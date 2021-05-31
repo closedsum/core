@@ -24,14 +24,13 @@ namespace NCsProjectileWeaponSoundFireAttach
 
 #pragma endregion ProjectileWeaponSoundFireAttach
 
-// FCsProjectileWeaponSoundFireParams
+// FCsProjectileWeapon_SoundFire_Params
 #pragma region
 
-#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FEmu
-void FCsProjectileWeaponSoundFireParams::CopyParams(ParamsType* Params)
-{
-#undef ParamsType
+#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
 
+void FCsProjectileWeapon_SoundFire_Params::CopyToParams(ParamsType* Params)
+{
 	Params->SetSound(&Sound);
 
 	typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::EAttach AttachType;
@@ -39,4 +38,15 @@ void FCsProjectileWeaponSoundFireParams::CopyParams(ParamsType* Params)
 	Params->SetAttachType((AttachType*)(&Attach));
 }
 
-#pragma endregion FCsProjectileWeaponSoundFireParams
+void FCsProjectileWeapon_SoundFire_Params::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetSound(Sound);
+
+	typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::EAttach AttachType;
+
+	Params->SetAttachType((AttachType)(Attach));
+}
+
+#undef ParamsType
+
+#pragma endregion FCsProjectileWeapon_SoundFire_Params

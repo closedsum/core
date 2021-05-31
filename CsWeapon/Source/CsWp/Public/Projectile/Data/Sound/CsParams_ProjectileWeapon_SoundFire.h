@@ -1,11 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Containers/CsGetInterfaceMap.h"
-
+// Types
 #include "Managers/Sound/CsTypes_Sound.h"
+// Containers
+#include "Containers/CsGetInterfaceMap.h"
+// Log
+#include "Utility/CsWpLog.h"
 
 struct FCsInterfaceMap;
-class UObject;
 
 namespace NCsWeapon
 {
@@ -57,7 +59,7 @@ namespace NCsWeapon
 
 						/**
 						*/
-						struct CSWP_API FEmu : public IParams
+						struct CSWP_API FImpl : public IParams
 						{
 						public:
 
@@ -71,14 +73,16 @@ namespace NCsWeapon
 
 							// IParams
 
-							FCsSound* Sound;
+							FCsSound Sound;
+							FCsSound* Sound_Emu;
 
-							EAttach* Attach;
+							EAttach AttachType;
+							EAttach* AttachType_Emu;
 
 						public:
 
-							FEmu();
-							~FEmu();
+							FImpl();
+							~FImpl();
 
 						FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -90,19 +94,19 @@ namespace NCsWeapon
 
 						#pragma endregion ICsGetInterfaceMap
 
-						public:
-
-							FORCEINLINE void SetSound(FCsSound* Value){ Sound = Value; }
-							FORCEINLINE void SetAttachType(EAttach* Value){ Attach = Value; }
-
 						// IParams
 						#pragma region
 						public:
 
-							FORCEINLINE const FCsSound& GetSound() const { return *Sound; }
-							FORCEINLINE const EAttach& GetAttachType() const { return *Attach; }
+							CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Sound, FCsSound)
+							CS_DEFINE_SET_GET_MEMBER_WITH_EMU(AttachType, EAttach)
 
 						#pragma endregion IParams
+
+						public:
+
+							bool IsValidChecked(const FString& Context) const;
+							bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 						};
 					}
 				}

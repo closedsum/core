@@ -5,6 +5,8 @@
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
 // Types
 #include "Types/CsTypes_Macro.h"
+// Log
+#include "Utility/CsWpLog.h"
 
 struct FCsInterfaceMap;
 enum class ECsProjectileWeaponLaunchLocation : uint8;
@@ -135,6 +137,13 @@ namespace NCsWeapon
 						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TraceDistance, float)
 		
 					#pragma endregion LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
+					
+					public:
+
+						static FImpl* AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 					};
 
 				#undef LaunchParamsType

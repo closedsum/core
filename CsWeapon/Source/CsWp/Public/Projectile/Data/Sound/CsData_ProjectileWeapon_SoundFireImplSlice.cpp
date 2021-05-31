@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFireImplSlice.h"
+#include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFireImplSlice.h"
 
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
@@ -8,7 +8,7 @@
 // Weapon
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
 
-#define SliceType NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice
+#define SliceType NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice
 
 #define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 #define CS_TEMP_ADD_SAFE_SLICE \
@@ -21,14 +21,14 @@
 	if (!DataHandler) \
 		return nullptr; \
 	\
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FireVisualDataType; \
+	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire FireVisualDataType; \
 	\
 	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, FireVisualDataType>(Context, Name); \
 	\
 	if (!Slice) \
 		return nullptr;
 
-SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 {
 	CS_TEMP_ADD_SAFE_SLICE
 
@@ -37,7 +37,7 @@ SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSlice(const FStr
 	return nullptr;
 }
 
-SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_TEMP_ADD_SAFE_SLICE
 
@@ -49,26 +49,26 @@ SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSliceAsValue(con
 #undef DataHandlerType
 #undef CS_TEMP_GET_DATA_HANDLER
 
-void FCsData_ProjectileWeapon_VisualFireImplSlice::CopyToSlice(SliceType* Slice)
+void FCsData_ProjectileWeapon_SoundFireImplSlice::CopyToSlice(SliceType* Slice)
 {
-	Params.CopyToParams(Slice->GetFireFXParamsPtr());
+	Params.CopyToParams(Slice->GetFireSoundParamsPtr());
 }
 
-void FCsData_ProjectileWeapon_VisualFireImplSlice::CopyToSliceAsValue(SliceType* Slice) const
+void FCsData_ProjectileWeapon_SoundFireImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
-	Params.CopyToParamsAsValue(Slice->GetFireFXParamsPtr());
+	Params.CopyToParamsAsValue(Slice->GetFireSoundParamsPtr());
 }
 
 #undef SliceType
 
-bool FCsData_ProjectileWeapon_VisualFireImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+bool FCsData_ProjectileWeapon_SoundFireImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	if (!Params.IsValid(Context, Log))
 		return false;
 	return true;
 }
 
-const FName NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice::Name = FName("NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice");
+const FName NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice::Name = FName("NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice");
 
 namespace NCsWeapon
 {
@@ -76,7 +76,7 @@ namespace NCsWeapon
 	{
 		namespace NData
 		{
-			namespace NVisual
+			namespace NSound
 			{
 				namespace NFire
 				{
@@ -86,16 +86,16 @@ namespace NCsWeapon
 						{
 							namespace Name
 							{
-								const FName VisualFireSlice = FName("VisualFireSlice");
+								const FName SoundFireSlice = FName("SoundFireSlice");
 
-								const FName VisualFireParams = FName("VisualFireParams");
+								const FName SoundFireParams = FName("SoundFireParams");
 							}
 						}
 					}
 
 					/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 					{
-						using namespace NCsWeapon::NProjectile::NData::NVisual::NFire::NImplSlice::NCached;
+						using namespace NCsWeapon::NProjectile::NData::NSound::NFire::NImplSlice::NCached;
 
 						CS_IS_PTR_NULL_RET_NULL(Object)
 
@@ -111,22 +111,22 @@ namespace NCsWeapon
 						if (!DataHandler)
 							return nullptr;
 
-						typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FireVisualDataType;
+						typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire FireSoundDataType;
 
-						FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, FireVisualDataType>(Context, DataName);
+						FImplSlice* Slice = DataHandler->AddSafeDataSlice<FImplSlice, FireSoundDataType>(Context, DataName);
 
 						if (!Slice)
 							return nullptr;
 
-						// Check for properties matching interface: FireVisualDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
+						// Check for properties matching interface: FireVisualDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
 						typedef NCsProperty::FLibrary PropertyLibrary;
 
 						bool Success = false;
 
-						// Try FCsData_ProjectileWeapon_VisualFireImplSlice
-						typedef FCsData_ProjectileWeapon_VisualFireImplSlice StructSliceType;
+						// Try FCsData_ProjectileWeapon_SoundFireImplSlice
+						typedef FCsData_ProjectileWeapon_SoundFireImplSlice StructSliceType;
 
-						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualFireSlice, nullptr))
+						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::SoundFireSlice, nullptr))
 						{
 							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
@@ -134,13 +134,13 @@ namespace NCsWeapon
 						// Try individual properties
 						else
 						{
-							typedef FCsProjectileWeapon_VisualFire_Params StructType;
+							typedef FCsProjectileWeapon_SoundFire_Params StructType;
 
-							StructType* VisualFireParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Context, Object, Object->GetClass(), Name::VisualFireParams, nullptr);
+							StructType* VisualSoundParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Context, Object, Object->GetClass(), Name::SoundFireParams, nullptr);
 
-							if (VisualFireParamsPtr)
+							if (VisualSoundParamsPtr)
 							{
-								VisualFireParamsPtr->CopyToParams(Slice->GetFireFXParamsPtr());
+								VisualSoundParamsPtr->CopyToParams(Slice->GetFireSoundParamsPtr());
 								Success = true;
 							}
 						}
@@ -149,10 +149,10 @@ namespace NCsWeapon
 						{
 							if (Log)
 							{
-								Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsWeapon::NProjectile::NData::NVisual::NFire::IFire.")));
-								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_ProjectileWeapon_VisualFireImplSlice with name: VisualFireSlice.")));
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsWeapon::NProjectile::NData::NSound::NFire::IFire.")));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_ProjectileWeapon_SoundFireImplSlice with name: SoundFireSlice.")));
 								Log(FString::Printf(TEXT("%s: - OR")));
-								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_VisualFire_Params with name: VisualFireParams.")));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_SoundFire_Params with name: SoundFireParams.")));
 							}
 						}
 						return Slice;

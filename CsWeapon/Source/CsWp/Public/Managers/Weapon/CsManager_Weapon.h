@@ -754,10 +754,16 @@ public:
 protected:
 
 #define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
+
 	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler;
-#undef DataInterfaceMapType
 
 	virtual void ConstructDataHandler();
+
+public:
+
+	FORCEINLINE DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
+
+#undef DataInterfaceMapType
 
 public:
 

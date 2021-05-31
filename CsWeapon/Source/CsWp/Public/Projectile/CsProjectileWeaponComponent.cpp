@@ -1099,10 +1099,10 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play()
 
 	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
-		typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::IParams ParamsType;
+		typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl ParamsType;
 
-		ParamsType* Params	  = SoundData->GetFireSoundParams();
-		const FCsSound& Sound = Params->GetSound();
+		const ParamsType& Params = SoundData->GetFireSoundParams();
+		const FCsSound& Sound	 = Params.GetSound();
 
 		typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 

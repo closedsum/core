@@ -141,6 +141,20 @@ namespace NCsWeapon
 
 		#define DataType NCsWeapon::NData::IData
 
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
+		DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
+
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->GetDataHandler();
+			}
+			return nullptr;
+		}
+
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 		{
 			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);

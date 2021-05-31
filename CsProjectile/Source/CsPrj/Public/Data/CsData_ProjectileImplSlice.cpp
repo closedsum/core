@@ -120,7 +120,7 @@ namespace NCsProjectile
 			if (!DataHandler) \
 				return nullptr;
 
-		FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
 			using namespace NCsProjectile::NData::NImplSlice::NCached;
 

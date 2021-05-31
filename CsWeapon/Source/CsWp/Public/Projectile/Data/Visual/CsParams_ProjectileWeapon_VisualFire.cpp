@@ -57,13 +57,13 @@ namespace NCsWeapon
 
 #define ParamsType NCsWeapon::NProjectile::NData::NVisual::NFire::FParams
 
-void FCsProjectileWeapon_VisualFire_Params::CopyParams(ParamsType* Params)
+void FCsProjectileWeapon_VisualFire_Params::CopyToParams(ParamsType* Params)
 {
 	Params->SetFX(&FX);
 	Params->SetAttach(&Attach);
 }
 
-void FCsProjectileWeapon_VisualFire_Params::CopyParamsAsValue(ParamsType* Params) const
+void FCsProjectileWeapon_VisualFire_Params::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetFX(FX);
 	Params->SetAttach(Attach);

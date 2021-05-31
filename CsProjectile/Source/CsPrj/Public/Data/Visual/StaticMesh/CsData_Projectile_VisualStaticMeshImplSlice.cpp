@@ -91,7 +91,7 @@ namespace NCsProjectile
 					}
 				}
 
-				FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 				{
 					using namespace NCsProjectile::NData::NVisual::NStaticMesh::NImplSlice::NCached;
 

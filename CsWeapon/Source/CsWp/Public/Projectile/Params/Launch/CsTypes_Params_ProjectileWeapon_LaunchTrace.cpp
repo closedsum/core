@@ -2,7 +2,11 @@
 #include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
 
 // Library
+#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+#include "Data/CsLibrary_Data_Weapon.h"
 #include "Library/CsLibrary_Valid.h"
+// Data
+#include "Projectile/Data/CsData_ProjectileWeaponImplSlice.h"
 // Params
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 
@@ -56,16 +60,102 @@ namespace NCsProjectileWeaponLaunchTraceDirection
 
 #define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
 
+ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+{
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+	typedef NCsWeapon::NData::IData WeaponDataType;
+
+	WeaponDataType* Data = WeaponManagerLibrary::GetSafeData(Context, WorldContext, Name, Log);
+
+	if (!Data)
+		return nullptr;
+
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
+
+	PrjWeaponDataType* PrjWeaponData = WeaponDataLibrary::GetSafeInterfaceChecked<PrjWeaponDataType>(Context, Data);
+
+	if (!PrjWeaponData)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT implement the interface: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataType::Name.ToString())));
+		return nullptr;
+	}
+
+	typedef NCsWeapon::NProjectile::NData::FImplSlice PrjWeaponDataImplType;
+
+	PrjWeaponDataImplType* PrjWeaponDataImpl = NCsInterfaceMap::SafeStaticCastChecked<PrjWeaponDataImplType, PrjWeaponDataType>(Context, PrjWeaponData);
+
+	if (!PrjWeaponDataImpl)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT contain the slice: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataImplType::Name.ToString())));
+		return nullptr;
+	}
+
+	ParamsType* Params = PrjWeaponDataImpl->ConstructLaunchParams<ParamsType>();
+
+	CopyToParams(Params);
+	return Params;
+}
+
+ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+	typedef NCsWeapon::NData::IData WeaponDataType;
+
+	WeaponDataType* Data = WeaponManagerLibrary::GetSafeData(Context, WorldContext, Name, Log);
+
+	if (!Data)
+		return nullptr;
+
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
+
+	PrjWeaponDataType* PrjWeaponData = WeaponDataLibrary::GetSafeInterfaceChecked<PrjWeaponDataType>(Context, Data);
+
+	if (!PrjWeaponData)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT implement the interface: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataType::Name.ToString())));
+		return nullptr;
+	}
+
+	typedef NCsWeapon::NProjectile::NData::FImplSlice PrjWeaponDataImplType;
+
+	PrjWeaponDataImplType* PrjWeaponDataImpl = NCsInterfaceMap::SafeStaticCastChecked<PrjWeaponDataImplType, PrjWeaponDataType>(Context, PrjWeaponData);
+
+	if (!PrjWeaponDataImpl)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s does NOT contain the slice: %s."), *Context, *(Name.ToString()), *(PrjWeaponDataImplType::Name.ToString())));
+		return nullptr;
+	}
+
+	ParamsType* Params = PrjWeaponDataImpl->ConstructLaunchParams<ParamsType>();
+
+	CopyToParamsAsValue(Params);
+	return Params;
+}
+
 void FCsProjectileWeaponLaunchTraceParams::CopyToParams(ParamsType* Params)
 {
-	Params->SetLocationType(&Location);
-	Params->SetDirectionType(&Direction);
+	Params->SetLocationType(&LocationType);
+	Params->SetDirectionType(&DirectionType);
 	Params->SetDirectionRules(&DirectionRules);
 	Params->SetTraceType(&TraceType);
 	Params->SetTraceMethod(&TraceMethod);
-	Params->SetTraceStartType(&TraceStart);
-	Params->SetTraceDirectionType(&TraceDirection);
+	Params->SetTraceStartType(&TraceStartType);
+	Params->SetTraceDirectionType(&TraceDirectionType);
 	Params->SetTraceDistance(&TraceDistance);
+}
+
+void FCsProjectileWeaponLaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetLocationType(LocationType);
+	Params->SetDirectionType(DirectionType);
+	Params->SetDirectionRules(DirectionRules);
+	Params->SetTraceType(TraceType);
+	Params->SetTraceMethod(TraceMethod);
+	Params->SetTraceStartType(TraceStartType);
+	Params->SetTraceDirectionType(TraceDirectionType);
+	Params->SetTraceDistance(TraceDistance);
 }
 
 #undef ParamsType

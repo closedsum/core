@@ -110,6 +110,66 @@ namespace NCsProperty
 	// Get
 	#pragma region
 
+	bool* FLibrary::GetBoolPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FBoolProperty* BoolProperty = FindPropertyByNameChecked<FBoolProperty>(Context, Struct, PropertyName);
+		bool* Value					= BoolProperty->ContainerPtrToValuePtr<bool>(StructValue);
+
+		checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Value;
+	}
+
+	bool* FLibrary::GetBoolPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FBoolProperty* BoolProperty = FindPropertyByName<FBoolProperty>(Context, Struct, PropertyName, Log);
+	
+		if (!BoolProperty)
+			return nullptr;
+
+		bool* Value = BoolProperty->ContainerPtrToValuePtr<bool>(StructValue);
+
+		if (!Value)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+		return Value;
+	}
+
+	int32* FLibrary::GetIntPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FIntProperty* IntProperty = FindPropertyByNameChecked<FIntProperty>(Context, Struct, PropertyName);
+		int32* Value			  = IntProperty->ContainerPtrToValuePtr<int32>(StructValue);
+
+		checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Value;
+	}
+
+	int32* FLibrary::GetIntPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FIntProperty* IntProperty = FindPropertyByName<FIntProperty>(Context, Struct, PropertyName, Log);
+
+		if (!IntProperty)
+			return nullptr;
+
+		int32* Value = IntProperty->ContainerPtrToValuePtr<int32>(StructValue);
+
+		if (!Value)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+		return Value;
+	}
+
 	float* FLibrary::GetFloatPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
 	{
 		CS_IS_PTR_NULL_CHECKED(StructValue)

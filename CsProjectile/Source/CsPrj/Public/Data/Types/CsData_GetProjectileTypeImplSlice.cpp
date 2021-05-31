@@ -11,6 +11,11 @@ void FCsData_GetProjectileTypeImplSlice::CopyToSlice(SliceType* Slice)
 	Slice->SetProjectileType(Type);
 }
 
+void FCsData_GetProjectileTypeImplSlice::CopyToSliceAsValue(SliceType* Slice) const
+{
+	Slice->SetProjectileType(Type);
+}
+
 #undef SliceType
 
 bool FCsData_GetProjectileTypeImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
@@ -29,13 +34,13 @@ namespace NCsProjectile
 		{
 			bool FImplSlice::IsValidChecked(const FString& Context) const
 			{
-				EMCsProjectile::Get().IsValidEnumChecked(Context, Type);
+				EMCsProjectile::Get().IsValidEnumChecked(Context, GetProjectileType());
 				return true;
 			}
 
 			bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 			{
-				CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Type)
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, GetProjectileType())
 				return true;
 			}
 		}

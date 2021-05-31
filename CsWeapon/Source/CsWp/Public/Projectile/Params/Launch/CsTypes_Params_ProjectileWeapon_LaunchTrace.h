@@ -122,10 +122,10 @@ struct CSWP_API FCsProjectileWeaponLaunchTraceParams
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ECsProjectileWeaponLaunchLocation Location;
+	ECsProjectileWeaponLaunchLocation LocationType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ECsProjectileWeaponLaunchDirection Direction;
+	ECsProjectileWeaponLaunchDirection DirectionType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
 	int32 DirectionRules;
@@ -137,28 +137,34 @@ public:
 	ECsTraceMethod TraceMethod;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ECsProjectileWeaponLaunchTraceStart TraceStart;
+	ECsProjectileWeaponLaunchTraceStart TraceStartType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ECsProjectileWeaponLaunchTraceDirection TraceDirection;
+	ECsProjectileWeaponLaunchTraceDirection TraceDirectionType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float TraceDistance;
 
 	FCsProjectileWeaponLaunchTraceParams() :
-		Location(ECsProjectileWeaponLaunchLocation::Owner),
-		Direction(ECsProjectileWeaponLaunchDirection::Owner),
+		LocationType(ECsProjectileWeaponLaunchLocation::Owner),
+		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
 		DirectionRules(CS_ROTATION_FLAGS_NONE),
 		TraceType(ECsTraceType::Line),
 		TraceMethod(ECsTraceMethod::Single),
-		TraceStart(ECsProjectileWeaponLaunchTraceStart::LaunchLocation),
-		TraceDirection(ECsProjectileWeaponLaunchTraceDirection::Owner),
+		TraceStartType(ECsProjectileWeaponLaunchTraceStart::LaunchLocation),
+		TraceDirectionType(ECsProjectileWeaponLaunchTraceDirection::Owner),
 		TraceDistance(1000.0f)
 	{
 	}
 
 #define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
+
+	ParamsType* AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+	ParamsType* AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
 	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+
 #undef ParamsType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

@@ -1,7 +1,47 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Macro.h"
+// Data
+#include "Data/CsData_Weapon.h"
+// Log
+#include "Utility/CsWpLog.h"
+
+#include "CsData_WeaponImplSlice.generated.h"
 #pragma once
 
-#include "Data/CsData_Weapon.h"
+// NCsWeapon::NData::FImplSlice
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FImplSlice)
+
+/**
+* Represents a "slice" of data, WeaponDataType (NCsWeapon::NData::IData).
+* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsData_WeaponImplSlice
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// WeaponDataType (NCsWeapon::NData::IData)
+
+	FCsData_WeaponImplSlice()
+	{
+	}
+
+#define SliceType NCsWeapon::NData::FImplSlice
+
+	SliceType* SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+	SliceType* SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+	void CopyToSlice(SliceType* Slice);
+	void CopyToSliceAsValue(SliceType* Slice) const;
+
+#undef SliceType
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
 
 struct FCsInterfaceMap;
 
@@ -61,6 +101,11 @@ namespace NCsWeapon
 			{
 				delete static_cast<NCsWeapon::NData::FImplSlice*>(Ptr);
 			}
+
+			static FImplSlice* SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 		};
 	}
 }

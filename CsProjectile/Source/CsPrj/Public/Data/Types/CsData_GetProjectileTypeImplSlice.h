@@ -31,7 +31,10 @@ public:
 	}
 
 #define SliceType NCsProjectile::NData::NType::FImplSlice
+
 	void CopyToSlice(SliceType* Slice);
+	void CopyToSliceAsValue(SliceType* Slice) const;
+
 #undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -67,18 +70,21 @@ namespace NCsProjectile
 				that describe the data. */
 				FCsInterfaceMap* InterfaceMap;
 
-				// ICsGetProjectileType
+				// ICsData_GetProjectileType
 
-			public:
-
-				FECsProjectile Type;
+				FECsProjectile ProjectileType;
+				FECsProjectile* ProjectileType_Emu;
 
 			public:
 
 				FImplSlice() :
+					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
-					Type()
+					// ICsData_GetProjectileType
+					ProjectileType(),
+					ProjectileType_Emu(nullptr)
 				{
+					ProjectileType_Emu = &ProjectileType;
 				}
 
 				~FImplSlice(){}
@@ -97,27 +103,23 @@ namespace NCsProjectile
 
 			#pragma endregion ICsGetInterfaceMap
 
-			public:
-
-				FORCEINLINE void SetProjectileType(const FECsProjectile& Value) { Type = Value; }
-
 			// ICsGetProjectileType
 			#pragma region
 			public:
 
-				FORCEINLINE const FECsProjectile& GetProjectileType() const { return Type; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ProjectileType, FECsProjectile)
 
 			#pragma endregion ICsGetProjectileType
 
 			public:
 
-				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
-
 				static void Deconstruct(void* Ptr)
 				{
 					delete static_cast<NCsProjectile::NData::NType::FImplSlice*>(Ptr);
 				}
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
 			#undef ParamsType
 			};

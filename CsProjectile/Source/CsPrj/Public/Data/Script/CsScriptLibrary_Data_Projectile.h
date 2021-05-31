@@ -45,6 +45,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision) to
 	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NCollision::FImplSlice.
 	* 
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -55,8 +56,22 @@ public:
 	static bool AddSlice_Collision(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsData_Projectile_CollisionImplSlice& Slice);
 
 	/**
+	* Adds a data slice which implements the interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision) to
+	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NCollision::FImplSlice.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Name				Name of the data.
+	* @param Slice
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
+	static bool AddSliceFromObject_Collision(const FString& Context, const UObject* WorldContextObject, const FString& Name, UObject* Object);
+
+	/**
 	* Adds a data slice which implements the interface: StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) to
 	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -68,7 +83,7 @@ public:
 
 	/**
 	* Adds a data slice which implements the interface: StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
-	* with Name.
+	* to data with Name.
 	* Adds slice of type: NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice.
 	*
 	* @param Context			The calling context.
@@ -82,6 +97,7 @@ public:
 	/**
 	* Adds a data slice which implements the interface: ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact) to
 	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NVisual::NImpact::FImplSlice.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -90,4 +106,17 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name,Slice"))
 	static bool AddSlice_VisualImpact(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsData_Projectile_VisualImpactImplSlice& Slice);
+
+	/**
+	* Adds a data slice which implements the interface: ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact) to
+	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NVisual::NImpact::FImplSlice.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Name				Name of the data.
+	* @param Slice
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
+	static bool AddSliceFromObject_VisualImpact(const FString& Context, const UObject* WorldContextObject, const FString& Name, UObject* Object);
 };

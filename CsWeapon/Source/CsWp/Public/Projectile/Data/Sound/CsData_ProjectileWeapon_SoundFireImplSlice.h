@@ -1,36 +1,42 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Types
+#include "Managers/Sound/CsTypes_Sound.h"
 // Data
-#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
+#include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFire.h"
+// Params
+#include "Projectile/Data/Sound/CsTypes_Params_ProjectileWeapon_SoundFire.h"
 // Log
 #include "Utility/CsWpLog.h"
 
-#include "CsData_ProjectileWeapon_VisualFireImplSlice.generated.h"
+
+#include "CsData_ProjectileWeapon_SoundFireImplSlice.generated.h"
 #pragma once
 
-// NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice
-CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, FImplSlice)
+// NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NSound, NFire, FImplSlice)
 
 /**
-* Represents a "slice" of data, VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire).
+* Represents a "slice" of data, SoundFireDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
 USTRUCT(BlueprintType)
-struct CSWP_API FCsData_ProjectileWeapon_VisualFireImplSlice
+struct CSWP_API FCsData_ProjectileWeapon_SoundFireImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCsProjectileWeapon_VisualFire_Params Params;
+	FCsProjectileWeapon_SoundFire_Params Params;
 
 public:
 
-	FCsData_ProjectileWeapon_VisualFireImplSlice() :
+	FCsData_ProjectileWeapon_SoundFireImplSlice() :
 		Params()
 	{
 	}
 
-#define SliceType NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice
+#define SliceType NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice
 
 	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -43,47 +49,39 @@ public:
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
 
+struct FCsInterfaceMap;
+
 namespace NCsWeapon
 {
 	namespace NProjectile
 	{
 		namespace NData
 		{
-			namespace NVisual
+			namespace NSound
 			{
 				namespace NFire
 				{
-				#define VisualFireDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
+				#define SoundFireDataType NCsWeapon::NProjectile::NData::NSound::NFire::IFire
 
-					/**
-					* Represents a "slice" of data, VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire).
-					* 
-					* If members are set via points to an "owning" data, then
-					* "Emulates" VisualFireDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire) by mimicking 
-					* the interfaces and having pointers to the appropriate members. 
-					* 
-					* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
-					* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
-					*/
-					struct CSWP_API FImplSlice : public VisualFireDataType
+					struct CSWP_API FImplSlice : public SoundFireDataType
 					{
 					public:
 
 						static const FName Name;
-
-					#define ParamsType NCsWeapon::NProjectile::NData::NVisual::NFire::FParams
+						
+					#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
 
 					private:
 
 						// ICsGetInterfaceMap
 
 						/** Pointer to the "root" object for all "Emu Slices". That object acts as the hub for the separate objects (via composition)
-						that describe the data. */
+							that describe the data. */
 						FCsInterfaceMap* InterfaceMap;
 
 					public:
 
-						// VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
+						// SoundFireDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
 
 						ParamsType Params;
 
@@ -94,7 +92,6 @@ namespace NCsWeapon
 							Params()
 						{
 						}
-
 						~FImplSlice(){}
 
 						FORCEINLINE UObject* _getUObject() const { return nullptr; }
@@ -113,21 +110,21 @@ namespace NCsWeapon
 
 					public:
 
-						FORCEINLINE ParamsType* GetFireFXParamsPtr() { return &Params; }
+						FORCEINLINE ParamsType* GetFireSoundParamsPtr() { return &Params; }
 
-					// VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
+					// SoundFireDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
 					#pragma region
 					public:
 
-						FORCEINLINE const ParamsType& GetFireFXParams() const { return Params; }
+						FORCEINLINE const ParamsType& GetFireSoundParams() const { return Params; }
 
-					#pragma endregion VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
-
+					#pragma endregion SoundFireDataType (NCsWeapon::NProjectile::NData::NSound::NFire::IFire)
+					
 					public:
 
 						static void Deconstruct(void* Ptr)
 						{
-							delete static_cast<NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice*>(Ptr);
+							delete static_cast<NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice*>(Ptr);
 						}
 
 						static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
@@ -138,7 +135,7 @@ namespace NCsWeapon
 					#undef ParamsType
 					};
 
-				#undef VisualFireDataType
+				#undef SoundFireDataType
 				}
 			}
 		}

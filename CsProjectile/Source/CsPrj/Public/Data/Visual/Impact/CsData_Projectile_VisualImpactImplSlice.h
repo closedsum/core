@@ -36,8 +36,13 @@ public:
 	}
 
 #define SliceType NCsProjectile::NData::NVisual::NImpact::FImplSlice
+
+	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
+
 #undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
@@ -133,6 +138,11 @@ namespace NCsProjectile
 					{
 						delete static_cast<NCsProjectile::NData::NVisual::NImpact::FImplSlice*>(Ptr);
 					}
+
+					static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 				};
 
 			#undef VisualImpactDataType

@@ -113,8 +113,8 @@ public:
 	}
 
 #define ParamsType NCsWeapon::NProjectile::NData::NVisual::NFire::FParams
-	void CopyParams(ParamsType* Params);
-	void CopyParamsAsValue(ParamsType* Params) const;
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
 #undef ParamsType
 	
 	bool IsValidChecked(const FString& Context) const;

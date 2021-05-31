@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sound/CsTypes_Sound.h"
+// Log
+#include "Utility/CsWpLog.h"
 
 #include "CsTypes_Params_ProjectileWeapon_SoundFire.generated.h"
 #pragma once
@@ -43,13 +45,14 @@ namespace NCsProjectileWeaponSoundFireAttach
 
 #pragma endregion ProjectileWeaponSoundFireAttach
 
-// FCsProjectileWeaponSoundFireParams
+// FCsProjectileWeapon_SoundFire_Params
 #pragma region
 
-CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NData, NSound, NFire, NParams, FEmu)
+// NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NData, NSound, NFire, NParams, FImpl)
 
 USTRUCT(BlueprintType)
-struct CSWP_API FCsProjectileWeaponSoundFireParams
+struct CSWP_API FCsProjectileWeapon_SoundFire_Params
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -61,21 +64,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsProjectileWeaponSoundFireAttach Attach;
 
-	FCsProjectileWeaponSoundFireParams() :
+	FCsProjectileWeapon_SoundFire_Params() :
 		Sound(),
 		Attach(ECsProjectileWeaponSoundFireAttach::Component)
 	{
 	}
 
-#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FEmu
+#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
 
-	void CopyParams(ParamsType* Params);
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
 
 #undef ParamsType
 	
-	// NOTE: Added to get around compiler error when using #undef
-private:
-	FORCEINLINE void _Nothing(){}
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const 
+	{
+		if (!Sound.IsValid(Context, Log))
+			return false;
+		return true;
+	}
 };
 
-#pragma endregion FCsProjectileWeaponSoundFireParams
+#pragma endregion FCsProjectileWeapon_SoundFire_Params

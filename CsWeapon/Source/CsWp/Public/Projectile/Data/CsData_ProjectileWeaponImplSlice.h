@@ -1,6 +1,85 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
+// Log
+#include "Utility/CsWpLog.h"
+// Data
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
+
+#include "CsData_ProjectileWeaponImplSlice.generated.h"
+#pragma once
+
+// NCsWeapon::NProjectile::NData::FImplSlice
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NProjectile, NData, FImplSlice)
+
+/**
+* Represents a "slice" of data, PrjWeaponDataType (NCsWeapon::NProjectile::NData::ICollision).
+* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsData_ProjectileWeaponImplSlice
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// CollisionDataType (NCsProjectile::NData::NCollision::IData)
+
+	/** Whether to perform a Fire action on input pressed or released. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDoFireOnRelease;
+
+	/** Whether the Fire action continues to execute when the Fire action is
+	    active. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bFullAuto;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bInfiniteAmmo;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	int32 MaxAmmo;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "1", ClampMin = "1"))
+	int32 ProjectilesPerShot;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TimeBetweenShots;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TimeBetweenAutoShots;
+
+	/** */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TimeBetweenProjectilesPerShot;
+
+	FCsData_ProjectileWeaponImplSlice() :
+		bDoFireOnRelease(false),
+		bFullAuto(false),
+		bInfiniteAmmo(false),
+		MaxAmmo(0),
+		ProjectilesPerShot(1),
+		TimeBetweenShots(0.0f),
+		TimeBetweenAutoShots(0.0f),
+		TimeBetweenProjectilesPerShot(0.0f)
+	{
+	}
+
+#define SliceType NCsWeapon::NProjectile::NData::FImplSlice
+
+	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+	void CopyToSlice(SliceType* Slice);
+	void CopyToSliceAsValue(SliceType* Slice) const;
+
+#undef SliceType
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
 
 struct FCsInterfaceMap;
 
@@ -13,9 +92,6 @@ namespace NCsWeapon
 	{
 		namespace NData
 		{
-			/**
-			*/
-
 			/**
 			* Represents a "slice" of data, PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData).
 			*
@@ -68,6 +144,9 @@ namespace NCsWeapon
 
 				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
+				LaunchParamsType* LaunchParams;
+				FName LaunchParamsName;
+
 			public:
 
 				FImplSlice() :
@@ -89,13 +168,13 @@ namespace NCsWeapon
 					TimeBetweenAutoShots(0.0f),
 					TimeBetweenAutoShots_Emu(nullptr),
 					TimeBetweenProjectilesPerShot(0.0f),
-					TimeBetweenProjectilesPerShot_Emu(nullptr)
+					TimeBetweenProjectilesPerShot_Emu(nullptr),
+					LaunchParams(nullptr),
+					LaunchParamsName(NAME_None)
 				{
 				}
 
-				~FImplSlice()
-				{
-				}
+				~FImplSlice();
 
 				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -110,6 +189,17 @@ namespace NCsWeapon
 				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 			#pragma endregion ICsGetInterfaceMap
+
+			public:
+
+				template<typename T>
+				FORCEINLINE T* ConstructLaunchParams()
+				{
+					T* ImplType		 = new T();
+					LaunchParams	 = ImplType;
+					LaunchParamsName = T::Name;
+					return ImplType;
+				}
 
 			// PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
 			#pragma region
@@ -145,10 +235,7 @@ namespace NCsWeapon
 				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenAutoShots, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenProjectilesPerShot, float)
 
-				FORCEINLINE const LaunchParamsType* GetLaunchParams() const
-				{
-					return nullptr;
-				}
+				FORCEINLINE const LaunchParamsType* GetLaunchParams() const { return LaunchParams; }
 
 			#pragma endregion PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
 
@@ -158,6 +245,11 @@ namespace NCsWeapon
 				{
 					delete static_cast<NCsWeapon::NProjectile::NData::FImplSlice*>(Ptr);
 				}
+
+				static FImplSlice* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Object, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 			};
 		}
 	}

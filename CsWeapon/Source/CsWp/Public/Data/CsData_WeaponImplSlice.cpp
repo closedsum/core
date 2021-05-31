@@ -1,6 +1,161 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsData_WeaponImplSlice.h"
 
-#include "Containers/CsInterfaceMap.h"
+// Library
+#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+#include "Library/CsLibrary_Property.h"
+#include "Library/CsLibrary_Valid.h"
+// Projectile
+#include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
+
+#define SliceType NCsWeapon::NData::FImplSlice
+
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define CS_TEMP_SAFE_CONSTRUCT \
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary; \
+	typedef NCsWeapon::NData::IData DataType; \
+	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType; \
+	\
+	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
+	\
+	if (!DataHandler) \
+		return nullptr; \
+	\
+	SliceType* Slice = DataHandler->SafeConstructData<SliceType, EMCsWeapon>(Context, Name); \
+	\
+	if (!Slice) \
+		return nullptr;
+
+SliceType* FCsData_WeaponImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+{
+	CS_TEMP_SAFE_CONSTRUCT
+
+	CopyToSlice(Slice);
+
+	// TODO: Eventually store copy of slice on a UObject.
+
+	return Slice;
+}
+
+SliceType* FCsData_WeaponImplSlice::SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	CS_TEMP_SAFE_CONSTRUCT
+
+	CopyToSliceAsValue(Slice);
+
+	// TODO: Eventually store copy of slice on a UObject.
+
+	return Slice;
+}
+
+#undef DataHandlerType
+#undef CS_TEMP_SAFE_CONSTRUCT
+
+void FCsData_WeaponImplSlice::CopyToSlice(SliceType* Slice)
+{
+}
+
+void FCsData_WeaponImplSlice::CopyToSliceAsValue(SliceType* Slice) const
+{
+}
+
+#undef SliceType
+
+bool FCsData_WeaponImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	return true;
+}
 
 const FName NCsWeapon::NData::FImplSlice::Name = FName("NCsWeapon::NData::FImplSlice");
+
+namespace NCsWeapon
+{
+	namespace NData
+	{
+		namespace NImplSlice
+		{
+			namespace NCached
+			{
+				namespace Name
+				{
+					const FName WeaponSlice = FName("WeaponSlice");
+				}
+			}
+		}
+
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define CS_TEMP_GET_SAFE_DATA_HANDLER \
+			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary; \
+			typedef NCsWeapon::NData::IData DataType; \
+			typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType; \
+			\
+			DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
+			\
+			if (!DataHandler) \
+				return nullptr;
+
+		/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			using namespace NCsWeapon::NData::NImplSlice::NCached;
+
+			CS_IS_PTR_NULL_RET_NULL(Object)
+
+			#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+			typedef NCsWeapon::NData::IData DataType;
+			typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
+			
+			DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+			
+			#undef DataHandlerType
+
+			if (!DataHandler)
+				return nullptr;
+
+			FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsWeapon>(Context, DataName);
+
+			if (!Slice)
+				return nullptr;
+
+			// Check for properties matching interface: WeaponDataType (NCsWeapon::NData::IData)
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			bool Success = false;
+
+			// Try FCsData_WeaponImplSlice
+			if (FCsData_WeaponImplSlice* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<FCsData_WeaponImplSlice>(Context, Object, Object->GetClass(), Name::WeaponSlice, nullptr))
+			{
+				SliceAsStruct->CopyToSlice(Slice);
+				Success = true;
+			}
+			// Try individual properties
+			else
+			{
+				Success = true;
+			}
+
+			if (!Success)
+			{
+				if (Log)
+				{
+					Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsWeapon::NData::IData.")));
+					Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_WeaponImplSlice with name: WeaponSlice.")));
+				}
+			}
+
+			// TODO: Eventually store reference to UObject.
+
+			return Slice;
+		}
+
+		bool FImplSlice::IsValidChecked(const FString& Context) const
+		{
+			return true;
+		}
+
+		bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+		{
+			return true;
+		}
+	}
+}

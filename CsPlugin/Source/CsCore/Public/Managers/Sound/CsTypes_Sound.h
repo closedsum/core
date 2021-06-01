@@ -544,6 +544,8 @@ public:
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	void Reset();
 };
 
 #pragma endregion FCsSound

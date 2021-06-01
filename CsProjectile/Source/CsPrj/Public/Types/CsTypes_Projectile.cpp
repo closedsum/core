@@ -11,6 +11,8 @@
 #include "Utility/CsPrjLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsPrjPopulateEnumMapFromSettings.h"
+// Projectile
+#include "Payload/CsPayload_ProjectilePooledImpl.h"
 
 // ProjectileRelevance
 #pragma region
@@ -231,3 +233,33 @@ namespace NCsProjectileData
 }
 
 #pragma endregion ProjectileData
+
+// FCsPayload_Projectile
+#pragma region
+
+#define PayloadType NCsProjectile::NPayload::FImplPooled
+void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
+{
+#undef PayloadType
+	
+	Payload->Instigator = Instigator;
+	Payload->Owner = Owner;
+	Payload->Parent = Parent;
+	//Payload->Time = Time;
+	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+
+	Payload->Location = Location;
+	Payload->Direction = Direction;
+}
+
+bool FCsPayload_Projectile::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsPayload_Projectile::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	return true;
+}
+
+#pragma endregion FCsPayload_Projectile

@@ -11,11 +11,16 @@ namespace NCsProjectile
 {
 	namespace NPayload
 	{
+	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+	#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+
 		/**
-		* Basic implementation of the interface: NCsPooledObject::NPayload::IPayload and NCsProjectile::NPayload::IPayload.
+		* Basic implementation of the interfaces: 
+		*  PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+		*  ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 		*/
-		struct CSPRJ_API FImplPooled : public NCsPooledObject::NPayload::IPayload,
-									   public NCsProjectile::NPayload::IPayload
+		struct CSPRJ_API FImplPooled : public PooledPayloadType,
+									   public ProjectilePayloadType
 		{
 		public:
 
@@ -27,7 +32,7 @@ namespace NCsProjectile
 
 			FCsInterfaceMap* InterfaceMap;
 
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 			bool bAllocated;
 
@@ -41,7 +46,9 @@ namespace NCsProjectile
 	
 			FCsTime Time;
 
-			// IPayload
+			uint32 PreserveChangesFromDefaultMask;
+
+			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 
 			FVector Direction;
 
@@ -63,79 +70,45 @@ namespace NCsProjectile
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const bool& IsAllocated() const
-			{
-				return bAllocated;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator;
-			}
-
-			FORCEINLINE UObject* GetOwner() const
-			{
-				return Owner;
-			}
-
-			FORCEINLINE UObject* GetParent() const
-			{
-				return Parent;
-			}
-
-			FORCEINLINE const FCsTime& GetTime() const
-			{
-				return Time;
-			}
-
-			FORCEINLINE void Allocate()
-			{
-				bAllocated = true;
-			}
+			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+			FORCEINLINE UObject* GetOwner() const { return Owner; }
+			FORCEINLINE UObject* GetParent() const { return Parent; }
+			FORCEINLINE const FCsTime& GetTime() const { return Time; }
+			FORCEINLINE void Allocate() { bAllocated = true; }
 
 			void Reset();
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
+
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
 			template<typename T>
-			FORCEINLINE T* GetInstigator() const
-			{
-				return Cast<T>(GetInstigator());
-			}
+			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
 
 			template<typename T>
-			FORCEINLINE T* GetOwner() const
-			{
-				return Cast<T>(GetOwner());
-			}
+			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
 
 			template<typename T>
-			FORCEINLINE T* GetParent() const
-			{
-				return Cast<T>(GetParent());
-			}
+			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// IPayload
+		// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const FVector& GetDirection() const
-			{
-				return Direction;
-			}
+			FORCEINLINE const FVector& GetDirection() const { return Direction; }
+			FORCEINLINE const FVector& GetLocation() const { return Location; }
 
-			FORCEINLINE const FVector& GetLocation() const
-			{
-				return Location;
-			}
-
-		#pragma endregion IPayload
+		#pragma endregion ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 		};
+
+	#undef PooledPayloadType
+	#undef ProjectilePayloadType
 	}
 }

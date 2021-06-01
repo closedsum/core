@@ -206,13 +206,13 @@ namespace NCsWeapon
 
 					bool FImpl::IsValidChecked(const FString& Context) const
 					{
-						CS_IS_FLOAT_GREATER_THAN_CHECKED(TraceDistance, 0.0f)
+						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetTraceDistance(), 0.0f)
 						return true;
 					}
 
 					bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						CS_IS_FLOAT_GREATER_THAN(TraceDistance, 0.0f)
+						CS_IS_FLOAT_GREATER_THAN(GetTraceDistance(), 0.0f)
 						return true;
 					}
 				}

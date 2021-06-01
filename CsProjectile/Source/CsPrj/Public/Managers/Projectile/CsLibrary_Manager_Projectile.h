@@ -109,6 +109,33 @@ namespace NCsProjectile
 
 		#pragma endregion Get
 
+		// Settings
+		#pragma region
+		public:
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Key
+			* @param Value
+			*/
+			static void SetAndAddTypeMapKeyValueChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Key, const FECsProjectile& Value);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Key
+			* @param Value
+			* @param Log			(optional)
+			*/
+			static void SafeSetAndAddTypeMapKeyValue(const FString& Context, const UObject* WorldContext, const FECsProjectile& Key, const FECsProjectile& Value, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		#pragma endregion Settings
+
 		// Data
 		#pragma region
 		public:

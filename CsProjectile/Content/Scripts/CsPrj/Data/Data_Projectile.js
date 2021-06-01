@@ -14,8 +14,6 @@ var FunctionLibrary = NJsFunction.FLibrary;
 // "typedefs" - functions
 var check = CommonLibrary.check;
 
-var Core;
-
 module.exports = class NJsProjectile
 {
     static NData = class Data
@@ -24,34 +22,38 @@ module.exports = class NJsProjectile
         {
             static IsImplementedByChecked(context, o)
             {
+                let self = NJsProjectile.NData.IData;
+
                 check(CommonLibrary.IsValidObjectChecked(context, o));
 
                 // GetLifeTime()
-                check(this.Implements_GetLifeTimeChecked(context, o));
+                check(self.Implements_GetLifeTimeChecked(context, o));
                 // GetInitialSpeed()
-                check(this.Implements_GetInitialSpeedChecked(context, o));
+                check(self.Implements_GetInitialSpeedChecked(context, o));
                 // GetMaxSpeed()
-                check(this.Implements_GetMaxSpeedChecked(context, o));
+                check(self.Implements_GetMaxSpeedChecked(context, o));
                 // GetGravityScale()
-                check(this.Implements_GetGravityScaleChecked(context, o));
+                check(self.Implements_GetGravityScaleChecked(context, o));
                 return true;
             }
 
             static IsImplementedBy(o)
             {
+                let self = NJsProjectile.NData.IData;
+
                 if (!CommonLibrary.IsValidObject(o))
                     return false;
                 // GetLifeTime()
-                if (!this.Implements_GetLifeTime(o))
+                if (!self.Implements_GetLifeTime(o))
                     return false;
                 // GetInitialSpeed()
-                if (!this.Implements_GetInitialSpeed(o))
+                if (!self.Implements_GetInitialSpeed(o))
                     return false;
                 // GetMaxSpeed()
-                if (!this.Implements_GetMaxSpeed(o))
+                if (!self.Implements_GetMaxSpeed(o))
                     return false;
                 // GetGravityScale()
-                if (!this.Implements_GetGravityScale(o))
+                if (!self.Implements_GetGravityScale(o))
                     return false;
                 return true;
             }

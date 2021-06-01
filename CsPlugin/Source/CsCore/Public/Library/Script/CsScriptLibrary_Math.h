@@ -73,4 +73,39 @@ public:
 	static bool RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection);
 
 #pragma endregion Intersection
+
+// Transform
+#pragma region
+public:
+
+	/**
+	* Make a Identity Transform.
+	*
+	* return Identity Transform
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Transform")
+	static FTransform MakeTransform_Identity()
+	{
+		return FTransform::Identity;
+	}
+
+#pragma endregion Transform
+
+// Rotation
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation")
+	static int32 MakeRotationRules_Pitch() { return 1; /* 1 << (int32)(ECsRotationRules::Pitch) */ }
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation")
+	static int32 MakeRotationRules_Yaw() { return 2; /* 1 << (int32)(ECsRotationRules::Yaw) */ }
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation")
+	static int32 MakeRotationRules_Roll() { return 4; /* 1 << (int32)(ECsRotationRules::Pitch) */ }
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation")
+	static int32 MakeRotationRules_All() { return 7; /* 1 + 2 + 4 */ }
+
+#pragma endregion Rotation
 };

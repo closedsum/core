@@ -70,6 +70,11 @@ public:
 	{
 	}
 
+	FORCEINLINE void UpdateInternalPtrs()
+	{
+		Sound.UpdateInternalPtrs();
+	}
+
 #define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
 
 	void CopyToParams(ParamsType* Params);

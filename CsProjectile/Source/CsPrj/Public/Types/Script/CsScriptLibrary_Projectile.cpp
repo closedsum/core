@@ -15,6 +15,7 @@ namespace NCsScriptLibraryProjectile
 		namespace Str
 		{
 			const FString FECsProjectile = TEXT("FECsProjectile");
+			const FString Create = TEXT("Create");
 			const FString Get = TEXT("Get");
 			const FString GetByIndex = TEXT("GetByIndex");
 		}
@@ -33,6 +34,17 @@ UCsScriptLibrary_Projectile::UCsScriptLibrary_Projectile(const FObjectInitialize
 
 #define EnumMapType EMCsProjectile
 #define EnumType FECsProjectile
+
+EnumType UCsScriptLibrary_Projectile::Create(const FString& Name, const FString& DisplayName)
+{
+	using namespace NCsScriptLibraryProjectile::NCached;
+
+	const FString& Context = Str::Create;
+
+	typedef NCsEnum::FLibrary EnumLibrary;
+
+	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
+}
 
 EnumType UCsScriptLibrary_Projectile::Get(const FString& Name)
 {

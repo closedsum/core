@@ -15,6 +15,9 @@ class CSPRJ_API UCsScriptLibrary_Projectile : public UObject
 #pragma region
 public:
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Projectile", meta = (AutoCreateRefTerm = "Name,DisplayName"))
+	static FECsProjectile Create(const FString& Name, const FString& DisplayName);
+
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Projectile", meta = (AutoCreateRefTerm = "Name"))
 	static FECsProjectile Get(const FString& Name);
 

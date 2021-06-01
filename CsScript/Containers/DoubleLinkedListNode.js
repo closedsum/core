@@ -59,7 +59,7 @@ module.exports = class FJsDoubleLinkedListNode
     LinkAfter(after)
     {
         checkf(IsValidObject(after), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
-
+        
         checkf(IsClassOf(after, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
 
         if (IsValidObject(this.NextLink))

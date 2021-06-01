@@ -12,13 +12,14 @@ namespace NCsProjectile
 		FImplPooled::FImplPooled() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
-			// IPayload
+			PreserveChangesFromDefaultMask(0),
+			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 			Direction(0.0f),
 			Location(0.0f)
 		{
@@ -26,8 +27,11 @@ namespace NCsProjectile
 
 			InterfaceMap->SetRootName(FImplPooled::Name);
 
-			InterfaceMap->Add<NCsPooledObject::NPayload::IPayload>(static_cast<NCsPooledObject::NPayload::IPayload*>(this));
-			InterfaceMap->Add<NCsProjectile::NPayload::IPayload>(static_cast<NCsProjectile::NPayload::IPayload*>(this));
+			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+			typedef NCsProjectile::NPayload::IPayload ProjectilePayloadType;
+
+			InterfaceMap->Add<PooledPayloadType>(static_cast<PooledPayloadType*>(this));
+			InterfaceMap->Add<ProjectilePayloadType>(static_cast<ProjectilePayloadType*>(this));
 		}
 
 		FImplPooled::~FImplPooled()
@@ -36,19 +40,19 @@ namespace NCsProjectile
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
 		void FImplPooled::Reset()
 		{
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;
 
 			Time.Reset();
-			// IPayload
+			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
 		}

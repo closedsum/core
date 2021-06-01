@@ -215,8 +215,12 @@ public:
 	*/
 	FORCEINLINE const FECsProjectile& GetTypeFromTypeMap(const FECsProjectile& Type)
 	{
+		check(EMCsProjectile::Get().IsValidEnum(Type));
+
 		return TypeMapArray[Type.GetValue()];
 	}
+
+	void SetAndAddTypeMapKeyValue(const FECsProjectile& Key, const FECsProjectile& Value);
 
 #pragma endregion Settings
 
@@ -662,8 +666,6 @@ public:
 		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
 	}
 
-	virtual PayloadType* ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
-
 #pragma endregion Payload
 
 	// Spawn
@@ -677,11 +679,6 @@ public:
 	* @param Payload
 	*/
 	const FCsProjectilePooled* Spawn(const FECsProjectile& Type, PayloadType* Payload);
-
-	/**
-	*
-	*/
-	virtual const FCsProjectilePooled* ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload);
 
 	/**
 	* Delegate type after a Projectile has been Spawned.

@@ -537,11 +537,6 @@ public:
 	const FCsStaticMeshActorPooled* Spawn(const FECsStaticMeshActor& Type, PayloadType* Payload);
 
 	/**
-	*
-	*/
-	//virtual const FCsFXActorPooled* ScriptSpawn(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
-
-	/**
 	* Delegate type after a Sound has been Spawned.
 	* 
 	* @param Type

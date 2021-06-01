@@ -162,6 +162,12 @@ public:
 	ParamsType* AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 	ParamsType* AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 
+private:
+
+	ParamsType* AddSafeToSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+public:
+
 	void CopyToParams(ParamsType* Params);
 	void CopyToParamsAsValue(ParamsType* Params) const;
 

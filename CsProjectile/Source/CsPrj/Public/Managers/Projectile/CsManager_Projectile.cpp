@@ -339,6 +339,24 @@ void UCsManager_Projectile::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+// Settings
+#pragma region
+
+void UCsManager_Projectile::SetAndAddTypeMapKeyValue(const FECsProjectile& Key, const FECsProjectile& Value)
+{
+	check(EMCsProjectile::Get().IsValidEnum(Key));
+
+	check(EMCsProjectile::Get().IsValidEnum(Value));
+
+	for (int32 I = TypeMapArray.Num() - 1; I < Key.GetValue(); ++I)
+	{
+		TypeMapArray.AddDefaulted_GetRef() = EMCsProjectile::Get().GetEnumAt(I + 1);
+	}
+	TypeMapArray[Key.GetValue()] = Value;
+}
+
+#pragma endregion Settings
+
 // Internal
 #pragma region
 
@@ -856,29 +874,6 @@ PayloadType* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
-PayloadType* UCsManager_Projectile::ScriptAllocatePayload(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	PayloadType* IP = Internal.AllocatePayload(GetTypeFromTypeMap(Type));
-	/*
-	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
-
-	// FCsPayload_PooledObjectImplSlice
-	if (FCsPayload_PooledObjectImplSlice* Slice = PayloadLibrary::SafeStaticCastChecked<FCsPayload_PooledObjectImplSlice>())
-	{
-		Slice->Instigator = ScriptPayload.Instigator;
-		Slice->Owner	  = ScriptPayload.Owner;
-		Slice->Parent	  = ScriptPayload.Parent;
-	}
-	// NCsProjectile::NPayload::FImplSlice
-	if (NCsProjectile::NPayload::FImplSlice* Slice = PayloadLibrary::SafeStaticCastChecked<NCsProjectile::NPayload::FImplSlice>())
-	{
-		Slice->Direction = ScriptPayload.Direction;
-		Slice->Location	 = ScriptPayload.Location;
-	}
-	*/
-	return IP;
-}
-
 #undef PayloadType
 
 #pragma endregion Payload
@@ -891,15 +886,6 @@ const FCsProjectilePooled* UCsManager_Projectile::Spawn(const FECsProjectile& Ty
 {
 #undef PayloadType
 	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
-}
-
-const FCsProjectilePooled* UCsManager_Projectile::ScriptSpawn(const FECsProjectile& Type, const FCsScriptProjectilePayload& ScriptPayload)
-{
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-
-	PayloadType* Payload = ScriptAllocatePayload(GetTypeFromTypeMap(Type), ScriptPayload);
-
-	return Spawn(Type, Payload);
 }
 
 #pragma endregion Spawn

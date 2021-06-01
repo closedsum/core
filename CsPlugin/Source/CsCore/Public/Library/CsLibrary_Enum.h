@@ -13,6 +13,28 @@ namespace NCsEnum
 	public:
 
 		template<typename EnumStructMap, typename EnumStruct>
+		FORCEINLINE static EnumStruct CreateSafe(const FString& Context, const FString& Name, const FString& DisplayName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			if (Name.IsEmpty())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name is EMPTY."), *Context, *Name));
+
+				return EnumStruct(0, NCsCached::Str::INVALID);
+			}
+
+			if (DisplayName.IsEmpty())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DisplayName is EMPTY."), *Context, *DisplayName));
+
+				return EnumStruct(0, NCsCached::Str::INVALID);
+			}
+
+			if (EnumStructMap::Get().IsValidEnum(Name))
+				return EnumStructMap::Get().GetEnum(Name);
+			return EnumStructMap::Get().Create(Name, DisplayName, true);
+		}
+
+		template<typename EnumStructMap, typename EnumStruct>
 		FORCEINLINE static EnumStruct GetSafe(const FString& Context, const FString& EnumStructName, const FString& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
 			if (EnumStructMap::Get().IsValidEnum(Name))

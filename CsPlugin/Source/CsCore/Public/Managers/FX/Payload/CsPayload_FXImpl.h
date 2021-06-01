@@ -15,8 +15,8 @@ namespace NCsFX
 {
 	namespace NPayload
 	{
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+	#define FXPayloadType NCsFX::NPayload::IPayload
 
 		/**
 		*/
@@ -137,7 +137,7 @@ namespace NCsFX
 		#undef ParameterType
 		};
 
-#undef PooledPayloadType
-#undef FXPayloadType
+	#undef PooledPayloadType
+	#undef FXPayloadType
 	}
 }

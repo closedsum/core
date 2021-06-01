@@ -666,34 +666,69 @@ public:
 
 #pragma endregion FCsProjectileBasePayload
 
-// FCsScriptProjectilePayload
+// FCsPayload_Projectile
 #pragma region
 
 class UObject;
 
+// NCsProjectile::NPayload::FImplPooled
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, FImplPooled)
+
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsScriptProjectilePayload : public FCsScriptPooledObjectPayload
+struct CSPRJ_API FCsPayload_Projectile
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
-	UPROPERTY(BlueprintReadWrite)
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+	/** The object "instigating" or starting the spawn. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Instigator;
+
+	/** The owner of the Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Owner;
+
+	/** The parent of the Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PreserveChangesFromDefaultMask;
+
+// PrjPayloadType (NCsProjectile::Payload::IPayload)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsProjectile Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Location;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Direction;
 
-	FCsScriptProjectilePayload() :
-		Super(),
+	FCsPayload_Projectile() :
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		PreserveChangesFromDefaultMask(0),
+		Type(),
 		Location(0.0f),
 		Direction(0.0f)
 	{
 	}
-	~FCsScriptProjectilePayload() {}
+
+#define PayloadType NCsProjectile::NPayload::FImplPooled
+	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
+#undef PayloadType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
-#pragma endregion FCsScriptProjectilePayload
+#pragma endregion FCsPayload_Projectile
 
 // FCsProjectilePtr
 #pragma region

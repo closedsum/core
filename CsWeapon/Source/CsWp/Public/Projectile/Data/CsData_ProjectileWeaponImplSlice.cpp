@@ -12,27 +12,12 @@
 
 #define SliceType NCsWeapon::NProjectile::NData::FImplSlice
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-#define CS_TEMP_ADD_SAFE_SLICE \
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary; \
-	typedef NCsWeapon::NData::IData DataType; \
-	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType; \
-	\
-	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-	\
-	if (!DataHandler) \
-		return nullptr; \
-	\
-	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType; \
-	\
-	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, PrjWeaponDataType>(Context, Name); \
-	\
-	if (!Slice) \
-		return nullptr;
-
 SliceType* FCsData_ProjectileWeaponImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSlice(Slice);
 
@@ -41,15 +26,37 @@ SliceType* FCsData_ProjectileWeaponImplSlice::AddSafeSlice(const FString& Contex
 
 SliceType* FCsData_ProjectileWeaponImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSliceAsValue(Slice);
 
 	return nullptr;
 }
 
-#undef DataHandlerType
-#undef CS_TEMP_GET_DATA_HANDLER
+SliceType* FCsData_ProjectileWeaponImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return nullptr;
+
+	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+	typedef NCsWeapon::NData::IData DataType;
+	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
+	
+	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+	if (!DataHandler)
+		return nullptr;
+	
+	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
+	
+	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, PrjWeaponDataType>(Context, Name);
+	
+	return Slice;
+}
 
 void FCsData_ProjectileWeaponImplSlice::CopyToSlice(SliceType* Slice)
 {

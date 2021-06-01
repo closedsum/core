@@ -586,11 +586,6 @@ public:
 	const FCsWidgetActorPooled* Spawn(const FECsWidgetActor& Type, PayloadType* Payload);
 
 	/**
-	*
-	*/
-	//virtual const FCsFXActorPooled* ScriptSpawn(const FECsFX& Type, const FCsScriptProjectilePayload& ScriptPayload);
-
-	/**
 	* Delegate type after an Widget Actor object has been Spawned.
 	* 
 	* @param Type

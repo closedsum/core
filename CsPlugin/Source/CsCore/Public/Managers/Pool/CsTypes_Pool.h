@@ -340,38 +340,6 @@ public:
 
 #pragma endregion FCsPooledObjectCache
 
-// FCsScriptPooledObjectPayload
-#pragma region
-
-class UObject;
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsScriptPooledObjectPayload
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	UPROPERTY(BlueprintReadWrite)
-	UObject* Instigator;
-
-	UPROPERTY(BlueprintReadWrite)
-	UObject* Owner;
-
-	UPROPERTY(BlueprintReadWrite)
-	UObject* Parent;
-
-	FCsScriptPooledObjectPayload() :
-		Instigator(nullptr),
-		Owner(nullptr),
-		Parent(nullptr)
-	{
-	}
-	~FCsScriptPooledObjectPayload() {}
-};
-
-#pragma endregion FCsScriptProjectilePayload
-
 // ManagerPooledObject
 #pragma region
 

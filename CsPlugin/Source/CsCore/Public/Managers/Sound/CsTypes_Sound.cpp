@@ -225,4 +225,22 @@ bool FCsSound::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FC
 	return true;
 }
 
+void FCsSound::Reset()
+{
+	Sound = nullptr;
+	Sound_LoadFlags = 0;
+	Sound_Internal = nullptr;
+	Type = EMCsSound::Get().GetMAX();
+	Attenuation = nullptr;
+	Attenuation_LoadFlags = 0;
+	Attenuation_Internal = nullptr;
+	DeallocateMethod = ECsSoundDeallocateMethod::Complete;
+	DeallocateMethod_Internal = (NCsSound::EDeallocateMethod*)&DeallocateMethod;
+	LifeTime = 0.0f;
+	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	Bone = NAME_None;
+	TransformRules = 7; // NCsTransformRules::All
+	Transform = FTransform::Identity;
+}
+
 #pragma endregion FCsSound

@@ -51,6 +51,12 @@ public:
 	SliceType* SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 	SliceType* SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
+private:
+
+	SliceType* SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+public:
+
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 

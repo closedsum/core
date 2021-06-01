@@ -103,6 +103,32 @@ namespace NCsProjectile
 
 		#pragma endregion Get
 
+		// Settings
+		#pragma region
+
+		void FLibrary::SetAndAddTypeMapKeyValueChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Key, const FECsProjectile& Value)
+		{
+			check(EMCsProjectile::Get().IsValidEnumChecked(Context, Key));
+
+			check(EMCsProjectile::Get().IsValidEnumChecked(Context, Value));
+
+			GetChecked(Context, WorldContext)->SetAndAddTypeMapKeyValue(Key, Value);
+		}
+
+		void FLibrary::SafeSetAndAddTypeMapKeyValue(const FString& Context, const UObject* WorldContext, const FECsProjectile& Key, const FECsProjectile& Value, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsProjectile, FECsProjectile, Key)
+
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsProjectile, FECsProjectile, Value)
+
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				Manager_Projectile->SetAndAddTypeMapKeyValue(Key, Value);
+			}
+		}
+
+		#pragma endregion Settings
+
 		// Data
 		#pragma region
 

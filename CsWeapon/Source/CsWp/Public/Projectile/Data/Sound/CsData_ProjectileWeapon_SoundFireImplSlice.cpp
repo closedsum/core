@@ -10,27 +10,12 @@
 
 #define SliceType NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-#define CS_TEMP_ADD_SAFE_SLICE \
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary; \
-	typedef NCsWeapon::NData::IData DataType; \
-	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType; \
-	\
-	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-	\
-	if (!DataHandler) \
-		return nullptr; \
-	\
-	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire FireVisualDataType; \
-	\
-	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, FireVisualDataType>(Context, Name); \
-	\
-	if (!Slice) \
-		return nullptr;
-
 SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSlice(Slice);
 
@@ -39,15 +24,39 @@ SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSlice(const FStri
 
 SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSliceAsValue(Slice);
 
 	return nullptr;
 }
 
-#undef DataHandlerType
-#undef CS_TEMP_GET_DATA_HANDLER
+SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	const_cast<FCsData_ProjectileWeapon_SoundFireImplSlice*>(this)->UpdateInternalPtrs();
+
+	if (!IsValid(Context, Log))
+		return nullptr;
+
+	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+	typedef NCsWeapon::NData::IData DataType;
+	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
+	
+	DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* DataHandler = WeaponManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+	if (!DataHandler)
+		return nullptr;
+	
+	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire FireVisualDataType;
+	
+	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, FireVisualDataType>(Context, Name);
+	
+	return Slice;
+}
 
 void FCsData_ProjectileWeapon_SoundFireImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -128,6 +137,7 @@ namespace NCsWeapon
 
 						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::SoundFireSlice, nullptr))
 						{
+							SliceAsStruct->UpdateInternalPtrs();
 							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
 						}
@@ -140,6 +150,7 @@ namespace NCsWeapon
 
 							if (VisualSoundParamsPtr)
 							{
+								VisualSoundParamsPtr->UpdateInternalPtrs();
 								VisualSoundParamsPtr->CopyToParams(Slice->GetFireSoundParamsPtr());
 								Success = true;
 							}

@@ -47,13 +47,13 @@ namespace NCsWeapon
 
 						bool FImpl::IsValidChecked(const FString& Context) const
 						{
-							check(Sound.IsValidChecked(Context));
+							check(GetSound().IsValidChecked(Context));
 							return true;
 						}
 
 						bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 						{
-							if (!Sound.IsValid(Context, Log))
+							if (!GetSound().IsValid(Context, Log))
 								return false;
 							return true;
 						}

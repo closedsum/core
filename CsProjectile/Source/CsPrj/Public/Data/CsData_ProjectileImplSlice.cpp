@@ -10,22 +10,9 @@
 
 #define SliceType NCsProjectile::NData::FImplSlice
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-#define CS_TEMP_GET_SAFE_DATA_HANDLER \
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary; \
-	typedef NCsProjectile::NData::IData DataType; \
-	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType; \
-	\
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-	\
-	if (!DataHandler) \
-		return nullptr;
-
 SliceType* FCsData_ProjectileImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
-	CS_TEMP_GET_SAFE_DATA_HANDLER
-
-	SliceType* Slice = DataHandler->SafeConstructData<SliceType, EMCsProjectile>(Context, Name);
+	SliceType* Slice = SafeConstruct_Internal(Context, WorldContext, Name, Log);
 
 	if (!Slice)
 		return nullptr;
@@ -39,9 +26,7 @@ SliceType* FCsData_ProjectileImplSlice::SafeConstruct(const FString& Context, co
 
 SliceType* FCsData_ProjectileImplSlice::SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	CS_TEMP_GET_SAFE_DATA_HANDLER
-
-	SliceType* Slice = DataHandler->SafeConstructData<SliceType, EMCsProjectile>(Context, Name);
+	SliceType* Slice = SafeConstruct_Internal(Context, WorldContext, Name, Log);
 
 	if (!Slice)
 		return nullptr;
@@ -53,8 +38,27 @@ SliceType* FCsData_ProjectileImplSlice::SafeConstructAsValue(const FString& Cont
 	return Slice;
 }
 
-#undef DataHandlerType
-#undef CS_TEMP_GET_DATA_HANDLER
+SliceType* FCsData_ProjectileImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return nullptr;
+
+	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+	typedef NCsProjectile::NData::IData DataType;
+	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	
+	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+	#undef DataHandlerType
+
+	if (!DataHandler)
+		return nullptr;
+
+	SliceType* Slice = DataHandler->SafeConstructData<SliceType, EMCsProjectile>(Context, Name);
+
+	return Slice;
+}
 
 void FCsData_ProjectileImplSlice::CopyToSlice(SliceType* Slice)
 {

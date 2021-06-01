@@ -36,7 +36,10 @@ UCsScriptLibrary_FX::UCsScriptLibrary_FX(const FObjectInitializer& ObjectInitial
 // Enum
 #pragma region
 
-FECsFX UCsScriptLibrary_FX::Get(const FString& Name)
+#define EnumMapType EMCsFX
+#define EnumType FECsFX
+
+EnumType UCsScriptLibrary_FX::Get(const FString& Name)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 
@@ -44,10 +47,10 @@ FECsFX UCsScriptLibrary_FX::Get(const FString& Name)
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetSafe<EMCsFX, FECsFX>(Context, Str::FECsFX, Name);
+	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
-FECsFX UCsScriptLibrary_FX::GetByIndex(const int32& Index)
+EnumType UCsScriptLibrary_FX::GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibraryFX::NCached;
 
@@ -55,35 +58,38 @@ FECsFX UCsScriptLibrary_FX::GetByIndex(const int32& Index)
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetSafeByIndex<EMCsFX, FECsFX>(Context, Str::FECsFX, Index);
+	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
-FString UCsScriptLibrary_FX::ToString(const FECsFX& Enum)
+FString UCsScriptLibrary_FX::ToString(const EnumType& Enum)
 {
 	return Enum.ToString();
 }
 
 uint8 UCsScriptLibrary_FX::GetCount()
 {
-	return EMCsFX::Get().Num();
+	return EnumMapType::Get().Num();
 }
 
-void UCsScriptLibrary_FX::GetAll(TArray<FECsFX>& OutTypes)
+void UCsScriptLibrary_FX::GetAll(TArray<EnumType>& OutTypes)
 {
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	EnumLibrary::GetAll<EMCsFX, FECsFX>(OutTypes);
+	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
-FECsFX UCsScriptLibrary_FX::GetMax()
+EnumType UCsScriptLibrary_FX::GetMax()
 {
-	return EMCsFX::Get().GetMAX();
+	return EnumMapType::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_FX::EqualEqual(const FECsFX& A, const FECsFX& B)
+bool UCsScriptLibrary_FX::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #pragma endregion Enum
 

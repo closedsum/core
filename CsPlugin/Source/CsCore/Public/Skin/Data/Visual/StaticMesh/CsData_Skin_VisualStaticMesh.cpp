@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Skin/Data/Visual/CsData_Skin_VisualStaticMesh.h"
+#include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
 #include "CsCore.h"
 
 const FName NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh");

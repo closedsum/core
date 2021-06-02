@@ -4,9 +4,9 @@
 // Library
 #include "Material/CsLibrary_Material.h"
 // Data
-#include "Skin/Data/Visual/CsData_Skin_VisualStaticMesh.h"
-#include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMesh.h"
-#include "Skin/Data/Visual/CsData_Skin_VisualMaterial.h"
+#include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
+#include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
+#include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"

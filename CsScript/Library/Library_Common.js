@@ -84,6 +84,22 @@ module.exports = class NJsCommon
             return result;
         }
 
+        static IsClass(c) 
+        { 
+            let self = NJsCommon.FLibrary;
+
+            return self.IsFunction(c); 
+        }
+
+        static IsClassChecked(context, c)
+        {
+            let self = NJsCommon.FLibrary;
+
+            let result = self.IsFunction(c);
+            self.checkf(result, context + ": class: " + c + " is NOT a class.");
+            return true;
+        }
+
         static IsClassOf(a, c) 
         { 
             let self = NJsCommon.FLibrary;
@@ -158,6 +174,15 @@ module.exports = class NJsCommon
             let result = typeof s === 'string';
             self.checkf(result, context + ": s: " + s + " is NOT a string.");
             return result;
+        }
+
+        static IsStringNotEmptyChecked(context, s)
+        {
+            let self = NJsCommon.FLibrary;
+
+            self.check(self.IsStringChecked(context, s));
+            self.checkf(s !== "", context + ": s: " + s + " is EMPTY.");
+            return true;
         }
     };
 };

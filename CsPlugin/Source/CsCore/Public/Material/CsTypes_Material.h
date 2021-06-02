@@ -254,6 +254,42 @@ public:
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return false;
+		}
+
+		if (Materials.Num() != Materials_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num()));
+			return false;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+				return false;
+			}
+
+			UMaterialInterface* Material = Materials_Internal[I];
+
+			if (!Material)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString())));
+				return false;
+			}
+		}
 		return true;
 	}
 };

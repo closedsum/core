@@ -4,8 +4,8 @@
 // Interfaces
 #include "Data/CsData.h"
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
-#include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMesh.h"
-#include "Skin/Data/Visual/CsData_Skin_VisualMaterial.h"
+#include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
+#include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 // Types
 #include "Types/CsTypes_SkeletalMesh.h"
 #include "Material/CsTypes_Material.h"

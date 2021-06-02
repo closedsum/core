@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMesh.h"
+#include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "CsCore.h"
 
 // Containers

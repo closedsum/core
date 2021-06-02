@@ -13,15 +13,20 @@ var CommonLibrary = NJsCommon.FLibrary;
 var checkf = CommonLibrary.checkf;
 var check = CommonLibrary.check;
 
-module.exports = class NJsFunction {
-    static FLibrary = class Library {
-        static NCached = class Cached {
-            static NStr = class Str {
+module.exports = class NJsFunction 
+{
+    static FLibrary = class Library 
+    {
+        static NCached = class Cached 
+        {
+            static NStr = class Str 
+            {
                 static IsArgFormatValidChecked = "NJsFunction::FLibrary::IsFormateValidChecked";
             }
         }
 
-        static IsArgFormatValidChecked(context, param, index) {
+        static IsArgFormatValidChecked(context, param, index) 
+        {
             let Str = NJsFunction.FLibrary.NCached.NStr;
 
             checkf(typeof context === 'string', Str.IsArgFormatValidChecked + ": context is NOT a string.");
@@ -31,22 +36,30 @@ module.exports = class NJsFunction {
             CommonLibrary.IsIntChecked(context, index);
 
             // Check 'key'.type exists
-            if (param['type'] === undefined) {
+            if (param['type'] === undefined) 
+            {
                 checkf(false, context + ": params[" + index + "].type is NOT defined.");
                 return false;
             }
             // check 'key'.value exists
-            if (param['value'] === undefined) {
+            if (param['value'] === undefined) 
+            {
                 checkf(false, context + ": params[" + index + "].value is NOT defined.");
                 return false;
             }
+
+            if (param['type'] === "string")
+                checkf(typeof param['value'] === "string", context + ": params[" + index + "].value: " + param['value'] + " NOT type 'string'.");
+
             return true;
         }
 
-        static IsArgsValidChecked(context, args) {
+        static IsArgsValidChecked(context, args) 
+        {
             let self = NJsFunction.FLibrary;
 
-            for (let i = 0; i < args.length; ++i) {
+            for (let i = 0; i < args.length; ++i) 
+            {
                 const arg = args[i];
 
                 CommonLibrary.IsValidObjectChecked(context, arg);
@@ -56,7 +69,8 @@ module.exports = class NJsFunction {
             return true;
         }
 
-        static IsReturn_Bool_Checked(context, fn, caller) {
+        static IsReturn_Bool_Checked(context, fn, caller) 
+        {
             // Check fn is a function
             CommonLibrary.IsFunctionChecked(context, fn);
 
@@ -66,7 +80,8 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsBoolChecked(context, fn());
         }
 
-        static IsReturn_Bool(fn, caller) {
+        static IsReturn_Bool(fn, caller) 
+        {
             // Check fn is a function
             if (!CommonLibrary.IsFunction(fn))
                 return false;
@@ -76,7 +91,8 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsBool(fn());
         }
 
-        static IsReturn_Int_Checked(context, fn, caller) {
+        static IsReturn_Int_Checked(context, fn, caller) 
+        {
             // Check fn is a function
             CommonLibrary.IsFunctionChecked(context, fn);
 
@@ -86,7 +102,8 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsIntChecked(context, fn());
         }
 
-        static IsReturn_Int(fn, caller) {
+        static IsReturn_Int(fn, caller) 
+        {
             // Check fn is a function
             if (!CommonLibrary.IsFunction(fn))
                 return false;
@@ -96,7 +113,8 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsInt(fn());
         }
 
-        static IsReturn_Number_Checked(context, fn, caller) {
+        static IsReturn_Number_Checked(context, fn, caller) 
+        {
             // Check fn is a function
             CommonLibrary.IsFunctionChecked(context, fn);
 
@@ -106,7 +124,8 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsNumberChecked(context, fn());
         }
 
-        static IsReturn_Number(fn, caller) {
+        static IsReturn_Number(fn, caller) 
+        {
             // Check fn is a function
             if (!CommonLibrary.IsFunction(fn))
                 return false;
@@ -116,7 +135,76 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsNumber(fn());
         }
 
-        static IsReturn_Class_Checked(context, fn, caller, classType) {
+        static IsReturn_Array_Checked(context, fn, caller) 
+        {
+            // Check fn is a function
+            check(CommonLibrary.IsFunctionChecked(context, fn));
+
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+            {
+                let ret = fn.call(caller);
+                checkf(ret, context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
+                return true
+            }
+            let ret = fn();
+            checkf(ret, context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
+            return true;
+        }
+
+        static IsReturn_Array(fn, caller) 
+        {
+            // Check fn is a function
+            if (!CommonLibrary.IsFunction(fn))
+                return false;
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+                return Array.isArray(fn.call(caller));
+            return Array.isArray(fn());
+        }
+
+        static IsReturn_ArrayAndNotEmpty_Checked(context, fn, caller) 
+        {
+            // Check fn is a function
+            check(CommonLibrary.IsFunctionChecked(context, fn));
+
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+            {
+                let ret = fn.call(caller);
+                checkf(ret, context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
+                checkf(ret.length !== 0, context + ": fn: " + fn.name + " returns an EMPTY array.");
+                return true
+            }
+            let ret = fn();
+            checkf(ret, context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
+            checkf(ret.length !== 0, context + ": fn: " + fn.name + " returns an EMPTY array.");
+            return true;
+        }
+
+        static IsReturn_ArrayAndNotEmpty(fn, caller) 
+        {
+            // Check fn is a function
+            if (!CommonLibrary.IsFunction(fn))
+                return false;
+            // If caller is valid, user caller to call fn
+            if (CommonLibrary.IsValidObject(caller))
+            {
+                let ret = fn.call(caller);
+
+                if (Array.isArray(ret))
+                    return ret.length !== 0;
+                return false;
+            }
+            let ret = fn();
+            
+            if (Array.isArray(ret))
+                return ret.length !== 0;
+            return false;
+        }
+
+        static IsReturn_Class_Checked(context, fn, caller, classType) 
+        {
             // Check fn is a function
             CommonLibrary.IsFunctionChecked(context, fn);
 
@@ -126,7 +214,8 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsClassOfChecked(context, fn(), classType);
         }
 
-        static IsReturn_Class(fn, caller, classType) {
+        static IsReturn_Class(fn, caller, classType) 
+        {
             // Check fn is a function
             if (!CommonLibrary.IsFunction(fn))
                 return false;
@@ -136,20 +225,22 @@ module.exports = class NJsFunction {
             return CommonLibrary.IsClassOf(fn(), classType);
         }
 
-        static IsArgCountAndReturn_Bool_Checked(context, fn, argCount, caller) {
+        static IsArgCountAndReturn_Bool_Checked(context, fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
             check(self.IsReturn_Bool_Checked(context, fn, caller));
 
             // Check argCount is an int
-            CommonLibrary.IsBoolChecked(context, argCount);
+            check(CommonLibrary.IsBoolChecked(context, argCount));
 
             checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
 
             return true;
         }
 
-        static IsArgCountAndReturn_Bool(fn, argCount, caller) {
+        static IsArgCountAndReturn_Bool(fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
             if (!self.IsReturn_Bool(fn, caller))
@@ -162,20 +253,22 @@ module.exports = class NJsFunction {
             return true;
         }
 
-        static IsArgCountAndReturn_Int_Checked(context, fn, argCount, caller) {
+        static IsArgCountAndReturn_Int_Checked(context, fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
             check(self.IsReturn_Int_Checked(context, fn, caller));
 
             // Check argCount is an int
-            CommonLibrary.IsIntChecked(context, argCount);
+            check(CommonLibrary.IsIntChecked(context, argCount));
 
             checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
 
             return true;
         }
 
-        static IsArgCountAndReturn_Int(fn, argCount, caller) {
+        static IsArgCountAndReturn_Int(fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
             if (!self.IsReturn_Int(fn, caller))
@@ -188,20 +281,22 @@ module.exports = class NJsFunction {
             return true;
         }
 
-        static IsArgCountAndReturn_Number_Checked(context, fn, argCount, caller) {
+        static IsArgCountAndReturn_Number_Checked(context, fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
             check(self.IsReturn_Number_Checked(context, fn, caller));
 
             // Check argCount is an int
-            CommonLibrary.IsIntChecked(context, argCount);
+            check(CommonLibrary.IsIntChecked(context, argCount));
 
             checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
 
             return true;
         }
 
-        static IsArgCountAndReturn_Number(fn, argCount, caller) {
+        static IsArgCountAndReturn_Number(fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
             if (!self.IsReturn_Number(fn, caller))
@@ -214,20 +309,50 @@ module.exports = class NJsFunction {
             return true;
         }
 
-        static IsArgCountAndReturn_Class_Checked(context, fn, argCount, caller, classType) {
+        static IsArgCountAndReturn_ArrayAndNotEmpty_Checked(context, fn, argCount, caller) 
+        {
             let self = NJsFunction.FLibrary;
 
-            check(self.IsReturn_Class_Checked(context, fn, caller, classType));
+            check(self.IsReturn_ArrayAndNotEmpty_Checked(context, fn, caller));
 
             // Check argCount is an int
-            CommonLibrary.IsIntChecked(context, argCount);
+            check(CommonLibrary.IsIntChecked(context, argCount));
 
             checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
 
             return true;
         }
 
-        static IsArgCountAndReturn_Class(fn, argCount, caller, classType) {
+        static IsArgCountAndReturn_ArrayAndNotEmpty(fn, argCount, caller) 
+        {
+            let self = NJsFunction.FLibrary;
+
+            if (!self.IsReturn_ArrayAndNotEmpty(fn, caller))
+                return false;
+            // Check argCount is an int
+            if (!CommonLibrary.IsInt(argCount))
+                return false;
+            if (fn.length !== argCount)
+                return false;
+            return true;
+        }
+
+        static IsArgCountAndReturn_Class_Checked(context, fn, argCount, caller, classType) 
+        {
+            let self = NJsFunction.FLibrary;
+
+            check(self.IsReturn_Class_Checked(context, fn, caller, classType));
+
+            // Check argCount is an int
+            check(CommonLibrary.IsIntChecked(context, argCount));
+
+            checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
+
+            return true;
+        }
+
+        static IsArgCountAndReturn_Class(fn, argCount, caller, classType) 
+        {
             let self = NJsFunction.FLibrary;
 
             if (!self.IsReturn_Class(fn, caller, classType))

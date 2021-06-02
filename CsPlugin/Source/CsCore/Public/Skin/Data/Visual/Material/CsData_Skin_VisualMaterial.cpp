@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Skin/Data/Visual/CsData_Skin_VisualMaterial.h"
+#include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 #include "CsCore.h"
 
 const FName NCsSkin::NData::NVisual::NMaterial::IMaterial::Name = FName("NCsSkin::NData::NVisual::NMaterial::IMaterial");

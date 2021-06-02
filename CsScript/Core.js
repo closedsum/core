@@ -3,6 +3,17 @@
 
 "use strict"
 
+// Library
+var NJsCommon = require('Cs/Library/Library_Common.js');
+var NJsFunction = require('Cs/Library/Library_Function.js');
+
+// "typedefs" - class
+var CommonLibrary = NJsCommon.FLibrary;
+var FunctionLibrary = NJsFunction.FLibrary;
+
+// "typedefs" - functions
+var check = CommonLibrary.check;
+
 module.exports = class FJsCore
 {
     constructor()
@@ -30,4 +41,17 @@ module.exports = class FJsCore
     GetPlayerState() { this.PlayerState; }
     GetPlayerPawn() { this.PlayerPawn; }
     GetCoroutineScheduler() { return this.CoroutineScheduler; }
+
+    GetClassChecked(context, className)
+    {
+        let args = [{value: className, type: "string"}];
+
+        check(FunctionLibrary.IsArgsValidChecked(context, args));
+        check(CommonLibrary.IsStringNotEmptyChecked(context, className));
+
+        let c = this.Classes.get(className);
+
+        check(CommonLibrary.IsClassChecked(context, c));
+        return c;
+    }
 };

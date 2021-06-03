@@ -4,37 +4,37 @@
 // Types
 #include "Managers/Input/CsTypes_Input.h"
 
-#include "CsScriptLibrary_InputActionMap.generated.h"
+#include "CsScriptLibrary_InputAction.generated.h"
 
 UCLASS()
-class CSCORE_API UCsScriptLibrary_InputActionMap : public UObject
+class CSCORE_API UCsScriptLibrary_InputAction : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
 
 public:
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
-	static FECsInputActionMap Create(const FString& Name, const FString& DisplayName);
+	static FECsInputAction Create(const FString& Name, const FString& DisplayName);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
-	static FECsInputActionMap Get(const FString& Name);
+	static FECsInputAction Get(const FString& Name);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Index"))
-	static FECsInputActionMap GetByIndex(const int32& Index);
+	static FECsInputAction GetByIndex(const int32& Index);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Enum"))
-	static FString ToString(const FECsInputActionMap& Enum);
+	static FString ToString(const FECsInputAction& Enum);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input")
 	static uint8 GetCount();
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input")
-	static void GetAll(TArray<FECsInputActionMap>& OutTypes);
+	static void GetAll(TArray<FECsInputAction>& OutTypes);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
-	static FECsInputActionMap GetNONE();
+	static FECsInputAction GetMAX();
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (InputActionMap)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
-	static bool EqualEqual(const FECsInputActionMap& A, const FECsInputActionMap& B);
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (InputAction)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
+	static bool EqualEqual(const FECsInputAction& A, const FECsInputAction& B);
 
 };

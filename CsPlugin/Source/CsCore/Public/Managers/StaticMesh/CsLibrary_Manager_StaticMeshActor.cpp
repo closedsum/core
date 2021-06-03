@@ -5,6 +5,7 @@
 #include "Types/CsTypes_Macro.h"
 // Managers
 #include "Managers/StaticMesh/CsManager_StaticMeshActor.h"
+// Library
 #include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
@@ -24,6 +25,7 @@ namespace NCsStaticMeshActor
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, GetSafeContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, SafeSpawn);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStaticMeshActor::NManager::FLibrary, GetSafe);
 				}
 			}
 		}
@@ -88,6 +90,15 @@ namespace NCsStaticMeshActor
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_StaticMeshActor."), *Context));
 			}
 			return Manager_StaticMeshActor;
+		}
+
+		UCsManager_StaticMeshActor* FLibrary::GetSafe(const UObject* WorldContext)
+		{
+			using namespace NCsStaticMeshActor::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, WorldContext, nullptr);
 		}
 
 		#pragma endregion Get

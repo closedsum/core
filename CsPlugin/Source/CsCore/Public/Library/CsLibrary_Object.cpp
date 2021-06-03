@@ -9,6 +9,11 @@
 
 namespace NCsObject
 {
+	FString FLibrary::PrintObjectAndClass(UObject* Object)
+	{
+		return FString::Printf(TEXT("Object: %s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
+	}
+
 	FString FLibrary::GetFlagsAsString(UObject* Object)
 	{
 		FString Str = TEXT("(");

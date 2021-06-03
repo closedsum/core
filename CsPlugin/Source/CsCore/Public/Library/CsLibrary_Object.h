@@ -15,6 +15,8 @@ namespace NCsObject
 	{
 	public:
 
+		static FString PrintObjectAndClass(UObject* Object);
+
 		/**
 		*
 		*

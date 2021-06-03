@@ -4,6 +4,7 @@
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Property.h"
+#include "Library/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
@@ -150,7 +151,9 @@ namespace NCsProjectile
 				{
 					if (Log)
 					{
-						Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsProjectile::NData::NCollision::ICollision.")));
+						typedef NCsObject::FLibrary ObjectLibrary;
+
+						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: NCsProjectile::NData::NCollision::ICollision."), *(ObjectLibrary::PrintObjectAndClass(Object))));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_CollisionImplSlice with name: CollisionSlice.")));
 						Log(FString::Printf(TEXT("%s: - OR")));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset.")));

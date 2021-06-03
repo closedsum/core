@@ -68,6 +68,23 @@ namespace NCsValid
 		{
 		public:
 
+			FORCEINLINE static bool NotEqualChecked(const FString& Context, const float& A, const FString& AName, const float& B)
+			{
+				checkf(A != B, TEXT("%s: %s: %f == %f is NOT Valid."), *Context, *AName, A, B);
+				return true;
+			}
+
+			FORCEINLINE static bool NotEqual(const FString& Context, const float& A, const FString& AName, const float& B, void(*Log)(const FString&))
+			{
+				if (A == B)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %f == %f is NOT Valid."), *Context, *AName, A, B));
+					return false;
+				}
+				return true;
+			}
+
 			FORCEINLINE static bool GreaterThanChecked(const FString& Context, const float& A, const FString& AName, const float& B)
 			{
 				checkf(A > B, TEXT("%s: %s: %f is NOT > %f."), *Context, *AName, A, B);
@@ -412,6 +429,18 @@ namespace NCsValid
 #pragma region
 
 // Assume const FString& Context has been defined
+#define CS_IS_FLOAT_NOT_EQUAL_CHECKED(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NFloat::FLibrary::NotEqualChecked(Context, __A, __temp__str__, __B)); \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_NOT_EQUAL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::NotEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context has been defined
 #define CS_IS_FLOAT_GREATER_THAN_CHECKED(__A, __B) \
 	{ \
 		static const FString __temp__str__ = #__A; \
@@ -468,11 +497,17 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NName::FLibrary::None(Context, __A, __temp__str__, Log)) { return false; } \
 	}
-	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_NAME_NONE_RET_NULL(__A) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NName::FLibrary::None(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_NAME_NONE_EXIT(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NName::FLibrary::None(Context, __A, __temp__str__, Log)) { return; } \
 	}
 
 #pragma endregion FName
@@ -699,6 +734,8 @@ namespace NCsValid
 #define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL(__A, __B, __C)
 #define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_RET_NULL(__A, __B, __C)
 // Float
+#define CS_IS_FLOAT_NOT_EQUAL_CHECKED(__A, __B)
+#define CS_IS_FLOAT_NOT_EQUAL(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
@@ -709,6 +746,7 @@ namespace NCsValid
 #define CS_IS_NAME_NONE_CHECKED(__A)
 #define CS_IS_NAME_NONE(__A)
 #define CS_IS_NAME_NONE_RET_NULL(__A)
+#define CS_IS_NAME_NONE_EXIT(__A)
 // FString
 #define CS_IS_STRING_EMPTY_CHECKED(__A)
 #define CS_IS_STRING_EMPTY(__A)

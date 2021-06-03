@@ -81,6 +81,14 @@ namespace NCsStaticMeshActor
 			*/
 			static UCsManager_StaticMeshActor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			/**
+			* Safely get the reference to UCsManager_StaticMeshActor from a WorldContext.
+			*
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_StaticMeshActor.
+			*/
+			static UCsManager_StaticMeshActor* GetSafe(const UObject* WorldContext);
+
 		#pragma endregion Get
 		};
 	}

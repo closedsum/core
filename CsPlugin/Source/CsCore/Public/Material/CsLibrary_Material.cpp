@@ -167,24 +167,25 @@ namespace NCsMaterial
 		Component->SetMaterial(Index, Material);
 	}
 
-	void FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL_EXIT(Component)
+		CS_IS_PTR_NULL(Component)
 		// Check Material is Valid
-		CS_IS_PTR_NULL_EXIT(Material)
+		CS_IS_PTR_NULL(Material)
 		// Check Index is Valid
-		CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(Index, 0)
+		CS_IS_INT_GREATER_THAN_OR_EQUAL(Index, 0)
 
 		if (Index >= Component->GetNumMaterials())
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is NOT Valid for Component: %s with %d Material Slots."), *Context, Index, *(Component->GetName()), Component->GetNumMaterials()));
-			return;
+			return false;
 		}
 		Component->SetMaterial(Index, Material);
+		return true;
 	}
 
-	void FLibrary::SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
+	bool FLibrary::SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 	{
 		using namespace NCsMaterial::NLibrary::NCached;
 
@@ -213,10 +214,10 @@ namespace NCsMaterial
 		}
 	}
 
-	void FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL_EXIT(Component)
+		CS_IS_PTR_NULL(Component)
 
 		const int32 Count		  = Component->GetNumMaterials();
 		const int32 MaterialCount = Materials.Num();
@@ -224,7 +225,7 @@ namespace NCsMaterial
 		if (Count != MaterialCount)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mismatch between Component (%s) material count (%d) != input material count (%d)"), *Context, *(Component->GetName()), Count, MaterialCount));
-			return;
+			return false;
 		}
 
 		ClearOverrideChecked(Context, Component);
@@ -234,13 +235,14 @@ namespace NCsMaterial
 			if (!Materials[I])
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
-				return;
+				return false;
 			}
 			Component->SetMaterial(I, Materials[I]);
 		}
+		return true;
 	}
 
-	void FLibrary::SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
+	bool FLibrary::SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 	{
 		using namespace NCsMaterial::NLibrary::NCached;
 

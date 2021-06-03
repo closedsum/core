@@ -42,14 +42,15 @@ void FCsData_Skin_VisualSkeletalMeshImplSlice::SetChecked(const FString& Context
 	Component->SetSkeletalMesh(Mesh.Get());
 }
 
-void FCsData_Skin_VisualSkeletalMeshImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualSkeletalMeshImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
-		return;
+		return false;
 
-	CS_IS_PTR_NULL_EXIT(Component)
+	CS_IS_PTR_NULL(Component)
 
 	Component->SetSkeletalMesh(Mesh.Get());
+	return true;
 }
 
 const FName NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice");
@@ -83,14 +84,15 @@ namespace NCsSkin
 					Component->SetSkeletalMesh(GetSkeletalMesh());
 				}
 
-				void FImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
 					if (!IsValid(Context, Log))
-						return;
+						return false;
 
-					CS_IS_PTR_NULL_EXIT(Component)
+					CS_IS_PTR_NULL(Component)
 
 					Component->SetSkeletalMesh(GetSkeletalMesh());
+					return true;
 				}
 			}
 		}

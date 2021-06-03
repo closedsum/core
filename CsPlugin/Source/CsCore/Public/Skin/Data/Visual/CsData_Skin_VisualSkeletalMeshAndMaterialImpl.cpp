@@ -1,8 +1,76 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMeshAndMaterialImpl.h"
 
+// Library
+#include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Valid.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
+// Components
+#include "Components/SkeletalMeshComponent.h"
+
+#define ImplType NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl
+
+void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::CopyToImpl(ImplType* Impl)
+{
+	Impl->SetSkeletalMesh(Mesh.GetPtr());
+	Impl->SetMaterials(Materials.GetPtr());
+}
+
+void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::CopyToImplAsValue(ImplType* Impl) const
+{
+	Impl->SetSkeletalMesh(Mesh.Get());
+	Impl->SetMaterials(Materials.Get());
+}
+
+#undef ImplType
+
+bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::IsValidChecked(const FString& Context) const
+{
+	// Check Mesh is Valid
+	check(Mesh.IsValidChecked(Context));
+	// Check Materials is Valid
+	check(Materials.IsValidChecked(Context));
+	return true;
+}
+
+bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Mesh is Valid
+	if (!Mesh.IsValid(Context, Log))
+		return false;
+	// Check Materials is Valid
+	if (!Materials.IsValid(Context, Log))
+		return false;
+	return true;
+}
+
+void FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::SetChecked(const FString& Context, USkeletalMeshComponent* Component) const
+{
+	check(IsValidChecked(Context));
+
+	CS_IS_PTR_NULL_CHECKED(Component);
+
+	Component->SetSkeletalMesh(Mesh.Get());
+
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	MaterialLibrary::SetChecked(Context, Component, Materials.Get());
+}
+
+bool FCsData_Skin_VisualSkeletalMeshAndMaterialImpl::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return false;
+
+	CS_IS_PTR_NULL(Component)
+
+	Component->SetSkeletalMesh(Mesh.Get());
+
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	return MaterialLibrary::SetSafe(Context, Component, Materials.Get());
+}
 
 const FName NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl::Name = FName("NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl");
 
@@ -47,6 +115,45 @@ namespace NCsSkin
 				FImpl::~FImpl()
 				{
 					delete InterfaceMap;
+				}
+
+				bool FImpl::IsValidChecked(const FString& Context) const
+				{
+					CS_IS_PTR_NULL_CHECKED(GetSkeletalMesh())
+					return true;
+				}
+
+				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				{
+					CS_IS_PTR_NULL(GetSkeletalMesh())
+					return true;
+				}
+
+				void FImpl::SetChecked(const FString& Context, USkeletalMeshComponent* Component) const
+				{
+					check(IsValidChecked(Context));
+
+					CS_IS_PTR_NULL_CHECKED(Component);
+
+					Component->SetSkeletalMesh(GetSkeletalMesh());
+
+					typedef NCsMaterial::FLibrary MaterialLibrary;
+
+					MaterialLibrary::SetChecked(Context, Component, GetMaterials());
+				}
+
+				bool FImpl::SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				{
+					if (!IsValid(Context, Log))
+						return false;
+
+					CS_IS_PTR_NULL(Component)
+
+					Component->SetSkeletalMesh(GetSkeletalMesh());
+					
+					typedef NCsMaterial::FLibrary MaterialLibrary;
+
+					return MaterialLibrary::SetSafe(Context, Component, GetMaterials());
 				}
 			}
 		}

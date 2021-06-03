@@ -1,5 +1,4 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
 // Interfaces
 #include "Data/CsData.h"
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
@@ -8,6 +7,58 @@
 // Types
 #include "Types/CsTypes_StaticMesh.h"
 #include "Material/CsTypes_Material.h"
+
+#include "CsData_Skin_VisualStaticMeshAndMaterialImpl.generated.h"
+#pragma once
+
+// NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMeshAndMaterial, FImpl)
+
+class UStaticMeshComponent;
+
+/**
+* Represents an implementation of data which implement the interfaces:
+* - DataType (NCsData::IData)
+* - SkinDataType (NCsSkin::NData::NVisual::IVisual)
+* - StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
+* - MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+* The idea behind this struct is to "build" the data via composition of separate objects that each implementation
+* a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsData_Skin_VisualStaticMeshAndMaterialImpl
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// StaticMeshVisualDataType(NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsStaticMesh Mesh;
+
+// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsTArrayMaterialnterface Materials;
+
+	FCsData_Skin_VisualStaticMeshAndMaterialImpl() :
+		Mesh(),
+		Materials()
+	{
+	}
+
+#define ImplType NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
+	void CopyToImpl(ImplType* Impl);
+	void CopyToImplAsValue(ImplType* Impl) const;
+#undef ImplType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	void SetChecked(const FString& Context, UStaticMeshComponent* Component) const;
+	bool SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
 
 class UObject;
 struct FCsInterfaceMap;
@@ -34,7 +85,7 @@ namespace NCsSkin
 				* - StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 				* - MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				*
-				* If members are set via points to an "owning" data, then "Emulates":
+				* If members are set via pointers to an "owning" data, then "Emulates":
 				* - DataType (NCsData::IData).
 				* - SkinDataType (NCsSkin::NData::NVisual::IVisual)
 				* - StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
@@ -125,6 +176,14 @@ namespace NCsSkin
 					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
 
 				#pragma endregion MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
+
+				public:
+
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+					void SetChecked(const FString& Context, UStaticMeshComponent* Component) const;
+					bool SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
 				};
 
 			#undef DataType

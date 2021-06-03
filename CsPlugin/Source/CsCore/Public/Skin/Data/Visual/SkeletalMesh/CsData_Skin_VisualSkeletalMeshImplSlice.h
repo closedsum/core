@@ -43,7 +43,7 @@ public:
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void SetChecked(const FString& Context, USkeletalMeshComponent* Component) const;
-	void SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
@@ -63,7 +63,7 @@ namespace NCsSkin
 				/**
 				* Represents a "slice" of data, SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				* 
-				* If members are set via points to an "owning" data, then
+				* If members are set via pointers to an "owning" data, then
 				* "Emulates" SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh) by mimicking 
 				* the interfaces and having pointers to the appropriate members.
 				*
@@ -138,7 +138,7 @@ namespace NCsSkin
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 					void SetChecked(const FString& Context, USkeletalMeshComponent* Component) const;
-					void SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+					bool SetSafe(const FString& Context, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
 				};
 
 			#undef SkeletalMeshVisualDataType

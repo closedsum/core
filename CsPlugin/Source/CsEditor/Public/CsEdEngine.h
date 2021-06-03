@@ -10,6 +10,13 @@
 
 #include "CsEdEngine.generated.h"
 
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsEdEngine_OnEndPIE, bool, IsSimulating);
+
+#pragma endregion Delegates
+
 struct FCsRoutine;
 
 UCLASS()
@@ -119,6 +126,9 @@ public:
 
 	virtual void OnBeginPIE(bool IsSimulating);
 	virtual void OnEndPIE(bool IsSimulating);
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Editor|Engine|PIE")
+	FCsEdEngine_OnEndPIE OnEndPIE_ScriptEvent;
 
 #pragma endregion PIE
 

@@ -247,6 +247,7 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 			ModuleSettings->UpdateDefaultConfigFile();
 		}
 	}
+	OnEndPIE_ScriptEvent.Broadcast(IsSimulating);
 }
 
 #pragma endregion PIE

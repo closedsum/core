@@ -42,14 +42,15 @@ void FCsData_Skin_VisualStaticMeshImplSlice::SetChecked(const FString& Context, 
 	Component->SetStaticMesh(Mesh.Get());
 }
 
-void FCsData_Skin_VisualStaticMeshImplSlice::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMeshImplSlice::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
-		return;
+		return false;
 
-	CS_IS_PTR_NULL_EXIT(Component)
+	CS_IS_PTR_NULL(Component)
 
 	Component->SetStaticMesh(Mesh.Get());
+	return true;
 }
 
 const FName NCsSkin::NData::NVisual::NStaticMesh::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::FImplSlice");
@@ -83,14 +84,15 @@ namespace NCsSkin
 					Component->SetStaticMesh(GetStaticMesh());
 				}
 
-				void FImplSlice::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
 					if (!IsValid(Context, Log))
-						return;
+						return false;
 
-					CS_IS_PTR_NULL_EXIT(Component)
+					CS_IS_PTR_NULL(Component)
 
 					Component->SetStaticMesh(GetStaticMesh());
+					return true;
 				}
 			}
 		}

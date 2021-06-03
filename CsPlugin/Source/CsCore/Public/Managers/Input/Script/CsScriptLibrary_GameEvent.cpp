@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Input/Script/CsScriptLibrary_InputActionMap.h"
+#include "Managers/Input/Script/CsScriptLibrary_GameEvent.h"
 #include "CsCore.h"
 
 // Library
@@ -8,13 +8,13 @@
 // Cached
 #pragma region
 
-namespace NCsScriptLibraryInputActionMap
+namespace NCsScriptLibraryGameEvent
 { 
 	namespace NCached
 	{
 		namespace Str
 		{
-			const FString FECsInputActionMap = TEXT("FECsInputActionMap");
+			const FString FECsGameEvent = TEXT("FECsGameEvent");
 			const FString Create = TEXT("Create");
 			const FString Get = TEXT("Get");
 			const FString GetByIndex = TEXT("GetByIndex");
@@ -24,17 +24,17 @@ namespace NCsScriptLibraryInputActionMap
 
 #pragma endregion Cached
 
-UCsScriptLibrary_InputActionMap::UCsScriptLibrary_InputActionMap(const FObjectInitializer& ObjectInitializer)
+UCsScriptLibrary_GameEvent::UCsScriptLibrary_GameEvent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-#define EnumMapType EMCsInputActionMap
-#define EnumType FECsInputActionMap
+#define EnumMapType EMCsGameEvent
+#define EnumType FECsGameEvent
 
-EnumType UCsScriptLibrary_InputActionMap::Create(const FString& Name, const FString& DisplayName)
+EnumType UCsScriptLibrary_GameEvent::Create(const FString& Name, const FString& DisplayName)
 {
-	using namespace NCsScriptLibraryInputActionMap::NCached;
+	using namespace NCsScriptLibraryGameEvent::NCached;
 
 	const FString& Context = Str::Create;
 
@@ -43,9 +43,9 @@ EnumType UCsScriptLibrary_InputActionMap::Create(const FString& Name, const FStr
 	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
 }
 
-EnumType UCsScriptLibrary_InputActionMap::Get(const FString& Name)
+EnumType UCsScriptLibrary_GameEvent::Get(const FString& Name)
 {
-	using namespace NCsScriptLibraryInputActionMap::NCached;
+	using namespace NCsScriptLibraryGameEvent::NCached;
 
 	const FString& Context = Str::Get;
 
@@ -54,9 +54,9 @@ EnumType UCsScriptLibrary_InputActionMap::Get(const FString& Name)
 	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
-EnumType UCsScriptLibrary_InputActionMap::GetByIndex(const int32& Index)
+EnumType UCsScriptLibrary_GameEvent::GetByIndex(const int32& Index)
 {
-	using namespace NCsScriptLibraryInputActionMap::NCached;
+	using namespace NCsScriptLibraryGameEvent::NCached;
 
 	const FString& Context = Str::GetByIndex;
 
@@ -65,29 +65,29 @@ EnumType UCsScriptLibrary_InputActionMap::GetByIndex(const int32& Index)
 	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
-FString UCsScriptLibrary_InputActionMap::ToString(const EnumType& Enum)
+FString UCsScriptLibrary_GameEvent::ToString(const EnumType& Enum)
 {
 	return Enum.ToString();
 }
 
-uint8 UCsScriptLibrary_InputActionMap::GetCount()
+uint8 UCsScriptLibrary_GameEvent::GetCount()
 {
 	return EnumMapType::Get().Num();
 }
 
-void UCsScriptLibrary_InputActionMap::GetAll(TArray<EnumType>& OutTypes)
+void UCsScriptLibrary_GameEvent::GetAll(TArray<EnumType>& OutTypes)
 {
 	typedef NCsEnum::FLibrary EnumLibrary;
 
 	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
-EnumType UCsScriptLibrary_InputActionMap::GetNONE()
+EnumType UCsScriptLibrary_GameEvent::GetMAX()
 {
-	return EnumMapType::Get().GetNONE();
+	return EnumMapType::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_InputActionMap::EqualEqual(const EnumType& A, const EnumType& B)
+bool UCsScriptLibrary_GameEvent::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
 }

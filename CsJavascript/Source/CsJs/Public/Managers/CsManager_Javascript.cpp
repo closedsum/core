@@ -3,6 +3,7 @@
 #include "CsJs.h"
 
 // Library
+#include "Managers/CsLibrary_Manager_Javascript.h"
 #include "Library/CsJsLibrary_Common.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
@@ -25,9 +26,7 @@
 #include "Engine/Engine.h"
 
 #if WITH_EDITOR
-// Library
-#include "Library/CsLibrary_World.h"
-
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/CsGetManagerJavascript.h"
@@ -72,26 +71,19 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerJavascript(InRoot)->GetManager_Javascript();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
 
 /*static*/ bool UCsManager_Javascript::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerJavascript(InRoot)->GetManager_Javascript() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Javascript::Init(UObject* InRoot)
 {
@@ -239,19 +231,15 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetFromWorldContextObject(const FString& Context, const UObject* WorldContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
+	typedef NCsJs::NManager::FLibrary JavascriptManagerLibrary;
 
-	UWorld* World = WorldLibrary::GetSafe(Context, WorldContextObject, Log);
+	if (UObject* ContextRoot = JavascriptManagerLibrary::GetSafe(Context, WorldContextObject))
+	{
+		if (UCsManager_Javascript* Manager = GetSafe(ContextRoot))
+			return Manager;
 
-	if (!World)
-		return nullptr;
-
-	// Game Instance
-	if (UCsManager_Javascript* Manager = GetSafe(Context, World->GetGameInstance(), Log))
-		return Manager;
-
-	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to Manager Item of type UCsManager_Javascript from GameInstance."), *Context));
-
+		UE_LOG(LogCsJs, Warning, TEXT("%s: Failed to Manager Javascript of type UCsManager_Javascript from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
+	}
 	return nullptr;
 }
 
@@ -355,6 +343,9 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 
 	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
+	// Engine
+	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GEngine"), GEngine);
+	 
 	// GameInstance
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameInstance"), GameInstance);
 

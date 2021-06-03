@@ -35,14 +35,14 @@ void FCsData_Skin_VisualMaterialImplSlice::SetChecked(const FString& Context, UP
 	MaterialLibrary::SetChecked(Context, Component, Materials.Get());
 }
 
-void FCsData_Skin_VisualMaterialImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualMaterialImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!Materials.IsValid(Context, Log))
-		return;
+		return false;
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	MaterialLibrary::SetSafe(Context, Component, Materials.Get(), Log);
+	return MaterialLibrary::SetSafe(Context, Component, Materials.Get(), Log);
 }
 
 const FName NCsSkin::NData::NVisual::NMaterial::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NMaterial::FImplSlice");
@@ -78,11 +78,11 @@ namespace NCsSkin
 					MaterialLibrary::SetChecked(Context, Component, GetMaterials());
 				}
 
-				void FImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				bool FImplSlice::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
 					typedef NCsMaterial::FLibrary MaterialLibrary;
 
-					MaterialLibrary::SetSafe(Context, Component, GetMaterials(), Log);
+					return MaterialLibrary::SetSafe(Context, Component, GetMaterials(), Log);
 				}
 			}
 		}

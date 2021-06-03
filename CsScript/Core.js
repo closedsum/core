@@ -18,6 +18,7 @@ module.exports = class FJsCore
 {
     constructor()
     {
+        this.Engine = null;
         this.GameInstance = null;
         this.Manager_Time = null;
         this.Coordinator_GameEvent = null;
@@ -32,6 +33,7 @@ module.exports = class FJsCore
         this.Classes = new Map();
     }
 
+    GetEngine() { return this.Engine; }
     GetGameInstance() { return this.GameInstance; }
     GetManager_Time() { return this.Manager_Time; }
     GetCoordinator_GameEvent() { return this.Coordinator_GameEvent; }

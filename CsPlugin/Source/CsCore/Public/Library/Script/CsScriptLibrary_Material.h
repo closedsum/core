@@ -51,9 +51,10 @@ public:
 	* @param Component
 	* @param Material
 	* @param Index
+	* return			Whether the Material was successful set at given Index or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Index"))
-	static void SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
+	static bool SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
 
 	/**
 	* Safely set the Materials on Component
@@ -61,9 +62,10 @@ public:
 	* @param Context	The calling context
 	* @param Component
 	* @param Materials
+	* return			Whether the Material was successful set or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context"))
-	static void Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
+	static bool Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
 
 #pragma endregion Set
 

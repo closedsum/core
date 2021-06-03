@@ -93,9 +93,10 @@ namespace NCsMaterial
 		* @param Component
 		* @param Material
 		* @param Index
-		* @param Log
+		* @param Log		(optional)
+		* return			Whether the material was successful set or not.
 		*/
-		static void SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
 		
 		/**
 		* Safely set the Material at the given Index on Component
@@ -103,8 +104,9 @@ namespace NCsMaterial
 		* @param Component
 		* @param Material
 		* @param Index
+		* return			Whether the material was successful set or not.
 		*/
-		static void SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
+		static bool SetSafe(UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
 
 		/**
 		* Set the Materials on Component
@@ -121,17 +123,19 @@ namespace NCsMaterial
 		* @param Context	The calling context
 		* @param Component
 		* @param Materials
-		* @param Log
+		* @param Log		(optional)
+		* return			Whether the materials were successful set or not.
 		*/
-		static void SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
 		
 		/**
 		* Safely set the Materials on Component
 		*
 		* @param Component
 		* @param Materials
+		* return			Whether the materials were successful set or not.
 		*/
-		static void SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
+		static bool SetSafe(UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
 
 		/**
 		* Set the materials on a StaticMeshComponent.

@@ -60,7 +60,7 @@ UMaterialInterface* UCsScriptLibrary_Material::LoadByStringPath(const FString& C
 // Set
 #pragma region
 
-void UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
+bool UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 {
 	using namespace NCsScriptLibraryMaterial::NCached;
 
@@ -71,7 +71,7 @@ void UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponen
 	return MaterialLibrary::SetSafe(Context, Component, Material, Index);
 }
 
-void UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
+bool UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 {
 	using namespace NCsScriptLibraryMaterial::NCached;
 

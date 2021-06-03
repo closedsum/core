@@ -249,6 +249,10 @@ namespace NCsPlayer
 		public:
 
 			static UPlayerInput* GetFirstLocal(UWorld* World);
+
+			static UPlayerInput* GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			static UPlayerInput* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 	}
 

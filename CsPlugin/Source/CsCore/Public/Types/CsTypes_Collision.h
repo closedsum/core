@@ -207,7 +207,7 @@ struct CSCORE_API FCsCollisionShape
 // FCsCollisionPreset
 #pragma region
 
-class USkeletalMeshComponent;
+class UPrimitiveComponent;
 
 /**
 */
@@ -258,7 +258,11 @@ struct CSCORE_API FCsCollisionPreset
 		return !(*this == B);
 	}
 
-	void Apply(USkeletalMeshComponent* Mesh) const;
+	void SetChecked(const FString& Context, UPrimitiveComponent* Component) const;
+	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsCollisionPreset

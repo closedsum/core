@@ -4,6 +4,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Components
+#include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
 // CollisionEnabled
@@ -154,18 +155,122 @@ bool FCsCollisionShape::IsValid(const FString& Context, void(*Log)(const FString
 // FCsCollisionPreset
 #pragma region
 
-void FCsCollisionPreset::Apply(USkeletalMeshComponent* Mesh) const
+void FCsCollisionPreset::SetChecked(const FString& Context, UPrimitiveComponent* Component) const
+{
+	CS_IS_PTR_NULL_CHECKED(Component)
+
+	check(IsValidChecked(Context));
+
+	bool bStaticMesh   = Cast<UStaticMeshComponent>(Component) != nullptr;
+	bool bSkeletalMesh = Cast<USkeletalMeshComponent>(Component) != nullptr;
+
+	checkf(bStaticMesh || bSkeletalMesh, TEXT("%s: Component: %s with Class: %s is NOT of type: UStaticMeshComponent or USkeletalMeshCompnent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName()));
+
+	if (CollisionEnabled != ECollisionEnabled::NoCollision)
+	{
+		Component->SetCollisionObjectType(ObjectType);
+		Component->SetCollisionResponseToChannels(CollisionResponses);
+
+		Component->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
+		Component->SetGenerateOverlapEvents(bGenerateOverlapEvents);
+
+		Component->SetCollisionEnabled(CollisionEnabled);
+	}
+}
+
+bool FCsCollisionPreset::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_PTR_NULL(Component)
+
+	if (!IsValid(Context, Log))
+		return false;
+
+	bool bStaticMesh = Cast<UStaticMeshComponent>(Component) != nullptr;
+	bool bSkeletalMesh = Cast<USkeletalMeshComponent>(Component) != nullptr;
+
+	if (!bStaticMesh && !bSkeletalMesh)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component: %s with Class: %s is NOT of type: UStaticMeshComponent or USkeletalMeshCompnent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName())));
+		return false;
+	}
+
+	if (CollisionEnabled != ECollisionEnabled::NoCollision)
+	{
+		Component->SetCollisionObjectType(ObjectType);
+		Component->SetCollisionResponseToChannels(CollisionResponses);
+
+		Component->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
+		Component->SetGenerateOverlapEvents(bGenerateOverlapEvents);
+
+		Component->SetCollisionEnabled(CollisionEnabled);
+	}
+	return true;
+}
+
+bool FCsCollisionPreset::IsValidChecked(const FString& Context) const
 {
 	if (CollisionEnabled != ECollisionEnabled::NoCollision)
 	{
-		Mesh->SetCollisionObjectType(ObjectType);
-		Mesh->SetCollisionResponseToChannels(CollisionResponses);
+		checkf(ObjectType != ECollisionChannel::ECC_OverlapAll_Deprecated, TEXT("%s: ObjectType == ECollisionChannel::ECC_OverlapAll_Deprecated is NOT Valid."), *Context);
 
-		Mesh->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
-		Mesh->SetGenerateOverlapEvents(bGenerateOverlapEvents);
+		checkf(ObjectType != ECollisionChannel::ECC_MAX, TEXT("%s: ObjectType == ECollisionChannel::ECC_MAX is NOT Valid."), *Context);
 
-		Mesh->SetCollisionEnabled(CollisionEnabled);
+		bool bAllIgnore = true;
+
+		for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
+		{
+			const ECollisionResponse Response = CollisionResponses.GetResponse(Channel);
+
+			if (Response != ECR_Ignore &&
+				Response != ECR_MAX)
+			{
+				bAllIgnore = false;
+				break;
+			}
+		}
+
+		checkf(bAllIgnore, TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context);
 	}
+	return true;
+}
+
+bool FCsCollisionPreset::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (CollisionEnabled != ECollisionEnabled::NoCollision)
+	{
+		if (ObjectType == ECollisionChannel::ECC_OverlapAll_Deprecated)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ObjectType == ECollisionChannel::ECC_OverlapAll_Deprecated is NOT Valid."), *Context));
+			return false;
+		}
+
+		if (ObjectType == ECollisionChannel::ECC_MAX)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ObjectType == ECollisionChannel::ECC_MAX is NOT Valid."), *Context));
+			return false;
+		}
+
+		bool bAllIgnore = true;
+
+		for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
+		{
+			const ECollisionResponse Response = CollisionResponses.GetResponse(Channel);
+
+			if (Response != ECR_Ignore &&
+				Response != ECR_MAX)
+			{
+				bAllIgnore = false;
+				break;
+			}
+		}
+
+		if (!bAllIgnore)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context));
+			return false;
+		}
+	}
+	return true;
 }
 
 #pragma endregion FCsCollisionPreset

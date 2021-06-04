@@ -144,11 +144,11 @@ module.exports = class NJsFunction
             if (CommonLibrary.IsValidObject(caller))
             {
                 let ret = fn.call(caller);
-                checkf(ret, context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
+                checkf(Array.isArray(ret), context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
                 return true
             }
             let ret = fn();
-            checkf(ret, context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
+            checkf(Array.isArray(ret), context + ": fn: " + fn.name + " returns type: " + typeof ret + " NOT an array.");
             return true;
         }
 

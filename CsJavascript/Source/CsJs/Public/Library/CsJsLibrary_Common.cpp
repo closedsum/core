@@ -40,6 +40,15 @@ namespace NCsJs
 			Cast<UJavascriptContext>(JavascriptContext)->Expose(Name, Object);
 		}
 
+		void FLibrary::ClearObject(UObject*& JavascriptContext, const FString& Name)
+		{
+			checkf(JavascriptContext, TEXT("FCsJs::NCommon::FLibrary::ClearObject: JavascriptContext is NULL."));
+
+			checkf(!Name.IsEmpty(), TEXT("FCsJs::NCommon::FLibrary::ClearObject: Name is Empty."));
+
+			Cast<UJavascriptContext>(JavascriptContext)->Expose(Name, nullptr);
+		}
+
 		void FLibrary::RunFile(UObject*& JavascriptContext, const FString& FileName)
 		{
 			checkf(JavascriptContext, TEXT("FCsJs::NCommon::FLibrary::RunFile: JavascriptContext is NULL."));

@@ -1,8 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/CsTypes_Javascript.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsJsLibrary_Common.h"
 
 // FCsJavascriptFileObjects
 #pragma region
@@ -19,9 +19,17 @@ void FCsJavascriptFileObjects::Shutdown()
 	if (Context &&
 	    !Context->IsPendingKill())
 	{
+		typedef NCsJs::NCommon::FLibrary JavascriptLibrary;
+
+		for (const FString& Name : ExposedObjectNames)
+		{
+			JavascriptLibrary::ClearObject(Context, Name);
+		}
+
 		Context->MarkPendingKill();
 		Context = nullptr;
 	}
+	ExposedObjectNames.Reset();
 }
 
 #pragma endregion FCsJavascriptFileObjects

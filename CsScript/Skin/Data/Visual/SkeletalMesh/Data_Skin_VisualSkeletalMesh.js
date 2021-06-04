@@ -51,13 +51,13 @@ module.exports = class NJsSkin
                     static Implements_GetSkeletalMeshChecked(context, o)
                     {
                         let classType = SkeletalMesh;
-                        return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetMaterials, 0, o, classType);
+                        return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetSkeletalMesh, 0, o, classType);
                     }
 
                     static Implements_GetSkeletalMesh(o)
                     {
                         let classType = SkeletalMesh;
-                        return FunctionLibrary.IsArgCountAndReturn_Class(o.GetMaterials, 0, o, classType);
+                        return FunctionLibrary.IsArgCountAndReturn_Class(o.GetSkeletalMesh, 0, o, classType);
                     }
                 }
             }

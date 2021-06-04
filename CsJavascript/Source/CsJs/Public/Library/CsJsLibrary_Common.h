@@ -7,7 +7,7 @@ namespace NCsJs
 {
 	namespace NCommon
 	{
-			struct CSJS_API FLibrary
+		struct CSJS_API FLibrary
 		{
 		public:
 
@@ -25,6 +25,14 @@ namespace NCsJs
 			static void ExposeObject(UObject*& Context, const FString& Name, UObject* Object);
 		#else
 			static void ExposeObject(UObject*& Context, const FString& Name, UObject* Object){}
+		#endif // #if WITH_EDITOR
+
+		#if WITH_EDITOR
+			/**
+			*/
+			static void ClearObject(UObject*& Context, const FString& Name);
+		#else
+			static void ClearObject(UObject*& Context, const FString& Name){}
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR

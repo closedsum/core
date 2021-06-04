@@ -345,40 +345,49 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 
 	// Engine
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GEngine"), GEngine);
+	EntryPoint.ExposedObjectNames.Add(TEXT("GEngine"));
 	 
 	// GameInstance
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameInstance"), GameInstance);
+	EntryPoint.ExposedObjectNames.Add(TEXT("GameInstance"));
 
 	// Manager_Time
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+	EntryPoint.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
 	// Coordinator_GameEvent
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
-	
+	EntryPoint.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
+
 	// World
 	CS_COROUTINE_WAIT_UNTIL(R, World);
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("World"), World);
+	EntryPoint.ExposedObjectNames.Add(TEXT("World"));
 
 	// Game State
 	CS_COROUTINE_WAIT_UNTIL(R, GameState);
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GameState"), GameState);
+	EntryPoint.ExposedObjectNames.Add(TEXT("GameState"));
 
 	// Player Controller
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerController);
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerController"), PlayerController);
+	EntryPoint.ExposedObjectNames.Add(TEXT("PlayerController"));
 
 	// Player State
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerState);
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerState"), PlayerState);
+	EntryPoint.ExposedObjectNames.Add(TEXT("PlayerState"));
 
 	// Player Pawn
 	CS_COROUTINE_WAIT_UNTIL(R, PlayerPawn);
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("PlayerPawn"), PlayerPawn);
+	EntryPoint.ExposedObjectNames.Add(TEXT("PlayerPawn"));
 
 	// Additional Setup
 	if (AdditionalSetupEntryPoint_Impl.IsBound())

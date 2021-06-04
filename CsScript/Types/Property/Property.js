@@ -12,11 +12,11 @@ module.exports = class FJsProperty
 
     Get() { return this.Value; }
 
-    IsBoolean() { return typeof Value === "boolean"; }
-    IsNumber() { return typeof Value === "number"; }
-    IsInt() { return Number.isSafeInteger(Value); }
-    IsFloat() { return Number.isFinite(Value) && !Number.isSafeInteger(Value); }
-    IsString() { return typeof Value === "string"; }
-    IsObject() { return typeof Value === "object"; }
-    IsNonNullObject() { return Value != null && Value === "object"; }
+    IsBoolean() { return typeof this.Value === "boolean"; }
+    IsNumber() { return typeof this.Value === "number"; }
+    IsInt() { return Number.isSafeInteger(this.Value); }
+    IsFloat() { return Number.isFinite(this.Value) && !Number.isSafeInteger(this.Value); }
+    IsString() { return typeof this.Value === "string"; }
+    IsObject() { return typeof this.Value === "object"; }
+    IsNonNullObject() { return this.Value != null && this.Value === "object"; }
 };

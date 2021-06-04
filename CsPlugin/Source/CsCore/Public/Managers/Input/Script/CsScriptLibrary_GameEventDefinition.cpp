@@ -18,6 +18,7 @@ namespace NCsScriptLibraryGameEvent
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameEventDefinition, Add);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameEventDefinition, Add_ActionOneOrWordNoCompletedValue);
 		}
 	}
 }
@@ -27,15 +28,42 @@ UCsScriptLibrary_GameEventDefinition::UCsScriptLibrary_GameEventDefinition(const
 {
 }
 
-bool UCsScriptLibrary_GameEventDefinition::Add(const FString& Context, const FECsGameEvent& Event, const FCsGameEventDefinition& Definition)
+bool UCsScriptLibrary_GameEventDefinition::Add(const FString& Context, const FCsGameEventDefinition& Definition)
 {
 	using namespace NCsScriptLibraryGameEvent::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Add : Context;
 
+	if (!Definition.IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Definition is NOT Valid."), *Ctxt);
+		UE_LOG(LogCs, Warning, TEXT("%s"), *(Definition.PrintSummary()));
+		return false;
+	}
+
 	UCsDeveloperSettings* Settings	 = GetMutableDefault<UCsDeveloperSettings>();
 	FCsSettings_Input& InputSettings = Settings->Input;
 
+	bool Found = false;
 
-	return false;
+	for (FCsGameEventDefinition& Def : InputSettings.GameEventDefinitions)
+	{
+		if (Def.Event == Definition.Event)
+		{
+			Def = Definition;
+			Found = true;
+
+			UE_LOG(LogCs, Warning, TEXT("%s: Definition for Event: %s already exists. Overwriting definition."), *Ctxt, Definition.Event.ToChar());
+			break;
+		}
+	}
+
+	if (!Found)
+		InputSettings.GameEventDefinitions.Add(Definition);
+	return true;
+}
+
+bool UCsScriptLibrary_GameEventDefinition::Add_ActionOneOrWordNoCompletedValue(const FString& Context, const FCsGameEventDefinitionActionOneOrWordNoCompletedValue& Definition)
+{
+	return true;
 }

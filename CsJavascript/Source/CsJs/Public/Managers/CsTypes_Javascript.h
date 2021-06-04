@@ -20,9 +20,13 @@ public:
 	UPROPERTY(Transient)
 	UObject* Context;
 
+	UPROPERTY(Transient)
+	TArray<FString> ExposedObjectNames;
+
 	FCsJavascriptFileObjects() :
 		Isolate(nullptr),
-		Context(nullptr)
+		Context(nullptr),
+		ExposedObjectNames()
 	{
 	}
 

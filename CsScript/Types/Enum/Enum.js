@@ -9,6 +9,7 @@ module.exports = class FJsEnum
     {
         this.Enums = [];
         this.EnumMap = new Map();
+        this.MAX = { Value: -1, Name: "MAX" };
     }
 
     Create(name)
@@ -18,6 +19,7 @@ module.exports = class FJsEnum
         this[name] = e;
         this.Enums[value] = e;
         this.EnumMap.set(name, e);
+        this.MAX.Value = this.Enums.length;
         return e;
     }
 
@@ -25,4 +27,7 @@ module.exports = class FJsEnum
     {
         return this.Enums[index];
     }
+
+    Num() { return this.Enums.length; }
+    GetMAX() { return this.MAX; }
 };

@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-class UWorld;
+class UUserWidget;
 class UObject;
 
 #include "CsScriptLibrary_Widget.generated.h"
@@ -10,6 +10,20 @@ UCLASS()
 class CSUI_API UCsScriptLibrary_Widget : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+public:
+
+	/**
+	* 
+	* 
+	* @param Context			The calling context.
+	* @param Owner
+	* @param UserWidgetClass
+	* @param WidgetName			(optional)
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,WidgetName"))
+	static UUserWidget* Create(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName);
 
 // Position
 #pragma region

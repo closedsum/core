@@ -10,15 +10,75 @@
 #include "Kismet/GameplayStatics.h"
 #include "Library/CsLibrary_Player.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
+// Player
+#include "GameFramework/PlayerController.h"
+// Game
+#include "Engine/GameInstance.h"
 // Widget
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetTree.h"
 // Components
+#include "Components/Widget.h"
 #include "Components/CanvasPanelSlot.h"
 // World
 #include "Engine/World.h"
 
 namespace NCsWidget
 {
+	UUserWidget* FLibrary::CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(Owner)
+
+		if (!UserWidgetClass.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: UserWidgetClass is NULL."), *Context));
+			return nullptr;
+		}
+
+		UUserWidget* Widget		 = nullptr;
+		bool CastOwnerSuccessful = false;
+
+		if (UWidget* W = Cast<UWidget>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*W, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UWidgetTree* WT = Cast<UWidgetTree>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*WT, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (APlayerController* PC = Cast<APlayerController>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*PC, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UGameInstance* GI = Cast<UGameInstance>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*GI, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UWorld* World = Cast<UWorld>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*World, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+
+		if (!Widget)
+		{
+			if (!CastOwnerSuccessful)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Owner: %s with Class: %s is NOT of type: UWidget, UWidgetTree, APlayerController, UGameInstance, or UWorld."), *Context, *(Owner->GetName()), *(Owner->GetClass()->GetName())));
+			}
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to create widget of type: %s with Owner: %s with Class: %s."), *Context, *(UserWidgetClass->GetName()), *(Owner->GetName()), *(Owner->GetClass()->GetName())));
+		}
+		return Widget;
+	}
+
 	namespace NPosition
 	{
 		namespace NScreen

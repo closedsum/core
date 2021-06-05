@@ -9,14 +9,28 @@ class UWidgetAnimation;
 
 namespace NCsWidget
 {
+	struct CSUI_API FLibrary final
+	{
+	public:
+
+		/**
+		*
+		*
+		* @param Context			The calling context.
+		* @param Owner
+		* @param UserWidgetClass
+		* @param WidgetName			(optional)
+		* @param Log				(optional)
+		*/
+		static UUserWidget* CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+	};
+
 	namespace NPosition
 	{
 		namespace NScreen
 		{
 			struct CSUI_API FLibrary final
 			{
-			public:
-
 				/**
 				* Get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
 				*

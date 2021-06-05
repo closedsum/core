@@ -4,6 +4,11 @@
 
 // Library
 #include "Library/CsLibrary_Enum.h"
+#include "Library/CsLibrary_Valid.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+// Log
+#include "Utility/CsLog.h"
 
 // Cached
 #pragma region
@@ -90,6 +95,16 @@ EnumType UCsScriptLibrary_InputActionMap::GetNONE()
 bool UCsScriptLibrary_InputActionMap::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
+}
+
+bool UCsScriptLibrary_InputActionMap::IsValid(const EnumType& Enum)
+{
+	return EnumMapType::Get().IsValidEnum(Enum);
+}
+
+bool UCsScriptLibrary_InputActionMap::IsValidByName(const FString& Name)
+{
+	return EnumMapType::Get().IsValidEnum(Name);
 }
 
 #undef EnumMapType

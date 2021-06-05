@@ -10,6 +10,6 @@ module.exports = class NJsGame
 {
     static NBoard = class Board
     {
-        static ETile = new FJsEnum();
+        static ETile = new FJsEnum("NJsGame.NBoard.ETile");
     }
 };

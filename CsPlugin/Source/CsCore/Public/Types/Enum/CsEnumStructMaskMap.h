@@ -149,7 +149,7 @@ public:
 
 		Enums.Add(E);
 		++Count;
-		EndPosition = 0;
+		EndPosition = Count;
 		if (UserDefinedEnum)
 		{
 			UserDefinedEnums.Add(E);
@@ -366,6 +366,7 @@ public:
 
 		// Reset maps with the update values 
 		Count = Enums.Num();
+		EndPosition = Count;
 
 		for (int32 I = 0; I < Count; ++I)
 		{

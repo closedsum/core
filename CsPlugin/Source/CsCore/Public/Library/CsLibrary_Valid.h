@@ -452,6 +452,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NFloat::FLibrary::GreaterThan(Context, __A, __temp__str__, __B, Log)) { return false; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_GREATER_THAN_RET_NULL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::GreaterThan(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
 // Assume const FString& Context has been defined
 #define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B) \
 	{ \
@@ -738,6 +744,7 @@ namespace NCsValid
 #define CS_IS_FLOAT_NOT_EQUAL(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN(__A, __B)
+#define CS_IS_FLOAT_GREATER_THAN_RET_NULL(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(__A, __B)
 #define CS_IS_FLOAT_COMPARE_LESS_THAN_CHECKED(__A, __B)

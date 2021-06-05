@@ -60,3 +60,10 @@ bool UCsScriptLibrary_Collision::SetFromObject_CollisionPreset(const FString& Co
 	}
 	return false;
 }
+
+FCollisionResponseContainer UCsScriptLibrary_Collision::SetCollisionResponse(const FCollisionResponseContainer& Container, const ECollisionChannel& Channel, const ECollisionResponse& NewResponse)
+{
+	FCollisionResponseContainer Copy = Container;
+	Copy.SetResponse(Channel, NewResponse);
+	return Copy;
+}

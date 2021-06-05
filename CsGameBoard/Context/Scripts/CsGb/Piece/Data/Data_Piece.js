@@ -24,6 +24,8 @@ module.exports = class NJsGame
             {
                 static IData = class InterfaceData
                 {
+                    // int GetType()
+                    
                     static IsImplementedByChecked(context, o)
                     {
                         let self = NJsGame.NBoard.NPiece.NData.IData;

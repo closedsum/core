@@ -1,4 +1,4 @@
-/// <reference path="../../../../typings/ue.d.ts">/>
+/// <reference path="../../../../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
 
 "use strict"
@@ -24,6 +24,8 @@ module.exports = class NJsSkin
             {
                 static IStaticMesh = class InterfaceStaticMesh
                 {
+                    // StaticMesh GetStaticMesh()
+
                     static IsImplementedByChecked(context, o)
                     {
                         let self = NJsSkin.NData.NVisual.NStaticMesh.IStaticMesh;

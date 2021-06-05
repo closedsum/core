@@ -16,7 +16,7 @@ module.exports = class NJsGame
             {
                 static NSkin = class Skin
                 {
-                    static ESkin = new FJsEnum();
+                    static ESkin = new FJsEnum("NJsGame.NPiece.NData.NSkin.ESkin");
                 }
             }
         }

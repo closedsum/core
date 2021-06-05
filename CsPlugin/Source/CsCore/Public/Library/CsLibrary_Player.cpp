@@ -28,6 +28,7 @@ namespace NCsPlayer
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::FLibrary, GetSafeFirstLocal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::FLibrary, GetSafeLocal);
 			}
 		}
 	}
@@ -69,6 +70,49 @@ namespace NCsPlayer
 		const FString& Context = Str::GetSafeFirstLocal;
 
 		return GetSafeFirstLocal(Context, WorldContext, nullptr);
+	}
+
+	ULocalPlayer* FLibrary::GetLocalChecked(const FString& Context, const UObject* WorldContext, const int32& Index)
+	{
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
+
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
+		ULocalPlayer* LocalPlayer   = GameInstance->GetLocalPlayerByIndex(Index);
+
+		checkf(LocalPlayer, TEXT("%s: Failed to get LocalPlayer[%d] from GameInstance: %s."), *Context, Index, *(GameInstance->GetName()));
+
+		return LocalPlayer;
+	}
+
+	ULocalPlayer* FLibrary::GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_NULL(Index, 0)
+
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		UGameInstance* GameInstance = GameInstanceLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!GameInstance)
+			return nullptr;
+
+		ULocalPlayer* LocalPlayer = GameInstance->GetLocalPlayerByIndex(Index);
+
+		if (!LocalPlayer)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get LocalPlayer[%d] from GameInstance: %s."), *Context, Index, *(GameInstance->GetName())));
+		}
+		return LocalPlayer;
+	}
+
+	ULocalPlayer* FLibrary::GetSafeLocal(const UObject* WorldContext, const int32& Index)
+	{
+		using namespace NCsPlayer::NLibrary::NCached;
+
+		const FString& Context = Str::GetSafeLocal;
+
+		return GetSafeLocal(Context, WorldContext, Index, nullptr);
 	}
 
 	namespace NController

@@ -7,7 +7,12 @@ module.exports = class NJsCommon
 {
     static FLibrary = class Library
     {
-        static checkf(condition, message)
+
+        /**
+         * @param {boolean} condition 
+         * @param {string} message 
+         */
+        static checkf(condition /*bool*/, message /*string*/)
         {
             if (!condition)
             {   
@@ -16,7 +21,10 @@ module.exports = class NJsCommon
             }
         }
 
-        static check(condition)
+        /**
+         * @param {boolean} condition 
+         */
+        static check(condition /*bool*/)
         {
             if (!condition)
             {
@@ -25,12 +33,21 @@ module.exports = class NJsCommon
             }
         }
 
-        static IsNullObject(o)
+        /**
+         * @param {object} o 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsNullObject(o /*object*/)
         {
             return o == null || typeof o !== "object";
         }
 
-        static IsNullObjectChecked(context, o)
+        /**
+         * @param {string} context 
+         * @param {object} o 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsNullObjectChecked(context /*string*/, o /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -39,12 +56,21 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsValidObject(o)
+        /**
+         * @param {object} o 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsValidObject(o /*string*/)
         {
             return o != null && typeof o === "object";
         }
 
-        static IsValidObjectChecked(context, o)
+        /**
+         * @param {string} context
+         * @param {object} o
+         * @returns {boolean}
+         */
+        static /*bool*/ IsValidObjectChecked(context /*string*/, o /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -182,6 +208,69 @@ module.exports = class NJsCommon
 
             self.check(self.IsStringChecked(context, s));
             self.checkf(s !== "", context + ": s: " + s + " is EMPTY.");
+            return true;
+        }
+
+        
+        /**
+         * @param {object} o 
+         * @param {string} key
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyExist(o /*object*/, key /*string*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            if (!self.IsValidObject(o))
+                return false;
+
+            return key in o;
+        }
+ 
+         /**
+          * @param {string} context
+          * @param {object} o 
+          * @param {string} key
+          * @returns {boolean} 
+          */
+        static /*bool*/ DoesKeyExistChecked(context /*string*/, o /*object*/, key /*string*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            self.check(self.IsValidObjectChecked(context, o));
+
+            self.checkf(key in o, context + ": o does NOT contain key: " + key);
+            return true;
+        }
+
+        /**
+         * @param {object} o 
+         * @param {string} key
+         * @param {function} classType
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyOfClassExist(o /*object*/, key /*string*/, classType /*class*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            if (!self.DoesKeyExist(o, key))
+                return false;
+            return self.IsClassOf(o[key], classType);
+        }
+ 
+         /**
+          * @param {string} context
+          * @param {object} o 
+          * @param {string} key
+          * @param {function} classType
+          * @returns {boolean} 
+          */
+        static /*bool*/ DoesKeyOfClassExistChecked(context /*string*/, o /*object*/, key /*string*/, classType /*class*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            self.check(self.DoesKeyExistChecked(context, o, key));
+            self.check(self.IsClassOfChecked(context, o[key], classType));
             return true;
         }
     };

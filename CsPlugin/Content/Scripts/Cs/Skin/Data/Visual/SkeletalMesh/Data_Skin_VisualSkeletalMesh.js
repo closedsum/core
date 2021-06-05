@@ -24,6 +24,8 @@ module.exports = class NJsSkin
             {
                 static ISkeletalMesh = class InterfaceSkeletalMesh
                 {
+                    // SkeletalMesh GetSkeletalMesh()
+
                     static IsImplementedByChecked(context, o)
                     {
                         let self = NJsSkin.NData.NVisual.NSkeletalMesh.ISkeletalMesh;

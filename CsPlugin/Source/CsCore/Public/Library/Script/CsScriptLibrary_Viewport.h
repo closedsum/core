@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Managers/Trace/CsTraceRequest.h"
+#include "Managers/Trace/CsTraceResponse.h"
 
 #include "CsScriptLibrary_Viewport.generated.h"
 
@@ -47,5 +50,23 @@ public:
 	* return					Whether the intersection exists or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Viewport", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ScreenPosition,Plane"))
-	static bool GetScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
+	static bool GetScreenWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
+
+	/**
+	* Perform a trace with the given Request.
+	*  Request.Start is replaced by:
+	*   de-projection of ScreenPosition
+	*  Request.End is replaced by:
+	*	The result of the Request.Start + Distance * World Direction (of the de-projectile of the current mouse position).
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param ScreenPosition	2D screen space to deproject.
+	* @param Request
+	* @param Distance		The distance to project outward from the Request->Start.
+	* @param Response		(out)
+	* return				Whether the trace was successful or not
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Viewport", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ScreenPosition,Request,Distance"))
+	static bool Trace(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse);
 };

@@ -250,7 +250,7 @@ bool FCsCollisionPreset::IsValid(const FString& Context, void(*Log)(const FStrin
 			return false;
 		}
 
-		bool bAllIgnore = true;
+		bool bAllIgnore = false;
 
 		for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
 		{
@@ -259,8 +259,7 @@ bool FCsCollisionPreset::IsValid(const FString& Context, void(*Log)(const FStrin
 			if (Response != ECR_Ignore &&
 				Response != ECR_MAX)
 			{
-				bAllIgnore = false;
-				break;
+				bAllIgnore |= true;
 			}
 		}
 

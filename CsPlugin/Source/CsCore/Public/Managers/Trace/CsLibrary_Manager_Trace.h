@@ -109,6 +109,45 @@ namespace NCsTrace
 
 		#pragma endregion Get
 
+		// Request
+		#pragma region
+		public:
+
+		#define RequestType NCsTrace::NRequest::FRequest
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return
+			*/
+			static RequestType* AllocateRequestChecked(const FString& Context, const UObject* WorldContext);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return
+			*/
+			static RequestType* SafeAllocateRequest(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return
+			*/
+			static RequestType* SafeAllocateRequest(const UObject* WorldContext);
+
+		#undef RequestType
+
+		#pragma endregion Request
+
 		#define ResponseType NCsTrace::NResponse::FResponse
 		#define RequestType NCsTrace::NRequest::FRequest
 

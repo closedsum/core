@@ -22,6 +22,7 @@ namespace NCsTrace
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, GetSafeContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, SafeAllocateRequest);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsTrace::NManager::FLibrary, SafeTrace);
 				}
 
@@ -104,6 +105,39 @@ namespace NCsTrace
 		}
 
 		#pragma endregion Get
+
+		// Request
+		#pragma region
+
+		#define RequestType NCsTrace::NRequest::FRequest
+
+		RequestType* FLibrary::AllocateRequestChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->AllocateRequest();
+		}
+
+		RequestType* FLibrary::SafeAllocateRequest(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_Trace)
+				return nullptr;
+
+			return Manager_Trace->AllocateRequest();
+		}
+
+		RequestType* FLibrary::SafeAllocateRequest(const UObject* WorldContext)
+		{
+			using namespace NCsTrace::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::SafeAllocateRequest;
+
+			return SafeAllocateRequest(Context, WorldContext, nullptr);
+		}
+
+		#undef RequestType
+
+		#pragma endregion Request
 
 		#define ResponseType NCsTrace::NResponse::FResponse
 		#define RequestType NCsTrace::NRequest::FRequest

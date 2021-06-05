@@ -92,5 +92,15 @@ bool UCsScriptLibrary_InputAction::EqualEqual(const EnumType& A, const EnumType&
 	return A == B;
 }
 
+bool UCsScriptLibrary_InputAction::IsValid(const EnumType& Enum)
+{
+	return EnumMapType::Get().IsValidEnum(Enum);
+}
+
+bool UCsScriptLibrary_InputAction::IsValidByName(const FString& Name)
+{
+	return EnumMapType::Get().IsValidEnum(Name);
+}
+
 #undef EnumMapType
 #undef EnumType

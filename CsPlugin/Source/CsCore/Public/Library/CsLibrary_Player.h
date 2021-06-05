@@ -30,7 +30,7 @@ namespace NCsPlayer
 		*
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* @param Log
+		* @param Log			(optional)
 		* return				Local Player
 		*/
 		static ULocalPlayer* GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -42,6 +42,36 @@ namespace NCsPlayer
 		* return				Local Player
 		*/
 		static ULocalPlayer* GetSafeFirstLocal(const UObject* WorldContext);
+
+		/**
+		* Get the local player with the given Index.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Index
+		* return				Local Player
+		*/
+		static ULocalPlayer* GetLocalChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
+
+		/**
+		* Get the local player with the given Index.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Index
+		* @param Log			(optional)
+		* return				Local Player
+		*/
+		static ULocalPlayer* GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the local player with the given Index.
+		*
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Index
+		* return				Local Player
+		*/
+		static ULocalPlayer* GetSafeLocal(const UObject* WorldContext, const int32& Index);
 	};
 
 	namespace NController

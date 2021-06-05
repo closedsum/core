@@ -65,5 +65,37 @@ bool UCsScriptLibrary_GameEventDefinition::Add(const FString& Context, const FCs
 
 bool UCsScriptLibrary_GameEventDefinition::Add_ActionOneOrWordNoCompletedValue(const FString& Context, const FCsGameEventDefinitionActionOneOrWordNoCompletedValue& Definition)
 {
+	using namespace NCsScriptLibraryGameEvent::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Add : Context;
+
+	if (!Definition.IsValid())
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Definition is NOT Valid."), *Ctxt);
+		UE_LOG(LogCs, Warning, TEXT("%s"), *(Definition.PrintSummary()));
+		return false;
+	}
+
+	UCsDeveloperSettings* Settings	 = GetMutableDefault<UCsDeveloperSettings>();
+	FCsSettings_Input& InputSettings = Settings->Input;
+
+	bool Found = false;
+
+	typedef FCsGameEventDefinitionActionOneOrWordNoCompletedValue DefinitionType;
+
+	for (DefinitionType& Def : InputSettings.GameEventDefinitions_ActionOneOrWordNoCompleteValue)
+	{
+		if (Def.GameEvent == Definition.GameEvent)
+		{
+			Def   = Definition;
+			Found = true;
+
+			UE_LOG(LogCs, Warning, TEXT("%s: Definition for Event: %s already exists. Overwriting definition."), *Ctxt, Definition.GameEvent.ToChar());
+			break;
+		}
+	}
+
+	if (!Found)
+		InputSettings.GameEventDefinitions_ActionOneOrWordNoCompleteValue.Add(Definition);
 	return true;
 }

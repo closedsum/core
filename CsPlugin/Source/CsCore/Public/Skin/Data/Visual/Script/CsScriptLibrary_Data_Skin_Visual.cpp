@@ -70,6 +70,14 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_Material : Context;
 
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return false;
+	}
+
 	// Check for properties matching interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 	typedef NCsProperty::FLibrary PropertyLibrary;
 
@@ -125,6 +133,14 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_StaticMesh : Context;
 
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return false;
+	}
+
 	// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 	typedef NCsProperty::FLibrary PropertyLibrary;
 
@@ -148,8 +164,6 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMesh(const FString& 
 		{
 			if (!MeshPtr->IsValid(Ctxt))
 				return false;
-
-			void(*Log)(const FString&) = &FCsLog::Warning;
 
 			CS_IS_PTR_NULL(Component)
 
@@ -183,6 +197,14 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_SkeletalMesh : Context;
 
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return false;
+	}
+
 	// Check for properties matching interface: SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 	typedef NCsProperty::FLibrary PropertyLibrary;
 
@@ -206,8 +228,6 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMesh(const FString
 		{
 			if (!MeshPtr->IsValid(Ctxt))
 				return false;
-
-			void(*Log)(const FString&) = &FCsLog::Warning;
 
 			CS_IS_PTR_NULL(Component)
 
@@ -241,6 +261,14 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_StaticMeshAndMaterial : Context;
 
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return false;
+	}
+
 	// Check for properties matching interface: 
 	// - StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 	// - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
@@ -269,8 +297,6 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 
 			if (!MaterialsPtr->IsValid(Ctxt))
 				return false;
-
-			void(*Log)(const FString&) = &FCsLog::Warning;
 
 			CS_IS_PTR_NULL(Component)
 
@@ -310,6 +336,14 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject_SkeletalMeshAndMaterial : Context;
 
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return false;
+	}
+
 	// Check for properties matching interface: 
 	// - SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
 	// - MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
@@ -338,8 +372,6 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 
 			if (!MaterialsPtr->IsValid(Ctxt))
 				return false;
-
-			void(*Log)(const FString&) = &FCsLog::Warning;
 
 			CS_IS_PTR_NULL(Component)
 

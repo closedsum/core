@@ -34,7 +34,7 @@ module.exports = class NJsGame
             {
                 static NSkin = class SkinData
                 {
-                    static ESkin = new FJsEnum();
+                    static ESkin = new FJsEnum("NJsGame.NBoard.NPiece.NData.NSkin.ESkin");
                     
                     static ISkin = class InterfaceSkin
                     {

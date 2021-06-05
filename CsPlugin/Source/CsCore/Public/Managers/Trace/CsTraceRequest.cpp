@@ -59,6 +59,13 @@ bool FCsTraceRequest::IsValid(const FString& Context, void(*Log)(const FString&)
 	if (!Shape.IsValid(Context, Log))
 		return false;
 
+	if (Shape.IsLine() &&
+		Start == End)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Start == End."), *Context));
+		return false;
+	}
+
 	if (Type == ECsTraceType::Sweep)
 	{
 		if (!Shape.IsLine())
@@ -104,7 +111,10 @@ namespace NCsTrace
 			// Check Query is Valid
 			check(EMCsTraceQuery::Get().IsValidEnumChecked(Context, Str::Query, Query));
 
-			checkf(Start != End, TEXT("%s: Start == End."), *Context);
+			if (Shape.IsLine())
+			{
+				checkf(Start != End, TEXT("%s: Start == End."), *Context);
+			}
 
 			// Check Shape
 			if (Type == ECsTraceType::Sweep)
@@ -128,7 +138,8 @@ namespace NCsTrace
 			// Check Query is Valid
 			CS_IS_ENUM_VALID(EMCsTraceQuery, ECsTraceQuery, Query)
 
-			if (Start == End)
+			if (Shape.IsLine() &&
+				Start == End)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Start == End."), *Context));
 				return false;

@@ -37,4 +37,7 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Collision", meta = (AutoCreateRefTerm = "Context"))
 	static bool SetFromObject_CollisionPreset(const FString& Context, UObject* Object, UPrimitiveComponent* Component);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Collision", meta = (AutoCreateRefTerm = "Context"))
+	static FCollisionResponseContainer SetCollisionResponse(const FCollisionResponseContainer& Container, const ECollisionChannel& Channel, const ECollisionResponse& NewResponse);
 };

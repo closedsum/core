@@ -127,6 +127,7 @@ public:
 
 		Enums.Add(E);
 		++Count;
+		EndPosition = bExplicitMAX ? Count - 1 : Count;
 		if (UserDefinedEnum)
 		{
 			UserDefinedEnums.Add(E);
@@ -163,6 +164,8 @@ public:
 		if (Success)
 		{
 			const int32 Size = Enums.Num();
+			Count = Size;
+			EndPosition = bExplicitMAX ? Count - 1 : Count;
 
 			for (int32 I = 0; I < Size; ++I)
 			{
@@ -359,6 +362,7 @@ public:
 
 		// Reset maps with the update values 
 		Count = Enums.Num();
+		EndPosition = bExplicitMAX ? Count - 1 : Count;
 
 		for (int32 I = 0; I < Count; ++I)
 		{

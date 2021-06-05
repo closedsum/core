@@ -6,6 +6,7 @@
 // Types
 var NJsCoroutine = require('Cs/Coroutine/Types_Coroutine.js');
 var FJsProperty = require('Cs/Types/Property/Property.js');
+var NJsEnum = require('Cs/Types/Enum/Enum_Yield.js');
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
@@ -20,6 +21,7 @@ const ROUTINE_FREE = -2;
 
 // "typedefs" - class
 var CommonLibrary = NJsCommon.FLibrary;
+var EnumYieldType = NJsEnum.FYield;
 
 // "typedefs" - function
 var checkf = CommonLibrary.checkf;
@@ -87,19 +89,21 @@ module.exports = class JsRoutine
 			}
         }
 
-		this.bWaitForFrame = false;
-		this.WaitForFrameCounter = 0;
-		this.WaitForFrame = 0;
-		this.WaitForFrameType = null;
-		this.bWaitForTime = false;
-		this.WaitForTime = 0.0;
-		this.WaitForTimeTimer = 0.0;
-		this.WaitForTimeType = null;
-		this.bWaitForFlag = false;
-		this.WaitForFlagType = null;
-		this.bWaitForListenMessage = false;
-		this.WaitForListenMessage = null;
-		this.WaitForListenMessageType = null;
+		this.bWaitForFrame = false; /*bool*/
+		this.WaitForFrameCounter = 0; /*int*/
+		this.WaitForFrame = 0; /*int*/
+		this.WaitForFrameType = null; /*FJsProperty*/
+		this.bWaitForTime = false; /*bool*/
+		this.WaitForTime = 0.0; /*float*/
+		this.WaitForTimeTimer = 0.0; /*float*/
+		this.WaitForTimeType = null; /*FJsProperty*/
+		this.bWaitForFlag = false; /*bool*/
+		this.WaitForFlagType = null; /*FJsProperty*/
+		this.bWaitForListenMessage = false; /*bool*/
+		this.WaitForListenMessage = null; /*string*/
+		this.WaitForListenMessageType = null; /*FJsProperty*/
+		this.bWaitForEnum = false; /*bool*/
+		this.WaitForEnum = new EnumYieldType(); /*EnumYieldType (NJsEnum.FYield)*/
     }
 
 	IsValid()
@@ -317,6 +321,17 @@ module.exports = class JsRoutine
                 this.bWaitForListenMessage = false;
             }
 		}
+		// WaitForEnum
+		if (this.bWaitForEnum)
+		{
+			move = this.WaitForEnum.IsEqual();
+			
+			if (move)
+			{
+				this.bWaitForEnum = false;
+				this.WaitForEnum.Reset();
+			}
+		}
 
 		let TimeLibrary = CsScriptLibrary_Time;
 
@@ -346,6 +361,15 @@ module.exports = class JsRoutine
 
 					waitForTimeByObject = true;
                 }
+				else
+				if (this.WaitForEnum.CopyFromYield(yieldCommand))
+				{
+					this.bWaitForEnum = true;
+				}
+				else
+				{
+					this.WaitForEnum.Reset();
+				}
 			}
 
 			if (typeof yieldCommand === "undefined" || yieldCommand == null)
@@ -479,6 +503,12 @@ module.exports = class JsRoutine
                     this.bWaitForListenMessage = true;
                 }
             }
+			// WaitForEnum
+			else
+			if (this.bWaitForEnum)
+			{
+				// Do Nothing, already set
+			}
             // INVALID Type
             else
             {
@@ -576,6 +606,8 @@ module.exports = class JsRoutine
 		this.bWaitForListenMessage = false;
 		this.WaitForListenMessage = null;
 		this.WaitForListenMessageType = null;
+		this.bWaitForEnum = false;
+		this.WaitForEnum.Reset();
 	}
 
     AddChild(child)

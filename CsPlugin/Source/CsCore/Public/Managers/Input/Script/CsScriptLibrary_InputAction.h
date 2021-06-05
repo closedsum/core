@@ -37,4 +37,9 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (InputAction)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
 	static bool EqualEqual(const FECsInputAction& A, const FECsInputAction& B);
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Enum"))
+	static bool IsValid(const FECsInputAction& Enum);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
+	static bool IsValidByName(const FString& Name);
 };

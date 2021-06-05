@@ -31,10 +31,15 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input")
 	static void GetAll(TArray<FECsInputActionMap>& OutTypes);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input")
 	static FECsInputActionMap GetNONE();
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (InputActionMap)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
 	static bool EqualEqual(const FECsInputActionMap& A, const FECsInputActionMap& B);
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Enum"))
+	static bool IsValid(const FECsInputActionMap& Enum);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
+	static bool IsValidByName(const FString& Name);
 };

@@ -2,11 +2,10 @@
 #include "Managers/Input/CsLibrary_Input.h"
 #include "CsCore.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Viewport.h"
+#include "Library/CsLibrary_Valid.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // UI
@@ -30,6 +29,7 @@ namespace NCsInput
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, GetSafePosition);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, SetSafePosition);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, GetSafeWorldIntersection);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, SafeTrace);
 				}
 			}
 		}
@@ -134,7 +134,7 @@ namespace NCsInput
 			SV->GetMousePos(OutPosition);
 		}
 
-		void FLibrary::GetSafePosition(const FString& Context, const UObject* WorldContext, FIntPoint& OutPosition, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::GetSafePosition(const FString& Context, const UObject* WorldContext, FIntPoint& OutPosition, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			OutPosition = FIntPoint::NoneValue;
 
@@ -143,16 +143,21 @@ namespace NCsInput
 			FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext, Log);
 
 			if (SV)
+			{
 				SV->GetMousePos(OutPosition);
+
+				return OutPosition != FIntPoint::NoneValue;
+			}
+			return true;
 		}
 
-		void FLibrary::GetSafePosition(const UObject* WorldContext, FIntPoint& OutPosition)
+		bool FLibrary::GetSafePosition(const UObject* WorldContext, FIntPoint& OutPosition)
 		{
 			using namespace NCsInput::NMouse::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafePosition;
 
-			GetSafePosition(Context, WorldContext, OutPosition, nullptr);
+			return GetSafePosition(Context, WorldContext, OutPosition, nullptr);
 		}
 
 		void FLibrary::SetPositionChecked(const FString& Context, const UObject* WorldContext, const int32& X, const int32& Y)
@@ -164,23 +169,27 @@ namespace NCsInput
 			SV->SetMouse(X, Y);
 		}
 
-		void FLibrary::SetSafePosition(const FString& Context, const UObject* WorldContext, const int32& X, const int32& Y, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafePosition(const FString& Context, const UObject* WorldContext, const int32& X, const int32& Y, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
 			FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext);
 
 			if (SV)
+			{
 				SV->SetMouse(X, Y);
+				return true;
+			}
+			return false;
 		}
 
-		void FLibrary::SetSafePosition(const UObject* WorldContext, const int32& X, const int32& Y)
+		bool FLibrary::SetSafePosition(const UObject* WorldContext, const int32& X, const int32& Y)
 		{
 			using namespace NCsInput::NMouse::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafePosition;
 
-			SetSafePosition(Context, WorldContext, X, Y, nullptr);
+			return SetSafePosition(Context, WorldContext, X, Y, nullptr);
 		}
 
 		void FLibrary::SetCenterOfViewportChecked(const FString& Context, const UObject* WorldContext)
@@ -243,6 +252,47 @@ namespace NCsInput
 
 			return GetSafeWorldIntersection(Context, WorldContext, Plane, OutIntersection, nullptr);
 		}
+
+		// Trace
+		#pragma region
+
+		#define ResponseType NCsTrace::NResponse::FResponse
+		#define RequestType NCsTrace::NRequest::FRequest
+
+		ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)
+		{
+			FIntPoint Position;
+			GetPositionChecked(Context, WorldContext, Position);
+
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+			return ViewportLibrary::TraceChecked(Context, WorldContext, FVector2D(Position.X, Position.Y), Request, Distance);
+		}
+
+		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			FIntPoint Position;
+			if (!GetSafePosition(Context, WorldContext, Position, Log))
+				return nullptr;
+
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+			return ViewportLibrary::SafeTrace(Context, WorldContext, FVector2D(Position.X, Position.Y), Request, Distance, Log);
+		}
+
+		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)
+		{
+			using namespace NCsInput::NMouse::NLibrary::NCached;
+
+			const FString& Context = Str::SafeTrace;
+
+			return SafeTrace(Context, WorldContext, Request, Distance, nullptr);
+		}
+
+		#undef ResponseType
+		#undef RequestType
+
+		#pragma endregion Trace
 	}
 
 	namespace NTouch

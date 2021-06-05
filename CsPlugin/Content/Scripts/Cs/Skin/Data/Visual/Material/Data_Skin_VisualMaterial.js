@@ -24,6 +24,8 @@ module.exports = class NJsSkin
             {
                 static IMaterial = class InterfaceMaterial
                 {
+                    // MaterialInterface[] GetMaterials()
+
                     static IsImplementedByChecked(context, o)
                     {
                         let self = NJsSkin.NData.NVisual.NMaterial.IMaterial;

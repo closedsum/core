@@ -27,6 +27,8 @@ var IsValidObject = CommonLibrary.IsValidObject;
 var StateType = NJsCoroutine.EState;
 var EndReasonType = NJsCoroutine.EEndReason;
 
+var Core;
+
 module.exports = class FJsCoroutineSchedule
 {
     static NCached = class Cached
@@ -38,8 +40,10 @@ module.exports = class FJsCoroutineSchedule
         }
     }
 
-    constructor()
+    constructor(core)
     {
+        Core = core;
+        
         this.Group = new ECsUpdateGroup();
 
         this.Manager_Routine = new FJsManager_Resource_Fixed();
@@ -466,19 +470,19 @@ module.exports = class FJsCoroutineSchedule
 	/**
 	*
 	*
-	* return
+	* @returns {NJsCoroutine.NPayload.FImpl}
 	*/
-	AllocatePayload() { return this.Manager_Payload.AllocateResource(); }
+	/*PayloadType*/ AllocatePayload() { return this.Manager_Payload.AllocateResource(); }
 
     // protected:
 
 	/**
 	*
 	*
-	* @param payload
-	* return
+	* @param {NJsCoroutine.NPayload.FImpl} payload
+	* @returns {FJsResourceContainer}   FJsResourceContainer < PayloadType >
 	*/
-    GetPayloadContainer(payload)
+    /*FJsResourceContainer<PayloadType>*/ GetPayloadContainer(payload /*PayloadType*/)
     {
         if (payload.GetIndex() === INDEX_NONE)
         {
@@ -502,10 +506,10 @@ module.exports = class FJsCoroutineSchedule
     *
     *
     * @param type
-    * @param message
-    * @param owner
+    * @param {string} message
+    * @param {object} owner
     */
-    BroadcastMessage(type, message, owner)
+    BroadcastMessage(type, message /*string*/, owner /*object*/)
     {
 	    let current = this.Manager_Routine.GetAllocatedHead();
 	    let next    = current;

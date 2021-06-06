@@ -14,7 +14,7 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	int32 Index;
 
 	UPROPERTY(BlueprintReadOnly)

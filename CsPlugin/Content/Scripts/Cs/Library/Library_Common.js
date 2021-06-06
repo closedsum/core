@@ -211,7 +211,6 @@ module.exports = class NJsCommon
             return true;
         }
 
-        
         /**
          * @param {object} o 
          * @param {string} key
@@ -240,6 +239,36 @@ module.exports = class NJsCommon
             self.check(self.IsValidObjectChecked(context, o));
 
             self.checkf(key in o, context + ": o does NOT contain key: " + key);
+            return true;
+        }
+
+        /**
+         * @param {object} o 
+         * @param {string} key
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyOfBoolExist(o /*object*/, key /*string*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            if (!self.DoesKeyExist(o, key))
+                return false;
+
+            return self.IsBool(o[key]);
+        }
+  
+        /**
+         * @param {string} context
+         * @param {object} o 
+         * @param {string} key
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyOfBoolExistChecked(context /*string*/, o /*object*/, key /*string*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            self.check(self.DoesKeyExistChecked(context, o, key));
+            self.check(self.IsBoolChecked(context, o[key]));
             return true;
         }
 

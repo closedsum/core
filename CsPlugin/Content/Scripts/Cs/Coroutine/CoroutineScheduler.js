@@ -3,12 +3,17 @@
 
 "use strict"
 
+// Coroutine
 var FJsCoroutineSchedule = require('Cs/Coroutine/CoroutineSchedule.js');
+
+var Core;
 
 module.exports = class FJCoroutineScheduler
 {
-    constructor()
+    constructor(core)
     {
+		Core = core;
+		
 		this.Schedules = [];
 
 		let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
@@ -16,7 +21,7 @@ module.exports = class FJCoroutineScheduler
 
 		for (let i = 0; i < count; ++i)
 		{
-			let schedule = new FJsCoroutineSchedule();
+			let schedule = new FJsCoroutineSchedule(Core);
 
 			schedule.SetGroup(UpdateGroupLibrary.GetByIndex(i));
 
@@ -40,10 +45,10 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param payloadContainer
-	* return
+	* @param {FJsResourceContainer} payloadContainer	FJsResourceContainer <PayloadType>
+	* @returns {CsRoutineHandle}
 	*/
-	StartByContainer(payloadContainer)
+	/*CsRoutineHandle*/ StartByContainer(payloadContainer /*FJsResourceContainer<PayloadType>*/)
 	{
 		let payload = payloadContainer.Get();
 
@@ -53,18 +58,18 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param payload
-	* return
+	* @param {NJsCoroutine.NPayload.FImpl} payload
+	* @returns {CsRoutineHandle}
 	*/
-	Start(payload) { return this.Schedules[payload.Group.Value].Start(payload); }
+	/*CsRoutineHandle*/ Start(payload /*PayloadType*/) { return this.Schedules[payload.Group.Value].Start(payload); }
 
 	/**
 	*
 	*
-	* @param payloadContainer
-	* return
+	* @param {FJsResourceContainer} payloadContainer	FJsResourceContainer <PayloadType>
+	* @returns {CsRoutineHandle}
 	*/
-	StartChildByContainer(payloadContainer)
+	/*CsRoutineHandle*/ StartChildByContainer(payloadContainer /*FJsResourceContainer<PayloadType>*/)
 	{
 		let payload = payloadContainer.Get();
 
@@ -74,10 +79,10 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param payload
-	* return
+	* @param {NJsCoroutine.NPayload.FImpl} payload
+	* @returns {CsRoutineHandle}
 	*/
-	StartChild(payload) { return this.Schedules[payload.Group.Value].StartChild(payload); }
+	/*CsRoutineHandle*/ StartChild(payload /*PayloadType*/) { return this.Schedules[payload.Group.Value].StartChild(payload); }
 
 	// #endregion Start
 
@@ -88,10 +93,10 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param group
-	* @param deltaTime
+	* @param {ECsUpdateGroup} 	group
+	* @param {CsDeltaTime}		deltaTime
 	*/
-	Update(group, deltaTime) { this.Schedules[group.Value].Update(deltaTime); }
+	Update(group /*ECsUpdateGroup*/, deltaTime /*CsDeltaTime*/) { this.Schedules[group.Value].Update(deltaTime); }
 
 	// #endregion Update
 
@@ -102,19 +107,19 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param group
-	* return
+	* @param {ECsUpdateGroup} 	group
+	* @returns {boolean}
 	*/
-	EndByGroup(group) { return this.Schedules[group.Value].End(); }
+	/*bool*/ EndByGroup(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].End(); }
 
 	/**
 	*
 	*
-	* @param group
-	* @param handle
-	* return
+	* @param {ECsUpdateGroup} 	group
+	* @param {CsRoutineHandle}	handle	Handle to a routine.
+	* @returns {boolean}
 	*/
-	EndByHandle(group, handle) { return this.Schedules[group.Value].End(handle); }
+	/*bool*/ EndByHandle(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/) { return this.Schedules[group.Value].End(handle); }
 
 	/**
 	*
@@ -131,20 +136,20 @@ module.exports = class FJCoroutineScheduler
 	* Check if a routine associated with the Group and Handle has already ended.
 	* NOTE: This returns True if Handle is NOT Valid.
 	* 
-	* @param group
-	* @param handle		Handle to a routine.
-	* return			Whether the routine has already ended.
+	* @param {ECsUpdateGroup} 	group
+	* @param {CsRoutineHandle}	handle		Handle to a routine.
+	* @returns {boolean}					Whether the routine has already ended.
 	*/
-	HasEnded(group, handle) { return this.Schedules[group.Value].HasEnded(handle); }
+	/*bool*/ HasEnded(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/) { return this.Schedules[group.Value].HasEnded(handle); }
 
 	/**
 	* Check if a routine associated with the Group and Handle has just ended.
 	*
-	* @param group
-	* @param handle		Handle to a routine.
-	* return			Whether the routine has just ended.
+	* @param {ECsUpdateGroup} 	group
+	* @param {CsRoutineHandle}	handle		Handle to a routine.
+	* @returns {boolean}					Whether the routine has just ended.
 	*/
-	HasJustEnded(group, handle) { return this.Schedules[group.Value].HasJustEnded(handle); }
+	/*bool*/ HasJustEnded(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/) { return this.Schedules[group.Value].HasJustEnded(handle); }
 
 	// #endregion End
 
@@ -155,18 +160,18 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param group
-	* return
+	* @param {ECsUpdateGroup} group
+	* @returns {FJsResourceContainer} FJsResourceContainer < PayloadType >
 	*/
-	AllocatePayloadContainer(group) { return this.Schedules[group.Value].AllocatePayloadContainer(); }
+	/*FJsResourceContainer<PayloadType>*/ AllocatePayloadContainer(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].AllocatePayloadContainer(); }
 
 	/**
 	*
 	*
-	* @param group
-	* return
+	* @param {ECsUpdateGroup} group
+	* @returns {NJsCoroutine.NPayload.FImpl} PayloadType
 	*/
-	AllocatePayload(group) { return this.Schedules[group.Value].AllocatePayload(); }
+	/*PayloadType*/ AllocatePayload(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].AllocatePayload(); }
 
 	// #endregion Payload
 
@@ -177,11 +182,11 @@ module.exports = class FJCoroutineScheduler
 	/**
 	* 
 	* 
-	* @param group
-	* @param handle
-	* return
+	* @param {ECsUpdateGroup} group
+	* @param {CsRoutineHandle} handle
+	* @returns {boolean}
 	*/
-	IsHandleValid(group, handle)
+	/*bool*/ IsHandleValid(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/)
 	{
 		return this.Schedules[group.Value].GetRoutineContainer(handle) != null;
 	}
@@ -189,11 +194,11 @@ module.exports = class FJCoroutineScheduler
 	/**
 	* 
 	* 
-	* @param group
-	* @param handle
-	* return
+	* @param {ECsUpdateGroup} group
+	* @param {CsRoutineHandle} handle
+	* @returns {boolean}
 	*/
-	IsRunning(group, handle)
+	/*bool*/ IsRunning(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/)
 	{
 		return this.Schedules[group.Value].IsRunning(handle);
 	}

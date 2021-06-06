@@ -15,9 +15,9 @@ var CommonLibrary = NJsCommon.FLibrary;
 var check = CommonLibrary.check;
 var checkf = CommonLibrary.checkf;
 
-module.exports = class NJsEnum
+module.exports = class NJsYield
 {
-    static FYield = class Yield
+    static FEnum = class EnumYield
     {
         constructor()
         {
@@ -57,7 +57,7 @@ module.exports = class NJsEnum
         /**
          * @returns {boolean}
          */
-        /*bool*/ IsEqual()
+        /*bool*/ Execute()
         {
             return this.Type.AreValuesEqual(this.Enum, this.Value);
         }

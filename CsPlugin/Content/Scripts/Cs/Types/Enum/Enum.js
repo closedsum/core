@@ -50,6 +50,8 @@ module.exports = class FJsEnum
         /*string*/ ToString() { return "{Outer:" + this.Outer.Name + ", Name:" + this.Name + ", Value:" + this.Value + "}"; }
 
         /**
+         * '=' operator
+         * 
          * @param {FJsEnum.FValue} from 
          */
         Equals(from /*FValue*/)
@@ -58,6 +60,20 @@ module.exports = class FJsEnum
 
             this.Name = from.Name;
             this.Value = from.Value;
+        }
+
+        /**
+         * '==' operator
+         * 
+         * @param {FJsEnum.FValue} a 
+         */
+        /*bool*/ EqualEqual(a /*FValue*/)
+        {
+            if (!CommonLibrary.IsClassOf(a, FJsEnum.FValue))
+                return false;
+            if (this.Outer !== a.GetOuter())
+                return false;
+            return this.Name === a.GetName() && this.Value === a.GetValue();
         }
     }
 

@@ -8,6 +8,7 @@ var NJsCoroutine = require('Cs/Coroutine/Types_Coroutine.js');
 var FJsProperty = require('Cs/Types/Property/Property.js');
 var NJsYield1 = require('Cs/Types/Yield/Yield_Enum.js');
 var NJsYield2 = require('Cs/Types/Yield/Yield_RoutineHandle.js');
+var NJsYield3 = require('Cs/Types/Yield/Yield_Function.js');
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
@@ -24,6 +25,7 @@ const ROUTINE_FREE = -2;
 var CommonLibrary = NJsCommon.FLibrary;
 var EnumYieldType = NJsYield1.FEnum;
 var RoutineHandleYieldType = NJsYield2.FRoutineHandle;
+var FunctionYieldType = NJsYield3.FFunction;
 
 // "typedefs" - function
 var checkf = CommonLibrary.checkf;
@@ -110,6 +112,8 @@ module.exports = class JsRoutine
 		this.WaitForEnum = new EnumYieldType(); /*EnumYieldType (NJsYield.FEnum)*/
 		this.bWaitForRoutineHandle = false; /*bool*/
 		this.WaitForRoutineHandle = new RoutineHandleYieldType(); /*RoutineHandleYieldType (NJsYield.FRoutineHandle)*/
+		this.bWaitForFunction = false; /*bool*/
+		this.WaitForFunction = new FunctionYieldType(); /*FunctionYieldType (NJsYield.FFunction)*/
     }
 
 	SetCore(core)
@@ -348,7 +352,7 @@ module.exports = class JsRoutine
 				this.WaitForEnum.Reset();
 			}
 		}
-		// WaitForEnum
+		// WaitForRoutineHandle
 		if (this.bWaitForRoutineHandle)
 		{
 			move = this.WaitForRoutineHandle.Execute();
@@ -357,6 +361,17 @@ module.exports = class JsRoutine
 			{
 				this.bWaitForRoutineHandle = false;
 				this.WaitForRoutineHandle.Reset();
+			}
+		}
+		// WaitForFunction
+		if (this.bWaitForFunction)
+		{
+			move = this.WaitForFunction.Execute();
+			
+			if (move)
+			{
+				this.bWaitForFunction = false;
+				this.WaitForFunction.Reset();
 			}
 		}
 
@@ -400,10 +415,17 @@ module.exports = class JsRoutine
 				{
 					this.bWaitForRoutineHandle = true;
 				}
+				// WaitForFunction
+				else
+				if (this.WaitForFunction.CopyFromYield(yieldCommand))
+				{
+					this.bWaitForFunction = true;
+				}
 				else
 				{
 					this.WaitForEnum.Reset();
 					this.WaitForRoutineHandle.Reset();
+					this.WaitForFunction.Reset();
 				}
 			}
 
@@ -550,6 +572,12 @@ module.exports = class JsRoutine
 			{
 				// Do Nothing, already set
 			}
+			// WaitForFunction
+			else
+			if (this.bWaitForFunction)
+			{
+				// Do Nothing, already set
+			}
             // INVALID Type
             else
             {
@@ -651,6 +679,8 @@ module.exports = class JsRoutine
 		this.WaitForEnum.Reset();
 		this.bWaitForRoutineHandle = false;
 		this.WaitForRoutineHandle.Reset();
+		this.bWaitForFunction = false;
+		this.WaitForFunction.Reset();
 	}
 
     AddChild(child)

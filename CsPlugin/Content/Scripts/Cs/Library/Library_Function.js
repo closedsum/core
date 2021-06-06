@@ -232,7 +232,7 @@ module.exports = class NJsFunction
             check(self.IsReturn_Bool_Checked(context, fn, caller));
 
             // Check argCount is an int
-            check(CommonLibrary.IsBoolChecked(context, argCount));
+            check(CommonLibrary.IsIntChecked(context, argCount));
 
             checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
 

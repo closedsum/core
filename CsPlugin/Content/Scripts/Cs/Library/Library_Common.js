@@ -302,5 +302,36 @@ module.exports = class NJsCommon
             self.check(self.IsClassOfChecked(context, o[key], classType));
             return true;
         }
+
+        /**
+         * @param {object} o 
+         * @param {string} key
+         * @param {function} fn
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyOfFunctionExist(o /*object*/, key /*string*/, fn /*function*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            if (!self.DoesKeyExist(o, key))
+                return false;
+            return self.IsFunction(o[key], fn);
+        }
+ 
+         /**
+          * @param {string} context
+          * @param {object} o 
+          * @param {string} key
+          * @param {function} fn
+          * @returns {boolean} 
+          */
+        static /*bool*/ DoesKeyOfFunctionExistChecked(context /*string*/, o /*object*/, key /*string*/, fn /*function*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            self.check(self.DoesKeyExistChecked(context, o, key));
+            self.check(self.IsFunctionChecked(context, o[key], fn));
+            return true;
+        }
     };
 };

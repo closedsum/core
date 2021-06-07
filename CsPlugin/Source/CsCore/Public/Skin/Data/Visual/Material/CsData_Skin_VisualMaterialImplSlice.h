@@ -31,7 +31,7 @@ public:
 // MaterialVisualDataType(NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCsTArrayMaterialnterface Materials;
+	FCsTArrayMaterialInterface Materials;
 
 	FCsData_Skin_VisualMaterialImplSlice() :
 		Materials()

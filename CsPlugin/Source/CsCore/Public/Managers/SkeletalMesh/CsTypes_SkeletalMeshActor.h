@@ -155,7 +155,7 @@ struct CSCORE_API FCsSkeletalMeshActorPooledInfo
 
 	/** Materials */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCsTArrayMaterialnterface Materials;
+	FCsTArrayMaterialInterface Materials;
 
 	/** The SkeletalMeshActor Type. This is used to group SkeletalMeshActors into different categories 
 	    and can be used by a Manager pooling SkeletalMeshActors to Spawn the correct

@@ -170,16 +170,19 @@ namespace NCsTrace
 		{
 			Caller = InCaller;
 
-			UClass* Class = InCaller->GetClass();
-
-			if (Class->ImplementsInterface(UCsUniqueObject::StaticClass()))
+			if (InCaller)
 			{
-				// Interface
-				if (ICsUniqueObject* Interface = Cast<ICsUniqueObject>(InCaller))
+				UClass* Class = InCaller->GetClass();
+
+				if (Class->ImplementsInterface(UCsUniqueObject::StaticClass()))
 				{
-					UniqueObject = Interface;
+					// Interface
+					if (ICsUniqueObject* Interface = Cast<ICsUniqueObject>(InCaller))
+					{
+						UniqueObject = Interface;
+					}
+					// Script Interface
 				}
-				// Script Interface
 			}
 		}
 

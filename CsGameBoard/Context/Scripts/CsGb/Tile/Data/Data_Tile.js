@@ -24,7 +24,12 @@ module.exports = class NJsGame
             {
                 static IData = class InterfaceData
                 {
-                    static IsImplementedByChecked(context, o)
+                    /**
+                     * @param {string} context 
+                     * @param {object} o 
+                     * @returns {boolean}
+                     */
+                    /*bool*/ static IsImplementedByChecked(context /*string*/, o /*object*/)
                     {
                         let self = NJsGame.NBoard.NData.IData;
 
@@ -32,7 +37,11 @@ module.exports = class NJsGame
                         return true;
                     }
 
-                    static IsImplementedBy(o)
+                    /**
+                     * @param {object} o 
+                     * @returns {boolean}
+                     */
+                    static /*bool*/ IsImplementedBy(o /*object*/)
                     {
                         let self = NJsProjectile.NData.IData;
 

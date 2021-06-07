@@ -98,7 +98,7 @@ public:
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsTArrayMaterialnterface Materials;
+	FCsTArrayMaterialInterface Materials;
 
 // ICsData_Skin_VisualMaterial
 #pragma region

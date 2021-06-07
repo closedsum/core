@@ -146,11 +146,12 @@ public:
 #pragma region
 
 class UMaterialInterface;
+class UPrimitiveComponent;
 
 /**
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsTArrayMaterialnterface
+struct CSCORE_API FCsTArrayMaterialInterface
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -165,7 +166,7 @@ struct CSCORE_API FCsTArrayMaterialnterface
 
 public:
 
-	FCsTArrayMaterialnterface() :
+	FCsTArrayMaterialInterface() :
 		Materials(),
 		Materials_LoadFlags(0),
 		Materials_Internal()
@@ -231,6 +232,10 @@ public:
 		return Materials_Internal;
 	}
 
+	void SetChecked(const FString& Context, UPrimitiveComponent* Component) const;
+
+	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 	bool IsValidChecked(const FString& Context) const
 	{
 		checkf(Materials.Num() > CS_EMPTY, TEXT("%s: No Materials set."), *Context);
@@ -294,7 +299,7 @@ public:
 	}
 };
 
-#pragma endregion FCsTArrayMaterialnterface
+#pragma endregion FCsTArrayMaterialInterface
 
 // FCsTArrayMaterialInstanceConstant
 #pragma region

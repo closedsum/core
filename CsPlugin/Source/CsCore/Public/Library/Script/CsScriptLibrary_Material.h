@@ -4,6 +4,7 @@
 // Types
 #include "Coroutine/CsRoutineHandle.h"
 #include "Material/CsTypes_Material_Anim.h"
+#include "Material/CsTypes_Material.h"
 
 #include "CsScriptLibrary_Material.generated.h"
 
@@ -45,7 +46,7 @@ public:
 public:
 
 	/**
-	* Safely set the Material at the given Index on Component
+	* Set the Material at the given Index on Component
 	*
 	* @param Context	The calling context
 	* @param Component
@@ -57,7 +58,7 @@ public:
 	static bool SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index);
 
 	/**
-	* Safely set the Materials on Component
+	* Set the Materials on Component
 	*
 	* @param Context	The calling context
 	* @param Component
@@ -66,6 +67,29 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context"))
 	static bool Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials);
+
+	/**
+	* Set the Materials on Component
+	*
+	* @param Context	The calling context
+	* @param Materials
+	* @param Component
+	* return			Whether the Material was successful set or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Materials"))
+	static bool SetByStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component);
+
+	/**
+	* Set the materials on Component from PropertyName on Object.
+	*
+	* @param Context		The calling context
+	* @param Object
+	* @param PropertyName
+	* @param Component
+	* return				Whether the Material was successful set or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static bool SetByObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component);
 
 #pragma endregion Set
 

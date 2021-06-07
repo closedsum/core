@@ -17,8 +17,10 @@ namespace NCsScriptLibraryGameEvent
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameEventDefinition, DoesExist);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameEventDefinition, Add);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameEventDefinition, Add_ActionOneOrWordNoCompletedValue);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_GameEventDefinition, Remove);
 		}
 	}
 }
@@ -26,6 +28,18 @@ namespace NCsScriptLibraryGameEvent
 UCsScriptLibrary_GameEventDefinition::UCsScriptLibrary_GameEventDefinition(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+bool UCsScriptLibrary_GameEventDefinition::DoesExist(const FString& Context, const FECsGameEvent& Event)
+{
+	using namespace NCsScriptLibraryGameEvent::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::DoesExist : Context;
+
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	FCsSettings_Input& InputSettings = Settings->Input;
+
+	return InputSettings.DoesExist(Ctxt, Event);
 }
 
 bool UCsScriptLibrary_GameEventDefinition::Add(const FString& Context, const FCsGameEventDefinition& Definition)
@@ -98,4 +112,16 @@ bool UCsScriptLibrary_GameEventDefinition::Add_ActionOneOrWordNoCompletedValue(c
 	if (!Found)
 		InputSettings.GameEventDefinitions_ActionOneOrWordNoCompleteValue.Add(Definition);
 	return true;
+}
+
+void UCsScriptLibrary_GameEventDefinition::Remove(const FString& Context, const FECsGameEvent& Event)
+{
+	using namespace NCsScriptLibraryGameEvent::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Remove : Context;
+
+	UCsDeveloperSettings* Settings   = GetMutableDefault<UCsDeveloperSettings>();
+	FCsSettings_Input& InputSettings = Settings->Input;
+
+	InputSettings.Remove(Context, Event);
 }

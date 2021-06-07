@@ -105,6 +105,36 @@ namespace NCsProperty
 		return Prop;
 	}
 
+	FArrayProperty* FLibrary::FindArrayPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FArrayProperty* Prop = CastField<FArrayProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TArray."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Prop;
+	}
+
+	FArrayProperty* FLibrary::FindArrayObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FArrayProperty* Property = FindArrayPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		if (FObjectProperty* InnerProperty = CastField<FObjectProperty>(Property->Inner))
+			return Property;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of UObjects but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Inner->GetName())));
+		return nullptr;
+	}
+
 	#pragma endregion Find
 
 	// Get

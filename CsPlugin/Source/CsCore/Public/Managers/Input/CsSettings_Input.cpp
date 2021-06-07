@@ -2,6 +2,11 @@
 #include "Managers/Input/CsSettings_Input.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Log
+#include "Utility/CsLog.h"
+
 // FCsSettings_Input
 #pragma region
 
@@ -80,6 +85,99 @@ void FCsSettings_Input::PopulateGameEventPriorityList()
 	GameEventPriorityList_Internal.Reset(Temp.Num());
 
 	GameEventPriorityList_Internal = Temp;
+}
+
+bool FCsSettings_Input::DoesExist(const FString& Context, const FECsGameEvent& Event) const
+{
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_ENUM_STRUCT_VALID(EMCsGameEvent, FECsGameEvent, Event)
+
+	// GameEventDefinitions
+	{
+		typedef FCsGameEventDefinition DefinitionType;
+		const TSet<DefinitionType>& Definitions = GameEventDefinitions;
+
+		for (const DefinitionType& Def : Definitions)
+		{
+			if (Event == Def.Event)
+			{
+				return true;
+			}
+		}
+	}
+	// GameEventDefinitions_ActionOneOrWordNoCompleteValue
+	{
+		typedef FCsGameEventDefinitionActionOneOrWordNoCompletedValue DefinitionType;
+		const TSet<DefinitionType>& Definitions = GameEventDefinitions_ActionOneOrWordNoCompleteValue;
+
+		if (DoesExist_Internal<DefinitionType>(Event, Definitions))
+			return true;
+	}
+	// GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue
+	{
+		typedef FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue DefinitionType;
+		const TSet<DefinitionType>& Definitions = GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue;
+
+		if (DoesExist_Internal<DefinitionType>(Event, Definitions))
+			return true;
+	}
+	// GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue
+	{
+		typedef FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue DefinitionType;
+		const TSet<DefinitionType>& Definitions = GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue;
+
+		if (DoesExist_Internal<DefinitionType>(Event, Definitions))
+			return true;
+	}
+	return false;
+}
+
+void FCsSettings_Input::Remove(const FString& Context, const FECsGameEvent& Event)
+{
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsGameEvent, FECsGameEvent, Event)
+
+	// GameEventDefinitions
+	{
+		typedef FCsGameEventDefinition DefinitionType;
+		TSet<DefinitionType>& Definitions = GameEventDefinitions;
+
+		int32 Index = INDEX_NONE;
+
+		for (DefinitionType& Def : Definitions)
+		{
+			if (Event == Def.Event)
+			{
+				Index = Definitions.FindId(Def).AsInteger();
+				break;
+			}
+		}
+
+		FSetElementId Id = FSetElementId::FromInteger(Index);
+
+		if (Id.IsValidId())
+			Definitions.Remove(Id);
+	}
+	// GameEventDefinitions_ActionOneOrWordNoCompleteValue
+	{
+		typedef FCsGameEventDefinitionActionOneOrWordNoCompletedValue DefinitionType;
+		TSet<DefinitionType>& Definitions = GameEventDefinitions_ActionOneOrWordNoCompleteValue;
+		Remove_Internal<DefinitionType>(Event, Definitions);
+	}
+	// GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue
+	{
+		typedef FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue DefinitionType;
+		TSet<DefinitionType>& Definitions = GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue;
+		Remove_Internal<DefinitionType>(Event, Definitions);
+	}
+	// GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue
+	{
+		typedef FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue DefinitionType;
+		TSet<DefinitionType>& Definitions = GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue;
+		Remove_Internal<DefinitionType>(Event, Definitions);
+	}
 }
 
 void FCsSettings_Input::OnPostEditChange(const FString& PropertyName, const TSet<FString>& PropertyNames)

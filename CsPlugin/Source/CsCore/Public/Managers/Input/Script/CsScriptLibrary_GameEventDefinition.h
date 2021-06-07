@@ -14,6 +14,16 @@ class CSCORE_API UCsScriptLibrary_GameEventDefinition : public UObject
 public:
 
 	/**
+	* Check whether a definition exists for Event.
+	*
+	* @param Context	The calling context.
+	* @param Event		Game Event.
+	* return			Whether the definition exists for Event.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Event"))
+	static bool DoesExist(const FString& Context, const FECsGameEvent& Event);
+
+	/**
 	* Add
 	*
 	* @param Context			The calling context.
@@ -32,4 +42,13 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (WorldContext = "WorldContextObject", DisplayName = "Add: Action - 1 Or Word, No Complete Value", AutoCreateRefTerm = "Context,Definition"))
 	static bool Add_ActionOneOrWordNoCompletedValue(const FString& Context, const FCsGameEventDefinitionActionOneOrWordNoCompletedValue& Definition);
+
+	/**
+	* Remove
+	*
+	* @param Context	The calling context.
+	* @param Event		Game Event.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Event"))
+	static void Remove(const FString& Context, const FECsGameEvent& Event);
 };

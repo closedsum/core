@@ -77,6 +77,51 @@ public:
 
 	void PopulateGameEventPriorityList();
 
+	bool DoesExist(const FString& Context, const FECsGameEvent& Event) const;
+
+private:
+	
+	template<typename DefinitionType>
+	bool DoesExist_Internal(const FECsGameEvent& Event, const TSet<DefinitionType>& Definitions) const
+	{
+		for (const DefinitionType& Def : Definitions)
+		{
+			if (Event == Def.GameEvent)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+public:
+
+	void Remove(const FString& Context, const FECsGameEvent& Event);
+
+private:
+
+	template<typename DefinitionType>
+	void Remove_Internal(const FECsGameEvent& Event, TSet<DefinitionType>& Definitions)
+	{
+		int32 Index = INDEX_NONE;
+
+		for (DefinitionType& Def : Definitions)
+		{
+			if (Event == Def.GameEvent)
+			{
+				Index = Definitions.FindId(Def).AsInteger();
+				break;
+			}
+		}
+
+		FSetElementId Id = FSetElementId::FromInteger(Index);
+
+		if (Id.IsValidId())
+			Definitions.Remove(Id);
+	}
+
+public:
+
 	void OnPostEditChange(const FString& PropertyName, const TSet<FString>& PropertyNames);
 };
 

@@ -173,6 +173,18 @@ namespace NCsInput
 			return nullptr;
 		}
 
+		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
+
+			APlayerController* PC = PlayerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
+
+			if (!PC)
+				return nullptr;
+
+			return GetSafe(Context, PC, Log);
+		}
+
 		bool FLibrary::HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers)
 		{
 			checkf(NumLocalPlayers > 0, TEXT("FLibrary::HaveAllBeenCreated: NumLocalPlayer: %d is NOT > 0."), NumLocalPlayers);
@@ -199,6 +211,16 @@ namespace NCsInput
 				++Count;
 			}
 			return Count == NumLocalPlayers;
+		}
+
+		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Input* ManagerInput = GetSafe(Context, WorldContext, ControllerId, Log))
+			{
+				ManagerInput->Init();
+				return true;
+			}
+			return false;
 		}
 
 		namespace NInputActionMap

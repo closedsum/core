@@ -264,6 +264,55 @@ namespace NCsProperty
 		}
 
 		/**
+		* Find the Array Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FArrayProperty* FindArrayPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Array Property (TArray of UObjects) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FArrayProperty* FindArrayObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Array Property (TArray of ObjectType) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		template<typename ObjectType>
+		static FArrayProperty* FindArrayObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FArrayProperty* Property = FindArrayObjectPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			FObjectProperty* InnerProperty = CastField<FObjectProperty>(Property->Inner);
+
+			if (InnerProperty-PropertyClass == ObjectType::StaticClass())
+				return Property;
+
+			if (Log)
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(ObjectType::StaticClass()->GetName()), *(Property->Inner->GetName())));
+			return nullptr;
+		}
+
+		/**
 		*
 		*
 		* @param Context
@@ -583,6 +632,34 @@ namespace NCsProperty
 					}
 				}
 			}
+		}
+
+		/**
+		* Get the Array of UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				UObject of type: T.
+		*/
+		template<typename T>
+		static TArray<T*>* GetArrayObjectPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FArrayProperty* Property = FindArrayObjectPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			TArray<T*>* Value = Property->ContainerPtrToValuePtr<TArray<T*>>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
 		}
 
 	#pragma endregion Get

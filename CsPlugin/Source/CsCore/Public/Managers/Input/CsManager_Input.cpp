@@ -1753,13 +1753,11 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			FCsGameEventDefinition Def;
 			Def.Event = Event;
 
-			Def.Sentence.Phrases.AddDefaulted();
-			FCsInputSentence& Sentence = Def.Sentence;
-			FCsInputPhrase& Phrase = Sentence.Phrases[CS_FIRST];
-			Phrase.Words.AddDefaulted();
-			FCsInputWord& Word = Phrase.Words[CS_FIRST];
-			Word.AndInputs.AddDefaulted();
-			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
+			FCsInputSentence& Sentence	= Def.Sentence;
+			FCsInputPhrase& Phrase		= Sentence.Phrases.AddDefaulted_GetRef();
+			FCsInputWord& Word			= Phrase.Words.AddDefaulted_GetRef();
+			FCsInputDescription& Desc	= Word.AndInputs.AddDefaulted_GetRef();
+
 			Desc.Action = NCsInputAction::Default__MousePositionXY__;
 			Desc.bAnyEvent = true;
 			Desc.CompareValue.ValueType = ECsInputValue::Vector;
@@ -1779,17 +1777,38 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			FCsGameEventDefinition Def;
 			Def.Event = Event;
 
-			Def.Sentence.Phrases.AddDefaulted();
-			FCsInputSentence& Sentence = Def.Sentence;
-			FCsInputPhrase& Phrase = Sentence.Phrases[CS_FIRST];
-			Phrase.Words.AddDefaulted();
-			FCsInputWord& Word = Phrase.Words[CS_FIRST];
-			Word.AndInputs.AddDefaulted();
-			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
+			FCsInputSentence& Sentence	= Def.Sentence;
+			FCsInputPhrase& Phrase		= Sentence.Phrases.AddDefaulted_GetRef();
+			FCsInputWord& Word			= Phrase.Words.AddDefaulted_GetRef();
+			FCsInputDescription& Desc	= Word.AndInputs.AddDefaulted_GetRef();
+
 			Desc.Action = NCsInputAction::Default__MouseLeftButton__;
 			Desc.Event = ECsInputEvent::FirstPressed;
 			Desc.CompareValue.ValueType = ECsInputValue::Void;
-			Desc.CompletedValue.ValueType = ECsInputValue::Void;
+			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
+
+			InputSentenceByGameEventMap.Add(Event, Sentence);
+			GameEventDefinitions.Add(Def);
+		}
+	}
+	// Default__MouseLeftButtonReleased__
+	{
+		const FECsGameEvent& Event = NCsGameEvent::Default__MouseLeftButtonReleased__;
+
+		if (!InputSentenceByGameEventMap.Find(Event))
+		{
+			FCsGameEventDefinition Def;
+			Def.Event = Event;
+
+			FCsInputSentence& Sentence	= Def.Sentence;
+			FCsInputPhrase& Phrase		= Sentence.Phrases.AddDefaulted_GetRef();
+			FCsInputWord& Word			= Phrase.Words.AddDefaulted_GetRef();
+			FCsInputDescription& Desc	= Word.AndInputs.AddDefaulted_GetRef();
+
+			Desc.Action = NCsInputAction::Default__MouseLeftButton__;
+			Desc.Event = ECsInputEvent::FirstReleased;
+			Desc.CompareValue.ValueType = ECsInputValue::Void;
+			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
 
 			InputSentenceByGameEventMap.Add(Event, Sentence);
 			GameEventDefinitions.Add(Def);
@@ -1804,17 +1823,38 @@ void UCsManager_Input::SetupGameEventDefinitions()
 			FCsGameEventDefinition Def;
 			Def.Event = Event;
 
-			Def.Sentence.Phrases.AddDefaulted();
-			FCsInputSentence& Sentence = Def.Sentence;
-			FCsInputPhrase& Phrase = Sentence.Phrases[CS_FIRST];
-			Phrase.Words.AddDefaulted();
-			FCsInputWord& Word = Phrase.Words[CS_FIRST];
-			Word.AndInputs.AddDefaulted();
-			FCsInputDescription& Desc = Word.AndInputs[CS_FIRST];
+			FCsInputSentence& Sentence	= Def.Sentence;
+			FCsInputPhrase& Phrase		= Sentence.Phrases.AddDefaulted_GetRef();
+			FCsInputWord& Word			= Phrase.Words.AddDefaulted_GetRef();
+			FCsInputDescription& Desc	= Word.AndInputs.AddDefaulted_GetRef();
+
 			Desc.Action = NCsInputAction::Default__MouseRightButton__;
 			Desc.Event = ECsInputEvent::FirstPressed;
 			Desc.CompareValue.ValueType = ECsInputValue::Void;
-			Desc.CompletedValue.ValueType = ECsInputValue::Void;
+			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
+
+			InputSentenceByGameEventMap.Add(Event, Sentence);
+			GameEventDefinitions.Add(Def);
+		}
+	}
+	// Default__MouseRightButtonReleased__
+	{
+		const FECsGameEvent& Event = NCsGameEvent::Default__MouseRightButtonReleased__;
+
+		if (!InputSentenceByGameEventMap.Find(Event))
+		{
+			FCsGameEventDefinition Def;
+			Def.Event = Event;
+
+			FCsInputSentence& Sentence	= Def.Sentence;
+			FCsInputPhrase& Phrase		= Sentence.Phrases.AddDefaulted_GetRef();
+			FCsInputWord& Word			= Phrase.Words.AddDefaulted_GetRef();
+			FCsInputDescription& Desc	= Word.AndInputs.AddDefaulted_GetRef();
+
+			Desc.Action = NCsInputAction::Default__MouseRightButton__;
+			Desc.Event = ECsInputEvent::FirstReleased;
+			Desc.CompareValue.ValueType = ECsInputValue::Void;
+			Desc.CompletedValue.ValueType = ECsInputValue::Vector;
 
 			InputSentenceByGameEventMap.Add(Event, Sentence);
 			GameEventDefinitions.Add(Def);

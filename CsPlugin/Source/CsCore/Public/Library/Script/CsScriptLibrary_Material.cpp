@@ -4,6 +4,8 @@
 
 // Library
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Property.h"
+#include "Library/CsLibrary_Object.h"
 
 // Cached
 #pragma region
@@ -18,6 +20,8 @@ namespace NCsScriptLibraryMaterial
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, Set);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetByStruct);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetByObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, PlayAnim);
 		}
 	}
@@ -80,6 +84,68 @@ bool UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent*
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	return MaterialLibrary::SetSafe(Context, Component, Materials);
+}
+
+bool UCsScriptLibrary_Material::SetByStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetByStruct : Context;
+
+	return Materials.SetSafe(Ctxt, Component);
+}
+
+bool UCsScriptLibrary_Material::SetByObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetByObject : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return false;
+	}
+
+	// Check for properties of type: FCsTArrayMaterialInterface or TArray<UMaterialInterface*> and name: PropertyName.
+	typedef NCsProperty::FLibrary PropertyLibrary;
+
+	// Try FCsTArrayMaterialInterface
+	typedef FCsTArrayMaterialInterface StructSliceType;
+
+	if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Ctxt, Object, Object->GetClass(), PropertyName, nullptr))
+	{
+		return SliceAsStruct->SetSafe(Ctxt, Component);
+	}
+	// Try individual properties
+	else
+	{
+		TArray<UMaterialInterface*>* MaterialsPtr = PropertyLibrary::GetArrayObjectPropertyValuePtr<UMaterialInterface>(Ctxt, Object, Object->GetClass(), PropertyName, nullptr);
+
+		if (MaterialsPtr)
+		{
+			if (!Component)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Ctxt));
+				return false;
+			}
+
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			return MaterialLibrary::SetSafe(Ctxt, Component, *MaterialsPtr);
+		}
+	}
+	
+	typedef NCsObject::FLibrary ObjectLibrary;
+
+	UE_LOG(LogCs, Warning, TEXT("%s: Failed to find any properties from %s for Property: %s of type: TArray<UMaterialInterface*>"), *Ctxt, *(ObjectLibrary::PrintObjectAndClass(Object)), *(PropertyName.ToString()));
+	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface."), *Ctxt);
+	UE_LOG(LogCs, Warning, TEXT("%s: - OR"), *Ctxt);
+	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get array property of type: TArray<UMaterialInterface*>."), *Ctxt);
+
+	return false;
 }
 
 #pragma endregion Set

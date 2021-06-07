@@ -73,7 +73,9 @@ class CSCORE_API UCsManager_Input : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void Init();
+public:
+
+	void Init();
 
 // UObject Interface
 #pragma region

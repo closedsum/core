@@ -155,7 +155,7 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 
 	/** Materials */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCsTArrayMaterialnterface Materials;
+	FCsTArrayMaterialInterface Materials;
 
 	/** The StaticMeshActor Type. This is used to group StaticMeshActors into different categories 
 	    and can be used by a Manager pooling StaticMeshActors to Spawn the correct

@@ -612,7 +612,9 @@ namespace NCsGameEvent
 
 	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MousePositionXY__);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseLeftButtonPressed__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseLeftButtonReleased__);
 	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseRightButtonPressed__);
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MouseRightButtonReleased__);
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{

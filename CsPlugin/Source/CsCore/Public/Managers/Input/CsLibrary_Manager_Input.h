@@ -40,7 +40,20 @@ namespace NCsInput
 
 			static UCsManager_Input* GetSafe(APawn* Pawn);
 
+			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			static bool HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
+
+			/**
+			* Safely call Manager_Input->Input()
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param Log			(optional)
+			* return				Whether Manager_Input->Input() was successfully called or not.
+			*/
+			static bool SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
 		namespace NInputActionMap

@@ -77,7 +77,7 @@ bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* Wor
 
 	RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Context, WorldContextObject);
 
-	if (RequestPtr)
+	if (!RequestPtr)
 		return false;
 
 	FCsTraceRequest* Req = const_cast<FCsTraceRequest*>(&Request);

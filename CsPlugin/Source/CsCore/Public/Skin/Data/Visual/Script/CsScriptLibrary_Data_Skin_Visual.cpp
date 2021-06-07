@@ -93,7 +93,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 	// Try individual properties
 	else
 	{
-		typedef FCsTArrayMaterialnterface StructType;
+		typedef FCsTArrayMaterialInterface StructType;
 
 		StructType* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
 
@@ -113,7 +113,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_Material(const FString& Co
 	UE_LOG(LogCs, Warning, TEXT("%s: Failed to find any properties from %s for interface: MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)."), *Ctxt, *(ObjectLibrary::PrintObjectAndClass(Object)));
 	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualMaterialImplSlice with name: VisualMaterialSlice."), *Ctxt);
 	UE_LOG(LogCs, Warning, TEXT("%s: - OR"), *Ctxt);
-	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialnterface with name: Materials."), *Ctxt);
+	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials."), *Ctxt);
 
 	return false;
 }
@@ -287,7 +287,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 	else
 	{
 		FCsStaticMesh* MeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsStaticMesh>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
-		FCsTArrayMaterialnterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialnterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
+		FCsTArrayMaterialInterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
 
 		if (MeshPtr &&
 			MaterialsPtr)
@@ -316,7 +316,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_StaticMeshAndMaterial(cons
 	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshAndMaterialImpl with name: VisualStaticMeshAndMaterialImpl."), *Ctxt);
 	UE_LOG(LogCs, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsStaticMesh with name: Mesh."), *Ctxt);
-	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialnterface with name: Materials."), *Ctxt);
+	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials."), *Ctxt);
 
 	return false;
 }
@@ -362,7 +362,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 	else
 	{
 		FCsSkeletalMesh* MeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsSkeletalMesh>(Ctxt, Object, Object->GetClass(), Name::Mesh, nullptr);
-		FCsTArrayMaterialnterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialnterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
+		FCsTArrayMaterialInterface* MaterialsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsTArrayMaterialInterface>(Ctxt, Object, Object->GetClass(), Name::Materials, nullptr);
 
 		if (MeshPtr &&
 			MaterialsPtr)
@@ -391,7 +391,7 @@ bool UCsScriptLibrary_Data_Skin_Visual::SetFromObject_SkeletalMeshAndMaterial(co
 	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualSkeletalMeshAndMaterialImpl with name: VisualSkeletalMeshAndMaterialImpl."), *Ctxt);
 	UE_LOG(LogCs, Warning, TEXT("%s: - OR"), *Ctxt);
 	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsSkeletalMesh with name: Mesh."), *Ctxt);
-	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialnterface with name: Materials."), *Ctxt);
+	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsTArrayMaterialInterface with name: Materials."), *Ctxt);
 
 	return false;
 }

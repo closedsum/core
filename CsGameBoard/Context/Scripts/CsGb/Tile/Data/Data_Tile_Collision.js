@@ -28,7 +28,12 @@ module.exports = class NJsGame
                     {
                         // CsCollisionPreset GetCollisionPreset()
 
-                        static IsImplementedByChecked(context, o)
+                        /**
+                         * @param {string} context 
+                         * @param {object} o 
+                         * @returns {boolean}
+                         */
+                        static /*bool*/ IsImplementedByChecked(context /*string*/, o /*object*/)
                         {
                             let self = NJsGame.NBoard.NTile.NData.NCollision.ICollision;
 
@@ -39,7 +44,11 @@ module.exports = class NJsGame
                             return true;
                         }
 
-                        static IsImplementedBy(o)
+                        /**
+                         * @param {object} o 
+                         * @returns {boolean}
+                         */
+                        static /*bool*/ IsImplementedBy(o /*object*/)
                         {
                             let self = NJsGame.NBoard.NTile.NData.NCollision.ICollision;
 
@@ -52,13 +61,23 @@ module.exports = class NJsGame
                         }
 
                         // GetCollisionPreset()
-                        static Implements_GetCollisionPresetChecked(context, o)
+
+                        /**
+                         * @param {string} context 
+                         * @param {object} o 
+                         * @returns {boolean}
+                         */
+                        static /*bool*/ Implements_GetCollisionPresetChecked(context /*string*/, o /*object*/)
                         {
                             let classType = CsCollisionPreset;
                             return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetCollisionPreset, 0, o, classType);
                         }
 
-                        static Implements_GetCollisionPreset(o)
+                        /**
+                         * @param {object} o 
+                         * @returns {boolean}
+                         */
+                        static /*bool*/ Implements_GetCollisionPreset(o /*object*/)
                         {
                             let classType = CsCollisionPreset;
                             return FunctionLibrary.IsArgCountAndReturn_Class(o.GetCollisionPreset, 0, o, classType);

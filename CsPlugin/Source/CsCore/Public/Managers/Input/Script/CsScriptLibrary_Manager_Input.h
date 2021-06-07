@@ -13,6 +13,18 @@ class CSCORE_API UCsScriptLibrary_Manager_Input : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	/**
+	* Call Manager_Input->Init()
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param ControllerId
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId"))
+	static bool Init(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+
 // InputActionMap
 #pragma region
 

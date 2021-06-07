@@ -1464,7 +1464,7 @@ public:
 	FORCEINLINE bool operator==(const FCsInputSentence& B) const
 	{
 		if (bActive != B.bActive) { return false; }
-		if (bCompleted != B.bActive) { return false; }
+		if (bCompleted != B.bCompleted) { return false; }
 		if (CompletedTime != B.CompletedTime) { return false; }
 		if (Cooldown != B.Cooldown) { return false; }
 		if (bInterval != B.bInterval) { return false; }
@@ -1792,7 +1792,9 @@ namespace NCsGameEvent
 
 	extern CSCORE_API const Type Default__MousePositionXY__;
 	extern CSCORE_API const Type Default__MouseLeftButtonPressed__;
+	extern CSCORE_API const Type Default__MouseLeftButtonReleased__;
 	extern CSCORE_API const Type Default__MouseRightButtonPressed__;
+	extern CSCORE_API const Type Default__MouseRightButtonReleased__;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

@@ -77,7 +77,7 @@ public:
 	* return			Whether the Material was successful set or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Materials"))
-	static bool SetByStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component);
+	static bool SetFromStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component);
 
 	/**
 	* Set the materials on Component from PropertyName on Object.
@@ -89,7 +89,7 @@ public:
 	* return				Whether the Material was successful set or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,PropertyName"))
-	static bool SetByObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component);
+	static bool SetFromObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component);
 
 #pragma endregion Set
 

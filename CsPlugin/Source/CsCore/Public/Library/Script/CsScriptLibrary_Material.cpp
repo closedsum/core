@@ -20,8 +20,8 @@ namespace NCsScriptLibraryMaterial
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, Set);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetByStruct);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetByObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetFromStruct);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetFromObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, PlayAnim);
 		}
 	}
@@ -86,20 +86,20 @@ bool UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent*
 	return MaterialLibrary::SetSafe(Context, Component, Materials);
 }
 
-bool UCsScriptLibrary_Material::SetByStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component)
+bool UCsScriptLibrary_Material::SetFromStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component)
 {
 	using namespace NCsScriptLibraryMaterial::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetByStruct : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromStruct : Context;
 
 	return Materials.SetSafe(Ctxt, Component);
 }
 
-bool UCsScriptLibrary_Material::SetByObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component)
+bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component)
 {
 	using namespace NCsScriptLibraryMaterial::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetByObject : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject : Context;
 
 	void(*Log)(const FString&) = &FCsLog::Warning;
 

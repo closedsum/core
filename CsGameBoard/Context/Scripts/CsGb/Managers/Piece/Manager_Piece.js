@@ -3,6 +3,8 @@
 
 "use strict"
 
+// Types
+var NJsGame1 = require('CsGb/Piece/Types_Piece.js');
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 var NJsFunction = require('Cs/Library/Library_Function.js');
@@ -13,6 +15,12 @@ var FunctionLibrary = NJsFunction.FLibrary;
 
 // "typedefs" - functions
 var check = CommonLibrary.check;
+var checkf = CommonLibrary.checkf;
+var IsArgsValidChecked = FunctionLibrary.IsArgsValidChecked;
+var IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked;
+
+// "typedefs" - enums
+var PieceType = NJsGame1.NBoard.EPiece;
 
 var Core;
 
@@ -26,8 +34,11 @@ module.exports = class NJsGame
             {
                 constructor()
                 {
+                    this.ClassMap = new Map();
                     this.DataMap = new Map();
                     this.SkinMap = new Map();
+
+                    this.Pieces = [];
                 }
 
                 Init(core)
@@ -35,13 +46,18 @@ module.exports = class NJsGame
                     Core = core;
                 }
 
-                ConstructDataObject(context, dataName, className)
+                /**
+                 * @param {string} context 
+                 * @param {string} dataName 
+                 * @param {string} className 
+                 */
+                ConstructDataObject(context /*string*/, dataName /*string*/, className /*string*/)
                 {
                     let args = [{value: dataName, type: "string"}, {value: className, type: "string"}];
 
-                    check(FunctionLibrary.IsArgsValidChecked(context, args));
-                    check(CommonLibrary.IsStringNotEmptyChecked(context, dataName));
-                    check(CommonLibrary.IsStringNotEmptyChecked(context, className));
+                    check(IsArgsValidChecked(context, args));
+                    check(IsStringNotEmptyChecked(context, dataName));
+                    check(IsStringNotEmptyChecked(context, className));
 
                     let data_C = Core.GetClassChecked(context, className);
                     let data   = new data_C(Core.GetWorld()); 
@@ -52,13 +68,18 @@ module.exports = class NJsGame
                     data.Init(Core, dataName);
                 }
 
-                ConstructSkinObject(context, skinName, className)
+                /**
+                 * @param {string} context 
+                 * @param {string} skinName 
+                 * @param {string} className 
+                 */
+                ConstructSkinObject(context /*string*/, skinName /*string*/, className /*string*/)
                 {
                     let args = [{value: skinName, type: "string"}, {value: className, type: "string"}];
 
-                    check(FunctionLibrary.IsArgsValidChecked(context, args));
-                    check(CommonLibrary.IsStringNotEmptyChecked(context, skinName));
-                    check(CommonLibrary.IsStringNotEmptyChecked(context, className));
+                    check(IsArgsValidChecked(context, args));
+                    check(IsStringNotEmptyChecked(context, skinName));
+                    check(IsStringNotEmptyChecked(context, className));
 
                     let skin_C = Core.GetClassChecked(context, className);
                     let skin   = new skin_C(Core.GetWorld());
@@ -69,24 +90,89 @@ module.exports = class NJsGame
                     skin.Init(Core, skinName);
                 }
 
-                GetDataChecked(context, dataName)
+                /**
+                 * @param {string} context 
+                 * @param {string} dataName
+                 * @returns {NJsGame.NBoard.NPiece.NData.IData} 
+                 */
+                /*DataType*/ GetDataChecked(context /*string*/, dataName /*string*/)
                 {
                     let args = [{value: dataName, type: "string"}];
 
-                    check(FunctionLibrary.IsArgsValidChecked(context, args));
-                    check(CommonLibrary.IsStringNotEmptyChecked(context, dataName));
+                    check(IsArgsValidChecked(context, args));
+                    check(IsStringNotEmptyChecked(context, dataName));
 
                     return this.DataMap.get(dataName);
                 }
 
-                GetSkinChecked(context, skinName)
+                /**
+                 * @param {string} context 
+                 * @param {NJsGame.NBoard.EPiece} pieceType
+                 * @returns {NJsGame.NBoard.NPiece.NData.IData} 
+                 */
+                /*DataType*/ GetDataByTypeChecked(context /*string*/, pieceType /*PieceType*/)
+                {
+                    let args = [{value: pieceType, type: PieceType}];
+
+                    check(IsArgsValidChecked(context, args));
+                 
+                    return this.GetDataChecked(context, pieceType.GetName());
+                }
+
+                /**
+                 * @param {string} context 
+                 * @param {string} skinName 
+                 * @returns {NJsGame.NBoard.NPiece.NData.NSkin.ISkin} 
+                 */
+                /*SkinType*/ GetSkinChecked(context /*string*/, skinName /*string*/)
                 {
                     let args = [{value: skinName, type: "string"}];
 
-                    check(FunctionLibrary.IsArgsValidChecked(context, args));
-                    check(CommonLibrary.IsStringNotEmptyChecked(context, skinName));
+                    check(IsArgsValidChecked(context, args));
+                    check(IsStringNotEmptyChecked(context, skinName));
 
                     return this.SkinMap.get(skinName);
+                }
+
+                /**
+                 * @param {string} context 
+                 * @param {string} dataName
+                 * @param {FJsCPiece_C} 
+                 */
+                /*FJsCPiece_C*/ GetClassChecked(context /*string*/, dataName /*string*/)
+                {
+                    let args = [{value: dataName, type: "string"}];
+
+                    check(IsArgsValidChecked(context, args));
+                    check(IsStringNotEmptyChecked(context, dataName));
+
+                    return this.ClassMap.get(dataName);
+                }
+
+                /**
+                 * @param {string} context 
+                 * @param {NJsGame.NBoard.EPiece} pieceType
+                 * @param {FJsCPiece_C} 
+                 */
+                /*FJsCPiece_C*/ GetClassByTypeChecked(context /*string*/, pieceType /*PieceType*/)
+                {
+                    let args = [{value: pieceType, type: PieceType}];
+
+                    check(IsArgsValidChecked(context, args));
+
+                    return this.GetClassChecked(context, pieceType.GetName());
+                }
+
+                /*FJsCPiece*/ SpawnChecked(context /*string*/, pieceType /*PieceType*/)
+                {
+                    let classType = this.GetClassByTypeChecked(context, pieceType);
+                    let piece = new classType(Core.GetWorld());
+
+                    check(CommonLibrary.IsValidObjectChecked(context, piece));
+
+                    this.Pieces.push(piece);
+                    
+                    return piece;
                 }
             }
         }

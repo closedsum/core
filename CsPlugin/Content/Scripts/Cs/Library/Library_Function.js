@@ -48,8 +48,12 @@ module.exports = class NJsFunction
                 return false;
             }
 
+            // String
             if (param['type'] === "string")
                 checkf(typeof param['value'] === "string", context + ": params[" + index + "].value: " + param['value'] + " NOT type 'string'.");
+            // Class
+            if (CommonLibrary.IsClass(param['type']))
+                checkf(CommonLibrary.IsClassOf(param['value'], param['type']), context + ": params[" + index + "].value: " + param['value'] + " NOT type: params[type].");
 
             return true;
         }

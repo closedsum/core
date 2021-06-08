@@ -334,25 +334,25 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	GENERATED_USTRUCT_BODY()
 
 	/** Describes how the Frames will be played. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAnim2DPlayback Playback;
 
 	/** Describes the time between each Frame. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAnim2DPlayRate PlayRate;
 
 	/** Time between each Frame.
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DeltaTime;
 
 	/** Total time to play all Frames. The time between each Frame will be
 		TotalTime / Number of Frames. 
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomTotalTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TotalTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsAnim2DFlipbookTextureFrame> Frames;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

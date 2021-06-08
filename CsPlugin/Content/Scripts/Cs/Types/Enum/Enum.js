@@ -92,6 +92,8 @@ module.exports = class FJsEnum
         this.MAX = new FJsEnum.FValue(this, "Max", -1);
     }
 
+    [Symbol.iterator]() { return this.Enums.values(); }
+
     /**
      * @returns {string}
      */

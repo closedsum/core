@@ -543,11 +543,11 @@ struct CSCORE_API FCsAnim2DMaterialFlipbookFrame
 
 #define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
 	void CopyToFrame(FrameType* Frame);
+	void CopyToFrameAsValue(FrameType* Frame) const;
 #undef FrameType
 
-private:
-
-	FORCEINLINE void __Nothing() const {}
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UMaterialInterface;
@@ -591,6 +591,7 @@ namespace NCsAnim
 					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Index, int32)
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 				};
 			}
 		}
@@ -660,7 +661,11 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook
 
 #define FlipbookType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
 	void CopyToFlipbook(FlipbookType* Flipbook);
+	void CopyToFlipbookAsValue(FlipbookType* Flipbook) const;
 #undef FlipbookType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
 };
@@ -762,6 +767,7 @@ namespace NCsAnim
 					}
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 					void Reset()
 					{

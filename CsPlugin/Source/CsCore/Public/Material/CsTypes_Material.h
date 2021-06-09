@@ -35,23 +35,96 @@ public:
 	{
 	}
 
-	FORCEINLINE UMaterialInterface* Get() const
-	{
-		return Material_Internal;
-	}
+	/**
+	* Get the Hard reference to the UMaterialInterface asset.
+	*
+	* return Material
+	*/
+	FORCEINLINE UMaterialInterface* Get() const { return Material_Internal; }
 
-	FORCEINLINE UMaterialInterface* GetChecked() const
-	{
-		checkf(Material_Internal, TEXT("FCsMaterialInterface::GetChecked: Material_Internal is NULL."));
+	/**
+	* Get the pointer to the Hard reference to the UMaterialInterface asset.
+	*
+	* return Material
+	*/
+	FORCEINLINE UMaterialInterface** GetPtr() { return &Material_Internal; }
 
-		return Material_Internal;
-	}
-
+	/**
+	* Get the Hard reference to the UMaterialInterface asset.
+	*
+	* @param Context	The calling context.
+	* return			Material
+	*/
 	FORCEINLINE UMaterialInterface* GetChecked(const FString& Context) const
 	{
-		checkf(Material_Internal, TEXT("%s: Material_Internal is NULL."), *Context);
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material is NULL."), *Context);
+
+		checkf(Material_Internal, TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString()));
 
 		return Material_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UMaterialInterface asset.
+	*
+	* return Material
+	*/
+	FORCEINLINE UMaterialInterface* GetChecked() const
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInterface::GetChecked: Mesh is NULL."));
+
+		checkf(Material_Internal, TEXT("FCsMaterialInterface::GetChecked: Material has NOT been loaded from Path @ %s."), *(Material.ToSoftObjectPath().ToString()));
+
+		return Material_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialInterface asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Material
+	*/
+	UMaterialInterface* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Material_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString())));
+		}
+		return Material_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialInterface asset.
+	*
+	* return Material
+	*/
+	UMaterialInterface* GetSafe()
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Material_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
 	}
 };
 

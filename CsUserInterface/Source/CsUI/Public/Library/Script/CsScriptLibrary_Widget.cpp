@@ -23,6 +23,8 @@ namespace NCsScriptLibraryWidget
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionBySlot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetTextBlock);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButton);
 		}
 	}
 }
@@ -135,3 +137,35 @@ UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimation(const FString& Context, 
 }
 
 #pragma endregion Animation
+
+// TextBlock
+#pragma region
+
+UTextBlock* UCsScriptLibrary_Widget::GetTextBlock(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetTextBlock : Context;
+
+	typedef NCsWidget::NTextBlock::FLibrary WidgetTextBlockLibrary;
+
+	return WidgetTextBlockLibrary::GetSafe(Ctxt, Widget, PropertyName);
+}
+
+#pragma endregion TextBlock
+
+// Button
+#pragma region
+
+UButton* UCsScriptLibrary_Widget::GetButton(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetButton : Context;
+
+	typedef NCsWidget::NButton::FLibrary WidgetButtonLibrary;
+
+	return WidgetButtonLibrary::GetSafe(Ctxt, Widget, PropertyName);
+}
+
+#pragma endregion Button

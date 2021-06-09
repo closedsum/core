@@ -20,6 +20,8 @@
 // Components
 #include "Components/Widget.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/TextBlock.h"
+#include "Components/Button.h"
 // World
 #include "Engine/World.h"
 
@@ -452,6 +454,88 @@ namespace NCsWidget
 			const FString& Context = Str::SafePlay;
 
 			return SafePlay(Context, Widget, Params, nullptr);
+		}
+	}
+
+	namespace NTextBlock
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NTextBlock::FLibrary, GetSafe);
+				}
+			}
+		}
+
+		UTextBlock* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValueChecked<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName);
+		}
+
+		UTextBlock* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValue<UTextBlock>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+		}
+
+		UTextBlock* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
+		{
+			using namespace NCsWidget::NTextBlock::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, Widget, PropertyName, nullptr);
+		}
+	}
+
+	namespace NButton
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NButton::FLibrary, GetSafe);
+				}
+			}
+		}
+
+		UButton* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValueChecked<UButton>(Context, Widget, Widget->GetClass(), PropertyName);
+		}
+
+		UButton* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValue<UButton>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+		}
+
+		UButton* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
+		{
+			using namespace NCsWidget::NButton::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, Widget, PropertyName, nullptr);
 		}
 	}
 }

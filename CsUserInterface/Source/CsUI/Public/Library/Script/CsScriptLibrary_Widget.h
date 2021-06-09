@@ -3,6 +3,9 @@
 
 class UUserWidget;
 class UObject;
+class UWidgetAnimation;
+class UTextBlock;
+class UButton;
 
 #include "CsScriptLibrary_Widget.generated.h"
 
@@ -72,4 +75,22 @@ public:
 	static UWidgetAnimation* GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName);
 
 #pragma endregion Animation
+
+// TextBlock
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|TextBlock", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static UTextBlock* GetTextBlock(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+#pragma endregion TextBlock
+
+// Button
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Button", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static UButton* GetButton(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+#pragma endregion Button
 };

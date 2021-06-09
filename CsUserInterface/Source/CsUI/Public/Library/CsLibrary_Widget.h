@@ -6,6 +6,8 @@
 class UObject;
 class UUserWidget;
 class UWidgetAnimation;
+class UTextBlock;
+class UButton;
 
 namespace NCsWidget
 {
@@ -315,6 +317,82 @@ namespace NCsWidget
 			* @param Params
 			*/
 			static void SafePlay(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params);
+		};
+	}
+
+	namespace NTextBlock
+	{
+		struct CSUI_API FLibrary final
+		{
+		public:
+
+			/**
+			* Get a TextBlock with PropertyName from Widget.
+			*
+			* @parma Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				TextBlock.
+			*/
+			static UTextBlock* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+			/**
+			* Safely get a TextBlock with PropertyName from Widget.
+			*
+			* @parma Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* @param Log
+			* return				TextBlock.
+			*/
+			static UTextBlock* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely get a TextBlock with PropertyName from Widget.
+			*
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				TextBlock.
+			*/
+			static UTextBlock* GetSafe(UUserWidget* Widget, const FName& PropertyName);
+		};
+	}
+
+	namespace NButton
+	{
+		struct CSUI_API FLibrary final
+		{
+		public:
+
+			/**
+			* Get a Button with PropertyName from Widget.
+			*
+			* @parma Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				Button.
+			*/
+			static UButton* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+			/**
+			* Safely get a Button with PropertyName from Widget.
+			*
+			* @parma Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* @param Log
+			* return				Button.
+			*/
+			static UButton* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely get a Button with PropertyName from Widget.
+			*
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				Button.
+			*/
+			static UButton* GetSafe(UUserWidget* Widget, const FName& PropertyName);
 		};
 	}
 }

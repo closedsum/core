@@ -1,4 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_Texture.h"
 #include "Material/CsTypes_Material.h"
@@ -309,6 +310,7 @@ namespace NCsAnim
 					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ParameterName, FName)
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 				};
 			}
 		}
@@ -481,6 +483,7 @@ namespace NCsAnim
 					}
 
 					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 					void Reset()
 					{

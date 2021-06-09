@@ -177,6 +177,15 @@ namespace NCsAnim
 					CS_IS_NAME_NONE_CHECKED(GetParameterName())
 					return true;
 				}
+
+				bool FFrame::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				{
+					// Check GetTexture() is Valid
+					CS_IS_PTR_NULL(GetTexture())
+					// Check GetParameterName() is Valid
+					CS_IS_NAME_NONE(GetParameterName())
+					return true;
+				}
 			}
 		}
 	}
@@ -341,6 +350,96 @@ namespace NCsAnim
 					for (const FrameType& Frame : Frames)
 					{
 						check(Frame.IsValidChecked(Context));
+					}
+					return true;
+				}
+
+				bool FFlipbook::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+				{
+					// Check Playback is Valid.
+					typedef NCsAnim::N2D::EMPlayback PlaybackMapType;
+					typedef NCsAnim::N2D::EPlayback PlaybackType;
+
+					CS_IS_ENUM_VALID(PlaybackMapType, PlaybackType, GetPlayback())
+
+					// Check PlayRate is Valid.
+					typedef NCsAnim::N2D::EMPlayRate PlayRateMapType;
+					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+
+					const PlayRateType& PR = GetPlayRate();
+
+					CS_IS_ENUM_VALID(PlayRateMapType, PlayRateType, GetPlayRate())
+
+					// Check DeltaTime or TotalTime
+
+					if (PR != PlayRateType::PR_CustomDeltaTime &&
+						PR != PlayRateType::PR_CustomTotalTime &&
+						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+						PR != PlayRateType::PR_Custom)
+					{
+						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);
+
+						if (FMath::Abs(GetDeltaTime() - DT) > KINDA_SMALL_NUMBER)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, GetDeltaTime(), GetDeltaTime(), DT, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+							return false;
+						}
+
+						if (GetTotalTime() <= 0.0f)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR)));
+							return false;
+						}
+
+						if (!IsLoopingForever())
+						{
+							if (GetTotalCount() <= 0)
+							{
+								CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR)));
+								return false;
+							}
+						}
+					}
+
+					if (PR == PlayRateType::PR_CustomDeltaTime ||
+						PR == PlayRateType::PR_CustomTotalTime ||
+						PR == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
+					{
+						if (GetDeltaTime() <= 0.0f)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetDeltaTime(), PlayRateMapType::Get().ToDisplayNameChar(PR)));
+							return false;
+						}
+
+						if (GetTotalTime() <= 0.0f)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR)));
+							return false;
+						}
+
+						if (!IsLoopingForever())
+						{
+							if (GetTotalCount() <= 0)
+							{
+								CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR)));
+								return false;
+							}
+						}
+					}
+
+					// Check Frames
+					if (Frames.Num() == CS_EMPTY)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set.")));
+						return false;
+					}
+
+					typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
+
+					for (const FrameType& Frame : Frames)
+					{
+						if (!Frame.IsValid(Context, Log))
+							return false;
 					}
 					return true;
 				}

@@ -1,6 +1,4 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-// Types
-#include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -87,21 +85,35 @@ public:
 		return Mesh_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the UStaticMesh asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Static Mesh
+	*/
 	UStaticMesh* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!Mesh.ToSoftObjectPath().IsValid())
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
 			return nullptr;
 		}
 
 		if (!Mesh_Internal)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString())));
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString())));
 		}
 		return Mesh_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the UStaticMesh asset.
+	*
+	* return Static Mesh
+	*/
 	UStaticMesh* GetSafe()
 	{
 		if (!Mesh.ToSoftObjectPath().IsValid())

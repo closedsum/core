@@ -153,12 +153,38 @@ namespace NCsAnim
 #pragma region
 
 #define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
+
 void FCsAnim2DFlipbookTextureFrame::CopyToFrame(FrameType* Frame)
 {
+	Frame->SetTexture(Texture.GetPtr());
+	Frame->SetParameterName(&ParameterName);
+}
+
+void FCsAnim2DFlipbookTextureFrame::CopyToFrameAsValue(FrameType* Frame) const
+{
+	Frame->SetTexture(Texture.Get());
+	Frame->SetParameterName(ParameterName);
+}
+
 #undef FrameType
 
-	Frame->SetTexture(&(Texture.Texture_Internal));
-	Frame->SetParameterName(&ParameterName);
+bool FCsAnim2DFlipbookTextureFrame::IsValidChecked(const FString& Context) const
+{
+	// Check Texture is Valid
+	check(Texture.IsValidChecked(Context));
+	// Check ParameterName is Valid
+	CS_IS_NAME_NONE_CHECKED(ParameterName)
+	return true;
+}
+
+bool FCsAnim2DFlipbookTextureFrame::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Texture is Valid
+	if (!Texture.IsValid(Context, Log))
+		return false;
+	// Check ParameterName is Valid
+	CS_IS_NAME_NONE(ParameterName)
+	return true;
 }
 
 namespace NCsAnim
@@ -263,10 +289,9 @@ void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNam
 }
 
 #define FlipbookType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
-void FCsAnim2DFlipbookTexture::CopyFlipbook(FlipbookType* Flipbook)
-{
-#undef FlipbookType
 
+void FCsAnim2DFlipbookTexture::CopyToFlipbook(FlipbookType* Flipbook)
+{
 	typedef NCsAnim::N2D::EPlayback PlaybackType;
 	typedef NCsAnim::N2D::EPlayRate PlayRateType;
 
@@ -288,6 +313,181 @@ void FCsAnim2DFlipbookTexture::CopyFlipbook(FlipbookType* Flipbook)
 		Frame.CopyToFrame(&F);
 	}
 	Flipbook->SetTotalCount(&TotalCount);
+}
+
+void FCsAnim2DFlipbookTexture::CopyToFlipbookAsValue(FlipbookType* Flipbook) const
+{
+	typedef NCsAnim::N2D::EPlayback PlaybackType;
+	typedef NCsAnim::N2D::EPlayRate PlayRateType;
+
+	Flipbook->SetPlayback((PlaybackType)Playback);
+	Flipbook->SetPlayRate((PlayRateType)PlayRate);
+	Flipbook->SetDeltaTime(DeltaTime);
+	Flipbook->SetTotalTime(TotalTime);
+
+	Flipbook->Frames.Reset(Frames.Num());
+
+	for (const FCsAnim2DFlipbookTextureFrame& Frame : Frames)
+	{
+		Flipbook->Frames.AddDefaulted();
+
+		typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
+
+		FrameType& F = Flipbook->Frames.Last();
+
+		Frame.CopyToFrameAsValue(&F);
+	}
+	Flipbook->SetTotalCount(TotalCount);
+}
+
+#undef FlipbookType
+
+bool FCsAnim2DFlipbookTexture::IsValidChecked(const FString& Context) const
+{
+	// Check Playback is Valid.
+	typedef EMCsAnim2DPlayback PlaybackMapType;
+	typedef ECsAnim2DPlayback PlaybackType;
+
+	check(EMCsAnim2DPlayback::Get().IsValidEnumChecked(Context, Playback));
+	// Check PlayRate is Valid.
+	typedef EMCsAnim2DPlayRate PlayRateMapType;
+	typedef ECsAnim2DPlayRate PlayRateType;
+
+	const PlayRateType& PR = PlayRate;
+
+	check(EMCsAnim2DPlayRate::Get().IsValidEnumChecked(Context, PlayRate));
+
+	// Check DeltaTime or TotalTime
+
+	if (PR != PlayRateType::PR_CustomDeltaTime &&
+		PR != PlayRateType::PR_CustomTotalTime &&
+		PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+		PR != PlayRateType::PR_Custom)
+	{
+		const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime((NCsAnim::N2D::EPlayRate)PR);
+
+		checkf(FMath::Abs(DeltaTime - DT) <= KINDA_SMALL_NUMBER, TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+		checkf(TotalTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, PlayRateMapType::Get().ToDisplayNameChar(PR));
+						
+		if (!IsLoopingForever())
+		{
+			checkf(TotalCount > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, PlayRateMapType::Get().ToDisplayNameChar(PR));
+		}
+	}
+	if (PR == PlayRateType::PR_CustomDeltaTime ||
+		PR == PlayRateType::PR_CustomTotalTime ||
+		PR == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
+	{
+		checkf(DeltaTime > 0.0f, TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, PlayRateMapType::Get().ToDisplayNameChar(PR));
+		checkf(TotalTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+		if (!IsLoopingForever())
+		{
+			checkf(TotalCount > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, PlayRateMapType::Get().ToDisplayNameChar(PR));
+		}
+	}
+
+	// Check Frames
+	checkf(Frames.Num() > CS_EMPTY, TEXT("%s: No Frames set."));
+
+	typedef FCsAnim2DFlipbookTextureFrame FrameType;
+
+	for (const FrameType& Frame : Frames)
+	{
+		check(Frame.IsValidChecked(Context));
+	}
+	return true;
+}
+
+bool FCsAnim2DFlipbookTexture::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Playback is Valid.
+	typedef EMCsAnim2DPlayback PlaybackMapType;
+	typedef ECsAnim2DPlayback PlaybackType;
+
+	CS_IS_ENUM_VALID(PlaybackMapType, PlaybackType, Playback)
+
+	// Check PlayRate is Valid.
+		typedef EMCsAnim2DPlayRate PlayRateMapType;
+	typedef ECsAnim2DPlayRate PlayRateType;
+
+	const PlayRateType& PR = PlayRate;
+
+	CS_IS_ENUM_VALID(PlayRateMapType, PlayRateType, PlayRate)
+
+	// Check DeltaTime or TotalTime
+
+	if (PR != PlayRateType::PR_CustomDeltaTime &&
+		PR != PlayRateType::PR_CustomTotalTime &&
+		PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+		PR != PlayRateType::PR_Custom)
+	{
+		const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime((NCsAnim::N2D::EPlayRate)PR);
+
+		if (FMath::Abs(DeltaTime - DT) > KINDA_SMALL_NUMBER)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+			return false;
+		}
+
+		if (TotalTime <= 0.0f)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+			return false;
+		}
+
+		if (!IsLoopingForever())
+		{
+			if (TotalCount <= 0)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+				return false;
+			}
+		}
+	}
+
+	if (PR == PlayRateType::PR_CustomDeltaTime ||
+		PR == PlayRateType::PR_CustomTotalTime ||
+		PR == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
+	{
+		if (DeltaTime <= 0.0f)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+			return false;
+		}
+
+		if (TotalTime <= 0.0f)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+			return false;
+		}
+
+		if (!IsLoopingForever())
+		{
+			if (TotalCount <= 0)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+				return false;
+			}
+		}
+	}
+
+	// Check Frames
+	if (Frames.Num() == CS_EMPTY)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Frames set.")));
+		return false;
+	}
+
+	typedef FCsAnim2DFlipbookTextureFrame FrameType;
+
+	for (const FrameType& Frame : Frames)
+	{
+		if (!Frame.IsValid(Context, Log))
+			return false;
+	}
+	return true;
 }
 
 namespace NCsAnim
@@ -555,7 +755,7 @@ void FCsAnim2DMaterialFlipbook::OnPostEditChange(const TSet<FString>& PropertyNa
 }
 
 #define FlipbookType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
-void FCsAnim2DMaterialFlipbook::CopyFlipbook(FlipbookType* Flipbook)
+void FCsAnim2DMaterialFlipbook::CopyToFlipbook(FlipbookType* Flipbook)
 {
 #undef FlipbookType
 

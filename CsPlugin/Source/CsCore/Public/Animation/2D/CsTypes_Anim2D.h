@@ -262,11 +262,11 @@ struct CSCORE_API FCsAnim2DFlipbookTextureFrame
 
 #define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
 	void CopyToFrame(FrameType* Frame);
+	void CopyToFrameAsValue(FrameType* Frame) const;
 #undef FrameType
 
-private:
-
-	FORCEINLINE void __Nothing() const {}
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UTexture;
@@ -281,13 +281,15 @@ namespace NCsAnim
 			{
 				struct CSCORE_API FFrame
 				{
-				public:
+				private:
 
 					UTexture* Texture;
 					UTexture** Texture_Emu;
 
 					FName ParameterName;
 					FName* ParameterName_Emu;
+
+				public:
 
 					FFrame() :
 						Texture(nullptr),
@@ -380,8 +382,12 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
 
 #define FlipbookType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
-	void CopyFlipbook(FlipbookType* Flipbook);
+	void CopyToFlipbook(FlipbookType* Flipbook);
+	void CopyToFlipbookAsValue(FlipbookType* Flipbook) const;
 #undef FlipbookType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
 };
@@ -653,7 +659,7 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook
 	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
 
 #define FlipbookType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
-	void CopyFlipbook(FlipbookType* Flipbook);
+	void CopyToFlipbook(FlipbookType* Flipbook);
 #undef FlipbookType
 
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);

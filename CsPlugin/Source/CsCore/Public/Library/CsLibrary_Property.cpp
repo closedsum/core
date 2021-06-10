@@ -55,6 +55,54 @@ namespace NCsProperty
 		return  Property;
 	}
 
+		// Enum
+	#pragma region
+
+	FByteProperty* FLibrary::FindEnumPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType)
+	{
+		FByteProperty* ByteProperty = FindPropertyByNameChecked<FByteProperty>(Context, Struct, PropertyName);
+
+		checkf(!EnumCppType.IsEmpty(), TEXT("%s: EnumCppyType is EMPTY."), *Context);
+
+		checkf(ByteProperty->IsEnum(), TEXT("%s: %s.%s is NOT an Enum."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+
+		checkf(ByteProperty->Enum->CppType.Contains(EnumCppType), TEXT("%s: %s.%s is NOT of type: EnumType."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+
+		return ByteProperty;
+	}
+
+	FByteProperty* FLibrary::FindEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FByteProperty* ByteProperty = FindPropertyByName<FByteProperty>(Context, Struct, PropertyName);
+
+		if (!ByteProperty)
+			return nullptr;
+
+		if (EnumCppType.IsEmpty())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: EnumCppyType is EMPTY."), *Context));
+			return nullptr;
+		}
+
+		if (!ByteProperty->IsEnum())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT an Enum."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+
+		if (!ByteProperty->Enum->CppType.Contains(EnumCppType))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT of type: EnumType."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+		return ByteProperty;
+	}
+
+	#pragma endregion Enum
+
+		// Struct
+	#pragma region
+
 	FStructProperty* FLibrary::FindStructPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
 	{
 		FProperty* Property   = FindPropertyByNameChecked(Context, Struct, PropertyName);
@@ -79,6 +127,11 @@ namespace NCsProperty
 		}
 		return Prop;
 	}
+
+	#pragma endregion Struct
+
+		// Object
+	#pragma region
 
 	FObjectProperty* FLibrary::FindObjectPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
 	{
@@ -105,6 +158,11 @@ namespace NCsProperty
 		return Prop;
 	}
 
+	#pragma endregion Object
+
+		// Array
+	#pragma region
+	
 	FArrayProperty* FLibrary::FindArrayPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
@@ -121,6 +179,38 @@ namespace NCsProperty
 		return Prop;
 	}
 
+	FArrayProperty* FLibrary::FindArrayEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FArrayProperty* Property = FindArrayPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FByteProperty* ByteProperty = CastField<FByteProperty>(Property->Inner);
+
+		if (!ByteProperty)
+			return nullptr;
+
+		if (EnumCppType.IsEmpty())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: EnumCppyType is EMPTY."), *Context));
+			return nullptr;
+		}
+
+		if (!ByteProperty->IsEnum())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT TArray<enum>."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+
+		if (!ByteProperty->Enum->CppType.Contains(EnumCppType))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is enum in TArray<enum> NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *EnumCppType));
+			return nullptr;
+		}
+		return Property;
+	}
+
 	FArrayProperty* FLibrary::FindArrayObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		FArrayProperty* Property = FindArrayPropertyByName(Context, Struct, PropertyName, Log);
@@ -135,9 +225,67 @@ namespace NCsProperty
 		return nullptr;
 	}
 
+	#pragma endregion Array
+
+		// Set
+	#pragma region
+
+	FSetProperty* FLibrary::FindSetPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FSetProperty* Prop = CastField<FSetProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TSet."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Prop;
+	}
+
+	FSetProperty* FLibrary::FindSetEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FSetProperty* Property = FindSetPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FByteProperty* ByteProperty = CastField<FByteProperty>(Property->ElementProp);
+
+		if (!ByteProperty)
+			return nullptr;
+
+		if (EnumCppType.IsEmpty())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: EnumCppyType is EMPTY."), *Context));
+			return nullptr;
+		}
+
+		if (!ByteProperty->IsEnum())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT TSet<enum>."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+
+		if (!ByteProperty->Enum->CppType.Contains(EnumCppType))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is enum in TSet<enum> NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *EnumCppType));
+			return nullptr;
+		}
+		return Property;
+	}
+
+	#pragma endregion Set
+
 	#pragma endregion Find
 
 	// Get
+	#pragma region
+
+		// Bool
 	#pragma region
 
 	bool* FLibrary::GetBoolPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
@@ -170,6 +318,11 @@ namespace NCsProperty
 		return Value;
 	}
 
+	#pragma endregion Bool
+
+		// Int
+	#pragma region
+
 	int32* FLibrary::GetIntPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
 	{
 		CS_IS_PTR_NULL_CHECKED(StructValue)
@@ -199,6 +352,11 @@ namespace NCsProperty
 		}
 		return Value;
 	}
+
+	#pragma endregion Int
+
+		// Float
+	#pragma region
 
 	float* FLibrary::GetFloatPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
 	{
@@ -230,6 +388,11 @@ namespace NCsProperty
 		return Value;
 	}
 
+	#pragma endregion Float
+
+		// Object
+	#pragma region
+
 	UObject* FLibrary::GetObjectPropertyValueChecked(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName)
 	{
 		CS_IS_PTR_NULL_CHECKED(StructValue)
@@ -258,6 +421,8 @@ namespace NCsProperty
 		}
 		return Value;
 	}
+
+	#pragma endregion Object
 
 	#pragma endregion Get
 

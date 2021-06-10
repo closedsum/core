@@ -5,8 +5,11 @@
 
 class UStruct;
 class FProperty;
+class FByteProperty;
 class FStructProperty;
 class FObjectProperty;
+class FArrayProperty;
+class FSetProperty;
 
 namespace NCsProperty
 {
@@ -130,8 +133,39 @@ namespace NCsProperty
 			return FindPropertyByName<T>(Context, Struct, PropertyName, nullptr);
 		}
 
+		// Enum
+	#pragma region
+	public:
+
 		/**
-		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		* Find the Struct Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		static FByteProperty* FindEnumPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType);
+
+		/**
+		* Find the Struct Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		static FByteProperty* FindEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Enum
+
+	// Struct
+	#pragma region
+	public:
+
+		/**
+		* Find the Struct Property from Struct with name: PropertyName.
 		*
 		* @param Context		The calling context.
 		* @param Struct
@@ -226,6 +260,12 @@ namespace NCsProperty
 			return FindStructPropertyByName<StructType>(Context, Struct, PropertyName, nullptr);
 		}
 
+	#pragma endregion Struct
+
+	// Object
+	#pragma region
+	public:
+
 		/**
 		* Find the Object Property of type: T from Struct with name: PropertyName.
 		*
@@ -263,6 +303,12 @@ namespace NCsProperty
 			return FindObjectPropertyByName(Context, Struct, PropertyName, nullptr);
 		}
 
+	#pragma endregion Object
+
+	// Array
+	#pragma region
+	public:
+
 		/**
 		* Find the Array Property from Struct with name: PropertyName.
 		*
@@ -273,6 +319,17 @@ namespace NCsProperty
 		* return				Property.
 		*/
 		static FArrayProperty* FindArrayPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Array Property (TArray of enums) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FArrayProperty* FindArrayEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Find the Array Property (TArray of UObjects) from Struct with name: PropertyName.
@@ -311,6 +368,36 @@ namespace NCsProperty
 				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(ObjectType::StaticClass()->GetName()), *(Property->Inner->GetName())));
 			return nullptr;
 		}
+
+		#pragma endregion Array
+
+	// Set
+	#pragma region
+	public:
+
+		/**
+		* Find the Set Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FSetProperty* FindSetPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Set Property (TSet of enums) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FSetProperty* FindSetEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Set
 
 		/**
 		*
@@ -354,7 +441,7 @@ namespace NCsProperty
 			return Property;
 		}
 
-		#pragma endregion Find
+	#pragma endregion Find
 
 	// Get
 	#pragma region
@@ -378,30 +465,45 @@ namespace NCsProperty
 			return ValuePtr;
 		}
 
+		// Bool
+	#pragma region
+	public:
+
 		static bool* GetBoolPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
 
 		static bool* GetBoolPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Bool
+
+		// Int
+	#pragma region
+	public:
 
 		static int32* GetIntPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
 
 		static int32* GetIntPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
+	#pragma endregion Int
+
+		// Float
+	#pragma region
+	public:
+
 		static float* GetFloatPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
 
 		static float* GetFloatPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
+	#pragma endregion Float
+
+		// Enum
+	#pragma region
+	public:
+
 		template<typename EnumType>
 		static EnumType* GetEnumPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType)
 		{
-			FByteProperty* ByteProperty = FindPropertyByNameChecked<FByteProperty>(Context, Struct, PropertyName);
-
-			checkf(!EnumCppType.IsEmpty(), TEXT("%s: EnumCppyType is EMPTY."), *Context);
-
-			checkf(ByteProperty->IsEnum(), TEXT("%s: %s.%s is NOT an Enum."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
-
-			checkf(ByteProperty->Enum->CppType.Contains(EnumCppType), TEXT("%s: %s.%s is NOT of type: EnumType."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
-
-			EnumType* Value	= ByteProperty->ContainerPtrToValuePtr<EnumType>(StructValue);
+			FByteProperty* ByteProperty = FindEnumPropertyByNameChecked(Context, Struct, PropertyName, EnumCppType);
+			EnumType* Value				= ByteProperty->ContainerPtrToValuePtr<EnumType>(StructValue);
 
 			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
 			return Value;
@@ -410,28 +512,10 @@ namespace NCsProperty
 		template<typename EnumType>
 		static EnumType* GetEnumPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
-			FByteProperty* ByteProperty = FindPropertyByNameChecked<FByteProperty>(Context, Struct, PropertyName);
+			FByteProperty* ByteProperty = FindEnumPropertyByName(Context, Struct, PropertyName, EnumCppType, Log);
 
-			if (EnumCppType.IsEmpty())
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: EnumCppyType is EMPTY."), *Context));
+			if (!ByteProperty)
 				return nullptr;
-			}
-
-			if (!ByteProperty->IsEnum())
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT an Enum."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
-				return nullptr;
-			}
-
-			if (!ByteProperty->Enum->CppType.Contains(EnumCppType))
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: EnumType."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
-				return nullptr;
-			}
 
 			EnumType* Value = ByteProperty->ContainerPtrToValuePtr<EnumType>(StructValue);
 
@@ -442,6 +526,12 @@ namespace NCsProperty
 			}
 			return Value;
 		}
+
+	#pragma endregion Enuym
+
+		// Struct
+	#pragma region
+	public:
 
 		template<typename StructType>
 		static StructType* GetStructPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
@@ -471,6 +561,12 @@ namespace NCsProperty
 			}
 			return Value;
 		}
+
+		#pragma endregion Struct
+
+		// Object
+	#pragma region
+	public:
 
 		template<typename T>
 		static T** GetObjectPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
@@ -634,6 +730,40 @@ namespace NCsProperty
 			}
 		}
 
+	#pragma endregion Object
+
+		// Array
+	#pragma region
+	public:
+
+		/**
+		* Get the Array of enums value of type: EnumType for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				TArray<EnumType>*.
+		*/
+		template<typename EnumType>
+		static TArray<EnumType>* GetArrayEnumPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FArrayProperty* Property = FindArrayEnumPropertyByName(Context, Struct, PropertyName, EnumCppType, Log);
+
+			if (!Property)
+				return nullptr;
+
+			TArray<EnumType>* Value = Property->ContainerPtrToValuePtr<TArray<EnumType>>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
+		}
+
 		/**
 		* Get the Array of UObject value of type: T for the Property with name: PropertyName from StructValue.
 		*
@@ -641,7 +771,7 @@ namespace NCsProperty
 		* @param StructValue
 		* @param Struct
 		* @param PropertyName
-		* return				UObject of type: T.
+		* return				TArray<T>* (UObject of type: T).
 		*/
 		template<typename T>
 		static TArray<T*>* GetArrayObjectPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
@@ -661,6 +791,42 @@ namespace NCsProperty
 			}
 			return Value;
 		}
+
+	#pragma endregion Array
+
+		// Set
+	#pragma region
+	public:
+
+		/**
+		* Get the Set of enums value of type: EnumType for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				TSet<EnumType>*.
+		*/
+		template<typename EnumType>
+		static TSet<EnumType>* GetSetEnumPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSetProperty* Property = FindSetEnumPropertyByName(Context, Struct, PropertyName, EnumCppType, Log);
+
+			if (!Property)
+				return nullptr;
+
+			TSet<EnumType>* Value = Property->ContainerPtrToValuePtr<TSet<EnumType>>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
+		}
+
+	#pragma endregion Set
 
 	#pragma endregion Get
 

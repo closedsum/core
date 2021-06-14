@@ -22,6 +22,24 @@ namespace NCsGameState
 		static AGameStateBase* GetChecked(const FString& Context, const UObject* WorldContext);
 
 		/**
+		* Get GameState of type: T from WorldContext.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return				GameState
+		*/
+		template<typename T>
+		static T* GetChecked(const FString& Context, const UObject* WorldContext)
+		{
+			AGameStateBase* GameState = GetChecked(Context, WorldContext);
+			T* GameStateT			  = Cast<T>(GameState);
+
+			checkf(GameStateT, TEXT("%s: GameState: %s with Class: %s is NOT of type: %s."), *Context, *(GameState->GetName()), *(GameState->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+
+			return GameStateT;
+		}
+
+		/**
 		* Safely get GameState from WorldContext.
 		* 
 		* @param Context		The calling context.

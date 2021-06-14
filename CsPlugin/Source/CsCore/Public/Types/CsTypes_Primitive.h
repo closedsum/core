@@ -635,6 +635,9 @@ public:
 
 #pragma endregion Vector Types
 
+// FCsData_ShortCode
+#pragma region
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_ShortCode
 {
@@ -684,3 +687,32 @@ public:
 		return true;
 	}
 };
+
+#pragma endregion FCsData_ShortCode
+
+// FCsBool_Array
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsBool_Array
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<bool> Flags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAnyTrue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAnyFalse;
+
+	FCsBool_Array() :
+		Flags(),
+		bAnyTrue(false),
+		bAnyFalse(false)
+	{
+	}
+};
+
+#pragma endregion FCsBool_Array

@@ -258,6 +258,8 @@ namespace NCsCVarLog
 
 	namespace Map
 	{
+		// Script
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogOverrideFunctions, CsCVarLogOverrideFunctions);
 		// Managers
 
 			// Data

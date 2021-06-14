@@ -383,6 +383,8 @@ namespace NCsCVarLog
 	{
 		typedef FCsCVarLogMap CVarMapType;
 
+		// Script
+		extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogOverrideFunctions);
 		// Managers
 
 			// Task
@@ -391,8 +393,6 @@ namespace NCsCVarLog
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerRunnableTransactions);
 			// Data
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerDataLoad);
-			// Projectile
-		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerProjectileTransactions);
 
 			// Collectible
 		//extern CSCORE_API CS_DECLARE_ADD_TO_CVAR_MAP(LogManagerCollectibleTransactions);

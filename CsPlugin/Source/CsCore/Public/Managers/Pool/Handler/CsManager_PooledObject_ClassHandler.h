@@ -286,6 +286,80 @@ namespace NCsPooledObject
 					return Ptr;
 				}
 
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE void AddClassByTypeChecked(const FString& Context, const EnumType& Type, UObject* Class)
+				{
+					InterfaceContainerType* Ptr = GetClassByType<EnumMap, EnumType>(Context, Type);
+
+					checkf(!Ptr, TEXT("%s: Class associated with Type: %s ALREADY exists."), *Context, Type.ToChar());
+
+					checkf(Class, TEXT("%s: Class is NULL."), *Context);
+
+					InterfaceContainerType& Container = ClassByTypeMap.Add(Type.GetFName());
+
+					Container.SetObject(Class);
+				}
+
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE bool SafeAddClassByType(const FString& Context, const EnumType& Type, UObject* Class)
+				{
+					InterfaceContainerType* Ptr = GetSafeClassByType<EnumMap, EnumType>(Context, Type);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class associated with Type: %s ALREADY exists."), *Context, Type.ToChar()));
+						return false;
+					}
+
+					if (!Class)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class is NULL."), *Context));
+						return false;
+					}
+
+					InterfaceContainerType& Container = ClassByTypeMap.Add(Type.GetFName());
+
+					Container.SetObject(Class);
+					return true;
+				}
+
+				template<typename EnumClassMap, typename EnumClassType>
+				FORCEINLINE void AddClassByClassTypeChecked(const FString& Context, const EnumClassType& Type, UObject* Class)
+				{
+					InterfaceContainerType* Ptr = GetClassByClassType<EnumClassMap, EnumClassType>(Context, Type);
+
+					checkf(!Ptr, TEXT("%s: Class associated with Class Type: %s ALREADY exists."), *Context, Type.ToChar());
+
+					checkf(Class, TEXT("%s: Class is NULL."), *Context);
+
+					InterfaceContainerType& Container = ClassByClassTypeMap.Add(Type.GetFName());
+
+					Container.SetObject(Class);
+				}
+
+				template<typename EnumClassMap, typename EnumClassType>
+				FORCEINLINE bool SafeAddClassByClassType(const FString& Context, const EnumClassType& Type, UObject* Class)
+				{
+					InterfaceContainerType* Ptr = GetSafeClassByClassType<EnumClassMap, EnumClassType>(Context, Type);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class associated with Class Type: %s ALREADY exists."), *Context, Type.ToChar()));
+						return false;
+					}
+
+					if (!Class)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class is NULL."), *Context));
+						return false;
+					}
+
+					InterfaceContainerType& Container = ClassByClassTypeMap.Add(Type.GetFName());
+
+					Container.SetObject(Class);
+					return true;
+				}
+
 			protected:
 
 				void ResetClassContainers()

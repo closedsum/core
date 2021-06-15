@@ -25,7 +25,13 @@ module.exports = class NJsFunction
             }
         }
 
-        static IsArgFormatValidChecked(context, param, index) 
+        /**
+         * @param {string}                  context 
+         * @param {{type: any, value: any}} param 
+         * @param {number}                  index       int 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsArgFormatValidChecked(context /*string*/, param /*{type: any, value: any}*/, index /*int*/) 
         {
             let Str = NJsFunction.FLibrary.NCached.NStr;
 
@@ -58,7 +64,12 @@ module.exports = class NJsFunction
             return true;
         }
 
-        static IsArgsValidChecked(context, args) 
+        /**
+         * @param {string}                      context 
+         * @param {{type: any, value: any}[]}   args 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsArgsValidChecked(context /*string*/, args /*{type: any, value: any}[]*/) 
         {
             let self = NJsFunction.FLibrary;
 
@@ -73,7 +84,13 @@ module.exports = class NJsFunction
             return true;
         }
 
-        static IsReturn_Bool_Checked(context, fn, caller) 
+        /**
+         * @param {string}      context 
+         * @param {function}    fn 
+         * @param {object}      caller 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsReturn_Bool_Checked(context /*string*/, fn /*function*/, caller /*objects*/) 
         {
             // Check fn is a function
             CommonLibrary.IsFunctionChecked(context, fn);
@@ -84,7 +101,12 @@ module.exports = class NJsFunction
             return CommonLibrary.IsBoolChecked(context, fn());
         }
 
-        static IsReturn_Bool(fn, caller) 
+        /**
+         * @param {function}    fn 
+         * @param {object}      caller 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsReturn_Bool(fn /*function*/, caller /*object*/) 
         {
             // Check fn is a function
             if (!CommonLibrary.IsFunction(fn))
@@ -227,6 +249,36 @@ module.exports = class NJsFunction
             if (CommonLibrary.IsValidObject(caller))
                 return CommonLibrary.IsClassOf(fn.call(caller), classType);
             return CommonLibrary.IsClassOf(fn(), classType);
+        }
+
+        /**
+         * @param {string}      context 
+         * @param {function}    fn 
+         * @param {number}      argCount    int 
+         * @returns {boolean} 
+         */
+        static /*bool*/ IsArgCountChecked(context /*string*/, fn /*function*/, argCount /*int*/)
+        {
+            check(CommonLibrary.IsFunctionChecked(context, fn));
+
+            checkf(fn.length === argCount, context + ": fn: " + fn.name + " argument count: " + fn.length + " != " + argCount);
+
+            return true;
+        }
+
+        /**
+         * @param {function}    fn 
+         * @param {number}      argCount    int
+         * @returns {boolean} 
+         */
+        static /*bool*/ IsArgCount(fn /*function*/, argCount /*int*/)
+        {
+            if (!CommonLibrary.IsFunction(fn))
+                return false;
+
+            if (fn.length !== argCount)
+                return false;
+            return true;
         }
 
         static IsArgCountAndReturn_Bool_Checked(context, fn, argCount, caller) 

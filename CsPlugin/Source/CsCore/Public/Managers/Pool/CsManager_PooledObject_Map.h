@@ -134,7 +134,7 @@ namespace NCsPooledObject
 			/**
 			* Init
 			*/
-			virtual void Init(const FParams& Params)
+			void Init(const FParams& Params)
 			{
 				Name			= Params.Name;
 				CurrentWorld	= Params.World;
@@ -142,8 +142,8 @@ namespace NCsPooledObject
 
 				for (const TPair<KeyType, FPoolParams>& Pair : Params.ObjectParams)
 				{
-					const KeyType& Key			 = Pair.Key;
-					const FPoolParams& PoolParam = Pair.Value;
+					const KeyType& Key			  = Pair.Key;
+					const FPoolParams& PoolParams = Pair.Value;
 
 					ManagerAbstractType* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
 
@@ -161,7 +161,7 @@ namespace NCsPooledObject
 					Pool->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
 
 					// Create pool
-					if (PoolParam.bCreatePool)
+					if (PoolParams.bCreatePool)
 					{
 						CurrentCreatePoolType = Key;
 
@@ -172,7 +172,7 @@ namespace NCsPooledObject
 							// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
 						FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
 
-						Pool->Init(PoolParam);
+						Pool->Init(PoolParams);
 
 						// Remove any delegates used to capture events when calling CreatePool
 						Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
@@ -180,7 +180,7 @@ namespace NCsPooledObject
 					}
 					else
 					{
-						Pool->Init(PoolParam);
+						Pool->Init(PoolParams);
 					}
 
 					// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
@@ -193,6 +193,54 @@ namespace NCsPooledObject
 				FunctionNames[(uint8)EFunctionNames::Deallocate]	= Name + TEXT("::Deallocate");
 				FunctionNames[(uint8)EFunctionNames::DeallocateAll] = Name + TEXT("::DeallocateAll");
 				FunctionNames[(uint8)EFunctionNames::Spawn]			= Name + TEXT("::Spawn");
+			}
+
+			void Init(const KeyType& Key, const FPoolParams& PoolParams)
+			{
+				checkf(Pools.Find(Key), TEXT("%s::Init: PoolParams ALREADY exist for Key."), *Name);
+
+				ManagerAbstractType* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
+
+				Pool->Log_Impl			  = Log_Impl;
+				Pool->LogTransaction_Impl = LogTransaction_Impl;
+
+				Pool->ConstructContainer_Impl.BindRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructContainer_Internal);
+				Pool->ConstructPayload_Impl.BindRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::ConstructPayload_Internal);
+
+				// Bind the appropriate Script delegates.
+				Pool->Script_GetCache_Impl			= Script_GetCache_Impl;
+				Pool->Script_Allocate_Impl			= Script_Allocate_Impl;
+				Pool->Script_Deallocate_Impl		= Script_Deallocate_Impl;
+				Pool->Script_Update_Impl			= Script_Update_Impl;
+				Pool->Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
+
+				// Create pool
+				if (PoolParams.bCreatePool)
+				{
+					CurrentCreatePoolType = Key;
+
+					// Add delegates to capture events when calling CreatePool
+
+						// Bind to OnConstructObject so the event OnConstructObject_Event can properly broadcast events.
+					FDelegateHandle OnConstructObjectHandle = Pool->OnConstructObject_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnConstructObject);
+						// Bind to OnAddToPool so the event OnAddToPool_Event can properly broadcast events.
+					FDelegateHandle OnAddToPoolHandle = Pool->OnAddToPool_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnCreatePool_AddToPool);
+
+					Pool->Init(PoolParams);
+
+					// Remove any delegates used to capture events when calling CreatePool
+					Pool->OnConstructObject_Event.Remove(OnConstructObjectHandle);
+					Pool->OnAddToPool_Event.Remove(OnAddToPoolHandle);
+				}
+				else
+				{
+					Pool->Init(PoolParams);
+				}
+
+				// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
+				Pool->OnUpdate_Object_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
+
+				Pools.Add(Key, Pool);
 			}
 
 			/**

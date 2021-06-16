@@ -104,6 +104,21 @@ namespace NCsData
 
 		#pragma endregion Get
 
+		// Data
+		#pragma region
+
+		bool FLibrary::SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return false;
+
+			return Manager_Data->SafeAddDataObject_Loaded(Context, EntryName, Data, Log);
+		}
+
+		#pragma endregion Data
+
 		// DataTabe
 		#pragma region
 		

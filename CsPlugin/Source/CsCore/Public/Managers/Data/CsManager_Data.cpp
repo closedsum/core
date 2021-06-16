@@ -7,6 +7,8 @@
 #include "CsCVars_Manager_Data.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
+#include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Data
@@ -993,3 +995,74 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 #pragma endregion Payload
 
 #pragma endregion Get
+
+// Add
+#pragma region
+
+	// Data
+#pragma region
+
+bool UCsManager_Data::SafeAddData_Loaded(const FString& Context, const FName& EntryName, ICsData* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	CS_IS_NAME_NONE(EntryName)
+
+	CS_IS_PTR_NULL(Data)
+
+	if (ICsData** DataPtr = DataMap_Loaded.Find(EntryName))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data already exists for EntryName: %s."), *Context, *(EntryName.ToString())));
+		return false;
+	}
+
+	typedef NCsData::IData DataType;
+
+	DataType* IData = Data->_getIData();
+
+	if (!IData)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data->_getIData() is NULL (returns DataType (NCsData::IData))."), *Context));
+		return false;
+	}
+
+	DataMap_Loaded.Add(EntryName, Data);
+	return true;
+}
+
+bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FName& EntryName, UObject* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	CS_IS_NAME_NONE(EntryName)
+
+	CS_IS_PTR_NULL(Data)
+
+	ICsData* InterfaceData = Cast<ICsData>(Data);
+
+	if (!InterfaceData)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *(ObjectLibrary::PrintObjectAndClass(Data))));
+		return false;
+	}
+	
+	typedef NCsData::IData DataType;
+
+	DataType* IData = InterfaceData->_getIData();
+
+	if (!IData)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->_getIData() is NULL (returns DataType (NCsData::IData))."), *(Data->GetName()), *Context));
+		return false;
+	}
+
+	if (UObject** DataPtr = DataObjectMap_Loaded.Find(EntryName))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data already exists for EntryName: %s."), *Context, *(EntryName.ToString())));
+		return false;
+	}
+	DataObjectMap_Loaded.Add(EntryName, Data);
+	return true;
+}
+
+#pragma endregion Data
+
+#pragma endregion Add

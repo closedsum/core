@@ -3,6 +3,8 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
 #include "Types/CsTypes_Macro.h"
+// Log
+#include "Utility/CsLog.h"
 #pragma once
 
 class UStaticMeshComponent;
@@ -37,6 +39,16 @@ namespace NCsSkin
 				* return
 				*/
 				static bool IsValidChecked(const FString& Context, SkinType* Skin);
+
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Log		(optional)
+				* return
+				*/
+				static bool IsValid(const FString& Context, SkinType* Skin, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			// Static Mesh
 			#pragma region

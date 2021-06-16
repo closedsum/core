@@ -3,6 +3,7 @@
 
 // Library
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Valid.h"
 // Data
 #include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
 #include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
@@ -29,7 +30,7 @@ namespace NCsSkin
 
 			bool FLibrary::IsValidChecked(const FString& Context, SkinType* Skin)
 			{
-				checkf(Skin, TEXT("%s: Skin is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(Skin)
 
 				// MaterialSkinType
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
@@ -79,6 +80,79 @@ namespace NCsSkin
 					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
 
 					checkf(Materials.Num() == Mesh->Materials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num());
+				}
+				return true;
+			}
+
+			bool FLibrary::IsValid(const FString& Context, SkinType* Skin, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Skin)
+
+				// MaterialSkinType
+				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
+				typedef NCsMaterial::FLibrary MaterialLibrary;
+
+				MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
+
+				if (MaterialSkin)
+				{
+					if (MaterialLibrary::IsValid(Context, MaterialSkin->GetMaterials(), Log))
+						return false;
+				}
+				// StaticMeshSkin
+
+				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
+
+				StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin);
+
+				if (StaticMeshSkin)
+				{
+					if (!StaticMeshSkin->GetStaticMesh())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetStaticMesh() is NULL for Skin implementing interface: %s."), *Context, *(StaticMeshSkinType::Name.ToString())));
+						return false;
+					}
+				}
+				// SkeletalMeshSkin
+				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
+
+				SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin);
+
+				if (SkeletalMeshSkin)
+				{
+					if (!SkeletalMeshSkin->GetSkeletalMesh())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetSkeletalMesh() is NULL for Skin implementing interface: %s."), *Context, *(SkeletalMeshSkinType::Name.ToString())));
+						return false;
+					}
+				}
+
+				// NOTE: For now this seems reasonable to check
+				if (MaterialSkin &&
+					StaticMeshSkin)
+				{
+					UStaticMesh* Mesh							 = StaticMeshSkin->GetStaticMesh();
+					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
+
+					if (Materials.Num() != Mesh->StaticMaterials.Num())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->StaticMaterials.Num()));
+						return false;
+					}
+				}
+
+				// NOTE: For now this seems reasonable to check
+				if (MaterialSkin &&
+					SkeletalMeshSkin)
+				{
+					USkeletalMesh* Mesh							 = SkeletalMeshSkin->GetSkeletalMesh();
+					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
+
+					if (Materials.Num() != Mesh->Materials.Num())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num()));
+						return false;
+					}
 				}
 				return true;
 			}
@@ -171,13 +245,13 @@ namespace NCsSkin
 			#define StaticMeshSkinType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
 			void FLibrary::SetStaticMesh(const FString& Context, StaticMeshSkinType* StaticMeshSkin, UStaticMeshComponent* Component)
 			{
-				checkf(StaticMeshSkin, TEXT("%s: StaticMeshSkin is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(StaticMeshSkin)
 
 				UStaticMesh* Mesh = StaticMeshSkin->GetStaticMesh();
 
 				checkf(Mesh, TEXT("%s: Failed to get StaticMesh from Skin of type: %s."), *Context, *(StaticMeshSkinType::Name.ToString()));
 
-				checkf(Component, TEXT("%s: Component is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(Component)
 
 				Component->SetStaticMesh(Mesh);
 			}
@@ -283,13 +357,13 @@ namespace NCsSkin
 			#define SkeletalMeshSkinType NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
 			void FLibrary::SetSkeletalMesh(const FString& Context, SkeletalMeshSkinType* SkeletalMeshSkin, USkeletalMeshComponent* Component)
 			{
-				checkf(SkeletalMeshSkin, TEXT("%s: SkeletalMeshSkin is nULL."));
+				CS_IS_PTR_NULL_CHECKED(SkeletalMeshSkin)
 
 				USkeletalMesh* Mesh = SkeletalMeshSkin->GetSkeletalMesh();
 
 				checkf(Mesh, TEXT("%s: Failed to get SkeletalMesh from Skin of type: %s."), *Context, *(SkeletalMeshSkinType::Name.ToString()));
 
-				checkf(Component, TEXT("%s: Component is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(Component)
 
 				Component->SetSkeletalMesh(Mesh);
 			}

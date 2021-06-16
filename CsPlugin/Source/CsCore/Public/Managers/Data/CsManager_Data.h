@@ -1321,4 +1321,20 @@ public:
 #pragma endregion Payload
 
 #pragma endregion Get
+
+// Add
+#pragma region
+public:
+
+	// Data
+#pragma region
+public:
+
+	bool SafeAddData_Loaded(const FString& Context, const FName& EntryName, ICsData* Data, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	bool SafeAddDataObject_Loaded(const FString& Context, const FName& EntryName, UObject* Data, void(*Log)(const FString&) = &FCsLog::Warning);
+
+#pragma endregion Data
+
+#pragma endregion Add
 };

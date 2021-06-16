@@ -105,6 +105,27 @@ namespace NCsData
 
 		#pragma endregion Get
 
+		// Data
+		#pragma region
+		public:
+
+		/**
+		*
+		*
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						or
+		*						A reference to the GameInstance.
+		* @param EntryName
+		* @param Data			Object that implements the interface: ICsData and
+		*						Data->_getIData() returns an object that implements the interface: NCsData::IData
+		* @param Log			(optional)
+		* return				Whether Data was successful added to an internal list in Manager_Data.
+		*/
+		static bool SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, void(*Log)(const FString&) = &FCsLog::Warning);
+		
+		#pragma endregion Data
+
 		// DataTabe
 		#pragma region
 		public:

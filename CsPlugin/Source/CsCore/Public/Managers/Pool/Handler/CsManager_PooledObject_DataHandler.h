@@ -414,6 +414,28 @@ namespace NCsPooledObject
 					return Ptr;
 				}
 
+				FORCEINLINE DataInterfaceMapType* GetSafeDataInterfaceMap(const FString& Context, const FName& Name)
+				{
+					if (Name == NAME_None)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+						return nullptr;
+					}
+
+					InterfaceDataType* Data = GetSafeData(Context, Name);
+
+					if (!Data)
+						return nullptr;
+
+					DataInterfaceMapType** Ptr = ImplDataInterfaceMap.Find(Name);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find DataInterfaceMap for Data with Name: %s."), *Context, *(Name.ToString())));
+					}
+					return *Ptr;
+				}
+
 			protected:
 
 				void ResetDataContainers()

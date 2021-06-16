@@ -10,7 +10,7 @@ FCsData_FXImpl::FCsData_FXImpl() :
 {
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_FXImpl::Name);
+	InterfaceMap->SetRoot<FCsData_FXImpl>(this);
 
 	InterfaceMap->Add<ICsData_FX>(static_cast<ICsData_FX*>(this));
 }

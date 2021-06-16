@@ -36,8 +36,12 @@ namespace NCsPooledObject
 
 			FCsTime Time;
 
+			uint32 PreserveChangesFromDefaultMask;
+
 			FImpl();
 			~FImpl();
+
+			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
 		// ICsGetInterfaceMap
 		#pragma region
@@ -59,6 +63,8 @@ namespace NCsPooledObject
 			FORCEINLINE void Allocate() { bAllocated = true; }
 
 			void Reset();
+
+			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
 		#pragma endregion IPayload
 		};

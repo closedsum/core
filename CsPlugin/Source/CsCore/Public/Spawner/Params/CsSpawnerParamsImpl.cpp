@@ -15,7 +15,7 @@ FCsSpawnerParamsImpl::FCsSpawnerParamsImpl() :
 {
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsSpawnerParamsImpl::Name);
+	InterfaceMap->SetRoot<FCsSpawnerParamsImpl>(this);
 
 	InterfaceMap->Add<ICsSpawnerParams>(static_cast<ICsSpawnerParams*>(this));
 }

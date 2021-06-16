@@ -96,7 +96,7 @@ namespace NCsSkin
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FImpl::Name);
+					InterfaceMap->SetRoot<FImpl>(this);
 
 					typedef NCsData::IData DataType;
 					typedef NCsSkin::NData::NVisual::IVisual SkinDataType;

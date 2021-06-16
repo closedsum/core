@@ -25,7 +25,7 @@ namespace NCsSkin
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FEmu::Name);
+					InterfaceMap->SetRoot<FEmu>(this);
 
 					InterfaceMap->Add<ISkeletalMesh>(static_cast<ISkeletalMesh*>(this));
 				}

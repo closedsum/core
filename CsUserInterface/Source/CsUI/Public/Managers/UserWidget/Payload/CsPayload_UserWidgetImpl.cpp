@@ -25,7 +25,7 @@ namespace NCsUserWidget
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImpl::Name);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 			typedef NCsUserWidget::NPayload::IPayload WidgetPayloadType;

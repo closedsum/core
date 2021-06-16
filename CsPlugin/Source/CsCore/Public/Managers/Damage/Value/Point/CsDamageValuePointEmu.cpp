@@ -22,7 +22,7 @@ namespace NCsDamage
 				// ICsGetInterfaceMap
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRootName(FEmu::Name);
+				InterfaceMap->SetRoot<FEmu>(this);
 
 				InterfaceMap->Add<IValue>(static_cast<IValue*>(this));
 				InterfaceMap->Add<IPoint>(static_cast<IPoint*>(this));

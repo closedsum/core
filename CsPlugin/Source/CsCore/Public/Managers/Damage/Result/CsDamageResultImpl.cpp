@@ -23,7 +23,7 @@ namespace NCsDamage
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImpl::Name);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			InterfaceMap->Add<IResult>(static_cast<IResult*>(this));
 		}

@@ -12,6 +12,8 @@
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMesh, FImplSlice)
 
 class UStaticMeshComponent;
+struct FCsInterfaceMap;
+class ICsDeconstructInterfaceSliceMap;
 
 /**
 * Represents a "slice" of data, StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IMaterial).
@@ -39,6 +41,8 @@ public:
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 #undef SliceType
+
+	bool SafeAddSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

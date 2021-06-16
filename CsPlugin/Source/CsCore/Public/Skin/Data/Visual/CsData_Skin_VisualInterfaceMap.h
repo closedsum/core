@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Containers/CsGetInterfaceMap.h"
+#include "Containers/CsDeconstructInterfaceSliceMap.h"
 
 struct FCsInterfaceMap;
 class UObject;
@@ -20,7 +21,8 @@ namespace NCsSkin
 			* This interface map allows other "layer" additional objects of the same category
 			* (implementing interfaces related to data and skin visual).
 			*/
-			struct CSCORE_API FInterfaceMap final : public ICsGetInterfaceMap
+			struct CSCORE_API FInterfaceMap final : public ICsGetInterfaceMap,
+													public ICsDeconstructInterfaceSliceMap
 			{
 			public:
 
@@ -31,6 +33,12 @@ namespace NCsSkin
 				// ICsGetInterfaceMap
 
 				FCsInterfaceMap* InterfaceMap;
+
+				// ICsDeconstructInterfaceSliceMap
+
+				TMap<FName, void*> SliceByNameMap;
+
+				TMap<FName, void(*)(void*)> DeconstructSliceImplByNameMap;
 
 			public:
 
@@ -44,12 +52,31 @@ namespace NCsSkin
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-				{
-					return InterfaceMap;
-				}
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 			#pragma endregion ICsGetInterfaceMap
+
+				void AddSlice(const FName& SliceName, void* Slice)
+				{
+					checkf(SliceName != NAME_None, TEXT("%s::AddSlice: SliceName: None is NOT Valid."), *(Name.ToString()));
+
+					checkf(Slice, TEXT("%s::AddSlice: Slice is NULL."), *(Name.ToString()));
+
+					checkf(SliceByNameMap.Find(SliceName) == nullptr, TEXT("%s::AddSlice: Slice: %s has ALREADY been added."), *(Name.ToString()), *(SliceName.ToString()));
+
+					SliceByNameMap.Add(SliceName, Slice);
+				}
+
+				void AddDeconstructSliceImpl(const FName& SliceName, void(*DeconstructImpl)(void*))
+				{
+					checkf(SliceName != NAME_None, TEXT("%s::AddDeconstructSliceImpl: SliceName: None is NOT Valid."), *(Name.ToString()));
+
+					checkf(DeconstructImpl, TEXT("%s::AddDeconstructSliceImpl: DeconstructImpl is NULL."), *(Name.ToString()));
+
+					checkf(DeconstructSliceImplByNameMap.Find(SliceName) == nullptr, TEXT("%s::AddSlice: DeconstructImpl has ALREADY been added for Slice: %s."), *(Name.ToString()), *(SliceName.ToString()));
+
+					DeconstructSliceImplByNameMap.Add(SliceName, DeconstructImpl);
+				}
 			};
 		}
 	}

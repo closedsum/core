@@ -47,7 +47,7 @@ namespace NCsSound
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImpl::Name);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsPooledObject::NCache::ICache PooledCacheType;
 			typedef NCsSound::NCache::ICache SoundCacheType;

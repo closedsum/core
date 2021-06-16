@@ -14,7 +14,7 @@ namespace NCsDamage
 			MinRange(0.0f),
 			MaxRange(0.0f)
 		{
-			InterfaceMap.SetRootName(FImpl::Name);
+			InterfaceMap.SetRoot<FImpl>(this);
 
 			InterfaceMap.Add<IRange>(static_cast<IRange*>(this));
 			InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));

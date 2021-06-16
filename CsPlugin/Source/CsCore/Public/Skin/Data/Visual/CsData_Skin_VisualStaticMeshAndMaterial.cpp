@@ -60,7 +60,7 @@ void UCsData_Skin_VisualStaticMeshAndMaterial::Init()
 		// Setup InterfaceMap
 		InterfaceMap = new FCsInterfaceMap();
 
-		InterfaceMap->SetRootName(UCsData_Skin_VisualStaticMeshAndMaterial::Name);
+		InterfaceMap->SetRoot<UCsData_Skin_VisualStaticMeshAndMaterial>(this);
 
 		typedef ICsData DataType;
 		typedef ICsData_Skin_Visual SkinDataType;

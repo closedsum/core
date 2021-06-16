@@ -17,12 +17,13 @@ namespace NCsPooledObject
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
-			Time()
+			Time(),
+			PreserveChangesFromDefaultMask(0)
 		{
 			// ICsGetInterfaceMap
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImpl::Name);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			InterfaceMap->Add<IPayload>(static_cast<IPayload*>(this));
 		}

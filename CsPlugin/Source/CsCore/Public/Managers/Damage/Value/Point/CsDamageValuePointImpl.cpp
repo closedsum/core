@@ -18,7 +18,7 @@ namespace NCsDamage
 				Value_Emu(nullptr)
 			{
 				// ICsGetInterfaceMap
-				InterfaceMap.SetRootName(FImpl::Name);
+				InterfaceMap.SetRoot<FImpl>(this);
 
 				InterfaceMap.Add<IValue>(static_cast<IValue*>(this));
 				InterfaceMap.Add<IPoint>(static_cast<IPoint*>(this));

@@ -48,7 +48,7 @@ namespace NCsSkeletalMeshActor
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImpl::Name);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsPooledObject::NCache::ICache PooledCacheType;
 			typedef NCsSkeletalMeshActor::NCache::ICache SkeletalMeshCacheType;

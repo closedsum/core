@@ -41,7 +41,7 @@ namespace NCsDamage
 					// ICsGetInterfaceMap
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FEmu::Name);
+					InterfaceMap->SetRoot<FEmu>(this);
 
 					typedef NCsDamage::NData::IData DataType;
 					typedef NCsDamage::NData::NShape::IShape ShapeDataType;

@@ -10,7 +10,7 @@ FCsData_StaticMeshActorImpl::FCsData_StaticMeshActorImpl() :
 {
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_StaticMeshActorImpl::Name);
+	InterfaceMap->SetRoot<FCsData_StaticMeshActorImpl>(this);
 
 	InterfaceMap->Add<ICsData_StaticMeshActor>(static_cast<ICsData_StaticMeshActor*>(this));
 }

@@ -31,7 +31,7 @@ namespace NCsSkeletalMeshActor
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FOneShot::Name);
+					InterfaceMap->SetRoot<FOneShot>(this);
 
 					typedef NCsSkeletalMeshActor::NParams::IParams ParamsType;
 
@@ -75,7 +75,7 @@ namespace NCsSkeletalMeshActor
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FOneShot::Name);
+					InterfaceMap->SetRoot<FOneShot>(this);
 
 					typedef NCsSkeletalMeshActor::NParams::IParams ParamsType;
 

@@ -10,7 +10,7 @@ FCsData_SoundImpl::FCsData_SoundImpl() :
 {
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_SoundImpl::Name);
+	InterfaceMap->SetRoot<FCsData_SoundImpl>(this);
 
 	InterfaceMap->Add<ICsData_Sound>(static_cast<ICsData_Sound*>(this));
 }

@@ -3,6 +3,9 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Containers
+#include "Containers/CsInterfaceMap.h"
+#include "Containers/CsDeconstructInterfaceSliceMap.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 
@@ -50,6 +53,33 @@ bool FCsData_Skin_VisualStaticMeshImplSlice::SetSafe(const FString& Context, USt
 	CS_IS_PTR_NULL(Component)
 
 	Component->SetStaticMesh(Mesh.Get());
+	return true;
+}
+
+bool FCsData_Skin_VisualStaticMeshImplSlice::SafeAddSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_PTR_NULL(InterfaceMap)
+
+	typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
+
+	if (InterfaceMap->Implements(InterfaceType::Name))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InterfaceMap already contains a reference an interface of tyep: %s."), *Context, *(InterfaceType::Name.ToString())));
+		return false;
+	}
+
+	typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
+	typedef NCsSkin::NData::NVisual::NStaticMesh::FImplSlice SliceType;
+
+	SliceType* Slice = new SliceType();
+
+	// Add slice as type SkinType
+	InterfaceMap->Add<InterfaceType>(InterfaceType::Name, static_cast<InterfaceType*>(Slice));
+	// Set the InterfaceMap of Data to the "root" InterfaceMap
+	Slice->SetInterfaceMap(InterfaceMap);
+
+	DeconstructInterfaceSliceMap->AddSlice(SliceType::Name, Slice);
+	DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(SliceType::Name, &SliceType::Deconstruct);
 	return true;
 }
 

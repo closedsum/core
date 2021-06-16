@@ -14,6 +14,8 @@ struct CSCORE_API FCsInterfaceMap
 {
 private:
 
+	void* Root;
+
 	/** */
 	FName RootName;
 
@@ -29,6 +31,7 @@ private:
 public:
 
 	FCsInterfaceMap() :
+		Root(nullptr),
 		RootName(NAME_None),
 		Interfaces(),
 		bUniqueBasedSlices(false),
@@ -41,9 +44,27 @@ public:
 	*
 	* @param InName
 	*/
-	FORCEINLINE void SetRootName(const FName& Name)
+	template<typename RootType>
+	FORCEINLINE void SetRoot(RootType* InRoot)
 	{
-		RootName = Name;
+		static_assert(!std::is_abstract<RootType>(), "FCsInterfaceMap::SetRoot: RootType IS abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, RootType>(), "FCsInterfaceMap::SetRoot: RootType is NOT a child of: ICsGetInterfaceMap.");
+
+		Root	 = InRoot;
+		RootName = RootType::Name;
+	}
+
+	template<typename RootType>
+	FORCEINLINE RootType* GetRoot()
+	{
+		static_assert(!std::is_abstract<RootType>(), "FCsInterfaceMap::GetRoot: RootType IS abstract.");
+
+		static_assert(std::is_base_of<ICsGetInterfaceMap, RootType>(), "FCsInterfaceMap::SetRoot: RootType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(RootName == RootType::Name, TEXT("FCsInterfaceMap::GetRoot: Root is NOT of type: %s."), *(RootType::Name.ToString()));
+
+		return static_cast<RootType*>(Root);
 	}
 
 	/**

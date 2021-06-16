@@ -10,7 +10,7 @@ FCsData_SkeletalMeshActorImpl::FCsData_SkeletalMeshActorImpl() :
 {
 	InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRootName(FCsData_SkeletalMeshActorImpl::Name);
+	InterfaceMap->SetRoot<FCsData_SkeletalMeshActorImpl>(this);
 
 	InterfaceMap->Add<ICsData_SkeletalMeshActor>(static_cast<ICsData_SkeletalMeshActor*>(this));
 }

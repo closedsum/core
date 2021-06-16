@@ -47,7 +47,7 @@ namespace NCsWidgetActor
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImpl::Name);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsPooledObject::NCache::ICache PooledCacheType;
 			typedef NCsWidgetActor::NCache::ICache WidgetActorCacheType;

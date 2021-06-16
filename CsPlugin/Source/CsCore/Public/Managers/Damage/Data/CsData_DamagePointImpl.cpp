@@ -52,7 +52,7 @@ namespace NCsDamage
 
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRootName(FImpl::Name);
+				InterfaceMap->SetRoot<FImpl>(this);
 
 				typedef NCsDamage::NData::IData DataType;
 

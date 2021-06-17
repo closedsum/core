@@ -350,9 +350,9 @@ namespace NCsLevel
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @parma Log
+			* @param Log
 			* return				LevelScriptActor of type: T.
 			*/
 			template<typename T>

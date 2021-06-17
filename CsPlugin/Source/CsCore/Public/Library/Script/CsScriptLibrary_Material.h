@@ -33,7 +33,7 @@ public:
 	* Load a Material Interface at the given Path.
 	* 
 	* @param Context	The calling context.
-	* @parma Path		FString path to the Material Interface to load.
+	* @param Path		FString path to the Material Interface to load.
 	* return			Material Interface
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Path"))

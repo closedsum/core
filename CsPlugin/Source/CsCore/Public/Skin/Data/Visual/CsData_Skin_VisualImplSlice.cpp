@@ -35,7 +35,7 @@ namespace NCsSkin
 				{
 					namespace Name
 					{
-						const FName SkinVisualSlice = FName("SkinVisualSlice");
+						const FName VisualSkinSlice = FName("VisualSkinSlice");
 					}
 				}
 			}

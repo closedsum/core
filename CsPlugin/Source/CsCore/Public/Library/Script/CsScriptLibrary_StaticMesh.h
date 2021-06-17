@@ -29,7 +29,7 @@ public:
 	* Load a StaticMesh at the given Path.
 	* 
 	* @param Context	The calling context.
-	* @parma Path		FString path to the StaticMesh to load.
+	* @param Path		FString path to the StaticMesh to load.
 	* return			StaticMesh
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|StaticMesh", meta = (AutoCreateRefTerm = "Context,Path"))

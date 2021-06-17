@@ -323,7 +323,7 @@ namespace NCsPooledObject
 					return true;
 				}
 
-				template<typename EnumClassMap, typename EnumClassType>
+				template<typename EnumClassMap>
 				FORCEINLINE void AddClassByClassTypeChecked(const FString& Context, const EnumClassType& Type, UObject* Class)
 				{
 					InterfaceContainerType* Ptr = GetClassByClassType<EnumClassMap, EnumClassType>(Context, Type);
@@ -337,7 +337,7 @@ namespace NCsPooledObject
 					Container.SetObject(Class);
 				}
 
-				template<typename EnumClassMap, typename EnumClassType>
+				template<typename EnumClassMap>
 				FORCEINLINE bool SafeAddClassByClassType(const FString& Context, const EnumClassType& Type, UObject* Class)
 				{
 					InterfaceContainerType* Ptr = GetSafeClassByClassType<EnumClassMap, EnumClassType>(Context, Type);

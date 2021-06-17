@@ -30,7 +30,7 @@ namespace NCsStaticMeshActor
 			*
 			* @param Context	The calling context.
 			* @param Payload
-			* @parma Shot
+			* @param Shot
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload);
 

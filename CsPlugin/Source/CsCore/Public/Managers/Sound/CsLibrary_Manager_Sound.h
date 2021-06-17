@@ -42,7 +42,7 @@ namespace NCsSound
 			/**
 			* Safely get the Context (Root) for UCsManager_Sound from a WorldContext.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log
 			* return				Context for UCsManager_Sound.

@@ -12,6 +12,8 @@ namespace NCsGameState
 	{
 	public:
 
+		static FString PrintGameStateAndClass(AGameStateBase* GameState);
+
 		/**
 		* Get GameState from WorldContext.
 		* 
@@ -34,7 +36,7 @@ namespace NCsGameState
 			AGameStateBase* GameState = GetChecked(Context, WorldContext);
 			T* GameStateT			  = Cast<T>(GameState);
 
-			checkf(GameStateT, TEXT("%s: GameState: %s with Class: %s is NOT of type: %s."), *Context, *(GameState->GetName()), *(GameState->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+			checkf(GameStateT, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintGameStateAndClass(GameState), *(T::StaticClass()->GetName()));
 
 			return GameStateT;
 		}

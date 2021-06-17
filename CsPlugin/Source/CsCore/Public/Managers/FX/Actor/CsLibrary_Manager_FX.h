@@ -30,7 +30,7 @@ namespace NCsFX
 			/**
 			* Get the Context (Root) for UCsManager_FX from a WorldContext.
 			* 
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_FX.
 			*/
@@ -46,7 +46,7 @@ namespace NCsFX
 			/**
 			* Safely get the Context (Root) for UCsManager_FX from a WorldContext.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log
 			* return				Context for UCsManager_FX.

@@ -24,6 +24,11 @@ namespace NCsGameState
 		}
 	}
 
+	FString FLibrary::PrintGameStateAndClass(AGameStateBase* GameState)
+	{
+		return FString::Printf(TEXT("GameState: %s with Class: %s"), *(GameState->GetName()), *(GameState->GetClass()->GetName()));
+	}
+
 	AGameStateBase* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
 		CS_IS_PTR_NULL_CHECKED(WorldContext)

@@ -4,7 +4,10 @@
 // Library
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
+// Containers
+#include "Containers/CsDeconstructInterfaceSliceMap.h"
 // Data
+#include "Skin/Data/Visual/CsData_Skin_VisualInterfaceMap.h"
 #include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
 #include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
@@ -155,6 +158,23 @@ namespace NCsSkin
 					}
 				}
 				return true;
+			}
+
+			ICsDeconstructInterfaceSliceMap* FLibrary::GetSafeDeconstructInterfaceSliceMap(const FString& Context, SkinType* Skin, void(*Log)(const FString&) /*=FCLog::Warning*/)
+			{
+				CS_IS_PTR_NULL_RET_NULL(Skin)
+
+				FCsInterfaceMap* InterfaceMap = Skin->GetInterfaceMap();
+				const FName& RootName		  = InterfaceMap->GetRootName();
+
+				typedef NCsSkin::NData::NVisual::FInterfaceMap DataInterfaceMapType;
+
+				if (RootName == DataInterfaceMapType::Name)
+				{
+					return InterfaceMap->GetRoot<DataInterfaceMapType>();
+				}
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin is NOT a composition of unique slices."), *Context));
+				return nullptr;
 			}
 
 		// Static Mesh

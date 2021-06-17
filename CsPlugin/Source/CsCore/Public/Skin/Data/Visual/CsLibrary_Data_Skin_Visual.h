@@ -15,6 +15,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMesh, IStaticM
 // NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NSkeletalMesh, ISkeletalMesh)
 
+class ICsDeconstructInterfaceSliceMap;
+
 namespace NCsSkin
 {
 	namespace NData
@@ -27,6 +29,8 @@ namespace NCsSkin
 
 			struct CSCORE_API FLibrary : TCsLibrary_InterfaceMap<SkinType>
 			{
+			public:
+
 				/**
 				*/
 				static FString PrintObjectAndClass(SkinType* Skin);
@@ -49,6 +53,16 @@ namespace NCsSkin
 				* return
 				*/
 				static bool IsValid(const FString& Context, SkinType* Skin, void(*Log)(const FString&) = &FCsLog::Warning);
+
+				/**
+				*
+				*
+				* @param Context	The calling context.
+				* @param Name
+				* @param Log		(optional)
+				* return
+				*/
+				static ICsDeconstructInterfaceSliceMap* GetSafeDeconstructInterfaceSliceMap(const FString& Context, SkinType* Skin, void(*Log)(const FString&) = FCsLog::Warning);
 
 			// Static Mesh
 			#pragma region

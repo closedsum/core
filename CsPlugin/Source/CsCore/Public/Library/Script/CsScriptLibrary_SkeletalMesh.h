@@ -29,7 +29,7 @@ public:
 	* Load a SkeletalMesh at the given Path.
 	* 
 	* @param Context	The calling context.
-	* @parma Path		FString path to the SkeletalMesh to load.
+	* @param Path		FString path to the SkeletalMesh to load.
 	* return			SkeletalMesh
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|SkeletalMesh", meta = (AutoCreateRefTerm = "Context,Path"))

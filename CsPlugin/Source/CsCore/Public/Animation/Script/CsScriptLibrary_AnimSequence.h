@@ -29,7 +29,7 @@ public:
 	* Load a AnimSequence at the given Path.
 	* 
 	* @param Context	The calling context.
-	* @parma Path		FString path to the AnimSequence to load.
+	* @param Path		FString path to the AnimSequence to load.
 	* return			AnimSequence
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimSequence", meta = (AutoCreateRefTerm = "Context,Path"))

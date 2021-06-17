@@ -233,7 +233,7 @@ namespace NCsWidget
 			/**
 			* Get a Widget Animation with AnimName from Widget.
 			* 
-			* @parma Context	The calling context.
+			* @param Context	The calling context.
 			* @param Widget
 			* @param AnimName	Name of the animation.
 			* return			Widget Animation.
@@ -243,7 +243,7 @@ namespace NCsWidget
 			/**
 			* Safely get a Widget Animation with AnimName from Widget.
 			*
-			* @parma Context	The calling context.
+			* @param Context	The calling context.
 			* @param Widget
 			* @param AnimName	Name of the animation.
 			* @param Log
@@ -329,7 +329,7 @@ namespace NCsWidget
 			/**
 			* Get a TextBlock with PropertyName from Widget.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param Widget
 			* @param PropertyName	Name of the property.
 			* return				TextBlock.
@@ -339,7 +339,7 @@ namespace NCsWidget
 			/**
 			* Safely get a TextBlock with PropertyName from Widget.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param Widget
 			* @param PropertyName	Name of the property.
 			* @param Log
@@ -367,7 +367,7 @@ namespace NCsWidget
 			/**
 			* Get a Button with PropertyName from Widget.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param Widget
 			* @param PropertyName	Name of the property.
 			* return				Button.
@@ -377,7 +377,7 @@ namespace NCsWidget
 			/**
 			* Safely get a Button with PropertyName from Widget.
 			*
-			* @parma Context		The calling context.
+			* @param Context		The calling context.
 			* @param Widget
 			* @param PropertyName	Name of the property.
 			* @param Log

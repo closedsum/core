@@ -29,7 +29,7 @@ public:
 	* Load a AnimMontage at the given Path.
 	* 
 	* @param Context	The calling context.
-	* @parma Path		FString path to the AnimMontage to load.
+	* @param Path		FString path to the AnimMontage to load.
 	* return			AnimMontage
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimMontage", meta = (AutoCreateRefTerm = "Context,Path"))

@@ -32,7 +32,7 @@ public:
 	* Load a AnimBlueprint at the given Path.
 	* 
 	* @param Context	The calling context.
-	* @parma Path		FString path to the AnimBlueprint to load.
+	* @param Path		FString path to the AnimBlueprint to load.
 	* return			AnimBlueprintGeneratedClass
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))

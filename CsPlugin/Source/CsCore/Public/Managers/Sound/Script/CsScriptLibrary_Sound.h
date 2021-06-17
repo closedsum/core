@@ -57,7 +57,7 @@ public:
 	* 
 	* 
 	* @param Context	The calling context.
-	* @parma Path
+	* @param Path
 	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Sound", meta = (AutoCreateRefTerm = "Context,Path"))

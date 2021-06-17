@@ -361,7 +361,7 @@ namespace NCsProperty
 
 			FObjectProperty* InnerProperty = CastField<FObjectProperty>(Property->Inner);
 
-			if (InnerProperty-PropertyClass == ObjectType::StaticClass())
+			if (InnerProperty->PropertyClass == ObjectType::StaticClass())
 				return Property;
 
 			if (Log)

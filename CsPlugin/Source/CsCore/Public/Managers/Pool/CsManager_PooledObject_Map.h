@@ -197,7 +197,7 @@ namespace NCsPooledObject
 
 			void Init(const KeyType& Key, const FPoolParams& PoolParams)
 			{
-				checkf(Pools.Find(Key), TEXT("%s::Init: PoolParams ALREADY exist for Key."), *Name);
+				checkf(Pools.Find(Key) == nullptr, TEXT("%s::Init: PoolParams ALREADY exist for Key."), *Name);
 
 				ManagerAbstractType* Pool = ConstructManagerPooledObjects_Impl.Execute(Key);
 

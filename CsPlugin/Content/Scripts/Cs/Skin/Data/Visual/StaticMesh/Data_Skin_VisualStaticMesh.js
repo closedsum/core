@@ -26,7 +26,12 @@ module.exports = class NJsSkin
                 {
                     // StaticMesh GetStaticMesh()
 
-                    static IsImplementedByChecked(context, o)
+                    /**
+                     * @param {string} context 
+                     * @param {object} o 
+                     * @returns {boolean}
+                     */
+                    static /*bool*/ IsImplementedByChecked(context /*string*/, o /*object*/)
                     {
                         let self = NJsSkin.NData.NVisual.NStaticMesh.IStaticMesh;
 
@@ -37,7 +42,11 @@ module.exports = class NJsSkin
                         return true;
                     }
 
-                    static IsImplementedBy(o)
+                    /**
+                     * @param {object} o 
+                     * @returns {boolean}
+                     */
+                    static /*bool*/ IsImplementedBy(o /*object*/)
                     {
                         let self = NJsSkin.NData.NVisual.NStaticMesh.IStaticMesh;
 
@@ -50,13 +59,23 @@ module.exports = class NJsSkin
                     }
 
                     // GetStaticMesh()
-                    static Implements_GetStaticMeshChecked(context, o)
+
+                    /**
+                     * @param {string} context 
+                     * @param {object} o 
+                     * @returns {boolean}
+                     */
+                    static /*bool*/ Implements_GetStaticMeshChecked(context /*string*/, o /*object*/)
                     {
                         let classType = StaticMesh;
                         return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetStaticMesh, 0, o, classType);
                     }
 
-                    static Implements_GetStaticMesh(o)
+                    /**
+                     * @param {object} o 
+                     * @returns {boolean}
+                     */
+                    static /*bool*/ Implements_GetStaticMesh(o /*object*/)
                     {
                         let classType = StaticMesh;
                         return FunctionLibrary.IsArgCountAndReturn_Class(o.GetStaticMesh, 0, o, classType);

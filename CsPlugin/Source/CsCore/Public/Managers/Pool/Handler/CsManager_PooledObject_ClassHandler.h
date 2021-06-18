@@ -305,7 +305,7 @@ namespace NCsPooledObject
 				{
 					InterfaceContainerType* Ptr = GetSafeClassByType<EnumMap, EnumType>(Context, Type);
 
-					if (!Ptr)
+					if (Ptr)
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class associated with Type: %s ALREADY exists."), *Context, Type.ToChar()));
 						return false;
@@ -340,9 +340,9 @@ namespace NCsPooledObject
 				template<typename EnumClassMap>
 				FORCEINLINE bool SafeAddClassByClassType(const FString& Context, const EnumClassType& Type, UObject* Class)
 				{
-					InterfaceContainerType* Ptr = GetSafeClassByClassType<EnumClassMap, EnumClassType>(Context, Type);
+					InterfaceContainerType* Ptr = GetSafeClassByClassType<EnumClassMap>(Context, Type);
 
-					if (!Ptr)
+					if (Ptr)
 					{
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class associated with Class Type: %s ALREADY exists."), *Context, Type.ToChar()));
 						return false;

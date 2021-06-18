@@ -56,4 +56,8 @@ module.exports = class FJsCore
         check(CommonLibrary.IsClassChecked(context, c));
         return c;
     }
+
+    CompileClasses(){}
+
+    Init(){}
 };

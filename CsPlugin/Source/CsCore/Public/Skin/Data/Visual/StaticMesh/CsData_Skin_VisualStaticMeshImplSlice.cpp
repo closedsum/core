@@ -37,8 +37,6 @@ SliceType* FCsData_Skin_VisualStaticMeshImplSlice::AddSafeSliceAsValue(const FSt
 
 	CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 
-	typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
-
 	SliceType* Slice = new SliceType();
 
 	// Add slice as type SkinType

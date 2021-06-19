@@ -29,24 +29,35 @@ namespace NCsMaterial
 	public:
 
 		/**
-		* Load the Material Interface at the given Path.
+		* Safely load the Material Interface at the given Path.
 		*
 		* @param Context	The calling context.
 		* @param Path		SoftObjectPath to the Material Interface to load.
-		* @param Log
-		* return			NiagaraSystem.
+		* @param Log		(optional)
+		* return			Material Interface.
 		*/
 		static UMaterialInterface* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Load a Material Interface at the given Path.
+		* Safely load a Material Interface at the given Path.
 		*
 		* @param Context	The calling context.
 		* @param Path		FString path to the Material Interface to load.
-		* @param Log
+		* @param Log		(optional)
 		* return			Material Interface.
 		*/
 		static UMaterialInterface* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely load Material Interfaces for the given Paths.
+		*
+		* @param Context		The calling context.
+		* @param Paths			FString paths to the Material Interfaces to load.
+		* @param OutMaterials	(out) 
+		* @param Log			(optional)
+		* return				Material Interface.
+		*/
+		static bool SafeLoad(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Load
 

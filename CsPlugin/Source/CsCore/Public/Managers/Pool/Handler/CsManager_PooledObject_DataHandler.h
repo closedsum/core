@@ -49,8 +49,7 @@ namespace NCsPooledObject
 					ImplDataMap(),
 					ImplDataInterfaceMap(),
 					ImplDataSliceByNameMap(),
-					ImplDataDeconstructByNameMap(),
-					Log(nullptr)
+					ImplDataDeconstructByNameMap()
 				{
 				}
 
@@ -180,7 +179,8 @@ namespace NCsPooledObject
 
 					if (!DataProperty)
 					{
-						Log(FString::Printf(TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
+						
+						FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
 					}
 
 					// Check which rows from the DataTable have been loaded
@@ -223,7 +223,7 @@ namespace NCsPooledObject
 			public:
 
 				template<typename DataSliceType, typename EnumMapType>
-				DataSliceType* SafeConstructData(const FString& Context, const FString& Name)
+				DataSliceType* SafeConstructData(const FString& Context, const FString& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
 
@@ -290,7 +290,7 @@ namespace NCsPooledObject
 				}
 
 				template<typename DataSliceType, typename InterfaceDataSliceType>
-				DataSliceType* AddSafeDataSlice(const FString& Context, const FName& Name)
+				DataSliceType* AddSafeDataSlice(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
 
@@ -359,7 +359,7 @@ namespace NCsPooledObject
 					return Ptr;
 				}
 
-				FORCEINLINE InterfaceDataType* GetSafeData(const FString& Context, const FName& Name)
+				FORCEINLINE InterfaceDataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (Name == NAME_None)
 					{
@@ -397,7 +397,7 @@ namespace NCsPooledObject
 				}
 
 				template<typename EnumMap, typename EnumType>
-				FORCEINLINE InterfaceDataType* GetSafeData(const FString& Context, const EnumType& Type)
+				FORCEINLINE InterfaceDataType* GetSafeData(const FString& Context, const EnumType& Type, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (!EnumMap::Get().IsValidEnum(Type))
 					{
@@ -414,7 +414,7 @@ namespace NCsPooledObject
 					return Ptr;
 				}
 
-				FORCEINLINE DataInterfaceMapType* GetSafeDataInterfaceMap(const FString& Context, const FName& Name)
+				FORCEINLINE DataInterfaceMapType* GetSafeDataInterfaceMap(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (Name == NAME_None)
 					{
@@ -422,7 +422,7 @@ namespace NCsPooledObject
 						return nullptr;
 					}
 
-					InterfaceDataType* Data = GetSafeData(Context, Name);
+					InterfaceDataType* Data = GetSafeData(Context, Name, Log);
 
 					if (!Data)
 						return nullptr;
@@ -472,14 +472,6 @@ namespace NCsPooledObject
 					DataMap.Reset();
 					DataTableRowByPathMap.Reset();
 				}
-
-			// Log
-			#pragma region
-			public:
-
-				void(*Log)(const FString&);
-
-			#pragma endregion Log
 			};
 		}
 	}

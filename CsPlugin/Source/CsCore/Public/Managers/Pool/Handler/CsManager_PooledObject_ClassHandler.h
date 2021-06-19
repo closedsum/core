@@ -40,8 +40,7 @@ namespace NCsPooledObject
 					Outer(nullptr),
 					MyRoot(nullptr),
 					ClassByTypeMap(),
-					ClassByClassTypeMap(),
-					Log(nullptr)
+					ClassByClassTypeMap()
 				{
 				}
 
@@ -99,7 +98,7 @@ namespace NCsPooledObject
 						if (!ClassProperty)
 						{
 		#if !UE_BUILD_SHIPPING
-							Log(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
+							FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
 		#endif // #if !UE_BUILD_SHIPPING
 							return;
 						}
@@ -160,7 +159,7 @@ namespace NCsPooledObject
 							if (!ClassProperty)
 							{
 		#if !UE_BUILD_SHIPPING
-								Log(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
+								FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
 		#endif // #if !UE_BUILD_SHIPPING
 								return;
 							}
@@ -233,7 +232,7 @@ namespace NCsPooledObject
 				}
 
 				template<typename EnumMap, typename EnumType>
-				FORCEINLINE InterfaceContainerType* GetSafeClassByType(const FString& Context, const EnumType& Type)
+				FORCEINLINE InterfaceContainerType* GetSafeClassByType(const FString& Context, const EnumType& Type, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (!EnumMap::Get().IsValidEnum(Type))
 					{
@@ -269,7 +268,7 @@ namespace NCsPooledObject
 				}
 
 				template<typename EnumClassMap>
-				FORCEINLINE InterfaceContainerType* GetSafeClassByClassType(const FString& Context, const EnumClassType& Type)
+				FORCEINLINE InterfaceContainerType* GetSafeClassByClassType(const FString& Context, const EnumClassType& Type, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (!EnumClassMap::Get().IsValidEnum(Type))
 					{
@@ -301,9 +300,9 @@ namespace NCsPooledObject
 				}
 
 				template<typename EnumMap, typename EnumType>
-				FORCEINLINE bool SafeAddClassByType(const FString& Context, const EnumType& Type, UObject* Class)
+				FORCEINLINE bool SafeAddClassByType(const FString& Context, const EnumType& Type, UObject* Class, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
-					InterfaceContainerType* Ptr = GetSafeClassByType<EnumMap, EnumType>(Context, Type);
+					InterfaceContainerType* Ptr = GetSafeClassByType<EnumMap, EnumType>(Context, Type, nullptr);
 
 					if (Ptr)
 					{
@@ -338,9 +337,9 @@ namespace NCsPooledObject
 				}
 
 				template<typename EnumClassMap>
-				FORCEINLINE bool SafeAddClassByClassType(const FString& Context, const EnumClassType& Type, UObject* Class)
+				FORCEINLINE bool SafeAddClassByClassType(const FString& Context, const EnumClassType& Type, UObject* Class, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
-					InterfaceContainerType* Ptr = GetSafeClassByClassType<EnumClassMap>(Context, Type);
+					InterfaceContainerType* Ptr = GetSafeClassByClassType<EnumClassMap>(Context, Type, nullptr);
 
 					if (Ptr)
 					{
@@ -369,14 +368,6 @@ namespace NCsPooledObject
 				}
 
 			#pragma endregion Class
-
-			// Log
-			#pragma region
-			public:
-
-				void(*Log)(const FString&);
-
-			#pragma endregion Log
 			};
 		}
 	}

@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Library/Script/CsScriptLibrary_Material.h"
+#include "Material/Script/CsScriptLibrary_Material.h"
 #include "CsCore.h"
 
 // Library
@@ -18,6 +18,7 @@ namespace NCsScriptLibraryMaterial
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPaths);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, Set);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetFromStruct);
@@ -57,6 +58,17 @@ UMaterialInterface* UCsScriptLibrary_Material::LoadByStringPath(const FString& C
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	return MaterialLibrary::SafeLoad(Ctxt, Path);
+}
+
+bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPaths : Context;
+
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	return MaterialLibrary::SafeLoad(Ctxt, Paths, OutMaterials);
 }
 
 #pragma endregion Load

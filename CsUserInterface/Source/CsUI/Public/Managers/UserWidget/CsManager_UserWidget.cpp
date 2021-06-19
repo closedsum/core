@@ -731,7 +731,6 @@ void UCsManager_UserWidget::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &NCsUI::FLog::Warning;
 }
 
 FCsUserWidgetPooled* UCsManager_UserWidget::GetUserWidgetPooled(const FECsUserWidgetPooled& Type)
@@ -764,7 +763,6 @@ void UCsManager_UserWidget::ConstructPooledClassHandler()
 	PooledClassHandler = new ClassHandlerType();
 	PooledClassHandler->Outer = this;
 	PooledClassHandler->MyRoot = MyRoot;
-	PooledClassHandler->Log = &NCsUI::FLog::Warning;
 }
 
 FCsUserWidgetPtr* UCsManager_UserWidget::GetUserWidget(const FECsUserWidget& Type)
@@ -807,14 +805,12 @@ void UCsManager_UserWidget::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &NCsUI::FLog::Warning;
 }
 
 #define DataType NCsUserWidget::NData::IData
+
 DataType* UCsManager_UserWidget::GetData(const FName& Name)
 {
-#undef DataType
-
 	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetData;
@@ -822,11 +818,8 @@ DataType* UCsManager_UserWidget::GetData(const FName& Name)
 	return DataHandler->GetData(Context, Name);
 }
 
-#define DataType NCsUserWidget::NData::IData
 DataType* UCsManager_UserWidget::GetData(const FECsUserWidget& Type)
 {
-#undef DataType
-
 	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetData;
@@ -834,11 +827,8 @@ DataType* UCsManager_UserWidget::GetData(const FECsUserWidget& Type)
 	return DataHandler->GetData<EMCsUserWidget, FECsUserWidget>(Context, Type);
 }
 
-#define DataType NCsUserWidget::NData::IData
 DataType* UCsManager_UserWidget::GetData(const FECsUserWidgetPooled& Type)
 {
-#undef DataType
-
 	using namespace NCsManagerUserWidget::NCached;
 
 	const FString& Context = Str::GetData;
@@ -846,28 +836,21 @@ DataType* UCsManager_UserWidget::GetData(const FECsUserWidgetPooled& Type)
 	return DataHandler->GetData<EMCsUserWidgetPooled, FECsUserWidgetPooled>(Context, Type);
 }
 
-#define DataType NCsUserWidget::NData::IData
 DataType* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FName& Name)
 {
-#undef DataType
-
 	return DataHandler->GetDataChecked(Context, Name);
 }
 
-#define DataType NCsUserWidget::NData::IData
 DataType* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FECsUserWidget& Type)
 {
-#undef DataType
-
 	return DataHandler->GetDataChecked<EMCsUserWidget, FECsUserWidget>(Context, Type);
 }
 
-#define DataType NCsUserWidget::NData::IData
 DataType* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FECsUserWidgetPooled& Type)
 {
-#undef DataType
-
 	return DataHandler->GetDataChecked<EMCsUserWidgetPooled, FECsUserWidgetPooled>(Context, Type);
 }
+
+#undef DataType
 
 #pragma endregion Data

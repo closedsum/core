@@ -51,6 +51,23 @@ namespace NCsMaterial
 		return ObjectLibrary::SafeLoad<UMaterialInterface>(Context, Path, Log);
 	}
 
+	bool FLibrary::SafeLoad(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		OutMaterials.Reset(Paths.Num());
+
+		bool Success = true;
+
+		for (const FString& Path : Paths)
+		{
+			UMaterialInterface* Material = OutMaterials.Add_GetRef(SafeLoad(Context, Path, Log));
+
+			Success &= Material != nullptr;
+		}
+		return Success;
+	}
+
 	#pragma endregion Load
 
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)

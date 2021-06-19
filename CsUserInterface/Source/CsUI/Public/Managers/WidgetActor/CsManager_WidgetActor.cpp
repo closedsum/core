@@ -735,7 +735,6 @@ void UCsManager_WidgetActor::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &NCsUI::FLog::Warning;
 }
 
 FCsWidgetActorPooled* UCsManager_WidgetActor::GetWidgetActor(const FECsWidgetActor& Type)
@@ -769,14 +768,12 @@ void UCsManager_WidgetActor::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &NCsUI::FLog::Warning;
 }
 
 #define DataType NCsWidgetActor::NData::IData
+
 DataType* UCsManager_WidgetActor::GetData(const FName& Name)
 {
-#undef DataType
-
 	using namespace NCsManagerWidgetActor::NCached;
 
 	const FString& Context = Str::GetData;
@@ -784,28 +781,21 @@ DataType* UCsManager_WidgetActor::GetData(const FName& Name)
 	return DataHandler->GetData(Context, Name);
 }
 
-#define DataType NCsWidgetActor::NData::IData
 DataType* UCsManager_WidgetActor::GetData(const FECsWidgetActor& Type)
 {
-#undef DataType
-
 	return GetData(Type.GetFName());
 }
 
-#define DataType NCsWidgetActor::NData::IData
 DataType* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const FName& Name)
 {
-#undef DataType
-
 	return DataHandler->GetData(Context, Name);
 }
 
-#define DataType NCsWidgetActor::NData::IData
 DataType* UCsManager_WidgetActor::GetDataChecked(const FString& Context, const FECsWidgetActor& Type)
 {
-#undef DataType
-
 	return GetDataChecked(Context, Type.GetFName());
 }
+
+#undef DataType
 
 #pragma endregion Data

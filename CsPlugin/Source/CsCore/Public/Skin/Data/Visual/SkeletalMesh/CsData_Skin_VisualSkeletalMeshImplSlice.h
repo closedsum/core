@@ -11,6 +11,8 @@
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NSkeletalMesh, FImplSlice)
 
 class USkeletalMeshComponent;
+struct FCsInterfaceMap;
+class ICsDeconstructInterfaceSliceMap;
 
 /**
 * Represents a "slice" of data, SkeletalMeshVisualDataType (NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial).
@@ -35,8 +37,12 @@ public:
 	}
 
 #define SliceType NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice
+
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
+
+	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 #undef SliceType
 
 	bool IsValidChecked(const FString& Context) const;
@@ -49,6 +55,7 @@ public:
 struct FCsInterfaceMap;
 class USkeletalMesh;
 class USkeletalMeshComponent;
+class ICsDeconstructInterfaceSliceMap;
 
 namespace NCsSkin
 {
@@ -133,6 +140,8 @@ namespace NCsSkin
 					{
 						delete static_cast<NCsSkin::NData::NVisual::NSkeletalMesh::FImplSlice*>(Ptr);
 					}
+
+					static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

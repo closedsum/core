@@ -39,6 +39,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Path"))
 	static UMaterialInterface* LoadByStringPath(const FString& Context, const FString& Path);
 
+	/**
+	* Load Material Interfaces for the given Paths.
+	*
+	* @param Context		The calling context.
+	* @param Paths			FString paths to the Material Interfaces to load.
+	* @param OutMaterials	(out)
+	* return				Whether the Material Interfaces were successfully loaded for the given Paths.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context"))
+	static bool LoadByStringPaths(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials);
+
 #pragma endregion Load
 
 // Set

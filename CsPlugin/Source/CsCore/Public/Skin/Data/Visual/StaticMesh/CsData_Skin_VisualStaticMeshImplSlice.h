@@ -56,6 +56,7 @@ public:
 struct FCsInterfaceMap;
 class UStaticMesh;
 class UStaticMeshComponent;
+class ICsDeconstructInterfaceSliceMap;
 
 namespace NCsSkin
 {

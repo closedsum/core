@@ -46,10 +46,36 @@ namespace NCsGameState
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* @param Log
+		* @param Log			(optional)
 		* return				GameState
 		*/
 		static AGameStateBase* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get GameState of type: T from WorldContext.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Log			(optional)
+		* return				GameState
+		*/
+		template<typename T>
+		static T* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			AGameStateBase* GameState = GetSafe(Context, WorldContext, Log);
+
+			if (!GameState)
+				return nullptr;
+
+			T* GameStateT = Cast<T>(GameState);
+
+			if (!GameStateT)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s is NOT of type: %s."), *Context, *PrintGameStateAndClass(GameState), *(T::StaticClass()->GetName())));
+			}
+			return GameStateT;
+		}
 
 		/**
 		* Safely get GameState from WorldContext.

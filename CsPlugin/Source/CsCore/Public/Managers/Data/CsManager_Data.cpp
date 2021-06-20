@@ -1024,6 +1024,10 @@ bool UCsManager_Data::SafeAddData_Loaded(const FString& Context, const FName& En
 		return false;
 	}
 
+	if (UObject* UData = Data->_getUObject())
+	{
+		DataObjectMap_Loaded.Add(EntryName, UData);
+	}
 	DataMap_Loaded.Add(EntryName, Data);
 	return true;
 }
@@ -1060,6 +1064,7 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 		return false;
 	}
 	DataObjectMap_Loaded.Add(EntryName, Data);
+	DataMap_Loaded.Add(EntryName, InterfaceData);
 	return true;
 }
 

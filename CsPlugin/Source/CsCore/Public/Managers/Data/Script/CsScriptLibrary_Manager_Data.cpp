@@ -2,8 +2,29 @@
 #include "Managers/Data/Script/CsScriptLibrary_Manager_Data.h"
 #include "CsCore.h"
 
-// Managers
-#include "Managers/Data/CsManager_Data.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+// Library
+#include "Managers/Data/CsLibrary_Manager_Data.h"
+
+// Cached
+#pragma region
+
+namespace NCsScriptLibraryManagerData
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTable);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTableByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTableBySoftObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, SafeAddDataObject_Loaded);
+		}
+	}
+}
+
+#pragma endregion Cached
 
 UCsScriptLibrary_Manager_Data::UCsScriptLibrary_Manager_Data(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -16,57 +37,60 @@ UCsScriptLibrary_Manager_Data::UCsScriptLibrary_Manager_Data(const FObjectInitia
 	// DataTable
 #pragma region
 
-UDataTable* UCsScriptLibrary_Manager_Data::GetDataTable(const UObject* WorldContextObject, const FName& TableName)
+UDataTable* UCsScriptLibrary_Manager_Data::GetDataTable(const FString& Context, const UObject* WorldContextObject, const FName& TableName)
 {
-#if WITH_EDITOR
-	if (UCsManager_Data* Manager = UCsManager_Data::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Data* Manager = UCsManager_Data::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->GetDataTable(TableName);
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Data::GetDataTable: No Manager Data of type UCsManager_Data was created."));
-	}
-	return nullptr;
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataTable : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, TableName);
 }
 
-UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableByPath(const UObject* WorldContextObject, const FSoftObjectPath& Path)
+UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
 {
-#if WITH_EDITOR
-	if (UCsManager_Data* Manager = UCsManager_Data::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Data* Manager = UCsManager_Data::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->GetDataTable(Path);
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Data::GetDataTableByPath: No Manager Data of type UCsManager_Data was created."));
-	}
-	return nullptr;
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataTableByPath : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, Path);
 }
 
-UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableBySoftObject(const UObject* WorldContextObject, TSoftObjectPtr<UDataTable> SoftObject)
+UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableBySoftObject(const FString& Context, const UObject* WorldContextObject, TSoftObjectPtr<UDataTable> SoftObject)
 {
-#if WITH_EDITOR
-	if (UCsManager_Data* Manager = UCsManager_Data::GetFromWorldContextObject(WorldContextObject))
-#else
-	if (UCsManager_Data* Manager = UCsManager_Data::Get())
-#endif // #if WITH_EDITOR
-	{
-		return Manager->GetDataTable(SoftObject);
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Data::GetDataTableByPath: No Manager Data of type UCsManager_Data was created."));
-	}
-	return nullptr;
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataTableBySoftObject : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, SoftObject);
 }
 
 #pragma endregion DataTable
 
 #pragma endregion Get
+
+// Add
+#pragma region
+
+	// Data
+#pragma region
+
+bool UCsScriptLibrary_Manager_Data::SafeAddDataObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, UObject* Data)
+{
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SafeAddDataObject_Loaded : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::SafeAddDataObject_Loaded(Ctxt, WorldContextObject, EntryName, Data);
+}
+
+#pragma endregion Data
+
+#pragma endregion Add

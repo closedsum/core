@@ -104,7 +104,10 @@ namespace NCsData
 
 		#pragma endregion Get
 
-		// Data
+		// Add
+		#pragma region
+
+			// Data
 		#pragma region
 
 		bool FLibrary::SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -119,9 +122,23 @@ namespace NCsData
 
 		#pragma endregion Data
 
+		#pragma endregion Add
+
 		// DataTabe
 		#pragma region
 		
+		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return nullptr;
+
+			CS_IS_NAME_NONE_RET_NULL(EntryName)
+
+			return Manager_Data->GetDataTable(EntryName);
+		}
+
 		UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path)
 		{
 			return GetChecked(Context, ContextObject)->GetDataTableChecked(Context, Path);

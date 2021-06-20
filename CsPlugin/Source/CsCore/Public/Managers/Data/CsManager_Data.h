@@ -414,6 +414,29 @@ public:
 	/**
 	*
 	*
+	* @param EntryName
+	* return			Data
+	*/
+	FORCEINLINE ICsData* GetSafeData(const FString& Context, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (EntryName == NAME_None)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: EntryName: None is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (ICsData** DataPtr = DataMap_Loaded.Find(EntryName))
+			return *DataPtr;
+
+		if (Log)
+			Log(FString::Printf(TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString())));
+		return nullptr;
+	}
+
+	/**
+	*
+	*
 	* @param Path
 	* return		Data
 	*/

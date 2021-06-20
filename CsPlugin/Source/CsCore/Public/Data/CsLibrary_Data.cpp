@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 // Library
+#include "Managers/Data/CsLibrary_Manager_Data.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
@@ -21,17 +22,6 @@ namespace NCsData
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
 		}
 	}
-	
-	#if WITH_EDITOR
-
-	UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
-	{
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		return GameInstanceLibrary::GetChecked(Context, ContextObject);
-	}
-
-	#endif // #if WITH_EDITOR
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)
 	{
@@ -50,7 +40,10 @@ namespace NCsData
 		return FString::Printf(TEXT("INVALID (Non-UObject)"));
 	}
 
+	// Load
+	#pragma region
 	#define DataType NCsData::IData
+
 	DataType* FLibrary::SafeLoad(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Object)
@@ -59,8 +52,7 @@ namespace NCsData
 
 		if (!UData)
 		{
-			if (Log)
-				Log(FString::Printf(TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object)));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object)));
 			return nullptr;
 		}
 
@@ -70,19 +62,14 @@ namespace NCsData
 
 		if (!Data)
 		{
-			if (Log)
-				Log(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			return nullptr;
 		}
 		return Data;
 	}
-	#undef DataType
 
-	#define DataType NCsData::IData
 	DataType* FLibrary::SafeLoad(UObject* Object)
 	{
-	#undef DataType
-
 		using namespace NCached;
 
 		const FString& Context = Str::SafeLoad;
@@ -90,7 +77,11 @@ namespace NCsData
 		return SafeLoad(Context, Object, nullptr);
 	}
 
+	#undef DataType
+	#pragma endregion Load
+
 	#define DataType NCsData::IData
+
 	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Object)
@@ -112,25 +103,41 @@ namespace NCsData
 		}
 		return Data;
 	}
-	#undef DataType
 
-	#define DataType NCsData::IData
-	DataType* FLibrary::GetChecked(const FString& Context, UObject* WorldContext, const FName& DataName)
+	DataType* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
 	{
-		ICsData* UData = UCsManager_Data::Get(GetContextRootChecked(Context, WorldContext))->GetDataChecked(Context, DataName);
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		ICsData* UData = DataManagerLibrary::GetChecked(Context, WorldContext)->GetDataChecked(Context, DataName);
 		DataType* Data = UData->_getIData();
 
 		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
 
 		return Data;
 	}
-	#undef DataType
 
-	#define DataType NCsData::IData
+	DataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+		if (UCsManager_Data* Manager_Data = DataManagerLibrary::GetSafe(Context, WorldContext, Log))
+		{
+			if (ICsData* UData = Manager_Data->GetSafeData(Context, DataName, Log))
+			{
+				DataType* Data = UData->_getIData();
+
+				if (!Data)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
+				}
+				return Data;
+			}
+		}
+		return nullptr;
+	}
+
 	DataType* FLibrary::GetChecked(const FString& Context, UObject* Object)
 	{
-	#undef DataType
-
 		CS_IS_PTR_NULL_CHECKED(Object)
 
 		ICsData* UData = Cast<ICsData>(Object);
@@ -140,7 +147,6 @@ namespace NCsData
 		return GetChecked(Context, UData);
 	}
 
-	#define DataType NCsData::IData
 	DataType* FLibrary::GetChecked(const FString& Context, ICsData* UData)
 	{
 		CS_IS_PTR_NULL_CHECKED(UData)
@@ -151,5 +157,6 @@ namespace NCsData
 
 		return Data;
 	}
+
 	#undef DataType
 }

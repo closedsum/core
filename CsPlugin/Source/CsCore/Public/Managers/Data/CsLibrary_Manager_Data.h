@@ -105,7 +105,11 @@ namespace NCsData
 
 		#pragma endregion Get
 
-		// Data
+		// Add
+		#pragma region
+		public:
+
+			// Data
 		#pragma region
 		public:
 
@@ -126,9 +130,25 @@ namespace NCsData
 		
 		#pragma endregion Data
 
+		#pragma endregion Add
+
 		// DataTabe
 		#pragma region
 		public:
+
+		/**
+		* Safely get a DataTable by EntryName.
+		* Check against the current loaded data tables.
+		*
+		* @param Context	The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+		*						or
+		*						A reference to the GameInstance.
+		* @param EntryName	Name to a data table.
+		* @param Log		(optional)
+		* return			DataTable
+		*/
+		static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Get a DataTable by SoftObjectPath.

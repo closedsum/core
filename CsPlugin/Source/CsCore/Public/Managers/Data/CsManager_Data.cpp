@@ -1027,6 +1027,7 @@ bool UCsManager_Data::SafeAddData_Loaded(const FString& Context, const FName& En
 	if (UObject* UData = Data->_getUObject())
 	{
 		DataObjectMap_Loaded.Add(EntryName, UData);
+		DataObjectsAdded_Loaded.Add(UData);
 	}
 	DataMap_Loaded.Add(EntryName, Data);
 	return true;
@@ -1065,7 +1066,15 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 	}
 	DataObjectMap_Loaded.Add(EntryName, Data);
 	DataMap_Loaded.Add(EntryName, InterfaceData);
+	DataObjectsAdded_Loaded.Add(Data);
 	return true;
+}
+
+void UCsManager_Data::AddDataCompositionObject_Loaded(UObject* Data)
+{
+	checkf(Data, TEXT("UCsManager_Data::AddDataCompositionObject_Loaded: Data is NULL."));
+
+	DataObjectsAdded_Loaded.Add(Data);
 }
 
 #pragma endregion Data

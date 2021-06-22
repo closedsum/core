@@ -120,6 +120,11 @@ namespace NCsData
 			return Manager_Data->SafeAddDataObject_Loaded(Context, EntryName, Data, Log);
 		}
 
+		void FLibrary::AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, UObject* Data)
+		{
+			GetChecked(Context, ContextObject)->AddDataCompositionObject_Loaded(Data);
+		}
+
 		#pragma endregion Data
 
 		#pragma endregion Add

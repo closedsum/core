@@ -114,7 +114,7 @@ namespace NCsData
 		public:
 
 		/**
-		*
+		* Add a Data UObject to an internal list in Manager_Data.
 		*
 		* @param Context		The calling context.
 		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
@@ -128,6 +128,20 @@ namespace NCsData
 		*/
 		static bool SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 		
+		/**
+		* Add a Data UObject to an internal list in Manager_Data.
+		* 
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						or
+		*						A reference to the GameInstance.
+		* @param EntryName
+		* @param Data			Object that serves as the UObject acting as a composition of multiple interfaces. The 
+		*						composition is built from this UObject and the UObject holds all the "hard" references in the 
+		*						case of garbage collection.
+		*/
+		static void AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, UObject* Data);
+
 		#pragma endregion Data
 
 		#pragma endregion Add

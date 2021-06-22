@@ -1349,6 +1349,11 @@ public:
 #pragma region
 public:
 
+	// TOOD: A bit of a HACK to keep Data UObject's constructed in script from being garbage collected
+
+	UPROPERTY()
+	TArray<UObject*> DataObjectsAdded_Loaded;
+
 	// Data
 #pragma region
 public:
@@ -1356,6 +1361,8 @@ public:
 	bool SafeAddData_Loaded(const FString& Context, const FName& EntryName, ICsData* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	bool SafeAddDataObject_Loaded(const FString& Context, const FName& EntryName, UObject* Data, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	void AddDataCompositionObject_Loaded(UObject* Data);
 
 #pragma endregion Data
 

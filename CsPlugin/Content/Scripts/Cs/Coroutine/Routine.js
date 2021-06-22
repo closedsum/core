@@ -56,7 +56,7 @@ module.exports = class JsRoutine
 		this.Delay = 0;
 
 		this.Handle = new CsRoutineHandle();
-
+		
 		this.AbortImpls = [];
 		this.OnAborts = [];
 
@@ -139,7 +139,7 @@ module.exports = class JsRoutine
 	SetIndex(index) 
 	{ 
 		this.Index = index;
-		this.Handle.Index = index; 
+		this.Handle.index = index; 
 	}
 	GetIndex() { return this.Index; }
 
@@ -171,7 +171,7 @@ module.exports = class JsRoutine
 		}
 
 		let RoutineLibrary = CsScriptLibrary_Routine;
-		this.Handle		   = RoutineLibrary.New(this.Handle);
+		this.Handle		   = RoutineLibrary.New(this.Handle).$;
     }
 
 	StartUpdate() { this.State = NJsCoroutine.EState.Update; }

@@ -22,6 +22,7 @@ var CommonLibrary = NJsCommon.FLibrary;
 var checkf = CommonLibrary.checkf;
 var check = CommonLibrary.check;
 var IsValidObject = CommonLibrary.IsValidObject;
+var IsClassOfChecked = CommonLibrary.IsClassOfChecked;
 
 // "typedefs" - enums
 var StateType = NJsCoroutine.EState;
@@ -124,11 +125,15 @@ module.exports = class FJsCoroutineSchedule
     /**
 	*
 	*
-	* @param handle
-	* return
+	* @param {CsRoutineHandle} handle
+	* @returns {FJsResourceContainer}
 	*/
-    GetRoutineContainer(handle)
+    /*FJsResourceContainer*/ GetRoutineContainer(handle /*CsRoutineHandle*/)
     {
+        let context = this.GetRoutineContainer.name;
+
+        check(IsClassOfChecked(context, handle, CsRoutineHandle));
+
         let RoutineLibrary = CsScriptLibrary_Routine;
 
         if (!RoutineLibrary.IsValid(handle))
@@ -136,17 +141,17 @@ module.exports = class FJsCoroutineSchedule
 
         let poolSize = this.Manager_Routine.GetPoolSize();
         
-        if (handle.Index >= this.PoolSize)
+        if (handle.index >= this.PoolSize)
         {
-            console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: %d is not associated with any Routine with Group: %s.", Handle.Index, Group.Name_Internal);
+            console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: " + handle.index + " is not associated with any Routine with Group: " + Group.Name_Internal + ".");
             return null;
         }
 
-        let container = this.Manager_Routine.GetAt(handle.Index);
+        let container = this.Manager_Routine.GetAt(handle.index);
         let r		  = container.Get();
 
-        let IsEqual = RoutineLibrary.EqualEqual_RoutineHandleRoutineHandle;
-
+        let IsEqual = RoutineLibrary.EqualEqual;
+        
         if (IsEqual(r.GetHandle(), handle))
             return container;
         return null;
@@ -155,10 +160,10 @@ module.exports = class FJsCoroutineSchedule
     /**
     *
     *
-    * @param handle
-    * return
+    * @param {CsRoutineHandle} handle
+    * @returns {FJsRoutine}
     */
-    GetRoutine(handle)
+    /*FJsRoutine*/ GetRoutine(handle /*CsRoutineHandle*/)
     {
         let container = this.GetRoutineContainer(handle);
 
@@ -171,12 +176,20 @@ module.exports = class FJsCoroutineSchedule
     // #region Handle
     // public:
 
-    IsHandleValid(handle)
+    /**
+     * @param {CsRoutineHandle} handle 
+     * @returns {boolean}
+     */
+    /*bool*/ IsHandleValid(handle /*CsRoutineHandle*/)
 	{
         return this.GetRoutineContainer(handle) != null;
     }
 
-    IsRunning(handle)
+    /**
+     * @param {CsRoutineHandle} handle 
+     * @returns {boolean}
+     */
+    /*bool*/ IsRunning(handle /*CsRoutineHandle*/)
     {
         let r = this.GetRoutine(handle);
 
@@ -191,12 +204,10 @@ module.exports = class FJsCoroutineSchedule
     // public:
 
     /**
-	*
-	*
-	* @param payloadContainer
-	* return
+	* @param {FJsResourceContainer} payloadContainer
+	* @returns {boolean}
 	*/
-    StartByContainer(payloadContainer)
+    StartByContainer(payloadContainer /*FJsResourceContainer*/)
     {
         let Str = FJsCoroutineSchedule.NCached.NStr;
 
@@ -231,23 +242,19 @@ module.exports = class FJsCoroutineSchedule
     }
 
     /**
-	*
-	*
-	* @param payload
-	* return
+	* @param {} payload
+	* @returns {FJsRoutine}
 	*/
-    Start(payload)
+    /*FJsRoutine*/ Start(payload)
     {
         return this.StartByContainer(this.GetPayloadContainer(payload));
     }
 
     /**
-	*
-	*
 	* @param payloadContainer
-	* return
+	* @returns {FJsRoutine}
 	*/
-    StartChildByContainer(payloadContainer)
+    /*FJsRoutine*/ StartChildByContainer(payloadContainer)
     {
         let Str = FJsCoroutineSchedule.NCached.NStr;
 
@@ -303,10 +310,10 @@ module.exports = class FJsCoroutineSchedule
     /**
 	*
 	*
-	* @param payload
-	* return
+	* @param {} payload
+	* @returns {FJsRoutine}
 	*/
-    StartChild(payload)
+    /*FJsRoutine*/ StartChild(payload)
     {
         return this.StartChildByContainer(this.GetPayloadContainer(payload));
     }
@@ -350,13 +357,13 @@ module.exports = class FJsCoroutineSchedule
 	/**
 	* End the routine associated with the Handle.
 	*
-	* @param handle		Handle to a routine.
-	* return			Whether the routine has successful ended.
-	*					NOTE: If the routine has already ended, this will return false.
+	* @param {CsRoutineHandle}  handle  Handle to a routine.
+	* @returns {boolean}			    Whether the routine has successful ended.
+	*					                NOTE: If the routine has already ended, this will return false.
 	*/
-    End(handle)
+    /*bool*/ End(handle /*CsRoutineHandle*/)
     {
-        let container = this.GetRoutine(handle);
+        let container = this.GetRoutineContainer(handle);
 
         if (IsValidObject(container))
         {
@@ -377,10 +384,10 @@ module.exports = class FJsCoroutineSchedule
 	* Check if a routine associated with the Handle has already ended.
 	* NOTE: This returns True if Handle is NOT Valid.
 	* 
-	* @param handle		Handle to a routine.
-	* return			Whether the routine has already ended.
+	* @param {CsRoutineHandle} handle	Handle to a routine.
+	* @returns {boolean}		        Whether the routine has already ended.
 	*/
-	HasEnded(handle)
+	/*bool*/ HasEnded(handle /*CsRoutineHandle*/)
     {
         let r = this.GetRoutine(handle);
 
@@ -392,10 +399,10 @@ module.exports = class FJsCoroutineSchedule
 	/**
 	* Check if a routine associated with the Handle has just ended.
 	*
-	* @param handle		Handle to a routine.
-	* return			Whether the routine has just ended.
+	* @param {CsRoutineHandle} handle	Handle to a routine.
+	* @returns {boolean}			    Whether the routine has just ended.
 	*/
-	HasJustEnded(handle)
+	/*bool*/ HasJustEnded(handle /*CsRoutineHandle*/)
     {
         let r = this.GetRoutine(handle);
 
@@ -411,11 +418,9 @@ module.exports = class FJsCoroutineSchedule
     // public:
 
     /**
-    *
-    *
-    * @param deltaTime
+    * @params {CsDeltaTime} deltaTime
     */
-    Update(deltaTime)
+    Update(deltaTime /*CsDeltaTime*/)
     {
 	    let current = this.Manager_Routine.GetAllocatedHead();
 	    let next    = current;
@@ -480,7 +485,7 @@ module.exports = class FJsCoroutineSchedule
 	*
 	*
 	* @param {NJsCoroutine.NPayload.FImpl} payload
-	* @returns {FJsResourceContainer}   FJsResourceContainer < PayloadType >
+	* @returns {FJsResourceContainer}               FJsResourceContainer < PayloadType >
 	*/
     /*FJsResourceContainer<PayloadType>*/ GetPayloadContainer(payload /*PayloadType*/)
     {

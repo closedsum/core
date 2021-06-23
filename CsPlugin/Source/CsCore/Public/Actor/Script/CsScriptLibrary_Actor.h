@@ -55,6 +55,18 @@ public:
 	static AActor* GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag);
 
 	/**
+	* Get a list of Actors with the given Tag (checks AActor->Tags).
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Tags
+	* @param OutActors		(out)
+	* return				Whether any actors were found with Tags.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors);
+
+	/**
 	* Get an Actor with the given Name.
 	*
 	* @param Context		The calling context.

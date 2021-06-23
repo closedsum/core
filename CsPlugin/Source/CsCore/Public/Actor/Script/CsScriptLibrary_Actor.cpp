@@ -17,6 +17,7 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRootComponent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRole);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByTag);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetAnyByTags);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
@@ -81,6 +82,17 @@ AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, UObject* WorldC
 	typedef NCsActor::FLibrary ActorLibrary;
 
 	return ActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
+}
+
+bool UCsScriptLibrary_Actor::GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnyByTags : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutActors);
 }
 
 AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name)

@@ -163,7 +163,12 @@ module.exports = class NJsGame
                     return this.GetClassChecked(context, pieceType.GetName());
                 }
 
-                /*FJsCPiece*/ SpawnChecked(context /*string*/, pieceType /*PieceType*/)
+                /**
+                 * @param {string} context 
+                 * @param {NJsGame.NBoard.EPiece} pieceType 
+                 * @returns {FJsCPiece_C}
+                 */
+                /*FJsCPiece_C*/ SpawnChecked(context /*string*/, pieceType /*PieceType*/)
                 {
                     let classType = this.GetClassByTypeChecked(context, pieceType);
                     let piece = new classType(Core.GetWorld());

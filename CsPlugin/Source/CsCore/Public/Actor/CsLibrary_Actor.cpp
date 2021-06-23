@@ -12,6 +12,7 @@
 #include "Library/CsLibrary_Math.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Object.h"
+#include "Library/CsLibrary_Name.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -165,6 +166,86 @@ namespace NCsActor
 
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actor with Tag: %s."), *Context, *(Tag.ToString())));
 		return nullptr;
+	}
+
+	void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_ARRAY_EMPTY_CHECKED(Tags, FName)
+
+		CS_IS_ARRAY_ANY_NONE_CHECKED(Tags)
+
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!A || A->IsPendingKill())
+				continue;
+
+			if (A->Tags.Num() < Tags.Num())
+				continue;
+
+			bool HasAllTags = true;
+
+			for (const FName& Tag : Tags)
+			{
+				if (!A->Tags.Contains(Tag))
+				{
+					continue;
+				}
+			}
+			OutActors.Add(A);
+		}
+
+		typedef NCsName::FLibrary NameLibrary;
+
+		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
+	}
+
+	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_ARRAY_EMPTY(Tags, FName)
+
+		CS_IS_ARRAY_ANY_NONE(Tags)
+
+		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
+		{
+			AActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!A || A->IsPendingKill())
+				continue;
+
+			if (A->Tags.Num() < Tags.Num())
+				continue;
+
+			bool HasAllTags = true;
+
+			for (const FName& Tag : Tags)
+			{
+				if (!A->Tags.Contains(Tag))
+				{
+					continue;
+				}
+			}
+			OutActors.Add(A);
+		}
+
+		typedef NCsName::FLibrary NameLibrary;
+
+		if (OutActors.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Actors with Tags: %s."), *Context, *(NameLibrary::ToString(Tags))));
+		}
+		return OutActors.Num() > CS_EMPTY;
 	}
 
 	AActor* FLibrary::GetByNameChecked(const FString& Context, const UObject* WorldContext, const FName& Name)

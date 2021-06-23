@@ -306,6 +306,33 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			FORCEINLINE static bool IsAnyNoneChecked(const FString& Context, const TArray<FName>& Array, const FString& ArrayName)
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					checkf(Array[I] != NAME_None, TEXT("%s: %s[%d] is None."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			FORCEINLINE static bool IsAnyNone(const FString& Context, const TArray<FName>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (Array[I] == NAME_None)
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is None."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
 		};
 	}
 
@@ -459,6 +486,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Array; \
 		check(NCsValid::NArray::FLibrary::IsAnyNullChecked<__ValueType>(Context, __Array, __temp__str__)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::IsAnyNoneChecked(Context, __Array, __temp__str__)); \
+	}
 
 #pragma endregion Array
 
@@ -516,6 +549,7 @@ namespace NCsValid
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
 #define CS_IS_ARRAY_ANY_NULL_CHECKED(__Array, __ValueType)
+#define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 // FSoftObjectPath
@@ -725,6 +759,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Array; \
 		if (!NCsValid::NArray::FLibrary::IsAnyNull<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ARRAY_ANY_NONE(__Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::IsAnyNone(Context, __Array, __temp__str__, Log)) { return false; } \
 	}
 
 #pragma endregion Array

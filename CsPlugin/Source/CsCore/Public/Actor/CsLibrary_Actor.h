@@ -144,6 +144,28 @@ namespace NCsActor
 		}
 
 		/**
+		* Get a list of Actors with the given Tag (checks AActor->Tags).
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tags
+		* @param OutActors		(out)
+		*/
+		static void GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors);
+
+		/**
+		* Safely get a list of Actors with the given Tag (checks AActor->Tags).
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tags
+		* @param OutActors		(out)
+		* @param Log			(optional)
+		* return				Whether any actors were found with Tags.
+		*/
+		static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Get an Actor with the given Name.
 		*
 		* @param Context		The calling context.

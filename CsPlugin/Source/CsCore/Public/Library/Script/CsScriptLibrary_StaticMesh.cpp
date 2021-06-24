@@ -40,7 +40,7 @@ UStaticMesh* UCsScriptLibrary_StaticMesh::LoadBySoftObjectPath(const FString& Co
 
 	typedef NCsStaticMesh::FLibrary StaticMeshLibrary;
 
-	return StaticMeshLibrary::SafeLoad(Context, Path);
+	return StaticMeshLibrary::SafeLoad(Ctxt, Path);
 }
 
 UStaticMesh* UCsScriptLibrary_StaticMesh::LoadByStringPath(const FString& Context, const FString& Path)

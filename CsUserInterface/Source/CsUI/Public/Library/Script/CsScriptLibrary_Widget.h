@@ -2,6 +2,7 @@
 #pragma once
 
 class UUserWidget;
+class UClass;
 class UObject;
 class UWidgetAnimation;
 class UTextBlock;
@@ -27,6 +28,32 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,WidgetName"))
 	static UUserWidget* Create(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName);
+
+	// Load
+#pragma region
+public:
+
+	/**
+	* Load a UserWidget at the given Path.
+	*
+	* @param Context	The calling context.
+	* @param Path		SoftObjectPath to the UserWidget to load.
+	* return			Class associated with UserWidget.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Widget", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UClass* LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path);
+
+	/**
+	* Load a UserWidget at the given Path.
+	*
+	* @param Context	The calling context.
+	* @param Path		FString path to the UserWidget to load.
+	* return			Class associated with UserWidget.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Widget", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UClass* LoadByStringPath(const FString& Context, const FString& Path);
+
+#pragma endregion Load
 
 // Position
 #pragma region

@@ -6,6 +6,7 @@
 #include "Managers/Trace/CsCVars_Manager_Trace.h"
 // Library
 #include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -498,6 +499,32 @@ void UCsManager_Trace::DeallocateRequest(RequestType* Request)
 
 	Request->Reset();
 	Manager_Request.DeallocateAt(Request->GetIndex());
+}
+
+bool UCsManager_Trace::SafeDeallocateRequest(const FString& Context, RequestType* Request, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	CS_IS_PTR_NULL(Request)
+
+	if (Request->GetIndex() < 0)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Request->GetIndex(): %s id NOT Valid."), *Context, Request->GetIndex()));
+		return false;
+	}
+
+	if (Request->GetIndex() >= Manager_Request.GetPoolSize())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Request is NOT apart of Manager_Request's pool."), *Context));
+		return false;
+	}
+
+	if (!Manager_Request.Contains(Request))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Request is NOT apart of Manager_Request's pool."), *Context));
+		return false;
+	}
+
+	DeallocateRequest(Request);
+	return true;
 }
 
 bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)

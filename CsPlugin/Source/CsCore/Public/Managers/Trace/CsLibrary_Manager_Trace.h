@@ -144,9 +144,23 @@ namespace NCsTrace
 			*/
 			static RequestType* SafeAllocateRequest(const UObject* WorldContext);
 
+			/**
+			* Safely deallocate Request.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Request
+			* @param Log			(optional)
+			* return				Whether the Request was successful deallocated.
+			*/
+			static bool SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		#undef RequestType
 
 		#pragma endregion Request
+
+		// Response
+		#pragma region
 
 		#define ResponseType NCsTrace::NResponse::FResponse
 		#define RequestType NCsTrace::NRequest::FRequest
@@ -197,6 +211,8 @@ namespace NCsTrace
 
 		#undef ResponseType
 		#undef RequestType
+
+		#pragma endregion Response
 		};
 	}
 }

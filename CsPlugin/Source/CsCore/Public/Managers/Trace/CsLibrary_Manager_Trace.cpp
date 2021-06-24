@@ -135,6 +135,16 @@ namespace NCsTrace
 			return SafeAllocateRequest(Context, WorldContext, nullptr);
 		}
 
+		bool FLibrary::SafeDeallocateRequest(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_Trace)
+				return false;
+
+			return Manager_Trace->SafeDeallocateRequest(Context, Request, Log);
+		}
+
 		#undef RequestType
 
 		#pragma endregion Request

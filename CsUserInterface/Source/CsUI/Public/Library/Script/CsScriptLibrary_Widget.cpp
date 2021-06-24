@@ -17,6 +17,8 @@ namespace NCsScriptLibraryWidget
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, Create);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, LoadBySoftObjectPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetScreenPositionBySlot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAbsoluteScreenPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetPixelAndViewportPositionByCachedGeometry);
@@ -46,6 +48,33 @@ UUserWidget* UCsScriptLibrary_Widget::Create(const FString& Context, UObject* Ow
 
 	return WidgetLibrary::CreateSafe(Context, Owner, UserWidgetClass, WidgetName);
 }
+
+// Load
+#pragma region
+
+UClass* UCsScriptLibrary_Widget::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
+
+	typedef NCsWidget::FLibrary WidgetLibrary;
+
+	return WidgetLibrary::SafeLoad(Ctxt, Path);
+}
+
+UClass* UCsScriptLibrary_Widget::LoadByStringPath(const FString& Context, const FString& Path)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+
+	typedef NCsWidget::FLibrary WidgetLibrary;
+
+	return WidgetLibrary::SafeLoad(Ctxt, Path);
+}
+
+#pragma endregion Load
 
 // Position
 #pragma region

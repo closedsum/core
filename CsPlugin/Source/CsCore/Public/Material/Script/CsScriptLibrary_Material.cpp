@@ -19,6 +19,7 @@ namespace NCsScriptLibraryMaterial
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPaths);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAll);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, Set);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetFromStruct);
@@ -75,6 +76,17 @@ bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const 
 
 // Set
 #pragma region
+
+bool UCsScriptLibrary_Material::SetAll(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetAll : Context;
+
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	return MaterialLibrary::SetSafe(Context, Component, Material);
+}
 
 bool UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 {

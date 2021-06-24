@@ -190,6 +190,12 @@ private:
 
 	void DeallocateRequest(RequestType* Request);
 
+public:
+
+	bool SafeDeallocateRequest(const FString& Context, RequestType* Request, void(*Log)(const FString&) = &FCsLog::Warning);
+
+private:
+
 #define PendingRequestsType NCsTrace::NManager::FPendingRequests
 	PendingRequestsType PendingRequests;
 #undef PendingRequestsType

@@ -17,14 +17,23 @@ module.exports = class NJsArray
 {
     static FLibrary = class Library
     {
-        static IsEmpty(a)
+        /**
+         * @param {Array} a 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsEmpty(a /*Array*/)
         {
             if (!Array.isArray(a))
                 return true;
             return a.length === 0;
         }
 
-        static IsNotEmptyChecked(context, a)
+        /**
+         * @param {string} context 
+         * @param {Array} a 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsNotEmptyChecked(context /*string*/, a /*Array*/)
         {
             // Check is array
             checkf(Array.isArray(a), context + ": a is type: " + typeof a + " and NOT an array.");
@@ -33,7 +42,11 @@ module.exports = class NJsArray
             return true;
         }
 
-        static IsNotEmpty(a)
+        /**
+         * @param {Array} a 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsNotEmpty(a /*Array*/)
         {
             // Check is array
             if (!Array.isArray(a))
@@ -41,6 +54,43 @@ module.exports = class NJsArray
             // Check array.length is NOT 0
             if (a.length === 0)
                 return false;
+            return true;
+        }
+
+        /**
+         * @param {Array}   a 
+         * @param {number}  size    int
+         * @returns {boolean} 
+         */
+        /*bool*/ static IsSize(a /*Array*/, size /*int*/)
+        {
+            let self = NJsArray.FLibrary;
+
+            if (!self.IsNotEmpty(a))
+                return false;
+
+            if (!CommonLibrary.IsInt(size))
+                return false;
+
+            return a.length === size;
+        }
+
+        /**
+         * @param {string}  context
+         * @param {Array}   a 
+         * @param {number}  size    int
+         * @returns {boolean} 
+         */
+        /*bool*/ static IsSizeChecked(context /*string*/, a /*Array*/, size /*int*/)
+        {
+            let self = NJsArray.FLibrary;
+
+            check(self.IsNotEmptyChecked(context, a));
+
+            check(CommonLibrary.IsIntChecked(context, size));
+
+            checkf(a.length === size, context + ": a is NOT of length: " + size);
+
             return true;
         }
 

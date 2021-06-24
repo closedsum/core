@@ -2,6 +2,9 @@
 #pragma once
 
 #include "UObject/Object.h"
+// Types
+#include "Managers/Trace/CsTraceRequest.h"
+#include "Managers/Trace/CsTraceResponse.h"
 
 #include "CsScriptLibrary_Mouse.generated.h"
 
@@ -49,9 +52,10 @@ public:
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param OutPosition		(out)
+	* return					Whether current mouse position was obtained successfully.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static void GetPosition(const FString& Context, const UObject* WorldContextObject, FIntPoint& OutPosition);
+	static bool GetPosition(const FString& Context, const UObject* WorldContextObject, FIntPoint& OutPosition);
 
 	/**
 	* Set the mouse position in viewport space.
@@ -60,9 +64,10 @@ public:
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param X
 	* @param Y
+	* return					Whether current mouse position was set successfully.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,X,Y"))
-	static void SetPosition(const FString& Context, const UObject* WorldContextObject, const int32& X, const int32& Y);
+	static bool SetPosition(const FString& Context, const UObject* WorldContextObject, const int32& X, const int32& Y);
 
 	/**
 	* Get the intersection between the de-projection of the current mouse position (viewport space) to a world ray (location and direction)
@@ -76,4 +81,19 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Plane"))
 	static bool GetWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FPlane& Plane, FVector& OutIntersection);
+
+	/**
+	* Perform a trace with the given Request.
+	*  Request->Start is replaced by:
+	*   de-projection of the current mouse position (viewport space)
+	*  Request->End is replaced by:
+	*	The result of the Request->Start + Distance * World Direction (of the de-projectile of the current mouse position).
+	*
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Request
+	* @param Distance		(optional) The distance to project outward from the Request->Start.
+	* return				Response
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Request,Distance"))
+	static bool Trace(const FString& Context, const UObject* WorldContextObject, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse);
 };

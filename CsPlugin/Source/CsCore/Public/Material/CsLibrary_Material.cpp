@@ -170,6 +170,37 @@ namespace NCsMaterial
 		return true;
 	}
 
+	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material)
+	{
+		// Check Component is Valid
+		CS_IS_PTR_NULL_CHECKED(Component)
+		// Check Material is Valid
+		CS_IS_PTR_NULL_CHECKED(Material)
+
+		const int32 Count = Component->GetNumMaterials();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Component->SetMaterial(I, Material);
+		}
+	}
+
+	bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check Component is Valid
+		CS_IS_PTR_NULL(Component)
+		// Check Material is Valid
+		CS_IS_PTR_NULL(Material)
+
+		const int32 Count = Component->GetNumMaterials();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			Component->SetMaterial(I, Material);
+		}
+		return true;
+	}
+
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 	{
 		// Check Component is Valid

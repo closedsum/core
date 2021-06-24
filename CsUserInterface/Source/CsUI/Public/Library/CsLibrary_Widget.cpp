@@ -3,13 +3,14 @@
 #include "CsUI.h"
 
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Types/CsTypes_Load.h"
 // Library
-#include "Library/CsLibrary_Valid.h"
 #include "Library/CsLibrary_Property.h"
-#include "Kismet/GameplayStatics.h"
+#include "Library/CsLibrary_Object.h"
 #include "Library/CsLibrary_Player.h"
+#include "Kismet/GameplayStatics.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
+#include "Library/CsLibrary_Valid.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // Game
@@ -22,6 +23,9 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+// Blueprint
+#include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/BlueprintCore.h"
 // World
 #include "Engine/World.h"
 
@@ -80,6 +84,139 @@ namespace NCsWidget
 		}
 		return Widget;
 	}
+
+	// Load
+	#pragma region
+
+	UClass* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+		
+		UObject* O = ObjectLibrary::LoadChecked(Context, Path);
+
+		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
+
+		checkf(BpGC, TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName()));
+
+		checkf(BpGC->ClassGeneratedBy, TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName()));
+
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+
+		checkf(BpC, TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName()));
+
+		checkf(BpC->GeneratedClass, TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName()));
+
+		return BpC->GeneratedClass;
+	}
+
+	UClass* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
+
+		if (!O)
+			return nullptr;
+
+		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
+
+		if (!BpGC)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName())));
+			return nullptr;
+		}
+
+		if (!BpGC->ClassGeneratedBy)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName())));
+			return nullptr;
+		}
+
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+
+		if (!BpC)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
+			return nullptr;
+		}
+
+		if (!BpC->GeneratedClass)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName())));
+			return nullptr;
+		}
+		return BpC->GeneratedClass;
+	}
+
+	UClass* FLibrary::LoadChecked(const FString& Context, const FString& Path)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		checkf(Path.EndsWith(ECsLoadCached::Str::_C), TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path);
+
+		UObject* O = ObjectLibrary::LoadChecked(Context, Path);
+
+		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
+
+		checkf(BpGC, TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName()));
+
+		checkf(BpGC->ClassGeneratedBy, TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName()));
+
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+
+		checkf(BpC, TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName()));
+
+		checkf(BpC->GeneratedClass, TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName()));
+
+		return BpC->GeneratedClass;
+	}
+
+	UClass* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+	{
+		typedef NCsObject::FLibrary ObjectLibrary;
+
+		if (!Path.EndsWith(ECsLoadCached::Str::_C))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path));
+			return nullptr;
+		}
+			
+		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
+
+		if (!O)
+			return nullptr;
+
+		UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O);
+
+		if (!BpGC)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName())));
+			return nullptr;
+		}
+
+		if (!BpGC->ClassGeneratedBy)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName())));
+			return nullptr;
+		}
+
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+
+		if (!BpC)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
+			return nullptr;
+		}
+
+		if (!BpC->GeneratedClass)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName())));
+			return nullptr;
+		}
+		return BpC->GeneratedClass;
+	}
+
+	#pragma endregion Load
 
 	namespace NPosition
 	{

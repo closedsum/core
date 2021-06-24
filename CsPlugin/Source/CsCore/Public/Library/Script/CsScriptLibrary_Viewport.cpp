@@ -8,7 +8,6 @@
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Library/CsLibrary_Viewport.h"
 
-
 // Cached
 #pragma region
 
@@ -72,14 +71,6 @@ bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* Wor
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetScreenWorldIntersection : Context;
 
-	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-	typedef NCsTrace::NRequest::FRequest RequestType;
-
-	RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Context, WorldContextObject);
-
-	if (!RequestPtr)
-		return false;
-
 	FCsTraceRequest* Req = const_cast<FCsTraceRequest*>(&Request);
 
 	if (Req->Shape.IsLine() &&
@@ -89,6 +80,14 @@ bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* Wor
 	}
 
 	if (!Request.IsValid(Ctxt))
+		return false;
+
+	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+	typedef NCsTrace::NRequest::FRequest RequestType;
+
+	RequestType* RequestPtr = TraceManagerLibrary::SafeAllocateRequest(Ctxt, WorldContextObject);
+
+	if (!RequestPtr)
 		return false;
 
 	Request.CopyToRequestAsValue(RequestPtr);
@@ -103,5 +102,7 @@ bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* Wor
 		OutResponse.CopyFromResponse(ResponsePtr);
 		return ResponsePtr->bResult;
 	}
+
+	TraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
 	return false;
 }

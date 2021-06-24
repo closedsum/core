@@ -195,10 +195,13 @@ namespace NCsActor
 			{
 				if (!A->Tags.Contains(Tag))
 				{
-					continue;
+					HasAllTags = false;
+					break;
 				}
 			}
-			OutActors.Add(A);
+
+			if (HasAllTags)
+				OutActors.Add(A);
 		}
 
 		typedef NCsName::FLibrary NameLibrary;
@@ -233,10 +236,13 @@ namespace NCsActor
 			{
 				if (!A->Tags.Contains(Tag))
 				{
-					continue;
+					HasAllTags = false;
+					break;
 				}
 			}
-			OutActors.Add(A);
+
+			if (HasAllTags)
+				OutActors.Add(A);
 		}
 
 		typedef NCsName::FLibrary NameLibrary;

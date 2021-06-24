@@ -57,6 +57,17 @@ public:
 public:
 
 	/**
+	* Set the Material at ALL Indices on Component
+	*
+	* @param Context	The calling context
+	* @param Component
+	* @param Material
+	* return			Whether the Material was successful set at given Index or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Index"))
+	static bool SetAll(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material);
+
+	/**
 	* Set the Material at the given Index on Component
 	*
 	* @param Context	The calling context

@@ -146,9 +146,13 @@ namespace NCsInput
 			{
 				SV->GetMousePos(OutPosition);
 
+				if (OutPosition == FIntPoint::NoneValue)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get a valid mouse position from Viewport."), *Context));
+				}
 				return OutPosition != FIntPoint::NoneValue;
 			}
-			return true;
+			return false;
 		}
 
 		bool FLibrary::GetSafePosition(const UObject* WorldContext, FIntPoint& OutPosition)

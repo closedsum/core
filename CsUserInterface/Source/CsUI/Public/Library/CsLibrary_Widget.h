@@ -5,6 +5,7 @@
 
 class UObject;
 class UUserWidget;
+class UClass;
 class UWidgetAnimation;
 class UTextBlock;
 class UButton;
@@ -25,6 +26,51 @@ namespace NCsWidget
 		* @param Log				(optional)
 		*/
 		static UUserWidget* CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+	// Load
+	#pragma region
+	public:
+
+		/**
+		* Load the UserWidget at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the UserWidget to load.
+		* return			Class associated with the UserWidget.
+		*/
+		static UClass* LoadChecked(const FString& Context, const FSoftObjectPath& Path);
+
+		/**
+		* Safely load the UserWidget at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the UserWidget to load.
+		* @param Log		(optional)
+		* return			Class associated with the UserWidget.
+		*/
+		static UClass* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+		/**
+		* Load a UserWidget at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the UserWidget to load.
+		* @param Log		(optional)
+		* return			Class associated with the UserWidget.
+		*/
+		static UClass* LoadChecked(const FString& Context, const FString& Path);
+
+		/**
+		* Safely load a UserWidget at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the UserWidget to load.
+		* @param Log		(optional)
+		* return			Class associated with the UserWidget.
+		*/
+		static UClass* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+	#pragma endregion Load
 	};
 
 	namespace NPosition

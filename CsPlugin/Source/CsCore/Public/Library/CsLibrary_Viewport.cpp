@@ -187,6 +187,7 @@ namespace NCsViewport
 				}
 
 				// Something went wrong, zero things and return false
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Unexpected error."), *Context));
 				return false;
 			}
 

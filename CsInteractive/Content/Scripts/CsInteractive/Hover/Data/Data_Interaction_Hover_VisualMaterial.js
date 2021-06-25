@@ -20,7 +20,7 @@ module.exports = class NJsInteraction
 {
     static NData = class Data
     {
-        static NSelect = class Select
+        static NHover = class Hover
         {
             static NVisual = class Visual
             {
@@ -28,7 +28,7 @@ module.exports = class NJsInteraction
                 {
                     static IMaterial = class InterfaceMaterial
                     {
-                        // MaterialInterface[] GetSelectMaterials()
+                        // MaterialInterface[] GetHoverMaterials()
 
                         /**
                          * @param {string} context 
@@ -37,12 +37,12 @@ module.exports = class NJsInteraction
                          */
                         static /*bool*/ IsImplementedByChecked(context /*string*/, o /*object*/)
                         {
-                            let self = NJsInteraction.NData.NSelect.NVisual.NMaterial.IMaterial;
+                            let self = NJsInteraction.NData.NHover.NVisual.NMaterial.IMaterial;
 
                             check(CommonLibrary.IsValidObjectChecked(context, o));
 
-                            // GetSelectMaterials()
-                            check(self.Implements_GetSelectMaterialsChecked(context, o));
+                            // GetHoverMaterials()
+                            check(self.Implements_GetHoverMaterialsChecked(context, o));
                             return true;
                         }
 
@@ -52,28 +52,28 @@ module.exports = class NJsInteraction
                          */
                         static /*bool*/ IsImplementedBy(o /*object*/)
                         {
-                            let self = NJsInteraction.NData.NSelect.NVisual.NMaterial.IMaterial;
+                            let self = NJsInteraction.NData.NHover.NVisual.NMaterial.IMaterial;
 
                             if (!CommonLibrary.IsValidObject(o))
                                 return false;
-                            // GetSelectMaterials()
-                            if (!self.Implements_GetSelectMaterials(o))
+                            // GetHoverMaterials()
+                            if (!self.Implements_GetHoverMaterials(o))
                                 return false;
                             return true;
                         }
 
-                        // GetSelectMaterials()
+                        // GetHoverMaterials()
 
                         /**
                          * @param {string} context 
                          * @param {object} o 
                          * @returns {boolean}
                          */
-                        static /*bool*/ Implements_GetSelectMaterialsChecked(context /*string*/, o /*object*/)
+                        static /*bool*/ Implements_GetHoverMaterialsChecked(context /*string*/, o /*object*/)
                         {
-                            check(FunctionLibrary.IsArgCountAndReturn_ArrayAndNotEmpty_Checked(context, o.GetSelectMaterials, 0, o));
+                            check(FunctionLibrary.IsArgCountAndReturn_ArrayAndNotEmpty_Checked(context, o.GetHoverMaterials, 0, o));
 
-                            let mats = o.GetSelectMaterials();
+                            let mats = o.GetHoverMaterials();
 
                             check(ArrayLibrary.AreAllElements_Class_Checked(context, mats, MaterialInterface));
 
@@ -84,12 +84,12 @@ module.exports = class NJsInteraction
                          * @param {object} o 
                          * @returns {boolean}
                          */
-                        static /*bool*/ Implements_GetSelectMaterials(o /*object*/)
+                        static /*bool*/ Implements_GetHoverMaterials(o /*object*/)
                         {
-                            if (!FunctionLibrary.IsArgCountAndReturn_ArrayAndNotEmpty(o.GetSelectMaterials, 0, o))
+                            if (!FunctionLibrary.IsArgCountAndReturn_ArrayAndNotEmpty(o.GetHoverMaterials, 0, o))
                                 return false;
 
-                            let mats = o.GetSelectMaterials();
+                            let mats = o.GetHoverMaterials();
 
                             if (!ArrayLibrary.AreAllElements_Class(mats, MaterialInterface))
                                 return false;

@@ -379,9 +379,10 @@ public:
 public:
 
 	/**
+	* Get Data by the Data's Entry Name
+    * (Row Name in the master Data list).
 	*
-	*
-	* @param EntryName
+	* @param EntryName	Row Name in the master Data list.
 	* return			Data
 	*/
 	FORCEINLINE ICsData* GetData(const FName& EntryName)
@@ -394,11 +395,12 @@ public:
 	}
 
 	/**
+	* Get Data by the Data's Entry Name
+	* (Row Name in the master Data list).
 	*
-	*
-	* @param Context
-	* @param EntryName
-	* return			
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Data list.
+	* return			Data
 	*/
 	FORCEINLINE ICsData* GetDataChecked(const FString& Context, const FName& EntryName)
 	{
@@ -412,9 +414,12 @@ public:
 	}
 
 	/**
+	* Safely get Data by the Data's Entry Name
+	* (Row Name in the master Data list).
 	*
-	*
-	* @param EntryName
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Data list.
+	* @param Log		(optional)
 	* return			Data
 	*/
 	FORCEINLINE ICsData* GetSafeData(const FString& Context, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning)
@@ -435,9 +440,10 @@ public:
 	}
 
 	/**
+	* Safely get Data by SoftObjectPath
+	* (Row Name in the master Data list).
 	*
-	*
-	* @param Path
+	* @param Path	Soft path to a data.
 	* return		Data
 	*/
 	FORCEINLINE ICsData* GetData(const FSoftObjectPath& Path)
@@ -450,11 +456,12 @@ public:
 	}
 
 	/**
+	* Get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
 	*
-	*
-	* @param Context
-	* @param EntryName
-	* return
+	* @param Context	The calling context.
+	* @param Path		Soft path to a data.
+	* return			Data
 	*/
 	FORCEINLINE ICsData* GetDataChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
@@ -468,10 +475,37 @@ public:
 	}
 
 	/**
+	* Safely get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
 	*
-	*
-	* @param EntryName
+	* @param Context	The calling context.
+	* @param Path		Soft path to a data.
+	* @param Log		(optional)
 	* return			Data
+	*/
+	FORCEINLINE ICsData* GetSafeData(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Path.IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (ICsData** DataPtr = DataByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+
+		if (Log)
+			Log(FString::Printf(TEXT("%s: Failed to find Data at Path: %s."), *Context, *(Path.ToString())));
+		return nullptr;
+	}
+
+	/**
+	* Get Data by the Data's Entry Name
+	* (Row Name in the master Data list).
+	*
+	* @param EntryName	Row Name in the master Data list.
+	* return			Data as UObject.
 	*/
 	FORCEINLINE UObject* GetDataObject(const FName& EntryName)
 	{
@@ -482,6 +516,13 @@ public:
 		return nullptr;
 	}
 
+	/**
+	* Get Data by the Data's Entry Name
+	* (Row Name in the master Data list).
+	*
+	* @param EntryName	Row Name in the master Data list.
+	* return			Data
+	*/
 	template<typename T>
 	FORCEINLINE T* GetDataObject(const FName& EntryName)
 	{
@@ -489,11 +530,12 @@ public:
 	}
 
 	/**
+	* Get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
 	*
-	*
-	* @param Context
-	* @param EntryName
-	* return			
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Data list.
+	* return			Data as UObject.
 	*/
 	FORCEINLINE UObject* GetDataObjectChecked(const FString& Context, const FName& EntryName)
 	{
@@ -506,6 +548,14 @@ public:
 		return nullptr;
 	}
 
+	/**
+	* Get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
+	*
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Data list.
+	* return			Data as UObject.
+	*/
 	template<typename T>
 	FORCEINLINE T* GetDataObjectChecked(const FString& Context, const FName& EntryName)
 	{
@@ -515,9 +565,34 @@ public:
 	}
 
 	/**
+	* Safely get a Data by SoftObjectPath.
 	*
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Data list.
+	* @param Log		(optional)
+	* return			Data as UObject.
+	*/
+	FORCEINLINE UObject* GetSafeDataObject(const FString& Context, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (EntryName == NAME_None)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: EntryName is None."), *Context));
+			return nullptr;
+		}
+
+		if (UObject** DataPtr = DataObjectMap_Loaded.Find(EntryName))
+			return *DataPtr;
+
+		if (Log)
+			Log(FString::Printf(TEXT("%s: Failed to find Data with EntryName: %s."), *Context, *(EntryName.ToString())));
+		return nullptr;
+	}
+
+	/**
+	* Get a Data by SoftObjectPath.
 	*
-	* @param Path
+	* @param Path	Soft path to a data.
 	* return		Data
 	*/
 	FORCEINLINE UObject* GetDataObject(const FSoftObjectPath& Path)
@@ -529,6 +604,12 @@ public:
 		return nullptr;
 	}
 
+	/**
+	* Get a Data by SoftObjectPath.
+	*
+	* @param Path	Soft path to a data.
+	* return		Data
+	*/
 	template<typename T>
 	FORCEINLINE T* GetDataObject(const FSoftObjectPath& Path)
 	{
@@ -536,10 +617,11 @@ public:
 	}
 
 	/**
+	* Get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
 	*
-	*
-	* @param Context
-	* @param EntryName
+	* @param Context	The calling context.
+	* @param Path		Soft path to a data.
 	* return
 	*/
 	FORCEINLINE UObject* GetDataObjectChecked(const FString& Context, const FSoftObjectPath& Path)
@@ -553,10 +635,44 @@ public:
 		return nullptr;
 	}
 
+	/**
+	* Get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft path to a data.
+	* return
+	*/
 	template<typename T>
 	FORCEINLINE T* GetDataObjectChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
 		return Cast<T>(GetDataObjectChecked(Context, Path));
+	}
+
+	/**
+	* Get a Data by SoftObjectPath.
+	* Check against the current loaded datas.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft path to a data.
+	* @param Log		(optional)
+	* return
+	*/
+	FORCEINLINE UObject* GetSafeDataObject(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Path.IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (UObject** DataPtr = DataObjectByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+
+		if (Log)
+			Log(FString::Printf(TEXT("%s: Failed to find Data at Path: %s."), *Context, *(Path.ToString())));
+		return nullptr;
 	}
 
 	// Entry

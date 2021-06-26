@@ -6,6 +6,7 @@
 
 class UObject;
 class UCsManager_Data;
+class ICsData;
 class UDataTable;
 
 namespace NCsData
@@ -103,6 +104,220 @@ namespace NCsData
 			*/
 			static UCsManager_Data* GetSafe(const UObject* ContextObject);
 
+			// Data
+		#pragma region
+		public:
+
+			/**
+			* Get Data by the Data's Entry Name
+			* (Row Name in the master Data list).
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param EntryName		Row Name in the master Data list.
+			* return				Data
+			*/
+			ICsData* GetDataChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
+			
+			/**
+			* Safely get Data by the Data's Entry Name
+			* (Row Name in the master Data list).
+			*
+			* @param EntryName		Row Name in the master Data list.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log			(optional)
+			* return				Data
+			*/
+			ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Get a Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft path to a data.
+			* return				Data
+			*/
+			ICsData* GetDataChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+
+			/**
+			* Safely get a Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft path to a data.
+			* @param Log			(optional)
+			* return				Data
+			*/
+			ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Get a Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param EntryName		Row Name in the master Data list.
+			* return				Data as UObject.
+			*/
+			UObject* GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
+
+			/**
+			* Safely get a Data by SoftObjectPath.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param EntryName		Row Name in the master Data list.
+			* @param Log			(optional)
+			* return				Data as UObject.
+			*/
+			UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Get a Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft path to a data.
+			* return
+			*/
+			UObject* GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+
+			/**
+			* Get a Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft path to a data.
+			* @param Log			(optional)
+			* return
+			*/
+			UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Data
+
+			// DataTabe
+		#pragma region
+		public:
+
+			/**
+			* Safely get a DataTable by EntryName.
+			* Check against the current loaded data tables.
+			*
+			* @param Context	The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param EntryName	Name to a data table.
+			* @param Log		(optional)
+			* return			DataTable
+			*/
+			static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Get a DataTable by SoftObjectPath.
+			* Check against the current loaded data tables.
+			*
+			* @param Context	The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path		Soft path to a data table.
+			* return			DataTable
+			*/
+			static UDataTable* GetDataTableChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+
+			/**
+			* Safely get a DataTable by SoftObjectPath.
+			* Check against the current loaded data tables.
+			*
+			* @param Context	The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path		Soft path to a data table.
+			* @param Log		(optional)
+			* return			DataTable
+			*/
+			static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get a DataTable by SoftObjectPath.
+			* Check against the current loaded data tables.
+			*
+			* @param Context	The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path		Soft path to a data table.
+			* @param Log			(optional)
+			* return				DataTable
+			*/
+			static UDataTable* GetSafeDataTable(const UObject* ContextObject, const FSoftObjectPath& Path);
+
+			/**
+			* Get a DataTable by SoftObjectPtr.
+			* Check against the current loaded data tables.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param SoftObject		Soft reference to a data table.
+			* return				DataTable
+			*/
+			static UDataTable* GetDataTableChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
+
+			/**
+			* Safely get a DataTable by SoftObjectPtr.
+			* Check against the current loaded data tables.
+			*
+			* @param Context	The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param SoftObject		Soft reference to a data table.
+			* @param Log			(optional)
+			* return				DataTable
+			*/
+			static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get a DataTable by SoftObjectPtr.
+			* Check against the current loaded data tables.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param SoftObject		Soft reference to a data table.
+			* @param Log			(optional)
+			* return				DataTable
+			*/
+			static UDataTable* GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
+
+		#pragma endregion DataTable
+
 		#pragma endregion Get
 
 		// Add
@@ -145,108 +360,6 @@ namespace NCsData
 		#pragma endregion Data
 
 		#pragma endregion Add
-
-		// DataTabe
-		#pragma region
-		public:
-
-		/**
-		* Safely get a DataTable by EntryName.
-		* Check against the current loaded data tables.
-		*
-		* @param Context	The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param EntryName	Name to a data table.
-		* @param Log		(optional)
-		* return			DataTable
-		*/
-		static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		/**
-		* Get a DataTable by SoftObjectPath.
-		* Check against the current loaded data tables.
-		*
-		* @param Context	The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param Path		Soft path to a data table.
-		* return			DataTable
-		*/
-		static UDataTable* GetDataTableChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
-
-		/**
-		* Safely get a DataTable by SoftObjectPath.
-		* Check against the current loaded data tables.
-		*
-		* @param Context	The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param Path		Soft path to a data table.
-		* @param Log		(optional)
-		* return			DataTable
-		*/
-		static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		/**
-		* Safely get a DataTable by SoftObjectPath.
-		* Check against the current loaded data tables.
-		*
-		* @param Context	The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param Path		Soft path to a data table.
-		* @param Log			(optional)
-		* return				DataTable
-		*/
-		static UDataTable* GetSafeDataTable(const UObject* ContextObject, const FSoftObjectPath& Path);
-
-		/**
-		* Get a DataTable by SoftObjectPtr.
-		* Check against the current loaded data tables.
-		*
-		* @param Context		The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param SoftObject		Soft reference to a data table.
-		* return				DataTable
-		*/
-		static UDataTable* GetDataTableChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
-
-		/**
-		* Safely get a DataTable by SoftObjectPtr.
-		* Check against the current loaded data tables.
-		*
-		* @param Context	The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param SoftObject		Soft reference to a data table.
-		* @param Log			(optional)
-		* return				DataTable
-		*/
-		static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		/**
-		* Safely get a DataTable by SoftObjectPtr.
-		* Check against the current loaded data tables.
-		*
-		* @param Context		The calling context.
-		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-		*						or
-		*						A reference to the GameInstance.
-		* @param SoftObject		Soft reference to a data table.
-		* @param Log			(optional)
-		* return				DataTable
-		*/
-		static UDataTable* GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
-
-		#pragma endregion DataTable
 		};
 	}
 }

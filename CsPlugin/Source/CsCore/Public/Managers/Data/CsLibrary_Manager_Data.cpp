@@ -102,34 +102,68 @@ namespace NCsData
 			return GetSafe(Context, ContextObject, nullptr);
 		}
 
-		#pragma endregion Get
-
-		// Add
-		#pragma region
-
 			// Data
 		#pragma region
 
-		bool FLibrary::SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ICsData* FLibrary::GetDataChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName)
 		{
-			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
-
-			if (!Manager_Data)
-				return false;
-
-			return Manager_Data->SafeAddDataObject_Loaded(Context, EntryName, Data, Log);
+			return GetChecked(Context, ContextObject)->GetDataChecked(Context, EntryName);
 		}
 
-		void FLibrary::AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, UObject* Data)
+		ICsData* FLibrary::GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			GetChecked(Context, ContextObject)->AddDataCompositionObject_Loaded(Data);
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
+			{
+				return Manager_Data->GetSafeData(Context, EntryName, Log);
+			}
+			return nullptr;
+		}
+
+		ICsData* FLibrary::GetDataChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path)
+		{
+			return GetChecked(Context, ContextObject)->GetDataChecked(Context, Path);
+		}
+
+		ICsData* FLibrary::GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
+			{
+				return Manager_Data->GetSafeData(Context, Path, Log);
+			}
+			return nullptr;
+		}
+
+		UObject* FLibrary::GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName)
+		{
+			return GetChecked(Context, ContextObject)->GetDataObjectChecked(Context, EntryName);
+		}
+
+		UObject* FLibrary::GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
+			{
+				return Manager_Data->GetSafeDataObject(Context, EntryName, Log);
+			}
+			return nullptr;
+		}
+
+		UObject* FLibrary::GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path)
+		{
+			return GetChecked(Context, ContextObject)->GetDataObjectChecked(Context, Path);
+		}
+
+		UObject* FLibrary::GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
+			{
+				return Manager_Data->GetSafeDataObject(Context, Path, Log);
+			}
+			return nullptr;
 		}
 
 		#pragma endregion Data
 
-		#pragma endregion Add
-
-		// DataTabe
+			// DataTabe
 		#pragma region
 		
 		UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -203,5 +237,32 @@ namespace NCsData
 		}
 
 		#pragma endregion DataTable
+
+		#pragma endregion Get
+
+		// Add
+		#pragma region
+
+			// Data
+		#pragma region
+
+		bool FLibrary::SafeAddDataObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& EntryName, UObject* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return false;
+
+			return Manager_Data->SafeAddDataObject_Loaded(Context, EntryName, Data, Log);
+		}
+
+		void FLibrary::AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, UObject* Data)
+		{
+			GetChecked(Context, ContextObject)->AddDataCompositionObject_Loaded(Data);
+		}
+
+		#pragma endregion Data
+
+		#pragma endregion Add
 	}
 }

@@ -16,6 +16,8 @@ namespace NCsScriptLibraryManagerData
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataObjectByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTableByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTableBySoftObject);
@@ -34,10 +36,37 @@ UCsScriptLibrary_Manager_Data::UCsScriptLibrary_Manager_Data(const FObjectInitia
 // Get
 #pragma region
 
+	// Data
+#pragma region
+
+UObject* UCsScriptLibrary_Manager_Data::GetDataObject(const FString& Context, const UObject* WorldContextObject, const FName& EntryName)
+{
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataObject : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::GetSafeDataObject(Ctxt, WorldContextObject, EntryName);
+}
+
+UObject* UCsScriptLibrary_Manager_Data::GetDataObjectByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
+{
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataObjectByPath : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::GetSafeDataObject(Ctxt, WorldContextObject, Path);
+}
+
+#pragma endregion Data
+
 	// DataTable
 #pragma region
 
-UDataTable* UCsScriptLibrary_Manager_Data::GetDataTable(const FString& Context, const UObject* WorldContextObject, const FName& TableName)
+UDataTable* UCsScriptLibrary_Manager_Data::GetDataTable(const FString& Context, const UObject* WorldContextObject, const FName& EntryName)
 {
 	using namespace NCsScriptLibraryManagerData::NCached;
 
@@ -45,7 +74,7 @@ UDataTable* UCsScriptLibrary_Manager_Data::GetDataTable(const FString& Context, 
 
 	typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, TableName);
+	return DataManagerLibrary::GetSafeDataTable(Ctxt, WorldContextObject, EntryName);
 }
 
 UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)

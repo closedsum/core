@@ -16,38 +16,66 @@ class CSCORE_API UCsScriptLibrary_Manager_Data : public UObject
 #pragma region
 public:
 
+	// Data
+#pragma region
+public:
+
+	/**
+	* Get a Data by SoftObjectPath.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param EntryName			Row Name in the master Data list.
+	* return					Data as UObject.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,EntryName"))
+	static UObject* GetDataObject(const FString& Context, const UObject* WorldContextObject, const FName& EntryName);
+
+	/**
+	* Get a Data by SoftObjectPath.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Path				Soft path to a data.
+	* return					Data as UObject.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
+	static UObject* GetDataObjectByPath(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+
+#pragma endregion Data
+
 	// DataTable
 #pragma region
 public:
 
 	/**
-	* 
+	* Get a DataTable by EntryName.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-	* @param TableName
+	* @param EntryName			Row Name in the master DataTable list.
 	* return					DataTable
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,TableName"))
-	static UDataTable* GetDataTable(const FString& Context, const UObject* WorldContextObject, const FName& TableName);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,EntryName"))
+	static UDataTable* GetDataTable(const FString& Context, const UObject* WorldContextObject, const FName& EntryName);
 
 	/**
-	*
+	* Get a DataTable by SoftObjectPath.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-	* @param Path
+	* @param Path				Soft path to a data table.
 	* return					DataTable
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
 	static UDataTable* GetDataTableByPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path);
 
 	/**
-	*
+	* Get a DataTable by SoftObjectPtr.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-	* @param SoftObject
+	* @param SoftObject			Soft reference to a data table.
 	* return					DataTable
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))

@@ -119,7 +119,7 @@ namespace NCsData
 			* @param EntryName		Row Name in the master Data list.
 			* return				Data
 			*/
-			ICsData* GetDataChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
+			static ICsData* GetDataChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
 			
 			/**
 			* Safely get Data by the Data's Entry Name
@@ -132,7 +132,7 @@ namespace NCsData
 			* @param Log			(optional)
 			* return				Data
 			*/
-			ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Get a Data by SoftObjectPath.
@@ -145,7 +145,7 @@ namespace NCsData
 			* @param Path			Soft path to a data.
 			* return				Data
 			*/
-			ICsData* GetDataChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+			static ICsData* GetDataChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
 
 			/**
 			* Safely get a Data by SoftObjectPath.
@@ -159,10 +159,10 @@ namespace NCsData
 			* @param Log			(optional)
 			* return				Data
 			*/
-			ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+			static ICsData* GetSafeData(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			* Get a Data by SoftObjectPath.
+			* Get a Data by the Data's Entry Name.
 			* Check against the current loaded datas.
 			*
 			* @param Context		The calling context.
@@ -172,7 +172,7 @@ namespace NCsData
 			* @param EntryName		Row Name in the master Data list.
 			* return				Data as UObject.
 			*/
-			UObject* GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
+			static UObject* GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
 
 			/**
 			* Safely get a Data by SoftObjectPath.
@@ -185,7 +185,7 @@ namespace NCsData
 			* @param Log			(optional)
 			* return				Data as UObject.
 			*/
-			UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Get a Data by SoftObjectPath.
@@ -198,7 +198,7 @@ namespace NCsData
 			* @param Path			Soft path to a data.
 			* return
 			*/
-			UObject* GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+			static UObject* GetDataObjectChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
 
 			/**
 			* Get a Data by SoftObjectPath.
@@ -212,7 +212,7 @@ namespace NCsData
 			* @param Log			(optional)
 			* return
 			*/
-			UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Data
 
@@ -224,13 +224,13 @@ namespace NCsData
 			* Safely get a DataTable by EntryName.
 			* Check against the current loaded data tables.
 			*
-			* @param Context	The calling context.
+			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param EntryName	Name to a data table.
-			* @param Log		(optional)
-			* return			DataTable
+			* @param EntryName		Row Name in the master DataTable list.
+			* @param Log			(optional)
+			* return				DataTable
 			*/
 			static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
 
@@ -238,12 +238,12 @@ namespace NCsData
 			* Get a DataTable by SoftObjectPath.
 			* Check against the current loaded data tables.
 			*
-			* @param Context	The calling context.
+			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Path		Soft path to a data table.
-			* return			DataTable
+			* @param Path			Soft path to a data table.
+			* return				DataTable
 			*/
 			static UDataTable* GetDataTableChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
 

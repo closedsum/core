@@ -3,6 +3,8 @@
 
 "use strict"
 
+// Types
+var NJsDelegate1 = require("Cs/Types/Delegate/Delegate.js")
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 var NJsFunction = require('Cs/Library/Library_Function.js');
@@ -18,93 +20,6 @@ var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
 
 module.exports = class NJsDelegate
 {
-    static FDelegateBase = class DelegateBase
-    {
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         */
-        constructor(params /*object*/)
-        {
-            this.Fn = params.Fn;
-            this.Caller = params.Caller;
-            this.bStatic = params.bStatic;
-            this.TerminationCount = params.TerminationCount;
-            this.ExecutionCount = 0;
-        }
-
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         */
-        Set(params /*object*/)
-        {
-            this.Fn = params.Fn;
-            this.Caller = params.Caller;
-            this.bStatic = params.bStatic;
-            this.TerminationCount = params.TerminationCount;
-            this.ExecutionCount = 0;
-        }
-
-        /*bool*/ IsSet() { return this.Fn !== null; }
-
-        /**
-         * @returns {boolean}
-         */
-        /*bool*/ HasExpired(){ return this.TerminationCount > 0 && this.ExecutionCount >= this.TerminationCount; }
-
-        Reset()
-        {
-            this.Fn = null;
-            this.Caller = null;
-            this.bStatic = false;
-            this.TerminationCount = -1;
-            this.ExecutionCount = 0;
-        }
-    }
-    
-    static FDelegate = class Delegate extends NJsDelegate.FDelegateBase
-    {
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         */
-        constructor(params /*object*/)
-        {
-            super(params);
-        }
-
-        Execute()
-        {
-            ++this.ExecutionCount;
-
-            if (this.bStatic)
-                return this.Fn();
-            return this.Fn.call(this.Caller);
-        }
-    }
-
-    static FDelegate_OneParam = class Delegate_OneParam extends NJsDelegate.FDelegateBase
-    {
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         */
-        constructor(params /*object*/)
-        {
-            super(params);
-        }
-
-        /**
-         * @param {any} param1
-         * @returns {any}
-         */
-        /*any*/ Execute(param1 /*any*/)
-        {
-            ++this.ExecutionCount;
-
-            if (this.bStatics)
-                return this.Fn(param1);
-            return this.Fn.call(this.Caller, param1);
-        }
-    }
-
     static FMulticastBase = class MulticastBase
     {
         constructor(argCount /*int*/)
@@ -165,7 +80,7 @@ module.exports = class NJsDelegate
             }
 
             let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: null, bStatic: false, TerminationCount: -1}
+            let params = {Fn: fn, Caller: null, bStatic: true, TerminationCount: -1}
             let d = this.CreateDelegate(params);
 
             this.InvocationMap.set(id, d);
@@ -220,7 +135,7 @@ module.exports = class NJsDelegate
             return ids.length > 0;
         }
 
-        /*bool*/ IsBound() { return }
+        /*bool*/ IsBound() { return this.InvocationMap.size > 0; }
     }
 
     static FMulticast = class Multicast extends NJsDelegate.FMulticastBase
@@ -235,7 +150,7 @@ module.exports = class NJsDelegate
          */
         /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
         {
-            return new NJsDelegate.FDelegate(params);
+            return new NJsDelegate1.FDelegate(params);
         }
 
         Broadcast()
@@ -271,7 +186,7 @@ module.exports = class NJsDelegate
          */
         /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
         {
-            return new NJsDelegate.FDelegate_OneParam(params);
+            return new NJsDelegate1.FDelegate_OneParam(params);
         }
 
         /**

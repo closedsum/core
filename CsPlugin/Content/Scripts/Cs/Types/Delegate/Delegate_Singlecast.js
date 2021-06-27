@@ -22,14 +22,28 @@ module.exports = class NJsDelegate
 {
     static FSinglecastBase = class SinglecastBase
     {
-        constructor(argCount /*int*/)
+        /**
+         * @param {{ArgTypeInfos: {Type: any}[]}} params 
+         */
+        constructor(params)
         {
+            check(IsValidObjectChecked(context, params));
+            check(CommonLibrary.DoesKeyExistChecked(context, params, "ArgTypeInfos"));
+
+            checkf(Array.isArray(params.ArgTypeInfos), context + ": params.ArgTypeInfos is NOT an array.");
+
+            this.ArgTypeInfos = [];
+
+            for (const info of params.ArgTypeInfos)
+            {
+                check(CommonLibbrary.DoesKeyExistChecked(context, info, "Type"));
+
+                this.ArgTypeInfos.push({Type: info.Type});
+            }
+
+            this.ArgCount = this.ArgTypeInfos.length;
+
             this.Delegate = null; // NJsDelegate.FDelegateBases 
-
-            checkf(CommonLibrary.IsIntChecked("NJsDelegate.FSinglecastBase.ctor: ", argCount));
-            checkf(argCount >= 0, "NJsDelegate.FSinglecastBase.ctor: argCount: " + argCount + " is NOT >= 0.");
-
-            this.ArgCount = argCount;
         }
 
         /**
@@ -84,7 +98,7 @@ module.exports = class NJsDelegate
     {
         constructor()
         {
-            super(0);
+            super({ArgTypeInfos: []});
 
             this.Delegate = new FJsDelegate1.FDelegate();
         }
@@ -113,13 +127,35 @@ module.exports = class NJsDelegate
 
     static FSinglecast_OneParam = class Singlecast_OneParam extends NJsDelegate.FSinglecastBase
     {
-        constructor()
+        /**
+         * @param {{ArgTypeInfos: {Type: any}[]}} params 
+         */
+        constructor(params)
         {
-            super(1);
+            super(params);
 
             this.Delegate = new FJsDelegate1.FDelegate_OneParam();
         }
 
+        /**
+         * @param {any} param1
+         * @returns {boolean}
+         */
+        /*bool*/ IsArgsValidChecked(param1 /*any*/)
+        {
+            let context = this.IsArgsValidChecked.name;
+
+            let args = [];
+
+            for (const info of this.ArgTypeInfos)
+            {
+                args.push({type: info.Type, value: param1});
+            }
+
+            check(FunctionLibrary.IsArgsValidChecked(context, args));
+            return true;
+        }
+        
         /**
          * @param {any} param1
          * @returns {any} 

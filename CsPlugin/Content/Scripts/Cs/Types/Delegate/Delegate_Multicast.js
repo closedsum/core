@@ -22,14 +22,30 @@ module.exports = class NJsDelegate
 {
     static FMulticastBase = class MulticastBase
     {
-        constructor(argCount /*int*/)
+        /**
+         * @param {{ArgTypeInfos: {Type: any}[]}} params 
+         */
+        constructor(params)
         {
+            let context = "NJsDelegate.FMulticastBase.ctor";
+
+            check(IsValidObjectChecked(context, params));
+            check(CommonLibrary.DoesKeyExistChecked(context, params, "ArgTypeInfos"));
+
+            checkf(Array.isArray(params.ArgTypeInfos), context + ": params.ArgTypeInfos is NOT an array.");
+
+            this.ArgTypeInfos = [];
+
+            for (const info of params.ArgTypeInfos)
+            {
+                check(CommonLibrary.DoesKeyExistChecked(context, info, "Type"));
+
+                this.ArgTypeInfos.push({Type: info.Type});
+            }
+
+            this.ArgCount = this.ArgTypeInfos.length;
+
             this.InvocationMap = new Map(); // [Guid as string][Delegate]
-
-            checkf(CommonLibrary.IsIntChecked("NJsDelegate.FMulticastBase.ctor: ", argCount));
-            checkf(argCount >= 0, "NJsDelegate.FMulticastBase.ctor: argCount: " + argCount + " is NOT >= 0.");
-
-            this.ArgCount = argCount;
         }
 
         /**
@@ -142,7 +158,7 @@ module.exports = class NJsDelegate
     {
         constructor()
         {
-            super(0);
+            super({ArgTypeInfos: []});
         }
 
         /**
@@ -176,9 +192,12 @@ module.exports = class NJsDelegate
 
     static FMulticast_OneParam = class Multicast_OneParam extends NJsDelegate.FMulticastBase
     {
-        constructor()
+        /**
+         * @param {{ArgTypeInfos: {Type: any}[]}} params 
+         */
+        constructor(params)
         {
-            super(1);
+            super(params);
         }
 
         /**
@@ -190,10 +209,31 @@ module.exports = class NJsDelegate
         }
 
         /**
+         * @param {any} param1
+         * @returns {boolean}
+         */
+        /*bool*/ IsArgsValidChecked(param1 /*any*/)
+        {
+            let context = this.IsArgsValidChecked.name;
+
+            let args = [];
+
+            for (const info of this.ArgTypeInfos)
+            {
+                args.push({type: info.Type, value: param1});
+            }
+
+            check(FunctionLibrary.IsArgsValidChecked(context, args));
+            return true;
+        }
+
+        /**
          * @param {any} param1 
          */
         Broadcast(param1 /*any*/)
         {
+            check(IsArgsValidChecked(param1));
+
             let ids = [];
 
             for (let [key, value] of this.InvocationMap.entries())

@@ -58,7 +58,7 @@ module.exports = class NJsDelegate
         }
     }
 
-    static FDelegate_OneParam = class Delegate_OnParams extends NJsDelegate.FDelegateBase
+    static FDelegate_OneParam = class Delegate_OneParam extends NJsDelegate.FDelegateBase
     {
         /**
          * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
@@ -88,7 +88,7 @@ module.exports = class NJsDelegate
         {
             this.InvocationMap = new Map(); // [Guid as string][Delegate]
 
-            checkf(CommonLibrary.IsIntChecked("NJsDelegate.FMulticastBase.ctor:", argCount));
+            checkf(CommonLibrary.IsIntChecked("NJsDelegate.FMulticastBase.ctor: ", argCount));
             checkf(argCount >= 0, "NJsDelegate.FMulticastBase.ctor: argCount: " + argCount + " is NOT >= 0.");
 
             this.ArgCount = argCount;
@@ -138,7 +138,7 @@ module.exports = class NJsDelegate
 
             for (const [key, value] of this.InvocationMap.entries())
             {
-                checkf(value.Fn !== fn, context + ": fn and caller have ALREADY been added.");
+                checkf(value.Fn !== fn, context + ": fn has ALREADY been added.");
             }
 
             let id = Guid.NewGuid().Conv_GuidToString();
@@ -186,7 +186,7 @@ module.exports = class NJsDelegate
 
             for (const [key, value] of this.InvocationMap.entries())
             {
-                if (value.caller === caller)
+                if (value.Caller === caller)
                     ids.push(key);
             }
 
@@ -196,6 +196,8 @@ module.exports = class NJsDelegate
             }
             return ids.length > 0;
         }
+
+        /*bool*/ IsBound() { return }
     }
 
     static FMulticast = class Multicast extends NJsDelegate.FMulticastBase
@@ -220,6 +222,45 @@ module.exports = class NJsDelegate
             for (let [key, value] of this.InvocationMap.entries())
             {
                 value.Execute();
+
+                // Check if the delegate should be removed after execution.
+                if (value.ShouldRemove())
+                    ids.push(key);
+            }
+
+            // Remove any delegates that have "expired"
+            for (const id of ids)
+            {
+                this.InvocationMap.delete(id);
+            }
+        }
+    }
+
+    static FMulticast_OneParam = class Multicast_OneParam extends NJsDelegate.FMulticastBase
+    {
+        constructor()
+        {
+            super(1);
+        }
+
+        /**
+         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
+         */
+        /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
+        {
+            return new NJsDelegate.FDelegate_OneParam(params);
+        }
+
+        /**
+         * @param {any} param1 
+         */
+        Broadcast(param1 /*any*/)
+        {
+            let ids = [];
+
+            for (let [key, value] of this.InvocationMap.entries())
+            {
+                value.Execute(param1);
 
                 // Check if the delegate should be removed after execution.
                 if (value.ShouldRemove())

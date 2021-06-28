@@ -30,7 +30,7 @@ module.exports = class FJsCoreActor extends Actor
      */
     Init(core)
     {
-        let context = this.Init.name;
+        let context = "FJsCoreActor.Init";
 
         this.Core = core;
 

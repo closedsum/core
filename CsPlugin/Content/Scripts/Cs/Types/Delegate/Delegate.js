@@ -130,7 +130,7 @@ module.exports = class NJsDelegate
          */
         /*string*/ Add(fn /*function*/, caller /*object*/)
         {
-            let context = this.Add.name;
+            let context = "NJsDelegate.FDelegateBase.Add";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
             check(IsValidObjectChecked(context, caller));
@@ -155,7 +155,7 @@ module.exports = class NJsDelegate
          */
         /*string*/ AddStatic(fn /*function*/)
         {
-            let context = this.AddStatic.name;
+            let context = "NJsDelegate.FDelegateBase.AddStatic";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
 
@@ -175,7 +175,7 @@ module.exports = class NJsDelegate
   
         /*string*/ AddOneShot(fn /*function*/, caller /*object*/)
         {
-            let context = this.AddOneShot.name;
+            let context = "NJsDelegate.FDelegateBase.AddOneShot";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
 

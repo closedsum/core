@@ -194,7 +194,7 @@ module.exports = class FJsEnum
      */
     /*bool*/ AreValuesEqual(a /*FValue*/, b /*FValue*/)
     {
-        let context = this.AreValuesEqual.name;
+        let context = "FJsEnum.AreValuesEqual";
 
         check(this.ContainsChecked(context, a));
         check(this.ContainsChecked(context, b));

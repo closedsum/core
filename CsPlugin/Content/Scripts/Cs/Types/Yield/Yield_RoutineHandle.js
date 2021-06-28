@@ -37,7 +37,7 @@ module.exports = class NJsYield
          */
         /*bool*/ CopyFromYield(yieldCommand /*object*/)
         {
-            let context = this.CopyFromYield.name;
+            let context = "NJsYield.FRoutineHandle.CopyFromYield";
 
             check(CommonLibrary.IsValidObjectChecked(context, yieldCommand));
 

@@ -61,7 +61,7 @@ module.exports = class NJsDelegate
          */
         /*string*/ Add(fn /*function*/, caller /*object*/)
         {
-            let context = this.Add.name;
+            let context = "NJsDelegate.FMulticastBase.Add";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
             check(IsValidObjectChecked(context, caller));
@@ -86,7 +86,7 @@ module.exports = class NJsDelegate
          */
         /*string*/ AddStatic(fn /*function*/)
         {
-            let context = this.AddStatic.name;
+            let context = "NJsDelegate.FMulticastBase.AddStatic";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
 
@@ -106,7 +106,7 @@ module.exports = class NJsDelegate
   
         /*string*/ AddOneShot(fn /*function*/, caller /*object*/)
         {
-            let context = this.AddOneShot.name;
+            let context = "NJsDelegate.FMulticastBase.AddOneShot";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
 
@@ -214,7 +214,7 @@ module.exports = class NJsDelegate
          */
         /*bool*/ IsArgsValidChecked(param1 /*any*/)
         {
-            let context = this.IsArgsValidChecked.name;
+            let context = "NJsDelegate.FMulticastBase.IsArgsValidChecked";
 
             let args = [];
 

@@ -58,7 +58,7 @@ module.exports = class NJsDelegate
          */
         Bind(fn /*function*/, caller /*object*/)
         {
-            let context = this.Add.name;
+            let context = "NJsDelegate.FSinglecastBase.Add";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
             check(IsValidObjectChecked(context, caller));
@@ -75,7 +75,7 @@ module.exports = class NJsDelegate
          */
         BindStatic(fn /*function*/)
         {
-            let context = this.AddStatic.name;
+            let context = "NJsDelegate.FSinglecastBase.AddStatic";
 
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
 
@@ -108,7 +108,7 @@ module.exports = class NJsDelegate
          */
         /*any*/ Execute()
         {
-            let context = this.Execute.name;
+            let context = "NJsDelegate.FSinglecastBase.Execute";
 
             checkf(this.Delegate.IsSet(), context + ": delegate is NOT bound.");
             return this.Delegate.Execute();
@@ -143,7 +143,7 @@ module.exports = class NJsDelegate
          */
         /*bool*/ IsArgsValidChecked(param1 /*any*/)
         {
-            let context = this.IsArgsValidChecked.name;
+            let context = "NJsDelegate.FSinglecastBase.IsArgsValidChecked";
 
             let args = [];
 
@@ -162,7 +162,7 @@ module.exports = class NJsDelegate
          */
         /*any*/ Execute(param1 /*any*/)
         {
-            let context = this.Execute.name;
+            let context = "NJsDelegate.FSinglecastBase.Execute";
 
             checkf(this.Delegate.IsSet(), context + ": delegate is NOT bound.");
             return this.Delegate.Execute(param1);

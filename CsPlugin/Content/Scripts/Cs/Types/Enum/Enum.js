@@ -75,6 +75,34 @@ module.exports = class FJsEnum
                 return false;
             return this.Name === a.GetName() && this.Value === a.GetValue();
         }
+
+        /**
+         * @param {string} context 
+         * @param {FJsEnum} type 
+         * @returns {boolean}
+         */
+        /*bool*/ IsTypeChecked(context /*string*/, type /*FJsEnum*/)
+        {
+            check(CommonLibrary.IsClassOfChecked(context, type, FJsEnum));
+
+            checkf(this.GetOuter() === type, context + ": " + this.Name + " is of type: " + this.GetOuter().GetName() + " NOT of type: " + type.GetName());
+
+            return true;
+        }
+
+        /**
+         * @param {string} context 
+         * @param {string} enumName 
+         * @returns {boolean}
+         */
+        /*bool*/ IsTypeByStringChecked(context /*string*/, enumName /*string*/)
+        {
+            check(CommonLibrary.IsStringChecked(context, enumName));
+
+            checkf(this.GetOuter().GetName() === enumName, context + ": " + this.Name + " is of type: " + this.GetOuter().GetName() + " NOT of type: " + enumName);
+
+            return true;
+        }
     }
 
     /**
@@ -144,6 +172,14 @@ module.exports = class FJsEnum
         this.EnumMap.set(name, e);
         this.MAX.Value = this.Enums.length;
         return e;
+    }
+
+    /**
+     * @returns {FJsEnum.FValue} FValue
+     */
+    /*FValue*/ CreateInvalid()
+    {
+        return new FJsEnum.FValue(this, "", -1);
     }
 
     /**

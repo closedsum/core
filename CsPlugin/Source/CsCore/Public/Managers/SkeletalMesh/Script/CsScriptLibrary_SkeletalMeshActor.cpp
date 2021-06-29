@@ -31,7 +31,10 @@ UCsScriptLibrary_SkeletalMeshActor::UCsScriptLibrary_SkeletalMeshActor(const FOb
 // Enum
 #pragma region
 
-FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::Get(const FString& Name)
+#define EnumMapType EMCsSkeletalMeshActor
+#define EnumType FECsSkeletalMeshActor
+
+EnumType UCsScriptLibrary_SkeletalMeshActor::Get(const FString& Name)
 {
 	using namespace NCsScriptLibrarySkeletalMeshActor::NCached;
 
@@ -39,10 +42,10 @@ FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::Get(const FString& Nam
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetSafe<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(Context, Str::FECsSkeletalMeshActor, Name);
+	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
-FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::GetByIndex(const int32& Index)
+EnumType UCsScriptLibrary_SkeletalMeshActor::GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibrarySkeletalMeshActor::NCached;
 
@@ -50,34 +53,37 @@ FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::GetByIndex(const int32
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetSafeByIndex<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(Context, Str::FECsSkeletalMeshActor, Index);
+	return EnumLibrary::GetSafeByIndex<EnumMapType, FECsSkeletalMeshActor>(Context, Str::EnumType, Index);
 }
 
-FString UCsScriptLibrary_SkeletalMeshActor::ToString(const FECsSkeletalMeshActor& Enum)
+FString UCsScriptLibrary_SkeletalMeshActor::ToString(const EnumType& Enum)
 {
 	return Enum.ToString();
 }
 
 uint8 UCsScriptLibrary_SkeletalMeshActor::GetCount()
 {
-	return EMCsSkeletalMeshActor::Get().Num();
+	return EnumMapType::Get().Num();
 }
 
-void UCsScriptLibrary_SkeletalMeshActor::GetAll(TArray<FECsSkeletalMeshActor>& OutTypes)
+void UCsScriptLibrary_SkeletalMeshActor::GetAll(TArray<EnumType>& OutTypes)
 {
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	EnumLibrary::GetAll<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(OutTypes);
+	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
-FECsSkeletalMeshActor UCsScriptLibrary_SkeletalMeshActor::GetMax()
+EnumType UCsScriptLibrary_SkeletalMeshActor::GetMax()
 {
-	return EMCsSkeletalMeshActor::Get().GetMAX();
+	return EnumMapType::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_SkeletalMeshActor::EqualEqual(const FECsSkeletalMeshActor& A, const FECsSkeletalMeshActor& B)
+bool UCsScriptLibrary_SkeletalMeshActor::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #pragma endregion Enum

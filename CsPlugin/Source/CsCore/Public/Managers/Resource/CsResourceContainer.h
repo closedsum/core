@@ -72,6 +72,16 @@ public:
 		return Resource;
 	}
 
+	FORCEINLINE ResourceType& GetRef()
+	{
+		return *Resource;
+	}
+
+	FORCEINLINE const ResourceType& GetRef() const
+	{
+		return *Resource;
+	}
+
 	FORCEINLINE void Set(ResourceType* InResource)
 	{
 		Resource = InResource;

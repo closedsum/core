@@ -5,6 +5,7 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Components
@@ -41,6 +42,7 @@ namespace NCsAnim
 			}
 
 			#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
+
 			const FCsRoutineHandle& FLibrary::Play(const ParamsType& Params)
 			{
 				using namespace NCached;
@@ -108,20 +110,46 @@ namespace NCsAnim
 
 				return Scheduler->Start(Payload);
 			}
+
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				if (!Params.IsValid(Context, Log))
+					return FCsRoutineHandle::Invalid;
+
+				return Play(Params);
+			}
+
 			#undef ParamsType
 
 			#define ParamsResourceType NCsAnim::N2D::NTexture::NPlay::NParams::FResource
+
 			const FCsRoutineHandle& FLibrary::Play(ParamsResourceType* Params)
 			{
-			#undef ParamsResourceType
-
-				const FCsRoutineHandle& Handle = Play(*(Params->Get()));
+				const FCsRoutineHandle& Handle = Play(Params->GetRef());
 
 				Params->Get()->Reset();
 				Get().DeallocatePlayParams(Params);
 
 				return Handle;
 			}
+
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				if (!Params)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
+					return FCsRoutineHandle::Invalid;
+				}
+
+				const FCsRoutineHandle& Handle = SafePlay(Context, Params->GetRef(), Log);
+
+				Params->Get()->Reset();
+				Get().DeallocatePlayParams(Params);
+
+				return Handle;
+			}
+
+			#undef ParamsResourceType
 
 			char FLibrary::Play_Internal(FCsRoutine* R)
 			{
@@ -264,6 +292,7 @@ namespace NCsAnim
 			}
 
 			#define ParamsType NCsAnim::N2D::NMaterial::NPlay::NParams::FParams
+
 			const FCsRoutineHandle& FLibrary::Play(const ParamsType& Params)
 			{
 				using namespace NCached;
@@ -328,20 +357,46 @@ namespace NCsAnim
 
 				return Scheduler->Start(Payload);
 			}
+
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				if (!Params.IsValid(Context, Log))
+					return FCsRoutineHandle::Invalid;
+
+				return Play(Params);
+			}
+
 			#undef ParamsType
 
 			#define ParamsResourceType NCsAnim::N2D::NMaterial::NPlay::NParams::FResource
+
 			const FCsRoutineHandle& FLibrary::Play(ParamsResourceType* Params)
 			{
-			#undef ParamsResourceType
-
-				const FCsRoutineHandle& Handle = Play(*(Params->Get()));
+				const FCsRoutineHandle& Handle = Play(Params->GetRef());
 
 				Params->Get()->Reset();
 				Get().DeallocatePlayParams(Params);
 
 				return Handle;
 			}
+
+			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				if (!Params)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
+					return FCsRoutineHandle::Invalid;
+				}
+
+				const FCsRoutineHandle& Handle = SafePlay(Context, Params->GetRef(), Log);
+
+				Params->Get()->Reset();
+				Get().DeallocatePlayParams(Params);
+
+				return Handle;
+			}
+
+			#undef ParamsResourceType
 
 			char FLibrary::Play_Internal(FCsRoutine* R)
 			{

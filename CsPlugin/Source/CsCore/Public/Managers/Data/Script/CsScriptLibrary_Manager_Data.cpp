@@ -109,7 +109,7 @@ UDataTable* UCsScriptLibrary_Manager_Data::GetDataTableBySoftObject(const FStrin
 	// Data
 #pragma region
 
-bool UCsScriptLibrary_Manager_Data::SafeAddDataObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, UObject* Data)
+bool UCsScriptLibrary_Manager_Data::AddDataObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, UObject* Data)
 {
 	using namespace NCsScriptLibraryManagerData::NCached;
 

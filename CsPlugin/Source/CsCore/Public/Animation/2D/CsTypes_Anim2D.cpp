@@ -222,7 +222,7 @@ namespace NCsAnim
 // FCsAnim2DFlipbookTexture
 #pragma region
 
-void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+void FCsAnim2DFlipbookTexture::Resolve()
 {
 	using namespace NCsAnim::N2D;
 
@@ -490,6 +490,11 @@ bool FCsAnim2DFlipbookTexture::IsValid(const FString& Context, void(*Log)(const 
 	return true;
 }
 
+void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+{
+	Resolve();
+}
+
 namespace NCsAnim
 {
 	namespace N2D
@@ -722,7 +727,7 @@ namespace NCsAnim
 // FCsAnim2DMaterialFlipbook
 #pragma region
 
-void FCsAnim2DMaterialFlipbook::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+void FCsAnim2DMaterialFlipbook::Resolve()
 {
 	using namespace NCsAnim::N2D;
 
@@ -988,6 +993,11 @@ bool FCsAnim2DMaterialFlipbook::IsValid(const FString& Context, void(*Log)(const
 			return false;
 	}
 	return true;
+}
+
+void FCsAnim2DMaterialFlipbook::OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName)
+{
+	Resolve();
 }
 
 namespace NCsAnim

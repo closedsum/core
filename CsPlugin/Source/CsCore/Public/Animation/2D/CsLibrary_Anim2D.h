@@ -43,12 +43,46 @@ namespace NCsAnim
 				FORCEINLINE void DeallocatePlayParams(ParamsResourceType* Resource) { Manager_PlayParams.Deallocate(Resource); }
 
 				/**
+				* Play a Texture 2D animation with the given Params.
+				*
+				* @param Params
+				* return			Handle
 				*/
 				static const FCsRoutineHandle& Play(const ParamsType& Params);
 
 				/**
+				* Safely play a Material 2D animation with the given Params.
+				*
+				* @param Context	The calling context.
+				* @param Params
+				* @param Log		(optional)
+				* return			Handle
+				*/
+				static const FCsRoutineHandle& SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
+
+				/**
+				* Play a Texture 2D animation with the given Params.
+				* NOTE: This assumes Params was allocated via AllocatePlayParams().
+				*		Use Play(const ParamsType& Params) if you do NOT want to allocate
+				*		the params upfront.
+				*
+				* @param Params
+				* return			 Handle
 				*/
 				static const FCsRoutineHandle& Play(ParamsResourceType* Params);
+
+				/**
+				* Safely play a Texture 2D animation with the given Params.
+				* NOTE: This assumes Params was allocated via AllocatePlayParams().
+				*		Use Play(const ParamsType& Params) if you do NOT want to allocate
+				*		the params upfront.
+				*
+				* @param Context	The calling context.
+				* @param Params
+				* @param Log		(optional)
+				* return			Handle
+				*/
+				static const FCsRoutineHandle& SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			private:
 
@@ -94,11 +128,21 @@ namespace NCsAnim
 
 				/**
 				* Play a Material 2D animation with the given Params.
-				* 
+				*
 				* @param Params
 				* return			Handle
 				*/
 				static const FCsRoutineHandle& Play(const ParamsType& Params);
+
+				/**
+				* Safely play a Material 2D animation with the given Params.
+				*
+				* @param Context	The calling context.
+				* @param Params
+				* @param Log		(optional)
+				* return			Handle
+				*/
+				static const FCsRoutineHandle& SafePlay(const FString& Context, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Play a Material 2D animation with the given Params.
@@ -110,6 +154,19 @@ namespace NCsAnim
 				* return			 Handle
 				*/
 				static const FCsRoutineHandle& Play(ParamsResourceType* Params);
+
+				/**
+				* Safely play a Material 2D animation with the given Params.
+				* NOTE: This assumes Params was allocated via AllocatePlayParams().
+				*		Use Play(const ParamsType& Params) if you do NOT want to allocate
+				*		the params upfront.
+				*
+				* @param Context	The calling context.
+				* @param Params
+				* @param Log		(optional)
+				* return			Handle
+				*/
+				static const FCsRoutineHandle& SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			private:
 

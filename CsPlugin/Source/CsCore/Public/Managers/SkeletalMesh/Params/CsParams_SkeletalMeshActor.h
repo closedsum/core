@@ -46,8 +46,7 @@ namespace NCsSkeletalMeshActor
 
 				private:
 
-					UAnimSequence* Anim;
-					UAnimSequence** Anim_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Anim, UAnimSequence*)
 
 				public:
 
@@ -89,14 +88,9 @@ namespace NCsSkeletalMeshActor
 
 				private:
 
-					UClass* Class;
-					UClass** Class_Emu;
-
-					UAnimMontage* Anim;
-					UAnimMontage** Anim_Emu;
-
-					float PlayRate;
-					float* PlayRate_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Class, UClass*)
+					CS_DECLARE_MEMBER_WITH_EMU(Anim, UAnimMontage*)
+					CS_DECLARE_MEMBER_WITH_EMU(PlayRate, float)
 
 				public:
 
@@ -117,12 +111,9 @@ namespace NCsSkeletalMeshActor
 
 					void Reset()
 					{
-						Class = nullptr;
-						Class_Emu = &Class;
-						Anim = nullptr;
-						Anim_Emu = &Anim;
-						PlayRate = 1.0f;
-						PlayRate_Emu = &PlayRate;
+						CS_RESET_MEMBER_WITH_EMU(Class, nullptr)
+						CS_RESET_MEMBER_WITH_EMU(Anim, nullptr)
+						CS_RESET_MEMBER_WITH_EMU(PlayRate, 1.0f)
 					}
 
 					bool IsValidChecked(const FString& Context) const;
@@ -155,32 +146,15 @@ namespace NCsSkeletalMeshActor
 
 			private:
 
-				USkeletalMesh* Mesh;
-				USkeletalMesh** Mesh_Emu;
-
-				TArray<UMaterialInterface*> Materials;
-				TArray<UMaterialInterface*>* Materials_Emu;
-
-				FECsSkeletalMeshActor Type;
-				FECsSkeletalMeshActor* Type_Emu;
-
-				DeallocateMethodType DeallocateMethod;
-				DeallocateMethodType* DeallocateMethod_Emu;
-
-				float LifeTime;
-				float* LifeTime_Emu;
-
-				ECsAttachmentTransformRules AttachmentTransformRules;
-				ECsAttachmentTransformRules* AttachmentTransformRules_Emu;
-
-				FName Bone;
-				FName* Bone_Emu;
-
-				int32 TransformRules;
-				int32* TransformRules_Emu;
-
-				FTransform Transform;
-				FTransform* Transform_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(Mesh, USkeletalMesh*)
+				CS_DECLARE_MEMBER_WITH_EMU(Materials, TArray<UMaterialInterface*>)
+				CS_DECLARE_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
+				CS_DECLARE_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
+				CS_DECLARE_MEMBER_WITH_EMU(LifeTime, float)
+				CS_DECLARE_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DECLARE_MEMBER_WITH_EMU(Bone, FName)
+				CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
+				CS_DECLARE_MEMBER_WITH_EMU(Transform, FTransform)
 
 			public:
 
@@ -189,35 +163,26 @@ namespace NCsSkeletalMeshActor
 			public:
 
 				FOneShot() :
-					Mesh(nullptr),
-					Mesh_Emu(nullptr),
-					Materials(),
-					Materials_Emu(nullptr),
-					Type(),
-					Type_Emu(nullptr),
-					DeallocateMethod(DeallocateMethodType::LifeTime),
-					DeallocateMethod_Emu(nullptr),
-					LifeTime(0.0f),
-					LifeTime_Emu(nullptr),
-					AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					AttachmentTransformRules_Emu(nullptr),
-					Bone(NAME_None),
-					Bone_Emu(nullptr),
-					TransformRules(0),
-					TransformRules_Emu(nullptr),
-					Transform(FTransform::Identity),
-					Transform_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Mesh, nullptr),
+					CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Materials),
+					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_EMU(Type),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(LifeTime, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Bone, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 0),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Transform, FTransform::Identity),
 					Params()
 				{
-					Mesh_Emu = &Mesh;
-					Materials_Emu = &Materials;
-					Type_Emu = &Type;
-					DeallocateMethod_Emu = &DeallocateMethod;
-					LifeTime_Emu = &LifeTime;
-					AttachmentTransformRules_Emu = &AttachmentTransformRules;
-					Bone_Emu = &Bone;
-					TransformRules_Emu = &TransformRules;
-					Transform_Emu = &Transform;
+					CS_CTOR_SET_MEMBER_EMU(Mesh);
+					CS_CTOR_SET_MEMBER_EMU(Materials);
+					CS_CTOR_SET_MEMBER_EMU(Type);
+					CS_CTOR_SET_MEMBER_EMU(DeallocateMethod);
+					CS_CTOR_SET_MEMBER_EMU(LifeTime);
+					CS_CTOR_SET_MEMBER_EMU(AttachmentTransformRules);
+					CS_CTOR_SET_MEMBER_EMU(Bone);
+					CS_CTOR_SET_MEMBER_EMU(TransformRules);
+					CS_CTOR_SET_MEMBER_EMU(Transform);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Mesh, USkeletalMesh)
@@ -247,24 +212,15 @@ namespace NCsSkeletalMeshActor
 
 				void Reset()
 				{
-					Mesh = nullptr;
-					Mesh_Emu = &Mesh;
-					Materials.Reset(Materials.Max());
-					Materials_Emu = &Materials;
-					Type = EMCsSkeletalMeshActor::Get().GetMAX();
-					Type_Emu = &Type;
-					DeallocateMethod = DeallocateMethodType::LifeTime;
-					DeallocateMethod_Emu = &DeallocateMethod;
-					LifeTime = 0.0;
-					LifeTime_Emu = &LifeTime;
-					AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
-					AttachmentTransformRules_Emu = &AttachmentTransformRules;
-					Bone = NAME_None;
-					Bone_Emu = &Bone;
-					TransformRules = 0;
-					TransformRules_Emu = &TransformRules;
-					Transform = FTransform::Identity;
-					Transform_Emu = &Transform;
+					CS_RESET_MEMBER_WITH_EMU(Mesh, nullptr)
+					CS_RESET_MEMBER_ARRAY_WITH_EMU(Materials)
+					CS_RESET_MEMBER_WITH_EMU(Type, EMCsSkeletalMeshActor::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime)
+					CS_RESET_MEMBER_WITH_EMU(LifeTime, 0.0f)
+					CS_RESET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					CS_RESET_MEMBER_WITH_EMU(Bone, NAME_None)
+					CS_RESET_MEMBER_WITH_EMU(TransformRules, 0)
+					CS_RESET_MEMBER_WITH_EMU(Transform, FTransform::Identity)
 					Params.Reset();
 				}
 
@@ -340,32 +296,15 @@ namespace NCsSkeletalMeshActor
 
 			private:
 
-				USkeletalMesh* Mesh;
-				USkeletalMesh** Mesh_Emu;
-
-				TArray<UMaterialInterface*> Materials;
-				TArray<UMaterialInterface*>* Materials_Emu;
-
-				FECsSkeletalMeshActor Type;
-				FECsSkeletalMeshActor* Type_Emu;
-
-				DeallocateMethodType DeallocateMethod;
-				DeallocateMethodType* DeallocateMethod_Emu;
-
-				float LifeTime;
-				float* LifeTime_Emu;
-
-				ECsAttachmentTransformRules AttachmentTransformRules;
-				ECsAttachmentTransformRules* AttachmentTransformRules_Emu;
-
-				FName Bone;
-				FName* Bone_Emu;
-
-				int32 TransformRules;
-				int32* TransformRules_Emu;
-
-				FTransform Transform;
-				FTransform* Transform_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(Mesh, USkeletalMesh*)
+				CS_DECLARE_MEMBER_WITH_EMU(Materials, TArray<UMaterialInterface*>)
+				CS_DECLARE_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
+				CS_DECLARE_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
+				CS_DECLARE_MEMBER_WITH_EMU(LifeTime, float)
+				CS_DECLARE_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DECLARE_MEMBER_WITH_EMU(Bone, FName)
+				CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
+				CS_DECLARE_MEMBER_WITH_EMU(Transform, FTransform)
 
 			public:
 
@@ -432,24 +371,15 @@ namespace NCsSkeletalMeshActor
 
 				void Reset()
 				{
-					Mesh = nullptr;
-					Mesh_Emu = &Mesh;
-					Materials.Reset(Materials.Max());
-					Materials_Emu = &Materials;
-					Type = EMCsSkeletalMeshActor::Get().GetMAX();
-					Type_Emu = &Type;
-					DeallocateMethod = DeallocateMethodType::LifeTime;
-					DeallocateMethod_Emu = &DeallocateMethod;
-					LifeTime = 0.0;
-					LifeTime_Emu = &LifeTime;
-					AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
-					AttachmentTransformRules_Emu = &AttachmentTransformRules;
-					Bone = NAME_None;
-					Bone_Emu = &Bone;
-					TransformRules = 0;
-					TransformRules_Emu = &TransformRules;
-					Transform = FTransform::Identity;
-					Transform_Emu = &Transform;
+					CS_RESET_MEMBER_WITH_EMU(Mesh, nullptr)
+					CS_RESET_MEMBER_ARRAY_WITH_EMU(Materials)
+					CS_RESET_MEMBER_WITH_EMU(Type, EMCsSkeletalMeshActor::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime)
+					CS_RESET_MEMBER_WITH_EMU(LifeTime, 0.0f)
+					CS_RESET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					CS_RESET_MEMBER_WITH_EMU(Bone, NAME_None)
+					CS_RESET_MEMBER_WITH_EMU(TransformRules, 0)
+					CS_RESET_MEMBER_WITH_EMU(Transform, FTransform::Identity)
 					Params.Reset();
 				}
 

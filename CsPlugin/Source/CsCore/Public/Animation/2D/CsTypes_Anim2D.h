@@ -283,28 +283,23 @@ namespace NCsAnim
 				{
 				private:
 
-					UTexture* Texture;
-					UTexture** Texture_Emu;
-
-					FName ParameterName;
-					FName* ParameterName_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Texture, UTexture*)
+					CS_DECLARE_MEMBER_WITH_EMU(ParameterName, FName)
 
 				public:
 
 					FFrame() :
-						Texture(nullptr),
-						Texture_Emu(nullptr),
-						ParameterName(NAME_None),
-						ParameterName_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Texture, nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(ParameterName, NAME_None)
 					{
-						Texture_Emu = &Texture;
-						ParameterName_Emu = &ParameterName;
+						CS_CTOR_SET_MEMBER_EMU(Texture);
+						CS_CTOR_SET_MEMBER_EMU(ParameterName);
 					}
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
 					{
-						Texture = B.Texture;
-						ParameterName = B.ParameterName;
+						SetTexture(B.GetTexture());
+						SetParameterName(B.GetParameterName());
 						return *this;
 					}
 
@@ -381,6 +376,8 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 
 	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
 
+	void Resolve();
+
 #define FlipbookType NCsAnim::N2D::NTexture::NFlipbook::FFlipbook
 	void CopyToFlipbook(FlipbookType* Flipbook);
 	void CopyToFlipbookAsValue(FlipbookType* Flipbook) const;
@@ -408,40 +405,28 @@ namespace NCsAnim
 
 				public:
 
-					PlaybackType Playback;
-					PlaybackType* Playback_Emu;
-
-					PlayRateType PlayRate;
-					PlayRateType* PlayRate_Emu;
-
-					float DeltaTime;
-					float* DeltaTime_Emu;
-
-					float TotalTime;
-					float* TotalTime_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Playback, PlaybackType)
+					CS_DECLARE_MEMBER_WITH_EMU(PlayRate, PlayRateType)
+					CS_DECLARE_MEMBER_WITH_EMU(DeltaTime, float)
+					CS_DECLARE_MEMBER_WITH_EMU(TotalTime, float)
 
 					TArray<FrameType> Frames;
 
-					int32 TotalCount;
-					int32* TotalCount_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(TotalCount, int32)
 
 					FFlipbook() :
-						Playback(PlaybackType::Forward),
-						Playback_Emu(nullptr),
-						PlayRate(PlayRateType::PR_60Fps),
-						PlayRate_Emu(nullptr),
-						DeltaTime(0.0f),
-						DeltaTime_Emu(nullptr),
-						TotalTime(0.0f),
-						TotalTime_Emu(nullptr),
-						TotalCount(0),
-						TotalCount_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Playback, PlaybackType::Forward),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(DeltaTime, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalTime, 0.0f),
+						Frames(),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalCount, 0)
 					{
-						Playback_Emu = &Playback;
-						PlayRate_Emu = &PlayRate;
-						DeltaTime_Emu = &DeltaTime;
-						TotalTime_Emu = &TotalTime;
-						TotalCount_Emu = &TotalCount;
+						CS_CTOR_SET_MEMBER_EMU(Playback);
+						CS_CTOR_SET_MEMBER_EMU(PlayRate);
+						CS_CTOR_SET_MEMBER_EMU(DeltaTime);
+						CS_CTOR_SET_MEMBER_EMU(TotalTime);
+						CS_CTOR_SET_MEMBER_EMU(TotalCount);
 					}
 
 					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)
@@ -564,26 +549,21 @@ namespace NCsAnim
 				{
 				public:
 
-					UMaterialInterface* Material;
-					UMaterialInterface** Material_Emu;
-
-					int32 Index;
-					int32* Index_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Material, UMaterialInterface*)
+					CS_DECLARE_MEMBER_WITH_EMU(Index, int32)
 
 					FFrame() :
-						Material(nullptr),
-						Material_Emu(nullptr),
-						Index(NAME_None),
-						Index_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Material, nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Index, INDEX_NONE)
 					{
-						Material_Emu = &Material;
-						Index_Emu = &Index;
+						CS_CTOR_SET_MEMBER_EMU(Material);
+						CS_CTOR_SET_MEMBER_EMU(Index);
 					}
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
 					{
-						Material = B.Material;
-						Index = B.Index;
+						SetMaterial(B.GetMaterial());
+						SetIndex(B.GetIndex());
 						return *this;
 					}
 
@@ -659,6 +639,8 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook
 
 	FORCEINLINE bool IsLoopingForever() const { return IsLooping() && TotalTime == 0.0f; }
 
+	void Resolve();
+
 #define FlipbookType NCsAnim::N2D::NMaterial::NFlipbook::FFlipbook
 	void CopyToFlipbook(FlipbookType* Flipbook);
 	void CopyToFlipbookAsValue(FlipbookType* Flipbook) const;
@@ -686,40 +668,28 @@ namespace NCsAnim
 
 				public:
 
-					PlaybackType Playback;
-					PlaybackType* Playback_Emu;
-
-					PlayRateType PlayRate;
-					PlayRateType* PlayRate_Emu;
-
-					float DeltaTime;
-					float* DeltaTime_Emu;
-
-					float TotalTime;
-					float* TotalTime_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Playback, PlaybackType)
+					CS_DECLARE_MEMBER_WITH_EMU(PlayRate, PlayRateType)
+					CS_DECLARE_MEMBER_WITH_EMU(DeltaTime, float)
+					CS_DECLARE_MEMBER_WITH_EMU(TotalTime, float)
 
 					TArray<FrameType> Frames;
 
-					int32 TotalCount;
-					int32* TotalCount_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(TotalCount, int32)
 
 					FFlipbook() :
-						Playback(PlaybackType::Forward),
-						Playback_Emu(nullptr),
-						PlayRate(PlayRateType::PR_60Fps),
-						PlayRate_Emu(nullptr),
-						DeltaTime(0.0f),
-						DeltaTime_Emu(nullptr),
-						TotalTime(0.0f),
-						TotalTime_Emu(nullptr),
-						TotalCount(0),
-						TotalCount_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Playback, PlaybackType::Forward),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(DeltaTime, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalTime, 0.0f),
+						Frames(),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalCount, 0)
 					{
-						Playback_Emu = &Playback;
-						PlayRate_Emu = &PlayRate;
-						DeltaTime_Emu = &DeltaTime;
-						TotalTime_Emu = &TotalTime;
-						TotalCount_Emu = &TotalCount;
+						CS_CTOR_SET_MEMBER_EMU(Playback);
+						CS_CTOR_SET_MEMBER_EMU(PlayRate);
+						CS_CTOR_SET_MEMBER_EMU(DeltaTime);
+						CS_CTOR_SET_MEMBER_EMU(TotalTime);
+						CS_CTOR_SET_MEMBER_EMU(TotalCount);
 					}
 
 					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)

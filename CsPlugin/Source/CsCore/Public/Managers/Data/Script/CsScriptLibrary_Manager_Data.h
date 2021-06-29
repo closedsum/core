@@ -104,7 +104,7 @@ public:
 	* return					Whether Data was successful added to an internal list in Manager_Data.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject"))
-	static bool SafeAddDataObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, UObject* Data);
+	static bool AddDataObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, UObject* Data);
 
 #pragma endregion Data
 

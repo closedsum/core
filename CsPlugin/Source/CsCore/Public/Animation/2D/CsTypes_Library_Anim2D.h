@@ -7,11 +7,59 @@
 #include "Managers/Time/CsTypes_Update.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 
+#include "CsTypes_Library_Anim2D.generated.h"
 #pragma once
+
+// FCsAnim2DTextureFlipbook_Params
+#pragma region
+
+// NCsAnim::N2D::NTexture::NPlay::NParams::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsAnim, N2D, NTexture, NPlay, NParams, FParams)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnim2DTextureFlipbook_Params
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* ContextRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsUpdateGroup UpdateGroup;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Owner;
+
+	//OnAbortType OnAbort;
+
+	//OnEndType OnEnd;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInstanceDynamic* MID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsAnim2DFlipbookTexture Anim;
+
+	FCsAnim2DTextureFlipbook_Params() :
+		ContextRoot(nullptr),
+		UpdateGroup(),
+		Owner(nullptr),
+		MID(nullptr),
+		Anim()
+	{
+	}
+
+#define ParamsType NCsAnim::N2D::NTexture::NPlay::NParams::FParams
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
 
 class UObject;
 class UMaterialInstanceDynamic;
-class UPrimitiveComponent;
 
 namespace NCsAnim
 {
@@ -60,7 +108,10 @@ namespace NCsAnim
 						{
 						}
 
+						AnimType* GetAnimPtr() { return &Anim; }
+
 						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 						void Reset()
 						{
@@ -92,7 +143,66 @@ namespace NCsAnim
 				}
 			}
 		}
+	}
+}
 
+#pragma endregion FCsAnim2DTextureFlipbook_Params
+
+// FCsAnim2DMaterialFlipbook_Params
+#pragma region
+
+// NCsAnim::N2D::NMaterial::NPlay::NParams::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsAnim, N2D, NMaterial, NPlay, NParams, FParams)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsAnim2DMaterialFlipbook_Params
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* ContextRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FECsUpdateGroup UpdateGroup;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Owner;
+
+	//OnAbortType OnAbort;
+
+	//OnEndType OnEnd;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPrimitiveComponent* Component;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsAnim2DMaterialFlipbook Anim;
+
+	FCsAnim2DMaterialFlipbook_Params() :
+		ContextRoot(nullptr),
+		UpdateGroup(),
+		Owner(nullptr),
+		Component(nullptr),
+		Anim()
+	{
+	}
+
+#define ParamsType NCsAnim::N2D::NMaterial::NPlay::NParams::FParams
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+class UObject;
+class UPrimitiveComponent;
+
+namespace NCsAnim
+{
+	namespace N2D
+	{
 		namespace NMaterial
 		{
 			namespace NPlay
@@ -136,7 +246,10 @@ namespace NCsAnim
 						{
 						}
 
+						AnimType* GetAnimPtr() { return &Anim; }
+
 						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 						void Reset()
 						{
@@ -170,3 +283,5 @@ namespace NCsAnim
 		}
 	}
 }
+
+#pragma endregion FCsAnim2DMaterialFlipbook_Params

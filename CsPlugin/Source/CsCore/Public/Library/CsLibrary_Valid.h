@@ -359,6 +359,31 @@ namespace NCsValid
 		};
 	}
 
+	namespace NWeakObjectPtr
+	{
+		struct CSCORE_API FLibrary final
+		{
+			template<typename ObjectType>
+			FORCEINLINE static bool NullChecked(const FString& Context, const TWeakObjectPtr<ObjectType>& Ptr, const FString& PtrName)
+			{
+				checkf(Ptr.IsValid() && Ptr.Get(), TEXT("%s: %s is NULL."), *Context, *PtrName);
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static bool Null(const FString& Context, const TWeakObjectPtr<ObjectType>& Ptr, const FString& PtrName, void(*Log)(const FString&))
+			{
+				if (!Ptr.IsValid() || !Ptr.Get())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *PtrName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+
 	namespace NSoftObjectPath
 	{
 		struct CSCORE_API FLibrary final
@@ -507,6 +532,18 @@ namespace NCsValid
 
 #pragma endregion Ptr
 
+// WeakObjectPtr
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		check(NCsValid::NWeakObjectPtr::FLibrary::NullChecked<__ObjectType>(Context, __Ptr, __temp__str__)); \
+	}
+
+#pragma endregion WeakObjectPtr
+
 // FSoftObjectPath
 #pragma region 
 
@@ -552,6 +589,8 @@ namespace NCsValid
 #define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
+// WeakObjectPtr
+#define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // FSoftObjectPath
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
 // Delegate
@@ -792,6 +831,30 @@ namespace NCsValid
 	}
 
 #pragma endregion Ptr
+
+// WeakObjectPtr
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_WEAK_OBJ_PTR_NULL(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NWeakObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_WEAK_OBJ_PTR_NULL_EXIT(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NWeakObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_WEAK_OBJ_PTR_NULL_RET_NULL(__Ptr, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NWeakObjectPtr::FLibrary::Null<__ObjectType>(Context, __Ptr, __temp__str__, Log)) { return nullptr; } \
+	}
+
+#pragma endregion WeakObjectPtr
 
 // FSoftObjectPath
 #pragma region 

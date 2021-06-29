@@ -26,8 +26,7 @@ namespace NCsSkeletalMeshActor
 
 				FOneShot::FOneShot() :
 					InterfaceMap(nullptr),
-					Anim(nullptr),
-					Anim_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Anim, nullptr)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -37,7 +36,7 @@ namespace NCsSkeletalMeshActor
 
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 
-					Anim_Emu = &Anim;
+					CS_CTOR_SET_MEMBER_EMU(Anim);
 				}
 
 				FOneShot::~FOneShot()
@@ -66,12 +65,9 @@ namespace NCsSkeletalMeshActor
 
 				FOneShot::FOneShot() :
 					InterfaceMap(nullptr),
-					Class(nullptr),
-					Class_Emu(nullptr),
-					Anim(nullptr),
-					Anim_Emu(nullptr),
-					PlayRate(1.0f),
-					PlayRate_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Class, nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Anim, nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, 1.0f)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -81,9 +77,9 @@ namespace NCsSkeletalMeshActor
 
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 
-					Class_Emu = &Class;
-					Anim_Emu = &Anim;
-					PlayRate_Emu = &PlayRate;
+					CS_CTOR_SET_MEMBER_EMU(Class);
+					CS_CTOR_SET_MEMBER_EMU(Anim);
+					CS_CTOR_SET_MEMBER_EMU(PlayRate);
 				}
 
 				FOneShot::~FOneShot()

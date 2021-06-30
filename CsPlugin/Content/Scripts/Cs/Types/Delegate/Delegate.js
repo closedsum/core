@@ -21,30 +21,62 @@ module.exports = class NJsDelegate
     static FDelegateBase = class DelegateBase
     {
         /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
+         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, Id: string, Order: int, TerminationCount: int} 
          */
         constructor(params /*object*/)
         {
+            // Reference to a function.
             this.Fn = params.Fn;
+            // Caller of function, this should be set (NOT null) if bStatic is true.
             this.Caller = params.Caller;
+            // Whether the function is static or not (needs a caller).
             this.bStatic = params.bStatic;
+            // Current Handle 'id', Guid as string, associated with the delegate.
+            this.Id = params.Id;
+            // The order, index in an InvocationList (relevant for Mulitcast), the function is called.
+            this.Order = params.Order;
+            // if > 0, the count before the delegate is removed from an InvocationList (relevant for Multicast).
             this.TerminationCount = params.TerminationCount;
+            // The current number of times Execute() has been called.
             this.ExecutionCount = 0;
         }
 
         /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
+         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, Id: string, Order: int, TerminationCount: int} 
          */
         Set(params /*object*/)
         {
             this.Fn = params.Fn;
             this.Caller = params.Caller;
             this.bStatic = params.bStatic;
+            this.Id = params.Id;
+            this.Order = params.Order;
             this.TerminationCount = params.TerminationCount;
             this.ExecutionCount = 0;
         }
 
+        /**
+         * @returns {boolean}
+         */
         /*bool*/ IsSet() { return this.Fn !== null; }
+
+        /**
+         * @returns {string} 
+         */
+        /*string*/ GetId() { return this.Id; }
+
+        /**
+         * @param {number} order 
+         */
+        SetOrder(order /*int*/)
+        {
+            this.Order = order;
+        }
+
+        /**
+         * @returns {number} int 
+         */
+        /*int*/ GetOrder(){ return this.Order; }
 
         /**
          * @returns {boolean}
@@ -56,6 +88,8 @@ module.exports = class NJsDelegate
             this.Fn = null;
             this.Caller = null;
             this.bStatic = false;
+            this.Id = "";
+            this.Order = -1;
             this.TerminationCount = -1;
             this.ExecutionCount = 0;
         }
@@ -102,199 +136,6 @@ module.exports = class NJsDelegate
             if (this.bStatics)
                 return this.Fn(param1);
             return this.Fn.call(this.Caller, param1);
-        }
-    }
-
-    static FMulticastBase = class MulticastBase
-    {
-        constructor(argCount /*int*/)
-        {
-            this.InvocationMap = new Map(); // [Guid as string][Delegate]
-
-            checkf(CommonLibrary.IsIntChecked("NJsDelegate.FMulticastBase.ctor: ", argCount));
-            checkf(argCount >= 0, "NJsDelegate.FMulticastBase.ctor: argCount: " + argCount + " is NOT >= 0.");
-
-            this.ArgCount = argCount;
-        }
-
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         * @returns {NJsDelegate.FDelegate}
-         */
-        // NJsDelegate.FDelegate CreateDelegate(object: params)
-
-        /**
-         * @param {function}    fn 
-         * @param {object}      caller
-         * @returns {string}    Guid as string 
-         */
-        /*string*/ Add(fn /*function*/, caller /*object*/)
-        {
-            let context = "NJsDelegate.FDelegateBase.Add";
-
-            check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
-            check(IsValidObjectChecked(context, caller));
-
-            for (const [key, value] of this.InvocationMap.entries())
-            {
-                checkf(value.Fn !== fn && value.Caller !== caller, context + ": fn and caller have ALREADY been added.");
-            }
-
-            let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: caller, bStatic: false, TerminationCount: -1}
-            let d = this.CreateDelegate(params);
-
-            this.InvocationMap.set(id, d);
-
-            return id;
-        }
-
-        /**
-         * @param {function} fn
-         * @returns {string} Guid as string
-         */
-        /*string*/ AddStatic(fn /*function*/)
-        {
-            let context = "NJsDelegate.FDelegateBase.AddStatic";
-
-            check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
-
-            for (const [key, value] of this.InvocationMap.entries())
-            {
-                checkf(value.Fn !== fn, context + ": fn has ALREADY been added.");
-            }
-
-            let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: null, bStatic: false, TerminationCount: -1}
-            let d = this.CreateDelegate(params);
-
-            this.InvocationMap.set(id, d);
-
-            return id;
-        }
-  
-        /*string*/ AddOneShot(fn /*function*/, caller /*object*/)
-        {
-            let context = "NJsDelegate.FDelegateBase.AddOneShot";
-
-            check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
-
-            for (const [key, value] of this.InvocationMap.entries())
-            {
-                checkf(value.Fn !== fn && value.Caller !== caller, context + ": fn and caller have ALREADY been added.");
-            }
-
-            let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: caller, bStatic: false, TerminationCount: 1}
-            let d = this.CreateDelegate(params);
-
-            this.InvocationMap.set(id, d);
-
-            return id;
-        }
-
-        /*bool*/ Remove(id /*string*/)
-        {
-            if (this.InvocationMap.has(id))
-            {
-                this.InvocationMap.delete(id);
-                return true;
-            }
-            return false;
-        }
-
-        /*bool*/ RemoveByCaller(caller /*object*/)
-        {
-            let ids = [];
-
-            for (const [key, value] of this.InvocationMap.entries())
-            {
-                if (value.Caller === caller)
-                    ids.push(key);
-            }
-
-            for (const id of ids)
-            {
-                this.InvocationMap.delete(id);
-            }
-            return ids.length > 0;
-        }
-
-        /*bool*/ IsBound() { return }
-    }
-
-    static FMulticast = class Multicast extends NJsDelegate.FMulticastBase
-    {
-        constructor()
-        {
-            super(0);
-        }
-
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         */
-        /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
-        {
-            return new NJsDelegate.FDelegate(params);
-        }
-
-        Broadcast()
-        {
-            let ids = [];
-
-            for (let [key, value] of this.InvocationMap.entries())
-            {
-                value.Execute();
-
-                // Check if the delegate should be removed after execution.
-                if (value.HasExpired())
-                    ids.push(key);
-            }
-
-            // Remove any delegates that have "expired"
-            for (const id of ids)
-            {
-                this.InvocationMap.delete(id);
-            }
-        }
-    }
-
-    static FMulticast_OneParam = class Multicast_OneParam extends NJsDelegate.FMulticastBase
-    {
-        constructor()
-        {
-            super(1);
-        }
-
-        /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
-         */
-        /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
-        {
-            return new NJsDelegate.FDelegate_OneParam(params);
-        }
-
-        /**
-         * @param {any} param1 
-         */
-        Broadcast(param1 /*any*/)
-        {
-            let ids = [];
-
-            for (let [key, value] of this.InvocationMap.entries())
-            {
-                value.Execute(param1);
-
-                // Check if the delegate should be removed after execution.
-                if (value.HasExpired())
-                    ids.push(key);
-            }
-
-            // Remove any delegates that have "expired"
-            for (const id of ids)
-            {
-                this.InvocationMap.delete(id);
-            }
         }
     }
 };

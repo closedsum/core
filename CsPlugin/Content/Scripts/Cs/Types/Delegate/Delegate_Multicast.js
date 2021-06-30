@@ -16,6 +16,7 @@ var FunctionLibrary = NJsFunction.FLibrary;
 // "typedefs" - functions
 var check = CommonLibrary.check;
 var checkf = CommonLibrary.checkf;
+var IsValidObject = CommonLibrary.IsValidObject;
 var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
 
 module.exports = class NJsDelegate
@@ -23,13 +24,22 @@ module.exports = class NJsDelegate
     static FMulticastBase = class MulticastBase
     {
         /**
-         * @param {{ArgTypeInfos: {Type: any}[]}} params 
+         * @param {{?bOrdered: boolean, ArgTypeInfos: {Type: any}[]}} params 
          */
         constructor(params)
         {
             let context = "NJsDelegate.FMulticastBase.ctor";
 
             check(IsValidObjectChecked(context, params));
+
+            this.bOrdered = false;
+
+            if (CommonLibrary.DoesKeyExist(params, "bOrdered"))
+            {
+                if (CommonLibrary.IsBool(params.bOrdered))
+                this.bOrdered = params.bOrdered;
+            }
+
             check(CommonLibrary.DoesKeyExistChecked(context, params, "ArgTypeInfos"));
 
             checkf(Array.isArray(params.ArgTypeInfos), context + ": params.ArgTypeInfos is NOT an array.");
@@ -46,10 +56,15 @@ module.exports = class NJsDelegate
             this.ArgCount = this.ArgTypeInfos.length;
 
             this.InvocationMap = new Map(); // [Guid as string][Delegate]
+            this.InvocationList = []; // [Delegate]
+
+            this.bBroadcasting = false;
+
+            this.RemoveQueue = new Set(); // [Guid as string]
         }
 
         /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
+         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, Id: string, Order: int, TerminationCount: int} 
          * @returns {NJsDelegate.FDelegate}
          */
         // NJsDelegate.FDelegate CreateDelegate(object: params)
@@ -72,11 +87,24 @@ module.exports = class NJsDelegate
             }
 
             let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: caller, bStatic: false, TerminationCount: -1}
-            let d = this.CreateDelegate(params);
 
-            this.InvocationMap.set(id, d);
+            if (this.bOrdered)
+            {
+                let index   = this.InvocationList.length;
+                let params  = {Fn: fn, Caller: caller, bStatic: false, Order: index, TerminationCount: -1}
+                let d       = this.CreateDelegate(params);
+    
+                this.InvocationList[index] = d;
 
+                this.InvocationMap.set(id, d);
+            }
+            else
+            {
+                let params  = {Fn: fn, Caller: caller, bStatic: false, Order: -1, TerminationCount: -1}
+                let d       = this.CreateDelegate(params);
+    
+                this.InvocationMap.set(id, d);
+            }
             return id;
         }
 
@@ -94,13 +122,25 @@ module.exports = class NJsDelegate
             {
                 checkf(value.Fn !== fn, context + ": fn has ALREADY been added.");
             }
-
+            
             let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: null, bStatic: true, TerminationCount: -1}
-            let d = this.CreateDelegate(params);
 
-            this.InvocationMap.set(id, d);
+            if (this.bOrdered)
+            {
+                let index   = this.InvocationList.length;
+                let params  = {Fn: fn, Caller: null, bStatic: true, Id: id, Order: index, TerminationCount: -1}
+                let d       = this.CreateDelegate(params);
 
+                this.InvocationList[index] = d;
+                this.InvocationMap.set(id, d);
+            }
+            else
+            {
+                let params  = {Fn: fn, Caller: null, bStatic: true, Id: id, Order: -1, TerminationCount: -1}
+                let d       = this.CreateDelegate(params);
+
+                this.InvocationMap.set(id, d);
+            }
             return id;
         }
   
@@ -116,20 +156,73 @@ module.exports = class NJsDelegate
             }
 
             let id = Guid.NewGuid().Conv_GuidToString();
-            let params = {Fn: fn, Caller: caller, bStatic: false, TerminationCount: 1}
-            let d = this.CreateDelegate(params);
 
-            this.InvocationMap.set(id, d);
+            if (this.bOrdered)
+            {
+                let index   = this.InvocationList.length;
+                let params = {Fn: fn, Caller: caller, bStatic: false, TerminationCount: 1}
+                let d      = this.CreateDelegate(params);
 
+                this.InvocationList[index] = d;
+                this.InvocationMap.set(id, d);
+            }
+            else
+            {
+                let params = {Fn: fn, Caller: caller, bStatic: false, TerminationCount: 1}
+                let d      = this.CreateDelegate(params);
+
+                this.InvocationMap.set(id, d);
+            }
             return id;
+        }
+
+        QueueRemove(id /*string*/)
+        {
+            if (!this.RemoveQueue.has(id))
+                this.RemoveQueue.add(id);
         }
 
         /*bool*/ Remove(id /*string*/)
         {
-            if (this.InvocationMap.has(id))
+            let d = this.InvocationMap.get(id);
+
+            if (d !== undefined)
             {
-                this.InvocationMap.delete(id);
-                return true;
+                // Ordered
+                if (this.bOrdered)
+                {
+                    let j = 0;
+                    let len = this.InvocationList.length;
+
+                    for (let i = 0; j < len; ++i)
+                    {
+                        if (this.InvocationList[i] === d)
+                        {
+                            ++j;
+                        }
+                        this.InvocationList[i] = this.InvocationList[j];
+                        this.InvocationList[i].SetOrder(i);
+                        ++j;
+                    }
+
+                    this.InvocationList.splice(len - 1, 1);
+                    this.InvocationMap.delete(id);
+                    return true;
+                }
+                // Unordered
+                else
+                {
+                    if (this.bBroadcasting)
+                    {
+                        this.QueueRemove(id);
+                        return false;
+                    }
+                    else
+                    {
+                        this.InvocationMap.delete(id);
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -138,10 +231,44 @@ module.exports = class NJsDelegate
         {
             let ids = [];
 
-            for (const [key, value] of this.InvocationMap.entries())
+            // Ordered
+            if (this.bOrdered)
             {
-                if (value.Caller === caller)
-                    ids.push(key);
+                let i   = 0;
+                let j   = 0;
+                let len = this.InvocationList.length;
+
+                for (i = 0; j < len; ++i)
+                {
+                    let d = this.InvocationList[i];
+
+                    if (d.Caller === caller)
+                    {
+                        ++j;
+                        ids.push(d.GetId());
+                    }
+                    this.InvocationList[i] = this.InvocationList[j];
+                    this.InvocationList[i].SetOrder(i);
+                }
+
+                if (i + 1 < len)
+                {
+                    this.InvocationList.splice(i + 1, len - (i + 1));
+                }
+            }
+            // Unordered
+            else
+            {
+                for (let [key, value] of this.InvocationMap.entries())
+                {
+                    if (value.Caller === caller)
+                    {
+                        if (this.bBroadcasting)
+                            this.QueueRemove(key);
+                        else
+                            ids.push(key);
+                    }
+                }
             }
 
             for (const id of ids)
@@ -156,13 +283,16 @@ module.exports = class NJsDelegate
 
     static FMulticast = class Multicast extends NJsDelegate.FMulticastBase
     {
-        constructor()
+        /**
+         * @param {boolean} ordered (optional) 
+         */
+        constructor(ordered /*?boolean*/)
         {
-            super({ArgTypeInfos: []});
+            super({bOrdered: ordered, ArgTypeInfos: []});
         }
 
         /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
+         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, Id: string, Order: int, TerminationCount: int} 
          */
         /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
         {
@@ -171,15 +301,52 @@ module.exports = class NJsDelegate
 
         Broadcast()
         {
+            this.bBroadcasting = true;
+
             let ids = [];
 
-            for (let [key, value] of this.InvocationMap.entries())
+            // Ordered
+            if (this.bOrdered)
             {
-                value.Execute();
+                let i = 0;
+                let j = 0;
+                let len = this.InvocationList.length;
+                
+                for (i = 0; i < len; ++i)
+                {
+                    let d = this.InvocationList[i];
 
-                // Check if the delegate should be removed after execution.
-                if (value.HasExpired())
-                    ids.push(key);
+                    d.Execute();
+
+                    if (d.HasExpired())
+                    {
+                        ++j;
+                        ids.push(d.GetId());
+                    }
+
+                    if (j < len)
+                    {
+                        this.InvocationList[i] = this.InvocationList[j];
+                        this.InvocationList[i].SetOrder(i);
+                    }
+                }
+
+                if (i + 1 < len)
+                {
+                    this.InvocationList.splice(i + 1, len - (i + 1));
+                }
+            }
+            // Unordered
+            else
+            {
+                for (let [key, value] of this.InvocationMap.entries())
+                {
+                    value.Execute();
+
+                    // Check if the delegate should be removed after execution.
+                    if (value.HasExpired())
+                        ids.push(key);
+                }
             }
 
             // Remove any delegates that have "expired"
@@ -187,13 +354,21 @@ module.exports = class NJsDelegate
             {
                 this.InvocationMap.delete(id);
             }
+            // Remove any queued delegates for removal
+            for (const id of this.RemoveQueue.values())
+            {
+                this.InvocationMap.delete(id);
+            }
+            this.RemoveQueue.clear();
+
+            this.bBroadcasting = false;
         }
     }
 
     static FMulticast_OneParam = class Multicast_OneParam extends NJsDelegate.FMulticastBase
     {
         /**
-         * @param {{ArgTypeInfos: {Type: any}[]}} params 
+         * @param {{?bOrdered: boolean, ArgTypeInfos: {Type: any}[]}} params 
          */
         constructor(params)
         {
@@ -201,7 +376,7 @@ module.exports = class NJsDelegate
         }
 
         /**
-         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, TerminationCount: int} 
+         * @param {object} params {Fn: function, Caller: object, bStatic: boolean, Id: string, Order: int, TerminationCount: int} 
          */
         /*NJsDelegate.FDelegate*/ CreateDelegate(params /*object*/)
         {
@@ -234,15 +409,52 @@ module.exports = class NJsDelegate
         {
             check(IsArgsValidChecked(param1));
 
+            this.bBroadcasting = true;
+
             let ids = [];
 
-            for (let [key, value] of this.InvocationMap.entries())
+            // Ordered
+            if (this.bOrdered)
             {
-                value.Execute(param1);
+                let i = 0;
+                let j = 0;
+                let len = this.InvocationList.length;
+                
+                for (i = 0; i < len; ++i)
+                {
+                    let d = this.InvocationList[i];
 
-                // Check if the delegate should be removed after execution.
-                if (value.HasExpired())
-                    ids.push(key);
+                    d.Execute(param1);
+
+                    if (d.HasExpired())
+                    {
+                        ++j;
+                        ids.push(d.GetId());
+                    }
+
+                    if (j < len)
+                    {
+                        this.InvocationList[i] = this.InvocationList[j];
+                        this.InvocationList[i].SetOrder(i);
+                    }
+                }
+
+                if (i + 1 < len)
+                {
+                    this.InvocationList.splice(i + 1, len - (i + 1));
+                }
+            }
+            // Unordered
+            else
+            {
+                for (let [key, value] of this.InvocationMap.entries())
+                {
+                    value.Execute(param1);
+
+                    // Check if the delegate should be removed after execution.
+                    if (value.HasExpired())
+                        ids.push(key);
+                }
             }
 
             // Remove any delegates that have "expired"
@@ -250,6 +462,14 @@ module.exports = class NJsDelegate
             {
                 this.InvocationMap.delete(id);
             }
+            // Remove any queued delegates for removal
+            for (const id of this.RemoveQueue.values())
+            {
+                this.InvocationMap.delete(id);
+            }
+            this.RemoveQueue.clear();
+
+            this.bBroadcasting = false;
         }
     }
 };

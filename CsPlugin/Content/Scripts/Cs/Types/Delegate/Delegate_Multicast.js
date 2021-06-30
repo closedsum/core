@@ -40,6 +40,9 @@ module.exports = class NJsDelegate
                 this.bOrdered = params.bOrdered;
             }
 
+            if (this.bOrdered)
+                console.log(context + ": Ordered Multicast delegate is NOT supported by Unreal Multicast delegate. Make sure to check/update logic in c++.")
+
             check(CommonLibrary.DoesKeyExistChecked(context, params, "ArgTypeInfos"));
 
             checkf(Array.isArray(params.ArgTypeInfos), context + ": params.ArgTypeInfos is NOT an array.");
@@ -148,6 +151,8 @@ module.exports = class NJsDelegate
         {
             let context = "NJsDelegate.FMulticastBase.AddOneShot";
 
+            console.log(context + ": This is NOT supported by Unreal Multicast delegates. Make sure to check/update logic in c++.");
+
             check(FunctionLibrary.IsArgCountChecked(context, fn, this.ArgCount));
 
             for (const [key, value] of this.InvocationMap.entries())
@@ -180,6 +185,8 @@ module.exports = class NJsDelegate
         {
             if (!this.RemoveQueue.has(id))
                 this.RemoveQueue.add(id);
+
+            console.log("NJsDelegate.FMulticastBase.QueueRemove: This behavior is NOT supported by Unreal Multicast delegates. Make sure to check/update logic in c++.");
         }
 
         /*bool*/ Remove(id /*string*/)

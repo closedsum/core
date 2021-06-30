@@ -173,7 +173,11 @@ namespace NCsSkeletalMeshActor
 			Payload->AttachmentTransformRules = Shot.GetAttachmentTransformRules();
 			Payload->Bone					  = Shot.GetBone();
 			Payload->TransformRules			  = Shot.GetTransformRules();
-			Payload->Transform				  = Shot.GetTransform();
+
+			Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Shot.GetTransform().GetTranslation());
+			const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Shot.GetTransform().GetRotation().Rotator();
+			Payload->Transform.SetRotation(Rotation.Quaternion());
+			Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Shot.GetTransform().GetScale3D());
 
 			typedef NCsSkeletalMeshActor::NParams::NAnim::NMontage::FOneShot ParamsType;
 

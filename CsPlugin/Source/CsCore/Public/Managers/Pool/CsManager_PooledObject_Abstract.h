@@ -1452,7 +1452,7 @@ namespace NCsPooledObject
 				// Check if Index is valid
 				if (Index <= INDEX_NONE)
 				{
-					// 
+					CS_NON_SHIPPING_EXPR(Log_Impl.ExecuteIfBound(FString::Printf(TEXT("%s::DeAllocate: %s with PoolIndex: %d is NOT in the Pool. Call AddToPool."), *Name, *(ConstructParams.Class->GetName()), Index)));
 					return false;
 				}
 				// Check if Index is valid

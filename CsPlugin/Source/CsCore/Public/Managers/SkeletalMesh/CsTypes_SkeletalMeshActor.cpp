@@ -160,7 +160,6 @@ bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(
 		if (!MaterialLibrary::IsValid(Context, Mesh.Get(), Materials.Get(), Log))
 			return false;
 	}
-		return false;
 	// Check Type is Valid
 	CS_IS_ENUM_STRUCT_VALID(EMCsSkeletalMeshActor, FECsSkeletalMeshActor, Type)
 

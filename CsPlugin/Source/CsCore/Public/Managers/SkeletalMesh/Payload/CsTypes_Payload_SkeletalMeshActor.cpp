@@ -6,6 +6,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// SkeletalMeshActor
+#include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 
 // FCsPayload_SkeletalMesh_AnimSequence_OneShot
 #pragma region
@@ -38,6 +40,8 @@ void FCsPayload_SkeletalMesh_AnimSequence_OneShot::CopyToPayloadAsValueChecked(c
 	CS_IS_PTR_NULL_CHECKED(InShot)
 
 	Shot.CopyToShotAsValue(InShot);
+
+	Payload->Transform = Transform;
 
 	SkeletalMeshPayloadLibrary::SetChecked(Context, Payload, &PooledPayload, *InShot);
 }
@@ -88,6 +92,8 @@ void FCsPayload_SkeletalMesh_AnimMontage_OneShot::CopyToPayloadAsValueChecked(co
 	CS_IS_PTR_NULL_CHECKED(InShot)
 
 	Shot.CopyToShotAsValue(InShot);
+
+	Payload->Transform = Transform;
 
 	SkeletalMeshPayloadLibrary::SetChecked(Context, Payload, &PooledPayload, *InShot);
 }

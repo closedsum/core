@@ -226,7 +226,7 @@ public:
 	 */
 	FORCEINLINE bool IsLinked()
 	{
-		return NextLink != nullptr && PrevLink != nullptr;
+		return NextLink != nullptr || PrevLink != nullptr;
 	}
 
 	FORCEINLINE ContainerType* Next()

@@ -47,8 +47,11 @@ public:
 
 // SkeletalMeshPayloadType (NCsSkeletalMeshActor::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSkeletalMeshAnimSequenceOneShot Shot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform Transform;
 
 	FCsPayload_SkeletalMesh_AnimSequence_OneShot() :
 		Instigator(nullptr),
@@ -56,7 +59,8 @@ public:
 		Parent(nullptr),
 		Time(),
 		PreserveChangesFromDefaultMask(0),
-		Shot()
+		Shot(),
+		Transform(FTransform::Identity)
 	{
 	}
 
@@ -114,8 +118,11 @@ public:
 
 // SkeletalMeshPayloadType (NCsSkeletalMeshActor::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSkeletalMeshAnimMontageOneShot Shot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform Transform;
 
 	FCsPayload_SkeletalMesh_AnimMontage_OneShot() :
 		Instigator(nullptr),
@@ -123,7 +130,8 @@ public:
 		Parent(nullptr),
 		Time(),
 		PreserveChangesFromDefaultMask(0),
-		Shot()
+		Shot(),
+		Transform(FTransform::Identity)
 	{
 	}
 

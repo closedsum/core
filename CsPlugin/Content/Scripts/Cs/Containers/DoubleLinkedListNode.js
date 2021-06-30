@@ -79,7 +79,7 @@ module.exports = class FJsDoubleLinkedListNode
 
     IsLinked()
     {
-        return IsValidObject(this.NextLink) && IsValidObject(this.PrevLink);
+        return IsValidObject(this.NextLink) || IsValidObject(this.PrevLink);
     }
 
     GetElement() { return this.Element; }

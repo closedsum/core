@@ -58,13 +58,12 @@ namespace NCsDelegate
 
 			void Broadcast(ParamTypes... Params) const
 			{
-				const_cast<TWrapper*>(this)->ResolveRemoveQueue();
 				const_cast<TWrapper*>(this)->StartBroadcasting();
 				
 				Delegate.Broadcast(Params...);
 
-				const_cast<TWrapper*>(this)->StopBroadcasting();
 				const_cast<TWrapper*>(this)->ResolveRemoveQueue();
+				const_cast<TWrapper*>(this)->StopBroadcasting();
 			}
 		};
 	}

@@ -65,7 +65,8 @@ bool FCsAnim2DTextureFlipbook_Params::IsValid(const FString& Context, void(*Log)
 	// Check MID is Valid.
 	CS_IS_PTR_NULL(MID)
 	// Check Anim is Valid.
-	check(Anim.IsValidChecked(Context));
+	if (!Anim.IsValid(Context, Log))
+		return false;
 	return true;
 }
 
@@ -113,7 +114,8 @@ namespace NCsAnim
 						// Check MID is Valid.
 						CS_IS_WEAK_OBJ_PTR_NULL(MID, UMaterialInstanceDynamic)
 						// Check Anim is Valid.
-						check(Anim.IsValidChecked(Context));
+						if (!Anim.IsValid(Context, Log))
+							return false;
 						return true;
 					}
 				}
@@ -183,7 +185,8 @@ bool FCsAnim2DMaterialFlipbook_Params::IsValid(const FString& Context, void(*Log
 	// Check MID is Valid.
 	CS_IS_PTR_NULL(Component)
 	// Check Anim is Valid.
-	check(Anim.IsValidChecked(Context));
+	if (!Anim.IsValid(Context, Log))
+		return false;
 	return true;
 }
 
@@ -231,7 +234,8 @@ namespace NCsAnim
 						// Check MID is Valid.
 						CS_IS_WEAK_OBJ_PTR_NULL(Component, UPrimitiveComponent)
 						// Check Anim is Valid.
-						check(Anim.IsValidChecked(Context));
+						if (!Anim.IsValid(Context, Log))
+							return false;
 						return true;
 					}
 				}

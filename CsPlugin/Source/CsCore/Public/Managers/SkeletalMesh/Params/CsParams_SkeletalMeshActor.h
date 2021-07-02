@@ -313,35 +313,26 @@ namespace NCsSkeletalMeshActor
 			public:
 
 				FOneShot() :
-					Mesh(nullptr),
-					Mesh_Emu(nullptr),
-					Materials(),
-					Materials_Emu(nullptr),
-					Type(),
-					Type_Emu(nullptr),
-					DeallocateMethod(DeallocateMethodType::LifeTime),
-					DeallocateMethod_Emu(nullptr),
-					LifeTime(0.0f),
-					LifeTime_Emu(nullptr),
-					AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					AttachmentTransformRules_Emu(nullptr),
-					Bone(NAME_None),
-					Bone_Emu(nullptr),
-					TransformRules(0),
-					TransformRules_Emu(nullptr),
-					Transform(FTransform::Identity),
-					Transform_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Mesh, nullptr),
+					CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Materials),
+					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_EMU(Type),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(LifeTime, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Bone, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 0),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Transform, FTransform::Identity),
 					Params()
 				{
-					Mesh_Emu = &Mesh;
-					Materials_Emu = &Materials;
-					Type_Emu = &Type;
-					DeallocateMethod_Emu = &DeallocateMethod;
-					LifeTime_Emu = &LifeTime;
-					AttachmentTransformRules_Emu = &AttachmentTransformRules;
-					Bone_Emu = &Bone;
-					TransformRules_Emu = &TransformRules;
-					Transform_Emu = &Transform;
+					CS_CTOR_SET_MEMBER_EMU(Mesh);
+					CS_CTOR_SET_MEMBER_EMU(Materials);
+					CS_CTOR_SET_MEMBER_EMU(Type);
+					CS_CTOR_SET_MEMBER_EMU(DeallocateMethod);
+					CS_CTOR_SET_MEMBER_EMU(LifeTime);
+					CS_CTOR_SET_MEMBER_EMU(AttachmentTransformRules);
+					CS_CTOR_SET_MEMBER_EMU(Bone);
+					CS_CTOR_SET_MEMBER_EMU(TransformRules);
+					CS_CTOR_SET_MEMBER_EMU(Transform);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Mesh, USkeletalMesh)

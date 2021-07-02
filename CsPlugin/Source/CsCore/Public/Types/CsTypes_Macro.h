@@ -155,6 +155,10 @@
 	__Member(), \
 	__Member##_Emu(nullptr)
 
+#define CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(__Member) \
+	__Member(), \
+	__Member##_Emu(nullptr)
+
 #define CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_EMU(__Member) \
 	__Member(), \
 	__Member##_Emu(nullptr)

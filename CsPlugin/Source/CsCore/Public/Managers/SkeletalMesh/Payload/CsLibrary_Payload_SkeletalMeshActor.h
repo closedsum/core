@@ -39,7 +39,6 @@ namespace NCsSkeletalMeshActor
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Shot
-			* @param Transform	(optional)
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const ShotType& Shot);
 
@@ -49,7 +48,6 @@ namespace NCsSkeletalMeshActor
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Shot
-			* @param Transform	(optional)
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const ShotType& Shot);
 
@@ -101,7 +99,6 @@ namespace NCsSkeletalMeshActor
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Shot
-			* @param Transform	(optional)
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const ShotType& Shot);
 

@@ -118,9 +118,10 @@ namespace NCsSkeletalMeshActor
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param Shot
+			* @param Transform		(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -129,10 +130,11 @@ namespace NCsSkeletalMeshActor
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param Shot
-			* @param Log
+			* @param Transform		(optional)
+			* @param Log			(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -155,9 +157,10 @@ namespace NCsSkeletalMeshActor
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param Shot
+			* @param Transform		(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -166,10 +169,11 @@ namespace NCsSkeletalMeshActor
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param Shot
-			* @param Log
+			* @param Transform		(optional)
+			* @param Log			(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.

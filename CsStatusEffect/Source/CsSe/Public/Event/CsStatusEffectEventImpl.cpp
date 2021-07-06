@@ -16,7 +16,7 @@ namespace NCsStatusEffect
 			Receiver(nullptr),
 			IgnoreObjects()
 		{
-			InterfaceMap.SetRootName(FImpl::Name);
+			InterfaceMap.SetRoot<FImpl>(this);
 
 			InterfaceMap.Add<IEvent>(static_cast<IEvent*>(this));
 			InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));

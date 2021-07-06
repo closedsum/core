@@ -36,7 +36,7 @@ namespace NCsWeapon
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FLineEmu::Name);
+					InterfaceMap->SetRoot<FLineEmu>(this);
 
 					InterfaceMap->Add<ITrace>(static_cast<ITrace*>(this));
 				}
@@ -63,7 +63,7 @@ namespace NCsWeapon
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FBoxEmu::Name);
+					InterfaceMap->SetRoot<FBoxEmu>(this);
 
 					InterfaceMap->Add<ITrace>(static_cast<ITrace*>(this));
 				}
@@ -98,7 +98,7 @@ namespace NCsWeapon
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FSphereEmu::Name);
+					InterfaceMap->SetRoot<FSphereEmu>(this);
 
 					InterfaceMap->Add<ITrace>(static_cast<ITrace*>(this));
 				}
@@ -131,7 +131,7 @@ namespace NCsWeapon
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRootName(FCapsuleEmu::Name);
+					InterfaceMap->SetRoot<FCapsuleEmu>(this);
 
 					InterfaceMap->Add<ITrace>(static_cast<ITrace*>(this));
 				}

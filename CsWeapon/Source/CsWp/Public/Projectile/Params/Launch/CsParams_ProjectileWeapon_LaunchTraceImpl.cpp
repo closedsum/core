@@ -79,7 +79,7 @@ namespace NCsWeapon
 					{
 						InterfaceMap = new FCsInterfaceMap();
 
-						InterfaceMap->SetRootName(FImpl::Name);
+						InterfaceMap->SetRoot<FImpl>(this);
 
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace LaunchTraceParamsType;

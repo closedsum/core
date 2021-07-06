@@ -964,7 +964,6 @@ void UCsManager_Projectile::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &NCsProjectile::FLog::Warning;
 }
 
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& Type)
@@ -1002,7 +1001,6 @@ void UCsManager_Projectile::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &NCsProjectile::FLog::Warning;
 }
 
 #define DataType NCsProjectile::NData::IData

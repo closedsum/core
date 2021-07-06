@@ -21,7 +21,7 @@ namespace NCsStatusEffect
 				// IDamage
 				DamageEvent()
 			{
-				InterfaceMap.SetRootName(FImpl::Name);
+				InterfaceMap.SetRoot<FImpl>(this);
 
 				InterfaceMap.Add<IEvent>(static_cast<IEvent*>(this));
 				InterfaceMap.Add<IDamage>(static_cast<IDamage*>(this));

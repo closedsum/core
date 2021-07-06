@@ -49,7 +49,7 @@ SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSliceAsValue(const F
 }
 
 #undef DataHandlerType
-#undef CS_TEMP_GET_DATA_HANDLER
+#undef CS_TEMP_ADD_SAFE_SLICE
 
 void FCsData_Projectile_VisualImpactImplSlice::CopyToSlice(SliceType* Slice)
 {

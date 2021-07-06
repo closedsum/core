@@ -48,7 +48,7 @@ SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSliceAsValue(const FStr
 }
 
 #undef DataHandlerType
-#undef CS_TEMP_GET_DATA_HANDLER
+#undef CS_TEMP_ADD_SAFE_SLICE
 
 void FCsData_Projectile_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 {

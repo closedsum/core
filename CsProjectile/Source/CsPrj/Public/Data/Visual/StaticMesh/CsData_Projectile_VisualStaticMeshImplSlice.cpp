@@ -47,7 +47,7 @@ SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSliceAsValue(con
 }
 
 #undef DataHandlerType
-#undef CS_TEMP_GET_DATA_HANDLER
+#undef CS_TEMP_ADD_SAFE_SLICE
 
 void FCsData_Projectile_VisualStaticMeshImplSlice::CopyToSlice(SliceType* Slice)
 {

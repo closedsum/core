@@ -14,7 +14,7 @@ namespace NCsWeapon
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FInterfaceMap::Name);
+			InterfaceMap->SetRoot<FInterfaceMap>(this);
 			InterfaceMap->SetUniqueBasedSlices();
 		}
 

@@ -35,7 +35,7 @@ namespace NCsWeapon
 						{
 							InterfaceMap = new FCsInterfaceMap();
 
-							InterfaceMap->SetRootName(FImpl::Name);
+							InterfaceMap->SetRoot<FImpl>(this);
 
 							InterfaceMap->Add<IParams>(static_cast<IParams*>(this));
 						}

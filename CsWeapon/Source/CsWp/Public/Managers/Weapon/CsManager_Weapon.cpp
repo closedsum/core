@@ -682,7 +682,6 @@ void UCsManager_Weapon::ConstructClassHandler()
 	ClassHandler = new ClassHandlerType();
 	ClassHandler->Outer = this;
 	ClassHandler->MyRoot = MyRoot;
-	ClassHandler->Log = &NCsWeapon::FLog::Warning;
 }
 
 
@@ -736,7 +735,6 @@ void UCsManager_Weapon::ConstructDataHandler()
 	DataHandler = new DataHandlerType();
 	DataHandler->Outer = this;
 	DataHandler->MyRoot = MyRoot;
-	DataHandler->Log = &NCsWeapon::FLog::Warning;
 }
 
 #define DataType NCsWeapon::NData::IData

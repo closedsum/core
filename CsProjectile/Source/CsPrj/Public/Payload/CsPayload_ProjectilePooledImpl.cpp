@@ -25,7 +25,7 @@ namespace NCsProjectile
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImplPooled::Name);
+			InterfaceMap->SetRoot<FImplPooled>(this);
 
 			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 			typedef NCsProjectile::NPayload::IPayload ProjectilePayloadType;

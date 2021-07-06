@@ -33,7 +33,7 @@ namespace NCsWeapon
 						{
 							InterfaceMap = new FCsInterfaceMap();
 
-							InterfaceMap->SetRootName(FEmu::Name);
+							InterfaceMap->SetRoot<FEmu>(this);
 
 							InterfaceMap->Add<IParams>(static_cast<IParams*>(this));
 						}

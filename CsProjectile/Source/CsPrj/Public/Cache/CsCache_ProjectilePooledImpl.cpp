@@ -32,7 +32,7 @@ namespace NCsProjectile
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRootName(FImplPooled::Name);
+			InterfaceMap->SetRoot<FImplPooled>(this);
 
 			typedef NCsPooledObject::NCache::ICache PooledCacheType;
 			typedef NCsProjectile::NCache::ICache ProjectileCacheType;

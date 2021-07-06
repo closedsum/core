@@ -31,7 +31,7 @@ namespace NCsStatusEffect
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRootName(FSphereEmu::Name);
+				InterfaceMap->SetRoot<FSphereEmu>(this);
 
 				typedef NCsData::IData DataType;
 				typedef NCsStatusEffect::NData::IData StatusEffectDataType;
@@ -107,7 +107,7 @@ void UCsData_StatusEffect_DamageSphere::Init()
 		// Setup InterfaceMap
 		InterfaceMap = new FCsInterfaceMap();
 
-		InterfaceMap->SetRootName(UCsData_StatusEffect_DamageSphere::Name);
+		InterfaceMap->SetRoot<UCsData_StatusEffect_DamageSphere>(this);
 
 		InterfaceMap->Add<ICsData>(Cast<ICsData>(this));
 		InterfaceMap->Add<ICsData_StatusEffect>(Cast<ICsData_StatusEffect>(this));

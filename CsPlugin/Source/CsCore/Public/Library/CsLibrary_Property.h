@@ -160,7 +160,7 @@ namespace NCsProperty
 
 	#pragma endregion Enum
 
-	// Struct
+		// Struct
 	#pragma region
 	public:
 
@@ -262,7 +262,7 @@ namespace NCsProperty
 
 	#pragma endregion Struct
 
-	// Object
+		// Object
 	#pragma region
 	public:
 
@@ -305,7 +305,7 @@ namespace NCsProperty
 
 	#pragma endregion Object
 
-	// Array
+		// Array
 	#pragma region
 	public:
 
@@ -330,6 +330,44 @@ namespace NCsProperty
 		* return				Property.
 		*/
 		static FArrayProperty* FindArrayEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Array Property (TArray of UStructs) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FArrayProperty* FindArrayStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Array Property (TArray of StructType) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		template<typename StructType>
+		static FArrayProperty* FindArrayStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FArrayProperty* Property = FindArrayStructPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			FStructProperty* InnerProperty = CastField<FStructProperty>(Property->Inner);
+
+			if (InnerProperty->Struct == StructType::StaticStruct())
+				return Property;
+
+			if (Log)
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of %s but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(StructType::StaticStruct()->GetName()), *(Property->Inner->GetName())));
+			return nullptr;
+		}
 
 		/**
 		* Find the Array Property (TArray of UObjects) from Struct with name: PropertyName.
@@ -371,7 +409,7 @@ namespace NCsProperty
 
 		#pragma endregion Array
 
-	// Set
+		// Set
 	#pragma region
 	public:
 
@@ -765,6 +803,34 @@ namespace NCsProperty
 		}
 
 		/**
+		* Get the Array of UStruct value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				TArray<T>* (UObject of type: T).
+		*/
+		template<typename T>
+		static TArray<T>* GetArrayStructPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FArrayProperty* Property = FindArrayStructPropertyByName<T>(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			TArray<T>* Value = Property->ContainerPtrToValuePtr<TArray<T>>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
+		}
+
+		/**
 		* Get the Array of UObject value of type: T for the Property with name: PropertyName from StructValue.
 		*
 		* @param Context		The calling context.
@@ -776,7 +842,7 @@ namespace NCsProperty
 		template<typename T>
 		static TArray<T*>* GetArrayObjectPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
-			FArrayProperty* Property = FindArrayObjectPropertyByName(Context, Struct, PropertyName, Log);
+			FArrayProperty* Property = FindArrayObjectPropertyByName<T>(Context, Struct, PropertyName, Log);
 
 			if (!Property)
 				return nullptr;

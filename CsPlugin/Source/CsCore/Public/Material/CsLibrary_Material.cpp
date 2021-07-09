@@ -525,6 +525,8 @@ namespace NCsMaterial
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeScalarParameterValue);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsVectorParameterValid);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeVectorParameterValue);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsTextureParameterValid);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeTextureParameterValue);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, PlayAnim_Internal);
 				}
 
@@ -1062,6 +1064,160 @@ namespace NCsMaterial
 		}
 
 		#pragma endregion Vector
+
+		// Texture
+		#pragma region
+
+		bool FLibrary::IsTextureParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			// Check MID is Valid
+			CS_IS_PTR_NULL_CHECKED(MID)
+			// Check ParamName is Valid
+			CS_IS_NAME_NONE_CHECKED(ParamName)
+
+			// MaterialInstance
+			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
+			{
+				for (const FTextureParameterValue& Value : MI->TextureParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MID->Parent))
+			{
+				TArray<FMaterialParameterInfo> Infos;
+				TArray<FGuid> Ids;
+
+				M->GetAllScalarParameterInfo(Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+			}
+			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()));
+			return false;
+		}
+
+		bool FLibrary::IsTextureParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			// Check MID is Valid
+			CS_IS_PTR_NULL(MID)
+			// Check ParamName is Valid
+			CS_IS_NAME_NONE(ParamName)
+
+			// MaterialInstance
+			if (UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent))
+			{
+				for (const FTextureParameterValue& Value : MI->TextureParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MID->Parent))
+			{
+				TArray<FMaterialParameterInfo> Infos;
+				TArray<FGuid> Ids;
+
+				M->GetAllScalarParameterInfo(Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName())));
+			return false;
+		}
+
+		bool FLibrary::IsTextureParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::IsTextureParameterValid;
+
+			return IsTextureParameterValid(Context, MID, ParamName, nullptr);
+		}
+
+		void FLibrary::SetTextureParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value)
+		{
+			check(IsTextureParameterValidChecked(Context, MID, ParamName));
+
+			MID->SetTextureParameterValue(ParamName, Value);
+		}
+
+		void FLibrary::SetTextureParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
+		{
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				SetTextureParameterValueChecked(Context, MID, ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetSafeTextureParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (IsTextureParameterValid(Context, MID, ParamName, Log))
+			{
+				MID->SetTextureParameterValue(ParamName, Value);
+			}
+		}
+
+		void FLibrary::SetSafeTextureParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeScalarParameterValue;
+
+			SetSafeTextureParameterValue(Context, MID, ParamName, Value, nullptr);
+		}
+
+		void FLibrary::SetSafeTextureParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			// Check MIDs is Valid
+			CS_IS_ARRAY_EMPTY_EXIT(MIDs, UMaterialInstanceDynamic*)
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				SetSafeTextureParameterValue(Context, MID, ParamName, Value, Log);
+			}
+		}
+
+		void FLibrary::SetSafeTextureParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeTextureParameterValue;
+
+			SetSafeTextureParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		UTexture* FLibrary::GetTextureParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			check(IsTextureParameterValidChecked(Context, MID, ParamName));
+
+			return MID->K2_GetTextureParameterValue(ParamName);
+		}
+
+		#pragma endregion Scalar
 
 		// Anim
 		#pragma region

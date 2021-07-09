@@ -222,6 +222,9 @@ public:
 		}
 		else
 		{
+			// TODO: FIX: Link references to resources containers will CHANGE. Need
+			//			  to recreate the link list
+
 			ResourceContainerType* M = new ResourceContainerType();
 			M->SetIndex(PoolSize);
 			M->Set(Resource);
@@ -267,7 +270,6 @@ public:
 	FORCEINLINE const int32& GetAllocatedSize() const
 	{
 		return AllocatedSize;
-	}return PoolSize;
 	}
 
 	/**

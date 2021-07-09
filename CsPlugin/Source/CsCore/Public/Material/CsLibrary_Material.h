@@ -15,6 +15,7 @@ class UMaterialInterface;
 class UMaterialInstanceConstant;
 class UMaterialInstanceDynamic;
 struct FSkeletalMaterial;
+class UTexture;
 struct FCsRoutine;
 
 namespace NCsMaterial
@@ -579,6 +580,112 @@ namespace NCsMaterial
 			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
 
 		#pragma endregion Vector
+
+		// Texture
+		#pragma region
+		public:
+
+			/**
+			* Check whether there is a Texture Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* return			Whether there IS a Texture Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsTextureParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+			/**
+			* Check whether there is a Texture Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* @param Log
+			* return			Whether there IS a Texture Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsTextureParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether there is a Texture Parameter Value with name: ParamName for MID.
+			*
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* return			Whether there IS a Texture Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsTextureParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+			/**
+			* Set the Texture Parameter Value with name: ParamName with value: Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetTextureParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Set the Texture Parameter Value with name: ParamName with value: Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetTextureParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MID.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeTextureParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MID.
+			*
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetSafeTextureParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MIDs.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			* @param Log
+			*/
+			static void SetSafeTextureParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MIDs.
+			*
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			*/
+			static void SetSafeTextureParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Get the value of the Texture Parameter Value with name: ParamName on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* return			The value of the Texture Parameter Value with name: ParamName.
+			*/
+			static UTexture* GetTextureParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+		#pragma endregion Texture
 
 		// Anim
 		#pragma region

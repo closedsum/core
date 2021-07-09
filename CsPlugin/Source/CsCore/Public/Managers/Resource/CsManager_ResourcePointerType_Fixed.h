@@ -164,22 +164,12 @@ public:
 			}
 			Pool.Reset();
 		}
-		// Resources
-		{
-			for (int32 I = 0; I < PoolSize; ++I)
-			{
-				if (bDeconstructResourcesOnShutdown)
-				{
-					ResourceType* R = Resources[I];
-					delete R;
-					Resources[I] = nullptr;
-				}
-			}
-			Resources.Reset();
-		}
+
 		PoolSize = 0;
 		PoolSizeMinusOne = 0;
 		PoolIndex = 0;
+
+		Resources.Reset();
 
 		// Links
 		{
@@ -254,7 +244,7 @@ public:
 	*
 	* @param Resource
 	*/
-	void Add(ResourceType* Resource)
+	const ResourceContainerType* Add(ResourceType* Resource)
 	{
 		checkf(Resource, TEXT("%s::Add: Resource is NULL."), *Name);
 
@@ -264,6 +254,8 @@ public:
 
 		Resources.Add(Resource);
 		ResourceContainers[Index].Set(Resource);
+
+		return &(ResourceContainers[Index]);
 	}
 
 	/**

@@ -163,6 +163,7 @@ UCsProjectileWeaponComponent::UCsProjectileWeaponComponent(const FObjectInitiali
 	// Projectile
 	CurrentProjectilePerShotIndex(0),
 	ProjectileImpl(nullptr),
+	bOverride_ProjectileImpl_GetLaunchDirection(false),
 	// Sound
 	SoundImpl(nullptr)
 {
@@ -783,6 +784,17 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 	const FString& Context = Str::GetLaunchDirection;
 
+#if WITH_EDITOR
+	if (Outer->ShouldOverride_ProjectileImpl_GetLaunchDirection())
+	{
+		if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+		{
+			UE_LOG(LogCsWp, Warning, TEXT("%s OVERRIDDEN for %s."), *Context, *(Outer->GetName()));
+		}
+		return Outer->Override_ProjectileImpl_GetLaunchDirection();
+	}
+#endif // #if WITH_EDITOR
+
 	// Get Data Slice
 	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
@@ -1004,6 +1016,11 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			return LaunchDirection;
 		}
 		return Dir;
+	}
+	// Custom
+	if (DirectionType == EDirection::Custom)
+	{
+		return CustomLaunchDirection;
 	}
 	return FVector::ZeroVector;
 }

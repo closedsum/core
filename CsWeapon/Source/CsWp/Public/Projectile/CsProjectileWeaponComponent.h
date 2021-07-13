@@ -313,9 +313,15 @@ public:
 
 	public:
 
+		FVector CustomLaunchDirection;
+
+	public:
+
 		FProjectileImpl() :
 			Outer(nullptr),
-			LaunchComponentTransform(nullptr)
+			LaunchComponentTransform(nullptr),
+			StartLaunchScopedHandle(),
+			CustomLaunchDirection(FVector::ZeroVector)
 		{
 		}
 
@@ -387,6 +393,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Fire|Projectile")
 	void ProjectileImpl_SetLaunchComponentTransform(USceneComponent* Component);
+
+protected:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Fire|Projectile")
+	bool bOverride_ProjectileImpl_GetLaunchDirection;
+
+public:
+
+	FORCEINLINE bool ShouldOverride_ProjectileImpl_GetLaunchDirection() const { return bOverride_ProjectileImpl_GetLaunchDirection; }
+
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	FVector Override_ProjectileImpl_GetLaunchDirection();
 
 #pragma endregion Projectile
 	

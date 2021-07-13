@@ -124,29 +124,14 @@ namespace NCsWeapon
 
 				// PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
 
-				bool bDoFireOnRelease;
-				bool* bDoFireOnRelease_Emu;
-
-				bool bFullAuto;
-				bool* bFullAuto_Emu;
-
-				bool bInfiniteAmmo;
-				bool* bInfiniteAmmo_Emu;
-
-				int32 MaxAmmo;
-				int32* MaxAmmo_Emu;
-
-				int32 ProjectilesPerShot;
-				int32* ProjectilesPerShot_Emu;
-
-				float TimeBetweenShots;
-				float* TimeBetweenShots_Emu;
-
-				float TimeBetweenAutoShots;
-				float* TimeBetweenAutoShots_Emu;
-
-				float TimeBetweenProjectilesPerShot;
-				float* TimeBetweenProjectilesPerShot_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(bDoFireOnRelease, bool)
+				CS_DECLARE_MEMBER_WITH_EMU(bFullAuto, bool)
+				CS_DECLARE_MEMBER_WITH_EMU(bInfiniteAmmo, bool)
+				CS_DECLARE_MEMBER_WITH_EMU(MaxAmmo, int32)
+				CS_DECLARE_MEMBER_WITH_EMU(ProjectilesPerShot, int32)
+				CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenShots, float)
+				CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenAutoShots, float)
+				CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenProjectilesPerShot, float)
 
 				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
@@ -159,25 +144,25 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
-					bDoFireOnRelease(false),
-					bDoFireOnRelease_Emu(nullptr),
-					bFullAuto(false),
-					bFullAuto_Emu(nullptr),
-					bInfiniteAmmo(false),
-					bInfiniteAmmo_Emu(nullptr),
-					MaxAmmo(0),
-					MaxAmmo_Emu(nullptr),
-					ProjectilesPerShot(0),
-					ProjectilesPerShot_Emu(nullptr),
-					TimeBetweenShots(0.0f),
-					TimeBetweenShots_Emu(nullptr),
-					TimeBetweenAutoShots(0.0f),
-					TimeBetweenAutoShots_Emu(nullptr),
-					TimeBetweenProjectilesPerShot(0.0f),
-					TimeBetweenProjectilesPerShot_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(bDoFireOnRelease, false),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(bFullAuto, false),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(bInfiniteAmmo, false),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(MaxAmmo, 0),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(ProjectilesPerShot, 0),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenShots, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenAutoShots, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenProjectilesPerShot, 0.0f),
 					LaunchParams(nullptr),
 					LaunchParamsName(NAME_None)
 				{
+					CS_CTOR_SET_MEMBER_EMU(bDoFireOnRelease);
+					CS_CTOR_SET_MEMBER_EMU(bFullAuto);
+					CS_CTOR_SET_MEMBER_EMU(bInfiniteAmmo);
+					CS_CTOR_SET_MEMBER_EMU(MaxAmmo);
+					CS_CTOR_SET_MEMBER_EMU(ProjectilesPerShot);
+					CS_CTOR_SET_MEMBER_EMU(TimeBetweenShots);
+					CS_CTOR_SET_MEMBER_EMU(TimeBetweenAutoShots);
+					CS_CTOR_SET_MEMBER_EMU(TimeBetweenProjectilesPerShot);
 				}
 
 				~FImplSlice();

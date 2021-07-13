@@ -49,9 +49,9 @@ module.exports = class JsRoutine
 		this.Group				= UpdateGroupLibrary.GetMax();
 
 		// Time
-		this.StartTime = new CsTime();
-		this.ElapsedTime = new CsDeltaTime();
-		this.DeltaTime = new CsDeltaTime();
+		this.StartTime = new CsTime(); /*CsTime*/
+		this.ElapsedTime = new CsDeltaTime(); /*CsDeltaTime*/
+		this.DeltaTime = new CsDeltaTime(); /*CsDeltaTime*/
 		this.TickCount = 0;
 		this.Delay = 0;
 

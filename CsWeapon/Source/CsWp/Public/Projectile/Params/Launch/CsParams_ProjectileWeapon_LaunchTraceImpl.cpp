@@ -59,23 +59,15 @@ namespace NCsWeapon
 						// ICsGetInterfaceMap
 						InterfaceMap(nullptr),
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
-						LocationType(ELocation::Owner),
-						LocationType_Emu(nullptr),
-						DirectionType(EDirection::Owner),
-						DirectionType_Emu(nullptr),
-						DirectionRules(0),
-						DirectionRules_Emu(nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(LocationType, ELocation::Owner),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(DirectionType, EDirection::Owner),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(DirectionRules, 0),
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
-						TraceType(ECsTraceType::Line),
-						TraceType_Emu(nullptr),
-						TraceMethod(ECsTraceMethod::Single),
-						TraceMethod_Emu(nullptr),
-						TraceStartType(ETraceStart::LaunchLocation),
-						TraceStartType_Emu(nullptr),
-						TraceDirectionType(ETraceDirection::Owner),
-						TraceDirectionType_Emu(nullptr),
-						TraceDistance(0.0f),
-						TraceDistance_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TraceType, ECsTraceType::Line),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TraceMethod, ECsTraceMethod::Single),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TraceStartType, ETraceStart::LaunchLocation),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TraceDirectionType, ETraceDirection::Owner),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(TraceDistance, 0.0f)
 					{
 						InterfaceMap = new FCsInterfaceMap();
 
@@ -86,6 +78,17 @@ namespace NCsWeapon
 
 						InterfaceMap->Add<LaunchParamsType>(static_cast<LaunchParamsType*>(this));
 						InterfaceMap->Add<LaunchTraceParamsType>(static_cast<LaunchTraceParamsType*>(this));
+
+						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
+						CS_CTOR_SET_MEMBER_EMU(LocationType);
+						CS_CTOR_SET_MEMBER_EMU(DirectionType);
+						CS_CTOR_SET_MEMBER_EMU(DirectionRules);
+						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
+						CS_CTOR_SET_MEMBER_EMU(TraceType);
+						CS_CTOR_SET_MEMBER_EMU(TraceMethod);
+						CS_CTOR_SET_MEMBER_EMU(TraceStartType);
+						CS_CTOR_SET_MEMBER_EMU(TraceDirectionType);
+						CS_CTOR_SET_MEMBER_EMU(TraceDistance);
 					}
 
 					FImpl::~FImpl()

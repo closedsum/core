@@ -44,31 +44,17 @@ namespace NCsWeapon
 
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 
-						ELocation LocationType;
-						ELocation* LocationType_Emu;
-
-						EDirection DirectionType;
-						EDirection* DirectionType_Emu;
-
-						int32 DirectionRules;
-						int32* DirectionRules_Emu;
+						CS_DECLARE_MEMBER_WITH_EMU(LocationType, ELocation)
+						CS_DECLARE_MEMBER_WITH_EMU(DirectionType, EDirection)
+						CS_DECLARE_MEMBER_WITH_EMU(DirectionRules, int32)
 
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 
-						ECsTraceType TraceType;
-						ECsTraceType* TraceType_Emu;
-
-						ECsTraceMethod TraceMethod;
-						ECsTraceMethod* TraceMethod_Emu;
-
-						ETraceStart TraceStartType;
-						ETraceStart* TraceStartType_Emu;
-
-						ETraceDirection TraceDirectionType;
-						ETraceDirection* TraceDirectionType_Emu;
-
-						float TraceDistance;
-						float* TraceDistance_Emu;
+						CS_DECLARE_MEMBER_WITH_EMU(TraceType, ECsTraceType)
+						CS_DECLARE_MEMBER_WITH_EMU(TraceMethod, ECsTraceMethod)
+						CS_DECLARE_MEMBER_WITH_EMU(TraceStartType, ETraceStart)
+						CS_DECLARE_MEMBER_WITH_EMU(TraceDirectionType, ETraceDirection)
+						CS_DECLARE_MEMBER_WITH_EMU(TraceDistance, float)
 
 					public:
 

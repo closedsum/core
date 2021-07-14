@@ -37,8 +37,10 @@
 #include "DetailCustomizations/EnumStruct/SkeletalMesh/ECsSkeletalMeshActorCustomization.h"
 		// Sense
 #include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
-
+		// Surface
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
+		// Team
+#include "DetailCustomizations/EnumStruct/Team/ECsTeamCustomization.h"
 
 void FCsRegisterDetailCustomization::Register()
 {
@@ -87,6 +89,8 @@ void FCsRegisterDetailCustomization::Register()
 		}
 		// Sense
 		CS_TEMP_REGISTER(ECsSenseActorType);
+		// Team
+		CS_TEMP_REGISTER(ECsTeam);
 
 #undef CS_TEMP_REGISTER
 	}

@@ -19,6 +19,7 @@
 //#include "Types/CsTypes_Interactive.h"
 //#include "AI/CsTypes_AI.h"
 #include "Managers/Sense/CsTypes_Sense.h"
+#include "Team/CsTypes_Team.h"
 
 #include "SlateBasics.h"
 
@@ -65,8 +66,10 @@
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
 	// Sense
 #include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
-
+	// Surface
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
+	// Team
+#include "GraphEditor/EnumStruct/Team/SCsGraphPin_ECsTeam.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -177,6 +180,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsSenseActorType
 		CS_TEMP_CREATE(ECsSenseActorType)
+	}
+	// Team
+	{
+		// FECsTeam
+		CS_TEMP_CREATE(ECsTeam)
 	}
 
 #undef CS_TEMP_CREATE

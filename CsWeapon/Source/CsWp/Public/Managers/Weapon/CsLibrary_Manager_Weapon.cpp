@@ -3,11 +3,13 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
-// Managers
-#include "Managers/Weapon/CsManager_Weapon.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 #include "Data/CsLibrary_Data_Weapon.h"
+// Managers
+#include "Managers/Weapon/CsManager_Weapon.h"
+// Weapon
+#include "CsWeapon.h"
 
 #if WITH_EDITOR
 // Library
@@ -132,6 +134,46 @@ namespace NCsWeapon
 				return Manager_Weapon->GetSafeWeapon(Context, Type);
 			}
 			return nullptr;
+		}
+
+		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				FCsWeapon* Weapon = Manager_Weapon->GetSafeWeapon(Context, Type);
+
+				return Weapon->GetClass();
+			}
+			return nullptr;
+		}
+
+		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				FCsWeapon* Weapon = Manager_Weapon->GetSafeWeapon(Context, Type);
+
+				return Weapon->GetClass();
+			}
+			return nullptr;
+		}
+
+		bool FLibrary::SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, UObject* Class, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->SafeAddClass(Context, Type, Class);
+			}
+			return false;
+		}
+
+		bool FLibrary::SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, UObject* Class, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		{
+			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Weapon->SafeAddClass(Context, Type, Class);
+			}
+			return false;
 		}
 
 		#pragma endregion Class

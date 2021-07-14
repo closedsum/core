@@ -723,6 +723,16 @@ FCsWeapon* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWe
 	return ClassHandler->GetSafeClassByClassType<EMCsWeaponClass>(Context, Type);
 }
 
+bool UCsManager_Weapon::SafeAddClass(const FString& Context, const FECsWeapon& Type, UObject* Class)
+{
+	return ClassHandler->SafeAddClassByType<EMCsWeapon, FECsWeapon>(Context, Type, Class);
+}
+
+bool UCsManager_Weapon::SafeAddClass(const FString& Context, const FECsWeaponClass& Type, UObject* Class)
+{
+	return ClassHandler->SafeAddClassByClassType<EMCsWeaponClass>(Context, Type, Class);
+}
+
 #pragma endregion Class
 
 // Data

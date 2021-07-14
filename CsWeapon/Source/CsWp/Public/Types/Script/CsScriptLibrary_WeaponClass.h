@@ -15,6 +15,9 @@ class CSWP_API UCsScriptLibrary_WeaponClass : public UObject
 #pragma region
 public:
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Weapon", meta = (AutoCreateRefTerm = "Name,DisplayName"))
+	static FECsWeaponClass Create(const FString& Name, const FString& DisplayName);
+
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Weapon", meta = (AutoCreateRefTerm = "Name"))
 	static FECsWeaponClass Get(const FString& Name);
 

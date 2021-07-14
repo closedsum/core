@@ -747,6 +747,10 @@ public:
 	*/
 	FCsWeapon* GetSafeWeapon(const FString& Context, const FECsWeaponClass& Type);
 
+	bool SafeAddClass(const FString& Context, const FECsWeapon& Type, UObject* Class);
+
+	bool SafeAddClass(const FString& Context, const FECsWeaponClass& Type, UObject* Class);
+
 #pragma endregion Class
 
 // Data

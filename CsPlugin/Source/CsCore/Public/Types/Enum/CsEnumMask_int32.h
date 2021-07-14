@@ -238,3 +238,9 @@ public:
 		{ \
 			return TEXT("Name: ") + GetName() + TEXT(" Value: ") + FString::FromInt(Value) + TEXT(" Mask: ") + FString::FromInt(Mask); \
 		}
+
+#define CS_DEFINE_ENUM_MASK_INT32_GET_TYPE_HASH(Enum) \
+	FORCEINLINE uint32 GetTypeHash(const Enum& b) \
+	{ \
+		return GetTypeHash(b.Name_Internal) ^ GetTypeHash(b.Value); \
+	}

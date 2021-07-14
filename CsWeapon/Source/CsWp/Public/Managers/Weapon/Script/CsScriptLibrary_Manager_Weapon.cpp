@@ -18,8 +18,10 @@ namespace NCsScriptLibraryManagerWeapon
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Weapon, GetWeaponClassByType);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Weapon, GetWeaponClassByClassType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Weapon, GetClassByType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Weapon, GetClassByClassType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Weapon, AddClassByType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Weapon, AddClassByClassType);
 		}
 	}
 }
@@ -34,11 +36,11 @@ UCsScriptLibrary_Manager_Weapon::UCsScriptLibrary_Manager_Weapon(const FObjectIn
 // Class
 #pragma region
 
-UClass* UCsScriptLibrary_Manager_Weapon::GetWeaponClassByType(const FString& Context, const UObject* WorldContextObject, const FECsWeapon& Type)
+UClass* UCsScriptLibrary_Manager_Weapon::GetClassByType(const FString& Context, const UObject* WorldContextObject, const FECsWeapon& Type)
 {
 	using namespace NCsScriptLibraryManagerWeapon::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetWeaponClassByType : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetClassByType : Context;
 
 	void(*Log)(const FString&) = &NCsWeapon::FLog::Warning;
 
@@ -51,11 +53,11 @@ UClass* UCsScriptLibrary_Manager_Weapon::GetWeaponClassByType(const FString& Con
 	return nullptr;
 }
 
-UClass* UCsScriptLibrary_Manager_Weapon::GetWeaponClassByClassType(const FString& Context, const UObject* WorldContextObject, const FECsWeaponClass& Type)
+UClass* UCsScriptLibrary_Manager_Weapon::GetClassByClassType(const FString& Context, const UObject* WorldContextObject, const FECsWeaponClass& Type)
 {
 	using namespace NCsScriptLibraryManagerWeapon::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetWeaponClassByClassType : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetClassByClassType : Context;
 
 	void(*Log)(const FString&) = &NCsWeapon::FLog::Warning;
 
@@ -66,6 +68,36 @@ UClass* UCsScriptLibrary_Manager_Weapon::GetWeaponClassByClassType(const FString
 		return Weapon->GetClass();
 	}
 	return nullptr;
+}
+
+bool UCsScriptLibrary_Manager_Weapon::AddClassByType(const FString& Context, const UObject* WorldContextObject, const FECsWeapon& Type, TSubclassOf<UObject> Class)
+{
+	using namespace NCsScriptLibraryManagerWeapon::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::AddClassByType : Context;
+
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+	if (UClass* C = Cast<UClass>(Class.Get()))
+	{
+		return WeaponManagerLibrary::SafeAddClass(Ctxt, WorldContextObject, Type, C->ClassDefaultObject);
+	}
+	return WeaponManagerLibrary::SafeAddClass(Ctxt, WorldContextObject, Type, Class);
+}
+
+bool UCsScriptLibrary_Manager_Weapon::AddClassByClassType(const FString& Context, const UObject* WorldContextObject, const FECsWeaponClass& Type, TSubclassOf<UObject> Class)
+{
+	using namespace NCsScriptLibraryManagerWeapon::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::AddClassByClassType : Context;
+
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+	if (UClass* C = Cast<UClass>(Class.Get()))
+	{
+		return WeaponManagerLibrary::SafeAddClass(Ctxt, WorldContextObject, Type, C->ClassDefaultObject);
+	}
+	return WeaponManagerLibrary::SafeAddClass(Ctxt, WorldContextObject, Type, Class);
 }
 
 #pragma endregion Class

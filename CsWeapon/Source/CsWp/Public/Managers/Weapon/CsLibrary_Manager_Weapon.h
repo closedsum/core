@@ -9,6 +9,7 @@
 class UObject;
 class UCsManager_Weapon;
 struct FCsWeapon;
+class UClass;
 
 // NCsPooledObject::NManager::NHandler::TData
 namespace NCsPooledObject {
@@ -161,6 +162,52 @@ namespace NCsWeapon
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
 			static FCsWeapon* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Safely get the Class associated with Weapon of Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Log			(optional)
+			* return				UClass associated with Type.
+			*/
+			static UClass* GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Safely get the Class associated with WeaponClass of Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Log			(optional)
+			* return				UClass associated with Type.
+			*/
+			static UClass* GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Safely add the Class for Type to Manager_Weapon's ClassHandler.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Class
+			* @param Log			(optional)
+			* return				Whether the Class was successfully added for Type.
+			*/
+			static bool SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, UObject* Class, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Safely add the Class for Class Type to Manager_Weapon's ClassHandler.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Class
+			* @param Log			(optional)
+			* return				Whether the Class was successfully added for Class Type.
+			*/
+			static bool SafeAddClass(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, UObject* Class, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
 		#pragma endregion Class
 

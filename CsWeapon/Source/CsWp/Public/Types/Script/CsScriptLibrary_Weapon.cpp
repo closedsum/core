@@ -15,6 +15,7 @@ namespace NCsScriptLibraryWeapon
 		namespace Str
 		{
 			const FString FECsWeapon = TEXT("FECsWeapon");
+			const FString Create = TEXT("Create");
 			const FString Get = TEXT("Get");
 			const FString GetByIndex = TEXT("GetByIndex");
 		}
@@ -33,6 +34,17 @@ UCsScriptLibrary_Weapon::UCsScriptLibrary_Weapon(const FObjectInitializer& Objec
 
 #define EnumMapType EMCsWeapon
 #define EnumType FECsWeapon
+
+EnumType UCsScriptLibrary_Weapon::Create(const FString& Name, const FString& DisplayName)
+{
+	using namespace NCsScriptLibraryWeapon::NCached;
+
+	const FString& Context = Str::Create;
+
+	typedef NCsEnum::FLibrary EnumLibrary;
+
+	return EnumLibrary::CreateSafe<EnumMapType, EnumType>(Context, Name, DisplayName);
+}
 
 EnumType UCsScriptLibrary_Weapon::Get(const FString& Name)
 {

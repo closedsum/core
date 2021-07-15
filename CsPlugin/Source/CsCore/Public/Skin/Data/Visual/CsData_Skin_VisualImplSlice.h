@@ -12,6 +12,9 @@
 // NCsSkin::NData::NVisual::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkin, NData, NVisual, FImplSlice)
 
+struct FCsInterfaceMap;
+class ICsDeconstructInterfaceSliceMap;
+
 /**
 * Represents a "slice" of data, SkinDataType (NCsskin::NData::NVisual::IVisual).
 * The idea behind this struct is to "build" the data via composition of separate objects that each implementation
@@ -35,6 +38,8 @@ public:
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
+	SliceType* AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 #undef SliceType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -42,6 +47,7 @@ public:
 
 struct FCsInterfaceMap;
 class UObject;
+class ICsDeconstructInterfaceSliceMap;
 
 namespace NCsSkin
 {
@@ -111,7 +117,7 @@ namespace NCsSkin
 					delete static_cast<NCsSkin::NData::NVisual::FImplSlice*>(Ptr);
 				}
 
-			public:
+				static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

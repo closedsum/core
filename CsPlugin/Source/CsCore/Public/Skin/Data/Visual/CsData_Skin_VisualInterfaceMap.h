@@ -56,6 +56,10 @@ namespace NCsSkin
 
 			#pragma endregion ICsGetInterfaceMap
 
+			// ICsDeconstructInterfaceSliceMap
+			#pragma region
+			public:
+
 				void AddSlice(const FName& SliceName, void* Slice)
 				{
 					checkf(SliceName != NAME_None, TEXT("%s::AddSlice: SliceName: None is NOT Valid."), *(Name.ToString()));
@@ -77,6 +81,8 @@ namespace NCsSkin
 
 					DeconstructSliceImplByNameMap.Add(SliceName, DeconstructImpl);
 				}
+
+			#pragma endregion ICsDeconstructInterfaceSliceMap
 			};
 		}
 	}

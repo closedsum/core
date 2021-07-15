@@ -1,4 +1,4 @@
-/// <reference path="../../../../typings/ue.d.ts">/>
+/// <reference path="../../../../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
 
 "use strict"

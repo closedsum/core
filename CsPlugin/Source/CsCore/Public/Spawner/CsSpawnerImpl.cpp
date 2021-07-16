@@ -19,22 +19,25 @@
 // Cached
 #pragma region
 
-namespace NCsSpawnerImplCached
+namespace NCsSpawnerImpl
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, StartPlay);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start_Internal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Spawn);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects_Internal);
-	}
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, StartPlay);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Spawn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects_Internal);
+		}
 
-	namespace Name
-	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, Start_Internal);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, SpawnObjects_Internal);
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, Start_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, SpawnObjects_Internal);
+		}
 	}
 }
 
@@ -124,7 +127,7 @@ bool ACsSpawnerImpl::ShouldTickIfViewportsOnly() const
 
 void ACsSpawnerImpl::StartPlay()
 {
-	using namespace NCsSpawnerImplCached;
+	using namespace NCsSpawnerImpl::NCached;
 
 	const FString& Context = Str::StartPlay;
 
@@ -136,11 +139,15 @@ void ACsSpawnerImpl::StartPlay()
 
 	checkf(Params, TEXT("%s: Params is NULL. Failed to ConstructParams."), *Context);
 
-	CountParams = const_cast<FCsSpawnerCountParams*>(&(Params->GetCountParams()));
+	typedef NCsSpawner::NParams::FCount CountParamsType;
+
+	CountParams = const_cast<CountParamsType*>(&(Params->GetCountParams()));
 
 	checkf(CountParams, TEXT("%s: CountParams is NULL. Failed to get the reference for CountParams."), *Context);
 
-	FrequencyParams = const_cast<FCsSpawnerFrequencyParams*>(&(Params->GetFrequencyParams()));
+	typedef NCsSpawner::NParams::FFrequency FrequencyParamsType;
+
+	FrequencyParams = const_cast<FrequencyParamsType*>(&(Params->GetFrequencyParams()));
 
 	checkf(FrequencyParams, TEXT("%s: FrequencyParams is NULL. Failed to get the reference for FrequencyParams."), *Context);
 
@@ -150,7 +157,9 @@ void ACsSpawnerImpl::StartPlay()
 
 	checkf(IsParamsValid(Context), TEXT("%s: Parms is NOT Valid."), *Context);
 
-	*TotalTime = FCsLibrary_SpawnerParams::CalculateTotalTime(Params);
+	typedef NCsSpawner::NParams::FLibrary ParamsLibrary;
+
+	*TotalTime = ParamsLibrary::CalculateTotalTime(Params);
 
 	// Spawn
 
@@ -173,7 +182,7 @@ bool ACsSpawnerImpl::IsParamsValid(const FString& Context) const
 
 void ACsSpawnerImpl::Start()
 {
-	using namespace NCsSpawnerImplCached;
+	using namespace NCsSpawnerImpl::NCached;
 
 	const FString& Context = Str::Start;
 
@@ -236,7 +245,7 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 
 void ACsSpawnerImpl::Spawn()
 {
-	using namespace NCsSpawnerImplCached;
+	using namespace NCsSpawnerImpl::NCached;
 
 	const FString& Context = Str::Spawn;
 
@@ -279,7 +288,9 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 	static const int32 HAS_SPAWN_INTERVAL = 1;
 	bool& HasSpawnInterval = R->GetValue_Flag(HAS_SPAWN_INTERVAL);
 
-	const ECsSpawnerFrequency& FrequencyType = FrequencyParams->Type;
+	typedef NCsSpawner::EFrequency FrequencyType;
+
+	const FrequencyType& FreqType = FrequencyParams->GetType();
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -288,7 +299,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 	OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
 
 	// If there is a Delay, Wait
-	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->Delay);
+	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->GetDelay());
 
 	OnStart_Event.Broadcast(this);
 
@@ -302,22 +313,22 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 			SpawnObjects(CurrentSpawnCount);
 
 			// Once
-			if (FrequencyType == ECsSpawnerFrequency::Once)
+			if (FreqType == FrequencyType::Once)
 			{
 				 // Do Nothing 
 			}
 			// Count | TimeCount | TimeInterval
 			else
-			if (FrequencyType == ECsSpawnerFrequency::Count ||
-				FrequencyType == ECsSpawnerFrequency::TimeCount ||
-				FrequencyType == ECsSpawnerFrequency::TimeInterval)
+			if (FreqType == FrequencyType::Count ||
+				FreqType == FrequencyType::TimeCount ||
+				FreqType == FrequencyType::TimeInterval)
 			{
-				CanSpawn		 = CurrentSpawnCount < FrequencyParams->Count;
-				HasSpawnInterval = CanSpawn && FrequencyParams->Interval > 0.0f;
+				CanSpawn		 = CurrentSpawnCount < FrequencyParams->GetCount();
+				HasSpawnInterval = CanSpawn && FrequencyParams->GetInterval() > 0.0f;
 			}
 			// Infinite
 			else
-			if (FrequencyType == ECsSpawnerFrequency::Infinite)
+			if (FreqType == FrequencyType::Infinite)
 			{
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
@@ -328,7 +339,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 				OnPreSpawnObjects_Event.Broadcast(this, CurrentSpawnCount);
 				OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
 
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->Interval);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->GetInterval());
 			}
 		}
 	} while (CanSpawn);
@@ -351,7 +362,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 
 void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 {
-	using namespace NCsSpawnerImplCached;
+	using namespace NCsSpawnerImpl::NCached;
 	
 	const FString& Context = Str::SpawnObjects;
 
@@ -391,8 +402,11 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	FCsRoutineHandle& Handle = SpawnObjects_Internal_Handles.Last();
 
 	// Allocate a Spawned Objects container
-	FCsResource_SpawnerSpawnedObjects* Container = Manager_SpawnedObjects.Allocate();
-	FCsSpawnerSpawnedObjects* Resource = Container->Get();
+	typedef NCsSpawner::NSpawnedObjects::FResource ResourceContainerType;
+	typedef NCsSpawner::FSpawnedObjects ResourceType;
+
+	ResourceContainerType* Container = Manager_SpawnedObjects.Allocate();
+	ResourceType* Resource			 = Container->Get();
 
 	Resource->Group = Index;
 
@@ -407,6 +421,10 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 
 char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 {
+	using namespace NCsSpawnerImpl::NCached;
+
+	const FString& Context = Str::SpawnObjects_Internal;
+
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += R->DeltaTime;
@@ -414,7 +432,9 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
 	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
 
-	FCsSpawnerSpawnedObjects* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
+	typedef NCsSpawner::FSpawnedObjects ResourceType;
+
+	ResourceType* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
 
 	static const int32 CURRENT_GROUP = 1;
 	const int32& CurrentGroup = R->GetValue_Int(CURRENT_GROUP);
@@ -436,11 +456,11 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 				if (CurrentGroup == FROM_SPAWN)
 				{
-					UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Group: %d. Spawning Object: %d / %d"), *(GetName()), CurrentGroup, CurrentCountPerSpawn, CountParams->CountPerSpawn);
+					UE_LOG(LogCs, Warning, TEXT("%s (%s): Group: %d. Spawning Object: %d / %d"), *Context, *(GetName()), CurrentGroup, CurrentCountPerSpawn, CountParams->GetCountPerSpawn());
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Spawning Object: %d / %d"), *(GetName()), CurrentCountPerSpawn, CountParams->CountPerSpawn);
+					UE_LOG(LogCs, Warning, TEXT("%s (%s): Spawning Object: %d / %d"), *Context, *(GetName()), CurrentCountPerSpawn, CountParams->GetCountPerSpawn());
 				}
 			}
 #endif // #if !UE_BUILD_SHIPPING
@@ -448,6 +468,8 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 			// Spawn Object
 			{
 				UObject* SpawnedObject = SpawnObject(CurrentCountPerSpawn);
+
+				checkf(SpawnedObject, TEXT("%s: Failed to Spawn Object at %d / %d."), *Context, CurrentCountPerSpawn, CountParams->GetCountPerSpawn());
 
 				Resource->Add(SpawnedObject);
 				SpawnedObjects.Add(SpawnedObject);
@@ -459,14 +481,14 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 			++CurrentSpawnCount;
 			++CurrentCountPerSpawn;
 
-			if (CurrentCountPerSpawn < CountParams->CountPerSpawn)
+			if (CurrentCountPerSpawn < CountParams->GetCountPerSpawn())
 			{
 				OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
 
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= CountParams->TimeBetweenCountPerSpawn);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= CountParams->GetTimeBetweenCountPerSpawn());
 			}
 		}
-	} while (CurrentCountPerSpawn < CountParams->CountPerSpawn);
+	} while (CurrentCountPerSpawn < CountParams->GetCountPerSpawn());
 
 	OnSpawnObjects_Event.Broadcast(this, Resource->Objects);
 
@@ -477,11 +499,11 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 		if (CurrentGroup == FROM_SPAWN)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CountParams->CountPerSpawn);
+			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CountParams->GetCountPerSpawn());
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Group: %d. Finished Spawning %d Objects."), *(GetName()), CurrentGroup, CountParams->CountPerSpawn);
+			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Group: %d. Finished Spawning %d Objects."), *(GetName()), CurrentGroup, CountParams->GetCountPerSpawn());
 		}
 	}
 #endif // #if !UE_BUILD_SHIPPING
@@ -495,7 +517,9 @@ void ACsSpawnerImpl::SpawnObjects_Internal_OnEnd(FCsRoutine* R)
 	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
 	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
 
-	FCsSpawnerSpawnedObjects* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
+	typedef NCsSpawner::FSpawnedObjects ResourceType;
+
+	ResourceType* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
 
 	Resource->Reset();
 
@@ -521,12 +545,14 @@ void ACsSpawnerImpl::LogParams() const
 	LogCountParams();
 
 	// FrequencyParams
+	typedef NCsSpawner::EMFrequency FrequencyMapType;
+
 	UE_LOG(LogCs, Warning, TEXT("- FrequencyParams"));
-	UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), EMCsSpawnerFrequency::Get().ToChar(FrequencyParams->Type));
-	UE_LOG(LogCs, Warning, TEXT("-- Delay: %f"), FrequencyParams->Delay);
-	UE_LOG(LogCs, Warning, TEXT("-- Count: %d"), FrequencyParams->Count);
-	UE_LOG(LogCs, Warning, TEXT("-- Interval: %f"), FrequencyParams->Interval);
-	UE_LOG(LogCs, Warning, TEXT("-- Time: %f"), FrequencyParams->Time);
+	UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), FrequencyMapType::Get().ToChar(FrequencyParams->GetType()));
+	UE_LOG(LogCs, Warning, TEXT("-- Delay: %f"), FrequencyParams->GetDelay());
+	UE_LOG(LogCs, Warning, TEXT("-- Count: %d"), FrequencyParams->GetCount());
+	UE_LOG(LogCs, Warning, TEXT("-- Interval: %f"), FrequencyParams->GetInterval());
+	UE_LOG(LogCs, Warning, TEXT("-- Time: %f"), FrequencyParams->GetTime());
 
 	// TotalTime
 	UE_LOG(LogCs, Warning, TEXT("- TotalTime: %f"), *TotalTime);
@@ -535,8 +561,8 @@ void ACsSpawnerImpl::LogParams() const
 void ACsSpawnerImpl::LogCountParams() const
 {
 	UE_LOG(LogCs, Warning, TEXT("- CountParams"));
-	UE_LOG(LogCs, Warning, TEXT("-- CountPerSpawn: %d"), CountParams->CountPerSpawn);
-	UE_LOG(LogCs, Warning, TEXT("-- TimeBetweenCountPerSpawn: %f"), CountParams->TimeBetweenCountPerSpawn);
+	UE_LOG(LogCs, Warning, TEXT("-- CountPerSpawn: %d"), CountParams->GetCountPerSpawn());
+	UE_LOG(LogCs, Warning, TEXT("-- TimeBetweenCountPerSpawn: %f"), CountParams->GetTimeBetweenCountPerSpawn());
 }
 
 #pragma endregion Log

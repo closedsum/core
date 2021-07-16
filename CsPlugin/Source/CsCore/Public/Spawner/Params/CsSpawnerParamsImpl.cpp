@@ -3,24 +3,32 @@
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName FCsSpawnerParamsImpl::Name = FName("FCsSpawnerParamsImpl");;
+const FName NCsSpawner::NParams::FImpl::Name = FName("NCsSpawner::NParams::FImpl");;
 
-FCsSpawnerParamsImpl::FCsSpawnerParamsImpl() :
-	// ICsGetInterfaceMap
-	InterfaceMap(nullptr),
-	// ICsSpawnerParams
-	CountParams(),
-	FrequencyParams(),
-	TotalTime(0.0f)
+namespace NCsSpawner
 {
-	InterfaceMap = new FCsInterfaceMap();
+	namespace NParams
+	{
+		FImpl::FImpl() :
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// ParamsType (NCsSpawner::NParams::IParams)
+			CountParams(),
+			FrequencyParams(),
+			TotalTime(0.0f)
+		{
+			InterfaceMap = new FCsInterfaceMap();
 
-	InterfaceMap->SetRoot<FCsSpawnerParamsImpl>(this);
+			InterfaceMap->SetRoot<FImpl>(this);
 
-	InterfaceMap->Add<ICsSpawnerParams>(static_cast<ICsSpawnerParams*>(this));
-}
+			typedef NCsSpawner::NParams::IParams ParamsType;
 
-FCsSpawnerParamsImpl::~FCsSpawnerParamsImpl()
-{
-	delete InterfaceMap;
+			InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			delete InterfaceMap;
+		}
+	}
 }

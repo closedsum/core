@@ -1,8 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// Interfaces
 #include "UObject/Interface.h"
+// Container
 #include "Containers/CsInterfaceObject.h"
+// Types
+#include "Types/CsTypes_Macro.h"
+
 #include "CsSpawner.generated.h"
 
 UINTERFACE(BlueprintType, meta = (CannotImplementInterfaceInBlueprint))
@@ -12,47 +16,52 @@ class CSCORE_API UCsSpawner : public UInterface
 };
 
 class ICsSpawner;
-struct ICsSpawnerParams;
 
-/**
-* OnStart
-*
-* @param Spawner
-*/
-DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnStart, ICsSpawner* /*Spawner*/);
-/**
-* OnStop
-*
-* @param Spawner
-*/
-DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnStop, ICsSpawner* /*Spawner*/);
-/**
-* OnSpawn
-*
-* @param Spawner
-* @param SpawnedObject
-*/
-DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnSpawn, ICsSpawner* /*Spawner*/);
-/**
-* OnSpawnObject
-*
-* @param Spawner
-* @param SpawnedObject
-*/
-DECLARE_MULTICAST_DELEGATE_TwoParams(FCsSpawner_OnSpawnObject, ICsSpawner* /*Spawner*/, UObject* /*SpawnedObject*/);
-/**
-* OnSpawnObjects
-*
-* @param Spawner
-* @param SpawnedObjects
-*/
-DECLARE_MULTICAST_DELEGATE_TwoParams(FCsSpawner_OnSpawnObjects, ICsSpawner* /*Spawner*/, const TArray<UObject*>& /*SpawnedObjects*/);
-/**
-* OnFinish
-*
-* @param Spawner
-*/
-DECLARE_MULTICAST_DELEGATE_OneParam(FCsSpawner_OnFinish, ICsSpawner* /*Spawner*/);
+// NCsSpawner::NParams::IParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, IParams)
+
+namespace NCsSpawner
+{
+	/**
+	* OnStart
+	*
+	* @param Spawner
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStart, ICsSpawner* /*Spawner*/);
+	/**
+	* OnStop
+	*
+	* @param Spawner
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnStop, ICsSpawner* /*Spawner*/);
+	/**
+	* OnSpawn
+	*
+	* @param Spawner
+	* @param SpawnedObject
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnSpawn, ICsSpawner* /*Spawner*/);
+	/**
+	* OnSpawnObject
+	*
+	* @param Spawner
+	* @param SpawnedObject
+	*/
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawnObject, ICsSpawner* /*Spawner*/, UObject* /*SpawnedObject*/);
+	/**
+	* OnSpawnObjects
+	*
+	* @param Spawner
+	* @param SpawnedObjects
+	*/
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnSpawnObjects, ICsSpawner* /*Spawner*/, const TArray<UObject*>& /*SpawnedObjects*/);
+	/**
+	* OnFinish
+	*
+	* @param Spawner
+	*/
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFinish, ICsSpawner* /*Spawner*/);
+}
 
 class CSCORE_API ICsSpawner
 {
@@ -60,9 +69,11 @@ class CSCORE_API ICsSpawner
 
 public:
 
+#define ParamsType NCsSpawner::NParams::IParams
+
 	/**
 	*/
-	virtual const ICsSpawnerParams* GetParams() const = 0;
+	virtual const ParamsType* GetParams() const = 0;
 
 	/**
 	*
@@ -74,7 +85,7 @@ public:
 	*
 	* return
 	*/
-	virtual FCsSpawner_OnStart& GetOnStart_Event() = 0;
+	virtual NCsSpawner::FOnStart& GetOnStart_Event() = 0;
 
 	/**
 	*
@@ -86,7 +97,7 @@ public:
 	*
 	* return
 	*/
-	virtual FCsSpawner_OnStop& GetOnStop_Event() = 0;
+	virtual NCsSpawner::FOnStop& GetOnStop_Event() = 0;
 
 	/**
 	*
@@ -98,28 +109,30 @@ public:
 	*
 	* return
 	*/
-	virtual FCsSpawner_OnSpawn& GetOnSpawn_Event() = 0;
+	virtual NCsSpawner::FOnSpawn& GetOnSpawn_Event() = 0;
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual FCsSpawner_OnSpawnObject& GetOnSpawnObject_Event() = 0;
+	virtual NCsSpawner::FOnSpawnObject& GetOnSpawnObject_Event() = 0;
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual FCsSpawner_OnSpawnObjects& GetOnSpawnObjects_Event() = 0;
+	virtual NCsSpawner::FOnSpawnObjects& GetOnSpawnObjects_Event() = 0;
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual FCsSpawner_OnFinish& GetOnFinish_Event() = 0;
+	virtual NCsSpawner::FOnFinish& GetOnFinish_Event() = 0;
+
+#undef ParamsType
 };
 
 // FCsSpawner
@@ -161,7 +174,7 @@ public:
 		  The object implements a script interface of type: ICsSpawner. */
 	FScript_Spawn Script_Spawn_Impl;
 
-	//FCsSpawner_OnSpawn OnSpawn_Event;
+	//NCsSpawner::FOnSpawn OnSpawn_Event;
 
 #pragma endregion Script
 
@@ -204,10 +217,7 @@ public:
 			Interface->Start();
 	}
 
-	FORCEINLINE FCsSpawner_OnStart& GetOnStart_Event()
-	{
-		return Interface->GetOnStart_Event();
-	}
+	FORCEINLINE NCsSpawner::FOnStart& GetOnStart_Event() { return Interface->GetOnStart_Event(); }
 
 	FORCEINLINE void Stop()
 	{
@@ -217,10 +227,7 @@ public:
 			Interface->Stop();
 	}
 
-	FORCEINLINE FCsSpawner_OnStop& GetOnStop_Event()
-	{
-		return Interface->GetOnStop_Event();
-	}
+	FORCEINLINE NCsSpawner::FOnStop& GetOnStop_Event() { return Interface->GetOnStop_Event(); }
 
 	FORCEINLINE void Spawn()
 	{
@@ -230,10 +237,7 @@ public:
 			Interface->Spawn();
 	}
 
-	FORCEINLINE FCsSpawner_OnSpawn& GetOnSpawn_Event() 
-	{
-		return Interface->GetOnSpawn_Event();
-	}
+	FORCEINLINE NCsSpawner::FOnSpawn& GetOnSpawn_Event() { return Interface->GetOnSpawn_Event(); }
 
 #pragma endregion ICsSpawner
 };

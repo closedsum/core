@@ -165,8 +165,8 @@
 
 #define CS_CTOR_SET_MEMBER_EMU(__Member) __Member##_Emu = &__Member
 
-#define CS_RESET_MEMBER_WITH_EMU(__Member, __ValueType) \
-	__Member = __ValueType; \
+#define CS_RESET_MEMBER_WITH_EMU(__Member, __Value) \
+	__Member = __Value; \
 	__Member##_Emu = &__Member;
 
 #define CS_RESET_MEMBER_ARRAY_WITH_EMU(__Member) \

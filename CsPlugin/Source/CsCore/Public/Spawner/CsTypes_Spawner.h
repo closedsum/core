@@ -1,62 +1,65 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-// FCsSpawnerSpawnedObjects
+// NCsSpawner::FSpawnedObjects
 #pragma region
 
 class UObject;
 
-/**
-*/
-struct CSCORE_API FCsSpawnerSpawnedObjects
+namespace NCsSpawner
 {
-public:
-
-	int32 Group;
-
-	TArray<TWeakObjectPtr<UObject>> WeakObjects;
-
-	TArray<UObject*> Objects;
-
-	FCsSpawnerSpawnedObjects() :
-		Group(INDEX_NONE),
-		WeakObjects(),
-		Objects()
+	/**
+	*/
+	struct CSCORE_API FSpawnedObjects
 	{
-	}
+	public:
 
-	void Add(UObject* Object)
-	{
-		Objects.Reset(Objects.Max());
+		int32 Group;
 
-		int32 Count = WeakObjects.Num();
+		TArray<TWeakObjectPtr<UObject>> WeakObjects;
 
-		for (int32 I = Count - 1; I >= 0; --I)
+		TArray<UObject*> Objects;
+
+		FSpawnedObjects() :
+			Group(INDEX_NONE),
+			WeakObjects(),
+			Objects()
 		{
-			if (WeakObjects[I].IsValid())
+		}
+
+		void Add(UObject* Object)
+		{
+			Objects.Reset(Objects.Max());
+
+			int32 Count = WeakObjects.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
 			{
-				if (UObject* O = WeakObjects[I].Get())
+				if (WeakObjects[I].IsValid())
 				{
-					Objects.Add(O);
+					if (UObject* O = WeakObjects[I].Get())
+					{
+						Objects.Add(O);
+					}
+					else
+					{
+						WeakObjects.RemoveAt(I, 1, false);
+					}
 				}
 				else
 				{
 					WeakObjects.RemoveAt(I, 1, false);
 				}
 			}
-			else
-			{
-				WeakObjects.RemoveAt(I, 1, false);
-			}
 		}
-	}
 
-	void Reset()
-	{
-		Group = INDEX_NONE;
-		WeakObjects.Reset(WeakObjects.Max());
-		Objects.Reset(Objects.Max());
-	}
-};
+		void Reset()
+		{
+			Group = INDEX_NONE;
+			WeakObjects.Reset(WeakObjects.Max());
+			Objects.Reset(Objects.Max());
+		}
+	};
+}
 
-#pragma endregion FCsSpawnerSpawnedObjects
+#pragma endregion NCsSpawner::FSpawnedObjects

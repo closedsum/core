@@ -22,25 +22,40 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsSpawnerImpl_OnSpawnObject, ACsSp
 // Structs
 #pragma region
 
-	// Memory Resource
+	// SpawnedObjects
 #pragma region
 
-struct CSCORE_API FCsResource_SpawnerSpawnedObjects : public TCsResourceContainer<FCsSpawnerSpawnedObjects>
+namespace NCsSpawner
 {
-};
+	namespace NSpawnedObjects
+	{
+	#define ResourceType NCsSpawner::FSpawnedObjects
 
-struct CSCORE_API FCsManager_SpawnerSpawnedObjects : public TCsManager_ResourceValueType_Fixed<FCsSpawnerSpawnedObjects, FCsResource_SpawnerSpawnedObjects, 0>
-{
-};
+		struct CSCORE_API FResource : public TCsResourceContainer<ResourceType>
+		{
+		};
+
+		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<ResourceType, FResource, 0>
+		{
+		};
+
+	#undef ResourceType
+	}
+}
 
 #pragma endregion Memory Resource
 
 #pragma endregion Structs
 
 struct FCsRoutine;
-struct ICsSpawnerParams;
-struct FCsSpawnerCountParams;
-struct FCsSpawnerFrequencyParams;
+
+// NCsSpawner::NParams::IParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, IParams)
+// NCsSpawner::NParams::FCount
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FCount)
+// NCsSpawner::NParams::FFrequency
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FFrequency)
+
 struct FCsDebugDrawCircle;
 struct FCsDebugDrawSphere;
 
@@ -50,6 +65,8 @@ class CSCORE_API ACsSpawnerImpl : public AActor,
 								  public ICsSpawner
 {
 	GENERATED_UCLASS_BODY()
+
+#define ParamsType NCsSpawner::NParams::IParams
 
 // AActor Interface
 #pragma region
@@ -82,13 +99,17 @@ public:
 #pragma region
 protected:
 
-	ICsSpawnerParams* Params;
+	ParamsType* Params;
 
+#define CountParamsType NCsSpawner::NParams::FCount
 	/** Reference to Params->GetCountParams() for easy / quick access. */
-	FCsSpawnerCountParams* CountParams;
+	CountParamsType* CountParams;
+#undef CountParamsType
 
+#define FrequencyParamsType NCsSpawner::NParams::FFrequency
 	/** Reference to Params->GetFrequencyParams() for easy / quick access. */
-	FCsSpawnerFrequencyParams* FrequencyParams;
+	FrequencyParamsType* FrequencyParams;
+#undef FrequencyParamsType
 
 	/** Reference to Params->GetTotalTime() for easy / quick access. */
 	float* TotalTime;
@@ -103,17 +124,17 @@ protected:
 #pragma region
 protected:
 
-	FCsSpawner_OnStart OnStart_Event;
+	NCsSpawner::FOnStart OnStart_Event;
 
-	FCsSpawner_OnStop OnStop_Event;
+	NCsSpawner::FOnStop OnStop_Event;
 
-	FCsSpawner_OnSpawn OnSpawn_Event;
+	NCsSpawner::FOnSpawn OnSpawn_Event;
 
-	FCsSpawner_OnSpawnObject OnSpawnObject_Event;
+	NCsSpawner::FOnSpawnObject OnSpawnObject_Event;
 
-	FCsSpawner_OnSpawnObjects OnSpawnObjects_Event;
+	NCsSpawner::FOnSpawnObjects OnSpawnObjects_Event;
 
-	FCsSpawner_OnFinish OnFinish_Event;
+	NCsSpawner::FOnFinish OnFinish_Event;
 
 #pragma endregion Events
 
@@ -121,49 +142,25 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE ICsSpawnerParams* GetParams() const
-	{
-		return Params;
-	}
+	FORCEINLINE ParamsType* GetParams() const { return Params; }
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|ICsSpawner")
 	virtual void Start();
 
-	FORCEINLINE FCsSpawner_OnStart& GetOnStart_Event()
-	{
-		return OnStart_Event;
-	}
+	FORCEINLINE NCsSpawner::FOnStart& GetOnStart_Event() { return OnStart_Event; }
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|ICsSpawner")
 	void Stop();
 
-	FORCEINLINE FCsSpawner_OnStop& GetOnStop_Event()
-	{
-		return OnStop_Event;
-	}
+	FORCEINLINE NCsSpawner::FOnStop& GetOnStop_Event() { return OnStop_Event; }
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|ICsSpawner")
 	void Spawn();
 	
-	FORCEINLINE FCsSpawner_OnSpawn& GetOnSpawn_Event()
-	{
-		return OnSpawn_Event;
-	}
-
-	FORCEINLINE FCsSpawner_OnSpawnObject& GetOnSpawnObject_Event()
-	{
-		return OnSpawnObject_Event;
-	}
-
-	FORCEINLINE FCsSpawner_OnSpawnObjects& GetOnSpawnObjects_Event()
-	{
-		return OnSpawnObjects_Event;
-	}
-
-	FORCEINLINE FCsSpawner_OnFinish& GetOnFinish_Event()
-	{
-		return OnFinish_Event;
-	}
+	FORCEINLINE NCsSpawner::FOnSpawn& GetOnSpawn_Event() { return OnSpawn_Event; }
+	FORCEINLINE NCsSpawner::FOnSpawnObject& GetOnSpawnObject_Event() { return OnSpawnObject_Event; }
+	FORCEINLINE NCsSpawner::FOnSpawnObjects& GetOnSpawnObjects_Event() { return OnSpawnObjects_Event; }
+	FORCEINLINE NCsSpawner::FOnFinish& GetOnFinish_Event() { return OnFinish_Event; }
 
 #pragma endregion ICsSpawner
 
@@ -177,11 +174,15 @@ protected:
 	/** */
 	int32 MaxConcurrentSpawnObjects;
 
-	/** Manager for objects of type: FCsSpawnerSpawnedObjects. */
-	FCsManager_SpawnerSpawnedObjects Manager_SpawnedObjects;
+#define SpawnedObjectsManagerType NCsSpawner::NSpawnedObjects::FManager
+	/** Manager for objects of type: SpawnedObjectsType (NCsSpawner::FSpawnedObjects). */
+	SpawnedObjectsManagerType Manager_SpawnedObjects;
+#undef SpawnedObjectsManagerType
 
 	/** */
-	FCsSpawnerSpawnedObjects SpawnedObjects;
+#define SpawnedObjectsType NCsSpawner::FSpawnedObjects
+	SpawnedObjectsType SpawnedObjects;
+#undef SpawnedObjectsType
 
 public:
 
@@ -253,4 +254,6 @@ protected:
 	virtual FCsDebugDrawSphere* GetDebugDrawSphere();
 
 #pragma endregion Debug
+
+#undef ParamsType
 };

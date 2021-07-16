@@ -4,6 +4,66 @@
 
 // Library
 #include "Library/CsLibrary_Array.h"
+#include "Library/CsLibrary_Valid.h"
+
+// FCsSpawnerCountParams
+#pragma region
+
+#define ParamsType NCsSpawner::NParams::FCount
+
+void FCsSpawnerCountParams::CopyToParams(ParamsType* Params)
+{
+	Params->SetCountPerSpawn(&CountPerSpawn);
+	Params->SetTimeBetweenCountPerSpawn(&TimeBetweenCountPerSpawn);
+}
+
+void FCsSpawnerCountParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetCountPerSpawn(CountPerSpawn);
+	Params->SetTimeBetweenCountPerSpawn(TimeBetweenCountPerSpawn);
+}
+
+#undef ParamsType
+
+bool FCsSpawnerCountParams::IsValidChecked(const FString& Context) const
+{
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CountPerSpawn, 1)
+
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(TimeBetweenCountPerSpawn, 0.0f)
+	return true;
+}
+
+bool FCsSpawnerCountParams::IsValid(const FString& Context, void(*Log)(const FString&) /*-FCsLog::Warning*/) const
+{
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(CountPerSpawn, 1)
+
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(TimeBetweenCountPerSpawn, 0.0f)
+	return true;
+}
+
+namespace NCsSpawner
+{
+	namespace NParams
+	{
+		bool FCount::IsValidChecked(const FString& Context) const
+		{
+			CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCountPerSpawn(), 1)
+
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetTimeBetweenCountPerSpawn(), 0.0f)
+			return true;
+		}
+
+		bool FCount::IsValid(const FString& Context, void(*Log)(const FString&) /*-FCsLog::Warning*/) const
+		{
+			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCountPerSpawn(), 1)
+
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetTimeBetweenCountPerSpawn(), 0.0f)
+			return true;
+		}
+	}
+}
+
+#pragma endregion FCsSpawnerCountParams
 
 // SpawnerFrequency
 #pragma region
@@ -25,21 +85,56 @@ namespace NCsSpawnerFrequency
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerFrequency_MAX;
 }
 
-#pragma endregion SpawnerFrequency
-
-// FCsSpawnerCountParams
-#pragma region
-
-bool FCsSpawnerCountParams::IsValidChecked(const FString& Context) const
+namespace NCsSpawner
 {
-	checkf(CountPerSpawn >= 1, TEXT("%s: CountPerSpawn MUST be >= 1."), *Context);
-	return true;
+	namespace NFrequency
+	{
+		namespace Ref
+		{
+			typedef EMFrequency EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Once);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Count);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(TimeCount);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(TimeInterval);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Infinite);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EFrequency_MAX, "MAX");
+		}
+
+		CSCORE_API const uint8 MAX = (uint8)EFrequency::EFrequency_MAX;
+	}
 }
 
-#pragma endregion FCsSpawnerCountParams
+#pragma endregion SpawnerFrequency
 
 // FCsSpawnerFrequencyParams
 #pragma region
+
+#define ParamsType NCsSpawner::NParams::FFrequency
+
+void FCsSpawnerFrequencyParams::CopyToParams(ParamsType* Params)
+{
+	typedef NCsSpawner::EFrequency FrequencyType;
+
+	Params->SetType((FrequencyType*)&Type);
+	Params->SetDelay(&Delay);
+	Params->SetCount(&Count);
+	Params->SetInterval(&Interval);
+	Params->SetTime(&Time);
+}
+
+void FCsSpawnerFrequencyParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	typedef NCsSpawner::EFrequency FrequencyType;
+
+	Params->SetType((FrequencyType)Type);
+	Params->SetDelay(Delay);
+	Params->SetCount(Count);
+	Params->SetInterval(Interval);
+	Params->SetTime(Time);
+}
+
+#undef ParamsType
 
 bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 {
@@ -201,6 +296,151 @@ void FCsSpawnerFrequencyParams::OnPostEditChange()
 	Update();
 }
 
+namespace NCsSpawner
+{
+	namespace NParams
+	{
+		bool FFrequency::IsValidChecked(const FString& Context) const
+		{
+			typedef NCsSpawner::EFrequency FrequencyType;
+
+			// Once
+			if (GetType() == FrequencyType::Once)
+			{
+				// No checks
+			}
+			// Count
+			else
+			if (GetType() == FrequencyType::Count)
+			{
+				checkf(GetCount() >= 1, TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::Count."), *Context);
+			}
+			// TimeCount
+			else
+			if (GetType() == FrequencyType::TimeCount)
+			{
+				checkf(GetCount() >= 1, TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::TimeCount."), *Context);
+			}
+			// TimeInterval
+			else
+			if (GetType() == FrequencyType::TimeInterval)
+			{
+				checkf(GetInterval() > 0.0f, TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::TimeInterval."), *Context);
+			}
+			// Infinite
+			else
+			if (GetType() == FrequencyType::Infinite)
+			{
+				checkf(GetInterval() > 0.0f, TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::Infinite."), *Context);
+			}
+			return true;
+		}
+
+		bool FFrequency::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			typedef NCsSpawner::EFrequency FrequencyType;
+
+			// Once
+			if (GetType() == FrequencyType::Once)
+			{
+				// No checks
+			}
+			// Count
+			else
+			if (GetType() == FrequencyType::Count)
+			{
+				if (GetCount() < 1)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::Count."), *Context));
+					return false;
+				}
+			}
+			// TimeCount
+			else
+			if (GetType() == FrequencyType::TimeCount)
+			{
+				if (GetCount() < 1)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::TimeCount."), *Context));
+					return false;
+				}
+			}
+			// TimeInterval
+			else
+			if (GetType() == FrequencyType::TimeInterval)
+			{
+				if (GetInterval() <= 0.0f)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::TimeInterval."), *Context));
+					return false;
+				}
+			}
+			// Infinite
+			else
+			if (GetType() == FrequencyType::Infinite)
+			{
+				if (GetInterval() <= 0.0f)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::Infinite."), *Context));
+					return false;
+				}
+			}
+			return true;
+		}
+
+		float FFrequency::CalculateTotalTime() const
+		{
+			typedef NCsSpawner::EFrequency FrequencyType;
+
+			float TotalTime = 0.0f;
+
+			// Once
+			if (GetType() == FrequencyType::Once)
+			{
+				TotalTime += GetDelay();
+			}
+			// Count
+			else
+			if (GetType() == FrequencyType::Count)
+			{
+				TotalTime += GetDelay();
+				TotalTime += GetCount() * GetInterval();
+			}
+			// TimeCount
+			else
+			if (GetType() == FrequencyType::TimeCount)
+			{
+				TotalTime += GetDelay();
+				TotalTime += GetTime();
+			}
+			// TimeInterval
+			else
+			if (GetType() == FrequencyType::TimeInterval)
+			{
+				TotalTime += GetDelay();
+				TotalTime += GetCount() * GetInterval();
+			}
+			// Infinite
+			if (GetType() == FrequencyType::Infinite)
+			{
+				TotalTime = 0.0f;
+			}
+			return TotalTime;
+		}
+
+		void FFrequency::Reset()
+		{
+			typedef NCsSpawner::EFrequency FrequencyType;
+
+			CS_RESET_MEMBER_WITH_EMU(Type, FrequencyType::Once)
+			CS_RESET_MEMBER_WITH_EMU(Delay, 0.0f)
+			CS_RESET_MEMBER_WITH_EMU(Count, 0)
+			CS_RESET_MEMBER_WITH_EMU(Interval, 0.0f)
+			CS_RESET_MEMBER_WITH_EMU(Time, 0.0f)
+		}
+	}
+}
+
 #pragma endregion FCsSpawnerFrequencyParams
 
 // SpawnerPoint
@@ -258,6 +498,25 @@ namespace NCsSpawnerPointOrder
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPointOrder_MAX;
+}
+
+namespace NCsSpawner
+{
+	namespace NPointOrder
+	{
+		namespace Ref
+		{
+			typedef EMPointOrder EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(FirstToLast);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(RandomShuffle);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Random);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPointOrder_MAX, "MAX");
+		}
+
+		CSCORE_API const uint8 MAX = (uint8)EPointOrder::EPointOrder_MAX;
+	}
 }
 
 #pragma endregion SpawnerPointOrder

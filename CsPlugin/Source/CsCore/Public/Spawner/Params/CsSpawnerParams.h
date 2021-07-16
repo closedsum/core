@@ -4,35 +4,47 @@
 // Types
 #include "Spawner/Params/CsTypes_SpawnerParams.h"
 
-struct CSCORE_API ICsSpawnerParams : public ICsGetInterfaceMap
+namespace NCsSpawner
 {
-public:
+	namespace NParams
+	{
+		struct CSCORE_API IParams : public ICsGetInterfaceMap
+		{
+		public:
 
-	static const FName Name;
+			static const FName Name;
 
-public:
+		public:
 
-	virtual ~ICsSpawnerParams(){}
+			virtual ~IParams(){}
 	
-	/**
-	* Get the parameters describing the number of objects "created" when
-	* Spawn is called.
-	*
-	* return Count Params
-	*/
-	virtual const FCsSpawnerCountParams& GetCountParams() const = 0;
+		#define CountParamsType NCsSpawner::NParams::FCount
+		#define FrequencyParamsType NCsSpawner::NParams::FFrequency
 
-	/**
-	*
-	*
-	* return Frequency Params
-	*/
-	virtual const FCsSpawnerFrequencyParams& GetFrequencyParams() const = 0;
+			/**
+			* Get the parameters describing the number of objects "created" when
+			* Spawn is called.
+			*
+			* return Count Params
+			*/
+			virtual const CountParamsType& GetCountParams() const = 0;
 
-	/**
-	*
-	*
-	* return Total Time
-	*/
-	virtual const float& GetTotalTime() const = 0;
-};
+			/**
+			*
+			*
+			* return Frequency Params
+			*/
+			virtual const FrequencyParamsType& GetFrequencyParams() const = 0;
+
+			/**
+			*
+			*
+			* return Total Time
+			*/
+			virtual const float& GetTotalTime() const = 0;
+
+		#undef CountParamsType
+		#undef FrequencyParamsType
+		};
+	}
+}

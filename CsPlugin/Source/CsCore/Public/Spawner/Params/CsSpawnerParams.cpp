@@ -3,4 +3,4 @@
 #include "Spawner/Params/CsSpawnerParams.h"
 #include "CsCore.h"
 
-const FName ICsSpawnerParams::Name = FName("ICsSpawnerParams");
+const FName NCsSpawner::NParams::IParams::Name = FName("NCsSpawner::NParams::IParams");

@@ -5,62 +5,64 @@
 
 struct FCsInterfaceMap;
 
-/**
-*/
-struct CSCORE_API FCsSpawnerParamsImpl final : public ICsSpawnerParams
+namespace NCsSpawner
 {
-public:
-
-	static const FName Name;
-
-private:
-
-	FCsInterfaceMap* InterfaceMap;
-
-public:
-
-	// ICsSpawnerParams
-
-	FCsSpawnerCountParams CountParams;
-
-	FCsSpawnerFrequencyParams FrequencyParams;
-
-	float TotalTime;
-
-public:
-
-	FCsSpawnerParamsImpl();
-	~FCsSpawnerParamsImpl();
-
-// ICsGetInterfaceMap
-#pragma region
-public:
-
-	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
+	namespace NParams
 	{
-		return InterfaceMap;
+	#define ParamsType NCsSpawner::NParams::IParams
+
+		/**
+		*/
+		struct CSCORE_API FImpl final : public ParamsType
+		{
+		public:
+
+			static const FName Name;
+
+		#define CountParamsType NCsSpawner::NParams::FCount
+		#define FrequencyParamsType NCsSpawner::NParams::FFrequency
+
+		private:
+
+			FCsInterfaceMap* InterfaceMap;
+
+		public:
+
+			// ParamsType (NCsSpawner::NParams::IParams)
+
+			CountParamsType CountParams;
+
+			FrequencyParamsType FrequencyParams;
+
+			float TotalTime;
+
+		public:
+
+			FImpl();
+			~FImpl();
+
+		// ICsGetInterfaceMap
+		#pragma region
+		public:
+
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+		#pragma endregion ICsGetInterfaceMap
+
+		// ParamsType (NCsSpawner::NParams::IParams)
+		#pragma region
+		public:
+
+			FORCEINLINE const CountParamsType& GetCountParams() const { return CountParams; }
+			FORCEINLINE const FrequencyParamsType& GetFrequencyParams() const { return FrequencyParams; }
+			FORCEINLINE const float& GetTotalTime() const { return TotalTime; }
+
+		#pragma endregion ParamsType (NCsSpawner::NParams::IParams)
+
+		#undef CountParamsType
+		#undef FrequencyParamsType
+		};
+
+	#undef ParamsType
 	}
-
-#pragma endregion ICsGetInterfaceMap
-
-// ICsSpawnerParams
-#pragma region
-public:
-
-	FORCEINLINE const FCsSpawnerCountParams& GetCountParams() const
-	{
-		return CountParams;
-	}
-
-	FORCEINLINE const FCsSpawnerFrequencyParams& GetFrequencyParams() const
-	{
-		return FrequencyParams;
-	}
-
-	FORCEINLINE const float& GetTotalTime() const
-	{
-		return TotalTime;
-	}
-
-#pragma endregion ICsSpawnerParams
-};
+}

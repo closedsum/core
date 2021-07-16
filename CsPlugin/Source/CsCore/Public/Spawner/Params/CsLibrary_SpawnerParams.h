@@ -1,18 +1,30 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Spawner/Params/CsSpawnerParams.h"
+// Container
 #include "Containers/CsLibrary_InterfaceMap.h"
+// Spawner
+#include "Spawner/Params/CsSpawnerParams.h"
 
 #pragma once
 
-struct CSCORE_API FCsLibrary_SpawnerParams : public TCsLibrary_InterfaceMap<ICsSpawnerParams>
+namespace NCsSpawner
 {
-public:
+	namespace NParams
+	{
+	#define ParamsType NCsSpawner::NParams::IParams
 
-	/**
-	*
-	*
-	* @param Params
-	* return
-	*/
-	static float CalculateTotalTime(const ICsSpawnerParams* Params);
-};
+		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<ParamsType>
+		{
+		public:
+
+			/**
+			*
+			*
+			* @param Params
+			* return
+			*/
+			static float CalculateTotalTime(const ParamsType* Params);
+		};
+
+	#undef ParamsType
+	}
+}

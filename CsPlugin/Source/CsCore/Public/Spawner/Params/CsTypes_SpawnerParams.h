@@ -6,6 +6,82 @@
 #include "CsTypes_SpawnerParams.generated.h"
 #pragma once
 
+// FCsSpawnerCountParams
+#pragma region
+
+// NCsSpawner::NParams::FCount
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FCount)
+
+/**
+* Parameters describing number (count) of objects "created" when Spawn is called.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSpawnerCountParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** The number of objects to "create" per Spawn call. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
+	int32 CountPerSpawn;
+
+	/** The amount of time between "creating" each object (if CountPerSpawn > 1). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float TimeBetweenCountPerSpawn;
+
+	FCsSpawnerCountParams() :
+		CountPerSpawn(1),
+		TimeBetweenCountPerSpawn(0.0f)
+	{
+	}
+
+#define ParamsType NCsSpawner::NParams::FCount
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+namespace NCsSpawner
+{
+	namespace NParams
+	{
+		/**
+		* Parameters describing number (count) of objects "created" when Spawn is called.
+		*/
+		struct CSCORE_API FCount
+		{
+		private:
+
+			/** The number of objects to "create" per Spawn call. */
+			CS_DECLARE_MEMBER_WITH_EMU(CountPerSpawn, int32)
+			/** The amount of time between "creating" each object (if CountPerSpawn > 1). */
+			CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenCountPerSpawn, float)
+
+		public:
+
+			FCount() :
+				CS_CTOR_INIT_MEMBER_WITH_EMU(CountPerSpawn, 1),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenCountPerSpawn, 0.0f)
+			{
+				CS_CTOR_SET_MEMBER_EMU(CountPerSpawn);
+				CS_CTOR_SET_MEMBER_EMU(TimeBetweenCountPerSpawn);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(CountPerSpawn, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenCountPerSpawn, float)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+		};
+	}
+}
+
+#pragma endregion FCsSpawnerCountParams
+
 // SpawnerFrequency
 #pragma region
 
@@ -50,42 +126,56 @@ namespace NCsSpawnerFrequency
 	extern CSCORE_API const uint8 MAX;
 }
 
-#pragma endregion SpawnerFrequency
-
-// FCsSpawnerCountParams
-#pragma region
-
-/**
-* Parameters describing number (count) of objects "created" when Spawn is called.
-*/
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsSpawnerCountParams
+namespace NCsSpawner
 {
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	/** The number of objects to "create" per Spawn call. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
-	int32 CountPerSpawn;
-
-	/** The amount of time between "creating" each object (if CountPerSpawn > 1). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float TimeBetweenCountPerSpawn;
-
-	FCsSpawnerCountParams() :
-		CountPerSpawn(1),
-		TimeBetweenCountPerSpawn(0.0f)
+	/**
+	* The frequency at which a spawner (ICsSpawner) calls Spawn.
+	*/
+	enum class EFrequency : uint8
 	{
+		/** */
+		Once,
+		/** */
+		Count,
+		/** */
+		TimeCount,
+		/** */
+		TimeInterval,
+		/** */
+		Infinite,
+		EFrequency_MAX
+	};
+
+	struct CSCORE_API EMFrequency : public TCsEnumMap<EFrequency>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMFrequency, EFrequency)
+	};
+
+	namespace NFrequency
+	{
+		namespace Ref
+		{
+			typedef EFrequency Type;
+
+			extern CSCORE_API const Type Once;
+			extern CSCORE_API const Type Count;
+			extern CSCORE_API const Type TimeCount;
+			extern CSCORE_API const Type TimeInterval;
+			extern CSCORE_API const Type Infinite;
+			extern CSCORE_API const Type EFrequency_MAX;
+		}
+
+		extern CSCORE_API const uint8 MAX;
 	}
+}
 
-	bool IsValidChecked(const FString& Context) const;
-};
-
-#pragma endregion FCsSpawnerCountParams
+#pragma endregion SpawnerFrequency
 
 // FCsSpawnerFrequencyParams
 #pragma region
+
+// NCsSpawner::NParams::FFrequency
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FFrequency)
 
 /**
 * Parameters describing the frequency at which Spawn is called after calling Start.
@@ -144,6 +234,11 @@ public:
 	{
 	}
 
+#define ParamsType NCsSpawner::NParams::FFrequency
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
@@ -155,6 +250,83 @@ public:
 	void OnPostEditChange();
 };
  
+namespace NCsSpawner
+{
+	namespace NParams
+	{
+		struct CSCORE_API FFrequency
+		{
+		#define FrequencyType NCsSpawner::EFrequency
+
+		private:
+
+			/** Trigger Frequency
+				If Type == FrequencyType::Once,
+				 Ignore Count and Interval.
+				If Type == FrequencyType::Count,
+				 Count should be > 0, if NOT, it will be treated
+				 as ECsSpawnerFrequency::Once.
+				if Type == FrequencyType::TimeCount,
+				if Type == FrequencyType::TimeInterval,
+				If Type == FrequencyType::Infinite,
+				 Ignore Count and Interval should be > 0.0f. */
+			CS_DECLARE_MEMBER_WITH_EMU(Type, FrequencyType)
+
+			/** The delay before calling Start.
+				If Delay == 0.0f, Spawn will be called at a given interval.
+				If Delay == 0.0f and Interval == 0.0f, Spawn will be called immediately. */
+			CS_DECLARE_MEMBER_WITH_EMU(Delay, float)
+
+			/** The number of times to call Spawn after Start is called.
+				Only valid if 
+				 Type == FrequencyType::Count
+				 Type == FrequencyType::TimeCount
+				Should be > 0. */
+			CS_DECLARE_MEMBER_WITH_EMU(Count, int32)
+
+			/** The time between each Spawn call after Start is called.
+				Only valid if,
+				Type == FrequencyType::Count
+				Type == FrequencyType::TimeInterval
+				Type == FrequencyType::Infinite */
+			CS_DECLARE_MEMBER_WITH_EMU(Interval, float)
+
+			CS_DECLARE_MEMBER_WITH_EMU(Time, float)
+
+		public:
+
+			FFrequency() :
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Type, FrequencyType::Once),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Delay, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Count, 0),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Interval, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Time, 0.0f)
+			{
+				CS_CTOR_SET_MEMBER_EMU(Type);
+				CS_CTOR_SET_MEMBER_EMU(Delay);
+				CS_CTOR_SET_MEMBER_EMU(Count);
+				CS_CTOR_SET_MEMBER_EMU(Interval);
+				CS_CTOR_SET_MEMBER_EMU(Time);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FrequencyType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Delay, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Count, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Interval, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Time, float)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			float CalculateTotalTime() const;
+
+			void Reset();
+
+		#undef FrequencyType
+		};
+	}
+}
+
 #pragma endregion FCsSpawnerFrequencyParams
 
 // SpawnerPoint
@@ -272,6 +444,42 @@ namespace NCsSpawnerPointOrder
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsSpawner
+{
+	/**
+	* The order in which to use spawn points.
+	*/
+	enum class EPointOrder : uint8
+	{
+		FirstToLast,
+		RandomShuffle,
+		Random,
+		Custom,
+		EPointOrder_MAX
+	};
+
+	struct CSCORE_API EMPointOrder : public TCsEnumMap<EPointOrder>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMPointOrder, EPointOrder)
+	};
+
+	namespace NPointOrder
+	{
+		namespace Ref
+		{
+			typedef EPointOrder Type;
+
+			extern CSCORE_API const Type FirstToLast;
+			extern CSCORE_API const Type RandomShuffle;
+			extern CSCORE_API const Type Random;
+			extern CSCORE_API const Type Custom;
+			extern CSCORE_API const Type EPointOrder_MAX;
+		}
+
+		extern CSCORE_API const uint8 MAX;
+	}
+}
+
 #pragma endregion SpawnerPointOrder
 
 // FCsSpawnerPointParams
@@ -314,6 +522,51 @@ public:
 	{
 	}
 };
+
+namespace NCsSpawner
+{
+	namespace NParams
+	{
+		struct CSCORE_API FPoint
+		{
+		#define PointType NCsSpawner::EPoint
+		#define PointOrderType NCsSpawner::EPointOrder
+
+		private:
+
+			CS_DECLARE_MEMBER_WITH_EMU(Type, PointType)
+			CS_DECLARE_MEMBER_WITH_EMU(Order, PointOrderType)
+			CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
+			CS_DECLARE_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
+			CS_DECLARE_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
+
+		public:
+
+			FPoint() :
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Type, PointType::Self),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Order, PointOrderType::FirstToLast),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 7),
+				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Transforms),
+				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Actors)
+			{
+				CS_CTOR_SET_MEMBER_EMU(Type);
+				CS_CTOR_SET_MEMBER_EMU(Order);
+				CS_CTOR_SET_MEMBER_EMU(TransformRules);
+				CS_CTOR_SET_MEMBER_EMU(Transforms);
+				CS_CTOR_SET_MEMBER_EMU(Actors);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, PointType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Order, PointOrderType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
+			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
+
+		#undef PointType
+		#undef PointOrderType
+		};
+	}
+}
 
 #pragma endregion FCsSpawnerPointParams
 

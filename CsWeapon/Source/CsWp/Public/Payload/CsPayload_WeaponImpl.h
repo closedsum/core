@@ -1,26 +1,21 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-#include "Payload/CsPayload_Projectile.h"
+#include "Payload/CsPayload_Weapon.h"
 
 #pragma once
 
 class UObject;
 struct FCsInterfaceMap;
 
-namespace NCsProjectile
+namespace NCsWeapon
 {
 	namespace NPayload
 	{
 	#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-	#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
+	#define PayloadType NCsWeapon::NPayload::IPayload
 
-		/**
-		* Basic implementation of the interfaces: 
-		*  PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-		*  ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-		*/
-		struct CSPRJ_API FImplPooled : public PooledPayloadType,
-									   public ProjectilePayloadType
+		struct CSWP_API FImpl : public PooledPayloadType,
+							    public PayloadType
 		{
 		public:
 
@@ -29,11 +24,9 @@ namespace NCsProjectile
 		private:
 
 			// ICsGetInterfaceMap
-
 			FCsInterfaceMap* InterfaceMap;
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-
 			bool bAllocated;
 
 		public:
@@ -43,30 +36,21 @@ namespace NCsProjectile
 			UObject* Owner;
 
 			UObject* Parent;
-	
+
 			FCsTime Time;
 
 			uint32 PreserveChangesFromDefaultMask;
 
-			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-
-			FVector Direction;
-
-			FVector Location;
-
 		public:
 
-			FImplPooled();
-			~FImplPooled();
+			FImpl();
+			~FImpl();
 
 		// ICsGetInterfaceMap
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -90,25 +74,31 @@ namespace NCsProjectile
 		public:
 
 			template<typename T>
-			FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
+			FORCEINLINE T* GetInstigator() const
+			{
+				return Cast<T>(GetInstigator());
+			}
 
 			template<typename T>
-			FORCEINLINE T* GetOwner() const { return Cast<T>(GetOwner()); }
+			FORCEINLINE T* GetOwner() const
+			{
+				return Cast<T>(GetOwner());
+			}
 
 			template<typename T>
-			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
+			FORCEINLINE T* GetParent() const
+			{
+				return Cast<T>(GetParent());
+			}
 
-		// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+		// PayloadType (NCsWeapon::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const FVector& GetDirection() const { return Direction; }
-			FORCEINLINE const FVector& GetLocation() const { return Location; }
-
-		#pragma endregion ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+		#pragma endregion PayloadType (NCsWeapon::NPayload::IPayload)
 		};
 
 	#undef PooledPayloadType
-	#undef ProjectilePayloadType
+	#undef PayloadType
 	}
 }

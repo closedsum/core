@@ -12,7 +12,7 @@
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsPrjPopulateEnumMapFromSettings.h"
 // Projectile
-#include "Payload/CsPayload_ProjectilePooledImpl.h"
+#include "Payload/CsPayload_ProjectileImpl.h"
 
 // ProjectileRelevance
 #pragma region
@@ -237,7 +237,7 @@ namespace NCsProjectileData
 // FCsPayload_Projectile
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::FImplPooled
+#define PayloadType NCsProjectile::NPayload::FImpl
 void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
 {
 #undef PayloadType

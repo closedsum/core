@@ -1,18 +1,18 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Cache/CsCache_ProjectilePooledImpl.h"
+#include "Cache/CsCache_ProjectileImpl.h"
 
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Containers/CsInterfaceMap.h"
 // Data
 #include "Data/CsData_Projectile.h"
 
-const FName NCsProjectile::NCache::FImplPooled::Name = FName("NCsProjectile::NCache::FImplPooled");
+const FName NCsProjectile::NCache::FImpl::Name = FName("NCsProjectile::NCache::FImpl");
 
 namespace NCsProjectile
 {
 	namespace NCache
 	{
-		FImplPooled::FImplPooled() :
+		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			// PooledCacheType (NCsPooledObject::NCache::ICache)
@@ -32,7 +32,7 @@ namespace NCsProjectile
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRoot<FImplPooled>(this);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsPooledObject::NCache::ICache PooledCacheType;
 			typedef NCsProjectile::NCache::ICache ProjectileCacheType;
@@ -41,7 +41,7 @@ namespace NCsProjectile
 			InterfaceMap->Add<ProjectileCacheType>(static_cast<ProjectileCacheType*>(this));
 		}
 
-		FImplPooled::~FImplPooled()
+		FImpl::~FImpl()
 		{
 			delete InterfaceMap;
 		}
@@ -50,7 +50,7 @@ namespace NCsProjectile
 		#pragma region
 
 		#define PayloadType NCsPooledObject::NPayload::IPayload
-		void FImplPooled::Allocate(PayloadType* Payload)
+		void FImpl::Allocate(PayloadType* Payload)
 		{
 		#undef PayloadType
 
@@ -62,17 +62,17 @@ namespace NCsProjectile
 			StartTime  = Payload->GetTime();
 		}
 
-		void FImplPooled::Deallocate()
+		void FImpl::Deallocate()
 		{
 			Reset();
 		}
 
-		bool FImplPooled::HasLifeTimeExpired()
+		bool FImpl::HasLifeTimeExpired()
 		{
 			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
 		}
 
-		void FImplPooled::Reset()
+		void FImpl::Reset()
 		{
 			bAllocated = false;
 			bQueueDeallocate = false;
@@ -88,13 +88,13 @@ namespace NCsProjectile
 
 		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
-		void FImplPooled::Update(const FCsDeltaTime& DeltaTime)
+		void FImpl::Update(const FCsDeltaTime& DeltaTime)
 		{
 			ElapsedTime += DeltaTime;
 		}
 
 		#define DataType NCsProjectile::NData::IData
-		void FImplPooled::SetData(DataType* InData)
+		void FImpl::SetData(DataType* InData)
 		{
 		#undef DataType
 

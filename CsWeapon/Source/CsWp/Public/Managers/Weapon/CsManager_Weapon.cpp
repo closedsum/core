@@ -28,7 +28,7 @@
 // Weapon
 #include "Managers/Weapon/Handler/CsManager_Weapon_ClassHandler.h"
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
-#include "Payload/CsPayload_WeaponPooledImpl.h"
+#include "Payload/CsPayload_WeaponImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -614,7 +614,7 @@ PayloadType* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
 {
 #undef PayloadType
 	
-	typedef NCsWeapon::NPayload::FImplPooled PayloadImplType;
+	typedef NCsWeapon::NPayload::FImpl PayloadImplType;
 
 	return new PayloadImplType();
 }

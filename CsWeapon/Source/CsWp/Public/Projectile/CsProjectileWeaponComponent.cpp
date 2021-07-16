@@ -42,7 +42,7 @@
 // Pooled
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
-#include "Payload/CsPayload_ProjectilePooledImpl.h"
+#include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Managers/Projectile/CsProjectilePooledImpl.h"
 // Sound

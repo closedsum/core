@@ -1,15 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsPayload_ProjectilePooledImpl.h"
+#include "Payload/CsPayload_ProjectileImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsProjectile::NPayload::FImplPooled::Name = FName("NCsProjectile::NPayload::FImplPooled");;
+const FName NCsProjectile::NPayload::FImpl::Name = FName("NCsProjectile::NPayload::FImpl");;
 
 namespace NCsProjectile
 {
 	namespace NPayload
 	{
-		FImplPooled::FImplPooled() :
+		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
@@ -25,7 +25,7 @@ namespace NCsProjectile
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap->SetRoot<FImplPooled>(this);
+			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 			typedef NCsProjectile::NPayload::IPayload ProjectilePayloadType;
@@ -34,7 +34,7 @@ namespace NCsProjectile
 			InterfaceMap->Add<ProjectilePayloadType>(static_cast<ProjectilePayloadType*>(this));
 		}
 
-		FImplPooled::~FImplPooled()
+		FImpl::~FImpl()
 		{
 			// ICsGetInterfaceMap
 			delete InterfaceMap;
@@ -43,7 +43,7 @@ namespace NCsProjectile
 		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
-		void FImplPooled::Reset()
+		void FImpl::Reset()
 		{
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;

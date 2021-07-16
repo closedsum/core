@@ -8,7 +8,7 @@
 // Managers
 #include "Managers/Projectile/CsManager_Projectile.h"
 // Projectile
-#include "Payload/CsPayload_ProjectilePooledImpl.h"
+#include "Payload/CsPayload_ProjectileImpl.h"
 
 // Cached
 #pragma region
@@ -69,7 +69,7 @@ int32 UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, const U
 	if (!Manager_Projectile)
 		return INDEX_NONE;
 
-	typedef NCsProjectile::NPayload::FImplPooled PayloadImplType;
+	typedef NCsProjectile::NPayload::FImpl PayloadImplType;
 
 	const FECsProjectile& Type	 = Payload.Type;
 	PayloadImplType* PayloadImpl = Manager_Projectile->AllocatePayload<PayloadImplType>(Type);

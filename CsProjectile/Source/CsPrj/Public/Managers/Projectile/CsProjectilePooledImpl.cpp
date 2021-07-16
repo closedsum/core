@@ -38,7 +38,7 @@
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
-#include "Cache/CsCache_ProjectilePooledImpl.h"
+#include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 // FX
 #include "Managers/FX/Cache/CsCache_FXImpl.h"
@@ -350,7 +350,7 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 
 	// Set Data on Cache
 	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+	typedef NCsProjectile::NCache::FImpl CacheImplType;
 
 	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
@@ -492,7 +492,7 @@ void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	const FString& Context = Str::Update;
 
 	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+	typedef NCsProjectile::NCache::FImpl CacheImplType;
 
 	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
@@ -503,7 +503,7 @@ void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsProjectilePooledImpl::ConstructCache()
 {
-	typedef NCsProjectile::NCache::FImplPooled CacheImplType;
+	typedef NCsProjectile::NCache::FImpl CacheImplType;
 
 	Cache = new CacheImplType();
 }

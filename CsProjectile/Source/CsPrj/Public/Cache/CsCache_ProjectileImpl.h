@@ -20,8 +20,8 @@ namespace NCsProjectile
 #define PooledCacheType NCsPooledObject::NCache::ICache
 #define ProjectileCacheType NCsProjectile::NCache::ICache
 
-		struct CSPRJ_API FImplPooled final : public PooledCacheType,
-											 public ProjectileCacheType
+		struct CSPRJ_API FImpl final : public PooledCacheType,
+									   public ProjectileCacheType
 		{
 		public:
 
@@ -66,8 +66,8 @@ namespace NCsProjectile
 
 		public:
 
-			FImplPooled();
-			~FImplPooled();
+			FImpl();
+			~FImpl();
 
 			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

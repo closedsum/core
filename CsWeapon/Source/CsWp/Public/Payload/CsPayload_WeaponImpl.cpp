@@ -1,13 +1,15 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsPayload_WeaponPooledImpl.h"
+#include "Payload/CsPayload_WeaponImpl.h"
 
 #include "Containers/CsInterfaceMap.h"
+
+const FName NCsWeapon::NPayload::FImpl::Name = FName("NCsWeapon::NPayload::FImpl");
 
 namespace NCsWeapon
 {
 	namespace NPayload
 	{
-		FImplPooled::FImplPooled() :
+		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
@@ -21,6 +23,8 @@ namespace NCsWeapon
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
+			InterfaceMap->SetRoot<FImpl>(this);
+
 			typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 			typedef NCsWeapon::NPayload::IPayload PayloadType;
 
@@ -28,7 +32,7 @@ namespace NCsWeapon
 			InterfaceMap->Add<PayloadType>(static_cast<PayloadType*>(this));
 		}
 
-		FImplPooled::~FImplPooled()
+		FImpl::~FImpl()
 		{
 			delete InterfaceMap;
 		}
@@ -36,7 +40,7 @@ namespace NCsWeapon
 		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
-		void FImplPooled::Reset()
+		void FImpl::Reset()
 		{
 			bAllocated = false;
 			Instigator = nullptr;

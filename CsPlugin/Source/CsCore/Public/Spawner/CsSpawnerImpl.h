@@ -68,6 +68,14 @@ class CSCORE_API ACsSpawnerImpl : public AActor,
 
 #define ParamsType NCsSpawner::NParams::IParams
 
+// UObject Interface
+#pragma region
+public:
+
+	virtual void BeginDestroy() override;
+
+#pragma endregion UObject Interface
+
 // AActor Interface
 #pragma region
 public:
@@ -95,6 +103,30 @@ public:
 
 #pragma endregion ICsStartPlay
 
+// StartPlay
+#pragma region
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "Spawner|StartPlay", meta = (AllowPrivateAccess = "true"))
+	bool bOverride_StartPlay;
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void Override_StartPlay();
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "Spawner|StartPlay", meta = (AllowPrivateAccess = "true"))
+	bool bReceiveStartPlay;
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ReceiveStartPlay();
+
+#pragma endregion StartPlay
+
 // Params
 #pragma region
 protected:
@@ -116,7 +148,21 @@ protected:
 
 	virtual void ConstructParams();
 
-	virtual bool IsParamsValid(const FString& Context) const;
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "Spawner|Params")
+	bool bConstructDefaultParams;
+
+	void(*DeconstructParamsImpl)(void* Ptr);
+
+	bool(*IsParamsValidImpl)(const FString&, ParamsType*);
+
+public:
+
+	void SetParams(const FString& Context, ParamsType* InParams, void(*InDeconstructParamsImpl)(void*), bool(*InIsParamsValidImpl)(const FString&, ParamsType*));
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Spawner|Params")
+	void SetupFromParams();
 
 #pragma endregion Params
 
@@ -194,9 +240,9 @@ protected:
 
 	//virtual void OnPreStart(ICsSpawner* Spawner);
 
-	FCsRoutineHandle Start_Internal_Handle;
-
 	char Start_Internal(FCsRoutine* R);
+
+	FCsRoutineHandle Start_Internal_Handle;
 
 public:
 
@@ -228,8 +274,17 @@ protected:
 
 	virtual UObject* SpawnObject(const int32& Index);
 
-	UPROPERTY(BlueprintAssignable, Category = "CsCore|Spawner")
+	UPROPERTY(BlueprintAssignable, Category = "Spawner|Spawn")
 	FCsSpawnerImpl_OnSpawnObject OnSpawnObject_ScriptEvent;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Spawner|Spawn", meta = (AllowPrivateAccess = "true"))
+	bool bOverride_SpawnObject;
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UObject* Override_SpawnObject(const int32& Index);
 
 #pragma endregion Spawn
 

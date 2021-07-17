@@ -11,10 +11,11 @@
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Spawner/Params/CsLibrary_SpawnerParams.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Spawner
-#include "Spawner/Params/CsSpawnerParams.h"
+#include "Spawner/Params/CsSpawnerParamsImpl.h"
 
 // Cached
 #pragma region
@@ -26,6 +27,7 @@ namespace NCsSpawnerImpl
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, StartPlay);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SetupFromParams);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Spawn);
@@ -47,11 +49,17 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	// ICsStartPlay
 	bHasStartedPlay(false),
+	// StartPlay
+	bOverride_StartPlay(false),
+	bReceiveStartPlay(false),
 	// ICsSpawner
 		// Params
 	CountParams(nullptr),
 	FrequencyParams(nullptr),
 	TotalTime(nullptr),
+	bConstructDefaultParams(false),
+	DeconstructParamsImpl(nullptr),
+	IsParamsValidImpl(nullptr),
 		// Events
 	OnStart_Event(),
 	OnStop_Event(),
@@ -65,7 +73,10 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	Manager_SpawnedObjects(),
 	SpawnedObjects(),
 	Start_Internal_Handle(),
-	SpawnObjects_Internal_Handles()
+	SpawnObjects_Internal_Handles(),
+	OnPreSpawnObject_Event(),
+	OnSpawnObject_ScriptEvent(),
+	bOverride_SpawnObject(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 #if WITH_EDITOR
@@ -74,6 +85,22 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	PrimaryActorTick.bStartWithTickEnabled = false;
 #endif // #if WITH_EDITOR
 }
+
+// UObject Interface
+#pragma region
+
+void ACsSpawnerImpl::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	if (Params)
+	{
+		DeconstructParamsImpl(Params);
+		Params = nullptr;
+	}
+}
+
+#pragma endregion UObject Interface
 
 // AActor Interface
 #pragma region
@@ -131,11 +158,74 @@ void ACsSpawnerImpl::StartPlay()
 
 	const FString& Context = Str::StartPlay;
 
+#if WITH_EDITOR
+	if (bOverride_StartPlay)
+	{
+		if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: OVERRIDDEN for %s."), *Context, *(GetName()));
+		}
+
+		Override_StartPlay();
+
+		bHasStartedPlay = true;
+		return;
+	}
+#endif // #if WITH_EDITOR
+
 	// ICsSpawner
 
 		// Params
 
 	ConstructParams();
+	SetupFromParams();
+
+	if (bReceiveStartPlay)
+		ReceiveStartPlay();
+	bHasStartedPlay = true;
+}
+
+#pragma endregion ICsStartPlay
+
+void ACsSpawnerImpl::ConstructParams()
+{
+	if (bConstructDefaultParams)
+	{
+		typedef NCsSpawner::NParams::FImpl ParamsType;
+
+		Params = new ParamsType();
+
+		DeconstructParamsImpl = &ParamsType::Deconstruct;
+	}
+}
+
+#define ParamsType NCsSpawner::NParams::IParams
+void ACsSpawnerImpl::SetParams(const FString& Context, ParamsType* InParams, void(*InDeconstructParamsImpl)(void*), bool(*InIsParamsValidImpl)(const FString&, ParamsType*))
+{
+#undef ParamsType
+
+	CS_IS_PTR_NULL_CHECKED(InParams)
+
+	CS_IS_PTR_NULL_CHECKED(InDeconstructParamsImpl)
+
+	if (Params)
+	{
+		DeconstructParamsImpl(Params);
+		Params = nullptr;
+	}
+
+	Params = InParams;
+	DeconstructParamsImpl = InDeconstructParamsImpl;
+	IsParamsValidImpl = InIsParamsValidImpl;
+
+	SetupFromParams();
+}
+
+void ACsSpawnerImpl::SetupFromParams()
+{
+	using namespace NCsSpawnerImpl::NCached;
+
+	const FString& Context = Str::SetupFromParams;
 
 	checkf(Params, TEXT("%s: Params is NULL. Failed to ConstructParams."), *Context);
 
@@ -155,26 +245,16 @@ void ACsSpawnerImpl::StartPlay()
 
 	checkf(TotalTime, TEXT("%s: TotalTime is NULL. Failed to get the reference for TotalTime."), *Context);
 
-	checkf(IsParamsValid(Context), TEXT("%s: Parms is NOT Valid."), *Context);
+	check(IsParamsValidImpl(Context, Params));
 
 	typedef NCsSpawner::NParams::FLibrary ParamsLibrary;
 
-	*TotalTime = ParamsLibrary::CalculateTotalTime(Params);
+	*TotalTime = ParamsLibrary::CalculateTotalTime(Context, Params);
 
 	// Spawn
 
 	if (MaxConcurrentSpawnObjects > 0)
 		Manager_SpawnedObjects.CreatePool(MaxConcurrentSpawnObjects);
-}
-
-#pragma endregion ICsStartPlay
-
-void ACsSpawnerImpl::ConstructParams(){}
-
-bool ACsSpawnerImpl::IsParamsValid(const FString& Context) const
-{
-	checkf(0, TEXT("ACsSpawnerImpl::IsParamsValid: This MUST be implemented."));
-	return true;
 }
 
 // ICsSpawner
@@ -195,7 +275,7 @@ void ACsSpawnerImpl::Start()
 		return;
 	}
 
-	checkf(IsParamsValid(Context), TEXT("%s: Params is NOT Valid."), *Context);
+	check(IsParamsValidImpl(Context, Params));
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
@@ -207,13 +287,19 @@ void ACsSpawnerImpl::Start()
 
 	CurrentSpawnCount = 0;
 
-	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::Start_Internal);
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE Start_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::COROUTINE);
 	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::Start_Internal);
-	Payload->SetFName(Name::Start_Internal);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
 
 	Start_Internal_Handle = Scheduler->Start(Payload);
 }
@@ -223,7 +309,7 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Stop (%s): Stopping"), *(GetName()));
+		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Stop (% s) : Stopping"), *(GetName()));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -278,6 +364,10 @@ void ACsSpawnerImpl::Spawn()
 
 char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 {
+	using namespace NCsSpawnerImpl::NCached;
+
+	const FString& Context = Str::Start_Internal;
+
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
 	ElapsedTime += R->DeltaTime;
@@ -349,7 +439,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Start_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CurrentSpawnCount);
+		UE_LOG(LogCs, Warning, TEXT("%s (%s): Finished Spawning %d Objects."), *Context, *(GetName()), CurrentSpawnCount);
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
@@ -386,7 +476,7 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
-	checkf(IsParamsValid(Context), TEXT("%s: Params is NOT Valid."), *Context);
+	check(IsParamsValidImpl(Context, Params));
 
 	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
@@ -499,11 +589,11 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 		if (CurrentGroup == FROM_SPAWN)
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Finished Spawning %d Objects."), *(GetName()), CountParams->GetCountPerSpawn());
+			UE_LOG(LogCs, Warning, TEXT("%s (%s): Finished Spawning %d Objects."), *Context, *(GetName()), CountParams->GetCountPerSpawn());
 		}
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::SpawnObjects_Internal (%s): Group: %d. Finished Spawning %d Objects."), *(GetName()), CurrentGroup, CountParams->GetCountPerSpawn());
+			UE_LOG(LogCs, Warning, TEXT("%s (%s): Group: %d. Finished Spawning %d Objects."), *Context, *(GetName()), CurrentGroup, CountParams->GetCountPerSpawn());
 		}
 	}
 #endif // #if !UE_BUILD_SHIPPING
@@ -530,6 +620,17 @@ void ACsSpawnerImpl::SpawnObjects_Internal_OnEnd(FCsRoutine* R)
 
 UObject* ACsSpawnerImpl::SpawnObject(const int32& Index)
 {
+#if WITH_EDITOR
+	if (bOverride_SpawnObject)
+	{
+		if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+		{
+			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::bOverride_SpawnObject: OVERRIDDEN for %s."), *(GetName()));
+		}
+
+		return SpawnObject(Index);
+	}
+#endif // #if WITH_EDITOR
 	checkf(0, TEXT("ACsSpawnerImpl::SpawnObject: This MUST be implemented."));
 	return nullptr;
 }

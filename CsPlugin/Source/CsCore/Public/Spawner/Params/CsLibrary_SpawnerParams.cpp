@@ -1,16 +1,19 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Spawner/Params/CsLibrary_SpawnerParams.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 namespace NCsSpawner
 {
 	namespace NParams
 	{
 		#define ParamsType NCsSpawner::NParams::IParams
-		float FLibrary::CalculateTotalTime(const ParamsType* Params)
+		float FLibrary::CalculateTotalTime(const FString& Context, const ParamsType* Params)
 		{
 		#undef ParamsType
 
-			checkf(Params, TEXT("FCsLibrary_SpawnerParams::CalculateTotalTime: Params is NULL."));
+			CS_IS_PTR_NULL_CHECKED(Params)
 
 			typedef NCsSpawner::NParams::FFrequency FrequencyParamsType;
 			typedef NCsSpawner::NParams::FCount CountParamsType;

@@ -1,7 +1,44 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Spawner
 #include "Spawner/Params/CsSpawnerParams.h"
 
+#include "CsSpawnerParamsImpl.generated.h"
 #pragma once
+
+// NCsSpawner::NParams::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FImpl)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSpawnerParamsImpl
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsSpawnerCountParams CountParams;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsSpawnerFrequencyParams FrequencyParams;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TotalTime;
+
+	FCsSpawnerParamsImpl() :
+		CountParams(),
+		FrequencyParams(),
+		TotalTime(0.0f)
+	{
+	}
+
+#define ParamsType NCsSpawner::NParams::FImpl
+	ParamsType* ConstructParamsImpl() const;
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
 
 struct FCsInterfaceMap;
 
@@ -49,6 +86,12 @@ namespace NCsSpawner
 
 		#pragma endregion ICsGetInterfaceMap
 
+		public:
+
+			FORCEINLINE CountParamsType* GetCountParamsPtr() { return &CountParams; }
+			FORCEINLINE FrequencyParamsType* GetFrequencyParamsPtr() { return &FrequencyParams; }
+			FORCEINLINE float* GetTotalTimePtr() { return &TotalTime; }
+
 		// ParamsType (NCsSpawner::NParams::IParams)
 		#pragma region
 		public:
@@ -58,6 +101,17 @@ namespace NCsSpawner
 			FORCEINLINE const float& GetTotalTime() const { return TotalTime; }
 
 		#pragma endregion ParamsType (NCsSpawner::NParams::IParams)
+
+		public:
+
+			static void Deconstruct(void* Ptr)
+			{
+				delete static_cast<NCsSpawner::NParams::FImpl*>(Ptr);
+			}
+
+			bool IsValidChecked(const FString& Context) const;
+			static bool IsValidChecked(const FString& Context, ParamsType* Params);
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 		#undef CountParamsType
 		#undef FrequencyParamsType

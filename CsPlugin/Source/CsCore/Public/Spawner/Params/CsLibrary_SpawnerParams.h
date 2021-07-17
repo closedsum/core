@@ -19,10 +19,11 @@ namespace NCsSpawner
 			/**
 			*
 			*
+			* @param Context	The calling context.
 			* @param Params
 			* return
 			*/
-			static float CalculateTotalTime(const ParamsType* Params);
+			static float CalculateTotalTime(const FString& Context, const ParamsType* Params);
 		};
 
 	#undef ParamsType

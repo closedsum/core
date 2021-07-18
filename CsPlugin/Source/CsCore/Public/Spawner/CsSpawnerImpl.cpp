@@ -628,7 +628,7 @@ UObject* ACsSpawnerImpl::SpawnObject(const int32& Index)
 			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::bOverride_SpawnObject: OVERRIDDEN for %s."), *(GetName()));
 		}
 
-		return SpawnObject(Index);
+		return Override_SpawnObject(Index);
 	}
 #endif // #if WITH_EDITOR
 	checkf(0, TEXT("ACsSpawnerImpl::SpawnObject: This MUST be implemented."));

@@ -432,5 +432,33 @@ namespace NCsActor
 		static AActor* SafeSpawn(const FString& Context, const UObject* WorldContext, const FString& Path, void (*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Spawn
+
+	// Distance
+	#pragma region
+	public:
+
+		/**
+		* Safely get the distance squared between A and B.
+		* 
+		* @param Context	The calling context.
+		* @param A
+		* @param B
+		* @param Log		(optional)
+		* return			Distance squared between A and B.
+		*/
+		static float GetSafeDistanceSq(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely get the distance squared 2D between A and B.
+		*
+		* @param Context	The calling context.
+		* @param A
+		* @param B
+		* @param Log		(optional)
+		* return			Distance squared 2D between A and B.
+		*/
+		static float GetSafeDistanceSq2D(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Distance
 	};
 }

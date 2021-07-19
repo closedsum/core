@@ -148,4 +148,31 @@ public:
 	static AActor* SpawnByStringPath(const FString& Context, const UObject* WorldContextObject, const FString& Path);
 
 #pragma endregion Spawn
+
+// Distance
+#pragma region
+public:
+
+	/**
+	* Get the distance squared between A and B.
+	*
+	* @param Context	The calling context.
+	* @param A
+	* @param B
+	* return			Distance squared between A and B.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
+	static float GetDistanceSq(const FString& Context, AActor* A, AActor* B);
+
+	/**
+	* Get the distance squared 2D between A and B.
+	*
+	* @param Context	The calling context.
+	* @param A
+	* @param B
+	* return			Distance squared 2D between A and B.
+	*/
+	static float GetDistanceSq2D(const FString& Context, AActor* A, AActor* B);
+
+#pragma endregion Distance
 };

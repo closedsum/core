@@ -25,6 +25,8 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterials);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SpawnBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SpawnByStringPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetDistanceSq);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetDistanceSq2D);
 		}
 	}
 }
@@ -204,3 +206,30 @@ AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, const 
 }
 
 #pragma endregion Spawn
+
+// Distance
+#pragma region
+
+float UCsScriptLibrary_Actor::GetDistanceSq(const FString& Context, AActor* A, AActor* B)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDistanceSq : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeDistanceSq(Ctxt, A, B);
+}
+
+float UCsScriptLibrary_Actor::GetDistanceSq2D(const FString& Context, AActor* A, AActor* B)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDistanceSq2D : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeDistanceSq2D(Ctxt, A, B);
+}
+
+#pragma endregion Distance

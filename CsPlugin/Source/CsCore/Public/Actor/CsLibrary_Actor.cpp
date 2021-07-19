@@ -784,4 +784,49 @@ namespace NCsActor
 	}
 
 	#pragma endregion Spawn
+
+	// Distance
+	#pragma region
+	
+	float FLibrary::GetSafeDistanceSq(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!A)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
+			return 0.0f;
+		}
+
+		if (!B)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
+			return 0.0f;
+		}
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		return FVector::DistSquared(VA, VB);
+	}
+
+	float FLibrary::GetSafeDistanceSq2D(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!A)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
+			return 0.0f;
+		}
+
+		if (!B)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
+			return 0.0f;
+		}
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		return FVector::DistSquared2D(VA, VB);
+	}
+
+	#pragma endregion Distance
 }

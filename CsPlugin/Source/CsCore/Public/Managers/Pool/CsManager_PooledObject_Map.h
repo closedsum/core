@@ -89,24 +89,33 @@ namespace NCsPooledObject
 			TTMap() :
 				Name(),
 				CurrentWorld(nullptr),
+				// Object
 				CurrentConstructObjectType(),
 				ConstructContainer_Impl(),
+				// Pool
 				Pools(),
 				ConstructManagerPooledObjects_Impl(),
 				OnCreatePool_AddToPool_Event(),
 				CurrentCreatePoolType(),
 				OnAddToPool_Event(),
 				OnAddToAllocatedObjects_Event(),
+				// Update
 				OnPreUpdate_Pool_Impl(),
 				OnUpdate_Object_Event(),
 				OnPostUpdate_Pool_Impl(),
 				CurrentUpdatePoolType(),
+				// Allocate / Deallocate
+				OnDeallocate_Event(),
+				// Payload
 				CurrentConstructPayloadType(),
 				ConstructPayload_Impl(),
+				// Log
 				Log_Impl(),
 				LogTransaction_Impl(),
 				LogType(),
+				// Spawn
 				OnSpawn_Event(),
+				// Script
 				Script_GetCache_Impl(),
 				Script_Allocate_Impl(),
 				Script_Deallocate_Impl(),
@@ -185,6 +194,9 @@ namespace NCsPooledObject
 
 					// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
 					Pool->OnUpdate_Object_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
+					// Bind to OnDeallocate so the event OnDeallocate_Event can properly broadcast events for pooled objects that get 
+					// deallocated during Update
+					Pool->OnDeallocate_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnDeallocate);
 
 					Pools.Add(Key, Pool);
 				}
@@ -239,6 +251,9 @@ namespace NCsPooledObject
 
 				// Bind to OnUpdate_Pool_Object so the event OnUpdate_Object_Event can properly broadcast events.
 				Pool->OnUpdate_Object_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnUpdate_Pool_Object);
+				// Bind to OnDeallocate so the event OnDeallocate_Event can properly broadcast events for pooled objects that get 
+				// deallocated during Update
+				Pool->OnDeallocate_Event.AddRaw(this, &TTMap<InterfaceType, InterfaceContainerType, PayloadType, KeyType>::OnDeallocate);
 
 				Pools.Add(Key, Pool);
 			}
@@ -971,15 +986,20 @@ namespace NCsPooledObject
 
 					OnPostUpdate_Pool_Impl.ExecuteIfBound(CurrentUpdatePoolType);
 				}
+				CurrentUpdatePoolType = KeyType();
 			}
 
 			void Update(const KeyType& Type, const FCsDeltaTime& DeltaTime)
 			{
+				CurrentUpdatePoolType = Type;
+
 				OnPreUpdate_Pool_Impl.ExecuteIfBound(Type);
 
 				GetManagerPooledObjects(Type)->Update(DeltaTime);
 
 				OnPostUpdate_Pool_Impl.ExecuteIfBound(Type);
+
+				CurrentUpdatePoolType = KeyType();
 			}
 
 			/**
@@ -1033,6 +1053,30 @@ namespace NCsPooledObject
 			}
 
 		#pragma endregion Pause
+
+		// Allocate / Deallocate
+		#pragma region
+		public:
+
+			/**
+			* Event called when updating a pooled object and that pooled object is deallocated.
+			*
+			* @param Type		Current type of pool.
+			* @param Object		Container holding a pooled object.
+			*/
+			TMulticastDelegate<void(const KeyType& /*Type*/, const InterfaceContainerType* /*Object*/)> OnDeallocate_Event;
+
+		private:
+
+			FORCEINLINE void OnDeallocate(const InterfaceContainerType* Object)
+			{
+				if (IsValidKey(CurrentUpdatePoolType))
+				{
+					OnDeallocate_Event.Broadcast(CurrentUpdatePoolType, Object);
+				}
+			}
+
+		#pragma endregion Allocate / Deallocate
 
 		// Payload
 		#pragma region

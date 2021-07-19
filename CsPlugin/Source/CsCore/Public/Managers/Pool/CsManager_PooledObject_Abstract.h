@@ -31,6 +31,8 @@ namespace NCsPooledObject
 
 			virtual ~IManager() {}
 
+			virtual const FGuid& GetId() const = 0;
+
 			virtual void Init(const FPoolParams& Params) = 0;
 
 			virtual void Clear() = 0;
@@ -151,6 +153,7 @@ namespace NCsPooledObject
 
 			TAbstract() :
 				Name(),
+				Id(),
 				CurrentWorld(nullptr),
 				ConstructContainer_Impl(),
 				ConstructObject_Impl(),
@@ -187,6 +190,8 @@ namespace NCsPooledObject
 			{
 				Name = TEXT("NCsPooledObject::NManager::TAbstract");
 
+				Id = FGuid::NewGuid();
+
 				OnAddToPool_Event.Clear();
 				OnDeallocate_Event.Clear();
 
@@ -214,7 +219,13 @@ namespace NCsPooledObject
 			/** */
 			FString Name;
 
+		private:
+
+			FGuid Id;
+
 		public:
+
+			FORCEINLINE const FGuid& GetId() const { return Id; }
 
 			/**
 			*
@@ -1518,11 +1529,15 @@ namespace NCsPooledObject
 				return true;
 			}
 
+		public:
+
 			/** Delegate type when deallocating a pooled object.
 			*
 			* @param Object
 			*/
 			TMulticastDelegate<void(const InterfaceContainerType* /*Object*/)> OnDeallocate_Event;
+
+		protected:
 
 			/**
 			* Deallocate an Object.

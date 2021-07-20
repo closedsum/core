@@ -44,7 +44,12 @@ module.exports = class FJsCore
     GetPlayerPawn() { this.PlayerPawn; }
     GetCoroutineScheduler() { return this.CoroutineScheduler; }
 
-    GetClassChecked(context, className)
+    /**
+     * @param {string} context 
+     * @param {string} className 
+     * @returns {Class}
+     */
+    GetClassChecked(context /*string*/, className /*string*/)
     {
         let args = [{value: className, type: "string"}];
 
@@ -55,6 +60,14 @@ module.exports = class FJsCore
 
         check(CommonLibrary.IsClassChecked(context, c));
         return c;
+    }
+
+    IsInstanceOfChecked(context, o, className)
+    {
+        check(CommonLibrary.IsStringNotEmptyChecked(context, className));
+        check(CommonLibrary.IsInstanceOfChecked(context, o, GetClassChecked(context, className)));
+
+        return true;
     }
 
     CompileClasses(){}

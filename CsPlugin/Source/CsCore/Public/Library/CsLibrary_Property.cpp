@@ -440,6 +440,59 @@ namespace NCsProperty
 
 	#pragma endregion Get
 
+	// Set
+	#pragma region
+
+		// Bool
+	#pragma region
+	
+	bool FLibrary::SetBoolPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FBoolProperty* BoolProperty = FindPropertyByName<FBoolProperty>(Context, Struct, PropertyName, Log);
+
+		if (!BoolProperty)
+			return false;
+
+		BoolProperty->SetPropertyValue_InContainer(StructValue, Value);
+		return true;
+	}
+
+	#pragma endregion Bool
+
+		// Int
+	#pragma region
+
+	bool FLibrary::SetIntPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, int32 Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FIntProperty* IntProperty = FindPropertyByName<FIntProperty>(Context, Struct, PropertyName, Log);
+
+		if (!IntProperty)
+			return false;
+
+		IntProperty->SetPropertyValue_InContainer(StructValue, Value);
+		return true;
+	}
+
+	#pragma endregion Int
+
+		// Float
+	#pragma region
+
+	bool FLibrary::SetFloatPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, float Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FFloatProperty* FloatProperty = FindPropertyByName<FFloatProperty>(Context, Struct, PropertyName, Log);
+
+		if (!FloatProperty)
+			return false;
+
+		FloatProperty->SetPropertyValue_InContainer(StructValue, Value);
+		return true;
+	}
+
+	#pragma endregion Float
+
+	#pragma endregion Set
+
 	#if WITH_EDITOR
 
 	TArrayView<const TMap<FString, int32>>& FLibrary::GetArrayIndicesPerObject(FPropertyChangedChainEvent& e)

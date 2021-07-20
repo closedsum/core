@@ -41,6 +41,15 @@ public:
 #pragma region
 public:
 
+	/**
+	* Set the UAnimSequence value for the Property with name: PropertyName from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param PropertyName
+	* @param Anim
+	* return				Whether Value was successfully set or not.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimSequence", meta = (AutoCreateRefTerm = "Context,PropertyName"))
 	static bool SetProperty(const FString& Context, UObject* Object, const FName& PropertyName, UAnimSequence* Anim);
 

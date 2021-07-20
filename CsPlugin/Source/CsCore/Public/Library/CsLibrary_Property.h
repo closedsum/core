@@ -918,6 +918,60 @@ namespace NCsProperty
 	#pragma region
 	public:
 
+		// Bool
+	#pragma region
+	public:
+
+		/**
+		* Set the bool value for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Value
+		* return				Whether Value was successfully set or not.
+		*/
+		static bool SetBoolPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool Value, void(*Log)(const FString&) = &FCsLog::Warning);
+		
+	#pragma endregion Bool
+
+		// Int
+	#pragma region
+	public:
+
+		/**
+		* Set the int32 value for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Value
+		* return				Whether Value was successfully set or not.
+		*/
+		static bool SetIntPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, int32 Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Int
+
+		// Float
+	#pragma region
+	public:
+
+		/**
+		* Set the float value for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Value
+		* return				Whether Value was successfully set or not.
+		*/
+		static bool SetFloatPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, float Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Float
+
 		// Object
 	#pragma region
 	public:
@@ -947,6 +1001,7 @@ namespace NCsProperty
 	#pragma endregion Object
 
 	#pragma endregion Set
+
 	#if WITH_EDITOR
 
 		/**

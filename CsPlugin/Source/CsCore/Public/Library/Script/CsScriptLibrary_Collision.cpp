@@ -4,6 +4,7 @@
 
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Library/CsLibrary_Object.h"
 
 // Cached
 #pragma region
@@ -58,6 +59,11 @@ bool UCsScriptLibrary_Collision::SetFromObject_CollisionPreset(const FString& Co
 	{
 		return ImplAsStruct->SetSafe(Ctxt, Component);
 	}
+
+	typedef NCsObject::FLibrary ObjectLibrary;
+
+	UE_LOG(LogCs, Warning, TEXT("%s: Failed to find any properties from %s for CollisionPreset."), *Ctxt, *(ObjectLibrary::PrintObjectAndClass(Object)));
+	UE_LOG(LogCs, Warning, TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context);
 	return false;
 }
 

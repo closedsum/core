@@ -43,6 +43,12 @@ public:
 	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
+private:
+
+	SliceType* AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+public:
+
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
@@ -87,22 +93,17 @@ namespace NCsProjectile
 
 				// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 
-				FCsCollisionPreset CollisionPreset;
-				FCsCollisionPreset* CollisionPreset_Emu;
-
-				float CollisionRadius;
-				float* CollisionRadius_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(CollisionPreset, FCsCollisionPreset)
+				CS_DECLARE_MEMBER_WITH_EMU(CollisionRadius, float)
 
 			public:
 
 				FImplSlice() :
-					CollisionPreset(),
-					CollisionPreset_Emu(nullptr),
-					CollisionRadius(0.0f),
-					CollisionRadius_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(CollisionPreset),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(CollisionRadius, 0.0f)
 				{
-					CollisionPreset_Emu = &CollisionPreset;
-					CollisionRadius_Emu = &CollisionRadius;
+					CS_CTOR_SET_MEMBER_EMU(CollisionPreset);
+					CS_CTOR_SET_MEMBER_EMU(CollisionRadius);
 				}
 
 				~FImplSlice(){}

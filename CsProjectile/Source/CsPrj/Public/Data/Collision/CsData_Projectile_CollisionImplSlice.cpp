@@ -11,27 +11,12 @@
 
 #define SliceType NCsProjectile::NData::NCollision::FImplSlice
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-#define CS_TEMP_ADD_SAFE_SLICE \
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary; \
-	typedef NCsProjectile::NData::IData DataType; \
-	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType; \
-	\
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-	\
-	if (!DataHandler) \
-		return nullptr; \
-	\
-	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType; \
-	\
-	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, CollisionDataType>(Context, Name); \
-	\
-	if (!Slice) \
-		return nullptr;
-
 SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSlice(Slice);
 
@@ -40,15 +25,36 @@ SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSlice(const FString& Co
 
 SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSliceAsValue(Slice);
 
 	return nullptr;
 }
 
-#undef DataHandlerType
-#undef CS_TEMP_ADD_SAFE_SLICE
+SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
+{
+	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+	typedef NCsProjectile::NData::IData DataType;
+	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	
+	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+	#undef DataHandlerType
+
+	if (!DataHandler)
+		return nullptr;
+	
+	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+	
+	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, CollisionDataType>(Context, Name);
+	
+	return Slice;
+}
 
 void FCsData_Projectile_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -86,7 +92,7 @@ namespace NCsProjectile
 				{
 					namespace Name
 					{
-						const FName VisualStaticMeshSlice = FName("CollisionSlice");
+						const FName CollisionSlice = FName("CollisionSlice");
 
 						const FName CollisionPreset = FName("CollisionPreset");
 						const FName CollisionRadius = FName("CollisionRadius");
@@ -119,7 +125,7 @@ namespace NCsProjectile
 				if (!Slice)
 					return nullptr;
 
-				// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
+				// Check for properties matching interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 				typedef NCsProperty::FLibrary PropertyLibrary;
 
 				bool Success = false;
@@ -127,7 +133,7 @@ namespace NCsProjectile
 				// Try FCsData_Projectile_CollisionImplSlice
 				typedef FCsData_Projectile_CollisionImplSlice StructSliceType;
 
-				if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
+				if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::CollisionSlice, nullptr))
 				{
 					SliceAsStruct->CopyToSlice(Slice);
 					Success = true;
@@ -153,11 +159,11 @@ namespace NCsProjectile
 					{
 						typedef NCsObject::FLibrary ObjectLibrary;
 
-						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: NCsProjectile::NData::NCollision::ICollision."), *(ObjectLibrary::PrintObjectAndClass(Object))));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_CollisionImplSlice with name: CollisionSlice.")));
-						Log(FString::Printf(TEXT("%s: - OR")));
-						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset.")));
-						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: CollisionRadius.")));
+						Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: CollisionDataType (NCsProjectile::NData::NCollision::ICollision)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_CollisionImplSlice with name: CollisionSlice."), *Context));
+						Log(FString::Printf(TEXT("%s: - OR"), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: CollisionRadius."), *Context));
 					}
 				}
 				return Slice;
@@ -165,17 +171,18 @@ namespace NCsProjectile
 
 			bool FImplSlice::IsValidChecked(const FString& Context) const
 			{
-				// TODO: Add Check for Preset
+				check(GetCollisionPreset().IsValidChecked(Context));
 
-				CS_IS_FLOAT_GREATER_THAN_CHECKED(CollisionRadius, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetCollisionRadius(), 0.0f)
 				return true;
 			}
 
 			bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&)/*=&NCsProjectile::FLog::Warning*/) const
 			{
-				// TODO: Add Check for Preset
+				if (!GetCollisionPreset().IsValid(Context, Log))
+					return false;
 
-				CS_IS_FLOAT_GREATER_THAN(CollisionRadius, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN(GetCollisionRadius(), 0.0f)
 				return true;
 			}
 		}

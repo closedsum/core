@@ -150,7 +150,11 @@ namespace NCsWeapon
 				}
 			}
 
-			// TODO: Eventually store reference to UObject.
+			// NOTE: If this technique is to be used in a shipping build, this will need to be slightly altered to
+			//		 allow destroying the object when the data needs to be "unloaded"
+			typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+			DataManagerLibrary::AddDataCompositionObject_Loaded_Checked(Context, WorldContext, FName(*DataName), Object, FImplSlice::Name);
 
 			return Slice;
 		}

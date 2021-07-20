@@ -12,27 +12,12 @@
 
 #define SliceType NCsProjectile::NData::NVisual::NImpact::FImplSlice
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-#define CS_TEMP_ADD_SAFE_SLICE \
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary; \
-	typedef NCsProjectile::NData::IData DataType; \
-	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType; \
-	\
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-	\
-	if (!DataHandler) \
-		return nullptr; \
-	\
-	typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType; \
-	\
-	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, ImpactVisualDataType>(Context, Name); \
-	\
-	if (!Slice) \
-		return nullptr;
-
 SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSlice(Slice);
 
@@ -41,15 +26,36 @@ SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSlice(const FString&
 
 SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSliceAsValue(Slice);
 
 	return nullptr;
 }
 
-#undef DataHandlerType
-#undef CS_TEMP_ADD_SAFE_SLICE
+SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
+{
+	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+	typedef NCsProjectile::NData::IData DataType;
+	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	
+	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+	#undef DataHandlerType
+
+	if (!DataHandler)
+		return nullptr;
+	
+	typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
+	
+	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, ImpactVisualDataType>(Context, Name);
+	
+	return Slice;
+}
 
 void FCsData_Projectile_VisualImpactImplSlice::CopyToSlice(SliceType* Slice)
 {
@@ -86,7 +92,7 @@ namespace NCsProjectile
 					{
 						namespace Name
 						{
-							const FName VisualStaticMeshSlice = FName("VisualImpactSlice");
+							const FName VisualImpactSlice = FName("VisualImpactSlice");
 
 							const FName ImpactFXs = FName("ImpactFXs");
 						}
@@ -155,15 +161,15 @@ namespace NCsProjectile
 					if (!Slice)
 						return nullptr;
 
-					// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
+					// Check for properties matching interface: ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 					typedef NCsProperty::FLibrary PropertyLibrary;
 
 					bool Success = false;
 
-					// Try FCsData_Projectile_CollisionImplSlice
+					// Try FCsData_Projectile_VisualImpactImplSlice
 					typedef FCsData_Projectile_VisualImpactImplSlice StructSliceType;
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
+					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualImpactSlice, nullptr))
 					{
 						SliceAsStruct->CopyToSlice(Slice);
 						Success = true;
@@ -184,7 +190,7 @@ namespace NCsProjectile
 					{
 						if (Log)
 						{
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsProjectile::NData::NVisual::NImpact::IImpact.")));
+							Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact).")));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_VisualImpactImplSlice with name: VisualImpactSlice.")));
 							Log(FString::Printf(TEXT("%s: - OR")));
 							Log(FString::Printf(TEXT("%s: - Failed to get object property of type: UDataTable with name: ImpactFXs.")));

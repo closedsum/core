@@ -40,6 +40,12 @@ public:
 	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 	SliceType* AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
+private:
+
+	SliceType* AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+public:
+
 	void CopyToSlice(SliceType* Slice);
 	void CopyToSliceAsValue(SliceType* Slice) const;
 
@@ -87,17 +93,15 @@ namespace NCsProjectile
 
 					// StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 
-					FCsPrjStaticMesh StaticMesh;
-					FCsPrjStaticMesh* StaticMesh_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(StaticMesh, FCsPrjStaticMesh)
 
 				public:
 
 					FImplSlice() :
 						InterfaceMap(nullptr),
-						StaticMesh(),
-						StaticMesh_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(StaticMesh)
 					{
-						StaticMesh_Emu = &StaticMesh;
+						CS_CTOR_SET_MEMBER_EMU(StaticMesh);
 					}
 
 					~FImplSlice()

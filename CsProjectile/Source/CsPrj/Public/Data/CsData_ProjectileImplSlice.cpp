@@ -2,6 +2,7 @@
 #include "Data/CsData_ProjectileImplSlice.h"
 
 // Library
+#include "Managers/Data/CsLibrary_Manager_Data.h"
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Property.h"
 #include "Library/CsLibrary_Valid.h"
@@ -113,36 +114,13 @@ namespace NCsProjectile
 			}
 		}
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-		#define CS_TEMP_GET_SAFE_DATA_HANDLER \
-			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary; \
-			typedef NCsProjectile::NData::IData DataType; \
-			typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType; \
-			\
-			DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-			\
-			if (!DataHandler) \
-				return nullptr;
-
 		/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
 			using namespace NCsProjectile::NData::NImplSlice::NCached;
 
 			CS_IS_PTR_NULL_RET_NULL(Object)
 
-			#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-			typedef NCsProjectile::NData::IData DataType;
-			typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
-			
-			DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
-			
-			#undef DataHandlerType
-
-			if (!DataHandler)
-				return nullptr;
-
-			FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsProjectile>(Context, DataName);
+			FImplSlice* Slice = SafeConstruct_Internal(Context, WorldContext, DataName, Log);
 
 			if (!Slice)
 				return nullptr;
@@ -197,7 +175,30 @@ namespace NCsProjectile
 				}
 			}
 
-			// TODO: Eventually store reference to UObject.
+			// NOTE: If this technique is to be used in a shipping build, this will need to be slightly altered to
+			//		 allow destroying the object when the data needs to be "unloaded"
+			typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+			DataManagerLibrary::AddDataCompositionObject_Loaded_Checked(Context, WorldContext, FName(*DataName), Object, FImplSlice::Name);
+
+			return Slice;
+		}
+
+		/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&FCLog::Warning*/)
+		{
+			#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+			typedef NCsProjectile::NData::IData DataType;
+			typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	
+			DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+			#undef DataHandlerType
+
+			if (!DataHandler)
+				return nullptr;
+
+			FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsProjectile>(Context, DataName);
 
 			return Slice;
 		}

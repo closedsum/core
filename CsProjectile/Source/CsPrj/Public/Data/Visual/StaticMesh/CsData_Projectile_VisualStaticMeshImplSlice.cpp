@@ -10,27 +10,12 @@
 
 #define SliceType NCsProjectile::NData::NVisual::NStaticMesh::FImplSlice
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-#define CS_TEMP_ADD_SAFE_SLICE \
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary; \
-	typedef NCsProjectile::NData::IData DataType; \
-	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType; \
-	\
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log); \
-	\
-	if (!DataHandler) \
-		return nullptr; \
-	\
-	typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType; \
-	\
-	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, StaticMeshVisualDataType>(Context, Name); \
-	\
-	if (!Slice) \
-		return nullptr;
-
 SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSlice(Slice);
 
@@ -39,15 +24,36 @@ SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSlice(const FStr
 
 SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	CS_TEMP_ADD_SAFE_SLICE
+	SliceType* Slice = AddSafeSlice_Internal(Context, WorldContext, Name, Log);
+
+	if (!Slice)
+		return nullptr;
 
 	CopyToSliceAsValue(Slice);
 
 	return nullptr;
 }
 
-#undef DataHandlerType
-#undef CS_TEMP_ADD_SAFE_SLICE
+SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
+{
+	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+	typedef NCsProjectile::NData::IData DataType;
+	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	
+	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	
+	#undef DataHandlerType
+
+	if (!DataHandler)
+		return nullptr;
+	
+	typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType;
+	
+	SliceType* Slice = DataHandler->AddSafeDataSlice<SliceType, StaticMeshVisualDataType>(Context, Name);
+	
+	return Slice;
+}
 
 void FCsData_Projectile_VisualStaticMeshImplSlice::CopyToSlice(SliceType* Slice)
 {

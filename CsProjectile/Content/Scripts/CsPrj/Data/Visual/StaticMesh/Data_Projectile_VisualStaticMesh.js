@@ -24,6 +24,7 @@ module.exports = class NJsProjectile
             {
                 static IStaticMesh = class InterfaceStaticMesh
                 {
+                    // StaticMesh GetStaticMesh()
                     static IsImplementedByChecked(context, o)
                     {
                         let self = NJsProjectile.NData.NVisual.NStaticMesh.IStaticMesh;
@@ -47,6 +48,8 @@ module.exports = class NJsProjectile
                         return true;
                     }
 
+                    // GetStaticMesh()
+                    
                     static Implements_GetStaticMeshChecked(context, o)
                     {
                         return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetStaticMesh, 0, o, CsPrjStaticMesh);

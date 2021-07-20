@@ -27,6 +27,8 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SpawnByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetDistanceSq);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetDistanceSq2D);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetNormalAtoB);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetNormal2DAtoB);
 		}
 	}
 }
@@ -233,3 +235,30 @@ float UCsScriptLibrary_Actor::GetDistanceSq2D(const FString& Context, AActor* A,
 }
 
 #pragma endregion Distance
+
+// Normal
+#pragma region
+
+bool UCsScriptLibrary_Actor::GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetNormalAtoB : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeNormalAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
+}
+
+bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetNormal2DAtoB : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeNormal2DAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
+}
+
+#pragma endregion Normal

@@ -172,7 +172,42 @@ public:
 	* @param B
 	* return			Distance squared 2D between A and B.
 	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
 	static float GetDistanceSq2D(const FString& Context, AActor* A, AActor* B);
 
 #pragma endregion Distance
+
+// Normal
+#pragma region
+public:
+
+	/**
+	* Gets the normal between A and B (AB or B - A)
+	* 
+	* @param Context		The calling context.
+	* @param A
+	* @param B
+	* @param OutNormal
+	* @param OutDistanceSq	The distance squared between A and B
+	* @param OutDistance
+	* return				Whether the normal was found successfully.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
+	static bool GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+
+	/**
+	* Gets the normal 2d between A and B (AB or B - A)
+	*
+	* @param Context		The calling context.
+	* @param A
+	* @param B
+	* @param OutNormal
+	* @param OutDistanceSq	The distance squared between A and B
+	* @param OutDistance
+	* return				Whether the normal was found successfully.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
+	static bool GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+
+#pragma endregion Normal
 };

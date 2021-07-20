@@ -460,5 +460,40 @@ namespace NCsActor
 		static float GetSafeDistanceSq2D(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Distance
+
+	// Normal
+	#pragma region
+	public:
+
+		/**
+		* Safely gets the normal between A and B (AB or B - A)
+		* 
+		* @param Context		The calling context.
+		* @param A
+		* @param B
+		* @param OutNormal
+		* @param OutDistanceSq	The distance squared between A and B
+		* @param OutDistance
+		* @param Log			(optional)
+		* return
+		*/
+		static bool GetSafeNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely gets the normal 2d between A and B (AB or B - A)
+		*
+		* @param Context		The calling context.
+		* @param A
+		* @param B
+		* @param OutNormal
+		* @param OutDistanceSq	The distance squared between A and B
+		* @param OutDistance
+		* @param Log			(optional)
+		* return
+		*/
+		static bool GetSafeNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Normal
+
 	};
 }

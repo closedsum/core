@@ -829,4 +829,61 @@ namespace NCsActor
 	}
 
 	#pragma endregion Distance
+
+	// Normal
+	#pragma region
+	
+	bool FLibrary::GetSafeNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!A)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
+			return 0.0f;
+		}
+
+		if (!B)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
+			return 0.0f;
+		}
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		const FVector& V = VB - VA;
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		OutNormal = MathLibrary::GetSafeNormal(V, OutDistanceSq, OutDistance);
+
+		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
+	}
+
+	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (!A)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
+			return 0.0f;
+		}
+
+		if (!B)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
+			return 0.0f;
+		}
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		const FVector& V = VB - VA;
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
+
+		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
+	}
+
+	#pragma endregion Normal
 }

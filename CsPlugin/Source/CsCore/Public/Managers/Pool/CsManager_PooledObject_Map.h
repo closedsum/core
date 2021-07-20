@@ -807,6 +807,17 @@ namespace NCsPooledObject
 		public:
 
 			/**
+			* Determine whether a pool as been created for the appropriate Type.
+			* 
+			* @param Type	Type of pool.
+			* return		Whether the pool of Type has been created.
+			*/
+			FORCEINLINE bool HasPool(const KeyType& Type) const
+			{
+				return Pools.Find(Type) != nullptr;
+			}
+
+			/**
 			* Get the pool for the appropriate Type.
 			*  Pool is an array of containers holding references to objects that 
 			*  implement the interface: ICsPooledObject.

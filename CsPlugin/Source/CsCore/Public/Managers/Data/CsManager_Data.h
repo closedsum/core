@@ -7,6 +7,7 @@
 // Types
 #include "Types/CsTypes_Load.h"
 #include "Managers/Load/CsTypes_Streaming.h"
+#include "Types/CsTypes_Map.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -1470,6 +1471,9 @@ public:
 	UPROPERTY()
 	TArray<UObject*> DataObjectsAdded_Loaded;
 
+	UPROPERTY()
+	TMap<FName, FCsMap_ObjectByName> DataCompositionObjectsAdded_Loaded;
+
 	// Data
 #pragma region
 public:
@@ -1478,7 +1482,7 @@ public:
 
 	bool SafeAddDataObject_Loaded(const FString& Context, const FName& EntryName, UObject* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	void AddDataCompositionObject_Loaded(UObject* Data);
+	void AddDataCompositionObject_Loaded(const FName& DataName, UObject* Data, const FName& SliceName);
 
 #pragma endregion Data
 

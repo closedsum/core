@@ -350,12 +350,13 @@ namespace NCsData
 		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
 		*						or
 		*						A reference to the GameInstance.
-		* @param EntryName
+		* @param DataName
 		* @param Data			Object that serves as the UObject acting as a composition of multiple interfaces. The 
 		*						composition is built from this UObject and the UObject holds all the "hard" references in the 
 		*						case of garbage collection.
+		* @param SliceName
 		*/
-		static void AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, UObject* Data);
+		static void AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, const FName& DataName, UObject* Data, const FName& SliceName);
 
 		#pragma endregion Data
 

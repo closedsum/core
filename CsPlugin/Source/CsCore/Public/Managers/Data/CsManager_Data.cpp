@@ -31,17 +31,21 @@
 // Cached
 #pragma region
 
-namespace NCsManagerDataCached
+namespace NCsManagerData
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GenerateMaps);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPaths);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPathCount);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GenerateMaps);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPaths);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPathCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddDataCompositionObject_Loaded);
+		}
 	}
 }
 
@@ -378,7 +382,7 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 
 void UCsManager_Data::GenerateMaps() 
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::GenerateMaps;
 
@@ -467,7 +471,7 @@ void UCsManager_Data::GenerateMaps()
 
 ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::LoadData;
 
@@ -500,7 +504,7 @@ ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 
 ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::LoadData;
 
@@ -538,7 +542,7 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::LoadDataTable;
 
@@ -568,7 +572,7 @@ UDataTable* UCsManager_Data::LoadDataTable(const FName& EntryName)
 
 UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::LoadDataTable;
 
@@ -598,7 +602,7 @@ UDataTable* UCsManager_Data::LoadDataTable(const FSoftObjectPath& Path)
 
 uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& RowName)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::LoadDataTableRow;
 
@@ -722,7 +726,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::AsyncLoadPayload;
 
@@ -783,7 +787,7 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 
 void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::GetPayloadSoftObjectPaths;
 
@@ -887,7 +891,7 @@ void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, c
 
 int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 {
-	using namespace NCsManagerDataCached;
+	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::GetPayloadSoftObjectPathCount;
 
@@ -1070,11 +1074,23 @@ bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FNa
 	return true;
 }
 
-void UCsManager_Data::AddDataCompositionObject_Loaded(UObject* Data)
+void UCsManager_Data::AddDataCompositionObject_Loaded(const FName& DataName, UObject* Data, const FName& SliceName)
 {
-	checkf(Data, TEXT("UCsManager_Data::AddDataCompositionObject_Loaded: Data is NULL."));
+	using namespace NCsManagerData::NCached;
 
-	DataObjectsAdded_Loaded.Add(Data);
+	const FString& Context = Str::AddDataCompositionObject_Loaded;
+
+	CS_IS_NAME_NONE_CHECKED(DataName)
+
+	CS_IS_PTR_NULL_CHECKED(Data)
+	
+	CS_IS_NAME_NONE_CHECKED(SliceName)
+
+	FCsMap_ObjectByName& Map = DataCompositionObjectsAdded_Loaded.FindOrAdd(DataName);
+
+	checkf(Map.Map.Find(SliceName) == nullptr, TEXT("%s: Data: %s with Slice: %s has ALREADY been added."), *(DataName.ToString()), *(SliceName.ToString()));
+
+	Map.Map.Add(SliceName, Data);
 }
 
 #pragma endregion Data

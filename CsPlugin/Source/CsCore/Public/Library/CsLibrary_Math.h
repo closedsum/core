@@ -243,7 +243,45 @@ namespace NCsMath
 
 			OutSize = FMath::Sqrt(OutSizeSquared);
 
-			return OutSize * V;
+			return (1.0f / OutSize) * V;
+		}
+
+		/**
+		* Mostly copied from:  Core\Public\Math\Vector.h
+		*
+		* Gets a normalized copy of the vector, checking it is safe to do so based on the length.
+		* Returns zero vector if vector length is too small to safely normalize.
+		*
+		* @param V					The vector to the the normal for.
+		* @param OutSizeSquared		V.SizeSquared().
+		* @param OutSize			V.Size().
+		* @param Tolerance			Minimum squared vector length.
+		* @return					A normalized copy if safe, (0,0,0) otherwise.
+		*/
+		FORCEINLINE static FVector GetSafeNormal2D(const FVector& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		{
+			OutSizeSquared = V.X*V.X + V.Y *V.Y;
+
+			// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+			if (OutSizeSquared == 1.f)
+			{
+				if (V.Z == 0.f)
+				{
+					return V;
+				}
+				else
+				{
+					return FVector(V.X, V.Y, 0.f);
+				}
+			}
+			else if (OutSizeSquared < Tolerance)
+			{
+				return FVector::ZeroVector;
+			}
+
+			OutSize = FMath::Sqrt(OutSizeSquared);
+
+			return (1.0f / OutSize) * V;
 		}
 
 		/**

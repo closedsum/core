@@ -23,7 +23,7 @@ public:
 	* 
 	* @param Context	The calling context.
 	* @param Path		SoftObjectPath to the AnimBlueprint to load.
-	* return			AnimBlueprintGeneratedClass
+	* return			AnimBlueprint
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))
 	static UAnimBlueprint* LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path);
@@ -33,7 +33,7 @@ public:
 	* 
 	* @param Context	The calling context.
 	* @param Path		FString path to the AnimBlueprint to load.
-	* return			AnimBlueprintGeneratedClass
+	* return			AnimBlueprint
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))
 	static UAnimBlueprint* LoadByStringPath(const FString& Context, const FString& Path);
@@ -44,6 +44,13 @@ public:
 #pragma region
 public:
 
+	/**
+	* Get the UClass (Generated Class) associated with the anim blueprint, Blueprint.
+	* 
+	* @param Context	The calling context.
+	* @param Blueprint	
+	* return
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context"))
 	static UAnimBlueprintGeneratedClass* GetGeneratedClass(const FString& Context, UAnimBlueprint* Blueprint);
 

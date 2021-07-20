@@ -69,7 +69,7 @@ module.exports = class FJsEnum
          */
         /*bool*/ EqualEqual(a /*FValue*/)
         {
-            if (!CommonLibrary.IsClassOf(a, FJsEnum.FValue))
+            if (!CommonLibrary.IsInstanceOf(a, FJsEnum.FValue))
                 return false;
             if (this.Outer !== a.GetOuter())
                 return false;
@@ -83,7 +83,7 @@ module.exports = class FJsEnum
          */
         /*bool*/ IsTypeChecked(context /*string*/, type /*FJsEnum*/)
         {
-            check(CommonLibrary.IsClassOfChecked(context, type, FJsEnum));
+            check(CommonLibrary.IsInstanceOfChecked(context, type, FJsEnum));
 
             checkf(this.GetOuter() === type, context + ": " + this.Name + " is of type: " + this.GetOuter().GetName() + " NOT of type: " + type.GetName());
 
@@ -135,9 +135,9 @@ module.exports = class FJsEnum
      */
     /*bool*/ EqualEqualChecked(context /*string*/, lhs /*FJsEnum*/, rhs /*FJsEnum*/)
     {
-        check(CommonLibrary.IsClassOfChecked(context, lhs, FJsEnum));
+        check(CommonLibrary.IsInstanceOfChecked(context, lhs, FJsEnum));
   
-        check(CommonLibrary.IsClassOfChecked(context, rhs, FJsEnum));
+        check(CommonLibrary.IsInstanceOfChecked(context, rhs, FJsEnum));
 
         checkf(lhs == this, context + ": lhs's type: " + lhs.Name + " != + " + this.Name);
 
@@ -152,9 +152,9 @@ module.exports = class FJsEnum
      */
     /*bool*/ EqualEqual(lhs /*FJsEnum*/, rhs /*FJsEnum*/)
     {
-        if (!CommonLibrary.IsClassOf(lhs, FJsEnum))
+        if (!CommonLibrary.IsInstanceOf(lhs, FJsEnum))
             return false;
-        if (!CommonLibrary.IsClassOf(rhs, FJsEnum))
+        if (!CommonLibrary.IsInstanceOf(rhs, FJsEnum))
             return false;
         return lhs === this && lhs === rhs;
     }
@@ -208,7 +208,7 @@ module.exports = class FJsEnum
      */
     /*bool*/ ContainsChecked(context /*string*/, a /*FValue*/)
     {
-        check(CommonLibrary.IsClassOfChecked(context, a, FJsEnum.FValue));
+        check(CommonLibrary.IsInstanceOfChecked(context, a, FJsEnum.FValue));
 
         checkf(this.Contains(a), context + ": a:" + a.ToString() + " is NOT of type: " + this.Name);
         return true;

@@ -40,10 +40,10 @@ module.exports = class NJsYield
             if ('WaitForEnum' in yieldCommand)
 			{
                 // Check yieldCommand.WaitForEnum is of type: FJsEnum.FValue
-                check(CommonLibrary.IsClassOfChecked(context, yieldCommand.WaitForEnum, FJsEnum.FValue));
+                check(CommonLibrary.IsInstanceOfChecked(context, yieldCommand.WaitForEnum, FJsEnum.FValue));
                 let enumType = yieldCommand.WaitForEnum.GetOuter();
                 // Check 'Value' key of type: yieldCommand.WaitForEnum.GetOuter() exists for yieldCommand
-                check(CommonLibrary.DoesKeyOfClassExistChecked(context, yieldCommand, 'Value', FJsEnum.FValue));
+                check(CommonLibrary.DoesKeyOfInstanceExistChecked(context, yieldCommand, 'Value', FJsEnum.FValue));
                 checkf(enumType.EqualEqualChecked(context, yieldCommand.Value.GetOuter(), enumType));
                 
                 this.Enum = yieldCommand.WaitForEnum;

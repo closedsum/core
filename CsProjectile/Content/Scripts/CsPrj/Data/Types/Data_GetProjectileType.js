@@ -41,11 +41,11 @@ module.exports = class IData_GetProjectileType
 
     static Implements_GetProjectileTypeChecked(context, o)
     {
-        return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetProjectileType, 0, o, ECsProjectile);
+        return FunctionLibrary.IsArgCountAndReturn_Instance_Checked(context, o.GetProjectileType, 0, o, ECsProjectile);
     }
 
     static Implements_GetProjectileType(o)
     {
-        return FunctionLibrary.IsArgCountAndReturn_Class(o.GetProjectileType, 0, o, ECsProjectile);
+        return FunctionLibrary.IsArgCountAndReturn_Instance(o.GetProjectileType, 0, o, ECsProjectile);
     }
 };

@@ -53,13 +53,13 @@ module.exports = class NJsWeapon
                         static Implements_GetFireFXParamsChecked(context, o)
                         {
                             let classType = CsProjectileWeapon_VisualFire_Params;
-                            return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetFireFXParams, 0, o, classType);
+                            return FunctionLibrary.IsArgCountAndReturn_Instance_Checked(context, o.GetFireFXParams, 0, o, classType);
                         }
 
                         static Implements_GetFireFXParams(o)
                         {
                             let classType = CsProjectileWeapon_VisualFire_Params;
-                            return FunctionLibrary.IsArgCountAndReturn_Class(o.GetFireFXParams, 0, o, classType);
+                            return FunctionLibrary.IsArgCountAndReturn_Instance(o.GetFireFXParams, 0, o, classType);
                         }
                     }
                 }

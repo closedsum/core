@@ -12,7 +12,7 @@ var CommonLibrary = NJsCommon.FLibrary;
 // "typedefs" - functions
 var checkf = CommonLibrary.checkf;
 var IsValidObject = CommonLibrary.IsValidObject;
-var IsClassOf = CommonLibrary.IsClassOf;
+var IsInstanceOf = CommonLibrary.IsInstanceOf;
 
 module.exports = class FJsDoubleLinkedListNode
 {
@@ -39,7 +39,7 @@ module.exports = class FJsDoubleLinkedListNode
     {
         checkf(IsValidObject(before), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
 
-        checkf(IsClassOf(before, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
+        checkf(IsInstanceOf(before, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
 
         if (IsValidObject(this.NextLink))
             this.NextLink.PrevLink = this.PrevLink;
@@ -60,7 +60,7 @@ module.exports = class FJsDoubleLinkedListNode
     {
         checkf(IsValidObject(after), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
         
-        checkf(IsClassOf(after, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
+        checkf(IsInstanceOf(after, FJsDoubleLinkedListNode), "FJsDoubleLinkedListNode.LinkBefore: n is NOT an instance of: FJsDoubleLinkedListNode.");
 
         if (IsValidObject(this.NextLink))
             this.NextLink.PrevLink = this.PrevLink;

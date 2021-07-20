@@ -130,7 +130,7 @@ module.exports = class NJsCommon
         { 
             let self = NJsCommon.FLibrary;
 
-            if (!self.IsValidObject(a))
+            if (!self.IsFunction(a))
                 return false;
             if (!self.IsFunction(c))
                 return false;
@@ -141,6 +141,29 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.check(self.IsFunctionChecked(context, a));
+            self.check(self.IsFunctionChecked(context, c));
+
+            let result = a.prototype instanceof c;
+            self.checkf(result, context + ": a: " + a + " is NOT an instance of c: " + c);
+            return result;
+        }
+
+        static IsInstanceOf(a, c) 
+        { 
+            let self = NJsCommon.FLibrary;
+
+            if (!self.IsValidObject(a))
+                return false;
+            if (!self.IsFunction(c))
+                return false;
+            return a instanceof c; 
+        }
+
+        static IsInstanceOfChecked(context, a, c)
+        {
+            let self = NJsCommon.FLibrary;
+
             self.check(self.IsValidObjectChecked(context, a));
             self.check(self.IsFunctionChecked(context, c));
 
@@ -148,7 +171,7 @@ module.exports = class NJsCommon
             self.checkf(result, context + ": a: " + a + " is NOT an instance of c: " + c);
             return result;
         }
-
+        
         static IsBool(a) { return typeof a === "boolean"; }
 
         static IsBoolChecked(context, a)
@@ -271,6 +294,37 @@ module.exports = class NJsCommon
             self.check(self.IsBoolChecked(context, o[key]));
             return true;
         }
+
+        /**
+         * @param {object} o 
+         * @param {string} key
+         * @param {function} classType
+         * @returns {boolean} 
+         */
+         static /*bool*/ DoesKeyOfInstanceExist(o /*object*/, key /*string*/, classType /*class*/)
+         {
+             let self = NJsCommon.FLibrary;
+ 
+             if (!self.DoesKeyExist(o, key))
+                 return false;
+             return self.IsInstanceOf(o[key], classType);
+         }
+  
+          /**
+           * @param {string} context
+           * @param {object} o 
+           * @param {string} key
+           * @param {function} classType
+           * @returns {boolean} 
+           */
+         static /*bool*/ DoesKeyOfInstanceExistChecked(context /*string*/, o /*object*/, key /*string*/, classType /*class*/)
+         {
+             let self = NJsCommon.FLibrary;
+ 
+             self.check(self.DoesKeyExistChecked(context, o, key));
+             self.check(self.IsInstanceOfChecked(context, o[key], classType));
+             return true;
+         }
 
         /**
          * @param {object} o 

@@ -30,7 +30,7 @@ var FunctionYieldType = NJsYield3.FFunction;
 // "typedefs" - function
 var checkf = CommonLibrary.checkf;
 var IsValidObject = CommonLibrary.IsValidObject;
-var IsClassOf = CommonLibrary.IsClassOf;
+var IsInstanceOf = CommonLibrary.IsInstanceOf;
 
 // "typedefs" - enums
 var StateType = NJsCoroutine.EState;
@@ -451,7 +451,7 @@ module.exports = class JsRoutine
 			}
 			// WaitForFrameType
 			else
-			if (IsClassOf(yieldCommand, FJsProperty) &&
+			if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsInt())
             {
                 this.WaitForFrameType = yieldCommand;
@@ -489,7 +489,7 @@ module.exports = class JsRoutine
 			}
 			// WaitForTimeType
             else
-            if (IsClassOf(yieldCommand, FJsProperty) &&
+            if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsFloat())
             {
                 this.WaitForTimeType = yieldCommand;
@@ -521,7 +521,7 @@ module.exports = class JsRoutine
 			*/
             // WaitForFlag
             else
-            if (IsClassOf(yieldCommand, FJsProperty) &&
+            if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsBoolean())
             {
                 this.WaitForBoolType = yieldCommand;
@@ -546,7 +546,7 @@ module.exports = class JsRoutine
 			}
 			// WaitForListenMessageType
             else
-            if (IsClassOf(yieldCommand, FJsProperty) &&
+            if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsString())
             {
                 this.WaitForListenMessageType = yieldCommand;

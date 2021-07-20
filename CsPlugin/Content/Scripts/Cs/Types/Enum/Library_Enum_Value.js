@@ -28,7 +28,7 @@ module.exports = class NJsEnum
              */
             /*bool*/ static IsTypeChecked(context /*string*/, e /*FJsEnum.FValue*/, type /*FJsEnum*/)
             {
-                check(CommonLibrary.IsClassOfChecked(context, e, FJsEnum.FValue));
+                check(CommonLibrary.IsInstanceOfChecked(context, e, FJsEnum.FValue));
                 check(e.IsTypeChecked(context, type));
                 return true;
             }
@@ -41,7 +41,7 @@ module.exports = class NJsEnum
              */
             /*bool*/ static IsTypeByStringChecked(context /*string*/, e /*FJsEnum.FValue*/, enumName /*string*/)
             {
-                check(CommonLibrary.IsClassOfChecked(context, e, FJsEnum.FValue));
+                check(CommonLibrary.IsInstanceOfChecked(context, e, FJsEnum.FValue));
                 check(e.IsTypeByStringChecked(context, enumName));
                 return true;
             }

@@ -68,7 +68,7 @@ module.exports = class NJsSkin
                     static /*bool*/ Implements_GetStaticMeshChecked(context /*string*/, o /*object*/)
                     {
                         let classType = StaticMesh;
-                        return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetStaticMesh, 0, o, classType);
+                        return FunctionLibrary.IsArgCountAndReturn_Instance_Checked(context, o.GetStaticMesh, 0, o, classType);
                     }
 
                     /**
@@ -78,7 +78,7 @@ module.exports = class NJsSkin
                     static /*bool*/ Implements_GetStaticMesh(o /*object*/)
                     {
                         let classType = StaticMesh;
-                        return FunctionLibrary.IsArgCountAndReturn_Class(o.GetStaticMesh, 0, o, classType);
+                        return FunctionLibrary.IsArgCountAndReturn_Instance(o.GetStaticMesh, 0, o, classType);
                     }
                 }
             }

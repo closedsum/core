@@ -52,12 +52,12 @@ module.exports = class NJsProjectile
                     
                     static Implements_GetStaticMeshChecked(context, o)
                     {
-                        return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetStaticMesh, 0, o, CsPrjStaticMesh);
+                        return FunctionLibrary.IsArgCountAndReturn_Instance_Checked(context, o.GetStaticMesh, 0, o, CsPrjStaticMesh);
                     }
 
                     static Implements_GetStaticMesh(o)
                     {
-                        return FunctionLibrary.IsArgCountAndReturn_Class(o.GetStaticMesh, 0, o, CsPrjStaticMesh);
+                        return FunctionLibrary.IsArgCountAndReturn_Instance(o.GetStaticMesh, 0, o, CsPrjStaticMesh);
                     }
                 }
             }

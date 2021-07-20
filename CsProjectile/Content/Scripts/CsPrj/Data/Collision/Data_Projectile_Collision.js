@@ -58,13 +58,13 @@ module.exports = class NJsProjectile
                 static Implements_GetCollisionPresetChecked(context, o)
                 {
                     let classType = CsCollisionPreset;
-                    return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetCollisionPreset, 0, o, classType);
+                    return FunctionLibrary.IsArgCountAndReturn_Instance_Checked(context, o.GetCollisionPreset, 0, o, classType);
                 }
 
                 static Implements_GetCollisionPreset(o)
                 {
                     let classType = CsCollisionPreset;
-                    return FunctionLibrary.IsArgCountAndReturn_Class(o.GetCollisionPreset, 0, o, classType);
+                    return FunctionLibrary.IsArgCountAndReturn_Instance(o.GetCollisionPreset, 0, o, classType);
                 }
 
                 // GetCollisionRadius()

@@ -53,13 +53,13 @@ module.exports = class NJsWeapon
                         static Implements_GetFireSoundParamsChecked(context, o)
                         {
                             let classType = CsProjectileWeapon_SoundFire_Params;
-                            return FunctionLibrary.IsArgCountAndReturn_Class_Checked(context, o.GetFireSoundParams, 0, o, classType);
+                            return FunctionLibrary.IsArgCountAndReturn_Instance_Checked(context, o.GetFireSoundParams, 0, o, classType);
                         }
 
                         static Implements_GetFireSoundParams(o)
                         {
                             let classType = CsProjectileWeapon_SoundFire_Params;
-                            return FunctionLibrary.IsArgCountAndReturn_Class(o.GetFireSoundParams, 0, o, classType);
+                            return FunctionLibrary.IsArgCountAndReturn_Instance(o.GetFireSoundParams, 0, o, classType);
                         }
                     }
                 }

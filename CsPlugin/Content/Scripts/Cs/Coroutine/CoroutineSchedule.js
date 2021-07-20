@@ -22,7 +22,7 @@ var CommonLibrary = NJsCommon.FLibrary;
 var checkf = CommonLibrary.checkf;
 var check = CommonLibrary.check;
 var IsValidObject = CommonLibrary.IsValidObject;
-var IsClassOfChecked = CommonLibrary.IsClassOfChecked;
+var IsInstanceOfChecked = CommonLibrary.IsInstanceOfChecked;
 
 // "typedefs" - enums
 var StateType = NJsCoroutine.EState;
@@ -132,7 +132,7 @@ module.exports = class FJsCoroutineSchedule
     {
         let context = "FJsCoroutineSchedule.GetRoutineContainer";
 
-        check(IsClassOfChecked(context, handle, CsRoutineHandle));
+        check(IsInstanceOfChecked(context, handle, CsRoutineHandle));
 
         let RoutineLibrary = CsScriptLibrary_Routine;
 

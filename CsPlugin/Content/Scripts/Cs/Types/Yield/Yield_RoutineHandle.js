@@ -45,9 +45,9 @@ module.exports = class NJsYield
             if ('WaitForRoutineHandle' in yieldCommand)
 			{
                 // Check yieldCommand.WaitForRoutineHandle is of type: CsRoutineHandle
-                check(CommonLibrary.IsClassOfChecked(context, yieldCommand.WaitForRoutineHandle, CsRoutineHandle));
+                check(CommonLibrary.IsInstanceOfChecked(context, yieldCommand.WaitForRoutineHandle, CsRoutineHandle));
                 // Check 'Group' key of type: ECsUpdateGroup exists for yieldCommand
-                check(CommonLibrary.DoesKeyOfClassExistChecked(context, yieldCommand, 'Group', ECsUpdateGroup));
+                check(CommonLibrary.DoesKeyOfInstanceExistChecked(context, yieldCommand, 'Group', ECsUpdateGroup));
                 // Check 'bNative' key of type: boolean exists for yieldCommand
                 check(CommonLibrary.DoesKeyOfBoolExistChecked(context, yieldCommand, 'bNative'));
 

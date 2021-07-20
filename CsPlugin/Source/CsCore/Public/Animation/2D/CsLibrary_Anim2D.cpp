@@ -185,11 +185,6 @@ namespace NCsAnim
 				static const int32 FRAME_INDEX = 1;
 				int32& FrameIndex = R->GetValue_Int(FRAME_INDEX);
 
-				// Frames
-				typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
-
-				const FrameType& Frame = Anim.Frames[FrameIndex];
-
 				FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 				ElapsedTime += R->DeltaTime;
 
@@ -207,7 +202,14 @@ namespace NCsAnim
 				do
 				{
 					{
-						MID->SetTextureParameterValue(Frame.GetParameterName(), Frame.GetTexture());
+						// Frame
+						{
+							typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
+
+							const FrameType& Frame = Anim.Frames[FrameIndex];
+
+							MID->SetTextureParameterValue(Frame.GetParameterName(), Frame.GetTexture());
+						}
 
 						CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= DeltaTime);
 
@@ -436,11 +438,6 @@ namespace NCsAnim
 				static const int32 FRAME_INDEX = 1;
 				int32& FrameIndex = R->GetValue_Int(FRAME_INDEX);
 
-				// Frames
-				typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
-
-				const FrameType& Frame = Anim.Frames[FrameIndex];
-
 				FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 				ElapsedTime += R->DeltaTime;
 
@@ -458,9 +455,16 @@ namespace NCsAnim
 				do
 				{
 					{
-						typedef NCsMaterial::FLibrary MaterialLibrary;
+						
+						// Frame
+						{
+							typedef NCsMaterial::FLibrary MaterialLibrary;
+							typedef NCsAnim::N2D::NMaterial::NFlipbook::FFrame FrameType;
 
-						MaterialLibrary::SetChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
+							const FrameType& Frame = Anim.Frames[FrameIndex];
+
+							MaterialLibrary::SetChecked(Context, Component, Frame.GetMaterial(), Frame.GetIndex());
+						}
 
 						CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= DeltaTime);
 

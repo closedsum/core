@@ -136,6 +136,8 @@ public:
 
 #pragma endregion ICsProjectileWeapon
 
+// Owner
+#pragma region
 protected:
 
 	UObject* MyOwner;
@@ -143,10 +145,15 @@ protected:
 
 public:
 
+	UFUNCTION(BlueprintPure, Category = "Weapon|Owner")
 	FORCEINLINE UObject* GetMyOwner() const 
 	{
 		return MyOwner;
 	}
+
+#pragma endregion Owner
+
+public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Init();

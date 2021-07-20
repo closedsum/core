@@ -6,6 +6,7 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Animation/CsLibrary_AnimSequence.h"
+#include "Library/CsLibrary_Property.h"
 
 // Cached
 #pragma region
@@ -18,6 +19,7 @@ namespace NCsScriptLibraryAnimSequence
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, LoadByStringPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, SetProperty);
 		}
 	}
 }
@@ -55,3 +57,19 @@ UAnimSequence* UCsScriptLibrary_AnimSequence::LoadByStringPath(const FString& Co
 }
 
 #pragma endregion Load
+
+// Property
+#pragma region
+
+bool UCsScriptLibrary_AnimSequence::SetProperty(const FString& Context, UObject* Object, const FName& PropertyName, UAnimSequence* Anim)
+{
+	using namespace NCsScriptLibraryAnimSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+
+	typedef NCsProperty::FLibrary PropertyLibrary;
+
+	return PropertyLibrary::SetObjectPropertyByName<UAnimSequence>(Ctxt, Object, Object->GetClass(), PropertyName, Anim);
+}
+
+#pragma endregion Property

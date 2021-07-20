@@ -610,27 +610,45 @@ namespace NCsProperty
 		static T** GetObjectPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
 		{
 			FObjectProperty* ObjectProperty = FindObjectPropertyByNameChecked(Context, Struct, PropertyName);
-			T** Value						= ObjectProperty->ContainerPtrToValuePtr<T*>(StructValue);
+
+			checkf(ObjectProperty->PropertyClass->IsChildOf(T::StaticClass()), TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName()));
+
+			T** Value = ObjectProperty->ContainerPtrToValuePtr<T*>(StructValue);
 
 			checkf(Value, TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
 			return Value;
 		}
 
+		/**
+		* Get the pointer to the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				pointer to UObject of type: T.
+		*/
 		template<typename T>
-		static T** GetObjectPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		static T** GetObjectPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
 			FObjectProperty* ObjectProperty = FindObjectPropertyByName(Context, Struct, PropertyName, Log);
 
 			if (!ObjectProperty)
 				return nullptr;
 
+			if (!ObjectProperty->PropertyClass->IsChildOf(T::StaticClass()))
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+				return nullptr;
+			}
+
 			T** Value = ObjectProperty->ContainerPtrToValuePtr<T*>(StructValue);
 
 			if (!Value)
 			{
 				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
-				return nullptr;
+					Log(FString::Printf(TEXT("%s: Failed to get pointer to member of type: from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
 			}
 			return Value;
 		}
@@ -896,6 +914,39 @@ namespace NCsProperty
 
 	#pragma endregion Get
 
+	// Set
+	#pragma region
+	public:
+
+		// Object
+	#pragma region
+	public:
+
+		/**
+		* Set the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		* 
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Value
+		* return				Whether Value was successfully set or not.
+		*/
+		template<typename T>
+		static bool SetObjectPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, T* Value, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			T** Ptr = GetObjectPropertyValuePtr<T>(Context, StructValue, Struct, PropertyName, Log);
+
+			if (!Ptr)
+				return false;
+
+			*Ptr = Value;
+			return true;
+		}
+
+	#pragma endregion Object
+
+	#pragma endregion Set
 	#if WITH_EDITOR
 
 		/**

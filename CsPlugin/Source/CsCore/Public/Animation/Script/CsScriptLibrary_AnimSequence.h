@@ -36,4 +36,13 @@ public:
 	static UAnimSequence* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Property
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimSequence", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static bool SetProperty(const FString& Context, UObject* Object, const FName& PropertyName, UAnimSequence* Anim);
+
+#pragma endregion Property
 };

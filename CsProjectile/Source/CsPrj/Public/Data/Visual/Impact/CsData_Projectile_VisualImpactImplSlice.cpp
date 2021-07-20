@@ -9,6 +9,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
+// Engine
+#include "Engine/DataTable.h"
 
 #define SliceType NCsProjectile::NData::NVisual::NImpact::FImplSlice
 

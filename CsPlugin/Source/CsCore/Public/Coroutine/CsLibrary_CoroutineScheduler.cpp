@@ -127,5 +127,21 @@ namespace NCsCoroutine
 		}
 
 		#pragma endregion Get
+
+		// End
+		#pragma region
+		
+		bool FLibrary::SafeEnd(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+				return Scheduler->End(Group, Handle);
+			}
+			return false;
+		}
+
+		#pragma endregion End
 	}
 }

@@ -1,4 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Coroutine
+#include "Coroutine/CsRoutineHandle.h"
+// Types
+#include "Managers/Time/CsTypes_Update.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -102,6 +106,26 @@ namespace NCsCoroutine
 			static UCsCoroutineScheduler* GetSafe(const UObject* ContextObject);
 
 		#pragma endregion Get
+		
+		// End
+		#pragma region
+		public:
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeEnd(const FString& context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion End
 		};
 	}
 }

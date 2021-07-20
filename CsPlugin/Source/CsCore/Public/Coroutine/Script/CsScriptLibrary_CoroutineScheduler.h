@@ -37,4 +37,22 @@ public:
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|CoroutineScheduler", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Group,Handle"))
 	static bool IsRunning(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+
+// End
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* @param Handle
+	* return
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|CoroutineScheduler", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Group,Handle"))
+	static bool End(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+	
+#pragma endregion End
 };

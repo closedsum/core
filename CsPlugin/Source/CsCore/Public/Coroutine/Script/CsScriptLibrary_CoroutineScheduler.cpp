@@ -16,6 +16,7 @@ namespace NCsScriptLibraryCoroutineScheduler
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_CoroutineScheduler, IsHandleValid);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_CoroutineScheduler, IsRunning);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_CoroutineScheduler, End);
 		}
 	}
 }
@@ -66,3 +67,19 @@ bool UCsScriptLibrary_CoroutineScheduler::IsRunning(const FString& Context, cons
 	}
 	return false;
 }
+
+// End
+#pragma region
+
+bool UCsScriptLibrary_CoroutineScheduler::End(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+{
+	using namespace NCsScriptLibraryCoroutineScheduler::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::End : Context;
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	return CoroutineSchedulerLibrary::SafeEnd(Context, WorldContextObject, Group, Handle);
+}
+
+#pragma endregion End

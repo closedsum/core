@@ -405,7 +405,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 			// Once
 			if (FreqType == FrequencyType::Once)
 			{
-				 // Do Nothing 
+				CanSpawn = false;
 			}
 			// Count | TimeCount | TimeInterval
 			else

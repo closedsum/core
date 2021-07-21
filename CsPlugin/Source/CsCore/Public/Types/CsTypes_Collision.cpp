@@ -161,11 +161,6 @@ void FCsCollisionPreset::SetChecked(const FString& Context, UPrimitiveComponent*
 
 	check(IsValidChecked(Context));
 
-	bool bStaticMesh   = Cast<UStaticMeshComponent>(Component) != nullptr;
-	bool bSkeletalMesh = Cast<USkeletalMeshComponent>(Component) != nullptr;
-
-	checkf(bStaticMesh || bSkeletalMesh, TEXT("%s: Component: %s with Class: %s is NOT of type: UStaticMeshComponent or USkeletalMeshCompnent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName()));
-
 	if (CollisionEnabled != ECollisionEnabled::NoCollision)
 	{
 		Component->SetCollisionObjectType(ObjectType);
@@ -184,15 +179,6 @@ bool FCsCollisionPreset::SetSafe(const FString& Context, UPrimitiveComponent* Co
 
 	if (!IsValid(Context, Log))
 		return false;
-
-	bool bStaticMesh = Cast<UStaticMeshComponent>(Component) != nullptr;
-	bool bSkeletalMesh = Cast<USkeletalMeshComponent>(Component) != nullptr;
-
-	if (!bStaticMesh && !bSkeletalMesh)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component: %s with Class: %s is NOT of type: UStaticMeshComponent or USkeletalMeshCompnent."), *Context, *(Component->GetName()), *(Component->GetClass()->GetName())));
-		return false;
-	}
 
 	if (CollisionEnabled != ECollisionEnabled::NoCollision)
 	{

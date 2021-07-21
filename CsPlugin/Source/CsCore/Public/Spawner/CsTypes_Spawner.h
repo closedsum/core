@@ -51,6 +51,9 @@ namespace NCsSpawner
 					WeakObjects.RemoveAt(I, 1, false);
 				}
 			}
+
+			Objects.Add(Object);
+			WeakObjects.Add(Object);
 		}
 
 		void Reset()

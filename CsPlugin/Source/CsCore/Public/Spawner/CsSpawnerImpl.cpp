@@ -287,6 +287,8 @@ void ACsSpawnerImpl::Start()
 
 	CurrentSpawnCount = 0;
 
+	SpawnedObjects.Reset();
+
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
@@ -309,7 +311,7 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Stop (% s) : Stopping"), *(GetName()));
+		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Stop (%s) : Stopping"), *(GetName()));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 

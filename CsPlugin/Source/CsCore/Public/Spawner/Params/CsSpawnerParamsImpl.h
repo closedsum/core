@@ -31,6 +31,11 @@ public:
 	{
 	}
 
+	void Update()
+	{
+		FrequencyParams.Update();
+	}
+
 #define ParamsType NCsSpawner::NParams::FImpl
 	ParamsType* ConstructParamsImpl() const;
 	void CopyToParamsAsValue(ParamsType* Params) const;

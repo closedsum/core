@@ -17,6 +17,25 @@ namespace NCsSpawner
 		public:
 
 			/**
+			* 
+			* 
+			* @param Context	The calling context.
+			* @param Params
+			* return
+			*/
+			static bool IsValidChecked(const FString& Context, const ParamsType* Params);
+
+			/**
+			*
+			*
+			* @param Context	The calling context.
+			* @param Params
+			* @param Log		(optional)
+			* return
+			*/
+			static bool IsValid(const FString& Context, const ParamsType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
 			*
 			*
 			* @param Context	The calling context.

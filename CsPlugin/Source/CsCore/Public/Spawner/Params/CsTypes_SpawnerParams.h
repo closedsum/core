@@ -407,38 +407,224 @@ namespace NCsSpawner
 
 #pragma endregion SpawnerPoint
 
-// SpawnerPointOrder
+//// FCsSpawnerPointParams
+//#pragma region
+//
+//class AActor;
+//
+///**
+//* Parameters describing where and how to apply the transform to the object spawned.
+//*/
+//USTRUCT(BlueprintType)
+//struct CSCORE_API FCsSpawnerPointParams
+//{
+//	GENERATED_USTRUCT_BODY()
+//
+//public:
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	ECsSpawnerPoint Type;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	ECsSpawnerPointOrder Order;
+//
+//	/** Which of the components of Transform to apply to the spawned object. */
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+//	int32 TransformRules;
+//
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//	TArray<FTransform> Transforms;
+//
+//	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
+//	TArray<AActor*> Actors;
+//
+//	FCsSpawnerPointParams() :
+//		Type(ECsSpawnerPoint::Self),
+//		Order(ECsSpawnerPointOrder::FirstToLast),
+//		TransformRules(7), // ALL
+//		Transforms(),
+//		Actors()
+//	{
+//	}
+//};
+//
+//namespace NCsSpawner
+//{
+//	namespace NParams
+//	{
+//		struct CSCORE_API FPoint
+//		{
+//		#define PointType NCsSpawner::EPoint
+//		#define PointOrderType NCsSpawner::EPointOrder
+//
+//		private:
+//
+//			CS_DECLARE_MEMBER_WITH_EMU(Type, PointType)
+//			CS_DECLARE_MEMBER_WITH_EMU(Order, PointOrderType)
+//			CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
+//			CS_DECLARE_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
+//			CS_DECLARE_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
+//
+//		public:
+//
+//			FPoint() :
+//				CS_CTOR_INIT_MEMBER_WITH_EMU(Type, PointType::Self),
+//				CS_CTOR_INIT_MEMBER_WITH_EMU(Order, PointOrderType::FirstToLast),
+//				CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 7),
+//				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Transforms),
+//				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Actors)
+//			{
+//				CS_CTOR_SET_MEMBER_EMU(Type);
+//				CS_CTOR_SET_MEMBER_EMU(Order);
+//				CS_CTOR_SET_MEMBER_EMU(TransformRules);
+//				CS_CTOR_SET_MEMBER_EMU(Transforms);
+//				CS_CTOR_SET_MEMBER_EMU(Actors);
+//			}
+//
+//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, PointType)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Order, PointOrderType)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
+//
+//		#undef PointType
+//		#undef PointOrderType
+//		};
+//	}
+//}
+//
+//#pragma endregion FCsSpawnerPointParams
+//
+//// FCsSpawnerPointHelper
+//#pragma region
+//
+//class ICsSpawner;
+//class AActor;
+//
+//struct CSCORE_API FCsSpawnerPointHelper
+//{
+//public:
+//
+//	ICsSpawner* Spawner;
+//
+//	AActor* SpawnerAsActor;
+//
+//	FCsSpawnerPointParams* Params;
+//
+//	int32 Index;
+//
+//	TArray<AActor*> Actors;
+//
+//	TArray<FTransform> Transforms;
+//
+//	// Delegates
+//
+//	DECLARE_DELEGATE(FPrepareSpawns);
+//
+//	FPrepareSpawns PrepareSpawns_Impl;
+//
+//	DECLARE_DELEGATE(FAdvanceIndex);
+//
+//	FAdvanceIndex AdvanceIndex_Impl;
+//
+//	DECLARE_DELEGATE_RetVal(FTransform, FGetSpawnTransform);
+//
+//	FGetSpawnTransform GetSpawnTransform_Impl;
+//
+//	DECLARE_DELEGATE_RetVal(FVector, FGetSpawnLocation);
+//
+//	FGetSpawnLocation GetSpawnLocation_Impl;
+//
+//	FCsSpawnerPointHelper() :
+//		Spawner(nullptr),
+//		SpawnerAsActor(nullptr),
+//		Params(nullptr),
+//		Index(0),
+//		Actors(),
+//		Transforms(),
+//		PrepareSpawns_Impl(),
+//		AdvanceIndex_Impl(),
+//		GetSpawnLocation_Impl()
+//	{
+//		PrepareSpawns_Impl.BindRaw(this, &FCsSpawnerPointHelper::PrepareSpawns);
+//		AdvanceIndex_Impl.BindRaw(this, &FCsSpawnerPointHelper::AdvanceIndex);
+//		GetSpawnTransform_Impl.BindRaw(this, &FCsSpawnerPointHelper::GetSpawnTransform);
+//		GetSpawnLocation_Impl.BindRaw(this, &FCsSpawnerPointHelper::GetSpawnLocation);
+//	}
+//
+//	void PrepareSpawns();
+//
+//	FORCEINLINE void PrepareSpawnsChecked(const FString& Context)
+//	{
+//		checkf(PrepareSpawns_Impl.IsBound(), TEXT("%s: PrepareSpawns_Impl is NOT bound to any function."));
+//
+//		PrepareSpawns_Impl.Execute();
+//	}
+//
+//	void AdvanceIndex();
+//
+//	FORCEINLINE void AdvanceIndexChecked(const FString& Context)
+//	{
+//		checkf(AdvanceIndex_Impl.IsBound(), TEXT("%s: AdvanceIndex_Impl is NOT bound to any function."));
+//
+//		AdvanceIndex_Impl.Execute();
+//	}
+//
+//	FTransform GetSpawnTransform() const;
+//
+//	FORCEINLINE FTransform GetSpawnTransformChecked(const FString& Context) const
+//	{
+//		checkf(GetSpawnTransform_Impl.IsBound(), TEXT("%s: GetSpawnTransform_Impl is NOT bound to any function."));
+//
+//		return GetSpawnTransform_Impl.Execute();
+//	}
+//
+//	FVector GetSpawnLocation() const;
+//
+//	FORCEINLINE FVector GetSpawnLocationChecked(const FString& Context) const
+//	{
+//		checkf(GetSpawnLocation_Impl.IsBound(), TEXT("%s: GetSpawnLocation_Impl is NOT bound to any function."));
+//
+//		return GetSpawnLocation_Impl.Execute();
+//	}
+//};
+//
+//#pragma endregion FCsSpawnerPointHelper
+
+// SpawnerShape
 #pragma region
 
 /**
-* The order in which to use spawn points.
+* The shape / area of the spawner from which objects are spawned.
 */
 UENUM(BlueprintType)
-enum class ECsSpawnerPointOrder : uint8
+enum class ECsSpawnerShape : uint8
 {
-	FirstToLast					UMETA(DisplayName = "First to Last"),
-	RandomShuffle				UMETA(DisplayName = "Random Shuffle"),
-	Random						UMETA(DisplayName = "Random"),
-	Custom						UMETA(DisplayName = "Custom"),
-	ECsSpawnerPointOrder_MAX	UMETA(Hidden),
+	Circle				UMETA(DisplayName = "Circle"),
+	Rectangle			UMETA(DisplayName = "Rectangle"),
+	Sphere				UMETA(DisplayName = "Sphere"),
+	Box					UMETA(DisplayName = "Box"),
+	Custom				UMETA(DisplayName = "Custom"),
+	ECsSpawnerShape_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSpawnerPointOrder : public TCsEnumMap<ECsSpawnerPointOrder>
+struct CSCORE_API EMCsSpawnerShape : public TCsEnumMap<ECsSpawnerShape>
 {
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerPointOrder, ECsSpawnerPointOrder)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerShape, ECsSpawnerShape)
 };
 
-namespace NCsSpawnerPointOrder
+namespace NCsSpawnerShape
 {
-	typedef ECsSpawnerPointOrder Type;
+	typedef ECsSpawnerShape Type;
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type FirstToLast;
-		extern CSCORE_API const Type RandomShuffle;
-		extern CSCORE_API const Type Random;
+		extern CSCORE_API const Type Circle;
+		extern CSCORE_API const Type Rectangle;
+		extern CSCORE_API const Type Sphere;
+		extern CSCORE_API const Type Box;
 		extern CSCORE_API const Type Custom;
-		extern CSCORE_API const Type ECsSpawnerPointOrder_MAX;
+		extern CSCORE_API const Type ECsSpawnerShape_MAX;
 	}
 
 	extern CSCORE_API const uint8 MAX;
@@ -446,222 +632,174 @@ namespace NCsSpawnerPointOrder
 
 namespace NCsSpawner
 {
-	/**
-	* The order in which to use spawn points.
-	*/
-	enum class EPointOrder : uint8
+	enum class EShape
 	{
-		FirstToLast,
-		RandomShuffle,
-		Random,
+		Circle,
+		Rectangle,
+		Sphere,
+		Box,
 		Custom,
-		EPointOrder_MAX
+		EShape_MAX
 	};
 
-	struct CSCORE_API EMPointOrder : public TCsEnumMap<EPointOrder>
+	struct CSCORE_API EMShape : public TCsEnumMap<EShape>
 	{
-		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMPointOrder, EPointOrder)
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMShape, EShape)
 	};
 
-	namespace NPointOrder
+	namespace NShape
 	{
 		namespace Ref
 		{
-			typedef EPointOrder Type;
+			typedef EShape Type;
 
-			extern CSCORE_API const Type FirstToLast;
-			extern CSCORE_API const Type RandomShuffle;
-			extern CSCORE_API const Type Random;
+			extern CSCORE_API const Type Circle;
+			extern CSCORE_API const Type Rectangle;
+			extern CSCORE_API const Type Sphere;
+			extern CSCORE_API const Type Box;
 			extern CSCORE_API const Type Custom;
-			extern CSCORE_API const Type EPointOrder_MAX;
+			extern CSCORE_API const Type EShape_MAX;
 		}
-
-		extern CSCORE_API const uint8 MAX;
 	}
 }
 
-#pragma endregion SpawnerPointOrder
+#pragma endregion SpawnerShape
 
-// FCsSpawnerPointParams
+// SpawnerShapeCenter
 #pragma region
 
-class AActor;
-
 /**
-* Parameters describing where and how to apply the transform to the object spawned.
+* Describe what is designed as the "center" of the spawner's shape.
 */
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsSpawnerPointParams
+UENUM(BlueprintType)
+enum class ECsSpawnerShapeCenter : uint8
 {
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsSpawnerPoint Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsSpawnerPointOrder Order;
-
-	/** Which of the components of Transform to apply to the spawned object. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
-	int32 TransformRules;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FTransform> Transforms;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
-	TArray<AActor*> Actors;
-
-	FCsSpawnerPointParams() :
-		Type(ECsSpawnerPoint::Self),
-		Order(ECsSpawnerPointOrder::FirstToLast),
-		TransformRules(7), // ALL
-		Transforms(),
-		Actors()
-	{
-	}
+	/** Center of shape using the Spawner's Transform */
+	Self						UMETA(DisplayName = "Self"),
+	/** Center of shape using a predefined Transform */
+	Transform					UMETA(DisplayName = "Transform"),
+	/** Center of shape using the an Actor's Transform */
+	Actor						UMETA(DisplayName = "Actor"),
+	/** Center of shape using a custom method */
+	Custom						UMETA(DisplayName = "Custom"),
+	ECsSpawnerShapeCenter_MAX	UMETA(Hidden),
 };
+
+struct CSCORE_API EMCsSpawnerShapeCenter : public TCsEnumMap<ECsSpawnerShapeCenter>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerShapeCenter, ECsSpawnerShapeCenter)
+};
+
+namespace NCsSpawnerShapeCenter
+{
+	typedef ECsSpawnerShapeCenter Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Self;
+		extern CSCORE_API const Type Transform;
+		extern CSCORE_API const Type Actor;
+		extern CSCORE_API const Type Custom;
+		extern CSCORE_API const Type ECsSpawnerShapeCenter_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
 
 namespace NCsSpawner
 {
-	namespace NParams
+	namespace NShape
 	{
-		struct CSCORE_API FPoint
+		enum class ECenter
 		{
-		#define PointType NCsSpawner::EPoint
-		#define PointOrderType NCsSpawner::EPointOrder
-
-		private:
-
-			CS_DECLARE_MEMBER_WITH_EMU(Type, PointType)
-			CS_DECLARE_MEMBER_WITH_EMU(Order, PointOrderType)
-			CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
-			CS_DECLARE_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
-			CS_DECLARE_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
-
-		public:
-
-			FPoint() :
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Type, PointType::Self),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Order, PointOrderType::FirstToLast),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 7),
-				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Transforms),
-				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Actors)
-			{
-				CS_CTOR_SET_MEMBER_EMU(Type);
-				CS_CTOR_SET_MEMBER_EMU(Order);
-				CS_CTOR_SET_MEMBER_EMU(TransformRules);
-				CS_CTOR_SET_MEMBER_EMU(Transforms);
-				CS_CTOR_SET_MEMBER_EMU(Actors);
-			}
-
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, PointType)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Order, PointOrderType)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
-
-		#undef PointType
-		#undef PointOrderType
+			/** Center of shape using the Spawner's Transform */
+			Self,
+			/** Center of shape using a predefined Transform */
+			Transform,
+			/** Center of shape using an Actor's Transform */
+			Actor	,
+			/** Center of shape using a custom method */
+			Custom,
+			ECenter_MAX
 		};
+
+		struct CSCORE_API EMCenter : public TCsEnumMap<ECenter>
+		{
+			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCenter, ECenter)
+		};
+
+		namespace NCenter
+		{
+			namespace Ref
+			{
+				typedef ECenter Type;
+
+				extern CSCORE_API const Type Self;
+				extern CSCORE_API const Type Transform;
+				extern CSCORE_API const Type Actor;
+				extern CSCORE_API const Type Custom;
+				extern CSCORE_API const Type ECenter_MAX;
+			}
+		}
 	}
 }
 
-#pragma endregion FCsSpawnerPointParams
+#pragma endregion SpawnerShapeCenter
 
-// FCsSpawnerPointHelper
+// SpawnerDistribution
 #pragma region
 
-class ICsSpawner;
-class AActor;
-
-struct CSCORE_API FCsSpawnerPointHelper
+/**
+* How the spawning is distributed over a shape / area.
+*/
+UENUM(BlueprintType)
+enum class ECsSpawnerDistribution : uint8
 {
-public:
-
-	ICsSpawner* Spawner;
-
-	AActor* SpawnerAsActor;
-
-	FCsSpawnerPointParams* Params;
-
-	int32 Index;
-
-	TArray<AActor*> Actors;
-
-	TArray<FTransform> Transforms;
-
-	// Delegates
-
-	DECLARE_DELEGATE(FPrepareSpawns);
-
-	FPrepareSpawns PrepareSpawns_Impl;
-
-	DECLARE_DELEGATE(FAdvanceIndex);
-
-	FAdvanceIndex AdvanceIndex_Impl;
-
-	DECLARE_DELEGATE_RetVal(FTransform, FGetSpawnTransform);
-
-	FGetSpawnTransform GetSpawnTransform_Impl;
-
-	DECLARE_DELEGATE_RetVal(FVector, FGetSpawnLocation);
-
-	FGetSpawnLocation GetSpawnLocation_Impl;
-
-	FCsSpawnerPointHelper() :
-		Spawner(nullptr),
-		SpawnerAsActor(nullptr),
-		Params(nullptr),
-		Index(0),
-		Actors(),
-		Transforms(),
-		PrepareSpawns_Impl(),
-		AdvanceIndex_Impl(),
-		GetSpawnLocation_Impl()
-	{
-		PrepareSpawns_Impl.BindRaw(this, &FCsSpawnerPointHelper::PrepareSpawns);
-		AdvanceIndex_Impl.BindRaw(this, &FCsSpawnerPointHelper::AdvanceIndex);
-		GetSpawnTransform_Impl.BindRaw(this, &FCsSpawnerPointHelper::GetSpawnTransform);
-		GetSpawnLocation_Impl.BindRaw(this, &FCsSpawnerPointHelper::GetSpawnLocation);
-	}
-
-	void PrepareSpawns();
-
-	FORCEINLINE void PrepareSpawnsChecked(const FString& Context)
-	{
-		checkf(PrepareSpawns_Impl.IsBound(), TEXT("%s: PrepareSpawns_Impl is NOT bound to any function."));
-
-		PrepareSpawns_Impl.Execute();
-	}
-
-	void AdvanceIndex();
-
-	FORCEINLINE void AdvanceIndexChecked(const FString& Context)
-	{
-		checkf(AdvanceIndex_Impl.IsBound(), TEXT("%s: AdvanceIndex_Impl is NOT bound to any function."));
-
-		AdvanceIndex_Impl.Execute();
-	}
-
-	FTransform GetSpawnTransform() const;
-
-	FORCEINLINE FTransform GetSpawnTransformChecked(const FString& Context) const
-	{
-		checkf(GetSpawnTransform_Impl.IsBound(), TEXT("%s: GetSpawnTransform_Impl is NOT bound to any function."));
-
-		return GetSpawnTransform_Impl.Execute();
-	}
-
-	FVector GetSpawnLocation() const;
-
-	FORCEINLINE FVector GetSpawnLocationChecked(const FString& Context) const
-	{
-		checkf(GetSpawnLocation_Impl.IsBound(), TEXT("%s: GetSpawnLocation_Impl is NOT bound to any function."));
-
-		return GetSpawnLocation_Impl.Execute();
-	}
+	Uniform						UMETA(DisplayName = "Uniform"),
+	ECsSpawnerDistribution_MAX	UMETA(Hidden),
 };
 
-#pragma endregion FCsSpawnerPointHelper
+struct CSCORE_API EMCsSpawnerDistribution : public TCsEnumMap<ECsSpawnerDistribution>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSpawnerDistribution, ECsSpawnerDistribution)
+};
+
+namespace NCsSpawnerDistribution
+{
+	typedef ECsSpawnerDistribution Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Uniform;
+		extern CSCORE_API const Type ECsSpawnerDistribution_MAX;
+	}
+
+	extern CSCORE_API const uint8 MAX;
+}
+
+namespace NCsSpawner
+{
+	enum class EDistribution
+	{
+		Uniform,
+		EDistribution_MAX
+	};
+
+	struct CSCORE_API EMDistribution : public TCsEnumMap<EDistribution>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDistribution, EDistribution)
+	};
+
+	namespace NDistribution
+	{
+		namespace Ref
+		{
+			typedef EDistribution Type;
+
+			extern CSCORE_API const Type Uniform;
+			extern CSCORE_API const Type EDistribution_MAX;
+		}
+	}
+}
+
+#pragma endregion SpawnerDistribution

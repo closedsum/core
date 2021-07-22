@@ -49,6 +49,9 @@ namespace NCsSpawner
 
 struct FCsRoutine;
 
+// NCsSpawner::NPoint::IImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NPoint, IImpl)
+
 // NCsSpawner::NParams::IParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, IParams)
 // NCsSpawner::NParams::FCount
@@ -127,6 +130,35 @@ public:
 
 #pragma endregion StartPlay
 
+// Point
+#pragma region
+protected:
+
+#define PointImplType NCsSpawner::NPoint::IImpl
+
+	PointImplType* PointImpl;
+
+public:
+
+	FORCEINLINE const PointImplType* GetPointImpl() const { return PointImpl; }
+
+protected:
+
+	virtual void ConstructPointImpl();
+
+	UPROPERTY(BlueprintReadWrite, Category = "Spawner|Point")
+	bool bConstructDefaultPointImpl;
+
+	void(*DeconstructPointImplImpl)(void* Ptr);
+
+public:
+
+	void SetPointImpl(const FString& Context, PointImplType* InPointImpl, void(*InDeconstructPointImplImpl)(void*));
+
+#undef PointImplType
+
+#pragma endregion Point
+
 // Params
 #pragma region
 protected:
@@ -147,8 +179,6 @@ protected:
 	float* TotalTime;
 
 	virtual void ConstructParams();
-
-protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Spawner|Params")
 	bool bConstructDefaultParams;
@@ -272,7 +302,7 @@ protected:
 
 	//virtual void OnPreSpawnObject(ICsSpawner* Spawner, const int32& Index);
 
-	virtual UObject* SpawnObject(const int32& Index);
+	virtual UObject* SpawnObject(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
 	UPROPERTY(BlueprintAssignable, Category = "Spawner|Spawn")
 	FCsSpawnerImpl_OnSpawnObject OnSpawnObject_ScriptEvent;
@@ -284,7 +314,7 @@ protected:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	UObject* Override_SpawnObject(const int32& Index);
+	UObject* Override_SpawnObject(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
 #pragma endregion Spawn
 

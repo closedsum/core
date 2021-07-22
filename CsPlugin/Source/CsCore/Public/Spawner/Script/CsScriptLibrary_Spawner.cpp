@@ -4,6 +4,7 @@
 
 // Spawner
 #include "Spawner/CsSpawnerImpl.h"
+#include "Spawner/Point/CsSpawnerPointImpl.h"
 
 namespace NCsScriptLibrarySpawner
 {
@@ -54,7 +55,20 @@ bool UCsScriptLibrary_Spawner::SetParams_DefaultImpl(const FString& Context, UOb
 		return false;
 	}
 
-	typedef NCsSpawner::NParams::FImpl  ParamsType;
+	const_cast<FCsSpawnerParamsImpl*>(&Params)->Update();
+
+	if (!Params.IsValid(Ctxt))
+		return false;
+
+	// Construct and Set PointImpl
+	typedef NCsSpawner::NPoint::FImpl PointImplType;
+
+	PointImplType* PointImpl = new PointImplType();
+
+	Impl->SetPointImpl(Ctxt, PointImpl, &PointImplType::Deconstruct);
+
+	// Construct and Set Params
+	typedef NCsSpawner::NParams::FImpl ParamsType;
 
 	ParamsType* ParamsImpl = Params.ConstructParamsImpl();
 

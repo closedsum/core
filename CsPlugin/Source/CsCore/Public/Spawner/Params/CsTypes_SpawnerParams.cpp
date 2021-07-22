@@ -481,127 +481,200 @@ namespace NCsSpawner
 
 #pragma endregion SpawnerPoint
 
-// SpawnerPointOrder
+//// FCsSpawnerPointHelper
+//#pragma region
+//
+//void FCsSpawnerPointHelper::PrepareSpawns()
+//{
+//	// NO spawns to prepare for Self
+//	if (Params->Type == ECsSpawnerPoint::Self)
+//		return;
+//
+//	typedef NCsArray::FLibrary ArrayLibrary;
+//
+//	// Transform
+//	if (Params->Type == ECsSpawnerPoint::Transform)
+//	{
+//		const TArray<FTransform>& _Transforms = Params->Transforms;
+//
+//		Transforms.Reset(FMath::Max(Transforms.Max(), _Transforms.Num()));
+//		Transforms.Append(_Transforms);
+//
+//		// RandomShuffle
+//		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
+//			ArrayLibrary::Shuffle<FTransform>(Transforms);
+//	}
+//	// Actor
+//	else
+//	if (Params->Type == ECsSpawnerPoint::Actor)
+//	{
+//		const TArray<AActor*>& _Actors = Params->Actors;
+//
+//		Actors.Reset(FMath::Max(Actors.Max(), _Actors.Num()));
+//		Actors.Append(_Actors);
+//
+//		// RandomShuffle
+//		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
+//			ArrayLibrary::Shuffle<AActor*>(Actors);
+//	}
+//}
+//
+//void FCsSpawnerPointHelper::AdvanceIndex()
+//{
+//	int32 Count = Params->Type == ECsSpawnerPoint::Transform ? Params->Transforms.Num() : Params->Actors.Num();
+//
+//	// FirstToLast
+//	if (Params->Order == ECsSpawnerPointOrder::FirstToLast)
+//		Index = (Index + 1) % Count;
+//	// RandomShuffle
+//	else
+//	if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
+//		Index = (Index + 1) % Count;
+//	// Random
+//	else
+//	if (Params->Order == ECsSpawnerPointOrder::Random)
+//		Index = FMath::RandRange(0, Count - 1);
+//}
+//
+//FTransform FCsSpawnerPointHelper::GetSpawnTransform() const
+//{
+//	// Self
+//	if (Params->Type == ECsSpawnerPoint::Self)
+//		return SpawnerAsActor->GetActorTransform();
+//	// Transform
+//	if (Params->Type == ECsSpawnerPoint::Transform)
+//		return Transforms[Index];
+//	// Actor
+//	if (Params->Type == ECsSpawnerPoint::Actor)
+//		return Actors[Index]->GetActorTransform();
+//	return FTransform::Identity;
+//}
+//
+//FVector FCsSpawnerPointHelper::GetSpawnLocation() const
+//{
+//	// Self
+//	if (Params->Type == ECsSpawnerPoint::Self)
+//		return SpawnerAsActor->GetActorLocation();
+//	// Transform
+//	if (Params->Type == ECsSpawnerPoint::Transform)
+//		return Transforms[Index].GetTranslation();
+//	// Actor
+//	if (Params->Type == ECsSpawnerPoint::Actor)
+//		return Actors[Index]->GetActorLocation();
+//	return FVector::ZeroVector;
+//}
+//
+//#pragma endregion FCsSpawnerPointHelper
+
+// SpawnerShape
 #pragma region
 
-namespace NCsSpawnerPointOrder
+namespace NCsSpawnerShape
 {
 	namespace Ref
 	{
-		typedef EMCsSpawnerPointOrder EnumMapType;
+		typedef EMCsSpawnerShape EnumMapType;
 
-		CSCORE_API CS_ADD_TO_ENUM_MAP(FirstToLast);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(RandomShuffle);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(Random);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Circle);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Rectangle);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Sphere);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Box);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerPointOrder_MAX, "MAX");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerShape_MAX, "MAX");
 	}
 
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerPointOrder_MAX;
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerShape_MAX;
 }
 
 namespace NCsSpawner
 {
-	namespace NPointOrder
+	namespace NShape
 	{
 		namespace Ref
 		{
-			typedef EMPointOrder EnumMapType;
+			typedef EMShape EnumMapType;
 
-			CSCORE_API CS_ADD_TO_ENUM_MAP(FirstToLast);
-			CSCORE_API CS_ADD_TO_ENUM_MAP(RandomShuffle);
-			CSCORE_API CS_ADD_TO_ENUM_MAP(Random);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Circle);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Rectangle);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Sphere);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Box);
 			CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
-			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPointOrder_MAX, "MAX");
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EShape_MAX, "MAX");
 		}
-
-		CSCORE_API const uint8 MAX = (uint8)EPointOrder::EPointOrder_MAX;
 	}
 }
 
-#pragma endregion SpawnerPointOrder
+#pragma endregion SpawnerShape
 
-// FCsSpawnerPointHelper
+// SpawnerShapeCenter
 #pragma region
 
-void FCsSpawnerPointHelper::PrepareSpawns()
+namespace NCsSpawnerShapeCenter
 {
-	// NO spawns to prepare for Self
-	if (Params->Type == ECsSpawnerPoint::Self)
-		return;
-
-	typedef NCsArray::FLibrary ArrayLibrary;
-
-	// Transform
-	if (Params->Type == ECsSpawnerPoint::Transform)
+	namespace Ref
 	{
-		const TArray<FTransform>& _Transforms = Params->Transforms;
+		typedef EMCsSpawnerShapeCenter EnumMapType;
 
-		Transforms.Reset(FMath::Max(Transforms.Max(), _Transforms.Num()));
-		Transforms.Append(_Transforms);
-
-		// RandomShuffle
-		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
-			ArrayLibrary::Shuffle<FTransform>(Transforms);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Transform);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerShapeCenter_MAX, "MAX");
 	}
-	// Actor
-	else
-	if (Params->Type == ECsSpawnerPoint::Actor)
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerShapeCenter_MAX;
+}
+
+namespace NCsSpawner
+{
+	namespace NShape
 	{
-		const TArray<AActor*>& _Actors = Params->Actors;
+		namespace NCenter
+		{
+			namespace Ref
+			{
+				typedef EMCenter EnumMapType;
 
-		Actors.Reset(FMath::Max(Actors.Max(), _Actors.Num()));
-		Actors.Append(_Actors);
-
-		// RandomShuffle
-		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
-			ArrayLibrary::Shuffle<AActor*>(Actors);
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Transform);
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+				CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECenter_MAX, "MAX");
+			}
+		}
 	}
 }
 
-void FCsSpawnerPointHelper::AdvanceIndex()
-{
-	int32 Count = Params->Type == ECsSpawnerPoint::Transform ? Params->Transforms.Num() : Params->Actors.Num();
+#pragma endregion SpawnerShapeCenter
 
-	// FirstToLast
-	if (Params->Order == ECsSpawnerPointOrder::FirstToLast)
-		Index = (Index + 1) % Count;
-	// RandomShuffle
-	else
-	if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
-		Index = (Index + 1) % Count;
-	// Random
-	else
-	if (Params->Order == ECsSpawnerPointOrder::Random)
-		Index = FMath::RandRange(0, Count - 1);
+// SpawnerDistribution
+#pragma region
+
+namespace NCsSpawnerDistribution
+{
+	namespace Ref
+	{
+		typedef EMCsSpawnerDistribution EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Uniform);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerDistribution_MAX, "MAX");
+	}
+
+	CSCORE_API const uint8 MAX = (uint8)Type::ECsSpawnerDistribution_MAX;
 }
 
-FTransform FCsSpawnerPointHelper::GetSpawnTransform() const
+namespace NCsSpawner
 {
-	// Self
-	if (Params->Type == ECsSpawnerPoint::Self)
-		return SpawnerAsActor->GetActorTransform();
-	// Transform
-	if (Params->Type == ECsSpawnerPoint::Transform)
-		return Transforms[Index];
-	// Actor
-	if (Params->Type == ECsSpawnerPoint::Actor)
-		return Actors[Index]->GetActorTransform();
-	return FTransform::Identity;
+	namespace NDistribution
+	{
+		namespace Ref
+		{
+			typedef EMDistribution EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Uniform);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDistribution_MAX, "MAX");
+		}
+	}
 }
 
-FVector FCsSpawnerPointHelper::GetSpawnLocation() const
-{
-	// Self
-	if (Params->Type == ECsSpawnerPoint::Self)
-		return SpawnerAsActor->GetActorLocation();
-	// Transform
-	if (Params->Type == ECsSpawnerPoint::Transform)
-		return Transforms[Index].GetTranslation();
-	// Actor
-	if (Params->Type == ECsSpawnerPoint::Actor)
-		return Actors[Index]->GetActorLocation();
-	return FVector::ZeroVector;
-}
-
-#pragma endregion FCsSpawnerPointHelper
+#pragma endregion SpawnerDistribution

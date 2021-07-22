@@ -30,7 +30,8 @@ namespace NCsSpawner
 			virtual const CountParamsType& GetCountParams() const = 0;
 
 			/**
-			*
+			* Get the parameters describing how often objects are "created" when
+			* Spawn is called.
 			*
 			* return Frequency Params
 			*/

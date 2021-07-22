@@ -9,12 +9,14 @@
 // Types
 #include "Debug/CsTypes_Debug.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Library/CsLibrary_World.h"
 #include "Spawner/Params/CsLibrary_SpawnerParams.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Spawner
+#include "Spawner/Point/CsSpawnerPointImpl.h"
 #include "Spawner/Params/CsSpawnerParamsImpl.h"
 
 // Cached
@@ -52,21 +54,25 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	// StartPlay
 	bOverride_StartPlay(false),
 	bReceiveStartPlay(false),
-	// ICsSpawner
-		// Params
+	// Point
+	PointImpl(nullptr),
+	bConstructDefaultPointImpl(false),
+	DeconstructPointImplImpl(nullptr),
+	// Params
+	Params(nullptr),
 	CountParams(nullptr),
 	FrequencyParams(nullptr),
 	TotalTime(nullptr),
 	bConstructDefaultParams(false),
 	DeconstructParamsImpl(nullptr),
 	IsParamsValidImpl(nullptr),
-		// Events
+	// Events
 	OnStart_Event(),
 	OnStop_Event(),
 	OnSpawn_Event(),
 	OnSpawnObject_Event(),
 	OnSpawnObjects_Event(),
-	OnFinish_Event(),
+	OnFinish_Event(),	
 	// Spawn
 	CurrentSpawnCount(0),
 	MaxConcurrentSpawnObjects(4),
@@ -175,8 +181,9 @@ void ACsSpawnerImpl::StartPlay()
 
 	// ICsSpawner
 
+		// PointImpl
+	ConstructPointImpl();
 		// Params
-
 	ConstructParams();
 	SetupFromParams();
 
@@ -186,6 +193,49 @@ void ACsSpawnerImpl::StartPlay()
 }
 
 #pragma endregion ICsStartPlay
+
+// Point
+#pragma region
+
+void ACsSpawnerImpl::ConstructPointImpl()
+{
+	if (bConstructDefaultPointImpl)
+	{
+		typedef NCsSpawner::NPoint::FImpl PointImplType;
+
+		PointImpl = new PointImplType();
+
+		DeconstructPointImplImpl = &PointImplType::Deconstruct;
+
+		PointImpl->SetSpawner(this);
+	}
+}
+
+#define PointImplType NCsSpawner::NPoint::IImpl
+void ACsSpawnerImpl::SetPointImpl(const FString& Context, PointImplType* InPointImpl, void(*InDeconstructPointImplImpl)(void*))
+{
+#undef PointImplType
+
+	CS_IS_PTR_NULL_CHECKED(InPointImpl)
+
+	CS_IS_PTR_NULL_CHECKED(InDeconstructPointImplImpl)
+
+	if (PointImpl)
+	{
+		DeconstructPointImplImpl(PointImpl);
+		PointImpl = nullptr;
+	}
+
+	PointImpl = InPointImpl;
+	DeconstructPointImplImpl = InDeconstructPointImplImpl;
+
+	PointImpl->SetSpawner(this);
+}
+
+#pragma endregion Point
+
+// Params
+#pragma region
 
 void ACsSpawnerImpl::ConstructParams()
 {
@@ -208,6 +258,9 @@ void ACsSpawnerImpl::SetParams(const FString& Context, ParamsType* InParams, voi
 
 	CS_IS_PTR_NULL_CHECKED(InDeconstructParamsImpl)
 
+	// Check PointImpl exists
+	checkf(PointImpl, TEXT("%s: No PointImpl exists. This must be set before setting any params."), *Context);
+
 	if (Params)
 	{
 		DeconstructParamsImpl(Params);
@@ -217,6 +270,8 @@ void ACsSpawnerImpl::SetParams(const FString& Context, ParamsType* InParams, voi
 	Params = InParams;
 	DeconstructParamsImpl = InDeconstructParamsImpl;
 	IsParamsValidImpl = InIsParamsValidImpl;
+
+	PointImpl->SetParams(Params);
 
 	SetupFromParams();
 }
@@ -257,6 +312,8 @@ void ACsSpawnerImpl::SetupFromParams()
 		Manager_SpawnedObjects.CreatePool(MaxConcurrentSpawnObjects);
 }
 
+#pragma endregion Params
+
 // ICsSpawner
 #pragma region
 
@@ -266,7 +323,10 @@ void ACsSpawnerImpl::Start()
 
 	const FString& Context = Str::Start;
 
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UObject* ContextRoot			   = CoroutineSchedulerLibrary::GetContextRootChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
@@ -289,6 +349,8 @@ void ACsSpawnerImpl::Start()
 
 	SpawnedObjects.Reset();
 
+	PointImpl->Prepare();
+
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
@@ -296,7 +358,7 @@ void ACsSpawnerImpl::Start()
 	#define COROUTINE Start_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::COROUTINE);
-	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
+	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -382,7 +444,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 
 	typedef NCsSpawner::EFrequency FrequencyType;
 
-	const FrequencyType& FreqType = FrequencyParams->GetType();
+	const FrequencyType& Frequency = FrequencyParams->GetType();
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -405,22 +467,22 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 			SpawnObjects(CurrentSpawnCount);
 
 			// Once
-			if (FreqType == FrequencyType::Once)
+			if (Frequency == FrequencyType::Once)
 			{
 				CanSpawn = false;
 			}
 			// Count | TimeCount | TimeInterval
 			else
-			if (FreqType == FrequencyType::Count ||
-				FreqType == FrequencyType::TimeCount ||
-				FreqType == FrequencyType::TimeInterval)
+			if (Frequency == FrequencyType::Count ||
+				Frequency == FrequencyType::TimeCount ||
+				Frequency == FrequencyType::TimeInterval)
 			{
 				CanSpawn		 = CurrentSpawnCount < FrequencyParams->GetCount();
 				HasSpawnInterval = CanSpawn && FrequencyParams->GetInterval() > 0.0f;
 			}
 			// Infinite
 			else
-			if (FreqType == FrequencyType::Infinite)
+			if (Frequency == FrequencyType::Infinite)
 			{
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
@@ -475,20 +537,27 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UObject* ContextRoot			   = CoroutineSchedulerLibrary::GetContextRootChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	check(IsParamsValidImpl(Context, Params));
 
 	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
 
-	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::SpawnObjects_Internal);
-	Payload->StartTime = UCsManager_Time::Get(GetGameInstance())->GetTime(UpdateGroup);
+	#define COROUTINE SpawnObjects_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
 	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::SpawnObjects_Internal);
-	Payload->SetFName(Name::SpawnObjects_Internal);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
 	Payload->OnEnds.AddDefaulted();
 	Payload->OnEnds.Last().BindUObject(this, &ACsSpawnerImpl::SpawnObjects_Internal_OnEnd);
+
+	#undef COROUTINE
 
 	SpawnObjects_Internal_Handles.AddDefaulted();
 	FCsRoutineHandle& Handle = SpawnObjects_Internal_Handles.Last();
@@ -559,7 +628,7 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 			// Spawn Object
 			{
-				UObject* SpawnedObject = SpawnObject(CurrentCountPerSpawn);
+				UObject* SpawnedObject = SpawnObject(CurrentSpawnCount, CurrentGroup, CurrentCountPerSpawn);
 
 				checkf(SpawnedObject, TEXT("%s: Failed to Spawn Object at %d / %d."), *Context, CurrentCountPerSpawn, CountParams->GetCountPerSpawn());
 
@@ -620,7 +689,7 @@ void ACsSpawnerImpl::SpawnObjects_Internal_OnEnd(FCsRoutine* R)
 
 //void ACsSpawnerImpl::OnPreSpawnObject(ICsSpawner* Spawner, const int32& Index){}
 
-UObject* ACsSpawnerImpl::SpawnObject(const int32& Index)
+UObject* ACsSpawnerImpl::SpawnObject(const int32& Count, const int32& Group, const int32& CountPerGroup)
 {
 #if WITH_EDITOR
 	if (bOverride_SpawnObject)
@@ -630,7 +699,7 @@ UObject* ACsSpawnerImpl::SpawnObject(const int32& Index)
 			UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::bOverride_SpawnObject: OVERRIDDEN for %s."), *(GetName()));
 		}
 
-		return Override_SpawnObject(Index);
+		return Override_SpawnObject(Count, Group, CountPerGroup);
 	}
 #endif // #if WITH_EDITOR
 	checkf(0, TEXT("ACsSpawnerImpl::SpawnObject: This MUST be implemented."));

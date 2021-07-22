@@ -11,25 +11,31 @@
 // Cached
 #pragma region
 
-namespace NCsFXCustomizationCached
+namespace NCsFXCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsFXCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsFXCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsFX
+#define EnumType FECsFX
+
 FECsFXCustomization::FECsFXCustomization() :
 	Super()
 {
-	Init<EMCsFX, FECsFX>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsFXCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsFXCustomizationCached;
+	using namespace NCsFXCustomization::NCached;
 
 	NCsFX::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
@@ -41,17 +47,20 @@ TSharedRef<IPropertyTypeCustomization> FECsFXCustomization::MakeInstance()
 
 void FECsFXCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsFX>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsFXCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsFX, FECsFX>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsFXCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsFX, FECsFX>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

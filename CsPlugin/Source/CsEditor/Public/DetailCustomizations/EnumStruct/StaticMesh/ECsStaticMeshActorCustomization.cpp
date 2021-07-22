@@ -24,10 +24,13 @@ namespace NCsStaticMeshActorCustomization
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsStaticMeshActor
+#define EnumType FECsStaticMeshActor
+
 FECsStaticMeshActorCustomization::FECsStaticMeshActorCustomization() :
 	Super()
 {
-	Init<EMCsStaticMeshActor, FECsStaticMeshActor>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsStaticMeshActorCustomization::CustomPopulateEnumMap()
@@ -44,17 +47,20 @@ TSharedRef<IPropertyTypeCustomization> FECsStaticMeshActorCustomization::MakeIns
 
 void FECsStaticMeshActorCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsStaticMeshActor>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsStaticMeshActorCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsStaticMeshActor, FECsStaticMeshActor>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsStaticMeshActorCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsStaticMeshActor, FECsStaticMeshActor>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

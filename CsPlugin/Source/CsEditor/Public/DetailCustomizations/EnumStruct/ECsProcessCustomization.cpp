@@ -5,11 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsProcessCustomization"
 
+#define EnumMapType EMCsProcess
+#define EnumType FECsProcess
 
 FECsProcessCustomization::FECsProcessCustomization() :
 	Super()
 {
-	Init<EMCsProcess, FECsProcess>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsProcessCustomization::MakeInstance()
@@ -19,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsProcessCustomization::MakeInstance()
 
 void FECsProcessCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsProcess>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsProcessCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsProcess, FECsProcess>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsProcessCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsProcess, FECsProcess>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

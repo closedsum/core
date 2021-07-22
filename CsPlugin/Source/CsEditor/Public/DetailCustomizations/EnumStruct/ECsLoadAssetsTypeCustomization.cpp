@@ -9,11 +9,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsLoadAssetsTypeCustomization"
 
+#define EnumMapType EMCsLoadAssetsType
+#define EnumType FECsLoadAssetsType
 
 FECsLoadAssetsTypeCustomization::FECsLoadAssetsTypeCustomization() : 
 	Super()
 {
-	Init<EMCsLoadAssetsType, FECsLoadAssetsType>();
+	Init<EnumMapType, EnumType>();
 
 	bPerformDropDownCheck = false;
 }
@@ -25,17 +27,20 @@ TSharedRef<IPropertyTypeCustomization> FECsLoadAssetsTypeCustomization::MakeInst
 
 void FECsLoadAssetsTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsLoadAssetsType>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsLoadAssetsTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsLoadAssetsType, FECsLoadAssetsType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsLoadAssetsTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsLoadAssetsType, FECsLoadAssetsType>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

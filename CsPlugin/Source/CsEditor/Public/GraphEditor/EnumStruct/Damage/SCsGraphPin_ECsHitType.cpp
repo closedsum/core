@@ -4,35 +4,40 @@
 
 #include "Managers/Damage/CsTypes_Damage.h"
 
+#define EnumMapType EMCsHitType
+#define EnumType FECsHitType
 
 void SCsGraphPin_ECsHitType::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsHitType, FECsHitType>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsHitType::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsHitType>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsHitType::OnGetText() const
 {
-	return OnGetText_Internal<EMCsHitType, FECsHitType>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsHitType::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsHitType, FECsHitType>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsHitType::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsHitType>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
 FText SCsGraphPin_ECsHitType::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsHitType>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef EnumMapType
+#undef EnumType

@@ -5,11 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsGestureTypeCustomization"
 
+#define EnumMapType EMCsGestureType
+#define EnumType FECsGestureType
 
 FECsGestureTypeCustomization::FECsGestureTypeCustomization() :
 	Super()
 {
-	Init<EMCsGestureType, FECsGestureType>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsGestureTypeCustomization::MakeInstance()
@@ -19,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsGestureTypeCustomization::MakeInstanc
 
 void FECsGestureTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsGestureType>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsGestureTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsGestureType, FECsGestureType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsGestureTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsGestureType, FECsGestureType>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

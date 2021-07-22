@@ -5,11 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsCVarToggleCustomization"
 
+#define EnumMapType EMCsCVarToggle
+#define EnumType FECsCVarToggle
 
 FECsCVarToggleCustomization::FECsCVarToggleCustomization() :
 	Super()
 {
-	Init<EMCsCVarToggle, FECsCVarToggle>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsCVarToggleCustomization::MakeInstance()
@@ -19,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsCVarToggleCustomization::MakeInstance
 
 void FECsCVarToggleCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsCVarToggle>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsCVarToggleCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsCVarToggle, FECsCVarToggle>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsCVarToggleCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsCVarToggle, FECsCVarToggle>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

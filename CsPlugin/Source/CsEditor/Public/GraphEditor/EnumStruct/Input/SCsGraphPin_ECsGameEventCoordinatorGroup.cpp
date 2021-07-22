@@ -4,34 +4,40 @@
 
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 
+#define EnumMapType EMCsGameEventCoordinatorGroup
+#define EnumType FECsGameEventCoordinatorGroup
+
 void SCsGraphPin_ECsGameEventCoordinatorGroup::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsGameEventCoordinatorGroup::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsGameEventCoordinatorGroup>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsGameEventCoordinatorGroup::OnGetText() const
 {
-	return OnGetText_Internal<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsGameEventCoordinatorGroup::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsGameEventCoordinatorGroup::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsGameEventCoordinatorGroup>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
 FText SCsGraphPin_ECsGameEventCoordinatorGroup::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsGameEventCoordinatorGroup>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef EnumMapType
+#undef EnumType

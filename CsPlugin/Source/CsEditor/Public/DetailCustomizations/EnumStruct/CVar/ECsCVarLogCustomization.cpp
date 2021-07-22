@@ -5,11 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsCVarLogCustomization"
 
+#define EnumMapType EMCsCVarLog
+#define EnumType FECsCVarLog
 
 FECsCVarLogCustomization::FECsCVarLogCustomization() :
 	Super()
 {
-	Init<EMCsCVarLog, FECsCVarLog>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsCVarLogCustomization::MakeInstance()
@@ -19,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsCVarLogCustomization::MakeInstance()
 
 void FECsCVarLogCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsCVarLog>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsCVarLogCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsCVarLog, FECsCVarLog>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsCVarLogCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsCVarLog, FECsCVarLog>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

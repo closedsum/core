@@ -5,10 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsGameEventCoordinatorGroupCustomization"
 
+#define EnumMapType EMCsGameEventCoordinatorGroup
+#define EnumType FECsGameEventCoordinatorGroup
+
 FECsGameEventCoordinatorGroupCustomization::FECsGameEventCoordinatorGroupCustomization() :
 	Super()
 {
-	Init<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsGameEventCoordinatorGroupCustomization::MakeInstance()
@@ -18,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsGameEventCoordinatorGroupCustomizatio
 
 void FECsGameEventCoordinatorGroupCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsGameEventCoordinatorGroup>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsGameEventCoordinatorGroupCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsGameEventCoordinatorGroupCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

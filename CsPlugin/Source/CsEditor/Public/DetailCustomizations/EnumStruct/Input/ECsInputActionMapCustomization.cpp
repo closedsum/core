@@ -21,10 +21,13 @@ namespace NCsInputActionMapCustomization
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsInputActionMap
+#define EnumType FECsInputActionMap
+
 FECsInputActionMapCustomization::FECsInputActionMapCustomization() :
 	Super()
 {
-	Init<EMCsInputActionMap, FECsInputActionMap>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsInputActionMapCustomization::CustomPopulateEnumMap()
@@ -41,32 +44,35 @@ TSharedRef<IPropertyTypeCustomization> FECsInputActionMapCustomization::MakeInst
 
 void FECsInputActionMapCustomization::AddEnumToMap(const FString& Name)
 {
-	EMCsInputActionMap::Get().CreateSafe(Name, true);
+	EnumMapType::Get().CreateSafe(Name, true);
 }
 
 const FString& FECsInputActionMapCustomization::GetEnumStructName()
 {
-	return EMCsInputActionMap::Get().GetEnumName();
+	return EnumMapType::Get().GetEnumName();
 }
 
 const FName& FECsInputActionMapCustomization::GetEnumStructFName()
 {
-	return EMCsInputActionMap::Get().GetEnumFName();
+	return EnumMapType::Get().GetEnumFName();
 }
 
 void FECsInputActionMapCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsInputActionMap>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsInputActionMapCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsInputActionMap, FECsInputActionMap, int32>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType, int32>(DisplayName);
 }
 
 void FECsInputActionMapCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsInputActionMap, FECsInputActionMap>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

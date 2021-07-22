@@ -24,10 +24,13 @@ namespace NCsSkeletalMeshActorCustomization
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsSkeletalMeshActor
+#define EnumType FECsSkeletalMeshActor
+
 FECsSkeletalMeshActorCustomization::FECsSkeletalMeshActorCustomization() :
 	Super()
 {
-	Init<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsSkeletalMeshActorCustomization::CustomPopulateEnumMap()
@@ -44,17 +47,20 @@ TSharedRef<IPropertyTypeCustomization> FECsSkeletalMeshActorCustomization::MakeI
 
 void FECsSkeletalMeshActorCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsSkeletalMeshActor>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsSkeletalMeshActorCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsSkeletalMeshActorCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

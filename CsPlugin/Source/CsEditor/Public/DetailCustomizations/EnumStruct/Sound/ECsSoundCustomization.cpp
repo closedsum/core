@@ -8,25 +8,31 @@
 // Cached
 #pragma region
 
-namespace NCsSoundCustomizationCached
+namespace NCsSoundCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsSoundCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsSoundCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsSound
+#define EnumType FECsSound
+
 FECsSoundCustomization::FECsSoundCustomization() :
 	Super()
 {
-	Init<EMCsSound, FECsSound>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsSoundCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsSoundCustomizationCached;
+	using namespace NCsSoundCustomization::NCached;
 
 	NCsSound::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
@@ -38,17 +44,20 @@ TSharedRef<IPropertyTypeCustomization> FECsSoundCustomization::MakeInstance()
 
 void FECsSoundCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsSound>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsSoundCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsSound, FECsSound>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsSoundCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsSound, FECsSound>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

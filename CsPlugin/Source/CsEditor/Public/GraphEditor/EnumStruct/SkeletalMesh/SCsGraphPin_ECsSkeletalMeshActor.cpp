@@ -20,11 +20,14 @@ namespace NCsGraphPinSkeletalMeshActor
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsSkeletalMeshActor
+#define EnumType FECsSkeletalMeshActor
+
 void SCsGraphPin_ECsSkeletalMeshActor::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsSkeletalMeshActor::CustomPopulateEnumMap()
@@ -36,25 +39,28 @@ void SCsGraphPin_ECsSkeletalMeshActor::CustomPopulateEnumMap()
 
 void SCsGraphPin_ECsSkeletalMeshActor::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsSkeletalMeshActor>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsSkeletalMeshActor::OnGetText() const
 {
-	return OnGetText_Internal<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsSkeletalMeshActor::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsSkeletalMeshActor::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsSkeletalMeshActor>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
 FText SCsGraphPin_ECsSkeletalMeshActor::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsSkeletalMeshActor>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef EnumMapType
+#undef EnumType

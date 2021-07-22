@@ -8,25 +8,31 @@
 // Cached
 #pragma region
 
-namespace NCsInputActionCustomizationCached
+namespace NCsInputActionCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsInputActionCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsInputActionCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsInputActionMap
+#define EnumType FECsInputActionMap
+
 FECsInputActionCustomization::FECsInputActionCustomization() :
 	Super()
 {
-	Init<EMCsInputAction, FECsInputAction>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsInputActionCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsInputActionCustomizationCached;
+	using namespace NCsInputActionCustomization::NCached;
 
 	NCsInputAction::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
@@ -38,32 +44,35 @@ TSharedRef<IPropertyTypeCustomization> FECsInputActionCustomization::MakeInstanc
 
 void FECsInputActionCustomization::AddEnumToMap(const FString& Name)
 {
-	EMCsInputAction::Get().CreateSafe(Name, true);
+	EnumMapType::Get().CreateSafe(Name, true);
 }
 
 const FString& FECsInputActionCustomization::GetEnumStructName()
 {
-	return EMCsInputAction::Get().GetEnumName();
+	return EnumMapType::Get().GetEnumName();
 }
 
 const FName& FECsInputActionCustomization::GetEnumStructFName()
 {
-	return EMCsInputAction::Get().GetEnumFName();
+	return EnumMapType::Get().GetEnumFName();
 }
 
 void FECsInputActionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsInputAction>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsInputActionCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsInputAction, FECsInputAction>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsInputActionCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsInputAction, FECsInputAction>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

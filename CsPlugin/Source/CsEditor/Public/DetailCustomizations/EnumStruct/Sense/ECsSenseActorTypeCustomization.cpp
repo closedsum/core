@@ -5,11 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsAssetTypeCustomization"
 
+#define EnumMapType EMCsSenseActorType
+#define EnumType FECsSenseActorType
 
 FECsSenseActorTypeCustomization::FECsSenseActorTypeCustomization() :
 	Super()
 {
-	Init<EMCsSenseActorType, FECsSenseActorType>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsSenseActorTypeCustomization::MakeInstance()
@@ -19,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsSenseActorTypeCustomization::MakeInst
 
 void FECsSenseActorTypeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsSenseActorType>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsSenseActorTypeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsSenseActorType, FECsSenseActorType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsSenseActorTypeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsSenseActorType, FECsSenseActorType>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

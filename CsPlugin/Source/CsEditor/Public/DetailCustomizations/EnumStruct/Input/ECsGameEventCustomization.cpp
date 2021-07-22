@@ -8,20 +8,26 @@
 // Cached
 #pragma region
 
-namespace NCsGameEventCustomizationCached
+namespace NCsGameEventCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsGameEventCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsGameEventCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsGameEvent
+#define EnumType FECsGameEvent
+
 FECsGameEventCustomization::FECsGameEventCustomization() :
 	Super()
 {
-	Init<EMCsGameEvent, FECsGameEvent>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsGameEventCustomization::MakeInstance()
@@ -31,24 +37,27 @@ TSharedRef<IPropertyTypeCustomization> FECsGameEventCustomization::MakeInstance(
 
 void FECsGameEventCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsGameEventCustomizationCached;
+	using namespace NCsGameEventCustomization::NCached;
 
 	NCsGameEvent::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void FECsGameEventCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsGameEvent>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsGameEventCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsGameEvent, FECsGameEvent>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsGameEventCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsGameEvent, FECsGameEvent>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

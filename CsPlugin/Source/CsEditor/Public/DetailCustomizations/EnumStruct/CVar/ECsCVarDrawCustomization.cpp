@@ -5,11 +5,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsCVarDrawCustomization"
 
+#define EnumMapType EMCsCVarDraw
+#define EnumType FECsCVarDraw
 
 FECsCVarDrawCustomization::FECsCVarDrawCustomization() :
 	Super()
 {
-	Init<EMCsCVarDraw, FECsCVarDraw>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsCVarDrawCustomization::MakeInstance()
@@ -19,17 +21,20 @@ TSharedRef<IPropertyTypeCustomization> FECsCVarDrawCustomization::MakeInstance()
 
 void FECsCVarDrawCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsCVarDraw>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsCVarDrawCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsCVarDraw, FECsCVarDraw>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsCVarDrawCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsCVarDraw, FECsCVarDraw>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

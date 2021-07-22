@@ -21,10 +21,13 @@ namespace NCsUpdateGroupCustomization
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsUpdateGroup
+#define EnumType FECsUpdateGroup
+
 FECsUpdateGroupCustomization::FECsUpdateGroupCustomization() :
 	Super()
 {
-	Init<EMCsUpdateGroup, FECsUpdateGroup>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsUpdateGroupCustomization::CustomPopulateEnumMap()
@@ -41,32 +44,35 @@ TSharedRef<IPropertyTypeCustomization> FECsUpdateGroupCustomization::MakeInstanc
 
 void FECsUpdateGroupCustomization::AddEnumToMap(const FString& Name)
 {
-	EMCsUpdateGroup::Get().CreateSafe(Name, true);
+	EnumMapType::Get().CreateSafe(Name, true);
 }
 
 const FString& FECsUpdateGroupCustomization::GetEnumStructName()
 {
-	return EMCsUpdateGroup::Get().GetEnumName();
+	return EnumMapType::Get().GetEnumName();
 }
 
 const FName& FECsUpdateGroupCustomization::GetEnumStructFName()
 {
-	return EMCsUpdateGroup::Get().GetEnumFName();
+	return EnumMapType::Get().GetEnumFName();
 }
 
 void FECsUpdateGroupCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsUpdateGroup>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsUpdateGroupCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsUpdateGroup, FECsUpdateGroup>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsUpdateGroupCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsUpdateGroup, FECsUpdateGroup>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

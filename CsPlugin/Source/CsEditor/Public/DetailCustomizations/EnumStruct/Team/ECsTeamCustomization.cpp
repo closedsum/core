@@ -6,11 +6,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsTeamCustomization"
 
+#define EnumMapType EMCsTeam
+#define EnumType FECsTeam
 
 FECsTeamCustomization::FECsTeamCustomization() :
 	Super()
 {
-	Init<EMCsTeam, FECsTeam>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsTeamCustomization::MakeInstance()
@@ -20,17 +22,20 @@ TSharedRef<IPropertyTypeCustomization> FECsTeamCustomization::MakeInstance()
 
 void FECsTeamCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsTeam>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsTeamCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsTeam, FECsTeam>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsTeamCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsTeam, FECsTeam>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

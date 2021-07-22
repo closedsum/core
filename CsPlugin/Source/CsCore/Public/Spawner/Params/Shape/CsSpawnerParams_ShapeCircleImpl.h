@@ -70,6 +70,11 @@ public:
 	{
 	}
 
+	void Update()
+	{
+		FrequencyParams.Update();
+	}
+
 #define ParamsType NCsSpawner::NParams::NShape::NCircle::FImpl
 	ParamsType* ConstructParamsImpl() const;
 	void CopyToParamsAsValue(ParamsType* Params) const;

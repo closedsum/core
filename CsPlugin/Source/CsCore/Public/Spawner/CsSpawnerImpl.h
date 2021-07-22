@@ -157,6 +157,9 @@ public:
 
 #undef PointImplType
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Spawner|Point")
+	FTransform PointImpl_GetCurrentTransform();
+
 #pragma endregion Point
 
 // Params

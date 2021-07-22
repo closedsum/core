@@ -232,6 +232,11 @@ void ACsSpawnerImpl::SetPointImpl(const FString& Context, PointImplType* InPoint
 	PointImpl->SetSpawner(this);
 }
 
+FTransform ACsSpawnerImpl::PointImpl_GetCurrentTransform()
+{
+	return PointImpl->GetCurrentTransform();
+}
+
 #pragma endregion Point
 
 // Params
@@ -641,6 +646,8 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 
 			++CurrentSpawnCount;
 			++CurrentCountPerSpawn;
+
+			PointImpl->Advance(CurrentSpawnCount, CurrentGroup, CurrentCountPerSpawn);
 
 			if (CurrentCountPerSpawn < CountParams->GetCountPerSpawn())
 			{

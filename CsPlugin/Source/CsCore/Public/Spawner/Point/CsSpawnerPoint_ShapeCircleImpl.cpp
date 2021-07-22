@@ -80,8 +80,6 @@ namespace NCsSpawner
 					else
 					if (CountType == PointCountType::TotalCount)
 					{
-						checkf(CountParams.GetCountPerSpawn() > 1 , TEXT("%s: If CountType == TotalCount (PointCountType::TotalCount), then Params->GetCountParams().GetCountPerSpawn() MUST be > 1."), *Context);
-
 						const FrequencyType& Frequency = FrequencyParams.GetType();
 
 						checkf(Frequency != FrequencyType::Infinite, TEXT("%s: If CountType == TotalCount (PointCountType::TotalCount), then Params->GetFrequencyParams().GetType() must NOT be Infinite (FrequencyType::Infinite)."), *Context);
@@ -96,6 +94,8 @@ namespace NCsSpawner
 						else
 						if (Frequency == FrequencyType::Count)
 						{
+							checkf(FrequencyParams.GetCount() > 0, TEXT("%s: If CountType == TotalCount (PointCountType::TotalCount), then Params->GetFrequencyParams().GetCount() MUST be > 0."), *Context);
+
 							Transforms.Reset(CountParams.GetCountPerSpawn() * FrequencyParams.GetCount());
 							Transforms.AddDefaulted(CountParams.GetCountPerSpawn() * FrequencyParams.GetCount());
 						}
@@ -104,6 +104,8 @@ namespace NCsSpawner
 						if (Frequency == FrequencyType::TimeCount ||
 							Frequency == FrequencyType::TimeInterval)
 						{
+							checkf(FrequencyParams.GetCount() > 0, TEXT("%s: If CountType == TotalCount (PointCountType::TotalCount), then Params->GetFrequencyParams().GetCount() MUST be > 0."), *Context);
+
 							Transforms.Reset(FrequencyParams.GetCount());
 							Transforms.AddDefaulted(FrequencyParams.GetCount());
 						}
@@ -197,7 +199,7 @@ namespace NCsSpawner
 
 					FTransform Transform = FTransform::Identity;
 
-					Transform.SetTranslation(GetCenterLocation());
+					Transform.SetTranslation(Location + GetCenterLocation());
 
 					return Transform;
 				}
@@ -227,7 +229,7 @@ namespace NCsSpawner
 
 					FTransform Transform = FTransform::Identity;
 
-					Transform.SetTranslation(GetCenterLocation());
+					Transform.SetTranslation(Location + GetCenterLocation());
 
 					return Transform;
 				}

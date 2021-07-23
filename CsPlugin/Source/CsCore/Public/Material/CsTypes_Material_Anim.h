@@ -109,34 +109,26 @@ namespace NCsMaterial
 			{
 			private:
 
-				FName Name;
-				FName* Name_Emu;
-
-				ECsEasingType Easing;
-				ECsEasingType* Easing_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(Name, FName)
+				CS_DECLARE_MEMBER_WITH_EMU(Easing, ECsEasingType)
 
 			protected:
 
-				ValueType From;
-				ValueType* From_Emu;
-
-				ValueType To;
-				ValueType* To_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(From, ValueType)
+				CS_DECLARE_MEMBER_WITH_EMU(To, ValueType)
 
 			public:
 
 				TValueType() :
-					Name(NAME_None),
-					Name_Emu(nullptr),
-					Easing(ECsEasingType::Linear),
-					Easing_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Name, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_EMU(Easing, ECsEasingType::Linear),
 					From_Emu(nullptr),
 					To_Emu(nullptr)
 				{
-					Name_Emu = &Name;
-					Easing_Emu = &Easing;
-					From_Emu = &From;
-					To_Emu = &To;
+					CS_CTOR_SET_MEMBER_EMU(Name);
+					CS_CTOR_SET_MEMBER_EMU(Easing);
+					CS_CTOR_SET_MEMBER_EMU(From);
+					CS_CTOR_SET_MEMBER_EMU(To);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Name, FName)
@@ -260,8 +252,7 @@ namespace NCsMaterial
 
 		private:
 
-			float Duration;
-			float* Duration_Emu;
+			CS_DECLARE_MEMBER_WITH_EMU(Duration, float)
 
 		public:
 
@@ -272,12 +263,11 @@ namespace NCsMaterial
 		public:
 
 			FFrame() :
-				Duration(0.0f),
-				Duration_Emu(nullptr),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Duration, 0.0f),
 				VectorParameters(),
 				ScalarParameters()
 			{
-				Duration_Emu = &Duration;
+				CS_CTOR_SET_MEMBER_EMU(Duration);
 			}
 
 			FORCEINLINE FFrame& operator=(const FFrame& B)
@@ -414,20 +404,17 @@ namespace NCsMaterial
 		private:
 
 			/** Describes how the Frames will be played. */
-			PlaybackType Playback;
-			PlaybackType* Playback_Emu;
+			CS_DECLARE_MEMBER_WITH_EMU(Playback, PlaybackType)
 
 			/** Describes the time between each Frame. */
-			PlayRateType PlayRate;
-			PlayRateType* PlayRate_Emu;
+			CS_DECLARE_MEMBER_WITH_EMU(PlayRate, PlayRateType)
 
 			/** Time between each Frame.
 				Only Valid if:
 				 PlayRate == ECsAnimPlayRate::CustomDeltaTime.
 				if PlayRate == EcsAnimPlayRate::Custon,
 				 this value is ignored. */
-			float DeltaTime;
-			float* DeltaTime_Emu;
+			CS_DECLARE_MEMBER_WITH_EMU(DeltaTime, float)
 
 			/** Total time to play all Frames.
 				If PlayRate == ECsAnimPlayRate::CustomTotalTime:
@@ -435,8 +422,7 @@ namespace NCsMaterial
 				 TotalTime / Number of Frames.
 				If PlayRate == ECsAnimPlayRate::Custom:
 				 Total = Sum of Duration of each Frame (Frame[Index].Duration). */
-			float TotalTime;
-			float* TotalTime_Emu;
+			CS_DECLARE_MEMBER_WITH_EMU(TotalTime, float)
 
 		public:
 
@@ -444,24 +430,23 @@ namespace NCsMaterial
 
 		private:
 
-			int32 TotalCount;
-			int32* TotalCount_Emu;
+			CS_DECLARE_MEMBER_WITH_EMU(TotalCount, int32)
 
 		public:
 
 			FAnim()	:
-				Playback(PlaybackType::Forward),
-				Playback_Emu(nullptr),
-				PlayRate(PlayRateType::PR_60Fps),
-				PlayRate_Emu(nullptr),
-				DeltaTime(0.0f),
-				DeltaTime_Emu(nullptr),
-				TotalTime(0.0f),
-				TotalTime_Emu(nullptr),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(Playback, PlaybackType::Forward),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(DeltaTime, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_EMU(TotalTime, 0.0f),
 				Frames(),
-				TotalCount(0),
-				TotalCount_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_WITH_EMU(TotalCount, 0)
 			{
+				CS_CTOR_SET_MEMBER_EMU(Playback);
+				CS_CTOR_SET_MEMBER_EMU(PlayRate);
+				CS_CTOR_SET_MEMBER_EMU(DeltaTime);
+				CS_CTOR_SET_MEMBER_EMU(TotalTime);
+				CS_CTOR_SET_MEMBER_EMU(TotalCount);
 			}
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Playback, PlaybackType)
@@ -517,19 +502,14 @@ namespace NCsMaterial
 
 			void Reset()
 			{
-				Playback = PlaybackType::Forward;
-				SetPlayback(&Playback);
-				PlayRate = PlayRateType::PR_60Fps;
-				SetPlayRate(&PlayRate);
-				DeltaTime = 0.0f;
-				SetDeltaTime(&DeltaTime);
-				TotalTime = 0.0f;
-				SetTotalTime(&TotalTime);
+				CS_RESET_MEMBER_WITH_EMU(Playback, PlaybackType::Forward)
+				CS_RESET_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps)
+				CS_RESET_MEMBER_WITH_EMU(DeltaTime, 0.0f)
+				CS_RESET_MEMBER_WITH_EMU(TotalTime, 0.0f)
 				// TODO: Since there are arrays contained in each Frame, look into handling this better in the future.
 				Frames.Reset(Frames.Max());
 
-				TotalCount = 0;
-				SetTotalCount(&TotalCount);
+				CS_RESET_MEMBER_WITH_EMU(TotalCount, 0)
 			}
 
 		#undef PlaybackType
@@ -560,14 +540,14 @@ public:
 	FCsMaterialAnim Anim;
 
 	/** Material to perform the animation on. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	UMaterialInstanceDynamic* MID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	UObject* MIDAsObject;
 
 	/** Owner of the Animation */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	UObject* Owner;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -611,8 +591,7 @@ namespace NCsMaterial
 
 				TWeakObjectPtr<UObject> Owner;
 
-				FECsUpdateGroup Group;
-				FECsUpdateGroup* Group_Emu;
+				CS_DECLARE_MEMBER_WITH_EMU(Group, FECsUpdateGroup)
 
 				// TODO: Add Abort and End Callbacks
 
@@ -622,10 +601,9 @@ namespace NCsMaterial
 					Anim(),
 					MID(nullptr),
 					Owner(nullptr),
-					Group(),
-					Group_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(Group)
 				{
-					Group_Emu = &Group;
+					CS_CTOR_SET_MEMBER_EMU(Group);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Group, FECsUpdateGroup)

@@ -178,12 +178,12 @@ public:
 
 	/** Actor that is moving.
 		Only valid if Mover == MoverType::Actor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	AActor* MoveActor;
 
 	/** Component that is moving.
 		Only valid if Mover == MoverType::Component */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	USceneComponent* MoveComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -218,17 +218,17 @@ public:
 
 	/** Actor to move to.
 		Only valid if Destination == DestinationType::Actor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	AActor* ToActor;
 
 	/** Component to move to.
 		Only valid if Destination == DestinationType::Component */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	USceneComponent* ToComponent;
 
 	/** Component to move to.
 		Only valid if Destination == DestinationType::Component */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite)
 	USkeletalMeshComponent* ToMeshComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

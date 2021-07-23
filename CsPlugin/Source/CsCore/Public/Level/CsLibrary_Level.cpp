@@ -28,7 +28,7 @@ namespace NCsLevel
 			}
 		}
 
-		ULevel* FLibrary::GetChecked(const FString& Context, UWorld* World)
+		ULevel* FLibrary::GetChecked(const FString& Context, const UWorld* World)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
@@ -45,14 +45,14 @@ namespace NCsLevel
 			return nullptr;
 		}
 
-		ULevel* FLibrary::GetChecked(const FString& Context, UObject* WorldContext)
+		ULevel* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 		{
 			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetChecked(Context, WorldContext->GetWorld());
 		}
 
-		ULevel* FLibrary::GetSafe(const FString& Context, UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		ULevel* FLibrary::GetSafe(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_RET_NULL(World)
 
@@ -69,7 +69,7 @@ namespace NCsLevel
 			return nullptr;
 		}
 
-		ULevel* FLibrary::GetSafe(UWorld* World)
+		ULevel* FLibrary::GetSafe(const UWorld* World)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -78,7 +78,7 @@ namespace NCsLevel
 			return GetSafe(Context, World, nullptr);
 		}
 
-		ULevel* FLibrary::GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		ULevel* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -90,7 +90,7 @@ namespace NCsLevel
 			return GetSafe(Context, World, Log);
 		}
 
-		ULevel* FLibrary::GetSafe(UObject* WorldContext)
+		ULevel* FLibrary::GetSafe(const UObject* WorldContext)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -102,21 +102,21 @@ namespace NCsLevel
 		// Name
 		#pragma region
 
-		FString FLibrary::GetNameChecked(const FString& Context, UWorld* World)
+		FString FLibrary::GetNameChecked(const FString& Context, const UWorld* World)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
 			return UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 		}
 
-		FString FLibrary::GetNameChecked(const FString& Context, UObject* WorldContext)
+		FString FLibrary::GetNameChecked(const FString& Context, const UObject* WorldContext)
 		{
 			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetNameChecked(Context, WorldContext->GetWorld());
 		}
 
-		FString FLibrary::GetSafeName(const FString& Context, UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		FString FLibrary::GetSafeName(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			if (!World)
 			{
@@ -133,7 +133,7 @@ namespace NCsLevel
 			return Result;
 		}
 
-		FString FLibrary::GetSafeName(UWorld* World)
+		FString FLibrary::GetSafeName(const UWorld* World)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -142,7 +142,7 @@ namespace NCsLevel
 			return GetSafeName(Context, World, nullptr);
 		}
 
-		FString FLibrary::GetSafeName(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		FString FLibrary::GetSafeName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -154,7 +154,7 @@ namespace NCsLevel
 			return GetSafeName(Context, World, Log);
 		}
 
-		FString FLibrary::GetSafeName(UObject* WorldContext)
+		FString FLibrary::GetSafeName(const UObject* WorldContext)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -163,7 +163,7 @@ namespace NCsLevel
 			return GetSafeName(Context, WorldContext, nullptr);
 		}
 
-		FString FLibrary::GetLongPackageNameChecked(const FString& Context, UObject* WorldContext)
+		FString FLibrary::GetLongPackageNameChecked(const FString& Context, const UObject* WorldContext)
 		{
 			const FString LevelPath = GetNameChecked(Context, WorldContext);
 
@@ -180,7 +180,7 @@ namespace NCsLevel
 		// FName
 		#pragma region
 
-		FName FLibrary::GetFNameChecked(const FString& Context, UWorld* World)
+		FName FLibrary::GetFNameChecked(const FString& Context, const UWorld* World)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
@@ -189,14 +189,14 @@ namespace NCsLevel
 			return FName(*Name);
 		}
 
-		FName FLibrary::GetFNameChecked(const FString& Context, UObject* WorldContext)
+		FName FLibrary::GetFNameChecked(const FString& Context, const UObject* WorldContext)
 		{
 			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetFNameChecked(Context, WorldContext->GetWorld());
 		}
 
-		FName FLibrary::GetSafeFName(const FString& Context, UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		FName FLibrary::GetSafeFName(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			if (!World)
 			{
@@ -214,7 +214,7 @@ namespace NCsLevel
 			return FName(*Name);
 		}
 
-		FName FLibrary::GetSafeFName(UWorld* World)
+		FName FLibrary::GetSafeFName(const UWorld* World)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -223,7 +223,7 @@ namespace NCsLevel
 			return GetSafeFName(Context, World, nullptr);
 		}
 
-		FName FLibrary::GetSafeFName(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		FName FLibrary::GetSafeFName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -235,7 +235,7 @@ namespace NCsLevel
 			return GetSafeFName(World);
 		}
 
-		FName FLibrary::GetSafeFName(UObject* WorldContext)
+		FName FLibrary::GetSafeFName(const UObject* WorldContext)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -244,7 +244,7 @@ namespace NCsLevel
 			return GetSafeFName(Context, WorldContext, nullptr);
 		}
 
-		bool FLibrary::IsNameChecked(const FString& Context, UWorld* World, const FString& MapPackageName)
+		bool FLibrary::IsNameChecked(const FString& Context, const UWorld* World, const FString& MapPackageName)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
@@ -253,14 +253,14 @@ namespace NCsLevel
 			return MapPackageName == UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 		}
 
-		bool FLibrary::IsNameChecked(const FString& Context, UObject* WorldContext, const FString& MapPackageName)
+		bool FLibrary::IsNameChecked(const FString& Context, const UObject* WorldContext, const FString& MapPackageName)
 		{
 			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return IsNameChecked(Context, WorldContext->GetWorld(), MapPackageName);
 ;		}
 
-		bool FLibrary::SafeIsName(const FString& Context, UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeIsName(const FString& Context, const UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(World)
 
@@ -272,7 +272,7 @@ namespace NCsLevel
 			return MapPackageName == UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 		}
 
-		bool FLibrary::SafeIsName(UWorld* World, const FString& MapPackageName)
+		bool FLibrary::SafeIsName(const UWorld* World, const FString& MapPackageName)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -281,7 +281,7 @@ namespace NCsLevel
 			return SafeIsName(Context, World, MapPackageName, nullptr);
 		}
 
-		bool FLibrary::SafeIsName(const FString& Context, UObject* WorldContext, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeIsName(const FString& Context, const UObject* WorldContext, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -298,7 +298,7 @@ namespace NCsLevel
 			return SafeIsName(Context, World, MapPackageName, Log);
 		}
 
-		bool FLibrary::SafeIsName(UObject* WorldContext, const FString& MapPackageName)
+		bool FLibrary::SafeIsName(const UObject* WorldContext, const FString& MapPackageName)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -317,7 +317,7 @@ namespace NCsLevel
 			return FString::Printf(TEXT("LevelScriptActor: %s with Class: %s"), *(Actor->GetName()), *(Actor->GetClass()->GetName()));
 		}
 
-		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, UWorld* World)
+		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, const UWorld* World)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
@@ -330,14 +330,14 @@ namespace NCsLevel
 			return LevelScriptActor;
 		}
 
-		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, UObject* WorldContext)
+		ALevelScriptActor* FLibrary::GetScriptActorChecked(const FString& Context, const UObject* WorldContext)
 		{
 			CS_IS_PTR_NULL_CHECKED(WorldContext)
 
 			return GetScriptActorChecked(Context, WorldContext->GetWorld());
 		}
 
-		ALevelScriptActor* FLibrary::GetSafeScriptActor(const FString& Context, UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		ALevelScriptActor* FLibrary::GetSafeScriptActor(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			if (ULevel* Level = GetSafe(Context, World, Log))
 			{
@@ -351,7 +351,7 @@ namespace NCsLevel
 			return nullptr;
 		}
 
-		ALevelScriptActor* FLibrary::GetSafeScriptActor(UWorld* World)
+		ALevelScriptActor* FLibrary::GetSafeScriptActor(const UWorld* World)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 
@@ -360,7 +360,7 @@ namespace NCsLevel
 			return GetSafeScriptActor(Context, World, nullptr);
 		}
 
-		ALevelScriptActor* FLibrary::GetSafeScriptActor(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		ALevelScriptActor* FLibrary::GetSafeScriptActor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -372,7 +372,7 @@ namespace NCsLevel
 			return GetSafeScriptActor(Context, World, Log);
 		}
 
-		ALevelScriptActor* FLibrary::GetSafeScriptActor(UObject* WorldContext)
+		ALevelScriptActor* FLibrary::GetSafeScriptActor(const UObject* WorldContext)
 		{
 			using namespace NCsLevel::NPersistent::NLibrary::NCached;
 

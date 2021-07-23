@@ -877,7 +877,7 @@ namespace NCsMaterial
 				Anim.Reset();
 				MID = nullptr;
 				Owner = nullptr;
-				Group = EMCsUpdateGroup::Get().GetMAX();
+				CS_RESET_MEMBER_WITH_EMU(Group, EMCsUpdateGroup::Get().GetMAX())
 			}
 		}
 	}

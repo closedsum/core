@@ -25,7 +25,7 @@ namespace NCsLevel
 			* @param World
 			* return			Level
 			*/
-			static ULevel* GetChecked(const FString& Context, UWorld* World);
+			static ULevel* GetChecked(const FString& Context, const UWorld* World);
 
 			/**
 			* Get the current Persistent Level.
@@ -34,7 +34,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Level
 			*/
-			static ULevel* GetChecked(const FString& Context, UObject* WorldContext);
+			static ULevel* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Get the current Persistent Level.
@@ -42,7 +42,7 @@ namespace NCsLevel
 			* @param World
 			* return		Level
 			*/
-			static ULevel* GetSafe(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static ULevel* GetSafe(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the current Persistent Level.
@@ -50,7 +50,7 @@ namespace NCsLevel
 			* @param World
 			* return		Level
 			*/
-			static ULevel* GetSafe(UWorld* World);
+			static ULevel* GetSafe(const UWorld* World);
 
 			/**
 			* Get the current Persistent Level.
@@ -58,7 +58,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Level
 			*/
-			static ULevel* GetSafe(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static ULevel* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the current Persistent Level.
@@ -66,7 +66,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return		Level
 			*/
-			static ULevel* GetSafe(UObject* WorldContext);
+			static ULevel* GetSafe(const UObject* WorldContext);
 
 		// Name
 		#pragma region
@@ -79,7 +79,7 @@ namespace NCsLevel
 			* @param World
 			* return			Level name
 			*/
-			static FString GetNameChecked(const FString& Context, UWorld* World);
+			static FString GetNameChecked(const FString& Context, const UWorld* World);
 
 			/**
 			* Get the current Persistent Level's name as a FString.
@@ -88,7 +88,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Level name
 			*/
-			static FString GetNameChecked(const FString& Context, UObject* WorldContext);
+			static FString GetNameChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Get the current Persistent Level's name as a FString.
@@ -98,7 +98,7 @@ namespace NCsLevel
 			* @param Log
 			* return			Level name
 			*/
-			static FString GetSafeName(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static FString GetSafeName(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the current Persistent Level's name as a FString.
@@ -106,7 +106,7 @@ namespace NCsLevel
 			* @param World
 			* return			Level name
 			*/
-			static FString GetSafeName(UWorld* World);
+			static FString GetSafeName(const UWorld* World);
 
 			/**
 			* Get the current Persistent Level's name as a FString.
@@ -116,7 +116,7 @@ namespace NCsLevel
 			* @param Log
 			* return				Level name
 			*/
-			static FString GetSafeName(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static FString GetSafeName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the current Persistent Level's name as a FString.
@@ -124,7 +124,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Level name
 			*/
-			static FString GetSafeName(UObject* WorldContext);
+			static FString GetSafeName(const UObject* WorldContext);
 
 			/**
 			* Get the Long Package Name for the Persistent Level. This is usually in the form:
@@ -134,7 +134,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				LevelPath.LevelName
 			*/
-			static FString GetLongPackageNameChecked(const FString& Context, UObject* WorldContext);
+			static FString GetLongPackageNameChecked(const FString& Context, const UObject* WorldContext);
 
 		#pragma endregion Name
 
@@ -149,7 +149,7 @@ namespace NCsLevel
 			* @param World
 			* return			Level name
 			*/
-			static FName GetFNameChecked(const FString& Context, UWorld* World);
+			static FName GetFNameChecked(const FString& Context, const UWorld* World);
 
 			/**
 			* Get the current Persistent Level's name as a FName.
@@ -158,7 +158,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Level name
 			*/
-			static FName GetFNameChecked(const FString& Context, UObject* WorldContext);
+			static FName GetFNameChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Get the current Persistent Level's name as a FName.
@@ -168,7 +168,7 @@ namespace NCsLevel
 			* @param Log
 			* return			Level name
 			*/
-			static FName GetSafeFName(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static FName GetSafeFName(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the current Persistent Level's name as a FName.
@@ -176,7 +176,7 @@ namespace NCsLevel
 			* @param World
 			* return			Level name
 			*/
-			static FName GetSafeFName(UWorld* World);
+			static FName GetSafeFName(const UWorld* World);
 
 			/**
 			* Get the current Persistent Level's name as a FName.
@@ -186,7 +186,7 @@ namespace NCsLevel
 			* @param Log
 			* return				Level name
 			*/
-			static FName GetSafeFName(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static FName GetSafeFName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the current Persistent Level's name as a FName.
@@ -194,7 +194,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Level name
 			*/
-			static FName GetSafeFName(UObject* WorldContext);
+			static FName GetSafeFName(const UObject* WorldContext);
 
 		#pragma endregion FName
 
@@ -202,27 +202,27 @@ namespace NCsLevel
 
 			/**
 			*/
-			static bool IsNameChecked(const FString& Context, UWorld* World, const FString& MapPackageName);
+			static bool IsNameChecked(const FString& Context, const UWorld* World, const FString& MapPackageName);
 
 			/**
 			*/
-			static bool IsNameChecked(const FString& Context, UObject* WorldContext, const FString& MapPackageName);
+			static bool IsNameChecked(const FString& Context, const UObject* WorldContext, const FString& MapPackageName);
 
 			/**
 			*/
-			static bool SafeIsName(const FString& Context, UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static bool SafeIsName(const FString& Context, const UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			*/
-			static bool SafeIsName(UWorld* World, const FString& MapPackageName);
+			static bool SafeIsName(const UWorld* World, const FString& MapPackageName);
 
 			/**
 			*/
-			static bool SafeIsName(const FString& Context, UObject* WorldContext, const FString& MapPackageName, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static bool SafeIsName(const FString& Context, const UObject* WorldContext, const FString& MapPackageName, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			*/
-			static bool SafeIsName(UObject* WorldContext, const FString& MapPackageName);
+			static bool SafeIsName(const UObject* WorldContext, const FString& MapPackageName);
 
 		// LevelScriptActor
 		#pragma region
@@ -237,7 +237,7 @@ namespace NCsLevel
 			* @param World
 			* return			LevelScriptActor
 			*/
-			static ALevelScriptActor* GetScriptActorChecked(const FString& Context, UWorld* World);
+			static ALevelScriptActor* GetScriptActorChecked(const FString& Context, const UWorld* World);
 
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
@@ -247,7 +247,7 @@ namespace NCsLevel
 			* return			LevelScriptActor of type: T.
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetScriptActorChecked(const FString& Context, UWorld* World)
+			FORCEINLINE static T* GetScriptActorChecked(const FString& Context, const UWorld* World)
 			{
 				T* Slice = Cast<T>(GetScriptActorChecked(Context, World));
 
@@ -263,7 +263,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				LevelScriptActor
 			*/
-			static ALevelScriptActor* GetScriptActorChecked(const FString& Context, UObject* WorldContext);
+			static ALevelScriptActor* GetScriptActorChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
@@ -273,7 +273,7 @@ namespace NCsLevel
 			* return				LevelScriptActor of type: T.
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetScriptActorChecked(const FString& Context, UObject* WorldContext)
+			FORCEINLINE static T* GetScriptActorChecked(const FString& Context, const UObject* WorldContext)
 			{
 				T* Slice = Cast<T>(GetScriptActorChecked(Context, WorldContext));
 
@@ -290,7 +290,7 @@ namespace NCsLevel
 			* @param Log
 			* return			LevelScriptActor
 			*/
-			static ALevelScriptActor* GetSafeScriptActor(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static ALevelScriptActor* GetSafeScriptActor(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
@@ -301,7 +301,7 @@ namespace NCsLevel
 			* return			LevelScriptActor of type: T.
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetSafeScriptActor(const FString& Context, UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning)
+			FORCEINLINE static T* GetSafeScriptActor(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) = &FCsLog::Warning)
 			{
 				ALevelScriptActor* Actor = GetSafeScriptActor(Context, World, Log);
 
@@ -323,7 +323,7 @@ namespace NCsLevel
 			* @param World
 			* return			LevelScriptActor
 			*/
-			static ALevelScriptActor* GetSafeScriptActor(UWorld* World);
+			static ALevelScriptActor* GetSafeScriptActor(const UWorld* World);
 
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
@@ -332,7 +332,7 @@ namespace NCsLevel
 			* return			LevelScriptActor of type: T.
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetSafeScriptActor(UWorld* World)
+			FORCEINLINE static T* GetSafeScriptActor(const UWorld* World)
 			{
 				return Cast<T>(GetSafeScriptActor(World));
 			}
@@ -345,7 +345,7 @@ namespace NCsLevel
 			* @param Log
 			* return				LevelScriptActor
 			*/
-			static ALevelScriptActor* GetSafeScriptActor(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+			static ALevelScriptActor* GetSafeScriptActor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
 
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
@@ -356,7 +356,7 @@ namespace NCsLevel
 			* return				LevelScriptActor of type: T.
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetSafeScriptActor(const FString& Context, UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning)
+			FORCEINLINE static T* GetSafeScriptActor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning)
 			{
 				return Cast<T>(GetSafeScriptActor(Context, WorldContext, Log));
 			}
@@ -367,7 +367,7 @@ namespace NCsLevel
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				LevelScriptActor
 			*/
-			static ALevelScriptActor* GetSafeScriptActor(UObject* WorldContext);
+			static ALevelScriptActor* GetSafeScriptActor(const UObject* WorldContext);
 
 			/**
 			* Get the LevelScriptActor of type: T from current Persistent Level.
@@ -376,7 +376,7 @@ namespace NCsLevel
 			* return				LevelScriptActor of type: T.
 			*/
 			template<typename T>
-			FORCEINLINE static T* GetSafeScriptActor(UObject* WorldContext)
+			FORCEINLINE static T* GetSafeScriptActor(const UObject* WorldContext)
 			{
 				return Cast<T>(GetSafeScriptActor(WorldContext));
 			}

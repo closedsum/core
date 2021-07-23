@@ -81,6 +81,33 @@
 				namespace __Ns5 { \
 					namespace __Ns6 { \
 						class __Class; } } } } } }
+#define CS_FWD_DECLARE_CLASS_NAMESPACE_7(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Class) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							class __Class; } } } } } } }
+#define CS_FWD_DECLARE_CLASS_NAMESPACE_8(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Ns8, __Class) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace __Ns8 { \
+								class __Class; } } } } } } } }
+#define CS_FWD_DECLARE_CLASS_NAMESPACE_9(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Ns8, __Ns9, __Class) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace __Ns8 { \
+								namespace __Ns9 { \
+									class __Class; } } } } } } } } }
 
 #define CS_FWD_DECLARE_STRUCT_NAMESPACE_1(__Ns1, __Struct) namespace __Ns1 { struct __Struct; }
 #define CS_FWD_DECLARE_STRUCT_NAMESPACE_2(__Ns1, __Ns2, __Struct) namespace __Ns1 { \
@@ -108,6 +135,33 @@
 				namespace __Ns5 { \
 					namespace __Ns6 { \
 						struct __Struct; } } } } } }
+#define CS_FWD_DECLARE_STRUCT_NAMESPACE_7(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Struct) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							struct __Struct; } } } } } } }
+#define CS_FWD_DECLARE_STRUCT_NAMESPACE_8(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Ns8, __Struct) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace __Ns8 { \
+								struct __Struct; } } } } } } } }
+#define CS_FWD_DECLARE_STRUCT_NAMESPACE_9(__Ns1, __Ns2, __Ns3, __Ns4, __Ns5, __Ns6, __Ns7, __Ns8, __Ns9, __Struct) namespace __Ns1 { \
+	namespace __Ns2 { \
+		namespace __Ns3 { \
+			namespace __Ns4 { \
+				namespace __Ns5 { \
+					namespace __Ns6 { \
+						namespace __Ns7 { \
+							namespace __Ns8 { \
+								namespace __Ns9 { \
+									struct __Struct; } } } } } } } } }
 
 #define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_1(__Ns1, __Enum) namespace __Ns1 { enum class __Enum : uint8; }
 #define CS_FWD_DECLARE_ENUM_CLASS_UINT8_NAMESPACE_2(__Ns1, __Ns2, __Enum) namespace __Ns1 { \

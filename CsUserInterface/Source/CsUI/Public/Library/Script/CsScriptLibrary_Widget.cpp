@@ -82,7 +82,7 @@ UClass* UCsScriptLibrary_Widget::LoadByStringPath(const FString& Context, const 
 	// Screen
 #pragma region
 
-FVector2D UCsScriptLibrary_Widget::GetScreenPositionBySlot(const FString& Context, UUserWidget* Widget)
+FVector2D UCsScriptLibrary_Widget::GetScreenPositionBySlot(const FString& Context, UWidget* Widget)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 
@@ -93,7 +93,7 @@ FVector2D UCsScriptLibrary_Widget::GetScreenPositionBySlot(const FString& Contex
 	return WidgetPositionLibrary::GetSafeBySlot(Ctxt, Widget);
 }
 
-FVector2D UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UUserWidget* Widget)
+FVector2D UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UWidget* Widget)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 
@@ -109,7 +109,7 @@ FVector2D UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(con
 // Viewport
 #pragma region
 
-void UCsScriptLibrary_Widget::GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+void UCsScriptLibrary_Widget::GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 
@@ -125,7 +125,7 @@ void UCsScriptLibrary_Widget::GetPixelAndViewportPositionByCachedGeometry(const 
 	// World
 #pragma region
 
-bool UCsScriptLibrary_Widget::GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+bool UCsScriptLibrary_Widget::GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 
@@ -136,7 +136,7 @@ bool UCsScriptLibrary_Widget::GetWorldPositionBySlot(const FString& Context, UOb
 	return WidgetPositionLibrary::GetSafeBySlot(Ctxt, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
 }
 
-bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
 {
 	using namespace NCsScriptLibraryWidget::NCached;
 

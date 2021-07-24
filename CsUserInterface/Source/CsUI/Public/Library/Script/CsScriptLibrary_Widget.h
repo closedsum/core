@@ -64,10 +64,10 @@ public:
 public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
-	static FVector2D GetScreenPositionBySlot(const FString& Context, UUserWidget* Widget);
+	static FVector2D GetScreenPositionBySlot(const FString& Context, UWidget* Widget);
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context"))
-	static FVector2D GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UUserWidget* Widget);
+	static FVector2D GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UWidget* Widget);
 
 #pragma endregion Screen
 
@@ -76,7 +76,7 @@ public:
 public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (AutoCreateRefTerm = "Context,OutPixelPosition,OutViewportPosition"))
-	static void GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+	static void GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
 
 #pragma endregion Viewport
 
@@ -85,10 +85,10 @@ public:
 public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,OutPosition,OutDirection"))
-	static bool GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+	static bool GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Position", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,OutPosition,OutDirection"))
-	static bool GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+	static bool GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
 
 #pragma endregion World
 

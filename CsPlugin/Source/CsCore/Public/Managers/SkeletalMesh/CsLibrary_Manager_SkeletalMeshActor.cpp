@@ -108,11 +108,11 @@ namespace NCsSkeletalMeshActor
 		// Spawn
 		#pragma region
 
-		#define PooledPooledType NCsPooledObject::NPayload::IPayload
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
@@ -132,7 +132,7 @@ namespace NCsSkeletalMeshActor
 			return nullptr;
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetSafe(Context, WorldContext, Log);
 
@@ -152,7 +152,7 @@ namespace NCsSkeletalMeshActor
 			return SpawnChecked(Context, WorldContext, PooledPayload, Shot, Transform);
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot)
 		{
 			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
 
@@ -165,7 +165,7 @@ namespace NCsSkeletalMeshActor
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
@@ -185,7 +185,7 @@ namespace NCsSkeletalMeshActor
 			return nullptr;
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetSafe(Context, WorldContext, Log);
 
@@ -205,7 +205,7 @@ namespace NCsSkeletalMeshActor
 			return SpawnChecked(Context, WorldContext, PooledPayload, Shot, Transform);
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot)
 		{
 			using namespace NCsSkeletalMeshActor::NManager::NLibrary::NCached;
 
@@ -216,7 +216,7 @@ namespace NCsSkeletalMeshActor
 
 		#undef ShotType
 
-		#undef PooledPooledType
+		#undef PooledPayloadType
 
 		#pragma endregion Spawn
 	}

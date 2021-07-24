@@ -31,7 +31,10 @@ UCsScriptLibrary_StaticMeshActor::UCsScriptLibrary_StaticMeshActor(const FObject
 // Enum
 #pragma region
 
-FECsStaticMeshActor UCsScriptLibrary_StaticMeshActor::Get(const FString& Name)
+#define EnumMapType EMCsStaticMeshActor
+#define EnumType FECsStaticMeshActor
+
+EnumType UCsScriptLibrary_StaticMeshActor::Get(const FString& Name)
 {
 	using namespace NCsScriptLibraryStaticMeshActor::NCached;
 
@@ -39,10 +42,10 @@ FECsStaticMeshActor UCsScriptLibrary_StaticMeshActor::Get(const FString& Name)
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetSafe<EMCsStaticMeshActor, FECsStaticMeshActor>(Context, Str::FECsStaticMeshActor, Name);
+	return EnumLibrary::GetSafe<EnumMapType, EnumType>(Context, Str::EnumType, Name);
 }
 
-FECsStaticMeshActor UCsScriptLibrary_StaticMeshActor::GetByIndex(const int32& Index)
+EnumType UCsScriptLibrary_StaticMeshActor::GetByIndex(const int32& Index)
 {
 	using namespace NCsScriptLibraryStaticMeshActor::NCached;
 
@@ -50,34 +53,37 @@ FECsStaticMeshActor UCsScriptLibrary_StaticMeshActor::GetByIndex(const int32& In
 
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	return EnumLibrary::GetSafeByIndex<EMCsStaticMeshActor, FECsStaticMeshActor>(Context, Str::FECsStaticMeshActor, Index);
+	return EnumLibrary::GetSafeByIndex<EnumMapType, EnumType>(Context, Str::EnumType, Index);
 }
 
-FString UCsScriptLibrary_StaticMeshActor::ToString(const FECsStaticMeshActor& Enum)
+FString UCsScriptLibrary_StaticMeshActor::ToString(const EnumType& Enum)
 {
 	return Enum.ToString();
 }
 
 uint8 UCsScriptLibrary_StaticMeshActor::GetCount()
 {
-	return EMCsStaticMeshActor::Get().Num();
+	return EnumMapType::Get().Num();
 }
 
-void UCsScriptLibrary_StaticMeshActor::GetAll(TArray<FECsStaticMeshActor>& OutTypes)
+void UCsScriptLibrary_StaticMeshActor::GetAll(TArray<EnumType>& OutTypes)
 {
 	typedef NCsEnum::FLibrary EnumLibrary;
 
-	EnumLibrary::GetAll<EMCsStaticMeshActor, FECsStaticMeshActor>(OutTypes);
+	EnumLibrary::GetAll<EnumMapType, EnumType>(OutTypes);
 }
 
-FECsStaticMeshActor UCsScriptLibrary_StaticMeshActor::GetMax()
+EnumType UCsScriptLibrary_StaticMeshActor::GetMax()
 {
-	return EMCsStaticMeshActor::Get().GetMAX();
+	return EnumMapType::Get().GetMAX();
 }
 
-bool UCsScriptLibrary_StaticMeshActor::EqualEqual(const FECsStaticMeshActor& A, const FECsStaticMeshActor& B)
+bool UCsScriptLibrary_StaticMeshActor::EqualEqual(const EnumType& A, const EnumType& B)
 {
 	return A == B;
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #pragma endregion Enum

@@ -234,7 +234,7 @@ namespace NCsWidget
 				}
 			}
 
-			FVector2D FLibrary::GetBySlotChecked(const FString& Context, UUserWidget* Widget)
+			FVector2D FLibrary::GetBySlotChecked(const FString& Context, UWidget* Widget)
 			{
 				CS_IS_PTR_NULL_CHECKED(Widget)
 
@@ -247,7 +247,7 @@ namespace NCsWidget
 				return Slot->GetPosition();
 			}
 
-			FVector2D FLibrary::GetSafeBySlot(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			FVector2D FLibrary::GetSafeBySlot(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				if (!Widget)
 				{
@@ -271,7 +271,7 @@ namespace NCsWidget
 				return Slot->GetPosition();
 			}
 
-			FVector2D FLibrary::GetSafeBySlot(UUserWidget* Widget)
+			FVector2D FLibrary::GetSafeBySlot(UWidget* Widget)
 			{
 				using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
 
@@ -280,14 +280,14 @@ namespace NCsWidget
 				return GetSafeBySlot(Context, Widget, nullptr);
 			}
 
-			FVector2D FLibrary::GetAbsoluteByCachedGeometryChecked(const FString& Context, UUserWidget* Widget)
+			FVector2D FLibrary::GetAbsoluteByCachedGeometryChecked(const FString& Context, UWidget* Widget)
 			{
 				CS_IS_PTR_NULL_CHECKED(Widget)
 
 				return Widget->GetCachedGeometry().GetAbsolutePosition();
 			}
 
-			FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				if (!Widget)
 				{
@@ -297,7 +297,7 @@ namespace NCsWidget
 				return Widget->GetCachedGeometry().GetAbsolutePosition();
 			}
 
-			FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(UUserWidget* Widget)
+			FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(UWidget* Widget)
 			{
 				using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
 
@@ -320,7 +320,7 @@ namespace NCsWidget
 				}
 			}
 
-			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
 			{
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
 
@@ -329,7 +329,7 @@ namespace NCsWidget
 				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
 			}
 
-			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
 
@@ -345,7 +345,7 @@ namespace NCsWidget
 				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
 			}
 
-			void FLibrary::GetSafeByCachedGeometry(UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+			void FLibrary::GetSafeByCachedGeometry(UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
 			{
 				using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached;
 
@@ -369,7 +369,7 @@ namespace NCsWidget
 				}
 			}
 
-			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
@@ -383,7 +383,7 @@ namespace NCsWidget
 				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
@@ -401,7 +401,7 @@ namespace NCsWidget
 				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
 			{
 				using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
 
@@ -410,7 +410,7 @@ namespace NCsWidget
 				return GetSafeBySlot(Context, WorldContext, ControllerId, Widget, OutPosition, OutDirection, nullptr);
 			}
 
-			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
@@ -426,7 +426,7 @@ namespace NCsWidget
 				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
@@ -447,7 +447,7 @@ namespace NCsWidget
 				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
 			{
 				using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
 

@@ -4,6 +4,7 @@
 #include "Types/CsTypes_UserWidget_Anim.h"
 
 class UObject;
+class UWidget;
 class UUserWidget;
 class UClass;
 class UWidgetAnimation;
@@ -86,7 +87,7 @@ namespace NCsWidget
 				* @param Widget
 				* return			Position of the Widget.
 				*/
-				static FVector2D GetBySlotChecked(const FString& Context, UUserWidget* Widget);
+				static FVector2D GetBySlotChecked(const FString& Context, UWidget* Widget);
 
 				/**
 				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -96,7 +97,7 @@ namespace NCsWidget
 				* @param Log
 				* return			Position of the Widget.
 				*/
-				static FVector2D GetSafeBySlot(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static FVector2D GetSafeBySlot(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -104,7 +105,7 @@ namespace NCsWidget
 				* @param Widget
 				* return			Position of the Widget.
 				*/
-				static FVector2D GetSafeBySlot(UUserWidget* Widget);
+				static FVector2D GetSafeBySlot(UWidget* Widget);
 
 				/**
 				* Get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -113,7 +114,7 @@ namespace NCsWidget
 				* @param Widget
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2D GetAbsoluteByCachedGeometryChecked(const FString& Context, UUserWidget* Widget);
+				static FVector2D GetAbsoluteByCachedGeometryChecked(const FString& Context, UWidget* Widget);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -123,7 +124,7 @@ namespace NCsWidget
 				* @param Log
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2D GetSafeAbsoluteByCachedGeometry(const FString& Context, UUserWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static FVector2D GetSafeAbsoluteByCachedGeometry(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -131,7 +132,7 @@ namespace NCsWidget
 				* @param Widget
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2D GetSafeAbsoluteByCachedGeometry(UUserWidget* Widget);
+				static FVector2D GetSafeAbsoluteByCachedGeometry(UWidget* Widget);
 			};
 		}
 
@@ -151,7 +152,7 @@ namespace NCsWidget
 				*									  to add another widget to the viewport at the same position in viewport space as this location, 
 				*									  this is what you would use.
 				*/
-				static void GetByCachedGeometryChecked(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+				static void GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
 
 				/**
 				* Safely get the pixel and viewport position of the Widget by transform the absolute position:
@@ -166,7 +167,7 @@ namespace NCsWidget
 				*									  this is what you would use.
 				* @param Log
 				*/
-				static void GetSafeByCachedGeometry(const FString& Context, UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the viewport position of the Widget by transform the absolute position:
@@ -179,7 +180,7 @@ namespace NCsWidget
 				*									  to add another widget to the viewport at the same position in viewport space as this location,
 				*									  this is what you would use.
 				*/
-				static void GetSafeByCachedGeometry(UUserWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+				static void GetSafeByCachedGeometry(UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
 			};
 		}
 
@@ -200,7 +201,7 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
 
 				/**
 				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -214,7 +215,7 @@ namespace NCsWidget
 				* @param Log
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -227,7 +228,7 @@ namespace NCsWidget
 				* @param Log
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
 
 				/**
 				* Get the world position and direction of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -240,7 +241,7 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -253,7 +254,7 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -265,7 +266,7 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UUserWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
 			};
 		}
 	}

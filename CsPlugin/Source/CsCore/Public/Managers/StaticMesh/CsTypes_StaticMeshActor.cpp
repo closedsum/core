@@ -10,6 +10,8 @@
 // Utility
 #include "Utility/CsLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
+// StaticMeshActor
+#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
 // StaticMeshActor
 #pragma region
@@ -120,6 +122,62 @@ namespace NCsStaticMeshActorDeallocateMethod
 
 // FCsStaticMeshActorPooledInfo
 #pragma region
+
+#define PayloadType NCsStaticMeshActor::NPayload::FImpl
+void FCsStaticMeshActorPooledInfo::SetPayloadChecked(const FString& Context, PayloadType* Payload) const
+{
+	check(IsValidChecked(Context));
+
+	Payload->Mesh = Mesh.GetChecked(Context);
+	Payload->SetMaterials(Materials.GetChecked(Context));
+	Payload->DeallocateMethod = GetDeallocateMethod();
+	Payload->LifeTime = LifeTime;
+	Payload->AttachmentTransformRules = AttachmentTransformRules;
+	Payload->Bone = Bone;
+	Payload->TransformRules = TransformRules;
+
+	Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Transform.GetTranslation());
+	const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
+	Payload->Transform.SetRotation(Rotation.Quaternion());
+	Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Transform.GetScale3D());
+
+	Payload->bCastShadow = bCastShadow;
+	Payload->bReceivesDecals = bReceivesDecals;
+	Payload->bUseAsOccluder = bUseAsOccluder;
+}
+
+bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return false;
+
+	if (!Mesh.GetSafe(Context, Log))
+		return false;
+
+	Payload->Mesh = Mesh.GetChecked(Context);
+
+	if (!Materials.GetSafe(Context, Log))
+		return false;
+
+	Payload->SetMaterials(Materials.GetChecked(Context));
+	Payload->DeallocateMethod = GetDeallocateMethod();
+	Payload->LifeTime = LifeTime;
+	Payload->AttachmentTransformRules = AttachmentTransformRules;
+	Payload->Bone = Bone;
+	Payload->TransformRules = TransformRules;
+
+	Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Transform.GetTranslation());
+	const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Transform.GetRotation().Rotator();
+	Payload->Transform.SetRotation(Rotation.Quaternion());
+	Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Transform.GetScale3D());
+
+	Payload->bCastShadow = bCastShadow;
+	Payload->bReceivesDecals = bReceivesDecals;
+	Payload->bUseAsOccluder = bUseAsOccluder;
+	return true;
+}	
+
+#undef PayloadType
 
 bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 {

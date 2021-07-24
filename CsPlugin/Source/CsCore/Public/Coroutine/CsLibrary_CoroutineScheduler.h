@@ -126,6 +126,66 @@ namespace NCsCoroutine
 			static bool SafeEnd(const FString& context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion End
+
+		// Handle
+		#pragma region
+		public:
+
+			/**
+			* Check whether a Coroutine with the given Handle for Group is valid.
+			*
+			* @param Context		The calling context
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* return
+			*/
+			static bool IsHandleValidChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+
+			/**
+			* Safely check whether a Coroutine with the given Handle for Group is valid.
+			*
+			* @param Context		The calling context
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeIsHandleValid(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether a Coroutine with the given Handle for Group is running.
+			*
+			* @param Context		The calling context
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* return
+			*/
+			static bool IsRunningChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+
+			/**
+			* Safely check whether a Coroutine with the given Handle for Group is running.
+			*
+			* @param Context		The calling context
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* @param Log				(optional)
+			* return
+			*/
+			static bool SafeIsRunning(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Handle
 		};
 	}
 }

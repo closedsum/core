@@ -45,22 +45,46 @@ namespace NCsStaticMeshActor
 			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
 		}
 
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_CHECKED(Payload)
+			CS_IS_PTR_NULL(Payload)
 
-			CS_IS_PTR_NULL_CHECKED(PooledPayload)
+			CS_IS_PTR_NULL(PooledPayload)
 
 			SetChecked(Context, Payload, PooledPayload);
+			return true;
 		}
 
-		void FLibrary::SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload)
+		bool FLibrary::SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload)
 		{
 			using namespace NCsStaticMeshActor::NPayload::NLibrary::NCached;
 
 			const FString& Context = Str::SetSafe;
 
-			SetSafe(Context, Payload, PooledPayload, nullptr);
+			return SetSafe(Context, Payload, PooledPayload, nullptr);
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info)
+		{
+			SetChecked(Context, Payload, PooledPayload);
+			Info.SetPayloadChecked(Context, Payload);
+		}
+
+		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!SetSafe(Context, Payload, PooledPayload))
+				return false;
+
+			return Info.SetSafePayload(Context, Payload, Log);
+		}
+
+		bool FLibrary::SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info)
+		{
+			using namespace NCsStaticMeshActor::NPayload::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafe;
+
+			return SetSafe(Context, Payload, PooledPayload, Info, nullptr);
 		}
 
 		#undef PayloadImplType

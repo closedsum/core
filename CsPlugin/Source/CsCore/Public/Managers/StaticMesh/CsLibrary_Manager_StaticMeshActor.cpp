@@ -1,12 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/StaticMesh/CsLibrary_Manager_StaticMeshActor.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
 // Managers
 #include "Managers/StaticMesh/CsManager_StaticMeshActor.h"
 // Library
+#include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
 #include "Library/CsLibrary_Valid.h"
+// StaticMeshActor
+#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -102,5 +103,52 @@ namespace NCsStaticMeshActor
 		}
 
 		#pragma endregion Get
+
+		// Spawn
+		#pragma region
+
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			UCsManager_StaticMeshActor* Manager_StaticMeshActor = GetChecked(Context, WorldContext);
+			// Allocate Payload
+			typedef NCsStaticMeshActor::NPayload::FImpl PayloadImplType;
+
+			PayloadImplType* Payload = Manager_StaticMeshActor->AllocatePayload<PayloadImplType>(Info.Type);
+			// Set Payload
+			typedef NCsStaticMeshActor::NPayload::FLibrary PayloadLibrary;
+
+			checkf(Transform.GetScale3D() != FVector::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context);
+
+			Payload->Transform = Transform;
+			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Info);
+			
+			return Manager_StaticMeshActor->Spawn(Info.Type, Payload);
+		}
+
+		const FCsStaticMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_StaticMeshActor* Manager_StaticMeshActor = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_StaticMeshActor)
+				return nullptr;
+
+			CS_IS_PTR_NULL_RET_NULL(PooledPayload)
+
+			if (!Info.IsValid(Context, Log))
+				return nullptr;
+
+			if (Transform.GetScale3D() == FVector::ZeroVector)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context));
+				return nullptr;
+			}
+			return SpawnChecked(Context, WorldContext, PooledPayload, Info, Transform);
+		}
+
+		#undef PooledPayloadType
+
+		#pragma endregion Spawn
 	}
 }

@@ -140,6 +140,9 @@ namespace NCsStaticMeshActor
 
 class UStaticMesh;
 
+// NCsStaticMeshActor::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, FImpl)
+
 /**
 * Container holding general information for a Static Mesh Actor.
 *  This is mostly used by object pooled by a Manager
@@ -176,36 +179,36 @@ private:
 
 public:
 
-	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
+	/** Valid if the DeallocateMethod == ECsStaticMeshActorDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
 		   LifeTime == 0.of means the Sound object will be deallocated immediately
 	        when the Parent object has been destroyed / deallocated.
 		   LifeTime > 0.0f will be the time after the Parent object has been 
 		    destroyed / deallocated to deallocate the Sound object.
 	    - If a Sound is NOT attached to a Parent object,
-		   LifeTime == 0.0f means the Sound object will stay active forever.
-		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
+		   LifeTime == 0.0f means the StaticMeshActor object will stay active forever.
+		   LifeTime > 0.0f means the StaticMeshActor will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
-	/** Valid if the Sound is attached to a Parent object or when an Sound object is
-		allocated, the Parent field of the payload is set.If the Parent object is NULL,
+	/** Valid if the StaticMeshActor is attached to a Parent object or when an StaticMeshActor object is
+		allocated, the Parent field of the payload is set. If the Parent object is NULL,
 		the Sound will NOT be attached. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
-	/** Valid only when the Sound is attached to a Parent object. 
+	/** Valid only when the StaticMeshActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Bone;
 
-	/** Which of the components of Transform to apply to the FX. */
+	/** Which of the components of Transform to apply to the StaticMeshActor. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
-	/** The Transform to apply to the FX.
-		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
+	/** The Transform to apply to the StaticMeshActor.
+		If the StaticMeshActor is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -258,6 +261,11 @@ public:
 	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
 
 #undef DeallocateMethodType
+
+#define PayloadType NCsStaticMeshActor::NPayload::FImpl
+	void SetPayloadChecked(const FString& Context, PayloadType* Payload) const;
+	bool SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) = &FCsLog::Warning) const;
+#undef PayloadType
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

@@ -305,6 +305,54 @@ public:
 		return Materials_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the array of Materials of type: UMaterialInterface.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Materials
+	*/
+	const TArray<UMaterialInterface*>* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return nullptr;
+		}
+
+		if (Materials.Num() != Materials_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num()));
+			return nullptr;
+		}
+
+		const int32 Count = Materials.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, I));
+				return nullptr;
+			}
+
+			UMaterialInterface* Material = Materials_Internal[I];
+
+			if (!Material)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString())));
+				return nullptr;
+			}
+		}
+		return &Materials_Internal;
+	}
+
 	void SetChecked(const FString& Context, UPrimitiveComponent* Component) const;
 
 	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;

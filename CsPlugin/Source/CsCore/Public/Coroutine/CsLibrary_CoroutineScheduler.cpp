@@ -143,5 +143,46 @@ namespace NCsCoroutine
 		}
 
 		#pragma endregion End
+
+		// Handle
+		#pragma region
+		
+		bool FLibrary::IsHandleValidChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+		{
+			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+
+			return GetChecked(Context, ContextObject)->IsHandleValid(Group, Handle);
+		}
+
+		bool FLibrary::SafeIsHandleValid(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject))
+			{
+				return Scheduler->IsHandleValid(Group, Handle);
+			}
+			return false;
+		}
+
+		bool FLibrary::IsRunningChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+		{
+			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+
+			return GetChecked(Context, ContextObject)->IsRunning(Group, Handle);
+		}
+
+		bool FLibrary::SafeIsRunning(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject))
+			{
+				return Scheduler->IsRunning(Group, Handle);
+			}
+			return false;
+		}
+
+		#pragma endregion Handle
 	}
 }

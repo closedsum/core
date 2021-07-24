@@ -290,20 +290,11 @@ namespace NCsMovement
 
 				private:
 
-					ECsEasingType Easing;
-					ECsEasingType* Easing_Emu;
-
-					MoverType Mover;
-					MoverType* Mover_Emu;
-
-					FVector FromLocation;
-					FVector* FromLocation_Emu;
-
-					FName MoveObjectName;
-					FName* MoveObjectName_Emu;
-
-					FString MoveActorLabel;
-					FString* MoveActorLabel_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Easing, ECsEasingType)
+					CS_DECLARE_MEMBER_WITH_EMU(Mover, MoverType)
+					CS_DECLARE_MEMBER_WITH_EMU(FromLocation, FVector)
+					CS_DECLARE_MEMBER_WITH_EMU(MoveObjectName, FName)
+					CS_DECLARE_MEMBER_WITH_EMU(MoveActorLabel, FString)
 
 					/** Actor that is moving.
 						Only valid if Mover == MoverType::Actor. */
@@ -312,15 +303,13 @@ namespace NCsMovement
 						Only valid if Mover == MoverType::Component */
 					TWeakObjectPtr<USceneComponent> MoveComponent;
 
-					DestinationType Destination;
-					DestinationType* Destination_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Destination, DestinationType)
 
 					/** If Destination == DestinationType::Location,
 							World location to move to.
 						If Destination != DestinationType::Location (Actor, Component, or Bone), 
 							Offset from the ToActor or ToComponent. */
-					FVector ToLocation;
-					FVector* ToLocation_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(ToLocation, FVector)
 					
 					/** The name of the Object to move to.
 						Object is Actor or Component. 
@@ -328,19 +317,16 @@ namespace NCsMovement
 							then Actor's name. 
 						If Destination == DestinationType::Component | DestinationType::Bone,
 							then Component's name. */
-					FName ToObjectName;
-					FName* ToObjectName_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(ToObjectName, FName)
 
 					/** Label of the Actor to move to.
 						Only valid in EDITOR.
 						Only valid if Destination == DestinationType:: Actor. */
-					FString ToActorLabel;
-					FString* ToActorLabel_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(ToActorLabel, FString)
 
 					/** Bone to move to. 
 						Only valid if Destination == DestinatinType::Component. */
-					FName ToBone;
-					FName* ToBone_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(ToBone, FName)
 
 					/** Actor to move to.
 						Only valid if Destination == DestinationType::Actor. */
@@ -350,57 +336,42 @@ namespace NCsMovement
 					TWeakObjectPtr<USceneComponent> ToComponent;
 					TWeakObjectPtr<USkeletalMeshComponent> ToMeshComponent;
 
-					float Time;
-					float* Time_Emu;
-
-					FECsUpdateGroup Group;
-					FECsUpdateGroup* Group_Emu;
+					CS_DECLARE_MEMBER_WITH_EMU(Time, float)
+					CS_DECLARE_MEMBER_WITH_EMU(Group, FECsUpdateGroup)
 
 				public:
 
 					FParams() :
-						Easing(ECsEasingType::Linear),
-						Easing_Emu(nullptr),
-						Mover(MoverType::Actor),
-						Mover_Emu(nullptr),
-						FromLocation(FVector::ZeroVector),
-						FromLocation_Emu(nullptr),
-						MoveObjectName(NAME_None),
-						MoveObjectName_Emu(nullptr),
-						MoveActorLabel(),
-						MoveActorLabel_Emu(nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Easing, ECsEasingType::Linear),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Mover, MoverType::Actor),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(FromLocation, FVector::ZeroVector),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(MoveObjectName, NAME_None),
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(MoveActorLabel),
 						MoveActor(nullptr),
 						MoveComponent(nullptr),
-						Destination(DestinationType::Location),
-						Destination_Emu(nullptr),
-						ToLocation(FVector::ZeroVector),
-						ToLocation_Emu(nullptr),
-						ToObjectName(NAME_None),
-						ToObjectName_Emu(nullptr),
-						ToActorLabel(),
-						ToActorLabel_Emu(nullptr),
-						ToBone(NAME_None),
-						ToBone_Emu(nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Destination, DestinationType::Location),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(ToLocation, FVector::ZeroVector),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(ToObjectName, NAME_None),
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(ToActorLabel),
+						CS_CTOR_INIT_MEMBER_WITH_EMU(ToBone, NAME_None),
 						ToActor(nullptr),
 						ToComponent(nullptr),
 						ToMeshComponent(nullptr),
-						Time(0.0f),
-						Time_Emu(nullptr),
-						Group(),
-						Group_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_EMU(Time, 0.0f),
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(Group)
 					{
-						Easing_Emu = &Easing;
-						Mover_Emu = &Mover;
-						FromLocation_Emu = &FromLocation;
-						MoveObjectName_Emu = &MoveObjectName;
-						MoveActorLabel_Emu = &MoveActorLabel;
-						Destination_Emu = &Destination;
-						ToLocation_Emu = &ToLocation;
-						ToObjectName_Emu = &ToObjectName;
-						ToActorLabel_Emu = &ToActorLabel;
-						ToBone_Emu = &ToBone;
-						Time_Emu = &Time;
-						Group_Emu = &Group;
+						CS_CTOR_SET_MEMBER_EMU(Easing);
+						CS_CTOR_SET_MEMBER_EMU(Mover);
+						CS_CTOR_SET_MEMBER_EMU(FromLocation);
+						CS_CTOR_SET_MEMBER_EMU(MoveObjectName);
+						CS_CTOR_SET_MEMBER_EMU(MoveActorLabel);
+						CS_CTOR_SET_MEMBER_EMU(Destination);
+						CS_CTOR_SET_MEMBER_EMU(ToLocation);
+						CS_CTOR_SET_MEMBER_EMU(ToObjectName);
+						CS_CTOR_SET_MEMBER_EMU(ToActorLabel);
+						CS_CTOR_SET_MEMBER_EMU(ToBone);
+						CS_CTOR_SET_MEMBER_EMU(Time);
+						CS_CTOR_SET_MEMBER_EMU(Group);
 					}
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Easing, ECsEasingType)

@@ -107,7 +107,7 @@ namespace NCsSkeletalMeshActor
 		#pragma region
 		public:
 
-		#define PooledPooledType NCsPooledObject::NPayload::IPayload
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 
@@ -121,7 +121,7 @@ namespace NCsSkeletalMeshActor
 			* @param Transform		(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity);
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -134,7 +134,7 @@ namespace NCsSkeletalMeshActor
 			* @param Log			(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -144,7 +144,7 @@ namespace NCsSkeletalMeshActor
 			* @param Shot
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot);
 
 		#undef ShotType
 
@@ -160,7 +160,7 @@ namespace NCsSkeletalMeshActor
 			* @param Transform		(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity);
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -173,7 +173,7 @@ namespace NCsSkeletalMeshActor
 			* @param Log			(optional)
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely spawn an SkeletalMeshActor with the given payload.
@@ -183,11 +183,11 @@ namespace NCsSkeletalMeshActor
 			* @param Shot
 			* return				Spawned SkeletalMeshActor
 			*/
-			static const FCsSkeletalMeshActorPooled* SafeSpawn(const UObject* WorldContext, const PooledPooledType* PooledPayload, const ShotType& Shot);
+			static const FCsSkeletalMeshActorPooled* SafeSpawn(const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot);
 
 		#undef ShotType
 
-		#undef PooledPooledType
+		#undef PooledPayloadType
 
 		#pragma endregion Spawn
 		};

@@ -1,6 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActor.h"
+// Types
+#include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
+// Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
+// StaticMesh
+#include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActor.h"
 #pragma once
 
 // NCsStaticMeshActor::NPayload::FImpl
@@ -30,7 +34,7 @@ namespace NCsStaticMeshActor
 			*
 			* @param Context	The calling context.
 			* @param Payload
-			* @param Shot
+			* @param PooledPayload
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload);
 
@@ -41,16 +45,50 @@ namespace NCsStaticMeshActor
 			* @param Payload
 			* @param PooledPayload
 			* @param Log
+			* return
 			*/
-			static void SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with PooledPayload.
 			*
 			* @param Payload
 			* @param PooledPayload
+			* return
 			*/
-			static void SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload);
+			static bool SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload);
+
+			/**
+			* Set the contents of the Payload with PooledPayload.
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			* @param Info
+			*/
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info);
+
+			/**
+			* Safely set the contents of Payload with PooledPayload.
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			* @param Info
+			* @param Log
+			* return
+			*/
+			static bool SetSafe(const FString& Context, PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely set the contents of Payload with PooledPayload.
+			*
+			* @param Payload
+			* @param PooledPayload
+			* @param Info
+			* return
+			*/
+			static bool SetSafe(PayloadImplType* Payload, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info);
 
 		#undef PayloadImplType
 		#undef PooledPayloadType

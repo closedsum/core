@@ -141,7 +141,7 @@ namespace NCsSkeletalMeshActor
 class USkeletalMesh;
 
 /**
-* Container holding general information for a Sound Asset.
+* Container holding general information for a Skeletal Mesh Actor.
 *  This is mostly used by object pooled by a Manager
 */
 USTRUCT(BlueprintType)
@@ -176,35 +176,35 @@ private:
 
 public:
 
-	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
-		- If a Sound IS attached to a Parent object, 
+	/** Valid if the DeallocateMethod == ECsSkeletalMeshActorDeallocateMethod::LifeTime.
+		- If a SkeletalMeshActor IS attached to a Parent object, 
 		   LifeTime == 0.of means the Sound object will be deallocated immediately
 	        when the Parent object has been destroyed / deallocated.
 		   LifeTime > 0.0f will be the time after the Parent object has been 
-		    destroyed / deallocated to deallocate the Sound object.
-	    - If a Sound is NOT attached to a Parent object,
+		    destroyed / deallocated to deallocate the SkeletalMeshActor object.
+	    - If a SkeletalMeshActor is NOT attached to a Parent object,
 		   LifeTime == 0.0f means the Sound object will stay active forever.
 		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
-	        the FX object has been allocated. */
+	        the SkeletalMeshActor object has been allocated. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
-	/** Valid if the Sound is attached to a Parent object or when an Sound object is
+	/** Valid if the SkeletalMeshActor is attached to a Parent object or when an SkeletalMeshActor object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
-		the Sound will NOT be attached. */
+		the SkeletalMeshActor will NOT be attached. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
-	/** Valid only when the Sound is attached to a Parent object. 
+	/** Valid only when the SkeletalMeshActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Bone;
 
-	/** Which of the components of Transform to apply to the FX. */
+	/** Which of the components of Transform to apply to the SkeletalMeshActor. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
-	/** The Transform to apply to the FX.
+	/** The Transform to apply to the SkeletalMeshActor.
 		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */

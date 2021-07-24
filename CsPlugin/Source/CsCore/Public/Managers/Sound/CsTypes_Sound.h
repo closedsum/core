@@ -438,7 +438,7 @@ public:
 	    - If a Sound is NOT attached to a Parent object,
 		   LifeTime == 0.0f means the Sound object will stay active forever.
 		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
-	        the FX object has been allocated. */
+	        the Sound object has been allocated. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
@@ -453,11 +453,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Bone;
 
-	/** Which of the components of Transform to apply to the FX. */
+	/** Which of the components of Transform to apply to the Sound. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
-	/** The Transform to apply to the FX.
+	/** The Transform to apply to the Sound.
 		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */

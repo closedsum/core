@@ -218,7 +218,7 @@ void ACsSpawnerImpl::SetPointImpl(const FString& Context, PointImplType* InPoint
 
 	CS_IS_PTR_NULL_CHECKED(InPointImpl)
 
-	CS_IS_PTR_NULL_CHECKED(InDeconstructPointImplImpl)
+	checkf(InDeconstructPointImplImpl, TEXT("%s: InDeconstructPointImplImpl is NULL."), *Context);
 
 	if (PointImpl)
 	{
@@ -261,7 +261,7 @@ void ACsSpawnerImpl::SetParams(const FString& Context, ParamsType* InParams, voi
 
 	CS_IS_PTR_NULL_CHECKED(InParams)
 
-	CS_IS_PTR_NULL_CHECKED(InDeconstructParamsImpl)
+	checkf(InDeconstructParamsImpl, TEXT("%s: InDeconstructParamsImpl is NULL."), *Context);
 
 	// Check PointImpl exists
 	checkf(PointImpl, TEXT("%s: No PointImpl exists. This must be set before setting any params."), *Context);

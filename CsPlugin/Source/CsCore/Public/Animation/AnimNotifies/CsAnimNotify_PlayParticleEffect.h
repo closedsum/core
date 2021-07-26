@@ -1,8 +1,11 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 #pragma once
-
-#include "Animation/AnimNotifies/AnimNotify.h"
+// Types
 #include "Managers/FX/CsTypes_FX.h"
+#include "Types/CsTypes_View.h"
+// Anim
+#include "Animation/AnimNotifies/AnimNotify.h"
+
 #include "CsAnimNotify_PlayParticleEffect.generated.h"
 
 USTRUCT()

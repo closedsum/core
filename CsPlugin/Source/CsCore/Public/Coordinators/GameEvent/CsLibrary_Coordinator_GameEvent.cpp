@@ -92,7 +92,7 @@ namespace NCsGameEvent
 
 		#pragma endregion Get
 
-		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
+		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
@@ -112,7 +112,7 @@ namespace NCsGameEvent
 			}
 		}
 
-		void FLibrary::BroadcastGameEventChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector& Location /*=FVector::ZeroVector*/)
+		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector& Location /*=FVector::ZeroVector*/)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
@@ -137,7 +137,7 @@ namespace NCsGameEvent
 			}
 		}
 
-		void FLibrary::SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		void FLibrary::SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 

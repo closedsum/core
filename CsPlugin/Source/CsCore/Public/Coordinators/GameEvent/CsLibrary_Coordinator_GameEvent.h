@@ -98,7 +98,7 @@ namespace NCsGameEvent
 			* @param Group			The route / "group" to direct the GameEvent.
 			* @param Info			
 			*/
-			static void ProcessGameEventInfoChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
+			static void ProcessGameEventInfoChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info);
 
 			/**
 			* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for
@@ -111,7 +111,7 @@ namespace NCsGameEvent
 			* @param Value			Value associated with the GameEvent.
 			* @param Location		Location associated with the GameEvent.
 			*/
-			static void BroadcastGameEventChecked(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector);
+			static void BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector);
 
 			/**
 			* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for 
@@ -126,7 +126,7 @@ namespace NCsGameEvent
 			* @param Log			Log function for logging conditions that result in NOT processing
 			*						the GameEvent.
 			*/
-			static void SafeBroadcastGameEvent(const FString& Context, UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 	}
 }

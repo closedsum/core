@@ -73,4 +73,21 @@ module.exports = class FJsCore
     CompileClasses(){}
 
     Init(){}
+
+    Reset()
+    {
+        this.Engine = null;
+        this.GameInstance = null;
+        this.Manager_Time = null;
+        this.Coordinator_GameEvent = null;
+        this.World = null;
+        this.GameState = null;
+        this.PlayerController = null;
+        this.PlayerState = null;
+        this.PlayerPawn = null;
+
+        this.CoroutineScheduler = null;
+
+        this.Classes.clear();
+    }
 };

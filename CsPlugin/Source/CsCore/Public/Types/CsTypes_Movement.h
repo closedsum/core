@@ -290,11 +290,11 @@ namespace NCsMovement
 
 				private:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Easing, ECsEasingType)
-					CS_DECLARE_MEMBER_WITH_EMU(Mover, MoverType)
-					CS_DECLARE_MEMBER_WITH_EMU(FromLocation, FVector)
-					CS_DECLARE_MEMBER_WITH_EMU(MoveObjectName, FName)
-					CS_DECLARE_MEMBER_WITH_EMU(MoveActorLabel, FString)
+					CS_DECLARE_MEMBER_WITH_PROXY(Easing, ECsEasingType)
+					CS_DECLARE_MEMBER_WITH_PROXY(Mover, MoverType)
+					CS_DECLARE_MEMBER_WITH_PROXY(FromLocation, FVector)
+					CS_DECLARE_MEMBER_WITH_PROXY(MoveObjectName, FName)
+					CS_DECLARE_MEMBER_WITH_PROXY(MoveActorLabel, FString)
 
 					/** Actor that is moving.
 						Only valid if Mover == MoverType::Actor. */
@@ -303,13 +303,13 @@ namespace NCsMovement
 						Only valid if Mover == MoverType::Component */
 					TWeakObjectPtr<USceneComponent> MoveComponent;
 
-					CS_DECLARE_MEMBER_WITH_EMU(Destination, DestinationType)
+					CS_DECLARE_MEMBER_WITH_PROXY(Destination, DestinationType)
 
 					/** If Destination == DestinationType::Location,
 							World location to move to.
 						If Destination != DestinationType::Location (Actor, Component, or Bone), 
 							Offset from the ToActor or ToComponent. */
-					CS_DECLARE_MEMBER_WITH_EMU(ToLocation, FVector)
+					CS_DECLARE_MEMBER_WITH_PROXY(ToLocation, FVector)
 					
 					/** The name of the Object to move to.
 						Object is Actor or Component. 
@@ -317,16 +317,16 @@ namespace NCsMovement
 							then Actor's name. 
 						If Destination == DestinationType::Component | DestinationType::Bone,
 							then Component's name. */
-					CS_DECLARE_MEMBER_WITH_EMU(ToObjectName, FName)
+					CS_DECLARE_MEMBER_WITH_PROXY(ToObjectName, FName)
 
 					/** Label of the Actor to move to.
 						Only valid in EDITOR.
 						Only valid if Destination == DestinationType:: Actor. */
-					CS_DECLARE_MEMBER_WITH_EMU(ToActorLabel, FString)
+					CS_DECLARE_MEMBER_WITH_PROXY(ToActorLabel, FString)
 
 					/** Bone to move to. 
 						Only valid if Destination == DestinatinType::Component. */
-					CS_DECLARE_MEMBER_WITH_EMU(ToBone, FName)
+					CS_DECLARE_MEMBER_WITH_PROXY(ToBone, FName)
 
 					/** Actor to move to.
 						Only valid if Destination == DestinationType::Actor. */
@@ -336,56 +336,56 @@ namespace NCsMovement
 					TWeakObjectPtr<USceneComponent> ToComponent;
 					TWeakObjectPtr<USkeletalMeshComponent> ToMeshComponent;
 
-					CS_DECLARE_MEMBER_WITH_EMU(Time, float)
-					CS_DECLARE_MEMBER_WITH_EMU(Group, FECsUpdateGroup)
+					CS_DECLARE_MEMBER_WITH_PROXY(Time, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(Group, FECsUpdateGroup)
 
 				public:
 
 					FParams() :
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Easing, ECsEasingType::Linear),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Mover, MoverType::Actor),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(FromLocation, FVector::ZeroVector),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(MoveObjectName, NAME_None),
-						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(MoveActorLabel),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Easing, ECsEasingType::Linear),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Mover, MoverType::Actor),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(FromLocation, FVector::ZeroVector),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(MoveObjectName, NAME_None),
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(MoveActorLabel),
 						MoveActor(nullptr),
 						MoveComponent(nullptr),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Destination, DestinationType::Location),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(ToLocation, FVector::ZeroVector),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(ToObjectName, NAME_None),
-						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(ToActorLabel),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(ToBone, NAME_None),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Destination, DestinationType::Location),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToLocation, FVector::ZeroVector),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToObjectName, NAME_None),
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ToActorLabel),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToBone, NAME_None),
 						ToActor(nullptr),
 						ToComponent(nullptr),
 						ToMeshComponent(nullptr),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Time, 0.0f),
-						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(Group)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Time, 0.0f),
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Group)
 					{
-						CS_CTOR_SET_MEMBER_EMU(Easing);
-						CS_CTOR_SET_MEMBER_EMU(Mover);
-						CS_CTOR_SET_MEMBER_EMU(FromLocation);
-						CS_CTOR_SET_MEMBER_EMU(MoveObjectName);
-						CS_CTOR_SET_MEMBER_EMU(MoveActorLabel);
-						CS_CTOR_SET_MEMBER_EMU(Destination);
-						CS_CTOR_SET_MEMBER_EMU(ToLocation);
-						CS_CTOR_SET_MEMBER_EMU(ToObjectName);
-						CS_CTOR_SET_MEMBER_EMU(ToActorLabel);
-						CS_CTOR_SET_MEMBER_EMU(ToBone);
-						CS_CTOR_SET_MEMBER_EMU(Time);
-						CS_CTOR_SET_MEMBER_EMU(Group);
+						CS_CTOR_SET_MEMBER_PROXY(Easing);
+						CS_CTOR_SET_MEMBER_PROXY(Mover);
+						CS_CTOR_SET_MEMBER_PROXY(FromLocation);
+						CS_CTOR_SET_MEMBER_PROXY(MoveObjectName);
+						CS_CTOR_SET_MEMBER_PROXY(MoveActorLabel);
+						CS_CTOR_SET_MEMBER_PROXY(Destination);
+						CS_CTOR_SET_MEMBER_PROXY(ToLocation);
+						CS_CTOR_SET_MEMBER_PROXY(ToObjectName);
+						CS_CTOR_SET_MEMBER_PROXY(ToActorLabel);
+						CS_CTOR_SET_MEMBER_PROXY(ToBone);
+						CS_CTOR_SET_MEMBER_PROXY(Time);
+						CS_CTOR_SET_MEMBER_PROXY(Group);
 					}
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Easing, ECsEasingType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Mover, MoverType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(FromLocation, FVector)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(MoveObjectName, FName)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(MoveActorLabel, FString)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Destination, DestinationType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ToLocation, FVector)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ToObjectName, FName)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ToActorLabel, FString)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ToBone, FName)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Time, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Group, FECsUpdateGroup)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Easing, ECsEasingType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Mover, MoverType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FromLocation, FVector)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MoveObjectName, FName)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MoveActorLabel, FString)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Destination, DestinationType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToLocation, FVector)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToObjectName, FName)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToActorLabel, FString)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToBone, FName)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Group, FECsUpdateGroup)
 
 					FORCEINLINE void SetMoveActor(AActor* Value) { MoveActor = Value; }
 					AActor* GetMoveActor() const;
@@ -875,95 +875,37 @@ namespace NCsSpeed
 
 		private:
 
-			MethodType Method;
-			MethodType* Method_Emu;
-
-			DirectionType Direction;
-			DirectionType* Direction_Emu;
-
-			ECsEasingType Easing;
-			ECsEasingType* Easing_Emu;
-			
-			UCurveFloat* Curve;
-			UCurveFloat** Curve_Emu;
-
-			float Time;
-			float* Time_Emu;
-
-			FCsAcceleration Acceleration;
-			FCsAcceleration* Acceleration_Emu;
+			CS_DECLARE_MEMBER_WITH_PROXY(Method, MethodType)
+			CS_DECLARE_MEMBER_WITH_PROXY(Direction, DirectionType)
+			CS_DECLARE_MEMBER_WITH_PROXY(Easing, ECsEasingType)
+			CS_DECLARE_MEMBER_WITH_PROXY(Curve, UCurveFloat*)
+			CS_DECLARE_MEMBER_WITH_PROXY(Time, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Acceleration, FCsAcceleration)
 
 		public:
 
 			FInfo() :
-				Method(MethodType::Acceleration),
-				Method_Emu(nullptr),
-				Direction(DirectionType::Increasing),
-				Direction_Emu(nullptr),
-				Easing(ECsEasingType::Linear),
-				Easing_Emu(nullptr),
-				Curve(nullptr),
-				Curve_Emu(nullptr),
-				Time(0.0f),
-				Time_Emu(nullptr),
-				Acceleration(),
-				Acceleration_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Method, MethodType::Acceleration),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Direction, DirectionType::Increasing),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Easing, ECsEasingType::Linear),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Curve, nullptr),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Time, 0.0f),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Acceleration)
 			{
-				Method_Emu = &Method;
-				Direction_Emu = &Direction;
-				Easing_Emu = &Easing;
-				Curve_Emu = &Curve;
-				Time_Emu = &Time;
-				Acceleration_Emu = &Acceleration;
+				CS_CTOR_SET_MEMBER_PROXY(Method);
+				CS_CTOR_SET_MEMBER_PROXY(Direction);
+				CS_CTOR_SET_MEMBER_PROXY(Easing);
+				CS_CTOR_SET_MEMBER_PROXY(Curve);
+				CS_CTOR_SET_MEMBER_PROXY(Time);
+				CS_CTOR_SET_MEMBER_PROXY(Acceleration);
 			}
 
-			FORCEINLINE void SetMethod(const MethodType& Value)
-			{
-				Method = Value;
-				Method_Emu = &Method;
-			}
-			FORCEINLINE void SetMethod(MethodType* Value) { Method_Emu = Value; }
-			FORCEINLINE const MethodType& GetMethod() const { return *Method_Emu; }
-
-			FORCEINLINE void SetDirection(const DirectionType& Value)
-			{
-				Direction = Value;
-				Direction_Emu = &Direction;
-			}
-			FORCEINLINE void SetDirection(DirectionType* Value) { Direction_Emu = Value; }
-			FORCEINLINE const DirectionType& GetDirection() const { return *Direction_Emu; }
-
-			FORCEINLINE void SetEasing(const ECsEasingType& Value)
-			{
-				Easing = Value;
-				Easing_Emu = &Easing;
-			}
-			FORCEINLINE void SetEasing(ECsEasingType* Value) { Easing_Emu = Value; }
-			FORCEINLINE const ECsEasingType& GetEasing() const { return *Easing_Emu; }
-
-			FORCEINLINE void SetCurve(UCurveFloat* Value)
-			{
-				Curve = Value;
-				Curve_Emu = &Curve;
-			}
-			FORCEINLINE void SetCurve(UCurveFloat** Value) { Curve_Emu = Value; }
-			FORCEINLINE UCurveFloat* GetCurve() const { return *Curve_Emu; }
-
-			FORCEINLINE void SetTime(const float& Value)
-			{
-				Time = Value;
-				Time_Emu = &Time;
-			}
-			FORCEINLINE void SetTime(float* Value) { Time_Emu = Value; }
-			FORCEINLINE const float& GetTime() const { return *Time_Emu; }
-
-			FORCEINLINE void SetAcceleration(const FCsAcceleration& Value)
-			{
-				Acceleration = Value;
-				Acceleration_Emu = &Acceleration;
-			}
-			FORCEINLINE void SetAcceleration(FCsAcceleration* Value) { Acceleration_Emu = Value; }
-			FORCEINLINE const FCsAcceleration& GetAcceleration() const { return *Acceleration_Emu; }
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Method, MethodType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Direction, DirectionType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Easing, ECsEasingType)
+			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Curve, UCurveFloat)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Acceleration, FCsAcceleration)
 
 			bool IsValidChecked(const FString& Context) const { return true; }
 

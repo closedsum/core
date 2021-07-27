@@ -115,13 +115,11 @@ namespace NCsSkin
 
 					// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
-					UStaticMesh* Mesh;
-					UStaticMesh** Mesh_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, UStaticMesh*)
 
 					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
-					TArray<UMaterialInterface*> Materials;
-					TArray<UMaterialInterface*>* Materials_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 
 				public:
 
@@ -142,17 +140,10 @@ namespace NCsSkin
 
 				public:
 
-					FORCEINLINE void SetStaticMesh(UStaticMesh* Value)
-					{
-						Mesh = Value;
-						Mesh_Emu = &Mesh;
-					}
-					FORCEINLINE void SetStaticMesh(UStaticMesh** Value) { Mesh_Emu = Value; }
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(StaticMesh, UStaticMesh)
 
 				// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 				#pragma region
-
-					FORCEINLINE UStaticMesh* GetStaticMesh() const { return *Mesh_Emu; }
 
 				#pragma endregion StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
@@ -166,14 +157,14 @@ namespace NCsSkin
 						{
 							Materials.Add(M);
 						}
-						Materials_Emu = &Materials;
+						Materials_Proxy = &Materials;
 					}
-					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
+					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Proxy = Value; }
 
 				// MaterialSkinDataType(NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				#pragma region
 
-					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
+					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Proxy; }
 
 				#pragma endregion MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 

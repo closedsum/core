@@ -10,7 +10,7 @@
 #include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
 #include "Managers/Damage/Range/CsDamageRangeEmu.h"
 
-const FName NCsDamage::NData::NShape::NSphere::FEmu::Name = FName("NCsDamage::NData::NShape::NSphere::FEmu");
+const FName NCsDamage::NData::NShape::NSphere::FProxy::Name = FName("NCsDamage::NData::NShape::NSphere::FProxy");
 
 namespace NCsDamage
 {
@@ -20,7 +20,7 @@ namespace NCsDamage
 		{
 			namespace NSphere
 			{
-				FEmu::FEmu() :
+				FProxy::FProxy() :
 					// ICsGetInterfaceMap
 					InterfaceMap(),
 					// DataType (NCsDamage::NData::IData)
@@ -41,7 +41,7 @@ namespace NCsDamage
 					// ICsGetInterfaceMap
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRoot<FEmu>(this);
+					InterfaceMap->SetRoot<FProxy>(this);
 
 					typedef NCsDamage::NData::IData DataType;
 					typedef NCsDamage::NData::NShape::IShape ShapeDataType;
@@ -52,14 +52,14 @@ namespace NCsDamage
 					InterfaceMap->Add<CollisionDataType>(static_cast<CollisionDataType*>(this));
 
 					// NCsDamage::NValue::NRange::IRange
-					typedef NCsDamage::NValue::NRange::FEmu ValueRangeEmuType;
-					DamageValue = new ValueRangeEmuType();
+					typedef NCsDamage::NValue::NRange::FProxy ValueRangeProxyType;
+					DamageValue = new ValueRangeProxyType();
 					// NCsDamage::NRange::IRange
-					typedef NCsDamage::NRange::FEmu RangeEmuType;
-					DamageRange = new RangeEmuType();
+					typedef NCsDamage::NRange::FProxy RangeProxyType;
+					DamageRange = new RangeProxyType();
 				}
 
-				FEmu::~FEmu()
+				FProxy::~FProxy()
 				{
 					delete InterfaceMap;
 				}
@@ -67,48 +67,48 @@ namespace NCsDamage
 				// ShapeDataType (NCsDamage::NData::NShape::IShape)
 				#pragma region
 
-				float FEmu::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const
+				float FProxy::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const
 				{
 					return 0.0f;
 				}
 
-				bool FEmu::IsInBounds(const FVector& Origin, const FVector& Point) const
+				bool FProxy::IsInBounds(const FVector& Origin, const FVector& Point) const
 				{
 					return false;
 				}
 
 				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
-				void FEmu::SetMinDamage(float* Value)
+				void FProxy::SetMinDamage(float* Value)
 				{
-					typedef NCsDamage::NValue::NRange::FEmu EmuType;
+					typedef NCsDamage::NValue::NRange::FProxy ProxyType;
 
-					EmuType* Emu = static_cast<EmuType*>(DamageValue);
-					Emu->SetMinValue(Value);
+					ProxyType* Proxy = static_cast<ProxyType*>(DamageValue);
+					Proxy->SetMinValue(Value);
 				}
 
-				void FEmu::SetMaxDamage(float* Value)
+				void FProxy::SetMaxDamage(float* Value)
 				{
-					typedef NCsDamage::NValue::NRange::FEmu EmuType;
+					typedef NCsDamage::NValue::NRange::FProxy ProxyType;
 
-					EmuType* Emu = static_cast<EmuType*>(DamageValue);
-					Emu->SetMaxValue(Value);
+					ProxyType* Proxy = static_cast<ProxyType*>(DamageValue);
+					Proxy->SetMaxValue(Value);
 				}
 
-				void FEmu::SetMinRadius(float* Value)
+				void FProxy::SetMinRadius(float* Value)
 				{
-					typedef NCsDamage::NRange::FEmu EmuType;
+					typedef NCsDamage::NRange::FProxy ProxyType;
 
-					EmuType* Emu = static_cast<EmuType*>(DamageRange);
-					Emu->SetMinRange(Value);
+					ProxyType* Proxy = static_cast<ProxyType*>(DamageRange);
+					Proxy->SetMinRange(Value);
 				}
 
-				void FEmu::SetMaxRadius(float* Value)
+				void FProxy::SetMaxRadius(float* Value)
 				{
-					typedef NCsDamage::NRange::FEmu EmuType;
+					typedef NCsDamage::NRange::FProxy ProxyType;
 
-					EmuType* Emu = static_cast<EmuType*>(DamageRange);
-					Emu->SetMaxValue(Value);
+					ProxyType* Proxy = static_cast<ProxyType*>(DamageRange);
+					Proxy->SetMaxValue(Value);
 				}
 			}
 		}

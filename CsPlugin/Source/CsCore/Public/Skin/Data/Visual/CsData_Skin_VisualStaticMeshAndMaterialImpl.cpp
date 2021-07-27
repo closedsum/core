@@ -88,11 +88,9 @@ namespace NCsSkin
 					InterfaceMap(nullptr),
 					// SkinDataType (NCsSkin::NData::NVisual::IVisual)
 					// StaticMeshSkinDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-					Mesh(nullptr),
-					Mesh_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(StaticMesh, nullptr),
 					// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-					Materials(),
-					Materials_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Materials)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -108,8 +106,8 @@ namespace NCsSkin
 					InterfaceMap->Add<StaticMeshSkinDataType>(static_cast<StaticMeshSkinDataType*>(this));
 					InterfaceMap->Add<MaterialSkinDataType>(static_cast<MaterialSkinDataType*>(this));
 
-					Mesh_Emu = &Mesh;
-					Materials_Emu = &Materials;
+					CS_CTOR_SET_MEMBER_PROXY(StaticMesh);
+					CS_CTOR_SET_MEMBER_PROXY(Materials);
 				}
 
 				FImpl::~FImpl()

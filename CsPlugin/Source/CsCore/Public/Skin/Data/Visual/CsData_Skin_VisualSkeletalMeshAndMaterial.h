@@ -36,7 +36,7 @@ public:
 
 private:
 
-	DataType* DataEmu;
+	DataType* DataProxy;
 
 // UObject Interface
 #pragma region
@@ -70,7 +70,7 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const { return DataEmu; }
+	FORCEINLINE DataType* _getIData() const { return DataProxy; }
 
 	bool IsValid(const int32& LoadFlags);
 

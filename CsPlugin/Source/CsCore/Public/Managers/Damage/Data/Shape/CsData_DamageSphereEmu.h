@@ -19,16 +19,16 @@ namespace NCsDamage
 		{
 			namespace NSphere
 			{
-#define DataType NCsDamage::NData::IData
-#define ShapeDataType NCsDamage::NData::NShape::IShape
-#define CollisionDataType NCsDamage::NData::NCollision::ICollision
+			#define DataType NCsDamage::NData::IData
+			#define ShapeDataType NCsDamage::NData::NShape::IShape
+			#define CollisionDataType NCsDamage::NData::NCollision::ICollision
 
 				/**
 				*
 				*/
-				struct CSCORE_API FEmu : public DataType,
-										 public ShapeDataType,
-										 public CollisionDataType
+				struct CSCORE_API FProxy : public DataType,
+										   public ShapeDataType,
+										   public CollisionDataType
 				{
 				public:
 
@@ -72,8 +72,8 @@ namespace NCsDamage
 
 				public:
 
-					FEmu();
-					~FEmu();
+					FProxy();
+					~FProxy();
 
 					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -133,9 +133,9 @@ namespace NCsDamage
 				#pragma endregion CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 				};
 
-#undef DataType
-#undef ShapeDataType
-#undef CollisionDataType
+			#undef DataType
+			#undef ShapeDataType
+			#undef CollisionDataType
 			}
 		}
 	}

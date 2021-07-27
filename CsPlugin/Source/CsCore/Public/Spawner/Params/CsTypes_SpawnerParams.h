@@ -57,22 +57,22 @@ namespace NCsSpawner
 		private:
 
 			/** The number of objects to "create" per Spawn call. */
-			CS_DECLARE_MEMBER_WITH_EMU(CountPerSpawn, int32)
+			CS_DECLARE_MEMBER_WITH_PROXY(CountPerSpawn, int32)
 			/** The amount of time between "creating" each object (if CountPerSpawn > 1). */
-			CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenCountPerSpawn, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenCountPerSpawn, float)
 
 		public:
 
 			FCount() :
-				CS_CTOR_INIT_MEMBER_WITH_EMU(CountPerSpawn, 1),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenCountPerSpawn, 0.0f)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(CountPerSpawn, 1),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenCountPerSpawn, 0.0f)
 			{
-				CS_CTOR_SET_MEMBER_EMU(CountPerSpawn);
-				CS_CTOR_SET_MEMBER_EMU(TimeBetweenCountPerSpawn);
+				CS_CTOR_SET_MEMBER_PROXY(CountPerSpawn);
+				CS_CTOR_SET_MEMBER_PROXY(TimeBetweenCountPerSpawn);
 			}
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(CountPerSpawn, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenCountPerSpawn, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CountPerSpawn, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenCountPerSpawn, float)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -270,50 +270,50 @@ namespace NCsSpawner
 				if Type == FrequencyType::TimeInterval,
 				If Type == FrequencyType::Infinite,
 				 Ignore Count and Interval should be > 0.0f. */
-			CS_DECLARE_MEMBER_WITH_EMU(Type, FrequencyType)
+			CS_DECLARE_MEMBER_WITH_PROXY(Type, FrequencyType)
 
 			/** The delay before calling Start.
 				If Delay == 0.0f, Spawn will be called at a given interval.
 				If Delay == 0.0f and Interval == 0.0f, Spawn will be called immediately. */
-			CS_DECLARE_MEMBER_WITH_EMU(Delay, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Delay, float)
 
 			/** The number of times to call Spawn after Start is called.
 				Only valid if 
 				 Type == FrequencyType::Count
 				 Type == FrequencyType::TimeCount
 				Should be > 0. */
-			CS_DECLARE_MEMBER_WITH_EMU(Count, int32)
+			CS_DECLARE_MEMBER_WITH_PROXY(Count, int32)
 
 			/** The time between each Spawn call after Start is called.
 				Only valid if,
 				Type == FrequencyType::Count
 				Type == FrequencyType::TimeInterval
 				Type == FrequencyType::Infinite */
-			CS_DECLARE_MEMBER_WITH_EMU(Interval, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Interval, float)
 
-			CS_DECLARE_MEMBER_WITH_EMU(Time, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Time, float)
 
 		public:
 
 			FFrequency() :
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Type, FrequencyType::Once),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Delay, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Count, 0),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Interval, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Time, 0.0f)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, FrequencyType::Once),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Delay, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Count, 0),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Interval, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Time, 0.0f)
 			{
-				CS_CTOR_SET_MEMBER_EMU(Type);
-				CS_CTOR_SET_MEMBER_EMU(Delay);
-				CS_CTOR_SET_MEMBER_EMU(Count);
-				CS_CTOR_SET_MEMBER_EMU(Interval);
-				CS_CTOR_SET_MEMBER_EMU(Time);
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(Delay);
+				CS_CTOR_SET_MEMBER_PROXY(Count);
+				CS_CTOR_SET_MEMBER_PROXY(Interval);
+				CS_CTOR_SET_MEMBER_PROXY(Time);
 			}
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FrequencyType)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Delay, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Count, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Interval, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Time, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FrequencyType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Delay, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Count, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Interval, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -459,33 +459,33 @@ namespace NCsSpawner
 //
 //		private:
 //
-//			CS_DECLARE_MEMBER_WITH_EMU(Type, PointType)
-//			CS_DECLARE_MEMBER_WITH_EMU(Order, PointOrderType)
-//			CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
-//			CS_DECLARE_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
-//			CS_DECLARE_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
+//			CS_DECLARE_MEMBER_WITH_PROXY(Type, PointType)
+//			CS_DECLARE_MEMBER_WITH_PROXY(Order, PointOrderType)
+//			CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
+//			CS_DECLARE_MEMBER_WITH_PROXY(Transforms, TArray<FTransform>)
+//			CS_DECLARE_MEMBER_WITH_PROXY(Actors, TArray<AActor*>)
 //
 //		public:
 //
 //			FPoint() :
-//				CS_CTOR_INIT_MEMBER_WITH_EMU(Type, PointType::Self),
-//				CS_CTOR_INIT_MEMBER_WITH_EMU(Order, PointOrderType::FirstToLast),
-//				CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 7),
-//				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Transforms),
-//				CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Actors)
+//				CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, PointType::Self),
+//				CS_CTOR_INIT_MEMBER_WITH_PROXY(Order, PointOrderType::FirstToLast),
+//				CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 7),
+//				CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Transforms),
+//				CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Actors)
 //			{
-//				CS_CTOR_SET_MEMBER_EMU(Type);
-//				CS_CTOR_SET_MEMBER_EMU(Order);
-//				CS_CTOR_SET_MEMBER_EMU(TransformRules);
-//				CS_CTOR_SET_MEMBER_EMU(Transforms);
-//				CS_CTOR_SET_MEMBER_EMU(Actors);
+//				CS_CTOR_SET_MEMBER_PROXY(Type);
+//				CS_CTOR_SET_MEMBER_PROXY(Order);
+//				CS_CTOR_SET_MEMBER_PROXY(TransformRules);
+//				CS_CTOR_SET_MEMBER_PROXY(Transforms);
+//				CS_CTOR_SET_MEMBER_PROXY(Actors);
 //			}
 //
-//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, PointType)
-//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Order, PointOrderType)
-//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
-//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transforms, TArray<FTransform>)
-//			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Actors, TArray<AActor*>)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, PointType)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Order, PointOrderType)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transforms, TArray<FTransform>)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Actors, TArray<AActor*>)
 //
 //		#undef PointType
 //		#undef PointOrderType

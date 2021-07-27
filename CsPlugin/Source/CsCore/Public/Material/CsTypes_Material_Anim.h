@@ -109,61 +109,61 @@ namespace NCsMaterial
 			{
 			private:
 
-				CS_DECLARE_MEMBER_WITH_EMU(Name, FName)
-				CS_DECLARE_MEMBER_WITH_EMU(Easing, ECsEasingType)
+				CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
+				CS_DECLARE_MEMBER_WITH_PROXY(Easing, ECsEasingType)
 
 			protected:
 
-				CS_DECLARE_MEMBER_WITH_EMU(From, ValueType)
-				CS_DECLARE_MEMBER_WITH_EMU(To, ValueType)
+				CS_DECLARE_MEMBER_WITH_PROXY(From, ValueType)
+				CS_DECLARE_MEMBER_WITH_PROXY(To, ValueType)
 
 			public:
 
 				TValueType() :
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Name, NAME_None),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Easing, ECsEasingType::Linear),
-					From_Emu(nullptr),
-					To_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Easing, ECsEasingType::Linear),
+					From_Proxy(nullptr),
+					To_Proxy(nullptr)
 				{
-					CS_CTOR_SET_MEMBER_EMU(Name);
-					CS_CTOR_SET_MEMBER_EMU(Easing);
-					CS_CTOR_SET_MEMBER_EMU(From);
-					CS_CTOR_SET_MEMBER_EMU(To);
+					CS_CTOR_SET_MEMBER_PROXY(Name);
+					CS_CTOR_SET_MEMBER_PROXY(Easing);
+					CS_CTOR_SET_MEMBER_PROXY(From);
+					CS_CTOR_SET_MEMBER_PROXY(To);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Name, FName)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Easing, ECsEasingType)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(From, ValueType)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(To, ValueType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Easing, ECsEasingType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(From, ValueType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(To, ValueType)
 
-				CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(Name)
-				CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(Easing)
-				CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(From)
-				CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(To)
+				CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Name)
+				CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Easing)
+				CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(From)
+				CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(To)
 
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
-					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
 					return true;
 				}
 
 				FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 				{
-					if (Name == NAME_None)
+					if (GetName() == NAME_None)
 					{
 						if (Log)
-							Log(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+							Log(FString::Printf(TEXT("%s: GetName(): None is NOT Valid."), *Context));
 						return false;
 					}
 					return true;
 				}
 
-				FORCEINLINE bool AreEmuPtrsDefaultChecked(const FString& Context) const
+				FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
 				{
-					CS_IS_EMU_PTR_DEFAULT_CHECKED(Name);
-					CS_IS_EMU_PTR_DEFAULT_CHECKED(Easing);
-					CS_IS_EMU_PTR_DEFAULT_CHECKED(From);
-					CS_IS_EMU_PTR_DEFAULT_CHECKED(To);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(Name);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(Easing);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(From);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(To);
 					return true;
 				}
 			};
@@ -252,7 +252,7 @@ namespace NCsMaterial
 
 		private:
 
-			CS_DECLARE_MEMBER_WITH_EMU(Duration, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Duration, float)
 
 		public:
 
@@ -263,11 +263,11 @@ namespace NCsMaterial
 		public:
 
 			FFrame() :
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Duration, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Duration, 0.0f),
 				VectorParameters(),
 				ScalarParameters()
 			{
-				CS_CTOR_SET_MEMBER_EMU(Duration);
+				CS_CTOR_SET_MEMBER_PROXY(Duration);
 			}
 
 			FORCEINLINE FFrame& operator=(const FFrame& B)
@@ -282,9 +282,9 @@ namespace NCsMaterial
 				return *this;
 			}
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Duration, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Duration, float)
 
-			CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(Duration)
+			CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Duration)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -292,18 +292,18 @@ namespace NCsMaterial
 			bool IsValidChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
 			bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-			FORCEINLINE bool AreEmuPtrsDefaultChecked(const FString& Context) const
+			FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
 			{
-				CS_IS_EMU_PTR_DEFAULT_CHECKED(Duration);
+				CS_IS_PROXY_PTR_DEFAULT_CHECKED(Duration);
 
 				for (const VectorType& Param : VectorParameters)
 				{
-					check(Param.AreEmuPtrsDefaultChecked(Context));
+					check(Param.AreProxyPtrsDefaultChecked(Context));
 				}
 
 				for (const ScalarType& Param : ScalarParameters)
 				{
-					check(Param.AreEmuPtrsDefaultChecked(Context));
+					check(Param.AreProxyPtrsDefaultChecked(Context));
 				}
 				return true;
 			}
@@ -404,17 +404,17 @@ namespace NCsMaterial
 		private:
 
 			/** Describes how the Frames will be played. */
-			CS_DECLARE_MEMBER_WITH_EMU(Playback, PlaybackType)
+			CS_DECLARE_MEMBER_WITH_PROXY(Playback, PlaybackType)
 
 			/** Describes the time between each Frame. */
-			CS_DECLARE_MEMBER_WITH_EMU(PlayRate, PlayRateType)
+			CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
 
 			/** Time between each Frame.
 				Only Valid if:
 				 PlayRate == ECsAnimPlayRate::CustomDeltaTime.
 				if PlayRate == EcsAnimPlayRate::Custon,
 				 this value is ignored. */
-			CS_DECLARE_MEMBER_WITH_EMU(DeltaTime, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
 
 			/** Total time to play all Frames.
 				If PlayRate == ECsAnimPlayRate::CustomTotalTime:
@@ -422,7 +422,7 @@ namespace NCsMaterial
 				 TotalTime / Number of Frames.
 				If PlayRate == ECsAnimPlayRate::Custom:
 				 Total = Sum of Duration of each Frame (Frame[Index].Duration). */
-			CS_DECLARE_MEMBER_WITH_EMU(TotalTime, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(TotalTime, float)
 
 		public:
 
@@ -430,36 +430,36 @@ namespace NCsMaterial
 
 		private:
 
-			CS_DECLARE_MEMBER_WITH_EMU(TotalCount, int32)
+			CS_DECLARE_MEMBER_WITH_PROXY(TotalCount, int32)
 
 		public:
 
 			FAnim()	:
-				CS_CTOR_INIT_MEMBER_WITH_EMU(Playback, PlaybackType::Forward),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(DeltaTime, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(TotalTime, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 				Frames(),
-				CS_CTOR_INIT_MEMBER_WITH_EMU(TotalCount, 0)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalCount, 0)
 			{
-				CS_CTOR_SET_MEMBER_EMU(Playback);
-				CS_CTOR_SET_MEMBER_EMU(PlayRate);
-				CS_CTOR_SET_MEMBER_EMU(DeltaTime);
-				CS_CTOR_SET_MEMBER_EMU(TotalTime);
-				CS_CTOR_SET_MEMBER_EMU(TotalCount);
+				CS_CTOR_SET_MEMBER_PROXY(Playback);
+				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
+				CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
+				CS_CTOR_SET_MEMBER_PROXY(TotalTime);
+				CS_CTOR_SET_MEMBER_PROXY(TotalCount);
 			}
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Playback, PlaybackType)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, PlayRateType)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeltaTime, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalTime, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalCount, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalCount, int32)
 
-			CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(Playback)
-			CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(PlayRate)
-			CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(DeltaTime)
-			CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(TotalTime)
-			CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(TotalCount)
+			CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Playback)
+			CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(PlayRate)
+			CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime)
+			CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(TotalTime)
+			CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount)
 
 			FORCEINLINE bool IsLooping() const
 			{
@@ -484,32 +484,32 @@ namespace NCsMaterial
 			bool IsValidChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
 			bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-			FORCEINLINE bool AreEmuPtrsDefaultChecked(const FString& Context) const
+			FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
 			{
-				CS_IS_EMU_PTR_DEFAULT_CHECKED(Playback);
-				CS_IS_EMU_PTR_DEFAULT_CHECKED(PlayRate);
-				CS_IS_EMU_PTR_DEFAULT_CHECKED(DeltaTime);
-				CS_IS_EMU_PTR_DEFAULT_CHECKED(TotalTime);
+				CS_IS_PROXY_PTR_DEFAULT_CHECKED(Playback);
+				CS_IS_PROXY_PTR_DEFAULT_CHECKED(PlayRate);
+				CS_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime);
+				CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalTime);
 
 				for (const FrameType& Frame : Frames)
 				{
-					check(Frame.AreEmuPtrsDefaultChecked(Context));
+					check(Frame.AreProxyPtrsDefaultChecked(Context));
 				}
 
-				CS_IS_EMU_PTR_DEFAULT_CHECKED(TotalCount);
+				CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount);
 				return true;
 			}
 
 			void Reset()
 			{
-				CS_RESET_MEMBER_WITH_EMU(Playback, PlaybackType::Forward)
-				CS_RESET_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps)
-				CS_RESET_MEMBER_WITH_EMU(DeltaTime, 0.0f)
-				CS_RESET_MEMBER_WITH_EMU(TotalTime, 0.0f)
+				CS_RESET_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward)
+				CS_RESET_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps)
+				CS_RESET_MEMBER_WITH_PROXY(DeltaTime, 0.0f)
+				CS_RESET_MEMBER_WITH_PROXY(TotalTime, 0.0f)
 				// TODO: Since there are arrays contained in each Frame, look into handling this better in the future.
 				Frames.Reset(Frames.Max());
 
-				CS_RESET_MEMBER_WITH_EMU(TotalCount, 0)
+				CS_RESET_MEMBER_WITH_PROXY(TotalCount, 0)
 			}
 
 		#undef PlaybackType
@@ -591,7 +591,7 @@ namespace NCsMaterial
 
 				TWeakObjectPtr<UObject> Owner;
 
-				CS_DECLARE_MEMBER_WITH_EMU(Group, FECsUpdateGroup)
+				CS_DECLARE_MEMBER_WITH_PROXY(Group, FECsUpdateGroup)
 
 				// TODO: Add Abort and End Callbacks
 
@@ -601,12 +601,12 @@ namespace NCsMaterial
 					Anim(),
 					MID(nullptr),
 					Owner(nullptr),
-					CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(Group)
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Group)
 				{
-					CS_CTOR_SET_MEMBER_EMU(Group);
+					CS_CTOR_SET_MEMBER_PROXY(Group);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Group, FECsUpdateGroup)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Group, FECsUpdateGroup)
 
 				void SetMID(UMaterialInstanceDynamic* Value);
 				UMaterialInstanceDynamic* GetMID() const;

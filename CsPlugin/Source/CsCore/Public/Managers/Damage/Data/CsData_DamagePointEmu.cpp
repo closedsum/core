@@ -9,7 +9,7 @@
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 
-const FName NCsDamage::NData::NPoint::FEmu::Name = FName("NCsDamage::NData::NPoint::FEmu");
+const FName NCsDamage::NData::NPoint::FProxy::Name = FName("NCsDamage::NData::NPoint::FProxy");
 
 namespace NCsDamage
 {
@@ -17,7 +17,7 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-			FEmu::FEmu() :
+			FProxy::FProxy() :
 				// ICsInterfaceMap
 				InterfaceMap(nullptr),
 				// DataType (NCsDamage::NData::IData)
@@ -28,7 +28,7 @@ namespace NCsDamage
 
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRoot<FEmu>(this);
+				InterfaceMap->SetRoot<FProxy>(this);
 
 				typedef NCsDamage::NData::IData DataType;
 
@@ -40,7 +40,7 @@ namespace NCsDamage
 				Value = new ValuePointImplType();
 			}
 
-			FEmu::~FEmu()
+			FProxy::~FProxy()
 			{
 				// ICsInterfaceMap
 				delete InterfaceMap;
@@ -48,7 +48,7 @@ namespace NCsDamage
 				delete Value;
 			}
 
-			void FEmu::SetValue(float* InValue)
+			void FProxy::SetValue(float* InValue)
 			{
 				typedef NCsDamage::NValue::NPoint::FImpl ValuePointImplType;
 

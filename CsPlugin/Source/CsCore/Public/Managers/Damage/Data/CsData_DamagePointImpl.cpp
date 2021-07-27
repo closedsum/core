@@ -45,8 +45,7 @@ namespace NCsDamage
 				InterfaceMap(nullptr),
 				// DataType (NCsDamage::NData::IData)
 				Value(),
-				Type(),
-				Type_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type)
 			{
 				// ICsInterfaceMap
 
@@ -57,6 +56,8 @@ namespace NCsDamage
 				typedef NCsDamage::NData::IData DataType;
 
 				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
+
+				CS_CTOR_SET_MEMBER_PROXY(Type);
 			}
 
 			FImpl::~FImpl()

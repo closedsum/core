@@ -217,41 +217,21 @@ namespace NCsAnim
 		{
 		private:
 
-			UAnimSequence* Anim;
-			UAnimSequence** Anim_Emu;
-
-			float PlayRate;
-			float* PlayRate_Emu;
+			CS_DECLARE_MEMBER_WITH_PROXY(Anim, UAnimSequence*)
+			CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, float)
 
 		public:
 
 			FInfo() :
-				Anim(nullptr),
-				Anim_Emu(nullptr),
-				PlayRate(1.0f),
-				PlayRate_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Anim, nullptr),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, 1.0f)
 			{
-				Anim_Emu = &Anim;
-				PlayRate_Emu = &PlayRate;
+				CS_CTOR_SET_MEMBER_PROXY(Anim);
+				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 			}
 
-			FORCEINLINE void SetAnim(UAnimSequence** Value) { Anim_Emu = Value; }
-			FORCEINLINE void SetAnim(UAnimSequence* Value)
-			{
-				Anim	 = Value;
-				Anim_Emu = &Anim;
-			}
-
-			FORCEINLINE UAnimSequence* GetAnim() const { return *Anim_Emu; }
-
-			FORCEINLINE void SetPlayRate(float* Value) { PlayRate_Emu = Value; }
-			FORCEINLINE void SetPlayRate(const float& Value)
-			{
-				PlayRate	 = Value;
-				PlayRate_Emu = &PlayRate;
-			}
-
-			FORCEINLINE const float& GetPlayRate() const { return *PlayRate_Emu; }
+			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimSequence)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
 		};
 	}
 }
@@ -477,41 +457,21 @@ namespace NCsAnim
 		{
 		private:
 
-			UAnimMontage* Anim;
-			UAnimMontage** Anim_Emu;
-
-			float PlayRate;
-			float* PlayRate_Emu;
+			CS_DECLARE_MEMBER_WITH_PROXY(Anim, UAnimMontage*)
+			CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, float)
 
 		public:
 
 			FInfo() :
-				Anim(nullptr),
-				Anim_Emu(nullptr),
-				PlayRate(1.0f),
-				PlayRate_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Anim, nullptr),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, 1.0f)
 			{
-				Anim_Emu = &Anim;
-				PlayRate_Emu = &PlayRate;
+				CS_CTOR_SET_MEMBER_PROXY(Anim);
+				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 			}
 
-			FORCEINLINE void SetAnim(UAnimMontage** Value) { Anim_Emu = Value; }
-			FORCEINLINE void SetAnim(UAnimMontage* Value)
-			{
-				Anim	 = Value;
-				Anim_Emu = &Anim;
-			}
-
-			FORCEINLINE UAnimMontage* GetAnim() const { return *Anim_Emu; }
-
-			FORCEINLINE void SetPlayRate(float* Value) { PlayRate_Emu = Value; }
-			FORCEINLINE void SetPlayRate(const float& Value)
-			{
-				PlayRate	 = Value;
-				PlayRate_Emu = &PlayRate;
-			}
-
-			FORCEINLINE const float& GetPlayRate() const { return *PlayRate_Emu; }
+			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimMontage)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
 		};
 	}
 }

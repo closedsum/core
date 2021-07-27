@@ -248,6 +248,7 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 		}
 	}
 	OnEndPIE_ScriptEvent.Broadcast(IsSimulating);
+	OnEndPIE_Last_ScriptEvent.Broadcast(IsSimulating);
 
 	CreatedObjects.DestroyAndRemoveNullPendingKillOrOrphaned();
 }

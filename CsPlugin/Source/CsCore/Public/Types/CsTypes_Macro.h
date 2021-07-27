@@ -197,81 +197,81 @@
 		__ptr = nullptr; \
 	}
 
-#define CS_DECLARE_MEMBER_WITH_EMU(__Member, __ValueType) \
+#define CS_DECLARE_MEMBER_WITH_PROXY(__Member, __ValueType) \
 	__ValueType __Member; \
-	__ValueType* __Member##_Emu;
+	__ValueType* __Member##_Proxy;
 
-#define CS_CTOR_INIT_MEMBER_WITH_EMU(__Member, __Value) \
+#define CS_CTOR_INIT_MEMBER_WITH_PROXY(__Member, __Value) \
 	__Member(__Value), \
-	__Member##_Emu(nullptr)
+	__Member##_Proxy(nullptr)
 
-#define CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(__Member) \
+#define CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(__Member) \
 	__Member(), \
-	__Member##_Emu(nullptr)
+	__Member##_Proxy(nullptr)
 
-#define CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(__Member) \
+#define CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(__Member) \
 	__Member(), \
-	__Member##_Emu(nullptr)
+	__Member##_Proxy(nullptr)
 
-#define CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_EMU(__Member) \
+#define CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_PROXY(__Member) \
 	__Member(), \
-	__Member##_Emu(nullptr)
+	__Member##_Proxy(nullptr)
 
-#define CS_CTOR_SET_MEMBER_EMU(__Member) __Member##_Emu = &__Member
+#define CS_CTOR_SET_MEMBER_PROXY(__Member) __Member##_Proxy = &__Member
 
-#define CS_RESET_MEMBER_WITH_EMU(__Member, __Value) \
+#define CS_RESET_MEMBER_WITH_PROXY(__Member, __Value) \
 	__Member = __Value; \
-	__Member##_Emu = &__Member;
+	__Member##_Proxy = &__Member;
 
-#define CS_RESET_MEMBER_ARRAY_WITH_EMU(__Member) \
+#define CS_RESET_MEMBER_ARRAY_WITH_PROXY(__Member) \
 	__Member.Reset(__Member.Max()); \
-	__Member##_Emu = &__Member;
+	__Member##_Proxy = &__Member;
 
-#define CS_DEFINE_SET_GET_MEMBER_WITH_EMU(__Member, __ValueType) \
+#define CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(__Member, __ValueType) \
 	FORCEINLINE void Set##__Member(const __ValueType& __value) \
 	{ \
 		__Member = __value; \
-		__Member##_Emu = &__Member; \
+		__Member##_Proxy = &__Member; \
 	} \
-	FORCEINLINE void Set##__Member(__ValueType* __value) { check(__value); __Member##_Emu = __value; } \
-	FORCEINLINE const __ValueType& Get##__Member() const { return *(__Member##_Emu); }
+	FORCEINLINE void Set##__Member(__ValueType* __value) { check(__value); __Member##_Proxy = __value; } \
+	FORCEINLINE const __ValueType& Get##__Member() const { return *(__Member##_Proxy); }
 
-#define CS_DEFINE_SET_MEMBER_WITH_EMU(__Member, __ValueType) \
+#define CS_DEFINE_SET_MEMBER_WITH_PROXY(__Member, __ValueType) \
 	FORCEINLINE void Set##__Member(const __ValueType& __value) \
 	{ \
 		__Member = __value; \
-		__Member##_Emu = &__Member; \
+		__Member##_Proxy = &__Member; \
 	} \
 	FORCEINLINE void Set##__Member(__ValueType* __value) \
 	{ \
 		check(__value); \
-		__Member##_Emu = __value; \
+		__Member##_Proxy = __value; \
 	}
 
-#define CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(__Member, __ValueType) \
+#define CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(__Member, __ValueType) \
 	FORCEINLINE void Set##__Member(__ValueType* __value) \
 	{ \
 		__Member = __value; \
-		__Member##_Emu = &__Member; \
+		__Member##_Proxy = &__Member; \
 	} \
 	FORCEINLINE void Set##__Member(__ValueType** __value) \
 	{ \
 		check(__value); \
-		__Member##_Emu = __value; \
+		__Member##_Proxy = __value; \
 	} \
-	FORCEINLINE __ValueType* Get##__Member() const { return *(__Member##_Emu); }
+	FORCEINLINE __ValueType* Get##__Member() const { return *(__Member##_Proxy); }
 
-#define CS_DEFINE_IS_EMU_PTR_DEFAULT_CHECKED(__Member) \
-	FORCEINLINE bool IsEmuPtrDefault_##__Member##_Checked(const FString& Context) const \
+#define CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(__Member) \
+	FORCEINLINE bool IsProxyPtrDefault_##__Member##_Checked(const FString& Context) const \
 	{ \
 		static const FString __temp__str__ = #__Member; \
-		static const FString __temp__str__emu__ = CS_STRINGIFY(__Member##_Emu); \
-		checkf(__Member##_Emu == &__Member, TEXT("%s: %s does NOT reference %s."), *Context, *__temp__str__, *__temp__str__emu__); \
+		static const FString __temp__str__proxy__ = CS_STRINGIFY(__Member##_Proxy); \
+		checkf(__Member##_Proxy == &__Member, TEXT("%s: %s does NOT reference %s."), *Context, *__temp__str__, *__temp__str__proxy__); \
 		return true; \
 	}
 
 // Assume const FString& Context has been defined
-#define CS_IS_EMU_PTR_DEFAULT_CHECKED(__Member) check(IsEmuPtrDefault_##__Member##_Checked(Context))
+#define CS_IS_PROXY_PTR_DEFAULT_CHECKED(__Member) check(IsProxyPtrDefault_##__Member##_Checked(Context))
 
 #define CS_ADD_TO_DYNAMIC_MULITCAST_DELEGATE(__Context, __Owner, __MulticastDelegate, __Delegate, __Log) \
 	if (__Delegate.IsBound()) \

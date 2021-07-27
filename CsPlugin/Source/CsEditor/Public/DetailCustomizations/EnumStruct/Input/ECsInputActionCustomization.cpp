@@ -21,8 +21,8 @@ namespace NCsInputActionCustomization
 
 #pragma endregion Cached
 
-#define EnumMapType EMCsInputActionMap
-#define EnumType FECsInputActionMap
+#define EnumMapType EMCsInputAction
+#define EnumType FECsInputAction
 
 FECsInputActionCustomization::FECsInputActionCustomization() :
 	Super()

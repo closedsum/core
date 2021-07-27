@@ -46,7 +46,7 @@ namespace NCsSkeletalMeshActor
 
 				private:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Anim, UAnimSequence*)
+					CS_DECLARE_MEMBER_WITH_PROXY(Anim, UAnimSequence*)
 
 				public:
 
@@ -61,12 +61,11 @@ namespace NCsSkeletalMeshActor
 
 				#pragma endregion ICsGetInterfaceMap
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Anim, UAnimSequence)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimSequence)
 
 					void Reset()
 					{
-						Anim = nullptr;
-						Anim_Emu = &Anim;
+						CS_RESET_MEMBER_WITH_PROXY(Anim, nullptr)
 					}
 
 					bool IsValidChecked(const FString& Context) const;
@@ -88,9 +87,9 @@ namespace NCsSkeletalMeshActor
 
 				private:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Class, UClass*)
-					CS_DECLARE_MEMBER_WITH_EMU(Anim, UAnimMontage*)
-					CS_DECLARE_MEMBER_WITH_EMU(PlayRate, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(Class, UClass*)
+					CS_DECLARE_MEMBER_WITH_PROXY(Anim, UAnimMontage*)
+					CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, float)
 
 				public:
 
@@ -105,15 +104,15 @@ namespace NCsSkeletalMeshActor
 
 				#pragma endregion ICsGetInterfaceMap
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Class, UClass)
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Anim, UAnimMontage)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, float)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Class, UClass)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimMontage)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
 
 					void Reset()
 					{
-						CS_RESET_MEMBER_WITH_EMU(Class, nullptr)
-						CS_RESET_MEMBER_WITH_EMU(Anim, nullptr)
-						CS_RESET_MEMBER_WITH_EMU(PlayRate, 1.0f)
+						CS_RESET_MEMBER_WITH_PROXY(Class, nullptr)
+						CS_RESET_MEMBER_WITH_PROXY(Anim, nullptr)
+						CS_RESET_MEMBER_WITH_PROXY(PlayRate, 1.0f)
 					}
 
 					bool IsValidChecked(const FString& Context) const;
@@ -146,15 +145,15 @@ namespace NCsSkeletalMeshActor
 
 			private:
 
-				CS_DECLARE_MEMBER_WITH_EMU(Mesh, USkeletalMesh*)
-				CS_DECLARE_MEMBER_WITH_EMU(Materials, TArray<UMaterialInterface*>)
-				CS_DECLARE_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
-				CS_DECLARE_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
-				CS_DECLARE_MEMBER_WITH_EMU(LifeTime, float)
-				CS_DECLARE_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
-				CS_DECLARE_MEMBER_WITH_EMU(Bone, FName)
-				CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
-				CS_DECLARE_MEMBER_WITH_EMU(Transform, FTransform)
+				CS_DECLARE_MEMBER_WITH_PROXY(Mesh, USkeletalMesh*)
+				CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
+				CS_DECLARE_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
+				CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
+				CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
 
 			public:
 
@@ -163,29 +162,29 @@ namespace NCsSkeletalMeshActor
 			public:
 
 				FOneShot() :
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Mesh, nullptr),
-					CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Materials),
-					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_EMU(Type),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(LifeTime, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Bone, NAME_None),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 0),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Transform, FTransform::Identity),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Mesh, nullptr),
+					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Materials),
+					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_PROXY(Type),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
 					Params()
 				{
-					CS_CTOR_SET_MEMBER_EMU(Mesh);
-					CS_CTOR_SET_MEMBER_EMU(Materials);
-					CS_CTOR_SET_MEMBER_EMU(Type);
-					CS_CTOR_SET_MEMBER_EMU(DeallocateMethod);
-					CS_CTOR_SET_MEMBER_EMU(LifeTime);
-					CS_CTOR_SET_MEMBER_EMU(AttachmentTransformRules);
-					CS_CTOR_SET_MEMBER_EMU(Bone);
-					CS_CTOR_SET_MEMBER_EMU(TransformRules);
-					CS_CTOR_SET_MEMBER_EMU(Transform);
+					CS_CTOR_SET_MEMBER_PROXY(Mesh);
+					CS_CTOR_SET_MEMBER_PROXY(Materials);
+					CS_CTOR_SET_MEMBER_PROXY(Type);
+					CS_CTOR_SET_MEMBER_PROXY(DeallocateMethod);
+					CS_CTOR_SET_MEMBER_PROXY(LifeTime);
+					CS_CTOR_SET_MEMBER_PROXY(AttachmentTransformRules);
+					CS_CTOR_SET_MEMBER_PROXY(Bone);
+					CS_CTOR_SET_MEMBER_PROXY(TransformRules);
+					CS_CTOR_SET_MEMBER_PROXY(Transform);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Mesh, USkeletalMesh)
+				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, USkeletalMesh)
 
 				FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& Value)
 				{
@@ -195,32 +194,32 @@ namespace NCsSkeletalMeshActor
 					{
 						Materials.Add(Material);
 					}
-					Materials_Emu = &Materials;
+					Materials_Proxy = &Materials;
 				}
-				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
-				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
+				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Proxy = Value; }
+				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Proxy; }
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(LifeTime, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Bone, FName)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transform, FTransform)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
 
 				FORCEINLINE const ParamsType* GetParamsPtr() const { return &Params; }
 
 				void Reset()
 				{
-					CS_RESET_MEMBER_WITH_EMU(Mesh, nullptr)
-					CS_RESET_MEMBER_ARRAY_WITH_EMU(Materials)
-					CS_RESET_MEMBER_WITH_EMU(Type, EMCsSkeletalMeshActor::Get().GetMAX())
-					CS_RESET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime)
-					CS_RESET_MEMBER_WITH_EMU(LifeTime, 0.0f)
-					CS_RESET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
-					CS_RESET_MEMBER_WITH_EMU(Bone, NAME_None)
-					CS_RESET_MEMBER_WITH_EMU(TransformRules, 0)
-					CS_RESET_MEMBER_WITH_EMU(Transform, FTransform::Identity)
+					CS_RESET_MEMBER_WITH_PROXY(Mesh, nullptr)
+					CS_RESET_MEMBER_ARRAY_WITH_PROXY(Materials)
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsSkeletalMeshActor::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime)
+					CS_RESET_MEMBER_WITH_PROXY(LifeTime, 0.0f)
+					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					CS_RESET_MEMBER_WITH_PROXY(Bone, NAME_None)
+					CS_RESET_MEMBER_WITH_PROXY(TransformRules, 0)
+					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform::Identity)
 					Params.Reset();
 				}
 
@@ -296,15 +295,15 @@ namespace NCsSkeletalMeshActor
 
 			private:
 
-				CS_DECLARE_MEMBER_WITH_EMU(Mesh, USkeletalMesh*)
-				CS_DECLARE_MEMBER_WITH_EMU(Materials, TArray<UMaterialInterface*>)
-				CS_DECLARE_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
-				CS_DECLARE_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
-				CS_DECLARE_MEMBER_WITH_EMU(LifeTime, float)
-				CS_DECLARE_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
-				CS_DECLARE_MEMBER_WITH_EMU(Bone, FName)
-				CS_DECLARE_MEMBER_WITH_EMU(TransformRules, int32)
-				CS_DECLARE_MEMBER_WITH_EMU(Transform, FTransform)
+				CS_DECLARE_MEMBER_WITH_PROXY(Mesh, USkeletalMesh*)
+				CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
+				CS_DECLARE_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
+				CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
+				CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
 
 			public:
 
@@ -313,29 +312,29 @@ namespace NCsSkeletalMeshActor
 			public:
 
 				FOneShot() :
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Mesh, nullptr),
-					CS_CTOR_INIT_MEMBER_ARRAY_WITH_EMU(Materials),
-					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_EMU(Type),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(LifeTime, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Bone, NAME_None),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(TransformRules, 0),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Transform, FTransform::Identity),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Mesh, nullptr),
+					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Materials),
+					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_PROXY(Type),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
 					Params()
 				{
-					CS_CTOR_SET_MEMBER_EMU(Mesh);
-					CS_CTOR_SET_MEMBER_EMU(Materials);
-					CS_CTOR_SET_MEMBER_EMU(Type);
-					CS_CTOR_SET_MEMBER_EMU(DeallocateMethod);
-					CS_CTOR_SET_MEMBER_EMU(LifeTime);
-					CS_CTOR_SET_MEMBER_EMU(AttachmentTransformRules);
-					CS_CTOR_SET_MEMBER_EMU(Bone);
-					CS_CTOR_SET_MEMBER_EMU(TransformRules);
-					CS_CTOR_SET_MEMBER_EMU(Transform);
+					CS_CTOR_SET_MEMBER_PROXY(Mesh);
+					CS_CTOR_SET_MEMBER_PROXY(Materials);
+					CS_CTOR_SET_MEMBER_PROXY(Type);
+					CS_CTOR_SET_MEMBER_PROXY(DeallocateMethod);
+					CS_CTOR_SET_MEMBER_PROXY(LifeTime);
+					CS_CTOR_SET_MEMBER_PROXY(AttachmentTransformRules);
+					CS_CTOR_SET_MEMBER_PROXY(Bone);
+					CS_CTOR_SET_MEMBER_PROXY(TransformRules);
+					CS_CTOR_SET_MEMBER_PROXY(Transform);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Mesh, USkeletalMesh)
+				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, USkeletalMesh)
 
 				FORCEINLINE void SetMaterials(const TArray<UMaterialInterface*>& Value)
 				{
@@ -345,32 +344,32 @@ namespace NCsSkeletalMeshActor
 					{
 						Materials.Add(Material);
 					}
-					Materials_Emu = &Materials;
+					Materials_Proxy = &Materials;
 				}
-				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
-				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
+				FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Proxy = Value; }
+				FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Proxy; }
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FECsSkeletalMeshActor)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(LifeTime, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Bone, FName)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TransformRules, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Transform, FTransform)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
 
 				FORCEINLINE const ParamsType* GetParamsPtr() const { return &Params; }
 
 				void Reset()
 				{
-					CS_RESET_MEMBER_WITH_EMU(Mesh, nullptr)
-					CS_RESET_MEMBER_ARRAY_WITH_EMU(Materials)
-					CS_RESET_MEMBER_WITH_EMU(Type, EMCsSkeletalMeshActor::Get().GetMAX())
-					CS_RESET_MEMBER_WITH_EMU(DeallocateMethod, DeallocateMethodType::LifeTime)
-					CS_RESET_MEMBER_WITH_EMU(LifeTime, 0.0f)
-					CS_RESET_MEMBER_WITH_EMU(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
-					CS_RESET_MEMBER_WITH_EMU(Bone, NAME_None)
-					CS_RESET_MEMBER_WITH_EMU(TransformRules, 0)
-					CS_RESET_MEMBER_WITH_EMU(Transform, FTransform::Identity)
+					CS_RESET_MEMBER_WITH_PROXY(Mesh, nullptr)
+					CS_RESET_MEMBER_ARRAY_WITH_PROXY(Materials)
+					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsSkeletalMeshActor::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime)
+					CS_RESET_MEMBER_WITH_PROXY(LifeTime, 0.0f)
+					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					CS_RESET_MEMBER_WITH_PROXY(Bone, NAME_None)
+					CS_RESET_MEMBER_WITH_PROXY(TransformRules, 0)
+					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform::Identity)
 					Params.Reset();
 				}
 

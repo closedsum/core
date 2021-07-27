@@ -34,8 +34,7 @@ namespace NCsDamage
 
 				// IPoint
 
-				float Value;
-				float* Value_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
 
 			public:
 
@@ -64,7 +63,7 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Value, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 
 			#pragma endregion IPoint
 

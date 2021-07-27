@@ -7,8 +7,8 @@
 // FCsData_DamagePoint
 #pragma region
 
-// NCsDamage::NData::NPoint::FEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FEmu)
+// NCsDamage::NData::NPoint::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_DamagePoint
@@ -29,11 +29,11 @@ struct CSCORE_API FCsData_DamagePoint
 
 private:
 
-	typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+	typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
 
 public:
 
-	void SetData(PointDataEmuType* Data);
+	void SetData(PointDataProxyType* Data);
 };
 
 #pragma endregion FCsData_DamagePoint

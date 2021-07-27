@@ -75,7 +75,7 @@ namespace NCsSkin
 			
 				// ICsGetInterfaceMap
 
-				/** Pointer to the "root" object for all "Emu Slices". That object acts as the hub for the separate objects (via composition) 
+				/** Pointer to the "root" object for all "Proxy Slices". That object acts as the hub for the separate objects (via composition) 
 					that describe the data. */
 				FCsInterfaceMap* InterfaceMap;
 

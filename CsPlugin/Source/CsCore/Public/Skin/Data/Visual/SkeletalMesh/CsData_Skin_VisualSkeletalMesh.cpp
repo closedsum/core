@@ -7,7 +7,7 @@
 
 const FName NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh::Name = FName("NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh");
 
-const FName NCsSkin::NData::NVisual::NSkeletalMesh::FEmu::Name = FName("NCsSkin::NData::NVisual::NSkeletalMesh::FEmu");
+const FName NCsSkin::NData::NVisual::NSkeletalMesh::FProxy::Name = FName("NCsSkin::NData::NVisual::NSkeletalMesh::FProxy");
 
 namespace NCsSkin
 {
@@ -17,7 +17,7 @@ namespace NCsSkin
 		{
 			namespace NSkeletalMesh
 			{
-				FEmu::FEmu() :
+				FProxy::FProxy() :
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// ISkeletalMesh
@@ -25,12 +25,12 @@ namespace NCsSkin
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRoot<FEmu>(this);
+					InterfaceMap->SetRoot<FProxy>(this);
 
 					InterfaceMap->Add<ISkeletalMesh>(static_cast<ISkeletalMesh*>(this));
 				}
 
-				FEmu::~FEmu()
+				FProxy::~FProxy()
 				{
 					delete InterfaceMap;
 				}

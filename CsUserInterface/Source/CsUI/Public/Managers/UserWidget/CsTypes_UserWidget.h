@@ -221,6 +221,15 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
 
+	FORCEINLINE UClass* GetClassChecked() const
+	{
+		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("FCsUserWidgetPtr::GetClassChecked: Widget's Path: %s is NOT Valid."), *(Widget.ToSoftObjectPath().ToString()));
+
+		checkf(Widget_Class, TEXT("FCsUserWidgetPtr::GetClassChecked: Widget has NOT been loaded from Path @ %s."), *(Widget.ToSoftObjectPath().ToString()));
+
+		return Widget_Class;
+	}
+
 	FORCEINLINE UClass** GetClassPtr() { return &Widget_Class; }
 
 	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }

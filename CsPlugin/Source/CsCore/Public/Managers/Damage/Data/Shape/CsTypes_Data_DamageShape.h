@@ -8,8 +8,8 @@
 // FCsData_DamageSphere
 #pragma region
 
-// NCsDamage::NData::NShape::NSphere::FEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FEmu)
+// NCsDamage::NData::NShape::NSphere::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsData_DamageSphere
@@ -63,11 +63,11 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NShape::NSphere::FEmu SphereDataEmuType;
+	typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
 
 public:
 
-	void SetData(SphereDataEmuType* Data);
+	void SetData(SphereDataProxyType* Data);
 };
 
 #pragma endregion FCsData_DamageSphere

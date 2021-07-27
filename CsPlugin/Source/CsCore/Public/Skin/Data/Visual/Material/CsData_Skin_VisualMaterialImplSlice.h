@@ -88,23 +88,21 @@ namespace NCsSkin
 
 					// ICsGetInterfaceMap
 
-					/** Pointer to the "root" object for all "Emu Slices". That object acts as the hub for the separate objects (via composition)
+					/** Pointer to the "root" object for all "Proxy Slices". That object acts as the hub for the separate objects (via composition)
 						that describe the data. */
 					FCsInterfaceMap* InterfaceMap;
 
 					// MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
-					TArray<UMaterialInterface*> Materials;
-					TArray<UMaterialInterface*>* Materials_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 
 				public:
 
 					FImplSlice() :
 						InterfaceMap(nullptr),
-						Materials(),
-						Materials_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Materials)
 					{
-						Materials_Emu = &Materials;
+						CS_CTOR_SET_MEMBER_PROXY(Materials);
 					}
 
 					~FImplSlice()
@@ -135,15 +133,15 @@ namespace NCsSkin
 						{
 							Materials.Add(M);
 						}
-						Materials_Emu = &Materials;
+						Materials_Proxy = &Materials;
 					}
-					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Emu = Value; }
+					FORCEINLINE void SetMaterials(TArray<UMaterialInterface*>* Value) { Materials_Proxy = Value; }
 
 				// MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 				#pragma region
 				public:
 
-					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Emu; }
+					FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return *Materials_Proxy; }
 
 				#pragma endregion MaterialVisualDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 

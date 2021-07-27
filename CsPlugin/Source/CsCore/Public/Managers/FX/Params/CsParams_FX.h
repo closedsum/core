@@ -79,8 +79,7 @@ namespace NCsFX
 
 				int32 Index;
 
-				FName Name;
-				FName* Name_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
 
 			public:
 
@@ -88,46 +87,40 @@ namespace NCsFX
 
 			private:
 
-				int32 Value;
-				int32* Value_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
 
 			public:
 
 				FIntType() :
 					Index(INDEX_NONE),
-					Name(NAME_None),
-					Name_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
 					ValueType(EValue::Float),
-					Value(0),
-					Value_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0)
 				{
-					Name_Emu  = &Name;
-					Value_Emu = &Value;
+					CS_CTOR_SET_MEMBER_PROXY(Name);
+					CS_CTOR_SET_MEMBER_PROXY(Value);
 				}
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-				CS_DEFINE_SET_MEMBER_WITH_EMU(Name, FName)
-				CS_DEFINE_SET_MEMBER_WITH_EMU(Value, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
 
 			// IParameter
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<int32*>(Value_Emu); }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<int32*>(Value_Proxy); }
 				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(int32); }
 
 			#pragma endregion IParameter
 
-				FORCEINLINE const int32& GetValue() const { return *Value_Emu; }
-
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
 					// Check Name is Valid
-					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
 					// Check ValueType is Valid
 					checkf(ValueType == EValue::Int, TEXT("%s: ValueType: %s is NOT Int."), *Context, EMValue::Get().ToChar(ValueType));
 					return true;
@@ -146,8 +139,7 @@ namespace NCsFX
 
 				int32 Index;
 
-				FName Name;
-				FName* Name_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
 
 			public:
 
@@ -155,46 +147,40 @@ namespace NCsFX
 
 			private:
 
-				float Value;
-				float* Value_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
 
 			public:
 
 				FFloatType() :
 					Index(INDEX_NONE),
-					Name(NAME_None),
-					Name_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
 					ValueType(EValue::Float),
-					Value(0.0f),
-					Value_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f)
 				{
-					Name_Emu  = &Name;
-					Value_Emu = &Value;
+					CS_CTOR_SET_MEMBER_PROXY(Name);
+					CS_CTOR_SET_MEMBER_PROXY(Value);
 				}
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-				CS_DEFINE_SET_MEMBER_WITH_EMU(Name, FName)
-				CS_DEFINE_SET_MEMBER_WITH_EMU(Value, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 
 			// IParameter
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(Value_Emu); }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<float*>(Value_Proxy); }
 				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(float); }
 
 			#pragma endregion IParameter
 
-				FORCEINLINE const float& GetValue() const { return *Value_Emu; }
-
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
 					// Check Name is Valid
-					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
 					// Check ValueType is Valid
 					checkf(ValueType == EValue::Float, TEXT("%s: ValueType: %s is NOT Float."), *Context, EMValue::Get().ToChar(ValueType));
 					return true;
@@ -213,8 +199,7 @@ namespace NCsFX
 
 				int32 Index;
 
-				FName Name;
-				FName* Name_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
 
 			public:
 
@@ -222,46 +207,40 @@ namespace NCsFX
 
 			private:
 
-				FVector Value;
-				FVector* Value_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, FVector)
 
 			public:
 
 				FVectorType() :
 					Index(INDEX_NONE),
-					Name(NAME_None),
-					Name_Emu(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
 					ValueType(EValue::Vector),
-					Value(0.0f),
-					Value_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f)
 				{
-					Name_Emu  = &Name;
-					Value_Emu = &Value;
+					CS_CTOR_SET_MEMBER_PROXY(Name);
+					CS_CTOR_SET_MEMBER_PROXY(Value);
 				}
 
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
-				CS_DEFINE_SET_MEMBER_WITH_EMU(Name, FName)
-				CS_DEFINE_SET_MEMBER_WITH_EMU(Value, FVector)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, FVector)
 
 			// IParameter
 			#pragma region
 			public:
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
-				FORCEINLINE const FName& GetName() const { return *Name_Emu; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(Value_Emu); }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(Value_Proxy); }
 				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(FVector); }
 
 			#pragma endregion IParameter
 
-				FORCEINLINE const FVector& GetValue() const { return *Value_Emu; }
-
 				FORCEINLINE bool IsValidChecked(const FString& Context) const
 				{
 					// Check Name is Valid
-					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
 					// Check ValueType is Valid
 					checkf(ValueType == EValue::Vector, TEXT("%s: ValueType: %s is NOT Vector."), *Context, EMValue::Get().ToChar(ValueType));
 					return true;

@@ -15,8 +15,8 @@ namespace NCsDamage
 			/**
 			* Basic implementation of the interface: NCsDamage::NValue::IValue
 			*/
-			struct CSCORE_API FEmu : public IValue,
-									 public IRange
+			struct CSCORE_API FProxy : public IValue,
+									   public IRange
 			{
 			public:
 
@@ -36,11 +36,11 @@ namespace NCsDamage
 
 			public:
 
-				FEmu();
-				~FEmu();
+				FProxy();
+				~FProxy();
 
-				FEmu(const FEmu&) = delete;
-				FEmu& operator = (const FEmu&) = delete;
+				FProxy(const FProxy&) = delete;
+				FProxy& operator = (const FProxy&) = delete;
 
 				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

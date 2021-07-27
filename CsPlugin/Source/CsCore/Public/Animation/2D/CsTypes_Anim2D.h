@@ -283,17 +283,17 @@ namespace NCsAnim
 				{
 				private:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Texture, UTexture*)
-					CS_DECLARE_MEMBER_WITH_EMU(ParameterName, FName)
+					CS_DECLARE_MEMBER_WITH_PROXY(Texture, UTexture*)
+					CS_DECLARE_MEMBER_WITH_PROXY(ParameterName, FName)
 
 				public:
 
 					FFrame() :
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Texture, nullptr),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(ParameterName, NAME_None)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Texture, nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ParameterName, NAME_None)
 					{
-						CS_CTOR_SET_MEMBER_EMU(Texture);
-						CS_CTOR_SET_MEMBER_EMU(ParameterName);
+						CS_CTOR_SET_MEMBER_PROXY(Texture);
+						CS_CTOR_SET_MEMBER_PROXY(ParameterName);
 					}
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
@@ -303,8 +303,8 @@ namespace NCsAnim
 						return *this;
 					}
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Texture, UTexture)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ParameterName, FName)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Texture, UTexture)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ParameterName, FName)
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -405,28 +405,28 @@ namespace NCsAnim
 
 				public:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Playback, PlaybackType)
-					CS_DECLARE_MEMBER_WITH_EMU(PlayRate, PlayRateType)
-					CS_DECLARE_MEMBER_WITH_EMU(DeltaTime, float)
-					CS_DECLARE_MEMBER_WITH_EMU(TotalTime, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(Playback, PlaybackType)
+					CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(TotalTime, float)
 
 					TArray<FrameType> Frames;
 
-					CS_DECLARE_MEMBER_WITH_EMU(TotalCount, int32)
+					CS_DECLARE_MEMBER_WITH_PROXY(TotalCount, int32)
 
 					FFlipbook() :
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Playback, PlaybackType::Forward),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(DeltaTime, 0.0f),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalTime, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 						Frames(),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalCount, 0)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalCount, 0)
 					{
-						CS_CTOR_SET_MEMBER_EMU(Playback);
-						CS_CTOR_SET_MEMBER_EMU(PlayRate);
-						CS_CTOR_SET_MEMBER_EMU(DeltaTime);
-						CS_CTOR_SET_MEMBER_EMU(TotalTime);
-						CS_CTOR_SET_MEMBER_EMU(TotalCount);
+						CS_CTOR_SET_MEMBER_PROXY(Playback);
+						CS_CTOR_SET_MEMBER_PROXY(PlayRate);
+						CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
+						CS_CTOR_SET_MEMBER_PROXY(TotalTime);
+						CS_CTOR_SET_MEMBER_PROXY(TotalCount);
 					}
 
 					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)
@@ -452,11 +452,11 @@ namespace NCsAnim
 						return *this;
 					}
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Playback, PlaybackType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, PlayRateType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeltaTime, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalTime, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalCount, int32)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalCount, int32)
 
 					FORCEINLINE bool IsLooping() const
 					{
@@ -549,15 +549,15 @@ namespace NCsAnim
 				{
 				public:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Material, UMaterialInterface*)
-					CS_DECLARE_MEMBER_WITH_EMU(Index, int32)
+					CS_DECLARE_MEMBER_WITH_PROXY(Material, UMaterialInterface*)
+					CS_DECLARE_MEMBER_WITH_PROXY(Index, int32)
 
 					FFrame() :
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Material, nullptr),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Index, INDEX_NONE)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Material, nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Index, INDEX_NONE)
 					{
-						CS_CTOR_SET_MEMBER_EMU(Material);
-						CS_CTOR_SET_MEMBER_EMU(Index);
+						CS_CTOR_SET_MEMBER_PROXY(Material);
+						CS_CTOR_SET_MEMBER_PROXY(Index);
 					}
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
@@ -567,8 +567,8 @@ namespace NCsAnim
 						return *this;
 					}
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(Material, UMaterialInterface)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Index, int32)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Material, UMaterialInterface)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Index, int32)
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -668,28 +668,28 @@ namespace NCsAnim
 
 				public:
 
-					CS_DECLARE_MEMBER_WITH_EMU(Playback, PlaybackType)
-					CS_DECLARE_MEMBER_WITH_EMU(PlayRate, PlayRateType)
-					CS_DECLARE_MEMBER_WITH_EMU(DeltaTime, float)
-					CS_DECLARE_MEMBER_WITH_EMU(TotalTime, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(Playback, PlaybackType)
+					CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(TotalTime, float)
 
 					TArray<FrameType> Frames;
 
-					CS_DECLARE_MEMBER_WITH_EMU(TotalCount, int32)
+					CS_DECLARE_MEMBER_WITH_PROXY(TotalCount, int32)
 
 					FFlipbook() :
-						CS_CTOR_INIT_MEMBER_WITH_EMU(Playback, PlaybackType::Forward),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, PlayRateType::PR_60Fps),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(DeltaTime, 0.0f),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalTime, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 						Frames(),
-						CS_CTOR_INIT_MEMBER_WITH_EMU(TotalCount, 0)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalCount, 0)
 					{
-						CS_CTOR_SET_MEMBER_EMU(Playback);
-						CS_CTOR_SET_MEMBER_EMU(PlayRate);
-						CS_CTOR_SET_MEMBER_EMU(DeltaTime);
-						CS_CTOR_SET_MEMBER_EMU(TotalTime);
-						CS_CTOR_SET_MEMBER_EMU(TotalCount);
+						CS_CTOR_SET_MEMBER_PROXY(Playback);
+						CS_CTOR_SET_MEMBER_PROXY(PlayRate);
+						CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
+						CS_CTOR_SET_MEMBER_PROXY(TotalTime);
+						CS_CTOR_SET_MEMBER_PROXY(TotalCount);
 					}
 
 					FORCEINLINE FFlipbook& operator=(const FFlipbook& B)
@@ -715,11 +715,11 @@ namespace NCsAnim
 						return *this;
 					}
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Playback, PlaybackType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(PlayRate, PlayRateType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DeltaTime, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalTime, float)
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TotalCount, int32)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalCount, int32)
 
 					FORCEINLINE bool IsLooping() const
 					{

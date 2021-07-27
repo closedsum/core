@@ -69,8 +69,7 @@ namespace NCsDamage
 
 				ValueImplType Value;
 
-				FECsDamageType Type;
-				FECsDamageType* Type_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
 			public:
 
@@ -97,7 +96,7 @@ namespace NCsDamage
 			public:
 
 				FORCEINLINE const ValueType* GetValue() const { return &Value; }
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Type, FECsDamageType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
 			#pragma endregion DataType (NCsDamage::NData::IData)
 

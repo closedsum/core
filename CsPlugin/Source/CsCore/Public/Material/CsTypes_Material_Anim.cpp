@@ -530,7 +530,7 @@ namespace NCsMaterial
 	{
 		void FAnim::UpdateFromPlaybackAndPlayRateChecked(const FString& Context)
 		{
-			check(AreEmuPtrsDefaultChecked(Context));
+			check(AreProxyPtrsDefaultChecked(Context));
 
 			typedef NCsAnim::EPlayRate PlayRateType;
 			typedef NCsAnim::EPlayback PlaybackType;
@@ -877,7 +877,7 @@ namespace NCsMaterial
 				Anim.Reset();
 				MID = nullptr;
 				Owner = nullptr;
-				CS_RESET_MEMBER_WITH_EMU(Group, EMCsUpdateGroup::Get().GetMAX())
+				CS_RESET_MEMBER_WITH_PROXY(Group, EMCsUpdateGroup::Get().GetMAX())
 			}
 		}
 	}

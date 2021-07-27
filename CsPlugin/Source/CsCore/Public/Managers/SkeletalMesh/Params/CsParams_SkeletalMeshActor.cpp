@@ -26,7 +26,7 @@ namespace NCsSkeletalMeshActor
 
 				FOneShot::FOneShot() :
 					InterfaceMap(nullptr),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Anim, nullptr)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Anim, nullptr)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -36,7 +36,7 @@ namespace NCsSkeletalMeshActor
 
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 
-					CS_CTOR_SET_MEMBER_EMU(Anim);
+					CS_CTOR_SET_MEMBER_PROXY(Anim);
 				}
 
 				FOneShot::~FOneShot()
@@ -65,9 +65,9 @@ namespace NCsSkeletalMeshActor
 
 				FOneShot::FOneShot() :
 					InterfaceMap(nullptr),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Class, nullptr),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(Anim, nullptr),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(PlayRate, 1.0f)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Class, nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Anim, nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, 1.0f)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -77,9 +77,9 @@ namespace NCsSkeletalMeshActor
 
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 
-					CS_CTOR_SET_MEMBER_EMU(Class);
-					CS_CTOR_SET_MEMBER_EMU(Anim);
-					CS_CTOR_SET_MEMBER_EMU(PlayRate);
+					CS_CTOR_SET_MEMBER_PROXY(Class);
+					CS_CTOR_SET_MEMBER_PROXY(Anim);
+					CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 				}
 
 				FOneShot::~FOneShot()

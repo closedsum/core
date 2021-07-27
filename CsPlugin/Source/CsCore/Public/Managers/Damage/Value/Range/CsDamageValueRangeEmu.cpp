@@ -5,7 +5,7 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsDamage::NValue::NRange::FEmu::Name = FName("NCsDamage::NValue::NRange::FEmu");
+const FName NCsDamage::NValue::NRange::FProxy::Name = FName("NCsDamage::NValue::NRange::FProxy");
 
 namespace NCsDamage
 {
@@ -13,7 +13,7 @@ namespace NCsDamage
 	{
 		namespace NRange
 		{
-			FEmu::FEmu() :
+			FProxy::FProxy() :
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
 				// IRange
@@ -23,13 +23,13 @@ namespace NCsDamage
 				// ICsGetInterfaceMap
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRoot<FEmu>(this);
+				InterfaceMap->SetRoot<FProxy>(this);
 
 				InterfaceMap->Add<IValue>(static_cast<IValue*>(this));
 				InterfaceMap->Add<IRange>(static_cast<IRange*>(this));
 			}
 
-			FEmu::~FEmu()
+			FProxy::~FProxy()
 			{
 				// ICsGetInterfaceMap
 				if (InterfaceMap)

@@ -88,23 +88,21 @@ namespace NCsSkin
 
 					// ICsGetInterfaceMap
 
-					/** Pointer to the "root" object for all "Emu Slices". That object acts as the hub for the separate objects (via composition)
+					/** Pointer to the "root" object for all "Proxy Slices". That object acts as the hub for the separate objects (via composition)
 						that describe the data. */
 					FCsInterfaceMap* InterfaceMap;
 
 					// StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 
-					UStaticMesh* StaticMesh;
-					UStaticMesh** StaticMesh_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, UStaticMesh*)
 
 				public:
 
 					FImplSlice() :
 						InterfaceMap(nullptr),
-						StaticMesh(nullptr),
-						StaticMesh_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(StaticMesh, nullptr)
 					{
-						StaticMesh_Emu = &StaticMesh;
+						CS_CTOR_SET_MEMBER_PROXY(StaticMesh);
 					}
 
 					~FImplSlice()
@@ -131,7 +129,7 @@ namespace NCsSkin
 				#pragma region
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(StaticMesh, UStaticMesh)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(StaticMesh, UStaticMesh)
 
 				#pragma endregion StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
 

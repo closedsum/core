@@ -687,23 +687,23 @@ namespace NCsMovement
 
 				void FParams::Reset()
 				{
-					CS_RESET_MEMBER_WITH_EMU(Easing, ECsEasingType::Linear)
-					CS_RESET_MEMBER_WITH_EMU(Mover, MoverType::Actor)
-					CS_RESET_MEMBER_WITH_EMU(FromLocation, FVector::ZeroVector)
-					CS_RESET_MEMBER_WITH_EMU(MoveObjectName, NAME_None)
-					CS_RESET_MEMBER_WITH_EMU(MoveActorLabel, TEXT(""))
+					CS_RESET_MEMBER_WITH_PROXY(Easing, ECsEasingType::Linear)
+					CS_RESET_MEMBER_WITH_PROXY(Mover, MoverType::Actor)
+					CS_RESET_MEMBER_WITH_PROXY(FromLocation, FVector::ZeroVector)
+					CS_RESET_MEMBER_WITH_PROXY(MoveObjectName, NAME_None)
+					CS_RESET_MEMBER_WITH_PROXY(MoveActorLabel, TEXT(""))
 					MoveActor = nullptr;
 					MoveComponent = nullptr;
-					CS_RESET_MEMBER_WITH_EMU(Destination, DestinationType::Location)
-					CS_RESET_MEMBER_WITH_EMU(ToLocation, FVector::ZeroVector)
-					CS_RESET_MEMBER_WITH_EMU(ToObjectName, NAME_None)
-					CS_RESET_MEMBER_WITH_EMU(ToActorLabel, TEXT(""))
-					CS_RESET_MEMBER_WITH_EMU(ToBone, NAME_None)
+					CS_RESET_MEMBER_WITH_PROXY(Destination, DestinationType::Location)
+					CS_RESET_MEMBER_WITH_PROXY(ToLocation, FVector::ZeroVector)
+					CS_RESET_MEMBER_WITH_PROXY(ToObjectName, NAME_None)
+					CS_RESET_MEMBER_WITH_PROXY(ToActorLabel, TEXT(""))
+					CS_RESET_MEMBER_WITH_PROXY(ToBone, NAME_None)
 					ToActor = nullptr;
 					ToComponent = nullptr;
 					ToMeshComponent = nullptr;
-					CS_RESET_MEMBER_WITH_EMU(Time, 0.0f)
-					CS_RESET_MEMBER_WITH_EMU(Group, EMCsUpdateGroup::Get().GetMAX())
+					CS_RESET_MEMBER_WITH_PROXY(Time, 0.0f)
+					CS_RESET_MEMBER_WITH_PROXY(Group, EMCsUpdateGroup::Get().GetMAX())
 				}
 
 				#undef MoverType

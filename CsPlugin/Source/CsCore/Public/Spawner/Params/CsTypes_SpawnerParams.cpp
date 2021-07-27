@@ -432,11 +432,11 @@ namespace NCsSpawner
 		{
 			typedef NCsSpawner::EFrequency FrequencyType;
 
-			CS_RESET_MEMBER_WITH_EMU(Type, FrequencyType::Once)
-			CS_RESET_MEMBER_WITH_EMU(Delay, 0.0f)
-			CS_RESET_MEMBER_WITH_EMU(Count, 0)
-			CS_RESET_MEMBER_WITH_EMU(Interval, 0.0f)
-			CS_RESET_MEMBER_WITH_EMU(Time, 0.0f)
+			CS_RESET_MEMBER_WITH_PROXY(Type, FrequencyType::Once)
+			CS_RESET_MEMBER_WITH_PROXY(Delay, 0.0f)
+			CS_RESET_MEMBER_WITH_PROXY(Count, 0)
+			CS_RESET_MEMBER_WITH_PROXY(Interval, 0.0f)
+			CS_RESET_MEMBER_WITH_PROXY(Time, 0.0f)
 		}
 	}
 }

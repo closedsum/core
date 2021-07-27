@@ -37,7 +37,7 @@ namespace NCsSkin
 
 				/**
 				*/
-				struct CSCORE_API FEmu : public ISkeletalMesh
+				struct CSCORE_API FProxy : public ISkeletalMesh
 				{
 				public:
 
@@ -55,8 +55,8 @@ namespace NCsSkin
 
 				public:
 
-					FEmu();
-					~FEmu();
+					FProxy();
+					~FProxy();
 
 					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

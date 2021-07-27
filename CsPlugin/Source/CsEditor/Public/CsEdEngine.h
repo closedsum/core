@@ -130,6 +130,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Editor|Engine|PIE")
 	FCsEdEngine_OnEndPIE OnEndPIE_ScriptEvent;
 
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Editor|Engine|PIE")
+	FCsEdEngine_OnEndPIE OnEndPIE_Last_ScriptEvent;
+
 #pragma endregion PIE
 
 // Stream

@@ -12,7 +12,7 @@ namespace NCsDamage
 		/**
 		* Basic implementation of the interface: NCsDamage::NRange::IRange
 		*/
-		struct CSCORE_API FEmu : public IRange
+		struct CSCORE_API FProxy : public IRange
 		{
 		public:
 
@@ -32,8 +32,8 @@ namespace NCsDamage
 
 		public:
 
-			FEmu();
-			~FEmu();
+			FProxy();
+			~FProxy();
 
 		// ICsGetInterfaceMap
 		#pragma region

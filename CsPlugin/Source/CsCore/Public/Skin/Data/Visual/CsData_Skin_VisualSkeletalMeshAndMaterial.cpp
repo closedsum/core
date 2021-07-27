@@ -8,7 +8,7 @@
 #include "Library/Load/CsLibrary_Load.h"
 // DataTable
 #include "Engine/DataTable.h"
-// Emu
+// Proxy
 #include "Skin/Data/Visual/CsData_Skin_VisualSkeletalMeshAndMaterialImpl.h"
 
 const FName UCsData_Skin_VisualSkeletalMeshAndMaterial::Name = FName("UCsData_Skin_VisualSkeletalMeshAndMaterial");
@@ -49,10 +49,10 @@ void UCsData_Skin_VisualSkeletalMeshAndMaterial::BeginDestroy()
 		delete InterfaceMap;
 		InterfaceMap = nullptr;
 	}
-	if (DataEmu)
+	if (DataProxy)
 	{
-		delete DataEmu;
-		DataEmu = nullptr;
+		delete DataProxy;
+		DataProxy = nullptr;
 	}
 }
 
@@ -78,18 +78,18 @@ void UCsData_Skin_VisualSkeletalMeshAndMaterial::Init()
 		InterfaceMap->Add<SkeletalMeshSkinDataType>(Cast<SkeletalMeshSkinDataType>(this));
 		InterfaceMap->Add<MaterialSkinDataType>(Cast<MaterialSkinDataType>(this));
 	}
-	if (!DataEmu)
+	if (!DataProxy)
 	{
-		typedef NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl DataEmuType;
+		typedef NCsSkin::NData::NVisual::NSkeletalMeshAndMaterial::FImpl DataProxyType;
 
-		DataEmu = new DataEmuType();
+		DataProxy = new DataProxyType();
 
-		DataEmuType* Emu = (DataEmuType*)DataEmu;
-		Emu->SetOuter(this);
+		DataProxyType* Proxy = (DataProxyType*)DataProxy;
+		Proxy->SetOuter(this);
 		// SkeletalMeshSkinDataType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh)
-		Emu->SetSkeletalMesh(Mesh.GetPtr());
+		Proxy->SetSkeletalMesh(Mesh.GetPtr());
 		// MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
-		Emu->SetMaterials(Materials.GetPtr());
+		Proxy->SetMaterials(Materials.GetPtr());
 	}
 }
 

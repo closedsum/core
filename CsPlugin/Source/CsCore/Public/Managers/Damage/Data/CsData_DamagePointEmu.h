@@ -18,7 +18,7 @@ namespace NCsDamage
 			/**
 			*
 			*/
-			struct CSCORE_API FEmu : public DataType
+			struct CSCORE_API FProxy : public DataType
 			{
 			public:
 
@@ -40,8 +40,8 @@ namespace NCsDamage
 
 			public:
 
-				FEmu();
-				~FEmu();
+				FProxy();
+				~FProxy();
 
 				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 

@@ -14,8 +14,7 @@ namespace NCsDamage
 				// ICsGetInterfaceMap
 				InterfaceMap(),
 				// IPoint
-				Value(0.0f),
-				Value_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f)
 			{
 				// ICsGetInterfaceMap
 				InterfaceMap.SetRoot<FImpl>(this);
@@ -24,7 +23,7 @@ namespace NCsDamage
 				InterfaceMap.Add<IPoint>(static_cast<IPoint*>(this));
 				InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 
-				Value_Emu = &Value;
+				CS_CTOR_SET_MEMBER_PROXY(Value);
 			}
 
 			// ICsReset
@@ -32,8 +31,7 @@ namespace NCsDamage
 
 			void FImpl::Reset()
 			{
-				Value = 0.0f;
-				Value_Emu = &Value;
+				CS_RESET_MEMBER_WITH_PROXY(Value, 0.0f)
 			}
 
 			#pragma endregion ICsReset

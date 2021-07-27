@@ -180,11 +180,13 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 		if (PropertyName == TEXT("ECsInputActionMap"))
 		{
 			EnumSettingsLibrary::PopulateArrayFromString(ECsInputActionMap_Internal, ECsInputActionMap, EMCsInputActionMap::Get().GetEnumName());
+			UpdateDefaultConfigFile();
 		}
 		// ECsGameEvent
 		if (PropertyName == TEXT("ECsGameEvent"))
 		{
 			EnumSettingsLibrary::PopulateArrayFromString(ECsGameEvent_Internal, ECsGameEvent, EMCsGameEvent::Get().GetEnumName());
+			UpdateDefaultConfigFile();
 		}
 		// Input
 		if (PropertyNames.Contains("Input"))

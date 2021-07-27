@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Data/Shape/CsTypes_Data_DamageShape.h"
 
-#include "Managers/Damage/Data/Shape/CsData_DamageSphereEmu.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageSphereProxy.h"
 
 // FCsData_DamageSphere
 #pragma region

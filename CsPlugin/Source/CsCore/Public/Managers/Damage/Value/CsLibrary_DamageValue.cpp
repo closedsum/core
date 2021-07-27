@@ -4,9 +4,9 @@
 
 // Damage
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePointEmu.h"
+#include "Managers/Damage/Value/Point/CsDamageValuePointProxy.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
+#include "Managers/Damage/Value/Range/CsDamageValueRangeProxy.h"
 
 namespace NCsDamage
 {

@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Data/Shape/CsData_DamageSphereEmu.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageSphereProxy.h"
 
 // Library
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
@@ -7,8 +7,8 @@
 #include "Containers/CsInterfaceMap.h"
 // Damage
 #include "Managers/Damage/Value/CsDamageValue.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRangeEmu.h"
-#include "Managers/Damage/Range/CsDamageRangeEmu.h"
+#include "Managers/Damage/Value/Range/CsDamageValueRangeProxy.h"
+#include "Managers/Damage/Range/CsDamageRangeProxy.h"
 
 const FName NCsDamage::NData::NShape::NSphere::FProxy::Name = FName("NCsDamage::NData::NShape::NSphere::FProxy");
 

@@ -48,10 +48,7 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-				{
-					return InterfaceMap;
-				}
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 			#pragma endregion ICsGetInterfaceMap
 
@@ -65,29 +62,15 @@ namespace NCsDamage
 			#pragma region
 			public:
 
-				FORCEINLINE const float& GetMinValue() const
-				{
-					return *MinValue;
-				}
-
-				FORCEINLINE const float& GetMaxValue() const
-				{
-					return *MaxValue;
-				}
+				FORCEINLINE const float& GetMinValue() const { return *MinValue; }
+				FORCEINLINE const float& GetMaxValue() const { return *MaxValue; }
 
 			#pragma endregion IRange
 
 			public:
 
-				void SetMinValue(float* InValue)
-				{
-					MinValue = InValue;
-				}
-
-				void SetMaxValue(float* InValue)
-				{
-					MaxValue = InValue;
-				}
+				void SetMinValue(float* InValue) { MinValue = InValue; }
+				void SetMaxValue(float* InValue) { MaxValue = InValue; }
 			};
 		}
 	}

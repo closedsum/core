@@ -122,16 +122,25 @@ public:
 
 // PIE
 #pragma region
-public:
+protected:
 
 	virtual void OnBeginPIE(bool IsSimulating);
 	virtual void OnEndPIE(bool IsSimulating);
+
+public:
 
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Editor|Engine|PIE")
 	FCsEdEngine_OnEndPIE OnEndPIE_ScriptEvent;
 
 	UPROPERTY(BlueprintAssignable, Category = "CsCore|Editor|Engine|PIE")
 	FCsEdEngine_OnEndPIE OnEndPIE_Last_ScriptEvent;
+
+protected:
+
+	void OnEndPIE_NextFrame(bool IsSimulating);
+	char OnEndPIE_NextFrame_Internal(FCsRoutine* R);
+
+	virtual void OnEndPlayMapPIE(bool IsSimulating);
 
 #pragma endregion PIE
 

@@ -51,6 +51,8 @@ namespace NCsEdEngine
 		{
 			const FString StandaloneFromEditor = TEXT("StandaloneFromEditor");
 
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnEndPIE_NextFrame_Internal);
+
 			const FString OnObjectSaved_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables");
 			const FString OnObjectSaved_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads");
 			const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
@@ -59,6 +61,8 @@ namespace NCsEdEngine
 		namespace Name
 		{
 			const FName LastExecutedPlayModeType = FName("LastExecutedPlayModeType");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsEdEngine, OnEndPIE_NextFrame_Internal);
 		}
 	}
 
@@ -251,6 +255,54 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 	OnEndPIE_Last_ScriptEvent.Broadcast(IsSimulating);
 
 	CreatedObjects.DestroyAndRemoveNullPendingKillOrOrphaned();
+}
+
+void UCsEdEngine::OnEndPIE_NextFrame(bool IsSimulating)
+{
+	using namespace NCsEdEngine::NCached;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::EditorEngine;
+
+	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(this);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE OnEndPIE_NextFrame_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsEdEngine::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	static const int32 IS_SIMULATING = 0;
+
+	Payload->SetValue_Flag(IS_SIMULATING, IsSimulating);
+
+	Scheduler->Start(Payload);
+}
+
+char UCsEdEngine::OnEndPIE_NextFrame_Internal(FCsRoutine* R)
+{
+	static const int32 IS_SIMULATING = 0;
+	const bool& IsSimulating = R->GetValue_Flag(IS_SIMULATING);
+
+	CS_COROUTINE_BEGIN(R)
+
+	CS_COROUTINE_YIELD(R)
+
+	OnEndPlayMapPIE(IsSimulating);
+
+	CS_COROUTINE_END(R)
+}
+
+void UCsEdEngine::OnEndPlayMapPIE(bool IsSimulating)
+{
+
 }
 
 #pragma endregion PIE

@@ -6,6 +6,8 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Time/CsGetManagerTime.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 #endif // #if WITH_EDITOR
 
 // static initializations
@@ -21,10 +23,19 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
+
 /*static*/ UCsManager_Time* UCsManager_Time::Get(UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerTime(InRoot)->GetManager_Time();
 }
+
+/*static*/ UCsManager_Time* UCsManager_Time::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerTime* GetManagerTime = GetSafe_GetManagerTime(Context, InRoot, Log))
+		return GetManagerTime->GetManager_Time();
+	return nullptr;
+}
+
 #endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Time::Init(UObject* InRoot)
@@ -89,6 +100,28 @@ UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 	checkf(GetManagerTime, TEXT("UCsManager_Time::Get: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerTime."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
 	return GetManagerTime;
+}
+
+/*static*/ ICsGetManagerTime* UCsManager_Time::GetSafe_GetManagerTime(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
+
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+
+	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
+		return nullptr;
+	}
+
+	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
+
+	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
+		return nullptr;
+	}
+	return Cast<ICsGetManagerTime>(Manager_Singleton);
 }
 
 #endif // #if WITH_EDITOR

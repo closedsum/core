@@ -1,8 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
-
 #include "Coroutine/CsCoroutineSchedule.h"
+
 #include "CsCoroutineScheduler.generated.h"
+#pragma once
 
 namespace NCsCoroutineScheduler
 {
@@ -43,6 +43,15 @@ public:
 	}
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITOR
+	static UCsCoroutineScheduler* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsCoroutineScheduler* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	static void Init(UObject* InRoot);
 	static void Shutdown(UObject* InRoot = nullptr);
 
@@ -50,13 +59,7 @@ public:
 protected:
 
 	static ICsGetCoroutineScheduler* Get_GetCoroutineScheduler(UObject* InRoot);
-	static ICsGetCoroutineScheduler* GetSafe_GetCoroutineScheduler(UObject* Object);
-
-	static UCsCoroutineScheduler* GetSafe(UObject* Object);
-
-public:
-
-	static UCsCoroutineScheduler* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetCoroutineScheduler* GetSafe_GetCoroutineScheduler(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

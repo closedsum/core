@@ -343,6 +343,8 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 
 	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
+	EntryPoint.ExposedObjectNames.Add(TEXT("Root"));
+
 	// Engine
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("GEngine"), GEngine);
 	EntryPoint.ExposedObjectNames.Add(TEXT("GEngine"));
@@ -364,6 +366,7 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 
 	JavascriptCommonLibrary::ExposeObject(EntryPoint.Context, TEXT("World"), World);
 	EntryPoint.ExposedObjectNames.Add(TEXT("World"));
+	EntryPoint.ExposedObjectNames.Add(TEXT("GWorld"));
 
 	// Game State
 	CS_COROUTINE_WAIT_UNTIL(R, GameState);

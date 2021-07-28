@@ -3,6 +3,9 @@
 #include "CsCore.h"
 
 #if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Coroutine/CsGetCoroutineScheduler.h"
@@ -21,6 +24,7 @@ namespace NCsCoroutineScheduler
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Start);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoroutineScheduler, Update);
@@ -38,10 +42,19 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 #pragma region
 
 #if WITH_EDITOR
+
 /*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::Get(UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetCoroutineScheduler(InRoot)->GetCoroutineScheduler();
 }
+
+/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetCoroutineScheduler* GetCoroutineScheduler = GetSafe_GetCoroutineScheduler(Context, Object, Log))
+		return GetCoroutineScheduler->GetCoroutineScheduler();
+	return nullptr;
+}
+
 #endif // #if WITH_EDITOR
 
 /*static*/ void UCsCoroutineScheduler::Init(UObject* InRoot)
@@ -107,47 +120,26 @@ UCsCoroutineScheduler::UCsCoroutineScheduler(const FObjectInitializer& ObjectIni
 	return GetCoroutineScheduler;
 }
 
-/*static*/ ICsGetCoroutineScheduler* UCsCoroutineScheduler::GetSafe_GetCoroutineScheduler(UObject* Object)
+/*static*/ ICsGetCoroutineScheduler* UCsCoroutineScheduler::GetSafe_GetCoroutineScheduler(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetCoroutineScheduler>(Manager_Singleton);
-}
-
-/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::GetSafe(UObject* Object)
-{
-	if (ICsGetCoroutineScheduler* GetCoroutineScheduler = GetSafe_GetCoroutineScheduler(Object))
-		return GetCoroutineScheduler->GetCoroutineScheduler();
-	return nullptr;
-}
-
-/*static*/ UCsCoroutineScheduler* UCsCoroutineScheduler::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsCoroutineScheduler* Scheduler = GetSafe(World->GetGameInstance()))
-			return Scheduler;
-
-		UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::GetFromWorldContextObject: Failed to Manager Save of type UCsCoroutineScheduler from GameInstance."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

@@ -29,6 +29,15 @@ public:
 	}
 #endif // #if WITH_EDITOR
 
+#if WITH_EDITOR
+	static UCsManager_Time* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_Time* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	static void Init(UObject* InRoot);
 	static void Shutdown(UObject* InRoot = nullptr);
 
@@ -36,6 +45,7 @@ public:
 protected:
 
 	static ICsGetManagerTime* Get_GetManagerTime(UObject* InRoot);
+	static ICsGetManagerTime* GetSafe_GetManagerTime(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

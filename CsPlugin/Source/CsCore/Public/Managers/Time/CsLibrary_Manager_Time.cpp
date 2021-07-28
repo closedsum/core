@@ -109,7 +109,7 @@ namespace NCsTime
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
+			UCsManager_Time* Manager_Time = UCsManager_Time::GetSafe(Context, ContextRoot, Log);
 
 			if (!Manager_Time)
 			{

@@ -108,7 +108,7 @@ namespace NCsCoroutine
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(ContextRoot);
+			UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::GetSafe(Context, ContextRoot, Log);
 
 			if (!Scheduler)
 			{

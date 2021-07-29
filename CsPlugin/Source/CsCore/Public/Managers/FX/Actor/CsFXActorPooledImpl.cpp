@@ -249,10 +249,9 @@ void UCsFXActorPooledImpl::ConstructCache()
 }
 
 #define FXPayloadType NCsFX::NPayload::IPayload
+
 void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
 {
-#undef FXPayloadType
-
 	CS_NON_SHIPPING_EXPR(Log_SetFXSystem(Payload));
 
 	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
@@ -283,11 +282,8 @@ void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem);
 }
 
-#define FXPayloadType NCsFX::NPayload::IPayload
 void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
 {
-#undef FXPayloadType
-
 	using namespace NCsFXActorPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_SetFXSystem;
@@ -327,12 +323,9 @@ void UCsFXActorPooledImpl::Log_SetFXSystem(FXPayloadType* Payload)
 }
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
+
 void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload)
 {
-#undef PooledPayloadType
-#undef FXPayloadType
-
 	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, FXPayload));
 
 	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
@@ -440,14 +433,13 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 	#undef ChangeHelper
 }
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-#define FXPayloadType NCsFX::NPayload::IPayload
-void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* SkeletalMeshPayload)
+void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload)
 {
-#undef PooledPayloadType
-#undef FXPayloadType
-
 }
+
+#undef PooledPayloadType
+
+#undef FXPayloadType
 
 void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 {

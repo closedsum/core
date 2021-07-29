@@ -22,6 +22,7 @@
 #include "Managers/FX/Params/CsParams_FX.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
+#include "NiagaraSystemSimulation.h"
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
@@ -465,10 +466,23 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		// NOTE: 4.25. Currently there is a BUG at Runtime when calling UNiagaraComponent->SetAsset(nullptr) where
 		//			   some code runs assuming the Asset is valid. The work around is to manually
 		//			   call DestroyInstance() and then "null" out the Asset member on UNiagaraComponent.
+		// NOTE: 4.26.2. Still occurs.
 #if WITH_EDITOR
 		FX->GetNiagaraComponent()->SetAsset(nullptr);
 #else
+		FX->GetNiagaraComponent()->DeactivateImmediate();
+
 		*AssetPropertyPtr = nullptr;
+
+		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
+		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
+
+		TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FX->GetNiagaraComponent()->GetSystemSimulation();
+		
+		if (Simulation.IsValid())
+		{
+			Simulation->WaitForInstancesTickComplete(true);
+		}
 
 		FX->GetNiagaraComponent()->DestroyInstance();
 #endif // #if WITH_EDITOR

@@ -6,6 +6,7 @@
 // CVars
 #include "Managers/FX/Actor/CsCVars_Manager_FX_Actor.h"
 // Library
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
@@ -19,7 +20,6 @@
 
 #if WITH_EDITOR
 // Library
-#include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Managers
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -292,25 +292,16 @@ void UCsManager_FX_Actor::CleanUp()
 {
 	// Unbind delegates for Time related events
 	{
-#if WITH_EDITOR
 		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-		UObject* ContextRoot = TimeManagerLibrary::GetSafeContextRoot(this);
-
-		if (ContextRoot)
-#else
-		UObject* ContextRoot = nullptr;
-#endif // #if WITH_EDITOR
+		if (UCsManager_Time* Manager_Time = TimeManagerLibrary::GetSafe(this))
 		{
-			if (UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot))
+			for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
 			{
-				for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
-				{
-					const FECsUpdateGroup& Group = Pair.Key;
-					const FDelegateHandle& Handle = Pair.Value;
+				const FECsUpdateGroup& Group = Pair.Key;
+				const FDelegateHandle& Handle = Pair.Value;
 
-					Manager_Time->RemoveOnPause(Group, Handle);
-				}
+				Manager_Time->RemoveOnPause(Group, Handle);
 			}
 		}
 		OnPauseHandleByGroupMap.Reset();

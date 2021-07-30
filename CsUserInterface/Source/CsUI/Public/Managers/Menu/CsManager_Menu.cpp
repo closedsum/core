@@ -2,20 +2,16 @@
 #include "Managers/Menu/CsManager_Menu.h"
 #include "CsUI.h"
 
-// CVar
-//#include "CsCVars_Manager_Data.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 
 #if WITH_EDITOR
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Menu/CsGetManagerMenu.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // static initializations
@@ -30,17 +26,21 @@ UCsManager_Menu::UCsManager_Menu(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_Menu* UCsManager_Menu::Get(UObject* InRoot /*= nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerMenu(InRoot)->GetManager_Menu();
-#else
-	if (s_bShutdown)
-		return nullptr;
-
-	return s_Instance;
-#endif // #if WITH_EDITOR
 }
+
+/*static*/ UCsManager_Menu* UCsManager_Menu::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerMenu* GetManagerMenu = GetSafe_GetManagerMenu(Context, InRoot, Log))
+		return GetManagerMenu->GetManager_Menu();
+	return nullptr;
+}
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Menu::Init(UObject* InRoot, TSubclassOf<UCsManager_Menu> ManagerMenuClass, UObject* InOuter /*= nullptr*/)
 {
@@ -113,47 +113,26 @@ UCsManager_Menu::UCsManager_Menu(const FObjectInitializer& ObjectInitializer)
 	return GetManagerMenu;
 }
 
-/*static*/ ICsGetManagerMenu* UCsManager_Menu::GetSafe_GetManagerMenu(UObject* Object)
+/*static*/ ICsGetManagerMenu* UCsManager_Menu::GetSafe_GetManagerMenu(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerMenu>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Menu* UCsManager_Menu::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerMenu* GetManagerMenu = GetSafe_GetManagerMenu(Object))
-		return GetManagerMenu->GetManager_Menu();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Menu* UCsManager_Menu::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Menu* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_Menu::GetFromWorldContextObject: Failed to Manager Data of type UCsManager_Menu from GameInstance."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

@@ -20,7 +20,10 @@ public:
 #if WITH_EDITOR
 	static UCsManager_Menu* Get(UObject* InRoot = nullptr);
 #else
-	static UCsManager_Menu* Get(UObject* InRoot = nullptr);
+	FORCEINLINE static UCsManager_Menu* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
@@ -29,6 +32,15 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
+	static UCsManager_Menu* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_Menu* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Menu> ManagerMenuClass, UObject* InOuter = nullptr);
 	static void Shutdown(UObject* InRoot = nullptr);
 
@@ -36,13 +48,7 @@ public:
 protected:
 
 	static ICsGetManagerMenu* Get_GetManagerMenu(UObject* InRoot);
-	static ICsGetManagerMenu* GetSafe_GetManagerMenu(UObject* Object);
-
-	static UCsManager_Menu* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Menu* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerMenu* GetSafe_GetManagerMenu(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

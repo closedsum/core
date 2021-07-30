@@ -131,6 +131,13 @@ namespace NCsCoroutine
 		// End
 		#pragma region
 		
+		bool FLibrary::EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+		{
+			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+
+			return GetChecked(Context, ContextObject)->End(Group, Handle);
+		}
+
 		bool FLibrary::SafeEnd(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject, Log))

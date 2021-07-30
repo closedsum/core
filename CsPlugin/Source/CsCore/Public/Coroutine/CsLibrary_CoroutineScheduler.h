@@ -112,6 +112,19 @@ namespace NCsCoroutine
 		public:
 
 			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* return
+			*/
+			static bool EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
+
+			/**
 			* 
 			* 
 			* @param Context		The calling context.

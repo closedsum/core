@@ -38,7 +38,7 @@ namespace NCsCoroutine
 
 		#if WITH_EDITOR
 			/**
-			* Safely get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
+			* Safely get the Context (Root) for UCsCoroutineScheduler from a ContextObject.
 			*
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -54,7 +54,7 @@ namespace NCsCoroutine
 
 		#if WITH_EDITOR
 			/**
-			* Safely get the Context (Root) for UCsCoroutineScheduler from a WorldContext.
+			* Safely get the Context (Root) for UCsCoroutineScheduler from a ContextObject.
 			*
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
@@ -96,12 +96,12 @@ namespace NCsCoroutine
 			static UCsCoroutineScheduler* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			* Safely get the reference to UCsManager_Time from a ContextObject.
+			* Safely get the reference to UCsCoroutineScheduler from a ContextObject.
 			*
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* return				UCsManager_Time.
+			* return				UCsCoroutineScheduler.
 			*/
 			static UCsCoroutineScheduler* GetSafe(const UObject* ContextObject);
 

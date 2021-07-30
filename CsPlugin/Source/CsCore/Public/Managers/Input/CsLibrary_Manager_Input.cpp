@@ -185,6 +185,11 @@ namespace NCsInput
 			return GetSafe(Context, PC, Log);
 		}
 
+		bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			return GetSafe(Context, WorldContext, ControllerId, Log) != nullptr;
+		}
+
 		bool FLibrary::HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers)
 		{
 			checkf(NumLocalPlayers > 0, TEXT("FLibrary::HaveAllBeenCreated: NumLocalPlayer: %d is NOT > 0."), NumLocalPlayers);

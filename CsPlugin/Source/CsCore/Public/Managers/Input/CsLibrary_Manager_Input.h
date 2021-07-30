@@ -42,6 +42,8 @@ namespace NCsInput
 
 			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			static bool Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			static bool HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
 
 			/**

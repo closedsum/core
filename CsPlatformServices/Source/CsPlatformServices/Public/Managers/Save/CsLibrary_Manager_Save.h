@@ -12,6 +12,17 @@ namespace NCsSave
 {
 	namespace NManager
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					extern CSPLATFORMSERVICES_API const FString GetSafe;
+				}
+			}
+		}
+
 		/**
 		*/
 		struct CSPLATFORMSERVICES_API FLibrary final
@@ -31,9 +42,9 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* return				Context for UCsManager_Save.
 			*/
-			static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject);
+			static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, UObject* ContextObject)
+			FORCEINLINE static UObject* GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 			{
 				return nullptr;
 			}
@@ -50,9 +61,9 @@ namespace NCsSave
 			* @param Log
 			* return				Context for UCsManager_Save.
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
 				return nullptr;
 			}
@@ -67,9 +78,9 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* return				Context for UCsManager_Save.
 			*/
-			static UObject* GetSafeContextRoot(UObject* ContextObject);
+			static UObject* GetSafeContextRoot(const UObject* ContextObject);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(UObject* ContextObject)
+			FORCEINLINE static UObject* GetSafeContextRoot(const UObject* ContextObject)
 			{
 				return nullptr;
 			}
@@ -90,7 +101,26 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* return				UCsManager_Save.
 			*/
-			static UCsManager_Save* GetChecked(const FString& Context, UObject* ContextObject);
+			static UCsManager_Save* GetChecked(const FString& Context, const UObject* ContextObject);
+
+			/**
+			* Get the reference to UCsManager_Save from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				UCsManager_Save.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetChecked(const FString& Context, const UObject* ContextObject)
+			{
+				UCsManager_Save* O = GetChecked(Context, ContextObject);
+				T* Other		   = Cast<T>(O);
+
+				checkf(Other, TEXT("%s: Manager_Save is NOT of type: %s."), *Context, *(T::StaticClass()->GetName()));
+				return Other;
+			}
 
 			/**
 			* Safely get the reference to UCsManager_Save from a ContextObject.
@@ -102,7 +132,66 @@ namespace NCsSave
 			* @param Log
 			* return				UCsManager_Save.
 			*/
-			static UCsManager_Save* GetSafe(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Save* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Save from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				UCsManager_Save.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UCsManager_Save* O = GetChecked(Context, ContextObject);
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					Log(FString::Printf(TEXT("%s: Manager_Save is NOT of type: %s."), *Context, *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
+
+			/**
+			* Safely get the reference to UCsManager_Save from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				UCsManager_Save.
+			*/
+			static UCsManager_Save* GetSafe(const UObject* ContextObject);
+
+			/**
+			* Safely get the reference to UCsManager_Save from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log
+			* return				UCsManager_Save.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafe(const UObject* ContextObject)
+			{
+				using namespace NCsSave::NManager::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafe;
+
+				return GetSafe<T>(Context, ContextObject, nullptr);
+			}
 
 		#pragma endregion Get
 
@@ -119,7 +208,7 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* @param Save			Save (slot) to set as the current save.
 			*/
-			static void SetCurrentSaveChecked(const FString& Context, UObject* ContextObject, const ECsSave& Save);
+			static void SetCurrentSaveChecked(const FString& Context, const UObject* ContextObject, const ECsSave& Save);
 
 			/**
 			* Set the current save (slot).
@@ -131,7 +220,7 @@ namespace NCsSave
 			* @param Save			Save (slot) to set as the current save.
 			* @param Log
 			*/
-			static void SetSafeCurrentSave(const FString& Context, UObject* ContextObject, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SetSafeCurrentSave(const FString& Context, const UObject* ContextObject, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion FileName
 
@@ -147,7 +236,7 @@ namespace NCsSave
 			*						or
 			*						A reference to the GameInstance.
 			*/
-			static void EnumerateChecked(const FString& Context, UObject* ContextObject);
+			static void EnumerateChecked(const FString& Context, const UObject* ContextObject);
 
 			/**
 			* Safely get a list of all save filenames for specified profile.
@@ -158,7 +247,7 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* @param Log
 			*/
-			static void SafeEnumerate(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeEnumerate(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#pragma endregion Enumerate
 
@@ -176,7 +265,7 @@ namespace NCsSave
 			* @param Profile		Profile to read save from.
 			* @param Save			Save (slot) to read from.
 			*/
-			static void ReadChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
+			static void ReadChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 			/**
 			* Safely read a save for a specified profile and Save (slot)
@@ -189,7 +278,7 @@ namespace NCsSave
 			* @param Save			Save (slot) to read from.
 			* @param Log
 			*/
-			static void SafeRead(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeRead(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Read all saves for a specified profile.
@@ -200,7 +289,7 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* @param Profile		Profile to read all saves from.
 			*/
-			static void ReadAllChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile);
+			static void ReadAllChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile);
 
 			/**
 			* Safely read all saves for a specified profile.
@@ -212,7 +301,7 @@ namespace NCsSave
 			* @param Profile		Profile to read all saves from.
 			* @param Log
 			*/
-			static void SafeReadAll(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeReadAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Read
 
@@ -230,7 +319,7 @@ namespace NCsSave
 			* @param Profile		Profile to write save to.
 			* @param Save			Save (slot) to write to.
 			*/
-			static void WriteChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
+			static void WriteChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 			/**
 			* Safely write a save for a specified profile and Save (slot). 
@@ -243,7 +332,7 @@ namespace NCsSave
 			* @param Save			Save (slot) to write to.
 			* @param Log
 			*/
-			static void SafeWrite(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeWrite(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Write all saves for a specified profile.
@@ -254,7 +343,7 @@ namespace NCsSave
 			*						A reference to the GameInstance.
 			* @param Profile		Profile to write all saves to.
 			*/
-			static void WriteAllChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile);
+			static void WriteAllChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile);
 
 			/**
 			* Safely write all saves for a specified profile.
@@ -266,7 +355,7 @@ namespace NCsSave
 			* @param Profile		Profile to write all saves to.
 			* @param Log
 			*/
-			static void SafeWriteAll(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeWriteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Write
 
@@ -282,7 +371,7 @@ namespace NCsSave
 			* @param Profile		Profile to delete save from.
 			* @param Save			Save (slot) to delete.
 			*/
-			static void DeleteChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
+			static void DeleteChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save);
 
 			/**
 			* Safely delete a save for a specified profile and Save (slot).
@@ -293,7 +382,7 @@ namespace NCsSave
 			* @param Save			Save (slot) to delete.
 			* @param Log
 			*/
-			static void SafeDelete(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeDelete(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, const ECsSave& Save, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Delete all saves for a specified profile.
@@ -302,7 +391,7 @@ namespace NCsSave
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Profile		Profile to delete all saves from.
 			*/
-			static void DeleteAllChecked(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile);
+			static void DeleteAllChecked(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile);
 
 			/**
 			* Safely delete all saves for a specified profile.
@@ -312,7 +401,7 @@ namespace NCsSave
 			* @param Profile		Profile to delete all saves from.
 			* @param Log
 			*/
-			static void SafeDeleteAll(const FString& Context, UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeDeleteAll(const FString& Context, const UObject* ContextObject, const ECsPlayerProfile& Profile, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Delete all saves for all profiles.
@@ -320,7 +409,7 @@ namespace NCsSave
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
-			static void DeleteAllContentChecked(const FString& Context, UObject* ContextObject);
+			static void DeleteAllContentChecked(const FString& Context, const UObject* ContextObject);
 
 			/**
 			* Safely delete all saves for all profiles.
@@ -329,7 +418,7 @@ namespace NCsSave
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log
 			*/
-			static void SafeDeleteAllContent(const FString& Context, UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SafeDeleteAllContent(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Delete
 		};

@@ -1556,15 +1556,15 @@ struct CSCORE_API FCsInputActionMapping
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString KeyName;
 
 	FKey Key;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Scale;
 
 	FCsInputActionMapping()
@@ -1606,7 +1606,7 @@ struct CSCORE_API FCsInputActionMappings
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FCsInputActionMapping> Mappings;
 
 	FORCEINLINE FCsInputActionMappings& operator=(const FCsInputActionMappings& B)
@@ -1632,7 +1632,8 @@ struct CSCORE_API FCsInputActionMappings
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-
+			if (Mappings[I] != B.Mappings[I])
+				return false;
 		}
 		return true;
 	}
@@ -1653,10 +1654,10 @@ struct CSCORE_API FCsInputProfile
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	uint8 Player;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Input")
+	UPROPERTY(VisibleDefaultsOnly)
 	FCsInputActionMappings DeviceMappings[(uint8)ECsInputDevice::ECsInputDevice_MAX];
 
 	FCsInputProfile()

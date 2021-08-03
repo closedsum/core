@@ -16,6 +16,7 @@ namespace NCsScriptLibraryInput
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, IsKeyValidForDevice);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, IsKeyValidForMode);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, GetKeysByDevice);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, GetKey);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, AddActionMapping);
@@ -39,6 +40,17 @@ bool UCsScriptLibrary_Input::IsKeyValidForDevice(const FString& Context, const E
 	typedef NCsInput::NKey::FLibrary InputKeyLibrary;
 
 	return InputKeyLibrary::IsValidForDevice(Ctxt, Device, Key);
+}
+
+bool UCsScriptLibrary_Input::IsKeyValidForMode(const FString& Context, const ECsInputMode& Mode, const FKey& Key)
+{
+	using namespace NCsScriptLibraryInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::IsKeyValidForMode : Context;
+
+	typedef NCsInput::NKey::FLibrary InputKeyLibrary;
+
+	return InputKeyLibrary::IsValidForMode(Ctxt, Mode, Key);
 }
 
 bool UCsScriptLibrary_Input::GetKeysByDevice(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys)

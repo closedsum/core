@@ -21,6 +21,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Device,Key"))
 	static bool IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key);
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Mode,Key"))
+	static bool IsKeyValidForMode(const FString& Context, const ECsInputMode& Mode, const FKey& Key);
+
+
 	/**
 	* Get the Keys for Device associated with Action.
 	*

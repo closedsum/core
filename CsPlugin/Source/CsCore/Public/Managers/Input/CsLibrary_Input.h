@@ -317,6 +317,8 @@ namespace NCsInput
 
 			static bool IsValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			static bool IsValidForMode(const FString& Context, const ECsInputMode& Mode, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			/**
 			* Safely get the Keys for Device associated with Action.
 			* 

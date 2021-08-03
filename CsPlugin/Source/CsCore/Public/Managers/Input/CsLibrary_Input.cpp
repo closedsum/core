@@ -361,6 +361,27 @@ namespace NCsInput
 			return false;
 		}
 
+		bool FLibrary::IsValidForMode(const FString& Context, const ECsInputMode& Mode, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			// Mouse - TODO: Add Mouse Axis
+			if (Mode == ECsInputMode::Mouse)
+				return Key.IsMouseButton();
+			// Gamepad
+			if (Mode == ECsInputMode::Gamepad)
+				return Key.IsGamepadKey();
+			// Touch
+			if (Mode == ECsInputMode::Touch)
+				return Key.IsTouch();
+			// MotionController - TODO:
+			return !Key.IsMouseButton() && !Key.IsGamepadKey() && !Key.IsTouch();
+		}
+
 		bool FLibrary::GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)

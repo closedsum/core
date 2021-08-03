@@ -10,8 +10,6 @@
 #include "GameFramework/PlayerController.h"
 // UI
 #include "Slate/SceneViewport.h"
-// Input
-#include "GameFramework/PlayerInput.h"
 
 namespace NCsInput
 {
@@ -330,5 +328,556 @@ namespace NCsInput
 			}
 			return false;
 		}
+	}
+
+	namespace NMapping
+	{
+		bool FLibrary::IsValidChecked(const FString& Context, const FInputActionKeyMapping& Mapping)
+		{
+			CS_IS_NAME_NONE_CHECKED(Mapping.ActionName)
+
+			checkf(Mapping.Key.IsValid(), TEXT("%s: Mapping.Key: %s is NOT Valid."), *Context, *(Mapping.Key.ToString()));
+			return true;
+		}
+
+		bool FLibrary::IsValid(const FString& Context, const FInputActionKeyMapping& Mapping, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_NAME_NONE(Mapping.ActionName)
+
+			if (!Mapping.Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mapping.Key: %s is NOT Valid."), *Context, *(Mapping.Key.ToString())));
+				return false;
+			}
+			return true;
+		}
+
+		bool FLibrary::IsValidChecked(const FString& Context, const FInputAxisKeyMapping& Mapping)
+		{
+			CS_IS_NAME_NONE_CHECKED(Mapping.AxisName)
+
+			checkf(Mapping.Key.IsValid(), TEXT("%s: Mapping.Key: %s is NOT Valid."), *Context, *(Mapping.Key.ToString()));
+
+			CS_IS_FLOAT_NOT_EQUAL_CHECKED(Mapping.Scale, 0.0f)
+			return true;
+		}
+
+		bool FLibrary::IsValid(const FString& Context, const FInputAxisKeyMapping& Mapping, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_NAME_NONE(Mapping.AxisName)
+
+			if (!Mapping.Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mapping.Key: %s is NOT Valid."), *Context, *(Mapping.Key.ToString())));
+				return false;
+			}
+
+			CS_IS_FLOAT_NOT_EQUAL(Mapping.Scale, 0.0f)
+			return true;
+		}
+
+		// Key
+		#pragma region
+		
+		bool FLibrary::IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_VALID(EMCsInputDevice, ECsInputDevice, Device)
+
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			// MouseAndKeyboard
+			if (Device == ECsInputDevice::MouseAndKeyboard)
+			{
+				const bool bMouse = Key.IsMouseButton();
+				const bool bKeyboard = !bMouse && !Key.IsGamepadKey() && !Key.IsTouch() && Key != EKeys::AnyKey;
+
+				return bMouse || bKeyboard;
+			}
+			// Gamepad
+			if (Device == ECsInputDevice::Gamepad)
+			{
+				return Key.IsGamepadKey();
+			}
+			// MotionController - TODO
+			return false;
+		}
+
+		#pragma endregion Key
+
+		// Add
+		#pragma region
+
+		void FLibrary::AddActionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputAction& Action, const FKey& Key, const float& Scale /*=0.0f*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetChecked(Context, WorldContext, ControllerId);
+
+			check(EMCsInputAction::Get().IsValidEnumChecked(Context, Action));
+
+			checkf(Key.IsValid(), TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString()));
+
+			// NOTE: When creating a completely new Action, a Listener on Manager_Input will also need to be created.
+
+			// NOTE: When changing a binding (NOT removing), call Add first and then remove the "old" mapping.
+
+			const FName& ActionName = Action.GetFName();
+
+			// Check Mapping already exists.
+
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName &&
+					Key == ActionMapping.Key)
+				{
+					checkf(0, TEXT("%s: Player: %d. ActionMapping already exists for Action: %s and Key: %s."), *Context, ControllerId, Action.ToChar(), *(Key.ToString()));
+					return;
+				}
+			}
+			// Axis
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName &&
+					Key == AxisMapping.Key)
+				{
+					checkf(0, TEXT("%s: Player: %d. AxisMapping already exists for Action: %s and Key: %s."), *Context, ControllerId, Action.ToChar(), *(Key.ToString()));
+					return;
+				}
+			}
+
+			// Add Mapping
+
+			// Check if the a mapping already exists for Action, if so add an ActionMapping
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName)
+				{
+					FInputActionKeyMapping Mapping;
+					Mapping.ActionName = ActionName;
+					Mapping.Key = Key;
+
+					PlayerInput->AddActionMapping(Mapping);
+					return;
+				}
+			}
+
+			// Check if the mapping already exists for Axis, if so add an AxisMapping
+				// Axis
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName)
+				{
+					CS_IS_FLOAT_NOT_EQUAL_CHECKED(Scale, 0.0f)
+
+					FInputAxisKeyMapping Mapping;
+					Mapping.AxisName = ActionName;
+					Mapping.Key = Key;
+					Mapping.Scale = Scale;
+
+					PlayerInput->AddAxisMapping(Mapping);
+					return ;
+				}
+			}
+
+			// Action
+			if (Scale == 0.0f)
+			{
+				FInputActionKeyMapping Mapping;
+				Mapping.ActionName = ActionName;
+				Mapping.Key = Key;
+
+				PlayerInput->AddActionMapping(Mapping);
+			}
+			// Axis
+			else
+			{
+				FInputAxisKeyMapping Mapping;
+				Mapping.AxisName = ActionName;
+				Mapping.Key = Key;
+				Mapping.Scale = Scale;
+
+				PlayerInput->AddAxisMapping(Mapping);
+			}
+		}
+
+		bool FLibrary::AddSafeAction(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputAction& Action, const FKey& Key, const float& Scale /*=0.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+
+			if (!PlayerInput)
+				return false;
+
+			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
+
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			// NOTE: When creating a completely new Action, a Listener on Manager_Input will also need to be created.
+
+			// NOTE: When changing a binding (NOT removing), call Add first and then remove the "old" mapping.
+
+			const FName& ActionName = Action.GetFName();
+
+			// Check Mapping already exists.
+
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName &&
+					Key == ActionMapping.Key)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player: %d. ActionMapping already exists for Action: %s and Key: %s."), *Context, ControllerId, Action.ToChar(), *(Key.ToString())));
+					return false;
+				}
+			}
+				// Axis
+			for (FInputAxisKeyMapping& AxisMapping: PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName &&
+					Key == AxisMapping.Key)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player: %d. AxisMapping already exists for Action: %s and Key: %s."), *Context, ControllerId, Action.ToChar(), *(Key.ToString())));
+					return false;
+				}
+			}
+
+			// Add Mapping
+
+			// Check if the a mapping already exists for Action, if so add an ActionMapping
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName)
+				{
+					FInputActionKeyMapping Mapping;
+					Mapping.ActionName = ActionName;
+					Mapping.Key = Key;
+
+					PlayerInput->AddActionMapping(Mapping);
+					return true;
+				}
+			}
+
+			// Check if the mapping already exists for Axis, if so add an AxisMapping
+				// Axis
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName)
+				{
+					CS_IS_FLOAT_NOT_EQUAL(Scale, 0.0f)
+
+					FInputAxisKeyMapping Mapping;
+					Mapping.AxisName = ActionName;
+					Mapping.Key = Key;
+					Mapping.Scale = Scale;
+
+					PlayerInput->AddAxisMapping(Mapping);
+					return true;
+				}
+			}
+
+			// Action
+			if (Scale == 0.0f) 
+			{
+				FInputActionKeyMapping Mapping;
+				Mapping.ActionName = ActionName;
+				Mapping.Key = Key;
+
+				PlayerInput->AddActionMapping(Mapping);
+			}
+			// Axis
+			else
+			{
+				FInputAxisKeyMapping Mapping;
+				Mapping.AxisName = ActionName;
+				Mapping.Key = Key;
+				Mapping.Scale = Scale;
+
+				PlayerInput->AddAxisMapping(Mapping);
+			}
+			return true;
+		}
+
+		bool FLibrary::AddSafeAction(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FInputActionKeyMapping& Mapping, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+
+			if (!PlayerInput)
+				return false;
+
+			if (!IsValid(Context, Mapping, Log))
+				return false;
+
+			// Check Mapping already exists.
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (Mapping.ActionName == ActionMapping.ActionName &&
+					Mapping.Key == ActionMapping.Key)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player: %d. ActionMapping already exists for Mapping.ActionName: %s and Mapping.Key: %s."), *Context, ControllerId, *(Mapping.ActionName.ToString()), *(Mapping.Key.ToString())));
+					return false;
+				}
+			}
+
+			PlayerInput->AddActionMapping(Mapping);
+			return true;
+		}
+
+		bool FLibrary::AddSafeAxis(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FInputAxisKeyMapping& Mapping, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+
+			if (!PlayerInput)
+				return false;
+
+			if (!IsValid(Context, Mapping, Log))
+				return false;
+
+			// Check Mapping already exists.
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (Mapping.AxisName == AxisMapping.AxisName &&
+					Mapping.Key == AxisMapping.Key)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player: %d. AxisMapping already exists for Mapping.AxisName: %s and Mapping.Key: %s."), *Context, ControllerId, *(Mapping.AxisName.ToString()), *(Mapping.Key.ToString())));
+					return false;
+				}
+			}
+
+			PlayerInput->AddAxisMapping(Mapping);
+			return true;
+		}
+
+		#pragma endregion Add
+
+		// Remove
+		#pragma region
+
+		void FLibrary::RemoveActionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputAction& Action, const FKey& Key)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetChecked(Context, WorldContext, ControllerId);
+
+			check(EMCsInputAction::Get().IsValidEnumChecked(Context, Action));
+
+			checkf(Key.IsValid(), TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString()));
+
+			// NOTE: When creating a completely new Action, a Listener on Manager_Input will also need to be created.
+
+			// NOTE: When changing a binding (NOT removing), call Add first and then remove the "old" mapping.
+
+			const FName& ActionName = Action.GetFName();
+
+			// Find the remove the mapping
+
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName &&
+					Key == ActionMapping.Key)
+				{
+					PlayerInput->RemoveActionMapping(ActionMapping);
+					return;
+				}
+			}
+				// Axis
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName &&
+					Key == AxisMapping.Key)
+				{
+					PlayerInput->RemoveAxisMapping(AxisMapping);
+					return;
+				}
+			}
+		}
+
+		bool FLibrary::RemoveSafeAction(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const FECsInputAction& Action, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+
+			if (!PlayerInput)
+				return false;
+
+			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
+
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			// NOTE: When creating a completely new Action, a Listener on Manager_Input will also need to be created.
+
+			// NOTE: When changing a binding (NOT removing), call Add first and then remove the "old" mapping.
+
+			const FName& ActionName = Action.GetFName();
+
+			// Find the remove the mapping
+
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName &&
+					Key == ActionMapping.Key)
+				{
+					PlayerInput->RemoveActionMapping(ActionMapping);
+					return true;
+				}
+			}
+				// Axis
+			for (FInputAxisKeyMapping& AxisMapping: PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName &&
+					Key == AxisMapping.Key)
+				{
+					PlayerInput->RemoveAxisMapping(AxisMapping);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		#pragma endregion Remove
+
+		// Replace
+		#pragma region
+
+		bool FLibrary::SafeReplaceAction(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale /*=0.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetSafe(Context, WorldContext, ControllerId, Log);
+
+			if (!PlayerInput)
+				return false;
+
+			CS_IS_ENUM_VALID(EMCsInputDevice, ECsInputDevice, Device)
+
+			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
+
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			if (!IsKeyValidForDevice(Context, Device, Key))
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), *(EMCsInputDevice::Get().ToChar(Device))));
+				return false;
+			}
+
+			const FName& ActionName = Action.GetFName();
+
+			// Check Mapping already exists.
+			
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName &&
+					Key == ActionMapping.Key)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player: %d. ActionMapping already exists for Action: %s and Key: %s."), *Context, ControllerId, Action.ToChar(), *(Key.ToString())));
+					return true;
+				}
+			}
+				// Axis
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName &&
+					Key == AxisMapping.Key)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Player: %d. AxisMapping already exists for Action: %s and Key: %s."), *Context, ControllerId, Action.ToChar(), *(Key.ToString())));
+					return true;
+				}
+			}
+
+			// Add the Mapping
+
+				// Action
+			if (Scale == 0.0f)
+			{
+				FInputActionKeyMapping Mapping;
+				Mapping.ActionName = ActionName;
+				Mapping.Key = Key;
+
+				PlayerInput->AddActionMapping(Mapping);
+			}
+				// Axis
+			else
+			{
+				FInputAxisKeyMapping Mapping;
+				Mapping.AxisName = ActionName;
+				Mapping.Key = Key;
+				Mapping.Scale = Scale;
+
+				PlayerInput->AddAxisMapping(Mapping);
+			}
+
+			// Remove the any mappings that are Key's for Device (excluding the Key that was added)
+
+				// Action
+			if (Scale == 0.0f)
+			{
+				TArray<FInputActionKeyMapping> Mappings;
+
+				for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+				{
+					if (ActionName == ActionMapping.ActionName &&
+						Key != ActionMapping.Key &&
+						IsKeyValidForDevice(Context, Device, ActionMapping.Key, nullptr))
+					{
+						Mappings.Add(ActionMapping);
+					}
+				}
+
+				for (FInputActionKeyMapping& Mapping : Mappings)
+				{
+					PlayerInput->RemoveActionMapping(Mapping);
+				}
+			}
+				// Axis
+			else
+			{
+				TArray<FInputAxisKeyMapping> Mappings;
+
+				for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+				{
+					if (ActionName == AxisMapping.AxisName &&
+						Key != AxisMapping.Key &&
+						IsKeyValidForDevice(Context, Device, AxisMapping.Key, nullptr))
+					{
+						Mappings.Add(AxisMapping);
+					}
+				}
+
+				for (FInputAxisKeyMapping& Mapping : Mappings)
+				{
+					PlayerInput->RemoveAxisMapping(Mapping);
+				}
+			}
+			return true;
+		}
+
+		#pragma endregion Replace
 	}
 }

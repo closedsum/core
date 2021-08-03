@@ -1624,7 +1624,7 @@ void UCsManager_Input::SetupInputActionMapping()
 		const int32& Mask			 = Map.Mask;
 		const FCsInputActionSet& Set = InputActionMappings[Map];
 
-		// HACK: TODO: Investigate and fox
+		// HACK: TODO: Investigate and fix
 		{
 			FCsInputActionSet& FixSet = const_cast<FCsInputActionSet&>(Set);
 			FixSet.ConditionalRebuild();
@@ -2418,7 +2418,7 @@ void UCsManager_Input::LoadInputProfile()
 
 				for (FCsInputActionMapping& Mapping : Mappings)
 				{
-					Mapping.Key	= GetKey(Mapping.KeyName);
+					//Mapping.Key	= GetKey(Mapping.KeyName);
 				}
 			}
 		}
@@ -2555,8 +2555,7 @@ void UCsManager_Input::UnbindActionMapping(const ECsInputDevice& Device, const F
 		if (Action == Mapping.Action &&
 			Key == Mapping.Key)
 		{
-			Mapping.KeyName = NCsCached::Str::Empty;
-			Mapping.Key		= EKeys::Invalid;
+			Mapping.Key	= EKeys::Invalid;
 			break;
 		}
 	}
@@ -2595,7 +2594,6 @@ void UCsManager_Input::UnbindAxisMapping(const ECsInputDevice& Device, const FEC
 		if (Action == Mapping.Action &&
 			Key == Mapping.Key)
 		{
-			Mapping.KeyName = NCsCached::Str::Empty;
 			Mapping.Key = EKeys::Invalid;
 			break;
 		}

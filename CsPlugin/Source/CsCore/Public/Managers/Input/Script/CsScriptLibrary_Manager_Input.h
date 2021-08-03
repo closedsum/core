@@ -7,11 +7,29 @@
 
 #include "CsScriptLibrary_Manager_Input.generated.h"
 
+class UCsManager_Input;
 
 UCLASS()
 class CSCORE_API UCsScriptLibrary_Manager_Input : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the Manager_Input associated with the player controller with ControllerId.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param ControllerId
+	* return				Manager_Input
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId"))
+	static UCsManager_Input* Get(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+
+#pragma endregion Get
 
 public:
 

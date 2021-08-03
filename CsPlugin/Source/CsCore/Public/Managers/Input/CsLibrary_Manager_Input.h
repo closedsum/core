@@ -16,6 +16,8 @@ namespace NCsInput
 	{
 		class CSCORE_API FLibrary
 		{
+		// Get
+		#pragma region
 		public:
 
 			static UCsManager_Input* GetFirstChecked(const FString& Context, UWorld* World);
@@ -40,7 +42,20 @@ namespace NCsInput
 
 			static UCsManager_Input* GetSafe(APawn* Pawn);
 
+			/**
+			* Safely get the Manager_Input associated with the player controller with ControllerId.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param Log			(optional)
+			* return				Manager_Input
+			*/
 			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Get
+
+		public:
 
 			static bool Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 

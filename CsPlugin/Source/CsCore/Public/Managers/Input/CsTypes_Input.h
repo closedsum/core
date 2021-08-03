@@ -1560,32 +1560,21 @@ struct CSCORE_API FCsInputActionMapping
 	FECsInputAction Action;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString KeyName;
-
 	FKey Key;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Scale;
 
-	FCsInputActionMapping()
+	FCsInputActionMapping() :
+		Action(),
+		Key(),
+		Scale(0.0f)
 	{
-		KeyName = NCsCached::Str::Empty;
-		Scale = 1.0f;
-	}
-
-	FORCEINLINE FCsInputActionMapping& operator=(const FCsInputActionMapping& B)
-	{
-		Action = B.Action;
-		KeyName = B.KeyName;
-		Key = B.Key;
-		Scale = B.Scale;
-		return *this;
 	}
 
 	FORCEINLINE bool operator==(const FCsInputActionMapping& B) const
 	{
 		return Action == B.Action &&
-			   KeyName == B.KeyName &&
 			   Key == B.Key &&
 			   Scale == B.Scale;
 	}
@@ -1700,8 +1689,7 @@ struct CSCORE_API FCsInputProfile
 		{
 			if (Action == Mapping.Action)
 			{
-				Mapping.KeyName = Key == EKeys::Invalid ? NCsCached::Str::Empty : Key.GetDisplayName().ToString();;
-				Mapping.Key		= Key;
+				Mapping.Key	= Key;
 				break;
 			}
 		}
@@ -1716,7 +1704,6 @@ struct CSCORE_API FCsInputProfile
 		Mappings.AddDefaulted();
 		FCsInputActionMapping& Mapping = Mappings[Count];
 		Mapping.Action	   = Action;
-		Mapping.KeyName	   = KeyName;
 		Mapping.Key		   = Key;
 	}
 

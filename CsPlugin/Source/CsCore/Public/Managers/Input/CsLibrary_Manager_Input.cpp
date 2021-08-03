@@ -32,6 +32,9 @@ namespace NCsInput
 			}
 		}
 
+		// Get
+		#pragma region
+
 		UCsManager_Input* FLibrary::GetFirstChecked(const FString& Context, UWorld* World)
 		{
 			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
@@ -184,6 +187,8 @@ namespace NCsInput
 
 			return GetSafe(Context, PC, Log);
 		}
+
+		#pragma endregion Get
 
 		bool FLibrary::Exists(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{

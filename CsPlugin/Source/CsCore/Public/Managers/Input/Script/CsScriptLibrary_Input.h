@@ -1,5 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "Managers/Input/CsTypes_Input.h"
 // Input
 #include "GameFrameWork/PlayerInput.h"
 
@@ -12,6 +14,13 @@ class CSCORE_API UCsScriptLibrary_Input : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Device,Key"))
+	static bool IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key);
+
+// Mapping
+#pragma region
 public:
 
 	/**
@@ -37,4 +46,22 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,KeyMapping"))
 	static bool AddAxisMapping(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FInputAxisKeyMapping& KeyMapping);
+
+	/**
+	* Replace a Mapping (FInputActionKeyMapping or FInputAxisKeyMapping) with name: Action.GetFName() and Key for
+	* the PlayerInput associated with ControllerId.
+	* NOTE: Assumes there is only ONE Key associated with the Device (i.e. there is only ONE Mouse, Keyboard, Gamepad, ... etc Key).
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Device
+	* @param Action
+	* @param Key
+	* @param Scale				Only relevant if the Action is of type Axis.
+	* return					Whether a mapping was successfully added.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,Device,Action,Key,Scale"))
+	static bool ReplaceActionMapping(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale = 0.0f);
+
+#pragma endregion Mapping
 };

@@ -746,6 +746,13 @@ namespace NCsValid
 		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
 	}
 
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_VALID_RET_VALUE(__EnumMapType, __EnumType, __Enum, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return __Value; } \
+	}
+
 #pragma endregion Enum
 
 // EnumStruct
@@ -768,6 +775,13 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
+	}
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_STRUCT_VALID_RET_VALUE(__EnumMapType, __EnumType, __Enum, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return __Value; } \
 	}
 
 #pragma endregion EnumStruct

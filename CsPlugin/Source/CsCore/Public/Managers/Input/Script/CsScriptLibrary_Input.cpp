@@ -16,6 +16,8 @@ namespace NCsScriptLibraryInput
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, IsKeyValidForDevice);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, GetKeysByDevice);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, GetKey);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, AddActionMapping);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, AddAxisMapping);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, ReplaceActionMapping);
@@ -34,9 +36,31 @@ bool UCsScriptLibrary_Input::IsKeyValidForDevice(const FString& Context, const E
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::IsKeyValidForDevice : Context;
 
-	typedef NCsInput::NMapping::FLibrary InputMappingLibrary;
+	typedef NCsInput::NKey::FLibrary InputKeyLibrary;
 
-	return InputMappingLibrary::IsKeyValidForDevice(Ctxt, Device, Key);
+	return InputKeyLibrary::IsValidForDevice(Ctxt, Device, Key);
+}
+
+bool UCsScriptLibrary_Input::GetKeysByDevice(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys)
+{
+	using namespace NCsScriptLibraryInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetKeysByDevice : Context;
+
+	typedef NCsInput::NKey::FLibrary InputKeyLibrary;
+
+	return InputKeyLibrary::GetSafe(Ctxt, Action, Device, OutKeys);
+}
+
+FKey UCsScriptLibrary_Input::GetKey(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device)
+{
+	using namespace NCsScriptLibraryInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetKey : Context;
+
+	typedef NCsInput::NKey::FLibrary InputKeyLibrary;
+
+	return InputKeyLibrary::GetSafe(Ctxt, Action, Device);
 }
 
 // Mapping

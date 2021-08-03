@@ -6,6 +6,8 @@
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Valid.h"
+// Settings
+#include "GameFramework/InputSettings.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // UI
@@ -330,6 +332,84 @@ namespace NCsInput
 		}
 	}
 
+	namespace NKey
+	{
+		bool FLibrary::IsValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_VALID(EMCsInputDevice, ECsInputDevice, Device)
+
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			// MouseAndKeyboard
+			if (Device == ECsInputDevice::MouseAndKeyboard)
+			{
+				const bool bMouse = Key.IsMouseButton();
+				const bool bKeyboard = !bMouse && !Key.IsGamepadKey() && !Key.IsTouch() && Key != EKeys::AnyKey;
+
+				return bMouse || bKeyboard;
+			}
+			// Gamepad
+			if (Device == ECsInputDevice::Gamepad)
+			{
+				return Key.IsGamepadKey();
+			}
+			// MotionController - TODO
+			return false;
+		}
+
+		bool FLibrary::GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
+
+			CS_IS_ENUM_VALID(EMCsInputDevice, ECsInputDevice, Device)
+
+			const FName& ActionName = Action.GetFName();
+
+			UInputSettings* InputSettings = GetMutableDefault<UInputSettings>();
+
+			const TArray<FInputActionKeyMapping>& ActionMappings = InputSettings->GetActionMappings();
+
+			for (const FInputActionKeyMapping& Mapping : ActionMappings)
+			{
+				if (Mapping.ActionName == ActionName &&
+					IsValidForDevice(Context, Device, Mapping.Key, nullptr))
+				{
+					OutKeys.Add(Mapping.Key);
+				}
+			}
+
+			const TArray<FInputAxisKeyMapping>& AxisMappings = InputSettings->GetAxisMappings();
+
+			for (const FInputAxisKeyMapping& Mapping : AxisMappings)
+			{
+				if (Mapping.AxisName == ActionName &&
+					IsValidForDevice(Context, Device, Mapping.Key, nullptr))
+				{
+					OutKeys.Add(Mapping.Key);
+				}
+			}
+			return OutKeys.Num() > CS_EMPTY;
+		}
+
+		FKey FLibrary::GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			TArray<FKey> Keys;
+
+			if (!GetSafe(Context, Action, Device, Keys, Log))
+				return EKeys::Invalid;
+
+			if (Keys.Num() > 1)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: More than %s: Key associated with Action: %s."), *Context, EMCsInputDevice::Get().ToChar(Device), Action.ToChar()));
+			}
+			return Keys[CS_FIRST];
+		}
+	}
+
 	namespace NMapping
 	{
 		bool FLibrary::IsValidChecked(const FString& Context, const FInputActionKeyMapping& Mapping)
@@ -375,38 +455,6 @@ namespace NCsInput
 			CS_IS_FLOAT_NOT_EQUAL(Mapping.Scale, 0.0f)
 			return true;
 		}
-
-		// Key
-		#pragma region
-		
-		bool FLibrary::IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
-		{
-			CS_IS_ENUM_VALID(EMCsInputDevice, ECsInputDevice, Device)
-
-			if (!Key.IsValid())
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
-				return false;
-			}
-
-			// MouseAndKeyboard
-			if (Device == ECsInputDevice::MouseAndKeyboard)
-			{
-				const bool bMouse = Key.IsMouseButton();
-				const bool bKeyboard = !bMouse && !Key.IsGamepadKey() && !Key.IsTouch() && Key != EKeys::AnyKey;
-
-				return bMouse || bKeyboard;
-			}
-			// Gamepad
-			if (Device == ECsInputDevice::Gamepad)
-			{
-				return Key.IsGamepadKey();
-			}
-			// MotionController - TODO
-			return false;
-		}
-
-		#pragma endregion Key
 
 		// Add
 		#pragma region
@@ -780,7 +828,7 @@ namespace NCsInput
 				return false;
 			}
 
-			if (!IsKeyValidForDevice(Context, Device, Key))
+			if (!NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, Key))
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), *(EMCsInputDevice::Get().ToChar(Device))));
 				return false;
@@ -844,7 +892,7 @@ namespace NCsInput
 				{
 					if (ActionName == ActionMapping.ActionName &&
 						Key != ActionMapping.Key &&
-						IsKeyValidForDevice(Context, Device, ActionMapping.Key, nullptr))
+						NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, ActionMapping.Key, nullptr))
 					{
 						Mappings.Add(ActionMapping);
 					}
@@ -864,7 +912,7 @@ namespace NCsInput
 				{
 					if (ActionName == AxisMapping.AxisName &&
 						Key != AxisMapping.Key &&
-						IsKeyValidForDevice(Context, Device, AxisMapping.Key, nullptr))
+						NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, AxisMapping.Key, nullptr))
 					{
 						Mappings.Add(AxisMapping);
 					}

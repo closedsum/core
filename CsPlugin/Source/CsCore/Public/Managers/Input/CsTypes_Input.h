@@ -1583,6 +1583,9 @@ struct CSCORE_API FCsInputActionMapping
 	{
 		return !(*this == B);
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) const;
 };
 
 #pragma endregion FCsInputActionMapping
@@ -1631,6 +1634,9 @@ struct CSCORE_API FCsInputActionMappings
 	{
 		return !(*this == B);
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) const;
 };
 
 #pragma endregion FCsInputActionMappings

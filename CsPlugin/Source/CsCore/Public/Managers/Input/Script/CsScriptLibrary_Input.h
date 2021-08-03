@@ -14,11 +14,40 @@ class CSCORE_API UCsScriptLibrary_Input : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Key
+#pragma region
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Device,Key"))
 	static bool IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key);
 
+	/**
+	* Get the Keys for Device associated with Action.
+	*
+	* @param Context	The calling context.
+	* @param Action
+	* @param Device
+	* @param OutKeys	(out)
+	* @param Log		(optional)
+	* return			Whether any keys for Device are associated with Action.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Action,Device"))
+	static bool GetKeysByDevice(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys);
+
+	/**
+	* Get the Key for Device associated with Action.
+	* NOTE: If there is MORE than ONE Key, return the FIRST Key.
+	*
+	* @param Context	The calling context
+	* @param Action
+	* @param Device
+	* @param Log		(optional)
+	* return			Key for Device associated with Action.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Action,Device"))
+	static FKey GetKey(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device);
+
+#pragma endregion Key
 // Mapping
 #pragma region
 public:

@@ -309,6 +309,40 @@ namespace NCsInput
 		};
 	}
 
+	namespace NKey
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			static bool IsValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the Keys for Device associated with Action.
+			* 
+			* @param Context	The calling context.
+			* @param Action
+			* @param Device
+			* @param OutKeys	(out)
+			* @param Log		(optional)
+			* return			Whether any keys for Device are associated with Action.
+			*/
+			static bool GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the Key for Device associated with Action.
+			* NOTE: If there is MORE than ONE Key, return the FIRST Key.
+			* 
+			* @param Context	The calling context
+			* @param Action
+			* @param Device
+			* @param Log		(optional)
+			* return			Key for Device associated with Action.
+			*/
+			static FKey GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, void(*Log)(const FString&) = &FCsLog::Warning);
+		};
+	}
+
 	namespace NMapping
 	{
 		struct CSCORE_API FLibrary final
@@ -322,14 +356,6 @@ namespace NCsInput
 			static bool IsValidChecked(const FString& Context, const FInputAxisKeyMapping& Mapping);
 
 			static bool IsValid(const FString& Context, const FInputAxisKeyMapping& Mapping, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		// Key
-		#pragma region
-		public:
-
-			static bool IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		#pragma endregion Key
 
 		// Add
 		#pragma region

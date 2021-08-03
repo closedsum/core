@@ -27,6 +27,7 @@ namespace NCsScriptLibraryWidget
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetTextBlock);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButton);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetImage);
 		}
 	}
 }
@@ -198,3 +199,19 @@ UButton* UCsScriptLibrary_Widget::GetButton(const FString& Context, UUserWidget*
 }
 
 #pragma endregion Button
+
+// Image
+#pragma region
+
+UImage* UCsScriptLibrary_Widget::GetImage(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetImage : Context;
+
+	typedef NCsWidget::NImage::FLibrary WidgetImageLibrary;
+
+	return WidgetImageLibrary::GetSafe(Ctxt, Widget, PropertyName);
+}
+
+#pragma endregion Image

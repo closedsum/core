@@ -7,6 +7,7 @@ class UObject;
 class UWidgetAnimation;
 class UTextBlock;
 class UButton;
+class UImage;
 
 #include "CsScriptLibrary_Widget.generated.h"
 
@@ -120,4 +121,13 @@ public:
 	static UButton* GetButton(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
 
 #pragma endregion Button
+
+// Image
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Image", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static UImage* GetImage(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+#pragma endregion Image
 };

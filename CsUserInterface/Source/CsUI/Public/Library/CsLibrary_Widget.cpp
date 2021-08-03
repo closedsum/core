@@ -23,6 +23,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "Components/Image.h"
 // Blueprint
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/BlueprintCore.h"
@@ -669,6 +670,47 @@ namespace NCsWidget
 		UButton* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
 		{
 			using namespace NCsWidget::NButton::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, Widget, PropertyName, nullptr);
+		}
+	}
+
+	namespace NImage
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NImage::FLibrary, GetSafe);
+				}
+			}
+		}
+
+		UImage* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+				typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValueChecked<UImage>(Context, Widget, Widget->GetClass(), PropertyName);
+		}
+
+		UImage* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValue<UImage>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+		}
+
+		UImage* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
+		{
+			using namespace NCsWidget::NImage::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafe;
 

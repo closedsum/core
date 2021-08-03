@@ -10,6 +10,7 @@ class UClass;
 class UWidgetAnimation;
 class UTextBlock;
 class UButton;
+class UImage;
 
 namespace NCsWidget
 {
@@ -440,6 +441,44 @@ namespace NCsWidget
 			* return				Button.
 			*/
 			static UButton* GetSafe(UUserWidget* Widget, const FName& PropertyName);
+		};
+	}
+
+	namespace NImage
+	{
+		struct CSUI_API FLibrary final
+		{
+		public:
+
+			/**
+			* Get a Image with PropertyName from Widget.
+			*
+			* @param Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				Button.
+			*/
+			static UImage* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+			/**
+			* Safely get a Image with PropertyName from Widget.
+			*
+			* @param Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* @param Log
+			* return				Button.
+			*/
+			static UImage* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely get a Image with PropertyName from Widget.
+			*
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				Button.
+			*/
+			static UImage* GetSafe(UUserWidget* Widget, const FName& PropertyName);
 		};
 	}
 }

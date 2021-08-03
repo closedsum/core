@@ -830,6 +830,13 @@ namespace NCsInput
 		// Replace
 		#pragma region
 
+		void FLibrary::ReplaceActionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale /*=0.0f*/)
+		{
+			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
+
+			UPlayerInput* PlayerInput = PlayerInputLibrary::GetChecked(Context, WorldContext, ControllerId);
+		}
+
 		bool FLibrary::SafeReplaceAction(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale /*=0.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;

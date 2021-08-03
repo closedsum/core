@@ -447,6 +447,20 @@ namespace NCsInput
 		#pragma region
 
 			/**
+			* Replace a Mapping (FInputActionKeyMapping or FInputAxisKeyMapping) with name: Action.GetFName() and Key for
+			* the PlayerInput associated with ControllerId.
+			* NOTE: Assumes there is only ONE Key associated with the Device (i.e. there is only ONE Mouse, Keyboard, Gamepad, ... etc Key).
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Device
+			* @param Action
+			* @param Key
+			* @param Scale			Only relevant if the Action is of type Axis.
+			*/
+			static void ReplaceActionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale = 0.0f);
+
+			/**
 			* Safely replace a Mapping (FInputActionKeyMapping or FInputAxisKeyMapping) with name: Action.GetFName() and Key for
 			* the PlayerInput associated with ControllerId.
 			* NOTE: Assumes there is only ONE Key associated with the Device (i.e. there is only ONE Mouse, Keyboard, Gamepad, ... etc Key).

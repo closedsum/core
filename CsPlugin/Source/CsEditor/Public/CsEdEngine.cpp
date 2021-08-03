@@ -255,6 +255,8 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 	OnEndPIE_Last_ScriptEvent.Broadcast(IsSimulating);
 
 	CreatedObjects.DestroyAndRemoveNullPendingKillOrOrphaned();
+
+	OnEndPIE_NextFrame(IsSimulating);
 }
 
 void UCsEdEngine::OnEndPIE_NextFrame(bool IsSimulating)

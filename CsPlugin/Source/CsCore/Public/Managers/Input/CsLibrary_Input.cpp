@@ -835,6 +835,102 @@ namespace NCsInput
 			typedef NCsPlayer::NInput::FLibrary PlayerInputLibrary;
 
 			UPlayerInput* PlayerInput = PlayerInputLibrary::GetChecked(Context, WorldContext, ControllerId);
+
+			check(EMCsInputDevice::Get().IsValidEnumChecked(Context, Device));
+
+			check(EMCsInputAction::Get().IsValidEnumChecked(Context, Action));
+
+			checkf(Key.IsValid(), TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString()));
+
+			checkf(NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, Key), TEXT("%s: Key: %s is NOT Valid for Device: %s."), *Context, *(Key.ToString()), *(EMCsInputDevice::Get().ToChar(Device)));
+
+			const FName& ActionName = Action.GetFName();
+
+			// Check Mapping already exists.
+
+				// Action
+			for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+			{
+				if (ActionName == ActionMapping.ActionName &&
+					Key == ActionMapping.Key)
+				{
+					return;
+				}
+			}
+			// Axis
+			for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+			{
+				if (ActionName == AxisMapping.AxisName &&
+					Key == AxisMapping.Key)
+				{
+					return;
+				}
+			}
+
+			// Add the Mapping
+
+				// Action
+			if (Scale == 0.0f)
+			{
+				FInputActionKeyMapping Mapping;
+				Mapping.ActionName = ActionName;
+				Mapping.Key = Key;
+
+				PlayerInput->AddActionMapping(Mapping);
+			}
+			// Axis
+			else
+			{
+				FInputAxisKeyMapping Mapping;
+				Mapping.AxisName = ActionName;
+				Mapping.Key = Key;
+				Mapping.Scale = Scale;
+
+				PlayerInput->AddAxisMapping(Mapping);
+			}
+
+			// Remove the any mappings that are Key's for Device (excluding the Key that was added)
+
+				// Action
+			if (Scale == 0.0f)
+			{
+				TArray<FInputActionKeyMapping> Mappings;
+
+				for (FInputActionKeyMapping& ActionMapping : PlayerInput->ActionMappings)
+				{
+					if (ActionName == ActionMapping.ActionName &&
+						Key != ActionMapping.Key &&
+						NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, ActionMapping.Key, nullptr))
+					{
+						Mappings.Add(ActionMapping);
+					}
+				}
+
+				for (FInputActionKeyMapping& Mapping : Mappings)
+				{
+					PlayerInput->RemoveActionMapping(Mapping);
+				}
+			}
+			// Axis
+			else
+			{
+				TArray<FInputAxisKeyMapping> Mappings;
+
+				for (FInputAxisKeyMapping& AxisMapping : PlayerInput->AxisMappings)
+				{
+					if (ActionName == AxisMapping.AxisName &&
+						Key != AxisMapping.Key &&
+						NCsInput::NKey::FLibrary::IsValidForDevice(Context, Device, AxisMapping.Key, nullptr))
+					{
+						Mappings.Add(AxisMapping);
+					}
+				}
+
+				for (FInputAxisKeyMapping& Mapping : Mappings)
+				{
+					PlayerInput->RemoveAxisMapping(Mapping);
+				}
+			}
 		}
 
 		bool FLibrary::SafeReplaceAction(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale /*=0.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)

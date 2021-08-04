@@ -42,4 +42,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
 	static bool IsValidByName(const FString& Name);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Key"))
+	static FECsInputAction GetByKey(const FKey& Key);
 };

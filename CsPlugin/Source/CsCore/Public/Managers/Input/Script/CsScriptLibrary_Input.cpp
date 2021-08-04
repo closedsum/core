@@ -22,6 +22,7 @@ namespace NCsScriptLibraryInput
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, AddActionMapping);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, AddAxisMapping);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, ReplaceActionMapping);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Input, IsActionAssociatedWithKey);
 		}
 	}
 }
@@ -30,6 +31,9 @@ UCsScriptLibrary_Input::UCsScriptLibrary_Input(const FObjectInitializer& ObjectI
 	: Super(ObjectInitializer)
 {
 }
+
+// Key
+#pragma region
 
 bool UCsScriptLibrary_Input::IsKeyValidForDevice(const FString& Context, const ECsInputDevice& Device, const FKey& Key)
 {
@@ -75,6 +79,8 @@ FKey UCsScriptLibrary_Input::GetKey(const FString& Context, const FECsInputActio
 	return InputKeyLibrary::GetSafe(Ctxt, Action, Device);
 }
 
+#pragma endregion Key
+
 // Mapping
 #pragma region
 
@@ -112,3 +118,19 @@ bool UCsScriptLibrary_Input::ReplaceActionMapping(const FString& Context, const 
 }
 
 #pragma endregion Mapping
+
+// Action
+#pragma region
+
+bool UCsScriptLibrary_Input::IsActionAssociatedWithKey(const FString& Context, const FECsInputAction& Action, const FKey& Key)
+{
+	using namespace NCsScriptLibraryInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::IsActionAssociatedWithKey : Context;
+
+	typedef NCsInput::NAction::FLibrary InputActionLibrary;
+
+	return InputActionLibrary::SafeIsAssociatedWith(Ctxt, Action, Key);
+}
+
+#pragma endregion Action

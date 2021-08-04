@@ -1052,4 +1052,139 @@ namespace NCsInput
 
 		#pragma endregion Replace
 	}
+
+	namespace NAction
+	{
+		const FECsInputAction& FLibrary::GetChecked(const FString& Context, const FKey& Key)
+		{
+			checkf(Key.IsValid(), TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString()));
+
+			UInputSettings* InputSettings = GetMutableDefault<UInputSettings>();
+
+			// Check Action Mapping
+			const TArray<FInputActionKeyMapping>& ActionMappings = InputSettings->GetActionMappings();
+
+			for (const FInputActionKeyMapping& Mapping : ActionMappings)
+			{
+				if (Mapping.Key == Key)
+					return EMCsInputAction::Get().GetEnum(Mapping.ActionName);
+			}
+			// Check Axis Mapping
+			const TArray<FInputAxisKeyMapping>& AxisMappings = InputSettings->GetAxisMappings();
+
+			for (const FInputAxisKeyMapping& Mapping : AxisMappings)
+			{
+				if (Mapping.Key == Key)
+					return EMCsInputAction::Get().GetEnum(Mapping.AxisName);
+			}
+			return EMCsInputAction::Get().GetMAX();
+		}
+
+		const FECsInputAction& FLibrary::GetSafe(const FString& Context, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return EMCsInputAction::Get().GetMAX();
+			}
+
+			UInputSettings* InputSettings = GetMutableDefault<UInputSettings>();
+
+			// Check Action Mapping
+			const TArray<FInputActionKeyMapping>& ActionMappings = InputSettings->GetActionMappings();
+
+			for (const FInputActionKeyMapping& Mapping : ActionMappings)
+			{
+				if (Mapping.Key == Key)
+					return EMCsInputAction::Get().GetEnum(Mapping.ActionName);
+			}
+			// Check Axis Mapping
+			const TArray<FInputAxisKeyMapping>& AxisMappings = InputSettings->GetAxisMappings();
+
+			for (const FInputAxisKeyMapping& Mapping : AxisMappings)
+			{
+				if (Mapping.Key == Key)
+					return EMCsInputAction::Get().GetEnum(Mapping.AxisName);
+			}
+			return EMCsInputAction::Get().GetMAX();
+		}
+		
+		bool FLibrary::IsAssociatedWithChecked(const FString& Context, const FECsInputAction& Action, const FKey& Key)
+		{
+			check(EMCsInputAction::Get().IsValidEnumChecked(Context, Action));
+
+			checkf(Key.IsValid(), TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString()));
+
+			UInputSettings* InputSettings = GetMutableDefault<UInputSettings>();
+
+			const FName& ActionName = Action.GetFName();
+
+			// Check Action Mapping
+			const TArray<FInputActionKeyMapping>& ActionMappings = InputSettings->GetActionMappings();
+
+			for (const FInputActionKeyMapping& Mapping : ActionMappings)
+			{
+				if (Mapping.ActionName == ActionName &&
+					Mapping.Key == Key)
+
+				{
+					return true;
+				}
+			}
+			// Check Axis Mapping
+			const TArray<FInputAxisKeyMapping>& AxisMappings = InputSettings->GetAxisMappings();
+
+			for (const FInputAxisKeyMapping& Mapping : AxisMappings)
+			{
+				if (Mapping.AxisName == ActionName &&
+					Mapping.Key == Key)
+
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool FLibrary::SafeIsAssociatedWith(const FString& Context, const FECsInputAction& Action, const FKey& Key, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
+
+			if (!Key.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Key: %s is NOT Valid."), *Context, *(Key.ToString())));
+				return false;
+			}
+
+			UInputSettings* InputSettings = GetMutableDefault<UInputSettings>();
+
+			const FName& ActionName = Action.GetFName();
+
+			// Check Action Mapping
+			const TArray<FInputActionKeyMapping>& ActionMappings = InputSettings->GetActionMappings();
+
+			for (const FInputActionKeyMapping& Mapping : ActionMappings)
+			{
+				if (Mapping.ActionName == ActionName &&
+					Mapping.Key == Key)
+
+				{
+					return true;
+				}
+			}
+			// Check Axis Mapping
+			const TArray<FInputAxisKeyMapping>& AxisMappings = InputSettings->GetAxisMappings();
+
+			for (const FInputAxisKeyMapping& Mapping : AxisMappings)
+			{
+				if (Mapping.AxisName == ActionName &&
+					Mapping.Key == Key)
+
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 }

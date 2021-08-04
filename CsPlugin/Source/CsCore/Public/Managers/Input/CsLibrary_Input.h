@@ -479,4 +479,56 @@ namespace NCsInput
 		#pragma endregion Replace
 		};
 	}
+
+	namespace NAction
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			/**
+			* Get a InputAction by Key. 
+			* This looks at the InputSettings for any Action that has Key associated with it.
+			* 
+			* @param Context	The calling context.
+			* @param Key
+			* return			Input Action.
+			*/
+			static const FECsInputAction& GetChecked(const FString& Context, const FKey& Key);
+
+			/**
+			* Safely get a InputAction by Key.
+			* This looks at the InputSettings for any Action that has Key associated with it.
+			*
+			* @param Context	The calling context.
+			* @param Key
+			* @param Log		(optional)
+			* return			Input Action.
+			*/
+			static const FECsInputAction& GetSafe(const FString& Context, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check if the Action is associated with the Key.
+			* This looks at InputSettings.
+			* 
+			* @param Context	The calling context.
+			* @param Action
+			* @param Key
+			* return			Whether the Action is associated with the Key or not.
+			*/
+			static bool IsAssociatedWithChecked(const FString& Context, const FECsInputAction& Action, const FKey& Key);
+
+			/**
+			* Safely check if the Action is associated with the Key.
+			* This looks at InputSettings.
+			*
+			* @param Context	The calling context.
+			* @param Action
+			* @param Key
+			* @param Log		(optional)
+			* return			Whether the Action is associated with the Key or not.
+			*/
+			static bool SafeIsAssociatedWith(const FString& Context, const FECsInputAction& Action, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
+		};
+	}
 }

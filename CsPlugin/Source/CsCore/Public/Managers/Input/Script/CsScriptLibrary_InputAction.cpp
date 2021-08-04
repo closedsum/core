@@ -4,6 +4,7 @@
 
 // Library
 #include "Library/CsLibrary_Enum.h"
+#include "Managers/Input/CsLibrary_Input.h"
 
 // Cached
 #pragma region
@@ -18,6 +19,8 @@ namespace NCsScriptLibraryInputAction
 			const FString Create = TEXT("Create");
 			const FString Get = TEXT("Get");
 			const FString GetByIndex = TEXT("GetByIndex");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_InputAction, GetByKey);
 		}
 	}
 }
@@ -100,6 +103,17 @@ bool UCsScriptLibrary_InputAction::IsValid(const EnumType& Enum)
 bool UCsScriptLibrary_InputAction::IsValidByName(const FString& Name)
 {
 	return EnumMapType::Get().IsValidEnum(Name);
+}
+
+EnumType UCsScriptLibrary_InputAction::GetByKey(const FKey& Key)
+{
+	using namespace NCsScriptLibraryInputAction::NCached;
+
+	const FString& Context = Str::GetByKey;
+
+	typedef NCsInput::NAction::FLibrary InputActionLibrary;
+
+	return InputActionLibrary::GetSafe(Context, Key);
 }
 
 #undef EnumMapType

@@ -52,6 +52,7 @@ public:
 	static FKey GetKey(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device);
 
 #pragma endregion Key
+
 // Mapping
 #pragma region
 public:
@@ -97,4 +98,22 @@ public:
 	static bool ReplaceActionMapping(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const ECsInputDevice& Device, const FECsInputAction& Action, const FKey& Key, const float& Scale = 0.0f);
 
 #pragma endregion Mapping
+
+// Action
+#pragma region
+public:
+
+	/**
+	* Check if the Action is associated with the Key.
+	* This looks at InputSettings.
+	*
+	* @param Context	The calling context.
+	* @param Action
+	* @param Key
+	* return			Whether the Action is associated with the Key or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context,Action,Key"))
+	static bool IsActionAssociatedWithKey(const FString& Context, const FECsInputAction& Action, const FKey& Key);
+
+#pragma endregion Action
 };

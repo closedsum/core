@@ -22,7 +22,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Index"))
 	static FECsInputAction GetByIndex(const int32& Index);
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Enum"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (DisplayName = "ToString (ECsInputAction)", CompactNodeTitle = "->", BlueprintAutocast, AutoCreateRefTerm = "Enum"))
 	static FString ToString(const FECsInputAction& Enum);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input")
@@ -34,7 +34,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
 	static FECsInputAction GetMAX();
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (InputAction)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (ECsInputAction)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
 	static bool EqualEqual(const FECsInputAction& A, const FECsInputAction& B);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Enum"))

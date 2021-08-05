@@ -382,6 +382,40 @@ namespace NCsInput
 			return !Key.IsMouseButton() && !Key.IsGamepadKey() && !Key.IsTouch();
 		}
 
+		void FLibrary::GetChecked(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys)
+		{
+			check(EMCsInputAction::Get().IsValidEnumChecked(Context, Action));
+
+			check(EMCsInputDevice::Get().IsValidEnumChecked(Context, Device));
+
+			const FName& ActionName = Action.GetFName();
+
+			UInputSettings* InputSettings = GetMutableDefault<UInputSettings>();
+
+			const TArray<FInputActionKeyMapping>& ActionMappings = InputSettings->GetActionMappings();
+
+			for (const FInputActionKeyMapping& Mapping : ActionMappings)
+			{
+				if (Mapping.ActionName == ActionName &&
+					IsValidForDevice(Context, Device, Mapping.Key, nullptr))
+				{
+					OutKeys.Add(Mapping.Key);
+				}
+			}
+
+			const TArray<FInputAxisKeyMapping>& AxisMappings = InputSettings->GetAxisMappings();
+
+			for (const FInputAxisKeyMapping& Mapping : AxisMappings)
+			{
+				if (Mapping.AxisName == ActionName &&
+					IsValidForDevice(Context, Device, Mapping.Key, nullptr))
+				{
+					OutKeys.Add(Mapping.Key);
+				}
+			}
+			checkf(OutKeys.Num() > CS_EMPTY, TEXT("%s: Failed to find any keys associated with Action: %s for Device: %s."), *Context, Action.ToChar(), EMCsInputDevice::Get().ToChar(Device));
+		}
+
 		bool FLibrary::GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
@@ -416,6 +450,15 @@ namespace NCsInput
 			return OutKeys.Num() > CS_EMPTY;
 		}
 
+		FKey FLibrary::GetChecked(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device)
+		{
+			TArray<FKey> Keys;
+			GetChecked(Context, Action, Device, Keys);
+
+			checkf(Keys.Num() == 1, TEXT("%s: More than 1 %s: Key associated with Action: %s."), *Context, EMCsInputDevice::Get().ToChar(Device), Action.ToChar());
+			return Keys[CS_FIRST];
+		}
+
 		FKey FLibrary::GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			TArray<FKey> Keys;
@@ -425,7 +468,7 @@ namespace NCsInput
 
 			if (Keys.Num() > 1)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: More than %s: Key associated with Action: %s."), *Context, EMCsInputDevice::Get().ToChar(Device), Action.ToChar()));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: More than 1 %s: Key associated with Action: %s."), *Context, EMCsInputDevice::Get().ToChar(Device), Action.ToChar()));
 			}
 			return Keys[CS_FIRST];
 		}

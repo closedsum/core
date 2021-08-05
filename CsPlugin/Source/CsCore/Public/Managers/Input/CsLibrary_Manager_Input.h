@@ -43,6 +43,16 @@ namespace NCsInput
 			static UCsManager_Input* GetSafe(APawn* Pawn);
 
 			/**
+			* Get the Manager_Input associated with the player controller with ControllerId.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* return				Manager_Input
+			*/
+			static UCsManager_Input* GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			/**
 			* Safely get the Manager_Input associated with the player controller with ControllerId.
 			* 
 			* @param Context		The calling context.

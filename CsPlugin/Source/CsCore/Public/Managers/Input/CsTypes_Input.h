@@ -1572,6 +1572,13 @@ struct CSCORE_API FCsInputActionMapping
 	{
 	}
 
+	FCsInputActionMapping(const FECsInputAction& InAction, const FKey& InKey, const float& InScale = 0.0f)
+	{
+		Action = InAction;
+		Key = InKey;
+		Scale = InScale;
+	}
+
 	FORCEINLINE bool operator==(const FCsInputActionMapping& B) const
 	{
 		return Action == B.Action &&
@@ -1635,8 +1642,73 @@ struct CSCORE_API FCsInputActionMappings
 		return !(*this == B);
 	}
 
+	FORCEINLINE const FECsInputAction& GetAction(const FKey& Key) const
+	{
+		for (const FCsInputActionMapping& Mapping : Mappings)
+		{
+			if (Mapping.Key == Key)
+				return Mapping.Action;
+		}
+		return EMCsInputAction::Get().GetMAX();
+	}
+
+	FORCEINLINE const FKey& GetKey(const FECsInputAction& Action) const 
+	{
+		for (const FCsInputActionMapping& Mapping : Mappings)
+		{
+			if (Mapping.Action == Action)
+				return Mapping.Key;
+		}
+		return EKeys::Invalid;
+	}
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) const;
+
+	FORCEINLINE bool IsActionAssociatedWithKey(const FECsInputAction& Action, const FKey& Key) const
+	{
+		for (const FCsInputActionMapping& Mapping : Mappings)
+		{
+			if (Mapping.Action == Action &&
+				Mapping.Key == Key)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void ConditionalCopyMappingsByActionChecked(const FString& Context, const FCsInputActionMappings& OtherMappings)
+	{
+		for (const FCsInputActionMapping& Mapping : OtherMappings.Mappings)
+		{
+			CopyMappingByActionChecked(Context, Mapping);
+		}
+	}
+
+	void CopyMappingByActionChecked(const FString& Context, const FCsInputActionMapping& Mapping)
+	{
+		for (FCsInputActionMapping& M : Mappings)
+		{
+			if (Mapping.Action == M.Action)
+			{
+				M = Mapping;
+				return;
+			}
+		}
+		checkf(0, TEXT("%s: Mappings does NOT contain Action: %s."), *Context, Mapping.Action.ToChar());
+	}
+
+	void ReplaceKey(const FECsInputAction& Action, const FKey& Key)
+	{
+		for (FCsInputActionMapping& Mapping : Mappings)
+		{
+			if (Mapping.Action == Action)
+			{
+				Mapping.Key = Key;
+			}
+		}
+	}
 };
 
 #pragma endregion FCsInputActionMappings
@@ -1659,6 +1731,9 @@ struct CSCORE_API FCsInputProfile
 	{
 		Player = 0;
 	}
+
+	FORCEINLINE const FCsInputActionMappings& GetMappings(const ECsInputDevice& Device) const { return DeviceMappings[(uint8)Device]; }
+	FORCEINLINE FCsInputActionMappings& GetMappings(const ECsInputDevice& Device) { return DeviceMappings[(uint8)Device]; }
 
 	FORCEINLINE FCsInputActionMapping& GetMapping(const ECsInputDevice& Device, const FECsInputAction& Action)
 	{

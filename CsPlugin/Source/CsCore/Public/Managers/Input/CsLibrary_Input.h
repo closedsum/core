@@ -320,6 +320,16 @@ namespace NCsInput
 			static bool IsValidForMode(const FString& Context, const ECsInputMode& Mode, const FKey& Key, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
+			* Get the Keys for Device associated with Action.
+			*
+			* @param Context	The calling context.
+			* @param Action
+			* @param Device
+			* @param OutKeys	(out)
+			*/
+			static void GetChecked(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys);
+
+			/**
 			* Safely get the Keys for Device associated with Action.
 			* 
 			* @param Context	The calling context.
@@ -330,6 +340,17 @@ namespace NCsInput
 			* return			Whether any keys for Device are associated with Action.
 			*/
 			static bool GetSafe(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device, TArray<FKey>& OutKeys, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Get the Key for Device associated with Action.
+			* NOTE: If there is MORE than ONE Key, this will assert.
+			*
+			* @param Context	The calling context
+			* @param Action
+			* @param Device
+			* return			Key for Device associated with Action.
+			*/
+			static FKey GetChecked(const FString& Context, const FECsInputAction& Action, const ECsInputDevice& Device);
 
 			/**
 			* Safely get the Key for Device associated with Action.

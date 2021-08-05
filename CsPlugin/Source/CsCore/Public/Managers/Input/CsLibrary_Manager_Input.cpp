@@ -176,6 +176,15 @@ namespace NCsInput
 			return nullptr;
 		}
 
+		UCsManager_Input* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
+
+			APlayerController* PC = PlayerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+
+			return GetChecked(Context, PC);
+		}
+
 		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsPlayer::NController::FLibrary PlayerLibrary;

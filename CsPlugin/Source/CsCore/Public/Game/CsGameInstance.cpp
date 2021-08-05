@@ -6,7 +6,6 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
-#include "Managers/Input/CsTypes_Input.h"
 // Managers
 #include "Managers/ScopedTimer//CsManager_ScopedTimer.h"
 #include "Managers/UnitTest/CsManager_UnitTest.h"
@@ -18,6 +17,10 @@
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
 // Level
 #include "Level/CsLevelScriptActor.h"
+// Input
+#include "Managers/Input/Action/CsInputActionMap.h"
+#include "Managers/Input/Action/CsInputAction.h"
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 
 #if WITH_EDITOR
 #include "Editor.h"

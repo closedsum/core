@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsInputActionMap.h"
 #include "CsEditor.h"
 
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Input/Action/CsInputActionMap.h"
 
 // Cached
 #pragma region

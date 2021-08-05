@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGameEvent.h"
 #include "CsEditor.h"
 
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 
 // Cached
 #pragma region

@@ -343,8 +343,6 @@ public:
 		return String;
 	}
 
-#if WITH_EDITOR
-
 	FORCEINLINE void ClearUserDefinedEnums()
 	{
 		const int32 StartSize = Enums.Num();
@@ -385,8 +383,6 @@ public:
 		UserDefinedEnums.Reset();
 		UserDefinedNameMap.Reset();
 	}
-
-#endif // #if WITH_EDITOR
 };
 
 #define CS_ENUM_STRUCT_MASK_MAP_BODY(EnumMap, EnumStruct, EnumType) \

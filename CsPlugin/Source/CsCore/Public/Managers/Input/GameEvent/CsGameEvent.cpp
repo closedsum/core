@@ -46,10 +46,10 @@ void FCsGameEventInfo::ApplyInputCompletedValue(const FCsInputCompletedValue* Co
 {
 	// Value | Float
 	if (CompletedValue->ValueType == ECsInputValue::Float)
-		Value = CompletedValue.Value;
+		Value = CompletedValue->Value;
 	// Location | Vector
 	if (CompletedValue->ValueType == ECsInputValue::Vector)
-		Location = CompletedValue.Location;
+		Location = CompletedValue->Location;
 }
 
 #pragma endregion FCsGameEventInfo

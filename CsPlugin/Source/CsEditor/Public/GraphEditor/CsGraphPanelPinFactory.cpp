@@ -7,7 +7,6 @@
 // Types
 #include "Types/CsTypes.h"
 #include "Managers/Time/CsTypes_Update.h"
-#include "Managers/Input/CsTypes_Input.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #include "Managers/FX/CsTypes_FX.h"
 //#include "Types/CsTypes_Item.h"
@@ -20,6 +19,11 @@
 //#include "AI/CsTypes_AI.h"
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Team/CsTypes_Team.h"
+// Input
+#include "Managers/Input/Action/CsInputActionMap.h"
+#include "Managers/Input/Action/CsInputAction.h"
+// GameEvent
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 
 #include "SlateBasics.h"
 

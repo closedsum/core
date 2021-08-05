@@ -3,7 +3,10 @@
 // Interfaces
 #include "Managers/ConsoleCommand/CsManager_ConsoleCommand.h"
 // Types
-#include "Managers/Input/CsTypes_Input.h"
+#include "Types/Enum/CsEnumMap.h"
+// GameEvent
+#include "Managers/Input/GameEvent/CsGameEvent.h"
+
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #pragma once
 

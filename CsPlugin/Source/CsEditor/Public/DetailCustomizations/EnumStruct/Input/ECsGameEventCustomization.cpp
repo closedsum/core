@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/Input/ECsGameEventCustomization.h"
 
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 
 #define LOCTEXT_NAMESPACE "ECsGameEventCustomization"
 

@@ -397,7 +397,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 			for (const FCsInputCompletedValue& CompletedValue : CompletedValues)
 			{
-				CurrentGameEventInfos[Index].ApplyInputCompletedValue(CompletedValue);
+				CurrentGameEventInfos[Index].ApplyInputCompletedValue(&CompletedValue);
 			}
 		}
 	}

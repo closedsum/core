@@ -2,8 +2,9 @@
 #pragma once
 #include "Components/WidgetInteractionComponent.h"
 // Types
-#include "Managers/Input/CsTypes_Input.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
+// GameEvent
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 
 #include "CsWidgetInteractionComponent.generated.h"
 

@@ -5,8 +5,13 @@
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
-#include "Managers/Input/CsInputFrame.h"
 #include "InputCoreTypes.h"
+#include "Managers/Input/Profile/CsTypes_InputProfile.h"
+// Input
+#include "Managers/Input/CsInputFrame.h"
+#include "Managers/Input/Action/CsInputActionMap.h"
+// GameEvent
+#include "Managers/Input/GameEvent/CsGameEventDefinition.h"
 
 #include "CsManager_Input.generated.h"
 

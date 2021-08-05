@@ -3,6 +3,8 @@
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
+// GameEvent
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 // Log
 #include "Utility/CsPlaybackLog.h"
 

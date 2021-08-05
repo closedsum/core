@@ -5,6 +5,7 @@
 #include "Managers/Input/CsTypes_Input.h"
 // Input
 #include "GameFramework/PlayerInput.h"
+#include "Managers/Input/Action/CsInputAction.h"
 // Log
 #include "Utility/CsLog.h"
 

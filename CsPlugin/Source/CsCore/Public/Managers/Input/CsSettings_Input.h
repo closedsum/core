@@ -1,5 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Input/Action/CsInputActionMap.h"
+#include "Managers/Input/GameEvent/CsGameEventDefinition.h"
 
 #include "CsSettings_Input.generated.h"
 #pragma once

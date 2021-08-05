@@ -1,8 +1,9 @@
 // Copyright 2019 Respawn Entertainment, Inc. All rights reserved.
 #pragma once
 // Types
-#include "Managers/Input/CsTypes_Input.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
+// GameEvent
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 // Log
 #include "Utility/CsLog.h"
 

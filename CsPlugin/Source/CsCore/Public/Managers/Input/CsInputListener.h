@@ -4,6 +4,9 @@
 #include "UObject/Object.h"
 // Types
 #include "Managers/Input/CsTypes_Input.h"
+#include "InputCoreTypes.h"
+// Input
+#include "Managers/Input/Action/CsInputAction.h"
 
 #include "CsInputListener.generated.h"
 

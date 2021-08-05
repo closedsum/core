@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Input/GameEvent/CsGameEvent.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #include "Managers/Time/CsTypes_Time.h"
 

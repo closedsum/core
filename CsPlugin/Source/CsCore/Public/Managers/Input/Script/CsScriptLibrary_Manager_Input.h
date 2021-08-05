@@ -2,8 +2,8 @@
 #pragma once
 
 #include "UObject/Object.h"
-// Types
-#include "Managers/Input/CsTypes_Input.h"
+// Input
+#include "Managers/Input/Action/CsInputActionMap.h"
 
 #include "CsScriptLibrary_Manager_Input.generated.h"
 

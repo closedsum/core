@@ -283,6 +283,8 @@ namespace NCsPlayer
 			static UPlayerInput* GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
 			static UPlayerInput* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static bool CanGetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 	}
 

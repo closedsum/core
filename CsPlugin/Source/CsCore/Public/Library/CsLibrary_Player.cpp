@@ -445,6 +445,21 @@ namespace NCsPlayer
 			}
 			return nullptr;
 		}
+
+		bool FLibrary::CanGetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			if (APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log))
+			{
+				UPlayerInput* PlayerInput = PC->PlayerInput;
+
+				CS_IS_PTR_NULL_RET_NULL(PlayerInput)
+
+				return true;
+			}
+			return false;
+		}
 	}
 	
 	namespace NHud

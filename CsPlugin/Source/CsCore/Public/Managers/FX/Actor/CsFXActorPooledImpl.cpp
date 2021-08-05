@@ -5,7 +5,6 @@
 // CVar
 #include "Managers/FX/CsCVars_FX.h"
 // Types
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_Math.h"
 // Library
@@ -22,9 +21,15 @@
 #include "Managers/FX/Params/CsParams_FX.h"
 #include "NiagaraActor.h"
 #include "NiagaraComponent.h"
+#include "NiagaraSystemInstance.h"
 #include "NiagaraSystemSimulation.h"
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
+
+#if WITH_EDITOR
+// Library
+#include "Game/CsLibrary_GameInstance.h"
+#endif // #if WITH_EDITOR
 
 // Cached
 #pragma region
@@ -39,6 +44,7 @@ namespace NCsFXActorPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Handle_SetFXSystem);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Handle_ClearFXSystem);
 		}
 
 		namespace Name
@@ -443,6 +449,10 @@ void UCsFXActorPooledImpl::Log_AttachAndSetTransform(PooledPayloadType* Payload,
 
 void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 {
+	using namespace NCsFXActorPooledImpl::NCached;
+
+	const FString& Context = Str::Handle_ClearFXSystem;
+
 	typedef NCsFX::NPayload::EChange ChangeType;
 	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 
@@ -459,8 +469,29 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		//			   some code runs assuming the Asset is valid. The work around is to manually
 		//			   call DestroyInstance() and then "null" out the Asset member on UNiagaraComponent.
 		// NOTE: 4.26.2. Still occurs.
+
 #if WITH_EDITOR
 		FX->GetNiagaraComponent()->SetAsset(nullptr);
+
+		// WITH_EDITOR
+		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
+		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
+		UObject* OuterRoot = Manager_FX_Actor->GetMyRoot();
+
+		if (GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
+		{
+			FX->GetNiagaraComponent()->DeactivateImmediate();
+
+			FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
+
+			if (System)
+			{
+				System->WaitForAsyncTickDoNotFinalize(true);
+			}
+		}
 #else
 		FX->GetNiagaraComponent()->DeactivateImmediate();
 
@@ -468,6 +499,13 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 
 		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
 		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
+
+		FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
+
+		if (System)
+		{
+			System->WaitForAsyncTickDoNotFinalize(true);
+		}
 
 		TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FX->GetNiagaraComponent()->GetSystemSimulation();
 		

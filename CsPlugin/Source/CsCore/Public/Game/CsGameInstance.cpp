@@ -36,6 +36,7 @@ namespace NCsGameInstance
 		namespace Str
 		{
 			const FString StandaloneFromEditor = TEXT("StandaloneFromEditor");
+			const FString StandaloneMobileFromEditor = TEXT("StandaloneMobileFromEditor");
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
@@ -86,6 +87,10 @@ void UCsGameInstance::Init()
 	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))
 	{
 		bStandaloneFromEditor = true;
+	}
+	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneMobileFromEditor))
+	{
+		bStandaloneMobileFromEditor = true;
 	}
 #endif // #if WITH_EDITOR
 

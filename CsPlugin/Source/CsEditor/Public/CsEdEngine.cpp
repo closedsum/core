@@ -50,6 +50,7 @@ namespace NCsEdEngine
 		namespace Str
 		{
 			const FString StandaloneFromEditor = TEXT("StandaloneFromEditor");
+			const FString StandaloneMobileFromEditor = TEXT("StandaloneMobileFromEditor");
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnEndPIE_NextFrame_Internal);
 
@@ -163,6 +164,13 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 	if (Params.SessionPreviewTypeOverride.IsSet() &&
 		Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::MobilePreview)
 	{
+		FString& CmdParams = OpCmdParams.GetValue();
+
+		if (!CmdParams.Contains(Str::StandaloneMobileFromEditor))
+		{
+			CmdParams += TEXT(" -") + Str::StandaloneMobileFromEditor;
+		}
+
 		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 		Settings->DataRootSet = Settings->GetDataRootSet(ECsPlatform::Android);

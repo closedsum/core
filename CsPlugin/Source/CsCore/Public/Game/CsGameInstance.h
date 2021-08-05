@@ -96,12 +96,14 @@ private:
 
 	bool bPIE;
 	bool bStandaloneFromEditor;
+	bool bStandaloneMobileFromEditor;
 	bool bOnStart;
 
 public:
 
 	FORCEINLINE bool IsPIE() const { return bPIE; }
 	FORCEINLINE bool IsStandaloneFromEditor() const { return bStandaloneFromEditor; }
+	FORCEINLINE bool IsStandaloneMobileFromEditor() const { return bStandaloneMobileFromEditor; }
 	FORCEINLINE bool HasOnStart() const { return bOnStart; }
 
 #pragma endregion Editor

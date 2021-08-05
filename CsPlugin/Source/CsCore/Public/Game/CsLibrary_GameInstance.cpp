@@ -7,7 +7,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Game
-#include "Engine/GameInstance.h"
+#include "Game/CsGameInstance.h"
 // World
 #include "Engine/World.h"
 
@@ -19,11 +19,14 @@ namespace NCsGameInstance
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafe);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafeAsObject);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafe);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafeAsObject);
 			}
 		}
 	}
+
+	// Get
+	#pragma region
 
 	UGameInstance* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 	{
@@ -100,4 +103,26 @@ namespace NCsGameInstance
 
 		return GetSafeAsObject(Context, WorldContext, nullptr);
 	}
+
+	#pragma endregion Get
+
+	// Editor
+	#pragma region
+	
+	bool FLibrary::IsPIEChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsPIE();
+	}
+
+	bool FLibrary::IsStandaloneFromEditorChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsStandaloneFromEditor();
+	}
+	
+	bool FLibrary::IsStandaloneMobileFromEditorChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsStandaloneMobileFromEditor();
+	}
+
+	#pragma endregion Editor
 }

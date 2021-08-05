@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 // Library
+#include "Managers/Input/CsLibrary_Input.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsLog.h"
@@ -52,6 +53,18 @@ bool FCsInputActionMappings::IsValid(const FString& Context, void(*Log)(const FS
 			return false;
 	}
 	return true;
+}
+
+void FCsInputActionMappings::ReplaceActionsChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device) const
+{
+	check(IsValidChecked(Context));
+
+	typedef NCsInput::NMapping::FLibrary InputMappingLibrary;
+
+	for (const FCsInputActionMapping& Mapping : Mappings)
+	{
+		InputMappingLibrary::ReplaceActionChecked(Context, WorldContext, ControllerId, Device, Mapping.Action, Mapping.Key, Mapping.Scale);
+	}
 }
 
 #pragma endregion FCsInputActionMappings

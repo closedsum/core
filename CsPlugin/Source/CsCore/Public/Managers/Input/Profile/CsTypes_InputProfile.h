@@ -59,6 +59,8 @@ struct CSCORE_API FCsInputActionMapping
 // FCsInputActionMappings
 #pragma region
 
+class UObject;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsInputActionMappings
 {
@@ -168,6 +170,8 @@ struct CSCORE_API FCsInputActionMappings
 			}
 		}
 	}
+
+	void ReplaceActionsChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, const ECsInputDevice& Device) const;
 };
 
 #pragma endregion FCsInputActionMappings

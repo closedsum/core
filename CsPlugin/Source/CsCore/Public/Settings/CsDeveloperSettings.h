@@ -286,21 +286,33 @@ public:
 #pragma region
 public:
 
+	/** Whether to override any PIE / Standalone (Editor) settings when testing from editor. 
+		If Standalone, viewport dimensions will be overridden.
+		If bPIE_Mobile == true, then also swap the DataRootSet to the mobile specific one. */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
 	bool bOverridePIESettings;
 
+	/** Whether to swap the DataRootSet to the mobile specific one. */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
 	bool bPIE_Mobile;
 
+	/** If bOverridePIESettings == true,
+		any settings to apply to the PIE instance (i.e. viewport dimensions). */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
 	FCsSettings_PIE PIE;
 
+	/** If bOverridePIESettings == true,
+		any settings to apply to the "Mobile" PIE instance (i.e. viewport dimensions). */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
 	FCsSettings_PIE PIE_Mobile;
 
+	/** If bOverridePIESettings == true,
+		any settings to apply to the Standalone (Editor) instance (i.e. viewport dimensions). */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
 	FCsSettings_PIE Standalone;
 
+	/** If bOverridePIESettings == true,
+		any settings to apply to the Mobile Standalone (Editor) instance (i.e. viewport dimensions). */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
 	FCsSettings_PIE Standalone_Mobile;
 

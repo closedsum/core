@@ -454,7 +454,7 @@ namespace NCsPlayer
 			{
 				UPlayerInput* PlayerInput = PC->PlayerInput;
 
-				CS_IS_PTR_NULL_RET_NULL(PlayerInput)
+				CS_IS_PTR_NULL(PlayerInput)
 
 				return true;
 			}

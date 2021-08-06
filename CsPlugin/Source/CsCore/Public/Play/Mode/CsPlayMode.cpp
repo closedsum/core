@@ -16,7 +16,7 @@ namespace NCsPlayMode
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(InVR, "In VR");
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Simulate);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Count);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(InMobilePreviewViewport, "In Mobile Preview Viewport");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(InMobilePreviewEditorViewport, "In Mobile Preview Editor Viewport");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(InMobilePreviewEditorFloating, "In Mobile Preview Editor Floating");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPlayMode_MAX, "MAX");
 	}

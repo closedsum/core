@@ -25,10 +25,10 @@ enum class ECsPlayMode : uint8
 	Simulate							UMETA(DisplayName = "Simulate"),
 	/** The number of different Play Modes. */
 	Count								UMETA(DisplayName = "Count"),
-	/** Simulates a mobile preview with the editor. */
-	InMobilePreviewViewport				UMETA(DisplayName = "In Mobile Preview Viewport"),
-	/** Simulates a mobile preview in a new windows. */
-	InMobilePreviewEditorFloating		UMETA(DisplayName = "In Mobile Preview Editor Viewport"),
+	/** Simulates a mobile preview from within the level viewport in editor. */
+	InMobilePreviewEditorViewport		UMETA(DisplayName = "In Mobile Preview Editor Viewport"),
+	/** Simulates a mobile preview in a new window (viewport) in editor. */
+	InMobilePreviewEditorFloating		UMETA(DisplayName = "In Mobile Preview Editor Floating"),
 	ECsPlayMode_MAX						UMETA(Hidden),
 };
 
@@ -52,12 +52,23 @@ namespace NCsPlayMode
 		extern CSCORE_API const Type InVR;
 		extern CSCORE_API const Type Simulate;
 		extern CSCORE_API const Type Count;
-		extern CSCORE_API const Type InMobilePreviewViewport;
+		extern CSCORE_API const Type InMobilePreviewEditorViewport;
 		extern CSCORE_API const Type InMobilePreviewEditorFloating;
 		extern CSCORE_API const Type ECsPlayMode_MAX;
 	}
 
 	extern CSCORE_API const uint8 MAX;
 
-	FORCEINLINE bool IsMobilePIE(const Type& InType) { return InType == Type::InMobilePreviewViewport || InType == Type::InMobilePreviewEditorFloating; }
+	FORCEINLINE bool IsMobilePIE(const Type& InType) { return InType == Type::InMobilePreviewEditorViewport || InType == Type::InMobilePreviewEditorFloating; }
+
+	FORCEINLINE bool IsMobilePreviewEditor(const Type& InType)
+	{
+#if WITH_EDITOR
+		bool bEditor = true;
+#else
+		bool bEditor = false;
+#endif // #if WITH_EDITOR
+
+		return bEditor && (InType == Type::InMobilePreview || IsMobilePIE(InType));
+	}
 }

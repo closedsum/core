@@ -129,8 +129,6 @@ public:
 	void OnPostProcessInput_LogCurrentInputFrame();
 	void OnPostProcessInput_LogGameEventInfo();
 
-	void OnPostProcessInput_UpdateActiveInputMode(const float& DeltaTime, const bool bGamePaused);
-
 	float CurrentDeltaTime;
 
 	FCsManager_Input Manager_Inputs;
@@ -575,18 +573,6 @@ public:
 	};
 
 	FActiveMode ActiveMode;
-
-private:
-
-	int32 ActiveInputMode;
-
-	int32 Last_ActiveInputMode;
-
-public:
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnActiveInputModeChange, const int32& /*PreviousMode*/, const int32& /*CurrentMode*/);
-
-	FOnActiveInputModeChange OnActiveInputModeChange_Event;
 
 #pragma endregion Mode
 

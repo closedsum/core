@@ -479,7 +479,7 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 		UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
-		UObject* OuterRoot = Manager_FX_Actor->GetMyRoot();
+		UObject* OuterRoot					  = Manager_FX_Actor->GetMyRoot();
 
 		if (GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
 		{

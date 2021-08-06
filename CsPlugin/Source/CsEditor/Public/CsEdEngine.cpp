@@ -232,11 +232,6 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 	FCsCVarLogMap::Get().ResetDirty();
 	FCsCVarToggleMap::Get().ResetDirty();
 	FCsCVarDrawMap::Get().ResetDirty();
-
-	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
-	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
-
-	const EPlayModeType PlayMode = PlaySettings->LastExecutedPlayModeType;
 }
 
 void UCsEdEngine::OnEndPIE(bool IsSimulating)
@@ -244,10 +239,10 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 	UCsDeveloperSettings* ModuleSettings   = GetMutableDefault<UCsDeveloperSettings>();
 	ULevelEditorPlaySettings* PlaySettings = GetMutableDefault<ULevelEditorPlaySettings>();
 
-	const EPlayModeType PlayMode = PlaySettings->LastExecutedPlayModeType;
+	const EPlayModeType PlayModeType = PlaySettings->LastExecutedPlayModeType;
 
 	// PIE
-	if (PlayMode == EPlayModeType::PlayMode_InEditorFloating)
+	if (PlayModeType == EPlayModeType::PlayMode_InEditorFloating)
 	{
 		// Mobile
 		if (ModuleSettings->bPIE_Mobile)
@@ -312,7 +307,7 @@ char UCsEdEngine::OnEndPIE_NextFrame_Internal(FCsRoutine* R)
 
 void UCsEdEngine::OnEndPlayMapPIE(bool IsSimulating)
 {
-
+	PlayMode = ECsPlayMode::ECsPlayMode_MAX;
 }
 
 #pragma endregion PIE
@@ -345,12 +340,13 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 	{
 		if (PropertyName == Name::LastExecutedPlayModeType)
 		{
+			const EPlayModeType PlayModeType = PlaySettings->LastExecutedPlayModeType;
+			PlayMode						 = (ECsPlayMode)PlayModeType;
+
 			if (ModuleSettings->bOverridePIESettings)
 			{
-				const EPlayModeType PlayMode = PlaySettings->LastExecutedPlayModeType;
-
 				// PIE
-				if (PlayMode == EPlayModeType::PlayMode_InEditorFloating)
+				if (PlayMode == ECsPlayMode::InEditorFloating)
 				{
 					// Mobile
 					if (ModuleSettings->bPIE_Mobile)
@@ -363,6 +359,8 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 
 						PlaySettings->NewWindowWidth  = ModuleSettings->PIE_Mobile.NewWindowWidth;
 						PlaySettings->NewWindowHeight = ModuleSettings->PIE_Mobile.NewWindowHeight;
+
+						PlayMode = ECsPlayMode::InMobilePreviewEditorFloating;
 					}
 					else
 					{
@@ -372,14 +370,14 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 				}
 				// Standalone Mobile
 				else
-				if (PlayMode == EPlayModeType::PlayMode_InMobilePreview)
+				if (PlayMode == ECsPlayMode::InMobilePreview)
 				{
 					PlaySettings->NewWindowWidth  = ModuleSettings->Standalone_Mobile.NewWindowWidth;
 					PlaySettings->NewWindowHeight = ModuleSettings->Standalone_Mobile.NewWindowHeight;
 				}
 				// Standalone
 				else
-				if (PlayMode == EPlayModeType::PlayMode_InNewProcess)
+				if (PlayMode == ECsPlayMode::InNewProcess)
 				{
 					PlaySettings->NewWindowWidth  = ModuleSettings->Standalone.NewWindowWidth;
 					PlaySettings->NewWindowHeight = ModuleSettings->Standalone.NewWindowHeight;
@@ -892,6 +890,8 @@ char UCsEdEngine::FStandalone::Monitor_Internal(FCsRoutine* R)
 		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Windows);
 		PackageSettings->UpdateDefaultConfigFile();
 	}
+
+	Outer->SetPlayMode(ECsPlayMode::ECsPlayMode_MAX);
 	Reset();
 
 	CS_COROUTINE_END(R);

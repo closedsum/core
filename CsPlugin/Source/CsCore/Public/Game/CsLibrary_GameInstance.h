@@ -176,6 +176,18 @@ namespace NCsGameInstance
 		static bool IsPIEChecked(const FString& Context, const UObject* ContextObject);
 
 		/**
+		* Check if the instance currently running is simulating Mobile Preview in PIE.
+		* NOTE: Assumes the GameInstance is of type: UCsGameInstance.
+		*
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return				Whether the instance running is simulating Mobile Preview in PIE.
+		*/
+		static bool IsMobilePIEChecked(const FString& Context, const UObject* ContextObject);
+
+		/**
 		* Check if the instance currently running is Standalone from Editor.
 		* NOTE: Assumes the GameInstnace is of Type: UCsGameInstance.
 		* 

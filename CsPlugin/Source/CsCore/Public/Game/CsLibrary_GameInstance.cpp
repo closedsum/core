@@ -114,6 +114,11 @@ namespace NCsGameInstance
 		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsPIE();
 	}
 
+	bool FLibrary::IsMobilePIEChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsMobilePIE();
+	}
+
 	bool FLibrary::IsStandaloneFromEditorChecked(const FString& Context, const UObject* ContextObject)
 	{
 		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsStandaloneFromEditor();

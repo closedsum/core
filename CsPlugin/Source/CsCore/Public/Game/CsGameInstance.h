@@ -1,10 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
-
 #include "Engine/GameInstance.h"
+// Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
+// Containers
 #include "Containers/Ticker.h"
+// Play
+#include "Play/Mode/CsPlayMode.h"
+
 #include "CsGameInstance.generated.h"
+#pragma once
 
 class UCsManager_Singleton;
 struct FCsRoutine;
@@ -94,6 +98,8 @@ public:
 #pragma region
 private:
 
+	ECsPlayMode PlayMode;
+
 	bool bPIE;
 	bool bStandaloneFromEditor;
 	bool bStandaloneMobileFromEditor;
@@ -102,6 +108,7 @@ private:
 public:
 
 	FORCEINLINE bool IsPIE() const { return bPIE; }
+	FORCEINLINE bool IsMobilePIE() const { return NCsPlayMode::IsMobilePIE(PlayMode); }
 	FORCEINLINE bool IsStandaloneFromEditor() const { return bStandaloneFromEditor; }
 	FORCEINLINE bool IsStandaloneMobileFromEditor() const { return bStandaloneMobileFromEditor; }
 	FORCEINLINE bool HasOnStart() const { return bOnStart; }

@@ -24,6 +24,9 @@
 
 #if WITH_EDITOR
 #include "Editor.h"
+#include "Engine/Engine.h"
+// Play
+#include "Play/Mode/CsGetPlayMode.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -59,8 +62,10 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	// Managers
 	Manager_Singleton(nullptr),
 	// Editor
+	PlayMode(ECsPlayMode::ECsPlayMode_MAX),
 	bPIE(false),
 	bStandaloneFromEditor(false),
+	bStandaloneMobileFromEditor(false),
 	bOnStart(false)
 {
 }
@@ -82,6 +87,9 @@ void UCsGameInstance::Init()
 
 #if WITH_EDITOR
 	bPIE = true;
+
+	if (ICsGetPlayMode* GetPlayMode = Cast<ICsGetPlayMode>(GEngine))
+		PlayMode = GetPlayMode->GetPlayMode();
 
 	// Check if Standalone was launched from editor
 	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))

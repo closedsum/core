@@ -4,6 +4,7 @@
 // Interfaces
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Object/CsGetCreatedObjects.h"
+#include "Play/Mode/CsGetPlayMode.h"
 // Types
 #include "Object/CsTypes_Object.h"
 #include "Types/CsTypes_Load.h"
@@ -22,9 +23,11 @@ struct FCsRoutine;
 UCLASS()
 class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
 								 public ICsGetManagerSingleton,
-								 public ICsGetCreatedObjects
+								 public ICsGetCreatedObjects,
+								 public ICsGetPlayMode
 {
 public:
+
 	GENERATED_BODY()
 
 // UEngine Interface
@@ -103,6 +106,26 @@ public:
 #undef CreatedObjectsType
 
 #pragma endregion Object
+
+// ICsGetPlayMode
+#pragma region
+public:
+
+	FORCEINLINE const ECsPlayMode& GetPlayMode() const { return PlayMode; }
+
+#pragma endregion ICsGetPlayMode
+
+// PlayMode
+#pragma region
+protected:
+
+	ECsPlayMode PlayMode;
+
+public:
+
+	void SetPlayMode(const ECsPlayMode& Value) { PlayMode = Value; }
+
+#pragma endregion PlayMode
 
 // PropertyChange
 #pragma region

@@ -109,6 +109,36 @@ namespace NCsFX
 
 		#pragma endregion Get
 
+		// Pool
+		#pragma region
+		public:
+
+			/**
+			* 
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				
+			*/
+			static bool IsNoneAllocatedChecked(const FString& Context, const UObject* WorldContext);
+
+		#pragma endregion Pool
+
+		// Allocate / Deallocate
+		#pragma region
+		public:
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return
+			*/
+			static void QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext);
+
+		#pragma endregion Allocate / Deallocate
+
 		// Spawn
 		#pragma region
 		public:

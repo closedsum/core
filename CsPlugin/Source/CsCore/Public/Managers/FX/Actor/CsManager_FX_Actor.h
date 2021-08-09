@@ -107,12 +107,12 @@ namespace NCsFX
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsFX& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsFX& Type) const override
 		{
 			return Type.GetName();
 		}
 
-		FORCEINLINE virtual bool IsValidKey(const FECsFX& Type) override
+		FORCEINLINE virtual bool IsValidKey(const FECsFX& Type) const override
 		{
 			return EMCsFX::Get().IsValidEnum(Type);
 		}
@@ -434,6 +434,10 @@ public:
 	*/
 	bool IsExhausted(const FECsFX& Type);
 
+	bool IsAnyAllocated() const;
+
+	bool IsNoneAllocated() const;
+
 	// Find
 #pragma region
 public:
@@ -556,6 +560,14 @@ public:
 	void BindToOnPause(const FECsUpdateGroup& Group);
 
 #pragma endregion Pause
+
+	// Allocate / Deallocate
+#pragma region
+public:
+
+	void QueueDeallocateAll();
+
+#pragma endregion Allocate / Deallocate
 
 	// Payload
 #pragma region

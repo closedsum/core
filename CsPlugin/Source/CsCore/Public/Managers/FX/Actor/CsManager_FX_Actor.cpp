@@ -685,6 +685,16 @@ bool UCsManager_FX_Actor::IsExhausted(const FECsFX& Type)
 	return Internal.IsExhausted(Type);
 }
 
+bool UCsManager_FX_Actor::IsAnyAllocated() const
+{
+	return Internal.IsAnyAllocated();
+}
+
+bool UCsManager_FX_Actor::IsNoneAllocated() const
+{
+	return Internal.IsNoneAllocated();
+}
+
 	// Find
 #pragma region
 
@@ -768,6 +778,16 @@ void UCsManager_FX_Actor::BindToOnPause(const FECsUpdateGroup& Group)
 }
 
 #pragma endregion Pause
+
+	// Allocate / Deallocate
+#pragma region
+
+void UCsManager_FX_Actor::QueueDeallocateAll()
+{
+	Internal.QueueDeallocateAll();
+}
+
+#pragma endregion Allocate / Deallocate
 
 	// Payload
 #pragma region

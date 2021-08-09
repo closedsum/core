@@ -105,6 +105,26 @@ namespace NCsFX
 
 		#pragma endregion Get
 
+		// Pool
+		#pragma region
+		
+		bool FLibrary::IsNoneAllocatedChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->IsNoneAllocated();
+		}
+
+		#pragma endregion Pool
+
+		// Allocate / Deallocate
+		#pragma region
+		
+		void FLibrary::QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->QueueDeallocateAll();
+		}
+
+		#pragma endregion Allocate / Deallocate
+
 		// Spawn
 		#pragma region
 

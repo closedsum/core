@@ -471,9 +471,6 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		// NOTE: 4.26.2. Still occurs.
 
 #if WITH_EDITOR
-		FX->GetNiagaraComponent()->SetAsset(nullptr);
-
-		// WITH_EDITOR
 		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
 		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
 		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
@@ -484,13 +481,13 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		if (GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
 		{
 			FX->GetNiagaraComponent()->DeactivateImmediate();
-
-			FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
-
-			if (System)
-			{
-				System->WaitForAsyncTickDoNotFinalize(true);
-			}
+			*AssetPropertyPtr = nullptr;
+			WaitForSystemComplete();
+			FX->GetNiagaraComponent()->DestroyInstance();
+		}
+		else
+		{
+			FX->GetNiagaraComponent()->SetAsset(nullptr);
 		}
 #else
 		FX->GetNiagaraComponent()->DeactivateImmediate();
@@ -499,26 +496,39 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 
 		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
 		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
-
-		FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
-
-		if (System)
-		{
-			System->WaitForAsyncTickDoNotFinalize(true);
-		}
-
-		TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FX->GetNiagaraComponent()->GetSystemSimulation();
-		
-		if (Simulation.IsValid())
-		{
-			Simulation->WaitForInstancesTickComplete(true);
-		}
+		WaitForSystemComplete();
 
 		FX->GetNiagaraComponent()->DestroyInstance();
 #endif // #if WITH_EDITOR
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem);
 		ChangeCounter::Get().AddCleared();
 	}
+}
+
+void UCsFXActorPooledImpl::WaitForSystemComplete()
+{
+	FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
+
+	if (System)
+	{
+		System->WaitForAsyncTickDoNotFinalize(true);
+	}
+
+	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FX->GetNiagaraComponent()->GetSystemSimulation();
+
+#if WITH_EDITOR
+	/*
+	while (Simulation.IsValid())
+	{
+		FPlatformProcess::SleepNoStats(0.001f);
+	}
+	*/
+#else
+	if (Simulation.IsValid())
+	{
+		Simulation->WaitForInstancesTickComplete(true);
+	}
+#endif // #if WITH_EDITOR
 }
 
 void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()

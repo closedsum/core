@@ -120,6 +120,8 @@ protected:
 	void Log_AttachAndSetTransform(PooledPayloadType* Payload, FXPayloadType* FXPayload);
 
 	void Handle_ClearFXSystem();
+	void WaitForSystemComplete();
+
 	void Handle_ClearAttachAndTransform();
 
 	void LogChangeCounter();

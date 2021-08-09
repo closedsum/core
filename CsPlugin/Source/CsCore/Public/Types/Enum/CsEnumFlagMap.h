@@ -110,6 +110,33 @@ public:
 		return FromNameInternalMap.Find(Name) != nullptr;
 	}
 
+	FORCEINLINE bool IsValidEnumChecked(const EnumType& Enum)
+	{
+		const bool Result = IsValidEnum(Enum);
+
+		checkf(Result, TEXT("%s::IsValidEnumChecked: Enum: %s is NOT Valid"), *MapName, ToChar(Enum));
+
+		return Result;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const EnumType& Enum)
+	{
+		const bool Result = IsValidEnum(Enum);
+
+		checkf(Result, TEXT("%s: Enum: %s is NOT Valid"), *Context, ToChar(Enum));
+
+		return Result;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& EnumElementName, const EnumType& Enum)
+	{
+		const bool Result = IsValidEnum(Enum);
+
+		checkf(Result, TEXT("%s: %s: %s is NOT Valid"), *Context, *EnumElementName, ToChar(Enum));
+
+		return Result;
+	}
+
 	FORCEINLINE bool IsValidFlag(const uint32& Flag) const
 	{
 		return FlagMap.Find(Flag) != nullptr;

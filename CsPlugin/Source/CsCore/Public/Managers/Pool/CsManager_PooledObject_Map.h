@@ -305,12 +305,12 @@ namespace NCsPooledObject
 				return GetCurrentWorld() ? GetCurrentWorld()->GetTimeSeconds() : 0.0f;
 			}
 
-			virtual const FString& KeyTypeToString(const KeyType& Type)
+			virtual const FString& KeyTypeToString(const KeyType& Type) const
 			{
 				return NCsCached::Str::Empty;
 			}
 
-			virtual bool IsValidKey(const KeyType& Type)
+			virtual bool IsValidKey(const KeyType& Type) const
 			{
 				return true;
 			}
@@ -430,16 +430,16 @@ namespace NCsPooledObject
 			* @param Type
 			* return
 			*/
-			ManagerAbstractType* GetManagerPooledObjects(const KeyType& Type)
+			ManagerAbstractType* GetManagerPooledObjects(const KeyType& Type) const
 			{
 				checkf(IsValidKey(Type), TEXT("%s::GetManagerPooledObjects: Type: %s is NOT a valid Key."), *Name, *KeyTypeToString(Type));
 
 			#if WITH_EDITOR
-				ManagerAbstractType** PoolPtr = Pools.Find(Type);
+				const ManagerAbstractType* const* PoolPtr = Pools.Find(Type);
 
 				checkf(PoolPtr, TEXT("%s::GetManagerPooledObjects: No Pool found for Type: %s. Call CreatePool."), *Name, *KeyTypeToString(Type));
 
-				return *PoolPtr;
+				return const_cast<ManagerAbstractType*>(*PoolPtr);
 			#else
 				return Pools[Type];
 			#endif // #if WITH_EDITOR
@@ -451,7 +451,7 @@ namespace NCsPooledObject
 			* @param Type
 			* return
 			*/
-			ManagerAbstractType* GetSafeManagerPooledObjects(const KeyType& Type)
+			ManagerAbstractType* GetSafeManagerPooledObjects(const KeyType& Type) const
 			{
 				if (!IsValidKey(Type))
 				{
@@ -459,12 +459,12 @@ namespace NCsPooledObject
 					return nullptr;
 				}
 
-				ManagerAbstractType** PoolPtr = Pools.Find(Type);
+				const ManagerAbstractType* const* PoolPtr = Pools.Find(Type);
 
 				if (!PoolPtr)
 					CS_NON_SHIPPING_EXPR(Log_Impl.Execute(FString::Printf(TEXT("%s::GetManagerPooledObjects: No Pool found for Type: %s. Call CreatePool."), *Name, *KeyTypeToString(Type))));
 
-				return *PoolPtr;
+				return const_cast<ManagerAbstractType*>(*PoolPtr);
 			}
 
 			/** Event called after constructing an Object of specified Type when creating a pool. 
@@ -850,7 +850,7 @@ namespace NCsPooledObject
 			* @param Type	Type of pool.
 			* return		Number of elements in the pool for the associated Type.
 			*/
-			FORCEINLINE const int32& GetPoolSize(const KeyType& Type)
+			FORCEINLINE const int32& GetPoolSize(const KeyType& Type) const
 			{
 				return GetManagerPooledObjects(Type)->GetPoolSize();
 			}
@@ -861,7 +861,7 @@ namespace NCsPooledObject
 			* @param Type	Type of allocated objects.
 			* return		Number of allocated objects for the associated Type.
 			*/ 
-			FORCEINLINE int32 GetAllocatedObjectsSize(const KeyType& Type)
+			FORCEINLINE int32 GetAllocatedObjectsSize(const KeyType& Type) const
 			{
 				return GetManagerPooledObjects(Type)->GetAllocatedObjectsSize();
 			}
@@ -873,10 +873,27 @@ namespace NCsPooledObject
 			@ @param Type	Type of pool to check against.
 			* return		All elements allocated or not.
 			*/
-			FORCEINLINE bool IsExhausted(const KeyType& Type)
+			FORCEINLINE bool IsExhausted(const KeyType& Type) const
 			{
 				return GetManagerPooledObjects(Type)->IsExhausted();
 			}
+
+			/**
+			* Check if any of the Pools have any allocated objects.
+			* 
+			* return
+			*/
+			FORCEINLINE bool IsAnyAllocated() const
+			{
+				for (const TPair<KeyType, ManagerAbstractType*>& Pair : Pools)
+				{
+					if (Pair.Value->GetAllocatedObjectsSize() > 0)
+						return true;
+				}
+				return false;
+			}
+
+			FORCEINLINE bool IsNoneAllocated() const { return !IsAnyAllocated(); }
 
 			// Find
 		#pragma region
@@ -1084,6 +1101,16 @@ namespace NCsPooledObject
 				if (IsValidKey(CurrentUpdatePoolType))
 				{
 					OnDeallocate_Event.Broadcast(CurrentUpdatePoolType, Object);
+				}
+			}
+
+		public:
+
+			FORCEINLINE void QueueDeallocateAll()
+			{
+				for (TPair<KeyType, ManagerAbstractType*>& Pair : Pools)
+				{
+					Pair.Value->QueueDeallocateAll();
 				}
 			}
 

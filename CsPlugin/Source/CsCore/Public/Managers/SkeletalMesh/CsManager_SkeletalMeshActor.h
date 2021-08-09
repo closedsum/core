@@ -40,12 +40,12 @@ namespace NCsSkeletalMeshActor
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsSkeletalMeshActor& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsSkeletalMeshActor& Type) const override
 		{
 			return Type.GetName();
 		}
 
-		FORCEINLINE virtual bool IsValidKey(const FECsSkeletalMeshActor& Type) override
+		FORCEINLINE virtual bool IsValidKey(const FECsSkeletalMeshActor& Type) const override
 		{
 			return EMCsSkeletalMeshActor::Get().IsValidEnum(Type);
 		}

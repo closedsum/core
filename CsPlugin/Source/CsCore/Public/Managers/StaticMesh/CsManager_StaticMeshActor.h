@@ -40,12 +40,12 @@ namespace NCsStaticMeshActor
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsStaticMeshActor& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsStaticMeshActor& Type) const override
 		{
 			return Type.GetName();
 		}
 
-		FORCEINLINE virtual bool IsValidKey(const FECsStaticMeshActor& Type) override
+		FORCEINLINE virtual bool IsValidKey(const FECsStaticMeshActor& Type) const override
 		{
 			return EMCsStaticMeshActor::Get().IsValidEnum(Type);
 		}

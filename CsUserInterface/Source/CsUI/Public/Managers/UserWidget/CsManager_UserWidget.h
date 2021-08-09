@@ -37,12 +37,12 @@ namespace NCsUserWidget
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsUserWidgetPooled& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsUserWidgetPooled& Type) const override
 		{
 			return Type.GetName();
 		}
 
-		FORCEINLINE virtual bool IsValidKey(const FECsUserWidgetPooled& Type) override
+		FORCEINLINE virtual bool IsValidKey(const FECsUserWidgetPooled& Type) const override
 		{
 			return EMCsUserWidgetPooled::Get().IsValidEnum(Type);
 		}

@@ -38,12 +38,12 @@ namespace NCsWidgetActor
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWidgetActor& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWidgetActor& Type) const override
 		{
 			return Type.GetName();
 		}
 
-		FORCEINLINE virtual bool IsValidKey(const FECsWidgetActor& Type) override
+		FORCEINLINE virtual bool IsValidKey(const FECsWidgetActor& Type) const override
 		{
 			return EMCsWidgetActor::Get().IsValidEnum(Type);
 		}

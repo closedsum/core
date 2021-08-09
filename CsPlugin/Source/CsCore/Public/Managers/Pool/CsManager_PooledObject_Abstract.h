@@ -48,10 +48,10 @@ namespace NCsPooledObject
 
 			virtual void CreatePool(const int32& Size) = 0;
 
-			virtual const int32& GetPoolSize() = 0;
-			virtual int32 GetAllocatedObjectsSize() = 0;
+			virtual const int32& GetPoolSize() const = 0;
+			virtual int32 GetAllocatedObjectsSize() const = 0;
 
-			virtual bool IsExhausted() = 0;
+			virtual bool IsExhausted() const = 0;
 
 		#pragma endregion Pool
 
@@ -74,6 +74,14 @@ namespace NCsPooledObject
 			virtual void DeconstructPayloads() = 0;
 
 		#pragma endregion Payload
+
+		// Allocate / Deallocate
+		#pragma region
+		public:
+
+			virtual void QueueDeallocateAll() = 0;
+
+		#pragma endregion Allocate / Deallocate
 
 		// Destroy
 		#pragma region
@@ -1076,7 +1084,7 @@ namespace NCsPooledObject
 			*
 			* return	Number of elements in the pool.
 			*/
-			FORCEINLINE const int32& GetPoolSize()
+			FORCEINLINE const int32& GetPoolSize() const
 			{
 				return PoolSize;
 			}
@@ -1086,7 +1094,7 @@ namespace NCsPooledObject
 			*
 			* return	Number of allocated objects.
 			*/
-			FORCEINLINE int32 GetAllocatedObjectsSize()
+			FORCEINLINE int32 GetAllocatedObjectsSize() const
 			{
 				return AllocatedObjectsSize;
 			}
@@ -1096,7 +1104,7 @@ namespace NCsPooledObject
 			*
 			* return	All elements allocated or not.
 			*/
-			FORCEINLINE bool IsExhausted()
+			FORCEINLINE bool IsExhausted() const
 			{
 				return AllocatedObjectsSize == PoolSize;
 			}
@@ -1401,6 +1409,16 @@ namespace NCsPooledObject
 
 		// Allocate / Deallocate
 		#pragma region
+		public:
+
+			FORCEINLINE void QueueDeallocateAll()
+			{
+				for (InterfaceContainerType* O : AllocatedObjects)
+				{
+					O->GetCache()->QueueDeallocate();
+				}
+			}
+
 		protected:
 
 			/**
@@ -1573,10 +1591,10 @@ namespace NCsPooledObject
 			{
 				const FString& Context = FunctionNames[(uint8)EFunctionNames::DeallocateAll];
 
-				for (InterfaceContainerType& O : AllocatedObjects)
+				for (InterfaceContainerType* O : AllocatedObjects)
 				{
 					CS_NON_SHIPPING_EXPR(LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Deallocate, O));
-					O.Deallocate();
+					O->Deallocate();
 					OnDeallocate_Event.Broadcast(O);
 				}
 

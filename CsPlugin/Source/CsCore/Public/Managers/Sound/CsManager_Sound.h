@@ -43,12 +43,12 @@ namespace NCsSound
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsSound& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsSound& Type) const override
 		{
 			return Type.GetName();
 		}
 
-		FORCEINLINE virtual bool IsValidKey(const FECsSound& Type) override
+		FORCEINLINE virtual bool IsValidKey(const FECsSound& Type) const override
 		{
 			return EMCsSound::Get().IsValidEnum(Type);
 		}

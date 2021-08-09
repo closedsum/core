@@ -66,9 +66,22 @@ protected:
 
 // Exit
 #pragma region
+protected:
+
+	virtual bool CanExitGame();
+
 public:
 
+	void QueueExitGame();
+
+	DECLARE_MULTICAST_DELEGATE(OnQueueExitGame)
+
+	OnQueueExitGame OnQueueExitGame_Event;
+
+private:
+
 	void ExitGame();
+	char ExitGame_Internal(FCsRoutine* R);
 
 #pragma endregion Exit
 
@@ -111,6 +124,7 @@ public:
 	FORCEINLINE bool IsMobilePIE() const { return NCsPlayMode::IsMobilePIE(PlayMode); }
 	FORCEINLINE bool IsStandaloneFromEditor() const { return bStandaloneFromEditor; }
 	FORCEINLINE bool IsStandaloneMobileFromEditor() const { return bStandaloneMobileFromEditor; }
+	FORCEINLINE bool IsMobilePreviewEditor() const { return NCsPlayMode::IsMobilePreviewEditor(PlayMode); }
 	FORCEINLINE bool HasOnStart() const { return bOnStart; }
 
 #pragma endregion Editor

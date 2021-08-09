@@ -43,11 +43,13 @@ namespace NCsGameInstance
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsGameInstance, ExitGame_Internal);
 		}
 
 		namespace Name
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsGameInstance, Check_FinishedLoadingPersistentLevel_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsGameInstance, ExitGame_Internal);
 		}
 	}
 }
@@ -60,6 +62,7 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	TickDelegate(),
 	TickDelegateHandle(),
 	// Managers
+	OnQueueExitGame_Event(),
 	Manager_Singleton(nullptr),
 	// Editor
 	PlayMode(ECsPlayMode::ECsPlayMode_MAX),
@@ -95,10 +98,12 @@ void UCsGameInstance::Init()
 	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneFromEditor))
 	{
 		bStandaloneFromEditor = true;
+		PlayMode = ECsPlayMode::InNewProcess;
 	}
 	if (FParse::Param(FCommandLine::Get(), *Str::StandaloneMobileFromEditor))
 	{
 		bStandaloneMobileFromEditor = true;
+		PlayMode = ECsPlayMode::InMobilePreview;
 	}
 #endif // #if WITH_EDITOR
 
@@ -209,8 +214,48 @@ bool UCsGameInstance::IsSimulateInEditor()
 #endif // #if WITH_EDITOR
 }
 
+bool UCsGameInstance::CanExitGame()
+{
+	return true;
+}
+
+void UCsGameInstance::QueueExitGame()
+{
+	OnQueueExitGame_Event.Broadcast();
+
+	ExitGame();
+}
+
 void UCsGameInstance::ExitGame()
 {
+	using namespace NCsGameInstance::NCached;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(this);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE ExitGame_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsGameInstance::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	Scheduler->Start(Payload);
+}
+
+char UCsGameInstance::ExitGame_Internal(FCsRoutine* R)
+{
+	CS_COROUTINE_BEGIN(R);
+
+	CS_COROUTINE_WAIT_UNTIL(R, CanExitGame());
+
 #if WITH_EDITOR
 	if (bStandaloneFromEditor)
 		FPlatformMisc::RequestExit(false);
@@ -219,6 +264,8 @@ void UCsGameInstance::ExitGame()
 #else
 	FPlatformMisc::RequestExit(false);
 #endif // #if WITH_EDITOR
+
+	CS_COROUTINE_END(R);
 }
 
 // Managers

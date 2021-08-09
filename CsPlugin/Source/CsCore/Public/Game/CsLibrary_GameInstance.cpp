@@ -129,5 +129,10 @@ namespace NCsGameInstance
 		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsStandaloneMobileFromEditor();
 	}
 
+	bool FLibrary::IsMobilePreviewEditorChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsMobilePreviewEditor();
+	}
+
 	#pragma endregion Editor
 }

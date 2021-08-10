@@ -3,6 +3,7 @@
 #include "Animation/SkeletalMeshActor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/SkeletalMesh/CsSkeletalMeshActor.h"
 // Types
@@ -29,6 +30,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkeletalMeshActor, NParams, NAnim, NMontage
 UCLASS()
 class CSCORE_API ACsSkeletalMeshActorPooledImpl : public ASkeletalMeshActor,
 											      public ICsUpdate,
+												  public ICsPause,
 												  public ICsPooledObject,
 												  public ICsSkeletalMeshActor
 {
@@ -67,6 +69,16 @@ public:
 
 #pragma endregion ICsUpdate
 
+// ICsPause
+#pragma region
+public:
+
+	void Pause(bool bPaused);
+
+#pragma endregion ICsPause
+
+// PooledObject
+#pragma region
 protected:
 
 	CacheType* Cache;
@@ -77,6 +89,8 @@ protected:
 	uint32 PreserveChangesToDefaultMask;
 	uint32 ChangesToDefaultMask;
 	uint32 ChangesFromLastMask;
+
+#pragma endregion PooledObject
 
 // ICsPooledObject
 #pragma region

@@ -6,12 +6,14 @@
 // CVars
 #include "Managers/SkeletalMesh/CsCVars_Manager_SkeletalMeshActor.h"
 // Library
-#include "Library/CsLibrary_Property.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Property.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
+#include "Managers/Time/CsManager_Time.h"
 #include "Managers/Data/CsManager_Data.h"
 // Data
 #include "Managers/SkeletalMesh/Data/CsData_SkeletalMeshActorImpl.h"
@@ -39,6 +41,7 @@ namespace NCsManagerSkeletalMeshActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, BindToOnPause);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_SkeletalMeshActor, Spawn);
 		}
 
@@ -79,6 +82,8 @@ UCsManager_SkeletalMeshActor::UCsManager_SkeletalMeshActor(const FObjectInitiali
 		// Update
 	CurrentUpdatePoolType(),
 	CurrentUpdatePoolObjectIndex(0),
+		// Pause
+	OnPauseHandleByGroupMap(),
 		// Spawn
 	OnSpawn_Event(),
 	OnSpawn_ScriptEvent(),
@@ -244,24 +249,6 @@ UCsManager_SkeletalMeshActor::UCsManager_SkeletalMeshActor(const FObjectInitiali
 	return nullptr;
 }
 
-/*static*/ UCsManager_SkeletalMeshActor* UCsManager_SkeletalMeshActor::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerSkeletalMeshActor::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsSkeletalMeshActor::NManager::FLibrary SkeletalMeshManagerLibrary;
-
-	if (UObject* ContextRoot = SkeletalMeshManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
-	{
-		if (UCsManager_SkeletalMeshActor* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Skeletal Mesh Actor of type UCsManager_SkeletalMeshActor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
-}
-
 #endif // #if WITH_EDITOR
 
 void UCsManager_SkeletalMeshActor::Initialize()
@@ -280,6 +267,23 @@ void UCsManager_SkeletalMeshActor::Initialize()
 
 void UCsManager_SkeletalMeshActor::CleanUp()
 {
+	// Unbind delegates for Time related events
+	{
+		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+		if (UCsManager_Time* Manager_Time = TimeManagerLibrary::GetSafe(this))
+		{
+			for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
+			{
+				const FECsUpdateGroup& Group = Pair.Key;
+				const FDelegateHandle& Handle = Pair.Value;
+
+				Manager_Time->RemoveOnPause(Group, Handle);
+			}
+		}
+		OnPauseHandleByGroupMap.Reset();
+	}
+
 	Internal.Shutdown();
 	Pool.Reset();
 
@@ -631,6 +635,35 @@ void UCsManager_SkeletalMeshActor::OnPostUpdate_Pool(const FECsSkeletalMeshActor
 }
 
 #pragma endregion Update
+
+// Pause
+#pragma region
+
+void UCsManager_SkeletalMeshActor::Pause(const FECsUpdateGroup& Group, bool bPaused)
+{
+	Internal.Pause(bPaused);
+}
+
+void UCsManager_SkeletalMeshActor::Pause(const FECsSkeletalMeshActor& Type, bool bPaused)
+{
+	Internal.Pause(Type, bPaused);
+}
+
+void UCsManager_SkeletalMeshActor::BindToOnPause(const FECsUpdateGroup& Group)
+{
+	using namespace NCsManagerSkeletalMeshActor::NCached;
+
+	const FString& Context = Str::BindToOnPause;
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	UObject* ContextRoot  = TimeManagerLibrary::GetContextRootChecked(Context, GetOuter());
+	FDelegateHandle Handle = UCsManager_Time::Get(ContextRoot)->GetOnPause_Event(Group).AddUObject(this, &UCsManager_SkeletalMeshActor::Pause);
+
+	OnPauseHandleByGroupMap.Add(Group, Handle);
+}
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

@@ -1,17 +1,20 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
-
 #include "UObject/Object.h"
-#include "Managers/Pool/CsManager_PooledObject_Map.h"
-#include "Managers/Resource/CsManager_ResourceValueType.h"
-// SkeletalMeshActor
+// Types
+#include "Managers/Time/CsTypes_Update.h"
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
+// Resource
+#include "Managers/Resource/CsManager_ResourceValueType.h"
+// Managers
+ #include "Managers/Pool/CsManager_PooledObject_Map.h"
+// SkeletalMeshActor
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActor.h"
 #include "Managers/SkeletalMesh/CsSkeletalMeshActor.h"
 #include "Managers/SkeletalMesh/CsSkeletalMeshActorPooled.h"
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
 
 #include "CsManager_SkeletalMeshActor.generated.h"
+#pragma once
 
 // Delegates
 #pragma region
@@ -104,10 +107,6 @@ protected:
 	static ICsGetManagerSkeletalMeshActor* GetSafe_GetManagerSkeletalMeshActor(UObject* Object);
 
 	static UCsManager_SkeletalMeshActor* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_SkeletalMeshActor* GetFromWorldContextObject(const UObject* WorldContextObject);
 
 #endif // #if WITH_EDITOR
 
@@ -474,6 +473,28 @@ protected:
 	void OnPostUpdate_Pool(const FECsSkeletalMeshActor& Type);
 
 #pragma endregion Update
+
+	// Pause
+#pragma region
+public:
+
+	/**
+	*/
+	void Pause(const FECsUpdateGroup& Group, bool bPaused);
+
+	/**
+	*/
+	void Pause(const FECsSkeletalMeshActor& Type, bool bPaused);
+
+private:
+
+	TMap<FECsUpdateGroup, FDelegateHandle> OnPauseHandleByGroupMap;
+
+public:
+
+	void BindToOnPause(const FECsUpdateGroup& Group);
+
+#pragma endregion Pause
 
 	// Payload
 #pragma region

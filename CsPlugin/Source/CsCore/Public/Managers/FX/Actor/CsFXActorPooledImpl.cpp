@@ -246,6 +246,9 @@ void UCsFXActorPooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
+// PooledObject
+#pragma region
+
 void UCsFXActorPooledImpl::ConstructCache()
 {
 	typedef NCsFX::NCache::FImpl CacheImplType;
@@ -253,6 +256,8 @@ void UCsFXActorPooledImpl::ConstructCache()
 	Cache	  = new CacheImplType();
 	CacheImpl = (CacheImplType*)Cache;
 }
+
+#pragma endregion PooledObject
 
 #define FXPayloadType NCsFX::NPayload::IPayload
 

@@ -85,6 +85,8 @@ public:
 
 #pragma endregion ICsPooledObject
 
+// PooledObject
+#pragma region
 protected:
 
 	CacheType* Cache;
@@ -94,6 +96,8 @@ protected:
 
 	uint32 PreserveChangesToDefaultMask;
 	uint32 ChangesToDefaultMask;
+
+#pragma endregion PooledObject
 
 // ICsFXActorPooled
 #pragma region

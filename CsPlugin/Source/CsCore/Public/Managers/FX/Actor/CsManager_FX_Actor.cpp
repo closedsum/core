@@ -38,7 +38,8 @@ namespace NCsManagerFXActor
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, SetupInternal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, PopulateDataMapFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, BindToOnPause);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, Spawn);
 		}
 
@@ -492,7 +493,9 @@ void UCsManager_FX_Actor::SetupInternal()
 
 void UCsManager_FX_Actor::InitInternalFromSettings()
 {
-	PopulateDataMapFromSettings();
+	using namespace NCsManagerFXActor::NCached;
+
+	const FString& Context = Str::InitInternalFromSettings;
 
 	if (Settings.PoolParams.Num() > CS_EMPTY)
 	{
@@ -512,18 +515,18 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 			PoolParamsType& PoolParams = ManagerParams.ObjectParams.Add(Type);
 
-			checkf(Params.Class.ToSoftObjectPath().IsValid(), TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class for Type: %s is NOT a Valid Path."), Type.ToChar());
+			checkf(Params.Class.ToSoftObjectPath().IsValid(), TEXT("%s: Class for Type: %s is NOT a Valid Path."), *Context, Type.ToChar());
 
 #if !UE_BUILD_SHIPPING
 			if (!Params.Class.Get())
 			{
-				UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Class @ for Type: %s is NOT already loaded in memory."), *(Params.Class.ToString()), Type.ToChar());
+				UE_LOG(LogCs, Warning, TEXT("%s: Class @ for Type: %s is NOT already loaded in memory."), *Context, *(Params.Class.ToString()), Type.ToChar());
 			}
 #endif // #if !UE_BUILD_SHIPPING
 
 			UClass* Class = Params.Class.LoadSynchronous();
 
-			checkf(Class, TEXT("UCsManager_FX_Actor::InitInternalFromSettings: Failed to load Class @ for Type: %s."), *(Params.Class.ToString()), Type.ToChar());
+			checkf(Class, TEXT("%s: Failed to load Class @ for Type: %s."), *Context, *(Params.Class.ToString()), Type.ToChar());
 
 			ClassMap.Add(Type, Class);
 
@@ -772,7 +775,14 @@ void UCsManager_FX_Actor::Pause(const FECsFX& Type, bool bPaused)
 
 void UCsManager_FX_Actor::BindToOnPause(const FECsUpdateGroup& Group)
 {
-	FDelegateHandle Handle = UCsManager_Time::Get(GetOuter())->GetOnPause_Event(Group).AddUObject(this, &UCsManager_FX_Actor::Pause);
+	using namespace NCsManagerFXActor::NCached;
+
+	const FString& Context = Str::BindToOnPause;
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	UObject* ContextRoot   = TimeManagerLibrary::GetContextRootChecked(Context, GetOuter());
+	FDelegateHandle Handle = UCsManager_Time::Get(ContextRoot)->GetOnPause_Event(Group).AddUObject(this, &UCsManager_FX_Actor::Pause);
 
 	OnPauseHandleByGroupMap.Add(Group, Handle);
 }
@@ -906,103 +916,6 @@ void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTr
 
 // Data
 #pragma region
-
-void UCsManager_FX_Actor::PopulateDataMapFromSettings()
-{
-	using namespace NCsManagerFXActor::NCached;
-
-	if (UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>())
-	{
-		/*
-		for (FCsProjectileSettings_DataTable_Projectiles& Projectiles : ModuleSettings->Projectiles)
-		{
-			// TODO: Get DataTable from Manager_Data
-
-			// TODO: Add check for ModuleSettings->Manager_Projectile.Payload
-
-			bool LoadedFromManagerData = false;
-
-			if (!LoadedFromManagerData)
-			{
-				// LOG Warning
-			}
-
-			// Check DataTable of Projectiles
-			TSoftObjectPtr<UDataTable> DT_SoftObject = Projectiles.Projectiles;
-
-			if (UDataTable* DT = DT_SoftObject.LoadSynchronous())
-			{
-				if (!LoadedFromManagerData)
-				{
-					DataTables.Add(DT);
-				}
-
-				const UScriptStruct* RowStruct    = DT->GetRowStruct();
-				const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
-
-				typedef NCsProperty::FLibrary PropertyLibrary;
-
-				// ICsData_Projectile
-
-				// LifeTime
-				UFloatProperty* LifeTimeProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::LifeTime, NCsProjectileData::Projectile.GetDisplayName());
-				// InitialSpeed
-				UFloatProperty* InitialSpeedProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::InitialSpeed, NCsProjectileData::Projectile.GetDisplayName());
-				// MaxSpeed
-				UFloatProperty* MaxSpeedProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::MaxSpeed, NCsProjectileData::Projectile.GetDisplayName());
-				// GravityScale
-				UFloatProperty* GravityScaleProperty = PropertyLibrary::FindPropertyByNameForInterfaceChecked<UFloatProperty>(Str::PopulateDataMapFromSettings, RowStruct, Name::GravityScale, NCsProjectileData::Projectile.GetDisplayName());
-
-				for (const TPair<FName, uint8*>& Pair : RowMap)
-				{
-					const FName& Name = Pair.Key;
-					uint8* RowPtr	  = const_cast<uint8*>(Pair.Value);
-
-					FCsData_ProjectileImpl* Data = new FCsData_ProjectileImpl();
-					
-					DataMap.Add(Name, Data);
-
-					// ICsData_Projectile
-					{
-						// LifeTime
-						{
-							float* Value = LifeTimeProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: LifeTime."));
-
-							Data->SetLifeTime(Value);
-						}
-						// InitialSpeed
-						{
-							float* Value = InitialSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: InitialSpeed."));
-
-							Data->SetInitialSpeed(Value);
-						}
-						// MaxSpeed
-						{
-							float* Value = MaxSpeedProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: MaxSpeed."));
-
-							Data->SetMaxSpeed(Value);
-						}
-						// GravityScale
-						{
-							float* Value = GravityScaleProperty->ContainerPtrToValuePtr<float>(RowPtr);
-
-							checkf(Value, TEXT("UCsManager_Projectile::PopulateDataMapFromSettings: Failed to float ptr from FloatProperty: GravityScale."));
-
-							Data->SetGravityScale(Value);
-						}
-					}
-				}
-			}
-		}
-		*/
-	}
-}
 
 void UCsManager_FX_Actor::DeconstructData(ICsData_FX* Data)
 {

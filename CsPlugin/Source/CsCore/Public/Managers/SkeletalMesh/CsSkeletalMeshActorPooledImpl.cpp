@@ -122,6 +122,19 @@ void ACsSkeletalMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 #pragma endregion ICsUpdate
 
+// ICsPause
+#pragma region
+
+void ACsSkeletalMeshActorPooledImpl::Pause(bool bPaused)
+{
+	GetSkeletalMeshComponent()->bPauseAnims = bPaused;
+}
+
+#pragma endregion ICsPause
+
+// PooledObject
+#pragma region
+
 void ACsSkeletalMeshActorPooledImpl::ConstructCache()
 {
 	typedef NCsSkeletalMeshActor::NCache::FImpl CacheImplType;
@@ -129,6 +142,8 @@ void ACsSkeletalMeshActorPooledImpl::ConstructCache()
 	Cache = new CacheImplType();
 	CacheImpl = (CacheImplType*)Cache;
 }
+
+#pragma endregion PooledObject
 
 // ICsPooledObject
 #pragma region

@@ -745,8 +745,6 @@ protected:
 
 public:
 
-	virtual void PopulateDataMapFromSettings();
-
 	virtual void DeconstructData(ICsData_FX* Data);
 
 	ICsData_FX* GetData(const FName& Name);

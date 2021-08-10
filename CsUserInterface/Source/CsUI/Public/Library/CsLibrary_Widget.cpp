@@ -24,6 +24,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Components/ProgressBar.h"
 // Blueprint
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/BlueprintCore.h"
@@ -718,7 +719,7 @@ namespace NCsWidget
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
 
-				typedef NCsProperty::FLibrary PropertyLibrary;
+			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			return PropertyLibrary::GetObjectPropertyValueChecked<UImage>(Context, Widget, Widget->GetClass(), PropertyName);
 		}
@@ -735,6 +736,47 @@ namespace NCsWidget
 		UImage* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
 		{
 			using namespace NCsWidget::NImage::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, Widget, PropertyName, nullptr);
+		}
+	}
+
+	namespace NProgressBar
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NProgressBar::FLibrary, GetSafe);
+				}
+			}
+		}
+
+		UProgressBar* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValueChecked<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName);
+		}
+
+		UProgressBar* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValue<UProgressBar>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+		}
+
+		UProgressBar* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
+		{
+			using namespace NCsWidget::NProgressBar::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafe;
 

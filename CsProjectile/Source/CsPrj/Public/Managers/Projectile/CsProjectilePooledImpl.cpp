@@ -5,19 +5,19 @@
 // CVar
 #include "Managers/Projectile/CsCVars_Projectile.h"
 // Library
-#include "Library/CsLibrary_Common.h"
-#include "Material/CsLibrary_Material.h"
-#include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
-#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Managers/Sound/CsLibrary_Manager_Sound.h"
+#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Data/CsLibrary_Data_Projectile.h"
-#include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
-#include "Managers/Sound/CsLibrary_Manager_Sound.h"
-#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
-#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Payload/CsLibrary_Payload_Projectile.h"
+#include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Library/CsLibrary_Common.h"
+#include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
@@ -536,6 +536,9 @@ void ACsProjectilePooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
+// PooledObject
+#pragma region
+
 void ACsProjectilePooledImpl::Deallocate_Internal()
 {
 	using namespace NCsProjectilePooledImpl::NCached;
@@ -591,6 +594,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	// Modifiers
 	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
 }
+
+#pragma endregion PooledObject
 
 // ICsProjectile
 #pragma region

@@ -167,9 +167,13 @@ public:
 
 #pragma endregion ICsPooledObject
 
+// PooledObject
+#pragma region
 protected:
 
 	void Deallocate_Internal();
+
+#pragma endregion PooledObject
 
 protected:
 

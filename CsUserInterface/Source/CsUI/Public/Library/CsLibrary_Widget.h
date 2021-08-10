@@ -11,6 +11,7 @@ class UWidgetAnimation;
 class UTextBlock;
 class UButton;
 class UImage;
+class UProgressBar;
 
 namespace NCsWidget
 {
@@ -456,7 +457,7 @@ namespace NCsWidget
 			* @param Context		The calling context.
 			* @param Widget
 			* @param PropertyName	Name of the property.
-			* return				Button.
+			* return				Image.
 			*/
 			static UImage* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
 
@@ -467,7 +468,7 @@ namespace NCsWidget
 			* @param Widget
 			* @param PropertyName	Name of the property.
 			* @param Log
-			* return				Button.
+			* return				Image.
 			*/
 			static UImage* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
@@ -476,9 +477,47 @@ namespace NCsWidget
 			*
 			* @param Widget
 			* @param PropertyName	Name of the property.
-			* return				Button.
+			* return				Image.
 			*/
 			static UImage* GetSafe(UUserWidget* Widget, const FName& PropertyName);
+		};
+	}
+
+	namespace NProgressBar
+	{
+		struct CSUI_API FLibrary final
+		{
+		public:
+
+			/**
+			* Get a ProgressBar with PropertyName from Widget.
+			*
+			* @param Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				ProgressBar.
+			*/
+			static UProgressBar* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+			/**
+			* Safely get a ProgressBar with PropertyName from Widget.
+			*
+			* @param Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* @param Log
+			* return				ProgressBar.
+			*/
+			static UProgressBar* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely get a ProgressBar with PropertyName from Widget.
+			*
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				ProgressBar.
+			*/
+			static UProgressBar* GetSafe(UUserWidget* Widget, const FName& PropertyName);
 		};
 	}
 }

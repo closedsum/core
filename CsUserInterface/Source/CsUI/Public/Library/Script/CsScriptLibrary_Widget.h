@@ -8,6 +8,7 @@ class UWidgetAnimation;
 class UTextBlock;
 class UButton;
 class UImage;
+class UProgressBar;
 
 #include "CsScriptLibrary_Widget.generated.h"
 
@@ -130,4 +131,13 @@ public:
 	static UImage* GetImage(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
 
 #pragma endregion Image
+
+// ProgressBar
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|ProgressBar", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static UProgressBar* GetProgressBar(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+#pragma endregion ProgressBar
 };

@@ -245,6 +245,8 @@ namespace NCsWidget
 
 				checkf(Slot, TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName()));
 
+				checkf(Widget->GetVisibility() != ESlateVisibility::Collapsed, TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName()));
+
 				return Slot->GetPosition();
 			}
 
@@ -269,6 +271,12 @@ namespace NCsWidget
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName())));
 					return FVector2D(-1.0f);
 				}
+
+				if (Widget->GetVisibility() == ESlateVisibility::Collapsed)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName())));
+					return FVector2D(-1.0f);
+				}
 				return Slot->GetPosition();
 			}
 
@@ -285,6 +293,10 @@ namespace NCsWidget
 			{
 				CS_IS_PTR_NULL_CHECKED(Widget)
 
+				checkf(Widget->GetVisibility() != ESlateVisibility::Collapsed, TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName()));
+
+				checkf(Widget->GetVisibility() != ESlateVisibility::Hidden, TEXT("%s: %s's Visibility == ESlateVisibility::Hidden is NOT Valid when getting position."), *Context, *(Widget->GetName()));
+
 				return Widget->GetCachedGeometry().GetAbsolutePosition();
 			}
 
@@ -293,6 +305,18 @@ namespace NCsWidget
 				if (!Widget)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget is NULL."), *Context));
+					return FVector2D(-1.0f);
+				}
+
+				if (Widget->GetVisibility() == ESlateVisibility::Collapsed)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName())));
+					return FVector2D(-1.0f);
+				}
+
+				if (Widget->GetVisibility() == ESlateVisibility::Hidden)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s's Visibility == ESlateVisibility::Hidden is NOT Valid when getting position."), *Context, *(Widget->GetName())));
 					return FVector2D(-1.0f);
 				}
 				return Widget->GetCachedGeometry().GetAbsolutePosition();

@@ -46,8 +46,8 @@ namespace NCsTraceWeaponVisualFireAttach
 // FCsTraceWeaponVisualFireParams
 #pragma region
 
-// NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NTrace, NData, NVisual, NFire, NParams, FEmu)
+// NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NTrace, NData, NVisual, NFire, NParams, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsTraceWeaponVisualFireParams
@@ -68,7 +68,7 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FEmu
+#define ParamsType NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy
 
 	void CopyParams(ParamsType* Params);
 

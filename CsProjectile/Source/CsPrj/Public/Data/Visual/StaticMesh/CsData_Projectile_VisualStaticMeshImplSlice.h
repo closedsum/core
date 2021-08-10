@@ -93,15 +93,15 @@ namespace NCsProjectile
 
 					// StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 
-					CS_DECLARE_MEMBER_WITH_EMU(StaticMesh, FCsPrjStaticMesh)
+					CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, FCsPrjStaticMesh)
 
 				public:
 
 					FImplSlice() :
 						InterfaceMap(nullptr),
-						CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(StaticMesh)
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(StaticMesh)
 					{
-						CS_CTOR_SET_MEMBER_EMU(StaticMesh);
+						CS_CTOR_SET_MEMBER_PROXY(StaticMesh);
 					}
 
 					~FImplSlice()
@@ -128,7 +128,7 @@ namespace NCsProjectile
 				#pragma region
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_EMU(StaticMesh, FCsPrjStaticMesh)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(StaticMesh, FCsPrjStaticMesh)
 
 				#pragma endregion StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 

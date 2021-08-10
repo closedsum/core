@@ -98,35 +98,24 @@ namespace NCsProjectile
 
 			// ProjectileDataType (NCsProjectile::NData::IData)
 
-			float LifeTime;
-			float* LifeTime_Emu;
-
-			float InitialSpeed;
-			float* InitialSpeed_Emu;
-
-			float MaxSpeed;
-			float* MaxSpeed_Emu;
-
-			float GravityScale;
-			float* GravityScale_Emu;
+			CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(InitialSpeed, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(MaxSpeed, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(GravityScale, float)
 
 		public:
 
 			FImplSlice() :
 				InterfaceMap(nullptr),
-				LifeTime(0.0f),
-				LifeTime_Emu(nullptr),
-				InitialSpeed(0.0f),
-				InitialSpeed_Emu(nullptr),
-				MaxSpeed(0.0f),
-				MaxSpeed_Emu(nullptr),
-				GravityScale(0.0f),
-				GravityScale_Emu(nullptr)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(InitialSpeed, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxSpeed, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(GravityScale, 0.0f)
 			{
-				LifeTime_Emu = &LifeTime;
-				InitialSpeed_Emu = &InitialSpeed;
-				MaxSpeed_Emu = &MaxSpeed;
-				GravityScale_Emu = &GravityScale;
+				CS_CTOR_SET_MEMBER_PROXY(LifeTime);
+				CS_CTOR_SET_MEMBER_PROXY(InitialSpeed);
+				CS_CTOR_SET_MEMBER_PROXY(MaxSpeed);
+				CS_CTOR_SET_MEMBER_PROXY(GravityScale);
 			}
 
 			~FImplSlice(){}
@@ -149,10 +138,10 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(LifeTime, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(InitialSpeed, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(MaxSpeed, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_EMU(GravityScale, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(InitialSpeed, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxSpeed, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(GravityScale, float)
 
 		#pragma endregion ICsData_Projectile
 

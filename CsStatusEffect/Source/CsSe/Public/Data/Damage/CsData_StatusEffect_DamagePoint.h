@@ -11,7 +11,7 @@
 
 #include "CsData_StatusEffect_DamagePoint.generated.h"
 
-// Emu
+// Proxy
 #pragma region
 
 // NCsDamage::NData::IData
@@ -31,7 +31,7 @@ namespace NCsStatusEffect
 			* "Emulates" UCsData_StatusEffect_DamagePoint by mimicking the interfaces and having pointers to the appropriate
 			* members. The idea behind this struct is to keep the code a cleaner and more readable.
 			*/
-			struct CSSE_API FPointEmu : public DataType,
+			struct CSSE_API FPointProxy : public DataType,
 										public StatusEffectDataType,
 										public StatusEffectDamageDataType
 			{
@@ -67,8 +67,8 @@ namespace NCsStatusEffect
 
 			public:
 
-				FPointEmu();
-				~FPointEmu();
+				FPointProxy();
+				~FPointProxy();
 
 				FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
 
@@ -124,7 +124,7 @@ namespace NCsStatusEffect
 	}
 }
 
-#pragma endregion Emu
+#pragma endregion Proxy
 
 struct FCsInterfaceMap;
 
@@ -148,7 +148,7 @@ public:
 
 private:
 
-	DataType* DataEmu;
+	DataType* DataProxy;
 
 // UObject Interface
 #pragma region
@@ -182,7 +182,7 @@ protected:
 #pragma region
 public:
 
-	FORCEINLINE DataType* _getIData() const { return DataEmu; }
+	FORCEINLINE DataType* _getIData() const { return DataProxy; }
 
 	bool IsValid(const int32& LoadFlags);
 
@@ -227,13 +227,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsData_DamagePoint DamagePoint;
 
-	DamageDataType* DamagePointEmu;
+	DamageDataType* DamagePointProxy;
 
 // ICsStatusEffect_Damage
 #pragma region
 public:
 
-	FORCEINLINE DamageDataType* GetDamageData() const { return DamagePointEmu; }
+	FORCEINLINE DamageDataType* GetDamageData() const { return DamagePointProxy; }
 
 #pragma endregion ICsStatusEffect_Damage
 

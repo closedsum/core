@@ -38,9 +38,14 @@ namespace NCsWeapon
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWeapon& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsWeapon& Type) const override
 		{
 			return Type.GetName();
+		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsWeapon& Type) const override
+		{
+			return EMCsWeapon::Get().IsValidEnum(Type);
 		}
 	};
 

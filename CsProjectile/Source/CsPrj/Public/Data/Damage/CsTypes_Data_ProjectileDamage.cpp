@@ -1,13 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Damage/CsTypes_Data_ProjectileDamage.h"
 
-#include "Managers/Damage/Data/CsData_DamagePointEmu.h"
-#include "Managers/Damage/Data/Shape/CsData_DamageSphereEmu.h"
+#include "Managers/Damage/Data/CsData_DamagePointProxy.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageSphereProxy.h"
 
 // FCsPrjData_DamagePoint
 #pragma region
 
-void FCsPrjData_DamagePoint::SetData(PointDataEmuType* Data)
+void FCsPrjData_DamagePoint::SetData(PointDataProxyType* Data)
 {
 	Data->SetValue(&Damage);
 	Data->SetType(&Type);
@@ -18,7 +18,7 @@ void FCsPrjData_DamagePoint::SetData(PointDataEmuType* Data)
 // FCsPrjData_DamageSphere
 #pragma region
 
-void FCsPrjData_DamageSphere::SetData(SphereDataEmuType* Data)
+void FCsPrjData_DamageSphere::SetData(SphereDataProxyType* Data)
 {
 	// ICsData_Damage
 	Data->SetType(&Type);

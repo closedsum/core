@@ -55,7 +55,7 @@ namespace NCsWeapon
 
 						/**
 						*/
-						struct CSWP_API FEmu : public IParams
+						struct CSWP_API FProxy : public IParams
 						{
 						public:
 
@@ -75,8 +75,8 @@ namespace NCsWeapon
 
 						public:
 
-							FEmu();
-							~FEmu();
+							FProxy();
+							~FProxy();
 
 						public:
 

@@ -17,11 +17,11 @@ namespace NCsWeapon
 		{
 			namespace NTrace
 			{
-			// FLineEmu
+			// FLineImpl
 			#pragma region
 				/**
 				*/
-				struct CSWP_API FLineEmu : public ITrace 
+				struct CSWP_API FLineImpl : public ITrace
 				{
 				public:
 
@@ -51,8 +51,8 @@ namespace NCsWeapon
 
 				public:
 
-					FLineEmu();
-					~FLineEmu();
+					FLineImpl();
+					~FLineImpl();
 
 					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -87,13 +87,13 @@ namespace NCsWeapon
 
 				#pragma endregion ITrace
 				};
-			#pragma endregion FLineEmu
+			#pragma endregion FLineImpl
 
-			// FBoxEmu
+			// FBoxImpl
 			#pragma region
 				/**
 				*/
-				struct CSWP_API FBoxEmu : public ITrace
+				struct CSWP_API FBoxImpl : public ITrace
 				{
 				public:
 
@@ -123,8 +123,8 @@ namespace NCsWeapon
 
 				public:
 
-					FBoxEmu();
-					~FBoxEmu();
+					FBoxImpl();
+					~FBoxImpl();
 					
 					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -160,13 +160,13 @@ namespace NCsWeapon
 
 				#pragma endregion ITrace
 				};
-			#pragma endregion FBoxEmu
+			#pragma endregion FBoxImpl
 
-			// FSphereEmu
+			// FSphereImpl
 			#pragma region
 				/**
 				*/
-				struct CSWP_API FSphereEmu : public ITrace
+				struct CSWP_API FSphereImpl : public ITrace
 				{
 				public:
 
@@ -196,8 +196,8 @@ namespace NCsWeapon
 
 				public:
 
-					FSphereEmu();
-					~FSphereEmu();
+					FSphereImpl();
+					~FSphereImpl();
 					
 					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -233,13 +233,13 @@ namespace NCsWeapon
 
 				#pragma endregion ITrace
 				};
-			#pragma endregion FSphereEmu
+			#pragma endregion FSphereImpl
 
-			// FCapsuleEmu
+			// FCapsuleImpl
 			#pragma region
 				/**
 				*/
-				struct CSWP_API FCapsuleEmu : public ITrace
+				struct CSWP_API FCapsuleImpl : public ITrace
 				{
 				public:
 
@@ -269,8 +269,8 @@ namespace NCsWeapon
 
 				public:
 
-					FCapsuleEmu();
-					~FCapsuleEmu();
+					FCapsuleImpl();
+					~FCapsuleImpl();
 					
 					FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -306,7 +306,7 @@ namespace NCsWeapon
 
 				#pragma endregion ITrace
 				};
-			#pragma endregion FCapsuleEmu
+			#pragma endregion FCapsuleImpl
 			}
 		}
 	}

@@ -9,11 +9,8 @@
 // FCsPrjData_DamagePoint
 #pragma region
 
-// NCsDamage::NData::NPoint::FEmu
-namespace NCsDamage {
-	namespace NData {
-		namespace NPoint {
-			struct FEmu; } } }
+// NCsDamage::NData::NPoint::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPrjData_DamagePoint
@@ -36,11 +33,11 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+	typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
 
 public:
 
-	void SetData(PointDataEmuType* Data);
+	void SetData(PointDataProxyType* Data);
 };
 
 #pragma endregion FCsPrjData_DamagePoint
@@ -48,12 +45,8 @@ public:
 // FCsPrjData_DamageSphere
 #pragma region
 
-// NCsDamage::NData::NShape::NSphere::FEmu
-namespace NCsDamage {
-	namespace NData {
-		namespace NShape {
-			namespace NSphere {
-				struct FEmu; } } } }
+// NCsDamage::NData::NShape::NSphere::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPrjData_DamageSphere
@@ -109,11 +102,11 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NShape::NSphere::FEmu SphereDataEmuType;
+	typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
 
 public:
 
-	void SetData(SphereDataEmuType* Data);
+	void SetData(SphereDataProxyType* Data);
 };
 
 #pragma endregion FCsPrjData_DamageSphere

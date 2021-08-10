@@ -93,17 +93,17 @@ namespace NCsProjectile
 
 				// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 
-				CS_DECLARE_MEMBER_WITH_EMU(CollisionPreset, FCsCollisionPreset)
-				CS_DECLARE_MEMBER_WITH_EMU(CollisionRadius, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
+				CS_DECLARE_MEMBER_WITH_PROXY(CollisionRadius, float)
 
 			public:
 
 				FImplSlice() :
-					CS_CTOR_INIT_MEMBER_STRUCT_WITH_EMU(CollisionPreset),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(CollisionRadius, 0.0f)
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(CollisionPreset),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionRadius, 0.0f)
 				{
-					CS_CTOR_SET_MEMBER_EMU(CollisionPreset);
-					CS_CTOR_SET_MEMBER_EMU(CollisionRadius);
+					CS_CTOR_SET_MEMBER_PROXY(CollisionPreset);
+					CS_CTOR_SET_MEMBER_PROXY(CollisionRadius);
 				}
 
 				~FImplSlice(){}
@@ -126,8 +126,8 @@ namespace NCsProjectile
 			#pragma region
 			public:
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(CollisionPreset, FCsCollisionPreset)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(CollisionRadius, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionRadius, float)
 
 			#pragma endregion CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 

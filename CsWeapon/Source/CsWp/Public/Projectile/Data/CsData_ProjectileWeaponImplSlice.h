@@ -124,14 +124,14 @@ namespace NCsWeapon
 
 				// PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
 
-				CS_DECLARE_MEMBER_WITH_EMU(bDoFireOnRelease, bool)
-				CS_DECLARE_MEMBER_WITH_EMU(bFullAuto, bool)
-				CS_DECLARE_MEMBER_WITH_EMU(bInfiniteAmmo, bool)
-				CS_DECLARE_MEMBER_WITH_EMU(MaxAmmo, int32)
-				CS_DECLARE_MEMBER_WITH_EMU(ProjectilesPerShot, int32)
-				CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenShots, float)
-				CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenAutoShots, float)
-				CS_DECLARE_MEMBER_WITH_EMU(TimeBetweenProjectilesPerShot, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(bDoFireOnRelease, bool)
+				CS_DECLARE_MEMBER_WITH_PROXY(bFullAuto, bool)
+				CS_DECLARE_MEMBER_WITH_PROXY(bInfiniteAmmo, bool)
+				CS_DECLARE_MEMBER_WITH_PROXY(MaxAmmo, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(ProjectilesPerShot, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenShots, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenAutoShots, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, float)
 
 				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
@@ -144,25 +144,25 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
-					CS_CTOR_INIT_MEMBER_WITH_EMU(bDoFireOnRelease, false),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(bFullAuto, false),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(bInfiniteAmmo, false),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(MaxAmmo, 0),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(ProjectilesPerShot, 0),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenShots, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenAutoShots, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_EMU(TimeBetweenProjectilesPerShot, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bDoFireOnRelease, false),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bFullAuto, false),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bInfiniteAmmo, false),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxAmmo, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(ProjectilesPerShot, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenShots, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenAutoShots, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, 0.0f),
 					LaunchParams(nullptr),
 					LaunchParamsName(NAME_None)
 				{
-					CS_CTOR_SET_MEMBER_EMU(bDoFireOnRelease);
-					CS_CTOR_SET_MEMBER_EMU(bFullAuto);
-					CS_CTOR_SET_MEMBER_EMU(bInfiniteAmmo);
-					CS_CTOR_SET_MEMBER_EMU(MaxAmmo);
-					CS_CTOR_SET_MEMBER_EMU(ProjectilesPerShot);
-					CS_CTOR_SET_MEMBER_EMU(TimeBetweenShots);
-					CS_CTOR_SET_MEMBER_EMU(TimeBetweenAutoShots);
-					CS_CTOR_SET_MEMBER_EMU(TimeBetweenProjectilesPerShot);
+					CS_CTOR_SET_MEMBER_PROXY(bDoFireOnRelease);
+					CS_CTOR_SET_MEMBER_PROXY(bFullAuto);
+					CS_CTOR_SET_MEMBER_PROXY(bInfiniteAmmo);
+					CS_CTOR_SET_MEMBER_PROXY(MaxAmmo);
+					CS_CTOR_SET_MEMBER_PROXY(ProjectilesPerShot);
+					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenShots);
+					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenAutoShots);
+					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenProjectilesPerShot);
 				}
 
 				~FImplSlice();
@@ -199,32 +199,32 @@ namespace NCsWeapon
 				FORCEINLINE void SetDoFireOnRelease(const bool& Value) \
 				{
 					bDoFireOnRelease = Value;
-					bDoFireOnRelease_Emu = &bDoFireOnRelease;
+					bDoFireOnRelease_Proxy = &bDoFireOnRelease;
 				}
-				FORCEINLINE void SetDoFireOnRelease(bool* Value) { check(Value); bDoFireOnRelease_Emu = Value; }
-				FORCEINLINE const bool& DoFireOnRelease() const { return *bDoFireOnRelease_Emu; }
+				FORCEINLINE void SetDoFireOnRelease(bool* Value) { check(Value); bDoFireOnRelease_Proxy = Value; }
+				FORCEINLINE const bool& DoFireOnRelease() const { return *bDoFireOnRelease_Proxy; }
 
 				FORCEINLINE void SetFullAuto(const bool& Value) \
 				{
 					bFullAuto = Value;
-					bFullAuto_Emu = &bFullAuto;
+					bFullAuto_Proxy = &bFullAuto;
 				}
-				FORCEINLINE void SetFullAuto(bool* Value) { check(Value); bFullAuto_Emu = Value; }
-				FORCEINLINE const bool& IsFullAuto() const { return *bFullAuto_Emu; }
+				FORCEINLINE void SetFullAuto(bool* Value) { check(Value); bFullAuto_Proxy = Value; }
+				FORCEINLINE const bool& IsFullAuto() const { return *bFullAuto_Proxy; }
 
 				FORCEINLINE void SetInfiniteAmmo(const bool& Value) \
 				{
 					bInfiniteAmmo = Value;
-					bInfiniteAmmo_Emu = &bInfiniteAmmo;
+					bInfiniteAmmo_Proxy = &bInfiniteAmmo;
 				}
-				FORCEINLINE void SetInfiniteAmmo(bool* Value) { check(Value); bInfiniteAmmo_Emu = Value; }
-				FORCEINLINE const bool& HasInfiniteAmmo() const { return *bInfiniteAmmo_Emu; }
+				FORCEINLINE void SetInfiniteAmmo(bool* Value) { check(Value); bInfiniteAmmo_Proxy = Value; }
+				FORCEINLINE const bool& HasInfiniteAmmo() const { return *bInfiniteAmmo_Proxy; }
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(MaxAmmo, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ProjectilesPerShot, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenShots, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenAutoShots, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TimeBetweenProjectilesPerShot, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxAmmo, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ProjectilesPerShot, int32)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenShots, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenAutoShots, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, float)
 
 				FORCEINLINE const LaunchParamsType* GetLaunchParams() const { return LaunchParams; }
 

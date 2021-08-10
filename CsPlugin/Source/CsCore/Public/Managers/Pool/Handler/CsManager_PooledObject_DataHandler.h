@@ -340,8 +340,8 @@ namespace NCsPooledObject
 					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 
 					// Check implemented data
-					if (InterfaceDataType** EmuDataPtr = ImplDataMap.Find(Name))
-						return *EmuDataPtr;
+					if (InterfaceDataType** ImplDataPtr = ImplDataMap.Find(Name))
+						return *ImplDataPtr;
 
 					// Check data
 					if (InterfaceDataType** DataPtr = DataMap.Find(Name))

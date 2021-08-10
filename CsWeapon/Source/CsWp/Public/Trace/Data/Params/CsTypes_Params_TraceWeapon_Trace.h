@@ -238,8 +238,8 @@ public:
 // FCsTraceWeaponLineTraceParams
 #pragma region
 
-// NCsWeapon::NTrace::NParams::NTrace::FLineEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FLineEmu)
+// NCsWeapon::NTrace::NParams::NTrace::FLineImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FLineImpl)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsTraceWeaponLineTraceParams
@@ -274,11 +274,11 @@ public:
 	{
 	}
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FLineEmu
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FLineImpl
 
-	void CopyParams(EmuType* Emu);
+	void CopyParams(ImplType* Impl);
 
-#undef EmuType
+#undef ImplType
 	
 	// NOTE: Added to get around compiler error when using #undef
 private:
@@ -290,8 +290,8 @@ private:
 // FCsTraceWeaponBoxTraceParams
 #pragma region
 
-// NCsWeapon::NTrace::NParams::NTrace::FBoxEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FBoxEmu)
+// NCsWeapon::NTrace::NParams::NTrace::FBoxImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FBoxImpl)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsTraceWeaponBoxTraceParams
@@ -330,11 +330,11 @@ public:
 	{
 	}
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FBoxEmu
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FBoxImpl
 
-	void CopyParams(EmuType* Emu);
+	void CopyParams(ImplType* Impl);
 
-#undef EmuType
+#undef ImplType
 	
 	// NOTE: Added to get around compiler error when using #undef
 private:
@@ -346,8 +346,8 @@ private:
 // FCsTraceWeaponSphereTraceParams
 #pragma region
 
-// NCsWeapon::NTrace::NParams::NTrace::FSphereEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FSphereEmu)
+// NCsWeapon::NTrace::NParams::NTrace::FSphereImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FSphereImpl)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsTraceWeaponSphereTraceParams
@@ -386,11 +386,11 @@ public:
 	{
 	}
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FSphereEmu
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FSphereImpl
 
-	void CopyParams(EmuType* Emu);
+	void CopyParams(ImplType* Impl);
 
-#undef EmuType
+#undef ImplType
 	
 	// NOTE: Added to get around compiler error when using #undef
 private:
@@ -402,8 +402,8 @@ private:
 // FCsTraceWeaponCapsuleTraceParams
 #pragma region
 
-// NCsWeapon::NTrace::NParams::NTrace::FSphereEmu
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FCapsuleEmu)
+// NCsWeapon::NTrace::NParams::NTrace::FCapsuleImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NParams, NTrace, FCapsuleImpl)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsTraceWeaponCapsuleTraceParams
@@ -442,11 +442,11 @@ public:
 	{
 	}
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FCapsuleEmu
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FCapsuleImpl
 
-	void CopyParams(EmuType* Emu);
+	void CopyParams(ImplType* Impl);
 
-#undef EmuType
+#undef ImplType
 	
 	// NOTE: Added to get around compiler error when using #undef
 private:

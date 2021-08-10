@@ -46,7 +46,7 @@ namespace NCsTraceWeaponSoundFireAttach
 // FCsTraceWeaponSoundFireParams
 #pragma region
 
-CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NTrace, NData, NSound, NFire, NParams, FEmu)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NTrace, NData, NSound, NFire, NParams, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsTraceWeaponSoundFireParams
@@ -67,7 +67,7 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NTrace::NData::NSound::NFire::NParams::FEmu
+#define ParamsType NCsWeapon::NTrace::NData::NSound::NFire::NParams::FProxy
 
 	void CopyParams(ParamsType* Params);
 

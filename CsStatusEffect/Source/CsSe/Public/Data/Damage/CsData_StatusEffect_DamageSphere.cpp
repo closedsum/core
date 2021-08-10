@@ -7,9 +7,9 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Data/Shape/CsData_DamageSphereEmu.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageSphereProxy.h"
 
-const FName NCsStatusEffect::NData::NDamage::FSphereEmu::Name = FName("NCsStatusEffect::NData::NDamage::FSphereEmu");
+const FName NCsStatusEffect::NData::NDamage::FSphereProxy::Name = FName("NCsStatusEffect::NData::NDamage::FSphereProxy");
 
 namespace NCsStatusEffect
 {
@@ -17,7 +17,7 @@ namespace NCsStatusEffect
 	{
 		namespace NDamage
 		{
-			FSphereEmu::FSphereEmu() :
+			FSphereProxy::FSphereProxy() :
 				Outer(nullptr),
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
@@ -31,7 +31,7 @@ namespace NCsStatusEffect
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRoot<FSphereEmu>(this);
+				InterfaceMap->SetRoot<FSphereProxy>(this);
 
 				typedef NCsData::IData DataType;
 				typedef NCsStatusEffect::NData::IData StatusEffectDataType;
@@ -42,7 +42,7 @@ namespace NCsStatusEffect
 				InterfaceMap->Add<StatusEffectDamageDataType>(static_cast<StatusEffectDamageDataType*>(this));
 			}
 
-			FSphereEmu::~FSphereEmu()
+			FSphereProxy::~FSphereProxy()
 			{
 				delete InterfaceMap;
 			}
@@ -82,18 +82,18 @@ void UCsData_StatusEffect_DamageSphere::BeginDestroy()
 		InterfaceMap = nullptr;
 	}
 	// ICsStatusEffect_Damage
-	if (DamageSphereEmu)
+	if (DamageSphereProxy)
 	{
-		typedef NCsDamage::NData::NShape::NSphere::FEmu SphereDataEmuType;
+		typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
 
-		SphereDataEmuType* Emu = static_cast<SphereDataEmuType*>(DamageSphereEmu);
-		delete Emu;
-		DamageSphereEmu = nullptr;
+		SphereDataProxyType* Proxy = static_cast<SphereDataProxyType*>(DamageSphereProxy);
+		delete Proxy;
+		DamageSphereProxy = nullptr;
 	}
-	if (DataEmu)
+	if (DataProxy)
 	{
-		delete DataEmu;
-		DataEmu = nullptr;
+		delete DataProxy;
+		DataProxy = nullptr;
 	}
 }
 
@@ -114,28 +114,28 @@ void UCsData_StatusEffect_DamageSphere::Init()
 		InterfaceMap->Add<ICsData_StatusEffect_Damage>(Cast<ICsData_StatusEffect_Damage>(this));
 	}
 	// ICsStatusEffect_Damage
-	if (!DamageSphereEmu)
+	if (!DamageSphereProxy)
 	{
-		typedef NCsDamage::NData::NShape::NSphere::FEmu SphereDataEmuType;
+		typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
 
-		DamageSphereEmu = new SphereDataEmuType();
-		DamageSphere.SetData(static_cast<SphereDataEmuType*>(DamageSphereEmu));
+		DamageSphereProxy = new SphereDataProxyType();
+		DamageSphere.SetData(static_cast<SphereDataProxyType*>(DamageSphereProxy));
 	}
-	if (!DataEmu)
+	if (!DataProxy)
 	{
-		typedef NCsStatusEffect::NData::NDamage::FSphereEmu DataEmuType;
+		typedef NCsStatusEffect::NData::NDamage::FSphereProxy DataProxyType;
 
-		DataEmu = new DataEmuType();
+		DataProxy = new DataProxyType();
 
-		DataEmuType* Emu = (DataEmuType*)DataEmu;
-		Emu->SetOuter(this);
+		DataProxyType* Proxy = (DataProxyType*)DataProxy;
+		Proxy->SetOuter(this);
 		// // NCsStatusEffect::NData::IData
-		//Emu->SetTriggerCondition(this);
-		//Emu->SetTriggerFrequencyParams(this);
-		//Emu->SetTransferFrequencyParams(this);
-		//Emu->SetChildren(this);
+		//Proxy->SetTriggerCondition(this);
+		//Proxy->SetTriggerFrequencyParams(this);
+		//Proxy->SetTransferFrequencyParams(this);
+		//Proxy->SetChildren(this);
 		// NCsStatusEffect::NData::NDamage::IDamage
-		//Emu->SetDamageData();
+		//Proxy->SetDamageData();
 	}
 }
 

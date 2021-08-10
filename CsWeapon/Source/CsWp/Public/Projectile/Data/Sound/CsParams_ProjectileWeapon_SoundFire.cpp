@@ -27,11 +27,8 @@ namespace NCsWeapon
 						FImpl::FImpl() :
 							InterfaceMap(nullptr),
 							// IParams
-							Sound(),
-							Sound_Emu(nullptr),
-							AttachType(EAttach::Component),
-							AttachType_Emu(nullptr)
-
+							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Sound),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachType, EAttach::Component)
 						{
 							InterfaceMap = new FCsInterfaceMap();
 

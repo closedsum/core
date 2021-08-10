@@ -27,7 +27,7 @@ namespace NCsTraceWeaponVisualFireAttach
 // FCsTraceWeaponVisualFireParams
 #pragma region
 
-#define ParamsType NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FEmu
+#define ParamsType NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy
 void FCsTraceWeaponVisualFireParams::CopyParams(ParamsType* Params)
 {
 #undef ParamsType

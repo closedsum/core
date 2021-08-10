@@ -3,6 +3,7 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Types/CsTypes_Macro.h"
 #include "Engine/EngineTypes.h"
 #include "CollisionShape.h"
 
@@ -86,38 +87,30 @@ namespace NCsWeapon
 				{
 				private:
 
-					ELocation Type;
-					ELocation* Type_Emu;
-
-					FName BoneOrSocket;
-					FName* BoneOrSocket_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(Type, ELocation)
+					CS_DECLARE_MEMBER_WITH_PROXY(BoneOrSocket, FName)
 
 				public:
 
 					FLocationInfo() :
-						Type(ELocation::Self),
-						Type_Emu(nullptr),
-						BoneOrSocket(NAME_None),
-						BoneOrSocket_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, ELocation::Self),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(BoneOrSocket, NAME_None)
 					{
-						Type_Emu = &Type;
-						BoneOrSocket_Emu = &BoneOrSocket;
+						CS_CTOR_SET_MEMBER_PROXY(Type);
+						CS_CTOR_SET_MEMBER_PROXY(BoneOrSocket);
 					}
 
-					FORCEINLINE void SetType(ELocation* Value) { Type_Emu = Value; }
-					FORCEINLINE const ELocation& GetType() const { return *Type_Emu; }
-
-					FORCEINLINE void SetBoneOrSocket(FName* Value) { BoneOrSocket_Emu = Value; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, ELocation)
 
 					/**
 					* Get the Bone from which Location information is used.
 					* Only valid if:
 					*  GetType() == ELocation::Bone ||
-* 					*  GetType() == ELocation::Socket
+	* 					*  GetType() == ELocation::Socket
 					*
 					* return Bone or Socket name
 					*/
-					FORCEINLINE const FName& GetBoneOrSocket() const { return *BoneOrSocket_Emu; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(BoneOrSocket, FName)
 				};
 
 				/**
@@ -128,34 +121,23 @@ namespace NCsWeapon
 				{
 				private:
 
-					EDirection Type;
-					EDirection* Type_Emu;
-
-					FName BoneOrSocket;
-					FName* BoneOrSocket_Emu;
-
-					int32 Rules;
-					int32* Rules_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(Type, EDirection)
+					CS_DECLARE_MEMBER_WITH_PROXY(BoneOrSocket, FName)
+					CS_DECLARE_MEMBER_WITH_PROXY(Rules, int32)
 
 				public:
 
 					FDirectionInfo() :
-						Type(EDirection::Self),
-						Type_Emu(nullptr),
-						BoneOrSocket(NAME_None),
-						BoneOrSocket_Emu(nullptr),
-						Rules(3), // CS_ROTATION_FLAGS_PITCH_AND_YAW
-						Rules_Emu(nullptr)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, EDirection::Self),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(BoneOrSocket, NAME_None),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Rules, 3) // CS_ROTATION_FLAGS_PITCH_AND_YAW
 					{
-						Type_Emu = &Type;
-						BoneOrSocket_Emu = &BoneOrSocket;
-						Rules_Emu = &Rules;
+						CS_CTOR_SET_MEMBER_PROXY(Type);
+						CS_CTOR_SET_MEMBER_PROXY(BoneOrSocket);
+						CS_CTOR_SET_MEMBER_PROXY(Rules);
 					}
 
-					FORCEINLINE void SetType(EDirection* Value) { Type_Emu = Value; }
-					FORCEINLINE const EDirection& GetType() const { return *Type_Emu; }
-
-					FORCEINLINE void SetBoneOrSocket(FName* Value) { BoneOrSocket_Emu = Value; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, EDirection)
 
 					/**
 					* Get the Bone from which Direction information is used.
@@ -165,9 +147,7 @@ namespace NCsWeapon
 					*
 					* return Bone or Socket name
 					*/
-					FORCEINLINE const FName& GetBoneOrSocket() const { return *BoneOrSocket_Emu; }
-
-					FORCEINLINE void SetRules(int32* Value) { Rules_Emu = Value; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(BoneOrSocket, FName)
 
 					/**
 					* Get the Rules, components (Pitch, Yaw, Roll), to use from a given rotation
@@ -176,7 +156,7 @@ namespace NCsWeapon
 					*
 					* return Rules as a mask.
 					*/
-					FORCEINLINE const int32& GetRules() const { return *Rules_Emu; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rules, int32)
 				};
 
 				/**

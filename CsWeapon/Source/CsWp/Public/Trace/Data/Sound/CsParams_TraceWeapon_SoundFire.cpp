@@ -7,7 +7,7 @@
 
 const FName NCurrentNamespace::IParams::Name = FName("NCsWeapon::NTrace::NData::NSound::NFire::NParams::IParams::Name");
 
-const FName NCurrentNamespace::FEmu::Name = FName("NCsWeapon::NTrace::NData::NSound::NFire::NParams::FEmu::Name");
+const FName NCurrentNamespace::FProxy::Name = FName("NCsWeapon::NTrace::NData::NSound::NFire::NParams::FProxy::Name");
 
 #undef NCurrentNamespace
 
@@ -23,7 +23,7 @@ namespace NCsWeapon
 				{
 					namespace NParams
 					{
-						FEmu::FEmu() :
+						FProxy::FProxy() :
 							// ICsGetInterfaceMap
 							InterfaceMap(nullptr),
 							// IParams
@@ -33,12 +33,12 @@ namespace NCsWeapon
 						{
 							InterfaceMap = new FCsInterfaceMap();
 
-							InterfaceMap->SetRoot<FEmu>(this);
+							InterfaceMap->SetRoot<FProxy>(this);
 
 							InterfaceMap->Add<IParams>(static_cast<IParams*>(this));
 						}
 
-						FEmu::~FEmu()
+						FProxy::~FProxy()
 						{
 							delete InterfaceMap;
 						}

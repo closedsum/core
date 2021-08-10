@@ -42,9 +42,14 @@ namespace NCsProjectile
 
 		FManager();
 
-		FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) override
+		FORCEINLINE virtual const FString& KeyTypeToString(const FECsProjectile& Type) const override
 		{
 			return Type.GetName();
+		}
+
+		FORCEINLINE virtual bool IsValidKey(const FECsProjectile& Type) const override
+		{
+			return EMCsProjectile::Get().IsValidEnum(Type);
 		}
 	};
 

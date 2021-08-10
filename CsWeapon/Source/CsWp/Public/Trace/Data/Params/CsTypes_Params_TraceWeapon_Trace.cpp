@@ -81,20 +81,20 @@ namespace NCsTraceWeaponTraceShape
 // FCsTraceWeaponLineTraceParams
 #pragma region
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FLineEmu
-void FCsTraceWeaponLineTraceParams::CopyParams(EmuType* Emu)
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FLineImpl
+void FCsTraceWeaponLineTraceParams::CopyParams(ImplType* Impl)
 {
-#undef EmuType
+#undef ImplType
 
 	using namespace NCsWeapon::NTrace::NParams::NTrace;
 
-	Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-	Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-	Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-	Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-	Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-	Emu->SetObjectTypes(ObjectTypes);
-	Emu->SetDistance(&Distance);
+	Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+	Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+	Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+	Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+	Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+	Impl->SetObjectTypes(ObjectTypes);
+	Impl->SetDistance(&Distance);
 }
 
 #pragma endregion FCsTraceWeaponLineTraceParams
@@ -102,21 +102,21 @@ void FCsTraceWeaponLineTraceParams::CopyParams(EmuType* Emu)
 // FCsTraceWeaponBoxTraceParams
 #pragma region
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FBoxEmu
-void FCsTraceWeaponBoxTraceParams::CopyParams(EmuType* Emu)
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FBoxImpl
+void FCsTraceWeaponBoxTraceParams::CopyParams(ImplType* Impl)
 {
-#undef EmuType
+#undef ImplType
 
 	using namespace NCsWeapon::NTrace::NParams::NTrace;
 
-	Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-	Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-	Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-	Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-	Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-	Emu->SetObjectTypes(ObjectTypes);
-	Emu->SetShape(&Shape);
-	Emu->SetDistance(&Distance);
+	Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+	Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+	Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+	Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+	Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+	Impl->SetObjectTypes(ObjectTypes);
+	Impl->SetShape(&Shape);
+	Impl->SetDistance(&Distance);
 }
 
 #pragma endregion FCsTraceWeaponBoxTraceParams
@@ -124,21 +124,21 @@ void FCsTraceWeaponBoxTraceParams::CopyParams(EmuType* Emu)
 // FCsTraceWeaponSphereTraceParams
 #pragma region
 
-#define EmuType NCsWeapon::NTrace::NParams::NTrace::FSphereEmu
-void FCsTraceWeaponSphereTraceParams::CopyParams(EmuType* Emu)
+#define ImplType NCsWeapon::NTrace::NParams::NTrace::FSphereImpl
+void FCsTraceWeaponSphereTraceParams::CopyParams(ImplType* Impl)
 {
-#undef EmuType
+#undef ImplType
 
 	using namespace NCsWeapon::NTrace::NParams::NTrace;
 
-	Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-	Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-	Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-	Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-	Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-	Emu->SetObjectTypes(ObjectTypes);
-	Emu->SetShape(&Shape);
-	Emu->SetDistance(&Distance);
+	Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+	Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+	Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+	Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+	Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+	Impl->SetObjectTypes(ObjectTypes);
+	Impl->SetShape(&Shape);
+	Impl->SetDistance(&Distance);
 }
 
 #pragma endregion FCsTraceWeaponSphereTraceParams
@@ -169,61 +169,61 @@ ParamsType* FCsTraceWeaponTraceParams::ConstructAndCopyParams()
 	// Line
 	if (Shape == ECsTraceWeaponTraceShape::Line)
 	{
-		FLineEmu* Emu = new FLineEmu();
+		FLineImpl* Impl = new FLineImpl();
 
-		Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-		Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-		Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-		Emu->SetObjectTypes(ObjectTypes);
-		Emu->SetDistance(&Distance);
-		return Emu;
+		Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+		Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+		Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+		Impl->SetObjectTypes(ObjectTypes);
+		Impl->SetDistance(&Distance);
+		return Impl;
 	}
 	// Box
 	if (Shape == ECsTraceWeaponTraceShape::Box)
 	{
-		FBoxEmu* Emu = new FBoxEmu();
+		FBoxImpl* Impl = new FBoxImpl();
 
-		Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-		Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-		Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-		Emu->SetObjectTypes(ObjectTypes);
-		Emu->SetShape(&BoxShape);
-		Emu->SetDistance(&Distance);
-		return Emu;
+		Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+		Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+		Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+		Impl->SetObjectTypes(ObjectTypes);
+		Impl->SetShape(&BoxShape);
+		Impl->SetDistance(&Distance);
+		return Impl;
 	}
 	// Sphere
 	if (Shape == ECsTraceWeaponTraceShape::Sphere)
 	{
-		FSphereEmu* Emu = new FSphereEmu();
+		FSphereImpl* Impl = new FSphereImpl();
 
-		Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-		Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-		Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-		Emu->SetObjectTypes(ObjectTypes);
-		Emu->SetShape(&SphereShape);
-		Emu->SetDistance(&Distance);
-		return Emu;
+		Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+		Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+		Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+		Impl->SetObjectTypes(ObjectTypes);
+		Impl->SetShape(&SphereShape);
+		Impl->SetDistance(&Distance);
+		return Impl;
 	}
 	// Capsule
 	if (Shape == ECsTraceWeaponTraceShape::Capsule)
 	{
-		FCapsuleEmu* Emu = new FCapsuleEmu();
+		FCapsuleImpl* Impl = new FCapsuleImpl();
 
-		Emu->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
-		Emu->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
-		Emu->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
-		Emu->DirectionInfo.SetRules(&DirectionInfo.Rules);
-		Emu->SetObjectTypes(ObjectTypes);
-		Emu->SetShape(&CapsuleShape);
-		Emu->SetDistance(&Distance);
-		return Emu;
+		Impl->LocationInfo.SetType((ELocation*)&LocationInfo.Type);
+		Impl->LocationInfo.SetBoneOrSocket(&LocationInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetType((EDirection*)&DirectionInfo.Type);
+		Impl->DirectionInfo.SetBoneOrSocket(&DirectionInfo.BoneOrSocket);
+		Impl->DirectionInfo.SetRules(&DirectionInfo.Rules);
+		Impl->SetObjectTypes(ObjectTypes);
+		Impl->SetShape(&CapsuleShape);
+		Impl->SetDistance(&Distance);
+		return Impl;
 	}
 
 	checkf(0, TEXT("%s: Failed to construct Params from Shape: %s."), *Context, EMCsTraceWeaponTraceShape::Get().ToChar(Shape));

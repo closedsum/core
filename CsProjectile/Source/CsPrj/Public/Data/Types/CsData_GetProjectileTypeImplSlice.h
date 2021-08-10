@@ -72,8 +72,7 @@ namespace NCsProjectile
 
 				// ICsData_GetProjectileType
 
-				FECsProjectile ProjectileType;
-				FECsProjectile* ProjectileType_Emu;
+				CS_DECLARE_MEMBER_WITH_PROXY(ProjectileType, FECsProjectile)
 
 			public:
 
@@ -81,10 +80,9 @@ namespace NCsProjectile
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// ICsData_GetProjectileType
-					ProjectileType(),
-					ProjectileType_Emu(nullptr)
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ProjectileType)
 				{
-					ProjectileType_Emu = &ProjectileType;
+					CS_CTOR_SET_MEMBER_PROXY(ProjectileType);
 				}
 
 				~FImplSlice(){}
@@ -107,7 +105,7 @@ namespace NCsProjectile
 			#pragma region
 			public:
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_EMU(ProjectileType, FECsProjectile)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ProjectileType, FECsProjectile)
 
 			#pragma endregion ICsGetProjectileType
 

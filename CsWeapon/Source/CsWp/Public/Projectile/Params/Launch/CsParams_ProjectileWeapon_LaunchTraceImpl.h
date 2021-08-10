@@ -44,17 +44,17 @@ namespace NCsWeapon
 
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 
-						CS_DECLARE_MEMBER_WITH_EMU(LocationType, ELocation)
-						CS_DECLARE_MEMBER_WITH_EMU(DirectionType, EDirection)
-						CS_DECLARE_MEMBER_WITH_EMU(DirectionRules, int32)
+						CS_DECLARE_MEMBER_WITH_PROXY(LocationType, ELocation)
+						CS_DECLARE_MEMBER_WITH_PROXY(DirectionType, EDirection)
+						CS_DECLARE_MEMBER_WITH_PROXY(DirectionRules, int32)
 
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 
-						CS_DECLARE_MEMBER_WITH_EMU(TraceType, ECsTraceType)
-						CS_DECLARE_MEMBER_WITH_EMU(TraceMethod, ECsTraceMethod)
-						CS_DECLARE_MEMBER_WITH_EMU(TraceStartType, ETraceStart)
-						CS_DECLARE_MEMBER_WITH_EMU(TraceDirectionType, ETraceDirection)
-						CS_DECLARE_MEMBER_WITH_EMU(TraceDistance, float)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceType, ECsTraceType)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceStartType, ETraceStart)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceDirectionType, ETraceDirection)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceDistance, float)
 
 					public:
 
@@ -74,25 +74,25 @@ namespace NCsWeapon
 						FORCEINLINE void SetLocationType(const ECsProjectileWeaponLaunchLocation& Value) 
 						{ 
 							LocationType = (ELocation)Value;
-							LocationType_Emu = &LocationType;
+							LocationType_Proxy = &LocationType;
 
 						}
-						FORCEINLINE void SetLocationType(ECsProjectileWeaponLaunchLocation* Value) { LocationType_Emu = (ELocation*)Value; }
+						FORCEINLINE void SetLocationType(ECsProjectileWeaponLaunchLocation* Value) { LocationType_Proxy = (ELocation*)Value; }
 
 						FORCEINLINE void SetDirectionType(const ECsProjectileWeaponLaunchDirection& Value) 
 						{ 
 							DirectionType = (EDirection)Value;
-							DirectionType_Emu = &DirectionType;
+							DirectionType_Proxy = &DirectionType;
 						}
-						FORCEINLINE void SetDirectionType(ECsProjectileWeaponLaunchDirection* Value) { DirectionType_Emu = (EDirection*)Value; }
+						FORCEINLINE void SetDirectionType(ECsProjectileWeaponLaunchDirection* Value) { DirectionType_Proxy = (EDirection*)Value; }
 
 					// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 					#pragma region
 					public:
 
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(LocationType, ELocation)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DirectionType, EDirection)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(DirectionRules, int32)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationType, ELocation)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionType, EDirection)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionRules, int32)
 
 					#pragma endregion LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 
@@ -101,26 +101,26 @@ namespace NCsWeapon
 						FORCEINLINE void SetTraceStartType(const ECsProjectileWeaponLaunchTraceStart& Value)
 						{
 							TraceStartType = (ETraceStart)Value;
-							TraceStartType_Emu = &TraceStartType;
+							TraceStartType_Proxy = &TraceStartType;
 						}
-						FORCEINLINE void SetTraceStartType(ECsProjectileWeaponLaunchTraceStart* Value) { TraceStartType_Emu = (ETraceStart*)Value; }
+						FORCEINLINE void SetTraceStartType(ECsProjectileWeaponLaunchTraceStart* Value) { TraceStartType_Proxy = (ETraceStart*)Value; }
 						
 						FORCEINLINE void SetTraceDirectionType(const ECsProjectileWeaponLaunchTraceDirection& Value) 
 						{ 
 							TraceDirectionType = (ETraceDirection)Value;
-							TraceDirectionType_Emu = &TraceDirectionType;
+							TraceDirectionType_Proxy = &TraceDirectionType;
 						}
-						FORCEINLINE void SetTraceDirectionType(ECsProjectileWeaponLaunchTraceDirection* Value) { TraceDirectionType_Emu = (ETraceDirection*)Value; }
+						FORCEINLINE void SetTraceDirectionType(ECsProjectileWeaponLaunchTraceDirection* Value) { TraceDirectionType_Proxy = (ETraceDirection*)Value; }
 
 					// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 					#pragma region
 					public:
 
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TraceType, ECsTraceType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TraceMethod, ECsTraceMethod)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TraceStartType, ETraceStart)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TraceDirectionType, ETraceDirection)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(TraceDistance, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceType, ECsTraceType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceStartType, ETraceStart)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDirectionType, ETraceDirection)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDistance, float)
 		
 					#pragma endregion LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 					

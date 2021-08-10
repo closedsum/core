@@ -7,12 +7,12 @@
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 // Damage
-#include "Managers/Damage/Data/CsData_DamagePointEmu.h"
+#include "Managers/Damage/Data/CsData_DamagePointProxy.h"
 
-// FPointEmu
+// FPointProxy
 #pragma region
 
-const FName NCsStatusEffect::NData::NDamage::FPointEmu::Name = FName("NCsStatusEffect::NData::NDamage::FPointEmu");
+const FName NCsStatusEffect::NData::NDamage::FPointProxy::Name = FName("NCsStatusEffect::NData::NDamage::FPointProxy");
 
 namespace NCsStatusEffect
 {
@@ -20,7 +20,7 @@ namespace NCsStatusEffect
 	{
 		namespace NDamage
 		{
-			FPointEmu::FPointEmu() :
+			FPointProxy::FPointProxy() :
 				Outer(nullptr),
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
@@ -34,7 +34,7 @@ namespace NCsStatusEffect
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap->SetRoot<FPointEmu>(this);
+				InterfaceMap->SetRoot<FPointProxy>(this);
 
 				typedef NCsData::IData DataType;
 				typedef NCsStatusEffect::NData::IData StatusEffectDataType;
@@ -45,7 +45,7 @@ namespace NCsStatusEffect
 				InterfaceMap->Add<StatusEffectDamageDataType>(static_cast<StatusEffectDamageDataType*>(this));
 			}
 
-			FPointEmu::~FPointEmu()
+			FPointProxy::~FPointProxy()
 			{
 				delete InterfaceMap;
 			}
@@ -53,7 +53,7 @@ namespace NCsStatusEffect
 	}
 }
 
-#pragma endregion FPointEmu
+#pragma endregion FPointProxy
 
 const FName UCsData_StatusEffect_DamagePoint::Name = FName("UCsData_StatusEffect_DamagePoint");
 
@@ -87,18 +87,18 @@ void UCsData_StatusEffect_DamagePoint::BeginDestroy()
 		InterfaceMap = nullptr;
 	}
 	// ICsStatusEffect_Damage
-	if (DamagePointEmu)
+	if (DamagePointProxy)
 	{
-		typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+		typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
 
-		PointDataEmuType* Emu = static_cast<PointDataEmuType*>(DamagePointEmu);
-		delete Emu;
-		DamagePointEmu = nullptr;
+		PointDataProxyType* Proxy = static_cast<PointDataProxyType*>(DamagePointProxy);
+		delete Proxy;
+		DamagePointProxy = nullptr;
 	}
-	if (DataEmu)
+	if (DataProxy)
 	{
-		delete DataEmu;
-		DataEmu = nullptr;
+		delete DataProxy;
+		DataProxy = nullptr;
 	}
 }
 
@@ -119,28 +119,28 @@ void UCsData_StatusEffect_DamagePoint::Init()
 		InterfaceMap->Add<ICsData_StatusEffect_Damage>(Cast<ICsData_StatusEffect_Damage>(this));
 	}
 	// ICsStatusEffect_Damage
-	if (!DamagePointEmu)
+	if (!DamagePointProxy)
 	{
-		typedef NCsDamage::NData::NPoint::FEmu PointDataEmuType;
+		typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
 
-		DamagePointEmu = new PointDataEmuType();
-		DamagePoint.SetData(static_cast<PointDataEmuType*>(DamagePointEmu));
+		DamagePointProxy = new PointDataProxyType();
+		DamagePoint.SetData(static_cast<PointDataProxyType*>(DamagePointProxy));
 	}
-	if (!DataEmu)
+	if (!DataProxy)
 	{
-		typedef NCsStatusEffect::NData::NDamage::FPointEmu DataEmuType;
+		typedef NCsStatusEffect::NData::NDamage::FPointProxy DataProxyType;
 
-		DataEmu = new DataEmuType();
+		DataProxy = new DataProxyType();
 
-		DataEmuType* Emu = (DataEmuType*)DataEmu;
-		Emu->SetOuter(this);
+		DataProxyType* Proxy = (DataProxyType*)DataProxy;
+		Proxy->SetOuter(this);
 		// // NCsStatusEffect::NData::IData
-		//Emu->SetTriggerCondition(this);
-		//Emu->SetTriggerFrequencyParams(this);
-		//Emu->SetTransferFrequencyParams(this);
-		//Emu->SetChildren(this);
+		//Proxy->SetTriggerCondition(this);
+		//Proxy->SetTriggerFrequencyParams(this);
+		//Proxy->SetTransferFrequencyParams(this);
+		//Proxy->SetChildren(this);
 		// NCsStatusEffect::NData::NDamage::IDamage
-		//Emu->SetDamageData();
+		//Proxy->SetDamageData();
 	}
 }
 

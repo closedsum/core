@@ -273,7 +273,7 @@ namespace NCsWeapon
 					{
 						// Setup and Add Emulated Interface
 
-						// TODO: Change FImpl to FEmu functionality
+						// TODO: Change FImpl to FProxy functionality
 						/*
 						typedef ICsData_ProjectileWeapon_SoundFire SoundDataType;
 						typedef NCsWeapon::NProjectile::NData::NSound::NFire::FImpl SoundDataImplType;

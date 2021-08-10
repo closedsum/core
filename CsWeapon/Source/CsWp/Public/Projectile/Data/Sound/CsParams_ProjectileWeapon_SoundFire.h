@@ -73,11 +73,8 @@ namespace NCsWeapon
 
 							// IParams
 
-							FCsSound Sound;
-							FCsSound* Sound_Emu;
-
-							EAttach AttachType;
-							EAttach* AttachType_Emu;
+							CS_DECLARE_MEMBER_WITH_PROXY(Sound, FCsSound)
+							CS_DECLARE_MEMBER_WITH_PROXY(AttachType, EAttach)
 
 						public:
 
@@ -98,8 +95,8 @@ namespace NCsWeapon
 						#pragma region
 						public:
 
-							CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Sound, FCsSound)
-							CS_DEFINE_SET_GET_MEMBER_WITH_EMU(AttachType, EAttach)
+							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Sound, FCsSound)
+							CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachType, EAttach)
 
 						#pragma endregion IParams
 

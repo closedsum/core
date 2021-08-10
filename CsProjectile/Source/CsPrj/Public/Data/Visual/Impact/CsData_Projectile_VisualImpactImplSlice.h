@@ -93,19 +93,17 @@ namespace NCsProjectile
 
 					// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 
-					UDataTable* ImpactFXs;
-					UDataTable** ImpactFXs_Emu;
+					CS_DECLARE_MEMBER_WITH_PROXY(ImpactFXs, UDataTable*)
 
 					TArray<FCsFXImpact*> ImpactFXRows;
 
 				public:
 
 					FImplSlice() :
-						ImpactFXs(nullptr),
-						ImpactFXs_Emu(nullptr),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ImpactFXs, nullptr),
 						ImpactFXRows()
 					{
-						ImpactFXs_Emu = &ImpactFXs;
+						CS_CTOR_SET_MEMBER_PROXY(ImpactFXs);
 					}
 
 					~FImplSlice(){}
@@ -126,7 +124,7 @@ namespace NCsProjectile
 
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_EMU(ImpactFXs, UDataTable)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(ImpactFXs, UDataTable)
 
 				// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 				#pragma region

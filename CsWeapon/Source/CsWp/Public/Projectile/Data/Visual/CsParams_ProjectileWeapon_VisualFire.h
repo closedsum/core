@@ -144,35 +144,30 @@ namespace NCsWeapon
 
 					private:
 
-						FCsFX FX;
-						FCsFX* FX_Emu;
-
-						AttachType Attach;
-						AttachType* Attach_Emu;
+						CS_DECLARE_MEMBER_WITH_PROXY(FX, FCsFX)
+						CS_DECLARE_MEMBER_WITH_PROXY(Attach, AttachType)
 
 					public:
 
 						FParams() :
-							FX(),
-							FX_Emu(nullptr),
-							Attach(AttachType::None),
-							Attach_Emu(nullptr)
+							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(FX),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Attach, AttachType::None)
 						{
-							FX_Emu = &FX;
-							Attach_Emu = &Attach;
+							CS_CTOR_SET_MEMBER_PROXY(FX);
+							CS_CTOR_SET_MEMBER_PROXY(Attach);
 						}
 
 					public:
 						
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(FX, FCsFX)
-						CS_DEFINE_SET_GET_MEMBER_WITH_EMU(Attach, AttachType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FX, FCsFX)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Attach, AttachType)
 
 						FORCEINLINE void SetAttach(const ECsProjectileWeaponVisualFireAttach& Value) 
 						{
-							Attach	   = (AttachType)Value;
-							Attach_Emu = &Attach;
+							Attach	     = (AttachType)Value;
+							Attach_Proxy = &Attach;
 						}
-						FORCEINLINE void SetAttach(ECsProjectileWeaponVisualFireAttach* Value) { Attach_Emu = (AttachType*)Value; }
+						FORCEINLINE void SetAttach(ECsProjectileWeaponVisualFireAttach* Value) { Attach_Proxy = (AttachType*)Value; }
 						
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

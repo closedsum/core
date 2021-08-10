@@ -27,7 +27,7 @@ namespace NCsTraceWeaponSoundFireAttach
 // FCsTraceWeaponSoundFireParams
 #pragma region
 
-#define ParamsType NCsWeapon::NTrace::NData::NSound::NFire::NParams::FEmu
+#define ParamsType NCsWeapon::NTrace::NData::NSound::NFire::NParams::FProxy
 void FCsTraceWeaponSoundFireParams::CopyParams(ParamsType* Params)
 {
 #undef ParamsType

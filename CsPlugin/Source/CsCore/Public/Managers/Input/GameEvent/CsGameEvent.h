@@ -118,14 +118,20 @@ public:
 		Definition = nullptr;
 	}
 
-	FORCEINLINE bool IsValid() const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) const
 	{
-		return EMCsGameEvent::Get().IsValidEnum(Event);
+		if (!EMCsGameEvent::Get().IsValidEnum(Event))
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Event: %s is NOT Valid."), *Context, Event.ToChar()));
+			return false;
+		}
+		return true;
 	}
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
-		checkf(IsValid(), TEXT("%s: Info is NOT Valid."), *Context);
+		checkf(IsValid(Context, nullptr), TEXT("%s: Info is NOT Valid."), *Context);
 		return true;
 	}
 

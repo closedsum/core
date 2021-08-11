@@ -34,7 +34,8 @@ public:
 public:
 
 	/**
-	* Call Manager_Input->Init()
+	* Call Manager_Input->Init() on the PlayerController with ControllerId and
+	* implements the interface: ICsGetManagerInput
 	*
 	* @param Context		The calling context.
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -42,6 +43,15 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId"))
 	static bool Init(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+
+	/**
+	* Call Manager_Input->Init() on all PlayerControllers that implement the interface: ICsGetManagerInput
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool InitAll(const FString& Context, const UObject* WorldContextObject);
 
 // InputActionMap
 #pragma region

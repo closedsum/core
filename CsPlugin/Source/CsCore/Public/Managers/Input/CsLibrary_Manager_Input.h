@@ -72,7 +72,8 @@ namespace NCsInput
 			static bool HaveAllBeenCreated(UObject* WorldContext, const int32& NumLocalPlayers);
 
 			/**
-			* Safely call Manager_Input->Input()
+			* Safely call Manager_Input->Input() on the PlayerController with ControllerId and
+			* implements the interface: ICsGetManagerInput
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -81,6 +82,16 @@ namespace NCsInput
 			* return				Whether Manager_Input->Input() was successfully called or not.
 			*/
 			static bool SafeInit(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely call Manager_Input->Input() on all PlayerControllers that implement the interface: ICsGetManagerInput
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return				Whether Manager_Input->Input() was successfully called or not.
+			*/
+			static bool SafeInit(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
 		namespace NInputActionMap

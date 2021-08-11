@@ -242,6 +242,39 @@ namespace NCsInput
 			return false;
 		}
 
+		bool FLibrary::SafeInit(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			TArray<APlayerController*> PlayerControllers;
+
+			PlayerControllerLibrary::GetAllLocal(WorldContext, PlayerControllers);
+
+			int32 Count = 0;
+
+			for (APlayerController* PC : PlayerControllers)
+			{
+				ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+				if (!GetManagerInput)
+					continue;
+
+				UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+				if (!Manager_Input)
+					continue;
+
+				Manager_Input->Init();
+				++Count;
+			}
+			
+			if (Count == 0)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No PlayerControllers found that implement the interface: ICsGetManagerInput."), *Context));
+			}
+			return Count > CS_EMPTY;
+		}
+
 		namespace NInputActionMap
 		{
 			namespace NLibrary

@@ -13,6 +13,7 @@ namespace NCsScriptLibraryManagerInput
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, Get);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, Init);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, InitAll);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, SetFirstInputActionMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, SetInputActionMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, ClearFirstInputActionMap);
@@ -48,11 +49,22 @@ bool UCsScriptLibrary_Manager_Input::Init(const FString& Context, const UObject*
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetFirstInputActionMap : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::Init : Context;
 
 	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
 
 	return InputManagerLibrary::SafeInit(Context, WorldContextObject, ControllerId);
+}
+
+bool UCsScriptLibrary_Manager_Input::InitAll(const FString& Context, const UObject* WorldContextObject)
+{
+	using namespace NCsScriptLibraryManagerInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::InitAll : Context;
+
+	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
+
+	return InputManagerLibrary::SafeInit(Context, WorldContextObject);
 }
 
 // InputActionMap

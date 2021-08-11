@@ -5,7 +5,7 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Property.h"
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"

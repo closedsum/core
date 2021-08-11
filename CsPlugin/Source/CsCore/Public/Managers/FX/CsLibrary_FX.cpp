@@ -7,7 +7,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"

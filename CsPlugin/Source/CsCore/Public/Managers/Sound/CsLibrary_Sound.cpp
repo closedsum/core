@@ -7,7 +7,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"

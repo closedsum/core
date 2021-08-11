@@ -7,7 +7,7 @@
 #include "CsCVars_Manager_Data.h"
 // Library
 #include "Library/Load/CsLibrary_Load.h"
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"

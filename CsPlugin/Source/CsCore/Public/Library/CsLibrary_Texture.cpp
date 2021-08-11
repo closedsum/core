@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 // Mesh
 #include "Engine/Texture.h"
 

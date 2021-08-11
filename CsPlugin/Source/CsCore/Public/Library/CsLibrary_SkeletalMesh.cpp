@@ -5,7 +5,7 @@
 // Types
 #include "Types/CsTypes_Math.h"
 // Library
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Components
 #include "Components/SkeletalMeshComponent.h"

@@ -4,7 +4,7 @@
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Library/CsLibrary_Property.h"
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"

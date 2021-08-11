@@ -5,7 +5,7 @@
 // Types
 #include "Types/CsCached.h"
 // Library
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Blueprint
 #include "Animation/AnimBlueprintGeneratedClass.h"

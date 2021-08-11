@@ -18,4 +18,9 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Object", meta = (AutoCreateRefTerm = "Context"))
 	static UObject* ConstructObject(const FString& Context, UObject* Outer, UClass* Class);
+
+	/**
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Object", meta = (AutoCreateRefTerm = "Context"))
+	static bool Object_MarkPendingKill(const FString& Context, UObject* Object);
 };

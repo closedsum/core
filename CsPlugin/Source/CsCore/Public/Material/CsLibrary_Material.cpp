@@ -7,7 +7,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_Object.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Library/CsLibrary_Math.h"

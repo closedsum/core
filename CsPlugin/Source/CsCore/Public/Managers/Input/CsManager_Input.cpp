@@ -418,7 +418,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 	for (FCsGameEventInfo& Info : CurrentGameEventInfos)
 	{
-		if (Info.IsValid())
+		if (Info.IsValid(Context, nullptr))
 		{
 			const FECsGameEvent& Event = Info.Event;
 
@@ -431,7 +431,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 				const int32& Index							= GameEventPriorityMap[NCsGameEvent::Default__MousePositionXY__.GetValue()];
 				const FCsGameEventInfo& MousePositionXYInfo = CurrentGameEventInfos[Index];
 
-				if (MousePositionXYInfo.IsValid())
+				if (MousePositionXYInfo.IsValid(Context, nullptr))
 				{
 					Info.Location = MousePositionXYInfo.Location;
 				}
@@ -1304,7 +1304,7 @@ void UCsManager_Input::OnPostProcessInput_LogGameEventInfo()
 
 		for (FCsGameEventInfo& Info : CurrentGameEventInfos)
 		{
-			if (Info.IsValid())
+			if (Info.IsValid(Context, nullptr))
 			{
 				++Count;
 				break;
@@ -1319,7 +1319,7 @@ void UCsManager_Input::OnPostProcessInput_LogGameEventInfo()
 
 			for (FCsGameEventInfo& Info : CurrentGameEventInfos)
 			{
-				if (Info.IsValid())
+				if (Info.IsValid(Context, nullptr))
 				{
 					const FECsGameEvent& Event = Info.Event;
 

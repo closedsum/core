@@ -288,6 +288,8 @@ void UCsCoordinator_GameEvent::ProcessGameEventInfo(const FECsGameEventCoordinat
 
 	if (Group == NCsGameEventCoordinatorGroup::ManagerInput0)
 		OnProcessGameEventInfo_ManagerInput0_ScriptEvent.Broadcast(Group, Info);
+
+	OnProcessGameEventInfo_ScriptEvent.Broadcast(Group, Info);
 }
 
 void UCsCoordinator_GameEvent::QueueGameEventInfo(const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)

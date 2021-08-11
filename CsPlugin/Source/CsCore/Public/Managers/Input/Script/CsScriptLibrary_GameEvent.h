@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (GameEvent)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Input")
 	static bool EqualEqual(const FECsGameEvent& A, const FECsGameEvent& B);
 
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "NotEqual (GameEvent)", CompactNodeTitle = "!=", ScriptMethod = "NotEquals", Keywords = "!= notequal"), Category = "CsCore|Library|Input")
+	static bool NotEqual(const FECsGameEvent& A, const FECsGameEvent& B);
+
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Enum"))
 	static bool IsValid(const FECsGameEvent& Enum);
 

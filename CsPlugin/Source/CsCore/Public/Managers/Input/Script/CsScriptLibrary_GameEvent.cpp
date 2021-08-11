@@ -92,6 +92,11 @@ bool UCsScriptLibrary_GameEvent::EqualEqual(const EnumType& A, const EnumType& B
 	return A == B;
 }
 
+bool UCsScriptLibrary_GameEvent::NotEqual(const EnumType& A, const EnumType& B)
+{
+	return A != B;
+}
+
 bool UCsScriptLibrary_GameEvent::IsValid(const EnumType& Enum)
 {
 	return EnumMapType::Get().IsValidEnum(Enum);

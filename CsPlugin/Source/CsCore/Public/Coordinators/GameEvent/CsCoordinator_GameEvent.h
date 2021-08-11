@@ -138,6 +138,9 @@ public:
 	}
 
 	UPROPERTY(BlueprintAssignable)
+	FCsCoordinatorGameEvent_OnProcessGameEventInfo OnProcessGameEventInfo_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable)
 	FCsCoordinatorGameEvent_OnProcessGameEventInfo OnProcessGameEventInfo_ManagerInput0_ScriptEvent;
 
 private:

@@ -101,67 +101,81 @@ namespace NCsGameEvent
 			// Check Info is Valid.
 			check(Info.IsValidChecked(Context));
 
+			UCsCoordinator_GameEvent* Coordinator_GameEvent = GetChecked(Context, ContextObject);
+
 			// If Group == None, Process Immediately
 			if (Group == NCsGameEventCoordinatorGroup::None)
 			{
-				UCsCoordinator_GameEvent::Get(ContextRoot)->ProcessGameEventInfo(Group, Info);
+				Coordinator_GameEvent->ProcessGameEventInfo(Group, Info);
 			}
 			else
 			{
-				UCsCoordinator_GameEvent::Get(ContextRoot)->QueueGameEventInfo(Group, Info);
+				Coordinator_GameEvent->QueueGameEventInfo(Group, Info);
 			}
+		}
+
+		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info)
+		{
+			// Check Group is Valid.
+			check(EMCsGameEventCoordinatorGroup::Get().IsValidEnumChecked(Context, Group));
+			// Check GameEvent is Valid.
+			check(Info.IsValidChecked(Context));
+
+			UCsCoordinator_GameEvent* Coordinator_GameEvent = GetChecked(Context, ContextObject);
+
+			// If Group == None, Process Immediately
+			if (Group == NCsGameEventCoordinatorGroup::None)
+			{
+				Coordinator_GameEvent->ProcessGameEventInfo(Group, Info);
+			}
+			else
+			{
+				Coordinator_GameEvent->QueueGameEventInfo(Group, Info);
+			}
+		}
+
+		bool FLibrary::SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			// Check Group is Valid.
+			CS_IS_ENUM_STRUCT_VALID(EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup, Group)
+
+			if (!Info.IsValid(Context, Log))
+				return false;
+
+			if (UCsCoordinator_GameEvent* Coordinator_GameEvent = GetSafe(Context, ContextObject, Log))
+			{ 
+				// If Group == None, Process Immediately
+				if (Group == NCsGameEventCoordinatorGroup::None)
+				{
+					Coordinator_GameEvent->ProcessGameEventInfo(Group, Info);
+				}
+				else
+				{
+					Coordinator_GameEvent->QueueGameEventInfo(Group, Info);
+				}
+				return true;
+			}
+			return false;
 		}
 
 		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector& Location /*=FVector::ZeroVector*/)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
-
 			FCsGameEventInfo Info;
 			Info.Event = GameEvent;
 			Info.Value = Value;
 			Info.Location = Location;
 
-			// Check Group is Valid.
-			check(EMCsGameEventCoordinatorGroup::Get().IsValidEnumChecked(Context, Group));
-			// Check GameEvent is Valid.
-			check(EMCsGameEvent::Get().IsValidEnumChecked(Context, GameEvent));
-
-			// If Group == None, Process Immediately
-			if (Group == NCsGameEventCoordinatorGroup::None)
-			{
-				UCsCoordinator_GameEvent::Get(ContextRoot)->ProcessGameEventInfo(Group, Info);
-			}
-			else
-			{
-				UCsCoordinator_GameEvent::Get(ContextRoot)->QueueGameEventInfo(Group, Info);
-			}
+			BroadcastGameEventChecked(Context, ContextObject, Group, Info);
 		}
 
-		void FLibrary::SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
-
-			// Check ContextRoot is Valid.
-			CS_IS_PTR_NULL_EXIT(ContextRoot)
-			// Check Group is Valid.
-			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup, Group)
-			// Check GameEvent is Valid.
-			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsGameEvent, FECsGameEvent, GameEvent)
-
 			FCsGameEventInfo Info;
-			Info.Event	  = GameEvent;
-			Info.Value	  = Value;
+			Info.Event = GameEvent;
+			Info.Value = Value;
 			Info.Location = Location;
 
-			// If Group == None, Process Immediately
-			if (Group == NCsGameEventCoordinatorGroup::None)
-			{
-				UCsCoordinator_GameEvent::Get(ContextRoot)->ProcessGameEventInfo(Group, Info);
-			}
-			else
-			{
-				UCsCoordinator_GameEvent::Get(ContextRoot)->QueueGameEventInfo(Group, Info);
-			}
+			return SafeBroadcastGameEvent(Context, ContextObject, Group, Info, Log);
 		}
 	}
 }

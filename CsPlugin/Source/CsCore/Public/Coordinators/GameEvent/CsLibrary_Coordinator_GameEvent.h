@@ -108,6 +108,31 @@ namespace NCsGameEvent
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Group			The route / "group" to direct the GameEvent.
+			* @param Info			Game Event Info to broadcast.
+			*/
+			static void BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info);
+
+			/**
+			* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for
+			* certain GameEvents.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Group			The route / "group" to direct the GameEvent.
+			* @param Info			Game Event Info to broadcast.
+			* @param Log			Log function for logging conditions that result in NOT processing
+			*						the GameEvent.
+			* return				Whether the info was broadcasted or not.
+			*/
+			static bool SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for
+			* certain GameEvents.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Group			The route / "group" to direct the GameEvent.
 			* @param GameEvent		Game Event to broadcast.
 			* @param Value			Value associated with the GameEvent.
 			* @param Location		Location associated with the GameEvent.
@@ -126,8 +151,9 @@ namespace NCsGameEvent
 			* @param Location		Location associated with the GameEvent.
 			* @param Log			Log function for logging conditions that result in NOT processing
 			*						the GameEvent.
+			* return				Whether the GameEvent, Value, Location was broadcasted or not.
 			*/
-			static void SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 	}
 }

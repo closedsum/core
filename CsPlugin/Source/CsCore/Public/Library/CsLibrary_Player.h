@@ -174,7 +174,7 @@ namespace NCsPlayer
 
 			static void GetAllLocal(UWorld* World, TArray<APlayerController*>& OutControllers);
 
-			static void GetAllLocal(UObject* WorldContext, TArray<APlayerController*>& OutControllers);
+			static void GetAllLocal(const UObject* WorldContext, TArray<APlayerController*>& OutControllers);
 
 			static void GetAllLocalChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
 

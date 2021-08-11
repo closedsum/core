@@ -288,7 +288,7 @@ namespace NCsPlayer
 			GetAllLocalChecked(Context, World, OutControllers);
 		}
 
-		void FLibrary::GetAllLocal(UObject* WorldContext, TArray<APlayerController*>& OutControllers)
+		void FLibrary::GetAllLocal(const UObject* WorldContext, TArray<APlayerController*>& OutControllers)
 		{
 			if (!WorldContext)
 				return;

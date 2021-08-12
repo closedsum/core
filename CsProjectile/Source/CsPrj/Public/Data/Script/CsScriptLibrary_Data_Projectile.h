@@ -6,6 +6,7 @@
 #include "Data/Collision/CsData_Projectile_CollisionImplSlice.h"
 #include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMeshImplSlice.h"
 #include "Data/Visual/Impact/CsData_Projectile_VisualImpactImplSlice.h"
+#include "Data/Damage/CsData_Projectile_DamagePointImplSlice.h"
 
 #include "CsScriptLibrary_Data_Projectile.generated.h"
 
@@ -119,4 +120,30 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
 	static bool AddSliceFromObject_VisualImpact(const FString& Context, const UObject* WorldContextObject, const FString& Name, UObject* Object);
+
+	/**
+	* Adds a data slice which implements the interface: DamageDataType (NCsProjectile::NData::NDamage::IDamage) to
+	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NDamage::NPoint::FImplSlice.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Name				Name of the data.
+	* @param Slice
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name,Slice"))
+	static bool AddSlice_DamagePoint(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsData_Projectile_DamagePointImplSlice& Slice);
+
+	/**
+	* Adds a data slice which implements the interface: DamageDataType (NCsProjectile::NData::NDamage::IDamage) to
+	* data with Name.
+	* Adds slice of type: NCsProjectile::NData::NDamage::NPoint::FImplSlice.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Name				Name of the data.
+	* @param Slice
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
+	static bool AddSliceFromObject_DamagePoint(const FString& Context, const UObject* WorldContextObject, const FString& Name, UObject* Object);
 };

@@ -24,6 +24,8 @@ namespace NCsScriptLibraryDataProjectile
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data_Projectile, AddSliceFromObject_VisualStaticMesh);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data_Projectile, AddSlice_VisualImpact);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data_Projectile, AddSliceFromObject_VisualImpact);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data_Projectile, AddSlice_DamagePoint);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Data_Projectile, AddSliceFromObject_DamagePoint);
 		}
 	}
 }
@@ -136,6 +138,32 @@ bool UCsScriptLibrary_Data_Projectile::AddSliceFromObject_VisualImpact(const FSt
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSliceFromObject_VisualImpact : Context;
 
 	typedef NCsProjectile::NData::NVisual::NImpact::FImplSlice DataSliceType;
+
+	DataSliceType* DataSlice = DataSliceType::AddSafeSlice(Context, WorldContextObject, FName(*Name), Object);
+
+	return DataSlice && DataSlice->IsValid(Context);
+}
+
+bool UCsScriptLibrary_Data_Projectile::AddSlice_DamagePoint(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsData_Projectile_DamagePointImplSlice& Slice)
+{
+	using namespace NCsScriptLibraryDataProjectile::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::AddSlice_DamagePoint : Context;
+
+	typedef NCsProjectile::NData::NDamage::NPoint::FImplSlice DataSliceType;
+
+	DataSliceType* DataSlice = Slice.AddSafeSliceAsValue(Ctxt, WorldContextObject, FName(*Name));
+
+	return DataSlice && DataSlice->IsValid(Context);
+}
+
+bool UCsScriptLibrary_Data_Projectile::AddSliceFromObject_DamagePoint(const FString& Context, const UObject* WorldContextObject, const FString& Name, UObject* Object)
+{
+	using namespace NCsScriptLibraryDataProjectile::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::AddSliceFromObject_DamagePoint : Context;
+
+	typedef NCsProjectile::NData::NDamage::NPoint::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = DataSliceType::AddSafeSlice(Context, WorldContextObject, FName(*Name), Object);
 

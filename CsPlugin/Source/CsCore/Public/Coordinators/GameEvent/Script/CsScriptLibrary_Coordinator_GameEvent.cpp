@@ -12,7 +12,8 @@ namespace NCsScriptLibraryCoordinatorGameEvent
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, Get);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, BroadcastGameEvent);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, BroadcastGameEventInfo);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, BroadcastGameEvent_GameInstance);
 		}
 	}
 }
@@ -38,13 +39,27 @@ UCsCoordinator_GameEvent* UCsScriptLibrary_Coordinator_GameEvent::Get(const FStr
 
 #pragma endregion Get
 
-bool UCsScriptLibrary_Coordinator_GameEvent::BroadcastGameEvent(const FString& Context, const UObject* WorldContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info)
+bool UCsScriptLibrary_Coordinator_GameEvent::BroadcastGameEventInfo(const FString& Context, const UObject* WorldContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 {
 	using namespace NCsScriptLibraryCoordinatorGameEvent::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::BroadcastGameEvent : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::BroadcastGameEventInfo : Context;
 
 	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
 
 	return GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, WorldContextObject, Group, Info);
+}
+
+bool UCsScriptLibrary_Coordinator_GameEvent::BroadcastGameEvent_GameInstance(const FString& Context, const UObject* WorldContextObject, const FECsGameEvent& Event)
+{
+	using namespace NCsScriptLibraryCoordinatorGameEvent::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::BroadcastGameEvent_GameInstance : Context;
+
+	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
+
+	FCsGameEventInfo Info;
+	Info.Event = Event;
+
+	return GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, WorldContextObject, NCsGameEventCoordinatorGroup::GameInstance, Info);
 }

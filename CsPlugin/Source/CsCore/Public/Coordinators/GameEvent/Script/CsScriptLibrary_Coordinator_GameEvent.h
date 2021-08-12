@@ -34,7 +34,7 @@ public:
 public:
 
 	/**
-	* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for
+	* Broadcast a GameEventInfo routed to the appropriated Group. Value and Location maybe be optional for
 	* certain GameEvents.
 	*
 	* @param Context			The calling context.
@@ -44,6 +44,17 @@ public:
 	* return					Whether the info was broadcasted or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Group,Info"))
-	static bool BroadcastGameEvent(const FString& Context, const UObject* WorldContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info);
+	static bool BroadcastGameEventInfo(const FString& Context, const UObject* WorldContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info);
 
+	/**
+	* Broadcast a GameEvent routed to the Group: GameInstance. Value and Location maybe be optional for
+	* certain GameEvents.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Event				Game Event to broadcast.
+	* return					Whether the info was broadcasted or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Event"))
+	static bool BroadcastGameEvent_GameInstance(const FString& Context, const UObject* WorldContextObject, const FECsGameEvent& Event);
 };

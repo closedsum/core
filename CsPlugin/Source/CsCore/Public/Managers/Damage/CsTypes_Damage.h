@@ -436,16 +436,3 @@ struct CSCORE_API FCsDamageResult
 	template<typename T>
 	FORCEINLINE T* GetVictim() { return Cast<T>(GetVictim()); }
 };
-
-/*
-struct FCsTempNode
-{
-	FCsTempNode* Children[8];
-
-	FVector Center;
-
-	FVector Extents[2];
-
-	TArray<UObject*> Elements;
-};
-*/

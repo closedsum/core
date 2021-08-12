@@ -545,7 +545,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 	// Collision
 	CollisionComponent->Deactivate();
-	CollisionComponent->ClearMoveIgnoreActors();
+	CollisionComponent->MoveIgnoreActors.Reset(CollisionComponent->MoveIgnoreActors.Max());
+	CollisionComponent->MoveIgnoreComponents.Reset(CollisionComponent->MoveIgnoreComponents.Max());
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 	CollisionComponent->SetComponentTickEnabled(false);

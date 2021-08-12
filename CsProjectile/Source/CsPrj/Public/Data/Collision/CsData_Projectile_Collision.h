@@ -8,6 +8,8 @@
 
 #include "CsData_Projectile_Collision.generated.h"
 
+class UObject;
+
 namespace NCsProjectile
 {
 	namespace NData
@@ -23,17 +25,49 @@ namespace NCsProjectile
 
 				static const FName Name;
 
+			public:
+
+				virtual ~ICollision() {}
+
 				/**
+				* Get the collision information (i.e. response, overlap, hit events, ... etc)
 				*
-				*
-				* return
+				* return Preset
 				*/
 				virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
 				/**
-				*
+				* Get the radius of the collision sphere
+				* 
+				* return Radius
 				*/
 				virtual const float& GetCollisionRadius() const = 0;
+
+				/**
+				* Get the number of hits before the projectile
+				* is stopped (and / or deallocated if pooled).
+				* NOTE:
+				* - Collision detection is captured via CollisionComponent->OnComponentHit.
+				* - GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful.
+				* 
+				* return Count
+				*/
+				virtual const int32& GetHitCount() const = 0;
+
+				/**
+				* Whether to ignore an object (AActor or UPrimitiveComponent) the projectile has collided with after
+				* the first collision.
+				* 
+				* return
+				*/
+				virtual const bool& IgnoreHitObjectAfterHit() const = 0;
+
+				/**
+				* Get the list of classes to ignore for colliding objects.
+				* 
+				* return
+				*/
+				virtual const TArray<TSubclassOf<UObject>>& GetIgnoreHitObjectClasses() const = 0;
 			};
 		}
 	}
@@ -44,6 +78,8 @@ class CSPRJ_API UCsData_Projectile_Collision : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
+
+class UObject;
 
 /**
 * Interface for describing any collision associated with a Projectile.
@@ -57,14 +93,42 @@ public:
 	static const FName Name;
 
 	/**
+	* Get the collision information (i.e. response, overlap, hit events, ... etc)
 	*
-	*
-	* return
+	* return Preset
 	*/
 	virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
 	/**
-	*
+	* Get the radius of the collision sphere
+	* 
+	* return Radius
 	*/
 	virtual const float& GetCollisionRadius() const = 0;
+
+	/**
+	* Get the number of hits before the projectile
+	* is stopped (and / or deallocated if pooled).
+	* NOTE:
+	* - Collision detection is captured via CollisionComponent->OnComponentHit.
+	* - GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful.
+	*
+	* return Count
+	*/
+	virtual const int32& GetHitCount() const = 0;
+
+	/**
+	* Whether to ignore an object (AActor or UPrimitiveComponent) the projectile has collided with after
+	* the first collision.
+	*
+	* return
+	*/
+	virtual const bool& IgnoreHitObjectAfterHit() const = 0;
+
+	/**
+	* Get the list of classes to ignore for colliding objects.
+	*
+	* return
+	*/
+	virtual const TArray<TSubclassOf<UObject>>& GetIgnoreHitObjectClasses() const = 0;
 };

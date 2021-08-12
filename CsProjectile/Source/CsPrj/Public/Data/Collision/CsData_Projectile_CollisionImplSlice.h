@@ -9,6 +9,8 @@
 #include "CsData_Projectile_CollisionImplSlice.generated.h"
 #pragma once
 
+class UObject;
+
 // NCsProjectile::NData::NCollision::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NData, NCollision, FImplSlice)
 
@@ -26,15 +28,36 @@ public:
 
 // CollisionDataType (NCsProjectile::NData::NCollision::IData)
 
+	/** Collision information (i.e. response, overlap, hit events, ... etc) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsCollisionPreset Preset;
 
+	/** Radius of the collision sphere */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
+	/** Number of hits before the projectile is stopped (and / or deallocated if pooled).
+		NOTE:
+			- Collision detection is captured via CollisionComponent->OnComponentHit.
+			- GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	int32 HitCount;
+
+	/** Whether to ignore an object (AActor or UPrimitiveComponent) the projectile has collided with after
+		the first collision. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIgnoreHitObjectAfterHit;
+
+	/** List of classes to ignore for colliding objects. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TSubclassOf<UObject>> IgnoreHitObjectClasses;
+
 	FCsData_Projectile_CollisionImplSlice() :
 		Preset(),
-		Radius(0.0f)
+		Radius(0.0f),
+		HitCount(0),
+		bIgnoreHitObjectAfterHit(false),
+		IgnoreHitObjectClasses()
 	{
 	}
 
@@ -58,6 +81,7 @@ public:
 };
 
 struct FCsInterfaceMap;
+class UObject;
 
 namespace NCsProjectile
 {
@@ -95,15 +119,24 @@ namespace NCsProjectile
 
 				CS_DECLARE_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
 				CS_DECLARE_MEMBER_WITH_PROXY(CollisionRadius, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(HitCount, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(bIgnoreHitObjectAfterHit, bool)
+				CS_DECLARE_MEMBER_WITH_PROXY(IgnoreHitObjectClasses, TArray<TSubclassOf<UObject>>)
 
 			public:
 
 				FImplSlice() :
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(CollisionPreset),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionRadius, 0.0f)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionRadius, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(HitCount, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bIgnoreHitObjectAfterHit, false),
+					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(IgnoreHitObjectClasses)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(CollisionPreset);
 					CS_CTOR_SET_MEMBER_PROXY(CollisionRadius);
+					CS_CTOR_SET_MEMBER_PROXY(HitCount);
+					CS_CTOR_SET_MEMBER_PROXY(bIgnoreHitObjectAfterHit);
+					CS_CTOR_SET_MEMBER_PROXY(IgnoreHitObjectClasses);
 				}
 
 				~FImplSlice(){}
@@ -122,12 +155,26 @@ namespace NCsProjectile
 
 			#pragma endregion ICsGetInterfaceMap
 
+			public:
+
+				FORCEINLINE void SetIgnoreHitObjectAfterHit(const bool& Value)
+				{
+					bIgnoreHitObjectAfterHit = Value;
+					bIgnoreHitObjectAfterHit_Proxy = &bIgnoreHitObjectAfterHit;
+				}
+				FORCEINLINE void SetIgnoreHitObjectAfterHit(bool* Value) { check(Value); bIgnoreHitObjectAfterHit_Proxy = Value; }
+
 			// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 			#pragma region
 			public:
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionRadius, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HitCount, int32)
+
+				FORCEINLINE const bool& IgnoreHitObjectAfterHit() const { return bIgnoreHitObjectAfterHit; }
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(IgnoreHitObjectClasses, TArray<TSubclassOf<UObject>>)
 
 			#pragma endregion CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 

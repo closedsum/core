@@ -72,9 +72,24 @@ void FCsData_Projectile_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice)
 
 bool FCsData_Projectile_CollisionImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	// TODO: Add Check for Preset
+	if (!Preset.IsValid(Context, Log))
+		return false;
 
 	CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f)
+
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(HitCount, 0)
+
+	const int32 Count = IgnoreHitObjectClasses.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const TSubclassOf<UObject>& O = IgnoreHitObjectClasses[I];
+
+		if (!O.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: IgnoreHitObjectClasses[%d] is NULL."), *Context, I));
+		}
+	}
 	return true;
 }
 

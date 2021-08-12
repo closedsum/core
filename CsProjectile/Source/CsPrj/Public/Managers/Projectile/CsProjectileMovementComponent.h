@@ -9,9 +9,21 @@ class CSPRJ_API UCsProjectileMovementComponent : public UProjectileMovementCompo
 {
 	GENERATED_UCLASS_BODY()
 
+// UProjectileMovementComponent Interface
+#pragma region
+public:
+
+	virtual void StopSimulating(const FHitResult& HitResult) override;
+
+	virtual bool ShouldUseSubStepping() const override;
+
+#pragma endregion UProjectileMovementComponent Interface
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ProjectileSimulation, meta = (UIMin = "0", ClampMin = "0"))
+	int32 HitCount;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ProjectileSimulation)
 	ECsProjectileMovement MovementType;
-
-	virtual bool ShouldUseSubStepping() const;
 };
-

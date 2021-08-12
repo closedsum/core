@@ -26,6 +26,8 @@ namespace NCsProjectile
 
 			public:
 
+				virtual ~IDamage() {}
+
 				virtual DamageDataType* GetDamageData() const = 0;
 
 			#undef DamageDataType

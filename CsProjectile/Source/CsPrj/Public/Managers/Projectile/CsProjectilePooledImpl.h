@@ -29,16 +29,10 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsProjectile::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
-// NCsProjectile::NData::NDamage::IDamage
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NData, NDamage, IDamage)
 
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
 
-// NCsDamage::NEvent::IEvent
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
-// NCsDamage::NEvent::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
@@ -54,12 +48,7 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 
 #define DataType NCsProjectile::NData::IData
 
-#define DamageEventType NCsDamage::NEvent::IEvent
-#define DamageEventResourceType NCsDamage::NEvent::FResource
 #define DamageModifierResourceType NCsDamage::NModifier::FResource
-#define DamageDataType NCsDamage::NData::IData
-
-#define ProjectileDamageDataType NCsProjectile::NData::NDamage::IDamage
 
 #define PooledCacheType NCsPooledObject::NCache::ICache
 
@@ -225,50 +214,13 @@ public:
 		
 	public:
 
-		/**
-		* Event to broadcast a damage event of type: (DamageEventType) NCsDamage::NEvent::IEvent.
-		*
-		* @param Event	DamageEvent.
-		*/
-		DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcast, const DamageEventType* /*Event*/);
-
-		/** */
-		FOnBroadcast OnBroadcast_Event;
-
-		/**
-		* Event to broadcast a damage event container of type: (DamageEventResourceType) NCsDamage::NDamage::FResource.
-		*
-		* @param Event	DamageEvent Container.
-		*/
-		DECLARE_MULTICAST_DELEGATE_OneParam(FOnBroadcastContainer, const DamageEventResourceType* /*Event*/);
-
-		/** */
-		FOnBroadcastContainer OnBroadcastContainer_Event;
-
 		FDamageImpl() :
 			Outer(nullptr),
-			Modifiers(),
-			OnBroadcast_Event(),
-			OnBroadcastContainer_Event()
+			Modifiers()
 		{
 		}
 
 		virtual ~FDamageImpl(){}
-
-	protected:
-
-		/**
-		* Get an allocated DamageEvent container from Manager_Event and set the appropriate members for 
-		* broadcasting the event.
-		* The DamageEvent will get deallocated / reset after the scope of the broadcast event 
-		* completes.
-		*
-		* @param HitResult	The HitResult from a OnComponentHit event
-		* return			DamageEvent
-		*/
-		virtual const DamageEventResourceType* OnHit_CreateEvent(const FHitResult& HitResult);
-
-		virtual const DamageEventResourceType* OnHit_CreateEvent(const FHitResult& HitResult, DamageDataType* DamageData);
 	};
 
 	FDamageImpl DamageImpl;
@@ -277,12 +229,7 @@ public:
 
 #undef DataType
 
-#undef DamageEventType
-#undef DamageEventResourceType
 #undef DamageModifierResourceType
-#undef DamageDataType
-
-#undef ProjectileDamageDataType
 
 #undef PooledCacheType
 

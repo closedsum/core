@@ -8,11 +8,8 @@
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
 #include "Data/CsLibrary_Data_Projectile.h"
-#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
-#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
-#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
@@ -25,8 +22,6 @@
 #include "Components/SphereComponent.h"
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
-// Managers
-#include "Managers/Damage/CsManager_Damage.h"
 // Data
 #include "Data/CsData_Projectile.h"
 #include "Data/Collision/CsData_Projectile_Collision.h"
@@ -35,22 +30,16 @@
 #include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
 #include "Data/Sound/CsData_Projectile_SoundImpact.h"
 #include "Data/Damage/CsData_Projectile_Damage.h"
+#include "Managers/Damage/Data/CsData_Damage.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 // FX
-#include "Managers/FX/Cache/CsCache_FXImpl.h"
-#include "Managers/FX/Payload/CsPayload_FXImpl.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
-// Damage
-#include "Managers/Damage/Event/CsDamageEventImpl.h"
-#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
-// Game
-#include "GameFramework/GameStateBase.h"
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
@@ -200,9 +189,6 @@ void ACsProjectilePooledImpl::BeginPlay()
 	ConstructCache();
 
 	DamageImpl.Outer = this;
-
-	// Bind Events
-	DamageImpl.OnBroadcastContainer_Event.AddUObject(UCsManager_Damage::Get(GetWorld()->GetGameState()), &UCsManager_Damage::ProcessDamageEventContainer);
 }
 
 void ACsProjectilePooledImpl::Tick(float DeltaSeconds)
@@ -462,12 +448,9 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 		if (DamageDataType* DamageData = PrjDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
 		{
-			typedef NCsDamage::NEvent::FResource DamageEventResourceType;
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
-			const DamageEventResourceType* Event = DamageImpl.OnHit_CreateEvent(Hit);
-
-			DamageImpl.OnBroadcast_Event.Broadcast(Event->Get());
-			DamageImpl.OnBroadcastContainer_Event.Broadcast(Event);
+			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit, DamageImpl.Modifiers);
 		}
 	}
 	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
@@ -551,14 +534,11 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	if (TrailFXPooled)
 	{
 		// Deactivate the Trail FX
-		typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 		typedef NCsPooledObject::NCache::ICache CacheType;
-		typedef NCsFX::NCache::FImpl CacheImplType;
 
-		CacheType* FXCache		   = TrailFXPooled->GetCache();
-		CacheImplType* FXCacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, FXCache);
+		CacheType* FXCache = TrailFXPooled->GetCache();
 
-		FXCacheImpl->QueueDeallocate();
+		FXCache->QueueDeallocate();
 
 		TrailFXPooled = nullptr;
 	}
@@ -796,106 +776,9 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 
 		if (ModDamagePayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
 		{
-			typedef NCsDamage::NModifier::IModifier ModifierType;
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
-			const TArray<ModifierType*> Modifiers = DmgModifierPayload->GetDamageModifiers();
-
-			DamageImpl.Modifiers.Reset(FMath::Max(DamageImpl.Modifiers.Max(), Modifiers.Num()));
-
-			UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(GetWorld()->GetGameState());
-
-			for (const ModifierType* From : Modifiers)
-			{
-				DamageImpl.Modifiers.Add(Manager_Damage->CreateCopyOfModifier(Context, From));
-			}
+			DamageManagerLibrary::CreateCopyOfModifiersChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
 		}
 	}
 }
-
-// Damage
-#pragma region
-
-#define DamageEventResourceType NCsDamage::NEvent::FResource
-#define DamageDataType NCsDamage::NData::IData
-
-const DamageEventResourceType* ACsProjectilePooledImpl::FDamageImpl::OnHit_CreateEvent(const FHitResult& HitResult)
-{
-	using namespace NCsProjectilePooledImpl::NDamageImpl::NCached;
-
-	const FString& Context = Str::OnHit_CreateEvent;
-
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-	typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
-
-	PrjDamageDataType* PrjDamageData = PrjDataLibrary::GetInterfaceChecked<PrjDamageDataType>(Context, Outer->GetData());
-	// Get Damage Data
-	DamageDataType* DamageData = PrjDamageData->GetDamageData();
-
-	return OnHit_CreateEvent(HitResult, DamageData);
-}
-
-const DamageEventResourceType* ACsProjectilePooledImpl::FDamageImpl::OnHit_CreateEvent(const FHitResult& HitResult, DamageDataType* DamageData)
-{
-	using namespace NCsProjectilePooledImpl::NDamageImpl::NCached;
-
-	const FString& Context = Str::OnHit_CreateEvent;
-
-	CS_IS_PTR_NULL_CHECKED(DamageData)
-
-	UObject* ContextRoot			  = Outer->GetWorld()->GetGameState();
-	UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
-
-	// Get Container from Manager_Damage
-	DamageEventResourceType* Container = Manager_Damage->AllocateEvent();
-
-		// Event
-	typedef NCsDamage::NEvent::FLibrary DamageEventLibrary;
-	typedef NCsDamage::NEvent::IEvent DamageEventType;
-	typedef NCsDamage::NEvent::FImpl DamageEventImplType;
-
-	DamageEventType* Event		   = Container->Get();
-	DamageEventImplType* EventImpl = DamageEventLibrary::PureStaticCastChecked<DamageEventImplType>(Context, Event);
-
-		// Value
-	typedef NCsDamage::NValue::IValue DamageValueType;
-
-	EventImpl->DamageValue.CopyFrom(ContextRoot, DamageData->GetValue());
-	DamageValueType* DamageValue = EventImpl->DamageValue.Value;
-
-		// Range
-	typedef NCsDamage::NRange::IRange DamageRangeType;
-
-	DamageRangeType* DamageRange = nullptr;
-
-	if (const DamageRangeType* Range = Manager_Damage->GetRange(Context, DamageData))
-	{
-		EventImpl->DamageRange.CopyFrom(ContextRoot, Range);
-		DamageRange = EventImpl->DamageRange.Range;
-	}
-
-	// Apply Damage Modifiers
-	typedef NCsDamage::NModifier::FResource MoidifierResourceType;
-
-	for (MoidifierResourceType* Modifier : Modifiers)
-	{
-		Manager_Damage->ModifyValue(Context, Modifier->Get(), DamageData, DamageValue);
-
-		if (DamageRange)
-		{
-			Manager_Damage->ModifyRange(Context, Modifier->Get(), DamageData, DamageRange);
-		}
-	}
-
-	EventImpl->Data			= DamageData;
-	EventImpl->Instigator	= Outer->GetCache()->GetInstigator();
-	EventImpl->Causer		= Outer;
-	EventImpl->Origin		= HitResult;
-	EventImpl->HitResult	= HitResult;
-
-	return Container;
-}
-
-#undef DamageEventResourceType
-#undef DamageDataType
-
-#pragma endregion Damage

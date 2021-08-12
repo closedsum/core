@@ -172,7 +172,7 @@ namespace NCsProjectile
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionRadius, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HitCount, int32)
 
-				FORCEINLINE const bool& IgnoreHitObjectAfterHit() const { return bIgnoreHitObjectAfterHit; }
+				FORCEINLINE const bool& IgnoreHitObjectAfterHit() const { return *bIgnoreHitObjectAfterHit_Proxy; }
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(IgnoreHitObjectClasses, TArray<TSubclassOf<UObject>>)
 

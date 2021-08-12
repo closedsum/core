@@ -13,8 +13,6 @@ class CSCORE_API UCsScriptLibrary_DamageType : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-// Menu
-#pragma region
 public:
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Damage", meta = (AutoCreateRefTerm = "Name,DisplayName"))
@@ -44,5 +42,9 @@ public:
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "NotEqual (ECsDamageType)", CompactNodeTitle = "!=", ScriptMethod = "NotEquals", Keywords = "!= notequal"), Category = "CsCore|Library|Damage")
 	static bool NotEqual(const FECsDamageType& A, const FECsDamageType& B);
 
-#pragma endregion Menu
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Damage", meta = (AutoCreateRefTerm = "Enum"))
+	static bool IsValid(const FECsDamageType& Enum);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Damage", meta = (AutoCreateRefTerm = "Name"))
+	static bool IsValidByName(const FString& Name);
 };

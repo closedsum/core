@@ -100,6 +100,16 @@ bool UCsScriptLibrary_DamageType::NotEqual(const EnumType& A, const EnumType& B)
 	return A != B;
 }
 
+bool UCsScriptLibrary_DamageType::IsValid(const EnumType& Enum)
+{
+	return EnumMapType::Get().IsValidEnum(Enum);
+}
+
+bool UCsScriptLibrary_DamageType::IsValidByName(const FString& Name)
+{
+	return EnumMapType::Get().IsValidEnum(Name);
+}
+
 #undef EnumMapType
 #undef EnumType
 

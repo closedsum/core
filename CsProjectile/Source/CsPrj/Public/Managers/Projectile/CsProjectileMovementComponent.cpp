@@ -1,16 +1,27 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Projectile/CsProjectileMovementComponent.h"
 
+// Interface
+#include "Collision/CsGetCollisionHitCount.h"
+
 UCsProjectileMovementComponent::UCsProjectileMovementComponent(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
-	HitCount(0),
-	MovementType(ECsProjectileMovement::Simulated)
+	MovementType(ECsProjectileMovement::Simulated),
+	bHandleDeflection(true)
 {
 }
 
+// UProjectileMovementComponent Interface
+#pragma region
+
 void UCsProjectileMovementComponent::StopSimulating(const FHitResult& HitResult)
 {
-	--HitCount;
+	int32 HitCount = 0;
+
+	if (ICsGetCollisionHitCount* GetCollisionHitCount = Cast<ICsGetCollisionHitCount>(GetOwner()))
+	{
+		HitCount = GetCollisionHitCount->GetCollisionHitCount();
+	}
 
 	if (HitCount <= 0)
 	{
@@ -26,3 +37,20 @@ bool UCsProjectileMovementComponent::ShouldUseSubStepping() const
 		return false;
 	return Super::ShouldUseSubStepping();
 }
+
+#define ResultType UProjectileMovementComponent::EHandleBlockingHitResult 
+ResultType UCsProjectileMovementComponent::HandleBlockingHit(const FHitResult& Hit, float TimeTick, const FVector& MoveDelta, float& SubTickTimeRemaining)
+{
+	ResultType Result = Super::HandleBlockingHit(Hit, TimeTick, MoveDelta, SubTickTimeRemaining);
+
+	if (Result == ResultType::Deflect)
+	{
+		if (bHandleDeflection)
+			return Result;
+		return ResultType::AdvanceNextSubstep;
+	}
+	return Result;
+}
+#undef ResultType
+
+#pragma endregion UProjectileMovementComponent Interface

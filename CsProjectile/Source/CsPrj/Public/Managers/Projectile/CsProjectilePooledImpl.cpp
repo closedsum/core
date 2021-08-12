@@ -91,6 +91,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	// Collision
 	IgnoreActors(),
 	bDeallocateOnHit(true),
+	HitCount(0),
 	// ICsPooledObject
 	Cache(nullptr),
 	// ICsProjectile
@@ -346,16 +347,60 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 // Collision
 #pragma region
 
-void ACsProjectilePooledImpl::AddIgnoreActor(AActor* InActor)
+void ACsProjectilePooledImpl::AddIgnoreActor(AActor* Actor)
 {
-	IgnoreActors.Add(InActor);
+	IgnoreActors.Add(Actor);
 }
 
-AActor* ACsProjectilePooledImpl::GetIgnoreActor(const int32 &Index)
+AActor* ACsProjectilePooledImpl::GetIgnoreActor(const int32& Index)
 {
 	if (Index >= IgnoreActors.Num())
 		return nullptr;
 	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
+}
+
+void ACsProjectilePooledImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
+{
+	IgnoreComponents.Add(Component);
+}
+
+UPrimitiveComponent* ACsProjectilePooledImpl::GetIgnoreComponent(const int32& Index)
+{
+	if (Index >= IgnoreComponents.Num())
+		return nullptr;
+	return IgnoreComponents[Index].IsValid() ? IgnoreComponents[Index].Get() : nullptr;
+}
+
+bool ACsProjectilePooledImpl::IsIgnored(AActor* Actor) const
+{
+	if (!Actor)
+		return false;
+
+	for (const TWeakObjectPtr<AActor>& A : IgnoreActors)
+	{
+		if (!A.IsValid())
+			continue;
+
+		if (Actor == A.Get())
+			return true;
+	}
+	return false;
+}
+
+bool ACsProjectilePooledImpl::IsIgnored(UPrimitiveComponent* Component) const
+{
+	if (!Component)
+		return false;
+
+	for (const TWeakObjectPtr<UPrimitiveComponent>& C : IgnoreComponents)
+	{
+		if (!C.IsValid())
+			continue;
+
+		if (Component == C.Get())
+			return true;
+	}
+	return false;
 }
 
 void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -363,6 +408,12 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnHit;
+
+	if (IsIgnored(OtherActor))
+		return;
+
+	if (IsIgnored(OtherComp))
+		return;
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogProjectileCollision))
@@ -453,9 +504,34 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit, DamageImpl.Modifiers);
 		}
 	}
+
+	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
+	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+	if (CollisionDataType* CollisionData = PrjDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
+	{
+		if (CollisionData->IgnoreHitObjectAfterHit())
+		{
+			// Actor
+			if (OtherActor)
+			{
+				AddIgnoreActor(OtherActor);
+				CollisionComponent->MoveIgnoreActors.Add(OtherActor);
+			}
+			// Component
+			if (OtherComp)
+			{
+				AddIgnoreComponent(OtherComp);
+				CollisionComponent->MoveIgnoreComponents.Add(OtherComp);
+			}
+		}
+	}
+
+	--HitCount;
+
 	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 
-	if (bDeallocateOnHit)
+	if (bDeallocateOnHit && HitCount <= 0)
 		Cache->QueueDeallocate();
 }
 
@@ -544,6 +620,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	}
 
 	// Collision
+	HitCount = 0;
+
 	CollisionComponent->Deactivate();
 	CollisionComponent->MoveIgnoreActors.Reset(CollisionComponent->MoveIgnoreActors.Max());
 	CollisionComponent->MoveIgnoreComponents.Reset(CollisionComponent->MoveIgnoreComponents.Max());
@@ -592,6 +670,9 @@ UObject* ACsProjectilePooledImpl::GetInstigator() const
 }
 
 #pragma endregion ICsProjectile
+
+// Launch
+#pragma region
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
@@ -746,6 +827,10 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
 			}
+
+			HitCount = CollisionData->GetHitCount();
+			// TODO: Move to Data
+			MovementComponent->bHandleDeflection = false;
 		}
 	}
 	
@@ -783,3 +868,5 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 		}
 	}
 }
+
+#pragma endregion Launch

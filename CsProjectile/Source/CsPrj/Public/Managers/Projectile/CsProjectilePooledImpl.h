@@ -5,6 +5,7 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Projectile/CsProjectile.h"
+#include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
@@ -19,6 +20,7 @@
 class USphereComponent;
 class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
+class UPrimitiveComponent;
 
 // NCsProjectile::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
@@ -42,7 +44,8 @@ UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsUpdate,
 										  public ICsPooledObject,
-										  public ICsProjectile
+										  public ICsProjectile,
+										  public ICsGetCollisionHitCount
 {
 	GENERATED_UCLASS_BODY()
 
@@ -111,17 +114,29 @@ protected:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
 
-	void AddIgnoreActor(AActor* InActor);
+	void AddIgnoreActor(AActor* Actor);
 
-	AActor* GetIgnoreActor(const int32 &Index);
+	AActor* GetIgnoreActor(const int32& Index);
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
+
+	void AddIgnoreComponent(UPrimitiveComponent* Component);
+
+	UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
+
+	bool IsIgnored(AActor* Actor) const;
+	bool IsIgnored(UPrimitiveComponent* Component) const;
 
 public:
 
-	/** Whether to deallocate the projectile on hit. */
+	/** Whether to deallocate the projectile on hit (and HitCount <= 0). */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	bool bDeallocateOnHit;
 
 protected:
+
+	int32 HitCount;
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
@@ -164,10 +179,6 @@ protected:
 
 #pragma endregion PooledObject
 
-protected:
-
-	DataType* Data;
-
 // ICsProjectile
 #pragma region
 public:
@@ -180,6 +191,16 @@ public:
 
 #pragma endregion ICsProjectile
 
+// Projectile
+#pragma region
+protected:
+
+	DataType* Data;
+
+#pragma endregion Projectile
+
+// Launch
+#pragma region
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
@@ -188,6 +209,16 @@ public:
 	void Launch(PooledPayloadType* Payload);
 
 	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
+
+#pragma endregion Launch
+
+// ICsGetCollisionHitCount
+#pragma region
+public:
+
+	FORCEINLINE int32 GetCollisionHitCount() const { return HitCount; }
+
+#pragma endregion ICsGetCollisionHitCount
 
 // FX
 #pragma region

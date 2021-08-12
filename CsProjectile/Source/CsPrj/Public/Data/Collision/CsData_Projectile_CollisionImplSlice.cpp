@@ -60,12 +60,18 @@ void FCsData_Projectile_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetCollisionPreset(&Preset);
 	Slice->SetCollisionRadius(&Radius);
+	Slice->SetHitCount(&HitCount);
+	Slice->SetIgnoreHitObjectAfterHit(&bIgnoreHitObjectAfterHit);
+	Slice->SetIgnoreHitObjectClasses(&IgnoreHitObjectClasses);
 }
 
 void FCsData_Projectile_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetCollisionPreset(Preset);
 	Slice->SetCollisionRadius(Radius);
+	Slice->SetHitCount(HitCount);
+	Slice->SetIgnoreHitObjectAfterHit(bIgnoreHitObjectAfterHit);
+	Slice->SetIgnoreHitObjectClasses(IgnoreHitObjectClasses);
 }
 
 #undef SliceType
@@ -111,6 +117,9 @@ namespace NCsProjectile
 
 						const FName CollisionPreset = FName("CollisionPreset");
 						const FName CollisionRadius = FName("CollisionRadius");
+						const FName HitCount = FName("HitCount");
+						const FName bIgnoreHitObjectAfterHit = FName("bIgnoreHitObjectAfterHit");
+						const FName IgnoreHitObjectClasses = FName("IgnoreHitObjectClasses");
 					}
 				}
 			}
@@ -158,12 +167,21 @@ namespace NCsProjectile
 				{
 					FCsCollisionPreset* CollisionPresetPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsCollisionPreset>(Context, Object, Object->GetClass(), Name::CollisionPreset, nullptr);
 					float* CollisionRadiusPtr			   = PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::CollisionRadius, nullptr);
+					int32* HitCountPtr					   = PropertyLibrary::GetIntPropertyValuePtr(Context, Object, Object->GetClass(), Name::HitCount, nullptr);
+					bool* bIgnoreHitObjectAfterHitPtr	   = PropertyLibrary::GetBoolPropertyValuePtr(Context, Object, Object->GetClass(), Name::bIgnoreHitObjectAfterHit, nullptr);
+
+					// TODO: Need to implement getting TArray<TSubclassOf<ClassType>>
 
 					if (CollisionPresetPtr &&
-						CollisionRadiusPtr)
+						CollisionRadiusPtr &&
+						HitCountPtr &&
+						bIgnoreHitObjectAfterHitPtr)
 					{
 						Slice->SetCollisionPreset(CollisionPresetPtr);
 						Slice->SetCollisionRadius(CollisionRadiusPtr);
+						Slice->SetHitCount(HitCountPtr);
+						Slice->SetIgnoreHitObjectAfterHit(bIgnoreHitObjectAfterHitPtr);
+
 						Success = true;
 					}
 				}
@@ -179,6 +197,9 @@ namespace NCsProjectile
 						Log(FString::Printf(TEXT("%s: - OR"), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: CollisionRadius."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: HitCount."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bIgnoreHitObjectAfterHit."), *Context));
+						// Log(FString::Printf(TEXT("%s: - Failed to get array property of type: TSubclassOf<UObject> with name: IgnoreHitObjectClasses."), *Context));
 					}
 				}
 				return Slice;
@@ -189,6 +210,17 @@ namespace NCsProjectile
 				check(GetCollisionPreset().IsValidChecked(Context));
 
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetCollisionRadius(), 0.0f)
+
+				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetHitCount(), 0)
+
+				const int32 Count = GetIgnoreHitObjectClasses().Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const TSubclassOf<UObject>& O = GetIgnoreHitObjectClasses()[I];
+
+					checkf(O.Get(), TEXT("%s: GetIgnoreHitObjectClasses()[%d] is NULL."), *Context, I);
+				}
 				return true;
 			}
 
@@ -198,6 +230,20 @@ namespace NCsProjectile
 					return false;
 
 				CS_IS_FLOAT_GREATER_THAN(GetCollisionRadius(), 0.0f)
+
+				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetHitCount(), 0)
+
+				const int32 Count = GetIgnoreHitObjectClasses().Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const TSubclassOf<UObject>& O = GetIgnoreHitObjectClasses()[I];
+
+					if (!O.Get())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetIgnoreHitObjectClasses()[%d] is NULL."), *Context, I));
+					}
+				}
 				return true;
 			}
 		}

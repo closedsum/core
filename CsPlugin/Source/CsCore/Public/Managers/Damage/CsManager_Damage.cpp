@@ -27,8 +27,6 @@
 #include "UniqueObject/CsUniqueObject.h"
 
 #if WITH_EDITOR
-// Library
-#include "Managers/Damage/CsLibrary_Manager_Damage.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
@@ -201,24 +199,6 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 {
 	if (ICsGetManagerDamage* GetManagerDamage = GetSafe_GetManagerDamage(Object))
 		return GetManagerDamage->GetManager_Damage();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Damage* UCsManager_Damage::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerDamage::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-	if (UObject* ContextRoot = DamageManagerLibrary::GetSafe(Context, WorldContextObject))
-	{
-		if (UCsManager_Damage* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Damage of type UCsManager_Damage from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
 	return nullptr;
 }
 
@@ -416,6 +396,63 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
+#define DataType NCsDamage::NData::IData
+#define ModifierResourceType NCsDamage::NModifier::FResource
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierResourceType*>& Modifiers)
+{
+#undef DataType
+
+	CS_IS_PTR_NULL_CHECKED(Data)
+
+	// Get Container from Manager_Damage
+	EventResourceType* Container = AllocateEvent();
+
+	// Event
+	typedef NCsDamage::NEvent::FLibrary EventLibrary;
+	typedef NCsDamage::NEvent::FImpl EventImplType;
+
+	EventType* Event		 = Container->Get();
+	EventImplType* EventImpl = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
+
+	// Copy Value from Data, this can change with modifiers
+	typedef NCsDamage::NValue::IValue ValueType;
+
+	EventImpl->DamageValue.CopyFrom(MyRoot, Data->GetValue());
+	ValueType* Value = EventImpl->DamageValue.Value;
+
+	// Copy Range from Data, this can change with modifiers
+	typedef NCsDamage::NRange::IRange RangeType;
+
+	RangeType* Range = nullptr;
+
+	if (const RangeType* R = GetRange(Context, Data))
+	{
+		EventImpl->DamageRange.CopyFrom(MyRoot, R);
+		Range = EventImpl->DamageRange.Range;
+	}
+
+	// Apply Modifiers
+	for (const ModifierResourceType* Modifier : Modifiers)
+	{
+		ModifyValue(Context, Modifier->Get(), Data, Value);
+
+		if (Range)
+		{
+			ModifyRange(Context, Modifier->Get(), Data, Range);
+		}
+	}
+
+	EventImpl->Data		  = Data;
+	EventImpl->Instigator = Instigator;
+	EventImpl->Causer	  = Causer;
+	EventImpl->Origin	  = HitResult;
+	EventImpl->HitResult  = HitResult;
+
+	return Container;
+}
+
+#undef ModifierResourceType
+
 void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 {
 	using namespace NCsManagerDamage::NCached;
@@ -501,9 +538,7 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 
 		Receiver.Damage(Evt);
 
-#if !UE_BUILD_SHIPPING
-		LogEvent(Evt);
-#endif // #if !UE_BUILD_SHIPPING
+		CS_NON_SHIPPING_EXPR(LogEvent(Evt));
 
 		OnProcessDamageEvent_Event.Broadcast(Evt);
 		DeallocateEvent(Context, EventContainer);
@@ -610,7 +645,6 @@ const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, c
 	return EMCsDamageValue::Get().GetMAX();
 }
 
-
 ValueResourceType* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ValueType* Value)
 {
 	const FECsDamageValue& Type = GetValueType(Context, Value);
@@ -678,7 +712,7 @@ RangeResourceType* UCsManager_Damage::CreateCopyOfRange(const FString& Context, 
 
 	bool Success = RangeLibrary::CopyChecked(Context, Range, Copy);
 
-	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+	checkf(Success, TEXT("%s: Failed to create copy of Range."), *Context);
 
 	return Container;
 }
@@ -747,6 +781,16 @@ ModifierResourceType* UCsManager_Damage::CreateCopyOfModifier(const FString& Con
 	return CreateCopyOfModifier(Context, Modifier->Get());
 }
 
+void UCsManager_Damage::CreateCopyOfModifiers(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+{
+	To.Reset(FMath::Max(To.Max(), From.Num()));
+
+	for (const ModifierType* Modifier : From)
+	{
+		To.Add(CreateCopyOfModifier(Context, Modifier));
+	}
+}
+
 #define DataType NCsDamage::NData::IData
 
 #define ValueType NCsDamage::NValue::IValue
@@ -781,6 +825,25 @@ void UCsManager_Damage::ModifyRange(const FString& Context, const ModifierType* 
 #undef ModifierType
 
 #pragma endregion Modifier
+
+// Data
+#pragma region
+
+#define DataType NCsDamage::NData::IData
+#define ModifierResourceType NCsDamage::NModifier::FResource
+void UCsManager_Damage::ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+{
+#undef DataType
+#undef ModifierResourceType
+
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+
+	const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
+
+	ProcessDamageEventContainer(Container);
+}
+
+#pragma endregion Data
 
 // Log
 #pragma region

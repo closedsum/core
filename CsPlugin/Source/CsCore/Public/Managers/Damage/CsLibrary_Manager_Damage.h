@@ -1,4 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Types
+#include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -6,6 +8,13 @@
 
 class UObject;
 class UCsManager_Damage;
+
+// NCsDamage::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+// NCsDamage::NModifier::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
+// NCsDamage::NModifier::IModifoer
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsDamage
 {
@@ -90,6 +99,53 @@ namespace NCsDamage
 			static UCsManager_Damage* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// Modifier
+		#pragma region
+		public:
+
+		#define ModifierResourceType NCsDamage::NModifier::FResource
+		#define ModifierType NCsDamage::NModifier::IModifier
+		
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param From
+			* @param To
+			*/
+			static void CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
+
+		#undef ModifierResourceType
+		#undef ModifierType
+
+		#pragma endregion Modifier
+
+		// Data
+		#pragma region
+		public:
+
+		#define DataType NCsDamage::NData::IData
+		#define ModifierResourceType NCsDamage::NModifier::FResource
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Data
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			* @param Modifiers
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+
+		#undef DataType
+		#undef ModifierResourceType
+
+#pragma endregion Data
 		};
 	}
 }

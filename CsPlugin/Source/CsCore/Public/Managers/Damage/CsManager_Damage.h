@@ -155,10 +155,6 @@ protected:
 
 	static UCsManager_Damage* GetSafe(UObject* Object);
 
-public:
-
-	static UCsManager_Damage* GetFromWorldContextObject(const UObject* WorldContextObject);
-
 #endif // #if WITH_EDITOR
 
 protected:
@@ -242,6 +238,8 @@ public:
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventType* Event);
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
+
+	EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 
 private:
 
@@ -398,12 +396,22 @@ public:
 	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier);
 
 	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
+	
+	void CreateCopyOfModifiers(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
 
 	virtual void ModifyValue(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value);
 
 	virtual void ModifyRange(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range);
 
 #pragma endregion Modifier
+
+// Data
+#pragma region
+public:
+
+	void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+
+#pragma endregion Data
 
 // Log
 #pragma region

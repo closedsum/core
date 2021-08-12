@@ -17,7 +17,7 @@ namespace NCsDamage
 	{
 		/**
 		* Container for an allocated object which implements the interface
-		* IRange. This container is used to some what cleanly free
+		* IRange. This container is used to somewhat cleanly free
 		* the object after use.
 		*/
 		struct CSCORE_API FAllocated

@@ -100,5 +100,37 @@ namespace NCsDamage
 		}
 
 		#pragma endregion Get
+		
+		// Modifier
+		#pragma region
+
+		#define ModifierResourceType NCsDamage::NModifier::FResource
+		#define ModifierType NCsDamage::NModifier::IModifier
+		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+		{
+		#undef ModifierResourceType
+		#undef ModifierType
+
+			GetChecked(Context, WorldContext)->CreateCopyOfModifiers(Context, From, To);
+		}
+
+		
+
+		#pragma endregion Modifier
+
+		// Data
+		#pragma region
+
+		#define DataType NCsDamage::NData::IData
+		#define ModifierResourceType NCsDamage::NModifier::FResource
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+		{
+		#undef DataType
+		#undef ModifierResourceType
+
+			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
+		}
+
+		#pragma endregion Data
 	}
 }

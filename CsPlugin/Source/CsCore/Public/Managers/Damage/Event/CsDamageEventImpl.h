@@ -78,10 +78,7 @@ namespace NCsDamage
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return const_cast<FCsInterfaceMap*>(&InterfaceMap);
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -89,55 +86,16 @@ namespace NCsDamage
 		#pragma region
 		public:
 
-			FORCEINLINE const float& GetDamage() const
-			{
-				return Damage;
-			}
-
-			FORCEINLINE const ValueType* GetDamageValue() const
-			{
-				return DamageValue.Value;
-			}
-
-			FORCEINLINE const RangeType* GetDamageRange() const
-			{
-				return DamageRange.Range;
-			}
-
-			FORCEINLINE DataType* GetData() const
-			{
-				return Data;
-			}
-
-			FORCEINLINE UObject* GetInstigator() const
-			{
-				return Instigator;
-			}
-
-			FORCEINLINE UObject* GetCauser() const
-			{
-				return Causer;
-			}
-
-			FORCEINLINE const FECsHitType& GetHitType() const
-			{
-				return HitType;
-			}
-
-			FORCEINLINE const FHitResult& GetOrigin() const
-			{
-				return Origin;
-			}
-
-			FORCEINLINE const FHitResult& GetHitResult() const
-			{
-				return HitResult;
-			}
-
-			FORCEINLINE const TArray<UObject*>& GetIgnoreObjects() const
-			{
-				return IgnoreObjects;
-			}
+			FORCEINLINE const float& GetDamage() const { return Damage; }
+			FORCEINLINE const ValueType* GetDamageValue() const { return DamageValue.Value; }
+			FORCEINLINE const RangeType* GetDamageRange() const { return DamageRange.Range; }
+			FORCEINLINE DataType* GetData() const { return Data; }
+			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
+			FORCEINLINE UObject* GetCauser() const { return Causer; }
+			FORCEINLINE const FECsHitType& GetHitType() const { return HitType; }
+			FORCEINLINE const FHitResult& GetOrigin() const { return Origin; }
+			FORCEINLINE const FHitResult& GetHitResult() const { return HitResult; }
+			FORCEINLINE const TArray<UObject*>& GetIgnoreObjects() const { return IgnoreObjects; }
 
 		#pragma endregion IEvent
 

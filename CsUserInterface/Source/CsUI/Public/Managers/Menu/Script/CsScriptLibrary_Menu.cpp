@@ -95,6 +95,11 @@ bool UCsScriptLibrary_Menu::EqualEqual(const EnumType& A, const EnumType& B)
 	return A == B;
 }
 
+bool UCsScriptLibrary_Menu::NotEqual(const EnumType& A, const EnumType& B)
+{
+	return A != B;
+}
+
 #undef EnumMapType
 #undef EnumType
 

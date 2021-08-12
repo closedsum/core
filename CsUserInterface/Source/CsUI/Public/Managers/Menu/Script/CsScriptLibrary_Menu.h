@@ -38,8 +38,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Menu", meta = (AutoCreateRefTerm = "Name"))
 	static FECsMenu GetMax();
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (Menu)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Menu")
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (ECsMenu)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Menu")
 	static bool EqualEqual(const FECsMenu& A, const FECsMenu& B);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "NotEqual (ECsMenu)", CompactNodeTitle = "!=", ScriptMethod = "NotEquals", Keywords = "!= notequal"), Category = "CsCore|Library|Menu")
+	static bool NotEqual(const FECsMenu& A, const FECsMenu& B);
 
 #pragma endregion Menu
 };

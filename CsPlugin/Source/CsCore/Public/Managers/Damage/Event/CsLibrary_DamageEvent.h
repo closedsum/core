@@ -5,6 +5,8 @@
 #include "Utility/CsLog.h"
 #pragma once
 
+class ICsGetCurrentDamageEvent;
+
 namespace NCsDamage
 {
 	namespace NEvent
@@ -39,7 +41,36 @@ namespace NCsDamage
 			*/
 			static bool SetDamageChecked(const FString& Context, EventType* Event);
 
+			/**
+			* Safely try to get the Current Damage Event (EventType: NCsDamage::NEvent::IEvent) from Object.
+			* Assumes Object implements the interfaces:
+			* - ICsReceiveDamage
+			* - ICsGetCurrentDamageEvent
+			* This should be called immediately after the following events:
+			* - Damage_ScriptEvent gets broadcasted during Character->Damage and after current damage event is set.
+			* - RecieveDamage (bRecieveDamage must be true) is called.
+			* - OverrideDamage (bOverrideDamage must be true) is called.
+			* 
+			* @param Context	The calling context.
+			* @param Object
+			* @param Log		(optional)
+			* return
+			*/
+			static const EventType* GetSafeCurrentDamageEvent(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			static float GetSafeDamage(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static UObject* GetSafeInstigator(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static UObject* GetSafeCauser(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static const FECsHitType& GetSafeHitType(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static const FHitResult& GetSafeOrigin(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static const FHitResult& GetSafeHitResult(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static bool GetSafeIgnoreObjects(const FString& Context, UObject* Object, TArray<UObject*>& OutObjects, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
 	#undef EventType

@@ -27,7 +27,7 @@ class CSCORE_API ICsGetCurrentDamageEvent
 
 public:
 
-	virtual const EventType* GetCurrentDamageEvent() = 0;
+	virtual const EventType* GetCurrentDamageEvent() const = 0;
 
 #undef EventType
 };

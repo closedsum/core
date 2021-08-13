@@ -404,7 +404,7 @@ namespace NCsValid
 				}
 				return true;
 			}
-			/*
+			
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static OtherClassType* CastTo(const FString& Context, ClassType* A, const FString& AName, void(*Log)(const FString&))
 			{
@@ -415,7 +415,7 @@ namespace NCsValid
 					return nullptr;
 				}
 
-				const OtherClassType* Other = Cast<OtherClassType>(A);
+				OtherClassType* Other = Cast<OtherClassType>(A);
 
 				if (!Other)
 				{
@@ -425,7 +425,27 @@ namespace NCsValid
 				}
 				return Other;
 			}
-			*/
+
+			template<typename ClassType, typename InterfaceType>
+			FORCEINLINE static InterfaceType* InterfaceCast(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return nullptr;
+				}
+
+				InterfaceType* Other = Cast<InterfaceType>(A);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName));
+					return nullptr;
+				}
+				return Other;
+			}
 		};
 	}
 
@@ -939,12 +959,34 @@ namespace NCsValid
 		if (!NCsValid::NObject::FLibrary::Implements<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_DOES_OBJ_IMPLEMENT_RET_NULL(__Object, __ObjectType, __InterfaceType) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		if (!NCsValid::NObject::FLibrary::Implements<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_DOES_OBJ_IMPLEMENT_RET_VALUE(__Object, __ObjectType, __InterfaceType, __Value) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
 		if (!NCsValid::NObject::FLibrary::Implements<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return __Value; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_CAST(__Object, __ObjectType, __OtherObjectType) \
+	[] (const FString& Context, __ObjectType* __Object, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__, Log); \
+	}(Context, __Object, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_INTERFACE_CAST(__Object, __ObjectType, __InterfaceType) \
+	[] (const FString& Context, __ObjectType* __Object, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log); \
+	}(Context, __Object, Log)
 
 #pragma endregion Object
 

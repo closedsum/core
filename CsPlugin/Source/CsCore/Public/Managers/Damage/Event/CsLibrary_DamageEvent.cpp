@@ -4,6 +4,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Damage
+#include "Managers/Damage/CsReceiveDamage.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 
 namespace NCsDamage
@@ -43,17 +44,15 @@ namespace NCsDamage
 			return false;
 		}
 
-	#undef EventType
-
-	#define EventResourceType NCsDamage::NEvent::FResource
-	#define DamageDataType NCsDamage::NData::IData
-
-		const EventResourceType* FLibrary::CreateContainerChecked(const FString& Context, const FHitResult& HitResult, const DamageDataType* Data)
+		float FLibrary::GetSafeDamage(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			return nullptr;
+			CS_IS_PTR_NULL_RET_VALUE(Object, 0.0f)
+
+			CS_DOES_OBJ_IMPLEMENT_RET_VALUE(Object, UObject, ICsReceiveDamage, 0.0f)
+
+			return 0.0f;
 		}
 
-	#undef EventResourceType
-	#undef DamageDataType
+	#undef EventType
 	}
 }

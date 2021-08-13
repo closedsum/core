@@ -359,6 +359,76 @@ namespace NCsValid
 		};
 	}
 
+	namespace NObject
+	{
+		struct CSCORE_API FLibrary final
+		{
+			template<typename ClassType, typename OtherClassType>
+			FORCEINLINE static bool IsClassOf(const FString& Context, const ClassType* A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return false;
+				}
+
+				const OtherClassType* Other = Cast<OtherClassType>(A);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName())));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ClassType, typename InterfaceType>
+			FORCEINLINE static bool Implements(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return false;
+				}
+
+				const InterfaceType* Other = Cast<InterfaceType>(A);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName));
+					return false;
+				}
+				return true;
+			}
+			/*
+			template<typename ClassType, typename OtherClassType>
+			FORCEINLINE static OtherClassType* CastTo(const FString& Context, ClassType* A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return nullptr;
+				}
+
+				const OtherClassType* Other = Cast<OtherClassType>(A);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName())));
+					return nullptr;
+				}
+				return Other;
+			}
+			*/
+		};
+	}
+
 	namespace NWeakObjectPtr
 	{
 		struct CSCORE_API FLibrary final
@@ -843,8 +913,40 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Ptr; \
 		if (!NCsValid::NPtr::FLibrary::Null(Context, __Ptr, __temp__str__, Log)) { return nullptr; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_PTR_NULL_RET_VALUE(__Ptr, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NPtr::FLibrary::Null(Context, __Ptr, __temp__str__, Log)) { return __Value; } \
+	}
 
 #pragma endregion Ptr
+
+// Object
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_OBJ_CLASS_OF(__Object, __ObjectType, __ClassType) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsClassOf<__ObjectType, __ClassType>(Context, __Object, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_DOES_OBJ_IMPLEMENT(__Object, __ObjectType, __InterfaceType) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		if (!NCsValid::NObject::FLibrary::Implements<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_DOES_OBJ_IMPLEMENT_RET_VALUE(__Object, __ObjectType, __InterfaceType, __Value) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		if (!NCsValid::NObject::FLibrary::Implements<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return __Value; } \
+	}
+
+#pragma endregion Object
 
 // WeakObjectPtr
 #pragma region

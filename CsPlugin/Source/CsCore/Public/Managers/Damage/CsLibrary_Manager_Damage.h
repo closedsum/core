@@ -9,11 +9,15 @@
 class UObject;
 class UCsManager_Damage;
 
+// NCsDamage::NEvent::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
+// NCsDamage::NEvent::IEvent
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
-// NCsDamage::NModifier::IModifoer
+// NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsDamage
@@ -99,6 +103,47 @@ namespace NCsDamage
 			static UCsManager_Damage* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// Event
+		#pragma region
+		public:
+
+		#define EventResourceType NCsDamage::NEvent::FResource
+		#define EventType NCsDamage::NEvent::IEvent
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Event
+			*/
+			static void DeallocateEventChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Event
+			* return
+			*/
+			static EventResourceType* CreateCopyOfEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event);
+
+			/**
+			*
+			*
+			* @param Context			The calling context.
+			* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param OutEventContainer
+			* @param OutEvent
+			*/
+			static void CreateCopyOfEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, EventResourceType*& OutEventContainer, EventType*& OutEvent);
+
+		#undef EventResourceType
+		#undef EventType
+
+		#pragma endregion Event
 
 		// Modifier
 		#pragma region

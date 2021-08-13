@@ -101,6 +101,33 @@ namespace NCsDamage
 
 		#pragma endregion Get
 		
+		// Event
+		#pragma region
+
+		#define EventResourceType NCsDamage::NEvent::FResource
+		#define EventType NCsDamage::NEvent::IEvent
+
+		void FLibrary::DeallocateEventChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event)
+		{
+			GetChecked(Context, WorldContext)->DeallocateEvent(Context, Event);
+		}
+
+		EventResourceType* FLibrary::CreateCopyOfEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event)
+		{
+			return GetChecked(Context, WorldContext)->CreateCopyOfEvent(Context, Event);
+		}
+
+		void FLibrary::CreateCopyOfEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, EventResourceType*& OutEventContainer, EventType*& OutEvent)
+		{
+			OutEventContainer = CreateCopyOfEventChecked(Context, WorldContext, Event);
+			OutEvent = OutEventContainer->Get();
+		}
+
+		#undef EventResourceType
+		#undef EventType
+
+		#pragma endregion Event
+
 		// Modifier
 		#pragma region
 

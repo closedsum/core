@@ -1,12 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Event/CsDamageEvent.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
+// Log
+#include "Utility/CsLog.h"
 #pragma once
-
-// NCsDamage::NEvent::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
-// NCsDamage::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsDamage
 {
@@ -40,24 +37,9 @@ namespace NCsDamage
 			* @param Event
 			* return			Whether the damage was set successfully.
 			*/
-			static bool SetDamageChecked(const FString&, EventType* Event);
+			static bool SetDamageChecked(const FString& Context, EventType* Event);
 
-		#define EventResourceType NCsDamage::NEvent::FResource
-		#define DamageDataType NCsDamage::NData::IData
-
-			/**
-			* Create a resource container (EventResourceType (NCsDamage::NEvent::FResource)) from
-			* a HitResult and Data which implements the interface: NCsDamage::NData::IData.
-			* 
-			* @param Context	The calling context.
-			* @param HitResult
-			* @param Data
-			* return			Event resource.
-			*/
-			static const EventResourceType* CreateContainerChecked(const FString& Context, const FHitResult& HitResult, const DamageDataType* Data);
-
-		#undef EventResourceType
-		#undef DamageDataType
+			static float GetSafeDamage(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
 	#undef EventType

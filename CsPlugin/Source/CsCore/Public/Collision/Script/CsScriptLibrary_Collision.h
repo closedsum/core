@@ -3,7 +3,7 @@
 
 #include "UObject/Object.h"
 // Types
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 
 #include "CsScriptLibrary_Collision.generated.h"
 

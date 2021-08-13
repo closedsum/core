@@ -2,7 +2,7 @@
 #include "Managers/Projectile/Handler/CsManager_Projectile_Datahandler.h"
 
 // Types
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"

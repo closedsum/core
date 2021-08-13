@@ -6,7 +6,7 @@
 // CVars
 #include "Managers/Projectile/CsCVars_Manager_Projectile.h"
 // Types
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Data/CsLibrary_Data_Projectile.h"

@@ -2,7 +2,7 @@
 #include "Debug/CsTypes_Debug.h"
 
 // Types
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 // Library
 #include "Debug/CsLibrary_Debug_Draw.h"
 // Collision

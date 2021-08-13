@@ -2,7 +2,7 @@
 // Types
 #include "Managers/Trace/CsTypes_Trace.h"
 #include "Managers/Time/CsTypes_Time.h"
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 #include "WorldCollision.h"
 // Trace
 #include "Managers/Trace/CsTraceResponse.h"

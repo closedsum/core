@@ -4,7 +4,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Types/CsTypes.h"
 #include "Animation/CsTypes_Anim.h"
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Interpolation.h"
 

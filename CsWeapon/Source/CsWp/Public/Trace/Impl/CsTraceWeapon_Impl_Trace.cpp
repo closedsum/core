@@ -6,7 +6,7 @@
 #include "Trace/CsCVars_TraceWeapon.h"
 // Types
 #include "Types/CsTypes_Math.h"
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
 #include "Data/CsLibrary_Data_Weapon.h"

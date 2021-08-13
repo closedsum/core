@@ -4,7 +4,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Collision.h"
+#include "Collision/CsTypes_Collision.h"
 
 #include "CsData_Projectile_Collision.generated.h"
 

@@ -12,7 +12,6 @@
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
-
 #include "UniqueObject/CsTypes_UniqueObject.h"
 
 #include "CsManager_Damage.generated.h"

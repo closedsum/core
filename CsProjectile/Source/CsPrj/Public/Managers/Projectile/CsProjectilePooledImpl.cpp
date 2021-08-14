@@ -620,6 +620,9 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	}
 
 	// Collision
+	IgnoreActors.Reset(IgnoreActors.Max());
+	IgnoreComponents.Reset(IgnoreComponents.Max());
+
 	HitCount = 0;
 
 	CollisionComponent->Deactivate();

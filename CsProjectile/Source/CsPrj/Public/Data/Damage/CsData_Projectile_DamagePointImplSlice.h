@@ -3,7 +3,7 @@
 #include "Managers/Damage/Data/CsTypes_Data_Damage.h"
 // Data
 #include "Data/Damage/CsData_Projectile_Damage.h"
-#include "Managers/Damage/Data/CsData_DamagePointImpl.h"
+#include "Managers/Damage/Data/Point/CsData_DamagePointImpl.h"
 // Log
 #include "Utility/CsPrjLog.h"
 

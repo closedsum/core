@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Data/CsData_DamagePointProxy.h"
+#include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
 // Library
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"

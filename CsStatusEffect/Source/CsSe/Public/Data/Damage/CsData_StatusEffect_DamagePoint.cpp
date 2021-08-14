@@ -7,7 +7,7 @@
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 // Damage
-#include "Managers/Damage/Data/CsData_DamagePointProxy.h"
+#include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
 // FPointProxy
 #pragma region

@@ -11,6 +11,7 @@
 #include "Managers/Damage/Modifier/CsDamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
+#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 
@@ -96,6 +97,19 @@ class ICsGetManagerDamage;
 
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData;
+		}
+	}
+}
+
+// NCsDamage::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, FInterfaceMap)
 
 UCLASS()
 class CSCORE_API UCsManager_Damage : public UObject
@@ -406,6 +420,23 @@ public:
 
 // Data
 #pragma region
+protected:
+
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
+
+	DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler;
+
+	virtual void ConstructDataHandler();
+
+public:
+
+	FORCEINLINE DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
+
+
+#undef DataHandlerType
+#undef DataInterfaceMapType
+
 public:
 
 	void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);

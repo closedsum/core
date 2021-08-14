@@ -17,6 +17,7 @@
 // Reset
 #include "Reset/CsReset.h"
 // Damage
+#include "Managers/Damage/Handler/CsManager_Damage_DataHandler.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
@@ -42,7 +43,7 @@ namespace NCsManagerDamage
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, GetFromWorldContextObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, Initialize);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEvent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, ProcessDamageEventContainer);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Damage, LogEvent);
@@ -206,6 +207,10 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 void UCsManager_Damage::Initialize()
 {
+	using namespace NCsManagerDamage::NCached;
+
+	const FString& Context = Str::Initialize;
+
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 	// Event
@@ -253,6 +258,12 @@ void UCsManager_Damage::Initialize()
 
 		Manager_Range.CreatePool(PoolSize);
 	}
+
+	// Data Handler
+	ConstructDataHandler();
+
+	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
+
 	bInitialized = true;
 }
 
@@ -280,6 +291,9 @@ void UCsManager_Damage::CleanUp()
 	}
 	// Range
 	Manager_Range.Shutdown();
+
+	delete DataHandler;
+	DataHandler = nullptr;
 
 	bInitialized = false;
 }
@@ -828,6 +842,15 @@ void UCsManager_Damage::ModifyRange(const FString& Context, const ModifierType* 
 
 // Data
 #pragma region
+
+void UCsManager_Damage::ConstructDataHandler()
+{
+	typedef NCsDamage::NManager::NHandler::FData DataHandlerType;
+
+	DataHandler			= new DataHandlerType();
+	DataHandler->Outer   = this;
+	DataHandler->MyRoot = MyRoot;
+}
 
 #define DataType NCsDamage::NData::IData
 #define ModifierResourceType NCsDamage::NModifier::FResource

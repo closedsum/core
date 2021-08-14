@@ -149,14 +149,31 @@ namespace NCsDamage
 		#pragma region
 
 		#define DataType NCsDamage::NData::IData
+
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
+		DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
+
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Damage->GetDataHandler();
+			}
+			return nullptr;
+		}
+
+		
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 		{
-		#undef DataType
 		#undef ModifierResourceType
 
 			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 		}
+
+		#undef DataType
 
 		#pragma endregion Data
 	}

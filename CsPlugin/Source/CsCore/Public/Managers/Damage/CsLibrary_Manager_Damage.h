@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -19,6 +19,19 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
+
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData;
+		}
+	}
+}
+
+// NCsDamage::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, FInterfaceMap)
 
 namespace NCsDamage
 {
@@ -172,6 +185,22 @@ namespace NCsDamage
 		public:
 
 		#define DataType NCsDamage::NData::IData
+
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			*/
+			static DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
+
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 
 			/**
@@ -187,10 +216,11 @@ namespace NCsDamage
 			*/
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 
-		#undef DataType
 		#undef ModifierResourceType
 
-#pragma endregion Data
+		#undef DataType
+
+		#pragma endregion Data
 		};
 	}
 }

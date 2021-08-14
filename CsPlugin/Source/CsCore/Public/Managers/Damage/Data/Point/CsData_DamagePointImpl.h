@@ -1,8 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-// Type
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 // Data
 #include "Managers/Damage/Data/CsData_Damage.h"
+// Damage
+#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 // Log
 #include "Utility/CsLog.h"
 

@@ -142,15 +142,38 @@ public:
 #pragma region
 public:
 
+#if WITH_EDITOR
 	static UCsManager_FX_Actor* Get(UObject* InRoot = nullptr);
-	
+#else
+	FORCEINLINE static UCsManager_FX_Actor* Get(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	template<typename T>
 	static T* Get(UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
+	static UCsManager_FX_Actor* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_FX_Actor* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_FX_Actor> ManagerFXActorClass, UObject* InOuter = nullptr);
 	
@@ -161,13 +184,7 @@ public:
 protected:
 
 	static ICsGetManagerFXActor* Get_GetManagerFXActor(UObject* InRoot);
-	static ICsGetManagerFXActor* GetSafe_GetManagerFXActor(UObject* Object);
-
-	static UCsManager_FX_Actor* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_FX_Actor* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerFXActor* GetSafe_GetManagerFXActor(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

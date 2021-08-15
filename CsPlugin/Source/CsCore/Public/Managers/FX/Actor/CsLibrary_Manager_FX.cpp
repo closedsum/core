@@ -85,7 +85,7 @@ namespace NCsFX
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::GetSafe(Context, ContextRoot, Log);
 
 			if (!Manager_FX)
 			{

@@ -514,9 +514,11 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 {
 	FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
 
-	if (System)
+	bool WaitForSystem = System && System->GetSystemInstanceIndex() != INDEX_NONE && System->GetSystem() != nullptr && !System->HandleCompletion();
+
+	if (WaitForSystem)
 	{
-		System->WaitForAsyncTickDoNotFinalize(true);
+		System->WaitForAsyncTickDoNotFinalize(false);
 	}
 
 	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FX->GetNiagaraComponent()->GetSystemSimulation();
@@ -529,9 +531,10 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 	}
 	*/
 #else
-	if (Simulation.IsValid())
+	if (WaitForSystem &&
+		Simulation.IsValid())
 	{
-		Simulation->WaitForInstancesTickComplete(true);
+		Simulation->WaitForInstancesTickComplete(false);
 	}
 #endif // #if WITH_EDITOR
 }

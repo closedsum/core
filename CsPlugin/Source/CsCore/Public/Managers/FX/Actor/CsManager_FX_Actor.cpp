@@ -8,6 +8,7 @@
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -19,8 +20,6 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
 #if WITH_EDITOR
-// Library
-#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Managers
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
@@ -36,7 +35,6 @@ namespace NCsManagerFXActor
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, BindToOnPause);
@@ -109,28 +107,26 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 // Singleton
 #pragma region
 
+#if WITH_EDITOR
+
 /*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::Get(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor();
-#else
-	if (s_bShutdown)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::Get: Manager has already shutdown."));
-		return nullptr;
-	}
-	return s_Instance;
-#endif // #if WITH_EDITOR
+}
+
+/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerFXActor* GetManagerFXActor = GetSafe_GetManagerFXActor(Context, InRoot, Log))
+		return GetManagerFXActor->GetManager_FX_Actor();
+	return nullptr;
 }
 
 /*static*/ bool UCsManager_FX_Actor::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_FX_Actor::Init(UObject* InRoot, TSubclassOf<UCsManager_FX_Actor> ManagerFXActorClass, UObject* InOuter /*=nullptr*/)
 {
@@ -221,19 +217,15 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 	return GetManagerFXActor;
 }
 
-/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::GetSafe_GetManagerFXActor(UObject* Object)
+/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::GetSafe_GetManagerFXActor(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::GetSafe_GetManagerFXActor: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::GetSafe_GetManagerFXActor: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -241,36 +233,10 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::GetSafe_GetManagerFXActor: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerFXActor>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerFXActor* GetManagerFXActor = GetSafe_GetManagerFXActor(Object))
-		return GetManagerFXActor->GetManager_FX_Actor();
-	return nullptr;
-}
-
-/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerFXActor::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-	if (UObject* ContextRoot = FXManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
-	{
-		if (UCsManager_FX_Actor* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager FX Actor of type UCsManager_FX_Actor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

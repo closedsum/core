@@ -264,9 +264,6 @@ public:
 		FDamageImpl();
 		virtual ~FDamageImpl();
 
-		
-		void SetType(const FECsDamageValue& InType);
-
 	#define DamageDataType NCsDamage::NData::IData
 		void SetValue(DamageDataType* InData);
 	#undef DamageDataType

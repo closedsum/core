@@ -235,6 +235,9 @@ public:
 
 	EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 
+	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+
 private:
 
 	TArray<FCsReceiveDamage> Local_Receivers;
@@ -311,17 +314,6 @@ protected:
 	*/
 	virtual void DeallocateValue(const FString& Context, ValueResourceType* Value);
 
-public:
-
-	/**
-	*
-	*
-	* @param Context	The calling context.
-	* @param Value
-	* return
-	*/
-	virtual const FECsDamageValue& GetValueType(const FString& Context, const ValueType* Value);
-
 #pragma endregion Value
 
 // Range
@@ -387,6 +379,9 @@ public:
 public:
 
 	void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+
+	void ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+	void ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
 #pragma endregion Data
 

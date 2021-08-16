@@ -4,6 +4,7 @@
 
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
@@ -39,11 +40,12 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
 
 			Root	  = InRoot;
 			Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From);
 			Value	  = Container->Get();
-			Type	  = DamageManagerLibrary::GetValueTypeChecked(Context, GetRoot(), Value);
+			Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
 		}
 
 		#define DataType NCsDamage::NData::IData
@@ -56,11 +58,12 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(Data)
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
 
 			Root	  = InRoot;
 			Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), Data->GetValue());
 			Value	  = Container->Get();
-			Type	  = DamageManagerLibrary::GetValueTypeChecked(Context, GetRoot(), Value);
+			Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
 		}
 
 		void FAllocated::CopyFrom(const FAllocated* From)
@@ -76,11 +79,12 @@ namespace NCsDamage
 			if (From->GetContainer())
 			{
 				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+				typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
 
 				Root	  = From->Root;
 				Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From->GetContainer());
 				Value	  = Container->Get();
-				Type	  = DamageManagerLibrary::GetValueTypeChecked(Context, GetRoot(), Value);
+				Type	  = DamageValueLibrary::GetTypeChecked(Context, Value);
 			}
 		}
 

@@ -2,6 +2,8 @@
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointProxy.h"
@@ -13,14 +15,37 @@ namespace NCsDamage
 	namespace NValue
 	{
 		#define ValueType NCsDamage::NValue::IValue
+
+		const FECsDamageValue& FLibrary::GetTypeChecked(const FString& Context, const ValueType* Value)
+		{
+			CS_IS_PTR_NULL_CHECKED(Value)
+
+			typedef NCsDamage::NValue::FLibrary ValueLibrary;
+			typedef NCsDamage::NValue::NPoint::IPoint PointType;
+			typedef NCsDamage::NValue::NRange::IRange RangeType;
+
+			// Point
+			if (GetSafeInterfaceChecked<PointType>(Context, Value))
+				return NCsDamageValue::Point;
+			// Range
+			if (GetSafeInterfaceChecked<RangeType>(Context, Value))
+				return NCsDamageValue::Range;
+
+			checkf(0, TEXT("%s: Failed to determine type (FECsDamageValue) for Value."), *Context);
+			return EMCsDamageValue::Get().GetMAX();
+		}
+
 		bool FLibrary::CopyChecked(const FString& Context, const ValueType* From, ValueType* To)
 		{
+			CS_IS_PTR_NULL_CHECKED(From)
+
+			CS_IS_PTR_NULL_CHECKED(To)
 
 			// Point
 			{
 				typedef NCsDamage::NValue::NPoint::IPoint PointType;
 
-				if (PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, const_cast<ValueType*>(From)))
+				if (const PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, From))
 				{
 					// NCsDamage::NValue::NPoint::FImpl (NCsDamage::NValue::NPoint::IPoint)
 					typedef NCsDamage::NValue::NPoint::FImpl ImplType;
@@ -36,7 +61,7 @@ namespace NCsDamage
 			{
 				typedef NCsDamage::NValue::NRange::IRange RangeType;
 
-				if (RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, const_cast<ValueType*>(From)))
+				if (const RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, From))
 				{
 					// NCsDamage::NValue::NRange::FImpl (NCsDamage::NValue::NRange::IRange)
 					typedef NCsDamage::NValue::NRange::FImpl ImplType;
@@ -49,8 +74,10 @@ namespace NCsDamage
 					}
 				}
 			}
+			checkf(0, TEXT("%s: Failed to copy From to To."), *Context);
 			return false;
 		}
+
 		#undef ValueType
 	}
 }

@@ -13,6 +13,7 @@
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"
@@ -80,7 +81,7 @@ namespace NCsProjectilePooledImpl
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl::FDamageImpl, OnHit_CreateEvent);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl::FDamageImpl, SetValue);
 			}
 		}
 	}
@@ -507,8 +508,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 			
 			// Apply Modifiers
-			//DamageImpl.ResetValue();
-			//DamageImpl.SetType(DamageData->GetDamageData()->GetType());
+			DamageImpl.SetValue(DamageData->GetDamageData());
 
 			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 
@@ -516,7 +516,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
-			//DamageManagerLibrary::ProcessDataChecked(Context, this, DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit, DamageImpl.Modifiers);
+			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
 		}
 	}
 
@@ -917,18 +917,23 @@ ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
 	Modifiers.Reset();
 }
 
-void ACsProjectilePooledImpl::FDamageImpl::SetType(const FECsDamageValue& InType)
-{
-	checkf(EMCsDamageValue::Get().IsValidEnum(InType), TEXT("ACsProjectilePooledImpl::FDamageImpl::SetType: InType: %s is NOT Valid."), InType.ToChar());
-
-	Type = InType;
-}
-
 #define DamageDataType NCsDamage::NData::IData
 void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 {
 #undef DamageDataType
 
+	using namespace NCsProjectilePooledImpl::NDamageImpl::NCached;
+
+	const FString& Context = Str::SetValue;
+
+	typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
+	typedef NCsDamage::NValue::IValue ValueType;
+
+	const ValueType* Value = InData->GetValue();
+	Type				   = DamageValueLibrary::GetTypeChecked(Context, Value);
+
+	ResetValue();
+	DamageValueLibrary::CopyChecked(Context, Value, GetValue());
 }
 
 #define ValueType NCsDamage::NValue::IValue

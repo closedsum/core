@@ -141,16 +141,13 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->DeallocateValue(Context, Type, Value);
 		}
 
-		const FECsDamageValue& FLibrary::GetValueTypeChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value)
-		{
-			return GetChecked(Context, WorldContext)->GetValueType(Context, Value);
-		}
-
 		ValueResourceType* FLibrary::CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value)
 		{
 			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
 
-			const FECsDamageValue& Type  = Manager_Damage->GetValueType(Context, Value);
+			typedef NCsDamage::NValue::FLibrary DamageValueLibrary;
+
+			const FECsDamageValue& Type  = DamageValueLibrary::GetTypeChecked(Context, Value);
 			ValueResourceType* Container = Manager_Damage->AllocateValue(Type);
 			ValueType* Copy				 = Container->Get();
 
@@ -301,9 +298,9 @@ namespace NCsDamage
 			}
 			return nullptr;
 		}
-
-		
+	
 		#define ModifierResourceType NCsDamage::NModifier::FResource
+		#define ValueType NCsDamage::NValue::IValue
 
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 		{
@@ -321,7 +318,18 @@ namespace NCsDamage
 			return false;
 		}
 
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+		{
+			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
+		}
+
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+		{
+			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Data, Instigator, Causer, HitResult);
+		}
+
 		#undef ModifierResourceType
+		#undef ValueType
 
 		#undef DataType
 

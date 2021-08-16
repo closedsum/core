@@ -191,15 +191,6 @@ namespace NCsDamage
 		* @param Value
 		* return
 		*/
-		static const FECsDamageValue& GetValueTypeChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value);
-
-		/**
-		*
-		*
-		* @param Context	The calling context.
-		* @param Value
-		* return
-		*/
 		static ValueResourceType* CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value);
 
 		/**
@@ -298,6 +289,7 @@ namespace NCsDamage
 		#undef DataInterfaceMapType
 
 		#define ModifierResourceType NCsDamage::NModifier::FResource
+		#define ValueType NCsDamage::NValue::IValue
 
 			/**
 			* 
@@ -327,7 +319,34 @@ namespace NCsDamage
 			*/
 			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value
+			* @param Data
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value
+			* @param Data
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+
 		#undef ModifierResourceType
+		#undef ValueType
 
 		#undef DataType
 

@@ -1,6 +1,10 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Value/CsDamageValue.h"
+// Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
+// Types
+#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+// Damage
+#include "Managers/Damage/Value/CsDamageValue.h"
 #pragma once
 
 namespace NCsDamage
@@ -14,6 +18,10 @@ namespace NCsDamage
 		*/
 		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<ValueType>
 		{
+		public:
+
+			static const FECsDamageValue& GetTypeChecked(const FString& Context, const ValueType* Value);
+
 			/**
 			* Copy the values from From to To with checks.
 			* Currently supports To types of:

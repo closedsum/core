@@ -253,6 +253,33 @@ void UCsManager_Damage::Initialize()
 
 		Manager_Range.CreatePool(PoolSize);
 	}
+	// Modifier
+	/*
+	{
+		const int32& Count = EMCsDamageModifier::Get().Num();
+
+		Manager_Modifiers.Reset(Count);
+		Manager_Modifiers.AddDefaulted(Count);
+
+		// Create Pool
+		const int32& PoolSize = Settings->Manager_Damage.Modifier.PoolSize;
+
+		for (const FECsDamageModifier& Modifier : EMCsDamageModifier::Get())
+		{
+			typedef NCsDamage::NModifier::FManager ModifierManagerType;
+
+			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
+
+			Manager.SetDeconstructResourcesOnShutdown();
+			Manager.CreatePool(PoolSize);
+
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				Manager.Add(ConstructModifier(Modifier));
+			}
+		}
+	}
+	*/
 
 	// Data Handler
 	ConstructDataHandler();
@@ -287,6 +314,7 @@ void UCsManager_Damage::CleanUp()
 	// Range
 	Manager_Range.Shutdown();
 	// Modifier
+	/*
 	{
 		for (const FECsDamageModifier& Modifier : EMCsDamageModifier::Get())
 		{
@@ -297,7 +325,7 @@ void UCsManager_Damage::CleanUp()
 			Manager.Shutdown();
 		}
 	}
-
+	*/
 	delete DataHandler;
 	DataHandler = nullptr;
 
@@ -418,12 +446,19 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 
 #define DataType NCsDamage::NData::IData
 #define ModifierResourceType NCsDamage::NModifier::FResource
+#define ValueType NCsDamage::NValue::IValue
+
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierResourceType*>& Modifiers)
 {
-#undef DataType
-
 	CS_IS_PTR_NULL_CHECKED(Data)
 
+	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
+}
+
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+{
+	CS_IS_PTR_NULL_CHECKED(Data)
+	
 	// Get Container from Manager_Damage
 	EventResourceType* Container = AllocateEvent();
 
@@ -435,10 +470,8 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 	EventImplType* EventImpl = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
 
 	// Copy Value from Data, this can change with modifiers
-	typedef NCsDamage::NValue::IValue ValueType;
-
-	EventImpl->DamageValue.CopyFrom(Context, MyRoot, Data);
-	ValueType* Value = EventImpl->DamageValue.GetValue();
+	EventImpl->DamageValue.CopyFrom(Context, MyRoot, Value);
+	ValueType* DamageValue = EventImpl->DamageValue.GetValue();
 
 	// Copy Range from Data, this can change with modifiers
 	typedef NCsDamage::NRange::IRange RangeType;
@@ -451,11 +484,11 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 
 	if (Range)
 	{
-		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Value, Range);
+		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, DamageValue, Range);
 	}
 	else
 	{
-		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Value);
+		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, DamageValue);
 	}
 
 	EventImpl->Data		  = Data;
@@ -467,7 +500,15 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 	return Container;
 }
 
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+{
+	TArray<ModifierResourceType*> Modifiers;
+	return CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
+}
+
+#undef DataType
 #undef ModifierResourceType
+#undef ValueType
 
 void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 {
@@ -644,26 +685,6 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, ValueResourceTyp
 	}
 }
 
-const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, const ValueType* Value)
-{
-	CS_IS_PTR_NULL_CHECKED(Value)
-
-	typedef NCsDamage::NValue::FLibrary ValueLibrary;
-	typedef NCsDamage::NValue::NPoint::IPoint PointType;
-	typedef NCsDamage::NValue::NRange::IRange RangeType;
-
-
-	// Point
-	if (ValueLibrary::GetSafeInterfaceChecked<PointType>(Context, Value))
-		return NCsDamageValue::Point;
-	// Range
-	if (ValueLibrary::GetSafeInterfaceChecked<RangeType>(Context, Value))
-		return NCsDamageValue::Range;
-
-	checkf(0, TEXT("%s: Failed to determine type (FECsDamageValue) for Value."), *Context);
-	return EMCsDamageValue::Get().GetMAX();
-}
-
 #undef ValueResourceType
 #undef ValueType
 
@@ -770,17 +791,38 @@ void UCsManager_Damage::ConstructDataHandler()
 
 #define DataType NCsDamage::NData::IData
 #define ModifierResourceType NCsDamage::NModifier::FResource
+#define ValueType NCsDamage::NValue::IValue
+
 void UCsManager_Damage::ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 {
-#undef DataType
-#undef ModifierResourceType
-
 	typedef NCsDamage::NEvent::FResource EventResourceType;
 
 	const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
 
 	ProcessDamageEventContainer(Container);
 }
+
+void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+{
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+
+	const EventResourceType* Container = CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
+
+	ProcessDamageEventContainer(Container);
+}
+
+void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+{
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+
+	const EventResourceType* Container = CreateEvent(Context, Value, Data, Instigator, Causer, HitResult);
+
+	ProcessDamageEventContainer(Container);
+}
+
+#undef DataType
+#undef ModifierResourceType
+#undef ValueType
 
 #pragma endregion Data
 

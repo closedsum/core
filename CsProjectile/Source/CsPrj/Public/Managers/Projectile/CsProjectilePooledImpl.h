@@ -42,6 +42,8 @@ struct FCsFXActorPooled;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+// NCsDamage::NValue::IValue
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NValue::NPoint::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
 // NCsDamage::NValue::NRange::FImpl
@@ -242,7 +244,7 @@ public:
 
 		ACsProjectilePooledImpl* Outer;
 
-		FECsDamageType Type;
+		FECsDamageValue Type;
 
 	#define PointType NCsDamage::NValue::NPoint::FImpl
 	#define RangeType NCsDamage::NValue::NRange::FImpl
@@ -262,6 +264,18 @@ public:
 		FDamageImpl();
 		virtual ~FDamageImpl();
 
+		
+		void SetType(const FECsDamageValue& InType);
+
+	#define DamageDataType NCsDamage::NData::IData
+		void SetValue(DamageDataType* InData);
+	#undef DamageDataType
+
+	#define ValueType NCsDamage::NValue::IValue
+		ValueType* GetValue();
+	#undef ValueType
+
+		void ResetValue();
 		void Reset();
 	};
 

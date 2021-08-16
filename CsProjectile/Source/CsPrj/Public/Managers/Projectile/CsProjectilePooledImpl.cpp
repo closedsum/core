@@ -13,6 +13,7 @@
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
@@ -506,6 +507,12 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 			
 			// Apply Modifiers
+			//DamageImpl.ResetValue();
+			//DamageImpl.SetType(DamageData->GetDamageData()->GetType());
+
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+
+			DamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
@@ -910,10 +917,45 @@ ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
 	Modifiers.Reset();
 }
 
-void ACsProjectilePooledImpl::FDamageImpl::Reset()
+void ACsProjectilePooledImpl::FDamageImpl::SetType(const FECsDamageValue& InType)
+{
+	checkf(EMCsDamageValue::Get().IsValidEnum(InType), TEXT("ACsProjectilePooledImpl::FDamageImpl::SetType: InType: %s is NOT Valid."), InType.ToChar());
+
+	Type = InType;
+}
+
+#define DamageDataType NCsDamage::NData::IData
+void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
+{
+#undef DamageDataType
+
+}
+
+#define ValueType NCsDamage::NValue::IValue
+ValueType* ACsProjectilePooledImpl::FDamageImpl::GetValue()
+{
+#undef ValueType
+
+	// Point
+	if (Type == NCsDamageValue::Point)
+		return ValuePoint;
+	// Range
+	if (Type == NCsDamageValue::Range)
+		return ValueRange;
+
+	checkf(0, TEXT("ACsProjectilePooledImpl::FDamageImpl::GetValue: No Value associated with Type: %s."), Type.ToChar());
+	return nullptr;
+}
+
+void ACsProjectilePooledImpl::FDamageImpl::ResetValue()
 {
 	ValuePoint->Reset();
 	ValueRange->Reset();
+}
+
+void ACsProjectilePooledImpl::FDamageImpl::Reset()
+{
+	ResetValue();
 
 	Modifiers.Reset(Modifiers.Max());
 }

@@ -1,12 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Data/CsData_Damage.h"
+// Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
+// Damage
+#include "Managers/Damage/Data/CsData_Damage.h"
+// Log
+#include "Utility/CsLog.h"
 #pragma once
 
 // NCsDamage::NRange::IRange
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
-
-
 
 namespace NCsDamage
 {
@@ -32,6 +34,8 @@ namespace NCsDamage
 			* return			
 			*/
 			static const RangeType* GetRangeChecked(const FString& Context, const DataType* Data);
+
+			static const RangeType* GetSafeRange(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef RangeType
 		};

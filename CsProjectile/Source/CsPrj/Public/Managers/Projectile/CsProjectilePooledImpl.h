@@ -8,7 +8,10 @@
 #include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
+#include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
+// Damage
+#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
 
 #include "CsProjectilePooledImpl.generated.h"
 
@@ -39,6 +42,10 @@ struct FCsFXActorPooled;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+// NCsDamage::NValue::NPoint::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
+// NCsDamage::NValue::NRange::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
@@ -50,13 +57,8 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 	GENERATED_UCLASS_BODY()
 
 #define DataType NCsProjectile::NData::IData
-
-#define DamageModifierResourceType NCsDamage::NModifier::FResource
-
 #define PooledCacheType NCsPooledObject::NCache::ICache
-
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
-
 #define PayloadType NCsProjectile::NPayload::IPayload
 
 // UObject Interface
@@ -240,18 +242,27 @@ public:
 
 		ACsProjectilePooledImpl* Outer;
 
+		FECsDamageType Type;
 
-		TArray<DamageModifierResourceType*> Modifiers;
+	#define PointType NCsDamage::NValue::NPoint::FImpl
+	#define RangeType NCsDamage::NValue::NRange::FImpl
+	#define AllocateModifierType NCsDamage::NModifier::FAllocated
+
+		PointType* ValuePoint;
+		RangeType* ValueRange;
+
+		TArray<AllocateModifierType> Modifiers;
 		
+	#undef PointType
+	#undef RangeType
+	#undef AllocatedModifierType
+
 	public:
 
-		FDamageImpl() :
-			Outer(nullptr),
-			Modifiers()
-		{
-		}
+		FDamageImpl();
+		virtual ~FDamageImpl();
 
-		virtual ~FDamageImpl(){}
+		void Reset();
 	};
 
 	FDamageImpl DamageImpl;
@@ -259,12 +270,7 @@ public:
 #pragma endregion Damage
 
 #undef DataType
-
-#undef DamageModifierResourceType
-
 #undef PooledCacheType
-
 #undef PooledPayloadType
-
 #undef PayloadType
 };

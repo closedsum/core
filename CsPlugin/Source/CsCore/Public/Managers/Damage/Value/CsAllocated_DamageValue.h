@@ -8,7 +8,8 @@ class UObject;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, FResource)
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
-
+// NCsDamage::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 namespace NCsDamage
 {
@@ -21,10 +22,10 @@ namespace NCsDamage
 		*/
 		struct CSCORE_API FAllocated
 		{
-		public:
+		private:
 
 			/** The Root for UCsManager_Damage. */
-			UObject* Root;
+			TWeakObjectPtr<UObject> Root;
 
 			/** Container holding a reference to Value (a Damage Value). */
 			FResource* Container;
@@ -36,6 +37,8 @@ namespace NCsDamage
 				quicker deallocation from UCsManager_Damage. */
 			FECsDamageValue Type;
 
+		public:
+
 			FAllocated() :
 				Root(nullptr),
 				Container(nullptr),
@@ -44,9 +47,19 @@ namespace NCsDamage
 			{
 			}
 
-			FORCEINLINE const IValue* GetValue() const { return Value; }
+			~FAllocated();
 
-			void CopyFrom(UObject* InRoot, const IValue* From);
+			UObject* GetRoot() const;
+			FORCEINLINE const FResource* GetContainer() const { return Container; }
+			FORCEINLINE IValue* GetValue() { return Value; }
+			FORCEINLINE const IValue* GetValue() const { return Value; }
+			FORCEINLINE const FECsDamageValue& GetType() const { return Type; }
+
+			void CopyFrom(const FString& Context, UObject* InRoot, const IValue* From);
+
+			#define DataType NCsDamage::NData::IData
+			void CopyFrom(const FString& Context, UObject* InRoot, const DataType* Data);
+			#undef DataType
 
 			void CopyFrom(const FAllocated* From);
 

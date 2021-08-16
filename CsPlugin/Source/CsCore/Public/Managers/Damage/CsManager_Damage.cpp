@@ -57,7 +57,8 @@ namespace NCsManagerDamage
 UCsManager_Damage* UCsManager_Damage::s_Instance;
 bool UCsManager_Damage::s_bShutdown = false;
 
-UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer)
 {
 }
 
@@ -65,20 +66,26 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 #pragma region
 
 #if WITH_EDITOR
+
 /*static*/ UCsManager_Damage* UCsManager_Damage::Get(UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerDamage(InRoot)->GetManager_Damage();
 }
-#endif // #if WITH_EDITOR
+
+/*static*/ UCsManager_Damage* UCsManager_Damage::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerDamage* GetManagerDamage = GetSafe_GetManagerDamage(Context, Object, Log))
+		return GetManagerDamage->GetManager_Damage();
+	return nullptr;
+}
 
 /*static*/ bool UCsManager_Damage::IsValid(UObject* InRoot /*=nullptr*/)
 {
-#if WITH_EDITOR
 	return Get_GetManagerDamage(InRoot)->GetManager_Damage() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
 }
+
+#endif // #if WITH_EDITOR
+
 
 /*static*/ void UCsManager_Damage::Init(UObject* InRoot, TSubclassOf<UCsManager_Damage> ManagerDamageClass, UObject* InOuter /*=nullptr*/)
 {
@@ -169,19 +176,15 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 	return GetManagerDamage;
 }
 
-/*static*/ ICsGetManagerDamage* UCsManager_Damage::GetSafe_GetManagerDamage(UObject* Object)
+/*static*/ ICsGetManagerDamage* UCsManager_Damage::GetSafe_GetManagerDamage(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetSafe_GetManagerDamage: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetSafe_GetManagerDamage: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -189,18 +192,10 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Damage::GetSafe_GetManagerDamage: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerDamage>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Damage* UCsManager_Damage::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerDamage* GetManagerDamage = GetSafe_GetManagerDamage(Object))
-		return GetManagerDamage->GetManager_Damage();
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -291,6 +286,17 @@ void UCsManager_Damage::CleanUp()
 	}
 	// Range
 	Manager_Range.Shutdown();
+	// Modifier
+	{
+		for (const FECsDamageModifier& Modifier : EMCsDamageModifier::Get())
+		{
+			typedef NCsDamage::NModifier::FManager ModifierManagerType;
+
+			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
+
+			Manager.Shutdown();
+		}
+	}
 
 	delete DataHandler;
 	DataHandler = nullptr;
@@ -431,29 +437,25 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 	// Copy Value from Data, this can change with modifiers
 	typedef NCsDamage::NValue::IValue ValueType;
 
-	EventImpl->DamageValue.CopyFrom(MyRoot, Data->GetValue());
-	ValueType* Value = EventImpl->DamageValue.Value;
+	EventImpl->DamageValue.CopyFrom(Context, MyRoot, Data);
+	ValueType* Value = EventImpl->DamageValue.GetValue();
 
 	// Copy Range from Data, this can change with modifiers
 	typedef NCsDamage::NRange::IRange RangeType;
 
-	RangeType* Range = nullptr;
-
-	if (const RangeType* R = GetRange(Context, Data))
-	{
-		EventImpl->DamageRange.CopyFrom(MyRoot, R);
-		Range = EventImpl->DamageRange.Range;
-	}
+	EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, Data);
+	RangeType* Range = EventImpl->DamageRange.GetRange();
 
 	// Apply Modifiers
-	for (const ModifierResourceType* Modifier : Modifiers)
-	{
-		ModifyValue(Context, Modifier->Get(), Data, Value);
+	typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 
-		if (Range)
-		{
-			ModifyRange(Context, Modifier->Get(), Data, Range);
-		}
+	if (Range)
+	{
+		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Value, Range);
+	}
+	else
+	{
+		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Value);
 	}
 
 	EventImpl->Data		  = Data;
@@ -644,10 +646,12 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, ValueResourceTyp
 
 const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, const ValueType* Value)
 {
+	CS_IS_PTR_NULL_CHECKED(Value)
+
+	typedef NCsDamage::NValue::FLibrary ValueLibrary;
 	typedef NCsDamage::NValue::NPoint::IPoint PointType;
 	typedef NCsDamage::NValue::NRange::IRange RangeType;
 
-	typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 	// Point
 	if (ValueLibrary::GetSafeInterfaceChecked<PointType>(Context, Value))
@@ -656,32 +660,8 @@ const FECsDamageValue& UCsManager_Damage::GetValueType(const FString& Context, c
 	if (ValueLibrary::GetSafeInterfaceChecked<RangeType>(Context, Value))
 		return NCsDamageValue::Range;
 
+	checkf(0, TEXT("%s: Failed to determine type (FECsDamageValue) for Value."), *Context);
 	return EMCsDamageValue::Get().GetMAX();
-}
-
-ValueResourceType* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ValueType* Value)
-{
-	const FECsDamageValue& Type = GetValueType(Context, Value);
-
-	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("%s: Type: %s is NOT Valid."), Type.ToChar());
-
-	ValueResourceType* Container = AllocateValue(Type);
-	ValueType* Copy				 = Container->Get();
-
-	typedef NCsDamage::NValue::FLibrary ValueLibrary;
-
-	bool Success = ValueLibrary::CopyChecked(Context, Value, Copy);
-
-	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
-
-	return Container;
-}
-
-ValueResourceType* UCsManager_Damage::CreateCopyOfValue(const FString& Context, const ValueResourceType* Value)
-{
-	CS_IS_PTR_NULL_CHECKED(Value)
-
-	return CreateCopyOfValue(Context, Value->Get());
 }
 
 #undef ValueResourceType
@@ -717,42 +697,8 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 	Manager_Range.Deallocate(Range);
 }
 
-RangeResourceType* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const RangeType* Range)
-{
-	RangeResourceType* Container = AllocateRange();
-	RangeType* Copy				 = Container->Get();
-
-	typedef NCsDamage::NRange::FLibrary RangeLibrary;
-
-	bool Success = RangeLibrary::CopyChecked(Context, Range, Copy);
-
-	checkf(Success, TEXT("%s: Failed to create copy of Range."), *Context);
-
-	return Container;
-}
-
-RangeResourceType* UCsManager_Damage::CreateCopyOfRange(const FString& Context, const RangeResourceType* Range)
-{
-	return CreateCopyOfRange(Context, Range->Get());
-}
-
-#define DataType NCsDamage::NData::IData
-const RangeType* UCsManager_Damage::GetRange(const FString& Context, const DataType* Data)
-{
-#undef DataType
-
-	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
-
-	if (const RangeType* Value = DamageDataLibrary::GetRangeChecked(Context, Data))
-	{
-		return Value;
-	}
-	return nullptr;
-}
-
 #undef RangeResourceType
 #undef RangeType
-
 
 #pragma endregion  Range
 
@@ -772,68 +718,38 @@ ModifierResourceType* UCsManager_Damage::AllocateModifier()
 	return nullptr;
 }
 
-void UCsManager_Damage::DeallocateModifier(const FString& Context, ModifierResourceType* Modifier)
+void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier)
 {
-}
+	checkf(EMCsDamageModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::DeallocateModifier: Type: %s is NOT Valid."), Type.ToChar());
 
-ModifierResourceType* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier)
-{
-	ModifierResourceType* Container = AllocateModifier();
-	ModifierType* Copy				= Container->Get();
+	CS_IS_PTR_NULL_CHECKED(Modifier)
 
 	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
 
-	bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+	// Reset
+	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
+		IReset->Reset();
 
-	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
-
-	return Container;
+	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
 }
 
-ModifierResourceType* UCsManager_Damage::CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier)
+const FECsDamageModifier& UCsManager_Damage::GetModifierType(const FString& Context, const ModifierType* Modifier)
 {
-	return CreateCopyOfModifier(Context, Modifier->Get());
+	/*
+	typedef NCsDamage::NModifier::NValue::IValue ValueType;
+	typedef NCsDamage::NModifier::NRange::IRange RangeType;
+
+	typedef NCsDamage::NModifier::FLibrary ValueLibrary;
+
+	// Value
+	if (ValueLibrary::GetSafeInterfaceChecked<ValueType>(Context, Value))
+		return NCsDamageValue::Value;
+	// Range
+	if (ValueLibrary::GetSafeInterfaceChecked<RangeType>(Context, Value))
+		return NCsDamageValue::Range;
+	*/
+	return EMCsDamageModifier::Get().GetMAX();
 }
-
-void UCsManager_Damage::CreateCopyOfModifiers(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
-{
-	To.Reset(FMath::Max(To.Max(), From.Num()));
-
-	for (const ModifierType* Modifier : From)
-	{
-		To.Add(CreateCopyOfModifier(Context, Modifier));
-	}
-}
-
-#define DataType NCsDamage::NData::IData
-
-#define ValueType NCsDamage::NValue::IValue
-void UCsManager_Damage::ModifyValue(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
-{
-#undef ValueType
-
-	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
-
-	if (!ModifierLibrary::ModifyChecked(Context, Modifier, Data, Value))
-	{
-
-	}
-}
-
-#define RangesType NCsDamage::NRange::IRange
-void UCsManager_Damage::ModifyRange(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangesType* Range)
-{
-#undef RangesType
-
-	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
-
-	if (!ModifierLibrary::ModifyChecked(Context, Modifier, Data, Range))
-	{
-
-	}
-}
-
-#undef DataType
 
 #undef ModifierResourceType
 #undef ModifierType

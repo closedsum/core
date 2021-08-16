@@ -2,68 +2,101 @@
 #include "Managers/Damage/Value/CsAllocated_DamageValue.h"
 #include "CsCore.h"
 
-// Managers
-#include "Managers/Damage/CsManager_Damage.h"
+// Library
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
+#include "Library/CsLibrary_Valid.h"
+// Damage
+#include "Managers/Damage/Data/CsData_Damage.h"
+#include "Managers/Damage/Value/CsResource_DamageValue.h"
 
 namespace NCsDamage 
 {
 	namespace NValue
 	{
-		namespace NAllocatedCached
+		namespace NAllocated
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NValue::FAllocated, CopyFrom);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NValue::FAllocated, Reset);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NValue::FAllocated, CopyFrom);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NValue::FAllocated, Reset);
+				}
 			}
 		}
 
-		void FAllocated::CopyFrom(UObject* InRoot, const IValue* From)
+		FAllocated::~FAllocated()
 		{
-			using namespace NAllocatedCached;
+			Reset();
+		}
 
-			const FString& Context = Str::CopyFrom;
+		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-			checkf(InRoot, TEXT("%s: InRoot is NULL."), *Context);
+		void FAllocated::CopyFrom(const FString& Context, UObject* InRoot, const IValue* From)
+		{
+			CS_IS_PTR_NULL_CHECKED(InRoot)
 
-			checkf(From, TEXT("%s: From is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(From)
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			Root	  = InRoot;
-			Container = UCsManager_Damage::Get(Root)->CreateCopyOfValue(Context, From);
+			Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From);
 			Value	  = Container->Get();
-			Type	  = UCsManager_Damage::Get(Root)->GetValueType(Context, Value);
+			Type	  = DamageManagerLibrary::GetValueTypeChecked(Context, GetRoot(), Value);
+		}
+
+		#define DataType NCsDamage::NData::IData
+		void FAllocated::CopyFrom(const FString& Context, UObject* InRoot, const DataType* Data)
+		{
+		#undef DataType
+
+			CS_IS_PTR_NULL_CHECKED(InRoot)
+
+			CS_IS_PTR_NULL_CHECKED(Data)
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+			Root	  = InRoot;
+			Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), Data->GetValue());
+			Value	  = Container->Get();
+			Type	  = DamageManagerLibrary::GetValueTypeChecked(Context, GetRoot(), Value);
 		}
 
 		void FAllocated::CopyFrom(const FAllocated* From)
 		{
-			using namespace NAllocatedCached;
+			using namespace NCsDamage::NValue::NAllocated::NCached;
 
 			const FString& Context = Str::CopyFrom;
 
-			checkf(From->Root, TEXT("&s: From->Root is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(From->GetRoot())
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-			if (From->Container)
+			if (From->GetContainer())
 			{
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
 				Root	  = From->Root;
-				Container = UCsManager_Damage::Get(Root)->CreateCopyOfValue(Context, From->Container);
+				Container = DamageManagerLibrary::CreateCopyOfValueChecked(Context, GetRoot(), From->GetContainer());
 				Value	  = Container->Get();
-				Type	  = UCsManager_Damage::Get(Root)->GetValueType(Context, Value);
+				Type	  = DamageManagerLibrary::GetValueTypeChecked(Context, GetRoot(), Value);
 			}
 		}
 
 		void FAllocated::Reset()
 		{
-			using namespace NAllocatedCached;
+			using namespace NCsDamage::NValue::NAllocated::NCached;
 
 			const FString& Context = Str::Reset;
 
 			if (Container)
 			{
-				checkf(Root, TEXT("%s: Root is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				UCsManager_Damage::Get(Root)->DeallocateValue(Context, Type, Container);
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+				DamageManagerLibrary::DeallocateValueChecked(Context, GetRoot(), Type, Container);
 			}
 
 			Root	  = nullptr;

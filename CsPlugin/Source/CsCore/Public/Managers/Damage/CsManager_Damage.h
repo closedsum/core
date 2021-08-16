@@ -1,21 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#pragma once
 #include "UObject/Object.h"
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Damage
 #include "Managers/Damage/Event/CsDamageEvent.h"
-#include "Managers/Damage/Value/CsDamageValue.h"
+#include "Managers/Damage/Value/CsResource_DamageValue.h"
 #include "Managers/Damage/Range/CsDamageRange.h"
-#include "Managers/Damage/Modifier/CsDamageModifier.h"
+#include "Managers/Damage/Modifier/CsResource_DamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
 #include "Managers/Damage/Data/CsTypes_Data_Damage.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
+#include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 
 #include "CsManager_Damage.generated.h"
+#pragma once
 
 // Structs
 #pragma region
@@ -39,23 +40,6 @@ namespace NCsDamage
 		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IEvent, FResource, 0> {};
 	}
 
-	namespace NValue
-	{
-		// NCsDamage::NValue::IValue
-
-		/**
-		* Container for holding a reference to an object that implements the interface: NCsDamage::NValue::IValue.
-		* This serves as an easy way for a Manager Resource to keep track of the resource.
-		*/
-		struct CSCORE_API FResource : public TCsResourceContainer<IValue> {};
-
-		/**
-		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NValue::IValue and
-		* are wrapped in the container: NCsDamage:;NValue::FResource.
-		*/
-		struct CSCORE_API FManager : public TCsManager_ResourcePointerType_Fixed<IValue, FResource, 0> {};
-	}
-
 	namespace NRange
 	{
 		// NCsDamage::NRange::IRange
@@ -71,23 +55,6 @@ namespace NCsDamage
 		* are wrapped in the container: NCsDamage::NRange::FResource.
 		*/
 		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IRange, FResource, 0> {};
-	}
-
-	namespace NModifier
-	{
-		// NCsDamage::NModifier::IModifier
-
-		/**
-		* Container for holding a reference to an object that implements the interface: NCsDamage::NModifier::IModifier.
-		* This serves as an easy way for a Manager Resource to keep track of the resource.
-		*/
-		struct CSCORE_API FResource : public TCsResourceContainer<IModifier> {};
-
-		/**
-		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
-		* are wrapped in the container: NCsDamage::NModifer::FResource.
-		*/
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IModifier, FResource, 0> {};
 	}
 }
 
@@ -153,7 +120,23 @@ FORCEINLINE static UCsManager_Damage* Get(UObject* InRoot = nullptr)
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
+	static UCsManager_Damage* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_Damage* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Damage> ManagerDamageClass, UObject* InOuter = nullptr);
 	
@@ -164,9 +147,7 @@ FORCEINLINE static UCsManager_Damage* Get(UObject* InRoot = nullptr)
 protected:
 
 	static ICsGetManagerDamage* Get_GetManagerDamage(UObject* InRoot);
-	static ICsGetManagerDamage* GetSafe_GetManagerDamage(UObject* Object);
-
-	static UCsManager_Damage* GetSafe(UObject* Object);
+	static ICsGetManagerDamage* GetSafe_GetManagerDamage(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -341,28 +322,6 @@ public:
 	*/
 	virtual const FECsDamageValue& GetValueType(const FString& Context, const ValueType* Value);
 
-	/**
-	*
-	*
-	* @param Context	The calling context.
-	* @param Value
-	* return
-	*/
-	virtual ValueResourceType* CreateCopyOfValue(const FString& Context, const ValueType* Value);
-
-	/**
-	*
-	*
-	* @param Context	The calling context.
-	* @param Value
-	* return
-	*/
-	virtual ValueResourceType* CreateCopyOfValue(const FString& Context, const ValueResourceType* Value);
-
-protected:
-
-	//void LogValue(const NCsDamage::NValue::IValue* Value);
-
 #pragma endregion Value
 
 // Range
@@ -379,24 +338,13 @@ public:
 
 	void DeallocateRange(const FString& Context, RangeResourceType* Range);
 
-	RangeResourceType* CreateCopyOfRange(const FString& Context, const RangeType* Range);
-
-	RangeResourceType* CreateCopyOfRange(const FString& Context, const RangeResourceType* Range);
-
-	/**
-	*
-	*
-	* @param Context	The calling context.
-	* @param Data
-	* return
-	*/
-	virtual const RangeType* GetRange(const FString& Context, const DataType* Data);
-
 #pragma endregion Range
 
 // Modifier
 #pragma region
 protected:
+
+	TArray<ModifierManagerType> Manager_Modifiers;
 
 	virtual ModifierType* ConstructModifier();
 
@@ -404,17 +352,16 @@ public:
 
 	ModifierResourceType* AllocateModifier();
 
-	void DeallocateModifier(const FString& Context, ModifierResourceType* Modifier);
+	void DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier);
 
-	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier);
-
-	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
-	
-	void CreateCopyOfModifiers(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
-
-	virtual void ModifyValue(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value);
-
-	virtual void ModifyRange(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range);
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
+	virtual const FECsDamageModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
 
 #pragma endregion Modifier
 

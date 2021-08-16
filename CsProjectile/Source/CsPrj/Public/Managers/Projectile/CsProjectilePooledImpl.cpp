@@ -40,6 +40,9 @@
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
+// Damage
+#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
@@ -499,9 +502,14 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 		if (DamageDataType* DamageData = PrjDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
 		{
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+			
+			// Apply Modifiers
+
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
-			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit, DamageImpl.Modifiers);
+			//DamageManagerLibrary::ProcessDataChecked(Context, this, DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit, DamageImpl.Modifiers);
 		}
 	}
 
@@ -873,3 +881,41 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 }
 
 #pragma endregion Launch
+
+// Damage
+#pragma region
+
+ACsProjectilePooledImpl::FDamageImpl::FDamageImpl() :
+	Outer(nullptr),
+	Type(),
+	ValuePoint(nullptr),
+	ValueRange(nullptr),
+	Modifiers()
+{
+	typedef NCsDamage::NValue::NPoint::FImpl PointType;
+	typedef NCsDamage::NValue::NRange::FImpl RangeType;
+
+	ValuePoint = new PointType();
+	ValueRange = new RangeType();
+}
+
+ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
+{
+	delete ValuePoint;
+	ValuePoint = nullptr;
+
+	delete ValueRange;
+	ValueRange = nullptr;
+
+	Modifiers.Reset();
+}
+
+void ACsProjectilePooledImpl::FDamageImpl::Reset()
+{
+	ValuePoint->Reset();
+	ValueRange->Reset();
+
+	Modifiers.Reset(Modifiers.Max());
+}
+
+#pragma endregion Damage

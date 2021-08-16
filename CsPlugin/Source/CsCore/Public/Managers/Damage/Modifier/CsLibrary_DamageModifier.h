@@ -1,8 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/CsDamageModifier.h"
+// Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
-// Types
-#include "Types/CsTypes_Macro.h"
+// Damage
+#include "Managers/Damage/Modifier/CsDamageModifier.h"
+#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
 #pragma once
 
 // NCsDamage::NValue::IValue
@@ -11,6 +12,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+// NCsDamage::NModifier::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 
 namespace NCsDamage
 {
@@ -64,6 +67,22 @@ namespace NCsDamage
 		* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
 		*/
 		static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range);
+
+	#define ModifierResourceType NCsDamage::NModifier::FResource
+
+		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range);
+
+		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value);
+
+	#undef ModifierResourceType
+
+	#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+
+		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range);
+
+		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value);
+
+	#undef AllocatedModifierType
 
 	#undef DataType
 	#undef ValueType

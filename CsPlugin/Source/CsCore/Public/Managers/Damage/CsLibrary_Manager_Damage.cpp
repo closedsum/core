@@ -1,11 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
+// Library
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Managers/Damage/Range/CsLibrary_DamageRange.h"
+#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Damage/CsManager_Damage.h"
-#include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
 // Library
@@ -81,7 +83,7 @@ namespace NCsDamage
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_Damage* Manager_Damage = UCsManager_Damage::Get(ContextRoot);
+			UCsManager_Damage* Manager_Damage = UCsManager_Damage::GetSafe(Context, ContextRoot, Log);
 
 			if (!Manager_Damage)
 			{
@@ -128,20 +130,156 @@ namespace NCsDamage
 
 		#pragma endregion Event
 
+		// Value
+		#pragma region
+
+		#define ValueResourceType NCsDamage::NValue::FResource
+		#define ValueType NCsDamage::NValue::IValue
+
+		void FLibrary::DeallocateValueChecked(const FString& Context, const UObject* WorldContext, const FECsDamageValue& Type, ValueResourceType* Value)
+		{
+			GetChecked(Context, WorldContext)->DeallocateValue(Context, Type, Value);
+		}
+
+		const FECsDamageValue& FLibrary::GetValueTypeChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value)
+		{
+			return GetChecked(Context, WorldContext)->GetValueType(Context, Value);
+		}
+
+		ValueResourceType* FLibrary::CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value)
+		{
+			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
+
+			const FECsDamageValue& Type  = Manager_Damage->GetValueType(Context, Value);
+			ValueResourceType* Container = Manager_Damage->AllocateValue(Type);
+			ValueType* Copy				 = Container->Get();
+
+			typedef NCsDamage::NValue::FLibrary ValueLibrary;
+
+			bool Success = ValueLibrary::CopyChecked(Context, Value, Copy);
+
+			checkf(Success, TEXT("%s: Failed to create copy of Value."), *Context);
+
+			return Container;
+		}
+
+		ValueResourceType* FLibrary::CreateCopyOfValueChecked(const FString& Context, const UObject* WorldContext, const ValueResourceType* Value)
+		{
+			CS_IS_PTR_NULL_CHECKED(Value)
+
+			return CreateCopyOfValueChecked(Context, WorldContext, Value->Get());
+		}
+
+		#undef ValueResourceType
+		#undef ValueType
+
+		#pragma endregion Value
+
+		// Range
+		#pragma region
+
+		#define RangeResourceType NCsDamage::NRange::FResource
+		#define RangeType NCsDamage::NRange::IRange
+
+		void FLibrary::DeallocateRangeChecked(const FString& Context, const UObject* WorldContext, RangeResourceType* Range)
+		{
+			GetChecked(Context, WorldContext)->DeallocateRange(Context, Range);
+		}
+
+		RangeResourceType* FLibrary::CreateCopyOfRangeChecked(const FString& Context, const UObject* WorldContext, const RangeType* Range)
+		{
+			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
+
+			RangeResourceType* Container = Manager_Damage->AllocateRange();
+			RangeType* Copy				 = Container->Get();
+
+			typedef NCsDamage::NRange::FLibrary RangeLibrary;
+
+			bool Success = RangeLibrary::CopyChecked(Context, Range, Copy);
+
+			checkf(Success, TEXT("%s: Failed to create copy of Range."), *Context);
+
+			return Container;
+		}
+
+		RangeResourceType* FLibrary::CreateCopyOfRangeChecked(const FString& Context, const UObject* WorldContext, const RangeResourceType* Range)
+		{
+			CS_IS_PTR_NULL_CHECKED(Range)
+
+			return CreateCopyOfRangeChecked(Context, WorldContext, Range->Get());
+		}
+
+		#undef RangeResourceType
+		#undef RangeType
+
+		#pragma endregion Range
+
 		// Modifier
 		#pragma region
 
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 		#define ModifierType NCsDamage::NModifier::IModifier
-		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+		#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+		
+		void FLibrary::DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsDamageModifier& Type, ModifierResourceType* Modifier)
 		{
-		#undef ModifierResourceType
-		#undef ModifierType
-
-			GetChecked(Context, WorldContext)->CreateCopyOfModifiers(Context, From, To);
+			GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
 		}
 
-		
+		const FECsDamageModifier& FLibrary::GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+		{
+			return GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+		}
+
+		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+		{
+			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
+
+			ModifierResourceType* Container = Manager_Damage->AllocateModifier();
+			ModifierType* Copy				= Container->Get();
+
+			typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
+
+			bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+
+			checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+
+			return Container;
+		}
+
+		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
+		{
+			CS_IS_PTR_NULL_CHECKED(Modifier)
+
+			return CreateCopyOfModifierChecked(Context, WorldContext, Modifier->Get());
+		}
+
+		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+		{
+			To.Reset(FMath::Max(To.Max(), From.Num()));
+
+			for (const ModifierType* Modifier : From)
+			{
+				To.Add(CreateCopyOfModifierChecked(Context, WorldContext, Modifier));
+			}
+		}
+
+		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+		{
+			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+
+			To.Reset(FMath::Max(To.Max(), From.Num()));
+
+			for (const ModifierType* Modifier : From)
+			{
+				AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
+				Allocated.CopyFrom(ContextRoot, Modifier);
+			}
+		}
+
+#		undef ModifierResourceType
+		#undef ModifierType
+		#undef AllocatedModifierType
 
 		#pragma endregion Modifier
 
@@ -166,12 +304,24 @@ namespace NCsDamage
 
 		
 		#define ModifierResourceType NCsDamage::NModifier::FResource
+
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 		{
-		#undef ModifierResourceType
-
 			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 		}
+
+		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				CS_IS_PTR_NULL(Data)
+
+				CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierResourceType)
+			}
+			return false;
+		}
+
+		#undef ModifierResourceType
 
 		#undef DataType
 

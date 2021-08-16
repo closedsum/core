@@ -82,7 +82,7 @@ namespace NCsDamage
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
 				typedef NCsDamage::NValue::NPoint::IPoint PointType;
 
-				PointType* DamageValuePoint = ValueLibrary::GetInterfaceChecked<PointType>(Context, DamageValue.Value);
+				PointType* DamageValuePoint = ValueLibrary::GetInterfaceChecked<PointType>(Context, DamageValue.GetValue());
 				Damage						= DamageValuePoint->GetValue();
 				return true;
 			}

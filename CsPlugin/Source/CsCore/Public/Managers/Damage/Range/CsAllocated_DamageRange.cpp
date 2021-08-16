@@ -2,6 +2,10 @@
 #include "Managers/Damage/Range/CsAllocated_DamageRange.h"
 #include "CsCore.h"
 
+// Library
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Damage/CsManager_Damage.h"
 
@@ -18,18 +22,49 @@ namespace NCsDamage
 			}
 		}
 
-		void FAllocated::CopyFrom(UObject* InRoot, const IRange* From)
+		FAllocated::~FAllocated()
 		{
-			using namespace NAllocatedCached;
+			Reset();
+		}
 
-			const FString& Context = Str::CopyFrom;
+		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-			checkf(InRoot, TEXT("%s: InRoot is NULL."), *Context);
+		void FAllocated::CopyFrom(const FString& Context, UObject* InRoot, const IRange* From)
+		{
+			CS_IS_PTR_NULL_CHECKED(InRoot)
 
-			checkf(From, TEXT("%s: From is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(From)
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			Root	  = InRoot;
-			Container = UCsManager_Damage::Get(Root)->CreateCopyOfRange(Context, From);
+			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From);
+			Range	  = Container->Get();
+		}
+
+		#define DataType NCsDamage::NData::IData
+		void FAllocated::SafeCopyFrom(const FString& Context, UObject* InRoot, const DataType* Data, void(*Log)(const FString&) /*=nullptr*/)
+		{
+		#undef DataType
+
+			CS_IS_PTR_NULL_CHECKED(InRoot)
+
+			CS_IS_PTR_NULL_EXIT(Data)
+
+			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+
+			const IRange* From = DamageDataLibrary::GetSafeInterfaceChecked<IRange>(Context, Data);
+
+			if (!From)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data does NOT implement the interface: %s."), *Context, *(IRange::Name.ToString())));
+				return;
+			}
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+			Root	  = InRoot;
+			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From);
 			Range	  = Container->Get();
 		}
 
@@ -39,14 +74,16 @@ namespace NCsDamage
 
 			const FString& Context = Str::CopyFrom;
 
-			checkf(From->Root, TEXT("&s: From->Root is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(From->GetRoot())
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-			if (From->Container)
+			if (From->GetContainer())
 			{
-				Root	  = From->Root;
-				Container = UCsManager_Damage::Get(Root)->CreateCopyOfRange(Context, From->Container);
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+				Root	  = From->GetRoot();
+				Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetContainer());
 				Range	  = Container->Get();
 			}
 		}
@@ -59,9 +96,11 @@ namespace NCsDamage
 
 			if (Container)
 			{
-				checkf(Root, TEXT("%s: Root is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				UCsManager_Damage::Get(Root)->DeallocateRange(Context, Container);
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+				DamageManagerLibrary::DeallocateRangeChecked(Context, GetRoot(), Container);
 			}
 
 			Root	  = nullptr;

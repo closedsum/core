@@ -87,8 +87,8 @@ namespace NCsDamage
 		public:
 
 			FORCEINLINE const float& GetDamage() const { return Damage; }
-			FORCEINLINE const ValueType* GetDamageValue() const { return DamageValue.Value; }
-			FORCEINLINE const RangeType* GetDamageRange() const { return DamageRange.Range; }
+			FORCEINLINE const ValueType* GetDamageValue() const { return DamageValue.GetValue(); }
+			FORCEINLINE const RangeType* GetDamageRange() const { return DamageRange.GetRange(); }
 			FORCEINLINE DataType* GetData() const { return Data; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetCauser() const { return Causer; }

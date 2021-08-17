@@ -11,6 +11,7 @@
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
@@ -205,6 +206,12 @@ void UCsManager_Damage::Initialize()
 	using namespace NCsManagerDamage::NCached;
 
 	const FString& Context = Str::Initialize;
+
+	// Populate EnumMaps
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+	NCsDamageType::PopulateEnumMapFromSettings(Context, GameInstanceLibrary::GetSafeAsObject(MyRoot));
+	NCsDamageData::PopulateEnumMapFromSettings(Context, GameInstanceLibrary::GetSafeAsObject(MyRoot));
 
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
@@ -790,6 +797,17 @@ void UCsManager_Damage::ConstructDataHandler()
 }
 
 #define DataType NCsDamage::NData::IData
+
+DataType* UCsManager_Damage::GetDataChecked(const FString& Context, const FName& Name)
+{
+	return DataHandler->GetDataChecked(Context, Name);
+}
+
+DataType* UCsManager_Damage::GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) /*=nullptr*/)
+{
+	return DataHandler->GetSafeData(Context, Name, Log);
+}
+
 #define ModifierResourceType NCsDamage::NModifier::FResource
 #define ValueType NCsDamage::NValue::IValue
 

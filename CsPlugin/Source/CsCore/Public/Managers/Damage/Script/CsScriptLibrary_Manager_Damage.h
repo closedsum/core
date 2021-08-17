@@ -23,8 +23,8 @@ public:
 	* @param Causer
 	* @param HitResult
 	*/
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Managers/Damage", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,HitResult"))
-	static bool ProcessData(const FString& Context, const UObject* WorldContextObject, UObject* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Managers/Damage", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,DataName,HitResult"))
+	static bool ProcessData(const FString& Context, const UObject* WorldContextObject, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
 #pragma endregion Data
 };

@@ -372,11 +372,30 @@ public:
 
 	FORCEINLINE DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
 
-
 #undef DataHandlerType
 #undef DataInterfaceMapType
 
 public:
+
+	/**
+	* Get the Data (implements interface: DataType (NCsData::NData::IData)) associated with Name of the projectile type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Projectile.
+	* return			Data that implements the interface: DataType (NCsData::NData::IData).
+	*/
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
+
+	/**
+	* Safely get the Data (implements interface: DataType (NCsData::NData::IData)) associated with Name of the weapon type.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Weapon.
+	* @param Log		(optional)
+	* return			Data that implements the interface: DataType (NCsData::NData::IData).
+	*/
+	DataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) = nullptr);
 
 	void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 

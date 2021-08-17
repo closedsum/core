@@ -2,6 +2,7 @@
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 
 // Library
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
@@ -311,9 +312,33 @@ namespace NCsDamage
 		{
 			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
 			{
-				CS_IS_PTR_NULL(Data)
+				typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+
+				if (!DamageDataLibrary::IsValid(Context, Data))
+					return false;
 
 				CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierResourceType)
+
+				Manager_Damage->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
+				return true;
+			}
+			return false;
+		}
+
+		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				DataType* Data = Manager_Damage->GetSafeData(Context, DataName, Log);
+
+				typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+
+				if (!DamageDataLibrary::IsValid(Context, Data))
+					return false;
+
+				TArray<ModifierResourceType*> Modifiers;
+				Manager_Damage->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
+				return true;
 			}
 			return false;
 		}

@@ -21,10 +21,13 @@ namespace NCsDamage
 		*/
 		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<DataType>
 		{
+		public:
+
+			static bool IsValidChecked(const FString& Context, const DataType* Data);
+
+			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#define RangeType NCsDamage::NRange::IRange
-
-		public:
 
 			/**
 			*

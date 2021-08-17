@@ -1,6 +1,22 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/CsTypes_Damage.h"
 
+// DamageType
+#pragma region
+
+namespace NCsDamageType
+{
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		EMCsDamageType::Get().ClearUserDefinedEnums();
+	}
+}
+
+#pragma endregion DamageType
+
+// HitDirection
+#pragma region
+
 namespace NCsHitDirection
 {
 	namespace Ref
@@ -16,3 +32,5 @@ namespace NCsHitDirection
 		CSCORE_API const Type ECsHitDirection_MAX = EMCsHitDirection::Get().Add(Type::ECsHitDirection_MAX, TEXT("ECsHitDirection_MAX"), TEXT("MAX"));
 	}
 }
+
+#pragma endregion HitDirection

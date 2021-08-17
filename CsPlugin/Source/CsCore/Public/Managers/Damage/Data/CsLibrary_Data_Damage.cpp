@@ -10,9 +10,28 @@ namespace NCsDamage
 {
 	namespace NData
 	{
-		#define RangeType NCsDamage::NRange::IRange
 		#define DataType NCsDamage::NData::IData
 
+		bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
+		{
+			CS_IS_PTR_NULL_CHECKED(Data)
+
+			CS_IS_PTR_NULL_CHECKED(Data->GetValue())
+
+			return true;
+		}
+
+		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(Data)
+
+			CS_IS_PTR_NULL(Data->GetValue())
+
+			return true;
+		}
+
+		#define RangeType NCsDamage::NRange::IRange
+		
 		const RangeType* FLibrary::GetRangeChecked(const FString& Context, const DataType* Data)
 		{
 			CS_IS_PTR_NULL_CHECKED(Data)
@@ -48,6 +67,7 @@ namespace NCsDamage
 		}
 
 		#undef RangeType
+
 		#undef DataType
 	}
 }

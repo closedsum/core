@@ -26,7 +26,7 @@ UCsScriptLibrary_Manager_Damage::UCsScriptLibrary_Manager_Damage(const FObjectIn
 {
 }
 
-bool UCsScriptLibrary_Manager_Damage::ProcessData(const FString& Context, const UObject* WorldContextObject, UObject* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+bool UCsScriptLibrary_Manager_Damage::ProcessData(const FString& Context, const UObject* WorldContextObject, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 {
 	using namespace NCsScriptLibraryManagerDamage::NCached;
 
@@ -34,6 +34,5 @@ bool UCsScriptLibrary_Manager_Damage::ProcessData(const FString& Context, const 
 
 	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
-
-	return false;
+	return DamageManagerLibrary::SafeProcessData(Context, WorldContextObject, DataName, Instigator, Causer, HitResult);
 }

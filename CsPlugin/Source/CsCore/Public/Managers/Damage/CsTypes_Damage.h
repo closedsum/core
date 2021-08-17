@@ -29,10 +29,7 @@ namespace NCsDamageType
 {
 	typedef FECsDamageType Type;
 
-	namespace Ref
-	{
-
-	}
+	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 
 #pragma endregion DamageType

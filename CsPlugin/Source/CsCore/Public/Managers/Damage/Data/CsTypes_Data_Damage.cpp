@@ -3,6 +3,19 @@
 
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
+// DamageData
+#pragma region
+
+namespace NCsDamageData
+{
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		EMCsDamageData::Get().ClearUserDefinedEnums();
+	}
+}
+
+#pragma endregion DamageData
+
 // FCsData_DamagePoint
 #pragma region
 

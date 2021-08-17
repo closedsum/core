@@ -324,6 +324,20 @@ namespace NCsDamage
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param DataName
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Value
 			* @param Data
 			* @param Instigator

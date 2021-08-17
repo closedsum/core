@@ -129,6 +129,12 @@ FCollisionShape FCsCollisionShape::ToShape() const
 
 bool FCsCollisionShape::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
+	if (Type == ECsCollisionShapeType::ECsCollisionShapeType_MAX)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Type: ECsCollisionShapeType::ECsCollisionShapeType_MAX is NOT Valid."), *Context));
+		return false;
+	}
+
 	// Box
 	if (Type == ECsCollisionShapeType::Box)
 	{

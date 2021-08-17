@@ -4,11 +4,13 @@
 // Library
 #include "Kismet/GameplayStatics.h"
 #include "Library/CsLibrary_Viewport.h"
+#include "Game/CsLibrary_GameState.h"
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Valid.h"
-#include "Game/CsLibrary_GameState.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
+// Components
+#include "Components/CapsuleComponent.h"
 
 namespace NCsTrace
 {
@@ -183,6 +185,49 @@ namespace NCsTrace
 			const FString& Context = Str::SafeTrace;
 
 			return SafeTrace(Context, WorldContext, Request, nullptr);
+		}
+
+		ResponseType* FLibrary::SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Component)
+
+			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
+
+			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleHalfHeight(), 0.0f)
+
+			const ECollisionChannel Channel = Component->GetCollisionObjectType();
+
+			if (Channel == ECollisionChannel::ECC_MAX ||
+				Channel == ECollisionChannel::ECC_OverlapAll_Deprecated)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component->GetCollisionObjectType() == (ECollisionChannel::ECC_MAX || ECollisionChannel::ECC_OverlapAll_Deprecated) is NOT Valid."), *Context))
+				return nullptr;
+			}
+
+			const FCollisionResponseContainer& Container = Component->GetCollisionResponseToChannels();
+
+			if (!NCsCollisionResponseContainer::IsValid(Context, Container, Log))
+				return nullptr;
+				
+			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_Trace)
+				return nullptr;
+
+			RequestType* Request = Manager_Trace->AllocateRequest();
+
+			Request->Type = ECsTraceType::Sweep;
+			Request->Method = ECsTraceMethod::Multi;
+			Request->Query = ECsTraceQuery::Channel;
+			Request->Start = Component->GetComponentLocation();
+			Request->End = Component->GetComponentLocation();
+			Request->Rotation = Component->GetComponentRotation();
+			Request->SetShape(Component);
+			Request->Channel = Channel;
+			Request->Params = Params;
+			Request->ResponseParams.CollisionResponse = Container;
+
+			return Manager_Trace->Trace(Request);
 		}
 
 		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)

@@ -3,8 +3,10 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
-
+// Object
 #include "UniqueObject/CsUniqueObject.h"
+// Components
+#include "Components/CapsuleComponent.h"
 
 namespace NCsTraceRequest
 {
@@ -189,6 +191,11 @@ namespace NCsTrace
 		UObject* FRequest::GetCaller() const
 		{
 			return Caller.IsValid() ? Caller.Get() : nullptr;
+		}
+
+		void FRequest::SetShape(UCapsuleComponent* Component)
+		{
+			Shape.SetCapsule(Component->GetScaledCapsuleRadius(), Component->GetScaledCapsuleHalfHeight());
 		}
 
 		void FRequest::Update(const FCsDeltaTime& DeltaTime)

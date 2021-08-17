@@ -20,6 +20,8 @@ struct FCsTraceResponse;
 // NCsTrace::NRequest::FRequest
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
+class UCapsuleComponent;
+
 /**
 */
 USTRUCT(BlueprintType)
@@ -304,6 +306,8 @@ namespace NCsTrace
 			void SetCaller(UObject* InCaller);
 
 			UObject* GetCaller() const;
+
+			void SetShape(UCapsuleComponent* Component);
 
 			FORCEINLINE bool HasExpired() const
 			{

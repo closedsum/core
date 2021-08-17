@@ -21,6 +21,7 @@ namespace NCsScriptLibraryManagerTrace
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, Trace);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, LineTraceSingleByChannel);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Trace, SweepByCapsuleComponent);
 		}
 	}
 }
@@ -108,3 +109,30 @@ bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Con
 }
 
 #pragma endregion Line
+
+// Capsule
+#pragma region
+
+bool UCsScriptLibrary_Manager_Trace::SweepByCapsuleComponent(const FString& Context, UObject* WorldContextObject, UCapsuleComponent* CapsuleComponent, const FCsCollisionQueryParams& Params, FCsTraceResponse& OutResponse)
+{
+	using namespace NCsScriptLibraryManagerTrace::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SweepByCapsuleComponent : Context;
+
+	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+	typedef NCsTrace::NResponse::FResponse ResponseType;
+
+	static FCollisionQueryParams QueryParams = FCollisionQueryParams::DefaultQueryParam;
+	Params.CopyToParams(QueryParams);
+
+	ResponseType* ResponsePtr = TraceManagerLibrary::SafeSweep(Ctxt, WorldContextObject, CapsuleComponent, QueryParams);
+
+	if (ResponsePtr)
+	{
+		OutResponse.CopyFromResponse(ResponsePtr);
+		return OutResponse.OutHits.Num() > CS_EMPTY;
+	}
+	return false;
+}
+
+#pragma endregion Capsule

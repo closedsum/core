@@ -204,6 +204,34 @@ struct CSCORE_API FCsCollisionShape
 
 #pragma endregion FCsCollisionShape
 
+namespace NCsCollisionResponseContainer
+{
+	
+	static bool IsValid(const FString& Context, const FCollisionResponseContainer& CollisionResponses, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		bool bAllIgnore = true;
+
+		for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
+		{
+			const ECollisionResponse Response = CollisionResponses.GetResponse(Channel);
+
+			if (Response != ECR_Ignore &&
+				Response != ECR_MAX)
+			{
+				bAllIgnore = false;
+				break;
+			}
+		}
+
+		if (bAllIgnore)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context));
+		}
+		return !bAllIgnore;
+	}
+}
+
 // FCsCollisionPreset
 #pragma region
 

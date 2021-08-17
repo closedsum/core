@@ -1,10 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-
 // Types
-#include "Engine/EngineTypes.h"
-#include "Types/CsTypes_Macro.h"
-// Log
-#include "Utility/CsLog.h"
+#include "Collision/CsTypes_Collision.h"
 
 #pragma once
 
@@ -15,6 +11,8 @@ class UCsManager_Trace;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 // NCsTrace::NResponse::FResponse
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
+
+class UCapsuleComponent;
 
 namespace NCsTrace
 {
@@ -183,7 +181,7 @@ namespace NCsTrace
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Request
-			* @param Log
+			* @param Log			(optional)
 			* return				Response
 			*/
 			static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -196,6 +194,18 @@ namespace NCsTrace
 			* return				Response
 			*/
 			static ResponseType* SafeTrace(const UObject* WorldContext, RequestType* Request);
+
+			/**
+			* Safely perform a sweep using the collision information from the CapsuleComponent.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Component
+			* @param Params
+			* @param Log			(optional)
+			* @param 
+			*/
+			static ResponseType* SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* 

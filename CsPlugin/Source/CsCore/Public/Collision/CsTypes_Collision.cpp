@@ -273,6 +273,209 @@ CSCORE_API const FHitResult NCsCollision::NHit::Default = FHitResult();
 
 #pragma endregion Collision
 
+namespace NCsCollisionQueryParams
+{
+	void ResetComponentListUnique(FCollisionQueryParams& Params)
+	{
+		// A bit of a hack to get access to Params.bComponentListUnique, which is private.
+		// Access is needed to when calling Reset
+
+		// Get pointer to start of Params.StatId
+		//FName* TraceTag = ((FName*)(&Params));
+		//char* Base = (char*)TraceTag;
+		TStatId* StatdId = &(Params.StatId);
+		char* Base = (char*)StatdId;
+
+		size_t Offset = 0;
+		/*
+		// Offset by TraceTag
+		size_t Offset = sizeof(FName);
+		// Offset by OwnerTag
+		Offset += sizeof(FName);
+		// Offset by bTraceComplex
+		Offset += sizeof(bool);
+		// Offset by bFindInitialOverlaps
+		Offset += sizeof(bool);
+		// Offset by bReturnFaceIndex
+		Offset += sizeof(bool);
+		// Offset by bReturnPhysicalMaterial
+		Offset += sizeof(bool);
+		// Offset by bIgnoreBlocks
+		Offset += sizeof(bool);
+		// Offset by bIgnoreTouches
+		Offset += sizeof(bool);
+		// Offset by bSkipNarrowPhase
+		Offset += sizeof(bool);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 1;
+		// Offset by MobilityType
+		Offset += sizeof(EQueryMobilityType);
+		// Offset by IgnoreMask
+		Offset += sizeof(FMaskFilter);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 3;
+		*/
+		// Offset by StatId
+		Offset += sizeof(TStatId);
+#if !(UE_BUILD_TEST || UE_BUILD_SHIPPING)
+		// Offset by bDebugQuery
+		Offset += sizeof(bool);
+#endif
+		*((bool*)(Base + Offset)) = true;
+	}
+
+	TArray<uint32, TInlineAllocator<8>>& GetIgnoreComponents(FCollisionQueryParams& Params)
+	{
+		// A bit of a hack to get access to Params.IgnoreComponents, which is private.
+		// Access is needed to efficiently reset the Array.
+
+		// Get pointer to start of Params.StatId
+		//FName* TraceTag = ((FName*)(&Params));
+		TStatId* StatdId = &(Params.StatId);
+		char* Base = (char*)StatdId;
+
+		size_t Offset = 0;
+		/*
+		// Offset by TraceTag
+		size_t Offset = sizeof(FName);
+		// Offset by OwnerTag
+		Offset += sizeof(FName);
+		// Offset by bTraceComplex
+		Offset += sizeof(bool);
+		// Offset by bFindInitialOverlaps
+		Offset += sizeof(bool);
+		// Offset by bReturnFaceIndex
+		Offset += sizeof(bool);
+		// Offset by bReturnPhysicalMaterial
+		Offset += sizeof(bool);
+		// Offset by bIgnoreBlocks
+		Offset += sizeof(bool);
+		// Offset by bIgnoreTouches
+		Offset += sizeof(bool);
+		// Offset by bSkipNarrowPhase
+		Offset += sizeof(bool);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 1;
+		// Offset by MobilityType
+		Offset += sizeof(EQueryMobilityType);
+		// Offset by IgnoreMask
+		Offset += sizeof(FMaskFilter);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 3;
+		*/
+		// Offset by StatId
+		Offset += sizeof(TStatId);
+#if !(UE_BUILD_TEST || UE_BUILD_SHIPPING)
+		// Offset by bDebugQuery
+		Offset += sizeof(bool);
+#endif
+		// Offset by bComponentListUnique
+		Offset += sizeof(bool);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 6;
+
+		return *((TArray<uint32, TInlineAllocator<8>>*)(Base + Offset));
+	}
+
+	TArray<uint32, TInlineAllocator<4>>& GetIgnoreActors(FCollisionQueryParams& Params)
+	{
+		// A bit of a hack to get access to Params.IgnoreActors, which is private.
+		// Access is needed to efficiently reset the Array.
+
+		// Get pointer to start of struct
+		//FName* TraceTag = ((FName*)(&Params));
+		//char* Base = (char*)TraceTag;
+		TStatId* StatdId = &(Params.StatId);
+		char* Base = (char*)StatdId;
+
+		size_t Offset = 0;
+		/*
+		// Offset by TraceTag
+		size_t Offset = sizeof(FName);
+		// Offset by OwnerTag
+		Offset += sizeof(FName);
+		// Offset by bTraceComplex
+		Offset += sizeof(bool);
+		// Offset by bFindInitialOverlaps
+		Offset += sizeof(bool);
+		// Offset by bReturnFaceIndex
+		Offset += sizeof(bool);
+		// Offset by bReturnPhysicalMaterial
+		Offset += sizeof(bool);
+		// Offset by bIgnoreBlocks
+		Offset += sizeof(bool);
+		// Offset by bIgnoreTouches
+		Offset += sizeof(bool);
+		// Offset by bSkipNarrowPhase
+		Offset += sizeof(bool);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 1;
+		// Offset by MobilityType
+		Offset += sizeof(EQueryMobilityType);
+		// Offset by IgnoreMask
+		Offset += sizeof(FMaskFilter);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 3;
+		*/
+		// Offset by StatId
+		Offset += sizeof(TStatId);
+#if !(UE_BUILD_TEST || UE_BUILD_SHIPPING)
+		// Offset by bDebugQuery
+		Offset += sizeof(bool);
+#endif
+		// Offset by bComponentListUnique
+		Offset += sizeof(bool);
+		// TODO: HACK: Need to debug why there is an extra byte here
+		Offset += 6;
+		// Offset by IgnoreComponents
+		Offset += sizeof(TArray<uint32, TInlineAllocator<8>>);
+
+		return *((TArray<uint32, TInlineAllocator<4>>*)(Base + Offset));
+	}
+
+	void ConditionalResetIgnoreComponents(FCollisionQueryParams& Params)
+	{
+		TArray<uint32, TInlineAllocator<8>>& IgnoreComponents = GetIgnoreComponents(Params);
+
+		if (IgnoreComponents.Max() > 8)
+			IgnoreComponents.Reset(8);
+		else
+			IgnoreComponents.Reset(IgnoreComponents.Max());
+	}
+
+	void ConditionalResetIgnoreActors(FCollisionQueryParams& Params)
+	{
+		TArray<uint32, TInlineAllocator<4>>& IgnoreActors = GetIgnoreActors(Params);
+
+		if (IgnoreActors.Max() > 4)
+			IgnoreActors.Reset(4);
+		else
+			IgnoreActors.Reset(IgnoreActors.Max());
+	}
+
+	void Reset(FCollisionQueryParams& Params)
+	{
+		Params.TraceTag = NAME_None;
+		Params.OwnerTag = NAME_None;
+		Params.bTraceComplex = false;
+		Params.bFindInitialOverlaps = true;
+		Params.bReturnFaceIndex = false;
+		Params.bReturnPhysicalMaterial = false;
+		Params.bIgnoreBlocks = false;
+		Params.bIgnoreTouches = false;
+		Params.bSkipNarrowPhase = false;
+		Params.MobilityType = EQueryMobilityType::Any;
+		Params.IgnoreMask = 0;
+		Params.StatId = FCollisionQueryParams::GetUnknownStatId();
+#if !(UE_BUILD_TEST || UE_BUILD_SHIPPING)
+		Params.bDebugQuery = false;
+#endif
+		ResetComponentListUnique(Params);
+		ConditionalResetIgnoreComponents(Params);
+		ConditionalResetIgnoreActors(Params);
+	}
+}
+
 // FCsCollisionQueryParams
 #pragma region
 

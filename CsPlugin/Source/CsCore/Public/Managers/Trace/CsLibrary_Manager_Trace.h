@@ -208,6 +208,34 @@ namespace NCsTrace
 			static ResponseType* SafeSweep(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
+			* Safely perform a sweep using the collision information from the CapsuleComponent.
+			* NOTE: OutResponse may include other objects (not Object) that have been hit or overlapped from the sweep.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Component
+			* @param Params
+			* @param Object
+			* @param Log			(optional)
+			* @param
+			*/
+			static ResponseType* SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely perform a sweep using the collision information from the CapsuleComponent.
+			* NOTE: OutResponse ONLY includes a hit or overlaps from the sweep with Object.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Component
+			* @param Params
+			* @param Object
+			* @param Log			(optional)
+			* @param
+			*/
+			static ResponseType* SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
 			* 
 			* 
 			* @param Context		The calling context.

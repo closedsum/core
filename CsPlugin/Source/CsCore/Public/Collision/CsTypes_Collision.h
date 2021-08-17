@@ -366,6 +366,21 @@ enum class ECsQueryMobilityType : uint8
 
 #pragma endregion QueryMobilityType
 
+namespace NCsCollisionQueryParams
+{
+	CSCORE_API void ResetComponentListUnique(FCollisionQueryParams& Params);
+
+	CSCORE_API TArray<uint32, TInlineAllocator<8>>& GetIgnoreComponents(FCollisionQueryParams& Params);
+
+	CSCORE_API TArray<uint32, TInlineAllocator<4>>& GetIgnoreActors(FCollisionQueryParams& Params);
+
+	CSCORE_API void ConditionalResetIgnoreComponents(FCollisionQueryParams& Params);
+
+	CSCORE_API void ConditionalResetIgnoreActors(FCollisionQueryParams& Params);
+
+	CSCORE_API void Reset(FCollisionQueryParams& Params);
+}
+
 // FCsCollisionQueryParams
 #pragma region
 
@@ -432,7 +447,7 @@ struct CSCORE_API FCsCollisionQueryParams
 		TraceTag(NAME_None),
 		OwnerTag(NAME_None),
 		bTraceComplex(false),
-		bFindInitialOverlaps(false),
+		bFindInitialOverlaps(true),
 		bReturnFaceIndex(false),
 		bReturnPhysicalMaterial(false),
 		bIgnoreBlocks(false),
@@ -457,8 +472,11 @@ struct CSCORE_API FCsCollisionQueryParams
 		Params.bSkipNarrowPhase = bSkipNarrowPhase;
 		Params.MobilityType = (EQueryMobilityType)MobilityType;
 
-		Params.AddIgnoredActors(IgnoreActors);
+		NCsCollisionQueryParams::ResetComponentListUnique(Params);
+		NCsCollisionQueryParams::ConditionalResetIgnoreComponents(Params);
 		Params.AddIgnoredComponents(IgnoreComponents);
+		NCsCollisionQueryParams::ConditionalResetIgnoreActors(Params);
+		Params.AddIgnoredActors(IgnoreActors);
 	}
 
 	void Reset()

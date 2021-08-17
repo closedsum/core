@@ -230,6 +230,136 @@ namespace NCsTrace
 			return Manager_Trace->Trace(Request);
 		}
 
+		ResponseType* FLibrary::SafeSweepAgainstObject(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Component)
+
+			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
+
+			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleHalfHeight(), 0.0f)
+
+			const ECollisionChannel Channel = Component->GetCollisionObjectType();
+
+			if (Channel == ECollisionChannel::ECC_MAX ||
+				Channel == ECollisionChannel::ECC_OverlapAll_Deprecated)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component->GetCollisionObjectType() == (ECollisionChannel::ECC_MAX || ECollisionChannel::ECC_OverlapAll_Deprecated) is NOT Valid."), *Context))
+				return nullptr;
+			}
+
+			const FCollisionResponseContainer& Container = Component->GetCollisionResponseToChannels();
+
+			if (!NCsCollisionResponseContainer::IsValid(Context, Container, Log))
+				return nullptr;
+
+			CS_IS_PTR_NULL_RET_NULL(Object)
+
+			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_Trace)
+				return nullptr;
+
+			RequestType* Request = Manager_Trace->AllocateRequest();
+
+			Request->Type = ECsTraceType::Sweep;
+			Request->Method = ECsTraceMethod::Multi;
+			Request->Query = ECsTraceQuery::Channel;
+			Request->Start = Component->GetComponentLocation();
+			Request->End = Component->GetComponentLocation();
+			Request->Rotation = Component->GetComponentRotation();
+			Request->SetShape(Component);
+			Request->Channel = Channel;
+			Request->Params = Params;
+			Request->ResponseParams.CollisionResponse = Container;
+
+			ResponseType* Response = Manager_Trace->Trace(Request);
+
+			bool ObjectFound = false;
+
+			for (const FHitResult& Hit : Response->OutHits)
+			{
+				if (Object == Hit.GetActor())
+				{
+					ObjectFound = true;
+					continue;
+				}
+
+				if (Object == Hit.GetComponent())
+				{
+					ObjectFound = true;
+					continue;
+				}
+			}
+
+			if (!ObjectFound)
+				return nullptr;
+			return Response;
+		}
+
+		ResponseType* FLibrary::SafeSweepAgainstObjectOnly(const FString& Context, const UObject* WorldContext, UCapsuleComponent* Component, const FCollisionQueryParams& Params, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Component)
+
+			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleRadius(), 0.0f)
+
+			CS_IS_FLOAT_GREATER_THAN_RET_NULL(Component->GetScaledCapsuleHalfHeight(), 0.0f)
+
+			const ECollisionChannel Channel = Component->GetCollisionObjectType();
+
+			if (Channel == ECollisionChannel::ECC_MAX ||
+				Channel == ECollisionChannel::ECC_OverlapAll_Deprecated)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component->GetCollisionObjectType() == (ECollisionChannel::ECC_MAX || ECollisionChannel::ECC_OverlapAll_Deprecated) is NOT Valid."), *Context))
+				return nullptr;
+			}
+
+			const FCollisionResponseContainer& Container = Component->GetCollisionResponseToChannels();
+
+			if (!NCsCollisionResponseContainer::IsValid(Context, Container, Log))
+				return nullptr;
+
+			CS_IS_PTR_NULL_RET_NULL(Object)
+
+			UCsManager_Trace* Manager_Trace = GetSafe(Context, WorldContext, Log);
+
+			if (!Manager_Trace)
+				return nullptr;
+
+			RequestType* Request = Manager_Trace->AllocateRequest();
+
+			Request->Type = ECsTraceType::Sweep;
+			Request->Method = ECsTraceMethod::Multi;
+			Request->Query = ECsTraceQuery::Channel;
+			Request->Start = Component->GetComponentLocation();
+			Request->End = Component->GetComponentLocation();
+			Request->Rotation = Component->GetComponentRotation();
+			Request->SetShape(Component);
+			Request->Channel = Channel;
+			Request->Params = Params;
+			Request->ResponseParams.CollisionResponse = Container;
+
+			ResponseType* Response = Manager_Trace->Trace(Request);
+
+			const int32 Count = Response->OutHits.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				const FHitResult& Hit = Response->OutHits[I];
+
+				if (Object == Hit.GetActor())
+					continue;
+
+				if (Object == Hit.GetComponent())
+					continue;
+
+				Response->OutHits.RemoveAt(I, 1, false);
+			}
+
+			if (Response->OutHits.Num() == CS_EMPTY)
+				return nullptr;
+			return Response;
+		}
+
 		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
 		{
 			using namespace NCsTrace::NManager::NLibrary::NCached;

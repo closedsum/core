@@ -68,8 +68,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
 	static bool SweepByCapsuleComponent(const FString& Context, UObject* WorldContextObject, UCapsuleComponent* CapsuleComponent, const FCsCollisionQueryParams& Params, FCsTraceResponse& OutResponse);
 
+	/**
+	* Perform a sweep using the collision information from the CapsuleComponent and check if Object
+	* has been hit or overlapped.
+	* NOTE: OutResponse may include other objects (not Object) that have been hit or overlapped from the sweep.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Component
+	* @param Params
+	* @param Log			(optional)
+	* @param
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
+	static bool SweepByCapsuleComponentAgainstObject(const FString& Context, UObject* WorldContextObject, UCapsuleComponent* CapsuleComponent, const FCsCollisionQueryParams& Params, UObject* Object, FCsTraceResponse& OutResponse);
 
-	//static bool DoesSweepbyCapsuleComponentAgainstObject(const FString& Context, UObject* WorldContextObject, UCapsuleComponent* CapsuleComponent, const FCsCollisionQueryParams& Params, UObject* Object, FCsTraceResponse* OutResponse);
+	/**
+	* Perform a sweep using the collision information from the CapsuleComponent and check if Object
+	* has been hit or overlapped.
+	* NOTE: OutResponse ONLY includes a hit or overlaps from the sweep with Object.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Component
+	* @param Params
+	* @param Log			(optional)
+	* @param
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
+	static bool SweepByCapsuleComponentAgainstObjectOnly(const FString& Context, UObject* WorldContextObject, UCapsuleComponent* CapsuleComponent, const FCsCollisionQueryParams& Params, UObject* Object, FCsTraceResponse& OutResponse);
 
 #pragma endregion Capsule
 };

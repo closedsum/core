@@ -219,9 +219,22 @@ namespace NCsGameInstance
 		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
 		*						of
 		*						A reference to the GameInstance.
-		* return				Whether the instance running is a Mobile Preview with Editor .
+		* return				Whether the instance running is a Mobile Preview with Editor.
 		*/
 		static bool IsMobilePreviewEditorChecked(const FString& Context, const UObject* ContextObject);
+
+		/**
+		* Safely check if the instance currently running is a Mobile Preview with Editor (WITH_EDITOR == 1).
+		* NOTE: Assumes the GameInstnace is of Type: UCsGameInstance.
+		*
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* @param Log			(optional)
+		* return				Whether the instance running is a Mobile Preview with Editor.
+		*/
+		static bool SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Editor
 	};

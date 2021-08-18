@@ -134,5 +134,14 @@ namespace NCsGameInstance
 		return GetChecked<UCsGameInstance>(Context, ContextObject)->IsMobilePreviewEditor();
 	}
 
+	bool FLibrary::SafeIsMobilePreviewEditor(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (UCsGameInstance* GameInstance = GetSafe<UCsGameInstance>(Context, ContextObject, Log))
+		{
+			return GameInstance->IsMobilePreviewEditor();
+		}
+		return false;
+	}
+
 	#pragma endregion Editor
 }

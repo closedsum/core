@@ -635,7 +635,9 @@ module.exports = class JsRoutine
 		this.TickCount = 0;
 		this.Delay = 0.0;
 
-		this.Handle = new CsRoutineHandle();
+		let RoutineLibrary = CsScriptLibrary_Routine;
+
+		this.Handle = RoutineLibrary.Reset(this.Handle).$;
 		this.AbortImpls = [];
 		this.OnAborts = [];
 

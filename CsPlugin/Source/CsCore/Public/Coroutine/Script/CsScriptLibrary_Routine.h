@@ -24,4 +24,10 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Equal (RoutineHandle)", CompactNodeTitle = "==", ScriptMethod = "Equals", Keywords = "== equal"), Category = "CsCore|Library|Routine")
 	static bool EqualEqual(const FCsRoutineHandle& A, const FCsRoutineHandle& B);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Routine")
+	static FCsRoutineHandle Reset(UPARAM(ref) FCsRoutineHandle& Handle);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Routine")
+	static FString ToString(const FCsRoutineHandle& Handle);
 };

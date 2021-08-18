@@ -29,3 +29,14 @@ bool UCsScriptLibrary_Routine::EqualEqual(const FCsRoutineHandle& A, const FCsRo
 {
 	return A == B;
 }
+
+FCsRoutineHandle UCsScriptLibrary_Routine::Reset(FCsRoutineHandle& Handle)
+{
+	Handle.Reset();
+	return Handle;
+}
+
+FString UCsScriptLibrary_Routine::ToString(const FCsRoutineHandle& Handle)
+{
+	return Handle.ToString();
+}

@@ -57,4 +57,9 @@ public:
 	{
 		Handle.Invalidate();
 	}
+
+	FORCEINLINE FString ToString() const
+	{
+		return FString::Printf(TEXT("Index: %d Handle: %s"), Index, *(Handle.ToString()));
+	}
 };

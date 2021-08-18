@@ -74,7 +74,7 @@ module.exports = class FJsCore
 
     Init(){}
 
-    Reset()
+    Shutdown()
     {
         this.Engine = null;
         this.GameInstance = null;

@@ -12,6 +12,7 @@ class UTextBlock;
 class UButton;
 class UImage;
 class UProgressBar;
+class UBorder;
 
 namespace NCsWidget
 {
@@ -518,6 +519,44 @@ namespace NCsWidget
 			* return				ProgressBar.
 			*/
 			static UProgressBar* GetSafe(UUserWidget* Widget, const FName& PropertyName);
+		};
+	}
+
+	namespace NBorder
+	{
+		struct CSUI_API FLibrary final
+		{
+		public:
+
+			/**
+			* Get a Border with PropertyName from Widget.
+			*
+			* @param Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				Border.
+			*/
+			static UBorder* GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+			/**
+			* Safely get a Border with PropertyName from Widget.
+			*
+			* @param Context		The calling context.
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* @param Log
+			* return				Border.
+			*/
+			static UBorder* GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely get a Border with PropertyName from Widget.
+			*
+			* @param Widget
+			* @param PropertyName	Name of the property.
+			* return				Border.
+			*/
+			static UBorder* GetSafe(UUserWidget* Widget, const FName& PropertyName);
 		};
 	}
 }

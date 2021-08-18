@@ -29,6 +29,7 @@ namespace NCsScriptLibraryWidget
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButton);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetImage);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetProgressBar);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetBorder);
 		}
 	}
 }
@@ -232,3 +233,19 @@ UProgressBar* UCsScriptLibrary_Widget::GetProgressBar(const FString& Context, UU
 }
 
 #pragma endregion ProgressBar
+
+// Border
+#pragma region
+
+UBorder* UCsScriptLibrary_Widget::GetBorder(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetBorder : Context;
+
+	typedef NCsWidget::NBorder::FLibrary WidgetBorderLibrary;
+
+	return WidgetBorderLibrary::GetSafe(Ctxt, Widget, PropertyName);
+}
+
+#pragma endregion Border

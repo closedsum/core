@@ -25,6 +25,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Components/Border.h"
 // Blueprint
 #include "Engine/BlueprintGeneratedClass.h"
 #include "Engine/BlueprintCore.h"
@@ -777,6 +778,47 @@ namespace NCsWidget
 		UProgressBar* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
 		{
 			using namespace NCsWidget::NProgressBar::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, Widget, PropertyName, nullptr);
+		}
+	}
+
+	namespace NBorder
+	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWidget::NBorder::FLibrary, GetSafe);
+				}
+			}
+		}
+
+		UBorder* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValueChecked<UBorder>(Context, Widget, Widget->GetClass(), PropertyName);
+		}
+
+		UBorder* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& PropertyName, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			return PropertyLibrary::GetObjectPropertyValue<UBorder>(Context, Widget, Widget->GetClass(), PropertyName, Log);
+		}
+
+		UBorder* FLibrary::GetSafe(UUserWidget* Widget, const FName& PropertyName)
+		{
+			using namespace NCsWidget::NBorder::NLibrary::NCached;
 
 			const FString& Context = Str::GetSafe;
 

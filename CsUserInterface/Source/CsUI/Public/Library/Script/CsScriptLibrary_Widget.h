@@ -140,4 +140,13 @@ public:
 	static UProgressBar* GetProgressBar(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
 
 #pragma endregion ProgressBar
+
+// Border
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Border", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static UBorder* GetBorder(const FString& Context, UUserWidget* Widget, const FName& PropertyName);
+
+#pragma endregion ProgressBar
 };

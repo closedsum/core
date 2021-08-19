@@ -27,3 +27,8 @@ FCsDeltaTime UCsScriptLibrary_Time::Add_DeltaTime(const FCsDeltaTime& A, const F
 {
 	return A + B;
 }
+
+FCsDeltaTime UCsScriptLibrary_Time::Subtract_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B)
+{
+	return A - B;
+}

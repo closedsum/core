@@ -25,4 +25,7 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime + DeltaTime", CompactNodeTitle = "+", ScriptMethod = "Add", ScriptOperator = "+;+=", Keywords = "+ add plus", AutoCreateRefTerm = "A,B"), Category = "CsCore|Library|Time")
 	static FCsDeltaTime Add_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B);
+
+	UFUNCTION(BlueprintPure, meta = (DisplayName = "DeltaTime - DeltaTime", CompactNodeTitle = "-", ScriptMethod = "Subtract", ScriptOperator = "-;-=", Keywords = "+ subtract minus", AutoCreateRefTerm = "A,B"), Category = "CsCore|Library|Time")
+	static FCsDeltaTime Subtract_DeltaTime(const FCsDeltaTime& A, const FCsDeltaTime& B);
 };

@@ -134,3 +134,13 @@ bool UCsScriptLibrary_Input::IsActionAssociatedWithKey(const FString& Context, c
 }
 
 #pragma endregion Action
+
+// Mode
+#pragma region
+
+bool UCsScriptLibrary_Input::TestBitflag_InputMode(const int32& Mask, const ECsInputMode& Mode)
+{
+	return CS_TEST_BLUEPRINT_BITFLAG(Mask, Mode);
+}
+
+#pragma endregion Mode

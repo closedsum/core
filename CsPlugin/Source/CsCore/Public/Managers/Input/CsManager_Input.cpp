@@ -111,6 +111,7 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	// Mode
 	CurrentMode(),
 	ActiveMode(),
+	OnActiveMode_Change_ScriptEvent(),
 	// Profile
 	InputProfile(),
 	AllKeys()
@@ -2258,6 +2259,7 @@ void UCsManager_Input::FActiveMode::OnPostProcessInput(const float& DeltaTime, c
 	{
 		CS_NON_SHIPPING_EXPR(PrintSummary(Context));
 		OnChange_Event.Broadcast(Last_Value, Value);
+		Outer->OnActiveMode_Change_ScriptEvent.Broadcast(Last_Value, Value);
 	}
 
 	Last_Value = Value;

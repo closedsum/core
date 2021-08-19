@@ -67,6 +67,8 @@ namespace NCsManagerInput
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_OnAnyKey_Pressed, const FKey&, Key);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerInput_OnAnyKey_Released, const FKey&, Key);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerInput_OnActiveMode_Change, const int32&, Previous, const int32&, Current);
+
 #pragma endregion Delegates
 
 class AActor;
@@ -573,6 +575,9 @@ public:
 	};
 
 	FActiveMode ActiveMode;
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerInput_OnActiveMode_Change OnActiveMode_Change_ScriptEvent;
 
 #pragma endregion Mode
 

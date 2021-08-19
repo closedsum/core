@@ -118,4 +118,20 @@ public:
 	static bool IsActionAssociatedWithKey(const FString& Context, const FECsInputAction& Action, const FKey& Key);
 
 #pragma endregion Action
+
+// Mode
+#pragma region
+public:
+
+	/**
+	* Check if the bit associated with Mode is set on the Mask.
+	* 
+	* @param Mask
+	* @param Mode
+	* return Whether the bit associated with Mode is set on Mask.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Mask,Mode"))
+	static bool TestBitflag_InputMode(const int32& Mask, const ECsInputMode& Mode);
+
+#pragma endregion Mode
 };

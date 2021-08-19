@@ -141,6 +141,19 @@ namespace NCsTime
 			static const FCsDeltaTime& GetTimeSinceStartChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
 
 			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Log			(optional)
+			* return
+			*/
+			static const FCsDeltaTime& GetSafeTimeSinceStart(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
 			* 
 			* 
 			* @param Context		The calling context.

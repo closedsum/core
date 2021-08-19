@@ -8,32 +8,19 @@
 
 #include "CsScriptLibrary_Manager_Time.generated.h"
 
-// Delegates
-#pragma region
-
-// Update
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FCsScriptLibraryManagerTime_OnUpdate, const FECsUpdateGroup, Group, const FCsDeltaTime&, DeltaTime);
-
-#pragma endregion Delegates
-
-
 UCLASS()
 class CSCORE_API UCsScriptLibrary_Manager_Time : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
-// Update
-#pragma region
-public:
-
 	/**
 	*
 	*
-	* @param WorldContextObject
-	* @param Event / Delegate
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (DisplayName = "BindToEvent: OnUpdate", WorldContext = "WorldContextObject"))
-	static void BindToEvent_OnUpdate(UObject* WorldContextObject, const FCsScriptLibraryManagerTime_OnUpdate& Delegate);
-	//UPARAM(DisplayName = "Event") 
-#pragma endregion Update
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	static FCsDeltaTime GetTimeSinceStart(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
 };

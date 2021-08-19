@@ -153,6 +153,17 @@ namespace NCsTime
 			return GetChecked(Context, ContextObject)->GetTimeSinceStart(Group);
 		}
 
+		const FCsDeltaTime& FLibrary::GetSafeTimeSinceStart(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID_RET_VALUE(EMCsUpdateGroup, FECsUpdateGroup, Group, FCsDeltaTime::Zero)
+
+				return Manager_Time->GetTimeSinceStart(Group);
+			}
+			return FCsDeltaTime::Zero;
+		}
+
 		void FLibrary::SetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale)
 		{
 			GetChecked(Context, ContextObject)->SetScaledDeltaTime(Group, Scale);

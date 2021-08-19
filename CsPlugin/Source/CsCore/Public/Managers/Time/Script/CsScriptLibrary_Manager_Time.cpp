@@ -4,45 +4,31 @@
 
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"
-// Managers
-#include "Managers/Time/CsManager_Time.h"
+
+namespace NCsScriptLibraryManagerTime
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Time, GetTimeSinceStart);
+		}
+	}
+}
 
 UCsScriptLibrary_Manager_Time::UCsScriptLibrary_Manager_Time(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-// Update
-#pragma region
 
-void UCsScriptLibrary_Manager_Time::BindToEvent_OnUpdate(UObject* WorldContextObject, const FCsScriptLibraryManagerTime_OnUpdate& Delegate)
+FCsDeltaTime UCsScriptLibrary_Manager_Time::GetTimeSinceStart(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group)
 {
+	using namespace NCsScriptLibraryManagerTime::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetTimeSinceStart : Context;
+
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-	UObject* ContextRoot = TimeManagerLibrary::GetSafeContextRoot(WorldContextObject);
-
-	if (UCsManager_Time* Manager = UCsManager_Time::Get(ContextRoot))
-	{
-		if (Delegate.IsBound())
-		{
-			if (!Manager->OnUpdate_ScriptEvent.Contains(Delegate))
-			{
-				Manager->OnUpdate_ScriptEvent.Add(Delegate);
-			}
-			else
-			{
-				UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Time::BindToEvent_OnUpdate: Delegate is already bound."));
-			}
-		}
-		else
-		{
-			UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Time::BindToEvent_OnUpdate: No Delegate Bound."));
-		}
-	}
-	else
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Manager_Time::BindToEvent_OnUpdate: No Manager Time of type UCsManager_Time was created."));
-	}
+	return TimeManagerLibrary::GetSafeTimeSinceStart(Ctxt, WorldContextObject, Group);
 }
-
-#pragma endregion Update

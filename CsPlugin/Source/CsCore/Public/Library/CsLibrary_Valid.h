@@ -384,6 +384,17 @@ namespace NCsValid
 				return true;
 			}
 
+			template<typename ClassType, typename OtherClassType>
+			FORCEINLINE static bool IsClassOfChecked(const FString& Context, const ClassType* A, const FString& AName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+
+				const OtherClassType* Other = Cast<OtherClassType>(A);
+
+				checkf(Other, TEXT("%s: %s: %s with Class: %s is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName()));
+				return true;
+			}
+
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static bool Implements(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
@@ -426,6 +437,39 @@ namespace NCsValid
 				return Other;
 			}
 
+			template<typename ClassType, typename OtherClassType>
+			FORCEINLINE static const OtherClassType* CastTo(const FString& Context, const ClassType* A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return nullptr;
+				}
+
+				const OtherClassType* Other = Cast<OtherClassType>(A);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName())));
+					return nullptr;
+				}
+				return Other;
+			}
+
+			template<typename ClassType, typename OtherClassType>
+			FORCEINLINE static OtherClassType* CastToChecked(const FString& Context, ClassType* A, const FString& AName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+
+				OtherClassType* Other = Cast<OtherClassType>(A);
+
+				checkf(Other, TEXT("%s: %s: %s with Class: %s does is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName()));
+
+				return Other;
+			}
+
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static InterfaceType* InterfaceCast(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
@@ -444,6 +488,39 @@ namespace NCsValid
 						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName));
 					return nullptr;
 				}
+				return Other;
+			}
+
+			template<typename ClassType, typename InterfaceType>
+			FORCEINLINE static const InterfaceType* InterfaceCast(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return nullptr;
+				}
+
+				const InterfaceType* Other = Cast<InterfaceType>(A);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName));
+					return nullptr;
+				}
+				return Other;
+			}
+
+			template<typename ClassType, typename InterfaceType>
+			FORCEINLINE static const InterfaceType* InterfaceCastChecked(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+
+				const InterfaceType* Other = Cast<InterfaceType>(A);
+
+				checkf(Other, TEXT("%s: %s: %s with Class: %s does NOT implement the interface: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *InterfaceName);
+
 				return Other;
 			}
 		};
@@ -499,6 +576,8 @@ namespace NCsValid
 		};
 	}
 }
+
+// CHECKED
 
 #if !UE_BUILD_SHIPPING
 // Int
@@ -622,6 +701,33 @@ namespace NCsValid
 
 #pragma endregion Ptr
 
+// Object
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_OBJ_CLASS_OF_CHECKED(__Object, __ObjectType, __ClassType) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		check((NCsValid::NObject::FLibrary::IsClassOfChecked<__ObjectType, __ClassType>(Context, __Object, __temp__str__))); \
+	}
+// Assume const FString& Context has been defined
+#define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
+	[] (const FString& Context, __ObjectType* __Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+	}(Context, __Object)
+// Assume const FString& Context has been defined
+#define CS_CONST_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
+	[] (const FString& Context, const __ObjectType* __Object) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
+	}(Context, __Object)
+
+#pragma endregion Object
+
 // WeakObjectPtr
 #pragma region
 
@@ -679,6 +785,26 @@ namespace NCsValid
 #define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
+// Object
+#pragma region
+#define CS_IS_OBJ_CLASS_OF_CHECKED(__Object, __ObjectType, __ClassType)
+// Assume const FString& Context has been defined
+#define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
+	[] (const FString& Context, __ObjectType* __Object) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+	}(Context, __Object)
+// Assume const FString& Context has been defined
+#define CS_CONST_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
+	[] (const FString& Context, const __ObjectType* __Object) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
+	}(Context, __Object)
+
+#pragma endregion Object
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // FSoftObjectPath
@@ -686,6 +812,8 @@ namespace NCsValid
 // Delegate
 #define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)
 #endif // #if !UE_BUILD_SHIPPING
+
+// SAFE
 
 // Int
 #pragma region
@@ -719,6 +847,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_VALUE(__A, __B, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL(__A, __B, __C) \
@@ -986,8 +1120,23 @@ namespace NCsValid
 		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__, Log); \
 	}(Context, __Object, Log)
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_CONST_CAST(__Object, __ObjectType, __OtherObjectType) \
+	[] (const FString& Context, const __ObjectType* __Object, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__, Log); \
+	}(Context, __Object, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_INTERFACE_CAST(__Object, __ObjectType, __InterfaceType) \
 	[] (const FString& Context, __ObjectType* __Object, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log); \
+	}(Context, __Object, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_CONST_INTERFACE_CAST(__Object, __ObjectType, __InterfaceType) \
+	[] (const FString& Context, const __ObjectType* __Object, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \

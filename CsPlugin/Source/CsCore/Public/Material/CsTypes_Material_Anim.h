@@ -1,8 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Types/CsTypes_Interpolation.h"
-#include "Animation/CsTypes_Anim_PlayRate.h"
-#include "Animation/CsTypes_Anim_Playback.h"
+#include "Animation/CsAnimPlayRate.h"
+#include "Animation/CsAnimPlayback.h"
 #include "Managers/Time/CsTypes_Update.h"
 // Log
 #include "Utility/CsLog.h"

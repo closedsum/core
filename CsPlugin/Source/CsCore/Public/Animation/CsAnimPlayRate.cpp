@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Animation/CsTypes_Anim_PlayRate.h"
+#include "Animation/CsAnimPlayRate.h"
 
 // AnimPlayRate
 #pragma region

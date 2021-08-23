@@ -1,7 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnumMap.h"
 
-#include "CsTypes_Anim_Playback.generated.h"
+#include "CsAnimPlayback.generated.h"
 #pragma once
 
 // AnimPlayback

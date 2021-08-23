@@ -266,7 +266,7 @@
 	{ \
 		static const FString __temp__str__ = #__Member; \
 		static const FString __temp__str__proxy__ = CS_STRINGIFY(__Member##_Proxy); \
-		checkf(__Member##_Proxy == &__Member, TEXT("%s: %s does NOT reference %s."), *Context, *__temp__str__, *__temp__str__proxy__); \
+		checkf(__Member##_Proxy == &__Member, TEXT("%s: %s does NOT reference %s."), *Context, *__temp__str__proxy__, *__temp__str__); \
 		return true; \
 	}
 

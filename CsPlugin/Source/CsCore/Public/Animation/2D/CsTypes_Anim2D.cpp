@@ -294,9 +294,11 @@ void FCsAnim2DFlipbookTexture::CopyToFlipbook(FlipbookType* Flipbook)
 {
 	typedef NCsAnim::N2D::EPlayback PlaybackType;
 	typedef NCsAnim::N2D::EPlayRate PlayRateType;
+	typedef NCsAnim::EPlayScale PlayScaleType;
 
 	Flipbook->SetPlayback((PlaybackType*)&Playback);
 	Flipbook->SetPlayRate((PlayRateType*)&PlayRate);
+	Flipbook->SetPlayScale((PlayScaleType*)&PlayScale);
 	Flipbook->SetDeltaTime(&DeltaTime);
 	Flipbook->SetTotalTime(&TotalTime);
 
@@ -319,9 +321,11 @@ void FCsAnim2DFlipbookTexture::CopyToFlipbookAsValue(FlipbookType* Flipbook) con
 {
 	typedef NCsAnim::N2D::EPlayback PlaybackType;
 	typedef NCsAnim::N2D::EPlayRate PlayRateType;
+	typedef NCsAnim::EPlayScale PlayScaleType;
 
 	Flipbook->SetPlayback((PlaybackType)Playback);
 	Flipbook->SetPlayRate((PlayRateType)PlayRate);
+	Flipbook->SetPlayScale((PlayScaleType)PlayScale);
 	Flipbook->SetDeltaTime(DeltaTime);
 	Flipbook->SetTotalTime(TotalTime);
 
@@ -348,14 +352,20 @@ bool FCsAnim2DFlipbookTexture::IsValidChecked(const FString& Context) const
 	typedef EMCsAnim2DPlayback PlaybackMapType;
 	typedef ECsAnim2DPlayback PlaybackType;
 
-	check(EMCsAnim2DPlayback::Get().IsValidEnumChecked(Context, Playback));
+	check(PlaybackMapType::Get().IsValidEnumChecked(Context, Playback));
 	// Check PlayRate is Valid.
 	typedef EMCsAnim2DPlayRate PlayRateMapType;
 	typedef ECsAnim2DPlayRate PlayRateType;
 
 	const PlayRateType& PR = PlayRate;
 
-	check(EMCsAnim2DPlayRate::Get().IsValidEnumChecked(Context, PlayRate));
+	check(PlayRateMapType::Get().IsValidEnumChecked(Context, PlayRate));
+
+	// Check PlayScale is Valid.
+	typedef EMCsAnimPlayScale PlayScaleMapType;
+	typedef ECsAnimPlayScale PlayScaleType;
+	
+	check(PlayScaleMapType::Get().IsValidEnumChecked(Context, PlayScale));
 
 	// Check DeltaTime or TotalTime
 
@@ -409,12 +419,18 @@ bool FCsAnim2DFlipbookTexture::IsValid(const FString& Context, void(*Log)(const 
 	CS_IS_ENUM_VALID(PlaybackMapType, PlaybackType, Playback)
 
 	// Check PlayRate is Valid.
-		typedef EMCsAnim2DPlayRate PlayRateMapType;
+	typedef EMCsAnim2DPlayRate PlayRateMapType;
 	typedef ECsAnim2DPlayRate PlayRateType;
 
 	const PlayRateType& PR = PlayRate;
 
 	CS_IS_ENUM_VALID(PlayRateMapType, PlayRateType, PlayRate)
+
+	// Check PlayScale is Valid.
+	typedef EMCsAnimPlayScale PlayScaleMapType;
+	typedef ECsAnimPlayScale PlayScaleType;
+
+	CS_IS_ENUM_VALID(PlayScaleMapType, PlayScaleType, PlayScale)
 
 	// Check DeltaTime or TotalTime
 
@@ -503,6 +519,112 @@ namespace NCsAnim
 		{
 			namespace NFlipbook
 			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAnim::N2D::NTexture::NFlipbook, ScaleTime);
+					}
+				}
+
+				void FFlipbook::ScaleTime(const float& Scale)
+				{
+					using namespace NCsAnim::N2D::NTexture::NFlipbook::NCached;
+
+					const FString& Context = Str::ScaleTime;
+
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale, 0.0f)
+
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(Playback);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(PlayRate);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(PlayScale);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalTime);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount);
+
+					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+					typedef NCsAnim::N2D::EPlayback PlaybackType;
+					typedef NCsAnim::EPlayScale PlayScaleType;
+
+					// CustomDeltaTime
+					if (PlayRate == PlayRateType::PR_CustomDeltaTime)
+					{
+						if (Playback == PlaybackType::PingPong)
+						{
+							TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+						}
+						else
+						{
+							TotalTime = Frames.Num() * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+						}
+						TotalTime *= Scale;
+					}
+					// CustomTotalTime
+					else
+					if (PlayRate == PlayRateType::PR_CustomTotalTime)
+					{
+						TotalTime *= Scale;
+
+						if (Playback == PlaybackType::PingPong)
+						{
+							DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
+							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+						}
+						else
+						{
+							DeltaTime = TotalTime > 0.0f && Frames.Num() > 0 ? TotalTime / Frames.Num() : 0.0f;
+							TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+						}
+					}
+					// CustomDeltaTimeAndTotalTime | Custom
+					else
+					if  (PlayRate == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
+					{
+						// Default
+						if (PlayScale == EPlayScale::Default)
+						{
+							TotalTime *= Scale;
+							DeltaTime *= Scale;
+						}
+						// TotalTime
+						else
+						{
+							TotalTime *= Scale;
+						}
+
+						if (DeltaTime > 0.0f &&
+							TotalTime > 0.0f &&
+							!IsLoopingForever())
+						{
+							TotalCount = FMath::FloorToInt(TotalTime / DeltaTime);
+						}
+					}
+					else
+					if (PlayRate == PlayRateType::PR_Custom)
+					{
+						// Do Nothing
+					}
+					else
+					{
+						if (Playback == PlaybackType::PingPong)
+						{
+							DeltaTime = NPlayRate::GetDeltaTime(PlayRate);
+							DeltaTime *= Scale;
+							TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+						}
+						else
+						{
+							DeltaTime = NPlayRate::GetDeltaTime(PlayRate);
+							DeltaTime *= Scale;
+							TotalTime = Frames.Num() * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+						}
+					}
+				}
+
 				bool FFlipbook::IsValidChecked(const FString& Context) const
 				{
 					// Check Playback is Valid.
@@ -515,6 +637,12 @@ namespace NCsAnim
 					const PlayRateType& PR = GetPlayRate();
 					
 					check(PlayRateMapType::Get().IsValidEnumChecked(Context, PR));
+
+					// Check PlayScale is Valid.
+					typedef NCsAnim::EMPlayScale PlayScaleMapType;
+					typedef NCsAnim::EPlayScale PlayScaleType;
+
+					check(PlayScaleMapType::Get().IsValidEnumChecked(Context, GetPlayScale()));
 
 					// Check DeltaTime or TotalTime
 
@@ -574,6 +702,12 @@ namespace NCsAnim
 					const PlayRateType& PR = GetPlayRate();
 
 					CS_IS_ENUM_VALID(PlayRateMapType, PlayRateType, GetPlayRate())
+
+					// Check PlayScale is Valid.
+					typedef NCsAnim::EMPlayScale PlayScaleMapType;
+					typedef NCsAnim::EPlayScale PlayScaleType;
+
+					CS_IS_ENUM_VALID(PlayScaleMapType, PlayScaleType, GetPlayScale())
 
 					// Check DeltaTime or TotalTime
 
@@ -799,9 +933,11 @@ void FCsAnim2DMaterialFlipbook::CopyToFlipbook(FlipbookType* Flipbook)
 {
 	typedef NCsAnim::N2D::EPlayback PlaybackType;
 	typedef NCsAnim::N2D::EPlayRate PlayRateType;
+	typedef NCsAnim::EPlayScale PlayScaleType;
 
 	Flipbook->SetPlayback((PlaybackType*)&Playback);
 	Flipbook->SetPlayRate((PlayRateType*)&PlayRate);
+	Flipbook->SetPlayScale((PlayScaleType*)&PlayScale);
 	Flipbook->SetDeltaTime(&DeltaTime);
 	Flipbook->SetTotalTime(&TotalTime);
 
@@ -824,9 +960,11 @@ void FCsAnim2DMaterialFlipbook::CopyToFlipbookAsValue(FlipbookType* Flipbook) co
 {
 	typedef NCsAnim::N2D::EPlayback PlaybackType;
 	typedef NCsAnim::N2D::EPlayRate PlayRateType;
+	typedef NCsAnim::EPlayScale PlayScaleType;
 
 	Flipbook->SetPlayback((PlaybackType)Playback);
 	Flipbook->SetPlayRate((PlayRateType)PlayRate);
+	Flipbook->SetPlayScale((PlayScaleType)PlayScale);
 	Flipbook->SetDeltaTime(DeltaTime);
 	Flipbook->SetTotalTime(TotalTime);
 
@@ -861,6 +999,12 @@ bool FCsAnim2DMaterialFlipbook::IsValidChecked(const FString& Context) const
 	const PlayRateType& PR = PlayRate;
 
 	check(EMCsAnim2DPlayRate::Get().IsValidEnumChecked(Context, PlayRate));
+
+	// Check PlayScale is Valid.
+	typedef EMCsAnimPlayScale PlayScaleMapType;
+	typedef ECsAnimPlayScale PlayScaleType;
+
+	check(PlayScaleMapType::Get().IsValidEnumChecked(Context, PlayScale));
 
 	// Check DeltaTime or TotalTime
 
@@ -914,12 +1058,18 @@ bool FCsAnim2DMaterialFlipbook::IsValid(const FString& Context, void(*Log)(const
 	CS_IS_ENUM_VALID(PlaybackMapType, PlaybackType, Playback)
 
 	// Check PlayRate is Valid.
-		typedef EMCsAnim2DPlayRate PlayRateMapType;
+	typedef EMCsAnim2DPlayRate PlayRateMapType;
 	typedef ECsAnim2DPlayRate PlayRateType;
 
 	const PlayRateType& PR = PlayRate;
 
 	CS_IS_ENUM_VALID(PlayRateMapType, PlayRateType, PlayRate)
+
+	// Check PlayScale is Valid.
+	typedef EMCsAnimPlayScale PlayScaleMapType;
+	typedef ECsAnimPlayScale PlayScaleType;
+
+	CS_IS_ENUM_VALID(PlayScaleMapType, PlayScaleType, PlayScale)
 
 	// Check DeltaTime or TotalTime
 
@@ -1008,6 +1158,112 @@ namespace NCsAnim
 		{
 			namespace NFlipbook
 			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAnim::N2D::NMaterial::NFlipbook, ScaleTime);
+					}
+				}
+
+				void FFlipbook::ScaleTime(const float& Scale)
+				{
+					using namespace NCsAnim::N2D::NMaterial::NFlipbook::NCached;
+
+					const FString& Context = Str::ScaleTime;
+
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale, 0.0f)
+
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(Playback);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(PlayRate);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(PlayScale);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalTime);
+					CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount);
+
+					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+					typedef NCsAnim::N2D::EPlayback PlaybackType;
+					typedef NCsAnim::EPlayScale PlayScaleType;
+
+					// CustomDeltaTime
+					if (PlayRate == PlayRateType::PR_CustomDeltaTime)
+					{
+						if (Playback == PlaybackType::PingPong)
+						{
+							TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+						}
+						else
+						{
+							TotalTime = Frames.Num() * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+						}
+						TotalTime *= Scale;
+					}
+					// CustomTotalTime
+					else
+					if (PlayRate == PlayRateType::PR_CustomTotalTime)
+					{
+						TotalTime *= Scale;
+
+						if (Playback == PlaybackType::PingPong)
+						{
+							DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
+							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+						}
+						else
+						{
+							DeltaTime = TotalTime > 0.0f && Frames.Num() > 0 ? TotalTime / Frames.Num() : 0.0f;
+							TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+						}
+					}
+					// CustomDeltaTimeAndTotalTime | Custom
+					else
+					if  (PlayRate == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
+					{
+						// Default
+						if (PlayScale == EPlayScale::Default)
+						{
+							TotalTime *= Scale;
+							DeltaTime *= Scale;
+						}
+						// TotalTime
+						else
+						{
+							TotalTime *= Scale;
+						}
+
+						if (DeltaTime > 0.0f &&
+							TotalTime > 0.0f &&
+							!IsLoopingForever())
+						{
+							TotalCount = FMath::FloorToInt(TotalTime / DeltaTime);
+						}
+					}
+					else
+					if (PlayRate == PlayRateType::PR_Custom)
+					{
+						// Do Nothing
+					}
+					else
+					{
+						if (Playback == PlaybackType::PingPong)
+						{
+							DeltaTime = NPlayRate::GetDeltaTime(PlayRate);
+							DeltaTime *= Scale;
+							TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+						}
+						else
+						{
+							DeltaTime = NPlayRate::GetDeltaTime(PlayRate);
+							DeltaTime *= Scale;
+							TotalTime = Frames.Num() * DeltaTime;
+							TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+						}
+					}
+				}
+
 				bool FFlipbook::IsValidChecked(const FString& Context) const
 				{
 					// Check Playback is Valid.
@@ -1020,6 +1276,12 @@ namespace NCsAnim
 					const PlayRateType& PR = GetPlayRate();
 					
 					check(PlayRateMapType::Get().IsValidEnumChecked(Context, PR));
+
+					// Check PlayScale is Valid.
+					typedef NCsAnim::EMPlayScale PlayScaleMapType;
+					typedef NCsAnim::EPlayScale PlayScaleType;
+
+					check(PlayScaleMapType::Get().IsValidEnumChecked(Context, GetPlayScale()));
 
 					// Check DeltaTime or TotalTime
 
@@ -1066,7 +1328,7 @@ namespace NCsAnim
 
 				bool FFlipbook::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
-				// Check Playback is Valid.
+					// Check Playback is Valid.
 					typedef NCsAnim::N2D::EMPlayback PlaybackMapType;
 					typedef NCsAnim::N2D::EPlayback PlaybackType;
 
@@ -1079,6 +1341,12 @@ namespace NCsAnim
 					const PlayRateType& PR = GetPlayRate();
 
 					CS_IS_ENUM_VALID(PlayRateMapType, PlayRateType, GetPlayRate())
+
+					// Check PlayScale is Valid.
+					typedef NCsAnim::EMPlayScale PlayScaleMapType;
+					typedef NCsAnim::EPlayScale PlayScaleType;
+
+					CS_IS_ENUM_VALID(PlayScaleMapType, PlayScaleType, GetPlayScale())
 
 					// Check DeltaTime or TotalTime
 

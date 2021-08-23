@@ -452,6 +452,12 @@ namespace NCsMaterial
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+
+			FORCEINLINE const float& GetDeltaTime(const int32& Index) const
+			{
+				return GetDeltaTime();
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalCount, int32)
 

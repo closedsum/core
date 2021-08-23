@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
-#include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_Texture.h"
 #include "Material/CsTypes_Material.h"
+#include "Animation/CsAnimPlayScale.h"
 
 #include "CsTypes_Anim2D.generated.h"
-#pragma once
 
 // Anim2DPlayRate
 #pragma region
@@ -340,6 +340,10 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECsAnim2DPlayRate PlayRate;
 
+	/** Describes how any time related information for an animation should be scaled. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsAnimPlayScale PlayScale;
+
 	/** Time between each Frame.
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -360,6 +364,7 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	FCsAnim2DFlipbookTexture() :
 		Playback(ECsAnim2DPlayback::Forward),
 		PlayRate(ECsAnim2DPlayRate::PR_60Fps),
+		PlayScale(ECsAnimPlayScale::Default),
 		DeltaTime(0.0f),
 		TotalTime(0.0f),
 		Frames(),
@@ -401,12 +406,14 @@ namespace NCsAnim
 				{
 				#define PlaybackType NCsAnim::N2D::EPlayback
 				#define PlayRateType NCsAnim::N2D::EPlayRate
+				#define PlayScaleType NCsAnim::EPlayScale
 				#define FrameType NCsAnim::N2D::NTexture::NFlipbook::FFrame
 
 				public:
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Playback, PlaybackType)
 					CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DECLARE_MEMBER_WITH_PROXY(PlayScale, PlayScaleType)
 					CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(TotalTime, float)
 
@@ -417,6 +424,7 @@ namespace NCsAnim
 					FFlipbook() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayScale, PlayScaleType::Default),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 						Frames(),
@@ -424,6 +432,7 @@ namespace NCsAnim
 					{
 						CS_CTOR_SET_MEMBER_PROXY(Playback);
 						CS_CTOR_SET_MEMBER_PROXY(PlayRate);
+						CS_CTOR_SET_MEMBER_PROXY(PlayScale);
 						CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
 						CS_CTOR_SET_MEMBER_PROXY(TotalTime);
 						CS_CTOR_SET_MEMBER_PROXY(TotalCount);
@@ -435,6 +444,8 @@ namespace NCsAnim
 						SetPlayback(&Playback);
 						PlayRate = B.GetPlayRate();
 						SetPlayRate(&PlayRate);
+						PlayScale = B.GetPlayScale();
+						SetPlayScale(&PlayScale);
 						DeltaTime = B.GetDeltaTime();
 						SetDeltaTime(&DeltaTime);
 						TotalTime = B.GetTotalTime();
@@ -454,9 +465,23 @@ namespace NCsAnim
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayScale, PlayScaleType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+
+					FORCEINLINE const float& GetDeltaTime(const int32& Index) const
+					{
+						return GetDeltaTime();
+					}
+
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalCount, int32)
+
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Playback)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(PlayRate)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(PlayScale)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(TotalTime)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount)
 
 					FORCEINLINE bool IsLooping() const
 					{
@@ -473,28 +498,27 @@ namespace NCsAnim
 							   GetPlayback() == EPlayback::LoopReverse;
 					}
 
+					void ScaleTime(const float& Scale);
+
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 					void Reset()
 					{
-						Playback = PlaybackType::Forward;
-						SetPlayback(&Playback);
-						PlayRate = PlayRateType::PR_60Fps;
-						SetPlayRate(&PlayRate);
-						DeltaTime = 0.0f;
-						SetDeltaTime(&DeltaTime);
-						TotalTime = 0.0f;
-						SetTotalTime(&TotalTime);
-
+						CS_RESET_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward)
+						CS_RESET_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps)
+						CS_RESET_MEMBER_WITH_PROXY(PlayScale, PlayScaleType::Default)
+						CS_RESET_MEMBER_WITH_PROXY(DeltaTime, 0.0f)
+						CS_RESET_MEMBER_WITH_PROXY(TotalTime, 0.0f)
+						
 						Frames.Reset(Frames.Max());
 
-						TotalCount = 0;
-						SetTotalCount(&TotalCount);
+						CS_RESET_MEMBER_WITH_PROXY(TotalCount, 0)
 					}
 
 				#undef PlaybackType
 				#undef PlayRateType
+				#undef PlayScaleType
 				#undef FrameType
 				};
 			}
@@ -603,6 +627,10 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsAnim2DPlayRate PlayRate;
 
+	/** Describes how any time related information for an animation should be scaled. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsAnimPlayScale PlayScale;
+
 	/** Time between each Frame.
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -623,6 +651,7 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook
 	FCsAnim2DMaterialFlipbook() :
 		Playback(ECsAnim2DPlayback::Forward),
 		PlayRate(ECsAnim2DPlayRate::PR_60Fps),
+		PlayScale(ECsAnimPlayScale::Default),
 		DeltaTime(0.0f),
 		TotalTime(0.0f),
 		Frames(),
@@ -664,12 +693,14 @@ namespace NCsAnim
 				{
 				#define PlaybackType NCsAnim::N2D::EPlayback
 				#define PlayRateType NCsAnim::N2D::EPlayRate
+				#define PlayScaleType NCsAnim::EPlayScale
 				#define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
 
 				public:
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Playback, PlaybackType)
 					CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DECLARE_MEMBER_WITH_PROXY(PlayScale, PlayScaleType)
 					CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(TotalTime, float)
 
@@ -680,6 +711,7 @@ namespace NCsAnim
 					FFlipbook() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayScale, PlayScaleType::Default),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 						Frames(),
@@ -687,6 +719,7 @@ namespace NCsAnim
 					{
 						CS_CTOR_SET_MEMBER_PROXY(Playback);
 						CS_CTOR_SET_MEMBER_PROXY(PlayRate);
+						CS_CTOR_SET_MEMBER_PROXY(PlayScale);
 						CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
 						CS_CTOR_SET_MEMBER_PROXY(TotalTime);
 						CS_CTOR_SET_MEMBER_PROXY(TotalCount);
@@ -698,6 +731,8 @@ namespace NCsAnim
 						SetPlayback(&Playback);
 						PlayRate = B.GetPlayRate();
 						SetPlayRate(&PlayRate);
+						PlayScale = B.GetPlayScale();
+						SetPlayScale(&PlayScale);
 						DeltaTime = B.GetDeltaTime();
 						SetDeltaTime(&DeltaTime);
 						TotalTime = B.GetTotalTime();
@@ -717,9 +752,23 @@ namespace NCsAnim
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayScale, PlayScaleType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+
+					FORCEINLINE const float& GetDeltaTime(const int32& Index) const
+					{
+						return GetDeltaTime();
+					}
+
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalCount, int32)
+
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Playback)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(PlayRate)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(PlayScale)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(TotalTime)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount)
 
 					FORCEINLINE bool IsLooping() const
 					{
@@ -736,28 +785,27 @@ namespace NCsAnim
 							   GetPlayback() == EPlayback::LoopReverse;
 					}
 
+					void ScaleTime(const float& Scale);
+
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 					void Reset()
 					{
-						Playback = PlaybackType::Forward;
-						SetPlayback(&Playback);
-						PlayRate = PlayRateType::PR_60Fps;
-						SetPlayRate(&PlayRate);
-						DeltaTime = 0.0f;
-						SetDeltaTime(&DeltaTime);
-						TotalTime = 0.0f;
-						SetTotalTime(&TotalTime);
+						CS_RESET_MEMBER_WITH_PROXY(Playback, PlaybackType::Forward)
+						CS_RESET_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps)
+						CS_RESET_MEMBER_WITH_PROXY(PlayScale, PlayScaleType::Default)
+						CS_RESET_MEMBER_WITH_PROXY(DeltaTime, 0.0f)
+						CS_RESET_MEMBER_WITH_PROXY(TotalTime, 0.0f)
 
 						Frames.Reset(Frames.Max());
 
-						TotalCount = 0;
-						SetTotalCount(&TotalCount);
+						CS_RESET_MEMBER_WITH_PROXY(TotalCount, 0)
 					}
 
 				#undef PlaybackType
 				#undef PlayRateType
+				#undef PlayScaleType
 				#undef FrameType
 				};
 			}

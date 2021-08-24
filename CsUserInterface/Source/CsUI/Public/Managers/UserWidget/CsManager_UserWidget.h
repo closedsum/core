@@ -115,6 +115,15 @@ public:
 	}
 
 #if WITH_EDITOR
+	static UCsManager_UserWidget* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_UserWidget* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);
 #else
 	static bool IsValid(UObject* InRoot = nullptr)
@@ -140,13 +149,7 @@ public:
 protected:
 
 	static ICsGetManagerUserWidget* Get_GetManagerUserWidget(UObject* InRoot);
-	static ICsGetManagerUserWidget* GetSafe_GetManagerUserWidget(UObject* Object);
-
-	static UCsManager_UserWidget* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_UserWidget* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerUserWidget* GetSafe_GetManagerUserWidget(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

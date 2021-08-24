@@ -6,8 +6,9 @@
 // CVars
 #include "Managers/UserWidget/CsCVars_Manager_UserWidget.h"
 // Library
-#include "Library/CsLibrary_Property.h"
 #include "Data/CsUILibrary_DataRootSet.h"
+#include "Library/CsLibrary_Property.h"
+#include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsUILog.h"
 // Settings
@@ -24,13 +25,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/UserWidget/CsGetManagerUserWidget.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -88,13 +82,19 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 {
 	return Get_GetManagerUserWidget(InRoot)->GetManager_UserWidget();
 }
-#endif // #if WITH_EDITOR
 
-#if WITH_EDITOR
+/*static*/ UCsManager_UserWidget* UCsManager_UserWidget::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerUserWidget* GetManagerUserWidget = GetSafe_GetManagerUserWidget(Context, InRoot, Log))
+		return GetManagerUserWidget->GetManager_UserWidget();
+	return nullptr;
+}
+
 /*static*/ bool UCsManager_UserWidget::IsValid(UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerUserWidget(InRoot)->GetManager_UserWidget() != nullptr;
 }
+
 #endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_UserWidget::Init(UObject* InRoot, TSubclassOf<UCsManager_UserWidget> ManagerUserWidgetClass, UObject* InOuter /*=nullptr*/)
@@ -184,19 +184,15 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 	return GetManagerUserWidget;
 }
 
-/*static*/ ICsGetManagerUserWidget* UCsManager_UserWidget::GetSafe_GetManagerUserWidget(UObject* Object)
+/*static*/ ICsGetManagerUserWidget* UCsManager_UserWidget::GetSafe_GetManagerUserWidget(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_UserWidget::GetSafe_GetManagerUserWidget: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_UserWidget::GetSafe_GetManagerUserWidget: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -204,36 +200,10 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_UserWidget::GetSafe_GetManagerUserWidget: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerUserWidget>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_UserWidget* UCsManager_UserWidget::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerUserWidget* GetManagerUserWidget = GetSafe_GetManagerUserWidget(Object))
-		return GetManagerUserWidget->GetManager_UserWidget();
-	return nullptr;
-}
-
-/*static*/ UCsManager_UserWidget* UCsManager_UserWidget::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game State
-		if (UCsManager_UserWidget* Manager = GetSafe(World->GetGameState()))
-			return Manager;
-
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_UserWidget::GetFromWorldContextObject: Failed to Manager FX Actor of type UCsManager_UserWidget from GameState."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

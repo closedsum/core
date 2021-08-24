@@ -32,6 +32,7 @@ namespace NCsAnim2DPlayRate
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTime, "Custom Delta Time");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomTotalTime, "Custom Total Time");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTimeAndTotalTime, "Custom Delta Time and Total Time");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTimePerFrame, "Custom Delta Time per Frame");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_Custom, "Custom");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsAnim2DPlayRate_MAX, "MAX");
 	}
@@ -68,6 +69,7 @@ namespace NCsAnim
 				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTime, "Custom Delta Time");
 				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomTotalTime, "Custom Total Time");
 				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTimeAndTotalTime, "Custom Delta Time and Total Time");
+				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_CustomDeltaTimePerFrame, "Custom Delta Time per Frame");
 				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(PR_Custom, "Custom");
 				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPlayRate_MAX, "MAX");
 			}
@@ -158,12 +160,14 @@ void FCsAnim2DFlipbookTextureFrame::CopyToFrame(FrameType* Frame)
 {
 	Frame->SetTexture(Texture.GetPtr());
 	Frame->SetParameterName(&ParameterName);
+	Frame->SetDeltaTime(&DeltaTime);
 }
 
 void FCsAnim2DFlipbookTextureFrame::CopyToFrameAsValue(FrameType* Frame) const
 {
 	Frame->SetTexture(Texture.Get());
 	Frame->SetParameterName(ParameterName);
+	Frame->SetDeltaTime(DeltaTime);
 }
 
 #undef FrameType
@@ -232,7 +236,7 @@ void FCsAnim2DFlipbookTexture::Resolve()
 		if (Playback == ECsAnim2DPlayback::PingPong)
 		{
 			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+			TotalCount = 2 * Frames.Num() - 1;
 		}
 		else
 		{
@@ -247,7 +251,7 @@ void FCsAnim2DFlipbookTexture::Resolve()
 		if (Playback == ECsAnim2DPlayback::PingPong)
 		{
 			DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
-			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+			TotalCount = 2 * Frames.Num() - 1;
 		}
 		else
 		{
@@ -266,6 +270,37 @@ void FCsAnim2DFlipbookTexture::Resolve()
 			TotalCount = FMath::FloorToInt(TotalTime / DeltaTime);
 		}
 	}
+	// CustomeDeltaTimePerFrame
+	else
+	if (PlayRate == ECsAnim2DPlayRate::PR_CustomDeltaTimePerFrame)
+	{
+		
+		if (IsLooping())
+		{
+			// Do Nothing
+		}
+		else
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			TotalTime = 0.0f;
+
+			const int32 Count = Frames.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{				
+				TotalTime += I < Count - 1 ? 2.0f * Frames[I].DeltaTime : Frames[I].DeltaTime;
+			}
+			TotalCount = 2 * Frames.Num() - 1;
+		}
+		else
+		{
+			for (const FCsAnim2DFlipbookTextureFrame& Frame : Frames)
+			{
+				TotalTime += Frame.DeltaTime;
+			}
+			TotalCount = Frames.Num();
+		}
+	}
 	else
 	if (PlayRate == ECsAnim2DPlayRate::PR_Custom)
 	{
@@ -277,7 +312,7 @@ void FCsAnim2DFlipbookTexture::Resolve()
 		{
 			DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
 			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+			TotalCount = 2 * Frames.Num() - 1;
 		}
 		else
 		{
@@ -407,6 +442,18 @@ bool FCsAnim2DFlipbookTexture::IsValidChecked(const FString& Context) const
 	{
 		check(Frame.IsValidChecked(Context));
 	}
+
+	if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+	{
+		const int32 Count = Frames.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FrameType& Frame = Frames[I];
+
+			checkf(Frame.DeltaTime > 0.0f, TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR));
+		}
+	}
 	return true;
 }
 
@@ -503,6 +550,22 @@ bool FCsAnim2DFlipbookTexture::IsValid(const FString& Context, void(*Log)(const 
 		if (!Frame.IsValid(Context, Log))
 			return false;
 	}
+
+	if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+	{
+		const int32 Count = Frames.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FrameType& Frame = Frames[I];
+
+			if (Frame.DeltaTime <= 0.0f)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+				return false;
+			}
+		}
+	}
 	return true;
 }
 
@@ -554,7 +617,7 @@ namespace NCsAnim
 						if (Playback == PlaybackType::PingPong)
 						{
 							TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+							TotalCount = 2 * Frames.Num() - 1;
 						}
 						else
 						{
@@ -572,7 +635,7 @@ namespace NCsAnim
 						if (Playback == PlaybackType::PingPong)
 						{
 							DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
-							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+							TotalCount = 2 * Frames.Num() - 1;
 						}
 						else
 						{
@@ -605,6 +668,52 @@ namespace NCsAnim
 							TotalCount = FMath::FloorToInt(TotalTime / DeltaTime);
 						}
 					}
+					// CustomeDeltaTimePerFrame
+					else
+					if (PlayRate == PlayRateType::PR_CustomDeltaTimePerFrame)
+					{
+						if (IsLooping())
+						{
+							// Do Nothing
+						}
+						else
+						if (Playback == PlaybackType::PingPong)
+						{
+							typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
+
+							TotalTime = 0.0f;
+
+							const int32 Count = Frames.Num();
+
+							for (int32 I = 0; I < Count; ++I)
+							{				
+								FrameType& Frame = Frames[I];
+
+								check(Frame.AreProxyPtrsDefaultChecked(Context));
+
+								float DT = Frame.GetDeltaTime();
+								Frame.SetDeltaTime(Scale * DT);
+
+								TotalTime += I < Count - 1 ? 2.0f * Frame.GetDeltaTime() : Frame.GetDeltaTime();
+							}
+							TotalCount = 2 * Frames.Num() - 1;
+						}
+						else
+						{
+							typedef NCsAnim::N2D::NTexture::NFlipbook::FFrame FrameType;
+
+							for (FrameType& Frame : Frames)
+							{
+								check(Frame.AreProxyPtrsDefaultChecked(Context));
+
+								float DT = Frame.GetDeltaTime();
+								Frame.SetDeltaTime(Scale * DT);
+
+								TotalTime += Frame.GetDeltaTime();
+							}
+							TotalCount = Frames.Num();
+						}
+					}
 					else
 					if (PlayRate == PlayRateType::PR_Custom)
 					{
@@ -617,7 +726,7 @@ namespace NCsAnim
 							DeltaTime = NPlayRate::GetDeltaTime(PlayRate);
 							DeltaTime *= Scale;
 							TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-							TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+							TotalCount = 2 * Frames.Num() - 1;
 						}
 						else
 						{
@@ -687,6 +796,18 @@ namespace NCsAnim
 					for (const FrameType& Frame : Frames)
 					{
 						check(Frame.IsValidChecked(Context));
+					}
+
+					if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+					{
+						const int32 Count = Frames.Num();
+
+						for (int32 I = 0; I < Count; ++I)
+						{
+							const FrameType& Frame = Frames[I];
+
+							checkf(Frame.GetDeltaTime() > 0.0f, TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR));
+						}
 					}
 					return true;
 				}
@@ -784,6 +905,22 @@ namespace NCsAnim
 						if (!Frame.IsValid(Context, Log))
 							return false;
 					}
+
+					if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+					{
+						const int32 Count = Frames.Num();
+
+						for (int32 I = 0; I < Count; ++I)
+						{
+							const FrameType& Frame = Frames[I];
+
+							if (Frame.GetDeltaTime() <= 0.0f)
+							{
+								CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+								return false;
+							}
+						}
+					}
 					return true;
 				}
 			}
@@ -802,12 +939,14 @@ void FCsAnim2DMaterialFlipbookFrame::CopyToFrame(FrameType* Frame)
 {
 	Frame->SetMaterial(Material.GetPtr());
 	Frame->SetIndex(&Index);
+	Frame->SetDeltaTime(&DeltaTime);
 }
 
 void FCsAnim2DMaterialFlipbookFrame::CopyToFrameAsValue(FrameType* Frame) const
 {
 	Frame->SetMaterial(Material.Get());
 	Frame->SetIndex(Index);
+	Frame->SetDeltaTime(DeltaTime);
 }
 
 #undef FrameType
@@ -876,7 +1015,7 @@ void FCsAnim2DMaterialFlipbook::Resolve()
 		if (Playback == ECsAnim2DPlayback::PingPong)
 		{
 			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+			TotalCount = 2 * Frames.Num() - 1;
 		}
 		else
 		{
@@ -891,7 +1030,7 @@ void FCsAnim2DMaterialFlipbook::Resolve()
 		if (Playback == ECsAnim2DPlayback::PingPong)
 		{
 			DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
-			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+			TotalCount = 2 * Frames.Num() - 1;
 		}
 		else
 		{
@@ -910,6 +1049,36 @@ void FCsAnim2DMaterialFlipbook::Resolve()
 			TotalCount = FMath::FloorToInt(TotalTime / DeltaTime);
 		}
 	}
+	// CustomeDeltaTimePerFrame
+	else
+	if (PlayRate == ECsAnim2DPlayRate::PR_CustomDeltaTimePerFrame)
+	{	
+		if (IsLooping())
+		{
+			// Do Nothing
+		}
+		else
+		if (Playback == ECsAnim2DPlayback::PingPong)
+		{
+			TotalTime = 0.0f;
+
+			const int32 Count = Frames.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{				
+				TotalTime += I < Count - 1 ? 2.0f * Frames[I].DeltaTime : Frames[I].DeltaTime;
+			}
+			TotalCount = 2 * Frames.Num() - 1;
+		}
+		else
+		{
+			for (const FCsAnim2DMaterialFlipbookFrame& Frame : Frames)
+			{
+				TotalTime += Frame.DeltaTime;
+			}
+			TotalCount = Frames.Num();
+		}
+	}
 	else
 	if (PlayRate == ECsAnim2DPlayRate::PR_Custom)
 	{
@@ -921,7 +1090,7 @@ void FCsAnim2DMaterialFlipbook::Resolve()
 		{
 			DeltaTime = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
 			TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-			TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+			TotalCount = 2 * Frames.Num() - 1;
 		}
 		else
 		{
@@ -1051,6 +1220,18 @@ bool FCsAnim2DMaterialFlipbook::IsValidChecked(const FString& Context) const
 	{
 		check(Frame.IsValidChecked(Context));
 	}
+
+	if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+	{
+		const int32 Count = Frames.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FrameType& Frame = Frames[I];
+
+			checkf(Frame.DeltaTime > 0.0f, TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR));
+		}
+	}
 	return true;
 }
 
@@ -1146,6 +1327,22 @@ bool FCsAnim2DMaterialFlipbook::IsValid(const FString& Context, void(*Log)(const
 	{
 		if (!Frame.IsValid(Context, Log))
 			return false;
+	}
+
+	if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+	{
+		const int32 Count = Frames.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const FrameType& Frame = Frames[I];
+
+			if (Frame.DeltaTime <= 0.0f)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+				return false;
+			}
+		}
 	}
 	return true;
 }
@@ -1332,6 +1529,18 @@ namespace NCsAnim
 					{
 						check(Frame.IsValidChecked(Context));
 					}
+
+					if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+					{
+						const int32 Count = Frames.Num();
+
+						for (int32 I = 0; I < Count; ++I)
+						{
+							const FrameType& Frame = Frames[I];
+
+							checkf(Frame.GetDeltaTime() > 0.0f, TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR));
+						}
+					}
 					return true;
 				}
 
@@ -1427,6 +1636,22 @@ namespace NCsAnim
 					{
 						if (!Frame.IsValid(Context, Log))
 							return false;
+					}
+
+					if (PR == PlayRateType::PR_CustomDeltaTimePerFrame)
+					{
+						const int32 Count = Frames.Num();
+
+						for (int32 I = 0; I < Count; ++I)
+						{
+							const FrameType& Frame = Frames[I];
+
+							if (Frame.GetDeltaTime() <= 0.0f)
+							{
+								CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Frames[%d] is NOT > 0.0f for PlayRate: %s."), *Context, I, PlayRateMapType::Get().ToDisplayNameChar(PR)));
+								return false;
+							}
+						}
 					}
 					return true;
 				}

@@ -135,11 +135,7 @@ namespace NCsAnim
 
 			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				if (!Params)
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
-					return FCsRoutineHandle::Invalid;
-				}
+				CS_IS_PTR_NULL_RET_VALUE(Params, FCsRoutineHandle::Invalid)
 
 				const FCsRoutineHandle& Handle = SafePlay(Context, Params->GetRef(), Log);
 
@@ -174,7 +170,6 @@ namespace NCsAnim
 
 				const PlaybackType& Playback = Params->Anim.GetPlayback();
 				const bool LoopingForever	 = Params->Anim.IsLoopingForever();
-				const float& DeltaTime		 = Anim.GetDeltaTime();
 				const float& TotalTime		 = Anim.GetTotalTime();
 				const int32 FrameCount		 = Anim.Frames.Num();
 				const int32& TotalCount		 = Anim.GetTotalCount();
@@ -184,6 +179,8 @@ namespace NCsAnim
 
 				static const int32 FRAME_INDEX = 1;
 				int32& FrameIndex = R->GetValue_Int(FRAME_INDEX);
+
+				const float& DeltaTime = Anim.GetDeltaTime(FrameIndex);
 
 				FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 				ElapsedTime += R->DeltaTime;
@@ -384,11 +381,7 @@ namespace NCsAnim
 
 			const FCsRoutineHandle& FLibrary::SafePlay(const FString& Context, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				if (!Params)
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
-					return FCsRoutineHandle::Invalid;
-				}
+				CS_IS_PTR_NULL_RET_VALUE(Params, FCsRoutineHandle::Invalid)
 
 				const FCsRoutineHandle& Handle = SafePlay(Context, Params->GetRef(), Log);
 
@@ -427,7 +420,6 @@ namespace NCsAnim
 
 				const PlaybackType& Playback = Params->Anim.GetPlayback();
 				const bool LoopingForever	 = Params->Anim.IsLoopingForever();
-				const float& DeltaTime		 = Anim.GetDeltaTime();
 				const float& TotalTime		 = Anim.GetTotalTime();
 				const int32 FrameCount		 = Anim.Frames.Num();
 				const int32& TotalCount		 = Anim.GetTotalCount();
@@ -437,6 +429,8 @@ namespace NCsAnim
 
 				static const int32 FRAME_INDEX = 1;
 				int32& FrameIndex = R->GetValue_Int(FRAME_INDEX);
+
+				const float& DeltaTime = Anim.GetDeltaTime(FrameIndex);
 
 				FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 				ElapsedTime += R->DeltaTime;

@@ -34,6 +34,7 @@ enum class ECsAnim2DPlayRate : uint8
 	PR_CustomDeltaTime				UMETA(DisplayName = "Custom Delta Time"),
 	PR_CustomTotalTime				UMETA(DisplayName = "Custom Total Time"),
 	PR_CustomDeltaTimeAndTotalTime	UMETA(DisplayName = "Custom Delta Time and Total Time"),
+	PR_CustomDeltaTimePerFrame		UMETA(DisplayName = "Custom Delta Time per Frame"),
 	PR_Custom						UMETA(DisplayName = "Custom"),
 	ECsAnim2DPlayRate_MAX			UMETA(Hidden),
 };
@@ -68,6 +69,7 @@ namespace NCsAnim2DPlayRate
 		extern CSCORE_API const Type PR_CustomDeltaTime;
 		extern CSCORE_API const Type PR_CustomTotalTime;
 		extern CSCORE_API const Type PR_CustomDeltaTimeAndTotalTime;
+		extern CSCORE_API const Type PR_CustomDeltaTimePerFrame;
 		extern CSCORE_API const Type PR_Custom;
 		extern CSCORE_API const Type ECsAnim2DPlayRate_MAX;
 	}
@@ -102,6 +104,7 @@ namespace NCsAnim
 			PR_CustomDeltaTime,
 			PR_CustomTotalTime,
 			PR_CustomDeltaTimeAndTotalTime,
+			PR_CustomDeltaTimePerFrame,
 			PR_Custom,
 			EPlayRate_MAX
 		};
@@ -136,6 +139,7 @@ namespace NCsAnim
 				extern CSCORE_API const Type PR_CustomDeltaTime;
 				extern CSCORE_API const Type PR_CustomTotalTime;
 				extern CSCORE_API const Type PR_CustomDeltaTimeAndTotalTime;
+				extern CSCORE_API const Type PR_CustomDeltaTimePerFrame;
 				extern CSCORE_API const Type PR_Custom;
 				extern CSCORE_API const Type EPlayRate_MAX;
 			}
@@ -254,9 +258,15 @@ struct CSCORE_API FCsAnim2DFlipbookTextureFrame
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName ParameterName;
 
+	/** How long this frame lasts for.
+		Only Valid if Animation's PlayRate == ECsAnim2DPlayRate::CustomDeltaTimePerFrame. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float DeltaTime;
+
 	FCsAnim2DFlipbookTextureFrame() :
 		Texture(),
-		ParameterName(NAME_None)
+		ParameterName(NAME_None),
+		DeltaTime(0.0f)
 	{
 	}
 
@@ -285,26 +295,43 @@ namespace NCsAnim
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Texture, UTexture*)
 					CS_DECLARE_MEMBER_WITH_PROXY(ParameterName, FName)
+					CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
 
 				public:
 
 					FFrame() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Texture, nullptr),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(ParameterName, NAME_None)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ParameterName, NAME_None),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f)
 					{
 						CS_CTOR_SET_MEMBER_PROXY(Texture);
 						CS_CTOR_SET_MEMBER_PROXY(ParameterName);
+						CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
 					}
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
 					{
 						SetTexture(B.GetTexture());
 						SetParameterName(B.GetParameterName());
+						SetDeltaTime(B.GetDeltaTime());
 						return *this;
 					}
 
 					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Texture, UTexture)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ParameterName, FName)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Texture)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(ParameterName)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime)
+
+					FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
+					{
+						CS_IS_PROXY_PTR_DEFAULT_CHECKED(Texture);
+						CS_IS_PROXY_PTR_DEFAULT_CHECKED(ParameterName);
+						CS_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime);
+						return true;
+					}
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -544,9 +571,15 @@ struct CSCORE_API FCsAnim2DMaterialFlipbookFrame
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (UIMin = "0", ClampMin= "0"))
 	int32 Index;
 
+	/** How long this frame lasts for.
+		Only Valid if Animation's PlayRate == ECsAnim2DPlayRate::CustomDeltaTimePerFrame. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float DeltaTime;
+
 	FCsAnim2DMaterialFlipbookFrame() :
 		Material(),
-		Index(0)
+		Index(0),
+		DeltaTime(0.0f)
 	{
 	}
 
@@ -575,24 +608,41 @@ namespace NCsAnim
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Material, UMaterialInterface*)
 					CS_DECLARE_MEMBER_WITH_PROXY(Index, int32)
+					CS_DECLARE_MEMBER_WITH_PROXY(DeltaTime, float)
 
 					FFrame() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Material, nullptr),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(Index, INDEX_NONE)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Index, INDEX_NONE),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f)
 					{
 						CS_CTOR_SET_MEMBER_PROXY(Material);
 						CS_CTOR_SET_MEMBER_PROXY(Index);
+						CS_CTOR_SET_MEMBER_PROXY(DeltaTime);
 					}
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
 					{
 						SetMaterial(B.GetMaterial());
 						SetIndex(B.GetIndex());
+						SetDeltaTime(B.GetDeltaTime());
 						return *this;
 					}
 
 					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Material, UMaterialInterface)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Index, int32)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
+
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Material)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(Index)
+					CS_DEFINE_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime)
+
+					FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
+					{
+						CS_IS_PROXY_PTR_DEFAULT_CHECKED(Material);
+						CS_IS_PROXY_PTR_DEFAULT_CHECKED(Index);
+						CS_IS_PROXY_PTR_DEFAULT_CHECKED(DeltaTime);
+						return true;
+					}
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

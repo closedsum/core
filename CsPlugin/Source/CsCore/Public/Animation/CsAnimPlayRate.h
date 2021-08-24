@@ -36,6 +36,8 @@ enum class ECsAnimPlayRate : uint8
 	PR_CustomTotalTime				UMETA(DisplayName = "Custom Total Time"),
 	/** TotalTime and DeltaTime are used to calculate the TotalCount. */
 	PR_CustomDeltaTimeAndTotalTime	UMETA(DisplayName = "Custom Delta Time and Total Time"),
+	/** Each frame has its own DeltaTime. TotalTime is the sum of each frame's DeltaTime. */
+	PR_CustomDeltaTimePerFrame		UMETA(DisplayName = "Custom Delta Time per Frame"),
 	/** DeltaTime, TotalTime, and TotalCount are determined by a custom
 		implementation */
 	PR_Custom						UMETA(DisplayName = "Custom"),
@@ -72,6 +74,7 @@ namespace NCsAnimPlayRate
 		extern CSCORE_API const Type PR_CustomDeltaTime;
 		extern CSCORE_API const Type PR_CustomTotalTime;
 		extern CSCORE_API const Type PR_CustomDeltaTimeAndTotalTime;
+		extern CSCORE_API const Type PR_CustomDeltaTimePerFrame;
 		extern CSCORE_API const Type PR_Custom;
 		extern CSCORE_API const Type ECsAnimPlayRate_MAX;
 	}
@@ -109,6 +112,8 @@ namespace NCsAnim
 		PR_CustomTotalTime,
 		/** TotalTime and DeltaTime are used to calculate the TotalCount. */
 		PR_CustomDeltaTimeAndTotalTime,
+		/** Each frame has its own DeltaTime. TotalTime is the sum of each frame's DeltaTime. */
+		PR_CustomDeltaTimePerFrame,
 		/** DeltaTime, TotalTime, and TotalCount are determined by a custom
 			implementation */
 		PR_Custom,
@@ -145,6 +150,7 @@ namespace NCsAnim
 			extern CSCORE_API const Type PR_CustomDeltaTime;
 			extern CSCORE_API const Type PR_CustomTotalTime;
 			extern CSCORE_API const Type PR_CustomDeltaTimeAndTotalTime;
+			extern CSCORE_API const Type PR_CustomDeltaTimePerFrame;
 			extern CSCORE_API const Type PR_Custom;
 			extern CSCORE_API const Type EPlayRate_MAX;
 		}

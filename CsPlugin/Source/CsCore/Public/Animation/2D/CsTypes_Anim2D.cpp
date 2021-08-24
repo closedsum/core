@@ -543,7 +543,9 @@ namespace NCsAnim
 					CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount);
 
 					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+					typedef NCsAnim::N2D::EMPlayback PlaybackMapType;
 					typedef NCsAnim::N2D::EPlayback PlaybackType;
+					typedef NCsAnim::EMPlayScale PlayScaleMapType;
 					typedef NCsAnim::EPlayScale PlayScaleType;
 
 					// CustomDeltaTime
@@ -591,6 +593,8 @@ namespace NCsAnim
 						// TotalTime
 						else
 						{
+							checkf(IsLooping(), TEXT("%s: For PlayScale: %s, Playback: %s is NOT a looping type."), PlayScaleMapType::Get().ToChar(PlayScale), PlaybackMapType::Get().ToChar(Playback));
+
 							TotalTime *= Scale;
 						}
 
@@ -793,6 +797,7 @@ namespace NCsAnim
 #pragma region
 
 #define FrameType NCsAnim::N2D::NMaterial::NFlipbook::FFrame
+
 void FCsAnim2DMaterialFlipbookFrame::CopyToFrame(FrameType* Frame)
 {
 	Frame->SetMaterial(Material.GetPtr());
@@ -1182,7 +1187,9 @@ namespace NCsAnim
 					CS_IS_PROXY_PTR_DEFAULT_CHECKED(TotalCount);
 
 					typedef NCsAnim::N2D::EPlayRate PlayRateType;
+					typedef NCsAnim::N2D::EMPlayback PlaybackMapType;
 					typedef NCsAnim::N2D::EPlayback PlaybackType;
+					typedef NCsAnim::EMPlayScale PlayScaleMapType;
 					typedef NCsAnim::EPlayScale PlayScaleType;
 
 					// CustomDeltaTime
@@ -1230,6 +1237,8 @@ namespace NCsAnim
 						// TotalTime
 						else
 						{
+							checkf(IsLooping(), TEXT("%s: For PlayScale: %s, Playback: %s is NOT a looping type."), PlayScaleMapType::Get().ToChar(PlayScale), PlaybackMapType::Get().ToChar(Playback));
+
 							TotalTime *= Scale;
 						}
 

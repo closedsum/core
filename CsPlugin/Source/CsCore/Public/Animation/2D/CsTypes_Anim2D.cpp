@@ -586,6 +586,7 @@ namespace NCsAnim
 				{
 					namespace Str
 					{
+						CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAnim::N2D::NTexture::NFlipbook, GetDeltaTime);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAnim::N2D::NTexture::NFlipbook, ScaleTime);
 					}
 				}
@@ -1364,6 +1365,7 @@ namespace NCsAnim
 				{
 					namespace Str
 					{
+						CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAnim::N2D::NMaterial::NFlipbook, GetDeltaTime);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsAnim::N2D::NMaterial::NFlipbook, ScaleTime);
 					}
 				}

@@ -311,9 +311,12 @@ namespace NCsAnim
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
 					{
-						SetTexture(B.GetTexture());
-						SetParameterName(B.GetParameterName());
-						SetDeltaTime(B.GetDeltaTime());
+						Texture = B.GetTexture();
+						SetTexture(&Texture);
+						ParameterName = B.GetParameterName();
+						SetParameterName(&ParameterName);
+						DeltaTime = B.GetDeltaTime();
+						SetDeltaTime(&DeltaTime);
 						return *this;
 					}
 
@@ -429,6 +432,14 @@ namespace NCsAnim
 		{
 			namespace NFlipbook
 			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						extern CSCORE_API const FString GetDeltaTime;
+					}
+				}
+
 				struct CSCORE_API FFlipbook
 				{
 				#define PlaybackType NCsAnim::N2D::EPlayback
@@ -497,6 +508,14 @@ namespace NCsAnim
 
 					FORCEINLINE const float& GetDeltaTime(const int32& Index) const
 					{
+						using namespace NCsAnim::N2D::NTexture::NFlipbook::NCached;
+
+						const FString& Context = Str::GetDeltaTime;
+
+						checkf(Index >= 0 && Index < Frames.Num(), TEXT("%s: Index is NOT in the bounds [0, %d)."), *Context, Frames.Num());
+
+						if (GetPlayRate() == PlayRateType::PR_CustomDeltaTimePerFrame)
+							return Frames[Index].GetDeltaTime();
 						return GetDeltaTime();
 					}
 
@@ -622,9 +641,12 @@ namespace NCsAnim
 
 					FORCEINLINE FFrame& operator=(const FFrame& B)
 					{
-						SetMaterial(B.GetMaterial());
-						SetIndex(B.GetIndex());
-						SetDeltaTime(B.GetDeltaTime());
+						Material = B.GetMaterial();
+						SetMaterial(&Material);
+						Index = B.GetIndex();
+						SetIndex(&Index);
+						DeltaTime = B.GetDeltaTime();
+						SetDeltaTime(&DeltaTime);
 						return *this;
 					}
 
@@ -739,6 +761,14 @@ namespace NCsAnim
 		{
 			namespace NFlipbook
 			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						extern CSCORE_API const FString GetDeltaTime;
+					}
+				}
+
 				struct CSCORE_API FFlipbook
 				{
 				#define PlaybackType NCsAnim::N2D::EPlayback
@@ -807,6 +837,14 @@ namespace NCsAnim
 
 					FORCEINLINE const float& GetDeltaTime(const int32& Index) const
 					{
+						using namespace NCsAnim::N2D::NMaterial::NFlipbook::NCached;
+
+						const FString& Context = Str::GetDeltaTime;
+
+						checkf(Index >= 0 && Index < Frames.Num(), TEXT("%s: Index is NOT in the bounds [0, %d)."), *Context, Frames.Num());
+
+						if (GetPlayRate() == PlayRateType::PR_CustomDeltaTimePerFrame)
+							return Frames[Index].GetDeltaTime();
 						return GetDeltaTime();
 					}
 

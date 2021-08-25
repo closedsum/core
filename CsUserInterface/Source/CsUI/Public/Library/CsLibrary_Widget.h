@@ -310,6 +310,15 @@ namespace NCsWidget
 			*/
 			static UWidgetAnimation* GetSafe(UUserWidget* Widget, const FName& AnimName);
 
+			/**
+			* Get the "length" of Animation (GetEndTime() - GetStartTime()).
+			* 
+			* @param Context	The calling context.
+			* @param Animation
+			* return			Animation length.
+			*/
+			static float GetLengthChecked(const FString& Context, const UWidgetAnimation* Animation);
+
 			#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
 
 			/**

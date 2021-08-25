@@ -526,6 +526,16 @@ namespace NCsWidget
 			return GetSafe(Context, Widget, AnimName, nullptr);
 		}
 
+		float FLibrary::GetLengthChecked(const FString& Context, const UWidgetAnimation* Animation)
+		{
+			CS_IS_PTR_NULL_CHECKED(Animation);
+
+			const float Time = Animation->GetEndTime() - Animation->GetStartTime();
+
+			checkf(Time > 0.0f, TEXT("%s: The 'length' (GetEndTime() - GetStartTime()) of Animation: %s is NOT > 0.0f."), *Context, *(Animation->GetName()));
+			return Time;
+		}
+
 		#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
 
 		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const ParamsType& Params)

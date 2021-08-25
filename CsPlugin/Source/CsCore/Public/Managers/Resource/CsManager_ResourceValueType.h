@@ -322,8 +322,7 @@ public:
 
 		for (int32 I = 0; I < Count; ++I)
 		{
-
-			if (&(Resources[I]) == Resource)
+			if (Resources[I] == Resource)
 			{
 				return Pool[I];
 			}
@@ -345,7 +344,7 @@ public:
 		for (int32 I = 0; I < Count; ++I)
 		{
 			
-			if (&(Resources[I]) == Resource)
+			if (Resources[I] == Resource)
 			{
 				return Pool[I];
 			}
@@ -407,6 +406,44 @@ public:
 			}
 		}
 		return nullptr;
+	}
+
+	/**
+	*/
+	bool Contains(const ResourceType* Resource) const
+	{
+		checkf(Resource, TEXT("%s::Contains: Resource is NULL."), *Name);
+
+		for (const ResourceType* R : Resources)
+		{
+			if (R == Resource)
+				return true;
+		}
+		return false;
+	}
+
+	FORCEINLINE bool ContainsChecked(const FString& Context, const ResourceType* Resource) const
+	{
+		checkf(Contains(Resource), TEXT("%s: Resource is NOT apart of %s."), *Context, *Name);
+		return true;
+	}
+
+	bool Contains(const ResourceContainerType* ResourceContainer) const
+	{
+		checkf(ResourceContainer, TEXT("%s::Contains: ResourceContainer is NULL."), *Name);
+
+		const int32& Index = ResourceContainer->GetIndex();
+
+		if (Index < 0 || Index >= PoolSize)
+			return false;
+
+		return Pool[Index] == ResourceContainer;
+	}
+
+	FORCEINLINE bool ContainsChecked(const FString& Context, const ResourceContainerType* ResourceContainer) const
+	{
+		checkf(Contains(ResourceContainer), TEXT("%s: ResourceContainer is NOT apart of %s."), *Context, *Name);
+		return true;
 	}
 
 #pragma endregion Pool
@@ -569,22 +606,16 @@ public:
 		return nullptr;
 	}
 
-	/*
-	ResourceContainerType* Allocate(const int32& Index)
-	{
-		checkf(Index > 0 && Index < PoolSize, TEXT("%s::Allocate: Index: %d is NOT Valid. Index must be > 0 and < PoolSize: %d."), Index, PoolSize);
-
-		ResourceContainerType* M = Pool[Index];
-
-		if (M->IsAllocated())
-			return M;
-
-		M->Allocate();
-		AddAllocatedLink(Links[PoolIndex]);
-		++AllocatedSize;
-		return M;
-	}
+	/**
+	* Allocate a ResourceType and add the corresponding linked list element to the
+	*  end of the list
+	*
+	* return ResourceType	Allocated ResourceType
 	*/
+	ResourceType* AllocateResource()
+	{
+		return Allocate()->Get();
+	}
 
 	/**
 	* Allocate a ResourceType and add the corresponding linked list element after
@@ -643,6 +674,16 @@ public:
 		if (AllocatedHead)
 			return AllocateAfter(**AllocatedHead);
 		return Allocate();
+	}
+
+	/**
+	* Get the current resource at the head of the allocated linked list.
+	*
+	* return Allocated Head's Resource.
+	*/
+	FORCEINLINE ResourceType* GetAllocatedResourceHead()
+	{
+		return AllocatedHead ? (**AllocatedHead)->Get() : nullptr;
 	}
 
 	/**
@@ -806,7 +847,7 @@ public:
 		checkf(Resource == M->Get(), TEXT("%s::DeallocateAt: Resource at Index: %d is NOT contained in Pool."), *Name, Index);
 
 		M->Deallocate();
-		RemoveAllocatedLink(&(Links[Index]));
+		RemoveAllocatedLink(Links[Index]);
 		AllocationOrder.Promote(Index);
 		--AllocatedSize;
 		return true;
@@ -840,7 +881,7 @@ public:
 			const int32& Index = M->GetIndex();
 
 			M->Deallocate();
-			RemoveAllocatedLink(&(Links[Index]));
+			RemoveAllocatedLink(Links[Index]);
 			--AllocatedSize;
 		}
 		AllocationOrder.Reset();

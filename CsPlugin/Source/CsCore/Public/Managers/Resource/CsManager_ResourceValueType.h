@@ -190,13 +190,11 @@ public:
 
 		Shutdown();
 
+		PoolSize = InSize;
+
 		Resources.Reset(PoolSize);
-		Resources.AddDefaulted(PoolSize);
-
 		Pool.Reset(PoolSize);
-
 		Links.Reset(PoolSize);
-		Links.AddDefaulted(PoolSize);
 
 		AllocationOrder.Create(PoolSize);
 
@@ -278,6 +276,8 @@ public:
 	{
 		return PoolSize == AllocatedSize;
 	}
+
+	FORCEINLINE bool IsNoneAllocated() const { return AllocatedSize == 0; }
 
 	FORCEINLINE void AdvancePoolIndexByIncrement() { PoolIndex = (PoolIndex + 1) % PoolSize; }
 

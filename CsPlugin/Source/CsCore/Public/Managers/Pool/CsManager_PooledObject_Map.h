@@ -462,8 +462,10 @@ namespace NCsPooledObject
 				const ManagerAbstractType* const* PoolPtr = Pools.Find(Type);
 
 				if (!PoolPtr)
+				{
 					CS_NON_SHIPPING_EXPR(Log_Impl.Execute(FString::Printf(TEXT("%s::GetManagerPooledObjects: No Pool found for Type: %s. Call CreatePool."), *Name, *KeyTypeToString(Type))));
-
+					return nullptr;
+				}
 				return const_cast<ManagerAbstractType*>(*PoolPtr);
 			}
 

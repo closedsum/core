@@ -193,6 +193,15 @@ namespace NCsPlayer
 			return GetSafeFirstLocal(Context, World, Log);
 		}
 
+		APlayerController* FLibrary::GetSafeFirstLocal(const UObject* WorldContext)
+		{
+			using namespace NCsPlayer::NController::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeFirstLocal;
+
+			return GetSafeFirstLocal(Context, WorldContext, nullptr);
+		}
+
 		APlayerController* FLibrary::GetLocal(const FString& Context, UWorld* World, const int32& ControllerId)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)

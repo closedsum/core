@@ -160,6 +160,8 @@ namespace NCsPlayer
 				return Cast<T>(GetSafeFirstLocal(Context, WorldContext, Log));
 			}
 
+			static APlayerController* GetSafeFirstLocal(const UObject* WorldContext);
+
 			static APlayerController* GetLocal(const FString& Context, UWorld* World, const int32& ControllerId);
 
 			static APlayerController* GetLocalChecked(const FString& Context, UWorld* World, const int32& ControllerId);

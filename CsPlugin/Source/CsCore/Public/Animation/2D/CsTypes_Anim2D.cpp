@@ -294,6 +294,8 @@ void FCsAnim2DFlipbookTexture::Resolve()
 		}
 		else
 		{
+			TotalTime = 0.0f;
+
 			for (const FCsAnim2DFlipbookTextureFrame& Frame : Frames)
 			{
 				TotalTime += Frame.DeltaTime;
@@ -407,6 +409,7 @@ bool FCsAnim2DFlipbookTexture::IsValidChecked(const FString& Context) const
 	if (PR != PlayRateType::PR_CustomDeltaTime &&
 		PR != PlayRateType::PR_CustomTotalTime &&
 		PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+		PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 		PR != PlayRateType::PR_Custom)
 	{
 		const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime((NCsAnim::N2D::EPlayRate)PR);
@@ -484,6 +487,7 @@ bool FCsAnim2DFlipbookTexture::IsValid(const FString& Context, void(*Log)(const 
 	if (PR != PlayRateType::PR_CustomDeltaTime &&
 		PR != PlayRateType::PR_CustomTotalTime &&
 		PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+		PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 		PR != PlayRateType::PR_Custom)
 	{
 		const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime((NCsAnim::N2D::EPlayRate)PR);
@@ -763,6 +767,7 @@ namespace NCsAnim
 					if (PR != PlayRateType::PR_CustomDeltaTime &&
 						PR != PlayRateType::PR_CustomTotalTime &&
 						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+						PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 						PR != PlayRateType::PR_Custom)
 					{
 						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);
@@ -840,6 +845,7 @@ namespace NCsAnim
 					if (PR != PlayRateType::PR_CustomDeltaTime &&
 						PR != PlayRateType::PR_CustomTotalTime &&
 						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+						PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 						PR != PlayRateType::PR_Custom)
 					{
 						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);
@@ -1073,6 +1079,8 @@ void FCsAnim2DMaterialFlipbook::Resolve()
 		}
 		else
 		{
+			TotalTime = 0.0f;
+
 			for (const FCsAnim2DMaterialFlipbookFrame& Frame : Frames)
 			{
 				TotalTime += Frame.DeltaTime;
@@ -1186,6 +1194,7 @@ bool FCsAnim2DMaterialFlipbook::IsValidChecked(const FString& Context) const
 	if (PR != PlayRateType::PR_CustomDeltaTime &&
 		PR != PlayRateType::PR_CustomTotalTime &&
 		PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+		PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 		PR != PlayRateType::PR_Custom)
 	{
 		const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime((NCsAnim::N2D::EPlayRate)PR);
@@ -1263,6 +1272,7 @@ bool FCsAnim2DMaterialFlipbook::IsValid(const FString& Context, void(*Log)(const
 	if (PR != PlayRateType::PR_CustomDeltaTime &&
 		PR != PlayRateType::PR_CustomTotalTime &&
 		PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+		PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 		PR != PlayRateType::PR_Custom)
 	{
 		const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime((NCsAnim::N2D::EPlayRate)PR);
@@ -1496,6 +1506,7 @@ namespace NCsAnim
 					if (PR != PlayRateType::PR_CustomDeltaTime &&
 						PR != PlayRateType::PR_CustomTotalTime &&
 						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+						PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 						PR != PlayRateType::PR_Custom)
 					{
 						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);
@@ -1572,7 +1583,8 @@ namespace NCsAnim
 
 					if (PR != PlayRateType::PR_CustomDeltaTime &&
 						PR != PlayRateType::PR_CustomTotalTime &&
-						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime &&
+						PR != PlayRateType::PR_CustomDeltaTimeAndTotalTime && 
+						PR != PlayRateType::PR_CustomDeltaTimePerFrame &&
 						PR != PlayRateType::PR_Custom)
 					{
 						const float DT = NCsAnim::N2D::NPlayRate::GetDeltaTime(PR);

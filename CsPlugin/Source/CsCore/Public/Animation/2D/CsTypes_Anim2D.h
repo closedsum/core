@@ -493,7 +493,8 @@ namespace NCsAnim
 
 						for (const FrameType& F : B.Frames)
 						{
-							Frames.Add(F);
+							FrameType& Frame = Frames.AddDefaulted_GetRef();
+							Frame			 = F;
 						}
 
 						TotalCount = B.GetTotalCount();
@@ -822,7 +823,8 @@ namespace NCsAnim
 
 						for (const FrameType& F : B.Frames)
 						{
-							Frames.Add(F);
+							FrameType& Frame = Frames.AddDefaulted_GetRef();
+							Frame			 = F;
 						}
 
 						TotalCount = B.GetTotalCount();

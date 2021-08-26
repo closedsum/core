@@ -113,6 +113,16 @@ struct CSCORE_API FCsInputActionMappings
 		return EMCsInputAction::Get().GetMAX();
 	}
 
+	FORCEINLINE bool HasAction(const FECsInputAction& Action) const
+	{
+		for (const FCsInputActionMapping& Mapping : Mappings)
+		{
+			if (Mapping.Action == Action)
+				return true;
+		}
+		return false;
+	}
+
 	FORCEINLINE const FKey& GetKey(const FECsInputAction& Action) const 
 	{
 		for (const FCsInputActionMapping& Mapping : Mappings)
@@ -121,6 +131,19 @@ struct CSCORE_API FCsInputActionMappings
 				return Mapping.Key;
 		}
 		return EKeys::Invalid;
+	}
+
+	FORCEINLINE FCsInputActionMapping& GetOrAddMapping(const FECsInputAction& Action)
+	{
+		for (FCsInputActionMapping& Mapping : Mappings)
+		{
+			if (Mapping.Action == Action)
+				return Mapping;
+		}
+		
+		FCsInputActionMapping& Mapping = Mappings.AddDefaulted_GetRef();
+		Mapping.Action = Action;
+		return Mapping;
 	}
 
 	bool IsValidChecked(const FString& Context) const;
@@ -158,6 +181,26 @@ struct CSCORE_API FCsInputActionMappings
 			}
 		}
 		checkf(0, TEXT("%s: Mappings does NOT contain Action: %s."), *Context, Mapping.Action.ToChar());
+	}
+
+	FORCEINLINE void SafeCopyMappingsByAction(const FCsInputActionMappings& OtherMappings)
+	{
+		for (const FCsInputActionMapping& Mapping : OtherMappings.Mappings)
+		{
+			SafeCopyMappingByAction(Mapping);
+		}
+	}
+
+	FORCEINLINE void SafeCopyMappingByAction(const FCsInputActionMapping& Mapping)
+	{
+		for (FCsInputActionMapping& M : Mappings)
+		{
+			if (Mapping.Action == M.Action)
+			{
+				M = Mapping;
+				return;
+			}
+		}
 	}
 
 	void ReplaceKey(const FECsInputAction& Action, const FKey& Key)
@@ -210,6 +253,8 @@ struct CSCORE_API FCsInputProfile
 		}
 		return Mappings[CS_FIRST];
 	}
+
+	FORCEINLINE FCsInputActionMappings* GetMappingsPtr(const ECsInputDevice& Device) { return &(DeviceMappings[(uint8)Device]); }
 
 	FORCEINLINE FKey GetKey(const ECsInputDevice& Device, const FECsInputAction& Action)
 	{

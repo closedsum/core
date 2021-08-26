@@ -583,6 +583,18 @@ public:
 
 // Profile
 #pragma region
+private:
+
+	FCsInputProfile DefaultInputProfile;
+
+public:
+
+	FORCEINLINE const FCsInputProfile& GetDefaultInputProfile() const { return DefaultInputProfile; }
+
+private:
+
+	void SetDefaultInputProfile();
+
 public:
 
 	virtual bool CanSaveInputActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action);

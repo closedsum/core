@@ -2,6 +2,7 @@
 #pragma once
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
+#include "Managers/Input/Profile/CsTypes_InputProfile.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -498,8 +499,48 @@ namespace NCsInput
 				static void SafeReset(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#pragma endregion Reset
+			};
+		}
 
-			#pragma endregion InputActionMap
+		namespace NProfile
+		{
+			struct CSCORE_API FLibrary final
+			{
+			public:
+
+				/**
+				* Reset the Mappings for Device to the "Default" Mappings located in Manager_Input associated with ControllerId.
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllerId
+				* @param Mappings
+				* @param Device
+				*/
+				static void ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FCsInputActionMappings& Mappings, const ECsInputDevice& Device);
+
+				/**
+				* Reset the array Mappings to the "Default" Mappings located in Manager_Input associated with ControllerId.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllerId
+				* @param Mappings
+				* @param Device
+				*/
+				static void ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, TArray<FCsInputActionMappings>& Mappings);
+
+				/**
+				* Safley reset the array Mappings to the "Default" Mappings located in Manager_Input associated with ControllerId.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllerId
+				* @param Mappings
+				* @param Device
+				* @param Log			(optional)
+				*/
+				static bool SafeResetToDefault(const FString& Context, const UObject* WorldContext, const int32& ControllerId, TArray<FCsInputActionMappings>& Mappings, void(*Log)(const FString&) = &FCsLog::Warning);
 			};
 		}
 	}

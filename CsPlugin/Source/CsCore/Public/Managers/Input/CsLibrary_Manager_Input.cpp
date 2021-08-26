@@ -21,7 +21,7 @@ namespace NCsInput
 	namespace NManager
 	{
 		namespace NLibrary
-			{
+		{
 			namespace NCached
 			{
 				namespace Str
@@ -618,7 +618,7 @@ namespace NCsInput
 
 			#pragma endregion Clear
 
-				// Reset
+			// Reset
 			#pragma region
 
 			void FLibrary::ResetFirstChecked(const FString& Context, UWorld* World)
@@ -713,6 +713,38 @@ namespace NCsInput
 			}
 
 			#pragma endregion Reset
+		}
+
+		namespace NProfile
+		{
+			void FLibrary::ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FCsInputActionMappings& Mappings, const ECsInputDevice& Device)
+			{
+				UCsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
+				const FCsInputProfile& DefaultInputProfile = Manager_Input->GetDefaultInputProfile();
+
+				check(EMCsInputDevice::Get().IsValidEnumChecked(Context, Device));
+
+				const FCsInputActionMappings& DefaultMappings = DefaultInputProfile.GetMappings(Device);
+
+				Mappings.ConditionalCopyMappingsByActionChecked(Context, DefaultMappings);
+			}
+
+			void FLibrary::ResetToDefaultChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, TArray<FCsInputActionMappings>& Mappings)
+			{
+				UCsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
+				const FCsInputProfile& DefaultInputProfile = Manager_Input->GetDefaultInputProfile();
+
+				CS_IS_ARRAY_EMPTY_CHECKED(Mappings, FCsInputActionMappings)
+
+				const int32 Count = Mappings.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const FCsInputActionMappings& DefaultMappings = DefaultInputProfile.GetMappings((ECsInputDevice)I);
+
+					Mappings[I].ConditionalCopyMappingsByActionChecked(Context, DefaultMappings);
+				}
+			}
 		}
 	}
 }

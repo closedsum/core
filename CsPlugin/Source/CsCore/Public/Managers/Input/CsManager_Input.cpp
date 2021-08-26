@@ -11,8 +11,6 @@
 #include "Library/CsLibrary_Viewport.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
-// Managers
-
 // Player
 #include "GameFramework/PlayerController.h"
 //#include "Player/CsPlayerController.h"
@@ -181,6 +179,7 @@ void UCsManager_Input::Init()
 
 		GameEventPriorityMap[Event.GetValue()] = I;
 	}
+	SetDefaultInputProfile();
 }
 
 // UObject Interface
@@ -2300,6 +2299,88 @@ void UCsManager_Input::FActiveMode::PrintSummary(const FString& Context)
 
 // Profile
 #pragma region
+
+void UCsManager_Input::SetDefaultInputProfile()
+{
+	// TODO: NOTE: FUTURE: May need to distinguish between 1 Player, 2 Player, ... etc
+
+	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
+
+	// Check Actions
+	for (const FInputActionKeyMapping& Mapping : PlayerInput->ActionMappings)
+	{
+		const FECsInputAction& Action = EMCsInputAction::Get().GetEnum(Mapping.ActionName);
+
+		FCsInputActionMappings* Mappings = nullptr;
+
+		// Gamepad
+		if (Mapping.Key.IsGamepadKey())
+		{
+			Mappings = DefaultInputProfile.GetMappingsPtr(ECsInputDevice::Gamepad);
+		}
+		// Mouse
+		else
+		if (Mapping.Key.IsMouseButton())
+		{
+			Mappings = DefaultInputProfile.GetMappingsPtr(ECsInputDevice::MouseAndKeyboard);
+		}
+		// Touch - Do Nothing for now
+		else
+		if (Mapping.Key.IsTouch())
+		{
+			// Do Nothing
+		}
+		// Keyboard
+		else
+		{
+			Mappings = DefaultInputProfile.GetMappingsPtr(ECsInputDevice::MouseAndKeyboard);
+		}
+
+		if (Mappings)
+		{
+			FCsInputActionMapping& Map = Mappings->GetOrAddMapping(Action);
+			Map.Key					  = Mapping.Key;
+		}
+	}
+
+	// Check Axis
+	for (const FInputAxisKeyMapping& Mapping : PlayerInput->AxisMappings)
+	{
+		const FECsInputAction& Action = EMCsInputAction::Get().GetEnum(Mapping.AxisName);
+
+		FCsInputActionMappings* Mappings = nullptr;
+
+		// Gamepad
+		if (Mapping.Key.IsGamepadKey())
+		{
+			Mappings = DefaultInputProfile.GetMappingsPtr(ECsInputDevice::Gamepad);
+		}
+		// Mouse
+		else
+		if (Mapping.Key.IsMouseButton())
+		{
+			Mappings = DefaultInputProfile.GetMappingsPtr(ECsInputDevice::MouseAndKeyboard);
+		}
+		// Touch - Do Nothing for now
+		else
+		if (Mapping.Key.IsTouch())
+		{
+			// Do Nothing
+		}
+		// Keyboard
+		else
+		{
+			Mappings = DefaultInputProfile.GetMappingsPtr(ECsInputDevice::MouseAndKeyboard);
+		}
+
+		if (Mappings)
+		{
+			FCsInputActionMapping& Map = Mappings->GetOrAddMapping(Action);
+			Map.Key					   = Mapping.Key;
+			Map.Scale				   = Mapping.Scale;
+		}
+	}
+}
 
 bool UCsManager_Input::CanSaveInputActionMapping(const ECsInputDevice& Device, const FECsInputAction& Action)
 {

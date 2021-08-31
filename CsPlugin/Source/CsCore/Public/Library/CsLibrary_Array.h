@@ -279,6 +279,62 @@ namespace NCsArray
 			}
 		}
 
+		template<typename T>
+		FORCEINLINE static void ResetChecked(const FString& Context, TArray<T*>& A, const int32& Count, const int32& Max)
+		{
+			checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0."), *Context, Count);
+
+			checkf(Max > 0, TEXT("%s: Max: %d is NOT > 0."), *Context, Max);
+
+			checkf(FMath::Max(A.Max(), Count) <= Max, TEXT("%s: A.Max(): %d and Count: %d are NOT <= %d."), *Context, A.Max(), Count, Max);
+
+			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
+		template<typename T>
+		FORCEINLINE static void ResetChecked(const FString& Context, TArray<T*>& A, const int32& Count)
+		{
+			checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0."), *Context, Count);
+
+			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
+		template<typename T>
+		FORCEINLINE static void ResetChecked(TArray<T*>& A, const int32& Count)
+		{
+			checkf(Count > 0, TEXT("NCsArray::FLibrary::ResetChecked: Count: %d is NOT > 0."), Count);
+
+			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
+		template<typename T>
+		FORCEINLINE static void ResetChecked(const FString& Context, TArray<T>& A, const int32& Count, const int32& Max)
+		{
+			checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0."), *Context, Count);
+
+			checkf(Max > 0, TEXT("%s: Max: %d is NOT > 0."), *Context, Max);
+
+			checkf(FMath::Max(A.Max(), Count) <= Max, TEXT("%s: A.Max(): %d and Count: %d are NOT <= %d."), *Context, A.Max(), Count, Max);
+
+			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
+		template<typename T>
+		FORCEINLINE static void ResetChecked(const FString& Context, TArray<T>& A, const int32& Count)
+		{
+			checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0."), *Context, Count);
+
+			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
+		template<typename T>
+		FORCEINLINE static void ResetChecked(TArray<T>& A, const int32& Count)
+		{
+			checkf(Count > 0, TEXT("NCsArray::FLibrary::ResetChecked: Count: %d is NOT > 0."), Count);
+
+			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
 	#pragma endregion TArray
 
 	// Fixed Array
@@ -293,3 +349,9 @@ namespace NCsArray
 	#pragma endregion Fixed Array
 	};
 }
+
+// Assume const FString& Context has been defined
+#define CS_RESET_ARRAY_WITH_MAX_CHECKED(__Array, __Type, __Count, __Max) NCsArray::FLibrary::ResetChecked<__Type>(Context, __Array, __Count, __Max)
+// Assume const FString& Context has been defined
+#define CS_RESET_ARRAY_CHECKED(__Array, __Type, __Count) NCsArray::FLibrary::ResetChecked<__Type>(Context, __Array, __Count)
+#define CS_RESET_ARRAY(__Array, __Type, __Count) NCsArray::FLibrary::ResetChecked<__Type>(__Array, __Count)

@@ -240,7 +240,7 @@ namespace NCsMaterial
 
 			for (const ScalarType& Param : ScalarParameters)
 			{
-				check(MIDLibrary::IsVectorParameterValidChecked(Context, MID, Param.GetName()));
+				check(MIDLibrary::IsScalarParameterValidChecked(Context, MID, Param.GetName()));
 			}
 			return true;
 		}
@@ -265,7 +265,7 @@ namespace NCsMaterial
 
 			for (const ScalarType& Param : ScalarParameters)
 			{
-				if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.GetName(), Log))
+				if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
 					return false;
 			}
 			return true;
@@ -635,11 +635,15 @@ namespace NCsMaterial
 
 				checkf(FMath::Abs(GetDeltaTime() - DT) <= KINDA_SMALL_NUMBER, TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, GetDeltaTime(), GetDeltaTime(), DT, PlayRateMapType::Get().ToDisplayNameChar(PR));
 
-				checkf(GetTotalTime() > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
-
-				if (!IsLoopingForever())
+				if (IsLoopingForever())
 				{
-					checkf(GetTotalCount() > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+				}
+				else
+				{
+					checkf(GetTotalTime() > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+					checkf(GetTotalCount() > 0, TEXT("%s: TotalCount: %d is NOT > 0 for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR));
 				}
 			}
 			if (PR == PlayRateType::PR_CustomDeltaTime ||
@@ -647,11 +651,16 @@ namespace NCsMaterial
 				PR == PlayRateType::PR_CustomDeltaTimeAndTotalTime)
 			{
 				checkf(GetDeltaTime() > 0.0f, TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetDeltaTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
-				checkf(GetTotalTime() > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
-
-				if (!IsLoopingForever())
+				
+				if (IsLoopingForever())
 				{
-					checkf(GetTotalCount() > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+				}
+				else
+				{
+					checkf(GetTotalTime() > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, GetTotalTime(), PlayRateMapType::Get().ToDisplayNameChar(PR));
+
+					checkf(GetTotalCount() > 0, TEXT("%s: TotalCount: %d is NOT > 0 for PlayRate: %s."), *Context, GetTotalCount(), PlayRateMapType::Get().ToDisplayNameChar(PR));
 				}
 			}
 

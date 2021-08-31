@@ -7,10 +7,11 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Object/CsLibrary_Object.h"
-#include "Library/CsLibrary_Valid.h"
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_Array.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Mesh
@@ -567,7 +568,7 @@ namespace NCsMaterial
 
 			const int32 Count = Materials.Num();
 
-			MIDs.Reset(Count);
+			CS_RESET_ARRAY(MIDs, UMaterialInstanceDynamic, Count);
 
 			for (int32 Index = 0; Index < Count; ++Index)
 			{
@@ -584,7 +585,7 @@ namespace NCsMaterial
 
 			const int32 Count = Materials.Num();
 
-			MIDs.Reset(Count);
+			CS_RESET_ARRAY(MIDs, UMaterialInstanceDynamic, Count);
 
 			for (int32 Index = 0; Index < Count; ++Index)
 			{
@@ -601,7 +602,7 @@ namespace NCsMaterial
 
 			const int32 Count = Materials.Num();
 
-			MIDs.Reset(Count);
+			CS_RESET_ARRAY(MIDs, UMaterialInstanceDynamic, Count);
 
 			for (int32 Index = 0; Index < Count; ++Index)
 			{
@@ -618,7 +619,7 @@ namespace NCsMaterial
 
 			const int32 Count = Materials.Num();
 	
-			MIDs.Reset(Count);
+			CS_RESET_ARRAY(MIDs, UMaterialInstanceDynamic, Count);
 
 			for (int32 Index = 0; Index < Count; ++Index)
 			{
@@ -635,7 +636,7 @@ namespace NCsMaterial
 
 			const int32 Count = Materials.Num();
 
-			MIDs.Reset(Count);
+			CS_RESET_ARRAY_CHECKED(MIDs, UMaterialInstanceDynamic, Count);
 
 			for (int32 Index = 0; Index < Count; ++Index)
 			{
@@ -669,7 +670,7 @@ namespace NCsMaterial
 
 			const int32 Count = Materials.Num();
 
-			MIDs.Reset(Count);
+			CS_RESET_ARRAY_CHECKED(MIDs, UMaterialInstanceDynamic, Count);
 
 			for (int32 Index = 0; Index < Count; ++Index)
 			{
@@ -706,7 +707,7 @@ namespace NCsMaterial
 					MID->MarkPendingKill();
 				}
 			}
-			MIDs.SetNum(0, true);
+			MIDs.Reset(MIDs.Max());
 		}
 
 		// Scalar
@@ -1245,7 +1246,7 @@ namespace NCsMaterial
 
 			PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
 			// Setup Payload
-#define COROUTINE PlayAnim_Internal
+			#define COROUTINE PlayAnim_Internal
 
 			Payload->CoroutineImpl.BindStatic(&FLibrary::COROUTINE);
 			Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
@@ -1253,7 +1254,7 @@ namespace NCsMaterial
 			Payload->SetName(Str::COROUTINE);
 			Payload->SetFName(Name::COROUTINE);
 
-#undef COROUTINE
+#			undef COROUTINE
 
 			// Set End callback (to free any allocated references)
 			typedef NCsCoroutine::FOnEnd OnEndType;
@@ -1270,11 +1271,7 @@ namespace NCsMaterial
 		FCsRoutineHandle FLibrary::SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check Params are Valid.
-			if (!Params)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Params is NULL."), *Context));
-				return FCsRoutineHandle::Invalid;
-			}
+			CS_IS_PTR_NULL_RET_VALUE(Params, FCsRoutineHandle::Invalid)
 			// Check Params's Resource is Valid.
 			if (!Params->Get())
 			{
@@ -1297,10 +1294,10 @@ namespace NCsMaterial
 
 				UObject* ContextRoot = CoroutineSchedulerLibrary::GetSafeContextRoot(Context, WorldContext, Log);
 
-#if WITH_EDITOR
+		#if WITH_EDITOR
 				if (!ContextRoot)
 					return FCsRoutineHandle::Invalid;
-#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 			}
 			return PlayAnimChecked(Context, WorldContext, Params);
 		}
@@ -1344,7 +1341,7 @@ namespace NCsMaterial
 			ElapsedTime += R->DeltaTime;
 
 			const float& Duration = Frame.GetDuration();
-			float Percent		   = FMath::Clamp(R->ElapsedTime.Time / Duration, 0.0f, 1.0f);
+			float Percent		   = FMath::Clamp(ElapsedTime.Time / Duration, 0.0f, 1.0f);
 
 			static const int32 DIRECTION = 2;
 			int32& Direction = R->GetValue_Int(DIRECTION);
@@ -1428,53 +1425,59 @@ namespace NCsMaterial
 						};
 					}
 
-					CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= Duration);
-
-					// Vector
-					for (const VectorType& Param : Frame.VectorParameters)
+					if (ElapsedTime.Time < Duration)
 					{
-						SetVectorParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
+						CS_COROUTINE_YIELD(R);	
 					}
-					// Float
-					for (const ScalarType& Param : Frame.ScalarParameters)
-					{
-						SetScalarParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
-					}
-
-					ElapsedTime.Reset();
-
-					// Forward
-					if (Playback == PlaybackType::Forward)
-						++FrameIndex;
-					// Reverse
 					else
-					if (Playback == PlaybackType::Reverse)
-						--FrameIndex;
-					// PingPong
-					else
-					if (Playback == PlaybackType::PingPong)
 					{
-						if (FrameIndex == FrameCount - 1)
+						// Vector
+						for (const VectorType& Param : Frame.VectorParameters)
 						{
-							Direction = -1;
+							SetVectorParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
 						}
+						// Float
+						for (const ScalarType& Param : Frame.ScalarParameters)
+						{
+							SetScalarParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
+						}
+
+						ElapsedTime.Reset();
+
+						// Forward
+						if (Playback == PlaybackType::Forward)
+							++FrameIndex;
+						// Reverse
+						else
+						if (Playback == PlaybackType::Reverse)
+							--FrameIndex;
+						// PingPong
+						else
+						if (Playback == PlaybackType::PingPong)
+						{
+							if (FrameIndex == FrameCount - 1)
+							{
+								Direction = -1;
+							}
 	
-						FrameIndex += Direction;
+							FrameIndex += Direction;
+						}
+						// Loop
+						else
+						if (Playback == PlaybackType::Loop)
+						{
+							FrameIndex = (FrameIndex + 1) % FrameCount;
+						}
+						// Loop Reverse
+						else
+						if (Playback == PlaybackType::LoopReverse)
+						{
+							FrameIndex = FrameIndex == 0 ? FrameCount - 1 : FrameIndex - 1;
+						}
+						// TODO: LoopPingPong
+						++Count;
 					}
-					// Loop
-					else
-					if (Playback == PlaybackType::Loop)
-					{
-						FrameIndex = (FrameIndex + 1) % FrameCount;
-					}
-					// Loop Reverse
-					else
-					if (Playback == PlaybackType::LoopReverse)
-					{
-						FrameIndex = FrameIndex == 0 ? FrameCount - 1 : FrameIndex - 1;
-					}
-					// TODO: LoopPingPong
-					++Count;
+					//CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= Duration);
 				}
 			} while (LoopingForever || Count < TotalCount);
 

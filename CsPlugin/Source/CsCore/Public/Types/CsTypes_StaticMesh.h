@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_StaticMesh.generated.h"
-#pragma once
 
 // FCsStaticMesh
 #pragma region

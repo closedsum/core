@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_View.h"
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Material.generated.h"
-#pragma once
 
 // FCsMaterialInterface
 #pragma region

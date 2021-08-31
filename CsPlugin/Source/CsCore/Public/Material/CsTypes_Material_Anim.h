@@ -449,6 +449,26 @@ namespace NCsMaterial
 				CS_CTOR_SET_MEMBER_PROXY(TotalCount);
 			}
 
+			FORCEINLINE FAnim& operator=(const FAnim& B)
+			{
+				Playback = B.GetPlayback();
+				SetPlayback(&Playback);
+				PlayRate = B.GetPlayRate();
+				SetPlayRate(&PlayRate);
+				DeltaTime = B.GetDeltaTime();
+				SetDeltaTime(&DeltaTime);
+				TotalTime = B.GetTotalTime();
+				SetTotalTime(&TotalTime);
+
+				typedef NCsArray::FLibrary ArrayLibrary;
+
+				ArrayLibrary::Copy<FrameType>(Frames, B.Frames);
+
+				TotalCount = B.GetTotalCount();
+				SetTotalCount(&TotalCount);
+				return *this;
+			}
+
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Playback, PlaybackType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, PlayRateType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeltaTime, float)
@@ -640,7 +660,7 @@ namespace NCsMaterial
 			{
 			};
 
-			#define CS_PARAMS_PAYLOAD_SIZE 64
+			#define CS_PARAMS_PAYLOAD_SIZE 128
 
 			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
 			{

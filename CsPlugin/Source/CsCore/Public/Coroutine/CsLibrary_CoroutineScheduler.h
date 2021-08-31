@@ -112,7 +112,7 @@ namespace NCsCoroutine
 		public:
 
 			/**
-			*
+			* End the Handle running on update group: Group.
 			*
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -125,7 +125,7 @@ namespace NCsCoroutine
 			static bool EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
 
 			/**
-			* 
+			* Safely end the Handle running on update group: Group. 
 			* 
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
@@ -136,7 +136,19 @@ namespace NCsCoroutine
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SafeEnd(const FString& context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeEnd(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely end the Handle running on update group: Group.
+			*
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Handle
+			* return
+			*/
+			static bool SafeEnd(const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
 
 		#pragma endregion End
 

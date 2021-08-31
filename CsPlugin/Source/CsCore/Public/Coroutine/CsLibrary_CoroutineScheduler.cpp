@@ -31,6 +31,7 @@ namespace NCsCoroutine
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetSafeContextRoot);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCoroutine::NScheduler::FLibrary, SafeEnd);
 				}
 			}
 		}
@@ -147,6 +148,15 @@ namespace NCsCoroutine
 				return Scheduler->End(Group, Handle);
 			}
 			return false;
+		}
+
+		bool FLibrary::SafeEnd(const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
+		{
+			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
+
+			const FString& Context = Str::SafeEnd;
+
+			return SafeEnd(Context, ContextObject, Group, Handle, nullptr);
 		}
 
 		#pragma endregion End

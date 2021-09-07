@@ -224,6 +224,30 @@ public:
 
 #pragma endregion Root
 
+	// State
+#pragma region
+public:
+
+	enum class EState : uint8
+	{
+		None,
+		Active,
+		BeginShutdown
+	};
+
+private:
+
+	EState State;
+
+public:
+
+
+	FORCEINLINE void SetBeginShutdown() { State = EState::BeginShutdown; }
+
+	FORCEINLINE bool IsBeginningShutdown() { return State == EState::BeginShutdown; }
+
+#pragma endregion State
+
 #pragma endregion Singleton
 
 // Settings

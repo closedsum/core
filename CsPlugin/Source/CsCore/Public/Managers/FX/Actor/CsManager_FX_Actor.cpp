@@ -245,6 +245,7 @@ void UCsManager_FX_Actor::Initialize()
 {
 	SetupInternal();
 
+	State = EState::Active;
 	bInitialized = true;
 }
 
@@ -257,6 +258,8 @@ void UCsManager_FX_Actor::Initialize()
 
 void UCsManager_FX_Actor::CleanUp()
 {
+	State = EState::BeginShutdown;
+
 	// Unbind delegates for Time related events
 	{
 		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
@@ -309,6 +312,7 @@ void UCsManager_FX_Actor::CleanUp()
 	Manager_ParameterFloat.Shutdown();
 	Manager_ParameterVector.Shutdown();
 
+	State = EState::None;
 	bInitialized = false;
 }
 

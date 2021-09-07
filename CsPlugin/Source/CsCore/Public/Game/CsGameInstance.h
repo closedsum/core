@@ -81,7 +81,10 @@ public:
 private:
 
 	void ExitGame();
-	char ExitGame_Internal(FCsRoutine* R);
+
+protected:
+
+	virtual char ExitGame_Internal(FCsRoutine* R);
 
 #pragma endregion Exit
 

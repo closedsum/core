@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
 	FSoftObjectPath MainMap;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	FSoftObjectPath ExitMap;
+
 #pragma endregion Flow
 
 // Startup
@@ -50,6 +53,10 @@ public:
 	UDataTable* Payloads;
 
 	FCsDataRootSet() :
+		EntryMap(),
+		TransitionEntryToMainMap(),
+		MainMap(),
+		ExitMap(),
 		StartupPayload(NAME_None),
 		Datas(nullptr),
 		DataTables(nullptr),

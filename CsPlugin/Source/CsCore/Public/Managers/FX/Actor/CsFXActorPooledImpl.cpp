@@ -11,6 +11,7 @@
 #include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/FX/CsLibrary_FX.h"
+#include "Library/CsLibrary_World.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Pooled Object
@@ -85,6 +86,8 @@ void UCsFXActorPooledImpl::BeginDestroy()
 		Cache = nullptr;
 		CacheImpl = nullptr;
 	}
+
+	FX = nullptr;
 }
 
 #pragma endregion UObject Interface
@@ -504,6 +507,7 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		WaitForSystemComplete();
 
 		FX->GetNiagaraComponent()->DestroyInstance();
+
 #endif // #if WITH_EDITOR
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::FXSystem);
 		ChangeCounter::Get().AddCleared();
@@ -512,9 +516,24 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 
 void UCsFXActorPooledImpl::WaitForSystemComplete()
 {
+	// Check to Wait for System to "complete"
+	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
+
+	const bool IsBeginningShutdown = Manager_FX_Actor->IsBeginningShutdown();
+
 	FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
 
-	bool WaitForSystem = System && System->GetSystemInstanceIndex() != INDEX_NONE && System->GetSystem() != nullptr && !System->HandleCompletion();
+	bool WaitForSystem = false;
+	
+	if (IsBeginningShutdown)
+	{
+		if (System)
+			WaitForSystem = true;
+	}
+	else
+	{
+		WaitForSystem = System != nullptr && System->GetSystemInstanceIndex() != INDEX_NONE && System->GetSystem() != nullptr;// && !System->HandleCompletion();
+	}
 
 	if (WaitForSystem)
 	{

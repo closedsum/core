@@ -1,15 +1,15 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Trace/Data/Visual/CsParams_TraceWeapon_VisualFire.h"
+#include "Beam/Data/Visual/CsParams_BeamWeapon_VisualFire.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams::Name = FName("NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams::Name");
+const FName NCsWeapon::NBeam::NData::NVisual::NFire::NParams::IParams::Name = FName("NCsWeapon::NBeam::NData::NVisual::NFire::NParams::IParams::Name");
 
-const FName NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy::Name = FName("NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy::Name");
+const FName NCsWeapon::NBeam::NData::NVisual::NFire::NParams::FProxy::Name = FName("NCsWeapon::NBeam::NData::NVisual::NFire::NParams::FProxy::Name");
 
 namespace NCsWeapon
 {
-	namespace NTrace
+	namespace NBeam
 	{
 		namespace NData
 		{

@@ -1,19 +1,19 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Trace/Data/Visual/CsParams_TraceWeapon_VisualFire.h"
+#include "Beam/Data/Sound/CsParams_BeamWeapon_SoundFire.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams::Name = FName("NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams::Name");
+const FName NCsWeapon::NBeam::NData::NSound::NFire::NParams::IParams::Name = FName("NCsWeapon::NBeam::NData::NSound::NFire::NParams::IParams::Name");
 
-const FName NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy::Name = FName("NCsWeapon::NTrace::NData::NVisual::NFire::NParams::FProxy::Name");
+const FName NCsWeapon::NBeam::NData::NSound::NFire::NParams::FProxy::Name = FName("NCsWeapon::NBeam::NData::NSound::NFire::NParams::FProxy::Name");
 
 namespace NCsWeapon
 {
-	namespace NTrace
+	namespace NBeam
 	{
 		namespace NData
 		{
-			namespace NVisual
+			namespace NSound
 			{
 				namespace NFire
 				{
@@ -23,7 +23,7 @@ namespace NCsWeapon
 							// ICsGetInterfaceMap
 							InterfaceMap(nullptr),
 							// IParams
-							FX(nullptr),
+							Sound(nullptr),
 							Attach(nullptr)
 
 						{

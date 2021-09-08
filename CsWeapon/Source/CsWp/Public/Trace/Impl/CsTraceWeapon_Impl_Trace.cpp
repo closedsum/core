@@ -8,12 +8,13 @@
 #include "Types/CsTypes_Math.h"
 #include "Collision/CsTypes_Collision.h"
 // Library
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
 #include "Data/CsLibrary_Data_Weapon.h"
+#include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Library/CsLibrary_Camera.h"
-#include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
-#include "Managers/Trace/CsLibrary_Manager_Trace.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -98,11 +99,10 @@ namespace NCsWeapon
 				}
 				 
 				#define TraceDataType NCsTrace::NData::IData
+
 				void FImpl::SetTraceData(const FString& Context, TraceDataType* Value)
 				{
-				#undef TraceDataType
-
-					checkf(Value, TEXT("%s: Value is NULL."), *Context);
+					CS_IS_PTR_NULL_CHECKED(Value)
 
 					TraceData = Value;
 
@@ -111,11 +111,8 @@ namespace NCsWeapon
 					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
 				}
 
-				#define TraceDataType NCsTrace::NData::IData
 				void FImpl::SetTraceData(TraceDataType* Value)
 				{
-				#undef TraceDataType
-
 					using namespace NCached;
 
 					const FString& Context = Str::SetTraceData;
@@ -123,9 +120,11 @@ namespace NCsWeapon
 					SetTraceData(Context, Value);
 				}
 
+				#undef TraceDataType
+
 				bool FImpl::IsValidChecked(const FString& Context)
 				{
-					checkf(TraceData, TEXT("%s: TraceData is NULL."), *Context);
+					CS_IS_PTR_NULL_CHECKED(TraceData)
 
 					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
 
@@ -134,10 +133,9 @@ namespace NCsWeapon
 				}
 
 				#define DataType NCsWeapon::NData::IData
+
 				FVector FImpl::GetStart(DataType* Data)
 				{
-				#undef DataType
-
 					using namespace NCached;
 
 					const FString& ScopeName		   = Str::GetStart;
@@ -170,7 +168,7 @@ namespace NCsWeapon
 					// Self
 					if (LocationType == ELocation::Self)
 					{
-						checkf(RootComponent, TEXT("%s: RootComponent is NULL."), *Context);
+						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
 						return RootComponent->GetComponentLocation();
 					}
@@ -205,7 +203,7 @@ namespace NCsWeapon
 					// Component
 					if (LocationType == ELocation::Component)
 					{
-						checkf(Component, TEXT("%s: Component is NULL."), *Context);
+						CS_IS_PTR_NULL_CHECKED(Component)
 
 						return Component->GetComponentLocation();
 					}
@@ -231,11 +229,8 @@ namespace NCsWeapon
 					return FVector::ZeroVector;
 				}
 
-				#define DataType NCsWeapon::NData::IData
 				FVector FImpl::GetDirection(DataType* Data, const FVector& Start)
 				{
-				#undef DataType
-
 					using namespace NCached;
 
 					const FString& ScopeName		   = Str::GetDirection;
@@ -253,11 +248,10 @@ namespace NCsWeapon
 					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 	
 					// Get Trace Params
+					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
 					using namespace NCsWeapon::NTrace::NParams::NTrace;
 
 					const ITrace* TraceParams = WeaponData->GetTraceParams();
-
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
 
 					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
 
@@ -270,7 +264,7 @@ namespace NCsWeapon
 					// Self
 					if (DirectionType == EDirection::Self)
 					{
-						checkf(RootComponent, TEXT("%s: RootComponent is NULL."), *Context);
+						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
 						return NCsRotationRules::GetRotation(RootComponent->GetComponentRotation(), DirectionRules).Vector();
 					}
@@ -304,7 +298,7 @@ namespace NCsWeapon
 					// Component
 					if (DirectionType == EDirection::Component)
 					{
-						checkf(Component, TEXT("%s: Component is NULL."));
+						CS_IS_PTR_NULL_CHECKED(Component)
 		
 						const FRotator Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
 
@@ -354,11 +348,8 @@ namespace NCsWeapon
 					return FVector::ZeroVector;
 				}
 
-				#define DataType NCsWeapon::NData::IData
 				FVector FImpl::GetEnd(DataType* Data, const FVector& Start)
 				{
-				#undef DataType
-
 					using namespace NCached;
 
 					const FString& Context = Str::GetEnd;
@@ -380,6 +371,8 @@ namespace NCsWeapon
 
 					return Start + TraceParams->GetDistance() * GetDirection(Data, Start);
 				}
+
+				#undef DataType
 
 				void FImpl::OnHit(const FHitResult& Hit)
 				{
@@ -443,10 +436,9 @@ namespace NCsWeapon
 				}
 
 				#define DataType NCsWeapon::NData::IData
+
 				void FImpl::LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit)
 				{
-				#undef DataType
-
 					//CS_SCOPED_TIMER(LineTraceScopedHandle);
 
 					using namespace NCached;
@@ -506,11 +498,8 @@ namespace NCsWeapon
 				#endif // #if !UE_BUILD_SHIPPING
 				}
 
-				#define DataType NCsWeapon::NData::IData
 				void FImpl::Trace(DataType* Data)
 				{
-				#undef DataType
-
 					CS_SCOPED_TIMER(TraceScopedHandle);
 
 					using namespace NCached;
@@ -532,14 +521,11 @@ namespace NCsWeapon
 					// Get collision information related to the trace.
 					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;
 					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+					typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
+					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
 
 					WeaponTraceDataType* WeaponTraceData = WeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
-	
-					typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
-
-					const TraceParamsType* TraceParams = WeaponTraceData->GetTraceParams();
-
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
+					const TraceParamsType* TraceParams   = WeaponTraceData->GetTraceParams();
 
 					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
 
@@ -589,6 +575,8 @@ namespace NCsWeapon
 					if (Response->bResult)
 						OnHit(Response->OutHits[CS_FIRST]);
 				}
+
+				#undef DataType
 
 				FString FImpl::PrintOuterNameAndClass()
 				{

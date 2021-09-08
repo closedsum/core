@@ -33,6 +33,10 @@
     {
       "Name": "CsProjectile",
       "Enabled": true
+    },
+    {
+      "Name": "CsBeam",
+      "Enabled": true
     }
   ]
 }

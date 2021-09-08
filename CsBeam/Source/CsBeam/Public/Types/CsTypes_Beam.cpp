@@ -11,6 +11,8 @@
 #include "Utility/CsBeamLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsBeamPopulateEnumMapFromSettings.h"
+// Beam
+#include "Payload/CsPayload_BeamImpl.h"
 
 // Beam
 #pragma region
@@ -33,11 +35,12 @@ namespace NCsBeam
 
 		if (!DataRootSet)
 			return;
-
+		/*
 		for (const FCsBeamSettings_DataTable_Beams& Beams : DataRootSet->Beams)
 		{
 			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsBeam>(Context, ContextRoot, Beams.Beams, Str::Beam, &NCsBeam::FLog::Warning);
 		}
+		*/
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

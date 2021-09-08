@@ -1,21 +1,21 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/CsPrjDataRootSet.h"
+#include "Data/CsBeamDataRootSet.h"
 
 #pragma once
 
 class UObject;
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	namespace NDataRootSet
 	{
 		/**
 		*/
-		struct CSPRJ_API FLibrary final
+		struct CSBEAM_API FLibrary final
 		{
 		public:
 
-			static const FCsPrjDataRootSet& GetChecked(const FString& Context, UObject* ContextRoot);
+			static const FCsBeamDataRootSet& GetChecked(const FString& Context, UObject* ContextRoot);
 		};
 	}
 }

@@ -1,8 +1,8 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Settings/CsBeamSettings.h"
-#include "CsPrj.h"
+#include "CsBeam.h"
 
-#include "Managers/Beam/CsBeam.h"
+#include "Managers/Beam/ICsBeam.h"
 
 // Cached
 #pragma region

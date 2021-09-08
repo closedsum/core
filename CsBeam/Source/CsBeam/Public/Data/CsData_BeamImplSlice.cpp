@@ -1,17 +1,17 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/CsData_ProjectileImplSlice.h"
+#include "Data/CsData_BeamImplSlice.h"
 
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
-#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Managers/Beam/CsLibrary_Manager_Beam.h"
 #include "Library/CsLibrary_Property.h"
 #include "Library/CsLibrary_Valid.h"
-// Projectile
-#include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
+// Beam
+#include "Managers/Beam/Handler/CsManager_Beam_DataHandler.h"
 
-#define SliceType NCsProjectile::NData::FImplSlice
+#define SliceType NCsBeam::NData::FImplSlice
 
-SliceType* FCsData_ProjectileImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+SliceType* FCsData_BeamImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 {
 	SliceType* Slice = SafeConstruct_Internal(Context, WorldContext, Name, Log);
 
@@ -25,7 +25,7 @@ SliceType* FCsData_ProjectileImplSlice::SafeConstruct(const FString& Context, co
 	return Slice;
 }
 
-SliceType* FCsData_ProjectileImplSlice::SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+SliceType* FCsData_BeamImplSlice::SafeConstructAsValue(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	SliceType* Slice = SafeConstruct_Internal(Context, WorldContext, Name, Log);
 
@@ -39,29 +39,29 @@ SliceType* FCsData_ProjectileImplSlice::SafeConstructAsValue(const FString& Cont
 	return Slice;
 }
 
-SliceType* FCsData_ProjectileImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+SliceType* FCsData_BeamImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return nullptr;
 
 	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-	typedef NCsProjectile::NData::IData DataType;
-	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
+	typedef NCsBeam::NData::IData DataType;
+	typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 	
-	DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+	DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = BeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 	#undef DataHandlerType
 
 	if (!DataHandler)
 		return nullptr;
 
-	SliceType* Slice = DataHandler->SafeConstructData<SliceType, EMCsProjectile>(Context, Name);
+	SliceType* Slice = DataHandler->SafeConstructData<SliceType, EMCsBeam>(Context, Name);
 
 	return Slice;
 }
 
-void FCsData_ProjectileImplSlice::CopyToSlice(SliceType* Slice)
+void FCsData_BeamImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetLifeTime(&LifeTime);
 	Slice->SetInitialSpeed(&InitialSpeed);
@@ -69,7 +69,7 @@ void FCsData_ProjectileImplSlice::CopyToSlice(SliceType* Slice)
 	Slice->SetGravityScale(&GravityScale);
 }
 
-void FCsData_ProjectileImplSlice::CopyToSliceAsValue(SliceType* Slice) const
+void FCsData_BeamImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetLifeTime(LifeTime);
 	Slice->SetInitialSpeed(InitialSpeed);
@@ -79,7 +79,7 @@ void FCsData_ProjectileImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 
 #undef SliceType
 
-bool FCsData_ProjectileImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+bool FCsData_BeamImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	if (MaxSpeed > 0.0f)
 	{
@@ -92,9 +92,9 @@ bool FCsData_ProjectileImplSlice::IsValid(const FString& Context, void(*Log)(con
 	return true;
 }
 
-const FName NCsProjectile::NData::FImplSlice::Name = FName("NCsProjectile::NData::FImplSlice");
+const FName NCsBeam::NData::FImplSlice::Name = FName("NCsBeam::NData::FImplSlice");
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	namespace NData
 	{
@@ -104,7 +104,7 @@ namespace NCsProjectile
 			{
 				namespace Name
 				{
-					const FName ProjectileSlice = FName("ProjectileSlice");
+					const FName BeamSlice = FName("BeamSlice");
 
 					const FName LifeTime = FName("LifeTime");
 					const FName InitialSpeed = FName("InitialSpeed");
@@ -114,9 +114,9 @@ namespace NCsProjectile
 			}
 		}
 
-		/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		/*static*/ FImplSlice* FImplSlice::SafeConstruct(const FString& Context, const UObject* WorldContext, const FString& DataName, UObject* Object, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/)
 		{
-			using namespace NCsProjectile::NData::NImplSlice::NCached;
+			using namespace NCsBeam::NData::NImplSlice::NCached;
 
 			CS_IS_PTR_NULL_RET_NULL(Object)
 
@@ -125,13 +125,13 @@ namespace NCsProjectile
 			if (!Slice)
 				return nullptr;
 
-			// Check for properties matching interface: ProjectileDataType (NCsProjectile::NData::IData)
+			// Check for properties matching interface: BeamDataType (NCsBeam::NData::IData)
 			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			bool Success = false;
 
-			// Try FCsData_ProjectileImplSlice
-			if (FCsData_ProjectileImplSlice* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<FCsData_ProjectileImplSlice>(Context, Object, Object->GetClass(), Name::ProjectileSlice, nullptr))
+			// Try FCsData_BeamImplSlice
+			if (FCsData_BeamImplSlice* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<FCsData_BeamImplSlice>(Context, Object, Object->GetClass(), Name::BeamSlice, nullptr))
 			{
 				SliceAsStruct->CopyToSlice(Slice);
 				Success = true;
@@ -165,8 +165,8 @@ namespace NCsProjectile
 			{
 				if (Log)
 				{
-					Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsProjectile::NData::IData.")));
-					Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_ProjectileImplSlice with name: ProjectileSlice.")));
+					Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsBeam::NData::IData.")));
+					Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_BeamImplSlice with name: BeamSlice.")));
 					Log(FString::Printf(TEXT("%s: - OR")));
 					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: LifeTime.")));
 					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: InitialSpeed.")));
@@ -187,18 +187,18 @@ namespace NCsProjectile
 		/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&FCLog::Warning*/)
 		{
 			#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
-			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-			typedef NCsProjectile::NData::IData DataType;
-			typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
+			typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
+			typedef NCsBeam::NData::IData DataType;
+			typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
 	
-			DataHandlerType<DataType, FCsData_ProjectilePtr, DataInterfaceMapType>* DataHandler = PrjManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
+			DataHandlerType<DataType, FCsData_BeamPtr, DataInterfaceMapType>* DataHandler = BeamManagerLibrary::GetSafeDataHandler(Context, WorldContext, Log);
 	
 			#undef DataHandlerType
 
 			if (!DataHandler)
 				return nullptr;
 
-			FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsProjectile>(Context, DataName);
+			FImplSlice* Slice = DataHandler->SafeConstructData<FImplSlice, EMCsBeam>(Context, DataName);
 
 			return Slice;
 		}
@@ -216,7 +216,7 @@ namespace NCsProjectile
 			return true;
 		}
 
-		bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+		bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 		{
 			if (GetMaxSpeed() > 0.0f)
 			{

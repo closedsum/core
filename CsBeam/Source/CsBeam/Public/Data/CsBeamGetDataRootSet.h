@@ -2,17 +2,17 @@
 #pragma once
 #include "UObject/Interface.h"
 // Types
-#include "Data/CsPrjDataRootSet.h"
+#include "Data/CsBeamDataRootSet.h"
 
-#include "CsPrjGetDataRootSet.generated.h"
+#include "CsBeamGetDataRootSet.generated.h"
 
 UINTERFACE(BlueprintType)
-class CSPRJ_API UCsPrjGetDataRootSet : public UInterface
+class CSBEAM_API UCsBeamGetDataRootSet : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class CSPRJ_API ICsPrjGetDataRootSet
+class CSBEAM_API ICsBeamGetDataRootSet
 {
 	GENERATED_IINTERFACE_BODY()
 
@@ -23,5 +23,5 @@ public:
 	*
 	* return
 	*/
-	virtual const FCsPrjDataRootSet& GetCsPrjDataRootSet() const = 0;
+	virtual const FCsBeamDataRootSet& GetCsBeamDataRootSet() const = 0;
 };

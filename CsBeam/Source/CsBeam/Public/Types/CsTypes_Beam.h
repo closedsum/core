@@ -262,3 +262,67 @@ struct CSBEAM_API FCsBeamEntry : public FTableRowBase
 };
 
 #pragma endregion FCsBeamEntry
+
+// FCsPayload_Beam
+#pragma region
+
+class UObject;
+
+// NCsBeam::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NPayload, FImpl)
+
+USTRUCT(BlueprintType)
+struct CSBEAM_API FCsPayload_Beam
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+	/** The object "instigating" or starting the spawn. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Instigator;
+
+	/** The owner of the Beam. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Owner;
+
+	/** The parent of the Beam. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PreserveChangesFromDefaultMask;
+
+// BeamPayloadType (NCsBeam::Payload::IPayload)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsBeam Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Direction;
+
+	FCsPayload_Beam() :
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		PreserveChangesFromDefaultMask(0),
+		Type(),
+		Location(0.0f),
+		Direction(0.0f)
+	{
+	}
+
+#define PayloadType NCsBeam::NPayload::FImpl
+	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
+#undef PayloadType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsPayload_Beam

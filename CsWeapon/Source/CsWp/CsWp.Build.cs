@@ -18,7 +18,8 @@ public class CsWp : ModuleRules
                     "AssetRegistry",
                     "DeveloperSettings",
                     "CsCore",
-                    "CsPrj"
+                    "CsPrj",
+                    "CsBeam"
                 }
             );
 

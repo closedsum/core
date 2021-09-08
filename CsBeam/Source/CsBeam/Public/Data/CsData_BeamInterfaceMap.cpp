@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/CsData_ProjectileInterfaceMap.h"
+#include "Data/CsData_BeamInterfaceMap.h"
 
 #include "Containers/CsInterfaceMap.h"
 
-const FName NCsProjectile::NData::FInterfaceMap::Name = FName("NCsProjectile::NData::FInterfaceMap");
+const FName NCsBeam::NData::FInterfaceMap::Name = FName("NCsBeam::NData::FInterfaceMap");
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	namespace NData
 	{

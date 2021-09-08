@@ -6,19 +6,19 @@
 struct FCsInterfaceMap;
 class UObject;
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	namespace NData
 	{
 		/**
 		* Structure for holding the InterfaceMap reference to any objects
 		* that implement an interface "slice" related to objects of the same category
-		* (data and projectile).
+		* (data and beam).
 		* This interface map serves as the "root" to route all the interface slices.
 		* This interface map allows other "layer" additional objects of the same category
-		* (implementing interfaces related to data and projectile).
+		* (implementing interfaces related to data and beam).
 		*/
-		struct CSPRJ_API FInterfaceMap final : public ICsGetInterfaceMap
+		struct CSBEAM_API FInterfaceMap final : public ICsGetInterfaceMap
 		{
 		public:
 
@@ -42,10 +42,7 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 		};

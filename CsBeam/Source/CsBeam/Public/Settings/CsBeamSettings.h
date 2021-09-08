@@ -4,7 +4,6 @@
 #include "Engine/DeveloperSettings.h"
 // Types
 #include "Settings/CsTypes_Settings.h"
-#include "Settings/CsTypes_BeamSettings.h"
 #include "Managers/Beam/CsSettings_Manager_Beam.h"
 #include "CsBeamSettings.generated.h"
 

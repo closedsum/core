@@ -1,13 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Settings/CsTypes_BeamSettings.h"
 
-#include "CsPrjDataRootSet.generated.h"
+#include "CsBeamDataRootSet.generated.h"
 
 class UDataTable;
 
 USTRUCT(BlueprintType)
-struct CSBEAM_API FCsPrjDataRootSet
+struct CSBEAM_API FCsBeamDataRootSet
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -19,7 +18,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftObjectPtr<UDataTable> Beams;
 
-	FCsPrjDataRootSet() :
+	FCsBeamDataRootSet() :
 		BeamClasses(),
 		Beams()
 	{

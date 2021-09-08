@@ -38,7 +38,7 @@ namespace NCsBeam
 			{
 				UObject* DataRootSetImpl			  = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsBeamDataRootSet& DataRootSet = NCsBeam::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
-
+				/*
 				for (const FCsBeamSettings_DataTable_Beams& Beams : DataRootSet.Beams)
 				{
 					TSoftObjectPtr<UDataTable> DataTableSoftObject = Beams.Beams;
@@ -52,6 +52,7 @@ namespace NCsBeam
 					OutDataTables.Add(DataTable);
 					OutDataTableSoftObjects.Add(DataTableSoftObject);
 				}
+				*/
 			}
 
 			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)

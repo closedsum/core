@@ -3,15 +3,15 @@
 
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
-#include "CsData_Projectile.generated.h"
+#include "CsData_Beam.generated.h"
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	namespace NData
 	{
 		/**
 		*/
-		struct CSPRJ_API IData : public ICsGetInterfaceMap
+		struct CSBEAM_API IData : public ICsGetInterfaceMap
 		{
 		public:
 
@@ -49,12 +49,12 @@ namespace NCsProjectile
 }
 
 UINTERFACE(BlueprintType)
-class CSPRJ_API UCsData_Projectile : public UCsGetInterfaceMap
+class CSBEAM_API UCsData_Beam : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-class CSPRJ_API ICsData_Projectile : public ICsGetInterfaceMap
+class CSBEAM_API ICsData_Beam : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 

@@ -21,7 +21,7 @@ namespace NCsBeam
 				/**
 				* 
 				*/
-				struct CSPRJ_API FImplSlice : public IDamage,
+				struct CSBEAM_API FImplSlice : public IDamage,
 											  public ICsReset
 				{
 				public:

@@ -2,7 +2,7 @@
 #include "Managers/Beam/CsBeamPooled.h"
 #include "CsBeam.h"
 
-#include "Managers/Beam/CsBeam.h"
+#include "Managers/Beam/ICsBeam.h"
 
 const FCsBeamPooled FCsBeamPooled::Empty;
 

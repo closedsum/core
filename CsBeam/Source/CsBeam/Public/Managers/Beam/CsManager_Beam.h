@@ -9,7 +9,7 @@
 #include "Types/CsTypes_Beam.h"
 // Beam
 #include "Payload/CsPayload_Beam.h"
-#include "Managers/Beam/CsBeam.h"
+#include "Managers/Beam/ICsBeam.h"
 #include "Managers/Beam/CsBeamPooled.h"
 #include "Managers/Beam/CsSettings_Manager_Beam.h"
 

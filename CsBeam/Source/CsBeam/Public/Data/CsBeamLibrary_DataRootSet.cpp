@@ -1,18 +1,18 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/CsPrjLibrary_DataRootSet.h"
+#include "Data/CsBeamLibrary_DataRootSet.h"
 
 // Data
 #include "Data/CsLibrary_DataRootSet.h"
-#include "Data/CsPrjGetDataRootSet.h"
-#include "Data/CsPrjDataRootSet.h"
+#include "Data/CsBeamGetDataRootSet.h"
+#include "Data/CsBeamDataRootSet.h"
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	namespace NDataRootSet
 	{
-		const FCsPrjDataRootSet& FLibrary::GetChecked(const FString& Context, UObject* ContextRoot)
+		const FCsBeamDataRootSet& FLibrary::GetChecked(const FString& Context, UObject* ContextRoot)
 		{
-			return NCsDataRootSet::FLibrary::GetChecked<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
+			return NCsDataRootSet::FLibrary::GetChecked<FCsBeamDataRootSet, ICsBeamGetDataRootSet, &ICsBeamGetDataRootSet::GetCsBeamDataRootSet>(Context, ContextRoot);
 		}
 	}
 }

@@ -1,14 +1,13 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #include "Trace/Impl/CsTraceWeapon_Impl_FX.h"
 
-// Types
-
 // Library
+#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
-#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
-#include "Managers/Trace/CsLibrary_Manager_Trace.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Data
@@ -226,7 +225,7 @@ namespace NCsWeapon
 					else
 					if (Type == AttachType::Component)
 					{
-						checkf(Component, TEXT("%s: Component is NULL."), *Context);
+						CS_IS_PTR_NULL_CHECKED(Component)
 
 						PayloadImpl->Parent = Component;
 					}
@@ -275,7 +274,7 @@ namespace NCsWeapon
 					else
 					if (AType == AttachType::Component)
 					{
-						checkf(Component, TEXT("%s: Component is NULL."), *Context);
+						CS_IS_PTR_NULL_CHECKED(Component)
 
 						PayloadImpl->Parent = Component;
 					}
@@ -320,7 +319,7 @@ namespace NCsWeapon
 						else
 						if (TType == TransformType::Component)
 						{
-							checkf(Component, TEXT("%s: Component is NULL."), *Context);
+							CS_IS_PTR_NULL_CHECKED(Component)
 
 							TransformToApply = Component->GetComponentTransform();
 						}

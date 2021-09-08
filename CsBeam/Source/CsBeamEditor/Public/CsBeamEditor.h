@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __CSPRJEDITOR_H__
-#define __CSPRJEDITOR_H__
+#ifndef __CSBEAMEDITOR_H__
+#define __CSBEAMEDITOR_H__
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogCsPrjEditor, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogCsBeamEditor, Log, All);
 
 #endif

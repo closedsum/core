@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CsPrj : ModuleRules
+public class CsBeam : ModuleRules
 {
-    public CsPrj(ReadOnlyTargetRules Target) : base(Target)
+    public CsBeam(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
@@ -39,16 +39,7 @@ public class CsPrj : ModuleRules
                 }
             );
 
-            /*
             PrivateDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
-            */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
                 new string[] {
                 }
             );

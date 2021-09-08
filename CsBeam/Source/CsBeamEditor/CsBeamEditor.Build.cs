@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CsPrjEditor : ModuleRules
+public class CsBeamEditor : ModuleRules
 {
-    public CsPrjEditor(ReadOnlyTargetRules Target) : base(Target)
+    public CsBeamEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
@@ -38,7 +38,7 @@ public class CsPrjEditor : ModuleRules
                     "EditorStyle",
                     "CsCore",
                     "CsEditor",
-                    "CsPrj",
+                    "CsBeam",
                 }
             );
 

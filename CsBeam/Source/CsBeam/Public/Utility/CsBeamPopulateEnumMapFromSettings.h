@@ -3,15 +3,15 @@
 
 class UObject;
 
-struct FCsPrjDataRootSet;
+struct FCsBeamDataRootSet;
 
 /**
 * Utility class to help populate a EnumStructMap. Called internally by the 
 * namespace associated with the appropriate EnumStruct.
 */
-struct CSPRJ_API FCsPrjPopulateEnumMapFromSettings final
+struct CSBEAM_API FCsBeamPopulateEnumMapFromSettings final
 {
 public:
 
-	static const FCsPrjDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
+	static const FCsBeamDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
 };

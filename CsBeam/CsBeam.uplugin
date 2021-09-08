@@ -2,8 +2,8 @@
 	"FileVersion": 3,
 	"Version": 2,
 	"VersionName": "0.0.1",
-	"FriendlyName": "Closed Sum Games Projectile",
-	"Description": "Closed Sum Games Projectile",
+	"FriendlyName": "Closed Sum Games Beam",
+	"Description": "Closed Sum Games Beam",
 	"Category": "Programming",
 	"CreatedBy": "Closed Sum Games LLC",
 	"CreatedByURL": "",
@@ -15,12 +15,12 @@
 	"Installed": true,
   "Modules": [
     {
-      "Name": "CsPrj",
+      "Name": "CsBeam",
       "Type": "Runtime",
       "LoadingPhase": "Default"
     },
     {
-      "Name": "CsPrjEditor",
+      "Name": "CsBeamEditor",
       "Type": "Editor",
       "LoadingPhase": "Default"
     }

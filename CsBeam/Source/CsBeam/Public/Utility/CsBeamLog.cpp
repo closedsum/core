@@ -1,11 +1,11 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Utility/CsPrjLog.h"
-#include "CsPrj.h"
+#include "Utility/CsBeamLog.h"
+#include "CsBeam.h"
 
-namespace NCsProjectile
+namespace NCsBeam
 {
 	void FLog::Warning(const FString& Str)
 	{
-		UE_LOG(LogCsPrj, Warning, TEXT("%s"), *Str);
+		UE_LOG(LogCsBeam, Warning, TEXT("%s"), *Str);
 	}
 }

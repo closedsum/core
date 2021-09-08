@@ -1,12 +1,12 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Utility/CsPrjPopulateEnumMapFromSettings.h"
+#include "Utility/CsBeamPopulateEnumMapFromSettings.h"
 
 // Data
-#include "Data/CsPrjGetDataRootSet.h"
+#include "Data/CsBeamGetDataRootSet.h"
 // Utility
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 
-const FCsPrjDataRootSet* FCsPrjPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
+const FCsBeamDataRootSet* FCsBeamPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
 {
-	return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
+	return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsBeamDataRootSet, ICsBeamGetDataRootSet, &ICsBeamGetDataRootSet::GetCsBeamDataRootSet>(Context, ContextRoot);
 }

@@ -1,9 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-namespace NCsProjectile
+namespace NCsBeam
 {
-	struct CSPRJ_API FLog final
+	struct CSBEAM_API FLog final
 	{
 	public:
 

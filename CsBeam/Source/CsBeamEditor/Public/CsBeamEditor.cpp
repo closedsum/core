@@ -1,6 +1,6 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsPrjEditor.h"
+#include "CsBeamEditor.h"
 
-IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsPrjEditor);
+IMPLEMENT_GAME_MODULE(FDefaultGameModuleImpl, CsBeamEditor);
 
-DEFINE_LOG_CATEGORY(LogCsPrjEditor);
+DEFINE_LOG_CATEGORY(LogCsBeamEditor);

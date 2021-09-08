@@ -1,27 +1,27 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Settings/CsTypes_ProjectileSettings.h"
+#include "Settings/CsTypes_BeamSettings.h"
 
 #include "CsPrjDataRootSet.generated.h"
 
 class UDataTable;
 
 USTRUCT(BlueprintType)
-struct CSPRJ_API FCsPrjDataRootSet
+struct CSBEAM_API FCsPrjDataRootSet
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UDataTable> ProjectileClasses;
+	TSoftObjectPtr<UDataTable> BeamClasses;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<FCsProjectileSettings_DataTable_Projectiles> Projectiles;
+	TSoftObjectPtr<UDataTable> Beams;
 
 	FCsPrjDataRootSet() :
-		ProjectileClasses(),
-		Projectiles()
+		BeamClasses(),
+		Beams()
 	{
 	}
 };

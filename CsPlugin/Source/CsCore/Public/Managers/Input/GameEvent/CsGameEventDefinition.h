@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Managers/Input/Definition/CsTypes_InputDefinition.h"
 #include "Managers/Input/GameEvent/CsGameEvent.h"

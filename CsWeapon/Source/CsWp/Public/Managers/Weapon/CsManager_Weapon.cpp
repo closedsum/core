@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "Managers/Weapon/CsManager_Weapon.h"
 #include "CsWp.h"

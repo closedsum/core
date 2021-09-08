@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coroutine/CsCVars_Coroutine.h"
 
 TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions(

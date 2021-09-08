@@ -21,10 +21,13 @@ namespace NCsProjectileCustomizationCached
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsProjectile
+#define EnumType FECsProjectile
+
 FECsProjectileCustomization::FECsProjectileCustomization() :
 	Super()
 {
-	Init<EMCsProjectile, FECsProjectile>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsProjectileCustomization::CustomPopulateEnumMap()
@@ -41,17 +44,20 @@ TSharedRef<IPropertyTypeCustomization> FECsProjectileCustomization::MakeInstance
 
 void FECsProjectileCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsProjectile>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsProjectileCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsProjectile, FECsProjectile>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsProjectileCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsProjectile, FECsProjectile>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

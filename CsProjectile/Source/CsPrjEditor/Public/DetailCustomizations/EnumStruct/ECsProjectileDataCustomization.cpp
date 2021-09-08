@@ -6,10 +6,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsProjectileDataCustomization"
 
+#define EnumMapType EMCsProjectileData
+#define EnumType FECsProjectileData
+
 FECsProjectileDataCustomization::FECsProjectileDataCustomization() :
 	Super()
 {
-	Init<EMCsProjectileData, FECsProjectileData>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsProjectileDataCustomization::MakeInstance()
@@ -19,17 +22,20 @@ TSharedRef<IPropertyTypeCustomization> FECsProjectileDataCustomization::MakeInst
 
 void FECsProjectileDataCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsProjectileData>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsProjectileDataCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsProjectileData, FECsProjectileData>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsProjectileDataCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsProjectileData, FECsProjectileData>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

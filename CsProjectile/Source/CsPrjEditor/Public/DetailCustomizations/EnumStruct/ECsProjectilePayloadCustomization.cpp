@@ -6,10 +6,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsProjectilePayloadCustomization"
 
+#define EnumMapType EMCsProjectilePayload
+#define EnumType FECsProjectilePayload
+
 FECsProjectilePayloadCustomization::FECsProjectilePayloadCustomization() :
 	Super()
 {
-	Init<EMCsProjectilePayload, FECsProjectilePayload>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsProjectilePayloadCustomization::MakeInstance()
@@ -19,17 +22,20 @@ TSharedRef<IPropertyTypeCustomization> FECsProjectilePayloadCustomization::MakeI
 
 void FECsProjectilePayloadCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsProjectilePayload>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsProjectilePayloadCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsProjectilePayload, FECsProjectilePayload>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsProjectilePayloadCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsProjectilePayload, FECsProjectilePayload>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

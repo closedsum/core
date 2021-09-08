@@ -4,34 +4,40 @@
 
 #include "Payload/CsTypes_Payload_Projectile.h"
 
+#define EnumMapType EMCsProjectilePayload
+#define EnumType FECsProjectilePayload
+
 void SCsGraphPin_ECsProjectilePayload::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsProjectilePayload, FECsProjectilePayload>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsProjectilePayload::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsProjectilePayload>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsProjectilePayload::OnGetText() const
 {
-	return OnGetText_Internal<EMCsProjectilePayload, FECsProjectilePayload>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsProjectilePayload::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsProjectilePayload, FECsProjectilePayload>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsProjectilePayload::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsProjectilePayload>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
 FText SCsGraphPin_ECsProjectilePayload::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsProjectilePayload>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef EnumMapType
+#undef EnumType

@@ -7,6 +7,7 @@
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
+#include "Collision/CsTypes_Collision.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
@@ -42,7 +43,6 @@ namespace NCsWeapon
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NFX::FImpl, TryFire);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NFX::FImpl, TryTracer);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NFX::FImpl, TryImpact);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NFX::FImpl, SetPayload);
 					}
 				}
 
@@ -67,23 +67,48 @@ namespace NCsWeapon
 
 					if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Data))
 					{
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 						typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
-
-						// Get Manager
-						UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
-						// Allocate payload
-						typedef NCsFX::NPayload::IPayload PayloadType;
+						typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::EAttach AttachType;
 
 						const ParamsType* Params = FXData->GetFireFXParams();
-						const FCsFX& FX			 = Params->GetFX();
+						const AttachType& Type   = Params->GetAttachType();
 
-						PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
-						// Set appropriate values on payload
-						SetPayload(Payload, FX);
-						SetPayload(Payload, FXData);
+						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
-						Manager_FX->Spawn(FX.Type, Payload);
+						PooledPayloadType PooledPayload;
+
+						// None
+						if (Type == AttachType::None)
+						{
+							PooledPayload.Parent = nullptr;
+						}
+						// Owner
+						else
+						if (Type == AttachType::Owner)
+						{
+							PooledPayload.Parent = Owner;
+						}
+						// Component
+						else
+						if (Type == AttachType::Component)
+						{
+							CS_IS_PTR_NULL_CHECKED(Component)
+
+							PooledPayload.Parent = Component;
+						}
+						// Custom
+						else
+						{
+							checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
+						}
+
+						// FX
+						const FCsFX& FX = Params->GetFX();
+
+						// Spawn
+						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+						FXManagerLibrary::SpawnChecked(Context, Outer, &PooledPayload, FX);
 					}
 				}
 
@@ -101,22 +126,105 @@ namespace NCsWeapon
 
 					if (TracerVisualDataType* TracerVisualData = TraceDataLibrary::GetSafeInterfaceChecked<TracerVisualDataType>(Context, Data))
 					{
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-						// Get Manager
-						UCsManager_FX_Actor* Manager_FX_Actor = FXManagerLibrary::GetChecked(Context, Outer);
-						// Get Payload
-						typedef NCsFX::NPayload::FImpl PayloadImplType;
+						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
+						PooledPayloadType PooledPayload;
+
+						// Set Parent based on AttachType
+						typedef NCsTrace::NData::NVisual::NTracer::EAttach AttachType;
+
+						const AttachType& AType = TracerVisualData->GetTracerAttachType();
+
+						// None
+						if (AType == AttachType::None)
+						{
+							PooledPayload.Parent = nullptr;
+						}
+						// Owner
+						else
+						if (AType == AttachType::Owner)
+						{
+							PooledPayload.Parent = Owner;
+						}
+						// Component
+						else
+						if (AType == AttachType::Component)
+						{
+							CS_IS_PTR_NULL_CHECKED(Component)
+
+							PooledPayload.Parent = Component;
+						}
+						// Custom
+						else
+						if (AType == AttachType::Custom)
+						{
+							checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
+						}
+						else
+						{
+							checkf(0, TEXT("%s: AttachType: is NOT Valid."), *Context);
+						}
+
+						// Get FX
 						const FCsFX& FX = TracerVisualData->GetTracerFX();
 
-						PayloadImplType* Payload = Manager_FX_Actor->AllocatePayload<PayloadImplType>(FX.Type);
+						// Set Transform based on TransformType.
+						// NOTE: This is only valid if AttachType == None.
+						FTransform Transform = FTransform::Identity;
 
-						SetPayload(Payload, TracerVisualData);
+						if (AType == AttachType::None)
+						{
+							typedef NCsTrace::NData::NVisual::NTracer::ETransform TransformType;
+
+							const TransformType& TType = TracerVisualData->GetTracerTransformType();
+
+							// None
+							if (TType == TransformType::None)
+							{
+								// Do Nothing
+							}
+							// Owner
+							else
+							if (TType == TransformType::Owner)
+							{
+								if (AActor* Actor = Cast<AActor>(Owner))
+									Transform = Actor->GetActorTransform();
+								else
+								if (USceneComponent* C = Cast<USceneComponent>(Owner))
+									Transform = C->GetComponentTransform();
+							}
+							// Component
+							else
+							if (TType == TransformType::Component)
+							{
+								CS_IS_PTR_NULL_CHECKED(Component)
+
+								Transform = Component->GetComponentTransform();
+							}
+							// Custom
+							else
+							if (TType == TransformType::Custom)
+							{
+								checkf(0, TEXT("%s: TransformType::Custom is NOT implemented."), *Context);
+							}
+							else
+							{
+								checkf(0, TEXT("%s: TransformType: is NOT Valid."), *Context);
+							}
+						}
+
+						// Allocate Payload
+						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+						typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+						PayloadImplType* Payload = FXManagerLibrary::AllocatePayloadImplChecked(Context, Outer, &PooledPayload, FX, Transform);
+
+						UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
 
 						// Get and Set any Niagara Parameters
 						typedef NCsFX::NParameter::NVector::FVectorType ParameterVectorType;
 
-						ParameterVectorType* Parameter = Manager_FX_Actor->AllocateValue<ParameterVectorType>();
+						ParameterVectorType* Parameter = Manager_FX->AllocateValue<ParameterVectorType>();
 
 						Parameter->SetName(TracerVisualData->GetTracerEndParameterName());
 						Parameter->SetValue(End);
@@ -125,7 +233,7 @@ namespace NCsWeapon
 						Payload->Parameters.Add(Parameter);
 
 						// Spawn FX
-						Manager_FX_Actor->Spawn(FX.Type, Payload);
+						Manager_FX->Spawn(FX.Type, Payload);
 					}
 				}
 
@@ -141,14 +249,8 @@ namespace NCsWeapon
 
 					if (ImpactVisualDataType* ImpactVisualData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{
-						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-						// Get Manager
-						UCsManager_FX_Actor* Manager_FX_Actor = FXManagerLibrary::GetChecked(Context, Outer);
-						
 						// Get Physics Surface
-						UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
-						EPhysicalSurface SurfaceType    = PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+						EPhysicalSurface SurfaceType = NCsHitResult::GetPhysSurfaceType(Hit);
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
@@ -157,197 +259,13 @@ namespace NCsWeapon
 						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
 						// Spawn FX
+						typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
 						FXManagerLibrary::SpawnChecked(Context, Outer, FX, Transform);
 					}
 				}
 
 				#undef TraceDataType
-
-				#define FXPayloadType NCsFX::NPayload::IPayload
-				void FImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX)
-				{
-				#undef FXPayloadType
-
-					using namespace NCached;
-
-					const FString& Context = Str::SetPayload;
-
-					typedef NCsFX::NPayload::FImpl PayloadImplType;
-					typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-					PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
-
-					PayloadImpl->Instigator					= Outer;
-					PayloadImpl->Owner						= Owner;
-					PayloadImpl->FXSystem					= FX.GetChecked(Context);
-					PayloadImpl->DeallocateMethod			= FX.GetDeallocateMethod();
-					PayloadImpl->LifeTime					= FX.LifeTime;
-					PayloadImpl->AttachmentTransformRules	= FX.AttachmentTransformRules;
-					PayloadImpl->Bone						= FX.Bone;
-					PayloadImpl->TransformRules				= FX.TransformRules;
-					PayloadImpl->Transform					= FX.Transform;
-				}
-
-				#define FXPayloadType NCsFX::NPayload::IPayload
-
-				#define FireVisualDataType NCsWeapon::NTrace::NData::NVisual::NFire::IFire
-				void FImpl::SetPayload(FXPayloadType* Payload, FireVisualDataType* FireVisualData)
-				{
-				#undef FireVisualDataType
-
-					using namespace NCached;
-
-					const FString& Context = Str::SetPayload;
-
-					typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::IParams ParamsType;
-					typedef NCsWeapon::NTrace::NData::NVisual::NFire::NParams::EAttach AttachType;
-
-					const ParamsType* Params = FireVisualData->GetFireFXParams();
-					const AttachType& Type   = Params->GetAttachType();
-
-					typedef NCsFX::NPayload::FImpl PayloadImplType;
-					typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-					PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
-
-					// None
-					if (Type == AttachType::None)
-					{
-						PayloadImpl->Parent = nullptr;
-					}
-					// Owner
-					else
-					if (Type == AttachType::Owner)
-					{
-						PayloadImpl->Parent = Owner;
-					}
-					// Component
-					else
-					if (Type == AttachType::Component)
-					{
-						CS_IS_PTR_NULL_CHECKED(Component)
-
-						PayloadImpl->Parent = Component;
-					}
-					// Custom
-					else
-					{
-						checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
-					}
-				}
-
-				#define TracerVisualDataType NCsTrace::NData::NVisual::NTracer::ITracer
-				void FImpl::SetPayload(FXPayloadType* Payload, TracerVisualDataType* TracerVisualData)
-				{
-				#undef TracerVisualDataType
-
-					const FCsFX& FX = TracerVisualData->GetTracerFX();
-
-					SetPayload(Payload, FX);
-
-					using namespace NCached;
-
-					const FString& Context = Str::SetPayload;
-
-					typedef NCsFX::NPayload::FImpl PayloadImplType;
-					typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-					PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
-
-					// Set Parent based on AttachType
-					typedef NCsTrace::NData::NVisual::NTracer::EAttach AttachType;
-
-					const AttachType& AType = TracerVisualData->GetTracerAttachType();
-
-					// None
-					if (AType == AttachType::None)
-					{
-						PayloadImpl->Parent = nullptr;
-					}
-					// Owner
-					else
-					if (AType == AttachType::Owner)
-					{
-						PayloadImpl->Parent = Owner;
-					}
-					// Component
-					else
-					if (AType == AttachType::Component)
-					{
-						CS_IS_PTR_NULL_CHECKED(Component)
-
-						PayloadImpl->Parent = Component;
-					}
-					// Custom
-					else
-					if (AType == AttachType::Custom)
-					{
-						checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."), *Context);
-					}
-					else
-					{
-						checkf(0, TEXT("%s: AttachType: is NOT Valid."), *Context);
-					}
-
-					// Set Transform based on TransformType.
-					// NOTE: This is only valid if AttachType == None.
-
-					if (AType == AttachType::None)
-					{
-						typedef NCsTrace::NData::NVisual::NTracer::ETransform TransformType;
-
-						const TransformType& TType = TracerVisualData->GetTracerTransformType();
-
-						FTransform TransformToApply = FTransform::Identity;
-
-						// None
-						if (TType == TransformType::None)
-						{
-							// Do Nothing
-						}
-						// Owner
-						else
-						if (TType == TransformType::Owner)
-						{
-							if (AActor* Actor = Cast<AActor>(Owner))
-								TransformToApply = Actor->GetActorTransform();
-							else
-							if (USceneComponent* C = Cast<USceneComponent>(Owner))
-								TransformToApply = C->GetComponentTransform();
-						}
-						// Component
-						else
-						if (TType == TransformType::Component)
-						{
-							CS_IS_PTR_NULL_CHECKED(Component)
-
-							TransformToApply = Component->GetComponentTransform();
-						}
-						// Custom
-						else
-						if (TType == TransformType::Custom)
-						{
-							checkf(0, TEXT("%s: TransformType::Custom is NOT implemented."), *Context);
-						}
-						else
-						{
-							checkf(0, TEXT("%s: TransformType: is NOT Valid."), *Context);
-						}
-		
-						// Location - Add each component
-						PayloadImpl->Transform.AddToTranslation(TransformToApply.GetTranslation());
-						// Rotation - Add each component
-						FRotator Rotation = PayloadImpl->Transform.Rotator();
-						Rotation += TransformToApply.Rotator();
-						PayloadImpl->Transform.SetRotation(Rotation.Quaternion());
-						// Scale - Multiply each component
-						FVector Scale = PayloadImpl->Transform.GetScale3D();
-						Scale *= TransformToApply.GetScale3D();
-						PayloadImpl->Transform.SetScale3D(Scale);
-					}
-				}
-
-				#undef FXPayloadType
 			}
 		}
 	}

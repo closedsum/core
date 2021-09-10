@@ -1,26 +1,25 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Trace/Impl/CsTraceWeapon_Impl_Sound.h"
+#include "Beam/Impl/CsBeamWeapon_Impl_Sound.h"
 
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
+#include "Data/CsLibrary_Data_Beam.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 // Data
-#include "Trace/Data/Sound/CsData_TraceWeapon_SoundFire.h"
-#include "Managers/Trace/Data/CsData_Trace.h"
-#include "Managers/Trace/Data/Sound/CsData_Trace_SoundImpact.h"
+#include "Beam/Data/Sound/CsData_BeamWeapon_SoundFire.h"
+#include "Data/Sound/CsData_Beam_SoundImpact.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon
-#include "Trace/CsTraceWeapon.h"
-#include "Trace/Data/Sound/CsParams_TraceWeapon_SoundFire.h"
+#include "Beam/CsBeamWeapon.h"
+#include "Beam/Data/Sound/CsParams_BeamWeapon_SoundFire.h"
 
 namespace NCsWeapon
 {
-	namespace NTrace
+	namespace NBeam
 	{
 		namespace NImpl
 		{
@@ -30,15 +29,15 @@ namespace NCsWeapon
 				{
 					namespace Str
 					{
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NSound::FImpl, TryFire);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NSound::FImpl, TryImpact);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NSound::FImpl, TryFire);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NSound::FImpl, TryImpact);
 					}
 				}
 
 				void FImpl::SetOuter(UObject* InOuter)
 				{
 					Outer	  = InOuter;
-					Interface = Cast<ICsTraceWeapon>(Outer);
+					Interface = Cast<ICsBeamWeapon>(Outer);
 				}
 
 				#define DataType NCsWeapon::NData::IData
@@ -50,8 +49,8 @@ namespace NCsWeapon
 
 					const FString& Context = Str::TryFire;
 
-					// SoundDataType (NCsWeapon::NTrace::NData::NSound::NFire::IFire)
-					typedef NCsWeapon::NTrace::NData::NSound::NFire::IFire SoundDataType;
+					// SoundDataType (NCsWeapon::NBeam::NData::NSound::NFire::IFire)
+					typedef NCsWeapon::NBeam::NData::NSound::NFire::IFire SoundDataType;
 					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
 					if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Data))
@@ -63,7 +62,7 @@ namespace NCsWeapon
 						PooledPayload.Owner = Owner;
 
 						// Get Sound
-						typedef NCsWeapon::NTrace::NData::NSound::NFire::NParams::IParams ParamsType;
+						typedef NCsWeapon::NBeam::NData::NSound::NFire::NParams::IParams ParamsType;
 
 						const ParamsType* Params = SoundData->GetFireSoundParams();
 						const FCsSound& Sound    = Params->GetSound();
@@ -75,20 +74,20 @@ namespace NCsWeapon
 					}
 				}
 
-				#define TraceDataType NCsTrace::NData::IData
-				void FImpl::TryImpact(TraceDataType* Data, const FHitResult& Hit)
+				#define BeamDataType NCsBeam::NData::IData
+				void FImpl::TryImpact(BeamDataType* Data, const FHitResult& Hit)
 				{
-				#undef TraceDataType
+				#undef BeamDataType
 
 					using namespace NCached;
 
 					const FString& Context = Str::TryImpact;
 
-					// ImpactSoundDataType (NCsTrace::NData::NSound::NImpact::IImpact)
-					typedef NCsTrace::NData::NSound::NImpact::IImpact ImpactSoundDataType;
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
+					typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
+					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 
-					if (ImpactSoundDataType* ImpactSoundData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+					if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 					{
 						typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 

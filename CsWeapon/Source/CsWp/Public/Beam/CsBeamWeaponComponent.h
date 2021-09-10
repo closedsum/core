@@ -7,6 +7,7 @@
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
+#include "Types/CsTypes_Beam.h"
 
 #include "CsBeamWeaponComponent.generated.h"
 
@@ -22,12 +23,14 @@ struct FCsRoutine;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
-// NCsWeapon::NTrace::NImpl::NTrace::FImpl
-//CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NTrace, FImpl)
-// NCsWeapon::NTrace::NImpl::NFX::FImpl
-//CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NFX, FImpl)
-// NCsWeapon::NTrace::NImpl::NSound::FImpl
-//CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NTrace, NImpl, NSound, FImpl)
+// NCsWeapon::NBeam::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NBeam, NData, IData)
+// NCsWeapon::NBeam::NImpl::NBeam::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NImpl, NBeam, FImpl)
+// NCsWeapon::NBeam::NImpl::NFX::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NImpl, NFX, FImpl)
+// NCsWeapon::NBeam::NImpl::NSound::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NImpl, NSound, FImpl)
 
 class USceneComponent;
 class UStaticMeshComponent;
@@ -42,8 +45,7 @@ class CSWP_API UCsBeamWeaponComponent : public UActorComponent,
 	GENERATED_UCLASS_BODY()
 
 #define DataType NCsWeapon::NData::IData
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-#define BeamImplType NCsWeapon::NBeam::NImpl::NTrace::FImpl
+#define BeamImplType NCsWeapon::NBeam::NImpl::NBeam::FImpl
 #define FXImplType NCsWeapon::NBeam::NImpl::NFX::FImpl
 #define SoundImplType NCsWeapon::NBeam::NImpl::NSound::FImpl
 
@@ -71,6 +73,8 @@ public:
 
 #pragma endregion ICsUpdate
 
+// Update
+#pragma region
 protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Update", meta = (AllowPrivateAccess))
@@ -85,6 +89,10 @@ public:
 		return UpdateGroup;
 	}
 
+#pragma endregion Update
+
+// Weapon
+#pragma region
 protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Type", meta = (AllowPrivateAccess))
@@ -97,6 +105,18 @@ public:
 protected:
 
 	DataType* Data;
+
+#define BeamDataType NCsWeapon::NBeam::NData::IData
+
+	BeamDataType* BeamData;
+
+public:
+
+	FORCEINLINE const BeamDataType* GetBeamData() const { return BeamData; }
+
+#undef BeamDataType
+
+#pragma endregion Weapon
 
 // ICsWeapon
 #pragma region
@@ -114,7 +134,23 @@ public:
 
 #pragma endregion ICsWeapon
 
-// ICsTraceWeapon
+// Beam
+#pragma region
+protected:
+
+	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Beam", meta = (AllowPrivateAccess))
+	FECsBeam BeamType;
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Beam")
+	void SetBeamType(const FECsBeam& Type);
+
+	FORCEINLINE const FECsBeam& GetBeamType() const { return BeamType; }
+
+#pragma endregion Beam
+
+// ICsBeamWeapon
 #pragma region
 public:
 
@@ -122,7 +158,7 @@ public:
 
 	void StopFire();
 
-#pragma endregion ICsTraceWeapon
+#pragma endregion ICsBeamWeapon
 
 // Components
 #pragma region
@@ -226,11 +262,11 @@ public:
 	*/
 	struct CSWP_API FTimeBetweenShotsImpl
 	{
-		friend class UCsTraceWeaponComponent;
+		friend class UCsBeamWeaponComponent;
 
 	protected:
 
-		UCsTraceWeaponComponent* Outer;
+		UCsBeamWeaponComponent* Outer;
 
 	public:
 
@@ -289,7 +325,7 @@ public:
 #pragma region
 public:
 
-	BeamImplType* TraceImpl;
+	BeamImplType* BeamImpl;
 
 protected:
 
@@ -370,7 +406,6 @@ public:
 #pragma endregion Print
 
 #undef DataType
-#undef ProjectilePayloadType
 #undef BeamImplType
 #undef FXImplType
 #undef SoundImplType

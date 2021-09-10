@@ -592,6 +592,9 @@ namespace NCsValid
 // CHECKED
 
 #if !UE_BUILD_SHIPPING
+// Assume const FString& Context has been defined
+#define CS_IS_VALID_CHECKED(__Object) __Object.IsValidChecked(Context)
+
 // Int
 #pragma region
 
@@ -785,6 +788,7 @@ namespace NCsValid
 #pragma endregion Delegate
 
 #else
+#define CS_IS_VALID_CHECKED(__Object)
 // Int
 #define CS_IS_INT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
@@ -806,7 +810,6 @@ namespace NCsValid
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 // Object
-#pragma region
 #define CS_IS_OBJ_CLASS_OF_CHECKED(__Object, __ObjectType, __ClassType)
 // Assume const FString& Context has been defined
 #define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
@@ -831,8 +834,6 @@ namespace NCsValid
 		static const FString __temp__str__b; \
 		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
-
-#pragma endregion Object
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // FSoftObjectPath
@@ -842,6 +843,19 @@ namespace NCsValid
 #endif // #if !UE_BUILD_SHIPPING
 
 // SAFE
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID(__Object) \
+	if (!__Object.IsValid(Context, Log)) \
+		return false;
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID_EXIT(__Object) \
+	if (!__Object.IsValid(Context, Log)) \
+		return;
+	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID_RET_NULL(__Object) \
+	if (!__Object.IsValid(Context, Log)) \
+		return nullptr;
 
 // Int
 #pragma region

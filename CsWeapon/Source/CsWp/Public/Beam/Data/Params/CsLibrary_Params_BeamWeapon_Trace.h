@@ -1,17 +1,17 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Containers/CsLibrary_InterfaceMap.h"
-#include "Trace/Data/Params/CsParams_TraceWeapon_Trace.h"
+#include "Beam/Data/Params/CsParams_BeamWeapon_Trace.h"
 
 namespace NCsWeapon
 {
-	namespace NTrace
+	namespace NBeam
 	{
 		namespace NParams
 		{
-			namespace NTrace
+			namespace NBeam
 			{
-			#define ParamsType NCsWeapon::NTrace::NParams::NTrace::ITrace
+			#define ParamsType NCsWeapon::NBeam::NParams::NBeam::IBeam
 
 				struct CSWP_API FLibrary : public TCsLibrary_InterfaceMap<ParamsType>
 				{

@@ -1,21 +1,23 @@
-#include "Trace/CsTraceWeaponComponent.h"
+#include "Beam/CsBeamWeaponComponent.h"
 #include "CsWp.h"
 
 // CVar
-#include "Trace/CsCVars_TraceWeapon.h"
+#include "Beam/CsCVars_BeamWeapon.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsCached.h"
 #include "Types/CsTypes_Math.h"
 // Library
-#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
-#include "Managers/Time/CsLibrary_Manager_Time.h"
-#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -24,68 +26,61 @@
 #include "Data/CsData_Weapon.h"
 #include "Data/Visual/CsData_Weapon_VisualSkin.h"
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
-#include "Trace/Data/CsData_TraceWeapon.h"
-// Containers
-#include "Containers/CsInterfaceMap.h"
-// Pooled
-#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
-// Params
-#include "Trace/Data/Params/CsParams_TraceWeapon_Trace.h"
-#include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
+#include "Beam/Data/CsData_BeamWeapon.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 // Weapon
-#include "Impl/CsTraceWeapon_Impl_Trace.h"
-#include "Impl/CsTraceWeapon_Impl_FX.h"
-#include "Impl/CsTraceWeapon_Impl_Sound.h"
+#include "Impl/CsBeamWeapon_Impl_Trace.h"
+#include "Impl/CsBeamWeapon_Impl_FX.h"
+#include "Impl/CsBeamWeapon_Impl_Sound.h"
 
 // Cached 
 #pragma region
 
-namespace NCsTraceWeaponComponent
+namespace NCsBeamWeaponComponent
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, SetUpdateGroup);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, SetUpdateGroup);
 			CS_DEFINE_CACHED_STRING(Group, "Group");
 
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, SetWeaponType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, SetWeaponType);
 			CS_DEFINE_CACHED_STRING(Type, "Type");
 
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Init);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, SetBeamType);
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, Init);
 			CS_DEFINE_CACHED_STRING(UpdateGroup, "UpdateGroup");
 			CS_DEFINE_CACHED_STRING(WeaponType, "WeaponType");
 			CS_DEFINE_CACHED_STRING(IdleState, "IdleState");
 			CS_DEFINE_CACHED_STRING(FireState, "FireState");
 
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, OnUpdate_HandleStates);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, CanFire);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Fire);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Fire_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, LineTrace);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent, Trace);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, OnUpdate_HandleStates);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, CanFire);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, Fire);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent, Fire_Internal);
 		}
 
 		namespace Name
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsTraceWeaponComponent, Fire_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsTraceWeaponComponent, Abort_Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsBeamWeaponComponent, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsBeamWeaponComponent, Abort_Fire_Internal);
 		}
 
 		namespace NTimeBetweenShotsImpl
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsTraceWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsBeamWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
 			}
 
 			namespace Name
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsTraceWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsBeamWeaponComponent::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
 			}
 		}
 	}
@@ -93,20 +88,25 @@ namespace NCsTraceWeaponComponent
 
 #pragma endregion Cached
 
-UCsTraceWeaponComponent::UCsTraceWeaponComponent(const FObjectInitializer& ObjectInitializer)
+UCsBeamWeaponComponent::UCsBeamWeaponComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	// ICsUpdate
 	UpdateGroup(),
+	// Weapon
 	WeaponType(),
 	Data(nullptr),
+	BeamData(nullptr),
+	// Beam
+	BeamType(),
+	// Owner
 	MyOwner(nullptr),
 	MyOwnerAsActor(nullptr),
 	// State
 	CurrentState(),
 	IdleState(),
 	FireState(),
-	// Ammo
-	CurrentAmmo(0),
+	// Charge
+	CurrentCharge(0.0f),
 	// Fire
 	bFire(false),
 	bFire_Last(false),
@@ -114,22 +114,24 @@ UCsTraceWeaponComponent::UCsTraceWeaponComponent(const FObjectInitializer& Objec
 	FireCount(0),
 	FireRoutineHandle(),
 	// Trace
-	TraceImpl(nullptr),
+	BeamImpl(nullptr),
 	// Sound
-	SoundImpl(nullptr)
+	SoundImpl(nullptr),
+	// FX
+	FXImpl(nullptr)
 {
 }
 
 // UObject Interface
 #pragma region
 
-void UCsTraceWeaponComponent::BeginDestroy()
+void UCsBeamWeaponComponent::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
 	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
 
-	CS_SAFE_DELETE_PTR(TraceImpl)
+	CS_SAFE_DELETE_PTR(BeamImpl)
 	CS_SAFE_DELETE_PTR(SoundImpl)
 	CS_SAFE_DELETE_PTR(FXImpl)
 }
@@ -139,7 +141,7 @@ void UCsTraceWeaponComponent::BeginDestroy()
 // UActorComponent Interface
 #pragma region
 
-void UCsTraceWeaponComponent::BeginPlay()
+void UCsBeamWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -148,8 +150,8 @@ void UCsTraceWeaponComponent::BeginPlay()
 
 	TimeBetweenShotsImpl.Outer = this;
 
-	TraceImpl = ConstructTraceImpl();
-	TraceImpl->SetOuter(this);
+	BeamImpl = ConstructBeamImpl();
+	BeamImpl->SetOuter(this);
 
 	SoundImpl = ConstructSoundImpl();
 	SoundImpl->SetOuter(this);
@@ -160,13 +162,13 @@ void UCsTraceWeaponComponent::BeginPlay()
 	// ScopedHandles
 #if !UE_BUILD_SHIPPING
 	{
-		using namespace NCsTraceWeaponComponent::NCached;
+		using namespace NCsBeamWeaponComponent::NCached;
 
 		// FireScopedHandle
 		{
 			const FString& ScopeName		   = Str::Fire_Internal;
-			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
-			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerFire;
+			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponBeam;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponBeamScopedTimerFire;
 
 			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
@@ -179,16 +181,19 @@ void UCsTraceWeaponComponent::BeginPlay()
 // ICsUpdate
 #pragma region
 
-void UCsTraceWeaponComponent::Update(const FCsDeltaTime& DeltaTime)
+void UCsBeamWeaponComponent::Update(const FCsDeltaTime& DeltaTime)
 { 
 	OnUpdate_HandleStates(DeltaTime);
 }
 
 #pragma endregion ICsUpdate
 
-void UCsTraceWeaponComponent::SetUpdateGroup(const FECsUpdateGroup& Group)
+// Update
+#pragma region
+
+void UCsBeamWeaponComponent::SetUpdateGroup(const FECsUpdateGroup& Group)
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
 	const FString& Context = Str::SetUpdateGroup;
 
@@ -197,9 +202,14 @@ void UCsTraceWeaponComponent::SetUpdateGroup(const FECsUpdateGroup& Group)
 	UpdateGroup = Group;
 }
 
-void UCsTraceWeaponComponent::SetWeaponType(const FECsWeapon& Type)
+#pragma endregion Update
+
+// Weapon
+#pragma region
+
+void UCsBeamWeaponComponent::SetWeaponType(const FECsWeapon& Type)
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
 	const FString& Context = Str::SetWeaponType;
 
@@ -208,33 +218,51 @@ void UCsTraceWeaponComponent::SetWeaponType(const FECsWeapon& Type)
 	WeaponType = Type;
 }
 
+#pragma endregion Weapon
+
 // ICsWeapon
 #pragma region
 
 #pragma endregion ICsWeapon
 
-// ICsProjectileWeapon
+// Beam
 #pragma region
 
-void UCsTraceWeaponComponent::StartFire()
+void UCsBeamWeaponComponent::SetBeamType(const FECsBeam& Type)
+{
+	using namespace NCsBeamWeaponComponent::NCached;
+
+	const FString& Context = Str::SetBeamType;
+
+	check(EMCsBeam::Get().IsValidEnumChecked(Context, Str::Type, Type));
+
+	BeamType = Type;
+}
+
+#pragma endregion Beam
+
+// ICsBeamWeapon
+#pragma region
+
+void UCsBeamWeaponComponent::StartFire()
 {
 	bFire = true;
 
 	Update(FCsDeltaTime::Zero);
 }
 
-void UCsTraceWeaponComponent::StopFire()
+void UCsBeamWeaponComponent::StopFire()
 {
 	bFire = false;
 
 	Update(FCsDeltaTime::Zero);
 }
 
-#pragma endregion ICsProjectileWeapon
+#pragma endregion ICsBeamWeapon
 
-void UCsTraceWeaponComponent::Init()
+void UCsBeamWeaponComponent::Init()
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
 	const FString& Context = Str::Init;
 
@@ -243,9 +271,10 @@ void UCsTraceWeaponComponent::Init()
 	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
 
 	// Get Data
-	Data = UCsManager_Weapon::Get(GetWorld()->GetGameState())->GetDataChecked(Context, WeaponType.GetFName());
-
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+
+	Data = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType.GetFName());
 
 	check(WeaponDataLibrary::IsValidChecked(Context, Data));
 
@@ -283,18 +312,17 @@ void UCsTraceWeaponComponent::Init()
 
 	CurrentState = IdleState;
 
-	// Ammo
-	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
+	typedef NCsWeapon::NBeam::NData::IData BeamDataType;
 
-	TraceDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
+	BeamData = WeaponDataLibrary::GetInterfaceChecked<BeamDataType>(Context, Data);
 
-	CurrentAmmo = PrjData->GetMaxAmmo();
+	CurrentCharge = BeamData->GetMaxCharge();
 
-	TraceImpl->SetOwner(MyOwner);
-	TraceImpl->SetFXImpl(FXImpl);
-	TraceImpl->SetSoundImpl(SoundImpl);
+	BeamImpl->SetOwner(MyOwner);
+	BeamImpl->SetFXImpl(FXImpl);
+	BeamImpl->SetSoundImpl(SoundImpl);
 
-	check(TraceImpl->IsValidChecked(Context));
+	check(BeamImpl->IsValidChecked(Context));
 
 	FXImpl->SetOwner(MyOwner);
 	SoundImpl->SetOwner(MyOwner);
@@ -303,9 +331,9 @@ void UCsTraceWeaponComponent::Init()
 // State
 #pragma region
 
-void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
+void UCsBeamWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
@@ -314,7 +342,7 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceState))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamState))
 	{
 		UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: %s."), *Context, CurrentState.ToChar());
 	}
@@ -332,7 +360,7 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 			CurrentState = FireState;
 
 #if !UE_BUILD_SHIPPING
-			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Idle -> Fire."), *Context);
 			}
@@ -357,7 +385,7 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 			CurrentState = IdleState;
 
 #if !UE_BUILD_SHIPPING
-			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Fire -> Idle."), *Context);
 			}
@@ -370,25 +398,26 @@ void UCsTraceWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTim
 
 #pragma endregion State
 
-// Ammo
+// Charge
 #pragma region
 
-void UCsTraceWeaponComponent::ConsumeAmmo()
+void UCsBeamWeaponComponent::ConsumeCharge()
 {
-	int32 PreviousAmmo = CurrentAmmo;
-	--CurrentAmmo;
+	float PreviousCharge = CurrentCharge;
+	// TODO: Decrement properly
+	--CurrentCharge;
 
-	OnConsumeAmmo_Event.Broadcast(this, PreviousAmmo, CurrentAmmo);
+	OnConsumeCharge_Event.Broadcast(this, PreviousCharge, CurrentCharge);
 }
 
-#pragma endregion Ammo
+#pragma endregion Charge
 
 // Fire
 #pragma region
 
-bool UCsTraceWeaponComponent::CanFire() const
+bool UCsBeamWeaponComponent::CanFire() const
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
 	const FString& Context = Str::CanFire;
 	
@@ -396,46 +425,41 @@ bool UCsTraceWeaponComponent::CanFire() const
 
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
-	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	TraceDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
-
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
+	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > BeamData->GetTimeBetweenShots());
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
-	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
+	const bool Pass_Fire = bFire && !BeamData->DoFireOnRelease() && (BeamData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
-	const bool Pass_FireOnRelease = !bFire && PrjData->DoFireOnRelease() && bFire_Last;
+	const bool Pass_FireOnRelease = !bFire && BeamData->DoFireOnRelease() && bFire_Last;
 	// Check if has ammo to fire.
-	const bool Pass_Ammo = PrjData->HasInfiniteAmmo() || CurrentAmmo > 0;
+	const bool Pass_Charge = BeamData->HasInfiniteCharge() || CurrentCharge > 0.0f;
 
 #if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceCanFire))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamCanFire))
 	{
 		using namespace NCsCached;
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, PrjData->GetTimeBetweenShots());
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, BeamData->GetTimeBetweenShots());
 		// Pass_Fire
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjData->DoFireOnRelease()), ToChar(PrjData->IsFullAuto()), ToChar(!bFire_Last));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!BeamData->DoFireOnRelease()), ToChar(BeamData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PrjData->DoFireOnRelease()), ToChar(bFire_Last));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(BeamData->DoFireOnRelease()), ToChar(bFire_Last));
 		// Pass_Ammo
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PrjData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Charge (%s): %s || %s"), ToChar(Pass_Charge), ToChar(BeamData->HasInfiniteCharge()), ToChar(CurrentCharge > 0.0f));
 
 		// Result
-		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Ammo));
+		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Charge), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Charge));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	return Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo;
+	return Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Charge;
 }
 
-void UCsTraceWeaponComponent::Fire()
+void UCsBeamWeaponComponent::Fire()
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
 	const FString& Context = Str::Fire;
 
@@ -459,45 +483,37 @@ void UCsTraceWeaponComponent::Fire()
 
 	#define COROUTINE Fire_Internal
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsTraceWeaponComponent::COROUTINE);
+	Payload->CoroutineImpl.BindUObject(this, &UCsBeamWeaponComponent::COROUTINE);
 	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
 	Payload->OnEnds.AddDefaulted();
-	Payload->OnEnds.Last().BindUObject(this, &UCsTraceWeaponComponent::Fire_Internal_OnEnd);
+	Payload->OnEnds.Last().BindUObject(this, &UCsBeamWeaponComponent::Fire_Internal_OnEnd);
 	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
 
 	#undef COROUTINE
 
-	// Cache pointer to TraceDataType (NCsWeapon::NTrace::NData::IData)
-	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Data);
-
-	check(WeaponDataLibrary::IsValidChecked(Context, Data));
-
-	Payload->SetValue_Flag(CS_FIRST, TraceData->HasInfiniteAmmo());
-	Payload->SetValue_Int(CS_FIRST, TraceData->GetTracesPerShot());
-	Payload->SetValue_Float(CS_FIRST, TraceData->GetTimeBetweenTracesPerShot());
+	Payload->SetValue_Flag(CS_FIRST, BeamData->HasInfiniteCharge());
+	Payload->SetValue_Int(CS_FIRST, BeamData->GetBeamsPerShot());
+	Payload->SetValue_Float(CS_FIRST, BeamData->GetTimeBetweenBeamsPerShot());
 
 	FireRoutineHandle = Scheduler->Start(Payload);
 }
 
-char UCsTraceWeaponComponent::Fire_Internal(FCsRoutine* R)
+char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 {
-	using namespace NCsTraceWeaponComponent::NCached;
+	using namespace NCsBeamWeaponComponent::NCached;
 
-	const bool& bInfiniteAmmo = R->GetValue_Flag(CS_FIRST);
+	const bool& bInfiniteCharge = R->GetValue_Flag(CS_FIRST);
 
-	static const int32 TRACES_PER_SHOT = 0;
-	const int32& TracesPerShot = R->GetValue_Int(TRACES_PER_SHOT);
+	static const int32 BEAMS_PER_SHOT = 0;
+	const int32& BeamsPerShot = R->GetValue_Int(BEAMS_PER_SHOT);
 
-	const float& TimeBetweenTracesPerShot = R->GetValue_Float(CS_FIRST);
+	const float& TimeBetweenBeamsPerShot = R->GetValue_Float(CS_FIRST);
 
-	static const int32 CURRENT_TRACE_PER_SHOT_INDEX = 1;
-	int32& CurrentTracePerShotIndex = R->GetValue_Int(CURRENT_TRACE_PER_SHOT_INDEX);
+	static const int32 CURRENT_BEAM_PER_SHOT_INDEX = 1;
+	int32& CurrentBeamPerShotIndex = R->GetValue_Int(CURRENT_BEAM_PER_SHOT_INDEX);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -514,37 +530,37 @@ char UCsTraceWeaponComponent::Fire_Internal(FCsRoutine* R)
 
 			ElapsedTime.Reset();
 
-			if (!bInfiniteAmmo)
-				ConsumeAmmo();
+			if (!bInfiniteCharge)
+				ConsumeCharge();
 
-			TraceImpl->Trace(Data);
+			BeamImpl->Emit(Data);
 			SoundImpl->TryFire(Data);
 			FXImpl->TryFire(Data);
 
 			// Increment the shot index
-			CurrentTracePerShotIndex = FMath::Min(CurrentTracePerShotIndex + 1, TracesPerShot);
+			CurrentBeamPerShotIndex = FMath::Min(CurrentBeamPerShotIndex + 1, BeamsPerShot);
 
 			// Check if more projectiles should be fired, if so wait
-			if (CurrentTracePerShotIndex < TracesPerShot)
+			if (CurrentBeamPerShotIndex < BeamsPerShot)
 			{
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenTracesPerShot);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenBeamsPerShot);
 			}
 
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
 		}
-	} while (CurrentTracePerShotIndex < TracesPerShot);
+	} while (CurrentBeamPerShotIndex < BeamsPerShot);
 
 	CS_COROUTINE_END(R);
 }
 
-void UCsTraceWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
+void UCsBeamWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
 {
 	--FireCount;
 }
 
-void UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
+void UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 {
-	using namespace NCsTraceWeaponComponent::NCached::NTimeBetweenShotsImpl;
+	using namespace NCsBeamWeaponComponent::NCached::NTimeBetweenShotsImpl;
 
 	const FString& Context = Str::OnElapsedTime;
 
@@ -561,7 +577,7 @@ void UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-	Payload->CoroutineImpl.BindRaw(this, &UCsTraceWeaponComponent::FTimeBetweenShotsImpl::COROUTINE);
+	Payload->CoroutineImpl.BindRaw(this, &UCsBeamWeaponComponent::FTimeBetweenShotsImpl::COROUTINE);
 	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
@@ -570,17 +586,12 @@ void UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 	#undef COROUTINE
 
 	// Get total elapsed time (= TimeBetweenShots)
-	typedef NCsWeapon::NTrace::NData::IData TraceDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	TraceDataType* TraceData = WeaponDataLibrary::GetInterfaceChecked<TraceDataType>(Context, Outer->GetData());
-
-	Payload->SetValue_Float(CS_FIRST, TraceData->GetTimeBetweenShots());
+	Payload->SetValue_Float(CS_FIRST, Outer->GetBeamData()->GetTimeBetweenShots());
 
 	Scheduler->Start(Payload);
 }
 
-char UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRoutine* R)
+char UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRoutine* R)
 {
 	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
 	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
@@ -613,23 +624,23 @@ char UCsTraceWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsR
 	CS_COROUTINE_END(R);
 }
 
-	// Trace
+	// Beam
 #pragma region
 
-#define TraceImplType NCsWeapon::NTrace::NImpl::NTrace::FImpl
-TraceImplType* UCsTraceWeaponComponent::ConstructTraceImpl()
+#define BeamImplType NCsWeapon::NBeam::NImpl::NBeam::FImpl
+BeamImplType* UCsBeamWeaponComponent::ConstructBeamImpl()
 {
-	return new TraceImplType();
+	return new BeamImplType();
 }
-#undef TraceImplType
+#undef BeamImplType
 
-#pragma endregion Projectile
+#pragma endregion Beam
 
 	// Sound
 #pragma region
 
-#define SoundImplType NCsWeapon::NTrace::NImpl::NSound::FImpl
-SoundImplType* UCsTraceWeaponComponent::ConstructSoundImpl()
+#define SoundImplType NCsWeapon::NBeam::NImpl::NSound::FImpl
+SoundImplType* UCsBeamWeaponComponent::ConstructSoundImpl()
 {
 	return new SoundImplType();
 }
@@ -640,8 +651,8 @@ SoundImplType* UCsTraceWeaponComponent::ConstructSoundImpl()
 	// FX
 #pragma region
 
-#define FXImplType NCsWeapon::NTrace::NImpl::NFX::FImpl
-FXImplType* UCsTraceWeaponComponent::ConstructFXImpl()
+#define FXImplType NCsWeapon::NBeam::NImpl::NFX::FImpl
+FXImplType* UCsBeamWeaponComponent::ConstructFXImpl()
 {
 	return new FXImplType();
 }
@@ -654,9 +665,9 @@ FXImplType* UCsTraceWeaponComponent::ConstructFXImpl()
 // Visual
 #pragma region
 
-void UCsTraceWeaponComponent::ConstructSkeletalMeshComponent()
+void UCsBeamWeaponComponent::ConstructSkeletalMeshComponent()
 {
-	checkf(!SkeletalMeshComponent, TEXT("UCsTraceWeaponComponent::ConstructSkeletalMeshComponent: SkeletalMeshComponent has already been constructed."));
+	checkf(!SkeletalMeshComponent, TEXT("UCsBeamWeaponComponent::ConstructSkeletalMeshComponent: SkeletalMeshComponent has already been constructed."));
 
 	SkeletalMeshComponent = NewObject<USkeletalMeshComponent>(this, FName("SkeletalMeshComponent"));
 	SkeletalMeshComponent->RegisterComponent();
@@ -667,12 +678,12 @@ void UCsTraceWeaponComponent::ConstructSkeletalMeshComponent()
 // Print
 #pragma region
 
-FString UCsTraceWeaponComponent::PrintNameAndClass()
+FString UCsBeamWeaponComponent::PrintNameAndClass()
 {
 	return FString::Printf(TEXT("Weapon: %s with Class: %s"), *(GetName()), *(GetClass()->GetName()));
 }
 
-FString UCsTraceWeaponComponent::PrintNameClassAndOwner()
+FString UCsBeamWeaponComponent::PrintNameClassAndOwner()
 {
 	return FString::Printf(TEXT("Weapon: %s with Class: %s with MyOwner: %s"), *(GetName()), *(GetClass()->GetName()), *(MyOwner->GetName()));
 }

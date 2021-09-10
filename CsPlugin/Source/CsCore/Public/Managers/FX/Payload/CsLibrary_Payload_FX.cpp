@@ -27,6 +27,7 @@ namespace NCsFX
 		}
 
 		#define PayloadType NCsFX::NPayload::IPayload
+
 		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
 		{
 			// Check Payload is Valid
@@ -78,16 +79,14 @@ namespace NCsFX
 			return true;
 		}
 
-		#undef PayloadType
-
 		#define PayloadImplType NCsFX::NPayload::FImpl
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
-			checkf(Payload, TEXT("%s: Payload is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Payload)
 
-			check(FX.IsValidChecked(Context));
+			CS_IS_VALID_CHECKED(FX);
 
 			Payload->FXSystem				  = FX.GetChecked(Context);
 			Payload->DeallocateMethod		  = FX.GetDeallocateMethod();
@@ -105,8 +104,7 @@ namespace NCsFX
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
 
-			if (!FX.IsValid(Context))
-				return;
+			CS_IS_VALID_EXIT(FX);
 
 			SetChecked(Context, Payload, FX, Transform);
 		}
@@ -120,15 +118,18 @@ namespace NCsFX
 			SetSafe(Context, Payload, FX, Transform, nullptr);
 		}
 
+		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
+
+			PayloadImpl->Transform = Transform;
+		}
+
 		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			SetChecked(Context, Payload, FX, Transform);
-
-			Payload->Instigator						= PooledPayload->GetInstigator();
-			Payload->Owner							= PooledPayload->GetOwner();
-			Payload->Parent							= PooledPayload->GetParent();
-			Payload->Time							= PooledPayload->GetTime();
-			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
+			SetChecked(Context, Payload, PooledPayload);
 		}
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -137,8 +138,7 @@ namespace NCsFX
 
 			CS_IS_PTR_NULL_EXIT(PooledPayload)
 
-			if (!FX.IsValid(Context))
-				return;
+			CS_IS_VALID_EXIT(FX)
 
 			SetChecked(Context, Payload, PooledPayload, FX, Transform);
 		}
@@ -152,7 +152,48 @@ namespace NCsFX
 			SetSafe(Context, Payload, PooledPayload, FX, Transform, nullptr);
 		}
 
+		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
+
+			SetChecked(Context, PayloadImpl, PooledPayload, FX, Transform);
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload)
+		{
+			CS_IS_PTR_NULL_CHECKED(Payload)
+
+			CS_IS_PTR_NULL_CHECKED(PooledPayload)
+
+			Payload->Instigator						= PooledPayload->GetInstigator();
+			Payload->Owner							= PooledPayload->GetOwner();
+			Payload->Parent							= PooledPayload->GetParent();
+			Payload->Time							= PooledPayload->GetTime();
+			Payload->PreserveChangesFromDefaultMask = PooledPayload->GetPreserveChangesFromDefaultMask();
+		}
+
+		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
+
+			SetChecked(Context, PayloadImpl, PooledPayload);
+		}
+
+		void FLibrary::ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
+
+			PayloadImpl->Transform.SetTranslation(Transform.GetTranslation() + PayloadImpl->Transform.GetTranslation());
+			PayloadImpl->Transform.SetRotation(Transform.GetRotation() + PayloadImpl->Transform.GetRotation());
+			PayloadImpl->Transform.SetScale3D(Transform.GetScale3D() * PayloadImpl->Transform.GetScale3D());
+		}
+
 		#undef PayloadImplType
 		#undef PooledPayloadType
+
+		#undef PayloadType
 	}
 }

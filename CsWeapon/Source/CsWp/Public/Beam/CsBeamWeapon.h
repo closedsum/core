@@ -53,7 +53,7 @@ private:
 
 public:
 
-	static const FCsTraceWeapon Empty;
+	static const FCsBeamWeapon Empty;
 
 protected:
 
@@ -171,7 +171,7 @@ public:
 			   bScriptUpdate == B.bScriptUpdate;
 	}
 
-	FORCEINLINE bool operator!=(const FCsTraceWeapon& B) const
+	FORCEINLINE bool operator!=(const FCsBeamWeapon& B) const
 	{
 		return !(*this == B);
 	}

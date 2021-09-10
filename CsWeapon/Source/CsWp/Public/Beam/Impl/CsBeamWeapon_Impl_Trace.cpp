@@ -1,17 +1,17 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Trace/Impl/CsTraceWeapon_Impl_Trace.h"
+#include "Beam/Impl/CsBeamWeapon_Impl_Trace.h"
 #include "CsWp.h"
 
 // CVar
-#include "Trace/CsCVars_TraceWeapon.h"
+#include "Beam/CsCVars_BeamWeapon.h"
 // Types
 #include "Types/CsTypes_Math.h"
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
-#include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
+#include "Data/CsLibrary_Data_Beam.h"
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
+#include "Beam/Data/Params/CsLibrary_Params_BeamWeapon_Trace.h"
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Valid.h"
@@ -21,34 +21,33 @@
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 #include "Managers/Trace/CsManager_Trace.h"
 // Data
-#include "Managers/Trace/Data/CsData_Trace.h"
-#include "Trace/Data/CsData_TraceWeapon.h"
+#include "Beam/Data/CsData_BeamWeapon.h"
 // Weapon
-#include "Trace/CsTraceWeapon.h"
-#include "Trace/Impl/CsTraceWeapon_Impl_FX.h"
-#include "Trace/Impl/CsTraceWeapon_Impl_Sound.h"
+#include "Beam/CsBeamWeapon.h"
+#include "Beam/Impl/CsBeamWeapon_Impl_FX.h"
+#include "Beam/Impl/CsBeamWeapon_Impl_Sound.h"
 // Component
 #include "Components/SkeletalMeshComponent.h"
 
 namespace NCsWeapon
 {
-	namespace NTrace
+	namespace NBeam
 	{
 		namespace NImpl
 		{
-			namespace NTrace
+			namespace NBeam
 			{
 				namespace NCached
 				{
 					namespace Str
 					{
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, SetTraceData);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, GetStart);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, GetDirection);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, GetEnd);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, OnHit);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, LineTrace);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NTrace::NImpl::NTrace::FImpl, Trace);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, SetBeamData);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetStart);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetDirection);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetEnd);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, OnHit);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, LineBeam);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, Beam);
 					}
 				}
 
@@ -58,7 +57,7 @@ namespace NCsWeapon
 					RootComponent(nullptr),
 					Owner(nullptr),
 					Component(nullptr),
-					TraceData(nullptr),
+					BeamData(nullptr),
 					FXImpl(nullptr),
 					SoundImpl(nullptr),
 					GetStartImpl(),
@@ -69,13 +68,13 @@ namespace NCsWeapon
 					{
 						using namespace NCached;
 
-						// TraceScopedHandle
+						// BeamScopedHandle
 						{
-							const FString& ScopeName			= Str::Trace;
-							const FECsScopedGroup& ScopedGroup  = NCsScopedGroup::WeaponTrace;
-							const FECsCVarLog& ScopeLog			= NCsCVarLog::LogWeaponTraceScopedTimerTrace;
+							const FString& ScopeName			= Str::Beam;
+							const FECsScopedGroup& ScopedGroup  = NCsScopedGroup::WeaponBeam;
+							const FECsCVarLog& ScopeLog			= NCsCVarLog::LogWeaponBeamScopedTimerBeam;
 
-							TraceScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+							BeamScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 						}
 					}
 				#endif // #if !UE_BUILD_SHIPPING
@@ -83,13 +82,13 @@ namespace NCsWeapon
 
 				FImpl::~FImpl()
 				{
-					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(TraceScopedHandle);
+					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(BeamScopedHandle);
 				}
 
 				void FImpl::SetOuter(UObject* InOuter)
 				{
 					Outer = InOuter;
-					Interface = Cast<ICsTraceWeapon>(Outer);
+					Interface = Cast<ICsBeamWeapon>(Outer);
 				}
 
 				void FImpl::SetRootComponent(USceneComponent* InComponent)
@@ -98,37 +97,37 @@ namespace NCsWeapon
 					SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Component);
 				}
 				 
-				#define TraceDataType NCsTrace::NData::IData
+				#define BeamDataType NCsBeam::NData::IData
 
-				void FImpl::SetTraceData(const FString& Context, TraceDataType* Value)
+				void FImpl::SetBeamData(const FString& Context, BeamDataType* Value)
 				{
 					CS_IS_PTR_NULL_CHECKED(Value)
 
-					TraceData = Value;
+					BeamData = Value;
 
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 
-					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
+					check(BeamDataLibrary::IsValidChecked(Context, BeamData));
 				}
 
-				void FImpl::SetTraceData(TraceDataType* Value)
+				void FImpl::SetBeamData(BeamDataType* Value)
 				{
 					using namespace NCached;
 
-					const FString& Context = Str::SetTraceData;
+					const FString& Context = Str::SetBeamData;
 
-					SetTraceData(Context, Value);
+					SetBeamData(Context, Value);
 				}
 
-				#undef TraceDataType
+				#undef BeamDataType
 
 				bool FImpl::IsValidChecked(const FString& Context)
 				{
-					CS_IS_PTR_NULL_CHECKED(TraceData)
+					CS_IS_PTR_NULL_CHECKED(BeamData)
 
-					typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 
-					check(TraceDataLibrary::IsValidChecked(Context, TraceData));
+					check(BeamDataLibrary::IsValidChecked(Context, BeamData));
 					return true;
 				}
 
@@ -139,30 +138,30 @@ namespace NCsWeapon
 					using namespace NCached;
 
 					const FString& ScopeName		   = Str::GetStart;
-					const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
-					const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTraceGetLocation;
+					const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponBeam;
+					const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponBeamScopedTimerBeamGetLocation;
 
 					CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
 					const FString& Context = Str::GetStart;
 
 					// Get Data Slice
-					typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
+					typedef NCsWeapon::NBeam::NData::IData WeaponDataType;
 					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
 					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 	
-					// Get Trace Params
+					// Get Beam Params
 
-					using namespace NCsWeapon::NTrace::NParams::NTrace;
+					using namespace NCsWeapon::NBeam::NParams::NBeam;
 
-					const ITrace* TraceParams = WeaponData->GetTraceParams();
+					const IBeam* BeamParams = WeaponData->GetBeamParams();
 
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
+					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
 
-					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
 
-					const FLocationInfo& LocationInfo = TraceParams->GetLocationInfo();
+					const FLocationInfo& LocationInfo = BeamParams->GetLocationInfo();
 					const ELocation& LocationType	  = LocationInfo.GetType();
 
 					// Self
@@ -234,32 +233,32 @@ namespace NCsWeapon
 					using namespace NCached;
 
 					const FString& ScopeName		   = Str::GetDirection;
-					const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponTrace;
-					const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponTraceScopedTimerTraceGetDirection;
+					const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponBeam;
+					const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponBeamScopedTimerBeamGetDirection;
 
 					CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
 					const FString& Context = Str::GetDirection;
 
 					// Get Data Slice
-					typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
+					typedef NCsWeapon::NBeam::NData::IData WeaponDataType;
 					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
 					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 	
-					// Get Trace Params
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
-					using namespace NCsWeapon::NTrace::NParams::NTrace;
+					// Get Beam Params
+					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
+					using namespace NCsWeapon::NBeam::NParams::NBeam;
 
-					const ITrace* TraceParams = WeaponData->GetTraceParams();
+					const IBeam* BeamParams = WeaponData->GetBeamParams();
 
-					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
 
-					const FDirectionInfo& DirectionInfo = TraceParams->GetDirectionInfo();
+					const FDirectionInfo& DirectionInfo = BeamParams->GetDirectionInfo();
 					const EDirection& DirectionType		= DirectionInfo.GetType();
 					const int32& DirectionRules			= DirectionInfo.GetRules();
 
-					checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in TraceParams for Data."), *Context);
+					checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in BeamParams for Data."), *Context);
 
 					// Self
 					if (DirectionType == EDirection::Self)
@@ -320,7 +319,7 @@ namespace NCsWeapon
 					if (DirectionType == EDirection::Trace)
 					{
 						// Try to get camera through the owner and
-						// perform a Trace from the Owner's Camera Location in the
+						// perform a Beam from the Owner's Camera Location in the
 						// direction the Owner's Camera is looking
 						if (Owner)
 						{
@@ -328,7 +327,9 @@ namespace NCsWeapon
 
 							const FVector CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
 							const FVector Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
-							const FVector End		  = CameraStart + TraceParams->GetDistance() * Dir;
+							// TODO: Fix
+							const FVector End		  = CameraStart + 10000.0f * Dir;
+							//const FVector End		  = CameraStart + BeamParams->GetDistance() * Dir;
 
 							FHitResult Hit;
 
@@ -348,30 +349,6 @@ namespace NCsWeapon
 					return FVector::ZeroVector;
 				}
 
-				FVector FImpl::GetEnd(DataType* Data, const FVector& Start)
-				{
-					using namespace NCached;
-
-					const FString& Context = Str::GetEnd;
-
-					// Get Data Slice
-					typedef NCsWeapon::NTrace::NData::IData WeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
-
-					// Get Trace Params
-					using namespace NCsWeapon::NTrace::NParams::NTrace;
-
-					const ITrace* TraceParams = WeaponData->GetTraceParams();
-
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
-
-					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
-
-					return Start + TraceParams->GetDistance() * GetDirection(Data, Start);
-				}
-
 				#undef DataType
 
 				void FImpl::OnHit(const FHitResult& Hit)
@@ -381,7 +358,7 @@ namespace NCsWeapon
 					const FString& Context = Str::OnHit;
 
 				#if !UE_BUILD_SHIPPING
-					if (CS_CVAR_LOG_IS_SHOWING(LogWeaponTraceTraceCollision))
+					if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamBeamCollision))
 					{
 						UE_LOG(LogCsWp, Warning, TEXT("%s (%s):"), *Context, *(Outer->GetName()));
 
@@ -394,8 +371,8 @@ namespace NCsWeapon
 						UE_LOG(LogCsWp, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
 						UE_LOG(LogCsWp, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
 						UE_LOG(LogCsWp, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- TraceStart: %s"), *(Hit.TraceStart.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
+						UE_LOG(LogCsWp, Warning, TEXT("-- BeamStart: %s"), *(Hit.TraceStart.ToString()));
+						UE_LOG(LogCsWp, Warning, TEXT("-- BeamEnd: %s"), *(Hit.TraceEnd.ToString()));
 						UE_LOG(LogCsWp, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
 						UE_LOG(LogCsWp, Warning, TEXT("-- Item: %d"), Hit.Item);
 						UE_LOG(LogCsWp, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
@@ -410,19 +387,19 @@ namespace NCsWeapon
 					UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
 					EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
-					// ImpactVisualDataType (NCsTrace::NData::NVisual::NImpact::IImpact)
-					FXImpl->TryImpact(TraceData, Hit);
+					// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
+					FXImpl->TryImpact(BeamData, Hit);
 
-					// ImpactSoundDataType (NCsTrace::NData::NSound::NImpact::IImpact)
-					SoundImpl->TryImpact(TraceData, Hit);
+					// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
+					SoundImpl->TryImpact(BeamData, Hit);
 
 					// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
 					/*
 					{
-						typedef NCsTrace::NData::NDamage::IDamage DamageDataType;
-						typedef NCsTrace::NData::FLibrary TraceDataLibrary;
+						typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
+						typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 
-						if (DamageDataType* DamageData = TraceDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, TraceData))
+						if (DamageDataType* DamageData = BeamDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, BeamData))
 						{
 							typedef NCsDamage::NEvent::FResource DamageEventResourceType;
 
@@ -439,12 +416,12 @@ namespace NCsWeapon
 
 				void FImpl::LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit)
 				{
-					//CS_SCOPED_TIMER(LineTraceScopedHandle);
+					//CS_SCOPED_TIMER(LineBeamScopedHandle);
 
 					using namespace NCached;
 
-					const FString& Context = Str::LineTrace;
-
+					const FString& Context = Str::LineBeam;
+					/*
 					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 					typedef NCsTrace::NRequest::FRequest RequestType;
 
@@ -455,58 +432,59 @@ namespace NCsWeapon
 					Request->End	= End;
 
 					// Get collision information related to the trace.
-					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;
+					
+					typedef NCsWeapon::NBeam::NData::IData WeaponBeamDataType;
 					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-					WeaponTraceDataType* WeaponTraceData = WeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
+					WeaponBeamDataType* WeaponBeamData = WeaponDataLibrary::GetInterfaceChecked<WeaponBeamDataType>(Context, Data);
 
-					typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
+					typedef NCsWeapon::NBeam::NParams::NBeam::IBeam BeamParamsType;
+					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
 
-					const TraceParamsType* TraceParams = WeaponTraceData->GetTraceParams();
+					const BeamParamsType* BeamParams = WeaponBeamData->GetBeamParams();
 
-					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
 
 					Request->Type   = ECsTraceType::Line;
 					Request->Method = ECsTraceMethod::Single;
 					Request->Query  = ECsTraceQuery::ObjectType;
 
-					const FCollisionShape& Shape = TraceParams->GetShape();
+					const FCollisionShape& Shape = BeamParams->GetShape();
 
 					// For now assume trace via ObjectType
-					const TArray<ECollisionChannel>& ObjectTypes = TraceParams->GetObjectTypes();
+					const TArray<ECollisionChannel>& ObjectTypes = BeamParams->GetObjectTypes();
 
 					for (const ECollisionChannel& ObjectType : ObjectTypes)
 					{
 						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 					}
 
-					typedef NCsTrace::NResponse::FResponse ResponseType;
+					typedef NCsBeam::NResponse::FResponse ResponseType;
 
-					ResponseType* Response = Manager_Trace->Trace(Request);
+					ResponseType* Response = Manager_Beam->Beam(Request);
 
 					OutHit = Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
-
+					*/
 				#if !UE_BUILD_SHIPPING
-					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponTraceLineTrace))
+					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponBeamLineBeam))
 					{
 						UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
 
-						Settings->TraceWeaponImpl.Debug.DrawLineTrace.Draw(Outer->GetWorld(), Start, End, OutHit);
+						//Settings->BeamWeaponImpl.Debug.DrawLineBeam.Draw(Outer->GetWorld(), Start, End, OutHit);
 					}
 				#endif // #if !UE_BUILD_SHIPPING
 				}
 
-				void FImpl::Trace(DataType* Data)
+				void FImpl::Emit(DataType* Data)
 				{
-					CS_SCOPED_TIMER(TraceScopedHandle);
+					CS_SCOPED_TIMER(BeamScopedHandle);
 
 					using namespace NCached;
 
-					const FString& Context = Str::Trace;
+					const FString& Context = Str::Beam;
 
 					const FVector Start = GetStart(Data);
-					const FVector End	= GetEnd(Data, Start);
+					const FVector End	= Start;//GetEnd(Data, Start);
 
 					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 					typedef NCsTrace::NRequest::FRequest RequestType;
@@ -518,61 +496,50 @@ namespace NCsWeapon
 					Request->End   = End;
 
 					// Get collision information related to the trace.
-					typedef NCsWeapon::NTrace::NData::IData WeaponTraceDataType;
+					typedef NCsWeapon::NBeam::NData::IData WeaponBeamDataType;
 					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-					typedef NCsWeapon::NTrace::NParams::NTrace::ITrace TraceParamsType;
-					typedef NCsWeapon::NTrace::NParams::NTrace::FLibrary TraceParamsLibrary;
+					typedef NCsWeapon::NBeam::NParams::NBeam::IBeam BeamParamsType;
+					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
 
-					WeaponTraceDataType* WeaponTraceData = WeaponDataLibrary::GetInterfaceChecked<WeaponTraceDataType>(Context, Data);
-					const TraceParamsType* TraceParams   = WeaponTraceData->GetTraceParams();
+					WeaponBeamDataType* WeaponBeamData = WeaponDataLibrary::GetInterfaceChecked<WeaponBeamDataType>(Context, Data);
+					const BeamParamsType* BeamParams   = WeaponBeamData->GetBeamParams();
 
-					check(TraceParamsLibrary::IsValidChecked(Context, TraceParams));
+					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
+					/*
+					const FCollisionShape& Shape = BeamParams->GetShape();
 
-					const FCollisionShape& Shape = TraceParams->GetShape();
-
-					// Line
-					if (Shape.IsLine())
-					{
-						Request->Type = ECsTraceType::Line;
-					}
-					else
-					{
-						Request->Type = ECsTraceType::Sweep;
-					}
-
+					Request->Type = ECsTraceType::Line;
 					Request->Method = ECsTraceMethod::Single;
 					Request->Query  = ECsTraceQuery::ObjectType;
 
 					Request->Shape = Shape;
 
 					// For now assume trace via ObjectType
-					const TArray<ECollisionChannel>& ObjectTypes = TraceParams->GetObjectTypes();
+					const TArray<ECollisionChannel>& ObjectTypes = BeamParams->GetObjectTypes();
 
 					for (const ECollisionChannel& ObjectType : ObjectTypes)
 					{
 						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
 					}
 
-					typedef NCsTrace::NResponse::FResponse ResponseType;
+					typedef NCsBeam::NResponse::FResponse ResponseType;
 
-					ResponseType* Response = Manager_Trace->Trace(Request);
+					ResponseType* Response = Manager_Beam->Beam(Request);
 	
 				#if !UE_BUILD_SHIPPING
-					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponTraceTrace))
+					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponBeamBeam))
 					{
 						UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
 						const FHitResult& Hit		= Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
 
-						Settings->TraceWeaponImpl.Debug.DrawTrace.Draw(Outer->GetWorld(), Start, End, &Shape, Hit);
+						//Settings->BeamWeaponImpl.Debug.DrawBeam.Draw(Outer->GetWorld(), Start, End, &Shape, Hit);
 					}
 
 				#endif // #if !UE_BUILD_SHIPPING
 
-					// TracerVisualDataType (NCsTrace::NData::NVisual::NTracer::ITracer)
-					FXImpl->TryTracer(TraceData, Response->bResult ? Response->OutHits[CS_FIRST].ImpactPoint : End);
-
 					if (Response->bResult)
 						OnHit(Response->OutHits[CS_FIRST]);
+					*/
 				}
 
 				#undef DataType

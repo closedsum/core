@@ -1,6 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Data
 #include "Managers/Trace/Data/Damage/CsData_TraceDamage.h"
 #include "Managers/Trace/Data/Visual/CsData_Trace_VisualTracer.h"
@@ -16,7 +18,7 @@ namespace NCsTrace
 		{
 		#undef DataType
 
-			checkf(Data, TEXT("%s: Data is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(Data)
 
 			// DamageDataType (NCsTrace::NData::NDamage::IDamage
 			typedef NCsTrace::NData::NDamage::IDamage DamageDataType;
@@ -31,7 +33,11 @@ namespace NCsTrace
 
 			if (TracerVisualDataType* VisualTracerData = GetSafeInterfaceChecked<TracerVisualDataType>(Context, Data))
 			{
-				checkf(VisualTracerData->GetTracerFX().Get(), TEXT("%s: Data implements interface: %s but GetTracerFX().Get() is NULL."), *Context, *(TracerVisualDataType::Name.ToString()));
+				const FCsFX& FX = VisualTracerData->GetTracerFX();
+
+				checkf(FX.Get(), TEXT("%s: Data implements interface: %s but GetTracerFX().Get() is NULL."), *Context, *(TracerVisualDataType::Name.ToString()));
+
+				CS_IS_VALID_CHECKED(FX);
 			}
 
 			// ImpactVisualDataType (NCsTrace::NData::NVisual::NImpact::IImpact)
@@ -39,7 +45,11 @@ namespace NCsTrace
 
 			if (ImpactVisualDataType* VisualImpactData = GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 			{
-				checkf(VisualImpactData->GetImpactFX(EPhysicalSurface::SurfaceType_Default).Get(), TEXT("%s: Data implements interface: %s but GetImpactFX('Default').Get() is NULL."), *Context, *(ImpactVisualDataType::Name.ToString()));
+				const FCsFX& FX = VisualImpactData->GetImpactFX(EPhysicalSurface::SurfaceType_Default);
+
+				checkf(FX.Get(), TEXT("%s: Data implements interface: %s but GetImpactFX('Default').Get() is NULL."), *Context, *(ImpactVisualDataType::Name.ToString()));
+
+				CS_IS_VALID_CHECKED(FX);
 			}
 
 			// ImpactSoundDataType (NCsTrace::NData::NSound::NImpact::IImpact)
@@ -47,7 +57,11 @@ namespace NCsTrace
 
 			if (ImpactSoundDataType* VisualImpactData = GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 			{
-				checkf(VisualImpactData->GetImpactSound(EPhysicalSurface::SurfaceType_Default).Get(), TEXT("%s: Data implements interface: %s but GetImpactSound('Default').Get() is NULL."), *Context, *(ImpactSoundDataType::Name.ToString()));
+				const FCsSound& Sound = VisualImpactData->GetImpactSound(EPhysicalSurface::SurfaceType_Default);
+
+				checkf(Sound.Get(), TEXT("%s: Data implements interface: %s but GetImpactSound('Default').Get() is NULL."), *Context, *(ImpactSoundDataType::Name.ToString()));
+
+				CS_IS_VALID_CHECKED(Sound);
 			}
 
 			return true;

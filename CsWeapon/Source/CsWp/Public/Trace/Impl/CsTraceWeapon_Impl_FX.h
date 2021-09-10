@@ -97,31 +97,6 @@ namespace NCsWeapon
 					*/
 					void TryImpact(TraceDataType* Data, const FHitResult& Hit);
 
-					/**
-					* Set any relevant parameters on the Payload from FX.
-					*
-					* @param Payload
-					* @param FX
-					*/
-					void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
-		
-					/**
-					* Set any relevant parameters on the Payload from 
-					* FireVisualDataType (NCsWeapon::NTrace::NData::NVisual::NFire::IFire).
-					*
-					* @param Payload
-					* @param FireVisualDataType
-					*/
-					void SetPayload(FXPayloadType* Payload, FireVisualDataType* FireVisualData);
-
-					/**
-					*
-					*
-					* @param Payload
-					* @param TraceData
-					*/
-					void SetPayload(FXPayloadType* Payload, TracerVisualDataType* TracerVisualData);
-
 				#undef DataType
 				#undef TraceDataType
 				#undef FXPayloadType

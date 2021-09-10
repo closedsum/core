@@ -6,6 +6,8 @@
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+// Physics
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 // CollisionEnabled
 #pragma region
@@ -504,3 +506,13 @@ bool FCsCollisionObjectQueryParams::IsValid(const FString& Context, void(*Log)(c
 }
 
 #pragma endregion FCsCollisionObjectQueryParams
+
+namespace NCsHitResult
+{
+	EPhysicalSurface GetPhysSurfaceType(const FHitResult& Hit)
+	{
+		UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
+
+		return PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+	}
+}

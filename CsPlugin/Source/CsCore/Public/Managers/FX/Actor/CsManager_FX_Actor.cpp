@@ -778,10 +778,9 @@ void UCsManager_FX_Actor::ConstructPayloads(const FECsFX& Type, const int32& Siz
 }
 
 #define PayloadType NCsFX::NPayload::IPayload
+
 PayloadType* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
 {
-#undef PayloadType
-
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 
 	PayloadImplType* Payload = new PayloadImplType();
@@ -791,12 +790,12 @@ PayloadType* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
 	return Payload;
 }
 
-#define PayloadType NCsFX::NPayload::IPayload
 PayloadType* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 {
-#undef PayloadType
 	return Internal.AllocatePayload(Type);
 }
+
+#undef PayloadType
 
 #pragma endregion Payload
 

@@ -3,8 +3,8 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_Valid.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // FX
@@ -118,29 +118,36 @@ namespace NCsFX
 		// Allocate / Deallocate
 		#pragma region
 		
-		void FLibrary::QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext)
-		{
-			return GetChecked(Context, WorldContext)->QueueDeallocateAll();
-		}
-
-		#pragma endregion Allocate / Deallocate
-
-		// Spawn
-		#pragma region
-
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
-		{
-			// Get Context for Manager_FX
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+		#define PayloadType NCsFX::NPayload::IPayload
 
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
-			// Allocate Payload
-			typedef NCsFX::NPayload::FImpl PayloadImplType;
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform);
+		}
+
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			return AllocatePayloadImplChecked(Context, WorldContext, FX, Transform);
+		}
+
+		#undef PayloadType
+
+		#define PayloadImplType NCsFX::NPayload::FImpl
+
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			UCsManager_FX_Actor* Manager_FX = GetChecked(Context, WorldContext);
+
+			CS_IS_PTR_NULL_CHECKED(PooledPayload)
+
+			CS_IS_VALID_CHECKED(FX);
 
 			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
-			// Set Payload
+
 			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, FX, Transform);
@@ -151,7 +158,7 @@ namespace NCsFX
 				typedef NCsFX::NParameter::NInt::FIntType ParameterIntType;
 
 				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
-				
+
 				Param.CopyToParamsAsValue(IntType);
 				Payload->Parameters.Add(IntType);
 			}
@@ -175,7 +182,78 @@ namespace NCsFX
 				Param.CopyToParamsAsValue(VectorType);
 				Payload->Parameters.Add(VectorType);
 			}
-			return Manager_FX->Spawn(FX.Type, Payload);
+			return Payload;
+		}
+
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			UCsManager_FX_Actor* Manager_FX = GetChecked(Context, WorldContext);
+
+			CS_IS_VALID_CHECKED(FX);
+
+			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
+
+			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
+
+			PayloadLibrary::SetChecked(Context, Payload, FX, Transform);
+
+			// Int
+			for (const FCsFXParameterInt& Param : FX.IntParameters)
+			{
+				typedef NCsFX::NParameter::NInt::FIntType ParameterIntType;
+
+				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
+
+				Param.CopyToParamsAsValue(IntType);
+				Payload->Parameters.Add(IntType);
+			}
+			// Float
+			for (const FCsFXParameterFloat& Param : FX.FloatParameters)
+			{
+				typedef NCsFX::NParameter::NFloat::FFloatType ParameterFloatType;
+
+				ParameterFloatType* FloatType = Manager_FX->AllocateValue<ParameterFloatType>();
+
+				Param.CopyToParamsAsValue(FloatType);
+				Payload->Parameters.Add(FloatType);
+			}
+			// Vector
+			for (const FCsFXParameterVector& Param : FX.VectorParameters)
+			{
+				typedef NCsFX::NParameter::NVector::FVectorType ParameterVectorType;
+
+				ParameterVectorType* VectorType = Manager_FX->AllocateValue<ParameterVectorType>();
+
+				Param.CopyToParamsAsValue(VectorType);
+				Payload->Parameters.Add(VectorType);
+			}
+			return Payload;
+		}
+
+		#undef PayloadImplType
+
+		#undef PooledPayloadType
+
+		void FLibrary::QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->QueueDeallocateAll();
+		}
+
+		#pragma endregion Allocate / Deallocate
+
+		// Spawn
+		#pragma region
+
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		{
+			// Allocate Payload
+			typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform);
+
+			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
 		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -212,50 +290,12 @@ namespace NCsFX
 
 		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
-			// Get Context for Manager_FX
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
-
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
 			// Allocate Payload
 			typedef NCsFX::NPayload::FImpl PayloadImplType;
 
-			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);
-			// Set Payload
-			typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-			PayloadLibrary::SetChecked(Context, Payload, FX, Transform);
-
-			// Int
-			for (const FCsFXParameterInt& Param : FX.IntParameters)
-			{
-				typedef NCsFX::NParameter::NInt::FIntType ParameterIntType;
-
-				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
-				
-				Param.CopyToParamsAsValue(IntType);
-				Payload->Parameters.Add(IntType);
-			}
-			// Float
-			for (const FCsFXParameterFloat& Param : FX.FloatParameters)
-			{
-				typedef NCsFX::NParameter::NFloat::FFloatType ParameterFloatType;
-
-				ParameterFloatType* FloatType = Manager_FX->AllocateValue<ParameterFloatType>();
-
-				Param.CopyToParamsAsValue(FloatType);
-				Payload->Parameters.Add(FloatType);
-			}
-			// Vector
-			for (const FCsFXParameterVector& Param : FX.VectorParameters)
-			{
-				typedef NCsFX::NParameter::NVector::FVectorType ParameterVectorType;
-
-				ParameterVectorType* VectorType = Manager_FX->AllocateValue<ParameterVectorType>();
-
-				Param.CopyToParamsAsValue(VectorType);
-				Payload->Parameters.Add(VectorType);
-			}
-			return Manager_FX->Spawn(FX.Type, Payload);
+			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, FX, Transform);
+			
+			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
 		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -267,8 +307,7 @@ namespace NCsFX
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			if (!FX.IsValid(Context))
-				return nullptr;
+			CS_IS_VALID_RET_NULL(FX)
 
 			return SpawnChecked(Context, WorldContext, FX, Transform);
 		}

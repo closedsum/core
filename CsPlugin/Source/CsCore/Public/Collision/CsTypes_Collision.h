@@ -566,3 +566,8 @@ struct CSCORE_API FCsCollisionResponseParams
 };
 
 #pragma endregion FCsCollisionResponseParams
+
+namespace NCsHitResult
+{
+	CSCORE_API EPhysicalSurface GetPhysSurfaceType(const FHitResult& Hit);
+}

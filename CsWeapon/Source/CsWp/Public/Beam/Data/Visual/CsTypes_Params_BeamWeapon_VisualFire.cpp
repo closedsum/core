@@ -1,6 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Beam/Data/Visual/CsTypes_Params_BeamWeapon_VisualFire.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Data
 #include "Beam/Data/Visual/CsParams_BeamWeapon_VisualFire.h"
 
 // BeamWeaponVisualFireAttach
@@ -41,7 +44,7 @@ void FCsBeamWeaponVisualFireParams::CopyToParams(ParamsType* Params)
 
 bool FCsBeamWeaponVisualFireParams::IsValidChecked(const FString& Context) const
 {
-	checkf(FX.IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(FX);
 
 	check(EMCsBeamWeaponVisualFireAttach::Get().IsValidEnumChecked(Context, Attach));
 	return true;

@@ -47,7 +47,7 @@ namespace NCsWeapon
 				if (!Data->HasInfiniteCharge())
 				{
 					// Check MaxAmmo is a Valid
-					CS_IS_INT_GREATER_THAN(Data->GetMaxAmmo(), 0)
+					CS_IS_INT_GREATER_THAN(Data->GetMaxCharge(), 0)
 					// Check ChargeConsumedByShot is Valid
 					CS_IS_INT_GREATER_THAN(Data->GetChargeConsumedByShot(), 0)
 				}

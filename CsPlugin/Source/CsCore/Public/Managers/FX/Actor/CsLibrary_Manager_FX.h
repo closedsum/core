@@ -9,6 +9,8 @@ class UObject;
 class UCsManager_FX_Actor;
 struct FCsFXActorPooled;
 
+// NCsFX::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 // NCsFX::NPayload::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
 // NCsPooledObject::NPayload::IPayload
@@ -127,6 +129,64 @@ namespace NCsFX
 		// Allocate / Deallocate
 		#pragma region
 		public:
+
+		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+		#define PayloadType NCsFX::NPayload::IPayload
+		
+			/**
+			* Allocate a Payload given the FX information
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param PooledPayload
+			* @param FX
+			* @param Transform		(optional)
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+			/**
+			* Allocate a Payload given the FX information
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param FX
+			* @param Transform		(optional)
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+		#undef PayloadType
+
+		#define PayloadImplType NCsFX::NPayload::FImpl
+
+			/**
+			* Allocate a Payload given the FX information
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param PooledPayload
+			* @param FX
+			* @param Transform		(optional)
+			* return				Payload
+			*/
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+			/**
+			* Allocate a Payload given the FX information
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param FX
+			* @param Transform		(optional)
+			* return				Payload
+			*/
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+		#undef PayloadImplType
+
+		#undef PooledPayloadType
 
 			/**
 			*

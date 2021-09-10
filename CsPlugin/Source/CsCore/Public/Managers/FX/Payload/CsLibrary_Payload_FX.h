@@ -77,6 +77,15 @@ namespace NCsFX
 			static void SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 			/**
+			* Set the contents of Payload with Transform.
+			*
+			* @param Context	The calling context.
+			* @param Payload
+			* @param Transform
+			*/
+			static void SetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform);
+
+			/**
 			* Set the contents of Payload with PooledPayload and FX.
 			*
 			* @param Context		The calling context.
@@ -111,6 +120,46 @@ namespace NCsFX
 			*						Sound.Transform is applied as an "offset".
 			*/
 			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+			/**
+			* Set the contents of Payload with PooledPayload and FX.
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			* @param FX
+			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
+			*						Sound.Transform is applied as an "offset".
+			*/
+			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+			/**
+			* Set the contents of Payload with PooledPayload.
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			*/
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload);
+
+			/**
+			* Set the contents of Payload with PooledPayload.
+			*
+			* @param Context		The calling context.
+			* @param Payload
+			* @param PooledPayload
+			*/
+			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload);
+
+			/**
+			* Apply Transform as an offset to the existing Payload->GetTransform().
+			*
+			* @param Context	The calling context.
+			* @param Payload
+			* @param Transform	Transform to apply the sound after allocation and before playing.
+			*					Sound.Transform is applied as an "offset".
+			*/
+			static void ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform);
 
 		#undef PooledPayloadType
 		#undef PayloadImplType

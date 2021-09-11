@@ -111,7 +111,6 @@ namespace NCsProjectileWeaponComponent
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, GetLaunchLocation);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, GetLaunchDirection);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, StartLaunch);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsProjectileWeaponComponent::FProjectileImpl, Launch);
 			}
 		}
@@ -180,7 +179,7 @@ void UCsProjectileWeaponComponent::BeginDestroy()
 
 	if (ProjectileImpl)
 	{
-		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->StartLaunchScopedHandle);
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
 
 		delete ProjectileImpl;
 		ProjectileImpl = nullptr;
@@ -235,13 +234,13 @@ void UCsProjectileWeaponComponent::BeginPlay()
 
 			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
-		// StartLaunchScopedHandle
+		// LaunchScopedHandle
 		{
-			const FString& ScopeName		   = ProjectileImpl::Str::StartLaunch;
+			const FString& ScopeName		   = ProjectileImpl::Str::Launch;
 			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
-			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileProjectileScopedTimerStartLaunch;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileProjectileScopedTimerLaunch;
 
-			ProjectileImpl->StartLaunchScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+			ProjectileImpl->LaunchScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
 	}
 #endif // #if !UE_BUILD_SHIPPING
@@ -556,7 +555,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 			if (!bInfiniteAmmo)
 				ConsumeAmmo();
 
-			ProjectileImpl->StartLaunch();
+			ProjectileImpl->Launch();
 			SoundImpl->Play();
 			FXImpl->Play();
 
@@ -655,16 +654,6 @@ char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal
 	// Projectile
 #pragma region
 
-bool UCsProjectileWeaponComponent::FProjectileImpl::SetType(const FString& Context, const FCsProjectilePooled* ProjectilePooled)
-{
-	ACsProjectilePooledImpl* Projectile = ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
-
-	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
-
-	Projectile->SetType(Outer->GetProjectileType());
-	return true;
-}
-
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
 
 bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload)
@@ -696,7 +685,8 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
 
-			Slice->Location = GetLaunchLocation();
+			Slice->Type		 = Outer->GetProjectileType();
+			Slice->Location  = GetLaunchLocation();
 			Slice->Direction = GetLaunchDirection();
 		}
 		else
@@ -1025,13 +1015,13 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	return FVector::ZeroVector;
 }
 
-void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
+void UCsProjectileWeaponComponent::FProjectileImpl::Launch()
 {
-	CS_SCOPED_TIMER(StartLaunchScopedHandle);
+	CS_SCOPED_TIMER(LaunchScopedHandle);
 
 	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
 
-	const FString& Context = Str::StartLaunch;
+	const FString& Context = Str::Launch;
 
 	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
@@ -1058,34 +1048,10 @@ void UCsProjectileWeaponComponent::FProjectileImpl::StartLaunch()
 	// Spawn
 	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(PrjType, Payload1);
 
-	const bool TypeSuccess = SetType(Context, ProjectilePooled);
-
-	checkf(TypeSuccess, TEXT("%s: Failed to set type for Projectile."), *Context);
-
-	// Launch
-	Launch(ProjectilePooled, Payload2);
-}
-
-#define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-void UCsProjectileWeaponComponent::FProjectileImpl::Launch(const FCsProjectilePooled* ProjectilePooled, ProjectilePayloadType* Payload)
-{
-#undef ProjectilePayloadType
-
-	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
-
-	const FString& Context = Str::Launch;
-
+	// Release payload so it returns to the pool
 	typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 
-	PooledPayloadType* ObjectPayload    = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
-	ACsProjectilePooledImpl* Projectile	= ProjectilePooled->GetObject<ACsProjectilePooledImpl>();
-
-	checkf(Projectile, TEXT("%s: Projectile is NULL. Projectile is not of type: ACsProjectilePooledImpl."), *Context);
-
-	if (!Projectile->bLaunchOnAllocate)
-		Projectile->Launch(ObjectPayload);
-
-	// Release payload so it returns to the pool
+	PooledPayloadType* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Context, Payload2);
 	ObjectPayload->Reset();
 }
 

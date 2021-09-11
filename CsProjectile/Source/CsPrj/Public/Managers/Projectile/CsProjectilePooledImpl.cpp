@@ -11,7 +11,6 @@
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
-#include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
@@ -61,7 +60,6 @@ namespace NCsProjectilePooledImpl
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
@@ -99,9 +97,9 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	HitCount(0),
 	// ICsPooledObject
 	Cache(nullptr),
+	CacheImpl(nullptr),
 	// ICsProjectile
 	Data(nullptr),
-	bLaunchOnAllocate(false),
 	// FX
 	TrailFXPooled(nullptr),
 	// Damage
@@ -337,16 +335,6 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 		// Get Data associated with Type
 		Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
 	}
-
-	// TODO: Need to determine best place to set LifeTime from Data
-
-	// Set Data on Cache
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-	typedef NCsProjectile::NCache::FImpl CacheImplType;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
-	CacheImpl->SetData(Data);
 }
 
 // Collision
@@ -561,15 +549,6 @@ void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, 
 
 void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::Update;
-
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-	typedef NCsProjectile::NCache::FImpl CacheImplType;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
-
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -579,7 +558,8 @@ void ACsProjectilePooledImpl::ConstructCache()
 {
 	typedef NCsProjectile::NCache::FImpl CacheImplType;
 
-	Cache = new CacheImplType();
+	CacheImpl = new CacheImplType();
+	Cache	  = CacheImpl;
 }
 
 // ICsPooledObject
@@ -596,10 +576,29 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
-	Cache->Allocate(Payload);
+	// Set Type
+	typedef NCsProjectile::NPayload::IPayload PayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	if (bLaunchOnAllocate)
-		Launch(Payload);
+	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+
+	Type = ProjectilePayload->GetType();
+
+	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Type));
+
+	// Get Data associated with Type
+	// TODO: FUTURE: Add to list of preserved changes
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
+
+	// TODO: Need to determine best place to set LifeTime from Data
+
+	// Set Data on Cache
+	CacheImpl->Allocate(Payload);
+	CacheImpl->SetData(Data);
+	
+	Launch(ProjectilePayload);
 }
 
 void ACsProjectilePooledImpl::Deallocate()
@@ -692,31 +691,17 @@ UObject* ACsProjectilePooledImpl::GetInstigator() const
 // Launch
 #pragma region
 
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
+#define PayloadType NCsProjectile::NPayload::IPayload
+void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 {
-#undef PooledPayloadType
-
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Launch;
 
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
-	// Get Projectile Payload
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
-	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
-
-	// Get Projectile Cache
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-	typedef NCsProjectile::NCache::ICache CacheType;
-
-	CacheType* ProjectileCache = PooledCacheLibrary::GetInterfaceChecked<CacheType>(Context, Cache);
-
 	// Set Damage Value if the projectile supports damage
-	OnLaunch_SetModifiers(ProjectilePayload);
+	OnLaunch_SetModifiers(Payload);
 
 	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
 
@@ -760,10 +745,10 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		const FVector& Direction = ProjectilePayload->GetDirection();
+		const FVector& Direction = Payload->GetDirection();
 		FRotator Rotation		 = Direction.Rotation();
 
-		TeleportTo(ProjectilePayload->GetLocation(), Rotation, false, true);
+		TeleportTo(Payload->GetLocation(), Rotation, false, true);
 	}
 
 	// Trail FX
@@ -807,14 +792,19 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 
 			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
+				typedef NCsProjectile::NPayload::FLibrary ProjectilePayloadLibrary;
+				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+
+				PooledPayloadType* PooledPayload = ProjectilePayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+
 				// Instigator
-				if (AActor* Actor = Cast<AActor>(Payload->GetInstigator()))
+				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
 					IgnoreActors.Add(Actor);
 				// Owner
-				if (AActor* Actor = Cast<AActor>(Payload->GetOwner()))
+				if (AActor* Actor = Cast<AActor>(PooledPayload->GetOwner()))
 					IgnoreActors.Add(Actor);
 				// Parent
-				if (AActor* Actor = Cast<AActor>(Payload->GetParent()))
+				if (AActor* Actor = Cast<AActor>(PooledPayload->GetParent()))
 					IgnoreActors.Add(Actor);
 
 				const int32 Count = IgnoreActors.Num();
@@ -859,16 +849,13 @@ void ACsProjectilePooledImpl::Launch(PooledPayloadType* Payload)
 	{
 		MovementComponent->InitialSpeed			  = Data->GetInitialSpeed();
 		MovementComponent->MaxSpeed				  = Data->GetMaxSpeed();
-		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * ProjectilePayload->GetDirection();
+		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Payload->GetDirection();
 		MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
 	}
 }
 
-#define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 {
-#undef PayloadType
-
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
@@ -886,6 +873,8 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 		}
 	}
 }
+
+#undef PayloadType
 
 #pragma endregion Launch
 

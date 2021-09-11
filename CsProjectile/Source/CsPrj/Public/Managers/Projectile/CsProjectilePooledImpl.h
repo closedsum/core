@@ -30,6 +30,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsProjectile::NCache::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NCache, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsProjectile::NPayload::IPayload
@@ -157,11 +159,19 @@ public:
 
 #pragma endregion ICsUpdate
 
+// PooledObject
+#pragma region
 protected:
 
 	PooledCacheType* Cache;
 
+#define CacheImplType NCsProjectile::NCache::FImpl
+	CacheImplType* CacheImpl;
+#undef CacheImplType
+
 	virtual void ConstructCache();
+
+#pragma endregion PooledObject
 
 // ICsPooledObject
 #pragma region
@@ -207,10 +217,7 @@ protected:
 #pragma region
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
-	bool bLaunchOnAllocate;
-
-	void Launch(PooledPayloadType* Payload);
+	void Launch(PayloadType* Payload);
 
 	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
 

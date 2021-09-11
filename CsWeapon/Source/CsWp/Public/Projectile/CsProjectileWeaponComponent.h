@@ -316,7 +316,7 @@ public:
 
 		USceneComponent* LaunchComponentTransform;
 
-		FCsScopedTimerHandle StartLaunchScopedHandle;
+		FCsScopedTimerHandle LaunchScopedHandle;
 
 	public:
 
@@ -327,7 +327,7 @@ public:
 		FProjectileImpl() :
 			Outer(nullptr),
 			LaunchComponentTransform(nullptr),
-			StartLaunchScopedHandle(),
+			LaunchScopedHandle(),
 			CustomLaunchDirection(FVector::ZeroVector)
 		{
 		}
@@ -340,15 +340,6 @@ public:
 		}
 
 	protected:
-
-		/**
-		*
-		*
-		* @param Context			The calling context.
-		* @param ProjectilePooled
-		* return					Whether the type was successfully set.
-		*/
-		virtual bool SetType(const FString& Context, const FCsProjectilePooled* ProjectilePooled);
 
 		/**
 		*
@@ -379,15 +370,7 @@ public:
 
 		virtual FVector GetLaunchDirection();
 
-		void StartLaunch();
-
-		/**
-		*
-		*
-		* @param ProjectilePooled
-		* @param Payload
-		*/
-		virtual void Launch(const FCsProjectilePooled* ProjectilePooled, ProjectilePayloadType* Payload);
+		void Launch();
 	};
 
 	FProjectileImpl* ProjectileImpl;

@@ -71,7 +71,7 @@ void FCsWidgetActorPooled::Reset()
 
 #pragma endregion TCsInterfaceObject
 
-// ICsFXActorPooled
+// ICsWidgetActor
 #pragma region
 
 UCsWidgetComponent* FCsWidgetActorPooled::GetWidgetComponent() const
@@ -81,7 +81,7 @@ UCsWidgetComponent* FCsWidgetActorPooled::GetWidgetComponent() const
 	return WidgetActor->GetWidgetComponent();
 }
 
-#pragma endregion ICsProjectile
+#pragma endregion ICsWidgetActor
 
 void FCsWidgetActorPooled::SetPooledObject(const FCsPooledObject& PooledObject)
 {

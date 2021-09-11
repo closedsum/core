@@ -227,7 +227,7 @@ void UCsTraceWeaponComponent::SetWeaponType(const FECsWeapon& Type)
 
 #pragma endregion ICsWeapon
 
-// ICsProjectileWeapon
+// ICsTraceWeapon
 #pragma region
 
 void UCsTraceWeaponComponent::StartFire()
@@ -244,7 +244,7 @@ void UCsTraceWeaponComponent::StopFire()
 	Update(FCsDeltaTime::Zero);
 }
 
-#pragma endregion ICsProjectileWeapon
+#pragma endregion ICsTraceWeapon
 
 void UCsTraceWeaponComponent::Init()
 {

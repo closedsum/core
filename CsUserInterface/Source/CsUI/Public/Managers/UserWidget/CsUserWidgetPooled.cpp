@@ -80,7 +80,7 @@ UUserWidget* FCsUserWidgetPooled::GetUserWidget() const
 	return UserWidgetPooled->GetUserWidget();
 }
 
-#pragma endregion ICsProjectile
+#pragma endregion ICsUserWidgetPooled
 
 void FCsUserWidgetPooled::SetPooledObject(const FCsPooledObject& PooledObject)
 {

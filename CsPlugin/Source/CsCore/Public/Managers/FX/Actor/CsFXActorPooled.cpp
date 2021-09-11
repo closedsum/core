@@ -84,7 +84,7 @@ ANiagaraActor* FCsFXActorPooled::GetFX() const
 	return FXActor->GetFX();
 }
 
-#pragma endregion ICsProjectile
+#pragma endregion ICsFXActorPooled
 
 void FCsFXActorPooled::SetPooledObject(const FCsPooledObject& PooledObject)
 {

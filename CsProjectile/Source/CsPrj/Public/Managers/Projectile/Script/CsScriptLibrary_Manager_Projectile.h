@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-
-#pragma once
-
 #include "UObject/Object.h"
-#include "Types/CsTypes_Projectile.h"
+// Projectile
+#include "Payload/CsPayload_ProjectileImpl.h"
+
 #include "CsScriptLibrary_Manager_Projectile.generated.h"
+#pragma once
 
 // Delegates
 #pragma region

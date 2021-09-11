@@ -1,8 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Payload/CsPayload_Projectile.h"
-#include "Reset/CsReset.h"
-
 #pragma once
+// Projectile
+#include "Payload/CsPayload_Projectile.h"
+// Reset
+#include "Reset/CsReset.h"
 
 class UObject;
 struct FCsInterfaceMap;
@@ -31,9 +32,12 @@ namespace NCsProjectile
 
 			// ICsPayload_Projectile
 
+			FECsProjectile Type;
+
 			FVector Direction;
 
 			FVector Location;
+
 		public:
 
 			FImplSlice();
@@ -43,10 +47,7 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -58,15 +59,9 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
-			FORCEINLINE const FVector& GetDirection() const
-			{
-				return Direction;
-			}
-
-			FORCEINLINE const FVector& GetLocation() const
-			{
-				return Location;
-			}
+			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
+			FORCEINLINE const FVector& GetDirection() const { return Direction; }
+			FORCEINLINE const FVector& GetLocation() const { return Location; }
 
 		#pragma endregion IPayload
 

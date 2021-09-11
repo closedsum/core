@@ -13,6 +13,7 @@ namespace NCsProjectile
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			// IPayload
+			Type(),
 			Direction(0.0f),
 			Location(0.0f)
 		{
@@ -36,6 +37,7 @@ namespace NCsProjectile
 		void FImplSlice::Reset()
 		{
 			// IPayload
+			Type = EMCsProjectile::Get().GetMAX();
 			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
 		}

@@ -1,8 +1,77 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-#include "Payload/CsPayload_Projectile.h"
-
 #pragma once
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
+// Projectile
+#include "Payload/CsPayload_Projectile.h"
+// Log
+#include "Utility/CsPrjLog.h"
+
+#include "CsPayload_ProjectileImpl.generated.h"
+
+// FCsPayload_Projectile
+#pragma region
+
+class UObject;
+
+// NCsProjectile::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, FImpl)
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsPayload_Projectile
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+	/** The object "instigating" or starting the spawn. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Instigator;
+
+	/** The owner of the Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Owner;
+
+	/** The parent of the Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PreserveChangesFromDefaultMask;
+
+// PrjPayloadType (NCsProjectile::Payload::IPayload)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsProjectile Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Direction;
+
+	FCsPayload_Projectile() :
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		PreserveChangesFromDefaultMask(0),
+		Type(),
+		Location(0.0f),
+		Direction(0.0f)
+	{
+	}
+
+#define PayloadType NCsProjectile::NPayload::FImpl
+	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
+#undef PayloadType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+#pragma endregion FCsPayload_Projectile
 
 class UObject;
 struct FCsInterfaceMap;
@@ -49,6 +118,8 @@ namespace NCsProjectile
 			uint32 PreserveChangesFromDefaultMask;
 
 			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
+
+			FECsProjectile Type;
 
 			FVector Direction;
 
@@ -102,6 +173,7 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
+			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 

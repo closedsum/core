@@ -26,6 +26,15 @@ class CSBEAM_API ICsBeam
 public:
 
 	/**
+	* 
+	*/
+	//virtual void On() const = 0;
+
+	/**
+	*/
+	//virtual void Off() const = 0;
+
+	/**
 	* The Data the beam is currently using.
 	*
 	* return Data that implements the interface: DataType (NCsBeam::NData::IData).
@@ -72,6 +81,17 @@ public:
 #pragma region
 
 public:
+
+	/**
+	* Delegate type for
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* return
+	*/
+	DECLARE_DELEGATE(FScript_On);
+
+	/** Delegate type for  */
+	FScript_On Script_On_Impl;
 
 	/**
 	* Delegate type for

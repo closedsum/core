@@ -14,6 +14,8 @@ class CSPRJ_API UCsProjectile : public UInterface
 	GENERATED_UINTERFACE_BODY()
 };
 
+// NCsProjectile::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // NCsProjectile::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
@@ -21,9 +23,12 @@ class CSPRJ_API ICsProjectile
 {
 	GENERATED_IINTERFACE_BODY()
 
+#define PayloadType NCsProjectile::NPayload::IPayload
 #define DataType NCsProjectile::NData::IData
 
 public:
+
+	virtual void Launch(PayloadType* Payload) = 0;
 
 	/**
 	* The Data the projectile is currently using.
@@ -46,13 +51,15 @@ public:
 	*/
 	virtual UObject* GetInstigator() const = 0;
 
+#undef PayloadType
 #undef DataType
 };
-
 
 // FCsProjectile
 #pragma region
 
+// NCsProjectile::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // NCsProjectile::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 
@@ -62,6 +69,7 @@ private:
 
 	typedef TCsInterfaceObject<ICsProjectile> Super;
 
+#define PayloadType NCsProjectile::NPayload::IPayload
 #define DataType NCsProjectile::NData::IData
 
 public:
@@ -72,6 +80,18 @@ public:
 #pragma region
 
 public:
+
+	/**
+	* Delegate type for
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* @param Payload
+	* return
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_Launch, UObject* /*Object*/, PayloadType* /*Payload*/);
+
+	/** Delegate type for  */
+	FScript_Launch Script_Launch_Impl;
 
 	/**
 	* Delegate type for
@@ -114,6 +134,7 @@ public:
 
 	FCsProjectile() :
 		Super(),
+		Script_Launch_Impl(),
 		Script_GetData_Impl(),
 		Script_GetOwner_Impl(),
 		Script_GetInstigator_Impl()
@@ -138,6 +159,7 @@ public:
 	{
 		Super::Reset();
 
+		Script_Launch_Impl.Unbind();
 		Script_GetData_Impl.Unbind();
 		Script_GetOwner_Impl.Unbind();
 		Script_GetInstigator_Impl.Unbind();
@@ -149,7 +171,15 @@ public:
 #pragma region
 public:
 
-	DataType* GetData()
+	FORCEINLINE void Launch(PayloadType* Payload)
+	{
+		if (bScript)
+			Script_Launch_Impl.Execute(Object, Payload);
+		else
+			Interface->Launch(Payload);
+	}
+
+	FORCEINLINE DataType* GetData()
 	{
 		if (bScript)
 			return Script_GetData_Impl.Execute(Object);
@@ -162,6 +192,7 @@ public:
 
 #pragma endregion ICsProjectile
 
+#undef PayloadType
 #undef DataType
 };
 

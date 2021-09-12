@@ -100,6 +100,8 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	CacheImpl(nullptr),
 	// ICsProjectile
 	Data(nullptr),
+	// Launch
+	bLaunchOnAllocate(true),
 	// FX
 	TrailFXPooled(nullptr),
 	// Damage
@@ -598,7 +600,8 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	CacheImpl->Allocate(Payload);
 	CacheImpl->SetData(Data);
 	
-	Launch(ProjectilePayload);
+	if (bLaunchOnAllocate)
+		Launch(ProjectilePayload);
 }
 
 void ACsProjectilePooledImpl::Deallocate()
@@ -676,24 +679,10 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 // ICsProjectile
 #pragma region
 
-UObject* ACsProjectilePooledImpl::GetOwner() const
-{
-	return Cache->GetOwner();
-}
-
-UObject* ACsProjectilePooledImpl::GetInstigator() const
-{
-	return Cache->GetInstigator();
-}
-
-#pragma endregion ICsProjectile
-
-// Launch
-#pragma region
-
 #define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 {
+#undef PayloadType
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Launch;
@@ -854,8 +843,26 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	}
 }
 
+UObject* ACsProjectilePooledImpl::GetOwner() const
+{
+	return Cache->GetOwner();
+}
+
+UObject* ACsProjectilePooledImpl::GetInstigator() const
+{
+	return Cache->GetInstigator();
+}
+
+#pragma endregion ICsProjectile
+
+// Launch
+#pragma region
+
+#define PayloadType NCsProjectile::NPayload::IPayload
 void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 {
+#undef PayloadType
+
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
@@ -873,8 +880,6 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 		}
 	}
 }
-
-#undef PayloadType
 
 #pragma endregion Launch
 

@@ -197,6 +197,8 @@ protected:
 #pragma region
 public:
 
+	void Launch(PayloadType* Payload);
+
 	FORCEINLINE DataType* GetData() const { return Data; }
 
 	UObject* GetOwner() const;
@@ -215,9 +217,11 @@ protected:
 
 // Launch
 #pragma region
-public:
+protected:
 
-	void Launch(PayloadType* Payload);
+	bool bLaunchOnAllocate;
+
+public:
 
 	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
 

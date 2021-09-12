@@ -3,6 +3,36 @@
 
 #include "Containers/CsInterfaceMap.h"
 
+// FCsPayload_Beam
+#pragma region
+
+#define PayloadType NCsBeam::NPayload::FImpl
+void FCsPayload_Beam::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
+{
+#undef PayloadType
+	
+	Payload->Instigator = Instigator;
+	Payload->Owner = Owner;
+	Payload->Parent = Parent;
+	//Payload->Time = Time;
+	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+
+	Payload->Location = Location;
+	Payload->Direction = Direction;
+}
+
+bool FCsPayload_Beam::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsPayload_Beam::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
+{
+	return true;
+}
+
+#pragma endregion FCsPayload_Beam
+
 const FName NCsBeam::NPayload::FImpl::Name = FName("NCsBeam::NPayload::FImpl");;
 
 namespace NCsBeam

@@ -1,6 +1,9 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Containers/CsGetInterfaceMap.h"
 #pragma once
+// Types
+#include "Types/CsTypes_Beam.h"
+// Container
+#include "Containers/CsGetInterfaceMap.h"
 
 namespace NCsBeam
 {

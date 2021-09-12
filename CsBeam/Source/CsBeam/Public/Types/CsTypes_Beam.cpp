@@ -11,8 +11,6 @@
 #include "Utility/CsBeamLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsBeamPopulateEnumMapFromSettings.h"
-// Beam
-#include "Payload/CsPayload_BeamImpl.h"
 
 // Beam
 #pragma region
@@ -123,33 +121,3 @@ namespace NCsBeamClass
 }
 
 #pragma endregion BeamClass
-
-// FCsPayload_Beam
-#pragma region
-
-#define PayloadType NCsBeam::NPayload::FImpl
-void FCsPayload_Beam::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
-{
-#undef PayloadType
-	
-	Payload->Instigator = Instigator;
-	Payload->Owner = Owner;
-	Payload->Parent = Parent;
-	//Payload->Time = Time;
-	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
-
-	Payload->Location = Location;
-	Payload->Direction = Direction;
-}
-
-bool FCsPayload_Beam::IsValidChecked(const FString& Context) const
-{
-	return true;
-}
-
-bool FCsPayload_Beam::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
-{
-	return true;
-}
-
-#pragma endregion FCsPayload_Beam

@@ -3,7 +3,9 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "Types/CsTypes_Beam.h"
+// Beam
+#include "Payload/CsPayload_BeamImpl.h"
+
 #include "CsScriptLibrary_Manager_Beam.generated.h"
 
 // Delegates

@@ -1,46 +1,14 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/CsTypes_Pool.h"
-#include "Types/CsTypes_Load.h"
+#pragma once
+// Types
+#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnumStructMap.h"
+// DataTable
 #include "Engine/DataTable.h"
 
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 
 #include "CsTypes_Beam.generated.h"
-#pragma once
-
-// BeamRelevance
-#pragma region
-
-UENUM(BlueprintType)
-enum class ECsBeamRelevance : uint8
-{
-	RealVisible					UMETA(DisplayName = "Real Visible"),
-	RealInvisible				UMETA(DisplayName = "Real Invisible"),
-	Fake						UMETA(DisplayName = "Fake"),
-	ECsBeamRelevance_MAX	UMETA(Hidden),
-};
-
-struct CSBEAM_API EMCsBeamRelevance : public TCsEnumMap<ECsBeamRelevance>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBeamRelevance, ECsBeamRelevance)
-};
-
-namespace NCsBeamRelevance
-{
-	typedef ECsBeamRelevance Type;
-
-	namespace Ref
-	{
-		extern CSBEAM_API const Type RealVisible;
-		extern CSBEAM_API const Type RealInvisible;
-		extern CSBEAM_API const Type Fake;
-		extern CSBEAM_API const Type ECsBeamRelevance_MAX;
-	}
-
-	extern CSBEAM_API const uint8 MAX;
-}
-
-#pragma endregion BeamRelevance
 
 // Beam
 #pragma region
@@ -262,67 +230,3 @@ struct CSBEAM_API FCsBeamEntry : public FTableRowBase
 };
 
 #pragma endregion FCsBeamEntry
-
-// FCsPayload_Beam
-#pragma region
-
-class UObject;
-
-// NCsBeam::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NPayload, FImpl)
-
-USTRUCT(BlueprintType)
-struct CSBEAM_API FCsPayload_Beam
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-
-	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UObject* Instigator;
-
-	/** The owner of the Beam. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UObject* Owner;
-
-	/** The parent of the Beam. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UObject* Parent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 PreserveChangesFromDefaultMask;
-
-// BeamPayloadType (NCsBeam::Payload::IPayload)
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FECsBeam Type;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector Location;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FVector Direction;
-
-	FCsPayload_Beam() :
-		Instigator(nullptr),
-		Owner(nullptr),
-		Parent(nullptr),
-		PreserveChangesFromDefaultMask(0),
-		Type(),
-		Location(0.0f),
-		Direction(0.0f)
-	{
-	}
-
-#define PayloadType NCsBeam::NPayload::FImpl
-	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
-#undef PayloadType
-
-	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
-};
-
-#pragma endregion FCsPayload_Beam

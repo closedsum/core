@@ -1,8 +1,77 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-#include "Payload/CsPayload_Beam.h"
-
 #pragma once
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
+// Beam
+#include "Payload/CsPayload_Beam.h"
+// Log
+#include "Utility/CsBeamLog.h"
+
+#include "CsPayload_BeamImpl.generated.h"
+
+// FCsPayload_Beam
+#pragma region
+
+class UObject;
+
+// NCsBeam::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NPayload, FImpl)
+
+USTRUCT(BlueprintType)
+struct CSBEAM_API FCsPayload_Beam
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+	/** The object "instigating" or starting the spawn. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Instigator;
+
+	/** The owner of the Beam. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Owner;
+
+	/** The parent of the Beam. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UObject* Parent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PreserveChangesFromDefaultMask;
+
+// BeamPayloadType (NCsBeam::Payload::IPayload)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsBeam Type;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Direction;
+
+	FCsPayload_Beam() :
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		PreserveChangesFromDefaultMask(0),
+		Type(),
+		Location(0.0f),
+		Direction(0.0f)
+	{
+	}
+
+#define PayloadType NCsBeam::NPayload::FImpl
+	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
+#undef PayloadType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
+};
+
+#pragma endregion FCsPayload_Beam
 
 class UObject;
 struct FCsInterfaceMap;

@@ -28,11 +28,11 @@ public:
 	/**
 	* 
 	*/
-	//virtual void On() const = 0;
+	virtual void On() = 0;
 
 	/**
 	*/
-	//virtual void Off() const = 0;
+	virtual void Off() = 0;
 
 	/**
 	* The Data the beam is currently using.
@@ -56,6 +56,7 @@ public:
 	virtual UObject* GetInstigator() const = 0;
 
 #undef DataType
+#undef PayloadType
 };
 
 
@@ -83,15 +84,26 @@ public:
 public:
 
 	/**
-	* Delegate type for
+	* Delegate type for turning the Beam On.
 	*
 	* @param Object		Object->GetClass() that implements the interface: ICsData.
 	* return
 	*/
-	DECLARE_DELEGATE(FScript_On);
+	DECLARE_DELEGATE_OneParam(FScript_On, UObject* /*Object*/);
 
-	/** Delegate type for  */
+	/** Delegate type for turning the Beam On. */
 	FScript_On Script_On_Impl;
+
+	/**
+	* Delegate type for turning the Beam Off.
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* return
+	*/
+	DECLARE_DELEGATE_OneParam(FScript_Off, UObject* /*Object*/);
+
+	/** Delegate type for turning the Beam Off */
+	FScript_Off Script_Off_Impl;
 
 	/**
 	* Delegate type for
@@ -134,6 +146,8 @@ public:
 
 	FCsBeam() :
 		Super(),
+		Script_On_Impl(),
+		Script_Off_Impl(),
 		Script_GetData_Impl(),
 		Script_GetOwner_Impl(),
 		Script_GetInstigator_Impl()
@@ -169,7 +183,23 @@ public:
 #pragma region
 public:
 
-	DataType* GetData()
+	FORCEINLINE void On()
+	{
+		if (bScript)
+			Script_On_Impl.Execute(Object);
+		else
+			Interface->On();
+	}
+
+	FORCEINLINE void Off()
+	{
+		if (bScript)
+			Script_Off_Impl.Execute(Object);
+		else
+			Interface->Off();
+	}
+
+	FORCEINLINE DataType* GetData()
 	{
 		if (bScript)
 			return Script_GetData_Impl.Execute(Object);

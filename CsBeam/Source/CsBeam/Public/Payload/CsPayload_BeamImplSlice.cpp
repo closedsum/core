@@ -13,6 +13,7 @@ namespace NCsBeam
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			// IPayload
+			Type(),
 			Direction(0.0f),
 			Location(0.0f)
 		{
@@ -36,6 +37,7 @@ namespace NCsBeam
 		void FImplSlice::Reset()
 		{
 			// IPayload
+			Type = EMCsBeam::Get().GetMAX();
 			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
 		}
@@ -44,6 +46,7 @@ namespace NCsBeam
 
 		bool FImplSlice::CopyFrom(const FImplSlice* From)
 		{
+			Type = From->Type;
 			Direction = From->Direction;
 			Location = From->Location;
 			return true;

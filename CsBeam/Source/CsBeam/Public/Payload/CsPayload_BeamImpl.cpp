@@ -17,6 +17,7 @@ void FCsPayload_Beam::CopyToPayloadAsValueChecked(const FString& Context, const 
 	//Payload->Time = Time;
 	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
 
+	Payload->Type = Type;
 	Payload->Location = Location;
 	Payload->Direction = Direction;
 }
@@ -50,6 +51,7 @@ namespace NCsBeam
 			Time(),
 			PreserveChangesFromDefaultMask(0),
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
+			Type(),
 			Direction(0.0f),
 			Location(0.0f)
 		{
@@ -83,6 +85,7 @@ namespace NCsBeam
 
 			Time.Reset();
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
+			Type = EMCsBeam::Get().GetMAX();
 			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
 		}

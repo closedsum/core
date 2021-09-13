@@ -17,11 +17,11 @@ namespace NCsBeam
 {
 	namespace NCache
 	{
-#define PooledCacheType NCsPooledObject::NCache::ICache
-#define BeamCacheType NCsBeam::NCache::ICache
+	#define PooledCacheType NCsPooledObject::NCache::ICache
+	#define BeamCacheType NCsBeam::NCache::ICache
 
 		struct CSBEAM_API FImpl final : public PooledCacheType,
-									   public BeamCacheType
+									    public BeamCacheType
 		{
 		public:
 
@@ -126,7 +126,7 @@ namespace NCsBeam
 		#undef PayloadType
 		};
 
-#undef PooledCacheType
-#undef BeamCacheType
+	#undef PooledCacheType
+	#undef BeamCacheType
 	}
 }

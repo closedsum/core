@@ -119,6 +119,8 @@ namespace NCsBeam
 
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
 
+			FECsBeam Type;
+
 			FVector Direction;
 
 			FVector Location;
@@ -171,6 +173,7 @@ namespace NCsBeam
 		#pragma region
 		public:
 
+			FORCEINLINE const FECsBeam& GetType() const { return Type; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 

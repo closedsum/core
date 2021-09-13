@@ -7,6 +7,10 @@
 #include "Managers/Beam/ICsBeam.h"
 // Types
 #include "Types/CsTypes_Beam.h"
+#include "Managers/Damage/CsTypes_Damage.h"
+#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+// Damage
+#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
 
 #include "CsBeamActorPooledImpl.generated.h"
 
@@ -42,14 +46,14 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
 
 UCLASS(Blueprintable)
-class CSPRJ_API ACsBeamActorPooledImpl : public AActor,
+class CSBEAM_API ACsBeamActorPooledImpl : public AActor,
 										 public ICsUpdate,
 										 public ICsPooledObject,
 										 public ICsBeam
 {
 	GENERATED_UCLASS_BODY()
 
-#define DataType NCsProjectile::NData::IData
+#define DataType NCsBeam::NData::IData
 #define PooledCacheType NCsPooledObject::NCache::ICache
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define PayloadType NCsBeam::NPayload::IPayload
@@ -67,7 +71,6 @@ public:
 public:
 
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void FellOutOfWorld(const UDamageType& DmgType) override;
 
@@ -92,12 +95,18 @@ protected:
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
 
+	UPROPERTY()
+	TSet<TWeakObjectPtr<AActor>> IgnoreActorSet;
+
 	void AddIgnoreActor(AActor* Actor);
 
 	AActor* GetIgnoreActor(const int32& Index);
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
+
+	UPROPERTY()
+	TSet<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponentSet;
 
 	void AddIgnoreComponent(UPrimitiveComponent* Component);
 
@@ -108,18 +117,17 @@ protected:
 
 public:
 
-	/** Whether to deallocate the beam on hit (and HitCount <= 0). */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
-	bool bDeallocateOnHit;
+	/** Whether to deallocate the beam on hit (and CollisionCount <= 0). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Beam")
+	bool bDeallocateOnCollision;
 
 protected:
 
-	int32 HitCount;
+	int32 CollisionCount;
+	int32 CollisionCountdownToDeallocate;
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 #pragma endregion Collision
 
@@ -180,41 +188,32 @@ public:
 
 #pragma endregion ICsBeam
 
-// Projectile
+// Beam
 #pragma region
 protected:
 
 	DataType* Data;
 
-#pragma endregion Projectile
-
-// Launch
+	// On
 #pragma region
 protected:
 
-	bool bLaunchOnAllocate;
+	bool bOnOnAllocate;
 
-public:
+	void PrepareOn(PayloadType* Payload);
+	void OnPrepareOn_SetModifiers(PayloadType* Payload);
 
-	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
+#pragma endregion On
 
-#pragma endregion Launch
-
-// ICsGetCollisionHitCount
+	// Off
 #pragma region
-public:
+protected:
 
-	FORCEINLINE int32 GetCollisionHitCount() const { return HitCount; }
+	bool bOnOffDeallocate;
 
-#pragma endregion ICsGetCollisionHitCount
+#pragma endregion Off
 
-// FX
-#pragma region
-public:
-
-	FCsFXActorPooled* TrailFXPooled;
-
-#pragma endregion FX
+#pragma endregion Beam
 
 // Damage
 #pragma region
@@ -222,11 +221,11 @@ public:
 
 	struct FDamageImpl
 	{
-		friend class ACsProjectilePooledImpl;
+		friend class ACsBeamActorPooledImpl;
 
 	private:
 
-		ACsProjectilePooledImpl* Outer;
+		ACsBeamActorPooledImpl* Outer;
 
 		FECsDamageValue Type;
 

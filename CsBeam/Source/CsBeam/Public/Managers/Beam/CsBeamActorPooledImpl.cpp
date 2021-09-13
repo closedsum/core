@@ -1,44 +1,40 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/CsProjectilePooledImpl.h"
-#include "CsPrj.h"
+#include "Managers/Beam/CsBeamActorPooledImpl.h"
+#include "CsBeam.h"
 
 // CVar
-#include "Managers/Projectile/CsCVars_Projectile.h"
+#include "Managers/Beam/CsCVars_Beam.h"
 // Library
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
-#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Managers/Beam/CsLibrary_Manager_Beam.h"
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
-#include "Data/CsLibrary_Data_Projectile.h"
-#include "Payload/CsLibrary_Payload_Projectile.h"
+#include "Data/CsLibrary_Data_Beam.h"
+#include "Payload/CsLibrary_Payload_Beam.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Collision/CsTypes_Collision.h"
 #include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Components
-#include "Components/SphereComponent.h"
-#include "Managers/Projectile/CsProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 // Data
-#include "Data/CsData_Projectile.h"
-#include "Data/Collision/CsData_Projectile_Collision.h"
-#include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMesh.h"
-#include "Data/Visual/CsData_Projectile_VisualTrail.h"
-#include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
-#include "Data/Sound/CsData_Projectile_SoundImpact.h"
-#include "Data/Damage/CsData_Projectile_Damage.h"
+#include "Data/CsData_Beam.h"
+#include "Data/Collision/CsData_Beam_Collision.h"
+#include "Data/Visual/StaticMesh/CsData_Beam_VisualStaticMesh.h"
+#include "Data/Visual/Impact/CsData_Beam_VisualImpact.h"
+#include "Data/Sound/CsData_Beam_SoundImpact.h"
+#include "Data/Damage/CsData_Beam_Damage.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
-// Projectile
-#include "Cache/CsCache_ProjectileImpl.h"
-#include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
-// FX
-#include "Managers/FX/Actor/CsFXActorPooled.h"
+// Beam
+#include "Cache/CsCache_BeamImpl.h"
+#include "Payload/Damage/CsPayload_BeamModifierDamage.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Damage
@@ -52,24 +48,25 @@
 // Cached
 #pragma region
 
-namespace NCsProjectilePooledImpl
+namespace NCsBeamActorPooledImpl
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);	
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, SetType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, OnCollision);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Deallocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, On);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, PrepareOn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, OnPrepareOn_SetModifiers);
 		}
 
 		namespace ScopedTimer
 		{
-			CS_DEFINE_CACHED_STRING(SetCollision, "ACsProjectilePooledImpl::Launch_SetCollision");
-			CS_DEFINE_CACHED_STRING(SetTrailVisual, "ACsProjectilePooledImpl::Launch_SetTrailVisual");
+			CS_DEFINE_CACHED_STRING(SetCollision, "ACsBeamActorPooledImpl::Launch_SetCollision");
+			CS_DEFINE_CACHED_STRING(SetTrailVisual, "ACsBeamActorPooledImpl::Launch_SetTrailVisual");
 		}
 	}
 
@@ -79,7 +76,7 @@ namespace NCsProjectilePooledImpl
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl::FDamageImpl, SetValue);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl::FDamageImpl, SetValue);
 			}
 		}
 	}
@@ -87,62 +84,32 @@ namespace NCsProjectilePooledImpl
 
 #pragma endregion Cached
 
-ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& ObjectInitializer) : 
+ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),
 	Type(),
-	State(),
 	// Collision
 	IgnoreActors(),
-	bDeallocateOnHit(true),
-	HitCount(0),
+	IgnoreActorSet(),
+	IgnoreComponents(),
+	IgnoreComponentSet(),
+	bDeallocateOnCollision(true),
+	CollisionCount(0),
+	CollisionCountdownToDeallocate(0),
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
-	// ICsProjectile
+	// ICsBeam
 	Data(nullptr),
-	// Launch
-	bLaunchOnAllocate(true),
-	// FX
-	TrailFXPooled(nullptr),
+	// Beam
+		// On
+	bOnOnAllocate(true),
+		// Off
+	bOnOffDeallocate(true),
 	// Damage
 	DamageImpl()
 {
-	// Collision Component
-	CollisionComponent = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("CollisionComponent"));
-	CollisionComponent->InitSphereRadius(5.0f);
-	CollisionComponent->BodyInstance.SetCollisionProfileName("Projectile");
-	CollisionComponent->AlwaysLoadOnClient  = true;
-	CollisionComponent->AlwaysLoadOnServer  = true;
-	CollisionComponent->bTraceComplexOnMove = true;
-	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//CollisionComponent->SetCollisionObjectType(CS_COLLISION_PROJECTILE);
-	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	CollisionComponent->SetGenerateOverlapEvents(false);
-	CollisionComponent->bReturnMaterialOnMove  = true;
-	CollisionComponent->SetNotifyRigidBodyCollision(true);
-	CollisionComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
-
-	// Players can't walk on it
-	CollisionComponent->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
-	CollisionComponent->CanCharacterStepUpOn = ECB_No;
-
-	CollisionComponent->Deactivate();
-
-	RootComponent = CollisionComponent;
-
-	// Movement Component
-	MovementComponent = ObjectInitializer.CreateDefaultSubobject<UCsProjectileMovementComponent>(this, TEXT("MovementComponent"));
-	MovementComponent->UpdatedComponent							  = nullptr;// CollisionComponent;
-	MovementComponent->InitialSpeed								  = 1.f;
-	MovementComponent->MaxSpeed									  = 1.f;
-	MovementComponent->bRotationFollowsVelocity					  = true;
-	MovementComponent->MaxSimulationIterations					  = 1;
-	MovementComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
-	MovementComponent->Deactivate();
-
 	// Mesh Component
 	MeshComponent = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("MeshComponent"));
-	MeshComponent->SetupAttachment(RootComponent);
 
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -151,20 +118,20 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	MeshComponent->PrimaryComponentTick.bStartWithTickEnabled = false;
 	MeshComponent->Deactivate();
 
+	RootComponent = MeshComponent;
+
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	PrimaryActorTick.TickGroup			   = TG_PrePhysics;
 	SetRemoteRoleForBackwardsCompat(ROLE_None);
 	bReplicates		   = false;
 	SetReplicatingMovement(false);
-
-	InitialLifeSpan = 0.0f;
 }
 
 // UObject Interface
 #pragma region
 
-void ACsProjectilePooledImpl::BeginDestroy()
+void ACsBeamActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
@@ -172,6 +139,7 @@ void ACsProjectilePooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+		CacheImpl = nullptr;
 	}
 }
 
@@ -180,14 +148,10 @@ void ACsProjectilePooledImpl::BeginDestroy()
 // AActor Interface
 #pragma region
 
-void ACsProjectilePooledImpl::BeginPlay()
+void ACsBeamActorPooledImpl::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CollisionComponent->OnComponentHit.AddDynamic(this, &ACsProjectilePooledImpl::OnHit);
-
-	CollisionComponent->SetComponentTickEnabled(false);
-	MovementComponent->SetComponentTickEnabled(false);
 	MeshComponent->SetComponentTickEnabled(false);
 
 	SetActorTickEnabled(false);
@@ -197,27 +161,14 @@ void ACsProjectilePooledImpl::BeginPlay()
 	DamageImpl.Outer = this;
 }
 
-void ACsProjectilePooledImpl::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	/*
-	OnTick_HandleCVars(DeltaSeconds);
-
-	Cache.ElapsedTime += DeltaSeconds;
-
-	OnTick_HandleMovementFunction(DeltaSeconds);
-	*/
-}
-
-void ACsProjectilePooledImpl::FellOutOfWorld(const UDamageType& DmgType)
+void ACsBeamActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Deallocate_Internal();
 	SetActorLocation(FVector::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
-void ACsProjectilePooledImpl::OutsideWorldBounds()
+void ACsBeamActorPooledImpl::OutsideWorldBounds()
 {
 	Deallocate_Internal();
 	SetActorLocation(FVector::ZeroVector);
@@ -226,151 +177,61 @@ void ACsProjectilePooledImpl::OutsideWorldBounds()
 
 #pragma endregion AActor Interface
 
-void ACsProjectilePooledImpl::OnTick_HandleCVars(const float& DeltaSeconds)
+void ACsBeamActorPooledImpl::SetType(const FECsBeam& InType)
 {
-	/*
-	if (CsCVarDrawProjectileCollision->GetInt() == CS_CVAR_DRAW)
-	{
-		if (Cache.Relevance != ECsProjectileRelevance::Fake)
-		{
-			const FVector Location = GetActorLocation();
-			const float Radius	   = CollisionComponent->GetScaledSphereRadius();
-
-			DrawDebugSphere(GetWorld(), Location, Radius, 16, FColor::Green, false, DeltaSeconds + 0.005f, 0, 0.25f);
-		}
-	}
-	*/
-}
-
-void ACsProjectilePooledImpl::OnTick_HandleMovementFunction(const float& DeltaSeconds)
-{
-	//UCsData_ProjectileBase* Data			 = Cache.GetData();
-	/*
-	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;//Data->GetMovementType();
-
-	if (MovementType != ECsProjectileMovement::Function)
-		return;
-
-	const FVector NextLocation	= EvaluateMovementFunction(Cache.ElapsedTime);
-	const FVector MoveDelta		= NextLocation - GetActorLocation();
-	const FQuat Rotation		= MoveDelta.ToOrientationQuat();
-
-	MovementComponent->MoveUpdatedComponent(MoveDelta, Rotation, true, nullptr);
-
-	DrawPath(DeltaSeconds);
-	*/
-}
-
-void ACsProjectilePooledImpl::DrawPath(const float& DeltaSeconds)
-{
-	// Local Player
-	/*
-	if (CsCVarDrawLocalPlayerProjectilePath->GetInt() == CS_CVAR_DRAW)
-	{
-		APawn* Pawn					 = Cast<APawn>(Cache.GetInstigator());
-		const bool IsLocalInstigator = UCsLibrary_Common::IsLocalPawn(GetWorld(), Pawn);
-
-		if (IsLocalInstigator)
-		{
-			const float Interval			= FMath::Max(CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_INTERVAL, CsCVarDrawLocalPlayerProjectilePathInterval->GetFloat());
-			const uint8 SegmentsPerInterval = FMath::Max(CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL, CsCVarDrawLocalPlayerProjectilePathSegmentsPerInterval->GetInt());
-			const float Thickness			= FMath::Max(CS_CVAR_DRAW_LOCAL_PLAYER_PROJECTILE_PATH_THICKNESS, CsCVarDrawLocalPlayerProjectilePathThickness->GetFloat());
-
-			DrawPath_Internal(DeltaSeconds, Interval, SegmentsPerInterval, Thickness);
-			return;
-		}
-	}
-	*/
-	// Any Instigator
-	/*
-	if (CsCVarDrawProjectilePath->GetInt() == CS_CVAR_DRAW)
-	{
-		const float Interval			= FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL, CsCVarDrawProjectilePathInterval->GetFloat());
-		const uint8 SegmentsPerInterval = FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL, CsCVarDrawProjectilePathSegmentsPerInterval->GetInt());
-		const float Thickness			= FMath::Max(CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS, CsCVarDrawProjectilePathThickness->GetFloat());
-
-		DrawPath_Internal(DeltaSeconds, Interval, SegmentsPerInterval, Thickness);
-	}
-	*/
-}
-
-void ACsProjectilePooledImpl::DrawPath_Internal(const float& DeltaSeconds, const float& Interval, const uint8& SegmentsPerInterval, const float& Thickness)
-{
-	/*
-	const float DeltaTime	  = Interval / (float)SegmentsPerInterval;
-	const float RemainingTime = Cache.LifeT%ime - Cache.ElapsedTime;
-	const uint16 Segments	  = FMath::FloorToInt(RemainingTime / DeltaTime) - 1;
-
-	float CurrentTime = Cache.ElapsedTime;
-	6
-	for (uint16 I = 0; I < Segments; ++I)
-	{
-		const float T0   = CurrentTime + I * DeltaTime;
-		const FVector P0 = EvaluateMovementFunction(T0);
-		const float T1	 = CurrentTime + (I + 1) * DeltaTime;
-		const FVector P1 = EvaluateMovementFunction(T1);
-
-		DrawDebugLine(GetWorld(), P0, P1, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
-	}
-	*/
-}
-
-FVector ACsProjectilePooledImpl::EvaluateMovementFunction(const float &Time)
-{
-	return FVector::ZeroVector;// Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
-}
-
-void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
-{
-	using namespace NCsProjectilePooledImpl::NCached;
+	using namespace NCsBeamActorPooledImpl::NCached;
 
 	const FString& Context = Str::SetType;
 
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, InType));
+	check(EMCsBeam::Get().IsValidEnumChecked(Context, InType));
 
 	if (Type != InType)
 	{
 		Type = InType;
 
-		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+		typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 
 		// Get Data associated with Type
-		Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
+		Data = BeamManagerLibrary::GetDataChecked(Context, this, Type);
 	}
 }
 
 // Collision
 #pragma region
 
-void ACsProjectilePooledImpl::AddIgnoreActor(AActor* Actor)
+void ACsBeamActorPooledImpl::AddIgnoreActor(AActor* Actor)
 {
 	IgnoreActors.Add(Actor);
+	IgnoreActorSet.Add(Actor);
 }
 
-AActor* ACsProjectilePooledImpl::GetIgnoreActor(const int32& Index)
+AActor* ACsBeamActorPooledImpl::GetIgnoreActor(const int32& Index)
 {
 	if (Index >= IgnoreActors.Num())
 		return nullptr;
 	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
 }
 
-void ACsProjectilePooledImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
+void ACsBeamActorPooledImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
 {
 	IgnoreComponents.Add(Component);
+	IgnoreComponentSet.Add(Component);
 }
 
-UPrimitiveComponent* ACsProjectilePooledImpl::GetIgnoreComponent(const int32& Index)
+UPrimitiveComponent* ACsBeamActorPooledImpl::GetIgnoreComponent(const int32& Index)
 {
 	if (Index >= IgnoreComponents.Num())
 		return nullptr;
 	return IgnoreComponents[Index].IsValid() ? IgnoreComponents[Index].Get() : nullptr;
 }
 
-bool ACsProjectilePooledImpl::IsIgnored(AActor* Actor) const
+bool ACsBeamActorPooledImpl::IsIgnored(AActor* Actor) const
 {
 	if (!Actor)
 		return false;
 
+	return IgnoreActorSet.Find(Actor) != nullptr;
+	/*
 	for (const TWeakObjectPtr<AActor>& A : IgnoreActors)
 	{
 		if (!A.IsValid())
@@ -380,9 +241,10 @@ bool ACsProjectilePooledImpl::IsIgnored(AActor* Actor) const
 			return true;
 	}
 	return false;
+	*/
 }
 
-bool ACsProjectilePooledImpl::IsIgnored(UPrimitiveComponent* Component) const
+bool ACsBeamActorPooledImpl::IsIgnored(UPrimitiveComponent* Component) const
 {
 	if (!Component)
 		return false;
@@ -398,11 +260,11 @@ bool ACsProjectilePooledImpl::IsIgnored(UPrimitiveComponent* Component) const
 	return false;
 }
 
-void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	using namespace NCsProjectilePooledImpl::NCached;
+	using namespace NCsBeamActorPooledImpl::NCached;
 
-	const FString& Context = Str::OnHit;
+	const FString& Context = Str::OnCollision;
 
 	if (IsIgnored(OtherActor))
 		return;
@@ -411,46 +273,45 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		return;
 
 #if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogProjectileCollision))
+	if (CS_CVAR_LOG_IS_SHOWING(LogBeamCollision))
 	{
-		UE_LOG(LogCsPrj, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
+		UE_LOG(LogCsBeam, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
 
-		UE_LOG(LogCsPrj, Warning, TEXT("- HitComponent: %s"), HitComponent ? *(HitComponent->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("- OtherActor: %s"), OtherActor ? *(OtherActor->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("- OtherComp: %s"), OtherComp ? *(OtherComp->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("- NormalImpulse: %s"), *(NormalImpulse.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("- CollidingComponent: %s"), CollidingComponent ? *(CollidingComponent->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("- OtherActor: %s"), OtherActor ? *(OtherActor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("- OtherComp: %s"), OtherComp ? *(OtherComp->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("- NormalImpulse: %s"), *(NormalImpulse.ToString()));
 		// HitResult
-		UE_LOG(LogCsPrj, Warning, TEXT("- Hit"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- bStartPenetrating"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Time: %f"), Hit.Time);
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Location: %s"), *(Hit.Location.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- TraceStart: %s"), *(Hit.TraceStart.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Item: %d"), Hit.Item);
-		UE_LOG(LogCsPrj, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
+		UE_LOG(LogCsBeam, Warning, TEXT("- Hit"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- bStartPenetrating"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Time: %f"), Hit.Time);
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Location: %s"), *(Hit.Location.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- TraceStart: %s"), *(Hit.TraceStart.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Item: %d"), Hit.Item);
+		UE_LOG(LogCsBeam, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
 	// Get Physics Surface
-	UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
-	EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+	EPhysicalSurface SurfaceType	= NCsHitResult::GetPhysSurfaceType(Hit);
 
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 
-	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
+	// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
 	{
-		typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
+		typedef NCsBeam::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
 
-		if (ImpactVisualDataType* ImpactVisualData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+		if (ImpactVisualDataType* ImpactVisualData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 		{
 			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
@@ -467,11 +328,11 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			FXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
 		}
 	}
-	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
+	// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
 	{
-		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
+		typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
 
-		if (ImpactSoundDataType* ImpactSoundData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+		if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 		{
 			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
@@ -488,11 +349,11 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			SoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
 		}
 	}
-	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
+	// DamageDataType (NCsBeam::NData::NDamage::IDamage)
 	{
-		typedef NCsProjectile::NData::NDamage::IDamage DamageDataType;
+		typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
 
-		if (DamageDataType* DamageData = PrjDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
+		if (DamageDataType* DamageData = BeamDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
 		{
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
@@ -510,10 +371,10 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		}
 	}
 
-	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
-	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
+	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
 
-	if (CollisionDataType* CollisionData = PrjDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
+	if (CollisionDataType* CollisionData = BeamDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
 	{
 		if (CollisionData->IgnoreHitObjectAfterHit())
 		{
@@ -521,27 +382,20 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			if (OtherActor)
 			{
 				AddIgnoreActor(OtherActor);
-				CollisionComponent->MoveIgnoreActors.Add(OtherActor);
 			}
 			// Component
 			if (OtherComp)
 			{
 				AddIgnoreComponent(OtherComp);
-				CollisionComponent->MoveIgnoreComponents.Add(OtherComp);
 			}
 		}
 	}
 
-	--HitCount;
+	++CollisionCount;
+	--CollisionCountdownToDeallocate;
 
-	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
-
-	if (bDeallocateOnHit && HitCount <= 0)
+	if (bDeallocateOnCollision && CollisionCountdownToDeallocate <= 0)
 		Cache->QueueDeallocate();
-}
-
-void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
 }
 
 #pragma endregion Collision
@@ -549,16 +403,16 @@ void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, 
 // ICsUpdate
 #pragma region
 
-void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
+void ACsBeamActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
 	CacheImpl->Update(DeltaTime);
 }
 
 #pragma endregion ICsUpdate
 
-void ACsProjectilePooledImpl::ConstructCache()
+void ACsBeamActorPooledImpl::ConstructCache()
 {
-	typedef NCsProjectile::NCache::FImpl CacheImplType;
+	typedef NCsBeam::NCache::FImpl CacheImplType;
 
 	CacheImpl = new CacheImplType();
 	Cache	  = CacheImpl;
@@ -568,43 +422,46 @@ void ACsProjectilePooledImpl::ConstructCache()
 #pragma region
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
-void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
+void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
 #undef PooledPayloadType
 
-	using namespace NCsProjectilePooledImpl::NCached;
+	using namespace NCsBeamActorPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
 
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	// Set Type
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
+	typedef NCsBeam::NPayload::IPayload PayloadType;
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
-	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+	PayloadType* BeamPayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
-	Type = ProjectilePayload->GetType();
+	Type = BeamPayload->GetType();
 
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Type));
+	check(EMCsBeam::Get().IsValidEnumChecked(Context, Type));
 
 	// Get Data associated with Type
 	// TODO: FUTURE: Add to list of preserved changes
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 
-	Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
+	Data = BeamManagerLibrary::GetDataChecked(Context, this, Type);
 
 	// TODO: Need to determine best place to set LifeTime from Data
 
 	// Set Data on Cache
 	CacheImpl->Allocate(Payload);
 	CacheImpl->SetData(Data);
-	
-	if (bLaunchOnAllocate)
-		Launch(ProjectilePayload);
+
+	if (bOnOnAllocate)
+	{
+		PrepareOn(BeamPayload);
+		On();
+	}
 }
 
-void ACsProjectilePooledImpl::Deallocate()
+void ACsBeamActorPooledImpl::Deallocate()
 {
 	Deallocate_Internal();
 	Cache->Deallocate();
@@ -615,47 +472,18 @@ void ACsProjectilePooledImpl::Deallocate()
 // PooledObject
 #pragma region
 
-void ACsProjectilePooledImpl::Deallocate_Internal()
+void ACsBeamActorPooledImpl::Deallocate_Internal()
 {
-	using namespace NCsProjectilePooledImpl::NCached;
+	using namespace NCsBeamActorPooledImpl::NCached;
 
 	const FString& Context = Str::Deallocate;
-
-	IgnoreActors.Reset();
-
-	// FX
-	if (TrailFXPooled)
-	{
-		// Deactivate the Trail FX
-		typedef NCsPooledObject::NCache::ICache CacheType;
-
-		CacheType* FXCache = TrailFXPooled->GetCache();
-
-		FXCache->QueueDeallocate();
-
-		TrailFXPooled = nullptr;
-	}
 
 	// Collision
 	IgnoreActors.Reset(IgnoreActors.Max());
 	IgnoreComponents.Reset(IgnoreComponents.Max());
 
-	HitCount = 0;
-
-	CollisionComponent->Deactivate();
-	CollisionComponent->MoveIgnoreActors.Reset(CollisionComponent->MoveIgnoreActors.Max());
-	CollisionComponent->MoveIgnoreComponents.Reset(CollisionComponent->MoveIgnoreComponents.Max());
-	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	CollisionComponent->SetComponentTickEnabled(false);
-	CollisionComponent->SetGenerateOverlapEvents(false);
-	CollisionComponent->SetNotifyRigidBodyCollision(false);
-	// Movement
-	MovementComponent->StopMovementImmediately();
-	MovementComponent->SetComponentTickEnabled(false);
-	MovementComponent->Deactivate();
-
-	// Deallocate attachments
+	CollisionCount = 0;
+	CollisionCountdownToDeallocate = 0;
 
 	// Mesh
 	typedef NCsMaterial::FLibrary MaterialLibrary;
@@ -676,126 +504,116 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 #pragma endregion PooledObject
 
-// ICsProjectile
+// ICsBeam
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::IPayload
-void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
+void ACsBeamActorPooledImpl::On()
 {
-#undef PayloadType
-	using namespace NCsProjectilePooledImpl::NCached;
+}
 
-	const FString& Context = Str::Launch;
+void ACsBeamActorPooledImpl::Off()
+{
+	if (bOnOffDeallocate)
+		Cache->QueueDeallocate();
+}
+
+UObject* ACsBeamActorPooledImpl::GetOwner() const
+{
+	return Cache->GetOwner();
+}
+
+UObject* ACsBeamActorPooledImpl::GetInstigator() const
+{
+	return Cache->GetInstigator();
+}
+
+#pragma endregion ICsBeam
+
+// Beam
+#pragma region
+
+	// On
+#pragma region
+
+#define PayloadType NCsBeam::NPayload::IPayload
+
+void ACsBeamActorPooledImpl::PrepareOn(PayloadType* Payload)
+{
+using namespace NCsBeamActorPooledImpl::NCached;
+
+	const FString& Context = Str::PrepareOn;
 
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
 	// Set Damage Value if the projectile supports damage
-	OnLaunch_SetModifiers(Payload);
-
-	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
+	OnPrepareOn_SetModifiers(Payload);
 
 	SetActorHiddenInGame(false);
 
-	// Real Visible
-	//if (Relevance == ECsProjectileRelevance::RealVisible)
+	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
+
+	// VisualDataType (NCsBeam::NData::NVisual::NStaticMesh::IStaticMesh)
 	{
-		RootComponent = CollisionComponent;
+		typedef NCsBeam::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
 
-		MovementComponent->UpdatedComponent = CollisionComponent;
-		MovementComponent->Activate();
-		MovementComponent->SetComponentTickEnabled(true);
-	}
-	
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-	// VisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
-	{
-		typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
-
-		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		if (VisualDataType* VisualData = BeamDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
 		{
-			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
+			// TODO: MAYBE? Allocate Static Mesh Actor and get Static Mesh Component
 
-			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			//MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-			UStaticMesh* Mesh = VisualData->GetStaticMesh().Mesh.GetChecked(Context);
+			UStaticMesh* Mesh = VisualData->GetStaticMesh();
+
+			CS_IS_PTR_NULL_CHECKED(Mesh)
 
 			MeshComponent->SetStaticMesh(Mesh);
-			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
+			//MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
 			MeshComponent->Activate();
 			MeshComponent->SetVisibility(true);
 			MeshComponent->SetHiddenInGame(false);
 			MeshComponent->SetComponentTickEnabled(true);
 		}
 	}
-
-	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;// Data_Projectile->GetMovementType();
-
-	// Simulated
-	if (MovementType == ECsProjectileMovement::Simulated)
+	
+	// TODO: Handle Attach and / or orientation
 	{
 		const FVector& Direction = Payload->GetDirection();
 		FRotator Rotation		 = Direction.Rotation();
 
 		TeleportTo(Payload->GetLocation(), Rotation, false, true);
 	}
-
-	// Trail FX
-	{
-		const FString& ScopeName		   = ScopedTimer::SetTrailVisual;
-		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
-		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetTrailVisual;
-
-		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
-		
-		typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
-
-		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
-		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType PayloadImpl;
-			PayloadImpl.Owner = this;
-			PayloadImpl.Parent = MeshComponent;
-
-			const FCsFX& TrailFX = VisualData->GetTrailFX();
-
-			TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, this, &PayloadImpl, TrailFX));
-		}
-	}
-
-	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
+	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 	{
 		const FString& ScopeName		   = ScopedTimer::SetCollision;
-		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
-		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetCollision;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Beam;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogBeamScopedTimerPrepareOnSetCollision;
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+		typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
 
-		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		if (CollisionDataType* CollisionData = BeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
 			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
 
 			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
-				typedef NCsProjectile::NPayload::FLibrary ProjectilePayloadLibrary;
+				typedef NCsBeam::NPayload::FLibrary BeamPayloadLibrary;
 				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 
-				PooledPayloadType* PooledPayload = ProjectilePayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+				PooledPayloadType* PooledPayload = BeamPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
 
 				// Instigator
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
-					IgnoreActors.Add(Actor);
+					AddIgnoreActor(Actor);
 				// Owner
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetOwner()))
-					IgnoreActors.Add(Actor);
+					AddIgnoreActor(Actor);
 				// Parent
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetParent()))
-					IgnoreActors.Add(Actor);
+					AddIgnoreActor(Actor);
 
+				/*
 				const int32 Count = IgnoreActors.Num();
 
 				for (int32 I = 0; I < Count; ++I)
@@ -807,11 +625,10 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 					CollisionComponent->MoveIgnoreActors.Add(Actor);
 				}
+				*/
 
-				//FCollisionResponseContainer CapsuleResponseContainer(ECR_Ignore);
-				//CapsuleResponseContainer.SetResponse(ECC_Pawn, ECR_Block);
-				//CapsuleResponseContainer.SetResponse(MBO_COLLISION_PROJECTILE, ECR_Ignore);
-
+				// TODO: FUTURE: Allow Mesh to be a colliding component?
+				/*
 				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
 				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
 				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
@@ -823,54 +640,25 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 				CollisionComponent->SetComponentTickEnabled(true);
 
 				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
+				*/
 			}
 
-			HitCount = CollisionData->GetHitCount();
-			// TODO: Move to Data
-			MovementComponent->bHandleDeflection = false;
+			CollisionCountdownToDeallocate = CollisionData->GetHitCount();
 		}
 	}
-	
 	SetActorTickEnabled(true);
+}
 
-	// Simulated
-	if (MovementType == ECsProjectileMovement::Simulated)
+void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
+{
+	using namespace NCsBeamActorPooledImpl::NCached;
+
+	const FString& Context = Str::OnPrepareOn_SetModifiers;
+
+	// NCsBeam::NPayload::NModifier::NDamage::IDamage
 	{
-		MovementComponent->InitialSpeed			  = Data->GetInitialSpeed();
-		MovementComponent->MaxSpeed				  = Data->GetMaxSpeed();
-		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Payload->GetDirection();
-		MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
-	}
-}
-
-UObject* ACsProjectilePooledImpl::GetOwner() const
-{
-	return Cache->GetOwner();
-}
-
-UObject* ACsProjectilePooledImpl::GetInstigator() const
-{
-	return Cache->GetInstigator();
-}
-
-#pragma endregion ICsProjectile
-
-// Launch
-#pragma region
-
-#define PayloadType NCsProjectile::NPayload::IPayload
-void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
-{
-#undef PayloadType
-
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::OnLaunch_SetModifiers;
-
-	// NCsProjectile::NPayload::NModifier::NDamage::IDamage
-	{
-		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
-		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage ModDamagePayloadType;
+		typedef NCsBeam::NPayload::FLibrary PayloadLibrary;
+		typedef NCsBeam::NPayload::NModifier::NDamage::IDamage ModDamagePayloadType;
 
 		if (ModDamagePayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
 		{
@@ -881,12 +669,16 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 	}
 }
 
-#pragma endregion Launch
+#undef PayloadType
+
+#pragma endregion On
+
+#pragma endregion Beam
 
 // Damage
 #pragma region
 
-ACsProjectilePooledImpl::FDamageImpl::FDamageImpl() :
+ACsBeamActorPooledImpl::FDamageImpl::FDamageImpl() :
 	Outer(nullptr),
 	Type(),
 	ValuePoint(nullptr),
@@ -900,7 +692,7 @@ ACsProjectilePooledImpl::FDamageImpl::FDamageImpl() :
 	ValueRange = new RangeType();
 }
 
-ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
+ACsBeamActorPooledImpl::FDamageImpl::~FDamageImpl()
 {
 	delete ValuePoint;
 	ValuePoint = nullptr;
@@ -912,11 +704,11 @@ ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
 }
 
 #define DamageDataType NCsDamage::NData::IData
-void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
+void ACsBeamActorPooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 {
 #undef DamageDataType
 
-	using namespace NCsProjectilePooledImpl::NDamageImpl::NCached;
+	using namespace NCsBeamActorPooledImpl::NDamageImpl::NCached;
 
 	const FString& Context = Str::SetValue;
 
@@ -931,7 +723,7 @@ void ACsProjectilePooledImpl::FDamageImpl::SetValue(DamageDataType* InData)
 }
 
 #define ValueType NCsDamage::NValue::IValue
-ValueType* ACsProjectilePooledImpl::FDamageImpl::GetValue()
+ValueType* ACsBeamActorPooledImpl::FDamageImpl::GetValue()
 {
 #undef ValueType
 
@@ -942,17 +734,17 @@ ValueType* ACsProjectilePooledImpl::FDamageImpl::GetValue()
 	if (Type == NCsDamageValue::Range)
 		return ValueRange;
 
-	checkf(0, TEXT("ACsProjectilePooledImpl::FDamageImpl::GetValue: No Value associated with Type: %s."), Type.ToChar());
+	checkf(0, TEXT("ACsBeamActorPooledImpl::FDamageImpl::GetValue: No Value associated with Type: %s."), Type.ToChar());
 	return nullptr;
 }
 
-void ACsProjectilePooledImpl::FDamageImpl::ResetValue()
+void ACsBeamActorPooledImpl::FDamageImpl::ResetValue()
 {
 	ValuePoint->Reset();
 	ValueRange->Reset();
 }
 
-void ACsProjectilePooledImpl::FDamageImpl::Reset()
+void ACsBeamActorPooledImpl::FDamageImpl::Reset()
 {
 	ResetValue();
 

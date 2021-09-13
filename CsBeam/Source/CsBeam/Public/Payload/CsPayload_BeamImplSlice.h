@@ -31,9 +31,12 @@ namespace NCsBeam
 
 			// ICsPayload_Beam
 
+			FECsBeam Type;
+
 			FVector Direction;
 
 			FVector Location;
+
 		public:
 
 			FImplSlice();
@@ -55,6 +58,7 @@ namespace NCsBeam
 		#pragma region
 		public:
 
+			FORCEINLINE const FECsBeam& GetType() const { return Type; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 

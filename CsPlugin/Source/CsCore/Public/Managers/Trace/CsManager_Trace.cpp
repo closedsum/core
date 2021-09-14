@@ -535,7 +535,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 
 	const FString& Context = Str::ProcessAsyncRequest;
 
-	checkf(Request, TEXT("%s: Request is NULL."), *Context);
+	CS_IS_PTR_NULL_CHECKED(Request)
 
 	checkf(Request->IsValid(), TEXT("%s: Request is NOT Valid."), *Context);
 

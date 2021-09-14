@@ -10,8 +10,8 @@
 
 class UObject;
 
-// NCsBeam::NCollision::NShape::IShape
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, IShape)
+// NCsBeam::NCollision::NShape::FShape
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
 
 namespace NCsBeam
 {
@@ -39,7 +39,7 @@ namespace NCsBeam
 				*/
 				virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
-			#define CollisionShapeType NCsBeam::NCollision::NShape::IShape
+			#define CollisionShapeType NCsBeam::NCollision::NShape::FShape
 
 				/**
 				* Get the collision shape
@@ -89,6 +89,9 @@ class CSBEAM_API UCsData_Beam_Collision : public UCsGetInterfaceMap
 
 class UObject;
 
+// NCsBeam::NCollision::NShape::FShape
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
+
 /**
 * Interface for describing any collision associated with a Beam.
 */
@@ -107,7 +110,7 @@ public:
 	*/
 	virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
-#define CollisionShapeType NCsBeam::NCollision::NShape::IShape
+#define CollisionShapeType NCsBeam::NCollision::NShape::FShape
 
 	/**
 	* Get the collision shape

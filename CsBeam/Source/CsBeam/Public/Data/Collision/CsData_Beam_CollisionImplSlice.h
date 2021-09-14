@@ -164,6 +164,15 @@ namespace NCsBeam
 
 			public:
 
+				FORCEINLINE void ConditionalSetCollisionShape(ShapeType* Shape)
+				{
+					if (CollisionShape)
+						delete CollisionShape;
+
+					CollisionShape = Shape;
+					CollisionShape_Proxy = &CollisionShape;
+				}
+
 				FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(const bool& Value)
 				{
 					bIgnoreCollidingObjectAfterCollision = Value;
@@ -176,7 +185,9 @@ namespace NCsBeam
 			public:
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
-				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(CollisionShape, ShapeType)
+
+				FORCEINLINE const ShapeType* GetCollisionShape() const { return *CollisionShape_Proxy; }
+
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionCount, int32)
 
 				FORCEINLINE const bool& IgnoreCollidingObjectAfterCollision() const { return *bIgnoreCollidingObjectAfterCollision_Proxy; }

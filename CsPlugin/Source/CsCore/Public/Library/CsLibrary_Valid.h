@@ -307,6 +307,39 @@ namespace NCsValid
 				return true;
 			}
 
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyNullChecked(const FString& Context, const TArray<TSubclassOf<ValueType>>& Array, const FString& ArrayName)
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const TSubclassOf<ValueType>& O = Array[I];
+
+					checkf(O.Get(), TEXT("%s: %s[%d] is NULL."), *Context, *ArrayName, I);
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool IsAnyNull(const FString& Context, const TArray<TSubclassOf<ValueType>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const TSubclassOf<ValueType>& O = Array[I];
+
+					if (!O.Get())
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] is NULL."), *Context, *ArrayName, I));
+						return false;
+					}
+				}
+				return true;
+			}
+
 			FORCEINLINE static bool IsAnyNoneChecked(const FString& Context, const TArray<FName>& Array, const FString& ArrayName)
 			{
 				const int32 Count = Array.Num();

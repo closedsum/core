@@ -16,12 +16,12 @@ namespace NCsBeamCollisionShapeLength
 	{
 		typedef EMCsBeamCollisionShapeLength EnumMapType;
 
-		CSCORE_API CS_ADD_TO_ENUM_MAP(Fixed);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(Scaled);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamCollisionShapeLength_MAX, "MAX");
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Fixed);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Scaled);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamCollisionShapeLength_MAX, "MAX");
 	}
 
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsBeamCollisionShapeLength_MAX;
+	CSBEAM_API const uint8 MAX = (uint8)Type::ECsBeamCollisionShapeLength_MAX;
 }
 
 namespace NCsBeam
@@ -36,9 +36,9 @@ namespace NCsBeam
 				{
 					typedef EMLength EnumMapType;
 
-					CSCORE_API CS_ADD_TO_ENUM_MAP(Fixed);
-					CSCORE_API CS_ADD_TO_ENUM_MAP(Count);
-					CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ELength_MAX, "MAX");
+					CSBEAM_API CS_ADD_TO_ENUM_MAP(Fixed);
+					CSBEAM_API CS_ADD_TO_ENUM_MAP(Scaled);
+					CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(ELength_MAX, "MAX");
 				}
 			}
 		}
@@ -56,13 +56,13 @@ namespace NCsBeamCollisionShapeType
 	{
 		typedef EMCsBeamCollisionShapeType EnumMapType;
 
-		CSCORE_API CS_ADD_TO_ENUM_MAP(Line);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(Box);
-		CSCORE_API CS_ADD_TO_ENUM_MAP(Capsule);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamCollisionShapeType_MAX, "MAX");
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Line);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Box);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Capsule);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamCollisionShapeType_MAX, "MAX");
 	}
 
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsBeamCollisionShapeType_MAX;
+	CSBEAM_API const uint8 MAX = (uint8)Type::ECsBeamCollisionShapeType_MAX;
 }
 
 #pragma endregion BeamCollisionShapeType
@@ -101,7 +101,7 @@ ShapeType* FCsBeamCollisionShape::ConstructShape()
 	return nullptr;
 }
 
-ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue()
+ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue() const
 {
 	if (Type == ECsBeamCollisionShapeType::Line)
 	{
@@ -116,7 +116,7 @@ ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue()
 
 #undef ShapeType
 
-bool IsValidChecked(const FString& Context) const
+bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 {
 	check(EMCsBeamCollisionShapeLength::Get().IsValidEnumChecked(Context, LengthType));
 
@@ -144,7 +144,7 @@ bool IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
+bool FCsBeamCollisionShape::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	CS_IS_ENUM_VALID(EMCsBeamCollisionShapeLength, ECsBeamCollisionShapeLength, LengthType)
 
@@ -161,7 +161,7 @@ bool IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLo
 	{
 		if (HalfExtents == FVector::ZeroVector)
 		{
-			CS_CONDITIONAL_LOG(TEXT("%s: HalfExtents == (0.0f, 0.0f, 0.0f) is NOT Valid.")));
+			CS_CONDITIONAL_LOG(TEXT("%s: HalfExtents == (0.0f, 0.0f, 0.0f) is NOT Valid."));
 			return false;
 		}
 	}
@@ -182,32 +182,122 @@ namespace NCsBeam
 	{
 		namespace NShape
 		{
+		// FLine
+		#pragma region
+
 			bool FLine::IsValidChecked(const FString& Context) const
 			{
-				check(EMLength::Get().IsValidEnumChecked(Context, LengthType));
+				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
 
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
+				return true;
 			}
 
 			bool FLine::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
-				CS_IS_ENUM_VALID(EMLength, ELength, LengthType)
+				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
 
 				CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
+				return true;
 			}
 
+			#define ResponseType NCsTrace::NResponse::FResponse
+			#define RequestType NCsTrace::NRequest::FRequest
 			ResponseType* FLine::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const
 			{
-				if (LengthType == ELength::Fixed)
+			#undef ResponseType
+			#undef RequestType
+
+				if (GetLengthType() == ELength::Fixed)
 				{
-					const FVector Dir = (RequestType->End - RequestType->Start).GetSafeNormal();
-					Request->End	  = RequestType->Start + Length * Dir;					
+					const FVector Dir = (Request->End - Request->Start).GetSafeNormal();
+					Request->End	  = Request->Start + GetLength() * Dir;
 				}
 
 				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 
 				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
 			}
+
+		#pragma endregion FLine
+
+		// FBox
+		#pragma region
+
+			bool FBox::IsValidChecked(const FString& Context) const
+			{
+				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
+
+				//CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
+				return true;
+			}
+
+			bool FBox::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
+
+				//CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
+				return true;
+			}
+
+			#define ResponseType NCsTrace::NResponse::FResponse
+			#define RequestType NCsTrace::NRequest::FRequest
+			ResponseType* FBox::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const
+			{
+			#undef ResponseType
+			#undef RequestType
+
+				if (GetLengthType() == ELength::Fixed)
+				{
+					//const FVector Dir = (Request->End - Request->Start).GetSafeNormal();
+					//Request->End	  = Request->Start + GetLength() * Dir;
+				}
+
+				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+
+				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
+			}
+
+		#pragma endregion FBox
+
+		// FCapsule
+		#pragma region
+
+			bool FCapsule::IsValidChecked(const FString& Context) const
+			{
+				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
+
+				//CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
+				return true;
+			}
+
+			bool FCapsule::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
+
+				//CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
+				return true;
+			}
+
+			#define ResponseType NCsTrace::NResponse::FResponse
+			#define RequestType NCsTrace::NRequest::FRequest
+			ResponseType* FCapsule::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const
+			{
+			#undef ResponseType
+			#undef RequestType
+
+				if (GetLengthType() == ELength::Fixed)
+				{
+					//const FVector Dir = (Request->End - Request->Start).GetSafeNormal();
+					//Request->End	  = Request->Start + GetLength() * Dir;
+				}
+
+				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+
+				return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
+			}
+
+		#pragma endregion FCapsule
 		}
 	}
 }

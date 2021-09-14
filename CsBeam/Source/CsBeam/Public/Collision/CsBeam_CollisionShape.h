@@ -5,6 +5,8 @@
 // Log
 #include "Utility/CsBeamLog.h"
 
+#include "CsBeam_CollisionShape.generated.h"
+
 // BeamCollisionShapeLength
 #pragma region
 
@@ -113,6 +115,8 @@ namespace NCsBeamCollisionShapeType
 // FCsBeamCollisionShape
 #pragma region
 
+// NCsBeam::NCollision::Shape::FShape
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
 // NCsBeam::NCollision::Shape::FLine
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FLine)
 
@@ -120,7 +124,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FLine)
 * 
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsBeamCollisionShape
+struct CSBEAM_API FCsBeamCollisionShape
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -164,7 +168,7 @@ public:
 
 #define ShapeType NCsBeam::NCollision::NShape::FShape
 	ShapeType* ConstructShape();
-	ShapeType* ConstructShapeAsValue();
+	ShapeType* ConstructShapeAsValue() const;
 #undef ShapeType
 
 	bool IsValidChecked(const FString& Context) const;
@@ -176,7 +180,7 @@ class UObject;
 // NCsTrace::NResponse::FResponse
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
 // NCsTrace::NRequest::FRequest
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
 
 namespace NCsBeam
 {
@@ -197,10 +201,13 @@ namespace NCsBeam
 				FShape(){}
 				virtual ~FShape(){}
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const {};
+				virtual bool IsValidChecked(const FString& Context) const { return false; };
+				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const { return false; };
+
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const { return nullptr; };
 			};
 
-			struct CSBEAM_API FLine
+			struct CSBEAM_API FLine : public FShape
 			{
 			private:
 
@@ -220,13 +227,13 @@ namespace NCsBeam
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LengthType, ELength)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Length, float)
 
-				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
+				virtual bool IsValidChecked(const FString& Context) const override;
+				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
 				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const override;
 			};
 
-			struct CSBEAM_API FBox
+			struct CSBEAM_API FBox : public FShape
 			{
 			public:
 
@@ -246,9 +253,14 @@ namespace NCsBeam
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LengthType, ELength)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HalfExtents, FVector)
+
+				virtual bool IsValidChecked(const FString& Context) const override;
+				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
+
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const override;
 			};
 
-			struct CSBEAM_API FCapsule
+			struct CSBEAM_API FCapsule : public FShape
 			{
 			public:
 
@@ -265,6 +277,15 @@ namespace NCsBeam
 					CS_CTOR_SET_MEMBER_PROXY(Radius);
 					CS_CTOR_SET_MEMBER_PROXY(HalfHeight);
 				}
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Radius, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HalfHeight, float)
+
+				virtual bool IsValidChecked(const FString& Context) const override;
+				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
+
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const override;
 			};
 
 			#undef ResponseType

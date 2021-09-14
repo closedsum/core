@@ -362,7 +362,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 	if (CollisionDataType* CollisionData = BeamDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
 	{
-		if (CollisionData->IgnoreHitObjectAfterHit())
+		if (CollisionData->IgnoreCollidingObjectAfterCollision())
 		{
 			// Actor
 			if (OtherActor)
@@ -629,7 +629,7 @@ using namespace NCsBeamActorPooledImpl::NCached;
 				*/
 			}
 
-			CollisionCountdownToDeallocate = CollisionData->GetHitCount();
+			CollisionCountdownToDeallocate = CollisionData->GetCollisionCount();
 		}
 	}
 	SetActorTickEnabled(true);

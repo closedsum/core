@@ -35,7 +35,7 @@ SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSliceAsValue(const FString& C
 	return nullptr;
 }
 
-SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
+SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
 	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
@@ -59,7 +59,7 @@ SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSlice_Internal(const FString&
 void FCsData_Beam_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetCollisionPreset(&Preset);
-	Slice->SetCollisionShape(Shape.ConstructShape());
+	Slice->ConditionalSetCollisionShape(Shape.ConstructShape());
 	Slice->SetCollisionCount(&CollisionCount);
 	Slice->SetIgnoreCollidingObjectAfterCollision(&bIgnoreCollidingObjectAfterCollision);
 	Slice->SetIgnoreCollidingObjectClasses(&IgnoreCollidingObjectClasses);
@@ -68,10 +68,10 @@ void FCsData_Beam_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 void FCsData_Beam_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetCollisionPreset(Preset);
-	Slice->SetCollisionRadius(Radius);
-	Slice->SetHitCount(HitCount);
-	Slice->SetIgnoreHitObjectAfterHit(bIgnoreHitObjectAfterHit);
-	Slice->SetIgnoreHitObjectClasses(IgnoreHitObjectClasses);
+	Slice->ConditionalSetCollisionShape(Shape.ConstructShapeAsValue());
+	Slice->SetCollisionCount(CollisionCount);
+	Slice->SetIgnoreCollidingObjectAfterCollision(bIgnoreCollidingObjectAfterCollision);
+	Slice->SetIgnoreCollidingObjectClasses(IgnoreCollidingObjectClasses);
 }
 
 #undef SliceType
@@ -81,19 +81,19 @@ bool FCsData_Beam_CollisionImplSlice::IsValid(const FString& Context, void(*Log)
 	if (!Preset.IsValid(Context, Log))
 		return false;
 
-	CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f)
+	CS_IS_VALID_CHECKED(Shape);
 
-	CS_IS_INT_GREATER_THAN_OR_EQUAL(HitCount, 0)
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(CollisionCount, 0)
 
-	const int32 Count = IgnoreHitObjectClasses.Num();
+	const int32 Count = IgnoreCollidingObjectClasses.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		const TSubclassOf<UObject>& O = IgnoreHitObjectClasses[I];
+		const TSubclassOf<UObject>& O = IgnoreCollidingObjectClasses[I];
 
 		if (!O.Get())
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: IgnoreHitObjectClasses[%d] is NULL."), *Context, I));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: IgnoreCollidingObjectClasses[%d] is NULL."), *Context, I));
 		}
 	}
 	return true;
@@ -116,10 +116,10 @@ namespace NCsBeam
 						const FName CollisionSlice = FName("CollisionSlice");
 
 						const FName CollisionPreset = FName("CollisionPreset");
-						const FName CollisionRadius = FName("CollisionRadius");
-						const FName HitCount = FName("HitCount");
-						const FName bIgnoreHitObjectAfterHit = FName("bIgnoreHitObjectAfterHit");
-						const FName IgnoreHitObjectClasses = FName("IgnoreHitObjectClasses");
+						const FName CollisionShape = FName("CollisionShape");
+						const FName CollisionCount = FName("CollisionCount");
+						const FName bIgnoreCollidingObjectAfterCollision = FName("bIgnoreCollidingObjectAfterCollision");
+						const FName IgnoreCollidingObjectClasses = FName("IgnoreCollidingObjectClasses");
 					}
 				}
 			}
@@ -165,22 +165,22 @@ namespace NCsBeam
 				// Try individual properties
 				else
 				{
-					FCsCollisionPreset* CollisionPresetPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsCollisionPreset>(Context, Object, Object->GetClass(), Name::CollisionPreset, nullptr);
-					float* CollisionRadiusPtr			   = PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::CollisionRadius, nullptr);
-					int32* HitCountPtr					   = PropertyLibrary::GetIntPropertyValuePtr(Context, Object, Object->GetClass(), Name::HitCount, nullptr);
-					bool* bIgnoreHitObjectAfterHitPtr	   = PropertyLibrary::GetBoolPropertyValuePtr(Context, Object, Object->GetClass(), Name::bIgnoreHitObjectAfterHit, nullptr);
+					FCsCollisionPreset* CollisionPresetPtr			= PropertyLibrary::GetStructPropertyValuePtr<FCsCollisionPreset>(Context, Object, Object->GetClass(), Name::CollisionPreset, nullptr);
+					FCsBeamCollisionShape* CollisionShapePtr		= PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionShape>(Context, Object, Object->GetClass(), Name::CollisionShape, nullptr);
+					int32* CollisionCountPtr						= PropertyLibrary::GetIntPropertyValuePtr(Context, Object, Object->GetClass(), Name::CollisionCount, nullptr);
+					bool* bIgnoreCollidingObjectAfterCollisionPtr	= PropertyLibrary::GetBoolPropertyValuePtr(Context, Object, Object->GetClass(), Name::bIgnoreCollidingObjectAfterCollision, nullptr);
 
 					// TODO: Need to implement getting TArray<TSubclassOf<ClassType>>
 
 					if (CollisionPresetPtr &&
-						CollisionRadiusPtr &&
-						HitCountPtr &&
-						bIgnoreHitObjectAfterHitPtr)
+						CollisionShapePtr &&
+						CollisionCountPtr &&
+						bIgnoreCollidingObjectAfterCollisionPtr)
 					{
 						Slice->SetCollisionPreset(CollisionPresetPtr);
-						Slice->SetCollisionRadius(CollisionRadiusPtr);
-						Slice->SetHitCount(HitCountPtr);
-						Slice->SetIgnoreHitObjectAfterHit(bIgnoreHitObjectAfterHitPtr);
+						Slice->ConditionalSetCollisionShape(CollisionShapePtr->ConstructShape());
+						Slice->SetCollisionCount(CollisionCountPtr);
+						Slice->SetIgnoreCollidingObjectAfterCollision(bIgnoreCollidingObjectAfterCollisionPtr);
 
 						Success = true;
 					}
@@ -196,10 +196,10 @@ namespace NCsBeam
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_CollisionImplSlice with name: CollisionSlice."), *Context));
 						Log(FString::Printf(TEXT("%s: - OR"), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: CollisionRadius."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: HitCount."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bIgnoreHitObjectAfterHit."), *Context));
-						// Log(FString::Printf(TEXT("%s: - Failed to get array property of type: TSubclassOf<UObject> with name: IgnoreHitObjectClasses."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionShape with name: CollisionShape."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: CollisionCount."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bIgnoreCollidingObjectAfterCollision."), *Context));
+						// Log(FString::Printf(TEXT("%s: - Failed to get array property of type: TSubclassOf<UObject> with name: IgnoreCollidingObjectClasses."), *Context));
 					}
 				}
 				return Slice;
@@ -207,43 +207,28 @@ namespace NCsBeam
 
 			bool FImplSlice::IsValidChecked(const FString& Context) const
 			{
-				check(GetCollisionPreset().IsValidChecked(Context));
+				CS_IS_VALID_CHECKED(GetCollisionPreset());
 
-				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetCollisionRadius(), 0.0f)
+				check(GetCollisionShape()->IsValidChecked(Context));
 
-				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetHitCount(), 0)
+				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCollisionCount(), 0)
 
-				const int32 Count = GetIgnoreHitObjectClasses().Num();
+				CS_IS_ARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
 
-				for (int32 I = 0; I < Count; ++I)
-				{
-					const TSubclassOf<UObject>& O = GetIgnoreHitObjectClasses()[I];
-
-					checkf(O.Get(), TEXT("%s: GetIgnoreHitObjectClasses()[%d] is NULL."), *Context, I);
-				}
 				return true;
 			}
 
 			bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&)/*=&NCsBeam::FLog::Warning*/) const
 			{
-				if (!GetCollisionPreset().IsValid(Context, Log))
+				CS_IS_VALID(GetCollisionPreset())
+
+				if (!GetCollisionShape()->IsValid(Context, Log))
 					return false;
 
-				CS_IS_FLOAT_GREATER_THAN(GetCollisionRadius(), 0.0f)
+				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCollisionCount(), 0)
 
-				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetHitCount(), 0)
+				CS_IS_ARRAY_ANY_NULL(GetIgnoreCollidingObjectClasses(), UObject)
 
-				const int32 Count = GetIgnoreHitObjectClasses().Num();
-
-				for (int32 I = 0; I < Count; ++I)
-				{
-					const TSubclassOf<UObject>& O = GetIgnoreHitObjectClasses()[I];
-
-					if (!O.Get())
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetIgnoreHitObjectClasses()[%d] is NULL."), *Context, I));
-					}
-				}
 				return true;
 			}
 		}

@@ -4,9 +4,14 @@
 
 // CVar
 #include "Managers/Beam/CsCVars_Beam.h"
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 #include "Data/CsLibrary_Data_Beam.h"
@@ -231,17 +236,6 @@ bool ACsBeamActorPooledImpl::IsIgnored(AActor* Actor) const
 		return false;
 
 	return IgnoreActorSet.Find(Actor) != nullptr;
-	/*
-	for (const TWeakObjectPtr<AActor>& A : IgnoreActors)
-	{
-		if (!A.IsValid())
-			continue;
-
-		if (Actor == A.Get())
-			return true;
-	}
-	return false;
-	*/
 }
 
 bool ACsBeamActorPooledImpl::IsIgnored(UPrimitiveComponent* Component) const
@@ -249,15 +243,7 @@ bool ACsBeamActorPooledImpl::IsIgnored(UPrimitiveComponent* Component) const
 	if (!Component)
 		return false;
 
-	for (const TWeakObjectPtr<UPrimitiveComponent>& C : IgnoreComponents)
-	{
-		if (!C.IsValid())
-			continue;
-
-		if (Component == C.Get())
-			return true;
-	}
-	return false;
+	return IgnoreComponentSet.Find(Component) != nullptr;
 }
 
 void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -672,6 +658,23 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 #undef PayloadType
 
 #pragma endregion On
+
+	// Emit
+#pragma region
+
+void ACsBeamActorPooledImpl::Emit()
+{
+
+}
+
+char ACsBeamActorPooledImpl::Emit_Internal(FCsRoutine* R)
+{
+	CS_COROUTINE_BEGIN(R)
+
+	CS_COROUTINE_END(R)
+}
+
+#pragma endregion Emit
 
 #pragma endregion Beam
 

@@ -10,6 +10,9 @@
 
 class UObject;
 
+// NCsBeam::NCollision::NShape::IShape
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, IShape)
+
 namespace NCsBeam
 {
 	namespace NData
@@ -36,23 +39,28 @@ namespace NCsBeam
 				*/
 				virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
+			#define CollisionShapeType NCsBeam::NCollision::NShape::IShape
+
 				/**
-				* Get the radius of the collision sphere
+				* Get the collision shape
 				* 
 				* return Radius
 				*/
-				virtual const float& GetCollisionRadius() const = 0;
+				virtual const CollisionShapeType* GetCollisionShape() const = 0;
+
+			#undef CollisionShapeType
 
 				/**
-				* Get the number of hits before the beam
-				* is stopped (and / or deallocated if pooled).
+				* Get the number of collisions before the beam
+				* is Off (and / or deallocated if pooled).
 				* NOTE:
-				* - Collision detection is captured via CollisionComponent->OnComponentHit.
-				* - GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful.
+				* - If a StaticMesh is used for collision,
+				*	 Collision detection is captured via MeshComponent->OnComponentHit.
+				*	 GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful.
 				* 
 				* return Count
 				*/
-				virtual const int32& GetHitCount() const = 0;
+				virtual const int32& GetCollisionCount() const = 0;
 
 				/**
 				* Whether to ignore an object (AActor or UPrimitiveComponent) the beam has collided with after
@@ -60,18 +68,14 @@ namespace NCsBeam
 				* 
 				* return
 				*/
-				virtual const bool& IgnoreHitObjectAfterHit() const = 0;
+				virtual const bool& IgnoreCollidingObjectAfterCollision() const = 0;
 
 				/**
 				* Get the list of classes to ignore for colliding objects.
 				* 
 				* return
 				*/
-				virtual const TArray<TSubclassOf<UObject>>& GetIgnoreHitObjectClasses() const = 0;
-
-				// TODO:
-
-				// virtual const bool& AllowStartPenetrationOnHit const = 0;
+				virtual const TArray<TSubclassOf<UObject>>& GetIgnoreCollidingObjectClasses() const = 0;
 			};
 		}
 	}
@@ -103,23 +107,28 @@ public:
 	*/
 	virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
+#define CollisionShapeType NCsBeam::NCollision::NShape::IShape
+
 	/**
-	* Get the radius of the collision sphere
+	* Get the collision shape
 	* 
 	* return Radius
 	*/
-	virtual const float& GetCollisionRadius() const = 0;
+	virtual const CollisionShapeType* GetCollisionShape() const = 0;
+
+#undef CollisionShapeType
 
 	/**
-	* Get the number of hits before the beam
-	* is stopped (and / or deallocated if pooled).
+	* Get the number of collisions before the beam
+	* is Off (and / or deallocated if pooled).
 	* NOTE:
-	* - Collision detection is captured via CollisionComponent->OnComponentHit.
-	* - GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful.
+	* - If a StaticMesh is used for collision,
+	*	 Collision detection is captured via MeshComponent->OnComponentHit.
+	*	 GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful.
 	*
 	* return Count
 	*/
-	virtual const int32& GetHitCount() const = 0;
+	virtual const int32& GetCollisionCount() const = 0;
 
 	/**
 	* Whether to ignore an object (AActor or UPrimitiveComponent) the beam has collided with after
@@ -127,12 +136,12 @@ public:
 	*
 	* return
 	*/
-	virtual const bool& IgnoreHitObjectAfterHit() const = 0;
+	virtual const bool& IgnoreCollidingObjectAfterCollision() const = 0;
 
 	/**
 	* Get the list of classes to ignore for colliding objects.
 	*
 	* return
 	*/
-	virtual const TArray<TSubclassOf<UObject>>& GetIgnoreHitObjectClasses() const = 0;
+	virtual const TArray<TSubclassOf<UObject>>& GetIgnoreCollidingObjectClasses() const = 0;
 };

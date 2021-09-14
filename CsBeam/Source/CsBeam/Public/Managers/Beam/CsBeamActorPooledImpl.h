@@ -6,7 +6,9 @@
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Beam/ICsBeam.h"
 // Types
+#include "Managers/Time/CsTypes_Update.h"
 #include "Types/CsTypes_Beam.h"
+#include "Coroutine/CsRoutineHandle.h"
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
 // Damage
@@ -34,6 +36,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsBeam::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NPayload, IPayload)
 
+struct FCsRoutine;
+
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
@@ -47,9 +51,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
 
 UCLASS(Blueprintable)
 class CSBEAM_API ACsBeamActorPooledImpl : public AActor,
-										 public ICsUpdate,
-										 public ICsPooledObject,
-										 public ICsBeam
+										  public ICsUpdate,
+										  public ICsPooledObject,
+										  public ICsBeam
 {
 	GENERATED_UCLASS_BODY()
 
@@ -139,6 +143,14 @@ public:
 
 #pragma endregion ICsUpdate
 
+// Update
+#pragma region
+protected:
+
+	FECsUpdateGroup UpdateGroup;
+
+#pragma endregion Update
+
 // PooledObject
 #pragma region
 protected:
@@ -212,6 +224,17 @@ protected:
 	bool bOnOffDeallocate;
 
 #pragma endregion Off
+
+	// Emit
+#pragma region
+protected:
+
+	void Emit();
+	char Emit_Internal(FCsRoutine* R);
+
+	FCsRoutineHandle EmitInternalHandle;
+
+#pragma endregion Emit
 
 #pragma endregion Beam
 

@@ -3,7 +3,7 @@
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
 
-#include "CsTypes_Data_BeamDamage.generated.h"
+#include "CsTypes_Data_Beam_Damage.generated.h"
 #pragma once
 
 // FCsBeamData_DamagePoint

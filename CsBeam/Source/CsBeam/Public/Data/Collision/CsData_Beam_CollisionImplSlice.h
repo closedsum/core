@@ -1,6 +1,7 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Collision/CsTypes_Collision.h"
+#include "Collision/CsBeam_CollisionShape.h"
 // Log
 #include "Utility/CsBeamLog.h"
 // Data
@@ -32,32 +33,33 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsCollisionPreset Preset;
 
-	/** Radius of the collision sphere */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float Radius;
+	/** Radius of the collision shape */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsBeamCollisionShape Shape;
 
-	/** Number of hits before the projectile is stopped (and / or deallocated if pooled).
+	/** Number of collisions before the beam is Off (and / or deallocated if pooled).
 		NOTE:
-			- Collision detection is captured via CollisionComponent->OnComponentHit.
-			- GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful. */
+		- If a StaticMesh is used for collision,
+			Collision detection is captured via MeshComponent->OnComponentHit.
+			GetCollisionPreset().bSimulationGeneratesHitEvents MUST be true for the count to be meaningful. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
-	int32 HitCount;
+	int32 CollisionCount;
 
-	/** Whether to ignore an object (AActor or UPrimitiveComponent) the projectile has collided with after
+	/** Whether to ignore an object (AActor or UPrimitiveComponent) the beam has collided with after
 		the first collision. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIgnoreHitObjectAfterHit;
+	bool bIgnoreCollidingObjectAfterCollision;
 
 	/** List of classes to ignore for colliding objects. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<TSubclassOf<UObject>> IgnoreHitObjectClasses;
+	TArray<TSubclassOf<UObject>> IgnoreCollidingObjectClasses;
 
 	FCsData_Beam_CollisionImplSlice() :
 		Preset(),
-		Radius(0.0f),
-		HitCount(0),
-		bIgnoreHitObjectAfterHit(false),
-		IgnoreHitObjectClasses()
+		Shape(),
+		CollisionCount(0),
+		bIgnoreCollidingObjectAfterCollision(false),
+		IgnoreCollidingObjectClasses()
 	{
 	}
 
@@ -107,6 +109,8 @@ namespace NCsBeam
 
 				static const FName Name;
 
+			#define ShapeType NCsBeam::NCollision::NShape::FShape
+
 			private:
 			
 				// ICsGetInterfaceMap
@@ -118,28 +122,31 @@ namespace NCsBeam
 				// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 
 				CS_DECLARE_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
-				CS_DECLARE_MEMBER_WITH_PROXY(CollisionRadius, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(HitCount, int32)
-				CS_DECLARE_MEMBER_WITH_PROXY(bIgnoreHitObjectAfterHit, bool)
-				CS_DECLARE_MEMBER_WITH_PROXY(IgnoreHitObjectClasses, TArray<TSubclassOf<UObject>>)
+				CS_DECLARE_MEMBER_WITH_PROXY(CollisionShape, ShapeType*)
+				CS_DECLARE_MEMBER_WITH_PROXY(CollisionCount, int32)
+				CS_DECLARE_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, bool)
+				CS_DECLARE_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
 
 			public:
 
 				FImplSlice() :
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(CollisionPreset),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionRadius, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(HitCount, 0),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bIgnoreHitObjectAfterHit, false),
-					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(IgnoreHitObjectClasses)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionShape, nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionCount, 0),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, false),
+					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(IgnoreCollidingObjectClasses)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(CollisionPreset);
-					CS_CTOR_SET_MEMBER_PROXY(CollisionRadius);
-					CS_CTOR_SET_MEMBER_PROXY(HitCount);
-					CS_CTOR_SET_MEMBER_PROXY(bIgnoreHitObjectAfterHit);
-					CS_CTOR_SET_MEMBER_PROXY(IgnoreHitObjectClasses);
+					CS_CTOR_SET_MEMBER_PROXY(CollisionShape);
+					CS_CTOR_SET_MEMBER_PROXY(CollisionCount);
+					CS_CTOR_SET_MEMBER_PROXY(bIgnoreCollidingObjectAfterCollision);
+					CS_CTOR_SET_MEMBER_PROXY(IgnoreCollidingObjectClasses);
 				}
 
-				~FImplSlice(){}
+				~FImplSlice()
+				{
+					delete CollisionShape;
+				}
 
 				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -157,24 +164,24 @@ namespace NCsBeam
 
 			public:
 
-				FORCEINLINE void SetIgnoreHitObjectAfterHit(const bool& Value)
+				FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(const bool& Value)
 				{
-					bIgnoreHitObjectAfterHit = Value;
-					bIgnoreHitObjectAfterHit_Proxy = &bIgnoreHitObjectAfterHit;
+					bIgnoreCollidingObjectAfterCollision = Value;
+					bIgnoreCollidingObjectAfterCollision_Proxy = &bIgnoreCollidingObjectAfterCollision;
 				}
-				FORCEINLINE void SetIgnoreHitObjectAfterHit(bool* Value) { check(Value); bIgnoreHitObjectAfterHit_Proxy = Value; }
+				FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(bool* Value) { check(Value); bIgnoreCollidingObjectAfterCollision_Proxy = Value; }
 
 			// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 			#pragma region
 			public:
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionRadius, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HitCount, int32)
+				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(CollisionShape, ShapeType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionCount, int32)
 
-				FORCEINLINE const bool& IgnoreHitObjectAfterHit() const { return *bIgnoreHitObjectAfterHit_Proxy; }
+				FORCEINLINE const bool& IgnoreCollidingObjectAfterCollision() const { return *bIgnoreCollidingObjectAfterCollision_Proxy; }
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(IgnoreHitObjectClasses, TArray<TSubclassOf<UObject>>)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
 
 			#pragma endregion CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 
@@ -189,6 +196,8 @@ namespace NCsBeam
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
+
+			#undef ShapeType
 			};
 
 		#undef CollisionDataType

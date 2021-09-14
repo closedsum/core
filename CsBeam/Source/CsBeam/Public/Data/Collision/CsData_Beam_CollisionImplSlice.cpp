@@ -59,10 +59,10 @@ SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSlice_Internal(const FString&
 void FCsData_Beam_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetCollisionPreset(&Preset);
-	Slice->SetCollisionRadius(&Radius);
-	Slice->SetHitCount(&HitCount);
-	Slice->SetIgnoreHitObjectAfterHit(&bIgnoreHitObjectAfterHit);
-	Slice->SetIgnoreHitObjectClasses(&IgnoreHitObjectClasses);
+	Slice->SetCollisionShape(Shape.ConstructShape());
+	Slice->SetCollisionCount(&CollisionCount);
+	Slice->SetIgnoreCollidingObjectAfterCollision(&bIgnoreCollidingObjectAfterCollision);
+	Slice->SetIgnoreCollidingObjectClasses(&IgnoreCollidingObjectClasses);
 }
 
 void FCsData_Beam_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice) const

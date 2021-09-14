@@ -92,49 +92,6 @@ public:
 
 	void SetType(const FECsBeam& InType);
 
-// Collision
-#pragma region
-protected:
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
-
-	UPROPERTY()
-	TSet<TWeakObjectPtr<AActor>> IgnoreActorSet;
-
-	void AddIgnoreActor(AActor* Actor);
-
-	AActor* GetIgnoreActor(const int32& Index);
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
-
-	UPROPERTY()
-	TSet<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponentSet;
-
-	void AddIgnoreComponent(UPrimitiveComponent* Component);
-
-	UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
-
-	bool IsIgnored(AActor* Actor) const;
-	bool IsIgnored(UPrimitiveComponent* Component) const;
-
-public:
-
-	/** Whether to deallocate the beam on hit (and CollisionCount <= 0). */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Beam")
-	bool bDeallocateOnCollision;
-
-protected:
-
-	int32 CollisionCount;
-	int32 CollisionCountdownToDeallocate;
-
-	UFUNCTION()
-	void OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-#pragma endregion Collision
-
 // ICsUpdate
 #pragma region
 public:
@@ -237,6 +194,53 @@ protected:
 #pragma endregion Emit
 
 #pragma endregion Beam
+
+// Collision
+#pragma region
+protected:
+
+#define CollisionDataType NCsBeam::NData::NCollision::ICollision
+	CollisionDataType* CollisionData;
+#undef CollisionDataType
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
+
+	UPROPERTY()
+	TSet<TWeakObjectPtr<AActor>> IgnoreActorSet;
+
+	void AddIgnoreActor(AActor* Actor);
+
+	AActor* GetIgnoreActor(const int32& Index);
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
+
+	UPROPERTY()
+	TSet<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponentSet;
+
+	void AddIgnoreComponent(UPrimitiveComponent* Component);
+
+	UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
+
+	bool IsIgnored(AActor* Actor) const;
+	bool IsIgnored(UPrimitiveComponent* Component) const;
+
+public:
+
+	/** Whether to deallocate the beam on hit (and CollisionCount <= 0). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Beam")
+	bool bDeallocateOnCollision;
+
+protected:
+
+	int32 CollisionCount;
+	int32 CollisionCountdownToDeallocate;
+
+	UFUNCTION()
+	void OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+#pragma endregion Collision
 
 // Damage
 #pragma region

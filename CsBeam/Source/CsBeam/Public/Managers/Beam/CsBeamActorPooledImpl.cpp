@@ -66,6 +66,13 @@ namespace NCsBeamActorPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, On);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, PrepareOn);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, OnPrepareOn_SetModifiers);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Emit);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Emit_Internal);
+		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsBeamActorPooledImpl, Emit_Internal);
 		}
 
 		namespace ScopedTimer
@@ -92,14 +99,6 @@ namespace NCsBeamActorPooledImpl
 ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),
 	Type(),
-	// Collision
-	IgnoreActors(),
-	IgnoreActorSet(),
-	IgnoreComponents(),
-	IgnoreComponentSet(),
-	bDeallocateOnCollision(true),
-	CollisionCount(0),
-	CollisionCountdownToDeallocate(0),
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
@@ -110,6 +109,15 @@ ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectI
 	bOnOnAllocate(true),
 		// Off
 	bOnOffDeallocate(true),
+	// Collision
+	CollisionData(nullptr),
+	IgnoreActors(),
+	IgnoreActorSet(),
+	IgnoreComponents(),
+	IgnoreComponentSet(),
+	bDeallocateOnCollision(true),
+	CollisionCount(0),
+	CollisionCountdownToDeallocate(0),
 	// Damage
 	DamageImpl()
 {
@@ -201,191 +209,6 @@ void ACsBeamActorPooledImpl::SetType(const FECsBeam& InType)
 	}
 }
 
-// Collision
-#pragma region
-
-void ACsBeamActorPooledImpl::AddIgnoreActor(AActor* Actor)
-{
-	IgnoreActors.Add(Actor);
-	IgnoreActorSet.Add(Actor);
-}
-
-AActor* ACsBeamActorPooledImpl::GetIgnoreActor(const int32& Index)
-{
-	if (Index >= IgnoreActors.Num())
-		return nullptr;
-	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
-}
-
-void ACsBeamActorPooledImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
-{
-	IgnoreComponents.Add(Component);
-	IgnoreComponentSet.Add(Component);
-}
-
-UPrimitiveComponent* ACsBeamActorPooledImpl::GetIgnoreComponent(const int32& Index)
-{
-	if (Index >= IgnoreComponents.Num())
-		return nullptr;
-	return IgnoreComponents[Index].IsValid() ? IgnoreComponents[Index].Get() : nullptr;
-}
-
-bool ACsBeamActorPooledImpl::IsIgnored(AActor* Actor) const
-{
-	if (!Actor)
-		return false;
-
-	return IgnoreActorSet.Find(Actor) != nullptr;
-}
-
-bool ACsBeamActorPooledImpl::IsIgnored(UPrimitiveComponent* Component) const
-{
-	if (!Component)
-		return false;
-
-	return IgnoreComponentSet.Find(Component) != nullptr;
-}
-
-void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	using namespace NCsBeamActorPooledImpl::NCached;
-
-	const FString& Context = Str::OnCollision;
-
-	if (IsIgnored(OtherActor))
-		return;
-
-	if (IsIgnored(OtherComp))
-		return;
-
-#if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogBeamCollision))
-	{
-		UE_LOG(LogCsBeam, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
-
-		UE_LOG(LogCsBeam, Warning, TEXT("- CollidingComponent: %s"), CollidingComponent ? *(CollidingComponent->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("- OtherActor: %s"), OtherActor ? *(OtherActor->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("- OtherComp: %s"), OtherComp ? *(OtherComp->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("- NormalImpulse: %s"), *(NormalImpulse.ToString()));
-		// HitResult
-		UE_LOG(LogCsBeam, Warning, TEXT("- Hit"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- bStartPenetrating"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Time: %f"), Hit.Time);
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Location: %s"), *(Hit.Location.ToString()));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- TraceStart: %s"), *(Hit.TraceStart.ToString()));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Item: %d"), Hit.Item);
-		UE_LOG(LogCsBeam, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
-	}
-#endif // #if !UE_BUILD_SHIPPING
-
-	// Get Physics Surface
-	EPhysicalSurface SurfaceType	= NCsHitResult::GetPhysSurfaceType(Hit);
-
-	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-	// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
-	{
-		typedef NCsBeam::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
-
-		if (ImpactVisualDataType* ImpactVisualData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
-		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType Payload;
-			Payload.Instigator = Cache->GetInstigator();
-
-			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
-
-			FTransform Transform = FTransform::Identity;
-			Transform.SetLocation(Hit.Location);
-			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
-
-			FXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
-		}
-	}
-	// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
-	{
-		typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
-
-		if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
-		{
-			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType Payload;
-			Payload.Instigator = Cache->GetInstigator();
-
-			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
-
-			FTransform Transform = FTransform::Identity;
-			Transform.SetLocation(Hit.Location);
-			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
-
-			SoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
-		}
-	}
-	// DamageDataType (NCsBeam::NData::NDamage::IDamage)
-	{
-		typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
-
-		if (DamageDataType* DamageData = BeamDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
-		{
-			// NOTE: For now reset and apply the modifiers on each hit.
-			// FUTURE: Look into having additional rules on how the modifiers are applied
-			
-			// Apply Modifiers
-			DamageImpl.SetValue(DamageData->GetDamageData());
-
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-
-			DamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
-
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-
-			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
-		}
-	}
-
-	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
-	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
-
-	if (CollisionDataType* CollisionData = BeamDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
-	{
-		if (CollisionData->IgnoreCollidingObjectAfterCollision())
-		{
-			// Actor
-			if (OtherActor)
-			{
-				AddIgnoreActor(OtherActor);
-			}
-			// Component
-			if (OtherComp)
-			{
-				AddIgnoreComponent(OtherComp);
-			}
-		}
-	}
-
-	++CollisionCount;
-	--CollisionCountdownToDeallocate;
-
-	if (bDeallocateOnCollision && CollisionCountdownToDeallocate <= 0)
-		Cache->QueueDeallocate();
-}
-
-#pragma endregion Collision
-
 // ICsUpdate
 #pragma region
 
@@ -433,6 +256,11 @@ void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 
 	Data = BeamManagerLibrary::GetDataChecked(Context, this, Type);
+
+	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
+	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
+
+	CollisionData = BeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data);
 
 	// TODO: Need to determine best place to set LifeTime from Data
 
@@ -664,7 +492,29 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 
 void ACsBeamActorPooledImpl::Emit()
 {
+	using namespace NCsBeamActorPooledImpl::NCached;	
 
+	const FString& Context = Str::Emit;
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	UCsCoroutineScheduler* Scheduler  = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	PayloadType* Payload			  = Scheduler->AllocatePayload(UpdateGroup);
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	#define COROUTINE Emit_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &ACsBeamActorPooledImpl::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	Scheduler->Start(Payload);
 }
 
 char ACsBeamActorPooledImpl::Emit_Internal(FCsRoutine* R)
@@ -677,6 +527,191 @@ char ACsBeamActorPooledImpl::Emit_Internal(FCsRoutine* R)
 #pragma endregion Emit
 
 #pragma endregion Beam
+
+// Collision
+#pragma region
+
+void ACsBeamActorPooledImpl::AddIgnoreActor(AActor* Actor)
+{
+	IgnoreActors.Add(Actor);
+	IgnoreActorSet.Add(Actor);
+}
+
+AActor* ACsBeamActorPooledImpl::GetIgnoreActor(const int32& Index)
+{
+	if (Index >= IgnoreActors.Num())
+		return nullptr;
+	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
+}
+
+void ACsBeamActorPooledImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
+{
+	IgnoreComponents.Add(Component);
+	IgnoreComponentSet.Add(Component);
+}
+
+UPrimitiveComponent* ACsBeamActorPooledImpl::GetIgnoreComponent(const int32& Index)
+{
+	if (Index >= IgnoreComponents.Num())
+		return nullptr;
+	return IgnoreComponents[Index].IsValid() ? IgnoreComponents[Index].Get() : nullptr;
+}
+
+bool ACsBeamActorPooledImpl::IsIgnored(AActor* Actor) const
+{
+	if (!Actor)
+		return false;
+
+	return IgnoreActorSet.Find(Actor) != nullptr;
+}
+
+bool ACsBeamActorPooledImpl::IsIgnored(UPrimitiveComponent* Component) const
+{
+	if (!Component)
+		return false;
+
+	return IgnoreComponentSet.Find(Component) != nullptr;
+}
+
+void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	using namespace NCsBeamActorPooledImpl::NCached;
+
+	const FString& Context = Str::OnCollision;
+
+	if (IsIgnored(OtherActor))
+		return;
+
+	if (IsIgnored(OtherComp))
+		return;
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogBeamCollision))
+	{
+		UE_LOG(LogCsBeam, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
+
+		UE_LOG(LogCsBeam, Warning, TEXT("- CollidingComponent: %s"), CollidingComponent ? *(CollidingComponent->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("- OtherActor: %s"), OtherActor ? *(OtherActor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("- OtherComp: %s"), OtherComp ? *(OtherComp->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("- NormalImpulse: %s"), *(NormalImpulse.ToString()));
+		// HitResult
+		UE_LOG(LogCsBeam, Warning, TEXT("- Hit"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- bStartPenetrating"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Time: %f"), Hit.Time);
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Location: %s"), *(Hit.Location.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- TraceStart: %s"), *(Hit.TraceStart.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Item: %d"), Hit.Item);
+		UE_LOG(LogCsBeam, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
+	// Get Physics Surface
+	EPhysicalSurface SurfaceType	= NCsHitResult::GetPhysSurfaceType(Hit);
+
+	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
+
+	// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
+	{
+		typedef NCsBeam::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
+
+		if (ImpactVisualDataType* ImpactVisualData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+		{
+			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+			PayloadImplType Payload;
+			Payload.Instigator = Cache->GetInstigator();
+
+			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
+
+			FTransform Transform = FTransform::Identity;
+			Transform.SetLocation(Hit.Location);
+			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+			FXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
+		}
+	}
+	// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
+	{
+		typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
+
+		if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+		{
+			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+			PayloadImplType Payload;
+			Payload.Instigator = Cache->GetInstigator();
+
+			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
+
+			FTransform Transform = FTransform::Identity;
+			Transform.SetLocation(Hit.Location);
+			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+			SoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
+		}
+	}
+	// DamageDataType (NCsBeam::NData::NDamage::IDamage)
+	{
+		typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
+
+		if (DamageDataType* DamageData = BeamDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
+		{
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+			
+			// Apply Modifiers
+			DamageImpl.SetValue(DamageData->GetDamageData());
+
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+
+			DamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
+		}
+	}
+
+	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
+	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
+
+	if (CollisionDataType* CollisionData = BeamDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
+	{
+		if (CollisionData->IgnoreCollidingObjectAfterCollision())
+		{
+			// Actor
+			if (OtherActor)
+			{
+				AddIgnoreActor(OtherActor);
+			}
+			// Component
+			if (OtherComp)
+			{
+				AddIgnoreComponent(OtherComp);
+			}
+		}
+	}
+
+	++CollisionCount;
+	--CollisionCountdownToDeallocate;
+
+	if (bDeallocateOnCollision && CollisionCountdownToDeallocate <= 0)
+		Cache->QueueDeallocate();
+}
+
+#pragma endregion Collision
 
 // Damage
 #pragma region

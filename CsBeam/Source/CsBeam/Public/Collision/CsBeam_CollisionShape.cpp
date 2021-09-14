@@ -228,7 +228,7 @@ namespace NCsBeam
 			{
 				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
 
-				//CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
+				CS_IS_VECTOR_ZERO_CHECKED(GetHalfExtents())
 				return true;
 			}
 
@@ -236,7 +236,7 @@ namespace NCsBeam
 			{
 				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
 
-				//CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
+				CS_IS_VECTOR_ZERO(GetHalfExtents())
 				return true;
 			}
 
@@ -267,7 +267,9 @@ namespace NCsBeam
 			{
 				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
 
-				//CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRadius(), 0.0f);
+
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetHalfHeight(), 0.0f);
 				return true;
 			}
 
@@ -275,7 +277,9 @@ namespace NCsBeam
 			{
 				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
 
-				//CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
+				CS_IS_FLOAT_GREATER_THAN(GetRadius(), 0.0f);
+
+				CS_IS_FLOAT_GREATER_THAN(GetHalfHeight(), 0.0f);
 				return true;
 			}
 

@@ -580,7 +580,7 @@ bool UCsManager_Trace::ProcessAsyncRequest(RequestType* Request)
 	const FCollisionResponseParams& ResponseParams	= Request->ResponseParams;
 
 	const FString& TraceMethodAsString = EMCsTraceMethod::Get().ToString(Method);
-
+	
 	// Line
 	if (Type == ECsTraceType::Line)
 	{

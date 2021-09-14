@@ -236,6 +236,31 @@ namespace NCsValid
 		}
 	}
 
+	namespace NVector
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			FORCEINLINE static bool IsZeroChecked(const FString& Context, const FVector& V, const FString& VName)
+			{
+				checkf(V != FVector::ZeroVector, TEXT("%s: %s == (0.0f, 0.0f, 0.0f) or ZeroVector is NOT Valid."), *Context, *VName);
+				return true;
+			}
+
+			FORCEINLINE static bool IsZero(const FString& Context, const FVector& V, const FString& VName, void(*Log)(const FString&))
+			{
+				if (V == FVector::ZeroVector)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s == (0.0f, 0.0f, 0.0f) or ZeroVector is NOT Valid."), *Context, *VName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+
 	namespace NArray
 	{
 		struct CSCORE_API FLibrary final
@@ -707,6 +732,18 @@ namespace NCsValid
 
 #pragma endregion FString
 
+// FVector
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_VECTOR_ZERO_CHECKED(__V) \
+	{ \
+		static const FString __temp__str__ = #__V; \
+		check(NCsValid::NVector::FLibrary::IsZeroChecked(Context, __V, __temp__str__)); \
+	}
+
+#pragma endregion FVector
+
 // Array
 #pragma region
 
@@ -835,6 +872,8 @@ namespace NCsValid
 #define CS_IS_NAME_NONE_CHECKED(__A)
 // FString
 #define CS_IS_STRING_EMPTY_CHECKED(__A)
+// FVector
+#define CS_IS_VECTOR_ZERO_CHECKED(__V)
 // Array
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
@@ -1090,6 +1129,18 @@ namespace NCsValid
 	}
 
 #pragma endregion EnumStruct
+
+// FVector
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VECTOR_ZERO(__V) \
+	{ \
+		static const FString __temp__str__ = #__V; \
+		if (!NCsValid::NVector::FLibrary::IsZero(Context, __V, __temp__str__, Log)) { return false; } \
+	}
+
+#pragma endregion FVector
 
 // Array
 #pragma region

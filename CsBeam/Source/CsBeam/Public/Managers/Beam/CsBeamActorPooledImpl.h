@@ -38,6 +38,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NPayload, IPayload)
 
 struct FCsRoutine;
 
+// NCsBeam::NData::NCollision::ICollision
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NData, NCollision, ICollision)
+
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData

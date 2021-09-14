@@ -404,9 +404,7 @@ using namespace NCsBeamActorPooledImpl::NCached;
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
-
-		if (CollisionDataType* CollisionData = BeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		if (CollisionData)
 		{
 			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
 
@@ -685,9 +683,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	}
 
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
-	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
-
-	if (CollisionDataType* CollisionData = BeamDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
+	if (CollisionData)
 	{
 		if (CollisionData->IgnoreCollidingObjectAfterCollision())
 		{

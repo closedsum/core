@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Beam_Collision.h"
+#include "Collision/CsTypes_Beam_Collision.h"
 #include "CsBeam.h"
 
 // Library

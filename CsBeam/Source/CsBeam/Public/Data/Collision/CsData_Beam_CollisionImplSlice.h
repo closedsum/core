@@ -33,9 +33,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsCollisionPreset Preset;
 
-	/** Radius of the collision shape */
+	/** Describes the shape of the collision (i.e. Line, Box, Capsule, ... etc) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsBeamCollisionShape Shape;
+
+	/** Describes the rate at which collision 'passes' (sweep or trace) should be performed. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCsBeamCollisionFrequencyParams FrequencyParams;
 
 	/** Number of collisions before the beam is Off (and / or deallocated if pooled).
 		NOTE:
@@ -57,6 +61,7 @@ public:
 	FCsData_Beam_CollisionImplSlice() :
 		Preset(),
 		Shape(),
+		FrequencyParams(),
 		CollisionCount(0),
 		bIgnoreCollidingObjectAfterCollision(false),
 		IgnoreCollidingObjectClasses()
@@ -110,6 +115,7 @@ namespace NCsBeam
 				static const FName Name;
 
 			#define ShapeType NCsBeam::NCollision::NShape::FShape
+			#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
 
 			private:
 			
@@ -123,6 +129,9 @@ namespace NCsBeam
 
 				CS_DECLARE_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
 				CS_DECLARE_MEMBER_WITH_PROXY(CollisionShape, ShapeType*)
+
+				FrequencyParamsType CollisionFrequencyParams;
+
 				CS_DECLARE_MEMBER_WITH_PROXY(CollisionCount, int32)
 				CS_DECLARE_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, bool)
 				CS_DECLARE_MEMBER_WITH_PROXY(IgnoreCollidingObjectClasses, TArray<TSubclassOf<UObject>>)
@@ -132,6 +141,7 @@ namespace NCsBeam
 				FImplSlice() :
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(CollisionPreset),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionShape, nullptr),
+					CollisionFrequencyParams(),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionCount, 0),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bIgnoreCollidingObjectAfterCollision, false),
 					CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(IgnoreCollidingObjectClasses)
@@ -173,6 +183,7 @@ namespace NCsBeam
 					CollisionShape_Proxy = &CollisionShape;
 				}
 
+				FORCEINLINE FrequencyParamsType* GetCollisionFrequencyParamsPtr() { return &CollisionFrequencyParams; }
 				FORCEINLINE void SetIgnoreCollidingObjectAfterCollision(const bool& Value)
 				{
 					bIgnoreCollidingObjectAfterCollision = Value;
@@ -187,6 +198,7 @@ namespace NCsBeam
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionPreset, FCsCollisionPreset)
 
 				FORCEINLINE const ShapeType* GetCollisionShape() const { return *CollisionShape_Proxy; }
+				FORCEINLINE const FrequencyParamsType& GetCollisionFrequencyParams() const { return CollisionFrequencyParams; }
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionCount, int32)
 
@@ -209,6 +221,7 @@ namespace NCsBeam
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const;
 
 			#undef ShapeType
+			#undef FrequencyParamsType
 			};
 
 		#undef CollisionDataType

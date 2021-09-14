@@ -5,6 +5,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Collision/CsTypes_Collision.h"
+#include "Collision/CsTypes_Beam_Collision.h"
 
 #include "CsData_Beam_Collision.generated.h"
 
@@ -39,16 +40,24 @@ namespace NCsBeam
 				*/
 				virtual const FCsCollisionPreset& GetCollisionPreset() const = 0;
 
-			#define CollisionShapeType NCsBeam::NCollision::NShape::FShape
+			#define ShapeType NCsBeam::NCollision::NShape::FShape
 
 				/**
 				* Get the collision shape
 				* 
-				* return Radius
+				* return Shape
 				*/
-				virtual const CollisionShapeType* GetCollisionShape() const = 0;
+				virtual const ShapeType* GetCollisionShape() const = 0;
 
 			#undef CollisionShapeType
+
+			#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+
+				/**
+				*/
+				virtual const FrequencyParamsType& GetCollisionFrequencyParams() const = 0;
+
+			#undef FrequencyParamsType
 
 				/**
 				* Get the number of collisions before the beam
@@ -120,6 +129,14 @@ public:
 	virtual const CollisionShapeType* GetCollisionShape() const = 0;
 
 #undef CollisionShapeType
+
+#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+
+	/**
+	*/
+	virtual const FrequencyParamsType& GetCollisionFrequencyParams() const = 0;
+
+#undef FrequencyParamsType
 
 	/**
 	* Get the number of collisions before the beam

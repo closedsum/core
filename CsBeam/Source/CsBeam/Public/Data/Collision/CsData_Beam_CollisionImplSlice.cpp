@@ -60,6 +60,7 @@ void FCsData_Beam_CollisionImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetCollisionPreset(&Preset);
 	Slice->ConditionalSetCollisionShape(Shape.ConstructShape());
+	FrequencyParams.CopyToParams(Slice->GetCollisionFrequencyParamsPtr());
 	Slice->SetCollisionCount(&CollisionCount);
 	Slice->SetIgnoreCollidingObjectAfterCollision(&bIgnoreCollidingObjectAfterCollision);
 	Slice->SetIgnoreCollidingObjectClasses(&IgnoreCollidingObjectClasses);
@@ -69,6 +70,7 @@ void FCsData_Beam_CollisionImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetCollisionPreset(Preset);
 	Slice->ConditionalSetCollisionShape(Shape.ConstructShapeAsValue());
+	FrequencyParams.CopyToParamsAsValue(Slice->GetCollisionFrequencyParamsPtr());
 	Slice->SetCollisionCount(CollisionCount);
 	Slice->SetIgnoreCollidingObjectAfterCollision(bIgnoreCollidingObjectAfterCollision);
 	Slice->SetIgnoreCollidingObjectClasses(IgnoreCollidingObjectClasses);
@@ -117,6 +119,7 @@ namespace NCsBeam
 
 						const FName CollisionPreset = FName("CollisionPreset");
 						const FName CollisionShape = FName("CollisionShape");
+						const FName CollisionFrequencyParams = FName("CollisionFrequencyParams");
 						const FName CollisionCount = FName("CollisionCount");
 						const FName bIgnoreCollidingObjectAfterCollision = FName("bIgnoreCollidingObjectAfterCollision");
 						const FName IgnoreCollidingObjectClasses = FName("IgnoreCollidingObjectClasses");
@@ -167,6 +170,7 @@ namespace NCsBeam
 				{
 					FCsCollisionPreset* CollisionPresetPtr			= PropertyLibrary::GetStructPropertyValuePtr<FCsCollisionPreset>(Context, Object, Object->GetClass(), Name::CollisionPreset, nullptr);
 					FCsBeamCollisionShape* CollisionShapePtr		= PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionShape>(Context, Object, Object->GetClass(), Name::CollisionShape, nullptr);
+					FCsBeamCollisionFrequencyParams* CollisionFrequencyParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsBeamCollisionFrequencyParams>(Context, Object, Object->GetClass(), Name::CollisionFrequencyParams, nullptr);
 					int32* CollisionCountPtr						= PropertyLibrary::GetIntPropertyValuePtr(Context, Object, Object->GetClass(), Name::CollisionCount, nullptr);
 					bool* bIgnoreCollidingObjectAfterCollisionPtr	= PropertyLibrary::GetBoolPropertyValuePtr(Context, Object, Object->GetClass(), Name::bIgnoreCollidingObjectAfterCollision, nullptr);
 
@@ -174,11 +178,13 @@ namespace NCsBeam
 
 					if (CollisionPresetPtr &&
 						CollisionShapePtr &&
+						CollisionFrequencyParamsPtr &&
 						CollisionCountPtr &&
 						bIgnoreCollidingObjectAfterCollisionPtr)
 					{
 						Slice->SetCollisionPreset(CollisionPresetPtr);
 						Slice->ConditionalSetCollisionShape(CollisionShapePtr->ConstructShape());
+						CollisionFrequencyParamsPtr->CopyToParamsAsValue(Slice->GetCollisionFrequencyParamsPtr());
 						Slice->SetCollisionCount(CollisionCountPtr);
 						Slice->SetIgnoreCollidingObjectAfterCollision(bIgnoreCollidingObjectAfterCollisionPtr);
 
@@ -197,6 +203,7 @@ namespace NCsBeam
 						Log(FString::Printf(TEXT("%s: - OR"), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsCollisionPreset with name: CollisionPreset."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionShape with name: CollisionShape."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsBeamCollisionFrequencyParams with name: CollisionFrequencyParams."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: CollisionCount."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bIgnoreCollidingObjectAfterCollision."), *Context));
 						// Log(FString::Printf(TEXT("%s: - Failed to get array property of type: TSubclassOf<UObject> with name: IgnoreCollidingObjectClasses."), *Context));
@@ -211,6 +218,8 @@ namespace NCsBeam
 
 				check(GetCollisionShape()->IsValidChecked(Context));
 
+				CS_IS_VALID_CHECKED(GetCollisionFrequencyParams());
+
 				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCollisionCount(), 0)
 
 				CS_IS_ARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
@@ -224,6 +233,8 @@ namespace NCsBeam
 
 				if (!GetCollisionShape()->IsValid(Context, Log))
 					return false;
+
+				CS_IS_VALID(GetCollisionFrequencyParams());
 
 				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCollisionCount(), 0)
 

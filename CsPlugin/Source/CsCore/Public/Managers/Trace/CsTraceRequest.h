@@ -339,7 +339,8 @@ namespace NCsTrace
 				Channel = ECollisionChannel::ECC_MAX;
 				ProfileName = NAME_None;
 				Shape.ShapeType = ECollisionShape::Line;
-				Params = FCollisionQueryParams::DefaultQueryParam;
+				//Params = FCollisionQueryParams::DefaultQueryParam;
+				NCsCollisionQueryParams::Reset(Params);
 				ObjectParams = FCollisionObjectQueryParams::DefaultObjectQueryParam;
 				ResponseParams = FCollisionResponseParams::DefaultResponseParam;
 

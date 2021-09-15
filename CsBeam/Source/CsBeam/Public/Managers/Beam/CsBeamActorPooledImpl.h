@@ -42,6 +42,8 @@ struct FCsRoutine;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NData, NCollision, ICollision)
 // NCsBeam::NCollision::NParams::FFrequency
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NParams, FFrequency)
+// NCsBeam::NCollision::NShape::FShape
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
 
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
@@ -203,6 +205,7 @@ protected:
 
 	#define CollisionDataType NCsBeam::NData::NCollision::ICollision
 	#define CollisionFrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+	#define CollisionShapeType NCsBeam::NCollision::NShape::FShape
 
 	private:
 		
@@ -212,8 +215,18 @@ protected:
 	
 		CollisionFrequencyParamsType* FrequencyParams;
 
+		CollisionShapeType* Shape;
+
 		int32 CurrentCount;
 		int32 CountdownToDeallocate;
+
+		TArray<TWeakObjectPtr<const AActor>> IgnoreActors;
+
+		TSet<TWeakObjectPtr<AActor>> IgnoreActorSet;
+
+		TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
+
+		TSet<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponentSet;
 
 	public:
 
@@ -221,13 +234,29 @@ protected:
 			Outer(nullptr),
 			CollisionData(nullptr),
 			FrequencyParams(nullptr),
+			Shape(nullptr),
 			CurrentCount(0),
 			CountdownToDeallocate(0),
+			IgnoreActors(),
+			IgnoreActorSet(),
+			IgnoreComponents(),
+			IgnoreComponentSet(),
 			EmitInternalHandle()
 		{
 		}
 
 	private:
+
+		void AddIgnoreActor(AActor* Actor);
+
+		const AActor* GetIgnoreActor(const int32& Index);
+
+		void AddIgnoreComponent(UPrimitiveComponent* Component);
+
+		UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
+
+		bool IsIgnored(AActor* Actor) const;
+		bool IsIgnored(UPrimitiveComponent* Component) const;
 
 		void ConditionalEmit();
 		void Emit();
@@ -241,32 +270,10 @@ protected:
 
 	#undef CollisionDataType
 	#undef CollisionFrequencyParamsType
+	#undef CollisionShapeType
 	};
 
 	FCollisionImpl CollisionImpl;
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
-
-	UPROPERTY()
-	TSet<TWeakObjectPtr<AActor>> IgnoreActorSet;
-
-	void AddIgnoreActor(AActor* Actor);
-
-	AActor* GetIgnoreActor(const int32& Index);
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
-
-	UPROPERTY()
-	TSet<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponentSet;
-
-	void AddIgnoreComponent(UPrimitiveComponent* Component);
-
-	UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
-
-	bool IsIgnored(AActor* Actor) const;
-	bool IsIgnored(UPrimitiveComponent* Component) const;
 
 public:
 

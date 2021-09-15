@@ -131,7 +131,7 @@ bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 	else
 	if (Type == ECsBeamCollisionShapeType::Box)
 	{
-		checkf(HalfExtents != FVector::ZeroVector, TEXT("%s: HalfExtents == (0.0f, 0.0f, 0.0f) is NOT Valid."));
+		CS_IS_VECTOR_ZERO_CHECKED(HalfExtents)
 	}
 	// Capsule
 	else
@@ -159,11 +159,7 @@ bool FCsBeamCollisionShape::IsValid(const FString& Context, void(*Log)(const FSt
 	else
 	if (Type == ECsBeamCollisionShapeType::Box)
 	{
-		if (HalfExtents == FVector::ZeroVector)
-		{
-			CS_CONDITIONAL_LOG(TEXT("%s: HalfExtents == (0.0f, 0.0f, 0.0f) is NOT Valid."));
-			return false;
-		}
+		CS_IS_VECTOR_ZERO(HalfExtents)
 	}
 	// Capsule
 	else

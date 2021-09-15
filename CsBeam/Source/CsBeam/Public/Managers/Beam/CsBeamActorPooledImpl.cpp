@@ -43,6 +43,7 @@
 // Beam
 #include "Cache/CsCache_BeamImpl.h"
 #include "Payload/Damage/CsPayload_BeamModifierDamage.h"
+#include "Collision/CsBeam_CollisionShape.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Damage
@@ -131,10 +132,6 @@ ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectI
 	bOnOffDeallocate(true),
 	// Collision
 	CollisionImpl(),
-	IgnoreActors(),
-	IgnoreActorSet(),
-	IgnoreComponents(),
-	IgnoreComponentSet(),
 	bDeallocateOnCollision(true),
 	// Damage
 	DamageImpl()
@@ -285,8 +282,10 @@ void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	if (CollisionData)
 	{
 		typedef NCsBeam::NCollision::NParams::FFrequency CollisionFrequencyParamsType;
+		typedef NCsBeam::NCollision::NShape::FShape CollisionShapeType;
 
 		CollisionImpl.FrequencyParams = const_cast<CollisionFrequencyParamsType*>(&CollisionData->GetCollisionFrequencyParams());
+		CollisionImpl.Shape			  = const_cast<CollisionShapeType*>(CollisionData->GetCollisionShape());
 	}
 	CollisionImpl.CollisionData = CollisionData;
 
@@ -322,9 +321,6 @@ void ACsBeamActorPooledImpl::Deallocate_Internal()
 
 	// Collision
 	CollisionImpl.Shutdown();
-
-	IgnoreActors.Reset(IgnoreActors.Max());
-	IgnoreComponents.Reset(IgnoreComponents.Max());
 
 	// Mesh
 	typedef NCsMaterial::FLibrary MaterialLibrary;
@@ -453,13 +449,13 @@ using namespace NCsBeamActorPooledImpl::NCached;
 
 				// Instigator
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
-					AddIgnoreActor(Actor);
+					CollisionImpl.AddIgnoreActor(Actor);
 				// Owner
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetOwner()))
-					AddIgnoreActor(Actor);
+					CollisionImpl.AddIgnoreActor(Actor);
 				// Parent
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetParent()))
-					AddIgnoreActor(Actor);
+					CollisionImpl.AddIgnoreActor(Actor);
 
 				/*
 				const int32 Count = IgnoreActors.Num();
@@ -525,6 +521,48 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 
 // Collision
 #pragma region
+
+void ACsBeamActorPooledImpl::FCollisionImpl::AddIgnoreActor(AActor* Actor)
+{
+	IgnoreActors.Add(Actor);
+	IgnoreActorSet.Add(Actor);
+}
+
+const AActor* ACsBeamActorPooledImpl::FCollisionImpl::GetIgnoreActor(const int32& Index)
+{
+	if (Index >= IgnoreActors.Num())
+		return nullptr;
+	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
+}
+
+void ACsBeamActorPooledImpl::FCollisionImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
+{
+	IgnoreComponents.Add(Component);
+	IgnoreComponentSet.Add(Component);
+}
+
+UPrimitiveComponent* ACsBeamActorPooledImpl::FCollisionImpl::GetIgnoreComponent(const int32& Index)
+{
+	if (Index >= IgnoreComponents.Num())
+		return nullptr;
+	return IgnoreComponents[Index].IsValid() ? IgnoreComponents[Index].Get() : nullptr;
+}
+
+bool ACsBeamActorPooledImpl::FCollisionImpl::IsIgnored(AActor* Actor) const
+{
+	if (!Actor)
+		return false;
+
+	return IgnoreActorSet.Find(Actor) != nullptr;
+}
+
+bool ACsBeamActorPooledImpl::FCollisionImpl::IsIgnored(UPrimitiveComponent* Component) const
+{
+	if (!Component)
+		return false;
+
+	return IgnoreComponentSet.Find(Component) != nullptr;
+}
 
 void ACsBeamActorPooledImpl::FCollisionImpl::ConditionalEmit()
 {
@@ -637,7 +675,29 @@ char ACsBeamActorPooledImpl::FCollisionImpl::Emit_Internal(FCsRoutine* R)
 
 void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 {
+	using namespace NCsBeamActorPooledImpl::NCollisionImpl::NCached;
 
+	const FString& Context = Str::PerformPass;
+
+	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+	typedef NCsTrace::NRequest::FRequest RequestType;
+
+	RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, Outer);
+
+	Request->Start = Outer->GetActorLocation();
+
+	Request->Method = ECsTraceMethod::Multi;
+	Request->Query = ECsTraceQuery::ObjectType;
+
+	Request->Params.AddIgnoredActors(IgnoreActors);
+	Request->Params.AddIgnoredComponents(IgnoreComponents);
+
+	const FCsCollisionPreset& Preset = CollisionData->GetCollisionPreset();
+
+	Request->ObjectParams.AddObjectTypesToQuery(Preset.ObjectType);
+	Request->ResponseParams.CollisionResponse = Preset.CollisionResponses;
+
+	Shape->TraceChecked(Context, Outer, Request);
 }
 
 void ACsBeamActorPooledImpl::FCollisionImpl::Shutdown()
@@ -652,51 +712,14 @@ void ACsBeamActorPooledImpl::FCollisionImpl::Shutdown()
 
 	CollisionData = nullptr;
 	FrequencyParams = nullptr;
+	Shape = nullptr;
 	CurrentCount = 0;
 	CountdownToDeallocate = 0;
+	IgnoreActors.Reset(IgnoreActors.Max());
+	IgnoreActorSet.Reset();
+	IgnoreComponents.Reset(IgnoreComponents.Max());
+	IgnoreComponentSet.Reset();
 	EmitInternalHandle.Reset();
-}
-
-void ACsBeamActorPooledImpl::AddIgnoreActor(AActor* Actor)
-{
-	IgnoreActors.Add(Actor);
-	IgnoreActorSet.Add(Actor);
-}
-
-AActor* ACsBeamActorPooledImpl::GetIgnoreActor(const int32& Index)
-{
-	if (Index >= IgnoreActors.Num())
-		return nullptr;
-	return IgnoreActors[Index].IsValid() ? IgnoreActors[Index].Get() : nullptr;
-}
-
-void ACsBeamActorPooledImpl::AddIgnoreComponent(UPrimitiveComponent* Component)
-{
-	IgnoreComponents.Add(Component);
-	IgnoreComponentSet.Add(Component);
-}
-
-UPrimitiveComponent* ACsBeamActorPooledImpl::GetIgnoreComponent(const int32& Index)
-{
-	if (Index >= IgnoreComponents.Num())
-		return nullptr;
-	return IgnoreComponents[Index].IsValid() ? IgnoreComponents[Index].Get() : nullptr;
-}
-
-bool ACsBeamActorPooledImpl::IsIgnored(AActor* Actor) const
-{
-	if (!Actor)
-		return false;
-
-	return IgnoreActorSet.Find(Actor) != nullptr;
-}
-
-bool ACsBeamActorPooledImpl::IsIgnored(UPrimitiveComponent* Component) const
-{
-	if (!Component)
-		return false;
-
-	return IgnoreComponentSet.Find(Component) != nullptr;
 }
 
 void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -705,10 +728,10 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 	const FString& Context = Str::OnCollision;
 
-	if (IsIgnored(OtherActor))
+	if (CollisionImpl.IsIgnored(OtherActor))
 		return;
 
-	if (IsIgnored(OtherComp))
+	if (CollisionImpl.IsIgnored(OtherComp))
 		return;
 
 #if !UE_BUILD_SHIPPING
@@ -813,19 +836,19 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
 
-	if (CollisionDataType* CollisionData = CollisionImpl.CollisionData)
+	CollisionDataType* CollisionData = CollisionImpl.CollisionData;
 	{
 		if (CollisionData->IgnoreCollidingObjectAfterCollision())
 		{
 			// Actor
 			if (OtherActor)
 			{
-				AddIgnoreActor(OtherActor);
+				CollisionImpl.AddIgnoreActor(OtherActor);
 			}
 			// Component
 			if (OtherComp)
 			{
-				AddIgnoreComponent(OtherComp);
+				CollisionImpl.AddIgnoreComponent(OtherComp);
 			}
 		}
 	}

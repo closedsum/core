@@ -29,20 +29,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float InitialSpeed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float MaxSpeed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float GravityScale;
-
 	FCsData_BeamImplSlice() :
-		LifeTime(0.0f),
-		InitialSpeed(0.0f),
-		MaxSpeed(0.0f),
-		GravityScale(0.0f)
+		LifeTime(0.0f)
 	{
 	}
 
@@ -99,23 +87,14 @@ namespace NCsBeam
 			// BeamDataType (NCsBeam::NData::IData)
 
 			CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
-			CS_DECLARE_MEMBER_WITH_PROXY(InitialSpeed, float)
-			CS_DECLARE_MEMBER_WITH_PROXY(MaxSpeed, float)
-			CS_DECLARE_MEMBER_WITH_PROXY(GravityScale, float)
 
 		public:
 
 			FImplSlice() :
 				InterfaceMap(nullptr),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(InitialSpeed, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxSpeed, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(GravityScale, 0.0f)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(LifeTime);
-				CS_CTOR_SET_MEMBER_PROXY(InitialSpeed);
-				CS_CTOR_SET_MEMBER_PROXY(MaxSpeed);
-				CS_CTOR_SET_MEMBER_PROXY(GravityScale);
 			}
 
 			~FImplSlice(){}
@@ -139,9 +118,6 @@ namespace NCsBeam
 		public:
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(InitialSpeed, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxSpeed, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(GravityScale, float)
 
 		#pragma endregion ICsData_Beam
 

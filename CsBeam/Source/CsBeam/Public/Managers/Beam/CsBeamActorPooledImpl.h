@@ -40,6 +40,8 @@ struct FCsRoutine;
 
 // NCsBeam::NData::NCollision::ICollision
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NData, NCollision, ICollision)
+// NCsBeam::NCollision::NParams::FFrequency
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NParams, FFrequency)
 
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
@@ -108,6 +110,10 @@ public:
 protected:
 
 	FECsUpdateGroup UpdateGroup;
+
+public:
+
+	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
 
 #pragma endregion Update
 
@@ -185,26 +191,59 @@ protected:
 
 #pragma endregion Off
 
-	// Emit
-#pragma region
-protected:
-
-	void Emit();
-	char Emit_Internal(FCsRoutine* R);
-
-	FCsRoutineHandle EmitInternalHandle;
-
-#pragma endregion Emit
-
 #pragma endregion Beam
 
 // Collision
 #pragma region
 protected:
 
-#define CollisionDataType NCsBeam::NData::NCollision::ICollision
-	CollisionDataType* CollisionData;
-#undef CollisionDataType
+	struct FCollisionImpl
+	{
+		friend class ACsBeamActorPooledImpl;
+
+	#define CollisionDataType NCsBeam::NData::NCollision::ICollision
+	#define CollisionFrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
+
+	private:
+		
+		ACsBeamActorPooledImpl* Outer;
+		
+		CollisionDataType* CollisionData;
+	
+		CollisionFrequencyParamsType* FrequencyParams;
+
+		int32 CurrentCount;
+		int32 CountdownToDeallocate;
+
+	public:
+
+		FCollisionImpl() :
+			Outer(nullptr),
+			CollisionData(nullptr),
+			FrequencyParams(nullptr),
+			CurrentCount(0),
+			CountdownToDeallocate(0),
+			EmitInternalHandle()
+		{
+		}
+
+	private:
+
+		void ConditionalEmit();
+		void Emit();
+		char Emit_Internal(FCsRoutine* R);
+
+		FCsRoutineHandle EmitInternalHandle;
+
+		void PerformPass();
+
+		void Shutdown();
+
+	#undef CollisionDataType
+	#undef CollisionFrequencyParamsType
+	};
+
+	FCollisionImpl CollisionImpl;
 
 	UPROPERTY()
 	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
@@ -236,9 +275,6 @@ public:
 	bool bDeallocateOnCollision;
 
 protected:
-
-	int32 CollisionCount;
-	int32 CollisionCountdownToDeallocate;
 
 	UFUNCTION()
 	void OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

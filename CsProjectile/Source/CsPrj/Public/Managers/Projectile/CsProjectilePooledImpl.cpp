@@ -62,6 +62,7 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);	
 		}
@@ -619,7 +620,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 {
 	using namespace NCsProjectilePooledImpl::NCached;
 
-	const FString& Context = Str::Deallocate;
+	const FString& Context = Str::Deallocate_Internal;
 
 	IgnoreActors.Reset();
 
@@ -672,6 +673,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	
 	// Modifiers
 	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
+
+	Cache->Reset();
 }
 
 #pragma endregion PooledObject

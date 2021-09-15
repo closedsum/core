@@ -419,8 +419,7 @@ namespace NCsCoroutine
 			{
 				if (!UsedValues[(uint8)Type][InIndex])
 				{
-					Infos.AddDefaulted();
-					FInfo& Info = Infos.Last();
+					FInfo& Info = Infos.AddDefaulted_GetRef();
 					Info.Type	= Type;
 					Info.Index	= InIndex;
 

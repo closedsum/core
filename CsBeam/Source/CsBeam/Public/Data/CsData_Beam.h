@@ -23,27 +23,6 @@ namespace NCsBeam
 			* return
 			*/
 			virtual const float& GetLifeTime() const = 0;
-
-			/**
-			*
-			*
-			* return
-			*/
-			virtual const float& GetInitialSpeed() const = 0;
-
-			/**
-			*
-			*
-			* return
-			*/
-			virtual const float& GetMaxSpeed() const = 0;
-
-			/**
-			*
-			*
-			* return
-			*/
-			virtual const float& GetGravityScale() const = 0;
 		};
 	}
 }
@@ -68,25 +47,4 @@ public:
 	* return
 	*/
 	virtual const float& GetLifeTime() const = 0;
-
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const float& GetInitialSpeed() const = 0;
-
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const float& GetMaxSpeed() const = 0;
-
-	/**
-	* 
-	*
-	* return
-	*/
-	virtual const float& GetGravityScale() const = 0;
 };

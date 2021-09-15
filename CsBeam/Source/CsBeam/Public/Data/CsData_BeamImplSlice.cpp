@@ -64,31 +64,19 @@ SliceType* FCsData_BeamImplSlice::SafeConstruct_Internal(const FString& Context,
 void FCsData_BeamImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetLifeTime(&LifeTime);
-	Slice->SetInitialSpeed(&InitialSpeed);
-	Slice->SetMaxSpeed(&MaxSpeed);
-	Slice->SetGravityScale(&GravityScale);
 }
 
 void FCsData_BeamImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetLifeTime(LifeTime);
-	Slice->SetInitialSpeed(InitialSpeed);
-	Slice->SetMaxSpeed(MaxSpeed);
-	Slice->SetGravityScale(GravityScale);
 }
 
 #undef SliceType
 
 bool FCsData_BeamImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
-	if (MaxSpeed > 0.0f)
-	{
-		CS_IS_FLOAT_GREATER_THAN(LifeTime, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(LifeTime, 0.0f)
 
-		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(InitialSpeed, 0.0f)
-	}
-
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GravityScale, 0.0f)
 	return true;
 }
 
@@ -107,9 +95,6 @@ namespace NCsBeam
 					const FName BeamSlice = FName("BeamSlice");
 
 					const FName LifeTime = FName("LifeTime");
-					const FName InitialSpeed = FName("InitialSpeed");
-					const FName MaxSpeed = FName("MaxSpeed");
-					const FName GravityScale = FName("GravityScale");
 				}
 			}
 		}
@@ -142,21 +127,12 @@ namespace NCsBeam
 				#define CS_TEMP_GET_SAFE_FLOAT_PTR(__PropertyName) PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::__PropertyName, nullptr)
 
 				float* LifeTimePtr		= CS_TEMP_GET_SAFE_FLOAT_PTR(LifeTime);
-				float* InitialSpeedPtr  = CS_TEMP_GET_SAFE_FLOAT_PTR(InitialSpeed);
-				float* MaxSpeedPtr		= CS_TEMP_GET_SAFE_FLOAT_PTR(MaxSpeed);
-				float* GravityScalePtr	= CS_TEMP_GET_SAFE_FLOAT_PTR(GravityScale);
 
 				#undef CS_TEMP_GET_SAFE_FLOAT_PTR
 
-				if (LifeTimePtr &&
-					InitialSpeedPtr &&
-					MaxSpeedPtr &&
-					GravityScalePtr)
+				if (LifeTimePtr)
 				{
 					Slice->SetLifeTime(LifeTimePtr);
-					Slice->SetInitialSpeed(InitialSpeedPtr);
-					Slice->SetMaxSpeed(MaxSpeedPtr);
-					Slice->SetGravityScale(GravityScalePtr);
 					Success = true;
 				}
 			}
@@ -165,13 +141,10 @@ namespace NCsBeam
 			{
 				if (Log)
 				{
-					Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsBeam::NData::IData.")));
-					Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_BeamImplSlice with name: BeamSlice.")));
-					Log(FString::Printf(TEXT("%s: - OR")));
-					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: LifeTime.")));
-					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: InitialSpeed.")));
-					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: MaxSpeed.")));
-					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: GravityScale.")));
+					Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsBeam::NData::IData."), *Context));
+					Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_BeamImplSlice with name: BeamSlice."), *Context));
+					Log(FString::Printf(TEXT("%s: - OR"), *Context));
+					Log(FString::Printf(TEXT("%s: - Failed to get float property with name: LifeTime."), *Context));
 				}
 			}
 
@@ -205,27 +178,13 @@ namespace NCsBeam
 
 		bool FImplSlice::IsValidChecked(const FString& Context) const
 		{
-			if (GetMaxSpeed() > 0.0f)
-			{
-				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLifeTime(), 0.0f)
-
-				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetInitialSpeed(), 0.0f)
-			}
-
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetGravityScale(), 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetLifeTime(), 0.0f)
 			return true;
 		}
 
 		bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 		{
-			if (GetMaxSpeed() > 0.0f)
-			{
-				CS_IS_FLOAT_GREATER_THAN(GetLifeTime(), 0.0f)
-
-				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetInitialSpeed(), 0.0f)
-			}
-
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetGravityScale(), 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetLifeTime(), 0.0f)
 			return true;
 		}
 	}

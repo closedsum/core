@@ -49,7 +49,7 @@ namespace NCsBeam
 				*/
 				virtual const ShapeType* GetCollisionShape() const = 0;
 
-			#undef CollisionShapeType
+			#undef ShapeType
 
 			#define FrequencyParamsType NCsBeam::NCollision::NParams::FFrequency
 

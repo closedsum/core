@@ -37,6 +37,9 @@
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// Trace
+#include "Managers/Trace/CsTraceRequest.h"
+#include "Managers/Trace/CsTraceResponse.h"
 // Beam
 #include "Cache/CsCache_BeamImpl.h"
 #include "Payload/Damage/CsPayload_BeamModifierDamage.h"
@@ -63,22 +66,39 @@ namespace NCsBeamActorPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, OnCollision);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Deallocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Deallocate_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, On);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, PrepareOn);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, OnPrepareOn_SetModifiers);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Emit);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, Emit_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl, OnPrepareOn_SetModifiers);		
 		}
 
 		namespace Name
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsBeamActorPooledImpl, Emit_Internal);
 		}
 
 		namespace ScopedTimer
 		{
 			CS_DEFINE_CACHED_STRING(SetCollision, "ACsBeamActorPooledImpl::Launch_SetCollision");
 			CS_DEFINE_CACHED_STRING(SetTrailVisual, "ACsBeamActorPooledImpl::Launch_SetTrailVisual");
+		}
+	}
+
+	namespace NCollisionImpl
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl::FCollisionImpl, Emit);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl::FCollisionImpl, Emit_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl::FCollisionImpl, PerformPass);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsBeamActorPooledImpl::FCollisionImpl, Shutdown);
+			}
+
+			namespace Name
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsBeamActorPooledImpl::FCollisionImpl, Emit_Internal);
+			}
 		}
 	}
 
@@ -110,14 +130,12 @@ ACsBeamActorPooledImpl::ACsBeamActorPooledImpl(const FObjectInitializer& ObjectI
 		// Off
 	bOnOffDeallocate(true),
 	// Collision
-	CollisionData(nullptr),
+	CollisionImpl(),
 	IgnoreActors(),
 	IgnoreActorSet(),
 	IgnoreComponents(),
 	IgnoreComponentSet(),
 	bDeallocateOnCollision(true),
-	CollisionCount(0),
-	CollisionCountdownToDeallocate(0),
 	// Damage
 	DamageImpl()
 {
@@ -171,6 +189,7 @@ void ACsBeamActorPooledImpl::BeginPlay()
 
 	ConstructCache();
 
+	CollisionImpl.Outer = this;
 	DamageImpl.Outer = this;
 }
 
@@ -257,10 +276,19 @@ void ACsBeamActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	Data = BeamManagerLibrary::GetDataChecked(Context, this, Type);
 
+	// Cache collision related data
 	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
 	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
 
-	CollisionData = BeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data);
+	CollisionDataType* CollisionData = BeamDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data);
+
+	if (CollisionData)
+	{
+		typedef NCsBeam::NCollision::NParams::FFrequency CollisionFrequencyParamsType;
+
+		CollisionImpl.FrequencyParams = const_cast<CollisionFrequencyParamsType*>(&CollisionData->GetCollisionFrequencyParams());
+	}
+	CollisionImpl.CollisionData = CollisionData;
 
 	// TODO: Need to determine best place to set LifeTime from Data
 
@@ -290,14 +318,13 @@ void ACsBeamActorPooledImpl::Deallocate_Internal()
 {
 	using namespace NCsBeamActorPooledImpl::NCached;
 
-	const FString& Context = Str::Deallocate;
+	const FString& Context = Str::Deallocate_Internal;
 
 	// Collision
+	CollisionImpl.Shutdown();
+
 	IgnoreActors.Reset(IgnoreActors.Max());
 	IgnoreComponents.Reset(IgnoreComponents.Max());
-
-	CollisionCount = 0;
-	CollisionCountdownToDeallocate = 0;
 
 	// Mesh
 	typedef NCsMaterial::FLibrary MaterialLibrary;
@@ -314,6 +341,10 @@ void ACsBeamActorPooledImpl::Deallocate_Internal()
 	
 	// Modifiers
 	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
+
+	Data = nullptr;
+
+	Cache->Reset();
 }
 
 #pragma endregion PooledObject
@@ -323,6 +354,7 @@ void ACsBeamActorPooledImpl::Deallocate_Internal()
 
 void ACsBeamActorPooledImpl::On()
 {
+	CollisionImpl.ConditionalEmit();
 }
 
 void ACsBeamActorPooledImpl::Off()
@@ -398,13 +430,17 @@ using namespace NCsBeamActorPooledImpl::NCached;
 	}
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 	{
+		// TODO: Move Into CollisionImpl
+
 		const FString& ScopeName		   = ScopedTimer::SetCollision;
 		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Beam;
 		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogBeamScopedTimerPrepareOnSetCollision;
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-		if (CollisionData)
+		typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
+
+		if (CollisionDataType* CollisionData = CollisionImpl.CollisionData)
 		{
 			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
 
@@ -455,7 +491,7 @@ using namespace NCsBeamActorPooledImpl::NCached;
 				*/
 			}
 
-			CollisionCountdownToDeallocate = CollisionData->GetCollisionCount();
+			CollisionImpl.CountdownToDeallocate = CollisionData->GetCollisionCount();
 		}
 	}
 	SetActorTickEnabled(true);
@@ -485,49 +521,141 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 
 #pragma endregion On
 
-	// Emit
+#pragma endregion Beam
+
+// Collision
 #pragma region
 
-void ACsBeamActorPooledImpl::Emit()
+void ACsBeamActorPooledImpl::FCollisionImpl::ConditionalEmit()
 {
-	using namespace NCsBeamActorPooledImpl::NCached;	
+	if (CollisionData)
+		Emit();
+}
+
+void ACsBeamActorPooledImpl::FCollisionImpl::Emit()
+{
+	using namespace NCsBeamActorPooledImpl::NCollisionImpl::NCached;	
 
 	const FString& Context = Str::Emit;
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	UCsCoroutineScheduler* Scheduler  = CoroutineSchedulerLibrary::GetChecked(Context, this);
-	PayloadType* Payload			  = Scheduler->AllocatePayload(UpdateGroup);
+	UCsCoroutineScheduler* Scheduler  = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
+	const FECsUpdateGroup& Group	  = Outer->GetUpdateGroup();
+	PayloadType* Payload			  = Scheduler->AllocatePayload(Group);
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
 	#define COROUTINE Emit_Internal
 
-	Payload->CoroutineImpl.BindUObject(this, &ACsBeamActorPooledImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
-	Payload->Owner.SetObject(this);
+	Payload->CoroutineImpl.BindRaw(this, &ACsBeamActorPooledImpl::FCollisionImpl::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Group);
+	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
 
 	#undef COROUTINE
 
+	static const int32 LIFETIME = 0;
+	Payload->SetValue_Float(LIFETIME, Outer->GetData()->GetLifeTime());
+
 	Scheduler->Start(Payload);
 }
 
-char ACsBeamActorPooledImpl::Emit_Internal(FCsRoutine* R)
+char ACsBeamActorPooledImpl::FCollisionImpl::Emit_Internal(FCsRoutine* R)
 {
+	static const int32 LIFETIME = 0;
+	const float& LifeTime = R->GetValue_Float(LIFETIME);
+
+	static const int32 CAN_EMIT = 0;
+	bool& CanEmit = R->GetValue_Flag(CAN_EMIT);
+
+	static const int32 HAS_INTERVAL = 1;
+	bool& HasInterval = R->GetValue_Flag(HAS_INTERVAL);
+
+	static const int32 SHOULD_YIELD = 2;
+	bool& ShouldYield = R->GetValue_Flag(SHOULD_YIELD);
+
+	static const int32 CURRENT_PASS_COUNT = 0;
+	int32& CurrentPassCount = R->GetValue_Int(CURRENT_PASS_COUNT);
+
+	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
+	ElapsedTime += R->DeltaTime;
+
+	typedef NCsBeam::NCollision::EFrequency FrequencyType;
+
+	const FrequencyType& Frequency = FrequencyParams->GetType();
+
 	CS_COROUTINE_BEGIN(R)
+
+	do 
+	{
+		{
+
+			ElapsedTime.Reset();
+
+			PerformPass();
+
+			// Once
+			if (Frequency == FrequencyType::Once)
+			{
+				CanEmit = false;
+			}
+			// Count | TimeCount | TimeInterval
+			else
+			if (Frequency == FrequencyType::Count ||
+				Frequency == FrequencyType::TimeCount ||
+				Frequency == FrequencyType::TimeInterval)
+			{
+				CanEmit		= CurrentPassCount < FrequencyParams->GetCount();
+				HasInterval = CanEmit && FrequencyParams->GetInterval() > 0.0f;
+			}
+			// Infinite
+			else
+			if (Frequency == FrequencyType::Infinite)
+			{
+				CanEmit		= LifeTime == 0.0f || ElapsedTime.Time < LifeTime;
+				HasInterval = CanEmit && FrequencyParams->GetInterval() > 0.0f;
+				ShouldYield = !HasInterval;
+			}
+
+			if (HasInterval)
+			{
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams->GetInterval());
+			}
+			else
+			if (ShouldYield)
+			{
+				CS_COROUTINE_YIELD(R);
+			}
+		}
+	} while(CanEmit);
 
 	CS_COROUTINE_END(R)
 }
 
-#pragma endregion Emit
+void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
+{
 
-#pragma endregion Beam
+}
 
-// Collision
-#pragma region
+void ACsBeamActorPooledImpl::FCollisionImpl::Shutdown()
+{
+	using namespace NCsBeamActorPooledImpl::NCollisionImpl::NCached;
+
+	const FString& Context = Str::Shutdown;
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	CoroutineSchedulerLibrary::SafeEnd(Outer, Outer->GetUpdateGroup(), EmitInternalHandle);
+
+	CollisionData = nullptr;
+	FrequencyParams = nullptr;
+	CurrentCount = 0;
+	CountdownToDeallocate = 0;
+	EmitInternalHandle.Reset();
+}
 
 void ACsBeamActorPooledImpl::AddIgnoreActor(AActor* Actor)
 {
@@ -683,7 +811,9 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	}
 
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
-	if (CollisionData)
+	typedef NCsBeam::NData::NCollision::ICollision CollisionDataType;
+
+	if (CollisionDataType* CollisionData = CollisionImpl.CollisionData)
 	{
 		if (CollisionData->IgnoreCollidingObjectAfterCollision())
 		{
@@ -700,10 +830,10 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 		}
 	}
 
-	++CollisionCount;
-	--CollisionCountdownToDeallocate;
+	++CollisionImpl.CurrentCount;
+	--CollisionImpl.CountdownToDeallocate;
 
-	if (bDeallocateOnCollision && CollisionCountdownToDeallocate <= 0)
+	if (bDeallocateOnCollision && CollisionImpl.CountdownToDeallocate <= 0)
 		Cache->QueueDeallocate();
 }
 

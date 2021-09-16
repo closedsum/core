@@ -9,7 +9,7 @@
 // Log
 #include "Utility/CsWpLog.h"
 
-#include "CsParams_BeamWeapon_Trace.generated.h"
+#include "CsParams_BeamWeapon_Beam.generated.h"
 
 // BeamWeaponLaunchLocation
 #pragma region

@@ -11,7 +11,7 @@
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Data/CsLibrary_Data_Beam.h"
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Beam/Data/Params/CsLibrary_Params_BeamWeapon_Trace.h"
+#include "Beam/Data/Params/CsLibrary_Params_BeamWeapon_Beam.h"
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Valid.h"

@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Beam/Data/Params/CsLibrary_Params_BeamWeapon_Trace.h"
+#include "Beam/Data/Params/CsLibrary_Params_BeamWeapon_Beam.h"
 
 // Types
 #include "Types/CsTypes_Macro.h"

@@ -52,6 +52,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Direction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector Scale;
+
 	FCsPayload_Beam() :
 		Instigator(nullptr),
 		Owner(nullptr),
@@ -59,7 +62,8 @@ public:
 		PreserveChangesFromDefaultMask(0),
 		Type(),
 		Location(0.0f),
-		Direction(0.0f)
+		Direction(0.0f),
+		Scale(0.0f)
 	{
 	}
 
@@ -121,9 +125,11 @@ namespace NCsBeam
 
 			FECsBeam Type;
 
+			FVector Location;
+
 			FVector Direction;
 
-			FVector Location;
+			FVector Scale;
 
 		public:
 
@@ -134,10 +140,7 @@ namespace NCsBeam
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -174,8 +177,9 @@ namespace NCsBeam
 		public:
 
 			FORCEINLINE const FECsBeam& GetType() const { return Type; }
-			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
+			FORCEINLINE const FVector& GetDirection() const { return Direction; }
+			FORCEINLINE const FVector& GetScale() const { return Scale; }
 
 		#pragma endregion BeamPayloadType (NCsBeam::NPayload::IPayload)
 		};

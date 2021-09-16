@@ -10,18 +10,19 @@
 // BeamCollisionShapeLength
 #pragma region
 
-namespace NCsBeamCollisionShapeLength
+namespace NCsBeamCollisionShapeScale
 {
 	namespace Ref
 	{
-		typedef EMCsBeamCollisionShapeLength EnumMapType;
+		typedef EMCsBeamCollisionShapeScale EnumMapType;
 
-		CSBEAM_API CS_ADD_TO_ENUM_MAP(Fixed);
-		CSBEAM_API CS_ADD_TO_ENUM_MAP(Scaled);
-		CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamCollisionShapeLength_MAX, "MAX");
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Default);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP(Owner);
+		CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(OwnerAsScalar, "Owner as Scalar");
+		CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamCollisionShapeScale_MAX, "MAX");
 	}
 
-	CSBEAM_API const uint8 MAX = (uint8)Type::ECsBeamCollisionShapeLength_MAX;
+	CSBEAM_API const uint8 MAX = (uint8)Type::ECsBeamCollisionShapeScale_MAX;
 }
 
 namespace NCsBeam
@@ -30,22 +31,23 @@ namespace NCsBeam
 	{
 		namespace NShape
 		{
-			namespace NLength
+			namespace NScale
 			{
 				namespace Ref
 				{
-					typedef EMLength EnumMapType;
+					typedef EMScale EnumMapType;
 
-					CSBEAM_API CS_ADD_TO_ENUM_MAP(Fixed);
-					CSBEAM_API CS_ADD_TO_ENUM_MAP(Scaled);
-					CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(ELength_MAX, "MAX");
+					CSBEAM_API CS_ADD_TO_ENUM_MAP(Default);
+					CSBEAM_API CS_ADD_TO_ENUM_MAP(Owner);
+					CSBEAM_API CS_ADD_TO_ENUM_MAP(OwnerAsScalar);
+					CSBEAM_API CS_ADD_TO_ENUM_MAP_CUSTOM(EScale_MAX, "MAX");
 				}
 			}
 		}
 	}
 }
 
-#pragma endregion BeamCollisionShapeLength
+#pragma endregion BeamCollisionShapeScale
 
 // BeamCollisionShapeType
 #pragma region
@@ -74,13 +76,13 @@ namespace NCsBeamCollisionShapeType
 
 void FCsBeamCollisionShape::CopyToShape(LineType* Shape)
 {
-	Shape->SetLengthType((NCsBeam::NCollision::NShape::ELength*)&LengthType);
+	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale*)&ScaleType);
 	Shape->SetLength(&Length);
 }
 
 void FCsBeamCollisionShape::CopyToShapeAsValue(LineType* Shape) const
 {
-	Shape->SetLengthType((NCsBeam::NCollision::NShape::ELength)LengthType);
+	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale)ScaleType);
 	Shape->SetLength(Length);
 }
 
@@ -118,7 +120,7 @@ ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue() const
 
 bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 {
-	check(EMCsBeamCollisionShapeLength::Get().IsValidEnumChecked(Context, LengthType));
+	check(EMCsBeamCollisionShapeScale::Get().IsValidEnumChecked(Context, ScaleType));
 
 	check(EMCsBeamCollisionShapeType::Get().IsValidEnumChecked(Context, Type));
 
@@ -146,7 +148,7 @@ bool FCsBeamCollisionShape::IsValidChecked(const FString& Context) const
 
 bool FCsBeamCollisionShape::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
-	CS_IS_ENUM_VALID(EMCsBeamCollisionShapeLength, ECsBeamCollisionShapeLength, LengthType)
+	CS_IS_ENUM_VALID(EMCsBeamCollisionShapeScale, ECsBeamCollisionShapeScale, ScaleType)
 
 	CS_IS_ENUM_VALID(EMCsBeamCollisionShapeType, ECsBeamCollisionShapeType, Type)
 
@@ -183,7 +185,7 @@ namespace NCsBeam
 
 			bool FLine::IsValidChecked(const FString& Context) const
 			{
-				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
+				check(EMScale::Get().IsValidEnumChecked(Context, GetScaleType()));
 
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLength(), 0.0f);
 				return true;
@@ -191,7 +193,7 @@ namespace NCsBeam
 
 			bool FLine::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
-				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
+				CS_IS_ENUM_VALID(EMScale, EScale, GetScaleType())
 
 				CS_IS_FLOAT_GREATER_THAN(GetLength(), 0.0f);
 				return true;
@@ -199,16 +201,10 @@ namespace NCsBeam
 
 			#define ResponseType NCsTrace::NResponse::FResponse
 			#define RequestType NCsTrace::NRequest::FRequest
-			ResponseType* FLine::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const
+			ResponseType* FLine::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const
 			{
 			#undef ResponseType
 			#undef RequestType
-
-				if (GetLengthType() == ELength::Fixed)
-				{
-					const FVector Dir = (Request->End - Request->Start).GetSafeNormal();
-					Request->End	  = Request->Start + GetLength() * Dir;
-				}
 
 				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 
@@ -222,7 +218,7 @@ namespace NCsBeam
 
 			bool FBox::IsValidChecked(const FString& Context) const
 			{
-				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
+				check(EMScale::Get().IsValidEnumChecked(Context, GetScaleType()));
 
 				CS_IS_VECTOR_ZERO_CHECKED(GetHalfExtents())
 				return true;
@@ -230,7 +226,7 @@ namespace NCsBeam
 
 			bool FBox::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
-				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
+				CS_IS_ENUM_VALID(EMScale, EScale, GetScaleType())
 
 				CS_IS_VECTOR_ZERO(GetHalfExtents())
 				return true;
@@ -238,16 +234,10 @@ namespace NCsBeam
 
 			#define ResponseType NCsTrace::NResponse::FResponse
 			#define RequestType NCsTrace::NRequest::FRequest
-			ResponseType* FBox::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const
+			ResponseType* FBox::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const
 			{
 			#undef ResponseType
 			#undef RequestType
-
-				if (GetLengthType() == ELength::Fixed)
-				{
-					//const FVector Dir = (Request->End - Request->Start).GetSafeNormal();
-					//Request->End	  = Request->Start + GetLength() * Dir;
-				}
 
 				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 
@@ -261,7 +251,7 @@ namespace NCsBeam
 
 			bool FCapsule::IsValidChecked(const FString& Context) const
 			{
-				check(EMLength::Get().IsValidEnumChecked(Context, GetLengthType()));
+				check(EMScale::Get().IsValidEnumChecked(Context, GetScaleType()));
 
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRadius(), 0.0f);
 
@@ -271,7 +261,7 @@ namespace NCsBeam
 
 			bool FCapsule::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 			{
-				CS_IS_ENUM_VALID(EMLength, ELength, GetLengthType())
+				CS_IS_ENUM_VALID(EMScale, EScale, GetScaleType())
 
 				CS_IS_FLOAT_GREATER_THAN(GetRadius(), 0.0f);
 
@@ -281,16 +271,10 @@ namespace NCsBeam
 
 			#define ResponseType NCsTrace::NResponse::FResponse
 			#define RequestType NCsTrace::NRequest::FRequest
-			ResponseType* FCapsule::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const
+			ResponseType* FCapsule::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const
 			{
 			#undef ResponseType
 			#undef RequestType
-
-				if (GetLengthType() == ELength::Fixed)
-				{
-					//const FVector Dir = (Request->End - Request->Start).GetSafeNormal();
-					//Request->End	  = Request->Start + GetLength() * Dir;
-				}
 
 				typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 

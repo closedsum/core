@@ -23,9 +23,11 @@ namespace NCsBeam
 
 			virtual const FECsBeam& GetType() const = 0;
 
+			virtual const FVector& GetLocation() const = 0;
+
 			virtual const FVector& GetDirection() const = 0;
 
-			virtual const FVector& GetLocation() const = 0;
+			virtual const FVector& GetScale() const = 0;
 		};
 	}
 }

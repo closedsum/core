@@ -44,6 +44,7 @@
 #include "Cache/CsCache_BeamImpl.h"
 #include "Payload/Damage/CsPayload_BeamModifierDamage.h"
 #include "Collision/CsBeam_CollisionShape.h"
+#include "CsGetBeamScale.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Damage
@@ -417,12 +418,48 @@ using namespace NCsBeamActorPooledImpl::NCached;
 		}
 	}
 	
-	// TODO: Handle Attach and / or orientation
-	{
-		const FVector& Direction = Payload->GetDirection();
-		FRotator Rotation		 = Direction.Rotation();
+	typedef NCsBeam::NPayload::FLibrary BeamPayloadLibrary;
+	typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
 
-		TeleportTo(Payload->GetLocation(), Rotation, false, true);
+	PooledPayloadType* PooledPayload = BeamPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+
+	// Handle Orientation
+	{
+		// Check Parent is set
+		USceneComponent* Parent = nullptr;
+
+		UObject* Object = PooledPayload->GetParent();
+
+		// SceneComponent
+		if (USceneComponent* Component = Cast<USceneComponent>(Object))
+			Parent = Component;
+		// Actor -> Get RootComponent
+		else
+		if (AActor* Actor = Cast<AActor>(Object))
+			Parent = Actor->GetRootComponent();
+
+		// Attach to Parent
+		if (Parent)
+		{
+			const ECsAttachmentTransformRules Rule = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			const FName Bone					   = NAME_None;
+
+			const FVector Scale = GetActorScale3D();
+
+			MeshComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			MeshComponent->SetWorldScale3D(Scale * Payload->GetScale());
+		}
+		// Teleport / Set Orientation
+		else
+		{
+			const FVector& Direction = Payload->GetDirection();
+			FRotator Rotation		= Direction.Rotation();
+
+			TeleportTo(Payload->GetLocation(), Rotation, false, true);
+
+			const FVector Scale = GetActorScale3D();
+			SetActorScale3D(Scale * Payload->GetScale());
+		}
 	}
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
 	{
@@ -442,11 +479,6 @@ using namespace NCsBeamActorPooledImpl::NCached;
 
 			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
 			{
-				typedef NCsBeam::NPayload::FLibrary BeamPayloadLibrary;
-				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-
-				PooledPayloadType* PooledPayload = BeamPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
-
 				// Instigator
 				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
 					CollisionImpl.AddIgnoreActor(Actor);
@@ -679,12 +711,24 @@ void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 
 	const FString& Context = Str::PerformPass;
 
+	void(*Log)(const FString&) = NCsBeam::FLog::Warning;
+
 	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 	typedef NCsTrace::NRequest::FRequest RequestType;
 
 	RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, Outer);
 
 	Request->Start = Outer->GetActorLocation();
+	
+	const FVector Dir = Outer->GetActorRotation().Vector();
+
+	FVector Scale = FVector::OneVector;
+
+	if (UObject* MyOwner = Outer->GetCache()->GetOwner())
+	{
+		ICsGetBeamScale* GetBeamScale = CS_INTERFACE_CAST(MyOwner, UObject, ICsGetBeamScale);
+		Scale						  = GetBeamScale->GetBeamScale();
+	}
 
 	Request->Method = ECsTraceMethod::Multi;
 	Request->Query = ECsTraceQuery::ObjectType;
@@ -697,7 +741,7 @@ void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 	Request->ObjectParams.AddObjectTypesToQuery(Preset.ObjectType);
 	Request->ResponseParams.CollisionResponse = Preset.CollisionResponses;
 
-	Shape->TraceChecked(Context, Outer, Request);
+	Shape->TraceChecked(Context, Outer, Request, Dir, Scale);
 }
 
 void ACsBeamActorPooledImpl::FCollisionImpl::Shutdown()

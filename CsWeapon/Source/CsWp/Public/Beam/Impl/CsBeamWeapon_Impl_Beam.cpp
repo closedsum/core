@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Beam/Impl/CsBeamWeapon_Impl_Trace.h"
+#include "Beam/Impl/CsBeamWeapon_Impl_Beam.h"
 #include "CsWp.h"
 
 // CVar
@@ -42,7 +42,7 @@ namespace NCsWeapon
 					namespace Str
 					{
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, SetBeamData);
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetStart);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetLocation);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetDirection);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetEnd);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, OnHit);
@@ -133,17 +133,17 @@ namespace NCsWeapon
 
 				#define DataType NCsWeapon::NData::IData
 
-				FVector FImpl::GetStart(DataType* Data)
+				FVector FImpl::GetLocation(DataType* Data)
 				{
 					using namespace NCached;
 
-					const FString& ScopeName		   = Str::GetStart;
+					const FString& ScopeName		   = Str::GetLocation;
 					const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponBeam;
 					const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponBeamScopedTimerBeamGetLocation;
 
 					CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
-					const FString& Context = Str::GetStart;
+					const FString& Context = Str::GetLocation;
 
 					// Get Data Slice
 					typedef NCsWeapon::NBeam::NData::IData WeaponDataType;
@@ -349,71 +349,6 @@ namespace NCsWeapon
 					return FVector::ZeroVector;
 				}
 
-				#undef DataType
-
-				void FImpl::OnHit(const FHitResult& Hit)
-				{
-					using namespace NCached;
-
-					const FString& Context = Str::OnHit;
-
-				#if !UE_BUILD_SHIPPING
-					if (CS_CVAR_LOG_IS_SHOWING(LogWeaponBeamBeamCollision))
-					{
-						UE_LOG(LogCsWp, Warning, TEXT("%s (%s):"), *Context, *(Outer->GetName()));
-
-						// HitResult
-						UE_LOG(LogCsWp, Warning, TEXT("- Hit"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- bStartPenetrating"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- Time: %f"), Hit.Time);
-						UE_LOG(LogCsWp, Warning, TEXT("-- Location: %s"), *(Hit.Location.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- BeamStart: %s"), *(Hit.TraceStart.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- BeamEnd: %s"), *(Hit.TraceEnd.ToString()));
-						UE_LOG(LogCsWp, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
-						UE_LOG(LogCsWp, Warning, TEXT("-- Item: %d"), Hit.Item);
-						UE_LOG(LogCsWp, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
-					}
-				#endif // #if !UE_BUILD_SHIPPING
-
-					// Get Physics Surface
-					UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
-					EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
-
-					// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
-					FXImpl->TryImpact(BeamData, Hit);
-
-					// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
-					SoundImpl->TryImpact(BeamData, Hit);
-
-					// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
-					/*
-					{
-						typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
-						typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-						if (DamageDataType* DamageData = BeamDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, BeamData))
-						{
-							typedef NCsDamage::NEvent::FResource DamageEventResourceType;
-
-							const DamageEventResourceType* Event = OnHit_CreateDamageEvent(Hit);
-
-							OnBroadcastDamage_Event.Broadcast(Event->Get());
-							OnBroadcastDamageContainer_Event.Broadcast(Event);
-						}
-					}
-					*/
-				}
-
-				#define DataType NCsWeapon::NData::IData
-
 				void FImpl::LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit)
 				{
 					//CS_SCOPED_TIMER(LineBeamScopedHandle);
@@ -473,6 +408,8 @@ namespace NCsWeapon
 						//Settings->BeamWeaponImpl.Debug.DrawLineBeam.Draw(Outer->GetWorld(), Start, End, OutHit);
 					}
 				#endif // #if !UE_BUILD_SHIPPING
+
+					checkf(0, TEXT("NOT IMPLEMENTED"));
 				}
 
 				void FImpl::Emit(DataType* Data)
@@ -483,63 +420,8 @@ namespace NCsWeapon
 
 					const FString& Context = Str::Beam;
 
-					const FVector Start = GetStart(Data);
-					const FVector End	= Start;//GetEnd(Data, Start);
-
-					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-					typedef NCsTrace::NRequest::FRequest RequestType;
-					
-					UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
-	
-					RequestType* Request = Manager_Trace->AllocateRequest();
-					Request->Start = Start;
-					Request->End   = End;
-
-					// Get collision information related to the trace.
-					typedef NCsWeapon::NBeam::NData::IData WeaponBeamDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-					typedef NCsWeapon::NBeam::NParams::NBeam::IBeam BeamParamsType;
-					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
-
-					WeaponBeamDataType* WeaponBeamData = WeaponDataLibrary::GetInterfaceChecked<WeaponBeamDataType>(Context, Data);
-					const BeamParamsType* BeamParams   = WeaponBeamData->GetBeamParams();
-
-					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
-					/*
-					const FCollisionShape& Shape = BeamParams->GetShape();
-
-					Request->Type = ECsTraceType::Line;
-					Request->Method = ECsTraceMethod::Single;
-					Request->Query  = ECsTraceQuery::ObjectType;
-
-					Request->Shape = Shape;
-
-					// For now assume trace via ObjectType
-					const TArray<ECollisionChannel>& ObjectTypes = BeamParams->GetObjectTypes();
-
-					for (const ECollisionChannel& ObjectType : ObjectTypes)
-					{
-						Request->ObjectParams.AddObjectTypesToQuery(ObjectType);
-					}
-
-					typedef NCsBeam::NResponse::FResponse ResponseType;
-
-					ResponseType* Response = Manager_Beam->Beam(Request);
-	
-				#if !UE_BUILD_SHIPPING
-					if (FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::DrawWeaponBeamBeam))
-					{
-						UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
-						const FHitResult& Hit		= Response->bResult ? Response->OutHits[CS_FIRST] : NCsCollision::NHit::Default;
-
-						//Settings->BeamWeaponImpl.Debug.DrawBeam.Draw(Outer->GetWorld(), Start, End, &Shape, Hit);
-					}
-
-				#endif // #if !UE_BUILD_SHIPPING
-
-					if (Response->bResult)
-						OnHit(Response->OutHits[CS_FIRST]);
-					*/
+					const FVector Location = GetLocation(Data);
+					const FVector Direction	= GetDirection(Data, Location);
 				}
 
 				#undef DataType

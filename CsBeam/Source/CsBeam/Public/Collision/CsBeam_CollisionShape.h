@@ -7,34 +7,42 @@
 
 #include "CsBeam_CollisionShape.generated.h"
 
-// BeamCollisionShapeLength
+// BeamCollisionShapeScale
 #pragma region
 
 /**
 * 
 */
 UENUM(BlueprintType)
-enum class ECsBeamCollisionShapeLength : uint8
+enum class ECsBeamCollisionShapeScale : uint8
 {
-	Fixed							UMETA(DisplayName = "Fixed"),
-	Scaled							UMETA(DisplayName = "Scaled"),
-	ECsBeamCollisionShapeLength_MAX	UMETA(Hidden),
+	/** The scale is determined by Beam's collision data (NCsBeam::NData::NCollision::ICollision). */
+	Default							UMETA(DisplayName = "Default"),
+	/** The scale is determined by the Owner of the Beam. 
+		Owner must implement the interface: ICsGetBeamScale. */
+	Owner							UMETA(DisplayName = "Owner"),
+	/** The scale is the product of a scalar from the Owner of the Beam
+		and the Beam's collision data (NCsBeam::NData::NCollision::ICollision).
+		Owner must implement the interface: ICsGetBeamScale. */
+	OwnerAsScalar					UMETA(DisplayName = "Owner as Scalar"),
+	ECsBeamCollisionShapeScale_MAX	UMETA(Hidden),
 };
 
-struct CSBEAM_API EMCsBeamCollisionShapeLength : public TCsEnumMap<ECsBeamCollisionShapeLength>
+struct CSBEAM_API EMCsBeamCollisionShapeScale : public TCsEnumMap<ECsBeamCollisionShapeScale>
 {
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBeamCollisionShapeLength, ECsBeamCollisionShapeLength)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBeamCollisionShapeScale, ECsBeamCollisionShapeScale)
 };
 
-namespace NCsBeamCollisionShapeLength
+namespace NCsBeamCollisionShapeScale
 {
-	typedef ECsBeamCollisionShapeLength Type;
+	typedef ECsBeamCollisionShapeScale Type;
 
 	namespace Ref
 	{
-		extern CSBEAM_API const Type Fixed;
-		extern CSBEAM_API const Type Scaled;
-		extern CSBEAM_API const Type ECsBeamCollisionShapeLength_MAX;
+		extern CSBEAM_API const Type Default;
+		extern CSBEAM_API const Type Owner;
+		extern CSBEAM_API const Type OwnerAsScale;
+		extern CSBEAM_API const Type ECsBeamCollisionShapeScaleMAX;
 	}
 
 	extern CSBEAM_API const uint8 MAX;
@@ -46,34 +54,42 @@ namespace NCsBeam
 	{
 		namespace NShape
 		{
-			enum class ELength : uint8
+			enum class EScale : uint8
 			{
-				Fixed,
-				Scaled,
-				ELength_MAX
+				Default,
+				Owner,
+				OwnerAsScalar,
+				EScale_MAX
 			};
 
-			struct CSBEAM_API EMLength : public TCsEnumMap<ELength>
+			struct CSBEAM_API EMScale : public TCsEnumMap<EScale>
 			{
-				CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMLength, ELength)
+				CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMScale, EScale)
 			};
 
-			namespace NLength
+			namespace NScale
 			{
-				typedef ELength Type;
+				typedef EScale Type;
 
 				namespace Ref
 				{
-					extern CSBEAM_API const Type Fixed;
-					extern CSBEAM_API const Type Scaled;
-					extern CSBEAM_API const Type ECsBeamCollisionShapeLength_MAX;
+					/** The scale is determined by Beam's collision data (NCsBeam::NData::NCollision::ICollision). */
+					extern CSBEAM_API const Type Default;
+					/** The scale is determined by the Owner of the Beam.
+						Owner must implement the interface: ICsGetBeamScale. */
+					extern CSBEAM_API const Type Owner;
+					/** The scale is the product of a scalar from the Owner of the Beam
+		`				and the Beam's collision data (NCsBeam::NData::NCollision::ICollision).
+						Owner must implement the interface: ICsGetBeamScale. */
+					extern CSBEAM_API const Type OwnerAsScalar;
+					extern CSBEAM_API const Type EScale_MAX;
 				}
 			}
 		}
 	}
 }
 
-#pragma endregion BeamCollisionShapeLength
+#pragma endregion BeamCollisionShapeScale
 
 // BeamCollisionShapeType 
 #pragma region
@@ -133,8 +149,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsBeamCollisionShapeType Type;
 
+	/** Describes how the dimesions of the collision shape will be scaled. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ECsBeamCollisionShapeLength LengthType;
+	ECsBeamCollisionShapeScale ScaleType;
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Line */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
@@ -154,6 +171,7 @@ public:
 
 	FCsBeamCollisionShape() :
 		Type(ECsBeamCollisionShapeType::Line),
+		ScaleType(ECsBeamCollisionShapeScale::Default),
 		Length(0.0f),
 		HalfExtents(0.0f),
 		Radius(0.0f),
@@ -204,88 +222,88 @@ namespace NCsBeam
 				virtual bool IsValidChecked(const FString& Context) const { return false; };
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const { return false; };
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const { return nullptr; };
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const { return nullptr; };
 			};
 
 			struct CSBEAM_API FLine : public FShape
 			{
 			private:
 
-				CS_DECLARE_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DECLARE_MEMBER_WITH_PROXY(ScaleType, EScale)
 				CS_DECLARE_MEMBER_WITH_PROXY(Length, float)
 
 			public:
 
 				FLine() :
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(LengthType, ELength::Scaled),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(ScaleType, EScale::Default),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Length, 0.0f)
 				{
-					CS_CTOR_SET_MEMBER_PROXY(LengthType);
+					CS_CTOR_SET_MEMBER_PROXY(ScaleType);
 					CS_CTOR_SET_MEMBER_PROXY(Length);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ScaleType, EScale)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Length, float)
 
 				virtual bool IsValidChecked(const FString& Context) const override;
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const override;
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const override;
 			};
 
 			struct CSBEAM_API FBox : public FShape
 			{
 			public:
 
-				CS_DECLARE_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DECLARE_MEMBER_WITH_PROXY(ScaleType, EScale)
 
 				/** Z component is in the direction of box oriented. 
 					(i.e. the Z component will get scaled if LengthType (NCsBeam::NCollision::NShape::ELength) == ELength::Fixed. */
 				CS_DECLARE_MEMBER_WITH_PROXY(HalfExtents, FVector)
 
 				FBox() :
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(LengthType, ELength::Scaled),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(ScaleType, EScale::Default),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(HalfExtents, FVector::ZeroVector)
 				{
-					CS_CTOR_SET_MEMBER_PROXY(LengthType);
+					CS_CTOR_SET_MEMBER_PROXY(ScaleType);
 					CS_CTOR_SET_MEMBER_PROXY(HalfExtents);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ScaleType, EScale)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HalfExtents, FVector)
 
 				virtual bool IsValidChecked(const FString& Context) const override;
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const override;
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const override;
 			};
 
 			struct CSBEAM_API FCapsule : public FShape
 			{
 			public:
 
-				CS_DECLARE_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DECLARE_MEMBER_WITH_PROXY(ScaleType, EScale)
 				CS_DECLARE_MEMBER_WITH_PROXY(Radius, float)
 				CS_DECLARE_MEMBER_WITH_PROXY(HalfHeight, float)
 
 				FCapsule() :
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(LengthType, ELength::Scaled),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(ScaleType, EScale::Default),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Radius, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(HalfHeight, 0.0f)
 				{
-					CS_CTOR_SET_MEMBER_PROXY(LengthType);
+					CS_CTOR_SET_MEMBER_PROXY(ScaleType);
 					CS_CTOR_SET_MEMBER_PROXY(Radius);
 					CS_CTOR_SET_MEMBER_PROXY(HalfHeight);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LengthType, ELength)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ScaleType, EScale)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Radius, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HalfHeight, float)
 
 				virtual bool IsValidChecked(const FString& Context) const override;
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request) const override;
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const override;
 			};
 
 			#undef ResponseType

@@ -15,7 +15,7 @@ namespace NCsBeam
 		* Basic implementation of the interface: NCsBeam::NPayload::IPayload.
 		*/
 		struct CSBEAM_API FImplSlice : public IPayload,
-									  public ICsReset
+									   public ICsReset
 		{
 		public:
 
@@ -29,13 +29,15 @@ namespace NCsBeam
 
 		public:
 
-			// ICsPayload_Beam
+			// BeamPayloadType (NCsBeam::Payload::IPayload)
 
 			FECsBeam Type;
 
+			FVector Location;
+
 			FVector Direction;
 
-			FVector Location;
+			FVector Scale;
 
 		public:
 
@@ -54,15 +56,16 @@ namespace NCsBeam
 
 			void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-		// IPayload
+		// BeamPayloadType (NCsBeam::Payload::IPayload)
 		#pragma region
 		public:
 
 			FORCEINLINE const FECsBeam& GetType() const { return Type; }
-			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
+			FORCEINLINE const FVector& GetDirection() const { return Direction; }
+			FORCEINLINE const FVector& GetScale() const { return Scale; }
 
-		#pragma endregion IPayload
+		#pragma endregion BeamPayloadType (NCsBeam::Payload::IPayload)
 
 		// ICsReset
 		#pragma region

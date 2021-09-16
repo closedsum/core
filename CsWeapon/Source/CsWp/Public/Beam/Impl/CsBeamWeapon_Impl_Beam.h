@@ -113,10 +113,8 @@ namespace NCsWeapon
 
 					bool IsValidChecked(const FString& Context);
 
-					FVector GetStart(DataType* Data);
+					FVector GetLocation(DataType* Data);
 					FVector GetDirection(DataType* Data, const FVector& Start);
-
-					void OnHit(const FHitResult& Hit);
 
 					void LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit);
 

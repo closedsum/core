@@ -6,8 +6,6 @@
 // DataTable
 #include "Engine/DataTable.h"
 
-#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-
 #include "CsTypes_Beam.generated.h"
 
 // Beam

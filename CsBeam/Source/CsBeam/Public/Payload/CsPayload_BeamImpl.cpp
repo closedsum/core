@@ -3,6 +3,9 @@
 
 #include "Containers/CsInterfaceMap.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 // FCsPayload_Beam
 #pragma region
 
@@ -20,15 +23,26 @@ void FCsPayload_Beam::CopyToPayloadAsValueChecked(const FString& Context, const 
 	Payload->Type = Type;
 	Payload->Location = Location;
 	Payload->Direction = Direction;
+	Payload->Scale = Scale;
 }
 
 bool FCsPayload_Beam::IsValidChecked(const FString& Context) const
 {
+	check(EMCsBeam::Get().IsValidEnumChecked(Context, Type));
+
+	//CS_IS_VECTOR_ZERO_CHECKED(Direction)
+
+	CS_IS_VECTOR_ZERO_CHECKED(Scale)
 	return true;
 }
 
 bool FCsPayload_Beam::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
+	CS_IS_ENUM_STRUCT_VALID(EMCsBeam, FECsBeam, Type)
+
+	//CS_IS_VECTOR_ZERO(Direction)
+
+	CS_IS_VECTOR_ZERO(Scale)
 	return true;
 }
 
@@ -52,8 +66,9 @@ namespace NCsBeam
 			PreserveChangesFromDefaultMask(0),
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
 			Type(),
+			Location(0.0f),
 			Direction(0.0f),
-			Location(0.0f)
+			Scale(0.0f)			
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -86,8 +101,9 @@ namespace NCsBeam
 			Time.Reset();
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
 			Type = EMCsBeam::Get().GetMAX();
-			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
+			Direction = FVector::ZeroVector;
+			Scale = FVector::OneVector;
 		}
 
 		#pragma endregion NCsPooledObject::NPayload::IPayload

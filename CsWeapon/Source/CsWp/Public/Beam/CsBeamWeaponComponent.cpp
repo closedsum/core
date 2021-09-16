@@ -31,7 +31,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 // Weapon
-#include "Impl/CsBeamWeapon_Impl_Trace.h"
+#include "Impl/CsBeamWeapon_Impl_Beam.h"
 #include "Impl/CsBeamWeapon_Impl_FX.h"
 #include "Impl/CsBeamWeapon_Impl_Sound.h"
 

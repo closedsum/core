@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Beam/Data/Params/CsParams_BeamWeapon_Beam.h"
+#include "Beam/Params/CsParams_BeamWeapon_Beam.h"
 
 // Container
 #include "Containers/CsInterfaceMap.h"
@@ -345,24 +345,20 @@ const FName NCsWeapon::NBeam::NParams::NBeam::IBeam::Name = FName("NCsWeapon::NB
 // FCsBeamWeaponBeamParams
 #pragma region
 
-#define ParamsType NCsWeapon::NBeam::NParams::NBeam::IBeam
-ParamsType* FCsBeamWeaponBeamParams::ConstructAndCopyToParams()
+#define ParamsType NCsWeapon::NBeam::NParams::NBeam::FImpl
+
+void FCsBeamWeaponBeamParams::CopyToParams(ParamsType* Params)
 {
-#undef ParamsType
-
-	typedef NCsWeapon::NBeam::NParams::NBeam::FImpl ImplType;
-
-	ImplType* Impl = new ImplType();
-
 	typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
 
-	Impl->bAttached = bAttached;
-	Impl->AttachRules = AttachRules;
-	Impl->LifeCycle = (LifeCycleType)LifeCycle;
-	LocationInfo.CopyToInfo(Impl->GetLocationInfoPtr());
-	DirectionInfo.CopyToInfo(Impl->GetDirectionInfoPtr());
-	return Impl;
+	Params->SetIsAttached(&bAttached);
+	Params->SetAttachRules(&AttachRules);
+	Params->SetLifeCycle((LifeCycleType*)&LifeCycle);
+	LocationInfo.CopyToInfo(Params->GetLocationInfoPtr());
+	DirectionInfo.CopyToInfo(Params->GetDirectionInfoPtr());
 }
+
+#undef ParamsType
 
 bool FCsBeamWeaponBeamParams::IsValidChecked(const FString& Context) const
 {
@@ -422,9 +418,9 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// BeamParamsType (NCsWeapon::NBeam::NParams::NBeam::IBeam)
-					bAttached(true),
-					AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
-					LifeCycle(NCsWeapon::NBeam::NParams::NBeam::ELifeCycle::AfterStopFire),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bAttached, true),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeCycle, NCsWeapon::NBeam::NParams::NBeam::ELifeCycle::AfterStopFire),
 					LocationInfo(),
 					DirectionInfo()
 				{
@@ -436,6 +432,10 @@ namespace NCsWeapon
 					typedef NCsWeapon::NBeam::NParams::NBeam::IBeam BeamParamsType;
 
 					InterfaceMap->Add<BeamParamsType>(static_cast<BeamParamsType*>(this));
+
+					CS_CTOR_SET_MEMBER_PROXY(bAttached);
+					CS_CTOR_SET_MEMBER_PROXY(AttachRules);
+					CS_CTOR_SET_MEMBER_PROXY(LifeCycle);
 				}
 
 				FImpl::~FImpl()
@@ -448,13 +448,13 @@ namespace NCsWeapon
 					typedef NCsWeapon::NBeam::NParams::NBeam::EMLifeCycle LifeCycleMapType;
 
 					// Check LifeCycle is Valid
-					check(LifeCycleMapType::Get().IsValidEnumChecked(Context, LifeCycle));
+					check(LifeCycleMapType::Get().IsValidEnumChecked(Context, GetLifeCycle()));
 
-					if (bAttached)
+					if (IsAttached())
 					{
 						typedef EMCsAttachmentTransformRules AttachRulesMapType;
 
-						check(AttachRulesMapType::Get().IsValidEnumChecked(Context, AttachRules));
+						check(AttachRulesMapType::Get().IsValidEnumChecked(Context, GetAttachRules()));
 					}
 
 					// Check LocationInfo is Valid
@@ -470,14 +470,14 @@ namespace NCsWeapon
 					typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
 
 					// Check LifeCycle is Valid
-					CS_IS_ENUM_VALID(LifeCycleMapType, LifeCycleType, LifeCycle)
+					CS_IS_ENUM_VALID(LifeCycleMapType, LifeCycleType, GetLifeCycle())
 
-					if (bAttached)
+					if (IsAttached())
 					{
 						typedef EMCsAttachmentTransformRules AttachRulesMapType;
 						typedef ECsAttachmentTransformRules AttachRulesType;
 
-						CS_IS_ENUM_VALID(AttachRulesMapType, AttachRulesType, AttachRules)
+						CS_IS_ENUM_VALID(AttachRulesMapType, AttachRulesType, GetAttachRules())
 					}
 
 					// Check LocationInfo is Valid

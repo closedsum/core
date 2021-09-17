@@ -642,8 +642,8 @@ namespace NCsWeapon
 // FCsBeamWeaponBeamParams
 #pragma region
 
-// NCsWeapon::NBeam::NParams::NBeam::IBeam
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NParams, NBeam, IBeam)
+// NCsWeapon::NBeam::NParams::NBeam::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NParams, NBeam, FImpl)
 
 /**
 */
@@ -684,8 +684,8 @@ public:
 	{
 	}
 
-#define ParamsType NCsWeapon::NBeam::NParams::NBeam::IBeam
-	ParamsType* ConstructAndCopyToParams();
+#define ParamsType NCsWeapon::NBeam::NParams::NBeam::FImpl
+	void CopyToParams(ParamsType* Params);
 #undef ParamsType
 
 	bool IsValidChecked(const FString& Context) const;
@@ -722,11 +722,9 @@ namespace NCsWeapon
 
 					// BeamParamsType (NCsWeapon::NBeam::NParams::NBeam::IBeam)
 
-					bool bAttached;
-
-					ECsAttachmentTransformRules AttachRules;
-
-					LifeCycleType LifeCycle;
+					CS_DECLARE_MEMBER_WITH_PROXY(bAttached, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(AttachRules, ECsAttachmentTransformRules)
+					CS_DECLARE_MEMBER_WITH_PROXY(LifeCycle, LifeCycleType)
 
 					LocationInfoType LocationInfo;
 
@@ -747,6 +745,13 @@ namespace NCsWeapon
 
 				public:
 					
+					FORCEINLINE void SetIsAttached(const bool& Value)
+					{
+						bAttached = Value;
+						bAttached_Proxy = &bAttached;
+					}
+					FORCEINLINE void SetIsAttached(bool* Value) { bAttached_Proxy = Value; }
+
 					LifeCycleType* GetLifeCyclePtr() { return &LifeCycle; }
 					LocationInfoType* GetLocationInfoPtr() { return &LocationInfo; }
 					DirectionInfoType* GetDirectionInfoPtr() { return &DirectionInfo; }
@@ -755,9 +760,11 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
-					FORCEINLINE const bool& IsAttached() const { return bAttached; }
-					FORCEINLINE const ECsAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
-					FORCEINLINE const LifeCycleType& GetLifeCycle() const { return LifeCycle; }
+					FORCEINLINE const bool& IsAttached() const { return *bAttached_Proxy; }
+
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachRules, ECsAttachmentTransformRules)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeCycle, LifeCycleType)
+
 					FORCEINLINE const LocationInfoType& GetLocationInfo() const { return LocationInfo; }
 					FORCEINLINE const DirectionInfoType& GetDirectionInfo() const { return DirectionInfo; }
 

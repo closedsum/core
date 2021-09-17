@@ -145,7 +145,7 @@ public:
 	*
 	* return
 	*/
-	virtual const bool& HasInfinitCharge() const = 0;
+	virtual const bool& HasInfiniteCharge() const = 0;
 
 	/**
 	*

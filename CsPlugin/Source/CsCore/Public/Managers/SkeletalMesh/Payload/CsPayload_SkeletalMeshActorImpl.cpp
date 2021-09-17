@@ -14,8 +14,8 @@ namespace NCsSkeletalMeshActor
 		FImpl::FImpl() :
 			InterfaceMap(nullptr),
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			UpdateType(NCsPooledObject::EUpdate::Manager),
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),

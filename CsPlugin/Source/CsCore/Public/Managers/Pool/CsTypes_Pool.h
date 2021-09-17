@@ -115,9 +115,9 @@ enum class ECsPooledObjectState : uint8
 	ECsPooledObjectState_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsPoolObjectState final : public TCsEnumMap<ECsPooledObjectState>
+struct CSCORE_API EMCsPooledObjectState final : public TCsEnumMap<ECsPooledObjectState>
 {
-	CS_ENUM_MAP_BODY(EMCsPoolObjectState, ECsPooledObjectState)
+	CS_ENUM_MAP_BODY(EMCsPooledObjectState, ECsPooledObjectState)
 };
 
 namespace NCsPooledObjectState
@@ -130,6 +130,35 @@ namespace NCsPooledObjectState
 		extern CSCORE_API const Type Active;
 		extern CSCORE_API const Type Inactive;
 		extern CSCORE_API const Type ECsPooledObjectState_MAX;
+	}
+}
+
+namespace NCsPooledObject
+{
+	enum class EState : uint8
+	{
+		WarmUp,
+		Active,
+		Inactive,
+		EState_MAX
+	};
+
+	struct CSCORE_API EMState final : public TCsEnumMap<EState>
+	{
+		CS_ENUM_MAP_BODY(EMState, EState)
+	};
+
+	namespace NState
+	{
+		typedef EState Type;
+
+		namespace Ref
+		{
+			extern CSCORE_API const Type WarmUp;
+			extern CSCORE_API const Type Active;
+			extern CSCORE_API const Type Inactive;
+			extern CSCORE_API const Type EState_MAX;
+		}
 	}
 }
 

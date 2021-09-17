@@ -1,22 +1,28 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // Types
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
-#pragma once
 
+class ICsGetUpdateGroup;
+class ICsWeapon;
 class ICsBeamWeapon;
+class ICsGetBeamType;
 class UObject;
 class USceneComponent;
 class USkeletalMeshComponent;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
-// NCsBeam::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NData, IData)
+// NCsWeapon::NBeam::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NBeam, NData, IData)
+// NCsWeapon::NBeam::NParams::NBeam::IBeam
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NParams, NBeam, IBeam)
 // NCsWeapon::NBeam::NImpl::NFX::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NImpl, NFX, FImpl)
 // NCsWeapon::NBeam::NImpl::NSound::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NBeam, NImpl, NSound, FImpl)
+
+class ICsBeam;
 
 namespace NCsWeapon
 {
@@ -35,7 +41,8 @@ namespace NCsWeapon
 					friend class ICsBeamWeapon;
 
 				#define DataType NCsWeapon::NData::IData
-				#define BeamDataType NCsBeam::NData::IData
+				#define BeamDataType NCsWeapon::NBeam::NData::IData
+				#define BeamParamsType NCsWeapon::NBeam::NParams::NBeam::IBeam
 				#define FXImplType NCsWeapon::NBeam::NImpl::NFX::FImpl
 				#define SoundImplType NCsWeapon::NBeam::NImpl::NSound::FImpl
 
@@ -44,8 +51,17 @@ namespace NCsWeapon
 					/** UObject reference to an object implementing the interface: ICsBeamWeapon. */
 					UObject* Outer;
 
-					/** Interface reference to Outer. */
-					ICsBeamWeapon* Interface;
+					/** Interface to get the Update Group (FECsUpdateGroup) from Outer. */
+					ICsGetUpdateGroup* GetUpdateGroup;
+
+					/** Weapon Interface reference to Outer. */
+					ICsWeapon* WeaponInterface;
+
+					/** Beam Weapon Interface reference to Outer. */
+					ICsBeamWeapon* BeamWeaponInterface;
+
+					/** Interface to get Beam's type (FECsBeam) from Outer. */
+					ICsGetBeamType* GetBeamType;
 
 					/** Reference to the root component of Outer. */
 					USceneComponent* RootComponent;
@@ -58,7 +74,11 @@ namespace NCsWeapon
 
 					USkeletalMeshComponent* SkeletalMeshComponent;
 
+					DataType* Data;
+
 					BeamDataType* BeamData;
+
+					BeamParamsType* BeamParams;
 
 					/** Reference to FX implementation on Outer. */
 					FXImplType* FXImpl;
@@ -86,6 +106,10 @@ namespace NCsWeapon
 					/** Delegate for custom implementation of GetDirection(). */
 					FGetDirection GetDirectionImpl;
 
+					TArray<ICsBeam*> Beams;
+
+					FCsScopedTimerHandle BeamScopedHandle;
+
 				public:
 
 					FImpl();
@@ -103,30 +127,29 @@ namespace NCsWeapon
 					FORCEINLINE void SetComponent(USceneComponent* InComponent) { Component = InComponent; }
 					FORCEINLINE USceneComponent* GetComponent() const { return Component; }
 
-					void SetBeamData(const FString& Context, BeamDataType* Type);
+					void SetData(DataType* Value) { Data = Value; }
 					void SetBeamData(BeamDataType* Value);
-
-					FORCEINLINE BeamDataType* GetBeamData() const { return BeamData; }
 
 					void SetFXImpl(FXImplType* Value) { FXImpl = Value; }
 					void SetSoundImpl(SoundImplType* Value) { SoundImpl = Value; }
 
-					bool IsValidChecked(const FString& Context);
+					FVector GetLocation();
+					FVector GetDirection(const FVector& Start);
 
-					FVector GetLocation(DataType* Data);
-					FVector GetDirection(DataType* Data, const FVector& Start);
+					void LineTrace(const FVector& Start, const FVector& End, FHitResult& OutHit);
 
-					void LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit);
+					void Emit();
 
-					FCsScopedTimerHandle BeamScopedHandle;
-
-					void Emit(DataType* Data);
+					void AfterShot();
+					void AfterBeamsPerShot();
+					void AfterStopFire();
 
 					FString PrintOuterNameAndClass();
 					FString PrintOuterNameClassAndOwner();
 
 				#undef DataType
 				#undef BeamDataType
+				#undef BeamParamsType
 				#undef FXImplType
 				#undef SoundImplType
 				};

@@ -2,8 +2,10 @@
 #include "Components/ActorComponent.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Managers/Time/CsGetUpdateGroup.h"
 #include "CsWeapon.h"
 #include "Beam/CsBeamWeapon.h"
+#include "Types/CsGetBeamType.h"
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
@@ -38,9 +40,11 @@ class USkeletalMeshComponent;
 
 UCLASS()
 class CSWP_API UCsBeamWeaponComponent : public UActorComponent,
-										 public ICsUpdate,
-										 public ICsWeapon,
-										 public ICsBeamWeapon
+										public ICsUpdate,
+										public ICsGetUpdateGroup,
+										public ICsWeapon,
+										public ICsBeamWeapon,
+										public ICsGetBeamType
 {
 	GENERATED_UCLASS_BODY()
 
@@ -73,6 +77,14 @@ public:
 
 #pragma endregion ICsUpdate
 
+// ICsGetUpdateGroup
+#pragma region
+public:
+
+	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
+
+#pragma endregion ICsGetUpdateGroup
+
 // Update
 #pragma region
 protected:
@@ -83,11 +95,6 @@ protected:
 public:
 
 	void SetUpdateGroup(const FECsUpdateGroup& Group);
-
-	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const 
-	{
-		return UpdateGroup;
-	}
 
 #pragma endregion Update
 
@@ -134,6 +141,24 @@ public:
 
 #pragma endregion ICsWeapon
 
+// ICsBeamWeapon
+#pragma region
+public:
+
+	void StartFire();
+
+	void StopFire();
+
+#pragma endregion ICsBeamWeapon
+
+// ICsGetBeamType
+#pragma region
+public:
+
+	FORCEINLINE const FECsBeam& GetBeamType() const { return BeamType; }
+
+#pragma endregion ICsGetBeamType
+
 // Beam
 #pragma region
 protected:
@@ -146,19 +171,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Beam")
 	void SetBeamType(const FECsBeam& Type);
 
-	FORCEINLINE const FECsBeam& GetBeamType() const { return BeamType; }
-
 #pragma endregion Beam
-
-// ICsBeamWeapon
-#pragma region
-public:
-
-	void StartFire();
-
-	void StopFire();
-
-#pragma endregion ICsBeamWeapon
 
 // Components
 #pragma region
@@ -217,6 +230,9 @@ public:
 
 	FOnConsumeCharge OnConsumeCharge_Event;
 
+	float GetMaxCharge() const;
+	float GetChargeConsumedByShot() const;
+
 #pragma endregion Charge
 
 // Fire
@@ -257,6 +273,10 @@ protected:
 	FCsScopedTimerHandleWrapper FireScopedHandle;
 
 public:
+
+	int32 GetBeamsPerShot() const;
+	float GetTimeBetweenShots() const;
+	float GetTimeBetweenBeamsPerShot() const;
 
 	/**
 	*/

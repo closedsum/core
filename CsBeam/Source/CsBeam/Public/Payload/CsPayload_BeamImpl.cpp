@@ -21,6 +21,7 @@ void FCsPayload_Beam::CopyToPayloadAsValueChecked(const FString& Context, const 
 	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
 
 	Payload->Type = Type;
+	Payload->AttachRules = AttachRules;
 	Payload->Location = Location;
 	Payload->Direction = Direction;
 	Payload->Scale = Scale;
@@ -66,6 +67,7 @@ namespace NCsBeam
 			PreserveChangesFromDefaultMask(0),
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
 			Type(),
+			AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Location(0.0f),
 			Direction(0.0f),
 			Scale(0.0f)			
@@ -101,6 +103,7 @@ namespace NCsBeam
 			Time.Reset();
 			// BeamPayloadType (NCsBeam::NPayload::IPayload)
 			Type = EMCsBeam::Get().GetMAX();
+			AttachRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Location = FVector::ZeroVector;
 			Direction = FVector::ZeroVector;
 			Scale = FVector::OneVector;

@@ -3,15 +3,115 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/Enum/CsEnumMap.h"
-#include "Engine/EngineTypes.h"
+#include "Types/CsTypes_AttachDetach.h"
 #include "CollisionShape.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 #include "CsParams_BeamWeapon_Beam.generated.h"
 
-// BeamWeaponLaunchLocation
+// BeamWeaponBeamLifeCycle
+#pragma region
+
+/**
+* Describes the different lifecycle of a Beam (implements the interface: ICsBeam) 
+* emitted from a Beam Weapon (weapon of type: ICsBeamWeapon).
+*/
+UENUM(BlueprintType)
+enum class ECsBeamWeaponBeamLifeCycle : uint8
+{
+	/** Beam (ICsBeam) controls its own life cycle or Off will 
+		need to be manually called on Beam. */
+	Self							UMETA(DisplayName = "Self"),
+	/** Beam (ICsBeam) will be turned Off after the Beam Weapon (ICsBeamWeapon) 
+		completes a Shot. */
+	AfterShot						UMETA(DisplayName = "After Shot"),
+	/** Beam (ICsBeam) will be turned Off after a Beam in a Shot has 
+		been completed. */
+	AfterBeamsPerShot				UMETA(DisplayName = "After Beam per Shot"),
+	/** Beam (ICsBeam) will be turned Off after the Beam Weapon (ICsBeamWeapon)
+		class StopFire(). */
+	AfterStopFire					UMETA(DisplayName = "After Stop Fire"),
+	ECsBeamWeaponBeamLifeCycle_MAX	UMETA(Hidden),
+};
+
+
+struct CSWP_API EMCsBeamWeaponBeamLifeCycle : public TCsEnumMap<ECsBeamWeaponBeamLifeCycle>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsBeamWeaponBeamLifeCycle, ECsBeamWeaponBeamLifeCycle)
+};
+
+namespace NCsBeamWeaponBeamLifeCycle
+{
+	typedef ECsBeamWeaponBeamLifeCycle Type;
+
+	namespace Ref
+	{
+		extern CSWP_API const Type Self;
+		extern CSWP_API const Type AfterShot;
+		extern CSWP_API const Type AfterBeamsPerShot;
+		extern CSWP_API const Type AfterStopFire;
+		extern CSWP_API const Type ECsBeamWeaponBeamLifeCycle_MAX;
+	}
+
+	extern CSWP_API const uint8 MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NBeam
+	{
+		namespace NParams
+		{
+			namespace NBeam
+			{
+				/**
+				* Describes the different lifecycle of a Beam (implements the interface: ICsBeam)
+				* emitted from a Beam Weapon (weapon of type: ICsBeamWeapon).
+				*/
+				enum class ELifeCycle : uint8
+				{
+					/** Beam (ICsBeam) controls its own life cycle or Off will 
+						need to be manually called on Beam. */
+					Self,
+					/** Beam (ICsBeam) will be turned Off after the Beam Weapon (ICsBeamWeapon) 
+						completes a Shot. */
+					AfterShot,
+					/** Beam (ICsBeam) will be turned Off after a Beam in a Shot has 
+						been completed. */
+					AfterBeamsPerShot,
+					/** Beam (ICsBeam) will be turned Off after the Beam Weapon (ICsBeamWeapon)
+						class StopFire(). */
+					AfterStopFire,
+					ELifeCycle_MAX
+				};
+
+				struct CSWP_API EMLifeCycle : public TCsEnumMap<ELifeCycle>
+				{
+					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMLifeCycle, ELifeCycle)
+				};
+
+				namespace NLifeCycle
+				{
+					typedef ELifeCycle Type;
+
+					namespace Ref
+					{
+						extern CSWP_API const Type Self;
+						extern CSWP_API const Type AfterShot;
+						extern CSWP_API const Type AfterBeamsPerShot;
+						extern CSWP_API const Type AfterStopFire;
+						extern CSWP_API const Type ELifeCycle_MAX;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion BeamWeaponBeamLifeCycle
+
+// BeamWeaponBeamLocation
 #pragma region
 
 /**
@@ -74,8 +174,8 @@ namespace NCsWeapon
 			namespace NBeam
 			{
 				/**
-				* Describes the different methods to get the Location from which a beam
-				* will be preformed from a weapon of type: ICsBeamWeapon.
+				* Describes the different methods to get the Location from which a Beam (implements the interface: ICsBeam)
+				* will be preformed from a Beam Weapon (weapon of type: ICsBeamWeapon).
 				*/
 				enum class ELocation : uint8
 				{
@@ -124,7 +224,7 @@ namespace NCsWeapon
 	}
 }
 
-#pragma endregion BeamWeaponLaunchLocation
+#pragma endregion BeamWeaponBeamLocation
 
 // FCsBeamWeaponBeamParamsLocationInfo
 #pragma region
@@ -490,25 +590,47 @@ namespace NCsWeapon
 
 					virtual ~IBeam() {}
 
+				#define LifeCycleType NCsWeapon::NBeam::NParams::NBeam::ELifeCycle
 				#define LocationInfoType NCsWeapon::NBeam::NParams::NBeam::FLocationInfo
 				#define DirectionInfoType NCsWeapon::NBeam::NParams::NBeam::FDirectionInfo
 
 					/**
-					* Get the Location related information for performing a beam for a
-					* weapon of type: ICsBeamWeapon.
+					* Get whether the Beam (implements the interface: ICsBeam) is
+					* attached to something (i.e. Beam Weapon, Weapon Owner, ... etc).
+					* 
+					* return
+					*/
+					virtual const bool& IsAttached() const = 0;
+
+					/**
+					*/
+					virtual const ECsAttachmentTransformRules& GetAttachRules() const = 0;
+
+					/**
+					* Get the lifecycle of a Beam (implements the interface: ICsBeam)
+					* emitted from a Beam Weapon (weapon of type: ICsBeamWeapon).
+					* 
+					* return Life Cycle
+					*/
+					virtual const LifeCycleType& GetLifeCycle() const = 0;
+
+					/**
+					* Get the Location related information for performing a Beam (implements the interface: ICsBeam) for a
+					* Beam Weapon (weapon of type: ICsBeamWeapon).
 					*
 					* return Location Info
 					*/
 					virtual const LocationInfoType& GetLocationInfo() const = 0;
 
 					/**
-					* Get the Direction related information for performing a beam from a
-					* weapon of type: ICsBeamWeapon
+					* Get the Direction related information for performing a Beam (implements the interface: ICsBeam) from a
+					* Beam Weapon (weapon of type: ICsBeamWeapon).
 					*
 					* return Direction Info
 					*/
 					virtual const DirectionInfoType& GetDirectionInfo() const = 0;
 
+				#undef LifeCycleType
 				#undef LocationInfoType
 				#undef DirectionInfoType
 				};
@@ -532,17 +654,31 @@ struct CSWP_API FCsBeamWeaponBeamParams
 
 public:
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bAttached;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsAttachmentTransformRules AttachRules;
+
+	/** Describes the different lifecycle of a Beam (implements the interface: ICsBeam)
+		emitted from a Beam Weapon (weapon of type: ICsBeamWeapon). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	ECsBeamWeaponBeamLifeCycle LifeCycle;
+
 	/** The Location related information for performing a trace for a
-		weapon of type: ICsBeamWeapon. */
+		Beam Weapon (weapon of type: ICsBeamWeapon). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsBeamWeaponBeamParamsLocationInfo LocationInfo;
 
 	/** Get the Direction related information for performing a trace from a
-		weapon of type: ICsBeamWeapon */
+		Beam Weapon (weapon of type: ICsBeamWeapon). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsBeamWeaponBeamParamsDirectionInfo DirectionInfo;
 
 	FCsBeamWeaponBeamParams() :
+		bAttached(true),
+		AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		LifeCycle(ECsBeamWeaponBeamLifeCycle::AfterStopFire),
 		LocationInfo(),
 		DirectionInfo()
 	{
@@ -572,6 +708,7 @@ namespace NCsWeapon
 
 					static const FName Name;
 
+				#define LifeCycleType NCsWeapon::NBeam::NParams::NBeam::ELifeCycle
 				#define LocationInfoType NCsWeapon::NBeam::NParams::NBeam::FLocationInfo
 				#define DirectionInfoType NCsWeapon::NBeam::NParams::NBeam::FDirectionInfo
 
@@ -584,6 +721,12 @@ namespace NCsWeapon
 				public:
 
 					// BeamParamsType (NCsWeapon::NBeam::NParams::NBeam::IBeam)
+
+					bool bAttached;
+
+					ECsAttachmentTransformRules AttachRules;
+
+					LifeCycleType LifeCycle;
 
 					LocationInfoType LocationInfo;
 
@@ -604,6 +747,7 @@ namespace NCsWeapon
 
 				public:
 					
+					LifeCycleType* GetLifeCyclePtr() { return &LifeCycle; }
 					LocationInfoType* GetLocationInfoPtr() { return &LocationInfo; }
 					DirectionInfoType* GetDirectionInfoPtr() { return &DirectionInfo; }
 
@@ -611,6 +755,9 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
+					FORCEINLINE const bool& IsAttached() const { return bAttached; }
+					FORCEINLINE const ECsAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
+					FORCEINLINE const LifeCycleType& GetLifeCycle() const { return LifeCycle; }
 					FORCEINLINE const LocationInfoType& GetLocationInfo() const { return LocationInfo; }
 					FORCEINLINE const DirectionInfoType& GetDirectionInfo() const { return DirectionInfo; }
 
@@ -621,6 +768,7 @@ namespace NCsWeapon
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 
+				#undef LifeCycleType
 				#undef LocationInfoType
 				#undef DirectionInfoType
 				};

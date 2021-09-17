@@ -22,7 +22,8 @@ namespace NCsPooledObject
 
 			static const FName Name;
 
-#define PayloadType NCsPooledObject::NPayload::IPayload
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+		#define UpdateType NCsPooledObject::EUpdate
 
 		public:
 
@@ -82,11 +83,14 @@ namespace NCsPooledObject
 			virtual const ECsPooledObjectState& GetState() const = 0;
 
 			/**
-			*
+			* Get how the pooled object should updated. Usually update for a
+			* pooled object (implements the interface: ICsPooledObject) is controlled
+			* by its manager.
+			* Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate).
 			*
 			* return
 			*/
-			virtual const EUpdate& GetUpdateType() const = 0;
+			virtual const UpdateType& GetUpdateType() const = 0;
 
 			/**
 			*
@@ -149,7 +153,8 @@ namespace NCsPooledObject
 			*/
 			virtual void Reset() = 0;
 
-#undef PayloadType
+		#undef PayloadType
+		#undef UpdateType
 		};
 	}
 }

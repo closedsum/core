@@ -59,12 +59,28 @@ namespace NCsPooledObjectState
 {
 	namespace Ref
 	{
-		typedef EMCsPoolObjectState EnumMapType;
+		typedef EMCsPooledObjectState EnumMapType;
 
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(WarmUp, "Warm Up");
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Active);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Inactive);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPooledObjectState_MAX, "MAX");
+	}
+}
+
+namespace NCsPooledObject
+{
+	namespace NState
+	{
+		namespace Ref
+		{
+			typedef EMState EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(WarmUp, "Warm Up");
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Active);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Inactive);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EState_MAX, "MAX");
+		}
 	}
 }
 

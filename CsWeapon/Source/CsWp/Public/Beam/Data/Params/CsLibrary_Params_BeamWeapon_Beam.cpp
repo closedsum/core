@@ -20,6 +20,11 @@ namespace NCsWeapon
 				{
 					CS_IS_PTR_NULL_CHECKED(Params)
 
+					// Check LifeCycle is Valid
+					typedef NCsWeapon::NBeam::NParams::NBeam::EMLifeCycle LifeCycleMapType;
+
+					check(LifeCycleMapType::Get().IsValidEnumChecked(Context, Params->GetLifeCycle()));
+
 					// Check Bone is Valid for appropriate Location Type
 					typedef NCsWeapon::NBeam::NParams::NBeam::FLocationInfo LocationInfoType;
 					typedef NCsWeapon::NBeam::NParams::NBeam::ELocation LocationType;

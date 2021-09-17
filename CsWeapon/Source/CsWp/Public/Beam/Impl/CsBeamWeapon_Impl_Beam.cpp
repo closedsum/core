@@ -8,7 +8,10 @@
 #include "Types/CsTypes_Math.h"
 #include "Collision/CsTypes_Collision.h"
 // Library
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
+#include "Managers/Beam/CsLibrary_Manager_Beam.h"
+#include "Beam/Data/CsLibrary_Data_BeamWeapon.h"
 #include "Data/CsLibrary_Data_Beam.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Beam/Data/Params/CsLibrary_Params_BeamWeapon_Beam.h"
@@ -20,12 +23,19 @@
 // Managers
 #include "Managers/ScopedTimer/CsManager_ScopedTimer.h"
 #include "Managers/Trace/CsManager_Trace.h"
+#include "Managers/Beam/CsManager_Beam.h"
 // Data
 #include "Beam/Data/CsData_BeamWeapon.h"
 // Weapon
+#include "CsWeapon.h"
 #include "Beam/CsBeamWeapon.h"
 #include "Beam/Impl/CsBeamWeapon_Impl_FX.h"
 #include "Beam/Impl/CsBeamWeapon_Impl_Sound.h"
+// Beam
+#include "Payload/CsPayload_BeamImpl.h"
+#include "Types/CsGetBeamType.h"
+// Update
+#include "Managers/Time/CsGetUpdateGroup.h"
 // Component
 #include "Components/SkeletalMeshComponent.h"
 
@@ -41,6 +51,7 @@ namespace NCsWeapon
 				{
 					namespace Str
 					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, SetOuter);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, SetBeamData);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetLocation);
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NBeam::NImpl::NBeam::FImpl, GetDirection);
@@ -53,15 +64,20 @@ namespace NCsWeapon
 
 				FImpl::FImpl() :
 					Outer(nullptr),
-					Interface(nullptr),
+					GetUpdateGroup(nullptr),
+					WeaponInterface(nullptr),
+					BeamWeaponInterface(nullptr),
+					GetBeamType(nullptr),
 					RootComponent(nullptr),
 					Owner(nullptr),
 					Component(nullptr),
+					Data(nullptr),
 					BeamData(nullptr),
 					FXImpl(nullptr),
 					SoundImpl(nullptr),
 					GetStartImpl(),
-					GetDirectionImpl()
+					GetDirectionImpl(),
+					Beams()
 				{
 					// ScopedHandles
 				#if !UE_BUILD_SHIPPING
@@ -82,13 +98,32 @@ namespace NCsWeapon
 
 				FImpl::~FImpl()
 				{
+					typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
+
+					if (UCsManager_Beam* Manager_Beam = BeamManagerLibrary::GetSafe(Outer))
+					{
+						for (ICsBeam* Beam : Beams)
+						{
+							Manager_Beam->Destroy(Beam);
+						}
+					}
+					Beams.Reset();
+
 					CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(BeamScopedHandle);
 				}
 
 				void FImpl::SetOuter(UObject* InOuter)
 				{
+					using namespace NCsWeapon::NBeam::NImpl::NBeam::NCached;
+
+					const FString& Context = Str::SetOuter;
+
 					Outer = InOuter;
-					Interface = Cast<ICsBeamWeapon>(Outer);
+
+					GetUpdateGroup = CS_INTERFACE_CAST_CHECKED(Outer, UObject, ICsGetUpdateGroup);
+					WeaponInterface = CS_INTERFACE_CAST_CHECKED(Outer, UObject, ICsWeapon);
+					BeamWeaponInterface = CS_INTERFACE_CAST_CHECKED(Outer, UObject, ICsBeamWeapon);
+					GetBeamType = CS_INTERFACE_CAST_CHECKED(Outer, UObject, ICsGetBeamType);
 				}
 
 				void FImpl::SetRootComponent(USceneComponent* InComponent)
@@ -96,44 +131,29 @@ namespace NCsWeapon
 					Component = InComponent;
 					SkeletalMeshComponent = Cast<USkeletalMeshComponent>(Component);
 				}
-				 
-				#define BeamDataType NCsBeam::NData::IData
 
-				void FImpl::SetBeamData(const FString& Context, BeamDataType* Value)
-				{
-					CS_IS_PTR_NULL_CHECKED(Value)
-
-					BeamData = Value;
-
-					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-					check(BeamDataLibrary::IsValidChecked(Context, BeamData));
-				}
-
+				#define BeamDataType NCsWeapon::NBeam::NData::IData
 				void FImpl::SetBeamData(BeamDataType* Value)
 				{
-					using namespace NCached;
+				#undef BeamDataType
+
+					using namespace NCsWeapon::NBeam::NImpl::NBeam::NCached;
 
 					const FString& Context = Str::SetBeamData;
 
-					SetBeamData(Context, Value);
-				}
+					BeamData = Value;
 
-				#undef BeamDataType
+					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
+					typedef NCsWeapon::NBeam::NParams::NBeam::IBeam BeamParamsType;
 
-				bool FImpl::IsValidChecked(const FString& Context)
-				{
-					CS_IS_PTR_NULL_CHECKED(BeamData)
+					BeamParams = const_cast<BeamParamsType*>(BeamData->GetBeamParams());
 
-					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
-
-					check(BeamDataLibrary::IsValidChecked(Context, BeamData));
-					return true;
+					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
 				}
 
 				#define DataType NCsWeapon::NData::IData
 
-				FVector FImpl::GetLocation(DataType* Data)
+				FVector FImpl::GetLocation()
 				{
 					using namespace NCached;
 
@@ -144,22 +164,8 @@ namespace NCsWeapon
 					CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
 					const FString& Context = Str::GetLocation;
-
-					// Get Data Slice
-					typedef NCsWeapon::NBeam::NData::IData WeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
 	
-					// Get Beam Params
-
 					using namespace NCsWeapon::NBeam::NParams::NBeam;
-
-					const IBeam* BeamParams = WeaponData->GetBeamParams();
-
-					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
-
-					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
 
 					const FLocationInfo& LocationInfo = BeamParams->GetLocationInfo();
 					const ELocation& LocationType	  = LocationInfo.GetType();
@@ -228,7 +234,7 @@ namespace NCsWeapon
 					return FVector::ZeroVector;
 				}
 
-				FVector FImpl::GetDirection(DataType* Data, const FVector& Start)
+				FVector FImpl::GetDirection(const FVector& Start)
 				{
 					using namespace NCached;
 
@@ -240,19 +246,7 @@ namespace NCsWeapon
 
 					const FString& Context = Str::GetDirection;
 
-					// Get Data Slice
-					typedef NCsWeapon::NBeam::NData::IData WeaponDataType;
-					typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-					WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Data);
-	
-					// Get Beam Params
-					typedef NCsWeapon::NBeam::NParams::NBeam::FLibrary BeamParamsLibrary;
 					using namespace NCsWeapon::NBeam::NParams::NBeam;
-
-					const IBeam* BeamParams = WeaponData->GetBeamParams();
-
-					check(BeamParamsLibrary::IsValidChecked(Context, BeamParams));
 
 					const FDirectionInfo& DirectionInfo = BeamParams->GetDirectionInfo();
 					const EDirection& DirectionType		= DirectionInfo.GetType();
@@ -333,7 +327,7 @@ namespace NCsWeapon
 
 							FHitResult Hit;
 
-							LineTrace(Data, CameraStart, End, Hit);
+							LineTrace(CameraStart, End, Hit);
 
 							if (Hit.bBlockingHit)
 							{
@@ -349,7 +343,7 @@ namespace NCsWeapon
 					return FVector::ZeroVector;
 				}
 
-				void FImpl::LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit)
+				void FImpl::LineTrace(const FVector& Start, const FVector& End, FHitResult& OutHit)
 				{
 					//CS_SCOPED_TIMER(LineBeamScopedHandle);
 
@@ -412,7 +406,7 @@ namespace NCsWeapon
 					checkf(0, TEXT("NOT IMPLEMENTED"));
 				}
 
-				void FImpl::Emit(DataType* Data)
+				void FImpl::Emit()
 				{
 					CS_SCOPED_TIMER(BeamScopedHandle);
 
@@ -420,11 +414,86 @@ namespace NCsWeapon
 
 					const FString& Context = Str::Beam;
 
-					const FVector Location = GetLocation(Data);
-					const FVector Direction	= GetDirection(Data, Location);
+					if (!BeamParams->IsAttached())
+					{
+						const FVector Location  = GetLocation();
+						const FVector Direction	= GetDirection(Location);
+					}
+
+					typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
+					typedef NCsBeam::NPayload::FImpl PayloadType;
+
+					UCsManager_Beam* Manager_Beam = BeamManagerLibrary::GetChecked(Context, Outer);
+
+					const FECsBeam& Type = GetBeamType->GetBeamType();
+					PayloadType* Payload	 = Manager_Beam->AllocatePayload<PayloadType>(Context, Type);
+
+					// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+					Payload->Instigator = Owner;
+					Payload->Owner = Outer;
+					
+					const bool IsAttached = BeamParams->IsAttached();
+
+					//Payload->Parent = IsAttached ? Component : nullptr;
+
+					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+					//Payload->Time = TimeManagerLibrary::GetTimeChecked(Context, Outer, )
+
+					//Payload->PreserveChangesFromDefaultMask;
+
+					// BeamPayloadType (NCsBeam::NPayload::IPayload)
+					Payload->Type = Type;
+					//Payload->Location;
+					//Payload->Direction;
+					//Payload->Scale;
+
+					const FCsBeamPooled* BeamPooled = Manager_Beam->Spawn(Type, Payload);
+
+					// If the Beam is attached, change the 
+					//if (IsAttached)
+					//typedef N
+					//BeamPooled->GetCache()
 				}
 
-				#undef DataType
+				void FImpl::AfterShot()
+				{
+					typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
+
+					if (BeamParams->GetLifeCycle() == LifeCycleType::AfterShot)
+					{
+						for (ICsBeam* Beam : Beams)
+						{
+							Beam->Off();
+						}
+					}
+				}
+
+				void FImpl::AfterBeamsPerShot()
+				{
+					typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
+
+					if (BeamParams->GetLifeCycle() == LifeCycleType::AfterBeamsPerShot)
+					{
+						for (ICsBeam* Beam : Beams)
+						{
+							Beam->Off();
+						}
+					}
+				}
+
+				void FImpl::AfterStopFire()
+				{
+					typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
+
+					if (BeamParams->GetLifeCycle() == LifeCycleType::AfterStopFire)
+					{
+						for (ICsBeam* Beam : Beams)
+						{
+							Beam->Off();
+						}
+					}
+				}
 
 				FString FImpl::PrintOuterNameAndClass()
 				{

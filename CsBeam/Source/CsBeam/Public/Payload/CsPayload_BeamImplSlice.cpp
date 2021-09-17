@@ -14,6 +14,7 @@ namespace NCsBeam
 			InterfaceMap(nullptr),
 			// IPayload
 			Type(),
+			AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Location(0.0f),
 			Direction(0.0f),
 			Scale(0.0f)
@@ -39,6 +40,7 @@ namespace NCsBeam
 		{
 			// BeamPayloadType (NCsBeam::Payload::IPayload)
 			Type = EMCsBeam::Get().GetMAX();
+			AttachRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Location = FVector::ZeroVector;
 			Direction = FVector::ZeroVector;
 			Scale = FVector::OneVector;
@@ -49,6 +51,7 @@ namespace NCsBeam
 		bool FImplSlice::CopyFrom(const FImplSlice* From)
 		{
 			Type = From->Type;
+			AttachRules = From->AttachRules;
 			Location = From->Location;
 			Direction = From->Direction;
 			Scale = From->Scale;

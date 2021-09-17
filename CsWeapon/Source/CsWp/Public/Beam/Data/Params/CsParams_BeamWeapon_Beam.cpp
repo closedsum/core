@@ -6,6 +6,53 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+// BeamWeaponBeamLifeCycle
+#pragma region
+
+namespace NCsBeamWeaponBeamLifeCycle
+{
+	namespace Ref
+	{
+		typedef EMCsBeamWeaponBeamLifeCycle EnumMapType;
+
+		CSWP_API CS_ADD_TO_ENUM_MAP(Self);
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AfterShot, "After Shot");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AfterBeamsPerShot, "After Beams per Shot");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AfterStopFire, "After Stop Fire");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsBeamWeaponBeamLifeCycle_MAX, "MAX");
+	}
+
+	CSWP_API const uint8 MAX = (uint8)Type::ECsBeamWeaponBeamLifeCycle_MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NBeam
+	{
+		namespace NParams
+		{
+			namespace NBeam
+			{
+				namespace NLifeCycle
+				{
+					namespace Ref
+					{
+						typedef EMLifeCycle EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP(Self);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AfterShot, "After Shot");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AfterBeamsPerShot, "After Beams per Shot");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AfterStopFire, "After Stop Fire");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ELifeCycle_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion BeamWeaponBeamLifeCycle
+
 // BeamWeaponBeamLocation
 #pragma region
 
@@ -307,6 +354,11 @@ ParamsType* FCsBeamWeaponBeamParams::ConstructAndCopyToParams()
 
 	ImplType* Impl = new ImplType();
 
+	typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
+
+	Impl->bAttached = bAttached;
+	Impl->AttachRules = AttachRules;
+	Impl->LifeCycle = (LifeCycleType)LifeCycle;
 	LocationInfo.CopyToInfo(Impl->GetLocationInfoPtr());
 	DirectionInfo.CopyToInfo(Impl->GetDirectionInfoPtr());
 	return Impl;
@@ -314,6 +366,18 @@ ParamsType* FCsBeamWeaponBeamParams::ConstructAndCopyToParams()
 
 bool FCsBeamWeaponBeamParams::IsValidChecked(const FString& Context) const
 {
+	typedef EMCsBeamWeaponBeamLifeCycle LifeCycleMapType;
+
+	// Check LifeCycle is Valid
+	check(LifeCycleMapType::Get().IsValidEnumChecked(Context, LifeCycle));
+	
+	if (bAttached)
+	{
+		typedef EMCsAttachmentTransformRules AttachRulesMapType;
+
+		check(AttachRulesMapType::Get().IsValidEnumChecked(Context, AttachRules));
+	}
+
 	// Check LocationInfo is Valid
 	CS_IS_VALID_CHECKED(LocationInfo);
 	// Check DirectionInfo is Valid
@@ -323,6 +387,20 @@ bool FCsBeamWeaponBeamParams::IsValidChecked(const FString& Context) const
 
 bool FCsBeamWeaponBeamParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
+	typedef EMCsBeamWeaponBeamLifeCycle LifeCycleMapType;
+	typedef ECsBeamWeaponBeamLifeCycle LifeCycleType;
+
+	// Check LifeCycle is Valid
+	CS_IS_ENUM_VALID(LifeCycleMapType, LifeCycleType, LifeCycle)
+
+	if (bAttached)
+	{
+		typedef EMCsAttachmentTransformRules AttachRulesMapType;
+		typedef ECsAttachmentTransformRules AttachRulesType;
+
+		CS_IS_ENUM_VALID(AttachRulesMapType, AttachRulesType, AttachRules)
+	}
+
 	// Check LocationInfo is Valid
 	CS_IS_VALID(LocationInfo)
 	// Check DirectionInfo is Valid
@@ -344,6 +422,9 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
 					// BeamParamsType (NCsWeapon::NBeam::NParams::NBeam::IBeam)
+					bAttached(true),
+					AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					LifeCycle(NCsWeapon::NBeam::NParams::NBeam::ELifeCycle::AfterStopFire),
 					LocationInfo(),
 					DirectionInfo()
 				{
@@ -364,6 +445,18 @@ namespace NCsWeapon
 
 				bool FImpl::IsValidChecked(const FString& Context) const
 				{
+					typedef NCsWeapon::NBeam::NParams::NBeam::EMLifeCycle LifeCycleMapType;
+
+					// Check LifeCycle is Valid
+					check(LifeCycleMapType::Get().IsValidEnumChecked(Context, LifeCycle));
+
+					if (bAttached)
+					{
+						typedef EMCsAttachmentTransformRules AttachRulesMapType;
+
+						check(AttachRulesMapType::Get().IsValidEnumChecked(Context, AttachRules));
+					}
+
 					// Check LocationInfo is Valid
 					CS_IS_VALID_CHECKED(LocationInfo);
 					// Check DirectionInfo is Valid
@@ -373,6 +466,20 @@ namespace NCsWeapon
 
 				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 				{
+					typedef NCsWeapon::NBeam::NParams::NBeam::EMLifeCycle LifeCycleMapType;
+					typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
+
+					// Check LifeCycle is Valid
+					CS_IS_ENUM_VALID(LifeCycleMapType, LifeCycleType, LifeCycle)
+
+					if (bAttached)
+					{
+						typedef EMCsAttachmentTransformRules AttachRulesMapType;
+						typedef ECsAttachmentTransformRules AttachRulesType;
+
+						CS_IS_ENUM_VALID(AttachRulesMapType, AttachRulesType, AttachRules)
+					}
+
 					// Check LocationInfo is Valid
 					CS_IS_VALID(LocationInfo)
 					// Check DirectionInfo is Valid

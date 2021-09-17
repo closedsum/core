@@ -77,6 +77,7 @@ namespace NCsBeam
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = ECsPooledObjectState::Inactive;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator.Reset();
 			Owner.Reset();
 			Parent.Reset();

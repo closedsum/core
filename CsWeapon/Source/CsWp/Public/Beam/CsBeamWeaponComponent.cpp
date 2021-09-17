@@ -256,6 +256,8 @@ void UCsBeamWeaponComponent::StopFire()
 	bFire = false;
 
 	Update(FCsDeltaTime::Zero);
+
+	BeamImpl->AfterStopFire();
 }
 
 #pragma endregion ICsBeamWeapon
@@ -316,13 +318,15 @@ void UCsBeamWeaponComponent::Init()
 
 	BeamData = WeaponDataLibrary::GetInterfaceChecked<BeamDataType>(Context, Data);
 
-	CurrentCharge = BeamData->GetMaxCharge();
+	CurrentCharge = GetMaxCharge();
 
 	BeamImpl->SetOwner(MyOwner);
+	BeamImpl->SetData(Data);
+	BeamImpl->SetBeamData(BeamData);
+
+
 	BeamImpl->SetFXImpl(FXImpl);
 	BeamImpl->SetSoundImpl(SoundImpl);
-
-	check(BeamImpl->IsValidChecked(Context));
 
 	FXImpl->SetOwner(MyOwner);
 	SoundImpl->SetOwner(MyOwner);
@@ -404,10 +408,19 @@ void UCsBeamWeaponComponent::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime
 void UCsBeamWeaponComponent::ConsumeCharge()
 {
 	float PreviousCharge = CurrentCharge;
-	// TODO: Decrement properly
-	--CurrentCharge;
+	CurrentCharge = FMath::Max(0.0f, CurrentCharge - GetChargeConsumedByShot());
 
 	OnConsumeCharge_Event.Broadcast(this, PreviousCharge, CurrentCharge);
+}
+
+float UCsBeamWeaponComponent::GetMaxCharge() const
+{
+	return BeamData->GetMaxCharge();
+}
+
+float UCsBeamWeaponComponent::GetChargeConsumedByShot() const
+{
+	return BeamData->GetChargeConsumedByShot();
 }
 
 #pragma endregion Charge
@@ -426,7 +439,7 @@ bool UCsBeamWeaponComponent::CanFire() const
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > BeamData->GetTimeBetweenShots());
+	const bool Pass_Time = (TimeSinceStart.Time - Fire_StartTime > GetTimeBetweenShots());
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
 	const bool Pass_Fire = bFire && !BeamData->DoFireOnRelease() && (BeamData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
@@ -441,7 +454,7 @@ bool UCsBeamWeaponComponent::CanFire() const
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, BeamData->GetTimeBetweenShots());
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, GetTimeBetweenShots());
 		// Pass_Fire
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!BeamData->DoFireOnRelease()), ToChar(BeamData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
@@ -495,8 +508,8 @@ void UCsBeamWeaponComponent::Fire()
 	#undef COROUTINE
 
 	Payload->SetValue_Flag(CS_FIRST, BeamData->HasInfiniteCharge());
-	Payload->SetValue_Int(CS_FIRST, BeamData->GetBeamsPerShot());
-	Payload->SetValue_Float(CS_FIRST, BeamData->GetTimeBetweenBeamsPerShot());
+	Payload->SetValue_Int(CS_FIRST, GetBeamsPerShot());
+	Payload->SetValue_Float(CS_FIRST, GetTimeBetweenBeamsPerShot());
 
 	FireRoutineHandle = Scheduler->Start(Payload);
 }
@@ -533,7 +546,7 @@ char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 			if (!bInfiniteCharge)
 				ConsumeCharge();
 
-			BeamImpl->Emit(Data);
+			BeamImpl->Emit();
 			SoundImpl->TryFire(Data);
 			FXImpl->TryFire(Data);
 
@@ -546,9 +559,13 @@ char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenBeamsPerShot);
 			}
 
+			BeamImpl->AfterBeamsPerShot();
+
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
 		}
 	} while (CurrentBeamPerShotIndex < BeamsPerShot);
+
+	BeamImpl->AfterShot();
 
 	CS_COROUTINE_END(R);
 }
@@ -556,6 +573,21 @@ char UCsBeamWeaponComponent::Fire_Internal(FCsRoutine* R)
 void UCsBeamWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
 {
 	--FireCount;
+}
+
+int32 UCsBeamWeaponComponent::GetBeamsPerShot() const
+{
+	return BeamData->GetBeamsPerShot();
+}
+
+float UCsBeamWeaponComponent::GetTimeBetweenShots() const
+{
+	return BeamData->GetTimeBetweenShots();
+}
+
+float UCsBeamWeaponComponent::GetTimeBetweenBeamsPerShot() const
+{
+	return BeamData->GetTimeBetweenBeamsPerShot();
 }
 
 void UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
@@ -586,7 +618,7 @@ void UCsBeamWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 	#undef COROUTINE
 
 	// Get total elapsed time (= TimeBetweenShots)
-	Payload->SetValue_Float(CS_FIRST, Outer->GetBeamData()->GetTimeBetweenShots());
+	Payload->SetValue_Float(CS_FIRST, Outer->GetTimeBetweenShots());
 
 	Scheduler->Start(Payload);
 }

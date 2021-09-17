@@ -2,6 +2,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Beam.h"
+#include "Types/CsTypes_AttachDetach.h"
 // Container
 #include "Containers/CsGetInterfaceMap.h"
 
@@ -22,6 +23,8 @@ namespace NCsBeam
 			virtual ~IPayload(){}
 
 			virtual const FECsBeam& GetType() const = 0;
+
+			virtual const ECsAttachmentTransformRules& GetAttachRules() const = 0;
 
 			virtual const FVector& GetLocation() const = 0;
 

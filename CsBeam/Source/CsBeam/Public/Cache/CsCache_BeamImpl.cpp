@@ -19,7 +19,7 @@ namespace NCsBeam
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
-			State(ECsPooledObjectState::Inactive),
+			State(NCsPooledObject::EState::Inactive),
 			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(),
 			Owner(),
@@ -55,7 +55,7 @@ namespace NCsBeam
 		#undef PayloadType
 
 			bAllocated = true;
-			State	   = ECsPooledObjectState::Active;
+			State	   = NCsPooledObject::EState::Active;
 			UpdateType = Payload->GetUpdateType();
 			Instigator = Payload->GetInstigator();
 			Owner	   = Payload->GetOwner();
@@ -77,7 +77,7 @@ namespace NCsBeam
 		{
 			bAllocated = false;
 			bQueueDeallocate = false;
-			State = ECsPooledObjectState::Inactive;
+			State = NCsPooledObject::EState::Inactive;
 			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator.Reset();
 			Owner.Reset();

@@ -24,6 +24,7 @@ namespace NCsPooledObject
 			static const FName Name;
 
 		#define PayloadType NCsPooledObject::NPayload::IPayload
+		#define StateType NCsPooledObject::EState
 		#define UpdateType NCsPooledObject::EUpdate
 
 		public:
@@ -81,7 +82,7 @@ namespace NCsPooledObject
 			*
 			* return
 			*/
-			virtual const ECsPooledObjectState& GetState() const = 0;
+			virtual const StateType& GetState() const = 0;
 
 			/**
 			* Get how the pooled object should updated. Usually update for a
@@ -155,6 +156,7 @@ namespace NCsPooledObject
 			virtual void Reset() = 0;
 
 		#undef PayloadType
+		#undef StateType
 		#undef UpdateType
 		};
 	}

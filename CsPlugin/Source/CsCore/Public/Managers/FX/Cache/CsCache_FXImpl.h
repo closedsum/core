@@ -57,7 +57,7 @@ namespace NCsFX
 
 			bool bQueueDeallocate;
 
-			ECsPooledObjectState State;
+			NCsPooledObject::EState State;
 
 			NCsPooledObject::EUpdate UpdateType;
 
@@ -115,7 +115,7 @@ namespace NCsFX
 
 			bool ShouldDeallocate() const;
 
-			FORCEINLINE const ECsPooledObjectState& GetState() const { return State; }
+			FORCEINLINE const NCsPooledObject::EState& GetState() const { return State; }
 			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator.Get(); }
 			FORCEINLINE UObject* GetOwner() const { return Owner.Get(); }

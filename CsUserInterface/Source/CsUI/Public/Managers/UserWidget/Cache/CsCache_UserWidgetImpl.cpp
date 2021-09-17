@@ -29,7 +29,7 @@ namespace NCsUserWidget
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
-			State(ECsPooledObjectState::Inactive),
+			State(NCsPooledObject::EState::Inactive),
 			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(),
 			Owner(),
@@ -64,7 +64,7 @@ namespace NCsUserWidget
 
 			// NCsPooledObject::NCache::ICache
 			bAllocated = true;
-			State	   = ECsPooledObjectState::Active;
+			State	   = NCsPooledObject::EState::Active;
 			UpdateType = Payload->GetUpdateType();
 			Instigator = Payload->GetInstigator();
 			Owner	   = Payload->GetOwner();
@@ -97,7 +97,7 @@ namespace NCsUserWidget
 			// NCsPooledObject::NCache::ICache
 			bAllocated = false;
 			bQueueDeallocate = false;
-			State = ECsPooledObjectState::Inactive;
+			State = NCsPooledObject::EState::Inactive;
 			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator.Reset();
 			Owner.Reset();

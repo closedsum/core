@@ -14,6 +14,7 @@ namespace NCsUserWidget
 			InterfaceMap(nullptr),
 			// NCsPooledObject::NPayload::IPayload
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
@@ -46,6 +47,7 @@ namespace NCsUserWidget
 		{
 			// NCsPooledObject::NPayload::IPayload
 			bAllocated = false;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;

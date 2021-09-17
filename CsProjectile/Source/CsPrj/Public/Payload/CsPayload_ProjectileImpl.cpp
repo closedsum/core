@@ -45,6 +45,7 @@ namespace NCsProjectile
 			InterfaceMap(nullptr),
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
@@ -79,6 +80,7 @@ namespace NCsProjectile
 		{
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;

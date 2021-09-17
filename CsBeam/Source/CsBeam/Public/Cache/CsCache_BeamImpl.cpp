@@ -56,6 +56,7 @@ namespace NCsBeam
 
 			bAllocated = true;
 			State	   = ECsPooledObjectState::Active;
+			UpdateType = Payload->GetUpdateType();
 			Instigator = Payload->GetInstigator();
 			Owner	   = Payload->GetOwner();
 			Parent	   = Payload->GetParent();

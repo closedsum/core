@@ -14,6 +14,7 @@ void FCsPayload_Beam::CopyToPayloadAsValueChecked(const FString& Context, const 
 {
 #undef PayloadType
 	
+	Payload->UpdateType	 = (NCsPooledObject::EUpdate)UpdateType;
 	Payload->Instigator = Instigator;
 	Payload->Owner = Owner;
 	Payload->Parent = Parent;
@@ -60,6 +61,7 @@ namespace NCsBeam
 			InterfaceMap(nullptr),
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
@@ -96,6 +98,7 @@ namespace NCsBeam
 		{
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;

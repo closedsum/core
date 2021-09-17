@@ -26,6 +26,13 @@ public:
 
 // PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
+	/** Describes how the pooled object should updated. Usually update for a
+		pooled object (implements the interface: ICsPooledObject) is controlled
+		by its manager.
+		Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsPooledObjectUpdate UpdateType;
+
 	/** The object "instigating" or starting the spawn. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UObject* Instigator;
@@ -53,6 +60,7 @@ public:
 	FVector Direction;
 
 	FCsPayload_Projectile() :
+		UpdateType(ECsPooledObjectUpdate::Manager),
 		Instigator(nullptr),
 		Owner(nullptr),
 		Parent(nullptr),
@@ -107,6 +115,8 @@ namespace NCsProjectile
 
 		public:
 
+			NCsPooledObject::EUpdate UpdateType;
+
 			UObject* Instigator;
 
 			UObject* Owner;
@@ -146,6 +156,7 @@ namespace NCsProjectile
 		public:
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetOwner() const { return Owner; }
 			FORCEINLINE UObject* GetParent() const { return Parent; }

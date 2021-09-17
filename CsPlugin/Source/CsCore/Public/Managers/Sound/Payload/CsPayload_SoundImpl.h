@@ -36,6 +36,8 @@ namespace NCsSound
 
 			UObject* Instigator;
 
+			NCsPooledObject::EUpdate UpdateType;
+
 			UObject* Owner;
 
 			UObject* Parent;
@@ -80,6 +82,7 @@ namespace NCsSound
 		public:
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetOwner() const { return Owner; }
 			FORCEINLINE UObject* GetParent() const { return Parent; }

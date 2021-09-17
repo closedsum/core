@@ -28,6 +28,7 @@ void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, 
 	typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadType;
 
 	PooledPayloadType PooledPayload;
+	PooledPayload.UpdateType					 = (NCsPooledObject::EUpdate)UpdateType;
 	PooledPayload.Instigator					 = Instigator;
 	PooledPayload.Owner							 = Owner;
 	PooledPayload.Parent						 = Parent;

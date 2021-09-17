@@ -1,5 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 // Types
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 
@@ -22,6 +23,13 @@ struct CSCORE_API FCsPayload_StaticMesh
 public:
 
 // PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+	/** Describes how the pooled object should updated. Usually update for a
+		pooled object (implements the interface: ICsPooledObject) is controlled
+		by its manager.
+		Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECsPooledObjectUpdate UpdateType;
 
 	/** The object "instigating" or starting the spawn. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -48,6 +56,7 @@ public:
 	FCsStaticMeshActorPooledInfo Mesh;
 
 	FCsPayload_StaticMesh() :
+		UpdateType(ECsPooledObjectUpdate::Manager),
 		Instigator(nullptr),
 		Owner(nullptr),
 		Parent(nullptr),

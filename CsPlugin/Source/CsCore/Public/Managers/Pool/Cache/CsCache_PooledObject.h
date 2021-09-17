@@ -1,9 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Containers
+#include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Managers/Time/CsTypes_Time.h"
-#include "Containers/CsGetInterfaceMap.h"
-
-#pragma once
 
 class UObject;
 
@@ -88,7 +89,7 @@ namespace NCsPooledObject
 			* by its manager.
 			* Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate).
 			*
-			* return
+			* return Update Type
 			*/
 			virtual const UpdateType& GetUpdateType() const = 0;
 

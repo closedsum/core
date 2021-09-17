@@ -72,6 +72,7 @@ namespace NCsSound
 
 			// PooledPayloadType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
+			UpdateType = Payload->GetUpdateType();
 			State	   = ECsPooledObjectState::Active;
 			Instigator = Payload->GetInstigator();
 			Owner	   = Payload->GetOwner();
@@ -162,6 +163,7 @@ namespace NCsSound
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = ECsPooledObjectState::Inactive;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator.Reset();
 			Owner.Reset();
 			Parent.Reset();

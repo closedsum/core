@@ -56,6 +56,7 @@ namespace NCsProjectile
 
 			bAllocated = true;
 			State	   = ECsPooledObjectState::Active;
+			UpdateType = Payload->GetUpdateType();
 			Instigator = Payload->GetInstigator();
 			Owner	   = Payload->GetOwner();
 			Parent	   = Payload->GetParent();
@@ -77,6 +78,7 @@ namespace NCsProjectile
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = ECsPooledObjectState::Inactive;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator.Reset();
 			Owner.Reset();
 			Parent.Reset();

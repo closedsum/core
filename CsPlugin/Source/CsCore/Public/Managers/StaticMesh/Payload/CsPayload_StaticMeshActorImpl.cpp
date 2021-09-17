@@ -15,6 +15,7 @@ namespace NCsStaticMeshActor
 			InterfaceMap(nullptr),
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
@@ -56,6 +57,7 @@ namespace NCsStaticMeshActor
 		{
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;

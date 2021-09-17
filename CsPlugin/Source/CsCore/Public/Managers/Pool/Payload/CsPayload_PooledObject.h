@@ -1,9 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Managers/Pool/CsTypes_Pool.h"
 #include "Managers/Time/CsTypes_Time.h"
-
-#pragma once
 
 class UObject;
 
@@ -32,6 +33,20 @@ namespace NCsPooledObject
 			* return Whether or not the payload has been marked to be used.
 			*/
 			virtual const bool& IsAllocated() const = 0;
+
+		#define UpdateType NCsPooledObject::EUpdate
+
+			/**
+			* Get how the pooled object should updated. Usually update for a
+			* pooled object (implements the interface: ICsPooledObject) is controlled
+			* by its manager.
+			* Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate).
+			*
+			* return Update Type
+			*/
+			virtual const UpdateType& GetUpdateType() const = 0;
+
+		#undef UpdateType
 
 			/**
 			* The object "instigating" or starting the process.

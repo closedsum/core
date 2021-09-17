@@ -14,6 +14,7 @@ namespace NCsPooledObject
 			InterfaceMap(nullptr),
 			// IPayload
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
@@ -41,7 +42,7 @@ namespace NCsPooledObject
 		{
 			// IPayload
 			bAllocated = false;
-
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;

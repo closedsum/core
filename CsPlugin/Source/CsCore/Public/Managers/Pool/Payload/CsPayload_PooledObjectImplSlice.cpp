@@ -17,6 +17,7 @@ namespace NCsPooledObject
 			InterfaceMap(nullptr),
 			// IPayload
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
@@ -44,7 +45,7 @@ namespace NCsPooledObject
 		{
 			// IPayload
 			bAllocated = false;
-
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;
@@ -68,6 +69,7 @@ namespace NCsPooledObject
 
 		bool FImplSlice::CopyFrom(const FImplSlice* From)
 		{
+			UpdateType = From->UpdateType;
 			Instigator = From->Instigator;
 			Owner = From->Owner;
 			Parent = From->Parent;

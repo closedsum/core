@@ -33,6 +33,8 @@ namespace NCsUserWidget
 
 			// NCsPooledObject::NPayload::IPayload
 
+			NCsPooledObject::EUpdate UpdateType;
+
 			UObject* Instigator;
 
 			UObject* Owner;
@@ -67,6 +69,7 @@ namespace NCsUserWidget
 		public:
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetOwner() const { return Owner; }
 			FORCEINLINE UObject* GetParent() const { return Parent; }

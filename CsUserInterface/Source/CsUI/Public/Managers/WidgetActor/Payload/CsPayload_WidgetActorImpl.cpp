@@ -12,14 +12,15 @@ namespace NCsWidgetActor
 		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
+			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
 			PreserveChangesFromDefaultMask(0),
-			// NCsWidgetActor::NPayload::IPayload
+			// WidgetPayloadType (NCsWidgetActor::NPayload::IPayload)
 			UserWidget(nullptr),
 			DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
 			LifeTime(0.0f),
@@ -27,7 +28,7 @@ namespace NCsWidgetActor
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
-			// NCsWidgetActor::NPayload::IUserWidget
+			// UserWidgetPayloadType (NCsWidgetActor::NPayload::IUserWidget
 			UserWidgetPooledType(),
 			UserWidgetPayload(nullptr)
 		{
@@ -49,13 +50,14 @@ namespace NCsWidgetActor
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
 			Owner = nullptr;
 			Parent = nullptr;
@@ -64,7 +66,7 @@ namespace NCsWidgetActor
 
 			PreserveChangesFromDefaultMask = 0;
 
-			// NCsWidgetActor::NPayload::IPayload
+			// WidgetPayloadType (NCsWidgetActor::NPayload::IPayload)
 			UserWidget = nullptr;
 			DeallocateMethod = ECsWidgetActorDeallocateMethod::Complete;
 			LifeTime = 0.0f;
@@ -73,11 +75,11 @@ namespace NCsWidgetActor
 			TransformRules = 0;
 			Transform = FTransform::Identity;
 
-			// NCsWidgetActor::NPayload::IUserWidget
+			// UserWidgetType (NCsWidgetActor::NPayload::IUserWidget)
 			UserWidgetPooledType = EMCsUserWidgetPooled::Get().GetMAX();
 			UserWidgetPayload = nullptr;
 		}
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

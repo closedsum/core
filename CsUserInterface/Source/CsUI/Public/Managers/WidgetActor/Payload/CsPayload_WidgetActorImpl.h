@@ -42,7 +42,9 @@ namespace NCsWidgetActor
 
 		public:
 
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+			NCsPooledObject::EUpdate UpdateType;
 
 			UObject* Instigator;
 
@@ -54,7 +56,7 @@ namespace NCsWidgetActor
 
 			uint32 PreserveChangesFromDefaultMask;
 
-			// NCsWidgetActor::NPayload::IPayload
+			// WidgetPayloadType (NCsWidgetActor::NPayload::IPayload)
 
 			UUserWidget* UserWidget;
 
@@ -70,7 +72,7 @@ namespace NCsWidgetActor
 
 			FTransform Transform;
 
-			// NCsWidgetActor::NPayload::IUserWidget
+			// UserWidgetType (NCsWidgetActor::NPayload::IUserWidget)
 
 			FECsUserWidgetPooled UserWidgetPooledType;
 
@@ -89,11 +91,12 @@ namespace NCsWidgetActor
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetOwner() const { return Owner; }
 			FORCEINLINE UObject* GetParent() const { return Parent; }
@@ -104,7 +107,7 @@ namespace NCsWidgetActor
 
 			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
@@ -117,7 +120,7 @@ namespace NCsWidgetActor
 			template<typename T>
 			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// NCsWidgetActor::NPayload::IPayload
+		// WidgetPayloadType (NCsWidgetActor::NPayload::IPayload)
 		#pragma region
 		public:
 
@@ -129,16 +132,16 @@ namespace NCsWidgetActor
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 
-		#pragma endregion NCsWidgetActor::NPayload::IPayload
+		#pragma endregion WidgetPayloadType (NCsWidgetActor::NPayload::IPayload)
 
-		// NCsWidgetActor::NPayload::IUserWidget
+		// UserWidgetType (NCsWidgetActor::NPayload::IUserWidget)
 		#pragma region
 		public:
 
 			FORCEINLINE const FECsUserWidgetPooled& GetUserWidgetPooledType() const { return UserWidgetPooledType; }
 			FORCEINLINE UserWidgetPayloadType* GetUserWidgetPayload() const { return UserWidgetPayload; }
 
-		#pragma endregion NCsWidgetActor::NPayload::IUserWidget
+		#pragma endregion UserWidgetType (NCsWidgetActor::NPayload::IUserWidget)
 		};
 
 #undef PooledPayloadType

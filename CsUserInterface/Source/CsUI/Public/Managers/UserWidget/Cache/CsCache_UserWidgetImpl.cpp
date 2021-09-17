@@ -65,6 +65,7 @@ namespace NCsUserWidget
 			// NCsPooledObject::NCache::ICache
 			bAllocated = true;
 			State	   = ECsPooledObjectState::Active;
+			UpdateType = Payload->GetUpdateType();
 			Instigator = Payload->GetInstigator();
 			Owner	   = Payload->GetOwner();
 			Parent	   = Payload->GetParent();
@@ -97,6 +98,7 @@ namespace NCsUserWidget
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = ECsPooledObjectState::Inactive;
+			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator.Reset();
 			Owner.Reset();
 			Parent.Reset();

@@ -44,6 +44,8 @@ namespace NCsFX
 
 		public:
 
+			NCsPooledObject::EUpdate UpdateType;
+
 			UObject* Instigator;
 
 			UObject* Owner;
@@ -95,6 +97,7 @@ namespace NCsFX
 		public:
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
+			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetOwner() const { return Owner; }
 			FORCEINLINE UObject* GetParent() const { return Parent; }

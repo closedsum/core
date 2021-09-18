@@ -88,10 +88,45 @@ void FCsBeamCollisionShape::CopyToShapeAsValue(LineType* Shape) const
 
 #undef LineType
 
+#define BoxType NCsBeam::NCollision::NShape::FBox
+
+void FCsBeamCollisionShape::CopyToShape(BoxType* Shape)
+{
+	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale*)&ScaleType);
+	Shape->SetHalfExtents(&HalfExtents);
+}
+
+void FCsBeamCollisionShape::CopyToShapeAsValue(BoxType* Shape) const
+{
+	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale)ScaleType);
+	Shape->SetHalfExtents(HalfExtents);
+}
+
+#undef BoxType
+
+#define CapsuleType NCsBeam::NCollision::NShape::FCapsule
+
+void FCsBeamCollisionShape::CopyToShape(CapsuleType* Shape)
+{
+	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale*)&ScaleType);
+	Shape->SetRadius(&Radius);
+	Shape->SetHalfHeight(&HalfHeight);
+}
+
+void FCsBeamCollisionShape::CopyToShapeAsValue(CapsuleType* Shape) const
+{
+	Shape->SetScaleType((NCsBeam::NCollision::NShape::EScale)ScaleType);
+	Shape->SetRadius(Radius);
+	Shape->SetHalfHeight(HalfHeight);
+}
+
+#undef CapsuleType
+
 #define ShapeType NCsBeam::NCollision::NShape::FShape
 
 ShapeType* FCsBeamCollisionShape::ConstructShape()
 {
+	// Line
 	if (Type == ECsBeamCollisionShapeType::Line)
 	{
 		typedef NCsBeam::NCollision::NShape::FLine LineType;
@@ -100,16 +135,53 @@ ShapeType* FCsBeamCollisionShape::ConstructShape()
 		CopyToShape(Shape);
 		return Shape;
 	}
+	// Box
+	if (Type == ECsBeamCollisionShapeType::Box)
+	{
+		typedef NCsBeam::NCollision::NShape::FBox BoxType;
+
+		BoxType* Shape = new BoxType();
+		CopyToShape(Shape);
+		return Shape;
+	}
+	// Capsule
+	if (Type == ECsBeamCollisionShapeType::Capsule)
+	{
+		typedef NCsBeam::NCollision::NShape::FCapsule CapsuleType;
+
+		CapsuleType* Shape = new CapsuleType();
+		CopyToShape(Shape);
+		return Shape;
+	}
 	return nullptr;
 }
 
 ShapeType* FCsBeamCollisionShape::ConstructShapeAsValue() const
 {
+	// Line
 	if (Type == ECsBeamCollisionShapeType::Line)
 	{
 		typedef NCsBeam::NCollision::NShape::FLine LineType;
 
 		LineType* Shape = new LineType();
+		CopyToShapeAsValue(Shape);
+		return Shape;
+	}
+	// Box
+	if (Type == ECsBeamCollisionShapeType::Box)
+	{
+		typedef NCsBeam::NCollision::NShape::FBox BoxType;
+
+		BoxType* Shape = new BoxType();
+		CopyToShapeAsValue(Shape);
+		return Shape;
+	}
+	// Capsule
+	if (Type == ECsBeamCollisionShapeType::Capsule)
+	{
+		typedef NCsBeam::NCollision::NShape::FCapsule CapsuleType;
+
+		CapsuleType* Shape = new CapsuleType();
 		CopyToShapeAsValue(Shape);
 		return Shape;
 	}

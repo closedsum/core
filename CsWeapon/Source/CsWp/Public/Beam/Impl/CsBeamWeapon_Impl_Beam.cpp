@@ -429,16 +429,23 @@ namespace NCsWeapon
 					PayloadType* Payload	 = Manager_Beam->AllocatePayload<PayloadType>(Context, Type);
 
 					// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+					const bool IsAttached = BeamParams->IsAttached();
+
+					if (IsAttached)
+					{
+						typedef NCsPooledObject::EUpdate UpdateType;
+
+						Payload->UpdateType = NCsPooledObject::EUpdate::Owner;
+					}
+
 					Payload->Instigator = Owner;
 					Payload->Owner = Outer;
 					
-					const bool IsAttached = BeamParams->IsAttached();
-
 					//Payload->Parent = IsAttached ? Component : nullptr;
 
 					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-					//Payload->Time = TimeManagerLibrary::GetTimeChecked(Context, Outer, )
+					Payload->Time = TimeManagerLibrary::GetTimeChecked(Context, Outer, GetUpdateGroup->GetUpdateGroup());
 
 					//Payload->PreserveChangesFromDefaultMask;
 

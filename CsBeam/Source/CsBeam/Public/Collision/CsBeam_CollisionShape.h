@@ -135,6 +135,10 @@ namespace NCsBeamCollisionShapeType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FShape)
 // NCsBeam::NCollision::Shape::FLine
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FLine)
+// NCsBeam::NCollision::Shape::FBox
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FBox)
+// NCsBeam::NCollision::Shape::FCapsule
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NCollision, NShape, FCapsule)
 
 /**
 * 
@@ -183,6 +187,16 @@ public:
 	void CopyToShape(LineType* Shape);
 	void CopyToShapeAsValue(LineType* Shape) const;
 #undef LineType
+
+#define BoxType NCsBeam::NCollision::NShape::FBox
+	void CopyToShape(BoxType* Shape);
+	void CopyToShapeAsValue(BoxType* Shape) const;
+#undef BoxType
+
+#define CapsuleType NCsBeam::NCollision::NShape::FCapsule
+	void CopyToShape(CapsuleType* Shape);
+	void CopyToShapeAsValue(CapsuleType* Shape) const;
+#undef CapsuleType
 
 #define ShapeType NCsBeam::NCollision::NShape::FShape
 	ShapeType* ConstructShape();

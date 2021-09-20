@@ -113,3 +113,26 @@ struct CSCORE_API FCsSettings_PIE
 };
 
 #pragma endregion FCsSettings_PIE
+
+// FCsSettings_Entry
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSettings_Entry
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float CompanyLogoDisplayTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float GameSplashDisplayTime;
+
+	FCsSettings_Entry() :
+		CompanyLogoDisplayTime(0.0f),
+		GameSplashDisplayTime(0.0f)
+	{
+	}
+};
+
+#pragma endregion FCsSettings_Entry

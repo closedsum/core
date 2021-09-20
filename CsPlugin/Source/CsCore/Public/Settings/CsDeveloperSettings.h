@@ -282,6 +282,15 @@ public:
 
 #pragma endregion SkeletalMesh
 
+// Entry
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FCsSettings_Entry Entry;
+
+#pragma endregion
+
 // PIE
 #pragma region
 public:

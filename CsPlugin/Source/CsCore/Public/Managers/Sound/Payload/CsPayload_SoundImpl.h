@@ -34,9 +34,9 @@ namespace NCsSound
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
-			UObject* Instigator;
-
 			NCsPooledObject::EUpdate UpdateType;
+
+			UObject* Instigator;
 
 			UObject* Owner;
 

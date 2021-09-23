@@ -645,6 +645,33 @@ namespace NCsValid
 			}
 		};
 	}
+
+	namespace NSubclassOf
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			template<typename ObjectType>
+			FORCEINLINE static bool NullChecked(const FString& Context, const TSubclassOf<ObjectType>& A, const FString& AName)
+			{
+				checkf(A.Get(), TEXT("%s: %s is NULL."), *Context, *AName);
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static bool Null(const FString& Context, const TSubclassOf<ObjectType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A.Get())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
 }
 
 // CHECKED
@@ -845,6 +872,18 @@ namespace NCsValid
 
 #pragma endregion FSoftObjectPath
 
+// SubclassOf
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		check(NCsValid::NSubclassOf::FLibrary::NullChecked<__ObjectType>(Context, __Class, __temp__str__)); \
+	}
+
+#pragma endregion WeakObjectPtr
+
 // Delegate
 #pragma region
 
@@ -910,6 +949,8 @@ namespace NCsValid
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // FSoftObjectPath
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
+// SubclassOf
+#define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType)
 // Delegate
 #define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)
 #endif // #if !UE_BUILD_SHIPPING
@@ -1312,6 +1353,30 @@ namespace NCsValid
 	}
 
 #pragma endregion FSoftObjectPath
+
+// SubclassOf
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL_EXIT(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SUBCLASS_OF_NULL_RET_NULL(__Class, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__Class; \
+		if (!NCsValid::NSubclassOf::FLibrary::Null<__ObjectType>(Context, __Class, __temp__str__, Log)) { return nullptr; } \
+	}
+
+#pragma endregion SubclassOf
 
 // Delegate
 #pragma region

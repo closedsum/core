@@ -1,6 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
+class UObject;
+class UClass;
+class UWorld;
+
 namespace NCsValid
 {
 	namespace NInt
@@ -593,6 +597,34 @@ namespace NCsValid
 
 				return Other;
 			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* NewChecked(const FString& Context, UObject* Outer, const FString& OuterName, UClass* Class, const FString& ClassName)
+			{
+				checkf(Outer, TEXT("%s: %s is NULL."), *Context, *OuterName);
+
+				checkf(Class, TEXT("%s: %s is NULL."), *Context, *ClassName);
+
+				ObjectType* O = NewObject<ObjectType>(Outer, Class);
+
+				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));
+				
+				return O;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* NewChecked(const FString& Context, UObject* Outer, const FString& OuterName, TSubclassOf<ObjectType>& Class, const FString& ClassName)
+			{
+				checkf(Outer, TEXT("%s: %s is NULL."), *Context, *OuterName);
+
+				checkf(Class.Get(), TEXT("%s: %s is NULL."), *Context, *ClassName);
+
+				ObjectType* O = NewObject<ObjectType>(Outer, Class);
+
+				checkf(O, TEXT("%s: Failed to create Object from Class: %s."), *Context, *(Class->GetName()));
+
+				return O;
+			}
 		};
 	}
 
@@ -669,6 +701,28 @@ namespace NCsValid
 					return false;
 				}
 				return true;
+			}
+		};
+	}
+
+	namespace NActor
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			template<typename ActorType>
+			FORCEINLINE static ActorType* SpawnChecked(const FString& Context, UWorld* World, UClass* Class, const FString& ClassName)
+			{
+				checkf(World, TEXT("%s: World is NULL."), *Context);
+
+				checkf(Class, TEXT("%s: %s is NULL."), *Context, *ClassName);
+
+				ActorType* A = World->SpawnActor<ActorType>(Class);
+
+				checkf(A, TEXT("%s: Failed to Spawn Actor of type: %s from %s of type: %s."), *Context, *(ActorType::StaticClass()->GetName()), *ClassName, *(Class->GetName()));
+
+				return A;
 			}
 		};
 	}
@@ -845,6 +899,22 @@ namespace NCsValid
 		static const FString __temp__str__b = #__InterfaceType; \
 		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
+// Assume const FString& Context has been defined
+#define CS_NEW_CHECKED(__ObjectType, __Outer, __Class) \
+	[] (const FString& Context, UObject* __Outer, UClass* __Class) \
+	{ \
+		static const FString __temp__str__a = #__Outer; \
+		static const FString __temp__str__b = #__Class; \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+	}(Context, __Outer, __Class)
+// Assume const FString& Context has been defined and this is passed out Outer for NewObject
+#define CS_NEW_BY_THIS_AND_SUBCLASS_OF_CHECKED(__ObjectType, __Class) \
+	[] (const FString& Context, UObject* __Outer, TSubclassOf<__ObjectType>& __Class) \
+	{ \
+		static const FString __temp__str__a = TEXT("this"); \
+		static const FString __temp__str__b = #__Class; \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+	}(Context, this, __Class)
 
 #pragma endregion Object
 
@@ -883,6 +953,19 @@ namespace NCsValid
 	}
 
 #pragma endregion WeakObjectPtr
+
+// Actor
+#pragma region
+
+// Assume const FString& Context has been defined and this->GetWorld() exists
+#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
+	[] (const FString& Context, UWorld* __World, UClass* __Class) \
+	{ \
+		static const FString __temp__str__a = #__Class; \
+		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __World, __Class, __temp__str__a); \
+	}(Context, GetWorld(), __Class)
+
+#pragma endregion Actor
 
 // Delegate
 #pragma region
@@ -945,12 +1028,36 @@ namespace NCsValid
 		static const FString __temp__str__b; \
 		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
+// Assume const FString& Context has been defined
+#define CS_NEW_CHECKED(__ObjectType, __Outer, __Class) \
+	[] (const FString& Context, UObject* __Outer, UClass* __Class) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+	}(Context, __Outer, __Class)
+// Assume const FString& Context has been defined and this is passed out Outer for NewObject
+#define CS_NEW_BY_THIS_AND_SUBCLASS_OF_CHECKED(__ObjectType, __Class) \
+	[] (const FString& Context, UObject* __Outer, TSubclassOf<__ObjectType>& __Class) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+	}(Context, this, __Class)
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // FSoftObjectPath
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
 // SubclassOf
 #define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType)
+// Actor
+// Assume const FString& Context has been defined and this->GetWorld() exists
+#define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
+	[] (const FString& Context, UWorld* __World, UClass* __Class) \
+	{ \
+		static const FString __temp__str__a; \
+		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __World, __Class, __temp__str__a); \
+	}(Context, GetWorld(), __Class)
 // Delegate
 #define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)
 #endif // #if !UE_BUILD_SHIPPING

@@ -159,6 +159,16 @@ namespace NCsGameInstance
 
 	#pragma endregion Get
 
+	// Start
+	#pragma region
+	public:
+
+		static bool HasStartedFromEntryChecked(const FString& Context, const UObject* ContextObject);
+
+		static bool SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Start
+
 	// Editor
 	#pragma region
 	public:

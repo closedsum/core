@@ -64,6 +64,18 @@ protected:
 
 	bool IsSimulateInEditor();
 
+// Start
+#pragma region
+protected:
+
+	bool bHasStartedFromEntry;
+
+public:
+
+	FORCEINLINE bool HasStartedFromEntry() const { return bHasStartedFromEntry; }
+
+#pragma endregion Start
+
 // Exit
 #pragma region
 protected:

@@ -61,6 +61,8 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	// Tick
 	TickDelegate(),
 	TickDelegateHandle(),
+	// Start
+	bHasStartedFromEntry(false),
 	// Managers
 	OnQueueExitGame_Event(),
 	Manager_Singleton(nullptr),

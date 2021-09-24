@@ -106,6 +106,23 @@ namespace NCsGameInstance
 
 	#pragma endregion Get
 
+	// Start
+	#pragma region
+
+	bool FLibrary::HasStartedFromEntryChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked<UCsGameInstance>(Context, ContextObject)->HasStartedFromEntry();
+	}
+
+	bool FLibrary::SafeHasStartedFromEntry(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (UCsGameInstance* GameInstance = GetSafe<UCsGameInstance>(Context, ContextObject, Log))
+			return GameInstance->HasStartedFromEntry();
+		return false;
+	}
+
+	#pragma endregion Start
+
 	// Editor
 	#pragma region
 	

@@ -813,6 +813,30 @@ namespace NCsValid
 
 #pragma endregion FString
 
+// Enum
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_ENUM_VALID_CHECKED(__EnumMapType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		check(__EnumMapType::Get().IsValidEnumChecked(Context, __temp__str__, __Enum)); \
+	}
+
+#pragma endregion Enum
+
+// EnumStruct
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_ENUM_STRUCT_VALID_CHECKED(__EnumMapType, __Enum) \
+	{ \
+		static const FString __temp__str__ = #__Enum; \
+		check(__EnumMapType::Get().IsValidEnumChecked(Context, __temp__str__, __Enum)); \
+	}
+
+#pragma endregion EnumStruct
+
 // FVector
 #pragma region
 
@@ -994,6 +1018,10 @@ namespace NCsValid
 #define CS_IS_NAME_NONE_CHECKED(__A)
 // FString
 #define CS_IS_STRING_EMPTY_CHECKED(__A)
+// Enum
+#define CS_IS_ENUM_VALID_CHECKED(__EnumMapType, __Enum)
+// EnumStruct
+#define CS_IS_ENUM_STRUCT_VALID_CHECKED(__EnumMapType, __Enum)
 // FVector
 #define CS_IS_VECTOR_ZERO_CHECKED(__V)
 // Array

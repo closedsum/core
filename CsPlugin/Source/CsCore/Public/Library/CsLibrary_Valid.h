@@ -1068,14 +1068,22 @@ namespace NCsValid
 #define CS_IS_VALID(__Object) \
 	if (!__Object.IsValid(Context, Log)) \
 		return false;
+// Assume const FString& Context has been defined
+#define CS_IS_VALID_NO_LOG(__Object) \
+	if (!__Object.IsValid(Context, nullptr)) \
+		return false;
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_VALID_EXIT(__Object) \
 	if (!__Object.IsValid(Context, Log)) \
 		return;
-	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_VALID_RET_NULL(__Object) \
 	if (!__Object.IsValid(Context, Log)) \
 		return nullptr;
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID_RET_VALUE(__Object, __Value) \
+	if (!__Object.IsValid(Context, Log)) \
+		return __Value;
 
 // Int
 #pragma region

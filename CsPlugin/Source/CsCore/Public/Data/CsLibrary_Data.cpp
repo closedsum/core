@@ -48,13 +48,10 @@ namespace NCsData
 	{
 		CS_IS_PTR_NULL_RET_NULL(Object)
 
-		ICsData* UData = Cast<ICsData>(Object);
+		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
 		if (!UData)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object)));
 			return nullptr;
-		}
 
 		UData->Load(NCsLoadFlags::All);
 
@@ -86,13 +83,10 @@ namespace NCsData
 	{
 		CS_IS_PTR_NULL_RET_NULL(Object)
 
-		ICsData* UData = Cast<ICsData>(Object);
+		ICsData* UData = CS_INTERFACE_CAST(Object, UObject, ICsData);
 
 		if (!UData)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement interface: ICsData."), *Context, *PrintObjectAndClass(Object)));
 			return nullptr;
-		}
 
 		DataType* Data = UData->_getIData();
 
@@ -140,9 +134,7 @@ namespace NCsData
 	{
 		CS_IS_PTR_NULL_CHECKED(Object)
 
-		ICsData* UData = Cast<ICsData>(Object);
-
-		checkf(UData, TEXT("%s: Object: %s does NOT implement the interface: ICsData."), *Context, *(Object->GetName()));
+		ICsData* UData = CS_INTERFACE_CAST_CHECKED(Object, UObject, ICsData);
 
 		return GetChecked(Context, UData);
 	}

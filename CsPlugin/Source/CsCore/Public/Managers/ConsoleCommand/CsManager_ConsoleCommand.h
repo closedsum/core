@@ -1,4 +1,4 @@
-// Copyright 2019 Respawn Entertainment, Inc. All rights reserved.
+// Copyright 2017-2021 Closed Sum Games, Inc. All rights reserved.
 #pragma once
 // Types
 #include "ConsoleCommand/CsTypes_ConsoleCommand.h"

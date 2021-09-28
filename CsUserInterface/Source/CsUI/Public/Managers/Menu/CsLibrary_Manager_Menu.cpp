@@ -1,4 +1,4 @@
-// Copyright 2019 Respawn Entertainment, Inc. All rights reserved.
+// Copyright 2017-2021 Closed Sum Games, Inc. All rights reserved.
 #include "Managers/Menu/CsLibrary_Manager_Menu.h"
 #include "CsUI.h"
 

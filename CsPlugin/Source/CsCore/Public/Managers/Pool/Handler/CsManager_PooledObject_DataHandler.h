@@ -1,12 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // Library
 #include "Library/CsLibrary_Property.h"
 #include "Data/CsLibrary_Data.h"
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
-#pragma once
 
 class UObject;
 class UDataTable;
@@ -178,8 +177,7 @@ namespace NCsPooledObject
 					FStructProperty* DataProperty = PropertyLibrary::FindStructPropertyByName<DataContainerType>(RowStruct, Name::Data);
 
 					if (!DataProperty)
-					{
-						
+					{	
 						FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
 					}
 

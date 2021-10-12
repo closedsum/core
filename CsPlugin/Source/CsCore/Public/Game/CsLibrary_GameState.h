@@ -34,11 +34,11 @@ namespace NCsGameState
 		static T* GetChecked(const FString& Context, const UObject* WorldContext)
 		{
 			AGameStateBase* GameState = GetChecked(Context, WorldContext);
-			T* GameStateT			  = Cast<T>(GameState);
+			T* Other				  = Cast<T>(GameState);
 
-			checkf(GameStateT, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintGameStateAndClass(GameState), *(T::StaticClass()->GetName()));
+			checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintGameStateAndClass(GameState), *(T::StaticClass()->GetName()));
 
-			return GameStateT;
+			return Other;
 		}
 
 		/**

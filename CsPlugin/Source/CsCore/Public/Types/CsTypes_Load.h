@@ -755,7 +755,7 @@ public:
 
 	FORCEINLINE void New()
 	{
-		Handle.NewGuid();
+		Handle = Handle.NewGuid();
 	}
 
 	FORCEINLINE void Reset()

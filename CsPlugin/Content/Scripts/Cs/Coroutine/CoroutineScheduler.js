@@ -33,7 +33,7 @@ module.exports = class FJCoroutineScheduler
 	{
 		for (let i = 0; i < this.Schedules.length; ++i)
 		{
-			this.Schedules.EndAll();
+			this.Schedules[i].EndAll();
 		}
 		this.Schedules = [];
 	}
@@ -126,9 +126,9 @@ module.exports = class FJCoroutineScheduler
 	*/
 	EndAll()
 	{
-		for (i = 0; i < Schedules.length; ++i)
+		for (let i = 0; i < this.Schedules.length; ++i)
 		{
-			this.Schedules[i].End();
+			this.Schedules[i].EndAll();
 		}
 	}
 

@@ -86,6 +86,7 @@ module.exports = class FJsCore
         this.PlayerState = null;
         this.PlayerPawn = null;
 
+        this.CoroutineScheduler.EndAll();
         this.CoroutineScheduler = null;
 
         this.Classes.clear();

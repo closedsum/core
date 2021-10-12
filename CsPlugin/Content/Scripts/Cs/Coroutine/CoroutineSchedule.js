@@ -131,7 +131,7 @@ module.exports = class FJsCoroutineSchedule
     /*FJsResourceContainer*/ GetRoutineContainer(handle /*CsRoutineHandle*/)
     {
         let context = "FJsCoroutineSchedule.GetRoutineContainer";
-
+        
         check(IsInstanceOfChecked(context, handle, CsRoutineHandle));
 
         let RoutineLibrary = CsScriptLibrary_Routine;

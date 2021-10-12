@@ -11,6 +11,23 @@
 
 #include "Engine/World.h"
 
+// Cached
+#pragma region
+
+namespace NCsManagerLoadTaskLoadObjects
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManagerLoad_Task_LoadObjects, OnFinishLoadObjectPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManagerLoad_Task_LoadObjects, LoadObjectPaths);
+		}
+	}
+}
+
+#pragma endregion Cached
+
 UCsManagerLoad_Task_LoadObjects::UCsManagerLoad_Task_LoadObjects(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	Index(INDEX_NONE),
@@ -99,11 +116,15 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 
 void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 {
+	using namespace NCsManagerLoadTaskLoadObjects::NCached;
+
+	const FString& Context = Str::OnFinishLoadObjectPath;
+
 	FSoftObjectPath& Path = Paths[Count];
 
 	UObject* Object = Path.ResolveObject();
 	
-	checkf(Object, TEXT("UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath: Object is NULL. Failed to resolve Path @ %s."), *(Path.ToString()));
+	checkf(Object, TEXT("%s: Object is NULL. Failed to resolve Path @ %s."), *Context, *(Path.ToString()));
 
 	LoadedObjects.Add(Object);
 
@@ -127,7 +148,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("FCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath: Finished Loading %s. %f mb (%f kb, %d bytes) in %f seconds."), *Path.ToString(), Megabytes, Kilobytes, Bytes, LoadingTime);
+		UE_LOG(LogCs, Log, TEXT("%s: Finished Loading %s. %f mb (%f kb, %d bytes) in %f seconds."), *Context, *Path.ToString(), Megabytes, Kilobytes, Bytes, LoadingTime);
 	}
 
 	// Broadcast the event to anyone listening
@@ -147,7 +168,7 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 
 		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Log, TEXT("UCsManager_Load::OnFinishedLoadingAssetReference: Requesting Load of %s."), *(NextPath.ToString()));
+			UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %s."), *Context, *(NextPath.ToString()));
 		}
 		OnStartLoadObjectPath_Event.ExecuteIfBound(NextPath);
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(NextPath, OnFinishLoadObjectPathDelegate));
@@ -186,6 +207,10 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 
 FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload)
 {
+	using namespace NCsManagerLoadTaskLoadObjects::NCached;
+
+	const FString& Context = Str::LoadObjectPaths;
+
 	Order = Payload.AsyncOrder;
 
 	const TArray<FSoftObjectPath>& ObjectPaths = Payload.ObjectPaths;
@@ -207,14 +232,14 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerL
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 	{
-		UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %d Assets."), Size);
+		UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %d Assets."), *Context, Size);
 		// None | Bulk
 		if (Order == ECsLoadAsyncOrder::None ||
 			Order == ECsLoadAsyncOrder::Bulk)
 		{
 			for (const FSoftObjectPath& Path : ObjectPaths)
 			{
-				UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %s."), *(Path.ToString()));
+				UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %s."), *Context, *(Path.ToString()));
 			}
 		}
 	}
@@ -225,7 +250,7 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerL
 	{
 		if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
 		{
-			UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::LoadObjectPaths: Requesting Load of %s."), *(ObjectPaths[CS_FIRST].ToString()));
+			UE_LOG(LogCs, Log, TEXT("%s: Requesting Load of %s."), *Context, *(ObjectPaths[CS_FIRST].ToString()));
 		}
 		OnStartLoadObjectPath_Event.ExecuteIfBound(ObjectPaths[CS_FIRST]);
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths[CS_FIRST], OnFinishLoadObjectPathDelegate));

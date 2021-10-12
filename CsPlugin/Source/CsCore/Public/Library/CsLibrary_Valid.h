@@ -1226,6 +1226,12 @@ namespace NCsValid
 		if (!NCsValid::NName::FLibrary::None(Context, __A, __temp__str__, Log)) { return nullptr; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_NAME_NONE_RET_VALUE(__A, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NName::FLibrary::None(Context, __A, __temp__str__, Log)) { return __Value; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_NAME_NONE_EXIT(__A) \
 	{ \
 		static const FString __temp__str__ = #__A; \

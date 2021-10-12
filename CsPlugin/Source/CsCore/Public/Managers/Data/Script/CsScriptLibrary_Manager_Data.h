@@ -106,6 +106,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject"))
 	static bool AddDataObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, UObject* Data);
 
+	/**
+	*
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param DataName
+	* return					Whether data with name: DataName was successfully removed.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject"))
+	static bool RemoveDataCompositionObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& DataName);
+
 #pragma endregion Data
 
 #pragma endregion Add

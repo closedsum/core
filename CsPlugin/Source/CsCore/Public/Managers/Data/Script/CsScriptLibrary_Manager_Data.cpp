@@ -21,7 +21,8 @@ namespace NCsScriptLibraryManagerData
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTableByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, GetDataTableBySoftObject);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, SafeAddDataObject_Loaded);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, AddDataObject_Loaded);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Data, RemoveDataCompositionObject_Loaded);
 		}
 	}
 }
@@ -113,11 +114,22 @@ bool UCsScriptLibrary_Manager_Data::AddDataObject_Loaded(const FString& Context,
 {
 	using namespace NCsScriptLibraryManagerData::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SafeAddDataObject_Loaded : Context;
+	const FString& Ctxt = Context.IsEmpty() ? Str::AddDataObject_Loaded : Context;
 
 	typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
 	return DataManagerLibrary::SafeAddDataObject_Loaded(Ctxt, WorldContextObject, EntryName, Data);
+}
+
+bool UCsScriptLibrary_Manager_Data::RemoveDataCompositionObject_Loaded(const FString& Context, const UObject* WorldContextObject, const FName& DataName)
+{
+	using namespace NCsScriptLibraryManagerData::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::RemoveDataCompositionObject_Loaded : Context;
+
+	typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+	return DataManagerLibrary::SafeRemoveDataCompositionObject_Loaded(Ctxt, WorldContextObject, DataName);
 }
 
 #pragma endregion Data

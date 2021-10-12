@@ -758,6 +758,45 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 	OnAsyncLoadPayloadCompleted_Event = Delegate;
 }
 
+void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+{
+	const int32 Count = GetSafePayloadSoftObjectPathCount(Context, PayloadName, Log);
+
+	if (Count <= CS_EMPTY)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString())));
+
+		OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+		return;
+	}
+
+	// TODO: Add bSafe to Payload
+	FCsManagerLoad_LoadObjectPathsPayload Payload;
+
+	// Set ObjectPaths
+	Payload.ObjectPaths.Reset(Count);
+
+	GetSafePayloadSoftObjectPaths(Context, PayloadName, Payload.ObjectPaths, Log);
+
+	if (Payload.ObjectPaths.Num() == CS_EMPTY)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString())));
+
+		OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+		return;
+	}
+	// Set Async Order
+	Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
+	// Set callback On Finish
+	Payload.OnFinishLoadObjectPaths.BindUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
+
+	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Payload);
+
+	InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
+
+	OnAsyncLoadPayloadCompleted_Event = Delegate;
+}
+
 void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime)
 {
 	const FName& PayloadName = InProgressAsyncLoadPayloads[Handle];
@@ -841,7 +880,7 @@ void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray
 
 void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths)
 {
-	checkf(PayloadName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
 
@@ -889,13 +928,63 @@ void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, c
 #endif // #if UE_BUILD_SHIPPING
 }
 
+void UCsManager_Data::GetSafePayloadSoftObjectPaths(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	CS_IS_NAME_NONE_EXIT(PayloadName)
+
+	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+
+	if (!PayloadPtr)
+		PayloadPtr = PayloadMap_Added.Find(PayloadName);
+
+	if (PayloadPtr)
+	{
+		const FCsPayload* Payload = *PayloadPtr;
+
+		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
+
+			GetDataSoftObjectPathsChecked(Context, EntryName, OutPaths);
+		}
+		// DataTables
+		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
+		{
+			const FName& EntryName = Payload_DataTable.Name;
+
+			// All Rows
+			if (Payload_DataTable.bAllRows)
+			{
+				GetDataTableSoftObjectPathsChecked(Context, EntryName, OutPaths);
+			}
+			else
+			{
+				if (Payload_DataTable.Rows.Num() == CS_EMPTY)
+					OutPaths.Add(GetDataTableSoftObjectPathChecked(Context, EntryName));
+
+				for (const FName& RowName : Payload_DataTable.Rows)
+				{
+					GetDataTableRowSoftObjectPathsChecked(Context, EntryName, RowName, OutPaths);
+				}
+			}
+		}
+	}
+#if !UE_BUILD_SHIPPING
+	else
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Payload: %s."), *Context, *(PayloadName.ToString())));
+	}
+#endif // #if UE_BUILD_SHIPPING
+}
+
 int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 {
 	using namespace NCsManagerData::NCached;
 
 	const FString& Context = Str::GetPayloadSoftObjectPathCount;
 
-	checkf(PayloadName != NAME_None, TEXT("%s: PayloadName: None is NOT Valid."), *Context);
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	int32 Count = 0;
 
@@ -945,7 +1034,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 
 int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Context, const FName& PayloadName)
 {
-	checkf(PayloadName != NAME_None, TEXT("%s: PayloadName: None is NOT Valid."), *Context);
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	int32 Count = 0;
 
@@ -991,6 +1080,57 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 	}
 
 	checkf(0, TEXT("%s: Failed to find Payload with PayloadName: %s."), *Context, *(PayloadName.ToString()));
+	return Count;
+}
+
+int32 UCsManager_Data::GetSafePayloadSoftObjectPathCount(const FString& Context, const FName& PayloadName, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+{
+	CS_IS_NAME_NONE_RET_VALUE(PayloadName, 0)
+
+	int32 Count = 0;
+
+	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+
+	if (!PayloadPtr)
+		PayloadPtr = PayloadMap_Added.Find(PayloadName);
+
+	if (PayloadPtr)
+	{
+		const FCsPayload* Payload = *PayloadPtr;
+
+		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
+
+			Count += GetDataSoftObjectPathCountChecked(Context, EntryName);
+		}
+		// DataTables
+		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
+		{
+			const FName& EntryName = Payload_DataTable.Name;
+
+			// All Rows
+			if (Payload_DataTable.bAllRows)
+			{
+				Count += GetDataTableSoftObjectPathCountChecked(Context, EntryName);
+			}
+			// Specified Rows
+			else
+			{
+				if (Payload_DataTable.Rows.Num() == CS_EMPTY)
+					++Count;
+
+				for (const FName& RowName : Payload_DataTable.Rows)
+				{
+					Count += GetDataTableRowSoftObjectPathCountChecked(Context, EntryName, RowName);
+				}
+			}
+		}
+		return Count;
+	}
+
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Payload with PayloadName: %s."), *Context, *(PayloadName.ToString())));
 	return Count;
 }
 
@@ -1091,6 +1231,19 @@ void UCsManager_Data::AddDataCompositionObject_Loaded(const FName& DataName, UOb
 	checkf(Map.Map.Find(SliceName) == nullptr, TEXT("%s: Data: %s with Slice: %s has ALREADY been added."), *(DataName.ToString()), *(SliceName.ToString()));
 
 	Map.Map.Add(SliceName, Data);
+}
+
+bool UCsManager_Data::SafeRemoveDataCompositionObject_Loaded(const FString& Context, const FName& DataName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	CS_IS_NAME_NONE(DataName)
+
+	const int32 Count = DataCompositionObjectsAdded_Loaded.Remove(DataName);
+
+	if (Count == 0)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Data associated with DataName: %s."), *Context, *(DataName.ToString())));
+	}
+	return Count > 0;
 }
 
 #pragma endregion Data

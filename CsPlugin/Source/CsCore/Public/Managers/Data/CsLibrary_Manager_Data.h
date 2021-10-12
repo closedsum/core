@@ -358,6 +358,18 @@ namespace NCsData
 		*/
 		static void AddDataCompositionObject_Loaded_Checked(const FString& Context, const UObject* ContextObject, const FName& DataName, UObject* Data, const FName& SliceName);
 
+		/**
+		* Remove a Data with name: DataName from an internal list in Manager_Data.
+		*
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						or
+		*						A reference to the GameInstance.
+		* @parma Log			(optional)
+		* return				Whether Data with name: DataName was successfully removed.
+		*/
+		static bool SafeRemoveDataCompositionObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& DataName, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		#pragma endregion Data
 
 		#pragma endregion Add

@@ -261,6 +261,16 @@ namespace NCsData
 			GetChecked(Context, ContextObject)->AddDataCompositionObject_Loaded(DataName, Data, SliceName);
 		}
 
+		bool FLibrary::SafeRemoveDataCompositionObject_Loaded(const FString& Context, const UObject* ContextObject, const FName& DataName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return false;
+
+			return Manager_Data->SafeRemoveDataCompositionObject_Loaded(Context, DataName, Log);
+		}
+
 		#pragma endregion Data
 
 		#pragma endregion Add

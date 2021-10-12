@@ -361,6 +361,8 @@ public:
 	*/
 	void AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
 
+	void SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
+
 private:
 
 	TMap<FCsLoadHandle, FName> InProgressAsyncLoadPayloads;
@@ -1440,6 +1442,16 @@ public:
 	/**
 	*
 	*
+	* @param Context		The calling context.
+	* @param PayloadName
+	* @param OutPaths
+	* @param Log			(optional)
+	*/
+	void GetSafePayloadSoftObjectPaths(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	/**
+	*
+	*
 	* @param PayloadName
 	* return			Number of SoftObjectPaths for the PayloadName.
 	*					0 for an invalid PayloadName.
@@ -1455,6 +1467,17 @@ public:
 	*						0 for an invalid PayloadName.
 	*/
 	int32 GetPayloadSoftObjectPathCountChecked(const FString& Context, const FName& PayloadName);
+
+	/**
+	*
+	*
+	* @param Context		The calling context.
+	* @param PayloadName
+	* @param Log			(optional)
+	* return				Number of SoftObjectPaths for the PayloadName.
+	*						0 for an invalid PayloadName.
+	*/
+	int32 GetSafePayloadSoftObjectPathCount(const FString& Context, const FName& PayloadName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 #pragma endregion SoftObjectPath
 
@@ -1483,6 +1506,8 @@ public:
 	bool SafeAddDataObject_Loaded(const FString& Context, const FName& EntryName, UObject* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	void AddDataCompositionObject_Loaded(const FName& DataName, UObject* Data, const FName& SliceName);
+
+	bool SafeRemoveDataCompositionObject_Loaded(const FString& Context, const FName& DataName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 #pragma endregion Data
 

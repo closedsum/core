@@ -396,6 +396,50 @@ namespace NCsValid
 				return true;
 			}
 		};
+
+		namespace N2D
+		{
+			struct CSCORE_API FLibrary final
+			{
+				template<typename ValueType>
+				FORCEINLINE static bool EmptyChecked(const FString& Context, const TArray<TArray<ValueType>>& Array, const FString& ArrayName)
+				{
+					checkf(Array.Num() > 0, TEXT("%s: %s is EMPTY."), *Context, *ArrayName);
+
+					int32 Count = Array.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						checkf(Array[I].Num() > 0, TEXT("%s: %s[%d] is EMPTY."), *Context, *ArrayName, I);
+					}
+					return true;
+				}
+
+				template<typename ValueType>
+				FORCEINLINE static bool Empty(const FString& Context, const TArray<TArray<ValueType>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+				{
+					if (Array.Num() == 0)
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s is EMPTY."), *Context, *ArrayName));
+						return false;
+					}
+
+					int32 Count = Array.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						if (Array[I].Num() == 0)
+						{
+							if (Log)
+								Log(FString::Printf(TEXT("%s: %s[%d] is EMPTY."), *Context, *ArrayName, I));
+							return false;
+						}
+					}
+					return true;
+				}
+			};
+		}
 	}
 
 	namespace NPtr
@@ -877,6 +921,18 @@ namespace NCsValid
 		check(NCsValid::NArray::FLibrary::IsAnyNoneChecked(Context, __Array, __temp__str__)); \
 	}
 
+	// 2D
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_2D_EMPTY_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::N2D::FLibrary::EmptyChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+
+#pragma endregion 2D
+
 #pragma endregion Array
 
 // Ptr
@@ -1029,6 +1085,8 @@ namespace NCsValid
 #define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
 #define CS_IS_ARRAY_ANY_NULL_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array)
+	// 2D
+#define CS_IS_ARRAY_2D_EMPTY_CHECKED(__Array, __ValueType)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 // Object
@@ -1365,6 +1423,18 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Array; \
 		if (!NCsValid::NArray::FLibrary::IsAnyNone(Context, __Array, __temp__str__, Log)) { return false; } \
 	}
+
+	// 2D
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ARRAY_2D_EMPTY(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::N2D::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+
+#pragma endregion 2D
 
 #pragma endregion Array
 

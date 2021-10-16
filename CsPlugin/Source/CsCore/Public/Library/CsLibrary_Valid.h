@@ -770,6 +770,47 @@ namespace NCsValid
 			}
 		};
 	}
+
+	namespace NInterface
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			template<typename InterfaceType>
+			FORCEINLINE static UObject* _getUObjectChecked(const FString& Context, const InterfaceType* A, const FString& AName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+
+				UObject* O = A->_getUObject();
+
+				checkf(O, TEXT("%s: %s is NOT a UObject."), *Context, *AName);
+
+				return O;
+			}
+
+			template<typename InterfaceType>
+			FORCEINLINE static UObject* _getUObject(const FString& Context, const InterfaceType* A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return nullptr;
+				}
+
+				UObject* O = A->_getUObject();
+
+				if (!O)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT a UObject."), *Context, *AName));
+					return nullptr;
+				}
+				return O;
+			}
+		};
+	}
 }
 
 // CHECKED
@@ -1047,6 +1088,19 @@ namespace NCsValid
 
 #pragma endregion Actor
 
+// Interface
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_INTERFACE_GET_UOBJECT_CHECKED(__Interface, __InterfaceType) \
+	[](const FString& Context, const __InterfaceType* __Interface) \
+	{ \
+		static const FString __temp__str = #__Interface; \
+		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __Interface, __temp__str); \
+	}(Context, __Interface)
+
+#pragma endregion Interface
+
 // Delegate
 #pragma region
 
@@ -1129,7 +1183,7 @@ namespace NCsValid
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
 		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
-	}(Context, this, __Class)
+	}(Context, this, __Class)	
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // FSoftObjectPath
@@ -1137,13 +1191,19 @@ namespace NCsValid
 // SubclassOf
 #define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType)
 // Actor
-// Assume const FString& Context has been defined and this->GetWorld() exists
 #define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
 	[] (const FString& Context, UWorld* __World, UClass* __Class) \
 	{ \
 		static const FString __temp__str__a; \
 		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __World, __Class, __temp__str__a); \
 	}(Context, GetWorld(), __Class)
+// Interface
+#define CS_INTERFACE_GET_UOBJECT_CHECKED(__Interface, __InterfaceType) \
+	[](const FString& Context, const __InterfaceType* __Interface) \
+	{ \
+		static const FString __temp__str; \
+		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __Interface, __temp__str); \
+	}(Context, __Interface)
 // Delegate
 #define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)
 #endif // #if !UE_BUILD_SHIPPING
@@ -1596,6 +1656,19 @@ namespace NCsValid
 	}
 
 #pragma endregion SubclassOf
+
+// Interface
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_INTERFACE_GET_UOBJECT(__Interface, __InterfaceType) \
+	[](const FString& Context, const __InterfaceType* __Interface, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str = #__Interface; \
+		return NCsValid::NInterface::FLibrary::_getUObject<__InterfaceType>(Context, __Interface, __temp__str, Log); \
+	}(Context, __Interface, Log)
+
+#pragma endregion Interface
 
 // Delegate
 #pragma region

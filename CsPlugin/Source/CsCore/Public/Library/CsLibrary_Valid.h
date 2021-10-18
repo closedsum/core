@@ -438,6 +438,87 @@ namespace NCsValid
 					}
 					return true;
 				}
+
+				template<typename ValueType>
+				FORCEINLINE static bool EmptyChecked(const FString& Context, const TArray<TArray<ValueType*>>& Array, const FString& ArrayName)
+				{
+					checkf(Array.Num() > 0, TEXT("%s: %s is EMPTY."), *Context, *ArrayName);
+
+					int32 Count = Array.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						checkf(Array[I].Num() > 0, TEXT("%s: %s[%d] is EMPTY."), *Context, *ArrayName, I);
+					}
+					return true;
+				}
+
+				template<typename ValueType>
+				FORCEINLINE static bool Empty(const FString& Context, const TArray<TArray<ValueType*>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+				{
+					if (Array.Num() == 0)
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s is EMPTY."), *Context, *ArrayName));
+						return false;
+					}
+
+					int32 Count = Array.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						if (Array[I].Num() == 0)
+						{
+							if (Log)
+								Log(FString::Printf(TEXT("%s: %s[%d] is EMPTY."), *Context, *ArrayName, I));
+							return false;
+						}
+					}
+					return true;
+				}
+
+				template<typename ValueType>
+				FORCEINLINE static bool IsAnyNullChecked(const FString& Context, const TArray<TArray<ValueType*>>& Array, const FString& ArrayName)
+				{
+					const int32 IMax = Array.Num();
+
+					for (int32 I = 0; I < IMax; ++I)
+					{
+						const TArray<ValueType*>& Arr = Array[I];
+
+						const int32 JMax = Array[I].Num();
+
+						for (int32 J = 0; J < JMax; ++J)
+						{
+							checkf(Array[I][J], TEXT("%s: %s[%d][%d] is NULL."), *Context, *ArrayName, I, J);
+						}
+					}
+					return true;
+				}
+
+				template<typename ValueType>
+				FORCEINLINE static bool IsAnyNull(const FString& Context, const TArray<TArray<ValueType*>>& Array, const FString& ArrayName, void(*Log)(const FString&))
+				{
+					const int32 IMax = Array.Num();
+
+					for (int32 I = 0; I < IMax; ++I)
+					{
+						const TArray<ValueType*>& Arr = Array[I];
+
+						const int32 JMax = Array[I].Num();
+
+						for (int32 J = 0; J < JMax; ++J)
+						{
+							if (!Array[I][J])
+							{
+								if (Log)
+									Log(FString::Printf(TEXT("%s: %s[%d][%d] is NULL."), *Context, *ArrayName, I, J));
+								return false;
+							}
+						}
+					}
+					return true;
+				}
 			};
 		}
 	}
@@ -970,6 +1051,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Array; \
 		check(NCsValid::NArray::N2D::FLibrary::EmptyChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_2D_ANY_NULL_CHECKED(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::N2D::FLibrary::IsAnyNullChecked<__ValueType>(Context, __Array, __temp__str__)); \
 	}
 
 #pragma endregion 2D

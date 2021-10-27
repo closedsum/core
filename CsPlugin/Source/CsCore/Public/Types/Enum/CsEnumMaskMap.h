@@ -87,6 +87,13 @@ public:
 		return FlagMap.Find(Flag) != nullptr;
 	}
 
+	FORCEINLINE bool IsValidFlagChecked(const FString& Context, const uint64& Flag) const
+	{
+		checkf(FlagMap.Find(Flag) != nullptr, TEXT("%s: Flag: %llu is NOT Valid"), *Context, Flag);
+
+		return true;
+	}
+
 	FORCEINLINE const EnumType& GetEnumAt(const int32& Index)
 	{
 		return Enums[Index];

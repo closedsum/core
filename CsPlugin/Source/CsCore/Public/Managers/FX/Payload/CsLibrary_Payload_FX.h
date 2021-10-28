@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/FX/Payload/CsPayload_FX.h"
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 // NCsFX::NPayload::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)

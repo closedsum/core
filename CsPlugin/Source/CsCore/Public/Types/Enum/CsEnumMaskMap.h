@@ -82,6 +82,20 @@ public:
 		return FromNameInternalMap.Find(Name) != nullptr;
 	}
 
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& Name) const
+	{
+		checkf(IsValidEnum(Name), TEXT("%s: There is NO Enum with Name: %s."), *Context, *Name);
+
+		return true;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FName& Name) const
+	{
+		checkf(IsValidEnum(Name), TEXT("%s: There is NO Enum with Name: %s."), *Context, *(Name.ToString()));
+
+		return true;
+	}
+
 	FORCEINLINE bool IsValidFlag(const uint64& Flag)
 	{
 		return FlagMap.Find(Flag) != nullptr;

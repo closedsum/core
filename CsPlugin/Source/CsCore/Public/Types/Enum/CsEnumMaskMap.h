@@ -82,6 +82,20 @@ public:
 		return FromNameInternalMap.Find(Name) != nullptr;
 	}
 
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const EnumType& Enum) const
+	{
+		checkf(IsValidEnum(Enum), TEXT("%s: Enum: %s is NOT Valid"), *Context, *(ToString(Enum)));
+
+		return true;
+	}
+
+	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& EnumElementName, const EnumType& Enum) const
+	{
+		checkf(IsValidEnum(Enum), TEXT("%s: %s: %s is NOT Valid"), *Context, *EnumElementName, *(ToString(Enum)));
+
+		return true;
+	}
+
 	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& Name) const
 	{
 		checkf(IsValidEnum(Name), TEXT("%s: There is NO Enum with Name: %s."), *Context, *Name);
@@ -108,64 +122,64 @@ public:
 		return true;
 	}
 
-	FORCEINLINE const EnumType& GetEnumAt(const int32& Index)
+	FORCEINLINE const EnumType& GetEnumAt(const int32& Index) const
 	{
 		return Enums[Index];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnumAt(const int32& Index)
+	FORCEINLINE const EnumType& GetSafeEnumAt(const int32& Index) const
 	{
 		return Index < Count ? Enums[Index] : None;
 	}
 
-	FORCEINLINE const EnumType& GetEnum(const FString& Name)
+	FORCEINLINE const EnumType& GetEnum(const FString& Name) const
 	{
 		return FromNameMap[Name];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnum(const FString& Name)
+	FORCEINLINE const EnumType& GetSafeEnum(const FString& Name) const
 	{
 		return IsValidEnum(Name) ? FromNameMap[Name] : None;
 	}
 
-	FORCEINLINE const EnumType& GetEnum(const FName& Name)
+	FORCEINLINE const EnumType& GetEnum(const FName& Name) const
 	{
 		return FromNameInternalMap[Name];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnum(const FName& Name)
+	FORCEINLINE const EnumType& GetSafeEnum(const FName& Name) const
 	{
 		return IsValidEnum(Name) ? FromNameInternalMap[Name] : None;
 	}
 
-	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString& DisplayName)
+	FORCEINLINE const EnumType& GetEnumByDisplayName(const FString& DisplayName) const
 	{
 		return FromDisplayNameMap[DisplayName];
 	}
 
-	FORCEINLINE const EnumType& GetEnumByFlag(const uint64& Flag)
+	FORCEINLINE const EnumType& GetEnumByFlag(const uint64& Flag) const
 	{
 		return FlagMap[Flag];
 	}
 
-	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint64& Flag)
+	FORCEINLINE const EnumType& GetSafeEnumByFlag(const uint64& Flag) const
 	{
 		return IsValidFlag(Flag) ? FlagMap[Flag] : None;
 	}
 
-	FORCEINLINE const int32& Num()
+	FORCEINLINE const int32& Num() const
 	{
 		return Count;
 	}
 
-	FORCEINLINE const FString& ToString(const EnumType& Enum)
+	FORCEINLINE const FString& ToString(const EnumType& Enum) const
 	{
-		if (FString* Name = ToNameMap.Find(Enum))
+		if (const FString* Name = ToNameMap.Find(Enum))
 			return *Name;
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE const FString& ToString(const int32& Index)
+	FORCEINLINE const FString& ToString(const int32& Index) const
 	{
 		if (Index >= Count)
 			return CS_INVALID_ENUM_TO_STRING;
@@ -198,30 +212,30 @@ public:
 		return String;
 	}
 
-	FORCEINLINE const FName& ToName(const EnumType& Enum)
+	FORCEINLINE const FName& ToName(const EnumType& Enum) const
 	{
-		if (FName* Name = ToNameInternalMap.Find(Enum))
+		if (const FName* Name = ToNameInternalMap.Find(Enum))
 			return *Name;
 		return CS_INVALID_ENUM_TO_NAME;
 	}
 
-	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum)
+	FORCEINLINE const FString& ToDisplayName(const EnumType& Enum) const
 	{
-		if (FString* Name = ToDisplayNameMap.Find(Enum))
+		if (const FString* Name = ToDisplayNameMap.Find(Enum))
 			return *Name;
 		return CS_INVALID_ENUM_TO_STRING;
 	}
 
-	FORCEINLINE const EnumType& ToType(const FString& Name)
+	FORCEINLINE const EnumType& ToType(const FString& Name) const
 	{
-		if (EnumType* Enum = FromNameMap.Find(Name))
+		if (const EnumType* Enum = FromNameMap.Find(Name))
 			return *Enum;
 		return None;
 	}
 
-	FORCEINLINE const EnumType& ToType(const FName& Name)
+	FORCEINLINE const EnumType& ToType(const FName& Name) const
 	{
-		if (EnumType* Enum = FromNameInternalMap.Find(Name))
+		if (const EnumType* Enum = FromNameInternalMap.Find(Name))
 			return *Enum;
 		return None;
 	}

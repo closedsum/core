@@ -3,6 +3,7 @@
 #include "Coroutine/CsRoutineHandle.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
+#include "Managers/Time/CsTypes_Time.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -107,6 +108,24 @@ namespace NCsCoroutine
 
 		#pragma endregion Get
 		
+		// Update
+		#pragma region
+		public:
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param DeltaTime
+			*/
+			static void UpdateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime);
+
+		#pragma endregion Update
+
 		// End
 		#pragma region
 		public:

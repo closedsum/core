@@ -2,11 +2,15 @@
 #include "Managers/Time/CsManager_Time.h"
 #include "CsCore.h"
 
+// Console Command
+#include "Managers/Time/CsConsoleCommand_Manager_Time.h"
+
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Time/CsGetManagerTime.h"
 // Library
+#include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 #endif // #if WITH_EDITOR
 
@@ -146,10 +150,23 @@ void UCsManager_Time::Initialize()
 		OnPause_Events.Reset(Count);
 		OnPause_Events.AddDefaulted(Count);
 	}
+
+#if WITH_EDITOR
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+	if (!GameInstanceLibrary::IsSafe(MyRoot))
+		return;
+#endif // #if WITH_EDITOR
+
+	typedef NCsTime::NManager::FConsoleCommand ConsoleCommandManagerType;
+
+	Manager_ConsoleCommand = new ConsoleCommandManagerType(MyRoot);
 }
 
 void UCsManager_Time::CleanUp()
 {
+	delete Manager_ConsoleCommand;
+	Manager_ConsoleCommand = nullptr;
 }
 
 #pragma endregion Singleton

@@ -16,6 +16,7 @@ namespace NCsGameInstance
 			{
 				extern CSCORE_API const FString GetSafe;
 				extern CSCORE_API const FString GetSafeAsObject;
+				extern CSCORE_API const FString IsSafe;
 			}
 		}
 	}
@@ -158,6 +159,45 @@ namespace NCsGameInstance
 		static UObject* GetSafeAsObject(const UObject* ContextObject);
 
 	#pragma endregion Get
+
+	// Is
+	#pragma region
+	public:
+
+		/**
+		* Check if the ContextObject is of type: UGameInstance
+		* 
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return
+		*/
+		static bool IsChecked(const FString& Context, const UObject* ContextObject);
+
+		/**
+		* Safely check if the ContextObject is of type: UGameInstance
+		*
+		* @param Context		The calling context.
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* @param Log			(optional)
+		* return
+		*/
+		static bool IsSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Safely check if the ContextObject is of type: UGameInstance
+		*
+		* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+		*						of
+		*						A reference to the GameInstance.
+		* return
+		*/
+		static bool IsSafe(const UObject* ContextObject);
+
+	#pragma endregion Is
 
 	// Start
 	#pragma region

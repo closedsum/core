@@ -129,12 +129,24 @@ namespace NCsCoroutine
 
 		#pragma endregion Get
 
+		// Update
+		#pragma region
+
+		void FLibrary::UpdateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+
+			GetChecked(Context, ContextObject)->Update(Group, DeltaTime);
+		}
+
+		#pragma endregion Update
+
 		// End
 		#pragma region
 		
 		bool FLibrary::EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 		{
-			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
 
 			return GetChecked(Context, ContextObject)->End(Group, Handle);
 		}
@@ -166,7 +178,7 @@ namespace NCsCoroutine
 		
 		bool FLibrary::IsHandleValidChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 		{
-			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
 
 			return GetChecked(Context, ContextObject)->IsHandleValid(Group, Handle);
 		}
@@ -184,7 +196,7 @@ namespace NCsCoroutine
 
 		bool FLibrary::IsRunningChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle)
 		{
-			check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
 
 			return GetChecked(Context, ContextObject)->IsRunning(Group, Handle);
 		}

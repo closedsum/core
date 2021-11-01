@@ -21,6 +21,7 @@ namespace NCsGameInstance
 			{
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafe);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, GetSafeAsObject);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameInstance::FLibrary, IsSafe);
 			}
 		}
 	}
@@ -105,6 +106,30 @@ namespace NCsGameInstance
 	}
 
 	#pragma endregion Get
+
+	// Is
+	#pragma region
+	
+	bool FLibrary::IsChecked(const FString& Context, const UObject* ContextObject)
+	{
+		return GetChecked(Context, ContextObject) != nullptr;
+	}
+
+	bool FLibrary::IsSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		return GetSafe(Context, ContextObject, Log) != nullptr;
+	}
+
+	bool FLibrary::IsSafe(const UObject* ContextObject)
+	{
+		using namespace NCsGameInstance::NLibrary::NCached;
+
+		const FString& Context = Str::IsSafe;
+
+		return IsSafe(Context, ContextObject, nullptr);
+	}
+
+	#pragma endregion Is
 
 	// Start
 	#pragma region

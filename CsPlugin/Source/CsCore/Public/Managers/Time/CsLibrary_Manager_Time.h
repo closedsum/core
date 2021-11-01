@@ -105,6 +105,58 @@ namespace NCsTime
 
 		#pragma endregion Get
 
+		// Pause
+		#pragma region
+		public:
+
+			/**
+			* Pause the update of Group.
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group			
+			*/
+			static void PauseChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
+			* Safely pause the update of Group.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Log			(optional)
+			*/
+			static void SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Unpause the update of Group.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			*/
+			static void UnpauseChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
+			* Safely unpause the update of Group.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Log			(optional)
+			*/
+			static void SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Pause
+
 		public:
 
 			/**

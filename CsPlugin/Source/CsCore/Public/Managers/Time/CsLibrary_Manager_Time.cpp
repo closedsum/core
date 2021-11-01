@@ -4,6 +4,7 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -129,18 +130,57 @@ namespace NCsTime
 
 		#pragma endregion Get
 
+		// Pause
+		#pragma region
+
+		void FLibrary::PauseChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+
+			GetChecked(Context, ContextObject)->Pause(Group);
+		}
+
+		void FLibrary::SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Time->Pause(Group);
+			}
+		}
+
+		void FLibrary::UnpauseChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+
+			GetChecked(Context, ContextObject)->Unpause(Group);
+		}
+
+		void FLibrary::SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Time->Unpause(Group);
+			}
+		}
+
+		#pragma endregion Pause
+
 		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
-
-			UCsManager_Time* Manager_Time = UCsManager_Time::Get(ContextRoot);
+			UCsManager_Time* Manager_Time = GetChecked(Context, ContextObject);
 
 			Manager_Time->Update(Group, DeltaTime);
 
 			const FCsDeltaTime& ScaledDeltaTime = Manager_Time->GetScaledDeltaTime(Group);
 
 			// Update CoroutineScheduler
-			UCsCoroutineScheduler::Get(ContextRoot)->Update(Group, ScaledDeltaTime);
+			typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+			CoroutineSchedulerLibrary::UpdateChecked(Context, ContextObject, Group, ScaledDeltaTime);
 		}
 
 		const FCsTime& FLibrary::GetTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)

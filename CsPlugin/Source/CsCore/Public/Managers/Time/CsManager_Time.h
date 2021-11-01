@@ -11,6 +11,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerTime_OnUpdate, const FECs
 
 class ICsGetManagerTime;
 
+// NCsTime::NManager::FConsoleCommand
+CS_FWD_DECLARE_CLASS_NAMESPACE_2(NCsTime, NManager, FConsoleCommand)
+
 UCLASS()
 class CSCORE_API UCsManager_Time : public UObject
 {
@@ -80,6 +83,16 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+// Console Commnad
+#pragma region
+private:
+
+#define ConsoleCommandManagerType NCsTime::NManager::FConsoleCommand
+	ConsoleCommandManagerType* Manager_ConsoleCommand;
+#undef ConsoleCommandManagerType
+
+#pragma endregion Console Command
 
 protected:
 

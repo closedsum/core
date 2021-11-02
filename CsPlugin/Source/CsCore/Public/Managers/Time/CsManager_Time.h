@@ -219,6 +219,21 @@ public:
 #undef OnUpdateType
 #undef OnUpdateDelegateType
 
+	FORCEINLINE void SetCustom(const FECsUpdateGroup& Group)
+	{
+		UpdateGroups[Group.GetValue()].SetCustom();
+	}
+
+	FORCEINLINE bool IsCustom(const FECsUpdateGroup& Group) const
+	{
+		return UpdateGroups[Group.GetValue()].IsCustom();
+	}
+
+	FORCEINLINE void SetCustomDeltaTime(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)
+	{
+		UpdateGroups[Group.GetValue()].SetCustomDeltaTime(DeltaTime);
+	}
+
 #pragma endregion Update
 
 public:
@@ -295,11 +310,6 @@ public:
 	FORCEINLINE void ResetScaledDeltaTime(const FECsUpdateGroup& Group)
 	{
 		UpdateGroups[Group.GetValue()].ResetScale();
-	}
-
-	FORCEINLINE bool IsCustom(const FECsUpdateGroup& Group) const
-	{
-		return UpdateGroups[Group.GetValue()].IsCustom();
 	}
 
 	void SetupInputListener();

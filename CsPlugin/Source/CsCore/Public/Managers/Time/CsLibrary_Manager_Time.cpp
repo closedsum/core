@@ -169,6 +169,24 @@ namespace NCsTime
 
 		#pragma endregion Pause
 
+		// Update
+		#pragma region
+	
+		void FLibrary::SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+			CS_IS_FLOAT_GREATER_THAN_EXIT(DeltaTime, 0.0f)
+
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				Manager_Time->SetCustom(Group);
+				Manager_Time->SetCustomDeltaTime(Group, FCsDeltaTime(DeltaTime));
+			}
+		}
+
+		#pragma endregion Update
+
 		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{
 			UCsManager_Time* Manager_Time = GetChecked(Context, ContextObject);

@@ -24,9 +24,13 @@ public:
 	UPROPERTY()
 	uint64 Frame;
 
-	FCsTime()
+	FCsTime() :
+		Time(0.0f),
+		RealTime(0.0f),
+		DateTime(),
+		Frame(0ull)
 	{
-		Reset();
+		DateTime = FDateTime::Now();
 	}
 	~FCsTime() {}
 
@@ -64,10 +68,24 @@ public:
 	UPROPERTY()
 	uint64 Frame;
 
-	FCsDeltaTime()
+	FCsDeltaTime() :
+		Time(0.0f),
+		RealTime(0.0f),
+		Timespan(),
+		Frame(0ull)
 	{
-		Reset();
+		Timespan = FTimespan::Zero();
 	}
+
+	FCsDeltaTime(const float& InTime) :
+		RealTime(0.0f),
+		Timespan(),
+		Frame(0ull)
+	{
+		Time = InTime;
+		Timespan = FTimespan::Zero();
+	}
+
 	~FCsDeltaTime() {}
 
 	FORCEINLINE bool operator==(const FCsDeltaTime& B) const

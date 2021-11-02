@@ -223,7 +223,7 @@ namespace NCsTime
 							static const int32 DELTA_TIME = 1;
 							ParamInfoType& ParamInfo = ParamInfos[DELTA_TIME];
 
-							ParamInfo.SetFloatMinOnly(TEXT("DeltaTime"), 0.0f);
+							ParamInfo.SetFloatMinOnly(TEXT("DeltaTime"), 0.01667f, 0.0001f);
 						}
 					}
 
@@ -249,13 +249,13 @@ namespace NCsTime
 
 						for (FString& Str : Base)
 						{
-							Definitions.Add(Str + TEXT(" [UpdateGroup]"));
+							Definitions.Add(Str + TEXT(" [UpdateGroup] [DeltaTime]"));
 						}
 					}
 					// Description
 					{
 						FString& Description = Info.Description;
-						Description += TEXT("Call the command Pause.\n");
+						Description += TEXT("Call the command CustomUpdate.\n");
 						Description += TEXT("- Checks for the following console commands:\n");
 
 						for (FString& Str : Info.Definitions)
@@ -264,7 +264,8 @@ namespace NCsTime
 						}
 
 						Description += TEXT("\n");
-						Description += TEXT("[UpdateGroup] = The Update Group to unpause.");
+						Description += TEXT("[UpdateGroup] = The Update Group to unpause.\n");
+						Description += TEXT("[DeltaTime]   = Number > 0.0f.");
 					}
 				}
 			}
@@ -289,6 +290,11 @@ namespace NCsTime
 			// ManagerTime Unpause [UpdateGroup]
 			// Manager Time Unpause [UpdateGroup]
 			if (Exec_Unpause(Cmd))
+				return true;
+			// ManagerTimeCustomUpdate [UpdateGroup] [DeltaTime]
+			// ManagerTime CustomUpdate [UpdateGroup] [DeltaTime]
+			// Manager Time CustomUpdate [UpdateGroup] [DeltaTime]
+			if (Exec_CustomUpdate(Cmd))
 				return true;
 			return false;
 		}
@@ -317,7 +323,19 @@ namespace NCsTime
 
 		bool FConsoleCommand::GetDeltaTime(const FString& Context, const TCHAR*& Str, float& OutValue, const FString& Definition)
 		{
+			typedef NCsConsoleCommand::NLibrary::FParams_GetValue_float ParamsType;
 
+			ParamsType Params;
+			Params.OutValue	  = &OutValue;
+			Params.CheckType  = ParamsType::ECheck::GreaterThan;
+			Params.Value	  = 0.0f;
+			Params.ValueName  = const_cast<FString*>(&NConsoleCommand::NCached::Str::DeltaTime);
+			Params.Definition = const_cast<FString*>(&Definition);
+			Params.Log		  = &FCsLog::Warning;
+
+			typedef NCsConsoleCommand::NLibrary::FLibrary ConsoleCommandLibrary;
+
+			return ConsoleCommandLibrary::Stream_GetValue<ParamsType>(Context, Str, Params);
 		}
 
 		bool FConsoleCommand::Exec_Pause(const TCHAR* Cmd)
@@ -427,6 +445,69 @@ namespace NCsTime
 					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
 					TimeManagerLibrary::SafeUnpause(Context, MyRoot, UpdateGroup);
+
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool FConsoleCommand::Exec_CustomUpdate(const TCHAR* Cmd)
+		{
+			using namespace NConsoleCommand::NCached;
+
+			const FString& Context = Str::Exec_CustomUpdate;
+
+			void(*Log)(const FString&) = &FCsLog::Warning;
+
+			FString OutString;
+			FParse::Line(&Cmd, OutString, true);
+
+			OutString.ToLower();
+
+			const TArray<FString>& Commands	   = CommandInfos[(uint8)ECommand::CustomUpdate].Commands;
+			const TArray<FString>& Definitions = CommandInfos[(uint8)ECommand::CustomUpdate].Definitions;
+
+			const int32 Count = Commands.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				const FString& Command	  = Commands[I];
+				const FString& Definition = Definitions[I];
+
+				if (OutString.RemoveFromStart(Command))
+				{
+					if (OutString.IsEmpty())
+					{
+						UE_LOG(LogCs, Warning, TEXT("%s: Command: %s."), *Context, *Definition);
+						return false;
+					}
+
+					typedef NCsConsoleCommand::NLibrary::FLibrary ConsoleCommandLibrary;
+
+					// Remove blank space ' '
+					if (!ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, OutString, Definition))
+						return false;
+
+					const TCHAR* StrAsChar = *OutString;
+
+					// Get UpdateGroup
+					FECsUpdateGroup UpdateGroup;
+					
+					if (!GetUpdateGroupAndAdvance(Context, StrAsChar, OutString, UpdateGroup, Definition))
+						return false;
+
+					// Get DeltaTime
+					float DeltaTime;
+
+					if (!GetDeltaTime(Context, StrAsChar, DeltaTime, Definition))
+						return false;
+
+					CS_IS_PTR_NULL(MyRoot)
+
+					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+					TimeManagerLibrary::SetSafeCustomUpdate(Context, MyRoot, UpdateGroup, DeltaTime);
 
 					return true;
 				}

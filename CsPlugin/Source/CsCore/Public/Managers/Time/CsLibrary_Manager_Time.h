@@ -157,6 +157,24 @@ namespace NCsTime
 
 		#pragma endregion Pause
 
+		// Update
+		#pragma region
+		public:
+
+			/**
+			* Set the update for Group to Custom for DeltaTime. The next update for Group will "tick" with DeltaTime.
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param DeltaTime
+			*/
+			static void SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Update
+
 		public:
 
 			/**
@@ -166,6 +184,7 @@ namespace NCsTime
 			*						or
 			*						A reference to the GameInstance.
 			* @param Group
+			* @param DeltaTime
 			*/
 			static void UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime);
 

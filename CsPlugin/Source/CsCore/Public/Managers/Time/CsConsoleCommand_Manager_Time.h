@@ -72,12 +72,15 @@ namespace NCsTime
 			bool GetUpdateGroup(const FString& Context, const TCHAR*& Str, FECsUpdateGroup& OutValue, const FString& Definition);
 			bool GetUpdateGroupAndAdvance(const FString& Context, const TCHAR*& StrAsChar, FString& Str, FECsUpdateGroup& OutValue, const FString& Definition);
 
+			bool GetDeltaTime(const FString& Context, const TCHAR*& Str, float& OutValue, const FString& Definition);
+
 		private:
 
 			enum class ECommand : uint8
 			{
 				Pause,
-				Unpause
+				Unpause,
+				CustomUpdate,
 			};
 
 			struct EMCommand : TCsEnumMap<ECommand>
@@ -120,6 +123,21 @@ namespace NCsTime
 			* return		Whether the console command was found / executed
 			*/
 			bool Exec_Unpause(const TCHAR* Cmd);
+
+			/**
+			* Call the command CustomUpdate.
+			* Checks for the following console commands:
+			* - ManagerTimeCustomUpdate [UpdateGroup] [DeltaTime]
+			* - ManagerTime CustomUpdate [UpdateGroup] [DeltaTime]
+			* - Manager Time CustomUpdate [UpdateGroup] [DeltaTime]
+			*
+			* [UpdateGroup] = The Update Group to pause.
+			* [DeltaTime]	= Number > 0.0f.
+			*
+			* @param Cmd	Console Command
+			* return		Whether the console command was found / executed
+			*/
+			bool Exec_CustomUpdate(const TCHAR* Cmd);
 
 		#undef HandleType
 		#undef InfoType

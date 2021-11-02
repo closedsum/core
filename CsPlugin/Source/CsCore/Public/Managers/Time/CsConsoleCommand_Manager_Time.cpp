@@ -26,8 +26,10 @@ namespace NCsTime
 
 					CS_DEFINE_FUNCTION_NAME_AS_STRING(NCsTime::NManager::FConsoleCommand, Exec_Pause);
 					CS_DEFINE_FUNCTION_NAME_AS_STRING(NCsTime::NManager::FConsoleCommand, Exec_Unpause);
+					CS_DEFINE_FUNCTION_NAME_AS_STRING(NCsTime::NManager::FConsoleCommand, Exec_CustomUpdate);
 					
 					const FString UpdateGroup = TEXT("UpdateGroup");
+					const FString DeltaTime = TEXT("DeltaTime");
 				}
 			}
 		}
@@ -193,6 +195,78 @@ namespace NCsTime
 						Description += TEXT("[UpdateGroup] = The Update Group to unpause.");
 					}
 				}
+				// CustomUpdate
+				{
+					CommandInfos.AddDefaulted();
+					InfoType& Info = CommandInfos.Last();
+
+					Info.PrimaryDefinitionIndex = 1;
+
+					// Params
+					{
+						typedef NCsConsoleCommand::NParam::FInfo ParamInfoType;
+						typedef NCsConsoleCommand::NParam::EValue ParamValueType;
+
+						TArray<ParamInfoType>& ParamInfos = Info.ParamInfos;
+
+						ParamInfos.AddDefaulted(2);
+
+						// UpdateGroup
+						{
+							static const int32 UPDATE_GROUP = 0;
+							ParamInfoType& ParamInfo = ParamInfos[UPDATE_GROUP];
+
+							ParamInfo.SetEnumStruct<EMCsUpdateGroup, FECsUpdateGroup>(TEXT("UpdateGroup"));
+						}
+						// DeltaTime
+						{
+							static const int32 DELTA_TIME = 1;
+							ParamInfoType& ParamInfo = ParamInfos[DELTA_TIME];
+
+							ParamInfo.SetFloatMinOnly(TEXT("DeltaTime"), 0.0f);
+						}
+					}
+
+					TArray<FString> Base;
+					Base.Add(TEXT("ManagerTimeCustomUpdate"));
+					Base.Add(TEXT("ManagerTime CustomUpdate"));
+					Base.Add(TEXT("Manager Time CustomUpdate"));
+
+					// Commands
+					{
+						TArray<FString>& Commands = Info.Commands;
+						Commands.Reset(Base.Num());
+
+						for (FString& Str : Base)
+						{
+							Commands.Add(Str.ToLower());
+						}
+					}
+					// Definitions
+					{
+						TArray<FString>& Definitions = Info.Definitions;
+						Definitions.Reset(Base.Num());
+
+						for (FString& Str : Base)
+						{
+							Definitions.Add(Str + TEXT(" [UpdateGroup]"));
+						}
+					}
+					// Description
+					{
+						FString& Description = Info.Description;
+						Description += TEXT("Call the command Pause.\n");
+						Description += TEXT("- Checks for the following console commands:\n");
+
+						for (FString& Str : Info.Definitions)
+						{
+							Description += TEXT("-- ") + Str + TEXT("\n");
+						}
+
+						Description += TEXT("\n");
+						Description += TEXT("[UpdateGroup] = The Update Group to unpause.");
+					}
+				}
 			}
 		}
 
@@ -239,6 +313,11 @@ namespace NCsTime
 			if (!ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, Str, Definition))
 				return false;
 			return true;
+		}
+
+		bool FConsoleCommand::GetDeltaTime(const FString& Context, const TCHAR*& Str, float& OutValue, const FString& Definition)
+		{
+
 		}
 
 		bool FConsoleCommand::Exec_Pause(const TCHAR* Cmd)

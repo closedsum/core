@@ -170,8 +170,9 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* @param Group
 			* @param DeltaTime
+			* @param ClearOnUpdate	Whether to Clear the Custom flag after calling Update.
 			*/
-			static void SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SetSafeCustomUpdate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime, const bool& ClearOnUpdate, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Update
 

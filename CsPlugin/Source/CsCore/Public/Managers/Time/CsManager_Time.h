@@ -219,9 +219,14 @@ public:
 #undef OnUpdateType
 #undef OnUpdateDelegateType
 
-	FORCEINLINE void SetCustom(const FECsUpdateGroup& Group)
+	FORCEINLINE void SetCustom(const FECsUpdateGroup& Group, const bool& ClearOnUpdate)
 	{
-		UpdateGroups[Group.GetValue()].SetCustom();
+		UpdateGroups[Group.GetValue()].SetCustom(ClearOnUpdate);
+	}
+
+	FORCEINLINE void ClearCustom(const FECsUpdateGroup& Group)
+	{
+		UpdateGroups[Group.GetValue()].ClearCustom();
 	}
 
 	FORCEINLINE bool IsCustom(const FECsUpdateGroup& Group) const
@@ -315,4 +320,5 @@ public:
 	void SetupInputListener();
 
 	void OnAnyKey_Pressed(const FKey& Key);
+	void OnAnyKey_Released(const FKey& Key);
 };

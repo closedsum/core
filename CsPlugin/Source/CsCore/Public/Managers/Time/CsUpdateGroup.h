@@ -60,6 +60,8 @@ private:
 	/** Whether group is being updated in a custom way. */
 	bool bCustom;
 
+	bool bClearCustomOnUpdate;
+
 	/** Only Valid if bCustom == true. A specific DeltaTime to use
 		when calling Update. */
 	FCsDeltaTime CustomDeltaTime;
@@ -80,7 +82,9 @@ public:
 		OnUpdate_Event(),
 		TimeSinceStart(),
 		TimePaused(),
-		bCustom(false)
+		bCustom(false),
+		bClearCustomOnUpdate(true),
+		CustomDeltaTime()
 	{
 	}
 
@@ -173,7 +177,7 @@ public:
 		// NOTE: For now clear bCustom. bCustom has only been used to "manually" update
 		//		 when paused. 
 		// TODO: Consider renaming bCustom so its clearer whats going on.
-		bCustom = false;
+		bCustom = !bClearCustomOnUpdate;
 
 		LastTime = Time;
 
@@ -223,7 +227,7 @@ public:
 		// NOTE: For now clear bCustom. bCustom has only been used to "manually" update
 		//		 when paused. 
 		// TODO: Consider renaming bCustom so its clearer whats going on.
-		bCustom = false;
+		bCustom = !bClearCustomOnUpdate;
 
 		LastTime = Time;
 
@@ -248,8 +252,16 @@ public:
 	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart() const { return TimeSinceStart; }
 	FORCEINLINE const FCsDeltaTime& GetTimePaused() const { return TimePaused; }
 
-	FORCEINLINE void SetCustom() { bCustom = true; }
-	FORCEINLINE void ClearCustom() { bCustom = false; }
+	FORCEINLINE void SetCustom(const bool& ClearOnUpdate = true) 
+	{ 
+		bCustom = true;
+		bClearCustomOnUpdate = ClearOnUpdate;
+	}
+	FORCEINLINE void ClearCustom() 
+	{ 
+		bCustom = false;
+		bClearCustomOnUpdate = true;
+	}
 	FORCEINLINE const bool& IsCustom() const { return bCustom; }
 
 	FORCEINLINE void SetCustomDeltaTime(const FCsDeltaTime& InDeltaTime) { CustomDeltaTime = InDeltaTime; }

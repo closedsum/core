@@ -1,25 +1,25 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
-#include "CsTypes_Map.generated.h"
+#include "CsTypes_Key.generated.h"
 
-// FCsMap_ObjectByName
+// FCsSet_Key
 #pragma region
 
 USTRUCT(BlueprintType)
-struct FCsMap_ObjectByName
+struct FCsSet_Key
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FName, UObject*> Map;
+	TSet<FKey> Set;
 
-	FCsMap_ObjectByName() :
-		Map()
+	FCsSet_Key() :
+		Set()
 	{
 	}
 };
 
-#pragma endregion FCsMap_ObjectByName
+#pragma endregion FCsSet_Key

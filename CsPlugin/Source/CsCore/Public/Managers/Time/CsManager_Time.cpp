@@ -238,6 +238,7 @@ void UCsManager_Time::SetupInputListener()
 	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, this);
 
 	Manager_Input->OnAnyKey_Pressed_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Pressed);
+	Manager_Input->OnAnyKey_Released_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Released);
 }
 
 void UCsManager_Time::OnAnyKey_Pressed(const FKey& Key)
@@ -246,11 +247,12 @@ void UCsManager_Time::OnAnyKey_Pressed(const FKey& Key)
 	const FCsSettings_Manager_Time& TimeSettings = Settings->Manager_Time;
 
 	// Check for Pause
-	for (const TPair<FECsUpdateGroup, FKey>& Pair : TimeSettings.TogglePauseGroupByKeyMap)
+	for (const TPair<FECsUpdateGroup, FCsSet_Key>& Pair : TimeSettings.TogglePauseGroupByKeysMap)
 	{
 		const FECsUpdateGroup& Group = Pair.Key;
+		const TSet<FKey>& Keys		 = Pair.Value.Set;
 
-		if (Key == Pair.Value)
+		if (Keys.Contains(Key))
 		{
 			if (IsPaused(Group))
 				Unpause(Group);
@@ -259,5 +261,41 @@ void UCsManager_Time::OnAnyKey_Pressed(const FKey& Key)
 		}
 	}
 	// Check for Custom Update
-	// NOTE: For now this will only call SetCustom for the Group if the Group is Paused
+	for (const TPair<FECsUpdateGroup, FCsSettings_Manager_Time_CustomUpdate>& Pair : TimeSettings.CustomUpdateMap)
+	{
+		const FECsUpdateGroup& Group									  = Pair.Key;
+		const FCsSettings_Manager_Time_CustomUpdate& CustomUpdateSettings = Pair.Value;
+
+		const TSet<FKey>& Keys = CustomUpdateSettings.Keys;
+
+		if (Keys.Contains(Key))
+		{
+			// NOTE: For now this will only call SetCustom for the Group if the Group is Paused
+			if (IsPaused(Group))
+			{
+				SetCustom(Group, !CustomUpdateSettings.bAllowSustained);
+				SetCustomDeltaTime(Group, FCsDeltaTime(CustomUpdateSettings.DeltaTime));
+			}
+		}
+	}
+}
+
+void UCsManager_Time::OnAnyKey_Released(const FKey& Key)
+{
+	UCsDeveloperSettings* Settings				 = GetMutableDefault<UCsDeveloperSettings>();
+	const FCsSettings_Manager_Time& TimeSettings = Settings->Manager_Time;
+
+	// Check for Custom Update
+	for (const TPair<FECsUpdateGroup, FCsSettings_Manager_Time_CustomUpdate>& Pair : TimeSettings.CustomUpdateMap)
+	{
+		const FECsUpdateGroup& Group									  = Pair.Key;
+		const FCsSettings_Manager_Time_CustomUpdate& CustomUpdateSettings = Pair.Value;
+
+		const TSet<FKey>& Keys = CustomUpdateSettings.Keys;
+
+		if (Keys.Contains(Key))
+		{
+			ClearCustom(Group);
+		}
+	}
 }

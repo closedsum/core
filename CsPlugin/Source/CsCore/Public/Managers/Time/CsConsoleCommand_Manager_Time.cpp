@@ -507,7 +507,7 @@ namespace NCsTime
 
 					typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-					TimeManagerLibrary::SetSafeCustomUpdate(Context, MyRoot, UpdateGroup, DeltaTime);
+					TimeManagerLibrary::SetSafeCustomUpdate(Context, MyRoot, UpdateGroup, DeltaTime, true);
 
 					return true;
 				}

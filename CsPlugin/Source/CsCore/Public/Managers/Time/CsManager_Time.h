@@ -296,4 +296,13 @@ public:
 	{
 		UpdateGroups[Group.GetValue()].ResetScale();
 	}
+
+	FORCEINLINE bool IsCustom(const FECsUpdateGroup& Group) const
+	{
+		return UpdateGroups[Group.GetValue()].IsCustom();
+	}
+
+	void SetupInputListener();
+
+	void OnAnyKey_Pressed(const FKey& Key);
 };

@@ -2,6 +2,12 @@
 #include "Managers/Time/CsManager_Time.h"
 #include "CsCore.h"
 
+// Library
+#include "Managers/Input/CsLibrary_Manager_Input.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
+// Managers
+#include "Managers/Input/CsManager_Input.h"
 // Console Command
 #include "Managers/Time/CsConsoleCommand_Manager_Time.h"
 
@@ -17,6 +23,22 @@
 // static initializations
 UCsManager_Time* UCsManager_Time::s_Instance;
 bool UCsManager_Time::s_bShutdown = false;
+
+// Cached
+#pragma region
+
+namespace NCsManagerTime
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Time, SetupInputListener);
+		}
+	}
+}
+
+#pragma endregion Cached
 
 UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -203,4 +225,39 @@ FCsTime UCsManager_Time::GetTimeNow(const FECsUpdateGroup& Group)
 	Time.DateTime = FDateTime::Now();
 
 	return Time;
+}
+
+void UCsManager_Time::SetupInputListener()
+{
+	using namespace NCsManagerTime::NCached;
+
+	const FString& Context = Str::SetupInputListener;
+
+	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
+
+	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, this);
+
+	Manager_Input->OnAnyKey_Pressed_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Pressed);
+}
+
+void UCsManager_Time::OnAnyKey_Pressed(const FKey& Key)
+{
+	UCsDeveloperSettings* Settings				 = GetMutableDefault<UCsDeveloperSettings>();
+	const FCsSettings_Manager_Time& TimeSettings = Settings->Manager_Time;
+
+	// Check for Pause
+	for (const TPair<FECsUpdateGroup, FKey>& Pair : TimeSettings.TogglePauseGroupByKeyMap)
+	{
+		const FECsUpdateGroup& Group = Pair.Key;
+
+		if (Key == Pair.Value)
+		{
+			if (IsPaused(Group))
+				Unpause(Group);
+			else
+				Pause(Group);
+		}
+	}
+	// Check for Custom Update
+	// NOTE: For now this will only call SetCustom for the Group if the Group is Paused
 }

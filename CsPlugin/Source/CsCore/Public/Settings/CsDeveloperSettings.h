@@ -14,6 +14,8 @@
 #include "Managers/Load/CsSettings_Manager_Load.h"
 // Runnable
 #include "Managers/Runnable/CsSettings_Manager_Runnable.h"
+// Time
+#include "Managers/Time/CsSettings_Manager_Time.h"
 // Input
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/CsSettings_Input.h"
@@ -114,6 +116,15 @@ public:
 	FCsSettings_Manager_Runnable Manager_Runnable;
 
 #pragma endregion Runnable
+
+// Time
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (DisplayName = "Manager Time"))
+	FCsSettings_Manager_Time Manager_Time;
+
+#pragma endregion Time
 
 // Input
 #pragma region

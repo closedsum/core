@@ -57,6 +57,13 @@ private:
 	/** The time elapsed since bPause was set to true. */
 	FCsDeltaTime TimePaused;
 
+	/** Whether group is being updated in a custom way. */
+	bool bCustom;
+
+	/** Only Valid if bCustom == true. A specific DeltaTime to use
+		when calling Update. */
+	FCsDeltaTime CustomDeltaTime;
+
 public:
 
 	FCsUpdateGroup() :
@@ -72,7 +79,8 @@ public:
 		ScaledDeltaTimes(),
 		OnUpdate_Event(),
 		TimeSinceStart(),
-		TimePaused()
+		TimePaused(),
+		bCustom(false)
 	{
 	}
 
@@ -129,10 +137,11 @@ public:
 		Time.DateTime = FDateTime::Now();
 		++(Time.Frame);
 
-		if (!bPause)
+		if (!bPause ||
+			bCustom)
 		{
 			// DeltaTime
-			DeltaTime.Time		= InDeltaTime;
+			DeltaTime.Time		= bCustom ? CustomDeltaTime.Time : InDeltaTime;
 			DeltaTime.Timespan	= Time.DateTime - LastTime.DateTime;
 			DeltaTime.RealTime	= (float)DeltaTime.Timespan.GetTotalSeconds();
 			DeltaTime.Frame		= Time.Frame - LastTime.Frame;
@@ -148,7 +157,7 @@ public:
 				Pair.Value.RealTime *= Scale;
 			}
 
-			TimeSinceStart.Time     += InDeltaTime;
+			TimeSinceStart.Time     += bCustom ? CustomDeltaTime.Time : InDeltaTime;
 			TimeSinceStart.Timespan += Time.DateTime - LastTime.DateTime;
 			TimeSinceStart.RealTime  = (float)TimeSinceStart.Timespan.GetTotalSeconds();
 			TimeSinceStart.Frame    += Time.Frame - LastTime.Frame;
@@ -160,6 +169,11 @@ public:
 			TimePaused.RealTime  = (float)TimePaused.Timespan.GetTotalSeconds();
 			TimePaused.Frame	+= Time.Frame - LastTime.Frame;
 		}
+
+		// NOTE: For now clear bCustom. bCustom has only been used to "manually" update
+		//		 when paused. 
+		// TODO: Consider renaming bCustom so its clearer whats going on.
+		bCustom = false;
 
 		LastTime = Time;
 
@@ -173,10 +187,11 @@ public:
 		Time.DateTime = FDateTime::Now();
 		++(Time.Frame);
 
-		if (!bPause)
+		if (!bPause ||
+			bCustom)
 		{
 			// DeltaTime
-			DeltaTime.Time	   = InDeltaTime;
+			DeltaTime.Time	   = bCustom ? CustomDeltaTime.Time : InDeltaTime;
 			DeltaTime.Timespan = Time.DateTime - LastTime.DateTime;
 			DeltaTime.RealTime = LastTime.RealTime - Time.RealTime;
 			DeltaTime.Frame	   = Time.Frame - LastTime.Frame;
@@ -192,7 +207,7 @@ public:
 				Pair.Value.RealTime *= Scale;
 			}
 
-			TimeSinceStart.Time		+= InDeltaTime;
+			TimeSinceStart.Time		+= bCustom ? CustomDeltaTime.Time : InDeltaTime;
 			TimeSinceStart.Timespan += Time.DateTime - LastTime.DateTime;
 			TimeSinceStart.RealTime += InRealTime;
 			TimeSinceStart.Frame	+= Time.Frame - LastTime.Frame;
@@ -204,6 +219,11 @@ public:
 			TimePaused.RealTime  = InRealTime;
 			TimePaused.Frame	+= Time.Frame - LastTime.Frame;
 		}
+
+		// NOTE: For now clear bCustom. bCustom has only been used to "manually" update
+		//		 when paused. 
+		// TODO: Consider renaming bCustom so its clearer whats going on.
+		bCustom = false;
 
 		LastTime = Time;
 
@@ -222,28 +242,15 @@ public:
 		OnUpdate_Event.Remove(Handle);
 	}
 
-	FORCEINLINE const FCsTime& GetTime() const
-	{
-		return Time;
-	}
+	FORCEINLINE const FCsTime& GetTime() const { return Time; }
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime() const { return ScaledDeltaTime; }
+	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FName& ScaleName) const { return ScaledDeltaTimes[ScaleName]; }
+	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart() const { return TimeSinceStart; }
+	FORCEINLINE const FCsDeltaTime& GetTimePaused() const { return TimePaused; }
 
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime() const
-	{
-		return ScaledDeltaTime;
-	}
+	FORCEINLINE void SetCustom() { bCustom = true; }
+	FORCEINLINE void ClearCustom() { bCustom = false; }
+	FORCEINLINE const bool& IsCustom() const { return bCustom; }
 
-	FORCEINLINE const FCsDeltaTime& GetScaledDeltaTime(const FName& ScaleName) const
-	{
-		return ScaledDeltaTimes[ScaleName];
-	}
-
-	FORCEINLINE const FCsDeltaTime& GetTimeSinceStart() const
-	{
-		return TimeSinceStart;
-	}
-
-	FORCEINLINE const FCsDeltaTime& GetTimePaused() const
-	{
-		return TimePaused;
-	}
+	FORCEINLINE void SetCustomDeltaTime(const FCsDeltaTime& InDeltaTime) { CustomDeltaTime = InDeltaTime; }
 };

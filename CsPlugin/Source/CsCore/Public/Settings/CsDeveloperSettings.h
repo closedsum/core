@@ -121,7 +121,7 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings", meta = (DisplayName = "Manager Time"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Time", meta = (DisplayName = "Manager Time"))
 	FCsSettings_Manager_Time Manager_Time;
 
 #pragma endregion Time

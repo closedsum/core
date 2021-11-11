@@ -466,6 +466,12 @@ public:
 		{
 		}
 
+		/**
+		* Set the Component from which FX are emitted from.
+		* Usually this is the Root Component of the Weapon or the Owner of the Weapon.
+		*
+		* @param Component
+		*/
 		FORCEINLINE void SetComponent(USceneComponent* InComponent)
 		{
 			Component = InComponent;
@@ -507,6 +513,12 @@ protected:
 
 public:
 
+	/**
+	* Set the Component from which FX are emitted from.
+	* Usually this is the Root Component of the Weapon or the Owner of the Weapon.
+	* 
+	* @param Component
+	*/
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Fire|FX")
 	void FXImpl_SetComponent(USceneComponent* Component);
 

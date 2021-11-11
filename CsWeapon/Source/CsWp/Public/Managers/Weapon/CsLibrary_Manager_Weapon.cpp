@@ -136,6 +136,11 @@ namespace NCsWeapon
 			return nullptr;
 		}
 
+		UClass* FLibrary::GetClassChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
+		{
+			return GetWeaponChecked(Context, WorldContext, Type)->GetClassChecked(Context);
+		}
+
 		UClass* FLibrary::GetSafeClass(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))

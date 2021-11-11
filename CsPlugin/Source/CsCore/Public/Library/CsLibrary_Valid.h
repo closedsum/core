@@ -226,6 +226,73 @@ namespace NCsValid
 			public:
 
 				template<typename EnumMapType, typename EnumType>
+				FORCEINLINE static bool IsValidChecked(const FString& Context, const TSet<EnumType>& Set, const FString& SetName)
+				{
+					for (const EnumType& Enum : Set)
+					{
+						checkf(EnumMapType::Get().IsValidEnum(Enum), TEXT("%s: Element: %s in %s is NOT Valid."), *Context, Enum.ToChar(), *SetName);
+					}
+					return true;
+				}
+
+				template<typename EnumMapType, typename EnumType>
+				FORCEINLINE static bool IsValid(const FString& Context, const TSet<EnumType>& Set, const FString& SetName, void(*Log)(const FString&))
+				{
+					for (const EnumType& Enum : Set)
+					{
+						if (!EnumMapType::Get().IsValidEnum(Enum))
+						{
+							if (Log)
+								Log(FString::Printf(TEXT("%s: Element: %s in %s is NOT Valid."), *Context, Enum.ToChar(), *SetName));
+							return false;
+						}
+					}
+					return true;
+				}
+
+				template<typename EnumMapType, typename EnumType>
+				FORCEINLINE static bool IsUniqueChecked(const FString& Context, const TSet<EnumType>& Set, const FString& SetName)
+				{
+					static TSet<EnumType> Enums;
+					Enums.Reset();
+
+					for (const EnumType& Enum : Set)
+					{
+						checkf(EnumMapType::Get().IsValidEnum(Enum), TEXT("%s: Element: %s in %s is NOT Valid."), *Context, Enum.ToChar(), *SetName);
+
+						Enums.Add(Enum);
+					}
+					checkf(Enums.Num() == Set.Num(), TEXT("%s: Not all elments in %s are unique."), *Context, *SetName);
+					return true;
+				}
+
+				template<typename EnumMapType, typename EnumType>
+				FORCEINLINE static bool IsUnique(const FString& Context, const TSet<EnumType>& Set, const FString& SetName, void(*Log)(const FString&))
+				{
+					static TSet<EnumType> Enums;
+					Enums.Reset();
+
+					for (const EnumType& Enum : Set)
+					{
+						if (!EnumMapType::Get().IsValidEnum(Enum))
+						{
+							if (Log)
+								Log(FString::Printf(TEXT("%s: Element: %s in %s is NOT Valid."), *Context, Enum.ToChar(), *SetName));
+							return false;
+						}
+						Enums.Add(Enum);
+					}
+
+					if (Enums.Num() != Set.Num())
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: Not all elments in %s are unique."), *Context, *SetName));
+						return false;
+					}
+					return true;
+				}
+
+				template<typename EnumMapType, typename EnumType>
 				FORCEINLINE static bool IsValid(const FString& Context, const EnumType& Enum, const FString& EnumName, void(*Log)(const FString&))
 				{
 					if (!EnumMapType::Get().IsValidEnum(Enum))
@@ -1028,6 +1095,18 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Enum; \
 		check(__EnumMapType::Get().IsValidEnumChecked(Context, __temp__str__, __Enum)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_ENUM_STRUCT_SET_VALID_CHECKED(__EnumMapType, __EnumType, __Set) \
+	{ \
+		static const FString __temp__str__ = #__Set; \
+		check((NCsValid::NEnum::NStruct::FLibrary::IsValidChecked<__EnumMapType, __EnumType>(Context, __Set, __temp__str__))); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(__EnumMapType, __EnumType, __Set) \
+	{ \
+		static const FString __temp__str__ = #__Set; \
+		check((NCsValid::NEnum::NStruct::FLibrary::IsUniqueChecked<__EnumMapType, __EnumType>(Context, __Set, __temp__str__))); \
+	}
 
 #pragma endregion EnumStruct
 
@@ -1264,6 +1343,8 @@ namespace NCsValid
 #define CS_IS_ENUM_VALID_CHECKED(__EnumMapType, __Enum)
 // EnumStruct
 #define CS_IS_ENUM_STRUCT_VALID_CHECKED(__EnumMapType, __Enum)
+#define CS_IS_ENUM_STRUCT_SET_VALID_CHECKED(__EnumMapType, __EnumType, __Set)
+#define CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(__EnumMapType, __EnumType, __Set)
 // FVector
 #define CS_IS_VECTOR_ZERO_CHECKED(__V)
 // Array
@@ -1566,12 +1647,23 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
 	}
-
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_ENUM_STRUCT_VALID_RET_VALUE(__EnumMapType, __EnumType, __Enum, __Value) \
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return __Value; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_STRUCT_SET_VALID(__EnumMapType, __EnumType, __Set) \
+	{ \
+		static const FString __temp__str__ = #__Set; \
+		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Set, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_STRUCT_SET_UNIQUE(__EnumMapType, __EnumType, __Set) \
+	{ \
+		static const FString __temp__str__ = #__Set; \
+		if (!NCsValid::NEnum::NStruct::FLibrary::IsUnique<__EnumMapType, __EnumType>(Context, __Set, __temp__str__, Log)) { return false; } \
 	}
 
 #pragma endregion EnumStruct

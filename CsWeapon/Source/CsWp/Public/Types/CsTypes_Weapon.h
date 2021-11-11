@@ -1,11 +1,14 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Types
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
-
+// Log
+#include "Utility/CsWpLog.h"
+// Engine
 #include "Engine/DataTable.h"
 
 #include "CsTypes_Weapon.generated.h"
-#pragma once
 
 // Weapon
 #pragma region
@@ -36,6 +39,8 @@ namespace NCsWeapon
 	CSWP_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSWP_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
+	CSWP_API void GetSafeFromLevel(const FString& Context, const UObject* WorldContext, TSet<FECsWeapon>& OutWeaponTypes, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 }
 
 #pragma endregion Weapon

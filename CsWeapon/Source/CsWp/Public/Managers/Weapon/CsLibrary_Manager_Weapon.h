@@ -164,6 +164,16 @@ namespace NCsWeapon
 			static FCsWeapon* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
 			/**
+			* Get the Class associated with Weapon of Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				UClass associated with Type.
+			*/
+			static UClass* GetClassChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
+
+			/**
 			* Safely get the Class associated with Weapon of Type.
 			*
 			* @param Context		The calling context.

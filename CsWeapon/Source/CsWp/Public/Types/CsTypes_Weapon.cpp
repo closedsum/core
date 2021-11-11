@@ -2,15 +2,22 @@
 #include "Types/CsTypes_Weapon.h"
 #include "CsWp.h"
 
-// Data
-#include "Data/CsWpGetDataRootSet.h"
+// Library
+#include "Level/CsLibrary_Level.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsWeaponSettings.h"
+// Data
+#include "Data/CsWpGetDataRootSet.h"
 // Utility
 #include "Utility/CsWpLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsWpPopulateEnumMapFromSettings.h"
+// Interface
+#include "Types/CsGetWeaponTypes.h"
+// Level
+#include "Engine/LevelScriptActor.h"
 
 // Weapon
 #pragma region
@@ -63,6 +70,20 @@ namespace NCsWeapon
 		{
 			FromDataTable(Context, ContextRoot);
 		}
+	}
+
+	void GetSafeFromLevel(const FString& Context, const UObject* WorldContext, TSet<FECsWeapon>& OutWeaponTypes, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+	{
+		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+
+		ICsGetWeaponTypes* GetWeaponTypes = LevelLibrary::GetSafeScriptActor<ICsGetWeaponTypes>(Context, WorldContext, Log);
+
+		if (!GetWeaponTypes)
+			return;
+
+		OutWeaponTypes = GetWeaponTypes->GetWeaponTypes();
+
+		CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsWeapon, FECsWeapon, OutWeaponTypes)
 	}
 }
 

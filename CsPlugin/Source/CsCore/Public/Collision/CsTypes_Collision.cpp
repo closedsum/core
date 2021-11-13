@@ -223,7 +223,7 @@ bool FCsCollisionPreset::IsValidChecked(const FString& Context) const
 			}
 		}
 
-		checkf(bAllIgnore, TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context);
+		checkf(!bAllIgnore, TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context);
 	}
 	return true;
 }
@@ -244,7 +244,7 @@ bool FCsCollisionPreset::IsValid(const FString& Context, void(*Log)(const FStrin
 			return false;
 		}
 
-		bool bAllIgnore = false;
+		bool bAllIgnore = true;
 
 		for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
 		{
@@ -253,11 +253,11 @@ bool FCsCollisionPreset::IsValid(const FString& Context, void(*Log)(const FStrin
 			if (Response != ECR_Ignore &&
 				Response != ECR_MAX)
 			{
-				bAllIgnore |= true;
+				bAllIgnore = false;
 			}
 		}
 
-		if (!bAllIgnore)
+		if (bAllIgnore)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context));
 			return false;

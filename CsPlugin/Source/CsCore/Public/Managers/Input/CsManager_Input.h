@@ -172,8 +172,8 @@ private:
 
 	void SetupInputActionEventInfos();
 
-	/** */
-	TMap<FECsInputAction, int32> InputActionMapping;
+	/** [Action][Mask] */
+	TArray<int32> InputActionMapping;
 
 	void SetupInputActionMapping();
 

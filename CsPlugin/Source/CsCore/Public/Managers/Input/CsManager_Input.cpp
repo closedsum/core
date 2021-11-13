@@ -267,6 +267,7 @@ void UCsManager_Input::PreProcessInput(const float DeltaTime, const bool bGamePa
 			{
 				Event = ECsInputEvent::Released;
 			}
+			Info.MarkDirty();
 		}
 	}
 }
@@ -330,33 +331,33 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 
 		const ECsInputType& Type = Info.Type;
 
-		// Action
-		if (Type == ECsInputType::Action)
+		if (Info.IsDirty())
 		{
-			TryAddInput(Type, Action, Event, Info.Value, Info.Location);
+			// Action
+			if (Type == ECsInputType::Action)
+			{
+				TryAddInput(Type, Action, Event, Info.Value, Info.Location);
+			}
+			// Axis
+			else
+			if (Type == ECsInputType::Axis)
+			{
+				float Value = Info.Value;
 
-			Info.FlushEvent();
+				TryAddInput(Type, Action, Event, Value, Info.Location);
+			}
+			// Location
+			else
+			if (Type == ECsInputType::Location)
+			{
+				const FVector& Location = Info.Location;
+
+				TryAddInput(Type, Action, Event, Info.Value, Info.Location);	
+			}
 		}
-		// Axis
-		else
-		if (Type == ECsInputType::Axis)
-		{
-			float Value = Info.Value;
 
-			TryAddInput(Type, Action, Event, Value, Info.Location);
-
-			Info.FlushEvent();
-		}
-		// Location
-		else
-		if (Type == ECsInputType::Location)
-		{
-			const FVector& Location = Info.Location;
-
-			TryAddInput(Type, Action, Event, Info.Value, Info.Location);
-
-			Info.FlushEvent();
-		}
+		Info.FlushEvent();
+		Info.ClearDirty();
 	}
 
 	// Add Queue Inputs
@@ -502,6 +503,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 			}
 
 			Info.Location = CurrentMousePosition;
+
+			Info.MarkDirty();
 		}
 	}
 	// TODO: Need to eventually bind Mouse Button events like Touch Pressed events
@@ -555,6 +558,7 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 				Info.ResetLocation();
 			}
 		}
+		Info.MarkDirty();
 	}
 #endif // #if PLATFORM_WINDOWS
 }
@@ -720,9 +724,13 @@ void UCsManager_Input::OnPostProcessInput_CaptureTouchInput(const float& DeltaTi
 
 	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
 	
-	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogCaptureTouchInput());
-
 	// TODO: See if there is a check if Touch is even a viable input
+#if !PLATFORM_ANDROID || !PLATFORM_IOS
+	return;
+#endif // #if !PLATFORM_ANDROID || !PLATFORM_IOS
+
+
+	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogCaptureTouchInput());
 
 	UPlayerInput* PlayerInput = OwnerAsController->PlayerInput;
 
@@ -793,6 +801,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureTouchInput(const float& DeltaTi
 		}
 
 		Info.Location = CurrentPosition;
+
+		Info.MarkDirty();
 	}
 }
 
@@ -1324,6 +1334,8 @@ void UCsManager_Input::OnPostProcessInput_LogGameEventInfo()
 					const FECsGameEvent& Event = Info.Event;
 
 					UE_LOG(LogCs, Warning, TEXT(" Event: %s."), Event.ToChar());
+					UE_LOG(LogCs, Warning, TEXT(" Value: %f."), Info.Value);
+					UE_LOG(LogCs, Warning, TEXT(" Location: %s."), *(Info.Location.ToCompactString()));
 				}
 			}
 		}
@@ -1347,11 +1359,7 @@ void UCsManager_Input::AddInput(const FECsInputAction& Action, const ECsInputEve
 
 bool UCsManager_Input::CanAddInput(const FECsInputAction& Action)
 {
-	if (int32* Mask = InputActionMapping.Find(Action))
-	{
-		return (CurrentInputActionMap & *Mask) > 0;
-	}
-	return false;
+	return (CurrentInputActionMap & InputActionMapping[Action.GetValue()]) > 0;
 }
 
 bool UCsManager_Input::TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*= 0.0f*/, const FVector& Location /*= FVector::ZeroVector*/, const FRotator& Rotation /*= FRotator::ZeroRotator*/)
@@ -1612,12 +1620,18 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 void UCsManager_Input::SetupInputActionMapping()
 {
+	// Initialize InputActionMapping
+	InputActionMapping.Reset(EMCsInputAction::Get().Num());
+
+	for (const FECsInputAction& Action : EMCsInputAction::Get())
+	{
+		InputActionMapping.Add(0);
+	}
+
 	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
 	const FCsSettings_Input& InputSettings = Settings->Input;
 
 	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSettings.InputActionMappings;
-
-	InputActionMapping.Reset();
 
 	for (const FECsInputActionMap& Map : EMCsInputActionMap::Get())
 	{
@@ -1630,17 +1644,10 @@ void UCsManager_Input::SetupInputActionMapping()
 			FixSet.ConditionalRebuild();
 		}
 
-		// Initialize InputActionMapping
+		// Set masks for InputActionMapping
 		for (const FECsInputAction& Action : Set.Actions)
 		{
-			if (InputActionMapping.Find(Action))
-			{
-				InputActionMapping[Action] |= Mask;
-			}
-			else
-			{
-				InputActionMapping.Add(Action, Mask);
-			}
+			InputActionMapping[Action.GetValue()] |= Mask;
 		}
 	}
 }
@@ -2009,6 +2016,8 @@ void UCsManager_Input::OnAction_Pressed(const FECsInputAction& Action, const FKe
 	Event = ECsInputEvent::FirstPressed;
 
 	Info.Key = Key;
+	
+	Info.MarkDirty();
 }
 
 void UCsManager_Input::OnAction_Released(const FECsInputAction& Action, const FKey& Key)
@@ -2017,6 +2026,8 @@ void UCsManager_Input::OnAction_Released(const FECsInputAction& Action, const FK
 	ECsInputEvent& Event = Info.Event;
 
 	Event = ECsInputEvent::FirstReleased;
+
+	Info.MarkDirty();
 }
 
 void UCsManager_Input::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Location)
@@ -2031,6 +2042,8 @@ void UCsManager_Input::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Lo
 	Info.Location = Location;
 
 	Event = ECsInputEvent::FirstPressed;
+
+	Info.MarkDirty();
 }
 
 void UCsManager_Input::OnTouchAction_Released(ETouchIndex::Type Index, FVector Location)
@@ -2045,6 +2058,8 @@ void UCsManager_Input::OnTouchAction_Released(ETouchIndex::Type Index, FVector L
 	Info.Location = Location;
 
 	Event = ECsInputEvent::FirstReleased;
+
+	Info.MarkDirty();
 }
 
 void UCsManager_Input::OnAxis(const FECsInputAction& Action, const float& Value)
@@ -2087,6 +2102,8 @@ void UCsManager_Input::OnAxis(const FECsInputAction& Action, const float& Value)
 		}
 	}
 	Info.Value = Value;
+
+	Info.MarkDirty();
 }
 
 #pragma endregion Listener

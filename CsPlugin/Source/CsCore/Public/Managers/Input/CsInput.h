@@ -52,6 +52,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	float Duration;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bDirty;
+
 	FCsInputInfo() :
 		Type(ECsInputType::ECsInputType_MAX),
 		ValueType(ECsInputValue::ECsInputValue_MAX),
@@ -63,7 +66,8 @@ public:
 		Location(0.0f),
 		Last_Location(0.0f),
 		Rotation(0.0f),
-		Duration(0.0f)
+		Duration(0.0f),
+		bDirty(false)
 	{
 	}
 
@@ -94,6 +98,10 @@ public:
 	{
 		Last_Event = Event;
 	}
+
+	FORCEINLINE const bool& IsDirty() const { return bDirty; }
+	FORCEINLINE void MarkDirty() { bDirty = true; }
+	FORCEINLINE void ClearDirty() { bDirty = false; }
 
 	FORCEINLINE bool IsValid() const
 	{

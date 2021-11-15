@@ -10,8 +10,9 @@
 #include "Debug/CsTypes_Debug.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
-#include "Library/CsLibrary_World.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Spawner/Params/CsLibrary_SpawnerParams.h"
+#include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -31,6 +32,7 @@ namespace NCsSpawnerImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, StartPlay);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SetupFromParams);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Stop);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Start_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Spawn);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects);
@@ -330,8 +332,7 @@ void ACsSpawnerImpl::Start()
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	UObject* ContextRoot			   = CoroutineSchedulerLibrary::GetContextRootChecked(Context, this);
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
@@ -362,8 +363,10 @@ void ACsSpawnerImpl::Start()
 
 	#define COROUTINE Start_Internal
 
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
 	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::COROUTINE);
-	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -375,14 +378,20 @@ void ACsSpawnerImpl::Start()
 
 void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 {
+	using namespace NCsSpawnerImpl::NCached;
+
+	const FString& Context = Str::Stop;
+
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
 	{
-		UE_LOG(LogCs, Warning, TEXT("ACsSpawnerImpl::Stop (%s) : Stopping"), *(GetName()));
+		UE_LOG(LogCs, Warning, TEXT("%s (% s) : Stopping"), *Context, *(GetName()));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	Scheduler->End(UpdateGroup, Start_Internal_Handle);
@@ -404,7 +413,9 @@ void ACsSpawnerImpl::Spawn()
 
 	const FString& Context = Str::Spawn;
 
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(GetGameInstance());
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	if (Scheduler->IsHandleValid(UpdateGroup, Start_Internal_Handle))
@@ -544,8 +555,7 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	UObject* ContextRoot			   = CoroutineSchedulerLibrary::GetContextRootChecked(Context, this);
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	check(IsParamsValidImpl(Context, Params));
@@ -554,8 +564,10 @@ void ACsSpawnerImpl::SpawnObjects(const int32& Index)
 
 	#define COROUTINE SpawnObjects_Internal
 
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
 	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::COROUTINE);
-	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);

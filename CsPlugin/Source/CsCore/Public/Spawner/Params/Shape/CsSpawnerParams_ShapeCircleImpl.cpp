@@ -32,15 +32,15 @@ void FCsSpawnerParams_ShapeCircleImpl::CopyToParamsAsValue(ParamsType* Params) c
 
 bool FCsSpawnerParams_ShapeCircleImpl::IsValidChecked(const FString& Context) const
 {
-	check(CountParams.IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(CountParams);
 
-	check(FrequencyParams.IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(FrequencyParams);
 
 	checkf(Shape == ECsSpawnerShape::Circle, TEXT("%s: Shape: %s is NOT Circle (ECsSpawnerShape::Circle)."), *Context, EMCsSpawnerShape::Get().ToChar(Shape));
 
-	check(EMCsSpawnerShapeCenter::Get().IsValidEnumChecked(Context, Center));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSpawnerShapeCenter, Center)
 
-	check(EMCsSpawnerDistribution::Get().IsValidEnumChecked(Context, Distribution));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSpawnerDistribution, Distribution)
 
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinRadius, 0.0f)
 
@@ -51,11 +51,9 @@ bool FCsSpawnerParams_ShapeCircleImpl::IsValidChecked(const FString& Context) co
 
 bool FCsSpawnerParams_ShapeCircleImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	if (!CountParams.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(CountParams)
 
-	if (!FrequencyParams.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(FrequencyParams)
 
 	if (Shape != ECsSpawnerShape::Circle)
 	{
@@ -123,9 +121,9 @@ namespace NCsSpawner
 
 				bool FImpl::IsValidChecked(const FString& Context) const
 				{
-					check(CountParams.IsValidChecked(Context));
+					CS_IS_VALID_CHECKED(CountParams);
 
-					check(FrequencyParams.IsValidChecked(Context));
+					CS_IS_VALID_CHECKED(FrequencyParams);
 
 					typedef NCsSpawner::EMShape ShapeMapType;
 
@@ -134,9 +132,9 @@ namespace NCsSpawner
 					typedef NCsSpawner::NShape::EMCenter CenterMapType;
 					typedef NCsSpawner::EMDistribution DistributionMapType;
 
-					check(CenterMapType::Get().IsValidEnumChecked(Context, Center));
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(CenterMapType, Center)
 
-					check(DistributionMapType::Get().IsValidEnumChecked(Context, Distribution));
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(DistributionMapType, Distribution)
 
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinRadius, 0.0f)
 
@@ -156,11 +154,9 @@ namespace NCsSpawner
 
 				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
-					if (!CountParams.IsValid(Context, Log))
-						return false;
+					CS_IS_VALID(CountParams)
 
-					if (!FrequencyParams.IsValid(Context, Log))
-						return false;
+					CS_IS_VALID(FrequencyParams)
 
 					if (Shape != ShapeType::Circle)
 					{

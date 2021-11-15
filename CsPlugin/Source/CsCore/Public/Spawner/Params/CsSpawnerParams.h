@@ -8,6 +8,10 @@ namespace NCsSpawner
 {
 	namespace NParams
 	{
+		/** 
+		* Interface for describing any information regarding the act of spawning an object.
+		* i.e. Count, Frequency, Time, ... etc. 
+		*/
 		struct CSCORE_API IParams : public ICsGetInterfaceMap
 		{
 		public:
@@ -38,7 +42,7 @@ namespace NCsSpawner
 			virtual const FrequencyParamsType& GetFrequencyParams() const = 0;
 
 			/**
-			*
+			* Get the total time the objects are being spawned for.
 			*
 			* return Total Time
 			*/

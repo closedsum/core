@@ -168,6 +168,8 @@ protected:
 
 	ParamsType* Params;
 
+protected:
+
 #define CountParamsType NCsSpawner::NParams::FCount
 	/** Reference to Params->GetCountParams() for easy / quick access. */
 	CountParamsType* CountParams;

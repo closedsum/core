@@ -14,6 +14,10 @@ namespace NCsSpawner
 {
 	namespace NPoint
 	{
+		/**
+		* Interface that describes any spawn "points", a place where an object is spawned, for a 
+		* Spawner (object that implements the interface: ICsSpawner).
+		*/
 		struct CSCORE_API IImpl
 		{
 		public:
@@ -120,6 +124,11 @@ namespace NCsSpawner
 	{
 	#define ImplType NCsSpawner::NPoint::IImpl
 
+		/**
+		* Basic implementation of the interface ImplType (NCsSpawner::NPoint::IImpl)
+		* that describes any spawn "points", a place where an object is spawned, for a
+		* Spawner (object that implements the interface: ICsSpawner).
+		*/
 		struct CSCORE_API FImpl : public ImplType
 		{
 		public:
@@ -128,10 +137,14 @@ namespace NCsSpawner
 		#define OrderType NCsSpawner::NPoint::EOrder
 		#define ParamsType NCsSpawner::NParams::IParams
 
+			/** Reference to the object that will handle spawning objects. */
 			ICsSpawner* Spawner;
+			/** Reference to Spawner as an AActor. */
 			AActor* SpawnerAsActor;
 
+			/** Describes how spawning of objects is tracked (counted). */
 			PointCountType CountType;
+			/** Describes the order in which spawn points are chosen. */
 			OrderType Order;
 
 			ParamsType* Params;

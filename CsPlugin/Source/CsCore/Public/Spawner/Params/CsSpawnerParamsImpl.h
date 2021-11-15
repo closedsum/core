@@ -15,12 +15,15 @@ struct CSCORE_API FCsSpawnerParamsImpl
 
 public:
 
+	/** Describes the number of objects "created" when Spawn is called. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSpawnerCountParams CountParams;
 
+	/** Describes how often objects are "created" whens Spawn is called. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSpawnerFrequencyParams FrequencyParams;
 
+	/** The total time the objects are being spawned for */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TotalTime;
 
@@ -54,6 +57,9 @@ namespace NCsSpawner
 	#define ParamsType NCsSpawner::NParams::IParams
 
 		/**
+		* Implements the interface ParamsType (NCsSpawner::NParams::IParmas)
+		* and describes any information regarding the act of spawning an object.
+		* i.e. Count, Frequency, Time, ... etc.
 		*/
 		struct CSCORE_API FImpl final : public ParamsType
 		{

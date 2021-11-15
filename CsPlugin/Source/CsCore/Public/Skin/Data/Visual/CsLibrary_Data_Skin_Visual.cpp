@@ -189,9 +189,9 @@ namespace NCsSkin
 				return false;
 			}
 
-			void FLibrary::SetStaticMeshAndMaterials(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
+			void FLibrary::SetStaticMeshAndMaterialsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
 			{
-				SetStaticMesh(Context, Skin, Component);
+				SetStaticMeshChecked(Context, Skin, Component);
 
 				// Materials
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
@@ -202,13 +202,13 @@ namespace NCsSkin
 				MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 			}
 
-			void FLibrary::SetSafeStaticMeshAndMaterials(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
+			void FLibrary::SetSafeStaticMeshAndMaterials(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
 				if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
 				{
-					SetStaticMesh(Context, StaticMeshSkin, Component);
+					SetStaticMeshChecked(Context, StaticMeshSkin, Component);
 
 					// Materials
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
@@ -218,12 +218,20 @@ namespace NCsSkin
 					{
 						MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
 					}
+					else
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin does NOT implement the interface: %s."), *Context, *(MaterialSkinType::Name.ToString())));
+					}
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin does NOT implement the interface: %s"), *Context, *(StaticMeshSkinType::Name.ToString())));
 				}
 			}
 
-			void FLibrary::SetStaticMeshAndMIDs(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
+			void FLibrary::SetStaticMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
 			{
-				SetStaticMesh(Context, Skin, Component);
+				SetStaticMeshChecked(Context, Skin, Component);
 
 				// Materials
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
@@ -234,13 +242,13 @@ namespace NCsSkin
 				MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 			}
 
-			void FLibrary::SetSafeStaticMeshAndMIDs(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
+			void FLibrary::SetSafeStaticMeshAndMIDs(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
 				if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
 				{
-					SetStaticMesh(Context, StaticMeshSkin, Component);
+					SetStaticMeshChecked(Context, StaticMeshSkin, Component);
 
 					// Materials
 					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
@@ -250,20 +258,28 @@ namespace NCsSkin
 					{
 						MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
 					}
+					else
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin does NOT implement the interface: %s."), *Context, *(MaterialSkinType::Name.ToString())));
+					}
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin does NOT implement the interface: %s"), *Context, *(StaticMeshSkinType::Name.ToString())));
 				}
 			}
 
-			void FLibrary::SetStaticMesh(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
+			void FLibrary::SetStaticMeshChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
 			{
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
 				StaticMeshSkinType* StaticMeshSkin = GetInterfaceChecked<StaticMeshSkinType>(Context, Skin);
 
-				SetStaticMesh(Context, StaticMeshSkin, Component);
+				SetStaticMeshChecked(Context, StaticMeshSkin, Component);
 			}
 
 			#define StaticMeshSkinType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
-			void FLibrary::SetStaticMesh(const FString& Context, StaticMeshSkinType* StaticMeshSkin, UStaticMeshComponent* Component)
+			void FLibrary::SetStaticMeshChecked(const FString& Context, StaticMeshSkinType* StaticMeshSkin, UStaticMeshComponent* Component)
 			{
 				CS_IS_PTR_NULL_CHECKED(StaticMeshSkin)
 
@@ -277,13 +293,17 @@ namespace NCsSkin
 			}
 			#undef StaticMeshSkinType
 
-			void FLibrary::SetSafeStaticMesh(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component)
+			void FLibrary::SetSafeStaticMesh(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
 				if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
 				{
-					SetStaticMesh(Context, StaticMeshSkin, Component);
+					SetStaticMeshChecked(Context, StaticMeshSkin, Component);
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin does NOT implement the interface: %s"), *Context, *(StaticMeshSkinType::Name.ToString())));
 				}
 			}
 
@@ -409,7 +429,7 @@ namespace NCsSkin
 				// StaticMesh
 				if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Component))
 				{
-					SetStaticMeshAndMIDs(Context, Skin, StaticMeshComponent, MIDs);
+					SetStaticMeshAndMIDsChecked(Context, Skin, StaticMeshComponent, MIDs);
 				}
 				// SkeletalMesh
 				else

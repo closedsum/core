@@ -489,14 +489,15 @@ namespace NCsSkin
 				}
 			}
 
-			void FLibrary::SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& MIDs)
+			#define ResultType NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult
+			ResultType FLibrary::SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& MIDs)
 			{
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
 				if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
 				{
 					SetStaticMeshChecked(Context, StaticMeshSkin, StaticMeshComponent);
-					return;
+					return ResultType::StaticMeshComponent;
 				}
 
 				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
@@ -504,10 +505,12 @@ namespace NCsSkin
 				if (SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
 				{
 					SetSkeletalMeshChecked(Context, SkeletalMeshSkin, SkeletalMeshComponent);
-					return;
+					return ResultType::SkeletalMeshComponent;
 				}
 				checkf(0, TEXT("%s: Skin: %s does NOT implement the interfaces: %s or %s."), *Context, *PrintNameAndClass(Skin), *(StaticMeshSkinType::Name.ToString()), *(SkeletalMeshSkinType::Name.ToString()));
+				return ResultType::None;
 			}
+			#undef ResultType
 
 		#pragma endregion Mesh
 

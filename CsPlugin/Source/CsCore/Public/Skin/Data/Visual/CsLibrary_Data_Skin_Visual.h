@@ -295,6 +295,18 @@ namespace NCsSkin
 				*/
 				static void SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, USceneComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
 
+				struct FSetMeshAndMIDs
+				{
+					enum class EResult
+					{
+						None,
+						StaticMeshComponent,
+						SkeletalMeshComponent
+					};
+				};
+
+				#define ResultType NCsSkin::NData::NVisual::FLibrary::FSetMeshAndMIDs::EResult
+
 				/**
 				* Set the Mesh (Static or Skeletal) and Materials on a StaticMeshComponent or SkeletalMeshComponent
 				* (depending on which interface SkinType implements) from the given Skin.
@@ -304,8 +316,12 @@ namespace NCsSkin
 				* @param StaticMeshComponent	
 				* @param SkeletalMeshComponent
 				* @param MIDs					Material Instance Dynamics to create from Material in the given Skin.
+				* return						0 = None, 1 = StaticMeshComponent, 2 = SkeletalMeshComponent
+				*								TODO: NOTE: Use a enum or wrap in a struct.
 				*/
-				static void SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& MIDs);
+				static ResultType SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& MIDs);
+
+				#undef ResultType
 
 			#pragma endregion Mesh
 			};

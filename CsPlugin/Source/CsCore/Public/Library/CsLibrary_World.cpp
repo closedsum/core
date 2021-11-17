@@ -87,6 +87,11 @@ namespace NCsWorld
 		return World && (World->WorldType == EWorldType::Game || World->WorldType == EWorldType::PIE);
 	}
 
+	bool FLibrary::IsPlayInGameOrPIE(const UObject* WorldContext)
+	{
+		return IsPlayInGameOrPIE(GetSafe(WorldContext));
+	}
+
 	bool FLibrary::IsAnyWorldContextEditorOrEditorPreview()
 	{
 		const TIndirectArray<FWorldContext>& WorldContexts = GEngine->GetWorldContexts();

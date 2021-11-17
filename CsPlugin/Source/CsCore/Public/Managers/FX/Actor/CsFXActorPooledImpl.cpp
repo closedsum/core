@@ -481,12 +481,14 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 #if WITH_EDITOR
 		// NOTE: 4.26.2. When exiting the game, need to wait for any async threads (render/gpu) to complete.
 		//				 During the game, this shouldn't be an issue since the FX should deallocate gracefully.
+		typedef NCsWorld::FLibrary WorldLibrary;
 		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 		UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
 		UObject* OuterRoot					  = Manager_FX_Actor->GetMyRoot();
 
-		if (GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
+		if (WorldLibrary::IsPlayInGameOrPIE(OuterRoot) &&
+			GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
 		{
 			FX->GetNiagaraComponent()->DeactivateImmediate();
 			*AssetPropertyPtr = nullptr;

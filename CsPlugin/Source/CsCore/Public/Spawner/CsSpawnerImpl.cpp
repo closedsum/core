@@ -253,6 +253,7 @@ void ACsSpawnerImpl::ConstructParams()
 		Params = new ParamsType();
 
 		DeconstructParamsImpl = &ParamsType::Deconstruct;
+		IsParamsValidImpl= &ParamsType::IsValidChecked;
 	}
 }
 

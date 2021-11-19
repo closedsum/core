@@ -194,7 +194,7 @@ protected:
 
 public:
 
-	void SetParams(const FString& Context, ParamsType* InParams, void(*InDeconstructParamsImpl)(void*), bool(*InIsParamsValidImpl)(const FString&, ParamsType*));
+	virtual void SetParams(const FString& Context, ParamsType* InParams, void(*InDeconstructParamsImpl)(void*), bool(*InIsParamsValidImpl)(const FString&, ParamsType*));
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Spawner|Params")
 	void SetupFromParams();

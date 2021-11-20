@@ -92,9 +92,9 @@ public:
 
 		T* O = Cast<T>(Object);
 
-		checkf(O, TEXT("%s: Failed to Cast Object to type: %s."), *Context, *(T::StaticClass()->GetName()));
+		checkf(O, TEXT("%s: Failed to Cast Object: %s with Class: %s to type: %s."), *Context, *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName()));
 
-		return Cast<T>(Object);
+		return O;
 	}
 
 	virtual void SetObject(UObject* InObject)

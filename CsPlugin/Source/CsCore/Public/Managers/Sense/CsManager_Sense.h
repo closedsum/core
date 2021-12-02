@@ -6,6 +6,7 @@
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "Managers/Sense/CsSenseInfo.h"
 #include "Managers/Sense/CsSenseHeuristic.h"
+
 #include "CsManager_Sense.generated.h"
 
 // Manager_MemoryResource

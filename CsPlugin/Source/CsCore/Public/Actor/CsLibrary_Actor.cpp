@@ -790,17 +790,9 @@ namespace NCsActor
 	
 	float FLibrary::GetSafeDistanceSq(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!A)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
-		if (!B)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
 		const FVector VB = B->GetActorLocation();
@@ -808,19 +800,23 @@ namespace NCsActor
 		return FVector::DistSquared(VA, VB);
 	}
 
+	float FLibrary::GetDistanceSq2DChecked(const FString& Context, AActor* A, AActor* B)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+
+		CS_IS_PTR_NULL_CHECKED(B)
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		return FVector::DistSquared2D(VA, VB);
+	}
+
 	float FLibrary::GetSafeDistanceSq2D(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!A)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
-		if (!B)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
 		const FVector VB = B->GetActorLocation();
@@ -835,17 +831,9 @@ namespace NCsActor
 	
 	bool FLibrary::GetSafeNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!A)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
-		if (!B)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
 		const FVector VB = B->GetActorLocation();
@@ -859,19 +847,27 @@ namespace NCsActor
 		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
 	}
 
+	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+
+		CS_IS_PTR_NULL_CHECKED(B)
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		const FVector& V = VB - VA;
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
+	}
+
 	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		if (!A)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
-		if (!B)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context))
-			return 0.0f;
-		}
+		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
 		const FVector VB = B->GetActorLocation();

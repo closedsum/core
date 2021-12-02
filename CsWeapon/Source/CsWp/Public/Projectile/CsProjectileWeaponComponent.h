@@ -386,6 +386,10 @@ public:
 
 protected:
 
+	/** If set, calls Override_ProjectileImpl_GetLaunchDirection when calling
+	    ProjectileImpl->GetLaunchDirection(). 
+		This flag is intended to be set by Blueprint | script and allow a non-native 
+		path to adjust the launch direction of the projectile. */
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Fire|Projectile")
 	bool bOverride_ProjectileImpl_GetLaunchDirection;
 
@@ -395,6 +399,13 @@ public:
 
 protected:
 
+	/** 
+	* Only Valid if bOverride_ProjectileImpl_GetLaunchDirection == true. 
+	* This provides a non-native (Blueprint | script) path to adjust the launch direction 
+	* of the projectile. 
+	* 
+	* return Launch Direction.
+	*/
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector Override_ProjectileImpl_GetLaunchDirection();
 

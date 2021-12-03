@@ -58,6 +58,12 @@ public:
 		Handle.Invalidate();
 	}
 
+	FORCEINLINE void Invalidate()
+	{
+		Index = INDEX_NONE;
+		Handle.Invalidate();
+	}
+
 	FORCEINLINE FString ToString() const
 	{
 		return FString::Printf(TEXT("Index: %d Handle: %s"), Index, *(Handle.ToString()));

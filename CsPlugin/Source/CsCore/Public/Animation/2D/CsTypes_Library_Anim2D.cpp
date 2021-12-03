@@ -38,7 +38,7 @@ bool FCsAnim2DTextureFlipbook_Params::IsValidChecked(const FString& Context) con
 	checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *Context);
 #endif // #if WITH_EDITOR
 	// Check UpdateGroup is Valid.
-	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, UpdateGroup));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup)
 	// Check Owner is Valid.
 	CS_IS_PTR_NULL_CHECKED(Owner)
 	// Check Component is Valid.
@@ -87,7 +87,7 @@ namespace NCsAnim
 						checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *Context);
 					#endif // #if WITH_EDITOR
 						// Check UpdateGroup is Valid.
-						check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, UpdateGroup));
+						CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup)
 						// Check Owner is Valid.
 						CS_IS_PTR_NULL_CHECKED(Owner)
 						// Check MID is Valid.
@@ -158,7 +158,7 @@ bool FCsAnim2DMaterialFlipbook_Params::IsValidChecked(const FString& Context) co
 	checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *Context);
 #endif // #if WITH_EDITOR
 	// Check UpdateGroup is Valid.
-	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, UpdateGroup));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup)
 	// Check Owner is Valid.
 	CS_IS_PTR_NULL_CHECKED(Owner)
 	// Check Component is Valid.
@@ -207,7 +207,7 @@ namespace NCsAnim
 						checkf(ContextRoot, TEXT("%s: ContextRoot for UCsCoroutineScheduler and UCsManager_Time is NULL."), *Context);
 					#endif // #if WITH_EDITOR
 						// Check UpdateGroup is Valid.
-						check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, UpdateGroup));
+						CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup)
 						// Check Owner is Valid.
 						CS_IS_PTR_NULL_CHECKED(Owner)
 						// Check Component is Valid.

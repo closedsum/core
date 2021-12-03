@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
@@ -8,7 +8,6 @@
 #include "Coroutine/CsTypes_Coroutine.h"
 
 #include "CsTypes_Library_Anim2D.generated.h"
-#pragma once
 
 // FCsAnim2DTextureFlipbook_Params
 #pragma region

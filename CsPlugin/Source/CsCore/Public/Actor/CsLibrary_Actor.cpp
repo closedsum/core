@@ -788,7 +788,7 @@ namespace NCsActor
 	// Distance
 	#pragma region
 	
-	float FLibrary::GetSafeDistanceSq(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	float FLibrary::GetSafeDistanceSq(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
@@ -800,7 +800,7 @@ namespace NCsActor
 		return FVector::DistSquared(VA, VB);
 	}
 
-	float FLibrary::GetDistanceSq2DChecked(const FString& Context, AActor* A, AActor* B)
+	float FLibrary::GetDistanceSq2DChecked(const FString& Context, const AActor* A, const AActor* B)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
 
@@ -812,7 +812,7 @@ namespace NCsActor
 		return FVector::DistSquared2D(VA, VB);
 	}
 
-	float FLibrary::GetSafeDistanceSq2D(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	float FLibrary::GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
@@ -829,7 +829,7 @@ namespace NCsActor
 	// Normal
 	#pragma region
 	
-	bool FLibrary::GetSafeNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
@@ -847,7 +847,7 @@ namespace NCsActor
 		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
 	}
 
-	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
 
@@ -863,7 +863,7 @@ namespace NCsActor
 		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
 	}
 
-	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 

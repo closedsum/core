@@ -446,7 +446,7 @@ namespace NCsActor
 		* @param Log		(optional)
 		* return			Distance squared between A and B.
 		*/
-		static float GetSafeDistanceSq(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static float GetSafeDistanceSq(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Get the distance squared 2D between A and B.
@@ -456,7 +456,7 @@ namespace NCsActor
 		* @param B
 		* return			Distance squared 2D between A and B.
 		*/
-		static float GetDistanceSq2DChecked(const FString& Context, AActor* A, AActor* B);
+		static float GetDistanceSq2DChecked(const FString& Context, const AActor* A, const AActor* B);
 
 		/**
 		* Safely get the distance squared 2D between A and B.
@@ -467,7 +467,7 @@ namespace NCsActor
 		* @param Log		(optional)
 		* return			Distance squared 2D between A and B.
 		*/
-		static float GetSafeDistanceSq2D(const FString& Context, AActor* A, AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static float GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Distance
 
@@ -487,7 +487,7 @@ namespace NCsActor
 		* @param Log			(optional)
 		* return
 		*/
-		static bool GetSafeNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Gets the normal 2d between A and B (AB or B - A)
@@ -500,7 +500,7 @@ namespace NCsActor
 		* @param OutDistance
 		* return
 		*/
-		static void GetNormal2DAtoBChecked(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+		static void GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
 
 		/**
 		* Safely gets the normal 2d between A and B (AB or B - A)
@@ -514,7 +514,7 @@ namespace NCsActor
 		* @param Log			(optional)
 		* return
 		*/
-		static bool GetSafeNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Normal
 

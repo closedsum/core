@@ -291,6 +291,10 @@ namespace NCsMaterial
 
 			/**
 			*/
+			static void SetChecked(const FString& Context, UPrimitiveComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+
+			/**
+			*/
 			static void SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
 
 			/**
@@ -578,6 +582,16 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			*/
 			static void SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+
+			/**
+			* Get the value of the Vector Parameter Value with name: ParamName on MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			The value of the Vector Parameter Value with name: ParamName.
+			*/
+			static FLinearColor GetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
 
 		#pragma endregion Vector
 

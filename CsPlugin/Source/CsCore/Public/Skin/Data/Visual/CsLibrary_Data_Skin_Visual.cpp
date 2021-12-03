@@ -514,6 +514,24 @@ namespace NCsSkin
 
 		#pragma endregion Mesh
 
+		// Material
+		#pragma region
+
+			#define MaterialSkinDataType NCsSkin::NData::NVisual::NMaterial::IMaterial
+			MaterialSkinDataType* FLibrary::SetMaterialsChecked(const FString& Context, SkinType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs)
+			{
+				MaterialSkinDataType* MaterialSkin = GetInterfaceChecked<MaterialSkinDataType>(Context, Skin);
+
+				typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+				MIDLibrary::SetChecked(Context, Component, MIDs, MaterialSkin->GetMaterials());
+
+				return MaterialSkin;
+			}
+			#undef MaterialSkinDataType
+
+		#pragma endregion Material
+
 		#undef SkinType
 		}
 	}

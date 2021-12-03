@@ -627,6 +627,25 @@ namespace NCsMaterial
 			}
 		}
 
+		void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
+		{
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::ClearOverrideChecked(Context, Mesh);
+			Destroy(MIDs);
+
+			const int32 Count = Materials.Num();
+
+			CS_RESET_ARRAY_CHECKED(MIDs, UMaterialInstanceDynamic, Count);
+
+			for (int32 Index = 0; Index < Count; ++Index)
+			{
+				checkf(Materials[Index], TEXT("%s: Materials[%d] is NULL."), *Context, Index);
+
+				MIDs.Add(Mesh->CreateDynamicMaterialInstance(Index, Materials[Index]));
+			}
+		}
+
 		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials)
 		{
 			typedef NCsMaterial::FLibrary MaterialLibrary;
@@ -1062,6 +1081,13 @@ namespace NCsMaterial
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		FLinearColor FLibrary::GetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
+		{
+			check(IsVectorParameterValidChecked(Context, MID, ParamName));
+
+			return MID->K2_GetVectorParameterValue(ParamName);
 		}
 
 		#pragma endregion Vector

@@ -7,6 +7,7 @@
 #include "Utility/CsLog.h"
 #pragma once
 
+class UPrimitiveComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
 
@@ -14,8 +15,12 @@ class USkeletalMeshComponent;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMesh, IStaticMesh)
 // NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NSkeletalMesh, ISkeletalMesh)
+// NCsSkin::NData::NVisual::NMaterial::IMaterial
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NMaterial, IMaterial)
 
 class ICsDeconstructInterfaceSliceMap;
+
+class UMaterialInstanceDynamic;
 
 namespace NCsSkin
 {
@@ -324,6 +329,28 @@ namespace NCsSkin
 				#undef ResultType
 
 			#pragma endregion Mesh
+
+			// Material
+			#pragma region
+			public:
+
+			#define MaterialSkinDataType NCsSkin::NData::NVisual::NMaterial::IMaterial
+
+				/**
+				* Set the Materials on MIDs that correspond to a Mesh Component (Static or Skeletal Component)
+				* from the given Skin.
+				* 
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Component	PrimitiveComponent (SHOULD be StaticMeshComponent or SkeletalMeshComponent).
+				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
+				* return			Slice from Skin that implements the interface: NCsSkin::NData::NVisual::NMaterial::IMaterial.
+				*/
+				static MaterialSkinDataType* SetMaterialsChecked(const FString& Context, SkinType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+
+			#undef MaterialSkinDataType
+
+			#pragma endregion Material
 			};
 
 		#undef SkinType

@@ -576,6 +576,9 @@ struct CSCORE_API FCsMaterialParameterFloat
 		Value(0.0f)
 	{
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsMaterialParameterFloat
@@ -592,13 +595,16 @@ struct CSCORE_API FCsMaterialParameterColor
 	FName Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FColor Value;
+	FLinearColor Value;
 
 	FCsMaterialParameterColor() :
 		Name(NAME_None),
-		Value(FColor::White)
+		Value(FLinearColor::White)
 	{
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsMaterialParameterColor

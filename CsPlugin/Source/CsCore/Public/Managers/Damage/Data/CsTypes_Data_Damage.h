@@ -29,6 +29,8 @@ namespace NCsDamageData
 	typedef FECsDamageData Type;
 	typedef EMCsDamageData EnumMapType;
 
+	CSCORE_API void FromDataTable(const FString& Context, UObject* ContextRoot);
+
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }
 

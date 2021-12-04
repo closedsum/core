@@ -318,6 +318,19 @@ namespace NCsMath
 			return OutSize * V;
 		}
 
+		/**
+		* Call V.Rotation() and return the rotation with ONLY the Yaw value as
+		* Yaw + Offset.
+		* 
+		* @param V
+		* @param Offset		Value to be added to V.Rotation().Yaw.
+		* return			FRotator(0.0f, V.Rotation().Yaw + Offset, 0.0f).
+		*/
+		FORCEINLINE static FRotator ToRotatorOnlyYaw(const FVector& V, const float& Offset = 0.0f)
+		{
+			return FRotator(0.0f, V.Rotation().Yaw + Offset, 0.0f);
+		}
+
 	#pragma endregion Vector
 
 	// Plane

@@ -246,4 +246,43 @@ namespace NCsDataRootSet
 
 		return UCsManager_Data::Get(ContextRoot)->GetDataTableRowChecked(Context, DataTableSoftObject, RowStruct, RowName);
 	}
+
+	#define MemberType FCsDataRootSet::EMember
+
+	UDataTable* FLibrary::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const MemberType& Member)
+	{
+		if (const FCsDataRootSet* DataRootSet = GetSafe(Context, WorldContext))
+			return DataRootSet->GetSafeDataTable(Context, WorldContext, Member);
+		return nullptr;
+	}
+
+	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const MemberType& Member)
+	{
+		const FCsDataRootSet& DataRootSet = GetChecked(Context, WorldContext);
+
+		return DataRootSet.GetDataTableChecked(Context, WorldContext, Member);
+	}
+
+	const TSoftObjectPtr<UDataTable>& FLibrary::GetDataTableSoftObjectChecked(const FString& Context, const UObject* WorldContext, const MemberType& Member)
+	{
+		const FCsDataRootSet& DataRootSet = GetChecked(Context, WorldContext);
+
+		return DataRootSet.GetDataTableSoftObjectChecked(Context, Member);
+	}
+
+	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const MemberType& Member, const FName& RowName)
+	{
+		const FCsDataRootSet& DataRootSet = GetChecked(Context, WorldContext);
+
+		return DataRootSet.GetDataTableRowChecked(Context, WorldContext, Member, RowName);
+	}
+
+	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const MemberType& Member, const UScriptStruct* RowStruct, const FName& RowName)
+	{
+		const FCsDataRootSet& DataRootSet = GetChecked(Context, WorldContext);
+
+		return DataRootSet.GetDataTableRowChecked(Context, WorldContext, Member, RowStruct, RowName);
+	}
+
+	#undef MemberType
 }

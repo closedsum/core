@@ -498,7 +498,6 @@ namespace NCsActor
 		* @param OutNormal
 		* @param OutDistanceSq	The distance squared between A and B
 		* @param OutDistance
-		* return
 		*/
 		static void GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
 
@@ -517,6 +516,5 @@ namespace NCsActor
 		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Normal
-
 	};
 }

@@ -28,6 +28,14 @@ namespace NCsDamage
 			public:
 
 				FData();
+
+			// DataHandlerType
+			#pragma region
+			protected:
+
+				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
+
+			#pragma endregion DataHandlerType
 			};
 
 		#undef DataHandlerType

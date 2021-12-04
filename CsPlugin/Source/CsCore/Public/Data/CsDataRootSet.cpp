@@ -5,17 +5,25 @@
 // Types
 #include "Types/CsTypes_Load.h"
 // Library
+#include "Data/CsLibrary_DataRootSet.h"
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Valid.h"
 
 // Cached
 #pragma region
 
-namespace NCsDataRootSetCached
+namespace NCsDataRootSet
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataRootSet, AddDataTable);
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataRootSet, AddDataTable);
+
+			CS_DEFINE_CACHED_STRING(GetCsDataRootSet, "GetCsDataRootSet()");
+
+			CS_DEFINE_CACHED_STRING(Damages, "Damages");
+		}
 	}
 }
 
@@ -25,7 +33,7 @@ namespace NCsDataRootSetCached
 
 void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
-	using namespace NCsDataRootSetCached;
+	using namespace NCsDataRootSet::NCached;
 
 	const FString& Context = Str::AddDataTable;
 
@@ -61,7 +69,7 @@ void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<U
 
 void FCsDataRootSet::AddDataTable(const FName& EntryName, const TSoftObjectPtr<UDataTable>& DataTable, const TSet<FName>& RowNames, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
-	using namespace NCsDataRootSetCached;
+	using namespace NCsDataRootSet::NCached;
 
 	const FString& Context = Str::AddDataTable;
 
@@ -132,3 +140,79 @@ bool FCsDataRootSet::IsPersistentLevel(UObject* WorldContext, const MapType& Typ
 	return LevelLibrary::SafeIsName(WorldContext, MapName);
 }
 #undef MapType
+
+bool FCsDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
+{
+	using namespace NCsDataRootSet::NCached;
+
+	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::Member) \
+	{ \
+		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName(), *Str::GetCsDataRootSet, *Str::Member)); \
+	}
+
+	// Damages
+	CS_TEMP_CHECK(Damages)
+
+	#undef CS_TEMP_CHECK
+
+	return true;
+}
+
+const TSoftObjectPtr<UDataTable>& FCsDataRootSet::GetDataTableSoftObjectChecked(const FString& Context, const EMember& MemberType) const
+{
+	#define CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Member) if (MemberType == EMember::Member) \
+		return Member;
+
+	// Damages
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Damages)
+
+	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
+
+	checkf(0, TEXT("%s: Failed to get DataTable SoftObject for MemberType."), *Context);
+	return Damages;
+}
+
+UDataTable* FCsDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
+{
+	using namespace NCsDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
+		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsDataRootSet, Member, Str::Member);
+
+	// Damages
+	CS_TEMP_GET_SAFE_DATA_TABLE(Damages)
+
+	#undef CS_TEMP_GET_SAFE_DATA_TABLE
+
+	UE_LOG(LogCs, Warning, TEXT("%s: Failed to get DataTable for MemberType."), *Context);
+	return nullptr;
+}
+
+UDataTable* FCsDataRootSet::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
+{
+	using namespace NCsDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	return DataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
+}
+
+uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const
+{
+	using namespace NCsDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
+}
+
+uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
+{
+	using namespace NCsDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
+}

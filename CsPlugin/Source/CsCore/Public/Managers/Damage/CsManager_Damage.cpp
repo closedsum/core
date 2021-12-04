@@ -792,7 +792,7 @@ void UCsManager_Damage::ConstructDataHandler()
 	typedef NCsDamage::NManager::NHandler::FData DataHandlerType;
 
 	DataHandler			= new DataHandlerType();
-	DataHandler->Outer   = this;
+	DataHandler->Outer  = this;
 	DataHandler->MyRoot = MyRoot;
 }
 

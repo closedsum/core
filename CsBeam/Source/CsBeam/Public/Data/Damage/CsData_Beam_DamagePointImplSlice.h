@@ -25,7 +25,7 @@ struct CSBEAM_API FCsData_Beam_DamagePointImplSlice
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsData_DamagePointImpl Damage;
+	FCsData_DamagePoint Damage;
 
 public:
 

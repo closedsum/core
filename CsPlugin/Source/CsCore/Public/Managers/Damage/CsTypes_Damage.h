@@ -28,6 +28,9 @@ struct CSCORE_API EMCsDamageType : public TCsEnumStructMap<FECsDamageType, uint8
 namespace NCsDamageType
 {
 	typedef FECsDamageType Type;
+	typedef EMCsDamageType EnumMapType;
+
+	extern CSCORE_API const Type Default;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

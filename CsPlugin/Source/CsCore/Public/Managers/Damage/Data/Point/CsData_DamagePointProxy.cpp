@@ -18,6 +18,7 @@ namespace NCsDamage
 		namespace NPoint
 		{
 			FProxy::FProxy() :
+				Outer(nullptr),
 				// ICsInterfaceMap
 				InterfaceMap(nullptr),
 				// DataType (NCsDamage::NData::IData)
@@ -30,9 +31,11 @@ namespace NCsDamage
 
 				InterfaceMap->SetRoot<FProxy>(this);
 
-				typedef NCsDamage::NData::IData DataType;
+				typedef NCsData::IData DataType;
+				typedef NCsDamage::NData::IData DamageDataType;
 
 				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
+				InterfaceMap->Add<DamageDataType>(static_cast<DamageDataType*>(this));
 
 				// NCsDamage::NData::IData
 				typedef NCsDamage::NValue::NPoint::FImpl ValuePointImplType;
@@ -44,7 +47,7 @@ namespace NCsDamage
 			{
 				// ICsInterfaceMap
 				delete InterfaceMap;
-				// DataType (NCsDamage::NData::IData)
+				// DamageDataType (NCsDamage::NData::IData)
 				delete Value;
 			}
 

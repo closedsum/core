@@ -308,6 +308,13 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 		}
 
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+		{
+			DataType* DataPtr = GetChecked(Context, WorldContext)->GetDataChecked(Context, Data.GetFName());
+
+			GetChecked(Context, WorldContext)->ProcessData(Context, DataPtr, Instigator, Causer, HitResult);
+		}
+
 		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))

@@ -457,8 +457,12 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierResourceType*>& Modifiers)
 {
-	CS_IS_PTR_NULL_CHECKED(Data)
+	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
+}
 
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+{
+	TArray<ModifierResourceType*> Modifiers;
 	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
 }
 
@@ -816,6 +820,15 @@ void UCsManager_Damage::ProcessData(const FString& Context, DataType* Data, UObj
 	typedef NCsDamage::NEvent::FResource EventResourceType;
 
 	const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
+
+	ProcessDamageEventContainer(Container);
+}
+
+void UCsManager_Damage::ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+{
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+
+	const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult);
 
 	ProcessDamageEventContainer(Container);
 }

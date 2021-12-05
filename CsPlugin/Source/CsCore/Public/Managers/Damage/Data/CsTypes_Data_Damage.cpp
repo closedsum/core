@@ -39,14 +39,3 @@ namespace NCsDamageData
 }
 
 #pragma endregion DamageData
-
-// FCsData_DamagePoint
-#pragma region
-
-void FCsData_DamagePoint::SetData(PointDataProxyType* Data)
-{
-	Data->SetValue(&Damage);
-	Data->SetType(&Type);
-}
-
-#pragma endregion FCsData_DamagePoint

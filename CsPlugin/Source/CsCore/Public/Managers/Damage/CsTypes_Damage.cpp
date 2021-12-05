@@ -6,6 +6,8 @@
 
 namespace NCsDamageType
 {
+	CSCORE_API CS_CREATE_ENUM_STRUCT(Default);
+
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
 		EMCsDamageType::Get().ClearUserDefinedEnums();

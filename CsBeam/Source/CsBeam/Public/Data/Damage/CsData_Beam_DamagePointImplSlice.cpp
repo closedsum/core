@@ -139,7 +139,7 @@ namespace NCsBeam
 					// Try individual properties
 					else
 					{
-						FCsData_DamagePointImpl* DamagePointPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsData_DamagePointImpl>(Context, Object, Object->GetClass(), Name::DamagePoint, nullptr);
+						FCsData_DamagePoint* DamagePointPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsData_DamagePoint>(Context, Object, Object->GetClass(), Name::DamagePoint, nullptr);
 
 						if (DamagePointPtr)
 						{
@@ -157,7 +157,7 @@ namespace NCsBeam
 							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: DamageDataType (NCsBeam::NData::NDamage::IDamage)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Beam_DamagePointImplSlice with name: DamagePointSlice."), *Context));
 							Log(FString::Printf(TEXT("%s: - OR"), *Context));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePointImpl with name: DamagePoint."), *Context));
+							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_DamagePoint with name: DamagePoint."), *Context));
 						}
 					}
 					return Slice;

@@ -1,5 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-// Data
+#pragma once
+// Interfaces
+#include "Data/CsData.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Damage
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
@@ -7,13 +9,15 @@
 #include "Utility/CsLog.h"
 
 #include "CsData_DamagePointImpl.generated.h"
-#pragma once
+
+// FCsData_DamagePoint
+#pragma region
 
 // NCsDamage::NData::NPoint::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FImpl)
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsData_DamagePointImpl
+struct CSCORE_API FCsData_DamagePoint
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -23,7 +27,7 @@ struct CSCORE_API FCsData_DamagePointImpl
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FECsDamageType Type;
 
-	FCsData_DamagePointImpl() :
+	FCsData_DamagePoint() :
 		Value(0.0f),
 		Type()
 	{
@@ -111,3 +115,106 @@ namespace NCsDamage
 		}
 	}
 }
+
+#pragma endregion FCsData_DamagePoint
+
+struct FCsInterfaceMap;
+
+// NCsDamage::NData::NPoint::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NPoint, FProxy)
+
+/**
+* Data for a Damage Point
+* 
+* Implements the interfaces:
+*  ICsData
+*  ICsData_Damage
+*/
+UCLASS(BlueprintType, Blueprintable)
+class CSCORE_API UCsData_DamagePointImpl : public UObject,
+										   public ICsData,
+										   public ICsData_Damage
+{
+	GENERATED_UCLASS_BODY()
+
+public:
+
+	static const FName Name;
+
+#define DataType NCsData::IData
+#define ValueType NCsDamage::NValue::IValue
+
+private:
+
+	DataType* DataProxy;
+
+// UObject Interface
+#pragma region
+public:
+
+	virtual void PostLoad() override;
+
+	virtual void BeginDestroy() override;
+
+#pragma endregion UObject Interface
+
+protected:
+
+
+	bool bLoaded;
+
+private:
+
+	void Init();
+	void Reset();
+
+	FCsInterfaceMap* InterfaceMap;
+
+// ICsGetInterfaceMap
+#pragma region
+public:
+
+	FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
+
+#pragma endregion ICsGetInterfaceMap
+
+// ICsData
+#pragma region
+public:
+
+	FORCEINLINE DataType* _getIData() const { return DataProxy; }
+
+	bool IsValid(const int32& LoadFlags);
+
+	void Load(const int32& LoadFlags);
+	
+	void Unload();
+
+	bool IsLoaded() const;
+
+#pragma endregion ICsData
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Value;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FECsDamageType Type;
+
+#define DamagePointProxyType NCsDamage::NData::NPoint::FProxy
+	DamagePointProxyType* DamageDataPointProxy;
+#undef DamagePointProxyType
+
+// ICsData_Damage
+#pragma region
+public:
+
+	const ValueType* GetValue() const;
+	FORCEINLINE const FECsDamageType& GetType() const { return Type; }
+
+#pragma endregion ICsData_Damage
+
+#undef DataType
+#undef ValueType
+};

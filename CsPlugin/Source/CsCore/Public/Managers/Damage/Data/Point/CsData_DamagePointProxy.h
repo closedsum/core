@@ -1,6 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Data/CsData_Damage.h"
 #pragma once
+// Interfaces
+#include "Data/CsData.h"
+#include "Managers/Damage/Data/CsData_Damage.h"
 
 struct FCsInterfaceMap;
 
@@ -13,12 +15,15 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-		#define DataType NCsDamage::NData::IData
+		#define DataType NCsData::IData
+		#define DamageDataType NCsDamage::NData::IData
 
 			/**
-			*
+			* "Emulates" an object by mimicking the interfaces and having pointers to the appropriate
+			* members. The idea behind this struct is to keep the code a cleaner and more readable.
 			*/
-			struct CSCORE_API FProxy : public DataType
+			struct CSCORE_API FProxy : public DataType,
+									   public DamageDataType
 			{
 			public:
 
@@ -26,13 +31,17 @@ namespace NCsDamage
 
 			#define ValueType NCsDamage::NValue::IValue
 
-				// ICsGetInterfaceMap
+			private:
+
+				UObject* Outer;
+
+			// ICsGetInterfaceMap
 
 				FCsInterfaceMap* InterfaceMap;
 
 			public:
 
-				// DataType (NCsDamage::NData::IData)
+			// DamageDataType (NCsDamage::NData::IData)
 
 				ValueType* Value;
 
@@ -43,7 +52,9 @@ namespace NCsDamage
 				FProxy();
 				~FProxy();
 
-				FORCEINLINE UObject* _getUObject() const { return nullptr; }
+				FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
+
+				FORCEINLINE UObject* _getUObject() const { return Outer; }
 
 			// ICsGetInterfaceMap
 			#pragma region
@@ -58,19 +69,20 @@ namespace NCsDamage
 				void SetValue(float* InValue);
 				void SetType(FECsDamageType* InValue) { Type = InValue; }
 
-			// DataType (NCsDamage::NData::IData)
+			// DamageDataType (NCsDamage::NData::IData)
 			#pragma region
 			public:
 
 				FORCEINLINE const ValueType* GetValue() const { return Value; }
 				FORCEINLINE const FECsDamageType& GetType() const { return const_cast<FECsDamageType&>(*Type); }
 
-			#pragma endregion DataType (NCsDamage::NData::IData)
+			#pragma endregion DamageDataType (NCsDamage::NData::IData)
 
 			#undef ValueType
 			};
 
 		#undef DataType
+		#undef DamageDataType
 		}
 	}
 }

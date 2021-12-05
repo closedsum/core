@@ -81,25 +81,10 @@ void UCsData_StatusEffect_DamagePoint::BeginDestroy()
 	Super::BeginDestroy();
 
 	// ICsGetInterfaceMap
-	if (InterfaceMap)
-	{
-		delete InterfaceMap;
-		InterfaceMap = nullptr;
-	}
+	CS_SAFE_DELETE_PTR(InterfaceMap)
 	// ICsStatusEffect_Damage
-	if (DamagePointProxy)
-	{
-		typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
-
-		PointDataProxyType* Proxy = static_cast<PointDataProxyType*>(DamagePointProxy);
-		delete Proxy;
-		DamagePointProxy = nullptr;
-	}
-	if (DataProxy)
-	{
-		delete DataProxy;
-		DataProxy = nullptr;
-	}
+	CS_SAFE_DELETE_PTR(DamagePointProxy)
+	CS_SAFE_DELETE_PTR(DataProxy)
 }
 
 #pragma endregion UObject Interface
@@ -123,8 +108,12 @@ void UCsData_StatusEffect_DamagePoint::Init()
 	{
 		typedef NCsDamage::NData::NPoint::FProxy PointDataProxyType;
 
-		DamagePointProxy = new PointDataProxyType();
-		DamagePoint.SetData(static_cast<PointDataProxyType*>(DamagePointProxy));
+		PointDataProxyType* PointProxy = new PointDataProxyType();
+		
+		PointProxy->SetValue(&DamagePoint.Value);
+		PointProxy->SetType(&DamagePoint.Type);
+
+		DamagePointProxy = PointProxy;
 	}
 	if (!DataProxy)
 	{

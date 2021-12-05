@@ -25,7 +25,7 @@ struct CSPRJ_API FCsData_Projectile_DamagePointImplSlice
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FCsData_DamagePointImpl Damage;
+	FCsData_DamagePoint Damage;
 
 public:
 

@@ -309,6 +309,19 @@ namespace NCsDamage
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value
+			* @param Data
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Data
 			* @param Instigator
 			* @param Causer

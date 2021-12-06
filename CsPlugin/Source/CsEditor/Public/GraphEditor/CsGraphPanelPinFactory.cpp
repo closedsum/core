@@ -11,7 +11,7 @@
 #include "Managers/FX/CsTypes_FX.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
-#include "Managers/Damage/CsTypes_Damage.h"
+#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
@@ -55,6 +55,7 @@
 //#include "GraphEditor/EnumStruct/Crafting/SCsGraphPin_ECsRecipeType.h"
 	// Damage
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageType.h"
+#include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageData.h"
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsHitType.h"
 	// Interactive
 //#include "GraphEditor/EnumStruct/Interactive/SCsGraphPin_ECsInteractiveType.h"
@@ -148,6 +149,8 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsDamageType
 		CS_TEMP_CREATE(ECsDamageType)
+		// FECsDamageData
+		CS_TEMP_CREATE(ECsDamageData)
 		// FECsHitType
 		CS_TEMP_CREATE(ECsHitType)
 	}

@@ -293,6 +293,8 @@ void UCsManager_Damage::Initialize()
 
 	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
 
+	DataHandler->PopulateDataMapFromSettings(Context);
+
 	bInitialized = true;
 }
 

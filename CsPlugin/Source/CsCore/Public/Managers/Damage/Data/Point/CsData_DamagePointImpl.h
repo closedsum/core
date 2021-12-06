@@ -160,7 +160,6 @@ public:
 
 protected:
 
-
 	bool bLoaded;
 
 private:

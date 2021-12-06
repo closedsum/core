@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Engine/DataTable.h"
 
 #include "CsTypes_Data_Damage.generated.h"
-#pragma once
 
 // DamageData
 #pragma region

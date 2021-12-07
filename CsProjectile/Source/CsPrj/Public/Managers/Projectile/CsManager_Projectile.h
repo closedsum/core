@@ -192,8 +192,37 @@ protected:
 	/** */
 	FCsSettings_Manager_Projectile Settings;
 
-	/** */
+	/** General Idea: Pool Sharing via Mapping of Types.
+		Describes the mapping of a Projectile type to underlying Projectile type
+		in terms the pool of Projectiles.
+
+		i.e. From -> To
+			 TypeMapArray[From] = To.
+
+		i.e. If Type 'A' is mapped to Type 'B' (TypeMapArray[A] = B), then
+			 when a Projectile of type 'A' is spawned it will be allocated from
+			 the pool of Projectile of type 'B'.
+
+		The idea behind behind this mapping is Projectiles of a different type may
+		not have underlying code differences and just be differences in the data
+		each respective character type uses. This provides the ability to save on both
+		the number of pools created and the number of objects created for a pool. */
 	TArray<FECsProjectile> TypeMapArray;
+
+public:
+
+	FORCEINLINE const TArray<FECsProjectile>& GetTypeMapArray() const { return TypeMapArray; }
+
+protected:
+
+	/** Used for faster lookup to see what types (Froms) are mapped to a particular type (To).
+		To -> [Froms]
+		TypeMapToArray[To] = [Froms] */
+	TArray<TArray<FECsProjectile>> TypeMapToArray;
+
+public:
+
+	FORCEINLINE const TArray<TArray<FECsProjectile>>& GetTypeMapToArray() const { return TypeMapToArray; }
 
 public:
 

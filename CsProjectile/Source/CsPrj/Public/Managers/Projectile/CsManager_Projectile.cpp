@@ -351,8 +351,12 @@ void UCsManager_Projectile::SetAndAddTypeMapKeyValue(const FECsProjectile& Key, 
 	for (int32 I = TypeMapArray.Num() - 1; I < Key.GetValue(); ++I)
 	{
 		TypeMapArray.AddDefaulted_GetRef() = EMCsProjectile::Get().GetEnumAt(I + 1);
+
+		TypeMapToArray.AddDefaulted();
 	}
 	TypeMapArray[Key.GetValue()] = Value;
+
+	TypeMapToArray[Value.GetValue()].Add(Key);
 }
 
 #pragma endregion Settings
@@ -425,15 +429,22 @@ void UCsManager_Projectile::SetupInternal()
 			const int32& Count = EMCsProjectile::Get().Num();
 
 			TypeMapArray.Reset(Count);
+			TypeMapToArray.Reset(Count);
 
 			for (const FECsProjectile& Type : EMCsProjectile::Get())
 			{
 				TypeMapArray.Add(Type);
+				TypeMapToArray.AddDefaulted();
 			}
 
 			for (const TPair<FECsProjectile, FECsProjectile>& Pair : Settings.TypeMap)
 			{
-				TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
+				const FECsProjectile& From = Pair.Key;
+				const FECsProjectile& To   = Pair.Value;
+
+				TypeMapArray[From.GetValue()] = To;
+
+				TypeMapToArray[To.GetValue()].Add(From);
 			}
 		}
 
@@ -447,7 +458,7 @@ void UCsManager_Projectile::SetupInternal()
 				const FECsUpdateGroup& Group						  = Pair.Key;
 				const FCsSettings_Manager_Projectile_TypeArray& Array = Pair.Value;
 
-				checkf(Array.Types.Num() > CS_EMPTY, TEXT("%s: No Types added for UCsDeveloperSettings.Manager_Sound.TypesByUpdateGroupMap[%s]."), *Context, Group.ToChar());
+				checkf(Array.Types.Num() > CS_EMPTY, TEXT("%s: No Types added for UCsDeveloperSettings.Manager_Projectile.TypesByUpdateGroupMap[%s]."), *Context, Group.ToChar());
 
 				TypesByUpdateGroup[Group.GetValue()].Append(Array.Types);
 

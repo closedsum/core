@@ -75,9 +75,18 @@ struct CSPRJ_API FCsSettings_Manager_Projectile
 
 public:
 
-	/** Mapping for sharing a pool of projectiles between many Projectile types. This is useful
-		when multiple Projectile types share the same Projectile Class. In this case, it is not
-		necessary to create separate pool for each Projectile type. */
+	/** General Idea: Pool Sharing via Mapping of Types.
+		Describes the mapping of a Projectile type to underlying Projectile type
+		in terms the pool of Projectiles.
+
+		i.e. If Type 'A' is mapped to Type 'B' (TypeMap[A] = B), then
+			 when a Projectile of type 'A' is spawned it will be allocated from
+			 the pool of Projectiles of type 'B'.
+
+		The idea behind behind this mapping is Projectiles of a different type may
+		not have underlying code differences and just be differences in the data
+		each respective character type uses. This provides the ability to save on both
+		the number of pools created and the number of objects created for a pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsProjectile, FECsProjectile> TypeMap;
 

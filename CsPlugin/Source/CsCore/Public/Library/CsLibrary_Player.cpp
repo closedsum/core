@@ -5,9 +5,10 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_Valid.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
 // Player
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
@@ -128,6 +129,7 @@ namespace NCsPlayer
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeFirstLocal);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeLocal);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetAllLocal);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsPlayer::NController::FLibrary, GetSafeId);
 				}
 			}
 		}
@@ -327,6 +329,57 @@ namespace NCsPlayer
 			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			GetAllLocalChecked(Context, WorldContext->GetWorld(), OutControllers);
+		}
+
+		int32 FLibrary::GetSafeId(const FString& Context, const UObject* PlayerContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_VALUE(PlayerContext, INDEX_NONE)
+
+			typedef NCsObject::FLibrary ObjectLibrary;
+
+			if (const APawn* Pawn = Cast<APawn>(PlayerContext))
+			{
+				if (APlayerController* PC = Cast<APlayerController>(Pawn->GetController()))
+				{
+					if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(PC->Player))
+					{
+						return LocalPlayer->GetControllerId();
+					}
+					else
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerContext)));
+						return INDEX_NONE;
+					}
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->Controller: %s with Class: %s"), *Context, *(PlayerContext->GetName()), *ObjectLibrary::PrintNameAndClass(Pawn->GetController())));
+					return INDEX_NONE;
+				}
+			}
+			if (const APlayerController* PC = Cast<APlayerController>(PlayerContext))
+			{
+				if (ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(PC->Player))
+				{
+					return LocalPlayer->GetControllerId();
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No LocalPlayer for PlayerController: %s."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerContext)));
+					return INDEX_NONE;
+				}
+			}
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerContext: %s with Class: %s is NOT of type APawn or APlayerController."), *Context, *ObjectLibrary::PrintNameAndClass(PlayerContext)));
+			return INDEX_NONE;
+		}
+
+		int32 FLibrary::GetSafeId(const UObject* PlayerContext)
+		{
+			using namespace NCsPlayer::NController::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeId;
+
+			return GetSafeId(Context, PlayerContext, nullptr);
 		}
 	}
 

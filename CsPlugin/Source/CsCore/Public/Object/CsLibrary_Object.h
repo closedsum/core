@@ -15,7 +15,9 @@ namespace NCsObject
 	{
 	public:
 
-		static FString PrintObjectAndClass(UObject* Object);
+		static FString PrintObjectAndClass(const UObject* Object);
+
+		static FString PrintNameAndClass(const UObject* Object);
 
 		/**
 		*

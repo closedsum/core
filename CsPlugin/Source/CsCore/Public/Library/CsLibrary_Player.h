@@ -181,6 +181,10 @@ namespace NCsPlayer
 			static void GetAllLocalChecked(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers);
 
 			static void GetAllLocalChecked(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers);
+
+			static int32 GetSafeId(const FString& Context, const UObject* PlayerContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static int32 GetSafeId(const UObject* PlayerContext);
 		};
 	}
 

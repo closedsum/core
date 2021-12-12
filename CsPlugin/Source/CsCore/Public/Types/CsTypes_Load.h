@@ -1122,7 +1122,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool bPopulateOnSave;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (MustImplement = "CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)

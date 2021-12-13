@@ -533,6 +533,7 @@ namespace NCsCVarToggle
 }
 
 #define CS_CVAR_TOGGLE_IS_ENABLED(__Toggle) FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::__Toggle)
+#define CS_CVAR_TOGGLE_IS_DISABLED(__Toggle) FCsCVarToggleMap::Get().IsDisabled(NCsCVarToggle::__Toggle)
 
 #pragma endregion CVarToggle
 

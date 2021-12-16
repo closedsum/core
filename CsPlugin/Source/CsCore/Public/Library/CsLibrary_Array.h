@@ -246,6 +246,29 @@ namespace NCsArray
 			}
 		}
 
+		/**
+		* Populate Arr with values from [Min, Max] and then perform a random shuffle.
+		* 
+		* @param Arr
+		* @param Min
+		* @param Max
+		*/
+		static void PopulateRangeAndShuffle(TArray<int32>& Arr, const int32& Min, const int32& Max)
+		{
+			checkf(Max > Min, TEXT("%d is NOT > %d, (Max is NOT > Min)"), Max, Min);
+
+			const int32 UpperBound = Max + 1;
+
+			Arr.Reset(UpperBound - Min);
+
+			for (int32 I = Min; I < UpperBound; ++I)
+			{
+				Arr.Add(I);
+			}
+
+			Shuffle<int32>(Arr);
+		}
+
 		template<typename T>
 		static void GetIntersecting(const TArray<T*>& A, const TArray<T*>& B, TArray<T*>& Out)
 		{
@@ -333,6 +356,12 @@ namespace NCsArray
 			checkf(Count > 0, TEXT("NCsArray::FLibrary::ResetChecked: Count: %d is NOT > 0."), Count);
 
 			A.Reset(FMath::Max(A.Max(), Count));
+		}
+
+		template<typename T>
+		FORCEINLINE static void RemoveLast(TArray<T>& A)
+		{
+			A.RemoveAt(A.Num() - 1, 1, false);
 		}
 
 	#pragma endregion TArray

@@ -234,7 +234,8 @@
 		__Member##_Proxy = &__Member; \
 	} \
 	FORCEINLINE void Set##__Member(__ValueType* __value) { check(__value); __Member##_Proxy = __value; } \
-	FORCEINLINE const __ValueType& Get##__Member() const { return *(__Member##_Proxy); }
+	FORCEINLINE const __ValueType& Get##__Member() const { return *(__Member##_Proxy); } \
+	FORCEINLINE __ValueType* Get##__Member##Ptr() const { return __Member##_Proxy; }
 
 #define CS_DEFINE_SET_MEMBER_WITH_PROXY(__Member, __ValueType) \
 	FORCEINLINE void Set##__Member(const __ValueType& __value) \

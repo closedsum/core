@@ -104,7 +104,14 @@ namespace NCsFX
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
+
+				FORCEINLINE void SetValue(const int32& __value)
+				{
+					Value = __value;
+					Value_Proxy = &Value;
+				}
+				FORCEINLINE void SetValue(int32* __value) { check(__value); Value_Proxy = __value; }
+				FORCEINLINE const int32& GetValue() const { return *Value_Proxy; }
 
 			// IParameter
 			#pragma region
@@ -164,7 +171,14 @@ namespace NCsFX
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+
+				FORCEINLINE void SetValue(const float& __value)
+				{
+					Value = __value;
+					Value_Proxy = &Value;
+				}
+				FORCEINLINE void SetValue(float* __value) { check(__value); Value_Proxy = __value; }
+				FORCEINLINE const float& GetValue() const { return *Value_Proxy; }
 
 			// IParameter
 			#pragma region
@@ -224,7 +238,14 @@ namespace NCsFX
 				FORCEINLINE void SetIndex(const int32& InIndex) { Index = InIndex; }
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, FVector)
+
+				FORCEINLINE void SetValue(const FVector& __value)
+				{
+					Value = __value;
+					Value_Proxy = &Value;
+				}
+				FORCEINLINE void SetValue(FVector* __value) { check(__value); Value_Proxy = __value; }
+				FORCEINLINE const FVector& GetValue() const { return *Value_Proxy; }
 
 			// IParameter
 			#pragma region

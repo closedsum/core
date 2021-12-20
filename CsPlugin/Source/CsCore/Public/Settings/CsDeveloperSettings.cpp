@@ -7,6 +7,10 @@
 #include "Library/CsLibrary_Property.h"
 // Settings
 #include "Settings/ProjectPackagingSettings.h"
+// Interface
+#include "Data/CsGetDataRootSet.h"
+// Editor
+#include "PackageTools.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -86,92 +90,247 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 	// Data
 	{
-		if (PropertyNames.Contains("DataRootSets") ||
-			PropertyNames.Contains("bApply"))
+		if (PropertyNames.Contains("DataRootSets"))
 		{
-			UProjectPackagingSettings* PackageSettings = GetMutableDefault< UProjectPackagingSettings>();
-
-			const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
-
-			int32 Index = INDEX_NONE;
-
-			// Add to DirectoriesToAlwaysCook
-			for (int32 I = 0; I < Count; ++I)
+			// bApply
+			if (PropertyNames.Contains("bApply"))
 			{
-				FCsSettings_DataRootSet& Set = DataRootSets[I];
+				UProjectPackagingSettings* PackageSettings = GetMutableDefault<UProjectPackagingSettings>();
 
-				if (Set.bApply)
+				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
+
+				int32 Index = INDEX_NONE;
+
+				// Add to DirectoriesToAlwaysCook
+				for (int32 I = 0; I < Count; ++I)
 				{
-					DataRootSet = DataRootSets[I].DataRootSet;
+					FCsSettings_DataRootSet& Set = DataRootSets[I];
 
-					if (PackageSettings->DirectoriesToAlwaysCook.Num() == CS_EMPTY)
+					if (Set.bApply)
 					{
-						PackageSettings->DirectoriesToAlwaysCook.AddDefaulted();
-					}
-					PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = DataRootSets[I].DirectoryToAlwaysCook;
+						DataRootSet = DataRootSets[I].DataRootSet;
 
-					Index = I;
-					break;
-				}
-			}
-			// Add to DirectoriesToNeverCook
-
-				// First remove all directories in DataRootSets
-			for (int32 I = 0; I < Count; ++I)
-			{
-				const FDirectoryPath& D1 = DataRootSets[I].DirectoryToAlwaysCook;
-
-				int32 Num = PackageSettings->DirectoriesToNeverCook.Num();
-
-				for (int32 J = Num - 1; J >= 0; --J)
-				{
-					FDirectoryPath& D2 = PackageSettings->DirectoriesToNeverCook[J];
-
-					if (D2.Path == D1.Path)
-					{
-						PackageSettings->DirectoriesToNeverCook.RemoveAt(J);
-					}
-				}
-			}
-				// Get all directories to add to DirectoriesToNeverCook
-			TArray<int32> PathsToAdd;
-
-			for (int32 I = 0; I < Count; ++I)
-			{
-				if (DataRootSets[I].bApply)
-					continue;
-
-				if (PathsToAdd.Num() == CS_EMPTY)
-				{
-					PathsToAdd.Add(I);
-				}
-				else
-				{
-					bool Add = true;
-
-					for (const int32& J : PathsToAdd)
-					{	
-						const FString& P  = DataRootSets[Index].DirectoryToAlwaysCook.Path;
-						const FString& P1 = DataRootSets[I].DirectoryToAlwaysCook.Path;
-						const FString& P2 = DataRootSets[J].DirectoryToAlwaysCook.Path;
-
-						if (P1 == P ||
-							P1 == P2)
+						if (PackageSettings->DirectoriesToAlwaysCook.Num() == CS_EMPTY)
 						{
-							Add = false;
+							PackageSettings->DirectoriesToAlwaysCook.AddDefaulted();
+						}
+						PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = DataRootSets[I].DirectoryToAlwaysCook;
+
+						Index = I;
+						break;
+					}
+				}
+				// Add to DirectoriesToNeverCook
+
+					// First remove all directories in DataRootSets
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const FDirectoryPath& D1 = DataRootSets[I].DirectoryToAlwaysCook;
+
+					int32 Num = PackageSettings->DirectoriesToNeverCook.Num();
+
+					for (int32 J = Num - 1; J >= 0; --J)
+					{
+						FDirectoryPath& D2 = PackageSettings->DirectoriesToNeverCook[J];
+
+						if (D2.Path == D1.Path)
+						{
+							PackageSettings->DirectoriesToNeverCook.RemoveAt(J);
 						}
 					}
-
-					if (Add)
-						PathsToAdd.Add(I);
 				}
+					// Get all directories to add to DirectoriesToNeverCook
+				TArray<int32> PathsToAdd;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					if (DataRootSets[I].bApply)
+						continue;
+
+					if (PathsToAdd.Num() == CS_EMPTY)
+					{
+						PathsToAdd.Add(I);
+					}
+					else
+					{
+						bool Add = true;
+
+						for (const int32& J : PathsToAdd)
+						{	
+							const FString& P  = DataRootSets[Index].DirectoryToAlwaysCook.Path;
+							const FString& P1 = DataRootSets[I].DirectoryToAlwaysCook.Path;
+							const FString& P2 = DataRootSets[J].DirectoryToAlwaysCook.Path;
+
+							if (P1 == P ||
+								P1 == P2)
+							{
+								Add = false;
+							}
+						}
+
+						if (Add)
+							PathsToAdd.Add(I);
+					}
+				}
+					// Add directors to DirectoriesToNeverCook
+				for (const int32& I : PathsToAdd)
+				{
+					PackageSettings->DirectoriesToNeverCook.Add(DataRootSets[I].DirectoryToAlwaysCook);
+				}
+				DataRootSets[Index].bApply = false;
 			}
-				// Add directors to DirectoriesToNeverCook
-			for (const int32& I : PathsToAdd)
+			// bPopulateAll
+			else
+			if (PropertyName.Contains("bPopulateAll"))
 			{
-				PackageSettings->DirectoriesToNeverCook.Add(DataRootSets[I].DirectoryToAlwaysCook);
+				UProjectPackagingSettings* PackageSettings = GetMutableDefault<UProjectPackagingSettings>();
+
+				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
+
+				int32 Index = INDEX_NONE;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCsSettings_DataRootSet& Set = DataRootSets[I];
+
+					if (Set.bPopulateAll)
+					{
+						Index = I;
+
+						TSoftClassPtr<UObject> SoftClass  = Set.DataRootSet;
+						UClass* Class					  = SoftClass.LoadSynchronous();
+						UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+						ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+
+						if (GetDataRootSet)
+						{
+							const FCsDataRootSet& CsDataRootSet = GetDataRootSet->GetCsDataRootSet();
+
+							TArray<UObject*> ObjectsToSave;
+
+							// Datas
+							if (UDataTable* Datas = CsDataRootSet.Datas)
+							{
+								const TMap<FName, uint8*>& RowMap = Datas->GetRowMap();
+
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName	  = Pair.Key;
+									FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
+
+									RowPtr->Name = RowName;
+
+									RowPtr->Populate();
+								}
+								Datas->MarkPackageDirty();
+								ObjectsToSave.Add(Datas);
+							}
+							// DataTables
+							if (UDataTable* DataTables = CsDataRootSet.DataTables)
+							{
+								const TMap<FName, uint8*>& RowMap = DataTables->GetRowMap();
+
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName		   = Pair.Key;
+									FCsDataEntry_DataTable* RowPtr = reinterpret_cast<FCsDataEntry_DataTable*>(Pair.Value);
+
+									RowPtr->Name = RowName;
+
+									RowPtr->Populate();
+								}
+								DataTables->MarkPackageDirty();
+								ObjectsToSave.Add(DataTables);
+							}
+							UPackageTools::SavePackagesForObjects(ObjectsToSave);
+						}
+						break;
+					}
+				}
+
+				if (Index > INDEX_NONE)
+					DataRootSets[Index].bPopulateAll = false;
 			}
-			DataRootSets[Index].bApply = false;
+			// bPopulateSubset
+			else
+			if (PropertyName.Contains("bPopulateSubset"))
+			{
+				UProjectPackagingSettings* PackageSettings = GetMutableDefault<UProjectPackagingSettings>();
+
+				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
+
+				int32 Index = INDEX_NONE;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCsSettings_DataRootSet& Set = DataRootSets[I];
+
+					if (Set.bPopulateSubset)
+					{
+						Index = I;
+
+						TSoftClassPtr<UObject> SoftClass  = Set.DataRootSet;
+						UClass* Class					  = SoftClass.LoadSynchronous();
+						UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+						ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+
+						if (GetDataRootSet)
+						{
+							const FCsDataRootSet& CsDataRootSet = GetDataRootSet->GetCsDataRootSet();
+
+							TArray<UObject*> ObjectsToSave;
+
+							// Datas
+							if (UDataTable* Datas = CsDataRootSet.Datas)
+							{
+								const TMap<FName, uint8*>& RowMap = Datas->GetRowMap();
+
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName = Pair.Key;
+
+									if (Set.DataRowsToPopulate.Find(RowName))
+									{
+										FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
+
+										RowPtr->Name = RowName;
+
+										RowPtr->Populate();
+									}
+								}
+								Datas->MarkPackageDirty();
+								ObjectsToSave.Add(Datas);
+							}
+							// DataTables
+							if (UDataTable* DataTables = CsDataRootSet.DataTables)
+							{
+								const TMap<FName, uint8*>& RowMap = DataTables->GetRowMap();
+
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName = Pair.Key;
+
+									if (Set.DataTableRowsToPopulate.Find(RowName))
+									{
+										FCsDataEntry_DataTable* RowPtr = reinterpret_cast<FCsDataEntry_DataTable*>(Pair.Value);
+
+										RowPtr->Name = RowName;
+
+										RowPtr->Populate();
+									}
+								}
+								DataTables->MarkPackageDirty();
+								ObjectsToSave.Add(DataTables);
+							}
+							UPackageTools::SavePackagesForObjects(ObjectsToSave);
+						}
+						break;
+					}
+				}
+
+				if (Index > INDEX_NONE)
+					DataRootSets[Index].bPopulateSubset = false;
+			}
 		}
 	}
 	// Input

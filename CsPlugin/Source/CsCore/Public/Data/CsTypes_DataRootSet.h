@@ -12,6 +12,26 @@ struct CSCORE_API FCsSettings_DataRootSet
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bApply;
 
+	/** Populate all the soft references from
+		DataRootSet->Datas and DataRootSet->DataTables. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bPopulateAll;
+
+	/** Populate all the soft references for rows listed
+		under DataRowsToPopulate and DataTableRowsToPopulate. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bPopulateSubset;
+
+	/** Row names from DataRootSet->Datas to populate soft references
+		for when bPopulateSubset is toggled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSet<FName> DataRowsToPopulate;
+
+	/** Row names from DataRootSet->DataTables to populate soft references
+		for when bPopulateSubset is toggled. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSet<FName> DataTableRowsToPopulate;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSoftClassPtr<UObject> DataRootSet;
 
@@ -20,6 +40,9 @@ struct CSCORE_API FCsSettings_DataRootSet
 
 	FCsSettings_DataRootSet() :
 		bApply(false),
+		bPopulateAll(false),
+		DataRowsToPopulate(),
+		DataTableRowsToPopulate(),
 		DataRootSet(),
 		DirectoryToAlwaysCook()
 	{

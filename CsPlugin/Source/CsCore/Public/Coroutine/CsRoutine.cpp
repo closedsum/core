@@ -190,9 +190,16 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 
 		CoroutineImpl.Execute(this);
 	}
-	// Check if the Coroutine has ended
+	// Check if the Coroutine has ended naturally after
+	// the function has completed execution / reached end of scope.
 	if (State == StateType::End)
-		End(EndReasonType::EndOfExecution);
+	{
+		if (EndReason == EndReasonType::EEndReason_MAX &&
+			TickCount > 0)
+		{
+			End(EndReasonType::EndOfExecution);
+		}
+	};
 }
 
 #pragma endregion Update

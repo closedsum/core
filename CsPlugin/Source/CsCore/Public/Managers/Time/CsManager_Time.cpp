@@ -235,7 +235,7 @@ void UCsManager_Time::SetupInputListener()
 
 	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
 
-	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, this);
+	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, MyRoot);
 
 	Manager_Input->OnAnyKey_Pressed_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Pressed);
 	Manager_Input->OnAnyKey_Released_Event.AddUObject(this, &UCsManager_Time::OnAnyKey_Released);

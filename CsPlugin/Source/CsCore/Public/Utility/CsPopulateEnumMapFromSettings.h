@@ -194,6 +194,11 @@ public:
 			if (NameProperty &&
 				DisplayNameProperty)
 			{
+				if (RowMap.Num() == CS_EMPTY)
+				{
+					CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: No entries found for %s."), *Context, *(DataTable->GetName()))));
+				}
+
 				for (const TPair<FName, uint8*>& Pair : RowMap)
 				{
 					const FName& RowName = Pair.Key;

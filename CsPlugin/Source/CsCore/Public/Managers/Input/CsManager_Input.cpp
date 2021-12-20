@@ -725,10 +725,9 @@ void UCsManager_Input::OnPostProcessInput_CaptureTouchInput(const float& DeltaTi
 	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
 	
 	// TODO: See if there is a check if Touch is even a viable input
-#if !PLATFORM_ANDROID || !PLATFORM_IOS
+#if !PLATFORM_ANDROID && !PLATFORM_IOS
 	return;
-#endif // #if !PLATFORM_ANDROID || !PLATFORM_IOS
-
+#endif // #if !PLATFORM_ANDROID && !PLATFORM_IOS
 
 	CS_NON_SHIPPING_EXPR(OnPostProcessInput_LogCaptureTouchInput());
 

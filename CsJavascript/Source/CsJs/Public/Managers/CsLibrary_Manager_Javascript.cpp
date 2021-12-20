@@ -89,12 +89,11 @@ namespace NCsJs
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
+		#if WITH_EDITOR
+			UCsManager_Javascript* Manager_Javascript = UCsManager_Javascript::GetSafe(Context, ContextRoot, Log);
+		#else
 			UCsManager_Javascript* Manager_Javascript = UCsManager_Javascript::Get(ContextRoot);
-
-			if (!Manager_Javascript)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Javascript."), *Context));
-			}
+		#endif // #if WITH_EDITOR
 			return Manager_Javascript;
 		}
 

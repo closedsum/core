@@ -51,6 +51,8 @@ public:
 			Cast<UGameInstance>(ContextRoot))
 		{
 			DataRootSetImpl = UCsManager_Data::Get(ContextRoot)->DataRootSet.GetObject();
+
+			checkf(DataRootSetImpl, TEXT("%s: Failed to get DataRootSet."), *Context);
 		}
 		else
 		{
@@ -96,6 +98,8 @@ public:
 			Cast<UGameInstance>(ContextRoot))
 		{
 			OutDataRootSetImpl = UCsManager_Data::Get(ContextRoot)->DataRootSet.GetObject();
+
+			checkf(OutDataRootSetImpl, TEXT("%s: Failed to get DataRootSet."), *Context);
 		}
 		else
 		{
@@ -251,6 +255,8 @@ public:
 			Cast<UGameInstance>(ContextRoot))
 		{
 			DT = UCsManager_Data::Get(ContextRoot)->GetDataTable(DT_SoftObject);
+
+			checkf(DT, TEXT("%s: Failed to Load DataTable @ %s."), *Context, *(DT_SoftObject.ToSoftObjectPath().ToString()));
 		}
 		else
 		{

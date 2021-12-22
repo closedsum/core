@@ -224,27 +224,21 @@ namespace NCsDataRootSet
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		UObject* ContextRoot = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
-
-		return UCsManager_Data::Get(ContextRoot)->GetDataTableChecked(Context, DataTableSoftObject);
+		return DataManagerLibrary::GetChecked(Context, WorldContext)->GetDataTableChecked(Context, DataTableSoftObject);
 	}
 
 	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName)
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		UObject* ContextRoot = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
-
-		return UCsManager_Data::Get(ContextRoot)->GetDataTableRowChecked(Context, DataTableSoftObject, RowName);
+		return DataManagerLibrary::GetChecked(Context, WorldContext)->GetDataTableRowChecked(Context, DataTableSoftObject, RowName);
 	}
 
 	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName)
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		UObject* ContextRoot = DataManagerLibrary::GetContextRootChecked(Context, WorldContext);
-
-		return UCsManager_Data::Get(ContextRoot)->GetDataTableRowChecked(Context, DataTableSoftObject, RowStruct, RowName);
+		return DataManagerLibrary::GetChecked(Context, WorldContext)->GetDataTableRowChecked(Context, DataTableSoftObject, RowStruct, RowName);
 	}
 
 	#define MemberType FCsDataRootSet::EMember

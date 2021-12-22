@@ -383,6 +383,8 @@ module.exports = class JsRoutine
 		if (!move)
 			return;
 
+		++this.TickCount;
+
 		let result		 = this.CoroutineImpl.next(this.self);
 		let yieldCommand = result.value;
 		let done		 = result.done;
@@ -587,7 +589,11 @@ module.exports = class JsRoutine
         // Finished
         else
         {
-            this.End(EndReasonType.EndOfExecution);
+            if (this.EndReason.Value === EndReasonType.EEndReason_MAX.Value &&
+				this.TickCount > 0)
+			{
+				this.End(EndReasonType.EndOfExecution);
+			}
 		}
 	}
 

@@ -10,10 +10,9 @@
 #include "Managers/Time/CsTypes_Update.h"
 // Library
 #include "Level/CsLibrary_Level.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-// Game
-#include "Engine/GameInstance.h"
 // World
 #include "Engine/World.h"
 // Level
@@ -23,10 +22,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Level/CsGetManagerLevel.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -65,7 +60,7 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_Level* UCsManager_Level::Get(UObject* InRoot /*= nullptr*/)
+/*static*/ UCsManager_Level* UCsManager_Level::Get(const UObject* InRoot /*= nullptr*/)
 {
 	return Get_GetManagerLevel(InRoot)->GetManager_Level();
 }
@@ -100,7 +95,7 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Level::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Level::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerLevel* GetManagerLevel = Get_GetManagerLevel(InRoot);
@@ -123,11 +118,11 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerLevel* UCsManager_Level::Get_GetManagerLevel(UObject* InRoot)
+/*static*/ ICsGetManagerLevel* UCsManager_Level::Get_GetManagerLevel(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Level::Get_GetManagerLevel: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Level::Get_GetManagerLevel: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -142,47 +137,33 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 	return GetManagerLevel;
 }
 
-/*static*/ ICsGetManagerLevel* UCsManager_Level::GetSafe_GetManagerLevel(UObject* Object)
+/*static*/ ICsGetManagerLevel* UCsManager_Level::GetSafe_GetManagerLevel(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerLevel>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Level* UCsManager_Level::GetSafe(UObject* Object)
+/*static*/ UCsManager_Level* UCsManager_Level::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerLevel* GetManagerLevel = GetSafe_GetManagerLevel(Object))
+	if (ICsGetManagerLevel* GetManagerLevel = GetSafe_GetManagerLevel(Context, InRoot, Log))
 		return GetManagerLevel->GetManager_Level();
 	return nullptr;
-}
-
-/*static*/ UCsManager_Level* UCsManager_Level::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Level* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Level::GetFromWorldContextObject: Failed to Manager Data of type UCsManager_Level from GameInstance."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

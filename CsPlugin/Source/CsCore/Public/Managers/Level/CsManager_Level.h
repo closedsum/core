@@ -23,34 +23,30 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Level* Get(UObject* InRoot = nullptr);
+	static UCsManager_Level* Get(const UObject* InRoot = nullptr);
 #else
-	static UCsManager_Level* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Level* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Level> ManagerMenuClass, UObject* InOuter = nullptr);
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerLevel* Get_GetManagerLevel(UObject* InRoot);
-	static ICsGetManagerLevel* GetSafe_GetManagerLevel(UObject* Object);
+	static ICsGetManagerLevel* Get_GetManagerLevel(const UObject* InRoot);
+	static ICsGetManagerLevel* GetSafe_GetManagerLevel(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_Level* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Level* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Level* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

@@ -3,6 +3,8 @@
 #include "CsPlatformServices.h"
 #include "Managers/Save/CsCVars_Manager_Save.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Player
 #include "Engine/LocalPlayer.h"
 // Online
@@ -12,11 +14,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Save/CsGetManagerSave.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -140,7 +137,7 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_Save* UCsManager_Save::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Save* UCsManager_Save::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerSave(InRoot)->GetManager_Save();
 }
@@ -180,7 +177,7 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Save::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Save::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerSave* GetManagerSave = Get_GetManagerSave(InRoot);
@@ -206,11 +203,11 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerSave* UCsManager_Save::Get_GetManagerSave(UObject* InRoot)
+/*static*/ ICsGetManagerSave* UCsManager_Save::Get_GetManagerSave(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Save::Get_GetManagerSave: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Save::Get_GetManagerSave: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -225,50 +222,33 @@ UCsManager_Save::UCsManager_Save(const FObjectInitializer& ObjectInitializer)
 	return GetManagerSave;
 }
 
-/*static*/ ICsGetManagerSave* UCsManager_Save::GetSafe_GetManagerSave(UObject* Object)
+/*static*/ ICsGetManagerSave* UCsManager_Save::GetSafe_GetManagerSave(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerSave>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Save* UCsManager_Save::GetSafe(UObject* Object)
+/*static*/ UCsManager_Save* UCsManager_Save::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerSave* GetManagerSave = GetSafe_GetManagerSave(Object))
+	if (ICsGetManagerSave* GetManagerSave = GetSafe_GetManagerSave(Context, InRoot, Log))
 		return GetManagerSave->GetManager_Save();
 	return nullptr;
-}
-
-/*static*/ UCsManager_Save* UCsManager_Save::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Save* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-		// Game State
-		if (UCsManager_Save* Manager = GetSafe(World->GetGameState()))
-			return Manager;
-
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Save::GetFromWorldContextObject: Failed to Manager Save of type UCsManager_Save from GameInstance or GameState."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

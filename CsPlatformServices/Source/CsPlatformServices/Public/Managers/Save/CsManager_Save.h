@@ -120,36 +120,32 @@ class CSPLATFORMSERVICES_API UCsManager_Save : public UObject
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Save* Get(UObject* InRoot = nullptr);
+	static UCsManager_Save* Get(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static UCsManager_Save* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Save* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 	static bool IsValid();
 	static void Init(UObject* InRoot, UClass* ManagerSaveClass);
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 	static bool HasShutdown();
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerSave* Get_GetManagerSave(UObject* InRoot);
-	static ICsGetManagerSave* GetSafe_GetManagerSave(UObject* Object);
+	static ICsGetManagerSave* Get_GetManagerSave(const UObject* InRoot);
+	static ICsGetManagerSave* GetSafe_GetManagerSave(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_Save* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Save* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Save* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

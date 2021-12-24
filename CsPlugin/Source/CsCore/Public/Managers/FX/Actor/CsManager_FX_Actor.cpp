@@ -109,19 +109,19 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor();
 }
 
-/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
 	if (ICsGetManagerFXActor* GetManagerFXActor = GetSafe_GetManagerFXActor(Context, InRoot, Log))
 		return GetManagerFXActor->GetManager_FX_Actor();
 	return nullptr;
 }
 
-/*static*/ bool UCsManager_FX_Actor::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_FX_Actor::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor() != nullptr;
 }
@@ -187,7 +187,7 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_FX_Actor::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_FX_Actor::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor() == nullptr;
@@ -198,11 +198,11 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::Get_GetManagerFXActor(UObject* InRoot)
+/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::Get_GetManagerFXActor(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_FX_Actor::Get_GetManagerProjectile: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_FX_Actor::Get_GetManagerFXActor: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -217,11 +217,11 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 	return GetManagerFXActor;
 }
 
-/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::GetSafe_GetManagerFXActor(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::GetSafe_GetManagerFXActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
 	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{

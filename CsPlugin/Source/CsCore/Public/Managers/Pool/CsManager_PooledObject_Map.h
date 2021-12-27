@@ -832,6 +832,21 @@ namespace NCsPooledObject
 				return GetManagerPooledObjects(Type)->GetPool();
 			}
 
+			/** 
+			* Get the Types for each pool. 
+			* 
+			* @param OutTypes (out)
+			*/
+			FORCEINLINE void GetPoolTypes(TArray<KeyType>& OutTypes) const
+			{
+				OutTypes.Reset(FMath::Max(OutTypes.Max(), Pools.Num()));
+
+				for (const TPair<KeyType, ManagerAbstractType*>& Pair : Pools)
+				{
+					OutTypes.Add(Pair.Key);
+				}
+			}
+
 			/**
 			* Get the allocated objects for the appropriate Type.
 			*  Allocated Objects are an array of containers holding references to objects that
@@ -840,7 +855,7 @@ namespace NCsPooledObject
 			* @param Type	Type of allocated objects to get.
 			* return		Allocated Objects associated with the Type.
 			*/
-			FORCEINLINE const TArray<InterfaceContainerType*>& GetAllocatedObjects(const KeyType& Type)
+			FORCEINLINE const TArray<InterfaceContainerType*>& GetAllocatedObjects(const KeyType& Type) const
 			{
 				return GetManagerPooledObjects(Type)->GetAllocatedObjects();
 			}

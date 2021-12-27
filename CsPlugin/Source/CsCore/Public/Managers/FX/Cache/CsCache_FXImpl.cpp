@@ -16,6 +16,18 @@ const FName NCsFX::NCache::FImpl::Name = FName("NCsFX::NCache::FImpl");
 
 namespace NCsFX
 {
+	namespace NDeallocateState
+	{
+		namespace Ref
+		{
+			typedef EMDeallocateState EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(LifeTime);
+		}
+	}
+
 	namespace NCache
 	{
 		namespace NImpl

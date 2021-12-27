@@ -175,6 +175,22 @@ namespace NCsFX
 		/** */
 		Complete
 	};
+
+	struct CSCORE_API EMDeallocateMethod final : public TCsEnumMap<EDeallocateMethod>
+	{
+		CS_ENUM_MAP_BODY(EMDeallocateMethod, EDeallocateMethod)
+	};
+
+	namespace NDeallocateMethod
+	{
+		namespace Ref
+		{
+			typedef EDeallocateMethod Type;
+
+			extern CSCORE_API const Type LifeTime;
+			extern CSCORE_API const Type Complete;
+		}
+	}
 }
 
 #pragma endregion FXDeallocateMethod

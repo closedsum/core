@@ -161,6 +161,20 @@ namespace NCsFXDeallocateMethod
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsFXDeallocateMethod_MAX;
 }
 
+namespace NCsFX
+{
+	namespace NDeallocateMethod
+	{
+		namespace Ref
+		{
+			typedef EMDeallocateMethod EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(LifeTime);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+		}
+	}
+}
+
 #pragma endregion FXDeallocateMethod
 
 // FXAttachPoint

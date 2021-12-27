@@ -125,6 +125,24 @@ namespace NCsPooledObjectUpdate
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPooledObjectUpdate_MAX;
 }
 
+namespace NCsPooledObject
+{
+	namespace NUpdate
+	{
+		namespace Ref
+		{
+			typedef EMUpdate EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Self);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Manager);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Owner);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Instigator);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EUpdate_MAX, "MAX");
+		}
+	}
+}
+
 #pragma endregion PooledObjectConstruction
 
 // ManagerPooledObject

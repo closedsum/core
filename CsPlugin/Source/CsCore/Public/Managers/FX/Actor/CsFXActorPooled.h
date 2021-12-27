@@ -34,6 +34,10 @@ public:
 	* return
 	*/
 	virtual ANiagaraActor* GetFX() const = 0;
+
+#if !UE_BUILD_SHIPPING
+	virtual FString PrintDescription(const int32& Padding) const = 0;
+#endif // #if !UE_BUILD_SHIPPING
 };
 
 // FCsFXActorPooled

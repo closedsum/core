@@ -41,6 +41,11 @@ public:
 		DateTime = FDateTime::Now();
 		Frame = 0;
 	}
+
+	FString ToCompactString() const
+	{
+		return FString::Printf(TEXT("Time: %3.3f RealTime: %3.3f DateTime: %s Frame: %lld"), Time, RealTime, *(DateTime.ToString()), Frame);
+	}
 };
 
 /**

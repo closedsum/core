@@ -252,8 +252,29 @@ namespace NCsPooledObject
 		/** */
 		Owner,
 		/** */
-		Instigator
+		Instigator,
+		EUpdate_MAX
 	};
+
+	struct CSCORE_API EMUpdate final : public TCsEnumMap<EUpdate>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMUpdate, EUpdate)
+	};
+
+	namespace NUpdate
+	{
+		namespace Ref
+		{
+			typedef EUpdate Type;
+
+			extern CSCORE_API const Type None;
+			extern CSCORE_API const Type Self;
+			extern CSCORE_API const Type Manager;
+			extern CSCORE_API const Type Owner;
+			extern CSCORE_API const Type Instigator;
+			extern CSCORE_API const Type EUpdate_MAX;
+		}
+	}
 }
 
 #pragma endregion PooledObjectUpdate

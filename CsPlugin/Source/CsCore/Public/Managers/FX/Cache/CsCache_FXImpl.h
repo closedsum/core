@@ -21,6 +21,23 @@ namespace NCsFX
 		LifeTime
 	};
 
+	struct CSCORE_API EMDeallocateState final : public TCsEnumMap<EDeallocateState>
+	{
+		CS_ENUM_MAP_BODY(EMDeallocateState, EDeallocateState)
+	};
+
+	namespace NDeallocateState
+	{
+		namespace Ref
+		{
+			typedef EDeallocateState Type;
+
+			extern CSCORE_API const Type None;
+			extern CSCORE_API const Type Complete;
+			extern CSCORE_API const Type LifeTime;
+		}
+	}
+
 	namespace NCache
 	{
 	#define PooledCacheType NCsPooledObject::NCache::ICache
@@ -144,6 +161,9 @@ namespace NCsFX
 		#pragma endregion FXCacheType (NCsFX::NCache::ICache)
 
 		public:
+
+			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
+			FORCEINLINE const EDeallocateState& GetDeallocateState() const { return DeallocateState; }
 
 			FORCEINLINE void SetFXComponent(UNiagaraComponent* InFXComponent) { FXComponent = InFXComponent; }
 

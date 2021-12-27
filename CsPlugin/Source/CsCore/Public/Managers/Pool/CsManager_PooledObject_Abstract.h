@@ -1062,7 +1062,7 @@ namespace NCsPooledObject
 			*
 			* return	Pool
 			*/
-			FORCEINLINE const TArray<InterfaceContainerType*>& GetPool()
+			FORCEINLINE const TArray<InterfaceContainerType*>& GetPool() const
 			{
 				return Pool;
 			}
@@ -1074,7 +1074,7 @@ namespace NCsPooledObject
 			*
 			* return	Allocated Objects
 			*/
-			FORCEINLINE const TArray<InterfaceContainerType*>& GetAllocatedObjects()
+			FORCEINLINE const TArray<InterfaceContainerType*>& GetAllocatedObjects() const
 			{
 				return AllocatedObjects;
 			}

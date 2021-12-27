@@ -262,6 +262,64 @@ void UCsFXActorPooledImpl::ConstructCache()
 
 #pragma endregion PooledObject
 
+// ICsFXActorPooled
+#pragma region
+
+#if !UE_BUILD_SHIPPING
+
+FString UCsFXActorPooledImpl::PrintDescription(const int32& Padding) const
+{
+	FString Desc;
+
+	FString Pad;
+
+	for (int32 I = 0; I < Padding; ++I)
+	{
+		Pad += TEXT(" ");
+	}
+
+	Desc += Pad + GetName();
+	Desc += TEXT("\n");
+	Desc += Pad + FString::Printf(TEXT(" Index: %d"), Cache->GetIndex());
+	Desc += TEXT("\n");
+	Desc += Pad + FString::Printf(TEXT(" bAllocated: %s"), Cache->IsAllocated() ? TEXT("True") : TEXT("False"));
+
+	if (Cache->IsAllocated())
+	{
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" State: %s"), NCsPooledObject::EMState::Get().ToChar(Cache->GetState()));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" UpdateType: %s"), NCsPooledObject::EMUpdate::Get().ToChar(Cache->GetUpdateType()));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" Instigator: %s"), Cache->GetInstigator() ? *(Cache->GetInstigator()->GetName()) : TEXT("NULL"));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" Owner: %s"), Cache->GetOwner() ? *(Cache->GetOwner()->GetName()) : TEXT("NULL"));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" Parent: %s"), Cache->GetParent() ? *(Cache->GetParent()->GetName()) : TEXT("NULL"));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" WarmUpTime: %f"), Cache->GetWarmUpTime());
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" LifeTime: %f"), Cache->GetLifeTime());
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" StartTime: %s"), *(Cache->GetStartTime().ToCompactString()));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" ElapsedTime: %s"), *(Cache->GetElapsedTime().ToCompactString()));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" FXComponent: %s"), *(CacheImpl->GetFXComponent()->GetName()));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" FXSystem: %s"), CacheImpl->GetFXComponent()->GetAsset() ? *(CacheImpl->GetFXComponent()->GetAsset()->GetName()) : TEXT("NULL"));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" DeallocateMethod: %s"), NCsFX::EMDeallocateMethod::Get().ToChar(CacheImpl->GetDeallocateMethod()));
+		Desc += TEXT("\n");
+		Desc += Pad + FString::Printf(TEXT(" DeallocateState: %s"), NCsFX::EMDeallocateState::Get().ToChar(CacheImpl->GetDeallocateState()));
+	}
+	return Desc;
+}
+
+#endif // #if !UE_BUILD_SHIPPING
+
+#pragma endregion ICsFXActorPooled
+
 #define FXPayloadType NCsFX::NPayload::IPayload
 
 void UCsFXActorPooledImpl::Handle_SetFXSystem(FXPayloadType* Payload)
@@ -530,11 +588,34 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 	if (IsBeginningShutdown)
 	{
 		if (System)
+		{
+#if !UE_BUILD_SHIPPING
+			if (CS_CVAR_LOG_IS_SHOWING(LogFXPooledWaitForSystemComplete))
+			{
+				if (UNiagaraSystem* NS = System->GetSystem())
+				{
+					UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: IsBeginningShutdown and System != NULL. NiagaraSystem: %s. Set WaitForSystem = true."), *(NS->GetName()));
+				}
+				else
+				{
+					UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: IsBeginningShutdown and System != NULL. Set WaitForSystem = true."))
+				}
+			}
+#endif // #if !UE_BUILD_SHIPPING
 			WaitForSystem = true;
+		}
 	}
 	else
 	{
 		WaitForSystem = System != nullptr && System->GetSystemInstanceIndex() != INDEX_NONE && System->GetSystem() != nullptr;// && !System->HandleCompletion();
+
+#if !UE_BUILD_SHIPPING
+		if (WaitForSystem &&
+			CS_CVAR_LOG_IS_SHOWING(LogFXPooledWaitForSystemComplete))
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: System != NULL. NiagaraSystem: %s. Set WaitForSystem = true."), *(System->GetSystem()->GetName()));
+		}
+#endif // #if !UE_BUILD_SHIPPING
 	}
 
 	if (WaitForSystem)
@@ -555,6 +636,13 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 	if (WaitForSystem &&
 		Simulation.IsValid())
 	{
+#if !UE_BUILD_SHIPPING
+		if (CS_CVAR_LOG_IS_SHOWING(LogFXPooledWaitForSystemComplete))
+		{
+			UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: Waiting for Simulation."), *(System->GetSystem()->GetName()));
+		}
+#endif // #if !UE_BUILD_SHIPPING
+
 		Simulation->WaitForInstancesTickComplete(false);
 	}
 #endif // #if WITH_EDITOR

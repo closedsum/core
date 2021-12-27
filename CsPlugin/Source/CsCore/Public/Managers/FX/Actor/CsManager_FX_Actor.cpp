@@ -643,6 +643,32 @@ const TArray<FCsFXActorPooled*>& UCsManager_FX_Actor::GetAllocatedObjects(const 
 	return Internal.GetAllocatedObjects(Type);
 }
 
+void UCsManager_FX_Actor::LogAllocatedObjects() const
+{
+#if WITH_EDITOR
+
+	static TArray<FECsFX> Types;
+	Internal.GetPoolTypes(Types);
+
+	for (const FECsFX& Type : Types)
+	{
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor:: Pool: %s"), Type.ToChar());
+		
+		const TArray<FCsFXActorPooled*>& AllocatedObjects = Internal.GetAllocatedObjects(Type);
+		
+		const int32 Count = AllocatedObjects.Num();
+
+		UE_LOG(LogCs, Warning, TEXT(" AllocatedObjects: %d"), Count);
+
+		for (FCsFXActorPooled* FXPooled : AllocatedObjects)
+		{
+			FXPooled->GetFXActorPooled()->PrintDescription(2);	
+		}
+	}
+
+#endif // #if WITH_EDITOR
+}
+
 const int32& UCsManager_FX_Actor::GetPoolSize(const FECsFX& Type)
 {
 	return Internal.GetPoolSize(Type);

@@ -449,6 +449,8 @@ public:
 	*/
 	const TArray<FCsFXActorPooled*>& GetAllocatedObjects(const FECsFX& Type);
 
+	void LogAllocatedObjects() const;
+
 	/**
 	* Get the number of elements in the pool for the appropriate Type.
 	*

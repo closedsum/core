@@ -41,6 +41,7 @@ struct CSCORE_API FCsSettings_DataRootSet
 	FCsSettings_DataRootSet() :
 		bApply(false),
 		bPopulateAll(false),
+		bPopulateSubset(false),
 		DataRowsToPopulate(),
 		DataTableRowsToPopulate(),
 		DataRootSet(),

@@ -106,6 +106,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|FX")
 	FORCEINLINE ANiagaraActor* GetFX() const { return FX; }
 
+#if !UE_BUILD_SHIPPING
+	virtual FString PrintDescription(const int32& Padding) const;
+#endif // #if !UE_BUILD_SHIPPING
+
 #pragma endregion ICsFXActorPooled
 
 protected:

@@ -54,7 +54,7 @@ TAutoConsoleVariable<int32> CsCVarLogFXPooledWaitForSystemComplete(
 	0,
 	TEXT("Log FX Pooled Wait for System Complete\n")
 	TEXT("\n")
-	TEXT("[Editor]\n")
+	TEXT("[Non-Shipping]\n")
 	TEXT("Log any waits initiated on the GameThread when a pooled FX\n")
 	TEXT(" is waiting to complete / shutdown.\n")
 	TEXT("0 - (default) DON'T	show log.\n")

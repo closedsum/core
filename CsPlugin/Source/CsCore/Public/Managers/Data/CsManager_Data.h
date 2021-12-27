@@ -64,28 +64,24 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Data* Get(UObject* InRoot = nullptr);
+	static UCsManager_Data* Get(const UObject* InRoot = nullptr);
 #else
-	static UCsManager_Data* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Data* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot);
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerData* Get_GetManagerData(UObject* InRoot);
-	static ICsGetManagerData* GetSafe_GetManagerData(UObject* Object);
+	static ICsGetManagerData* Get_GetManagerData(const UObject* InRoot);
+	static ICsGetManagerData* GetSafe_GetManagerData(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_Data* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Data* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Data* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

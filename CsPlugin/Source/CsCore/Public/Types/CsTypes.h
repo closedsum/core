@@ -1,11 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Coroutine/pt.h"
 #include "Engine.h"
 
 #include "Json.h"
 #include "JsonObjectConverter.h"
-
-#include "../HeadMountedDisplay/Public/HeadMountedDisplayTypes.h"
 
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
@@ -13,7 +12,6 @@
 #include "Types/CsTypes_View.h"
 
 #include "CsTypes.generated.h"
-#pragma once
 
 #define CS_ACTOR_SMALLEST_SCALE 0.001f
 #define CS_VECTOR_ONE FVector(1.0f)

@@ -23,34 +23,30 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Fade* Get(UObject* InRoot = nullptr);
+	static UCsManager_Fade* Get(const UObject* InRoot = nullptr);
 #else
-	static UCsManager_Fade* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Fade* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Fade> ManagerMenuClass, UObject* InOuter = nullptr);
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerFade* Get_GetManagerFade(UObject* InRoot);
-	static ICsGetManagerFade* GetSafe_GetManagerFade(UObject* Object);
+	static ICsGetManagerFade* Get_GetManagerFade(const UObject* InRoot);
+	static ICsGetManagerFade* GetSafe_GetManagerFade(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_Fade* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Fade* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Fade* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

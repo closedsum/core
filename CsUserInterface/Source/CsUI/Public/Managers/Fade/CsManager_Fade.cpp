@@ -11,12 +11,9 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Data/CsUILibrary_DataRootSet.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 // UI
 #include "Managers/Fade/CsUserWidget_Fade.h"
 #include "Components/Image.h"
@@ -25,10 +22,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Fade/CsGetManagerFade.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -69,7 +62,7 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_Fade* UCsManager_Fade::Get(UObject* InRoot /*= nullptr*/)
+/*static*/ UCsManager_Fade* UCsManager_Fade::Get(const UObject* InRoot /*= nullptr*/)
 {
 	return Get_GetManagerFade(InRoot)->GetManager_Fade();
 }
@@ -104,7 +97,7 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Fade::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Fade::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerFade* GetManagerFade = Get_GetManagerFade(InRoot);
@@ -127,11 +120,11 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerFade* UCsManager_Fade::Get_GetManagerFade(UObject* InRoot)
+/*static*/ ICsGetManagerFade* UCsManager_Fade::Get_GetManagerFade(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Fade::Get_GetManagerFade: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Fade::Get_GetManagerFade: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -146,47 +139,33 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 	return GetManagerFade;
 }
 
-/*static*/ ICsGetManagerFade* UCsManager_Fade::GetSafe_GetManagerFade(UObject* Object)
+/*static*/ ICsGetManagerFade* UCsManager_Fade::GetSafe_GetManagerFade(const FString & Context, const UObject * InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerFade>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Fade* UCsManager_Fade::GetSafe(UObject* Object)
+/*static*/ UCsManager_Fade* UCsManager_Fade::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerFade* GetManagerFade = GetSafe_GetManagerFade(Object))
+	if (ICsGetManagerFade* GetManagerFade = GetSafe_GetManagerFade(Context, InRoot, Log))
 		return GetManagerFade->GetManager_Fade();
 	return nullptr;
-}
-
-/*static*/ UCsManager_Fade* UCsManager_Fade::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Fade* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_Fade::GetFromWorldContextObject: Failed to Manager Data of type UCsManager_Fade from GameInstance."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

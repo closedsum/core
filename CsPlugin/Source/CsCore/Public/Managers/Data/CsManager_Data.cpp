@@ -21,11 +21,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Data/CsGetManagerData.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -64,7 +59,7 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_Data* UCsManager_Data::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Data* UCsManager_Data::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerData(InRoot)->GetManager_Data();
 }
@@ -99,7 +94,7 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Data::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Data::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerData* GetManagerData = Get_GetManagerData(InRoot);
@@ -122,11 +117,11 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerData* UCsManager_Data::Get_GetManagerData(UObject* InRoot)
+/*static*/ ICsGetManagerData* UCsManager_Data::Get_GetManagerData(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Data::Get_GetManagerData: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Data::Get_GetManagerData: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -141,47 +136,33 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 	return GetManagerData;
 }
 
-/*static*/ ICsGetManagerData* UCsManager_Data::GetSafe_GetManagerData(UObject* Object)
+/*static*/ ICsGetManagerData* UCsManager_Data::GetSafe_GetManagerData(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerData>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Data* UCsManager_Data::GetSafe(UObject* Object)
+/*static*/ UCsManager_Data* UCsManager_Data::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerData* GetManagerData = GetSafe_GetManagerData(Object))
+	if (ICsGetManagerData* GetManagerData = GetSafe_GetManagerData(Context, InRoot, Log))
 		return GetManagerData->GetManager_Data();
 	return nullptr;
-}
-
-/*static*/ UCsManager_Data* UCsManager_Data::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Data* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Data::GetFromWorldContextObject: Failed to Manager Data of type UCsManager_Data from GameInstance."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

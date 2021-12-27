@@ -4,8 +4,9 @@
 
 // CVars
 #include "Managers/Sound/CsCVars_Sound.h"
+// Types
+#include "Types/CsTypes_Math.h"
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Sound
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"

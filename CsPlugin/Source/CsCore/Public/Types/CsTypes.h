@@ -863,7 +863,7 @@ CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGestureType)
 
 struct CSCORE_API EMCsGestureType : public TCsEnumStructMap<FECsGestureType, uint8>
 {
-	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsGestureType)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsGestureType, FECsGestureType, uint8)
 };
 
 #pragma endregion GestureType

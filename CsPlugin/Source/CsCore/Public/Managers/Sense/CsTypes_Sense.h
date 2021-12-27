@@ -40,26 +40,23 @@ namespace NCsSenseObjectType
 #pragma region
 
 UENUM(BlueprintType)
-namespace ECsSenseTeam
+enum class ECsSenseTeam : uint8
 {
-	enum Type
-	{
-		Friendly			UMETA(DisplayName = "Friendly"),
-		Enemy				UMETA(DisplayName = "Enemy"),
-		Neutral				UMETA(DisplayName = "Neutral"),
-		ECsSenseTeam_MAX	UMETA(Hidden),
-	};
-}
-
-typedef ECsSenseTeam::Type TCsSenseTeam;
-
-struct CSCORE_API EMCsSenseTeam : public TCsEnumMap<ECsSenseTeam::Type>
-{
-	CS_DECLARE_ENUM_MAP_BODY(EMCsSenseTeam)
+	Friendly			UMETA(DisplayName = "Friendly"),
+	Enemy				UMETA(DisplayName = "Enemy"),
+	Neutral				UMETA(DisplayName = "Neutral"),
+	ECsSenseTeam_MAX	UMETA(Hidden),
 };
 
-namespace ECsSenseTeam
+struct CSCORE_API EMCsSenseTeam : public TCsEnumMap<ECsSenseTeam>
 {
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSenseTeam, ECsSenseTeam)
+};
+
+namespace NCsSenseTeam
+{
+	typedef ECsSenseTeam Type;
+
 	namespace Ref
 	{
 		extern CSCORE_API const Type Friendly;
@@ -109,7 +106,7 @@ struct FCsSenseInfo_DEPRECATED
 	FECsSenseActorType ActorType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
-	TEnumAsByte<ECsSenseTeam::Type> Team;
+	ECsSenseTeam Team;
 
 	/** TODO: Need to update UniqueObjectId to be FGuid in GameInstance */
 	UPROPERTY()

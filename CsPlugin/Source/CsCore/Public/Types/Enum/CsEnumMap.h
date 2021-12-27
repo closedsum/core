@@ -311,29 +311,6 @@ public:
 			return Instance; \
 		}
 
-#define CS_DECLARE_ENUM_MAP_BODY(EnumMap) \
-	protected: \
-		EnumMap() {} \
-		EnumMap(const EnumMap &) = delete; \
-		EnumMap(EnumMap &&) = delete; \
-	public: \
-		~EnumMap() {} \
-	private: \
-		static EnumMap* Instance; \
-		\
-	public: \
-		static EnumMap& Get();
-
-#define CS_DEFINE_ENUM_MAP_BODY(EnumMap) \
-	EnumMap* EnumMap::Instance; \
-	\
-	EnumMap& EnumMap::Get() \
-	{ \
-		if (!Instance) \
-			Instance = new EnumMap(); \
-		return *Instance; \
-	}
-
 // Assume typedef "EnumType" Type and typedef "EnumMapType" EnumMapType
 #define CS_ADD_TO_ENUM_MAP(EnumElementName) const Type EnumElementName = EnumMapType::Get().Add(Type::EnumElementName, #EnumElementName)
 #define CS_ADD_TO_ENUM_MAP_CUSTOM(EnumElementName, DisplayName) const Type EnumElementName = EnumMapType::Get().Add(Type::EnumElementName, #EnumElementName, TEXT(DisplayName))

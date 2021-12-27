@@ -131,9 +131,6 @@ namespace NCsGestureDevice
 
 #pragma endregion GestureDevice
 
-	// GestureType
-CS_DEFINE_ENUM_MAP_BODY(EMCsGestureType)
-
 #pragma endregion Gestures
 
 // Color
@@ -146,6 +143,8 @@ namespace NCsLinearColor
 {
 	namespace Ref
 	{
+		typedef EMCsLinearColor EnumMapType;
+
 		CSCORE_API const Type White = EMCsLinearColor::Get().Add(Type::White, TEXT("White"));
 		CSCORE_API const Type Gray = EMCsLinearColor::Get().Add(Type::Gray, TEXT("Gray"));
 		CSCORE_API const Type Black = EMCsLinearColor::Get().Add(Type::Black, TEXT("Black"));

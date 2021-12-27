@@ -11,15 +11,19 @@ namespace ECsSenseActorType
 }
 
 // SenseTeam
-CS_DEFINE_ENUM_MAP_BODY(EMCsSenseTeam)
+#pragma region
 
-namespace ECsSenseTeam
+namespace NCsSenseTeam
 {
 	namespace Ref
 	{
-		CSCORE_API const Type Friendly = EMCsSenseTeam::Get().Add(Type::Friendly, TEXT("Friendly"));
-		CSCORE_API const Type Enemy = EMCsSenseTeam::Get().Add(Type::Friendly, TEXT("Friendly"));
-		CSCORE_API const Type Neutral = EMCsSenseTeam::Get().Add(Type::Friendly, TEXT("Friendly"));
-		CSCORE_API const Type ECsSenseTeam_MAX = EMCsSenseTeam::Get().Add(Type::ECsSenseTeam_MAX, TEXT("ECsSenseTeam_MAX"), TEXT("MAX"));
+		typedef EMCsSenseTeam EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Friendly);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Enemy);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Neutral);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSenseTeam_MAX, "MAX");
 	}
 }
+
+#pragma endregion SenseTeam

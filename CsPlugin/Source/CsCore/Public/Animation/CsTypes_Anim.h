@@ -631,7 +631,7 @@ enum class ECsFpvAnimBlueprintMember : uint8
 
 struct CSCORE_API EMCsFpvAnimBlueprintMember : public TCsEnumMap<ECsFpvAnimBlueprintMember>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsFpvAnimBlueprintMember)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFpvAnimBlueprintMember, ECsFpvAnimBlueprintMember)
 };
 
 namespace NCsFpvAnimBlueprintMember
@@ -843,7 +843,7 @@ enum class ECsFpvAnimBlendSpaceMember : uint8
 
 struct CSCORE_API EMCsFpvAnimBlendSpaceMember : public TCsEnumMap<ECsFpvAnimBlendSpaceMember>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsFpvAnimBlendSpaceMember)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFpvAnimBlendSpaceMember, ECsFpvAnimBlendSpaceMember)
 };
 
 namespace NCsFpvAnimBlendSpaceMember
@@ -1295,7 +1295,7 @@ enum class ECsAdditiveBasePoseType : uint8
 
 struct CSCORE_API EMCsAdditiveBasePoseType : public TCsEnumMap<ECsAdditiveBasePoseType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsAdditiveBasePoseType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAdditiveBasePoseType, ECsAdditiveBasePoseType)
 };
 
 namespace NCsAdditiveBasePoseType
@@ -1353,7 +1353,7 @@ enum class ECsAdditiveAnimationType : uint8
 
 struct CSCORE_API EMCsAdditiveAnimationType : public TCsEnumMap<ECsAdditiveAnimationType>
 {
-	CS_DECLARE_ENUM_MAP_BODY(EMCsAdditiveAnimationType)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsAdditiveAnimationType, ECsAdditiveAnimationType)
 };
 
 namespace NCsAdditiveAnimationType

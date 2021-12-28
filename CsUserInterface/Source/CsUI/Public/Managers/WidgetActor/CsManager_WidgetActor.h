@@ -97,24 +97,24 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_WidgetActor* Get(UObject* InRoot = nullptr);
+	static UCsManager_WidgetActor* Get(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static UCsManager_WidgetActor* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_WidgetActor* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 	
 	template<typename T>
-	FORCEINLINE static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 #if WITH_EDITOR
-	static bool IsValid(UObject* InRoot = nullptr);
+	static bool IsValid(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? false : s_Instance != nullptr;
 	}
@@ -122,12 +122,12 @@ public:
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_WidgetActor> ManagerWidgetActorClass, UObject* InOuter = nullptr);
 	
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static bool HasShutdown(UObject* InRoot = nullptr)
+	FORCEINLINE static bool HasShutdown(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? true : s_Instance == nullptr;
 	}
@@ -136,14 +136,10 @@ public:
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerWidgetActor* Get_GetManagerWidgetActor(UObject* InRoot);
-	static ICsGetManagerWidgetActor* GetSafe_GetManagerWidgetActor(UObject* Object);
+	static ICsGetManagerWidgetActor* Get_GetManagerWidgetActor(const UObject* InRoot);
+	static ICsGetManagerWidgetActor* GetSafe_GetManagerWidgetActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_WidgetActor* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_WidgetActor* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_WidgetActor* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -155,7 +151,7 @@ protected:
 
 public:
 
-	static bool HasInitialized(UObject* InRoot);
+	static bool HasInitialized(const UObject* InRoot);
 
 protected:
 

@@ -147,36 +147,32 @@ class CSPLATFORMSERVICES_API UCsManager_Achievement : public UObject
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Achievement* Get(UObject* InRoot = nullptr);
+	static UCsManager_Achievement* Get(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static UCsManager_Achievement* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Achievement* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 	static bool IsValid();
 	static void Init(UObject* InRoot, UClass* ManagerAchievementClass);
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 	static bool HasShutdown();
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerAchievement* Get_GetManagerAchievement(UObject* InRoot);
-	static ICsGetManagerAchievement* GetSafe_GetManagerAchievement(UObject* Object);
+	static ICsGetManagerAchievement* Get_GetManagerAchievement(const UObject* InRoot);
+	static ICsGetManagerAchievement* GetSafe_GetManagerAchievement(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_Achievement* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Achievement* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Achievement* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

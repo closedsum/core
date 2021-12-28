@@ -2,19 +2,15 @@
 #include "Managers/PlayerProfile/CsManager_PlayerProfile.h"
 #include "CsPlatformServices.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Managers
 #include "Managers/PlayerProfile/CsPlayerProfile.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/PlayerProfile/CsGetManagerPlayerProfile.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -48,7 +44,7 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_PlayerProfile* UCsManager_PlayerProfile::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_PlayerProfile* UCsManager_PlayerProfile::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerPlayerProfile(InRoot)->GetManager_PlayerProfile();
 }
@@ -85,7 +81,7 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_PlayerProfile::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_PlayerProfile::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerPlayerProfile* GetManagerPlayerProfile = Get_GetManagerPlayerProfile(InRoot);
@@ -111,11 +107,11 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerPlayerProfile* UCsManager_PlayerProfile::Get_GetManagerPlayerProfile(UObject* InRoot)
+/*static*/ ICsGetManagerPlayerProfile* UCsManager_PlayerProfile::Get_GetManagerPlayerProfile(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_PlayerProfile::Get_GetManagerPlayerProfile: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_PlayerProfile::Get_GetManagerPlayerProfile: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -130,64 +126,33 @@ UCsManager_PlayerProfile::UCsManager_PlayerProfile(const FObjectInitializer& Obj
 	return GetManagerPlayerProfile;
 }
 
-/*static*/ ICsGetManagerPlayerProfile* UCsManager_PlayerProfile::GetSafe_GetManagerPlayerProfile(UObject* InRoot)
+/*static*/ ICsGetManagerPlayerProfile* UCsManager_PlayerProfile::GetSafe_GetManagerPlayerProfile(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!InRoot)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerPlayerProfile>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_PlayerProfile* UCsManager_PlayerProfile::GetSafe(UObject* InRoot)
+/*static*/ UCsManager_PlayerProfile* UCsManager_PlayerProfile::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerPlayerProfile* GetManagerPlayerProfiles = GetSafe_GetManagerPlayerProfile(InRoot))
+	if (ICsGetManagerPlayerProfile* GetManagerPlayerProfiles = GetSafe_GetManagerPlayerProfile(Context, InRoot, Log))
 		return GetManagerPlayerProfiles->GetManager_PlayerProfile();
 	return nullptr;
-}
-
-/*static*/ UCsManager_PlayerProfile* UCsManager_PlayerProfile::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_PlayerProfile* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-		// Game State
-		if (UCsManager_PlayerProfile* Manager = GetSafe(World->GetGameState()))
-			return Manager;
-
-		// Player Controller
-		TArray<APlayerController*> Controllers;
-
-		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
-
-		if (Controllers.Num() == CS_EMPTY)
-			return nullptr;
-
-		for (APlayerController* Controller : Controllers)
-		{
-			if (UCsManager_PlayerProfile* Manager = GetSafe(Controller))
-				return Manager;
-		}
-
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_PlayerProfile::GetFromWorldContextObject: Failed to Manager Player Profile of type UCsManager_PlayerProfile from GameInstance, GameState, or PlayerController."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

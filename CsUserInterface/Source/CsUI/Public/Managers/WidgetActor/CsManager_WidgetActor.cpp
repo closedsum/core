@@ -8,15 +8,13 @@
 // Types
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 // Library
-#include "Library/CsLibrary_Property.h"
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsUILibrary_DataRootSet.h"
+#include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsUILog.h"
 // Settings
 #include "Settings/CsUserInterfaceSettings.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
 // WidgetActor
 #include "Managers/WidgetActor/Handler/CsManager_WidgetActor_ClassHandler.h"
 #include "Managers/WidgetActor/Handler/CsManager_WidgetActor_DataHandler.h"
@@ -30,12 +28,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/WidgetActor/CsGetManagerWidgetActor.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/Engine.h"
-
-#include "GameFramework/GameStateBase.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -85,14 +77,14 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor();
 }
 #endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
-/*static*/ bool UCsManager_WidgetActor::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_WidgetActor::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor() != nullptr;
 }
@@ -135,7 +127,7 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_WidgetActor::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_WidgetActor::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerWidgetActor* GetManagerWidgetActor = Get_GetManagerWidgetActor(InRoot);
@@ -158,7 +150,7 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 }
 
 #if WITH_EDITOR
-/*static*/ bool UCsManager_WidgetActor::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_WidgetActor::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor() == nullptr;
 }
@@ -166,11 +158,11 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerWidgetActor* UCsManager_WidgetActor::Get_GetManagerWidgetActor(UObject* InRoot)
+/*static*/ ICsGetManagerWidgetActor* UCsManager_WidgetActor::Get_GetManagerWidgetActor(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_WidgetActor::Get_GetManagerWidgetActor: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_WidgetActor::Get_GetManagerWidgetActor: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -185,19 +177,15 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 	return GetManagerWidgetActor;
 }
 
-/*static*/ ICsGetManagerWidgetActor* UCsManager_WidgetActor::GetSafe_GetManagerWidgetActor(UObject* Object)
+/*static*/ ICsGetManagerWidgetActor* UCsManager_WidgetActor::GetSafe_GetManagerWidgetActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_WidgetActor::GetSafe_GetManagerWidgetActor: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_WidgetActor::GetSafe_GetManagerWidgetActor: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -205,36 +193,17 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_WidgetActor::GetSafe_GetManagerWidgetActor: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerWidgetActor>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::GetSafe(UObject* Object)
+/*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerWidgetActor* GetManagerWidgetActor = GetSafe_GetManagerWidgetActor(Object))
+	if (ICsGetManagerWidgetActor* GetManagerWidgetActor = GetSafe_GetManagerWidgetActor(Context, InRoot, Log))
 		return GetManagerWidgetActor->GetManager_WidgetActor();
 	return nullptr;
-}
-
-/*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game State
-		if (UCsManager_WidgetActor* Manager = GetSafe(World->GetGameState()))
-			return Manager;
-
-		UE_LOG(LogCsUI, Warning, TEXT("UCsManager_WidgetActor::GetFromWorldContextObject: Failed to Manager FX Actor of type UCsManager_WidgetActor from GameState."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR
@@ -246,7 +215,7 @@ void UCsManager_WidgetActor::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsManager_WidgetActor::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_WidgetActor::HasInitialized(const UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;

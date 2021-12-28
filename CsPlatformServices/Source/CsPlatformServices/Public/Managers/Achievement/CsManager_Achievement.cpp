@@ -7,6 +7,7 @@
 // Library
 #include "Library/CsLibrary_String.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsPlatformServicesSettings.h"
 // Player
@@ -18,11 +19,6 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Achievement/CsGetManagerAchievement.h"
-
-#include "Library/CsLibrary_Common.h"
-
-#include "Engine/World.h"
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -106,7 +102,7 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_Achievement* UCsManager_Achievement::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Achievement* UCsManager_Achievement::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerAchievement(InRoot)->GetManager_Achievement();
 }
@@ -146,7 +142,7 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Achievement::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Achievement::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerAchievement* GetManagerAchievement = Get_GetManagerAchievement(InRoot);
@@ -172,11 +168,11 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerAchievement* UCsManager_Achievement::Get_GetManagerAchievement(UObject* InRoot)
+/*static*/ ICsGetManagerAchievement* UCsManager_Achievement::Get_GetManagerAchievement(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Achievement::Get_GetManagerAchievement: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Achievement::Get_GetManagerAchievement: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -191,64 +187,33 @@ UCsManager_Achievement::UCsManager_Achievement(const FObjectInitializer& ObjectI
 	return GetManagerAchievement;
 }
 
-/*static*/ ICsGetManagerAchievement* UCsManager_Achievement::GetSafe_GetManagerAchievement(UObject* Object)
+/*static*/ ICsGetManagerAchievement* UCsManager_Achievement::GetSafe_GetManagerAchievement(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerAchievement>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Achievement* UCsManager_Achievement::GetSafe(UObject* Object)
+/*static*/ UCsManager_Achievement* UCsManager_Achievement::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerAchievement* GetManagerAchievement = GetSafe_GetManagerAchievement(Object))
+	if (ICsGetManagerAchievement* GetManagerAchievement = GetSafe_GetManagerAchievement(Context, InRoot, Log))
 		return GetManagerAchievement->GetManager_Achievement();
 	return nullptr;
-}
-
-/*static*/ UCsManager_Achievement* UCsManager_Achievement::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Achievement* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-		// Game State
-		if (UCsManager_Achievement* Manager = GetSafe(World->GetGameState()))
-			return Manager;
-
-		// Player Controller
-		TArray<APlayerController*> Controllers;
-
-		//UCsLibrary_Common::GetAllLocalPlayerControllers(World, Controllers);
-
-		if (Controllers.Num() == CS_EMPTY)
-			return nullptr;
-
-		for (APlayerController* Controller : Controllers)
-		{
-			if (UCsManager_Achievement* Manager = GetSafe(Controller))
-				return Manager;
-		}
-
-		UE_LOG(LogCsPlatformServices, Warning, TEXT("UCsManager_Achievement::GetFromWorldContextObject: Failed to Manager Achievement of type UCsManager_Achievement from GameInstance, GameState, or PlayerController."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR

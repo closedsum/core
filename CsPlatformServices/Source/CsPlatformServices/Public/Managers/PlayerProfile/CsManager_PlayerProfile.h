@@ -17,9 +17,9 @@ class CSPLATFORMSERVICES_API UCsManager_PlayerProfile : public UObject
 public:
 
 #if WITH_EDITOR
-	static UCsManager_PlayerProfile* Get(UObject* InRoot = nullptr);
+	static UCsManager_PlayerProfile* Get(const UObject* InRoot = nullptr);
 #else
-FORCEINLINE static UCsManager_PlayerProfile* Get(UObject* InRoot = nullptr)
+FORCEINLINE static UCsManager_PlayerProfile* Get(const UObject* InRoot = nullptr)
 {
 	return s_bShutdown ? nullptr : s_Instance;
 }
@@ -27,20 +27,16 @@ FORCEINLINE static UCsManager_PlayerProfile* Get(UObject* InRoot = nullptr)
 
 	static bool IsValid();
 	static void Init(UObject* InRoot);
-	static void Shutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
 	static bool HasShutdown();
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerPlayerProfile* Get_GetManagerPlayerProfile(UObject* InRoot);
-	static ICsGetManagerPlayerProfile* GetSafe_GetManagerPlayerProfile(UObject* InRoot);
+	static ICsGetManagerPlayerProfile* Get_GetManagerPlayerProfile(const UObject* InRoot);
+	static ICsGetManagerPlayerProfile* GetSafe_GetManagerPlayerProfile(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_PlayerProfile* GetSafe(UObject* InRoot);
-
-public:
-
-	static UCsManager_PlayerProfile* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_PlayerProfile* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

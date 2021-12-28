@@ -12,7 +12,6 @@
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Asset.h"
 #include "Library/CsLibrary_String.h"
 #include "Library/Load/CsLibrary_Load.h"
@@ -477,9 +476,11 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 
 bool UCsEdEngine::Stream_GetString(const TCHAR*& Str, const FString& StringType, FString& OutString, const FString& Check, const FString& Format)
 {
-	OutString = UCsLibrary_Common::Stream_GetString(Str, false);
+	typedef NCsString::FLibrary StringLibrary;
 
-	if (OutString == TEXT(""))
+	const bool Success = StringLibrary::Stream_GetValue(Str, OutString, false);
+
+	if (Success)
 	{
 		UE_LOG(LogCsEditor, Warning, TEXT("Check_%s: No %s set."), *Check, *StringType);
 		UE_LOG(LogCsEditor, Warning, TEXT("Check_%s: The correct format is %s"), *Check, *Format);
@@ -502,8 +503,16 @@ bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
 	if (FParse::Command(&Stream, *Command))
 	{
 		// AssetType
-		const FString AssetTypeAsString = UCsLibrary_Common::Stream_GetString(Stream, false);
-		const FECsAssetType AssetType   = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
+		typedef NCsString::FLibrary StringLibrary;
+
+		FString AssetTypeAsString;
+		
+		const bool Success = StringLibrary::Stream_GetValue(Stream, AssetTypeAsString, false);
+
+		if (Success)
+			return false;
+
+		const FECsAssetType AssetType = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
 
 		MarkDatasDirty(AssetType);
 		return true;
@@ -787,9 +796,13 @@ bool UCsEdEngine::Check_GetObjectPaths(const TCHAR* Stream)
 
 	if (FParse::Command(&Stream, *Command))
 	{
-		const FString AssetPath = UCsLibrary_Common::Stream_GetString(Stream, false);
+		typedef NCsString::FLibrary StringLibrary;
 
-		if (!AssetPath.IsEmpty())
+		FString AssetPath;
+		
+		const bool Success = StringLibrary::Stream_GetValue(Stream, AssetPath, false);
+
+		if (Success)
 		{
 			GetObjectPaths(AssetPath);
 			return true;
@@ -820,9 +833,13 @@ bool UCsEdEngine::Check_LoadObject(const TCHAR* Stream)
 
 	if (FParse::Command(&Stream, *Command))
 	{
-		const FString AssetPath = UCsLibrary_Common::Stream_GetString(Stream, false);
+		typedef NCsString::FLibrary StringLibrary;
 
-		if (!AssetPath.IsEmpty())
+		FString AssetPath;
+		
+		const bool Success = StringLibrary::Stream_GetValue(Stream, AssetPath, false);
+
+		if (Success)
 		{
 			LoadObject(AssetPath);
 			return true;

@@ -5,7 +5,6 @@
 #include "Types/CsTypes_Texture.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/Sound/CsTypes_Sound.h"
-#include "Types/CsTypes.h"
 #include "Types/CsTypes_SkeletalMesh.h"
 
 #include "CsLibrary_Blueprint.generated.h"

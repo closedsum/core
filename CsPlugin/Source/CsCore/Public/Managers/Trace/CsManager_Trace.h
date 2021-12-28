@@ -69,24 +69,33 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Trace* Get(UObject* InRoot = nullptr);
+	static UCsManager_Trace* Get(const UObject* InRoot = nullptr);
 #else
-	static UCsManager_Trace* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Trace* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 #if WITH_EDITOR
-	static bool IsValid(UObject* InRoot = nullptr);
+	static UCsManager_Trace* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 #else
-	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Trace* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+	static bool IsValid(const UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? false : s_Instance != nullptr; 
 	}
@@ -94,20 +103,14 @@ public:
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Trace> ManagerTraceClass, UObject* InOuter = nullptr);
 	
-	static void Shutdown(UObject* InRoot = nullptr);
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerTrace* Get_GetManagerTrace(UObject* InRoot);
-	static ICsGetManagerTrace* GetSafe_GetManagerTrace(UObject* Object);
-
-	static UCsManager_Trace* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Trace* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerTrace* Get_GetManagerTrace(const UObject* InRoot);
+	static ICsGetManagerTrace* GetSafe_GetManagerTrace(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -119,7 +122,7 @@ protected:
 
 public:
 
-	static bool HasInitialized(UObject* InRoot);
+	static bool HasInitialized(const UObject* InRoot);
 
 protected:
 

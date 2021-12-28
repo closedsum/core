@@ -11,11 +11,13 @@ namespace NCsLevelState
 {
 	namespace Ref
 	{
-		CSCORE_API const Type None = EMCsLevelState::Get().Add(Type::None, TEXT("None"));
-		CSCORE_API const Type Loaded = EMCsLevelState::Get().Add(Type::Loaded, TEXT("Loaded"));
-		CSCORE_API const Type BeginTransition = EMCsLevelState::Get().Add(Type::BeginTransition, TEXT("BeginTransition"), TEXT("Begin Transition"));
-		CSCORE_API const Type InTransition = EMCsLevelState::Get().Add(Type::InTransition, TEXT("InTransition"), TEXT("In Transition"));
-		CSCORE_API const Type ECsLevelState_MAX = EMCsLevelState::Get().Add(Type::ECsLevelState_MAX, TEXT("ECsLevelState_MAX"), TEXT("MAX"));
+		typedef EMCsLevelState EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Loaded);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(BeginTransition, "Begin Transition");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(InTransition, "In Transition");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsLevelState_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsLevelState_MAX;
@@ -110,28 +112,6 @@ namespace NCsHMDDeviceType
 #pragma endregion HMDDeviceType
 
 #pragma endregion VR
-
-// Gestures
-#pragma region
-
-	// GestureDevice
-#pragma region
-
-namespace NCsGestureDevice
-{
-	namespace Ref
-	{
-		CSCORE_API const Type Mouse = EMCsGestureDevice::Get().Add(Type::Mouse, TEXT("Mouse"));
-		CSCORE_API const Type MotionController = EMCsGestureDevice::Get().Add(Type::MotionController, TEXT("Motion Controller"));
-		CSCORE_API const Type ECsGestureDevice_MAX = EMCsGestureDevice::Get().Add(Type::ECsGestureDevice_MAX, TEXT("ECsGestureDevice_MAX"), TEXT("MAX"));
-	}
-
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsGestureDevice_MAX;
-}
-
-#pragma endregion GestureDevice
-
-#pragma endregion Gestures
 
 // Color
 #pragma region

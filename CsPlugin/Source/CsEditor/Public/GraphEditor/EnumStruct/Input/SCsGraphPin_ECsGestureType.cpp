@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Input/SCsGraphPin_ECsGestureType.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes.h"
+#include "Managers/Gesture/CsTypes_Gesture.h"
 
 #define EnumMapType EMCsGestureType
 #define EnumType FECsGestureType

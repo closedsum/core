@@ -88,7 +88,7 @@ namespace NCsTrace
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_Trace* Manager_Trace = UCsManager_Trace::Get(ContextRoot);
+			UCsManager_Trace* Manager_Trace = UCsManager_Trace::GetSafe(Context, ContextRoot, Log);
 
 			if (!Manager_Trace)
 			{

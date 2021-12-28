@@ -616,12 +616,6 @@ float UCsLibrary_Common::LerpAngle(const float &FromAngle, const float &ToAngle,
 	return FMath::Clamp(UCsLibrary_Common::AngleClamp360(FromAngle + Percent * DeltaAngle), MinAngle, MaxAngle);
 }
 
-int32 UCsLibrary_Common::Mod(const int32 &A, const int32 &B)
-{
-	const int32 C = A % B;
-	return C < 0 ? C + B : C;
-}
-
 FVector UCsLibrary_Common::BuildUniformVector(const FVector &V, const int32 &Axes)
 {
 	/*
@@ -1946,35 +1940,6 @@ const uint64& UCsLibrary_Common::GetUniqueObjectId(AActor* Actor)
 	return CS_INVALID_UNIQUE_OBJECT_ID;
 }
 */
-// Time
-#pragma region
-
-uint64 UCsLibrary_Common::GetWorldTimeMilliseconds(UWorld* InWorld)
-{
-	return (uint64)FMath::FloorToInt(InWorld->TimeSeconds * 1000.0f);
-}
-
-float UCsLibrary_Common::GetCurrentDateTimeSeconds()
-{
-	FDateTime DateTime = FDateTime::Now();
-	
-	float Seconds = (float)DateTime.GetMinute() * 60.0f;
-	Seconds		 += (float)DateTime.GetSecond();
-	Seconds		 += (float)DateTime.GetMillisecond() / 1000.0f;
-	
-	return Seconds;
-}
-
-uint64 UCsLibrary_Common::GetCurrentFrame(UWorld* InWorld) 
-{
-#if WITH_EDITOR
-	//if (IsPlayInEditorPreview(InWorld))
-	//	return 0;
-#endif // #if WITH_EDITOR
-	return 0ull;// InWorld->GetGameInstance<UCsGameInstance_DEPRECATED>()->CurrentGameFrame;
-}
-
-#pragma endregion Time
 
 bool UCsLibrary_Common::IsDeveloperBuild()
 {

@@ -1,7 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/CsEmitter.h"
 #include "CsCore.h"
-#include "Library/CsLibrary_Common.h"
+
+// Component
+#include "Particles/ParticleSystemComponent.h"
 
 #define CS_EMITTER_DEFAULT_LOCATION FVector(10000.0f)
 

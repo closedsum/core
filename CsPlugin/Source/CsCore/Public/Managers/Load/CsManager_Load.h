@@ -36,23 +36,34 @@ public:
 #pragma region
 public:
 
-	static UCsManager_Load* Get(UObject* InRoot = nullptr);
+#if WITH_EDITOR
+	static UCsManager_Load* Get(const UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static UCsManager_Load* Get(const UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+	static UCsManager_Load* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_Load* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	static void Init(UObject* InRoot);
 
-	static void Shutdown(UObject* InRoot = nullptr);
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerLoad* Get_GetManagerLoad(UObject* InRoot);
-	static ICsGetManagerLoad* GetSafe_GetManagerLoad(UObject* InRoot);
-
-	static UCsManager_Load* GetSafe(UObject* InRoot);
-
-public:
-
-	static UCsManager_Load* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerLoad* Get_GetManagerLoad(const UObject* InRoot);
+	static ICsGetManagerLoad* GetSafe_GetManagerLoad(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -64,7 +75,7 @@ protected:
 
 public:
 
-	static bool HasInitialized(UObject* InRoot);
+	static bool HasInitialized(const UObject* InRoot);
 
 protected:
 

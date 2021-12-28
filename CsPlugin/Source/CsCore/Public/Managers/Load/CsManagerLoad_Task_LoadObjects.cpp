@@ -6,10 +6,8 @@
 // CVar
 #include "Managers/Load/CsCVars_Manager_Load.h"
 // Library
-#include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Time.h"
 #include "Library/CsLibrary_Math.h"
-
-#include "Engine/World.h"
 
 // Cached
 #pragma region
@@ -95,7 +93,9 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 	if (Count < Paths.Num())
 		return;
 
-	const float CurrentTime = UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	typedef NCsTime::FLibrary TimeLibrary;
+
+	const float CurrentTime = TimeLibrary::GetCurrentDateTimeSeconds();
 	const float LoadTime    = CurrentTime - StartTime;
 
 	// All AssetReferences are LOADED
@@ -143,7 +143,9 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPath()
 	SizeLoaded.Kilobytes += Kilobytes;
 	SizeLoaded.Megabytes += Megabytes;
 
-	const float CurrentTime = UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	typedef NCsTime::FLibrary TimeLibrary;
+
+	const float CurrentTime = TimeLibrary::GetCurrentDateTimeSeconds();
 	const float LoadingTime	= CurrentTime - StartTime;
 
 	if (CsCVarLogManagerLoad->GetInt() == CS_CVAR_SHOW_LOG)
@@ -261,7 +263,9 @@ FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerL
 		StreamableHandles.Add(StreamableManager->RequestAsyncLoad(ObjectPaths, OnFinishLoadObjectPathsDelegate));
 	}
 
-	StartTime =  UCsLibrary_Common::GetCurrentDateTimeSeconds();
+	typedef NCsTime::FLibrary TimeLibrary;
+
+	StartTime = TimeLibrary::GetCurrentDateTimeSeconds();
 
 	Handle.New();
 

@@ -1,10 +1,12 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "../CoreUObject/Public/UObject/Object.h"
-#include "Types/CsTypes.h"
-#include "Managers/Input/CsTypes_Input.h"
+#include "UObject/Object.h"
+// Types
+#include "Managers/Gesture/CsTypes_Gesture.h"
+
 #include "CsGesture.generated.h"
 
+class UWorld;
 struct FCsInputFrame;
 
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBindableDynEvent_CsGesture_Override_ProcessInputs, const FCsInputFrame*, InputFrame);

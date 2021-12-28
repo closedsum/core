@@ -1,7 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Gesture/CsManager_Gesture.h"
 #include "CsCore.h"
-#include "Types/CsTypes.h"
+
+// Gesture
 #include "Managers/Gesture/CsGesture.h"
 
 // static initializations

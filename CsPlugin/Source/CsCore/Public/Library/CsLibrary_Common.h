@@ -212,8 +212,6 @@ public:
 	static FRotator AngleClamp360(const FRotator &Rotation);
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float LerpAngle(const float &FromAngle, const float &ToAngle, const float &LerpRate, const float &DeltaSeconds, float MinAngle, float MaxAngle);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static int32 Mod(const int32 &A, const int32 &B);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static FVector BuildUniformVector(const FVector &V, const int32 &Axes);
@@ -396,17 +394,6 @@ public:
 	//static const uint64& GetUniqueObjectId(AActor* Actor);
 
 #pragma endregion Object / Actor
-
-// Time
-#pragma region
-
-	static uint64 GetWorldTimeMilliseconds(UWorld* InWorld);
-
-	static float GetCurrentDateTimeSeconds();
-
-	static uint64 GetCurrentFrame(UWorld* InWorld);
-
-#pragma endregion Time
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static bool IsDeveloperBuild();

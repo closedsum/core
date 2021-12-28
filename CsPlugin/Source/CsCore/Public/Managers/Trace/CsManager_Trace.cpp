@@ -5,7 +5,6 @@
 // CVars
 #include "Managers/Trace/CsCVars_Manager_Trace.h"
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
@@ -110,18 +109,24 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 #pragma region
 
 #if WITH_EDITOR
-/*static*/ UCsManager_Trace* UCsManager_Trace::Get(UObject* InRoot /*=nullptr*/)
+
+/*static*/ UCsManager_Trace* UCsManager_Trace::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerTrace(InRoot)->GetManager_Trace();
 }
-#endif // #if WITH_EDITOR
 
+/*static*/ UCsManager_Trace* UCsManager_Trace::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerTrace* GetManagerTrace = GetSafe_GetManagerTrace(Context, InRoot, Log))
+		return GetManagerTrace->GetManager_Trace();
+	return nullptr;
+}
 
-#if WITH_EDITOR
-/*static*/ bool UCsManager_Trace::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Trace::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerTrace(InRoot)->GetManager_Trace() != nullptr;
 }
+
 #endif // #if WITH_EDITORs
 
 /*static*/ void UCsManager_Trace::Init(UObject* InRoot, TSubclassOf<UCsManager_Trace> ManagerTraceClass, UObject* InOuter /*=nullptr*/)
@@ -161,7 +166,7 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Trace::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Trace::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerTrace* GetManagerTrace = Get_GetManagerTrace(InRoot);
@@ -183,7 +188,7 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_Trace::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Trace::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetManagerTrace(InRoot)->GetManager_Trace() == nullptr;
@@ -194,11 +199,11 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerTrace* UCsManager_Trace::Get_GetManagerTrace(UObject* InRoot)
+/*static*/ ICsGetManagerTrace* UCsManager_Trace::Get_GetManagerTrace(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Trace::Get_GetManagerTrace: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Trace::Get_GetManagerTrace: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -213,19 +218,15 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 	return GetManagerTrace;
 }
 
-/*static*/ ICsGetManagerTrace* UCsManager_Trace::GetSafe_GetManagerTrace(UObject* Object)
+/*static*/ ICsGetManagerTrace* UCsManager_Trace::GetSafe_GetManagerTrace(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetSafe_GetManagerTrace: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetSafe_GetManagerTrace: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -233,37 +234,10 @@ UCsManager_Trace::UCsManager_Trace(const FObjectInitializer& ObjectInitializer) 
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Trace::GetSafe_GetManagerTrace: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerTrace>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Trace* UCsManager_Trace::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerTrace* GetManagerTrace = GetSafe_GetManagerTrace(Object))
-		return GetManagerTrace->GetManager_Trace();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Trace* UCsManager_Trace::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerTrace::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
-
-	if (UObject* ContextRoot = TraceManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
-	{
-		// Game State
-		if (UCsManager_Trace* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Trace of type UCsManager_Trace from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -332,7 +306,7 @@ void UCsManager_Trace::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsManager_Trace::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_Trace::HasInitialized(const UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;

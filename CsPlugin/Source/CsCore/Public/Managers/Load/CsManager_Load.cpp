@@ -6,17 +6,13 @@
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Library/CsLibrary_Math.h"
-
-#include "Engine/World.h"
+#include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
 #include "Managers/Load/CsGetManagerLoad.h"
-
-#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // static initializations
@@ -32,17 +28,21 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 // Singleton
 #pragma region
 
-/*static*/ UCsManager_Load* UCsManager_Load::Get(UObject* InRoot /*=nullptr*/)
-{
 #if WITH_EDITOR
-	return Get_GetManagerLoad(InRoot)->GetManager_Load();
-#else
-	if (s_bShutdown)
-		return nullptr;
 
-	return s_Instance;
-#endif // #if WITH_EDITOR
+/*static*/ UCsManager_Load* UCsManager_Load::Get(const UObject* InRoot /*=nullptr*/)
+{
+	return Get_GetManagerLoad(InRoot)->GetManager_Load();
 }
+
+/*static*/ UCsManager_Load* UCsManager_Load::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerLoad* GetManagerLoad = GetSafe_GetManagerLoad(Context, InRoot, Log))
+		return GetManagerLoad->GetManager_Load();
+	return nullptr;
+}
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Load::Init(UObject* InRoot)
 {
@@ -69,7 +69,7 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Load::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Load::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerLoad* GetManagerLoad = Get_GetManagerLoad(InRoot);
@@ -88,7 +88,7 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_Load::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Load::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetManagerLoad(InRoot)->GetManager_Load() == nullptr;
@@ -99,11 +99,11 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerLoad* UCsManager_Load::Get_GetManagerLoad(UObject* InRoot)
+/*static*/ ICsGetManagerLoad* UCsManager_Load::Get_GetManagerLoad(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Load::Get_GetManagerLoad: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Load::Get_GetManagerLoad: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -118,47 +118,26 @@ UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 	return GetManagerLoad;
 }
 
-/*static*/ ICsGetManagerLoad* UCsManager_Load::GetSafe_GetManagerLoad(UObject* InRoot)
+/*static*/ ICsGetManagerLoad* UCsManager_Load::GetSafe_GetManagerLoad(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!InRoot)
-		return nullptr;
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
+	}
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
 	if (!Manager_Singleton)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
-
+	}
 	return Cast<ICsGetManagerLoad>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Load* UCsManager_Load::GetSafe(UObject* InRoot)
-{
-	if (ICsGetManagerLoad* GetManagerLoad = GetSafe_GetManagerLoad(InRoot))
-		return GetManagerLoad->GetManager_Load();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Load* UCsManager_Load::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
-	{
-		// Game Instance
-		if (UCsManager_Load* Manager = GetSafe(World->GetGameInstance()))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Load::GetFromWorldContextObject: Failed to Manager Player Profile of type UCsManager_Load from GameInstance."));
-
-		return nullptr;
-	}
-	else
-	{
-		return nullptr;
-	}
 }
 
 #endif // #if WITH_EDITOR
@@ -192,7 +171,7 @@ void UCsManager_Load::Initialize()
 	}
 }
 
-/*static*/ bool UCsManager_Load::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_Load::HasInitialized(const UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;

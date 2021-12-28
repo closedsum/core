@@ -6,7 +6,6 @@
 #include "Json.h"
 #include "JsonObjectConverter.h"
 
-#include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_Primitive.h"
 #include "Types/CsTypes_Load.h"
 #include "Types/CsTypes_View.h"
@@ -810,63 +809,6 @@ namespace NCsHMDDeviceType
 #pragma endregion HMDDeviceType
 
 #pragma endregion VR
-
-// Gestures
-#pragma region
-
-	// GestureDevice
-#pragma region
-
-UENUM(BlueprintType)
-enum class ECsGestureDevice : uint8
-{
-	Mouse					UMETA(DisplayName = "Mouse"),
-	MotionController		UMETA(DisplayName = "MotionController"),
-	ECsGestureDevice_MAX	UMETA(Hidden),
-};
-
-struct CSCORE_API EMCsGestureDevice : public TCsEnumMap<ECsGestureDevice>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsGestureDevice, ECsGestureDevice)
-};
-
-namespace NCsGestureDevice
-{
-	typedef ECsGestureDevice Type;
-
-	namespace Ref
-	{
-		extern CSCORE_API const Type Mouse;
-		extern CSCORE_API const Type MotionController;
-		extern CSCORE_API const Type ECsGestureDevice_MAX;
-	}
-
-	extern CSCORE_API const uint8 MAX;
-}
-
-#pragma endregion GestureDevice
-
-	// GestureType
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FECsGestureType : public FECsEnum_uint8
-{
-	GENERATED_USTRUCT_BODY()
-
-	CS_ENUM_UINT8_BODY(FECsGestureType)
-};
-
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsGestureType)
-
-struct CSCORE_API EMCsGestureType : public TCsEnumStructMap<FECsGestureType, uint8>
-{
-	CS_ENUM_STRUCT_MAP_BODY(EMCsGestureType, FECsGestureType, uint8)
-};
-
-#pragma endregion GestureType
-
-#pragma endregion Gestures
 
 // Replication
 #pragma region

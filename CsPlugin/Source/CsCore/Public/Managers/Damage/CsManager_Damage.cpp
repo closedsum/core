@@ -5,7 +5,6 @@
 // CVar
 #include "Managers/Damage/CsCVars_Manager_Damage.h"
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
@@ -68,19 +67,19 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_Damage* UCsManager_Damage::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Damage* UCsManager_Damage::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerDamage(InRoot)->GetManager_Damage();
 }
 
-/*static*/ UCsManager_Damage* UCsManager_Damage::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=nullptr*/)
+/*static*/ UCsManager_Damage* UCsManager_Damage::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerDamage* GetManagerDamage = GetSafe_GetManagerDamage(Context, Object, Log))
+	if (ICsGetManagerDamage* GetManagerDamage = GetSafe_GetManagerDamage(Context, InRoot, Log))
 		return GetManagerDamage->GetManager_Damage();
 	return nullptr;
 }
 
-/*static*/ bool UCsManager_Damage::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Damage::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerDamage(InRoot)->GetManager_Damage() != nullptr;
 }
@@ -125,7 +124,7 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Damage::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Damage::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerDamage* GetManagerDamage = Get_GetManagerDamage(InRoot);
@@ -147,7 +146,7 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_Damage::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Damage::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetManagerDamage(InRoot)->GetManager_Damage() == nullptr;
@@ -158,11 +157,11 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerDamage* UCsManager_Damage::Get_GetManagerDamage(UObject* InRoot)
+/*static*/ ICsGetManagerDamage* UCsManager_Damage::Get_GetManagerDamage(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Damage::Get_GetManagerDamage: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Damage::Get_GetManagerDamage: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -177,11 +176,11 @@ UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer
 	return GetManagerDamage;
 }
 
-/*static*/ ICsGetManagerDamage* UCsManager_Damage::GetSafe_GetManagerDamage(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+/*static*/ ICsGetManagerDamage* UCsManager_Damage::GetSafe_GetManagerDamage(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
 	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{

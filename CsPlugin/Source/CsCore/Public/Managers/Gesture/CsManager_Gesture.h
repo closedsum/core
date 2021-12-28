@@ -1,9 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes.h"
-#include "Managers/Input/CsTypes_Input.h"
+#include "Managers/Gesture/CsTypes_Gesture.h"
+
 #include "CsManager_Gesture.generated.h"
 
+class UWorld;
+class UCsGesture;
 struct FCsInputFrame;
 
 /**
@@ -36,10 +38,10 @@ public:
 	UWorld* GetCurrentWorld();
 
 	UPROPERTY(BlueprintReadOnly, Category = "Gesture")
-	TArray<class UCsGesture*> Gestures;
+	TArray<UCsGesture*> Gestures;
 
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
-	void AddGesture(TSubclassOf<class UCsGesture> GestureClass);
+	void AddGesture(TSubclassOf<UCsGesture> GestureClass);
 
 	UFUNCTION(BlueprintCallable, Category = "Gesture")
 	UCsGesture* GetGesture(const FECsGestureType& GestureType);

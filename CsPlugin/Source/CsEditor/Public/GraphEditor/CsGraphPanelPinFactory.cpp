@@ -5,7 +5,8 @@
 // CVar
 #include "CsCVars.h"
 // Types
-#include "Types/CsTypes.h"
+#include "Types/CsTypes.h" // TODO: Move SurfaceType out
+#include "Managers/Gesture/CsTypes_Gesture.h"
 #include "Managers/Time/CsTypes_Update.h"
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
 #include "Managers/FX/CsTypes_FX.h"
@@ -19,6 +20,7 @@
 //#include "AI/CsTypes_AI.h"
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Team/CsTypes_Team.h"
+#include "Types/CsTypes_Load.h"
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
 #include "Managers/Input/Action/CsInputAction.h"

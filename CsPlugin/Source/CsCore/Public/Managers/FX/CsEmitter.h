@@ -3,6 +3,7 @@
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Particles/Emitter.h"
+
 #include "CsEmitter.generated.h"
 
 USTRUCT(BlueprintType)

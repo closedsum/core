@@ -5,7 +5,7 @@
 // CVar
 #include "Managers/Input/CsCVars_Manager_Input.h"
 // Library
-#include "Library/CsLibrary_Common.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Viewport.h"
@@ -18,7 +18,7 @@
 #include "Engine/LocalPlayer.h"
 // Input
 #include "GameFramework/PlayerInput.h"
-#include "../HeadMountedDisplay/Public/IMotionController.h"
+//#include "../HeadMountedDisplay/Public/IMotionController.h"
 #include "Managers/Input/CsInputListener.h"
 
 // Cached
@@ -1045,19 +1045,20 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 
 void UCsManager_Input::OnPostProcessInput_CaptureVRInput()
 {
-	const bool IsVR = UCsLibrary_Common::IsVR();
+	const bool IsVR = false;//UCsLibrary_Common::IsVR();
 
 	if (IsVR)
 	{
 		FRotator Rotation;
 		FVector Location;
 
-		UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
+		//UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
 
 		//HMD_Rotation_Raw.ExecuteIfBound(Rotation);
 		//HMD_Location_Raw.ExecuteIfBound(Location);
 	}
 
+	/*
 	TArray<IMotionController*> Controllers = IModularFeatures::Get().GetModularFeatureImplementations<IMotionController>(IMotionController::GetModularFeatureName());
 
 	for (IMotionController* Controller : Controllers)
@@ -1084,6 +1085,7 @@ void UCsManager_Input::OnPostProcessInput_CaptureVRInput()
 		//	RightHand_Location_Raw.ExecuteIfBound(Location);
 		}
 	}
+	*/
 }
 
 void UCsManager_Input::OnPostProcessInput_LogInputAction()
@@ -1662,7 +1664,9 @@ void UCsManager_Input::SetInputActionMappingByMap(FECsInputActionMap Map)
 
 FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action)
 {
-	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	typedef NCsMath::FLibrary MathLibrary;
+
+	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;
@@ -1670,7 +1674,9 @@ FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action
 
 FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action, const ECsInputEvent& Event)
 {
-	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	typedef NCsMath::FLibrary MathLibrary;
+
+	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Event);
 
 	return Input;
@@ -1678,7 +1684,9 @@ FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action
 
 FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action, const TArray<ECsInputEvent>& Events)
 {
-	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
+	typedef NCsMath::FLibrary MathLibrary;
+
+	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 1, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action, Events);
 
 	return Input;
@@ -1686,7 +1694,9 @@ FCsInput* UCsManager_Input::GetPreviousInputAction(const FECsInputAction& Action
 
 FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction& Action)
 {
-	const int32 LastInputFrame = UCsLibrary_Common::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
+	typedef NCsMath::FLibrary MathLibrary;
+
+	const int32 LastInputFrame = MathLibrary::Mod(CurrentInputFrameIndex - 2, CS_MAX_INPUT_FRAMES);
 	FCsInput* Input			   = InputFrames[LastInputFrame].GetInput(Action);
 
 	return Input;

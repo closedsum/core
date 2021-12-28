@@ -1,7 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/Input/ECsGestureTypeCustomization.h"
 
-#include "Types/CsTypes.h"
+#include "Managers/Gesture/CsTypes_Gesture.h"
 
 #define LOCTEXT_NAMESPACE "ECsGestureTypeCustomization"
 

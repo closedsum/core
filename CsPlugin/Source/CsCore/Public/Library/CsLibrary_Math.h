@@ -208,6 +208,74 @@ namespace NCsMath
 			return C < 0 ? C + B : C;
 		}
 
+	// Angle
+	#pragma region
+	public:
+
+		FORCEINLINE static float GetAngleDelta(const float& Angle1, const float& Angle2)
+		{
+			const int32 Mag		   = Angle2 - Angle1 > 0 ? 1 : -1;
+			const float DeltaAngle = Angle2 - Angle1;
+
+			return FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle);
+		}
+
+		FORCEINLINE static FRotator GetAngleDelta(const FRotator& A, const FRotator& B)
+		{
+			FRotator Rotation;
+
+			Rotation.Pitch = GetAngleDelta(A.Pitch, B.Pitch);
+			Rotation.Yaw   = GetAngleDelta(A.Yaw, B.Yaw);
+			Rotation.Roll  = GetAngleDelta(A.Roll, B.Roll);
+
+			return Rotation;
+		}
+	
+		FORCEINLINE static float GetAbsAngleDelta(const float& Angle1, const float& Angle2)
+		{
+			const float DeltaAngle = Angle2 - Angle1;
+			const int32 Mag		   = DeltaAngle > 0 ? 1 : -1;
+
+			return FMath::Abs(FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle));
+		}
+
+		FORCEINLINE static FRotator GetAbsAngleDelta(const FRotator& A, const FRotator& B)
+		{
+			FRotator Rotation;
+
+			Rotation.Pitch = GetAbsAngleDelta(A.Pitch, B.Pitch);
+			Rotation.Yaw   = GetAbsAngleDelta(A.Yaw, B.Yaw);
+			Rotation.Roll  = GetAbsAngleDelta(A.Roll, B.Roll);
+
+			return Rotation;
+		}
+
+		FORCEINLINE static float AngleClamp180(float Angle)
+		{
+			while (Angle < -180.0f) { Angle += 360.0f; }
+			while (Angle > 180.0f) { Angle -= 360.0f; }
+			return Angle;
+		}
+
+		FORCEINLINE static FRotator AngleClamp180(const FRotator& Rotation)
+		{
+			return FRotator(AngleClamp180(Rotation.Pitch), AngleClamp180(Rotation.Yaw), AngleClamp180(Rotation.Roll));
+		}
+
+		FORCEINLINE static float AngleClamp360(float Angle)
+		{
+			while (Angle < 0.0f) { Angle += 360.0f; }
+			while (Angle > 360.0f) { Angle -= 360.0f; }
+			return Angle;
+		}
+
+		FORCEINLINE static FRotator AngleClamp360(const FRotator& Rotation)
+		{
+			return FRotator(AngleClamp360(Rotation.Pitch), AngleClamp360(Rotation.Yaw), AngleClamp360(Rotation.Roll));
+		}
+
+	#pragma endregion Angle
+
 	// Vector
 	#pragma region
 	public:

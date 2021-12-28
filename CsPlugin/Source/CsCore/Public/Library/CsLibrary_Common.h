@@ -102,12 +102,6 @@ public:
 // String
 #pragma region
 
-	static FString Stream_GetString(const TCHAR*& Str, bool IsLowerCase);
-	static FName Stream_GetName(const TCHAR*& Str);
-	static bool Stream_GetBool(const TCHAR*& Str);
-	static int32 Stream_GetBoolAsInt(const TCHAR*& Str);
-	static int32 Stream_GetInt(const TCHAR*& Str);
-	static float Stream_GetFloat(const TCHAR*& Str);
 	static ERichCurveInterpMode Stream_GetRichCurveInterpMode(const TCHAR*& Str);
 	static ERichCurveTangentMode Stream_GetRichCurveTangentMode(const TCHAR*& Str);
 	static ECsViewType Stream_GetViewType(const TCHAR*& Str);

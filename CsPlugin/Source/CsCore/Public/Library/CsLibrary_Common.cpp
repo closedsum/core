@@ -7,6 +7,7 @@
 #include "Types/CsTypes_Curve.h"
 #include "Types/CsTypes_Interpolation.h"
 // Library
+#include "Library/CsLibrary_String.h"
 #include "Library/CsLibrary_Math.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Player.h"
@@ -322,69 +323,21 @@ ECsLoadFlags UCsLibrary_Common::ViewTypeToLoadFlags(const ECsViewType& ViewType,
 // String
 #pragma region
 
-FString UCsLibrary_Common::Stream_GetString(const TCHAR*& Str, bool IsLowerCase)
-{
-	FString Arg;
-	FParse::Token(Str, Arg, false);
-
-	return IsLowerCase ? Arg.ToLower() : Arg;
-}
-
-FName UCsLibrary_Common::Stream_GetName(const TCHAR*& Str)
-{
-	return FName(*Stream_GetString(Str, false));
-}
-
-bool UCsLibrary_Common::Stream_GetBool(const TCHAR*& Str)
-{
-	FString Arg;
-	FParse::Token(Str, Arg, false);
-
-	const FString Bool = Arg.ToLower();
-
-	if (Bool == TEXT("true") || Bool == TEXT("1"))
-		return true;
-	if (Bool == TEXT("false") || Bool == TEXT("0"))
-		return false;
-	return false;
-}
-
-int32 UCsLibrary_Common::Stream_GetBoolAsInt(const TCHAR*& Str)
-{
-	FString Arg = Stream_GetString(Str, true);
-
-	if (Arg == TEXT("true") || Arg == TEXT("1"))
-		return 1;
-	if (Arg == TEXT("false") || Arg == TEXT("0"))
-		return 0;
-	return INDEX_NONE;
-}
-
-int32 UCsLibrary_Common::Stream_GetInt(const TCHAR*& Str)
-{
-	FString Arg;
-	FParse::Token(Str, Arg, false);
-
-	return FCString::Atoi(*Arg);
-}
-
-float UCsLibrary_Common::Stream_GetFloat(const TCHAR*& Str)
-{
-	FString Arg;
-	FParse::Token(Str, Arg, false);
-
-	return FCString::Atof(*Arg);
-}
-
 ERichCurveInterpMode UCsLibrary_Common::Stream_GetRichCurveInterpMode(const TCHAR*& Str)
 {
-	FString Arg = Stream_GetString(Str, true);
+	typedef NCsString::FLibrary StringLibrary;
+
+	FString Arg;
+	const bool Success = StringLibrary::Stream_GetValue(Str, Arg, true);
 	return NCsRichCurveInterpMode::ToBaseType(Arg);
 }
 
 ERichCurveTangentMode UCsLibrary_Common::Stream_GetRichCurveTangentMode(const TCHAR*& Str)
 {
-	FString Arg = Stream_GetString(Str, true);
+	typedef NCsString::FLibrary StringLibrary;
+
+	FString Arg;
+	const bool Success = StringLibrary::Stream_GetValue(Str, Arg, true);
 	return NCsRichCurveTangentMode::ToBaseType(Arg);
 }
 

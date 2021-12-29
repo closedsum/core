@@ -183,27 +183,11 @@ public:
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float GetAngleDelta(const float &Angle1, const float &Angle2);
-
-	static FRotator GetAngleDelta(const FRotator &A, const FRotator &B);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static FRotator Rotator_GetAngleDelta(const FRotator &A, const FRotator &B);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float GetAbsAngleDelta(const float &Angle1, const float &Angle2);
-
-	static FRotator GetAbsAngleDelta(const FRotator &A, const FRotator &B);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static FRotator Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B);
 
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float AngleClamp180(float Angle);
-
-	static FRotator AngleClamp180(const FRotator &Rotation);
-	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static float AngleClamp360(float Angle);
-
-	static FRotator AngleClamp360(const FRotator &Rotation);
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float LerpAngle(const float &FromAngle, const float &ToAngle, const float &LerpRate, const float &DeltaSeconds, float MinAngle, float MaxAngle);
 

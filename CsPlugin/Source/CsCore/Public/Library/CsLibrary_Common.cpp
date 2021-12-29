@@ -480,85 +480,23 @@ bool UCsLibrary_Common::IsMatchInProgress(UWorld *InWorld)
 // Math
 #pragma region
 
-float UCsLibrary_Common::GetAngleDelta(const float &Angle1, const float &Angle2)
-{
-	const int32 Mag			= Angle2 - Angle1 > 0 ? 1 : -1;
-	const float DeltaAngle	= Angle2 - Angle1;
-
-	return FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle);
-}
-
-FRotator UCsLibrary_Common::GetAngleDelta(const FRotator &A, const FRotator &B)
-{
-	FRotator Rotation;
-
-	Rotation.Pitch = GetAngleDelta(A.Pitch, B.Pitch);
-	Rotation.Yaw = GetAngleDelta(A.Yaw, B.Yaw);
-	Rotation.Roll = GetAngleDelta(A.Roll, B.Roll);
-
-	return Rotation;
-}
-
 FRotator UCsLibrary_Common::Rotator_GetAngleDelta(const FRotator &A, const FRotator &B)
 {
-	return GetAngleDelta(A, B);
-}
-
-float UCsLibrary_Common::GetAbsAngleDelta(const float &Angle1, const float &Angle2)
-{
-	const float DeltaAngle = Angle2 - Angle1;
-	const int32 Mag		   = DeltaAngle > 0 ? 1 : -1;
-
-	return FMath::Abs(FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle));
-}
-
-FRotator UCsLibrary_Common::GetAbsAngleDelta(const FRotator &A, const FRotator &B)
-{
-	FRotator Rotation;
-
-	Rotation.Pitch = GetAbsAngleDelta(A.Pitch, B.Pitch);
-	Rotation.Yaw = GetAbsAngleDelta(A.Yaw, B.Yaw);
-	Rotation.Roll = GetAbsAngleDelta(A.Roll, B.Roll);
-
-	return Rotation;
+	return NCsMath::FLibrary::GetAngleDelta(A, B);
 }
 
 FRotator UCsLibrary_Common::Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B)
 {
-	return GetAbsAngleDelta(A, B);
-}
-
-float UCsLibrary_Common::AngleClamp180(float Angle)
-{
-	while (Angle < -180.0f){ Angle += 360.0f; }
-	while (Angle > 180.0f){ Angle -= 360.0f; }
-	return Angle;
-}
-
-FRotator UCsLibrary_Common::AngleClamp180(const FRotator &Rotation)
-{
-	return FRotator(AngleClamp180(Rotation.Pitch), AngleClamp180(Rotation.Yaw), AngleClamp180(Rotation.Roll));
-}
-
-float UCsLibrary_Common::AngleClamp360(float Angle)
-{
-	while (Angle < 0.0f){ Angle += 360.0f; }
-	while (Angle > 360.0f){ Angle -= 360.0f; }
-	return Angle;
-}
-
-FRotator UCsLibrary_Common::AngleClamp360(const FRotator &Rotation)
-{
-	return FRotator(AngleClamp360(Rotation.Pitch), AngleClamp360(Rotation.Yaw), AngleClamp360(Rotation.Roll));
+	return NCsMath::FLibrary::GetAbsAngleDelta(A, B);
 }
 
 float UCsLibrary_Common::LerpAngle(const float &FromAngle, const float &ToAngle, const float &LerpRate, const float &DeltaSeconds, float MinAngle, float MaxAngle)
 {
-	float DeltaAngle	   = UCsLibrary_Common::GetAngleDelta(FromAngle, ToAngle);
+	float DeltaAngle	   = NCsMath::FLibrary::GetAngleDelta(FromAngle, ToAngle);
 	const float SmallDelta = 0.001f;
 	float Percent		   = FMath::Abs(DeltaAngle) > SmallDelta ? FMath::Clamp((LerpRate * DeltaSeconds) / FMath::Abs(DeltaAngle), 0.0f, 1.0f) : 1.0f;
 
-	MinAngle = UCsLibrary_Common::AngleClamp360(MinAngle);
+	MinAngle = NCsMath::FLibrary::AngleClamp360(MinAngle);
 
 	if (MinAngle > MaxAngle)
 	{
@@ -566,7 +504,7 @@ float UCsLibrary_Common::LerpAngle(const float &FromAngle, const float &ToAngle,
 		MaxAngle   = MinAngle;
 		MinAngle   = Temp;
 	}
-	return FMath::Clamp(UCsLibrary_Common::AngleClamp360(FromAngle + Percent * DeltaAngle), MinAngle, MaxAngle);
+	return FMath::Clamp(NCsMath::FLibrary::AngleClamp360(FromAngle + Percent * DeltaAngle), MinAngle, MaxAngle);
 }
 
 FVector UCsLibrary_Common::BuildUniformVector(const FVector &V, const int32 &Axes)

@@ -233,7 +233,10 @@ namespace NCsDamage
 		{
 			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
 
-			ModifierResourceType* Container = Manager_Damage->AllocateModifier();
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+
+			const FECsDamageModifier& Type  = DamageModifierLibrary::GetTypeChecked(Context, Modifier);
+			ModifierResourceType* Container = Manager_Damage->AllocateModifier(Type);
 			ModifierType* Copy				= Container->Get();
 
 			typedef NCsDamage::NModifier::FLibrary ModifierLibrary;

@@ -667,32 +667,19 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		typedef NCsPooledObject::NPayload::FImplSlice SliceType;
 		typedef NCsPooledObject::NPayload::IPayload SliceInterfaceType;
 
-		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
-		{
-			Slice->Instigator = Outer;
-			Slice->Owner	  = Outer->GetMyOwner();
-		}
-		else
-		{
-			Result &= false;
-		}
+		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		Slice->Instigator = Outer;
+		Slice->Owner	  = Outer->GetMyOwner();
 	}
 	// Projectile
 	{
 		typedef NCsProjectile::NPayload::FImplSlice SliceType;
 		typedef NCsProjectile::NPayload::IPayload SliceInterfaceType;
 
-		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
-		{
-
-			Slice->Type		 = Outer->GetProjectileType();
-			Slice->Location  = GetLaunchLocation();
-			Slice->Direction = GetLaunchDirection();
-		}
-		else
-		{
-			Result &= false;
-		}
+		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
+		Slice->Type		 = Outer->GetProjectileType();
+		Slice->Location  = GetLaunchLocation();
+		Slice->Direction = GetLaunchDirection();
 	}
 	return Result;
 }

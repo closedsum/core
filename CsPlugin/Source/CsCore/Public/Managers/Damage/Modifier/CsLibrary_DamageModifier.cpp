@@ -5,6 +5,9 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Damage
+#include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
+#include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRange.h"
+#include "Managers/Damage/Modifier/CsDamageModifierRange.h"
 #include "Managers/Damage/Modifier/CsResource_DamageModifier.h"
 
 namespace NCsDamage
@@ -15,6 +18,28 @@ namespace NCsDamage
 		#define DataType NCsDamage::NData::IData
 		#define ValueType NCsDamage::NValue::IValue
 		#define RangeType NCsDamage::NRange::IRange
+
+		const FECsDamageModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
+		{
+			CS_IS_PTR_NULL_CHECKED(Modifier)
+
+			typedef NCsDamage::NModifier::NValue::NPoint::IPoint ModiferValuePointType;
+			typedef NCsDamage::NModifier::NValue::NRange::IRange ModiferValueRangeType;
+			typedef NCsDamage::NModifier::NRange::IRange ModifierRangeType;
+
+			// ValuePoint
+			if (GetSafeInterfaceChecked<ModiferValuePointType>(Context, Modifier))
+				return NCsDamageModifier::ValuePoint;
+			// ValueRange
+			if (GetSafeInterfaceChecked<ModiferValueRangeType>(Context, Modifier))
+				return NCsDamageModifier::ValueRange;
+			// Range
+			if (GetSafeInterfaceChecked<ModifierRangeType>(Context, Modifier))
+				return NCsDamageModifier::Range;
+
+			checkf(0, TEXT("%s: Failed to determine type (FECsDamageModifier) for Value."), *Context);
+			return EMCsDamageModifier::Get().GetMAX();
+		}
 
 		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
 		{

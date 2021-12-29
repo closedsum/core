@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Damage
 #include "Managers/Damage/Modifier/CsDamageModifier.h"
 #include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
-#pragma once
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
@@ -33,6 +33,8 @@ namespace NCsDamage
 	
 
 	public:
+
+		static const FECsDamageModifier& GetTypeChecked(const FString& Context, const ModifierType* Modifier);
 
 		/**
 		* Copy the values from From to To with checks.

@@ -652,12 +652,6 @@ public:
 	*/
 	virtual PayloadType* ConstructPayload(const FECsProjectile& Type);
 
-protected:
-
-	virtual void DeconstructPayloadSlice(const FName& InterfaceImplName, void* Data);
-
-public:
-
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
 	*  Payload implements the interface: PayloadType (NCsProjectile::NPayload::IPayload).

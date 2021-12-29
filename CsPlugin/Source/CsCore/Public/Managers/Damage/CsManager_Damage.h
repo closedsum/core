@@ -1,4 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "UObject/Object.h"
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
@@ -16,7 +17,6 @@
 #include "UniqueObject/CsTypes_UniqueObject.h"
 
 #include "CsManager_Damage.generated.h"
-#pragma once
 
 // Structs
 #pragma region
@@ -339,11 +339,11 @@ protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
 
-	virtual ModifierType* ConstructModifier();
+	virtual ModifierType* ConstructModifier(const FECsDamageModifier& Type);
 
 public:
 
-	ModifierResourceType* AllocateModifier();
+	ModifierResourceType* AllocateModifier(const FECsDamageModifier& Type);
 
 	void DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier);
 

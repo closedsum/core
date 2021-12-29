@@ -1,6 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 // Resource
-#include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
+#include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Damage
 #include "Managers/Damage/Modifier/CsDamageModifier.h"
 #pragma once
@@ -21,6 +21,6 @@ namespace NCsDamage
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
 		* are wrapped in the container: NCsDamage::NModifer::FResource.
 		*/
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IModifier, FResource, 0> {};
+		struct CSCORE_API FManager : public TCsManager_ResourcePointerType_Fixed<IModifier, FResource, 0> {};
 	}
 }

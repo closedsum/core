@@ -24,6 +24,8 @@
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
+#include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"
+#include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRangeImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -260,7 +262,6 @@ void UCsManager_Damage::Initialize()
 		Manager_Range.CreatePool(PoolSize);
 	}
 	// Modifier
-	/*
 	{
 		const int32& Count = EMCsDamageModifier::Get().Num();
 
@@ -285,7 +286,6 @@ void UCsManager_Damage::Initialize()
 			}
 		}
 	}
-	*/
 
 	// Data Handler
 	ConstructDataHandler();
@@ -322,7 +322,6 @@ void UCsManager_Damage::CleanUp()
 	// Range
 	Manager_Range.Shutdown();
 	// Modifier
-	/*
 	{
 		for (const FECsDamageModifier& Modifier : EMCsDamageModifier::Get())
 		{
@@ -333,7 +332,7 @@ void UCsManager_Damage::CleanUp()
 			Manager.Shutdown();
 		}
 	}
-	*/
+
 	delete DataHandler;
 	DataHandler = nullptr;
 
@@ -649,7 +648,7 @@ ValueType* UCsManager_Damage::ConstructValue(const FECsDamageValue& Type)
 	// Point | NCsDamage::NValue::NPoint::IPoint (NCsDamage::NValue::NPoint::FImpl)
 	if (Type == NCsDamageValue::Point)
 		return new NCsDamage::NValue::NPoint::FImpl();
-	// Point | NCsDamage::NValue::NRange::IRange (NCsDamage::NValue::NRange::FImpl)
+	// Range | NCsDamage::NValue::NRange::IRange (NCsDamage::NValue::NRange::FImpl)
 	if (Type == NCsDamageValue::Range)
 		return new NCsDamage::NValue::NRange::FImpl();
 	return nullptr;
@@ -741,14 +740,26 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 #define ModifierResourceType NCsDamage::NModifier::FResource
 #define ModifierType NCsDamage::NModifier::IModifier
 
-ModifierType* UCsManager_Damage::ConstructModifier()
+ModifierType* UCsManager_Damage::ConstructModifier(const FECsDamageModifier& Type)
 {
+	// ValuePoint | NCsDamage::NModifier::NValue::NPoint::IPoint (NCsDamage::NModifier::NValue::NPoint::FImpl)
+	if (Type == NCsDamageModifier::ValuePoint)
+		return new NCsDamage::NModifier::NValue::NPoint::FImpl();
+	// ValueRange | NCsDamage::NModifier::NValue::NRange::IRange (NCsDamage::NModifier::NValue::NRange::FImpl)
+	if (Type == NCsDamageModifier::ValueRange)
+		return new NCsDamage::NModifier::NValue::NRange::FImpl();
+	// TODO: Fix
+	// Range | NCsDamage::NModifier::NRange::IRange (NCsDamage::NModifier::NRange::FImpl)
+	if (Type == NCsDamageModifier::Range)
+		return new NCsDamage::NModifier::NValue::NPoint::FImpl();
 	return nullptr;
 }
 
-ModifierResourceType* UCsManager_Damage::AllocateModifier()
+ModifierResourceType* UCsManager_Damage::AllocateModifier(const FECsDamageModifier& Type)
 {
-	return nullptr;
+	checkf(EMCsDamageModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::AllocateModifier: Type: %s is NOT Valid."), Type.ToChar());
+
+	return Manager_Modifiers[Type.GetValue()].Allocate();
 }
 
 void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier)

@@ -32,7 +32,7 @@
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
-#include "Payload/Damage/CsPayload_ProjectileModifierDamageImplSlice.h"
+#include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 
 #if WITH_EDITOR
 // Library
@@ -824,10 +824,10 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 	
 	const TSet<FECsProjectilePayload> PayloadTypes = ModuleSettings->Manager_Projectile.PayloadTypes;
 
-	// NCsProjectile::NPayload::NModifier::NDamage::FImplSlice
-	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileDamageModifier))
+	// NCsProjectile::NPayload::NModifier::FImplSlice
+	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileModifier))
 	{
-		typedef NCsProjectile::NPayload::NModifier::NDamage::FImplSlice SliceType;
+		typedef NCsProjectile::NPayload::NModifier::FImplSlice SliceType;
 
 		SliceType* Slice = new SliceType();
 
@@ -841,27 +841,6 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 	return InterfaceMap->Get<PayloadType>();
 }
 #undef PayloadType
-
-void UCsManager_Projectile::DeconstructPayloadSlice(const FName& InterfaceImplName, void* Data)
-{
-	// FCsPayload_PooledObjectImplSlice
-	if (InterfaceImplName == NCsPooledObject::NPayload::FImplSlice::Name)
-	{
-		delete static_cast<NCsPooledObject::NPayload::FImplSlice*>(Data);
-	}
-	// FCsPayload_ProjectileImplSlice
-	if (InterfaceImplName == NCsProjectile::NPayload::FImplSlice::Name)
-	{
-		checkf(0, TEXT("UCsManager_Projectile::DeconstructPayloadSlice: Deleting Data of type: NCsProjectile::NPayload::FImplSlice is handled by Intenral."));
-	}
-	// FCsPayload_ProjectileModifierDamageImplSlice
-	if (InterfaceImplName == NCsProjectile::NPayload::NModifier::NDamage::FImplSlice::Name)
-	{
-		typedef NCsProjectile::NPayload::NModifier::NDamage::FImplSlice SliceType;
-
-		delete static_cast<SliceType*>(Data);
-	}
-}
 
 #define PayloadType NCsProjectile::NPayload::IPayload
 

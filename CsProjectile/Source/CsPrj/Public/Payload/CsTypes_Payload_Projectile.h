@@ -31,7 +31,7 @@ namespace NCsProjectilePayload
 	typedef EMCsProjectilePayload EnumMapType;
 
 	extern CSPRJ_API const Type Projectile;
-	extern CSPRJ_API const Type ProjectileDamageModifier;
+	extern CSPRJ_API const Type ProjectileModifier;
 }
 
 #pragma endregion ProjectilePayload

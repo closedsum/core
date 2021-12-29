@@ -110,6 +110,10 @@ public:
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::Add: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
 
+		checkf(Root, TEXT("FCsInterfaceMap::Add: Root is NULL."));
+
+		checkf(RootName != NAME_None, TEXT("FCsInterfaceMap::Add: RootName: None is NOT Valid."));
+
 		checkf(Interface, TEXT("FCsInterfaceMap::Add: Interface is NULL."));
 
 		checkf(InterfaceType::Name != NAME_None, TEXT("FCsInterfaceMap::Add: InterfaceName: None is NOT Valid."));
@@ -129,6 +133,12 @@ public:
 		static_assert(std::is_abstract<InterfaceType>(), "FCsInterfaceMap::Add: InterfaceType is NOT abstract.");
 
 		static_assert(std::is_base_of<ICsGetInterfaceMap, InterfaceType>(), "FCsInterfaceMap::Add: InterfaceType is NOT a child of: ICsGetInterfaceMap.");
+
+		checkf(Root, TEXT("FCsInterfaceMap::Add: Root is NULL."));
+
+		checkf(RootName != NAME_None, TEXT("FCsInterfaceMap::Add: RootName: None is NOT Valid."));
+
+		checkf(bUniqueBasedSlices, TEXT("FCsInterfaceMap::Add: bUniqueBasedSlices MUST be true if adding a Unique Based Slice."));
 
 		checkf(UniqueBasedRootName != NAME_None, TEXT("FCsInterfaceMap::Add: UniqueBasedRootName: None is NOT Valid."));
 

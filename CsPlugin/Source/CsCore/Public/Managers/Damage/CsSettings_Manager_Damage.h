@@ -68,6 +68,27 @@ public:
 
 #pragma endregion FCsSettings_Manager_Damage_Range
 
+// FCsSettings_Manager_Damage_Modifier
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSettings_Manager_Damage_Modifier
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	int32 PoolSize;
+
+	FCsSettings_Manager_Damage_Modifier() :
+		PoolSize(256)
+	{
+	}
+};
+
+#pragma endregion FCsSettings_Manager_Damage_Modifier
+
 // FCsSettings_Manager_Damage
 #pragma region
 
@@ -87,10 +108,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsSettings_Manager_Damage_Range Range;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsSettings_Manager_Damage_Modifier Modifier;
+
 	FCsSettings_Manager_Damage() :
 		Event(),
 		Value(),
-		Range()
+		Range(),
+		Modifier()
 	{
 	}
 };

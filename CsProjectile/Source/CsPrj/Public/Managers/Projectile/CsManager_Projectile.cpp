@@ -8,11 +8,13 @@
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
-#include "Library/CsLibrary_Property.h"
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
+#include "Modifier/CsLibrary_ProjectileModifier.h"
+#include "Library/CsLibrary_Property.h"
 #include "Level/CsLibrary_Level.h"
+#include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsPrjLog.h"
 // Settings
@@ -33,6 +35,7 @@
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
+#include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -115,7 +118,13 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 	Script_GetCache_Impl(),
 	Script_Allocate_Impl(),
 	Script_Deallocate_Impl(),
-	Script_Update_Impl()
+	Script_Update_Impl(),
+	// Class
+	ClassHandler(nullptr),
+	// Data
+	DataHandler(nullptr),
+	// Modifier
+	Manager_Modifiers()
 {
 }
 
@@ -124,12 +133,12 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Projectile* UCsManager_Projectile::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile();
 }
 
-/*static*/ bool UCsManager_Projectile::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Projectile::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile() != nullptr;
 }
@@ -173,7 +182,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Projectile::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Projectile::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerProjectile* GetManagerProjectile = Get_GetManagerProjectile(InRoot);
@@ -195,7 +204,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_Projectile::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Projectile::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetManagerProjectile(InRoot)->GetManager_Projectile() == nullptr;
@@ -206,11 +215,11 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerProjectile* UCsManager_Projectile::Get_GetManagerProjectile(UObject* InRoot)
+/*static*/ ICsGetManagerProjectile* UCsManager_Projectile::Get_GetManagerProjectile(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Projectile::Get_GetManagerProjectile: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -225,19 +234,15 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 	return GetManagerProjectile;
 }
 
-/*static*/ ICsGetManagerProjectile* UCsManager_Projectile::GetSafe_GetManagerProjectile(UObject* Object)
+/*static*/ ICsGetManagerProjectile* UCsManager_Projectile::GetSafe_GetManagerProjectile(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -245,35 +250,16 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsPrj, Warning, TEXT("UCsManager_Projectile::GetSafe_GetManagerProjectile: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerProjectile>(Manager_Singleton);
 }
 
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::GetSafe(UObject* Object)
+/*static*/ UCsManager_Projectile* UCsManager_Projectile::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerProjectile* GetManagerProjectile = GetSafe_GetManagerProjectile(Object))
+	if (ICsGetManagerProjectile* GetManagerProjectile = GetSafe_GetManagerProjectile(Context, InRoot, Log))
 		return GetManagerProjectile->GetManager_Projectile();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Projectile* UCsManager_Projectile::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerProjectile::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	if (UObject* ContextRoot = PrjManagerLibrary::GetSafe(Context, WorldContextObject))
-	{
-		if (UCsManager_Projectile* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCsPrj, Warning, TEXT("%s: Failed to Manager Projectile of type UCsManager_Projectile from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
 	return nullptr;
 }
 
@@ -286,7 +272,7 @@ void UCsManager_Projectile::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsManager_Projectile::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_Projectile::HasInitialized(const UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;
@@ -304,6 +290,18 @@ void UCsManager_Projectile::CleanUp()
 	PayloadInterfaceMaps.Reset();
 
 	Pool.Reset();
+
+	// Modifier
+	{
+		for (const FECsProjectileModifier& Modifier : EMCsProjectileModifier::Get())
+		{
+			typedef NCsProjectile::NModifier::FManager ModifierManagerType;
+
+			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
+
+			Manager.Shutdown();
+		}
+	}
 
 	delete ClassHandler;
 	ClassHandler = nullptr;
@@ -363,6 +361,32 @@ void UCsManager_Projectile::SetupInternal()
 
 	NCsProjectile::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsProjectileClass::PopulateEnumMapFromSettings(Context, GameInstance);
+
+	// Modifier
+	{
+		const int32& Count = EMCsProjectileModifier::Get().Num();
+
+		Manager_Modifiers.Reset(Count);
+		Manager_Modifiers.AddDefaulted(Count);
+
+		// Create Pool
+		const int32& PoolSize = 0;//Settings->Manager_Damage.Modifier.PoolSize;
+
+		for (const FECsProjectileModifier& Modifier : EMCsProjectileModifier::Get())
+		{
+			typedef NCsProjectile::NModifier::FManager ModifierManagerType;
+
+			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
+
+			Manager.SetDeconstructResourcesOnShutdown();
+			Manager.CreatePool(PoolSize);
+
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				Manager.Add(ConstructModifier(Modifier));
+			}
+		}
+	}
 
 	// Class Handler
 	ConstructClassHandler();
@@ -1025,3 +1049,61 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 }
 
 #pragma endregion Data
+
+// Modifier
+#pragma region
+
+#define ModifierResourceType NCsProjectile::NModifier::FResource
+#define ModifierType NCsProjectile::NModifier::IModifier
+
+ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModifier& Type)
+{
+	// DamageValuePoint | 
+	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
+	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
+	if (Type == NCsProjectileModifier::DamageValuePoint)
+		return new NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl();
+	return nullptr;
+}
+
+ModifierResourceType* UCsManager_Projectile::AllocateModifier(const FECsProjectileModifier& Type)
+{
+	checkf(EMCsProjectileModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::AllocateModifier: Type: %s is NOT Valid."), Type.ToChar());
+
+	return Manager_Modifiers[Type.GetValue()].Allocate();
+}
+
+void UCsManager_Projectile::DeallocateModifier(const FString& Context, const FECsProjectileModifier& Type, ModifierResourceType* Modifier)
+{
+	checkf(EMCsProjectileModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::DeallocateModifier: Type: %s is NOT Valid."), Type.ToChar());
+
+	CS_IS_PTR_NULL_CHECKED(Modifier)
+
+	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+	// Reset
+	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
+		IReset->Reset();
+
+	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
+}
+
+const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FString& Context, const ModifierType* Modifier)
+{
+	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+	// DamageValuePoint | 
+	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
+	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
+	typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgModiferValuePointType;
+
+	if (ModifierLibrary::SafeStaticCastChecked<PrjDmgModiferValuePointType>(Context, Modifier))
+		return NCsProjectileModifier::DamageValuePoint;
+
+	return EMCsProjectileModifier::Get().GetMAX();
+}
+
+#undef ModifierResourceType
+#undef ModifierType
+
+#pragma endregion Modifier

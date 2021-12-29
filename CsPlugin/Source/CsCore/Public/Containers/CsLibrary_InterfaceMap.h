@@ -109,6 +109,20 @@ public:
 		return NCsInterfaceMap::SafeStaticCastChecked<DerivedType, InterfaceType>(Context, Interface);
 	}
 
+	/* 
+	* Safely perform the operation static_cast<DerivedType*>("Interface associated with InterfaceType") with checks.
+	* DerivedType is NOT abstract.
+	*
+	* @param Context	The calling context
+	* @param Interface	Interface that implements the interface: InterfaceType.
+	* return			Interface casted to DerivedType (static_cast<DerivedType*>(Interface))
+	*/
+	template<typename DerivedType>
+	FORCEINLINE static const DerivedType* SafeStaticCastChecked(const FString& Context, const InterfaceType* Interface)
+	{
+		return NCsInterfaceMap::SafeStaticCastChecked<DerivedType, InterfaceType>(Context, Interface);
+	}
+
 	/**
 	* Safely perform the operation static_cast<SliceType*>("Interface associated with InterfaceType") with checks.
 	* SliceType is NOT abstract.

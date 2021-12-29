@@ -7,11 +7,13 @@
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
+#include "Modifier/CsTypes_ProjectileModifier.h"
 // Projectile
 #include "Payload/CsPayload_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Managers/Projectile/CsProjectilePooled.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
+#include "Modifier/CsResource_ProjectileModifier.h"
 
 #include "CsManager_Projectile.generated.h"
 
@@ -105,24 +107,24 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Projectile * Get(UObject * InRoot = nullptr);
+	static UCsManager_Projectile * Get(const UObject * InRoot = nullptr);
 #else
-FORCEINLINE static UCsManager_Projectile* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Projectile* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 	
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 #if WITH_EDITOR
-	static bool IsValid(UObject* InRoot = nullptr);
+	static bool IsValid(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
 	{
 		return s_Instance != nullptr;
 	}
@@ -130,20 +132,16 @@ FORCEINLINE static UCsManager_Projectile* Get(UObject* InRoot = nullptr)
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Projectile> ManagerProjectileClass, UObject* InOuter = nullptr);
 	
-	static void Shutdown(UObject* InRoot = nullptr);
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerProjectile* Get_GetManagerProjectile(UObject* InRoot);
-	static ICsGetManagerProjectile* GetSafe_GetManagerProjectile(UObject* Object);
+	static ICsGetManagerProjectile* Get_GetManagerProjectile(const UObject* InRoot);
+	static ICsGetManagerProjectile* GetSafe_GetManagerProjectile(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
-	static UCsManager_Projectile* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Projectile* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static UCsManager_Projectile* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -155,7 +153,7 @@ protected:
 
 public:
 
-	static bool HasInitialized(UObject* InRoot);
+	static bool HasInitialized(const UObject* InRoot);
 
 protected:
 
@@ -927,6 +925,40 @@ public:
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
+
+// Modifier
+#pragma region
+
+#define ModifierResourceType NCsProjectile::NModifier::FResource
+#define ModifierManagerType NCsProjectile::NModifier::FManager
+#define ModifierType NCsProjectile::NModifier::IModifier
+
+protected:
+
+	TArray<ModifierManagerType> Manager_Modifiers;
+
+	virtual ModifierType* ConstructModifier(const FECsProjectileModifier& Type);
+
+public:
+
+	ModifierResourceType* AllocateModifier(const FECsProjectileModifier& Type);
+
+	void DeallocateModifier(const FString& Context, const FECsProjectileModifier& Type, ModifierResourceType* Modifier);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
+	virtual const FECsProjectileModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
+
+#undef ModifierResourceType
+#undef ModifierManagerType
+#undef ModifierType
+
+#pragma endregion Modifier
 
 #undef ManagerType
 #undef ManagerParamsType

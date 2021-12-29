@@ -1,8 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "Containers/CsGetInterfaceMap.h"
-
 #pragma once
+#include "Containers/CsGetInterfaceMap.h"
 
 /**
 * Map of interfaces for an object. This stores the memory offsets for each "slice"
@@ -77,6 +75,8 @@ public:
 		return RootName;
 	}
 
+	FORCEINLINE const TMap<FName, void*>& GetInterfaces() const { return Interfaces; }
+
 	FORCEINLINE void SetUniqueBasedSlices()
 	{
 		bUniqueBasedSlices = true;
@@ -95,6 +95,8 @@ public:
 
 		return InterfacesByUniqueBasedSliceRootName.Find(Name) != nullptr;
 	}
+
+	FORCEINLINE const TMap<FName, void*>& GetInterfacesByUniqueBasedSliceRootName() const { return InterfacesByUniqueBasedSliceRootName; }
 
 	/**
 	* Add a reference to the interface or slice of the root structure.

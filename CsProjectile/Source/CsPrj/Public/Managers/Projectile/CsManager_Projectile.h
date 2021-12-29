@@ -635,12 +635,6 @@ protected:
 	/** <InterfaceMapPtr> */
 	TArray<NCsProjectile::NPayload::FInterfaceMap*> PayloadInterfaceMaps;
 
-	/** <InterfaceImpName, <InterfaceImplPtr>> 
-		 stores all interface "slices" related to payload and projectile but 
-		 NOT the interface stored in Internal (i.e. NCsProjectile::NPayload::FImplSlice) 
-		 as Internal handles the deconstruction of that interface. */
-	TMap<FName, TArray<void*>> PayloadInterfaceImplMap;
-
 public:
 
 	/**

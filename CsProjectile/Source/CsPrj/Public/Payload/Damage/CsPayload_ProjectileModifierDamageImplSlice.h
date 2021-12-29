@@ -1,8 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
 #include "Reset/CsReset.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;
@@ -48,10 +47,7 @@ namespace NCsProjectile
 				#pragma region
 				public:
 
-					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-					{
-						return InterfaceMap;
-					}
+					FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 				#pragma endregion ICsGetInterfaceMap
 
@@ -63,10 +59,7 @@ namespace NCsProjectile
 				#pragma region
 				public:
 
-					FORCEINLINE const TArray<NCsDamage::NModifier::IModifier*>& GetDamageModifiers() const
-					{
-						return Modifiers;
-					}
+					FORCEINLINE const TArray<NCsDamage::NModifier::IModifier*>& GetDamageModifiers() const { return Modifiers; }
 
 				#pragma endregion IDamage
 
@@ -81,6 +74,11 @@ namespace NCsProjectile
 				public:
 
 					bool CopyFrom(const FImplSlice* From);
+
+					FORCEINLINE static void Deconstruct(void* Ptr)
+					{
+						delete static_cast<NCsProjectile::NPayload::NModifier::NDamage::FImplSlice*>(Ptr);
+					}
 				};
 			}
 		}

@@ -296,26 +296,13 @@ void UCsManager_Projectile::Initialize()
 void UCsManager_Projectile::CleanUp()
 {
 	Internal.Shutdown();
-	
-	for (TPair<FName, TArray<void*>>& Pair : PayloadInterfaceImplMap)
-	{
-		const FName& InterfaceImplName = Pair.Key;
-		TArray<void*> Impls			   = Pair.Value;
-
-		for (void* Impl: Impls)
-		{
-			DeconstructPayloadSlice(InterfaceImplName, Impl);
-		}
-		Impls.Reset();
-	}
-	PayloadInterfaceImplMap.Reset();
 
 	for (NCsProjectile::NPayload::FInterfaceMap* Map : PayloadInterfaceMaps)
 	{
 		delete Map;
 	}
 	PayloadInterfaceMaps.Reset();
-	
+
 	Pool.Reset();
 
 	delete ClassHandler;
@@ -818,8 +805,7 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 	{
 		BaseSlice->SetInterfaceMap(InterfaceMap);
 		// Add to map
-		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(BaseSliceType::Name);
-		ImplMap.Add(BaseSlice);
+		PayloadInterfaceMap->AddDeconstruct(BaseSliceType::Name, &BaseSliceType::Deconstruct);
 	}
 
 	// NCsProjectile::NPayload::FImplSice
@@ -849,8 +835,7 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
 		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
 		// Add to map
-		TArray<void*>& ImplMap = PayloadInterfaceImplMap.FindOrAdd(SliceType::Name);
-		ImplMap.Add(Slice);
+		PayloadInterfaceMap->AddDeconstruct(SliceType::Name, &SliceType::Deconstruct);
 	}
 
 	return InterfaceMap->Get<PayloadType>();

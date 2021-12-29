@@ -89,6 +89,11 @@ namespace NCsPooledObject
 			void AddReset(ICsReset* InReset);
 
 			bool CopyFrom(const FImplSlice* From);
+
+			FORCEINLINE static void Deconstruct(void* Ptr)
+			{
+				delete static_cast<NCsPooledObject::NPayload::FImplSlice*>(Ptr);
+			}
 		};
 	}
 }

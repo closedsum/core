@@ -1,6 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
+// Containers
 #include "Containers/CsGetInterfaceMap.h"
 
 struct FCsInterfaceMap;
@@ -29,12 +29,13 @@ namespace NCsProjectile
 			// ICsGetInterfaceMap
 
 			FCsInterfaceMap* InterfaceMap;
+		
+			TMap<FName, void(*)(void *)> DeconstructFnPtrByNameMap;
 
 		public:
 
 			FInterfaceMap();
 			~FInterfaceMap();
-
 
 			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -42,12 +43,16 @@ namespace NCsProjectile
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
+
+		public:
+
+			FORCEINLINE void AddDeconstruct(const FName& SliceName, void(*Fn)(void*))
+			{
+				DeconstructFnPtrByNameMap.Add(SliceName, Fn);
+			}
 		};
 	}
 }

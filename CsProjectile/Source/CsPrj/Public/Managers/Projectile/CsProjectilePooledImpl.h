@@ -10,6 +10,8 @@
 #include "Types/CsTypes_Projectile.h"
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
+// Projectile
+#include "Modifier/CsAllocated_ProjectileModifier.h"
 // Damage
 #include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
 
@@ -242,6 +244,16 @@ public:
 	FCsFXActorPooled* TrailFXPooled;
 
 #pragma endregion FX
+
+// Modifier
+#pragma region
+protected:
+
+#define AllocateModifierType NCsProjectile::NModifier::FAllocated
+	TArray<AllocateModifierType> Modifiers;
+#undef AllocateModifierType
+
+#pragma endregion Modifier
 
 // Damage
 #pragma region

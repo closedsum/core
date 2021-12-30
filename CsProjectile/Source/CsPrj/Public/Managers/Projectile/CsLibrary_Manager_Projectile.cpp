@@ -7,6 +7,7 @@
 #include "Managers/Projectile/CsManager_Projectile.h"
 // Library
 #include "Data/CsLibrary_Data_Projectile.h"
+#include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
@@ -203,5 +204,94 @@ namespace NCsProjectile
 		#undef DataType
 
 		#pragma endregion Data
+
+		// Modifier
+		#pragma region
+
+		#define ModifierResourceType NCsProjectile::NModifier::FResource
+		#define ModifierType NCsProjectile::NModifier::IModifier
+		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+		
+		void FLibrary::DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier)
+		{
+			GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
+		}
+
+		const FECsProjectileModifier& FLibrary::GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+		{
+			return GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+		}
+
+		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+		{
+			UCsManager_Projectile* Manager_Projectile = GetChecked(Context, WorldContext);
+
+			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+			const FECsProjectileModifier& Type  = PrjModifierLibrary::GetTypeChecked(Context, Modifier);
+			ModifierResourceType* Container		= Manager_Projectile->AllocateModifier(Type);
+			ModifierType* Copy					= Container->Get();
+
+			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+			bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+
+			checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+
+			return Container;
+		}
+
+		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
+		{
+			CS_IS_PTR_NULL_CHECKED(Modifier)
+
+			return CreateCopyOfModifierChecked(Context, WorldContext, Modifier->Get());
+		}
+
+		void FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsProjectileModifier& OutType)
+		{
+			UCsManager_Projectile* Manager_Projectile = GetChecked(Context, WorldContext);
+
+			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+			OutType				= PrjModifierLibrary::GetTypeChecked(Context, Modifier);
+			OutContainer		= Manager_Projectile->AllocateModifier(OutType);
+			ModifierType* Copy	= OutContainer->Get();
+
+			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+			bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+
+			checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+		}
+
+		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+		{
+			To.Reset(FMath::Max(To.Max(), From.Num()));
+
+			for (const ModifierType* Modifier : From)
+			{
+				To.Add(CreateCopyOfModifierChecked(Context, WorldContext, Modifier));
+			}
+		}
+
+		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+		{
+			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+
+			To.Reset(FMath::Max(To.Max(), From.Num()));
+
+			for (const ModifierType* Modifier : From)
+			{
+				AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
+				Allocated.CopyFrom(ContextRoot, Modifier);
+			}
+		}
+
+#		undef ModifierResourceType
+		#undef ModifierType
+		#undef AllocatedModifierType
+
+		#pragma endregion Modifier
 	}
 }

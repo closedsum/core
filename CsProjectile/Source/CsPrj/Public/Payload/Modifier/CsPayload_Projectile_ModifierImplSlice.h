@@ -1,7 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Interfaces
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
 #include "Reset/CsReset.h"
+// Projectile
+#include "Modifier/CsAllocated_ProjectileModifier.h"
 
 class UObject;
 struct FCsInterfaceMap;
@@ -26,6 +29,7 @@ namespace NCsProjectile
 				static const FName Name;
 
 			#define ModifierType NCsProjectile::NModifier::IModifier
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
 
 			private:
 
@@ -39,11 +43,15 @@ namespace NCsProjectile
 
 				TArray<ModifierType*> Modifiers;
 
-				UObject* Root;
+				TArray<AllocatedModifierType> Modifiers_Internal;
 
 			public:
 
 				FImplSlice();
+
+			public:
+
+				void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
 			// ICsGetInterfaceMap
 			#pragma region
@@ -53,9 +61,17 @@ namespace NCsProjectile
 
 			#pragma endregion ICsGetInterfaceMap
 
-			public:
+				void CopyFromModifiers(UObject* Root, const TArray<ModifierType*>& FromModifiers);
 
-				void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
+				FORCEINLINE void SetModifiers(const TArray<ModifierType*>& InModifiers)
+				{
+					Modifiers.Reset(FMath::Max(Modifiers.Max(), InModifiers.Num()));
+
+					for (ModifierType* Modifier : InModifiers)
+					{
+						Modifiers.Add(Modifier);
+					}
+				}
 
 			// IModifier
 			#pragma region
@@ -75,14 +91,13 @@ namespace NCsProjectile
 
 			public:
 
-				bool CopyFrom(const FImplSlice* From);
-
 				FORCEINLINE static void Deconstruct(void* Ptr)
 				{
 					delete static_cast<NCsProjectile::NPayload::NModifier::FImplSlice*>(Ptr);
 				}
 
 			#undef ModifierType
+			#undef AllocatedModifierType
 			};
 		}
 	}

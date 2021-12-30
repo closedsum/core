@@ -14,6 +14,7 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
@@ -37,6 +38,7 @@
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
+#include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
 // FX
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound
@@ -692,7 +694,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 	CS_IS_PTR_NULL_CHECKED(Payload)
 
-	// Set Damage Value if the projectile supports damage
+	// Set / Cache any Modifiers from the Payload
 	OnLaunch_SetModifiers(Payload);
 
 	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
@@ -841,6 +843,10 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	{
 		MovementComponent->InitialSpeed			  = Data->GetInitialSpeed();
 		MovementComponent->MaxSpeed				  = Data->GetMaxSpeed();
+
+		// Check to apply any Speed Modifiers
+
+
 		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Payload->GetDirection();
 		MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
 	}
@@ -870,16 +876,17 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
 
-	// NCsProjectile::NPayload::NModifier::NDamage::IDamage
+	// ModifierPayloadType (NCsProjectile::NPayload::NModifier::IModifier)
 	{
 		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
-		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage ModDamagePayloadType;
+		typedef NCsProjectile::NPayload::NModifier::IModifier ModifierPayloadType;
 
-		if (ModDamagePayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
+		if (ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+			typedef NCsProjectile::NModifier::IModifier ModifierType;
 
-			DamageManagerLibrary::CreateCopyOfModifiersChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
+			PrjManagerLibrary::CreateCopyOfModifiersChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
 		}
 	}
 }

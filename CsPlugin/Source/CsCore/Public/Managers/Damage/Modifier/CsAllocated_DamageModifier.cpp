@@ -5,8 +5,8 @@
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 #include "Library/CsLibrary_Valid.h"
-// Managers
-#include "Managers/Damage/CsManager_Damage.h"
+// Damage
+#include "Managers/Damage/Modifier/CsResource_DamageModifier.h"
 
 namespace NCsDamage 
 {

@@ -44,6 +44,7 @@
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
+#include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "Managers/Projectile/CsProjectilePooledImpl.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
@@ -681,6 +682,21 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 		Slice->Location  = GetLaunchLocation();
 		Slice->Direction = GetLaunchDirection();
 	}
+	// Projectile Modifiers
+	{
+		typedef NCsProjectile::NPayload::NModifier::FImplSlice SliceType;
+		typedef NCsProjectile::NPayload::NModifier::IModifier SliceInterfaceType;
+
+		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		{
+			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
+
+			static TArray<PrjModifierType*> Modifiers;
+			Outer->GetProjectileModifiers(Modifiers);
+
+
+		}
+	}
 	return Result;
 }
 
@@ -1050,6 +1066,12 @@ UCsProjectileWeaponComponent::FProjectileImpl* UCsProjectileWeaponComponent::Con
 void UCsProjectileWeaponComponent::ProjectileImpl_SetLaunchComponentTransform(USceneComponent* Component)
 {
 	ProjectileImpl->SetLaunchComponentTransform(Component);
+}
+
+#define PrjModifierType NCsProjectile::NModifier::IModifier
+void UCsProjectileWeaponComponent::GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers)
+{
+#undef PrjModifierType
 }
 
 #pragma endregion Projectile

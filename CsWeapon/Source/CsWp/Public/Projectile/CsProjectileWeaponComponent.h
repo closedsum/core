@@ -33,6 +33,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 // NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
+// NCsProjectile::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
 struct FCsProjectilePooled;
 
@@ -408,6 +410,12 @@ protected:
 	*/
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector Override_ProjectileImpl_GetLaunchDirection();
+
+public:
+
+#define PrjModifierType NCsProjectile::NModifier::IModifier
+	virtual void GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers);
+#undef PrjModifierType
 
 #pragma endregion Projectile
 	

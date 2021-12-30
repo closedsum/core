@@ -6,6 +6,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Projectile
 #include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
+#include "Modifier/Speed/CsProjectileModifier_SpeedImpl.h"
 
 namespace NCsProjectile
 {
@@ -18,10 +19,15 @@ namespace NCsProjectile
 			CS_IS_PTR_NULL_CHECKED(Modifier)
 
 			// DamageValuePoint
-			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgModiferValuePointType;
+			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
 
-			if (SafeStaticCastChecked<PrjDmgModiferValuePointType>(Context, Modifier))
+			if (SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
 				return NCsProjectileModifier::DamageValuePoint;
+			// Speed
+			typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
+
+			if (SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+				return NCsProjectileModifier::Speed;
 
 			checkf(0, TEXT("%s: Failed to determine type (FECsProjectileModifier) for Value."), *Context);
 			return EMCsProjectileModifier::Get().GetMAX();
@@ -35,11 +41,23 @@ namespace NCsProjectile
 
 			// DamageValuePoint
 			{
-				typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgModiferValuePointType;
+				typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
 
-				if (const PrjDmgModiferValuePointType* FromImpl = SafeStaticCastChecked<PrjDmgModiferValuePointType>(Context, From))
+				if (const PrjDmgValuePointModiferType* FromImpl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, From))
 				{
-					PrjDmgModiferValuePointType* ToImpl = StaticCastChecked<PrjDmgModiferValuePointType>(Context, To);
+					PrjDmgValuePointModiferType* ToImpl = StaticCastChecked<PrjDmgValuePointModiferType>(Context, To);
+
+					FromImpl->CopyTo(ToImpl);
+					return true;
+				}
+			}
+			// Speed
+			{
+				typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
+
+				if (const PrjSpeedModifierType* FromImpl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, From))
+				{
+					PrjSpeedModifierType* ToImpl = StaticCastChecked<PrjSpeedModifierType>(Context, To);
 
 					FromImpl->CopyTo(ToImpl);
 					return true;

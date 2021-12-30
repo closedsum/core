@@ -8,6 +8,8 @@
 // Types
 #include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
 
+class ICsProjectile;
+
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
@@ -63,6 +65,14 @@ namespace NCsProjectile
 						FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 					#pragma endregion ICsGetInterfaceMap
+
+					// PrjModifierType
+					#pragma region
+					public:
+
+						void Modify(ICsProjectile* Projectile){}
+
+					#pragma endregion PrjModifierType
 
 					// IValue (NCsDamage::NModifier::NValue::IValue)
 					#pragma region

@@ -75,52 +75,13 @@ namespace NCsDamage
 					const float& MinValueRef = ValueRange->GetMinValue();
 					float* MinValuePtr	    = const_cast<float*>((const float*)(&MinValueRef));
 
-					typedef NCsDamage::NModifier::EApplication ApplicationType;
+					NCsDamage::NModifier::NApplication::Modify(*MinValuePtr, MinValue, ApplicationMin);
 
-					if (ApplicationMin == ApplicationType::Multiply)
-					{
-						*MinValuePtr *= MinValue;
-					}
-					else
-					if (ApplicationMin == ApplicationType::Add)
-					{
-						*MinValuePtr += MinValue;
-					}
-					else
-					if (ApplicationMin == ApplicationType::Replace)
-					{
-						*MinValuePtr = MinValue;
-					}
-					else
-					if (ApplicationMin == ApplicationType::ReplaceOnlyIfGreater)
-					{
-						if (MinValue > *MinValuePtr)
-							*MinValuePtr = MinValue;
-					}
 					// Max
 					const float& MaxValueRef = ValueRange->GetMinValue();
 					float* MaxValuePtr	    = const_cast<float*>((const float*)(&MaxValueRef));
 
-					if (ApplicationMax == ApplicationType::Multiply)
-					{
-						*MaxValuePtr *= MaxValue;
-					}
-					else
-					if (ApplicationMax == ApplicationType::Add)
-					{
-						*MaxValuePtr += MaxValue;
-					}
-					else
-					if (ApplicationMax == ApplicationType::Replace)
-					{
-						*MaxValuePtr = MaxValue;
-					}
-					else
-					if (ApplicationMax == ApplicationType::ReplaceOnlyIfGreater)
-					{
-						if (MinValue > *MaxValuePtr)
-							*MaxValuePtr = MaxValue;
-					}
+					NCsDamage::NModifier::NApplication::Modify(*MaxValuePtr, MaxValue, ApplicationMax);
 				}
 				#undef ValueType
 

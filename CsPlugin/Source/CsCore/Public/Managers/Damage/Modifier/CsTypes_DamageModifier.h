@@ -69,6 +69,30 @@ namespace NCsDamage
 				extern CSCORE_API const Type ReplaceOnlyIfGreater;
 				extern CSCORE_API const Type EApplication_MAX;
 			}
+
+			FORCEINLINE void Modify(float& ValueToModify, const float& Modifier, const EApplication& Type)
+			{
+				if (Type == EApplication::Multiply)
+				{
+					ValueToModify *= Modifier;
+				}
+				else
+				if (Type == EApplication::Add)
+				{
+					ValueToModify += Modifier;
+				}
+				else
+				if (Type == EApplication::Replace)
+				{
+					ValueToModify = Modifier;
+				}
+				else
+				if (Type == EApplication::ReplaceOnlyIfGreater)
+				{
+					if (Modifier > ValueToModify)
+						ValueToModify = Modifier;
+				}
+			}
 		}
 	}
 }

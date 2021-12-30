@@ -30,7 +30,7 @@ namespace NCsProjectileModifier
 
 	extern CSPRJ_API const Type DamageValuePoint;
 	//extern CSPRJ_API const Type ValueRange;
-	//extern CSPRJ_API const Type Speed;
+	extern CSPRJ_API const Type Speed;
 }
 
 #pragma endregion ProjectileModifier

@@ -2,6 +2,10 @@
 #pragma once
 // Interfaces
 #include "Modifier/CsProjectileModifier.h"
+// Types
+#include "Modifier/Speed/CsTypes_ProjectileModifier_Speed.h"
+
+class ICsProjectile;
 
 namespace NCsProjectile
 {
@@ -17,6 +21,8 @@ namespace NCsProjectile
 
 				static const FName Name;
 
+			#define ApplicationType NCsProjectile::NModifier::NSpeed::EApplication
+
 			private:
 
 				// ICsGetInterfaceMap
@@ -27,7 +33,7 @@ namespace NCsProjectile
 
 				float Val;
 
-				//ApplicationType Application;
+				ApplicationType Application;
 
 			public:
 						
@@ -44,9 +50,19 @@ namespace NCsProjectile
 
 			#pragma endregion ICsGetInterfaceMap
 
+			// PrjModifierType (NCsProjectile::NModifier::IModifier)
+			#pragma region
+			public:
+
+				void Modify(ICsProjectile* Projectile);
+
+			#pragma endregion PrjModifierType (NCsProjectile::NModifier::IModifier)
+
 			public:
 
 				void CopyTo(FImpl* To) const;
+
+			#undef ApplicationType
 			};
 
 		#undef PrjModifierType

@@ -74,29 +74,7 @@ namespace NCsProjectile
 						const float& ValRef = ValuePoint->GetValue();
 						float* ValPtr	    = const_cast<float*>((const float*)(&ValRef));
 
-						typedef NCsDamage::NModifier::EApplication ApplicationType;
-
-						if (Application == ApplicationType::Multiply)
-						{
-							*ValPtr *= Val;
-						}
-						else
-						if (Application == ApplicationType::Add)
-						{
-							*ValPtr += Val;
-						}
-						else
-						if (Application == ApplicationType::Replace)
-						{
-							*ValPtr = Val;
-						}
-						else
-						if (Application == ApplicationType::ReplaceOnlyIfGreater)
-						{
-							if (Val > *ValPtr)
-								*ValPtr = Val;
-						}
-						
+						NCsDamage::NModifier::NApplication::Modify(*ValPtr, Val, Application);
 					}
 					#undef ValueType
 

@@ -21,7 +21,6 @@ namespace NCsDamage
 	{
 	#define ModifierType NCsDamage::NModifier::IModifier
 
-
 	/**
 	* Library for interface: ModifierType (NCsDamage::NModifier::IModifier)
 	*/
@@ -85,6 +84,36 @@ namespace NCsDamage
 		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value);
 
 	#undef AllocatedModifierType
+
+		struct CSCORE_API FModify
+		{
+			enum class ECheck : int32
+			{
+				// Check if Modifier is NULL
+				Modifier = 1 << 0,
+				// Check if Modifier implements the appropriate interface for Modify
+				Modifier_ImplementsInterface = 1 << 1,
+				// Check if Modifiers is Empty
+				Modifiers_Empty = 1 << 2,
+				// Check if ANY element in Modifiers is NULL
+				Modifiers_AnyNull = 1 << 3,
+				// Check at LEAST one element in Modifiers implements the appropriate interface for Modify
+				Modifiers_AnyImplmentsInterface = 1 << 4,
+				// Check ALL the elements in Modifiers implement the appropriate interface for Modify
+				Modifiers_AllImplementInterface = 1 << 5,
+				// check if Value is NULL
+				Value = 1 << 6
+			};
+
+			// const FName NCsDamage::NModifier::IModifier::Name = FName("NCsDamage::NModifier::IModifier");
+
+			static const int32 SafeModifierImplementsInterface;
+			static const int32 SafeModifiersImplementsInterface;
+		};
+
+		static void ConditionalModifyChecked(const FString& Context, const ModifierType* Modifier, ValueType* Value, const int32& CheckMask = FModify::SafeModifierImplementsInterface);
+
+		static void ConditionalModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, ValueType* Value, const int32& CheckMask = FModify::SafeModifiersImplementsInterface);
 
 	#undef DataType
 	#undef ValueType

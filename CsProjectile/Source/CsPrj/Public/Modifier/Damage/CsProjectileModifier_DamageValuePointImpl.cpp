@@ -58,7 +58,7 @@ namespace NCsProjectile
 					#pragma region
 
 					#define ValueType NCsDamage::NValue::IValue
-					void FImpl::Modify(ValueType* Value)
+					void FImpl::Modify(ValueType* Value) const
 					{
 						using namespace NCsProjectile::NModifier::NDamage::NValue::NPoint::NCached;
 

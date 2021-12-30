@@ -212,6 +212,11 @@ namespace NCsProjectile
 		#define ModifierType NCsProjectile::NModifier::IModifier
 		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
 		
+		ModifierResourceType* FLibrary::AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocateModifier(Type);
+		}
+
 		void FLibrary::DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier)
 		{
 			GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
@@ -267,6 +272,8 @@ namespace NCsProjectile
 
 		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
 		{
+			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
 			for (const ModifierType* Modifier : From)
@@ -278,6 +285,8 @@ namespace NCsProjectile
 		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+
+			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 

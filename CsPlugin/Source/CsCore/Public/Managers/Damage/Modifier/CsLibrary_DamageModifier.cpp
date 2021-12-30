@@ -5,10 +5,18 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Damage
+#include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
 #include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
 #include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRange.h"
 #include "Managers/Damage/Modifier/CsDamageModifierRange.h"
 #include "Managers/Damage/Modifier/CsResource_DamageModifier.h"
+
+#define CS_TEMP_ECHECK NCsDamage::NModifier::FLibrary::FModify::ECheck
+
+const int32 NCsDamage::NModifier::FLibrary::FModify::SafeModifierImplementsInterface = ((int32)(CS_TEMP_ECHECK::Modifier) | (int32)(CS_TEMP_ECHECK::Value));
+const int32 NCsDamage::NModifier::FLibrary::FModify::SafeModifiersImplementsInterface = ((int32)(CS_TEMP_ECHECK::Modifier) | (int32)(CS_TEMP_ECHECK::Modifiers_AnyNull) | (int32)(CS_TEMP_ECHECK::Value));
+
+#undef CS_TEMP_ECHECK
 
 namespace NCsDamage
 {
@@ -118,6 +126,73 @@ namespace NCsDamage
 		}
 
 		#undef AllocatedModifierType
+
+		void FLibrary::ConditionalModifyChecked(const FString& Context, const ModifierType* Modifier, ValueType* Value, const int32& CheckMask /*=FModify::SafeModifierImplementsInterface*/)
+		{
+			typedef NCsDamage::NModifier::FLibrary::FModify::ECheck CheckType;
+
+			void(*Log)(const FString&) = nullptr;
+
+			if (CS_TEST_BITFLAG(CheckMask, CheckType::Modifier))
+			{
+				CS_IS_PTR_NULL_CHECKED(Modifier)
+			}
+			else
+			{
+				CS_IS_PTR_NULL_EXIT(Modifier)
+			}
+
+			if (CS_TEST_BITFLAG(CheckMask, CheckType::Value))
+			{
+				CS_IS_PTR_NULL_CHECKED(Value)
+			}
+			else
+			{
+				CS_IS_PTR_NULL_EXIT(Value)
+			}
+
+			typedef NCsDamage::NModifier::NValue::IValue ValueModifierType;
+
+			if (CS_TEST_BLUEPRINT_BITFLAG(CheckMask, CheckType::Modifier_ImplementsInterface))
+			{
+				const ValueModifierType* ValueModifier = GetInterfaceChecked<ValueModifierType>(Context, Modifier);
+				
+				ValueModifier->Modify(Value);
+			}
+			else
+			{
+				if (const ValueModifierType* ValueModifier = GetSafeInterfaceChecked<ValueModifierType>(Context, Modifier))
+				{
+					ValueModifier->Modify(Value);
+				}
+			}
+		}
+
+		void FLibrary::ConditionalModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, ValueType* Value, const int32& CheckMask /*=FModify::SafeModifiersImplementsInterface*/)
+		{
+			typedef NCsDamage::NModifier::FLibrary::FModify::ECheck CheckType;
+
+			if (CS_TEST_BITFLAG(CheckMask, CheckType::Modifiers_Empty))
+			{
+				CS_IS_ARRAY_EMPTY_CHECKED(Modifiers, ModifierType*)
+			}
+
+			void(*Log)(const FString&) = nullptr;
+
+			if (CS_TEST_BITFLAG(CheckMask, CheckType::Modifiers_AnyNull))
+			{
+				CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			}
+			else
+			{
+				//CS_IS_ARRAY_ANY_NULL_EXIT(Modifiers, ModifierType)
+			}
+
+			for (const ModifierType* Modifier : Modifiers)
+			{
+				ConditionalModifyChecked(Context, Modifier, Value, CheckMask);
+			}
+		}
 
 		#undef ModifierType
 		#undef DataType

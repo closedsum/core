@@ -78,7 +78,7 @@ namespace NCsProjectile
 					#pragma region
 					public:
 
-						void Modify(ValueType* Value);
+						void Modify(ValueType* Value) const;
 
 					#pragma endregion IValue (NCsDamage::NModifier::NValue::IValue)
 

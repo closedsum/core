@@ -54,6 +54,14 @@ namespace NCsProjectile
 
 			void CopyFrom(const FAllocated* From);
 
+			FORCEINLINE void Clear()
+			{
+				Root	  = nullptr;
+				Container = nullptr;
+				Modifier  = nullptr;
+				Type	  = EMCsProjectileModifier::Get().GetMAX();
+			}
+
 			/**
 			* Clear / null out all members and deallocate the Container.
 			*/

@@ -6,6 +6,10 @@
 #include "Modifier/CsTypes_ProjectileModifier.h"
 // Projectile
 #include "Modifier/CsProjectileModifier.h"
+#include "Modifier/CsAllocated_ProjectileModifier.h"
+
+// NCsDamage::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsProjectile
 {
@@ -33,6 +37,20 @@ namespace NCsProjectile
 		* return			Whether the copy was performed successfully.
 		*/
 		static bool CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To);
+
+	// Damage
+	#pragma region
+	public:
+
+	#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+	#define DmgModifierType NCsDamage::NModifier::IModifier
+
+		static void GetDamageModifiersChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, TArray<DmgModifierType*>& OutModifiers);
+
+	#undef AllocatedModifierType
+	#undef DmgModifierType
+
+	#pragma endregion Damage
 	};
 
 	#undef ModifierType

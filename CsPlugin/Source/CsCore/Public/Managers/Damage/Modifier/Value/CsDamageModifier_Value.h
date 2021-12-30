@@ -35,7 +35,7 @@ namespace NCsDamage
 				*
 				* @param Value
 				*/
-				virtual void Modify(ValueType* Value) = 0;
+				virtual void Modify(ValueType* Value) const = 0;
 			};
 		}
 	}

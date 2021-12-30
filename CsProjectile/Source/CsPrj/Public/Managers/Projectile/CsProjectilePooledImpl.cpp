@@ -15,7 +15,6 @@
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
-#include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
@@ -505,7 +504,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 
-			DamageModifierLibrary::ModifyChecked(Context, DamageImpl.Modifiers, DamageData->GetDamageData(), DamageImpl.GetValue());
+			DamageModifierLibrary::ConditionalModifyChecked(Context, DamageImpl.Modifiers, DamageImpl.GetValue());
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
@@ -674,6 +673,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	SetActorTickEnabled(false);
 	
 	// Modifiers
+	Modifiers.Reset(Modifiers.Max());
 	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
 
 	Cache->Reset();
@@ -897,6 +897,10 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 			typedef NCsProjectile::NModifier::IModifier ModifierType;
 
 			PrjManagerLibrary::CreateCopyOfModifiersChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
+
+			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+			ModifierLibrary::GetDamageModifiersChecked(Context, Modifiers, DamageImpl.Modifiers);
 		}
 	}
 }

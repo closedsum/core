@@ -215,6 +215,8 @@ namespace NCsProjectile
 		#define ModifierType NCsProjectile::NModifier::IModifier
 		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
 		
+			static ModifierResourceType* AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type);
+
 			static void DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier);
 
 			static const FECsProjectileModifier& GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);

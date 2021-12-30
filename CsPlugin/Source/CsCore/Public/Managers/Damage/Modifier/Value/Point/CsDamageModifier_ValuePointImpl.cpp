@@ -55,7 +55,7 @@ namespace NCsDamage
 				#pragma region
 
 				#define ValueType NCsDamage::NValue::IValue
-				void FImpl::Modify(ValueType* Value)
+				void FImpl::Modify(ValueType* Value) const
 				{
 					using namespace NCsDamage::NModifier::NValue::NPoint::NCached;
 

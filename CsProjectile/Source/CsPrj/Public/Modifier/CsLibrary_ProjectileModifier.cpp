@@ -67,5 +67,29 @@ namespace NCsProjectile
 		}
 
 		#undef ModifierType
+
+		// Damage
+		#pragma region
+
+		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+		#define DmgModifierType NCsDamage::NModifier::IModifier
+
+		void FLibrary::GetDamageModifiersChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, TArray<DmgModifierType*>& OutModifiers)
+		{
+			OutModifiers.Reset(FMath::Max(OutModifiers.Max(), Modifiers.Num()));
+
+			for (const AllocatedModifierType& Modifier : Modifiers)
+			{
+				if (DmgModifierType* DmgModifier = GetSafeInterfaceChecked<DmgModifierType>(Context, Modifier.Modifier))
+				{
+					OutModifiers.Add(DmgModifier);
+				}
+			}
+		}
+
+		#undef AllocatedModifierType
+		#undef DmgModifierType
+
+		#pragma endregion Damage
 	}
 }

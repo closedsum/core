@@ -84,11 +84,7 @@ namespace NCsProjectile
 
 				PrjManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
 			}
-
-			Root	  = nullptr;
-			Container = nullptr;
-			Modifier  = nullptr;
-			Type	  = EMCsProjectileModifier::Get().GetMAX();
+			Clear();
 		}
 	}
 }

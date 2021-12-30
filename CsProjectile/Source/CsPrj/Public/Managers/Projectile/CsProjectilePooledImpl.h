@@ -12,8 +12,6 @@
 #include "Managers/Damage/Value/CsTypes_DamageValue.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
-// Damage
-#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
 
 #include "CsProjectilePooledImpl.generated.h"
 
@@ -42,8 +40,6 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
 
-// NCsDamage::NModifier::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsDamage::NValue::IValue
@@ -52,6 +48,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
 // NCsDamage::NValue::NRange::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
+// NCsDamage::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
@@ -271,16 +269,16 @@ public:
 
 	#define PointType NCsDamage::NValue::NPoint::FImpl
 	#define RangeType NCsDamage::NValue::NRange::FImpl
-	#define AllocateModifierType NCsDamage::NModifier::FAllocated
+	#define ModifierType NCsDamage::NModifier::IModifier
 
 		PointType* ValuePoint;
 		RangeType* ValueRange;
 
-		TArray<AllocateModifierType> Modifiers;
+		TArray<ModifierType*> Modifiers;
 		
 	#undef PointType
 	#undef RangeType
-	#undef AllocatedModifierType
+	#undef ModifierType
 
 	public:
 

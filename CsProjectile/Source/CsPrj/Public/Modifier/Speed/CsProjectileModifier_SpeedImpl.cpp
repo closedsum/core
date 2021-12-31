@@ -41,6 +41,7 @@ namespace NCsProjectile
 				typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
 				InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
+				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 			}
 				
 			FImpl::~FImpl()
@@ -72,6 +73,27 @@ namespace NCsProjectile
 			{
 				To->Val = Val;
 				To->Application = Application;
+			}
+
+			bool FImpl::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(Val, 0.0f)
+
+				typedef NCsProjectile::NModifier::NSpeed::EMApplication ApplicationMapType;
+
+				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application)
+				return true;
+			}
+
+			bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+			{
+				CS_IS_FLOAT_GREATER_THAN(Val, 0.0f)
+
+				typedef NCsProjectile::NModifier::NSpeed::EMApplication ApplicationMapType;
+				typedef NCsProjectile::NModifier::NSpeed::EApplication ApplicationType;
+
+				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, Application)
+				return true;
 			}
 		}
 	}

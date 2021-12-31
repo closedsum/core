@@ -1,11 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 // Types
+#pragma once
 #include "Types/CsTypes_Projectile.h"
 #include "Payload/CsTypes_Payload_Projectile.h"
 #include "Managers/Time/CsTypes_Update.h"
 
 #include "CsSettings_Manager_Projectile.generated.h"
-#pragma once
 
 // FCsSettings_Manager_Projectile_TypeArray
 #pragma region
@@ -62,6 +62,31 @@ public:
 
 #pragma endregion FCsSettings_Manager_Projectile_PoolParams
 
+// FCsSettings_Manager_Projectile_Modifiers
+#pragma region
+
+/** 
+* Describes any settings related to Projectile Modifiers,
+* objects that implement the interface: NCsProjectile::NModifier::IModifier
+*/
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsSettings_Manager_Projectile_Modifiers
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	int32 PoolSize;
+
+	FCsSettings_Manager_Projectile_Modifiers() :
+		PoolSize(256)
+	{
+	}
+};
+
+#pragma endregion FCsSettings_Manager_Projectile_Modifiers
+
 // FCsSettings_Manager_Projectile
 #pragma region
 
@@ -103,11 +128,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams> PoolParams;
 
+	/**  Describes any settings related to Projectile Modifiers */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsSettings_Manager_Projectile_Modifiers Modifiers;
+
 	FCsSettings_Manager_Projectile() :
 		TypeMap(),
 		PayloadTypes(),
 		TypesByUpdateGroupMap(),
-		PoolParams()
+		PoolParams(),
+		Modifiers()
 	{
 	}
 };

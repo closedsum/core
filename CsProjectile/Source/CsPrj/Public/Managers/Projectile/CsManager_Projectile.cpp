@@ -12,6 +12,7 @@
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
+#include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Property.h"
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Valid.h"
@@ -56,7 +57,6 @@ namespace NCsManagerProjectile
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
@@ -357,11 +357,12 @@ void UCsManager_Projectile::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	UWorld* World				= MyRoot->GetWorld();
-	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-	NCsProjectile::PopulateEnumMapFromSettings(Context, GameInstance);
-	NCsProjectileClass::PopulateEnumMapFromSettings(Context, GameInstance);
+	UObject* ContextRoot = GameInstanceLibrary::GetAsObjectChecked(Context, MyRoot);
+
+	NCsProjectile::PopulateEnumMapFromSettings(Context, ContextRoot);
+	NCsProjectileClass::PopulateEnumMapFromSettings(Context, ContextRoot);
 
 	// Modifier
 	{
@@ -371,7 +372,9 @@ void UCsManager_Projectile::SetupInternal()
 		Manager_Modifiers.AddDefaulted(Count);
 
 		// Create Pool
-		const int32& PoolSize = 0;//Settings->Manager_Damage.Modifier.PoolSize;
+		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
+
+		const int32& PoolSize = ModuleSettings->Manager_Projectile.Modifiers.PoolSize;
 
 		for (const FECsProjectileModifier& Modifier : EMCsProjectileModifier::Get())
 		{
@@ -1067,7 +1070,7 @@ ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModif
 	// Speed | 
 	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
 	// NCsProjectile::NModifier::NSpeed::FImpl
-	if (Type == NCsProjectileModifier::DamageValuePoint)
+	if (Type == NCsProjectileModifier::Speed)
 		return new NCsProjectile::NModifier::NSpeed::FImpl();
 	return nullptr;
 }

@@ -2,8 +2,11 @@
 #pragma once
 // Interfaces
 #include "Modifier/CsProjectileModifier.h"
+#include "Reset/CsReset.h"
 // Types
 #include "Modifier/Speed/CsTypes_ProjectileModifier_Speed.h"
+// Log
+#include "Utility/CsPrjLog.h"
 
 class ICsProjectile;
 
@@ -15,7 +18,8 @@ namespace NCsProjectile
 		{
 		#define PrjModifierType NCsProjectile::NModifier::IModifier
 
-			struct CSPRJ_API FImpl : public PrjModifierType
+			struct CSPRJ_API FImpl : public PrjModifierType,
+									 public ICsReset
 			{
 			public:
 
@@ -58,9 +62,24 @@ namespace NCsProjectile
 
 			#pragma endregion PrjModifierType (NCsProjectile::NModifier::IModifier)
 
+			// ICsReset
+			#pragma region
+			public:
+
+				FORCEINLINE void Reset()
+				{
+					Val = 0.0f;
+					Application = ApplicationType::EApplication_MAX;
+				}
+
+			#pragma endregion ICsReset
+
 			public:
 
 				void CopyTo(FImpl* To) const;
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
 			#undef ApplicationType
 			};

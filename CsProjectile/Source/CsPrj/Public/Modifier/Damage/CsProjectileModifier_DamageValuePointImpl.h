@@ -5,8 +5,11 @@
 #include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
 #include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
 #include "Modifier/CsProjectileModifier.h"
+#include "Reset/CsReset.h"
 // Types
 #include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
+// Log
+#include "Utility/CsPrjLog.h"
 
 class ICsProjectile;
 
@@ -31,7 +34,8 @@ namespace NCsProjectile
 					struct CSPRJ_API FImpl : public DmgModifierType,
 											 public DmgValueModifierType,
 											 public DmgValuePointModifierType,
-											 public PrjModifierType
+											 public PrjModifierType,
+											 public ICsReset
 					{
 					public:
 
@@ -74,17 +78,32 @@ namespace NCsProjectile
 
 					#pragma endregion PrjModifierType
 
-					// IValue (NCsDamage::NModifier::NValue::IValue)
+					// DmgValueModifierType (NCsDamage::NModifier::NValue::IValue)
 					#pragma region
 					public:
 
 						void Modify(ValueType* Value) const;
 
-					#pragma endregion IValue (NCsDamage::NModifier::NValue::IValue)
+					#pragma endregion DmgValueModifierType (NCsDamage::NModifier::NValue::IValue)
+
+					// ICsReset
+					#pragma region
+					public:
+
+						FORCEINLINE void Reset()
+						{
+							Val = 0.0f;
+							Application = ApplicationType::EApplication_MAX;
+						}
+
+					#pragma endregion ICsReset
 
 					public:
 
 						void CopyTo(FImpl* To) const;
+
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
 					#undef ValueType
 					#undef ApplicationType

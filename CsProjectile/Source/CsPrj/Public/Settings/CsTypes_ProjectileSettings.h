@@ -1,7 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Projectile.h"
-#include "CsTypes_ProjectileSettings.generated.h"
 #pragma once
+#include "Types/CsTypes_Projectile.h"
+
+#include "CsTypes_ProjectileSettings.generated.h"
 
 // FCsProjectileSettings_DataTable_Projectiles
 #pragma region

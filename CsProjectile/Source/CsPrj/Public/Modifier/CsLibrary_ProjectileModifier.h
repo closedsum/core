@@ -7,6 +7,8 @@
 // Projectile
 #include "Modifier/CsProjectileModifier.h"
 #include "Modifier/CsAllocated_ProjectileModifier.h"
+// Log
+#include "Utility/CsPrjLog.h"
 
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
@@ -24,6 +26,17 @@ namespace NCsProjectile
 	{
 	public:
 
+		static bool IsValidChecked(const FString& Context, const ModifierType* Modifier);
+
+		static bool IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		/**
+		* Get the Type (FECsProjectileModifier) associated with Modifier.
+		* 
+		* @param Context	The calling context.
+		* @param Modifier
+		* return			Type (FECsProjectileModifier) associated with Modifier.
+		*/
 		static const FECsProjectileModifier& GetTypeChecked(const FString& Context, const ModifierType* Modifier);
 
 		/**

@@ -14,6 +14,41 @@ namespace NCsProjectile
 	{
 		#define ModifierType NCsProjectile::NModifier::IModifier
 
+		bool FLibrary::IsValidChecked(const FString& Context, const ModifierType* Modifier)
+		{
+			CS_IS_PTR_NULL_CHECKED(Modifier)
+
+			// DamageValuePoint
+			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
+
+			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
+				return Impl->IsValidChecked(Context);
+			// Speed
+			typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
+
+			if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+				return Impl->IsValidChecked(Context);
+
+			return true;
+		}
+
+		bool FLibrary::IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(Modifier)
+
+			// DamageValuePoint
+			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
+
+			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
+				return Impl->IsValid(Context, Log);
+			// Speed
+			typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
+
+			if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+				return Impl->IsValid(Context, Log);
+			return true;
+		}
+
 		const FECsProjectileModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
 		{
 			CS_IS_PTR_NULL_CHECKED(Modifier)
@@ -66,8 +101,6 @@ namespace NCsProjectile
 			return false;
 		}
 
-		#undef ModifierType
-
 		// Damage
 		#pragma region
 
@@ -91,5 +124,7 @@ namespace NCsProjectile
 		#undef DmgModifierType
 
 		#pragma endregion Damage
+
+		#undef ModifierType
 	}
 }

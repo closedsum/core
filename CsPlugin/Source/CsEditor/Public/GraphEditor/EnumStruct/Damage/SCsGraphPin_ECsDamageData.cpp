@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Damage/SCsGraphPin_ECsDamageData.h"
 #include "CsEditor.h"
 
-#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 
 #define EnumMapType EMCsDamageData
 #define EnumType FECsDamageData

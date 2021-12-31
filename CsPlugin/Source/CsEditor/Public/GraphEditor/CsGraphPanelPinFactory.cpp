@@ -12,7 +12,7 @@
 #include "Managers/FX/CsTypes_FX.h"
 //#include "Types/CsTypes_Item.h"
 //#include "Types/CsTypes_Recipe.h"
-#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"

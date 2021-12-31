@@ -1,7 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
 // Types
-#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Data
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/CsData_DamageInterfaceMap.h"

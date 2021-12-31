@@ -1,6 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 // Types
-#include "Managers/Damage/Data/CsTypes_Data_Damage.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Data
 #include "Data/Damage/CsData_Projectile_Damage.h"
 #include "Managers/Damage/Data/Point/CsData_DamagePointImpl.h"

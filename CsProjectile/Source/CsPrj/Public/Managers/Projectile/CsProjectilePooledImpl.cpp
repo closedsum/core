@@ -623,8 +623,6 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 	const FString& Context = Str::Deallocate_Internal;
 
-	IgnoreActors.Reset();
-
 	// FX
 	if (TrailFXPooled)
 	{
@@ -812,10 +810,6 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 					CollisionComponent->MoveIgnoreActors.Add(Actor);
 				}
-
-				//FCollisionResponseContainer CapsuleResponseContainer(ECR_Ignore);
-				//CapsuleResponseContainer.SetResponse(ECC_Pawn, ECR_Block);
-				//CapsuleResponseContainer.SetResponse(MBO_COLLISION_PROJECTILE, ECR_Ignore);
 
 				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
 				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());

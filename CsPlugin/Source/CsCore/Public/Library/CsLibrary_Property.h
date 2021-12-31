@@ -435,6 +435,44 @@ namespace NCsProperty
 		*/
 		static FSetProperty* FindSetEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		/**
+		* Find the Set Property (TArray of UStructs) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FSetProperty* FindSetStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Set Property (TArray of UStructs) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		template<typename StructType>
+		static FSetProperty* FindSetStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSetProperty* Property = FindSetStructPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			FStructProperty* ElementProperty = CastField<FStructProperty>(Property->ElementProp);
+
+			if (ElementProperty->Struct == StructType::StaticStruct())
+				return Property;
+
+			if (Log)
+				Log(FString::Printf(TEXT("%s: %s.%s is NOT a TSet of %s but a TSet of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(StructType::StaticStruct()->GetName()), *(Property->ElementProp->GetName())));
+			return nullptr;
+		}
+
 	#pragma endregion Set
 
 		/**
@@ -900,6 +938,34 @@ namespace NCsProperty
 				return nullptr;
 
 			TSet<EnumType>* Value = Property->ContainerPtrToValuePtr<TSet<EnumType>>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
+		}
+
+		/**
+		* Get the Set of UStruct value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				TSet<T>* (struct of type: T).
+		*/
+		template<typename T>
+		static TSet<T>* GetSetStructPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSetProperty* Property = FindSetStructPropertyByName<T>(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			TSet<T>* Value = Property->ContainerPtrToValuePtr<TSet<T>>(StructValue);
 
 			if (!Value)
 			{

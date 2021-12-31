@@ -292,6 +292,20 @@ namespace NCsProperty
 		return Property;
 	}
 
+	FSetProperty* FLibrary::FindSetStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FSetProperty* Property = FindSetPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		if (FStructProperty* ElementProperty = CastField<FStructProperty>(Property->ElementProp))
+			return Property;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TSet of UStructs but a TSet of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->ElementProp->GetName())));
+		return nullptr;
+	}
+
 	#pragma endregion Set
 
 	#pragma endregion Find

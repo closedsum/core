@@ -486,15 +486,18 @@ namespace NCsMaterial
 
 		int32 Count = Mesh->GetNumOverrideMaterials();
 
-		for (int32 Index = 0; Index < Count; ++Index)
+		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
+			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
 				if (!Material->IsPendingKill())
 					Material->IsPendingKill();
 			}
+			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
-		Mesh->EmptyOverrideMaterials();
+
+		if (Count > 0)
+			Mesh->MarkRenderStateDirty();
 	}
 
 	void FLibrary::ClearOverride(USkeletalMeshComponent* Mesh)
@@ -503,15 +506,18 @@ namespace NCsMaterial
 
 		int32 Count = Mesh->GetNumOverrideMaterials();
 
-		for (int32 Index = 0; Index < Count; ++Index)
+		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
+			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
 				if (!Material->IsPendingKill())
 					Material->IsPendingKill();
 			}
+			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
-		Mesh->EmptyOverrideMaterials();
+
+		if (Count > 0)
+			Mesh->MarkRenderStateDirty();
 	}
 
 	namespace NMID
@@ -718,15 +724,19 @@ namespace NCsMaterial
 
 		void FLibrary::Destroy(TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
-			for (UMaterialInstanceDynamic* MID : MIDs)
+			const int32 Count = MIDs.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
 			{
+				UMaterialInstanceDynamic* MID = MIDs[I];
+
 				if (MID &&
 					!MID->IsPendingKill())
 				{
 					MID->MarkPendingKill();
 				}
+				MIDs.RemoveAt(I, 1, false);
 			}
-			MIDs.Reset(MIDs.Max());
 		}
 
 		// Scalar

@@ -9,6 +9,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Damage/CsManager_Damage.h"
+// Data
+#include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
 
 #if WITH_EDITOR
 // Library
@@ -288,6 +290,20 @@ namespace NCsDamage
 		#pragma region
 
 		#define DataType NCsDamage::NData::IData
+
+		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType)
+		{
+		#undef GetDamageDataTypeDataType
+
+			CS_IS_PTR_NULL_CHECKED(GetDamageDataType)
+
+			const FECsDamageData& DamageDataType = GetDamageDataType->GetDamageDataType();
+
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, DamageDataType)
+
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, DamageDataType.GetFName());
+		}
 
 		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap

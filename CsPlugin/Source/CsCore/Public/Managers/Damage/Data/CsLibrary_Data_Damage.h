@@ -1,11 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 // NCsDamage::NRange::IRange
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)

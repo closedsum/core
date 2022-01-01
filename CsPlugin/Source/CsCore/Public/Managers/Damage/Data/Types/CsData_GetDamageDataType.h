@@ -20,7 +20,7 @@ namespace NCsData
 
 		virtual ~IGetDamageDataType(){}
 
-		virtual const FECsDamageData* GetDamageDataType() const = 0;
+		virtual const FECsDamageData& GetDamageDataType() const = 0;
 	};
 }
 
@@ -43,5 +43,5 @@ public:
 
 public:
 
-	virtual const FECsDamageData* GetDamageDataType() const = 0;
+	virtual const FECsDamageData& GetDamageDataType() const = 0;
 };

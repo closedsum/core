@@ -16,14 +16,19 @@ class UCsManager_Damage;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, FResource)
 // NCsDamage::NEvent::IEvent
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
+
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+// NCsData::IGetDamageDataType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataType)
+
 // NCsDamage::NValue::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, FResource)
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 // NCsDamage::NRange::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, FResource)
+
 // NCsDamage::NRange::IRange
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NModifier::FResource
@@ -272,6 +277,21 @@ namespace NCsDamage
 		public:
 
 		#define DataType NCsDamage::NData::IData
+
+		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
+
+			/**
+			* Get the Data, Object that implements the interface: DataType (NCsDamage::NData::IData), 
+			* associated with the result of GetDamageDataType->GetDamageDataType (FECsDamageData).
+			* 
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param GetDamageDataType
+			* return					Object which implements the interface: DataType (NCsDamage::NData::IData).
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType);
+
+		#undef GetDamageDataTypeDataType
 
 		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap

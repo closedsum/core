@@ -32,6 +32,7 @@
 #include "Data/Sound/CsData_Projectile_SoundImpact.h"
 #include "Data/Damage/CsData_Projectile_Damage.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
+#include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
@@ -509,6 +510,32 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
+		}
+	}
+	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
+	{
+		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
+
+		if (GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NData::IData DamageDataType;
+
+			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, this, GetDamageDataType);
+
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+
+			// Apply Modifiers
+			DamageImpl.SetValue(DamageData);
+
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+
+			DamageModifierLibrary::ConditionalModifyChecked(Context, DamageImpl.Modifiers, DamageImpl.GetValue());
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData, GetCache()->GetInstigator(), this, Hit);
 		}
 	}
 

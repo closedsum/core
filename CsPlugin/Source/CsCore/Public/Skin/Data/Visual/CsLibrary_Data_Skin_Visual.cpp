@@ -497,6 +497,7 @@ namespace NCsSkin
 				if (StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin))
 				{
 					SetStaticMeshChecked(Context, StaticMeshSkin, StaticMeshComponent);
+					SetMaterialsChecked(Context, Skin, StaticMeshComponent, MIDs);
 					return ResultType::StaticMeshComponent;
 				}
 
@@ -505,6 +506,7 @@ namespace NCsSkin
 				if (SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin))
 				{
 					SetSkeletalMeshChecked(Context, SkeletalMeshSkin, SkeletalMeshComponent);
+					SetMaterialsChecked(Context, Skin, SkeletalMeshComponent, MIDs);
 					return ResultType::SkeletalMeshComponent;
 				}
 				checkf(0, TEXT("%s: Skin: %s does NOT implement the interfaces: %s or %s."), *Context, *PrintNameAndClass(Skin), *(StaticMeshSkinType::Name.ToString()), *(SkeletalMeshSkinType::Name.ToString()));

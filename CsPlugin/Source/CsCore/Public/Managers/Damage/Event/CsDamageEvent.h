@@ -1,8 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Interface
 #include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Engine/EngineTypes.h"
 #include "Managers/Damage/CsTypes_Damage.h"
-#pragma once
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)

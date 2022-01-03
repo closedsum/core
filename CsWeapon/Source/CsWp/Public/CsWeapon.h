@@ -5,6 +5,7 @@
 #include "Containers/CsInterfaceObject.h"
 // Types
 #include "Types/CsTypes_Weapon.h"
+
 #include "CsWeapon.generated.h"
 
 UINTERFACE(Blueprintable)

@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // Interfaces
 #include "Managers/Damage/Event/CsDamageEvent.h"
 #include "Reset/CsReset.h"
@@ -8,7 +8,6 @@
 // Types
 #include "Managers/Damage/Value/CsAllocated_DamageValue.h"
 #include "Managers/Damage/Range/CsAllocated_DamageRange.h"
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;

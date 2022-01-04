@@ -5,6 +5,40 @@
 
 #include "CsTypes_StatusEffect.generated.h"
 
+// StatusEffect
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSSE_API FECsStatusEffect : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+		CS_ENUM_UINT8_BODY(FECsStatusEffect)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsStatusEffect)
+
+struct CSSE_API EMCsStatusEffect : public TCsEnumStructMap<FECsStatusEffect, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsStatusEffect, FECsStatusEffect, uint8)
+};
+
+class UObject;
+
+namespace NCsStatusEffect
+{
+	typedef FECsStatusEffect Type;
+	typedef EMCsStatusEffect EnumMapType;
+
+	CSSE_API void FromDataTable(const FString& Context, UObject* ContextRoot);
+
+	CSSE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
+#pragma endregion StatusEffect
+
 // StatusEffectEvent
 #pragma region
 

@@ -6,23 +6,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsStatusEffectTriggerConditionCustomization"
 
-// Cached
-#pragma region
-
-namespace NCsStatusEffectTriggerConditionCustomizationCached
-{
-	namespace Str
-	{
-		const FString CustomPopulateEnumMap = TEXT("FECsStatusEffectTriggerConditionCustomization::CustomPopulateEnumMap");
-	}
-}
-
-#pragma endregion Cached
+#define EnumMapType EMCsStatusEffectTriggerCondition
+#define EnumType FECsStatusEffectTriggerCondition
 
 FECsStatusEffectTriggerConditionCustomization::FECsStatusEffectTriggerConditionCustomization() :
 	Super()
 {
-	Init<EMCsStatusEffectTriggerCondition, FECsStatusEffectTriggerCondition>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsStatusEffectTriggerConditionCustomization::MakeInstance()
@@ -32,17 +22,20 @@ TSharedRef<IPropertyTypeCustomization> FECsStatusEffectTriggerConditionCustomiza
 
 void FECsStatusEffectTriggerConditionCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsStatusEffectTriggerCondition>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsStatusEffectTriggerConditionCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsStatusEffectTriggerCondition, FECsStatusEffectTriggerCondition>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsStatusEffectTriggerConditionCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsStatusEffectTriggerCondition, FECsStatusEffectTriggerCondition>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

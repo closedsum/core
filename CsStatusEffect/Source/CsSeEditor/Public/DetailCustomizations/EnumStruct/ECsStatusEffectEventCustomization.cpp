@@ -6,23 +6,13 @@
 
 #define LOCTEXT_NAMESPACE "ECsStatusEffectEventCustomization"
 
-// Cached
-#pragma region
-
-namespace NCsStatusEffectEventCustomizationCached
-{
-	namespace Str
-	{
-		const FString CustomPopulateEnumMap = TEXT("FECsStatusEffectEventCustomization::CustomPopulateEnumMap");
-	}
-}
-
-#pragma endregion Cached
+#define EnumMapType EMCsStatusEffectEvent
+#define EnumType FECsStatusEffectEvent
 
 FECsStatusEffectEventCustomization::FECsStatusEffectEventCustomization() :
 	Super()
 {
-	Init<EMCsStatusEffectEvent, FECsStatusEffectEvent>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsStatusEffectEventCustomization::MakeInstance()
@@ -32,17 +22,20 @@ TSharedRef<IPropertyTypeCustomization> FECsStatusEffectEventCustomization::MakeI
 
 void FECsStatusEffectEventCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsStatusEffectEvent>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsStatusEffectEventCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsStatusEffectEvent, FECsStatusEffectEvent>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsStatusEffectEventCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsStatusEffectEvent, FECsStatusEffectEvent>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

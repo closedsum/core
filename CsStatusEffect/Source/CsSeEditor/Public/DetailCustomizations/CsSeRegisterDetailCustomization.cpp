@@ -8,6 +8,7 @@
 // DetailCustomizations
 	// EnumStruct
 		// StatusEffect
+#include "DetailCustomizations/EnumStruct/ECsStatusEffectCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsStatusEffectTriggerConditionCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsStatusEffectEventCustomization.h"
 
@@ -17,9 +18,18 @@ void FCsSeRegisterDetailCustomization::Register()
 
 	// EnumStruct
 	{
-		// ECsStatusEffectTriggerCondition
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsStatusEffectTriggerCondition", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsStatusEffectTriggerConditionCustomization::MakeInstance));
-		// ECsStatusEffectEvent
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsStatusEffectEvent", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsStatusEffectEventCustomization::MakeInstance));
+#define CS_TEMP_REGISTER(EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(#EnumName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##EnumName##Customization::MakeInstance)))
+
+		// StatusEffect
+		{
+			// ECsStatusEffect
+			CS_TEMP_REGISTER(ECsStatusEffect);
+			// ECsStatusEffectTriggerCondition
+			CS_TEMP_REGISTER(ECsStatusEffectTriggerCondition);
+			// ECsStatusEffectEvent
+			CS_TEMP_REGISTER(ECsStatusEffectEvent);
+		}
+
+#undef CS_TEMP_REGISTER
 	}
 }

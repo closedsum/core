@@ -7,6 +7,7 @@
 #include "Trigger/CsTypes_StatusEffect_Trigger.h"
 // EnumStructs
 	// Status Effect
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffect.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectTriggerCondition.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectEvent.h"
 
@@ -16,13 +17,21 @@ TSharedPtr<SGraphPin> FCsSePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) c
 	/*
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
+
+#define CS_TEMP_CREATE(EnumName) if (DoesPinUseScriptStruct<F##EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumName, InPin); }
+
 	// Status Effect
 	{
+		// ECsStatusEffect
+		CS_TEMP_CREATE(ECsStatusEffect)
 		// FECsStatusEffectTriggerCondition
-		if (DoesPinUseScriptStruct<FECsStatusEffectTriggerCondition>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsStatusEffectTriggerCondition, InPin); }
+		CS_TEMP_CREATE(ECsStatusEffectTriggerCondition)
 		// FECsStatusEffectEvent
-		if (DoesPinUseScriptStruct<FECsStatusEffectEvent>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsStatusEffectEvent, InPin); }
+		CS_TEMP_CREATE(ECsStatusEffectEvent)
 	}
+
+#undef CS_TEMP_CREATE
+
 	return nullptr;
 }
 

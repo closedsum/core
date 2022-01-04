@@ -11,6 +11,21 @@
 
 class ICsGetCoordinatorStatusEffect;
 
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
+// NCsStatusEffect::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, FInterfaceMap)
+
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData;
+		}
+	}
+}
+
 UCLASS()
 class CSSE_API UCsCoordinator_StatusEffect : public UObject
 {
@@ -19,6 +34,10 @@ class CSSE_API UCsCoordinator_StatusEffect : public UObject
 #define EventType NCsStatusEffect::NEvent::IEvent
 #define EventResourceType NCsStatusEffect::NEvent::FResource
 #define EventManagerType NCsStatusEffect::NEvent::FManager
+
+#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataType NCsStatusEffect::NData::IData
+#define DataInterfaceMapType NCsStatusEffect::NData::FInterfaceMap
 
 // Singleton
 #pragma region
@@ -204,6 +223,74 @@ public:
 
 #pragma endregion Event
 
+// Data
+#pragma region
+protected:
+
+	DataHandlerType<DataType, FCsData_StatusEffectPtr, DataInterfaceMapType>* DataHandler;
+
+	virtual void ConstructDataHandler();
+
+public:
+
+	FORCEINLINE DataHandlerType<DataType, FCsData_StatusEffectPtr, DataInterfaceMapType>* GetDataHandler() const { return DataHandler; }
+
+	/**
+	* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the character type.
+	*
+	* @param Name	Name of the Status Effect.
+	* return		Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+	*/
+	DataType* GetData(const FName& Name);
+
+	/**
+	* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the character type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Status Effect.
+	* return			Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+	*/
+	DataType* GetDataChecked(const FString& Context, const FName& Name);
+
+	/**
+	* Safely get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the weapon type.
+	*
+	* @param Context	The calling context.
+	* @param Name		Name of the Status Effect.
+	* return			Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+	*/
+	DataType* GetSafeData(const FString& Context, const FName& Name);
+
+	/**
+	* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Type.
+	*
+	* @param Type	Status Effect type.
+	* return		Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+	*/
+	DataType* GetData(const FECsStatusEffect& Type);
+
+	/**
+	* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Status Effect type.
+	* return			Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+	*/
+	DataType* GetDataChecked(const FString& Context, const FECsStatusEffect& Type);
+
+	/**
+	* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Type.
+	*
+	* @param Context	The calling context.
+	* @param Type		Status Effect type.
+	* return			Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+	*/
+	DataType* GetSafeData(const FString& Context, const FECsStatusEffect& Type);
+
+#pragma endregion Data
+
 // Log
 #pragma region
 public:
@@ -215,4 +302,8 @@ public:
 #undef EventType
 #undef EventResourceType
 #undef EventManagerType
+
+#undef DataHandlerType
+#undef DataType
+#undef DataInterfaceMapType
 };

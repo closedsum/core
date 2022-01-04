@@ -7,6 +7,7 @@
 // Library
 #include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Event/CsLibrary_StatusEffectEvent.h"
+#include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/StatusEffect/CsManager_StatusEffect.h"
@@ -20,6 +21,7 @@
 #include "CsReceiveStatusEffect.h"
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
+#include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_DataHandler.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -41,9 +43,11 @@ namespace NCsCoordinatorStatusEffect
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, Initialize);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetTypeFromEvent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEvent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEventContainer);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetData);
 		}
 	}
 }
@@ -197,38 +201,59 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 
 void UCsCoordinator_StatusEffect::Initialize()
 {
+	using namespace NCsCoordinatorStatusEffect::NCached;
+
+	const FString& Context = Str::Initialize;
+
 	// TODO: Poll config in future
 
-	const int32& Count = EMCsStatusEffectEvent::Get().Num();
+	// Populate EnumMaps
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-	Manager_Events.Reset(Count);
-	Manager_Events.AddDefaulted(Count);
+	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
 
-	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
+	NCsStatusEffect::PopulateEnumMapFromSettings(Context, ContextRoot);
+
+	// Data Handler
+	ConstructDataHandler();
+
+	checkf(DataHandler, TEXT("%s: Failed to construct DataHandler."), *Context);
+
+	DataHandler->PopulateDataMapFromSettings(Context);
+
+	// Event
 	{
-		typedef NCsStatusEffect::NEvent::FManager EventManagerType;
+		const int32& Count = EMCsStatusEffectEvent::Get().Num();
 
-		EventManagerType& Manager = Manager_Events[Event.GetValue()];
-		
-		const FString Name = FString::Printf(TEXT("UCsCoordinator_StatusEffect::Manager_Events[%s]"), Event.ToChar());
+		Manager_Events.Reset(Count);
+		Manager_Events.AddDefaulted(Count);
 
-		Manager.SetName(Name);
-		Manager.SetDeconstructResourcesOnShutdown();
-
-		const int32 PoolSize = 64;
-
-		Manager.CreatePool(PoolSize);
-
-		for (int32 I = 0; I < PoolSize; ++I)
+		for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
 		{
-			typedef NCsStatusEffect::NEvent::IEvent EventInterfaceType;
+			typedef NCsStatusEffect::NEvent::FManager EventManagerType;
 
-			EventInterfaceType* IEvent = ConstructEvent(Event);
+			EventManagerType& Manager = Manager_Events[Event.GetValue()];
+		
+			const FString Name = FString::Printf(TEXT("UCsCoordinator_StatusEffect::Manager_Events[%s]"), Event.ToChar());
 
-			checkf(IEvent, TEXT("UCsCoordinator_StatusEffect::Initialize: Failed to construct event for type: %s."), Event.ToChar());
+			Manager.SetName(Name);
+			Manager.SetDeconstructResourcesOnShutdown();
 
-			Manager.Add(IEvent);
-		} 
+			const int32 PoolSize = 64;
+
+			Manager.CreatePool(PoolSize);
+
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				typedef NCsStatusEffect::NEvent::IEvent EventInterfaceType;
+
+				EventInterfaceType* IEvent = ConstructEvent(Event);
+
+				checkf(IEvent, TEXT("UCsCoordinator_StatusEffect::Initialize: Failed to construct event for type: %s."), Event.ToChar());
+
+				Manager.Add(IEvent);
+			} 
+		}
 	}
 
 	bInitialized = true;
@@ -243,6 +268,9 @@ void UCsCoordinator_StatusEffect::Initialize()
 
 void UCsCoordinator_StatusEffect::CleanUp()
 {
+	delete DataHandler;
+
+	// Event
 	typedef NCsStatusEffect::NEvent::FManager EventManagerType;
 
 	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
@@ -540,6 +568,62 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 #undef EventType
 
 #pragma endregion Event
+
+// Data
+#pragma region
+
+void UCsCoordinator_StatusEffect::ConstructDataHandler()
+{
+	typedef NCsStatusEffect::NManager::NHandler::FData DataHandlerType;
+
+	DataHandler = new DataHandlerType();
+	DataHandler->Outer = this;
+	DataHandler->MyRoot = MyRoot;
+}
+
+#define DataType NCsStatusEffect::NData::IData
+
+DataType* UCsCoordinator_StatusEffect::GetData(const FName& Name)
+{
+	using namespace NCsCoordinatorStatusEffect::NCached;
+
+	const FString& Context = Str::GetData;
+
+	return DataHandler->GetData(Context, Name);
+}
+
+DataType* UCsCoordinator_StatusEffect::GetDataChecked(const FString& Context, const FName& Name)
+{
+	return DataHandler->GetDataChecked(Context, Name);
+}
+
+DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FName& Name)
+{
+	return DataHandler->GetSafeData(Context, Name);
+}
+
+DataType* UCsCoordinator_StatusEffect::GetData(const FECsStatusEffect& Type)
+{
+	using namespace NCsCoordinatorStatusEffect::NCached;
+
+	const FString& Context = Str::GetData;
+
+	return DataHandler->GetData<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+}
+
+DataType* UCsCoordinator_StatusEffect::GetDataChecked(const FString& Context, const FECsStatusEffect& Type)
+{
+	return DataHandler->GetDataChecked<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+}
+
+DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FECsStatusEffect& Type)
+{
+	return DataHandler->GetSafeData<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+}
+
+#undef DataType
+
+#pragma endregion Data
 
 // Log
 #pragma region

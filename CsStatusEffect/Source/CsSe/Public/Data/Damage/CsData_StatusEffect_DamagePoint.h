@@ -62,7 +62,7 @@ namespace NCsStatusEffect
 
 				TransferFrequencyParamsType* TransferFrequencyParams;
 
-				TArray<StatusEffectDataType*>* Children;
+				TArray<FECsStatusEffect>* Children;
 
 				// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
 
@@ -90,7 +90,7 @@ namespace NCsStatusEffect
 				FORCEINLINE void SetTriggerCondition(FECsStatusEffectTriggerCondition* Value) { TriggerCondition = Value; }
 				FORCEINLINE void SetTriggerFrequencyParams(TriggerFrequencyParamsType* Value) { TriggerFrequencyParams = Value; }
 				FORCEINLINE void SetTransferFrequencyParams(TransferFrequencyParamsType* Value) { TransferFrequencyParams = Value; }
-				FORCEINLINE void SetChildren(TArray<StatusEffectDataType*>* Value) { Children = Value; }
+				FORCEINLINE void SetChildren(TArray<FECsStatusEffect>* Value) { Children = Value; }
 
 			// StatusEffectDataType (NCsStatusEffect::NData::IData)
 			#pragma region
@@ -99,7 +99,7 @@ namespace NCsStatusEffect
 				FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return *TriggerCondition; }
 				FORCEINLINE const TriggerFrequencyParamsType& GetTriggerFrequencyParams() const { return *TriggerFrequencyParams; }
 				FORCEINLINE const TransferFrequencyParamsType& GetTransferFrequencyParams() const { return *TransferFrequencyParams; }
-				FORCEINLINE const TArray<StatusEffectDataType*>& GetChildren() const { return *Children; }
+				FORCEINLINE const TArray<FECsStatusEffect>& GetChildren() const { return *Children; }
 
 			#pragma endregion StatusEffectDataType (NCsStatusEffect::NData::IData)
 
@@ -212,7 +212,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsStatusEffectTransferFrequencyParams TransferFrequencyParams;
 
-	TArray<ICsData_StatusEffect*> Children;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FECsStatusEffect> Children;
 
 // ICsData_StatusEffect
 #pragma region
@@ -221,7 +222,7 @@ public:
 	FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return TriggerCondition; }
 	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const { return TriggerFrequencyParams; }
 	FORCEINLINE const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const { return TransferFrequencyParams; }
-	FORCEINLINE const TArray<ICsData_StatusEffect*>& GetChildren() const { return Children; }
+	FORCEINLINE const TArray<FECsStatusEffect>& GetChildren() const { return Children; }
 
 #pragma endregion ICsStatusEffect
 

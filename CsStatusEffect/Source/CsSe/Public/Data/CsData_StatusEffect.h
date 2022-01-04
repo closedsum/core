@@ -1,7 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "CsTypes_StatusEffect.h"
 
 #include "CsData_StatusEffect.generated.h"
 
@@ -26,7 +27,7 @@ namespace NCsStatusEffect
 			*
 			* return
 			*/
-			virtual const TArray<IData*>& GetChildren() const = 0;
+			virtual const TArray<FECsStatusEffect>& GetChildren() const = 0;
 		};
 	}
 }
@@ -54,5 +55,5 @@ public:
 	*
 	* return
 	*/
-	virtual const TArray<ICsData_StatusEffect*>& GetChildren() const = 0;
+	virtual const TArray<FECsStatusEffect>& GetChildren() const = 0;
 };

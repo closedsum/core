@@ -36,13 +36,15 @@ namespace NCsDamage
 
 					InterfaceMap->SetRoot<FImpl>(this);
 
-					typedef NCsDamage::NModifier::IModifier ModifierType;
-					typedef NCsDamage::NModifier::NValue::IValue ModifierValueType;
-					typedef NCsDamage::NModifier::NValue::NPoint::IPoint ModifierValuePointType;
+					typedef NCsModifier::IModifier ModifierType;
+					typedef NCsDamage::NModifier::IModifier DmgModifierType;
+					typedef NCsDamage::NModifier::NValue::IValue DmgModifierValueType;
+					typedef NCsDamage::NModifier::NValue::NPoint::IPoint DmgModifierValuePointType;
 
 					InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
-					InterfaceMap->Add<ModifierValueType>(static_cast<ModifierValueType*>(this));
-					InterfaceMap->Add<ModifierValuePointType>(static_cast<ModifierValuePointType*>(this));
+					InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
+					InterfaceMap->Add<DmgModifierValueType>(static_cast<DmgModifierValueType*>(this));
+					InterfaceMap->Add<DmgModifierValuePointType>(static_cast<DmgModifierValuePointType*>(this));
 				}
 				
 				FImpl::~FImpl()
@@ -51,7 +53,7 @@ namespace NCsDamage
 					delete InterfaceMap;
 				}
 
-				// IValue (NCsDamage::NModifier::NValue::IValue)
+				// DmgModifierValueType (NCsDamage::NModifier::NValue::IValue)
 				#pragma region
 
 				#define ValueType NCsDamage::NValue::IValue
@@ -75,7 +77,7 @@ namespace NCsDamage
 				}
 				#undef ValueType
 
-				#pragma endregion IValue (NCsDamage::NModifier::NValue::IValue)
+				#pragma endregion DmgModifierValueType (NCsDamage::NModifier::NValue::IValue)
 			}
 		}
 	}

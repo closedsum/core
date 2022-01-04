@@ -1,6 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Interfaces
+#include "Modifier/CsModifier.h"
 #include "Managers/Damage/Modifier/CsDamageModifier.h"
 #include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
 #include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
@@ -18,12 +19,18 @@ namespace NCsDamage
 		{
 			namespace NPoint
 			{
+			#define ModifierType NCsModifier::IModifier
+			#define DmgModifierType NCsDamage::NModifier::IModifier
+			#define DmgValueModifierType NCsDamage::NModifier::NValue::IValue
+			#define DmgValuePointModifierType NCsDamage::NModifier::NValue::NPoint::IPoint
+
 				/**
 				* 
 				*/
-				struct CSCORE_API FImpl : public IModifier,
-										  public IValue,
-										  public IPoint
+				struct CSCORE_API FImpl : public ModifierType,
+										  public DmgModifierType,
+										  public DmgValueModifierType,
+										  public DmgValuePointModifierType
 				{
 				public:
 
@@ -38,9 +45,9 @@ namespace NCsDamage
 
 					FCsInterfaceMap* InterfaceMap;
 
-					// IModifier (NCsDamage::NModifier::IModifier)
+					// DmgModifierType (NCsDamage::NModifier::IModifier)
 				
-					// IValue (NCsDamage::NModifier::NValue::IValue)
+					// DmgValuePointModifierType (NCsDamage::NModifier::NValue::IValue)
 
 				public:
 
@@ -63,17 +70,22 @@ namespace NCsDamage
 
 				#pragma endregion ICsGetInterfaceMap
 
-				// IValue (NCsDamage::NModifier::NValue::IValue)
+				// DmgValuePointModifierType (NCsDamage::NModifier::NValue::IValue)
 				#pragma region
 				public:
 
 					void Modify(ValueType* Value) const;
 
-				#pragma endregion IValue (NCsDamage::NModifier::NValue::IValue)
+				#pragma endregion DmgValuePointModifierType (NCsDamage::NModifier::NValue::IValue)
 
 				#undef ValueType
 				#undef ApplicationType
 				};
+
+			#undef ModifierType
+			#undef DmgModifierType
+			#undef DmgValueModifierType
+			#undef DmgValuePointModifierType
 			}
 		}
 	}

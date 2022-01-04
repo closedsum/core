@@ -9,13 +9,10 @@
 #include "Event/CsStatusEffectEventInfo.h"
 #include "CsReceiveStatusEffect.h"
 
-
 #include "CsManager_StatusEffect.generated.h"
 
 // Structs
 #pragma region
-
-	// NCsStatuseffect::NEvent::NInfo::FImpl
 
 namespace NCsStatusEffect
 {
@@ -24,7 +21,7 @@ namespace NCsStatusEffect
 		namespace NInfo
 		{
 			/**
-			* Container for holding a reference to an object of type: NCsDamage::NEvent::NInfo::FImpl.
+			* Container for holding a reference to an object of type: NCsStatuseffect::NEvent::NInfo::FImpl.
 			* This serves as an easy way for a Manager Resource to keep track of the resource.
 			*/
 			struct CSSE_API FResource : public TCsResourceContainer<FImpl>
@@ -32,8 +29,8 @@ namespace NCsStatusEffect
 			};
 
 			/**
-			* A manager handling allocating and deallocating objects of type: NCsDamage::NEvent::NInfo::FImpl and
-			* are wrapped in the container: NCsDamage::NEvent::FResource.
+			* A manager handling allocating and deallocating objects of type: NCsStatuseffect::NEvent::NInfo::FImpl and
+			* are wrapped in the container: NCsStatuseffect::NEvent::FResource.
 			*/
 			struct CSSE_API FManager : public TCsManager_ResourceValueType_Fixed<FImpl, FResource, 0>
 			{

@@ -5,7 +5,6 @@
 // CVar
 #include "Coordinators/StatusEffect/CsCVars_Coordinator_StatusEffect.h"
 // Library
-#include "Library/CsLibrary_Common.h"
 #include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Event/CsLibrary_StatusEffectEvent.h"
 #include "Library/CsLibrary_Valid.h"
@@ -40,7 +39,6 @@ namespace NCsCoordinatorStatusEffect
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, GetTypeFromEvent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEvent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_StatusEffect, ProcessStatusEffectEventContainer);
@@ -63,12 +61,19 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 
 #if WITH_EDITOR
 
-/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect();
 }
 
-/*static*/ bool UCsCoordinator_StatusEffect::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetCoordinatorStatusEffect* GetCoordinatorStatusEffect = GetSafe_GetCoordinatorStatusEffect(Context, InRoot, Log))
+		return GetCoordinatorStatusEffect->GetCoordinator_StatusEffect();
+	return nullptr;
+}
+
+/*static*/ bool UCsCoordinator_StatusEffect::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect() != nullptr;
 }
@@ -112,7 +117,7 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsCoordinator_StatusEffect::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsCoordinator_StatusEffect::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetCoordinatorStatusEffect* GetCoordinatorStatusEffect = Get_GetCoordinatorStatusEffect(InRoot);
@@ -134,7 +139,7 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsCoordinator_StatusEffect::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsCoordinator_StatusEffect::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetCoordinatorStatusEffect(InRoot)->GetCoordinator_StatusEffect() == nullptr;
@@ -145,11 +150,11 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetCoordinatorStatusEffect* UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect(UObject* InRoot)
+/*static*/ ICsGetCoordinatorStatusEffect* UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsCoordinator_StatusEffect::Get_GetCoordinatorStatusEffect: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -164,19 +169,15 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 	return GetCoorindatorStatusEffect;
 }
 
-/*static*/ ICsGetCoordinatorStatusEffect* UCsCoordinator_StatusEffect::GetSafe_GetCoordinatorStatusEffect(UObject* Object)
+/*static*/ ICsGetCoordinatorStatusEffect* UCsCoordinator_StatusEffect::GetSafe_GetCoordinatorStatusEffect(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsCoordinator_StatusEffect::GetSafe_GetCoordinatorStatusEffect: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsManager_Damage::GetSafe_GetCoordinatorStatusEffect: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -184,36 +185,10 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsSe, Warning, TEXT("UCsManager_Damage::GetSafe_GetCoordinatorStatusEffect: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetCoordinatorStatusEffect>(Manager_Singleton);
-}
-
-/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::GetSafe(UObject* Object)
-{
-	if (ICsGetCoordinatorStatusEffect* GetCoordinatorStatusEffect = GetSafe_GetCoordinatorStatusEffect(Object))
-		return GetCoordinatorStatusEffect->GetCoordinator_StatusEffect();
-	return nullptr;
-}
-
-/*static*/ UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsCoordinatorStatusEffect::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsStatusEffect::NCoordinator::FLibrary StaticMeshCoordinatorLibrary;
-
-	if (UObject* ContextRoot = StaticMeshCoordinatorLibrary::GetSafe(Context, WorldContextObject))
-	{
-		if (UCsCoordinator_StatusEffect* Coordinator = StaticMeshCoordinatorLibrary::GetSafe(ContextRoot))
-			return Coordinator;
-
-		UE_LOG(LogCsSe, Warning, TEXT("%s: Failed to Coordinator Status Effect of type UCsCoordinator_StatusEffect from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -257,7 +232,7 @@ void UCsCoordinator_StatusEffect::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsCoordinator_StatusEffect::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsCoordinator_StatusEffect::HasInitialized(const UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;

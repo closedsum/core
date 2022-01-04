@@ -25,24 +25,33 @@ class CSSE_API UCsCoordinator_StatusEffect : public UObject
 public:
 
 #if WITH_EDITOR
-	static UCsCoordinator_StatusEffect* Get(UObject* InRoot = nullptr);
+	static UCsCoordinator_StatusEffect* Get(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static UCsCoordinator_StatusEffect* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsCoordinator_StatusEffect* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 #if WITH_EDITOR
-	static bool IsValid(UObject* InRoot = nullptr);
+	static UCsCoordinator_StatusEffect* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 #else
-	FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsCoordinator_StatusEffect* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+	static bool IsValid(const UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
 	{
 		return s_Instance != nullptr;
 	}
@@ -50,20 +59,14 @@ public:
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsCoordinator_StatusEffect> CoordinatorStatusEffectClass, UObject* InOuter = nullptr);
 	
-	static void Shutdown(UObject* InRoot = nullptr);
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetCoordinatorStatusEffect* Get_GetCoordinatorStatusEffect(UObject* InRoot);
-	static ICsGetCoordinatorStatusEffect* GetSafe_GetCoordinatorStatusEffect(UObject* Object);
-
-	static UCsCoordinator_StatusEffect* GetSafe(UObject* Object);
-
-public:
-
-	static UCsCoordinator_StatusEffect* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetCoordinatorStatusEffect* Get_GetCoordinatorStatusEffect(const UObject* InRoot);
+	static ICsGetCoordinatorStatusEffect* GetSafe_GetCoordinatorStatusEffect(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -75,7 +78,7 @@ protected:
 
 public:
 
-	static bool HasInitialized(UObject* InRoot);
+	static bool HasInitialized(const UObject* InRoot);
 
 protected:
 

@@ -2,7 +2,7 @@
 #include "DetailCustomizations/EnumStruct/ECsStatusEffectTriggerConditionCustomization.h"
 
 // Managers
-#include "CsTypes_StatusEffect.h"
+#include "Trigger/CsTypes_StatusEffect_Trigger.h"
 
 #define LOCTEXT_NAMESPACE "ECsStatusEffectTriggerConditionCustomization"
 

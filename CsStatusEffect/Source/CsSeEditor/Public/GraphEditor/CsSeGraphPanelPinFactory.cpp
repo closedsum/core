@@ -4,6 +4,7 @@
 
 // Types
 #include "CsTypes_StatusEffect.h"
+#include "Trigger/CsTypes_StatusEffect_Trigger.h"
 // EnumStructs
 	// Status Effect
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectTriggerCondition.h"

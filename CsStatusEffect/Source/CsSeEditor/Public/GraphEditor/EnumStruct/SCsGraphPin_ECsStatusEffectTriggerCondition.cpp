@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectTriggerCondition.h"
 #include "CsSeEditor.h"
 
-#include "CsTypes_StatusEffect.h"
+#include "Trigger/CsTypes_StatusEffect_Trigger.h"
 
 // Cached
 #pragma region

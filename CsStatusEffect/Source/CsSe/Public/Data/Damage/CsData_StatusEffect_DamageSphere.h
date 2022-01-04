@@ -5,6 +5,7 @@
 #include "Data/CsData.h"
 #include "Data/CsData_StatusEffect.h"
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
+#include "Data/Trigger/CsData_StatusEffect_Trigger.h"
 // Types
 #include "CsTypes_StatusEffect.h"
 #include "Managers/Damage/Data/Shape/CsTypes_Data_DamageShape.h"
@@ -26,9 +27,9 @@ namespace NCsStatusEffect
 	{
 		namespace NDamage
 		{
-#define DataType NCsData::IData
-#define StatusEffectDataType NCsStatusEffect::NData::IData
-#define StatusEffectDamageDataType NCsStatusEffect::NData::NDamage::IDamage
+		#define DataType NCsData::IData
+		#define StatusEffectDataType NCsStatusEffect::NData::IData
+		#define StatusEffectDamageDataType NCsStatusEffect::NData::NDamage::IDamage
 			/**
 			* "Emulates" UCsData_StatusEffect_DamageSphere by mimicking the interfaces and having pointers to the appropriate
 			* members. The idea behind this struct is to keep the code a cleaner and more readable.
@@ -115,9 +116,9 @@ namespace NCsStatusEffect
 			#pragma endregion NCsStatusEffect::NData::NDamage::IDamage
 			};
 
-#undef DataType
-#undef StatusEffectDataType
-#undef StatusEffectDamageDataType
+		#undef DataType
+		#undef StatusEffectDataType
+		#undef StatusEffectDamageDataType
 		}
 	}
 }

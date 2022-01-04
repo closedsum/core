@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Containers/CsGetInterfaceMap.h"
-#include "CsTypes_StatusEffect.h"
+#include "Trigger/CsTypes_StatusEffect_Trigger.h"
 
 #include "CsData_StatusEffect_Trigger.generated.h"
 

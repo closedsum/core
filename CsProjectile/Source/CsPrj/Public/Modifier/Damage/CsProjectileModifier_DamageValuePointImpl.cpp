@@ -39,11 +39,13 @@ namespace NCsProjectile
 
 						InterfaceMap->SetRoot<FImpl>(this);
 
+						typedef NCsModifier::IModifier ModifierType;
 						typedef NCsDamage::NModifier::IModifier DmgModifierType;
 						typedef NCsDamage::NModifier::NValue::IValue DmgModifierValueType;
 						typedef NCsDamage::NModifier::NValue::NPoint::IPoint DmgModifierValuePointType;
 						typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
+						InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
 						InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 						InterfaceMap->Add<DmgModifierValueType>(static_cast<DmgModifierValueType*>(this));
 						InterfaceMap->Add<DmgModifierValuePointType>(static_cast<DmgModifierValuePointType*>(this));

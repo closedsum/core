@@ -1,6 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Interfaces
+#include "Modifier/CsModifier.h"
 #include "Managers/Damage/Modifier/CsDamageModifier.h"
 #include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
 #include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
@@ -26,12 +27,14 @@ namespace NCsProjectile
 			{
 				namespace NPoint
 				{
+				#define ModifierType NCsModifier::IModifier
 				#define DmgModifierType NCsDamage::NModifier::IModifier
 				#define DmgValueModifierType NCsDamage::NModifier::NValue::IValue
 				#define DmgValuePointModifierType NCsDamage::NModifier::NValue::NPoint::IPoint
 				#define PrjModifierType NCsProjectile::NModifier::IModifier
 
-					struct CSPRJ_API FImpl : public DmgModifierType,
+					struct CSPRJ_API FImpl : public ModifierType,
+											 public DmgModifierType,
 											 public DmgValueModifierType,
 											 public DmgValuePointModifierType,
 											 public PrjModifierType,
@@ -108,7 +111,8 @@ namespace NCsProjectile
 					#undef ValueType
 					#undef ApplicationType
 					};
-
+				
+				#undef ModifierType
 				#undef DmgModifierType
 				#undef DmgValueModifierType
 				#undef DmgValuePointModifierType

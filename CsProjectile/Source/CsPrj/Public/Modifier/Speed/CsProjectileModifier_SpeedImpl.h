@@ -1,6 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Interfaces
+#include "Modifier/CsModifier.h"
 #include "Modifier/CsProjectileModifier.h"
 #include "Reset/CsReset.h"
 // Types
@@ -16,9 +17,11 @@ namespace NCsProjectile
 	{
 		namespace NSpeed
 		{
+		#define ModifierType NCsModifier::IModifier
 		#define PrjModifierType NCsProjectile::NModifier::IModifier
 
-			struct CSPRJ_API FImpl : public PrjModifierType,
+			struct CSPRJ_API FImpl : public ModifierType,
+									 public PrjModifierType,
 									 public ICsReset
 			{
 			public:
@@ -84,6 +87,7 @@ namespace NCsProjectile
 			#undef ApplicationType
 			};
 
+		#undef ModifierType
 		#undef PrjModifierType
 		}
 	}

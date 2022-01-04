@@ -38,8 +38,10 @@ namespace NCsProjectile
 
 				InterfaceMap->SetRoot<FImpl>(this);
 
+				typedef NCsModifier::IModifier ModifierType;
 				typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
+				InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
 				InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
 				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 			}

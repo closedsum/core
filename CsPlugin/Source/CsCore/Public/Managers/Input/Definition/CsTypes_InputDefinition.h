@@ -1,9 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Input
 #include "Managers/Input/CsInput.h"
 
 #include "CsTypes_InputDefinition.generated.h"
-#pragma once
 
 // InputValueRule
 #pragma region

@@ -1,11 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/Action/CsInputAction.h"
 #include "InputCoreTypes.h"
 
 #include "CsInput.generated.h"
-#pragma once
 
 // FCsInputInfo
 #pragma region

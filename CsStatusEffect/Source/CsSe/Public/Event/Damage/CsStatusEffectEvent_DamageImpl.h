@@ -1,11 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Event/CsStatusEffectEvent.h"
 #include "Event/Damage/CsStatusEffectEvent_Damage.h"
 #include "Reset/CsReset.h"
 #include "Containers/CsInterfaceMap.h"
 // Types
 #include "Managers/Damage/Event/CsAllocated_DamageEvent.h"
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;

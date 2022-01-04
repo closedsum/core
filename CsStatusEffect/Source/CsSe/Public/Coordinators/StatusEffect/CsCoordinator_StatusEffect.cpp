@@ -12,10 +12,12 @@
 #include "Managers/StatusEffect/CsManager_StatusEffect.h"
 #include "Managers/StatusEffect/CsGetManagerStatusEffect.h"
 #include "Managers/Damage/CsManager_Damage.h"
-// StatusEffect
+// Data
+#include "Data/Trigger/CsData_StatusEffect_Trigger.h"
 #include "Data/Shape/CsData_StatusEffect_Shape.h"
-#include "CsReceiveStatusEffect.h"
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
+// StatusEffect
+#include "CsReceiveStatusEffect.h"
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 // Unique
@@ -409,46 +411,51 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 
 	checkf(Data, TEXT("%s: Data is NULL. No Status Effect found for Event."), *Context);
 
-	typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
-	typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
+	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+	typedef NCsStatusEffect::NData::NTrigger::ITrigger TriggerDataType;
 
-	const TriggerFrequencyParamsType& TriggerParams   = Data->GetTriggerFrequencyParams();
-	const TransferFrequencyParamsType& TransferParams = Data->GetTransferFrequencyParams();
-
-	// TODO: Need to check for Shape
-
-	// Check for Status Effects will no transfer / pass through and will be consumed immediately
-	typedef NCsStatusEffect::NTrigger::EFrequency TriggerFrequencyType;
-	typedef NCsStatusEffect::NTransfer::EFrequency TransferFrequencyType;
-
-	if (TriggerParams.Type == TriggerFrequencyType::Once &&
-		TransferParams.Type == TransferFrequencyType::None)
+	if (TriggerDataType* TriggerData = SeDataLibrary::GetInterfaceChecked<TriggerDataType>(Context, Data))
 	{
-		// SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
+		typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
+		typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
 
-		typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
-		typedef NCsStatusEffect::NEvent::NDamage::IDamage SeDamageEventType;
+		const TriggerFrequencyParamsType& TriggerParams = TriggerData->GetTriggerFrequencyParams();
+		const TransferFrequencyParamsType& TransferParams = TriggerData->GetTransferFrequencyParams();
 
-		if (const SeDamageEventType* SeDamageEvent = SeEventLibrary::GetSafeInterfaceChecked<SeDamageEventType>(Context, Event))
+		// TODO: Need to check for Shape
+
+		// Check for Status Effects will no transfer / pass through and will be consumed immediately
+		typedef NCsStatusEffect::NTrigger::EFrequency TriggerFrequencyType;
+		typedef NCsStatusEffect::NTransfer::EFrequency TransferFrequencyType;
+
+		if (TriggerParams.Type == TriggerFrequencyType::Once &&
+			TransferParams.Type == TransferFrequencyType::None)
 		{
-			// Get the DamageEvent
-			typedef NCsDamage::NEvent::IEvent DamageEventType;
+			// SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 
-			const DamageEventType* DamageEvent = SeDamageEvent->GetDamageEvent();
+			typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
+			typedef NCsStatusEffect::NEvent::NDamage::IDamage SeDamageEventType;
 
-			checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: NCsStatusEffect::NEvent::NDamage::IDamage."), *Context);
+			if (const SeDamageEventType* SeDamageEvent = SeEventLibrary::GetSafeInterfaceChecked<SeDamageEventType>(Context, Event))
+			{
+				// Get the DamageEvent
+				typedef NCsDamage::NEvent::IEvent DamageEventType;
 
-			UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
-		}
-		else
-		{
+				const DamageEventType* DamageEvent = SeDamageEvent->GetDamageEvent();
 
+				checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: NCsStatusEffect::NEvent::NDamage::IDamage."), *Context);
+
+				UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
+			}
+			else
+			{
+
+			}
 		}
 	}
 	else
 	{
 		// ShapeDataType
-		typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
 		typedef NCsStatusEffect::NData::NShape::IShape ShapeDataType;
 
 		if (ShapeDataType* ShapeData = SeDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))

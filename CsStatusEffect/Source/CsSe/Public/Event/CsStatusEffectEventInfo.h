@@ -1,7 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Containers/CsGetInterfaceMap.h"
 #include "Event/CsTypes_StatusEffectEvent.h"
-#pragma once
 
 // NCsStatusEffect::NEvent::IEvent
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, IEvent)
@@ -23,6 +23,7 @@ namespace NCsStatusEffect
 			private:
 
 				typedef NCsStatusEffect::NEvent::FResource EventResourceType;
+				typedef NCsStatusEffect::NTrigger::NFrequency::FInfo FrequencyInfoType;
 
 			public:
 
@@ -30,7 +31,7 @@ namespace NCsStatusEffect
 
 				EventResourceType* Container;
 
-				FCsStatusEffectTriggerFrequencyInfo FrequencyInfo;
+				FrequencyInfoType FrequencyInfo;
 
 				float TotalTime;
 

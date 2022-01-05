@@ -6,7 +6,7 @@
 
 namespace NCsWeaponModifier
 {
-	//CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageValuePoint, "NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PrjWp_TimeBetweenShots, "NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl");
 }
 
 #pragma endregion WeaponModifier

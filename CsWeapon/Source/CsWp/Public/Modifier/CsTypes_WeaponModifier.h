@@ -28,7 +28,7 @@ namespace NCsWeaponModifier
 	typedef FECsWeaponModifier Type;
 	typedef EMCsWeaponModifier EnumMapType;
 
-	//extern CSWP_API const Type DamageValuePoint;
+	extern CSWP_API const Type PrjWp_TimeBetweenShots;
 }
 
 #pragma endregion WeaponModifier

@@ -1,9 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Cache/CsCache_Projectile.h"
 #include "Containers/CsWeakObjectPtr.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;
@@ -32,11 +31,11 @@ namespace NCsProjectile
 
 		private:
 
-			// ICsGetInterfaceMap
+		// ICsGetInterfaceMap
 
 			FCsInterfaceMap* InterfaceMap;
 
-			// PooledCacheType (NCsPooledObject::NCache::ICache)
+		// PooledCacheType (NCsPooledObject::NCache::ICache)
 
 			int32 Index;
 
@@ -78,6 +77,15 @@ namespace NCsProjectile
 			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
+
+		public:
+
+			FORCEINLINE void SetLifeTimeChecked(const FString& Context, const float& InLifeTime)
+			{
+				checkf(InLifeTime >= 0.0f, TEXT("%s: InLifeTime: %f is NOT >= 0.0f."), *Context, InLifeTime);
+
+				LifeTime = InLifeTime;
+			}
 
 		// PooledCacheType (NCsPooledObject::NCache::ICache)
 		#pragma region

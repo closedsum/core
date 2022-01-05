@@ -38,7 +38,7 @@
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
-#include "Modifier/Speed/CsProjectileModifier_SpeedImpl.h"
+#include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
 // FX
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound
@@ -868,15 +868,26 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		// Check to apply any Speed Modifiers
 		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
-		typedef NCsProjectile::NModifier::NSpeed::FImpl SpeedModifierType;
 
-		for (AllocatedModifierType& AllocatedModifier : Modifiers)
+			// Initial
 		{
-			if (SpeedModifierType* SpeedModifier = ModifierLibrary::SafeStaticCastChecked<SpeedModifierType>(Context, AllocatedModifier.Modifier))
+			typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl SpeedModifierType;
+
+			for (AllocatedModifierType& AllocatedModifier : Modifiers)
 			{
-				SpeedModifier->Modify(this);
+				if (SpeedModifierType* SpeedModifier = ModifierLibrary::SafeStaticCastChecked<SpeedModifierType>(Context, AllocatedModifier.Modifier))
+				{
+					SpeedModifier->Modify(this);
+				}
 			}
 		}
+			// Max
+		{
+
+		}
+
+		if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
+			MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
 
 		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Payload->GetDirection();
 		MovementComponent->ProjectileGravityScale = Data->GetGravityScale();

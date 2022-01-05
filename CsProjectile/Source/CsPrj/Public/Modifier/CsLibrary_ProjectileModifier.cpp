@@ -6,7 +6,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Projectile
 #include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_SpeedImpl.h"
+#include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
 
 namespace NCsProjectile
 {
@@ -24,11 +24,14 @@ namespace NCsProjectile
 			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
 				return Impl->IsValidChecked(Context);
 			// Speed
-			typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
 
-			if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
-				return Impl->IsValidChecked(Context);
+				// Initial
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
 
+				if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+					return Impl->IsValidChecked(Context);
+			}
 			return true;
 		}
 
@@ -42,10 +45,14 @@ namespace NCsProjectile
 			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
 				return Impl->IsValid(Context, Log);
 			// Speed
-			typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
 
-			if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
-				return Impl->IsValid(Context, Log);
+				// Initial
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
+
+				if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+					return Impl->IsValid(Context, Log);
+			}
 			return true;
 		}
 
@@ -59,11 +66,14 @@ namespace NCsProjectile
 			if (SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
 				return NCsProjectileModifier::DamageValuePoint;
 			// Speed
-			typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
 
-			if (SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
-				return NCsProjectileModifier::Speed;
+				// Initial
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
 
+				if (SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+					return NCsProjectileModifier::InitialSpeed;
+			}
 			checkf(0, TEXT("%s: Failed to determine type (FECsProjectileModifier) for Value."), *Context);
 			return EMCsProjectileModifier::Get().GetMAX();
 		}
@@ -87,8 +97,10 @@ namespace NCsProjectile
 				}
 			}
 			// Speed
+
+				// Initial
 			{
-				typedef NCsProjectile::NModifier::NSpeed::FImpl PrjSpeedModifierType;
+				typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
 
 				if (const PrjSpeedModifierType* FromImpl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, From))
 				{

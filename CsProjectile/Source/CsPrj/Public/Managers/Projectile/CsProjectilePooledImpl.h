@@ -163,13 +163,21 @@ public:
 #pragma region
 protected:
 
+#define CacheImplType NCsProjectile::NCache::FImpl
+
 	PooledCacheType* Cache;
 
-#define CacheImplType NCsProjectile::NCache::FImpl
 	CacheImplType* CacheImpl;
-#undef CacheImplType
+
+public:
+
+	CacheImplType* GetCacheImpl() const { return CacheImpl; }
+
+protected:
 
 	virtual void ConstructCache();
+
+#undef CacheImplType
 
 #pragma endregion PooledObject
 

@@ -8,7 +8,7 @@ namespace NCsProjectileModifier
 {
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageValuePoint, "NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl");
 	//CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValueRange, "NCsDamage::NModifier::NValue::NRange::IRange");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(Speed, "NCsProjectile::NModifier::NSpeed::FImpl");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(InitialSpeed, "NCsProjectile::NModifier::NSpeed::NInitial::FImpl");
 }
 
 #pragma endregion ProjectileModifier

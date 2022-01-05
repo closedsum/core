@@ -55,9 +55,8 @@ namespace NCsProjectile
 
 					public:
 
-						float Val;
-
-						ApplicationType Application;
+						CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+						CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
 
 					public:
 						
@@ -86,7 +85,7 @@ namespace NCsProjectile
 					#pragma region
 					public:
 
-						void Modify(ValueType* Value) const;
+						void Modify(ValueType* InValue) const;
 
 					#pragma endregion DmgValueModifierType (NCsDamage::NModifier::NValue::IValue)
 
@@ -96,13 +95,16 @@ namespace NCsProjectile
 
 						FORCEINLINE void Reset()
 						{
-							Val = 0.0f;
-							Application = ApplicationType::EApplication_MAX;
+							CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
+							CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
 						}
 
 					#pragma endregion ICsReset
 
 					public:
+
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
 						void CopyTo(FImpl* To) const;
 

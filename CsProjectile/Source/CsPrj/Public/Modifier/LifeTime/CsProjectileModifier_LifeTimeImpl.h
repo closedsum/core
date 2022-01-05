@@ -15,7 +15,7 @@ namespace NCsProjectile
 {
 	namespace NModifier
 	{
-		namespace NSpeed
+		namespace NLifeTime
 		{
 		#define ModifierType NCsModifier::IModifier
 		#define PrjModifierType NCsProjectile::NModifier::IModifier
@@ -36,11 +36,8 @@ namespace NCsProjectile
 
 				FCsInterfaceMap* InterfaceMap;
 
-			public:
-
-				float Val;
-
-				ApplicationType Application;
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
 
 			public:
 						
@@ -71,13 +68,16 @@ namespace NCsProjectile
 
 				FORCEINLINE void Reset()
 				{
-					Val = 0.0f;
-					Application = ApplicationType::EApplication_MAX;
+					CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
+					CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
 				}
 
 			#pragma endregion ICsReset
 
 			public:
+				
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
 				void CopyTo(FImpl* To) const;
 

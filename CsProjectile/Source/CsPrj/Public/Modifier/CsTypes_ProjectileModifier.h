@@ -1,5 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
@@ -30,7 +31,7 @@ namespace NCsProjectileModifier
 
 	extern CSPRJ_API const Type DamageValuePoint;
 	//extern CSPRJ_API const Type ValueRange;
-	extern CSPRJ_API const Type Speed;
+	extern CSPRJ_API const Type InitialSpeed;
 }
 
 #pragma endregion ProjectileModifier

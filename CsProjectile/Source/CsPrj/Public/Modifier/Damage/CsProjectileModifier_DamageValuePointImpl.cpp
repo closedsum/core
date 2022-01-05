@@ -32,8 +32,8 @@ namespace NCsProjectile
 					FImpl::FImpl() :
 						// ICsGetInterfaceMap
 						InterfaceMap(nullptr),
-						Val(0.0f),
-						Application(NCsModifier::NValue::NIntegral::EApplication::Multiply)
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NIntegral::EApplication::Multiply)
 					{
 						InterfaceMap = new FCsInterfaceMap();
 
@@ -51,6 +51,9 @@ namespace NCsProjectile
 						InterfaceMap->Add<DmgModifierValuePointType>(static_cast<DmgModifierValuePointType*>(this));
 						InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
 						InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
+
+						CS_CTOR_SET_MEMBER_PROXY(Value);
+						CS_CTOR_SET_MEMBER_PROXY(Application);
 					}
 				
 					FImpl::~FImpl()
@@ -63,7 +66,7 @@ namespace NCsProjectile
 					#pragma region
 
 					#define ValueType NCsDamage::NValue::IValue
-					void FImpl::Modify(ValueType* Value) const
+					void FImpl::Modify(ValueType* InValue) const
 					{
 						using namespace NCsProjectile::NModifier::NDamage::NValue::NPoint::NCached;
 
@@ -74,12 +77,12 @@ namespace NCsProjectile
 						typedef NCsDamage::NValue::FLibrary ValueLibrary;
 						typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
 
-						ValuePointType* ValuePoint = ValueLibrary::GetInterfaceChecked<ValuePointType>(Context, Value);
+						ValuePointType* ValuePoint = ValueLibrary::GetInterfaceChecked<ValuePointType>(Context, InValue);
 
 						const float& ValRef = ValuePoint->GetValue();
 						float* ValPtr	    = const_cast<float*>((const float*)(&ValRef));
 
-						NCsModifier::NValue::NIntegral::NApplication::Modify(*ValPtr, Val, Application);
+						NCsModifier::NValue::NIntegral::NApplication::Modify(*ValPtr, GetValue(), GetApplication());
 					}
 					#undef ValueType
 
@@ -87,28 +90,28 @@ namespace NCsProjectile
 
 					void FImpl::CopyTo(FImpl* To) const
 					{
-						To->Val = Val;
-						To->Application = Application;
+						To->SetValue(GetValue());
+						To->SetApplication(GetApplication());
 					}
 
 					bool FImpl::IsValidChecked(const FString& Context) const
 					{
-						CS_IS_FLOAT_GREATER_THAN_CHECKED(Val, 0.0f)
+						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetValue(), 0.0f)
 
 						typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
 
-						CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application)
+						CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
 						return true;
 					}
 
 					bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 					{
-						CS_IS_FLOAT_GREATER_THAN(Val, 0.0f)
+						CS_IS_FLOAT_GREATER_THAN(GetValue(), 0.0f)
 
 						typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
 						typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
 
-						CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, Application)
+						CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
 						return true;
 					}
 				}

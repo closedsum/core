@@ -8,7 +8,7 @@
 #include "Modifier/CsProjectileModifier.h"
 #include "Reset/CsReset.h"
 // Types
-#include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
+#include "Modifier/CsTypes_Modifier.h"
 // Log
 #include "Utility/CsPrjLog.h"
 
@@ -45,7 +45,8 @@ namespace NCsProjectile
 						static const FName Name;
 
 					#define ValueType NCsDamage::NValue::IValue
-					#define ApplicationType NCsDamage::NModifier::EApplication
+					#define ApplicationType NCsModifier::NValue::NIntegral::EApplication
+
 					private:
 
 						// ICsGetInterfaceMap

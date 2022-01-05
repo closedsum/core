@@ -5,7 +5,7 @@
 #include "Modifier/CsProjectileModifier.h"
 #include "Reset/CsReset.h"
 // Types
-#include "Modifier/Speed/CsTypes_ProjectileModifier_Speed.h"
+#include "Modifier/CsTypes_Modifier.h"
 // Log
 #include "Utility/CsPrjLog.h"
 
@@ -28,7 +28,7 @@ namespace NCsProjectile
 
 				static const FName Name;
 
-			#define ApplicationType NCsProjectile::NModifier::NSpeed::EApplication
+			#define ApplicationType NCsModifier::NValue::NIntegral::EApplication
 
 			private:
 

@@ -32,7 +32,7 @@ namespace NCsProjectile
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
 				Val(0.0f),
-				Application(NCsProjectile::NModifier::NSpeed::EApplication::Multiply)
+				Application(NCsModifier::NValue::NIntegral::EApplication::Multiply)
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
@@ -66,7 +66,7 @@ namespace NCsProjectile
 
 				float& InitialSpeed = MovementComponent->InitialSpeed;
 
-				NCsProjectile::NModifier::NSpeed::NApplication::Modify(InitialSpeed, Val, Application);
+				NCsModifier::NValue::NIntegral::NApplication::Modify(InitialSpeed, Val, Application);
 			}
 
 			#pragma endregion PrjModifierType (NCsProjectile::NModifier::IModifier)
@@ -81,7 +81,7 @@ namespace NCsProjectile
 			{
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(Val, 0.0f)
 
-				typedef NCsProjectile::NModifier::NSpeed::EMApplication ApplicationMapType;
+				typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
 
 				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application)
 				return true;
@@ -91,8 +91,8 @@ namespace NCsProjectile
 			{
 				CS_IS_FLOAT_GREATER_THAN(Val, 0.0f)
 
-				typedef NCsProjectile::NModifier::NSpeed::EMApplication ApplicationMapType;
-				typedef NCsProjectile::NModifier::NSpeed::EApplication ApplicationType;
+				typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
+				typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
 
 				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, Application)
 				return true;

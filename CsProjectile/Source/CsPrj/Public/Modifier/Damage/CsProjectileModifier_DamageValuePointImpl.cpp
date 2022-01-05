@@ -33,7 +33,7 @@ namespace NCsProjectile
 						// ICsGetInterfaceMap
 						InterfaceMap(nullptr),
 						Val(0.0f),
-						Application(NCsDamage::NModifier::EApplication::Multiply)
+						Application(NCsModifier::NValue::NIntegral::EApplication::Multiply)
 					{
 						InterfaceMap = new FCsInterfaceMap();
 
@@ -79,7 +79,7 @@ namespace NCsProjectile
 						const float& ValRef = ValuePoint->GetValue();
 						float* ValPtr	    = const_cast<float*>((const float*)(&ValRef));
 
-						NCsDamage::NModifier::NApplication::Modify(*ValPtr, Val, Application);
+						NCsModifier::NValue::NIntegral::NApplication::Modify(*ValPtr, Val, Application);
 					}
 					#undef ValueType
 
@@ -95,7 +95,7 @@ namespace NCsProjectile
 					{
 						CS_IS_FLOAT_GREATER_THAN_CHECKED(Val, 0.0f)
 
-						typedef NCsDamage::NModifier::EMApplication ApplicationMapType;
+						typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
 
 						CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application)
 						return true;
@@ -105,8 +105,8 @@ namespace NCsProjectile
 					{
 						CS_IS_FLOAT_GREATER_THAN(Val, 0.0f)
 
-						typedef NCsDamage::NModifier::EMApplication ApplicationMapType;
-						typedef NCsDamage::NModifier::EApplication ApplicationType;
+						typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
+						typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
 
 						CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, Application)
 						return true;

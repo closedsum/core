@@ -30,7 +30,7 @@ namespace NCsDamage
 				FImpl::FImpl() :
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
-					Application(NCsDamage::NModifier::EApplication::Multiply)
+					Application(NCsModifier::NValue::NIntegral::EApplication::Multiply)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -73,7 +73,7 @@ namespace NCsDamage
 					const float& ValRef = ValuePoint->GetValue();
 					float* ValPtr	    = const_cast<float*>((const float*)(&ValRef));
 
-					NCsDamage::NModifier::NApplication::Modify(*ValPtr, Val, Application);
+					NCsModifier::NValue::NIntegral::NApplication::Modify(*ValPtr, Val, Application);
 				}
 				#undef ValueType
 

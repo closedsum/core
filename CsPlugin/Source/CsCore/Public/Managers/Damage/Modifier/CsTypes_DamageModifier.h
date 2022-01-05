@@ -36,69 +36,6 @@ namespace NCsDamageModifier
 
 #pragma endregion DamageModifier
 
-// DamageModifierApplication
-#pragma region
-
-namespace NCsDamage
-{
-	namespace NModifier
-	{
-		enum class EApplication : uint8
-		{
-			Multiply,
-			Add,
-			Replace,
-			ReplaceOnlyIfGreater,
-			EApplication_MAX
-		};
-
-		struct CSCORE_API EMApplication : public TCsEnumMap<EApplication>
-		{
-			CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMApplication, EApplication)
-		};
-
-		namespace NApplication
-		{
-			namespace Ref
-			{
-				typedef EApplication Type;
-
-				extern CSCORE_API const Type Multiply;
-				extern CSCORE_API const Type Add;
-				extern CSCORE_API const Type Replace;
-				extern CSCORE_API const Type ReplaceOnlyIfGreater;
-				extern CSCORE_API const Type EApplication_MAX;
-			}
-
-			FORCEINLINE void Modify(float& ValueToModify, const float& Modifier, const EApplication& Type)
-			{
-				if (Type == EApplication::Multiply)
-				{
-					ValueToModify *= Modifier;
-				}
-				else
-				if (Type == EApplication::Add)
-				{
-					ValueToModify += Modifier;
-				}
-				else
-				if (Type == EApplication::Replace)
-				{
-					ValueToModify = Modifier;
-				}
-				else
-				if (Type == EApplication::ReplaceOnlyIfGreater)
-				{
-					if (Modifier > ValueToModify)
-						ValueToModify = Modifier;
-				}
-			}
-		}
-	}
-}
-
-#pragma endregion DamageModifierApplication
-
 // TODO: DamageModifierOrder
 
 // TODO: DamageModifierPriority

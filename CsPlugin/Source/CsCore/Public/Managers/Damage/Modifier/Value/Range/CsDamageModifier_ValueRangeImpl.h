@@ -6,7 +6,7 @@
 #include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
 #include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRange.h"
 // Types
-#include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
+#include "Modifier/CsTypes_Modifier.h"
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
@@ -37,7 +37,7 @@ namespace NCsDamage
 					static const FName Name;
 
 				#define ValueType NCsDamage::NValue::IValue
-				#define ApplicationType NCsDamage::NModifier::EApplication
+				#define ApplicationType NCsModifier::NValue::NIntegral::EApplication
 
 				private:
 

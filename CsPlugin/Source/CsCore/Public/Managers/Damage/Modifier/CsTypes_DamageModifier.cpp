@@ -12,28 +12,3 @@ namespace NCsDamageModifier
 }
 
 #pragma endregion DamageModifier
-
-// DamageModifierApplication
-#pragma region
-
-namespace NCsDamage
-{
-	namespace NModifier
-	{
-		namespace NApplication
-		{
-			namespace Ref
-			{
-				typedef EMApplication EnumMapType;
-
-				CSCORE_API CS_ADD_TO_ENUM_MAP(Multiply);
-				CSCORE_API CS_ADD_TO_ENUM_MAP(Add);
-				CSCORE_API CS_ADD_TO_ENUM_MAP(Replace);
-				CSCORE_API CS_ADD_TO_ENUM_MAP(ReplaceOnlyIfGreater);
-				CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EApplication_MAX, "MAX");
-			}
-		}
-	}
-}
-
-#pragma endregion DamageModifierApplication

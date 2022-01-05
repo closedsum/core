@@ -2,12 +2,18 @@
 #pragma once
 
 #include "UObject/Object.h"
+// Managers
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
+// Types
+#include "Modifier/CsTypes_WeaponModifier.h"
+// Settings
+ #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
+// Weapon
 #include "Payload/CsPayload_Weapon.h"
 #include "CsWeapon.h"
 #include "CsWeaponPooled.h"
-#include "Managers/Weapon/CsSettings_Manager_Weapon.h"
+#include "Modifier/CsResource_WeaponModifier.h"
 
 #include "CsManager_Weapon.generated.h"
 
@@ -91,6 +97,7 @@ class UDataTable;
 struct FCsWeaponPtr;
 struct FCsProjectileWeaponPtr;
 
+
 UCLASS()
 class CSWP_API UCsManager_Weapon : public UObject
 {
@@ -111,24 +118,33 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_Weapon* Get(UObject* InRoot = nullptr);
+	static UCsManager_Weapon* Get(const UObject* InRoot = nullptr);
 #else
-FORCEINLINE static UCsManager_Weapon* Get(UObject* InRoot = nullptr)
+FORCEINLINE static UCsManager_Weapon* Get(const UObject* InRoot = nullptr)
 {
 	return s_bShutdown ? nullptr : s_Instance;
 }
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
 #if WITH_EDITOR
-	static bool IsValid(UObject* InRoot = nullptr);
+	static UCsManager_Weapon* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 #else
-FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_Weapon* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+	static bool IsValid(const UObject* InRoot = nullptr);
+#else
+FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
 {
 	return s_Instance != nullptr;
 }
@@ -136,20 +152,14 @@ FORCEINLINE static bool IsValid(UObject* InRoot = nullptr)
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Weapon> ManagerWeaponClass, UObject* InOuter = nullptr);
 	
-	static void Shutdown(UObject* InRoot = nullptr);
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static void Shutdown(const UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerWeapon* Get_GetManagerWeapon(UObject* InRoot);
-	static ICsGetManagerWeapon* GetSafe_GetManagerWeapon(UObject* Object);
-
-	static UCsManager_Weapon* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Weapon* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerWeapon* Get_GetManagerWeapon(const UObject* InRoot);
+	static ICsGetManagerWeapon* GetSafe_GetManagerWeapon(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -161,7 +171,7 @@ protected:
 
 public:
 
-	static bool HasInitialized(UObject* InRoot);
+	static bool HasInitialized(const UObject* InRoot);
 
 protected:
 
@@ -835,6 +845,40 @@ protected:
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
+
+// Modifier
+#pragma region
+
+#define ModifierResourceType NCsWeapon::NModifier::FResource
+#define ModifierManagerType NCsWeapon::NModifier::FManager
+#define ModifierType NCsWeapon::NModifier::IModifier
+
+protected:
+
+	TArray<ModifierManagerType> Manager_Modifiers;
+
+	virtual ModifierType* ConstructModifier(const FECsWeaponModifier& Type);
+
+public:
+
+	ModifierResourceType* AllocateModifier(const FECsWeaponModifier& Type);
+
+	void DeallocateModifier(const FString& Context, const FECsWeaponModifier& Type, ModifierResourceType* Modifier);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
+	virtual const FECsWeaponModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
+
+#undef ModifierResourceType
+#undef ModifierManagerType
+#undef ModifierType
+
+#pragma endregion Modifier
 
 #undef ManagerType
 #undef ManagerParamsType

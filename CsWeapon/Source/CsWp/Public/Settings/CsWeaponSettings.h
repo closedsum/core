@@ -102,7 +102,7 @@ public:
 #pragma endregion Enum
 	
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FCsSettings_Manager_Weapon ManagerWeapon;
+	FCsSettings_Manager_Weapon Manager_Weapon;
 	
 // Unit Test
 #pragma region

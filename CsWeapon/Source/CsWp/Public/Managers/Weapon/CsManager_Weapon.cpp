@@ -4,13 +4,15 @@
 #include "CsWp.h"
 
 // CVars
-//#include "Managers/Projectile/CsCVars_Manager_Projectile.h"
+//#include "Managers/Weapon/CsCVars_Manager_Weapon.h"
 // Types
 #include "Projectile/CsTypes_ProjectileWeapon.h"
 // Library
+#include "Modifier/CsLibrary_WeaponModifier.h"
 #include "Library/CsLibrary_Property.h"
 #include "Library/Load/CsLibrary_Load.h"
 #include "Data/CsLibrary_Data.h"
+#include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsWpLog.h"
 // Settings
@@ -29,6 +31,7 @@
 #include "Managers/Weapon/Handler/CsManager_Weapon_ClassHandler.h"
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
 #include "Payload/CsPayload_WeaponImpl.h"
+#include "Modifier/Projectile/TimeBetweenShots/CsProjectileWeaponModifier_TimeBetweenShotsImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -48,7 +51,6 @@ namespace NCsManagerWeapon
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, InitInternalFromSettings);
 			CS_DEFINE_CACHED_STRING(Class, "Class");
@@ -93,12 +95,19 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_Weapon* UCsManager_Weapon::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Weapon* UCsManager_Weapon::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWeapon(InRoot)->GetManager_Weapon();
 }
 
-/*static*/ bool UCsManager_Weapon::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Weapon* UCsManager_Weapon::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerWeapon* GetManagerWeapon = GetSafe_GetManagerWeapon(Context, InRoot, Log))
+		return GetManagerWeapon->GetManager_Weapon();
+	return nullptr;
+}
+
+/*static*/ bool UCsManager_Weapon::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWeapon(InRoot)->GetManager_Weapon() != nullptr;
 }
@@ -142,7 +151,7 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_Weapon::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_Weapon::Shutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	ICsGetManagerWeapon* GetManagerWeapon = Get_GetManagerWeapon(InRoot);
@@ -164,7 +173,7 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_Weapon::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_Weapon::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
 	return Get_GetManagerWeapon(InRoot)->GetManager_Weapon() == nullptr;
@@ -175,11 +184,11 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerWeapon* UCsManager_Weapon::Get_GetManagerWeapon(UObject* InRoot)
+/*static*/ ICsGetManagerWeapon* UCsManager_Weapon::Get_GetManagerWeapon(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Weapon::Get_GetManagerWeapon: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Weapon::Get_GetManagerWeapon: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -194,19 +203,15 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 	return GetManagerWeapon;
 }
 
-/*static*/ ICsGetManagerWeapon* UCsManager_Weapon::GetSafe_GetManagerWeapon(UObject* Object)
+/*static*/ ICsGetManagerWeapon* UCsManager_Weapon::GetSafe_GetManagerWeapon(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::GetSafe_GetManagerWeapon: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::GetSafe_GetManagerWeapon: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -214,36 +219,10 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCsWp, Warning, TEXT("UCsManager_Weapon::GetSafe_GetManagerWeapon: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerWeapon>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Weapon* UCsManager_Weapon::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerWeapon* GetManagerWeapon = GetSafe_GetManagerWeapon(Object))
-		return GetManagerWeapon->GetManager_Weapon();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Weapon* UCsManager_Weapon::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerWeapon::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-	if (UObject* ContextRoot = WeaponManagerLibrary::GetSafe(Context, WorldContextObject))
-	{
-		if (UCsManager_Weapon* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCsWp, Warning, TEXT("%s: Failed to Manager Weapon of type UCsManager_Weapon from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR
@@ -255,7 +234,7 @@ void UCsManager_Weapon::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsManager_Weapon::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_Weapon::HasInitialized(const UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;
@@ -266,6 +245,18 @@ void UCsManager_Weapon::CleanUp()
 {
 	Internal.Shutdown();
 	Pool.Reset();
+
+	// Modifier
+	{
+		for (const FECsWeaponModifier& Modifier : EMCsWeaponModifier::Get())
+		{
+			typedef NCsWeapon::NModifier::FManager ModifierManagerType;
+
+			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
+
+			Manager.Shutdown();
+		}
+	}
 
 	delete ClassHandler;
 	ClassHandler = nullptr;
@@ -304,6 +295,34 @@ void UCsManager_Weapon::SetupInternal()
 	NCsWeapon::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsWeaponClass::PopulateEnumMapFromSettings(Context, GameInstance);
 	NCsWeaponState::PopulateEnumMapFromSettings(Context, GameInstance);
+
+	// Modifier
+	{
+		const int32& Count = EMCsWeaponModifier::Get().Num();
+
+		Manager_Modifiers.Reset(Count);
+		Manager_Modifiers.AddDefaulted(Count);
+
+		// Create Pool
+		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
+
+		const int32& PoolSize = ModuleSettings->Manager_Weapon.Modifiers.PoolSize;
+
+		for (const FECsWeaponModifier& Modifier : EMCsWeaponModifier::Get())
+		{
+			typedef NCsWeapon::NModifier::FManager ModifierManagerType;
+
+			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
+
+			Manager.SetDeconstructResourcesOnShutdown();
+			Manager.CreatePool(PoolSize);
+
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				Manager.Add(ConstructModifier(Modifier));
+			}
+		}
+	}
 
 	// Class Handler
 	ConstructClassHandler();
@@ -348,7 +367,7 @@ void UCsManager_Weapon::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_Weapon::SetupInternal: Failed to get settings of type: UCsWeaponSettings."));
 
-		Settings = ModuleSettings->ManagerWeapon;
+		Settings = ModuleSettings->Manager_Weapon;
 
 		// Populate TypeMapArray
 		{
@@ -794,3 +813,65 @@ void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
 }
 
 #pragma endregion Data
+
+// Modifier
+#pragma region
+
+#define ModifierResourceType NCsWeapon::NModifier::FResource
+#define ModifierType NCsWeapon::NModifier::IModifier
+
+ModifierType* UCsManager_Weapon::ConstructModifier(const FECsWeaponModifier& Type)
+{
+	// PrjWp_TimeBetweenShots | 
+	// ModifierType (NCsModifier::IModifier)
+	// WeaponModifierType (NCsWeapon::NModifier::IModifier)
+	// PrjWeaponModifierType (NCsWeapon::NModifier::NProjectile::IProjectile)
+	// NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl
+	if (Type == NCsWeaponModifier::PrjWp_TimeBetweenShots)
+		return new NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl();
+	return nullptr;
+}
+
+ModifierResourceType* UCsManager_Weapon::AllocateModifier(const FECsWeaponModifier& Type)
+{
+	checkf(EMCsWeaponModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::AllocateModifier: Type: %s is NOT Valid."), Type.ToChar());
+
+	return Manager_Modifiers[Type.GetValue()].Allocate();
+}
+
+void UCsManager_Weapon::DeallocateModifier(const FString& Context, const FECsWeaponModifier& Type, ModifierResourceType* Modifier)
+{
+	checkf(EMCsWeaponModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Weapon::DeallocateModifier: Type: %s is NOT Valid."), Type.ToChar());
+
+	CS_IS_PTR_NULL_CHECKED(Modifier)
+
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+
+	// Reset
+	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
+		IReset->Reset();
+
+	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
+}
+
+const FECsWeaponModifier& UCsManager_Weapon::GetModifierType(const FString& Context, const ModifierType* Modifier)
+{
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+
+	// PrjWp_TimeBetweenShots | 
+	// ModifierType (NCsModifier::IModifier)
+	// WeaponModifierType (NCsWeapon::NModifier::IModifier)
+	// PrjWeaponModifierType (NCsWeapon::NModifier::NProjectile::IProjectile)
+	// NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl
+	typedef NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl TimeBetweenShotsModiferType;
+
+	if (ModifierLibrary::SafeStaticCastChecked<TimeBetweenShotsModiferType>(Context, Modifier))
+		return NCsWeaponModifier::PrjWp_TimeBetweenShots;
+
+	return EMCsWeaponModifier::Get().GetMAX();
+}
+
+#undef ModifierResourceType
+#undef ModifierType
+
+#pragma endregion Modifier

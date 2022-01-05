@@ -9,7 +9,7 @@ namespace NCsProjectile
 {
 	namespace NModifier
 	{
-		// NCsDamage::NModifier::IModifier
+		// NCsProjectile::NModifier::IModifier
 
 		/**
 		* Container for holding a reference to an object that implements the interface: NCsProjectile::NModifier::IModifier.

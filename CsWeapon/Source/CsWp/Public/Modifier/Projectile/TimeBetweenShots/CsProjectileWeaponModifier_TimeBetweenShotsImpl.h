@@ -6,6 +6,7 @@
 #include "Modifier/Projectile/CsProjectileWeaponModifier.h"
 #include "Reset/CsReset.h"
 // Types
+#include "Modifier/CsTypes_Modifier.h"
 #include "Modifier/CsTypes_WeaponModifier.h"
 // Log
 #include "Utility/CsWpLog.h"
@@ -18,15 +19,15 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 
 namespace NCsWeapon
 {
-	namespace NModifier
+	namespace NProjectile
 	{
-		namespace NProjectile
+		namespace NModifier
 		{
 			namespace NTimeBetweenShots
 			{
 			#define ModifierType NCsModifier::IModifier
 			#define WeaponModifierType NCsWeapon::NModifier::IModifier
-			#define PrjWeaponModifierType NCsWeapon::NModifier::NProjectile::IProjectile
+			#define PrjWeaponModifierType NCsWeapon::NProjectile::NModifier::IModifier
 
 				struct CSWP_API FImpl : public ModifierType,
 										public WeaponModifierType,
@@ -37,13 +38,16 @@ namespace NCsWeapon
 
 					static const FName Name;
 
+				#define ApplicationType NCsModifier::NValue::NIntegral::EApplication
+
 				private:
 
 					// ICsGetInterfaceMap
 
 					FCsInterfaceMap* InterfaceMap;
 
-				public:
+					CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
 
 				public:
 						
@@ -68,13 +72,13 @@ namespace NCsWeapon
 
 				#pragma endregion WeaponModifierType (NCsWeapon::NModifier::IModifier)
 
-				// PrjWeaponModifierType (NCsWeapon::NModifier::NProjectile::IProjectile)
+				// PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 				#pragma region
 				public:
 
 					void Modify(ICsProjectileWeapon* ProjectileWeapon){}
 
-				#pragma endregion PrjWeaponModifierType (NCsWeapon::NModifier::NProjectile::IProjectile)
+				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 
 				// ICsReset
 				#pragma region
@@ -82,16 +86,23 @@ namespace NCsWeapon
 
 					FORCEINLINE void Reset()
 					{
+						CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
+						CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
 					}
 
 				#pragma endregion ICsReset
 
 				public:
 
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+
 					void CopyTo(FImpl* To) const;
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+				#undef ApplicationType
 				};
 				
 			#undef ModifierType

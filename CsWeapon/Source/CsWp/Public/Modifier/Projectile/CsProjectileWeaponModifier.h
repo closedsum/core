@@ -6,11 +6,11 @@ class ICsProjectileWeapon;
 
 namespace NCsWeapon
 {
-	namespace NModifier
+	namespace NProjectile
 	{
-		namespace NProjectile
+		namespace NModifier
 		{
-			struct CSWP_API IProjectile : public ICsGetInterfaceMap
+			struct CSWP_API IModifier : public ICsGetInterfaceMap
 			{
 			public:
 
@@ -18,7 +18,7 @@ namespace NCsWeapon
 
 			public:
 
-				virtual ~IProjectile() {}
+				virtual ~IModifier() {}
 
 				virtual void Modify(ICsProjectileWeapon* ProjectileWeapon) = 0;
 			};

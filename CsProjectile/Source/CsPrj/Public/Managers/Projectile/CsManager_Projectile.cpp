@@ -36,8 +36,9 @@
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
-#include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
+#include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
+#include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -1062,16 +1063,21 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModifier& Type)
 {
-	// DamageValuePoint | 
-	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
-	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
-	if (Type == NCsProjectileModifier::DamageValuePoint)
-		return new NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl();
 	// IntialSpeed | 
 	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
 	// NCsProjectile::NModifier::NSpeed::NInitial::FImpl
 	if (Type == NCsProjectileModifier::InitialSpeed)
 		return new NCsProjectile::NModifier::NSpeed::NInitial::FImpl();
+	// MaxSpeed | 
+	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
+	// NCsProjectile::NModifier::NSpeed::NMax::FImpl
+	if (Type == NCsProjectileModifier::MaxSpeed)
+		return new NCsProjectile::NModifier::NSpeed::NMax::FImpl();
+	// DamageValuePoint | 
+	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
+	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
+	if (Type == NCsProjectileModifier::DamageValuePoint)
+		return new NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl();
 	return nullptr;
 }
 
@@ -1101,6 +1107,24 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 {
 	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 
+	// InitialSpeed | 
+	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
+	// NCsProjectile::NModifier::NSpeed::NInitial::FImpl
+	{
+		typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
+
+		if (ModifierLibrary::SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+			return NCsProjectileModifier::InitialSpeed;
+	}
+	// MaxSpeed | 
+	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
+	// NCsProjectile::NModifier::NSpeed::NMax::FImpl
+	{
+		typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
+
+		if (ModifierLibrary::SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+			return NCsProjectileModifier::InitialSpeed;
+	}
 	// DamageValuePoint | 
 	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
 	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
@@ -1108,13 +1132,6 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 
 	if (ModifierLibrary::SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
 		return NCsProjectileModifier::DamageValuePoint;
-	// InitialSpeed | 
-	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
-	// NCsProjectile::NModifier::NSpeed::NInitialFImpl
-	typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
-
-	if (ModifierLibrary::SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
-		return NCsProjectileModifier::InitialSpeed;
 
 	return EMCsProjectileModifier::Get().GetMAX();
 }

@@ -825,10 +825,10 @@ ModifierType* UCsManager_Weapon::ConstructModifier(const FECsWeaponModifier& Typ
 	// PrjWp_TimeBetweenShots | 
 	// ModifierType (NCsModifier::IModifier)
 	// WeaponModifierType (NCsWeapon::NModifier::IModifier)
-	// PrjWeaponModifierType (NCsWeapon::NModifier::NProjectile::IProjectile)
-	// NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl
+	// PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
+	// NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl
 	if (Type == NCsWeaponModifier::PrjWp_TimeBetweenShots)
-		return new NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl();
+		return new NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl();
 	return nullptr;
 }
 
@@ -861,9 +861,9 @@ const FECsWeaponModifier& UCsManager_Weapon::GetModifierType(const FString& Cont
 	// PrjWp_TimeBetweenShots | 
 	// ModifierType (NCsModifier::IModifier)
 	// WeaponModifierType (NCsWeapon::NModifier::IModifier)
-	// PrjWeaponModifierType (NCsWeapon::NModifier::NProjectile::IProjectile)
+	// PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 	// NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl
-	typedef NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl TimeBetweenShotsModiferType;
+	typedef NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl TimeBetweenShotsModiferType;
 
 	if (ModifierLibrary::SafeStaticCastChecked<TimeBetweenShotsModiferType>(Context, Modifier))
 		return NCsWeaponModifier::PrjWp_TimeBetweenShots;

@@ -7,6 +7,7 @@
 // Projectile
 #include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
+#include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
 
 namespace NCsProjectile
 {
@@ -18,11 +19,6 @@ namespace NCsProjectile
 		{
 			CS_IS_PTR_NULL_CHECKED(Modifier)
 
-			// DamageValuePoint
-			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
-
-			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
-				return Impl->IsValidChecked(Context);
 			// Speed
 
 				// Initial
@@ -32,6 +28,18 @@ namespace NCsProjectile
 				if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
 					return Impl->IsValidChecked(Context);
 			}
+				// Max
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
+
+				if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+					return Impl->IsValidChecked(Context);
+			}
+			// DamageValuePoint
+			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
+
+			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
+				return Impl->IsValidChecked(Context);
 			return true;
 		}
 
@@ -39,11 +47,6 @@ namespace NCsProjectile
 		{
 			CS_IS_PTR_NULL(Modifier)
 
-			// DamageValuePoint
-			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
-
-			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
-				return Impl->IsValid(Context, Log);
 			// Speed
 
 				// Initial
@@ -53,6 +56,18 @@ namespace NCsProjectile
 				if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
 					return Impl->IsValid(Context, Log);
 			}
+				// Max
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
+
+				if (const PrjSpeedModifierType* Impl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+					return Impl->IsValid(Context, Log);
+			}
+			// DamageValuePoint
+			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
+
+			if (const PrjDmgValuePointModiferType* Impl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
+				return Impl->IsValid(Context, Log);
 			return true;
 		}
 
@@ -60,11 +75,6 @@ namespace NCsProjectile
 		{
 			CS_IS_PTR_NULL_CHECKED(Modifier)
 
-			// DamageValuePoint
-			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
-
-			if (SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
-				return NCsProjectileModifier::DamageValuePoint;
 			// Speed
 
 				// Initial
@@ -74,6 +84,18 @@ namespace NCsProjectile
 				if (SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
 					return NCsProjectileModifier::InitialSpeed;
 			}
+				// Max
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
+
+				if (SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
+					return NCsProjectileModifier::MaxSpeed;
+			}
+			// DamageValuePoint
+			typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
+
+			if (SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
+				return NCsProjectileModifier::DamageValuePoint;
 			checkf(0, TEXT("%s: Failed to determine type (FECsProjectileModifier) for Value."), *Context);
 			return EMCsProjectileModifier::Get().GetMAX();
 		}
@@ -84,18 +106,6 @@ namespace NCsProjectile
 
 			CS_IS_PTR_NULL_CHECKED(To)
 
-			// DamageValuePoint
-			{
-				typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
-
-				if (const PrjDmgValuePointModiferType* FromImpl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, From))
-				{
-					PrjDmgValuePointModiferType* ToImpl = StaticCastChecked<PrjDmgValuePointModiferType>(Context, To);
-
-					FromImpl->CopyTo(ToImpl);
-					return true;
-				}
-			}
 			// Speed
 
 				// Initial
@@ -105,6 +115,30 @@ namespace NCsProjectile
 				if (const PrjSpeedModifierType* FromImpl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, From))
 				{
 					PrjSpeedModifierType* ToImpl = StaticCastChecked<PrjSpeedModifierType>(Context, To);
+
+					FromImpl->CopyTo(ToImpl);
+					return true;
+				}
+			}
+				// Max
+			{
+				typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
+
+				if (const PrjSpeedModifierType* FromImpl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, From))
+				{
+					PrjSpeedModifierType* ToImpl = StaticCastChecked<PrjSpeedModifierType>(Context, To);
+
+					FromImpl->CopyTo(ToImpl);
+					return true;
+				}
+			}
+			// DamageValuePoint
+			{
+				typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
+
+				if (const PrjDmgValuePointModiferType* FromImpl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, From))
+				{
+					PrjDmgValuePointModiferType* ToImpl = StaticCastChecked<PrjDmgValuePointModiferType>(Context, To);
 
 					FromImpl->CopyTo(ToImpl);
 					return true;

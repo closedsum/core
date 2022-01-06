@@ -233,6 +233,8 @@ protected:
 
 public:
 
+	float TimeBetweenShots;
+
 	/**
 	*/
 	struct CSWP_API FTimeBetweenShotsImpl

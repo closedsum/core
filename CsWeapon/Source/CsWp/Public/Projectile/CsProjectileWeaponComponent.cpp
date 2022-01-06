@@ -347,6 +347,8 @@ void UCsProjectileWeaponComponent::Init()
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
+
+	TimeBetweenShots = PrjData->GetTimeBetweenShots();
 }
 
 // State
@@ -447,7 +449,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > PrjData->GetTimeBetweenShots());
+	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShots);
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
 	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
@@ -462,7 +464,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, PrjData->GetTimeBetweenShots());
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShots);
 		// Pass_Fire
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjData->DoFireOnRelease()), ToChar(PrjData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
@@ -614,7 +616,8 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
 
-	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenShots());
+	static const int32 TIME_BETWEEN_SHOTS = 0;
+	Payload->SetValue_Float(TIME_BETWEEN_SHOTS, Outer->TimeBetweenShots);
 
 	Scheduler->Start(Payload);
 }
@@ -626,18 +629,19 @@ char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal
 
 	ElapsedTime += R->DeltaTime;
 
-	const float& TimeBetweenShots = R->GetValue_Float(CS_FIRST);
+	static const int32 TIME_BETWEEN_SHOTS = 0;
+	const float& Captured_TimeBetweenShots = R->GetValue_Float(TIME_BETWEEN_SHOTS);
 
 	// Broadcast ElapsedTime events
 
 		// Time
 	const float& PreviousTime = PreviousElapsedTime.Time;
-	const float NewTime		   = FMath::Max(ElapsedTime.Time, TimeBetweenShots);
+	const float NewTime		   = FMath::Max(ElapsedTime.Time, Captured_TimeBetweenShots);
 
 	OnElapsedTime_Event.Broadcast(Outer, PreviousTime, NewTime);
 	// Percent
-	const float PreviousPercent = PreviousElapsedTime.Time / TimeBetweenShots;
-	const float NewPercent		= FMath::Min(ElapsedTime.Time / TimeBetweenShots, 1.0f);
+	const float PreviousPercent = PreviousElapsedTime.Time / Captured_TimeBetweenShots;
+	const float NewPercent		= FMath::Min(ElapsedTime.Time / Captured_TimeBetweenShots, 1.0f);
 
 	OnElapsedTimeAsPercent_Event.Broadcast(Outer, PreviousPercent, NewPercent);
 
@@ -645,7 +649,7 @@ char UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime_Internal
 
 	ElapsedTime.Reset();
 
-	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenShots);
+	CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= Captured_TimeBetweenShots);
 
 	OnComplete_Event.Broadcast(Outer);
 

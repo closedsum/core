@@ -1,6 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "CsTypes_StatusEffect.h"
 
 namespace NCsStatusEffect
 {
@@ -16,5 +18,7 @@ namespace NCsStatusEffect
 	public:
 
 		virtual ~IStatusEffect(){}
+
+		virtual const FECsStatusEffect& GetStatusEffectType() const = 0;
 	};
 }

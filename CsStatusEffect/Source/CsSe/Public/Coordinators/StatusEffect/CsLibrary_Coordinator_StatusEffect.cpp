@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coordinators/StatusEffect/CsLibrary_Coordinator_StatusEffect.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
-// Managers
+// Coordinators
 #include "Coordinators/StatusEffect/CsCoordinator_StatusEffect.h"
+// Library
+#include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
@@ -81,7 +81,7 @@ namespace NCsStatusEffect
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsCoordinator_StatusEffect* Coordinator_StatusEffect = UCsCoordinator_StatusEffect::Get(ContextRoot);
+			UCsCoordinator_StatusEffect* Coordinator_StatusEffect = UCsCoordinator_StatusEffect::GetSafe(Context, ContextRoot, Log);
 
 			if (!Coordinator_StatusEffect)
 			{
@@ -100,5 +100,80 @@ namespace NCsStatusEffect
 		}
 
 		#pragma endregion Get
+
+		// Data
+		#pragma region
+
+		#define DataType NCsStatusEffect::NData::IData
+
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsStatusEffect::NData::FInterfaceMap
+		DataHandlerType<DataType, FCsData_StatusEffectPtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
+
+			if (UCsCoordinator_StatusEffect* Coordinator_StatusEffect = GetSafe(Context, WorldContext, Log))
+			{
+				return Coordinator_StatusEffect->GetDataHandler();
+			}
+			return nullptr;
+		}
+
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
+		{
+			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
+
+			typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+			check(SeDataLibrary::IsValidChecked(Context, Data));
+
+			return Data;
+		}
+
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsCoordinator_StatusEffect* Coordinator_StatusEffect = GetSafe(Context, WorldContext, Log))
+			{
+				DataType* Data = Coordinator_StatusEffect->GetSafeData(Context, Name);
+
+				typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+				if (!SeDataLibrary::IsValid(Context, Data, Log))
+					return nullptr;
+				return Data;
+			}
+			return nullptr;
+		}
+
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type)
+		{
+			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
+
+			typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+			check(SeDataLibrary::IsValidChecked(Context, Data));
+
+			return Data;
+		}
+
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, void(*Log)(const FString&) /*=&FCLog::Warning*/)
+		{
+			if (UCsCoordinator_StatusEffect* Coordinator_StatusEffect = GetSafe(Context, WorldContext, Log))
+			{
+				DataType* Data = Coordinator_StatusEffect->GetSafeData(Context, Type);
+
+				typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+				if (!SeDataLibrary::IsValid(Context, Data, Log))
+					return nullptr;
+				return Data;
+			}
+			return nullptr;
+		}
+
+		#undef DataType
+
+		#pragma endregion Data
 	}
 }

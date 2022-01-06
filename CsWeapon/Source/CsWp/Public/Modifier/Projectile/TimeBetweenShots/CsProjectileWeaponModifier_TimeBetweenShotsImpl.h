@@ -68,7 +68,7 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
-					void Modify(ICsWeapon* Weapon){}
+					void Modify(ICsWeapon* Weapon);
 
 				#pragma endregion WeaponModifierType (NCsWeapon::NModifier::IModifier)
 
@@ -76,7 +76,7 @@ namespace NCsWeapon
 				#pragma region
 				public:
 
-					void Modify(ICsProjectileWeapon* ProjectileWeapon){}
+					void Modify(ICsProjectileWeapon* ProjectileWeapon);
 
 				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 

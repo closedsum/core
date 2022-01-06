@@ -158,7 +158,7 @@ struct CSPRJ_API FCsProjectileModifierInfo
 	bool bInitialSpeed;
 
 	/** Describes how to modify the InitialSpeed property. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bIntialSpeed"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInitialSpeed"))
 	FCsProjectileModifier_InitialSpeedInfo InitialSpeed;
 
 	/** Flag to indicate whether or note the MaxSpeed property should be modified. */

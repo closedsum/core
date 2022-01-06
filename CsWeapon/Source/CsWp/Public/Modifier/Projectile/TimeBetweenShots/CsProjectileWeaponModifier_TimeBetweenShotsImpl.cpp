@@ -5,6 +5,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
+// Weapon
+#include "Projectile/CsProjectileWeaponComponent.h"
 
 const FName NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl::Name = FName("NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl");
 
@@ -16,11 +18,14 @@ namespace NCsWeapon
 		{
 			namespace NTimeBetweenShots
 			{
-				namespace NCached
+				namespace NImpl
 				{
-					namespace Str
+					namespace NCached
 					{
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl, Modify);
+						namespace Str
+						{
+							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl, Modify);
+						}
 					}
 				}
 
@@ -52,6 +57,38 @@ namespace NCsWeapon
 					// ICsGetInterfaceMap
 					delete InterfaceMap;
 				}
+
+				// WeaponModifierType (NCsWeapon::NModifier::IModifier)
+				#pragma region
+
+				void FImpl::Modify(ICsWeapon* Weapon)
+				{
+					using namespace NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::NImpl::NCached;
+
+					const FString& Context = Str::Modify;
+
+					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Weapon, ICsWeapon, UCsProjectileWeaponComponent);
+
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, Value, Application);
+				}
+
+				#pragma endregion WeaponModifierType (NCsWeapon::NModifier::IModifier)
+
+				// PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
+				#pragma region
+
+				void FImpl::Modify(ICsProjectileWeapon* ProjectileWeapon)
+				{
+					using namespace NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::NImpl::NCached;
+
+					const FString& Context = Str::Modify;
+
+					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(ProjectileWeapon, ICsProjectileWeapon, UCsProjectileWeaponComponent);
+
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, Value, Application);
+				}
+
+				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 
 				void FImpl::CopyTo(FImpl* To) const
 				{

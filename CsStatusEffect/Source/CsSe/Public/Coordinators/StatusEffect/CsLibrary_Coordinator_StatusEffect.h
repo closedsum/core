@@ -1,11 +1,27 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Types
+#include "CsTypes_StatusEffect.h"
 // Log
 #include "Utility/CsSeLog.h"
 
-#pragma once
-
 class UObject;
 class UCsCoordinator_StatusEffect;
+
+// NCsPooledObject::NManager::NHandler::TData
+namespace NCsPooledObject {
+	namespace NManager {
+		namespace NHandler {
+			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
+			class TData;
+		}
+	}
+}
+
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
+// NCsStatusEffect::NData::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, FInterfaceMap)
 
 namespace NCsStatusEffect
 {
@@ -90,6 +106,75 @@ namespace NCsStatusEffect
 			static UCsCoordinator_StatusEffect* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// Data
+		#pragma region
+		public:
+
+		#define DataType NCsStatusEffect::NData::IData
+
+		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataInterfaceMapType NCsStatusEffect::NData::FInterfaceMap
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			*/
+			static DataHandlerType<DataType, FCsData_StatusEffectPtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+		#undef DataHandlerType
+		#undef DataInterfaceMapType
+
+			/**
+			* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the weapon type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Weapon.
+			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name);
+
+			/**
+			* Safely get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the weapon type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Weapon.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+			/**
+			* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Type.
+			* "Checked" in regards to returning a valid pointer.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type);
+
+			/**
+			* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+		#undef DataType
+
+		#pragma endregion Data
 		};
 	}
 }

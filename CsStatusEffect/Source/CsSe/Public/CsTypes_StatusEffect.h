@@ -2,6 +2,10 @@
 #pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+// Log
+#include "Utility/CsSeLog.h"
+// Engine
+#include "Engine/DataTable.h"
 
 #include "CsTypes_StatusEffect.generated.h"
 
@@ -73,6 +77,11 @@ namespace NCsStatusEffectEvent
 // FCsData_StatusEffectPtr
 #pragma region
 
+class UObject;
+
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
+
 /**
 */
 USTRUCT(BlueprintType)
@@ -105,25 +114,52 @@ public:
 	FORCEINLINE UObject* Get() const { return Data_Internal; }
 
 	template<typename T>
-	FORCEINLINE T* Get() const
-	{
-		return Cast<T>(Get());
-	}
+	FORCEINLINE T* Get() { return Cast<T>(Get()); }
 
-	FORCEINLINE UObject* GetChecked(const FString& Context) const
-	{
-		checkf(Data_Internal, TEXT("%s: Data_Internal is NULL."), *Context);
+#define DataType NCsStatusEffect::NData::IData
 
-		return Data_Internal;
-	}
+	DataType* GetChecked(const FString& Context) const;
 
-	template<typename T>
-	FORCEINLINE T* GetChecked(const FString& Context) const
-	{
-		return Cast<T>(GetChecked(Context));
-	}
+	DataType* GetSafe(const FString& Context) const;
 
-	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+	DataType* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+	DataType* SafeLoad();
+
+#undef DataType
+
+private:
+
+	FORCEINLINE void __Nothing() const {}
 };
 
 #pragma endregion FCsData_StatusEffectPtr
+
+// FCsStatusEffectEntry
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSSE_API FCsStatusEffectEntry : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** The enum (FECsStatusEffect) name for the Block. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	/** The enum (FECsStatusEffect) display name for the Block. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString DisplayName;
+
+	/** Soft Reference to a data of type: ICsData_StatusEffect. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsData_StatusEffectPtr Data;
+
+	FCsStatusEffectEntry() :
+		Name(),
+		DisplayName(),
+		Data()
+	{
+	}
+};
+
+#pragma endregion FCsStatusEffectEntry

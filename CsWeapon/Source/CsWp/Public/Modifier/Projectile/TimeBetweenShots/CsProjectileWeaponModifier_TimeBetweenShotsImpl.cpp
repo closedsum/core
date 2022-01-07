@@ -67,9 +67,11 @@ namespace NCsWeapon
 
 					const FString& Context = Str::Modify;
 
+					check(IsValidChecked(Context));
+
 					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Weapon, ICsWeapon, UCsProjectileWeaponComponent);
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, Value, Application);
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, GetValue(), GetApplication());
 				}
 
 				#pragma endregion WeaponModifierType (NCsWeapon::NModifier::IModifier)
@@ -83,9 +85,11 @@ namespace NCsWeapon
 
 					const FString& Context = Str::Modify;
 
+					check(IsValidChecked(Context));
+
 					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(ProjectileWeapon, ICsProjectileWeapon, UCsProjectileWeaponComponent);
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, Value, Application);
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, GetValue(), GetApplication());
 				}
 
 				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)

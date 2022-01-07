@@ -591,7 +591,8 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
 	typedef NCsStatusEffect::NData::NTrigger::ITrigger TriggerDataType;
 
-	if (TriggerDataType* TriggerData = SeDataLibrary::GetInterfaceChecked<TriggerDataType>(Context, Data))
+	// Trigger
+	if (TriggerDataType* TriggerData = SeDataLibrary::GetSafeInterfaceChecked<TriggerDataType>(Context, Data))
 	{
 		typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
 		typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;

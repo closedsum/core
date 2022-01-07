@@ -129,22 +129,22 @@ namespace NCsStatusEffect
 		#undef DataInterfaceMapType
 
 			/**
-			* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the weapon type.
+			* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the Status Effect type.
 			* "Checked" in regards to returning a valid pointer.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Name			Name of the Weapon.
+			* @param Name			Name of the Status Effect.
 			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 			*/
 			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name);
 
 			/**
-			* Safely get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the weapon type.
+			* Safely get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Name of the Status Effect type.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Name			Name of the Weapon.
+			* @param Name			Name of the Status Effect.
 			* @param Log			(optional)
 			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 			*/
@@ -156,7 +156,7 @@ namespace NCsStatusEffect
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Type			Weapon type.
+			* @param Type			Status Effect type.
 			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 			*/
 			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type);
@@ -166,11 +166,23 @@ namespace NCsStatusEffect
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Type			Weapon type.
+			* @param Type			Status Effect type.
 			* @param Log			(optional)
 			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 			*/
 			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Status Effect type.
+			* @param Instigator
+			* @param Causer
+			* @param Receiver
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver);
 
 		#undef DataType
 

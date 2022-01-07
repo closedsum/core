@@ -1,8 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Interfaces
 #include "Event/CsStatusEffectEvent.h"
 #include "Reset/CsReset.h"
-#include "Containers/CsInterfaceMap.h"
-#pragma once
+// StatusEffect
+#include "CsAllocated_StatusEffect.h"
 
 class UObject;
 struct FCsInterfaceMap;
@@ -14,22 +16,28 @@ namespace NCsStatusEffect
 {
 	namespace NEvent
 	{
-		struct CSSE_API FImpl final : public IEvent,
+	#define EventType NCsStatusEffect::NEvent::IEvent
+
+		struct CSSE_API FImpl final : public EventType,
 									  public ICsReset
 		{
 		public:
 
 			static const FName Name;
 
+		#define StatusEffectType NCsStatusEffect::IStatusEffect
+		#define AllocatedStatusEffectType NCsStatusEffect::FAllocated
 		#define DataType NCsStatusEffect::NData::IData
 
 		private:
 
-			FCsInterfaceMap InterfaceMap;
+			FCsInterfaceMap* InterfaceMap;
 
 		public:
 
-			// IEvent
+			// EventType (NCsStatusEffect::NEvent::IEvent)
+
+			AllocatedStatusEffectType StatusEffect;
 
 			DataType* Data;
 
@@ -44,6 +52,7 @@ namespace NCsStatusEffect
 		public:
 
 			FImpl();
+			~FImpl();
 
 			FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -51,21 +60,22 @@ namespace NCsStatusEffect
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// IEvent
+		// EventType (NCsStatusEffect::NEvent::IEvent)
 		#pragma region
 		public:
 
+			FORCEINLINE StatusEffectType* GetStatusEffect() const { return StatusEffect.Get(); }
 			FORCEINLINE DataType* GetData() const { return Data; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 			FORCEINLINE UObject* GetCauser() const { return Causer.IsValid() ? Causer.Get() : nullptr; }
 			FORCEINLINE UObject* GetReceiver() const { return Receiver.IsValid() ? Receiver.Get() : nullptr; }
 			FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const { return IgnoreObjects; }
 
-		#pragma endregion IEvent
+		#pragma endregion EventType (NCsStatusEffect::NEvent::IEvent)
 
 		public:
 
@@ -92,7 +102,11 @@ namespace NCsStatusEffect
 
 		#pragma endregion ICsReset
 
+		#undef StatusEffectType
+		#undef AllocatedStatusEffectType
 		#undef DataType
 		};
+
+	#undef EventType
 	}
 }

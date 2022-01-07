@@ -15,7 +15,7 @@ namespace NCsProjectile
 	namespace NModifier
 	{
 		/**
-		* Container for an allocated object which implements the interface
+		* Container for an allocated object which implements the interface:
 		* ModifierType (NCsProjectile::NModifier::IModifier). This container is used to some what cleanly free
 		* the object after use.
 		*/

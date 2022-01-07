@@ -3,7 +3,6 @@
 #include "Event/CsStatusEffectEvent.h"
 #include "Event/Damage/CsStatusEffectEvent_Damage.h"
 #include "Reset/CsReset.h"
-#include "Containers/CsInterfaceMap.h"
 // Types
 #include "Managers/Damage/Event/CsAllocated_DamageEvent.h"
 
@@ -21,16 +20,20 @@ namespace NCsStatusEffect
 	{
 		namespace NDamage
 		{
+		#define StatusEffectEventType NCsStatusEffect::NEvent::IEvent
+		#define DamageSeEventType NCsStatusEffect::NEvent::NDamage::IDamage
+		
 			/**
 			*/
-			struct CSSE_API FImpl final : public IEvent,
-										  public IDamage,
+			struct CSSE_API FImpl final : public StatusEffectEventType,
+										  public DamageSeEventType,
 										  public ICsReset
 			{
 			public:
 
 				static const FName Name;
 
+			#define StatusEffectType NCsStatusEffect::IStatusEffect
 			#define DataType NCsStatusEffect::NData::IData
 
 			private:
@@ -39,11 +42,13 @@ namespace NCsStatusEffect
 
 				// ICsGetInterfaceMap
 
-				FCsInterfaceMap InterfaceMap;
+				FCsInterfaceMap* InterfaceMap;
 
 			public:
 
-				// IEvent
+				// StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
+
+				StatusEffectType* StatusEffect;
 
 				DataType* Data;
 
@@ -55,13 +60,14 @@ namespace NCsStatusEffect
 
 				TArray<TWeakObjectPtr<UObject>> IgnoreObjects;
 
-				// IDamage
+				// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 
 				AllocatedDamageEventType DamageEvent;
 
 			public:
 
 				FImpl();
+				~FImpl();
 	
 				FORCEINLINE UObject* _getUObject() const { return nullptr; }
 
@@ -69,29 +75,30 @@ namespace NCsStatusEffect
 			#pragma region
 			public:
 
-				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return const_cast<FCsInterfaceMap*>(&InterfaceMap); }
+				FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 			#pragma endregion ICsGetInterfaceMap
 
-			// IEvent
+			// StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
 			#pragma region
 			public:
 
+				FORCEINLINE StatusEffectType* GetStatusEffect() const { return StatusEffect; }
 				FORCEINLINE DataType* GetData() const { return Data; }
 				FORCEINLINE UObject* GetInstigator() const { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 				FORCEINLINE UObject* GetCauser() const { return Causer.IsValid() ? Causer.Get() : nullptr; }
 				FORCEINLINE UObject* GetReceiver() const { return Receiver.IsValid() ? Receiver.Get() : nullptr; }
 				FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const { return IgnoreObjects; }
 
-			#pragma endregion IEvent
+			#pragma endregion StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
 
-			// IDamage
+			// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 			#pragma region
 			public:
 
 				FORCEINLINE NCsDamage::NEvent::IEvent* GetDamageEvent() const { return DamageEvent.Event; }
 
-			#pragma endregion IDamage
+			#pragma endregion DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 
 			public:
 
@@ -118,8 +125,12 @@ namespace NCsStatusEffect
 
 			#pragma endregion ICsReset
 
+			#undef StatusEffectType
 			#undef DataType
 			};
+
+		#undef StatusEffectEventType
+		#undef DamageSeEventType
 		}
 	}
 }

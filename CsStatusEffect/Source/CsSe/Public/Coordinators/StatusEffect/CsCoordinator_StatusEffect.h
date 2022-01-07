@@ -1,11 +1,14 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
-
+// Types
 #include "Event/CsResource_StatusEffectEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 #include "CsTypes_StatusEffect.h"
+// Interface
 #include "CsReceiveStatusEffect.h"
+// StatusEffect
+#include "CsResource_StatusEffect.h"
 
 #include "CsCoordinator_StatusEffect.generated.h"
 
@@ -30,6 +33,8 @@ UCLASS()
 class CSSE_API UCsCoordinator_StatusEffect : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+#define StatusEffectType NCsStatusEffect::IStatusEffect
 
 #define EventType NCsStatusEffect::NEvent::IEvent
 #define EventResourceType NCsStatusEffect::NEvent::FResource
@@ -127,6 +132,38 @@ public:
 
 #pragma endregion Singleton
 
+// StatusEffect
+#pragma region
+
+#define SeResourceType NCsStatusEffect::FResource
+#define SeManagerType NCsStatusEffect::FManager
+
+protected:
+
+	TArray<SeManagerType> Manager_StatusEffects;
+
+	virtual StatusEffectType* ConstructStatusEffect(const FECsStatusEffectImpl& Type);
+
+public:
+
+	SeResourceType* AllocateStatusEffect(const FECsStatusEffectImpl& Type);
+
+	void DeallocateStatusEffect(const FString& Context, const FECsStatusEffectImpl& Type, SeResourceType* StatusEffect);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Value
+	* return
+	*/
+	virtual const FECsStatusEffectImpl& GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect);
+
+#undef SeResourceType
+#undef SeManagerType
+
+#pragma endregion StatusEffect
+
 // Receive Status Effect
 #pragma region
 protected:
@@ -189,6 +226,8 @@ public:
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventType* Event);
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
+
+	EventResourceType* CreateEvent(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver);
 
 private:
 
@@ -289,6 +328,10 @@ public:
 	*/
 	DataType* GetSafeData(const FString& Context, const FECsStatusEffect& Type);
 
+	void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver);
+
+	void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver);
+
 #pragma endregion Data
 
 // Log
@@ -298,6 +341,8 @@ public:
 	//void LogEventPoint(const NCsStatusEffect::NEvent::IEvent* Event);
 
 #pragma endregion Log
+
+#undef StatusEffectType
 
 #undef EventType
 #undef EventResourceType

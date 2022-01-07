@@ -20,6 +20,8 @@ namespace NCsStatusEffect
 		{
 		public:
 		
+			static FString PrintDataAndClass(DataType* Data);
+
 			static bool IsValidChecked(const FString& Context, DataType* Data) { return true; }
 
 			static bool IsValid(const FString& Context, DataType* Data, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning) { return true; }

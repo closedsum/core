@@ -7,6 +7,7 @@
 // Library
 #include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Event/CsLibrary_StatusEffectEvent.h"
+#include "CsLibrary_StatusEffect.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
@@ -22,6 +23,8 @@
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 #include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_DataHandler.h"
+#include "Data/Types/CsData_GetStatusEffectImplType.h"
+#include "Copy/CsStatusEffect_Copy.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -58,7 +61,22 @@ namespace NCsCoordinatorStatusEffect
 UCsCoordinator_StatusEffect* UCsCoordinator_StatusEffect::s_Instance;
 bool UCsCoordinator_StatusEffect::s_bShutdown = false;
 
-UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Singleton
+	bInitialized(false),
+	MyRoot(nullptr),
+	// StatusEffect
+	Manager_StatusEffects(),
+	// Receive Status Effect
+	ReceiveStatusEffectMap(),
+	// Event
+	Manager_Events(),
+	Local_Receivers(),
+	Local_Events(),
+	OnEvent_Event(),
+	// Data
+	DataHandler(nullptr)
 {
 }
 
@@ -221,6 +239,33 @@ void UCsCoordinator_StatusEffect::Initialize()
 
 	DataHandler->PopulateDataMapFromSettings(Context);
 
+	// StatusEffect
+	{
+		const int32& Count = EMCsStatusEffectImpl::Get().Num();
+
+		Manager_StatusEffects.Reset(Count);
+		Manager_StatusEffects.AddDefaulted(Count);
+
+		// Create Pool
+		//UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
+
+		const int32& PoolSize = 64;//ModuleSettings->Manager_Projectile.Modifiers.PoolSize;
+
+		for (const FECsStatusEffectImpl& ImplType : EMCsStatusEffectImpl::Get())
+		{
+			typedef NCsStatusEffect::FManager SeManagerType;
+
+			SeManagerType& Manager = Manager_StatusEffects[ImplType.GetValue()];
+
+			Manager.SetDeconstructResourcesOnShutdown();
+			Manager.CreatePool(PoolSize);
+
+			for (int32 I = 0; I < PoolSize; ++I)
+			{
+				Manager.Add(ConstructStatusEffect(ImplType));
+			}
+		}
+	}
 	// Event
 	{
 		const int32& Count = EMCsStatusEffectEvent::Get().Num();
@@ -270,17 +315,30 @@ void UCsCoordinator_StatusEffect::CleanUp()
 {
 	delete DataHandler;
 
-	// Event
-	typedef NCsStatusEffect::NEvent::FManager EventManagerType;
-
-	for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
+	// Modifier
 	{
-		EventManagerType& Manager = Manager_Events[Event.GetValue()];
+		for (const FECsStatusEffectImpl& ImplType : EMCsStatusEffectImpl::Get())
+		{
+			typedef NCsStatusEffect::FManager SeManagerType;
 
-		Manager.Shutdown();
+			SeManagerType& Manager = Manager_StatusEffects[ImplType.GetValue()];
+
+			Manager.Shutdown();
+		}
+		Manager_StatusEffects.Reset();
 	}
-	Manager_Events.Reset();
+	// Event
+	{
+		typedef NCsStatusEffect::NEvent::FManager EventManagerType;
 
+		for (const FECsStatusEffectEvent& Event : EMCsStatusEffectEvent::Get())
+		{
+			EventManagerType& Manager = Manager_Events[Event.GetValue()];
+
+			Manager.Shutdown();
+		}
+		Manager_Events.Reset();
+	}
 	bInitialized = false;
 }
 
@@ -295,6 +353,51 @@ void UCsCoordinator_StatusEffect::SetMyRoot(UObject* InRoot)
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+// StatusEffect
+#pragma region
+
+#define SeResourceType NCsStatusEffect::FResource
+#define StatusEffectType NCsStatusEffect::IStatusEffect
+
+StatusEffectType* UCsCoordinator_StatusEffect::ConstructStatusEffect(const FECsStatusEffectImpl& Type)
+{
+	checkf(0, TEXT("UCsCoordinator_StatusEffect::ConstructStatusEffect: Failed to construct Status Effect for Type: %s."), Type.ToChar())
+	return nullptr;
+}
+
+SeResourceType* UCsCoordinator_StatusEffect::AllocateStatusEffect(const FECsStatusEffectImpl& Type)
+{
+	checkf(EMCsStatusEffectImpl::Get().IsValidEnum(Type), TEXT("UCsCoordinator_StatusEffect::AllocateStatusEffect: Type: %s is NOT Valid."), Type.ToChar());
+
+	return Manager_StatusEffects[Type.GetValue()].Allocate();
+}
+
+void UCsCoordinator_StatusEffect::DeallocateStatusEffect(const FString& Context, const FECsStatusEffectImpl& Type, SeResourceType* StatusEffect)
+{
+	checkf(EMCsStatusEffectImpl::Get().IsValidEnum(Type), TEXT("UCsCoordinator_StatusEffect::DeallocateStatusEffect: Type: %s is NOT Valid."), Type.ToChar());
+
+	CS_IS_PTR_NULL_CHECKED(StatusEffect)
+
+	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;
+
+	// Reset
+	if (ICsReset* IReset = StatusEffectLibrary::GetSafeInterfaceChecked<ICsReset>(Context, StatusEffect->Get()))
+		IReset->Reset();
+
+	Manager_StatusEffects[Type.GetValue()].Deallocate(StatusEffect);
+}
+
+const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect)
+{
+	checkf(0, TEXT("UCsCoordinator_StatusEffect::GetModifierType:Failed to get type associated with StatusEffect."));
+	return EMCsStatusEffectImpl::Get().GetMAX();
+}
+
+#undef SeResourceType
+#undef StatusEffectType
+
+#pragma endregion StatusEffect
 
 // Receive Status Effect
 #pragma region
@@ -354,9 +457,12 @@ void UCsCoordinator_StatusEffect::Remove(ICsReceiveStatusEffect* Object)
 EventType* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
 {
 	// Default
+	// NCsStatusEffect::NEvent::IEvent
 	if (Type == NCsStatusEffectEvent::Default)
 		return new NCsStatusEffect::NEvent::FImpl();
 	// Damage
+	// NCsStatusEffect::NEvent::IEvent
+	// NCsStatusEffect::NEvent::NDamage::IDamage
 	if (Type == NCsStatusEffectEvent::Damage)
 		return new NCsStatusEffect::NEvent::NDamage::FImpl();
 	return nullptr;
@@ -367,12 +473,14 @@ EventResourceType* UCsCoordinator_StatusEffect::AllocateEvent(const FECsStatusEf
 	return Manager_Events[Type.GetValue()].Allocate();
 }
 
-const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const NCsStatusEffect::NEvent::IEvent* Event)
+const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const EventType* Event)
 {
 	typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 
 	// Damage
-	if (SeEventLibrary::GetSafeInterfaceChecked<NCsStatusEffect::NEvent::NDamage::IDamage>(Context, Event))
+	typedef NCsStatusEffect::NEvent::NDamage::IDamage DamageEventType;
+
+	if (SeEventLibrary::GetSafeInterfaceChecked<DamageEventType>(Context, Event))
 		return NCsStatusEffectEvent::Damage;
 	return NCsStatusEffectEvent::Default;
 }
@@ -423,6 +531,47 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString&
 	CS_IS_PTR_NULL_CHECKED(Event)
 
 	return CreateCopyOfEvent(Context, Event->Get());
+}
+
+#define DataType NCsStatusEffect::NData::IData
+EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
+{
+#undef DataType
+
+	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+	ICsData_GetStatusEffectImplType* GetStatusEffectImplType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectImplType>(Context, Data);
+	const FECsStatusEffectImpl& ImplType					 = GetStatusEffectImplType->GetStatusEffectImplType();
+
+	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;	
+	typedef NCsStatusEffect::FResource SeResourceType;
+	typedef NCsStatusEffect::IStatusEffect StatusEffectType;
+	typedef NCsStatusEffect::NCopy::ICopy CopyType;
+
+	SeResourceType* Container	   = AllocateStatusEffect(ImplType);
+	StatusEffectType* StatusEffect = Container->Get();
+	CopyType* Copy				   = StatusEffectLibrary::GetInterfaceChecked<CopyType>(Context, StatusEffect);
+
+	Copy->CopyFromData(Type, Data);
+
+	// TODO: MAYBE: Fix
+	typedef NCsStatusEffect::NEvent::FLibrary EventLibrary;
+	typedef NCsStatusEffect::NEvent::FImpl EventImplType;
+
+	EventResourceType* EventContainer = AllocateEvent(NCsStatusEffectEvent::Default);
+	EventType* Event				  = EventContainer->Get();
+	EventImplType* EventImpl		  = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
+
+	EventImpl->StatusEffect.Root		 = MyRoot;
+	EventImpl->StatusEffect.Container	 = Container;
+	EventImpl->StatusEffect.StatusEffect = StatusEffect;
+	EventImpl->StatusEffect.Type		 = Type;
+	EventImpl->Data = Data;
+	EventImpl->Instigator = Instigator;
+	EventImpl->Causer = Causer;
+	EventImpl->Receiver = Receiver;
+
+	return EventContainer;
 }
 
 void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Event)
@@ -505,6 +654,7 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 
 					Local_Events.Add(EventContainer);
 				}
+				// TODO: Add check if Receiver doesn't implement the interface?
 			}
 		}
 	}
@@ -619,6 +769,20 @@ DataType* UCsCoordinator_StatusEffect::GetDataChecked(const FString& Context, co
 DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FECsStatusEffect& Type)
 {
 	return DataHandler->GetSafeData<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+}
+
+void UCsCoordinator_StatusEffect::ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
+{
+	typedef NCsStatusEffect::NEvent::FResource EventResourceType;
+
+	EventResourceType* Container = CreateEvent(Context, Type, Data, Instigator, Causer, Receiver);
+
+	ProcessStatusEffectEventContainer(Container);
+}
+
+void UCsCoordinator_StatusEffect::ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver)
+{
+	ProcessDataChecked(Context, Type, GetDataChecked(Context, Type), Instigator, Causer, Receiver);
 }
 
 #undef DataType

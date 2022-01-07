@@ -1,6 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 
+// Container
+#include "Containers/CsInterfaceMap.h"
+
 const FName NCsStatusEffect::NEvent::NDamage::FImpl::Name = FName("NCsStatusEffect::NEvent::NDamage::FImpl");;
 
 namespace NCsStatusEffect
@@ -12,25 +15,36 @@ namespace NCsStatusEffect
 			FImpl::FImpl() :
 				// ICsGetInterfaceMap
 				InterfaceMap(),
-				// IEvent
+				// StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
+				StatusEffect(nullptr),
 				Data(nullptr),
 				Instigator(nullptr),
 				Causer(nullptr),
 				Receiver(nullptr),
 				IgnoreObjects(),
-				// IDamage
+				// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 				DamageEvent()
 			{
-				InterfaceMap.SetRoot<FImpl>(this);
+				InterfaceMap = new FCsInterfaceMap();
 
-				InterfaceMap.Add<IEvent>(static_cast<IEvent*>(this));
-				InterfaceMap.Add<IDamage>(static_cast<IDamage*>(this));
-				InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
+				InterfaceMap->SetRoot<FImpl>(this);
+
+				typedef NCsStatusEffect::NEvent::IEvent StatusEffectEventType;
+				typedef NCsStatusEffect::NEvent::NDamage::IDamage DamageSeEventType;
+		
+				InterfaceMap->Add<StatusEffectEventType>(static_cast<StatusEffectEventType*>(this));
+				InterfaceMap->Add<DamageSeEventType>(static_cast<DamageSeEventType*>(this));
+				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
+			}
+
+			FImpl::~FImpl()
+			{
+				delete InterfaceMap;
 			}
 
 			void FImpl::CopyFrom(const FImpl* From)
 			{
-				// IEvent
+				// StatusEffectEventType(NCsStatusEffect::NEvent::IEvent)
 
 				Data = From->Data;
 				Instigator = From->Instigator;
@@ -44,7 +58,7 @@ namespace NCsStatusEffect
 					IgnoreObjects.Add(O);
 				}
 
-				// IDamage
+				// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 
 				DamageEvent.CopyFrom(&(From->DamageEvent));
 			}
@@ -54,6 +68,7 @@ namespace NCsStatusEffect
 
 			void FImpl::Reset()
 			{
+				StatusEffect = nullptr;
 				Data = nullptr;
 				Instigator = nullptr;
 				Causer = nullptr;

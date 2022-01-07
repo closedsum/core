@@ -1,6 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Event/CsStatusEffectEventImpl.h"
 
+// Container
+#include "Containers/CsInterfaceMap.h"
+
 const FName NCsStatusEffect::NEvent::FImpl::Name = FName("NCsStatusEffect::NEvent::FImpl");;
 
 namespace NCsStatusEffect
@@ -8,18 +11,30 @@ namespace NCsStatusEffect
 	namespace NEvent
 	{
 		FImpl::FImpl() :
-			InterfaceMap(),
-			// NCsStatusEffect::NEvent::IEvent
+			// ICsGetInterfaceMap
+			InterfaceMap(nullptr),
+			// EventType (NCsStatusEffect::NEvent::IEvent)
+			StatusEffect(),
 			Data(nullptr),
 			Instigator(nullptr),
 			Causer(nullptr),
 			Receiver(nullptr),
 			IgnoreObjects()
 		{
-			InterfaceMap.SetRoot<FImpl>(this);
+			InterfaceMap = new FCsInterfaceMap();
 
-			InterfaceMap.Add<IEvent>(static_cast<IEvent*>(this));
-			InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
+			InterfaceMap->SetRoot<FImpl>(this);
+
+			typedef NCsStatusEffect::NEvent::IEvent EventType;
+
+			InterfaceMap->Add<EventType>(static_cast<EventType*>(this));
+			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
+		}
+
+		FImpl::~FImpl()
+		{
+			// ICsGetInterfaceMap
+			delete InterfaceMap;
 		}
 
 		void FImpl::CopyFrom(const FImpl* From)
@@ -42,6 +57,7 @@ namespace NCsStatusEffect
 
 		void FImpl::Reset()
 		{
+			StatusEffect.Reset();
 			Data = nullptr;
 			Instigator = nullptr;
 			Causer = nullptr;

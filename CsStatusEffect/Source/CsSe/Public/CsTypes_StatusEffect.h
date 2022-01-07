@@ -43,6 +43,34 @@ namespace NCsStatusEffect
 
 #pragma endregion StatusEffect
 
+// StatusEffectImpl
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSSE_API FECsStatusEffectImpl : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsStatusEffectImpl)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsStatusEffectImpl)
+
+struct CSSE_API EMCsStatusEffectImpl : public TCsEnumStructMap<FECsStatusEffectImpl, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsStatusEffectImpl, FECsStatusEffectImpl, uint8)
+};
+
+namespace NCsStatusEffectImpl
+{
+	typedef FECsStatusEffectImpl Type;
+	typedef EMCsStatusEffectImpl EnumMapType;
+}
+
+#pragma endregion StatusEffectImpl
+
 // StatusEffectEvent
 #pragma region
 

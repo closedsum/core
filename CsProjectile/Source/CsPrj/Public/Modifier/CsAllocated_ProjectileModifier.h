@@ -48,11 +48,11 @@ namespace NCsProjectile
 
 			UObject* GetRoot() const;
 
-			FORCEINLINE const IModifier* GetModifier() const { return Modifier; }
+			FORCEINLINE IModifier* Get() const { return Modifier; }
 
-			void CopyFrom(UObject* InRoot, const IModifier* From);
+			void Copy(UObject* InRoot, const IModifier* From);
 
-			void CopyFrom(const FAllocated* From);
+			void Copy(const FAllocated& From);
 
 			FORCEINLINE void Clear()
 			{

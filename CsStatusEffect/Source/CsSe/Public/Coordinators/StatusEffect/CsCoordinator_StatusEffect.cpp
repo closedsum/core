@@ -24,6 +24,7 @@
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 #include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_DataHandler.h"
 #include "Data/Types/CsData_GetStatusEffectImplType.h"
+#include "Types/CsGetStatusEffectImplType.h"
 #include "Copy/CsStatusEffect_Copy.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
@@ -381,21 +382,43 @@ void UCsCoordinator_StatusEffect::DeallocateStatusEffect(const FString& Context,
 	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;
 
 	// Reset
-	if (ICsReset* IReset = StatusEffectLibrary::GetSafeInterfaceChecked<ICsReset>(Context, StatusEffect->Get()))
-		IReset->Reset();
+	ICsReset* IReset = StatusEffectLibrary::GetInterfaceChecked<ICsReset>(Context, StatusEffect->Get());
+	
+	IReset->Reset();
 
 	Manager_StatusEffects[Type.GetValue()].Deallocate(StatusEffect);
 }
 
 const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect)
 {
-	checkf(0, TEXT("UCsCoordinator_StatusEffect::GetModifierType:Failed to get type associated with StatusEffect."));
-	return EMCsStatusEffectImpl::Get().GetMAX();
+	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;
+
+	const ICsGetStatusEffectImplType* GetStatusEffectImplType = StatusEffectLibrary::GetInterfaceChecked<ICsGetStatusEffectImplType>(Context, StatusEffect);
+	const FECsStatusEffectImpl& ImplType					  = GetStatusEffectImplType->GetStatusEffectImplType();
+
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsStatusEffectImpl, ImplType);
+
+	return ImplType;
+}
+
+SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect)
+{
+	const FECsStatusEffectImpl& Type = GetStatusEffectType(Context, StatusEffect);
+	SeResourceType* Container		 = AllocateStatusEffect(Type);
+	StatusEffectType* Copy			 = Container->Get();
+
+	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;
+	typedef NCsStatusEffect::NCopy::ICopy CopyType;
+
+	CopyType* ICopy = StatusEffectLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+
+	//ICopy->
+	return nullptr;
 }
 
 SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const SeResourceType* StatusEffect)
 {
-	return nullptr;
+	return CreateCopyOfStatusEffect(Context, StatusEffect->Get());
 }
 
 #undef SeResourceType

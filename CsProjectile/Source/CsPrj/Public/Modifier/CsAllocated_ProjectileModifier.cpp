@@ -18,7 +18,7 @@ namespace NCsProjectile
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FAllocated, CopyFrom);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FAllocated, Copy);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FAllocated, Reset);
 				}
 			}
@@ -31,11 +31,11 @@ namespace NCsProjectile
 
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::CopyFrom(UObject* InRoot, const IModifier* From)
+		void FAllocated::Copy(UObject* InRoot, const IModifier* From)
 		{
 			using namespace NCsProjectile::NModifier::NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
 
@@ -49,24 +49,28 @@ namespace NCsProjectile
 			Type	  = PrjManagerLibrary::GetModifierTypeChecked(Context, InRoot, Modifier);
 		}
 
-		void FAllocated::CopyFrom(const FAllocated* From)
+		void FAllocated::Copy(const FAllocated& From)
 		{
 			using namespace NCsProjectile::NModifier::NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
-			CS_IS_PTR_NULL_CHECKED(From->GetRoot())
+			CS_IS_PTR_NULL_CHECKED(From.GetRoot())
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-			if (From->Container)
+			if (From.Container)
 			{
 				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
-				Root	  = From->GetRoot();
-				Container = PrjManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From->Container);
+				Root	  = From.GetRoot();
+				Container = PrjManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
-				Type	  = PrjManagerLibrary::GetModifierTypeChecked(Context, GetRoot(), Modifier);
+				Type	  = From.Type;
+			}
+			else
+			{
+				Modifier = From.Modifier;
 			}
 		}
 

@@ -18,7 +18,7 @@ namespace NCsWeapon
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FAllocated, CopyFrom);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FAllocated, Copy);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FAllocated, Reset);
 				}
 			}
@@ -31,11 +31,11 @@ namespace NCsWeapon
 
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::CopyFrom(UObject* InRoot, const IModifier* From)
+		void FAllocated::Copy(UObject* InRoot, const IModifier* From)
 		{
 			using namespace NCsWeapon::NModifier::NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
 			CS_IS_PTR_NULL_CHECKED(InRoot)
 
@@ -49,24 +49,28 @@ namespace NCsWeapon
 			//Type	  = WeaponManagerLibrary::GetModifierTypeChecked(Context, InRoot, Modifier);
 		}
 
-		void FAllocated::CopyFrom(const FAllocated* From)
+		void FAllocated::Copy(const FAllocated& From)
 		{
 			using namespace NCsWeapon::NModifier::NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
-			CS_IS_PTR_NULL_CHECKED(From->GetRoot())
+			CS_IS_PTR_NULL_CHECKED(From.GetRoot())
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-			if (From->Container)
+			if (From.Container)
 			{
 				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-				Root	  = From->GetRoot();
+				Root	  = From.GetRoot();
 				//Container = WeaponManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From->Container);
 				Modifier  = Container->Get();
-				//Type	  = WeaponManagerLibrary::GetModifierTypeChecked(Context, GetRoot(), Modifier);
+				Type	  = From.Type;
+			}
+			else
+			{
+				Modifier = From.Modifier;
 			}
 		}
 

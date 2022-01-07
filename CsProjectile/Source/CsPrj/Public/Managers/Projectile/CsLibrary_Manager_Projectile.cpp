@@ -293,7 +293,7 @@ namespace NCsProjectile
 			for (const ModifierType* Modifier : From)
 			{
 				AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
-				Allocated.CopyFrom(ContextRoot, Modifier);
+				Allocated.Copy(ContextRoot, Modifier);
 			}
 		}
 

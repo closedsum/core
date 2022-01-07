@@ -13,6 +13,8 @@
 #pragma region
 
 /**
+* Describes the Status Effect "type".
+* Provides "enum" like access to a Status Effect
 */
 USTRUCT(BlueprintType)
 struct CSSE_API FECsStatusEffect : public FECsEnum_uint8
@@ -47,6 +49,8 @@ namespace NCsStatusEffect
 #pragma region
 
 /**
+* Describes the Status Effect implementation "type".
+* Provies "enum" like access to the Status Effect implementation.
 */
 USTRUCT(BlueprintType)
 struct CSSE_API FECsStatusEffectImpl : public FECsEnum_uint8

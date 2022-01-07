@@ -159,6 +159,8 @@ public:
 	*/
 	virtual const FECsStatusEffectImpl& GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect);
 
+	SeResourceType* CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect);
+
 	SeResourceType* CreateCopyOfStatusEffect(const FString& Context, const SeResourceType* StatusEffect);
 
 #undef SeResourceType

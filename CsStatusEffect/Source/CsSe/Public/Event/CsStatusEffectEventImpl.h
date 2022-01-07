@@ -2,6 +2,7 @@
 #pragma once
 // Interfaces
 #include "Event/CsStatusEffectEvent.h"
+#include "Event/Copy/CsStatusEffectEvent_Copy.h"
 #include "Reset/CsReset.h"
 // StatusEffect
 #include "CsAllocated_StatusEffect.h"
@@ -17,6 +18,7 @@ namespace NCsStatusEffect
 	namespace NEvent
 	{
 	#define EventType NCsStatusEffect::NEvent::IEvent
+	#define CopyType NCsStatusEffect::NEvent::NCopy::ICopy
 
 		struct CSSE_API FImpl final : public EventType,
 									  public ICsReset
@@ -77,6 +79,22 @@ namespace NCsStatusEffect
 
 		#pragma endregion EventType (NCsStatusEffect::NEvent::IEvent)
 
+		// CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
+		#pragma region
+		public:
+
+			void Copy(const EventType* From);
+
+		#pragma endregion CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
+
+		// ICsReset
+		#pragma region
+		public:
+
+			void Reset();
+
+		#pragma endregion ICsReset
+
 		public:
 
 			template<typename T>
@@ -94,19 +112,12 @@ namespace NCsStatusEffect
 			*/
 			void CopyFrom(const FImpl* From);
 
-		// ICsReset
-		#pragma region
-		public:
-
-			void Reset();
-
-		#pragma endregion ICsReset
-
 		#undef StatusEffectType
 		#undef AllocatedStatusEffectType
 		#undef DataType
 		};
 
 	#undef EventType
+	#undef CopyType
 	}
 }

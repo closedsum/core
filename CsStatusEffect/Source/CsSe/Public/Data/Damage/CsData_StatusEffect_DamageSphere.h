@@ -7,7 +7,7 @@
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
 #include "Data/Trigger/CsData_StatusEffect_Trigger.h"
 // Types
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 #include "Managers/Damage/Data/Shape/CsTypes_Data_DamageShape.h"
 #include "CsData_StatusEffect_DamageSphere.generated.h"
 

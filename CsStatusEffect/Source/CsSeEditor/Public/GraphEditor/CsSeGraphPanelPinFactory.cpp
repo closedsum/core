@@ -3,7 +3,7 @@
 #include "CsSeEditor.h"
 
 // Types
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 #include "Trigger/CsTypes_StatusEffect_Trigger.h"
 // EnumStructs
 	// Status Effect

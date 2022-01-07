@@ -13,6 +13,7 @@ namespace NCsStatusEffect
 		bool FLibrary::CopyChecked(const FString& Context, const EventType* From, EventType* To)
 		{
 		#undef EventType
+			/*
 			// NCsStatusEffect::NEvent::FImpl (NCsStatusEffect::NEvent::IEvent)
 			{
 				typedef NCsStatusEffect::NEvent::FImpl ImplType;
@@ -37,6 +38,7 @@ namespace NCsStatusEffect
 					return true;
 				}
 			}
+			*/
 			return false;
 		}
 	}

@@ -17,6 +17,7 @@ namespace NCsStatusEffect
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::FAllocated, CopyFrom);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::FAllocated, Copy);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::FAllocated, Reset);
 			}
 		}
@@ -48,17 +49,17 @@ namespace NCsStatusEffect
 		*/
 	}
 
-	void FAllocated::CopyFrom(const FAllocated* From)
+	void FAllocated::Copy(const FAllocated& From)
 	{
 		using namespace NCsStatusEffect::NAllocated::NCached;
 
-		const FString& Context = Str::CopyFrom;
+		const FString& Context = Str::Copy;
 
-		CS_IS_PTR_NULL_CHECKED(From->GetRoot())
+		CS_IS_PTR_NULL_CHECKED(From.GetRoot())
 
 		checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-		if (From->Container)
+		if (From.Container)
 		{
 			typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
 			/*

@@ -2,7 +2,7 @@
 #pragma once
 #include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
 // Types
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 // Data
 #include "Data/CsData_StatusEffect.h"
 #include "Data/CsData_StatusEffectInterfaceMap.h"

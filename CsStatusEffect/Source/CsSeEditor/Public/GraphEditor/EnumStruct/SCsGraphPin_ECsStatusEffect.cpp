@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffect.h"
 #include "CsSeEditor.h"
 
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 
 // Cached
 #pragma region

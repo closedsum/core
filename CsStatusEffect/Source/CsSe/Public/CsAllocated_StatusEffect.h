@@ -1,6 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 
 class UObject;
 
@@ -53,7 +53,7 @@ namespace NCsStatusEffect
 
 		void CopyFrom(UObject* InRoot, const StatusEffectType* From);
 
-		void CopyFrom(const FAllocated* From);
+		void Copy(const FAllocated& From);
 
 		FORCEINLINE void Clear()
 		{

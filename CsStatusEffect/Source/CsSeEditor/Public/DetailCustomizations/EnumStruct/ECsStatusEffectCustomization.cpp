@@ -2,7 +2,7 @@
 #include "DetailCustomizations/EnumStruct/ECsStatusEffectCustomization.h"
 
 // Managers
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 
 #define LOCTEXT_NAMESPACE "ECsStatusEffectCustomization"
 

@@ -4,7 +4,7 @@
 // Types
 #include "Event/CsResource_StatusEffectEvent.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 // Interface
 #include "CsReceiveStatusEffect.h"
 // StatusEffect
@@ -159,6 +159,8 @@ public:
 	*/
 	virtual const FECsStatusEffectImpl& GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect);
 
+	SeResourceType* CreateCopyOfStatusEffect(const FString& Context, const SeResourceType* StatusEffect);
+
 #undef SeResourceType
 #undef SeManagerType
 
@@ -232,7 +234,6 @@ public:
 private:
 
 	TArray<FCsReceiveStatusEffect> Local_Receivers;
-	TArray<EventResourceType*> Local_Events;
 
 public:
 
@@ -248,7 +249,7 @@ public:
 	*
 	* @param Event	Container for event of type: NCsStatusEffect::NEvent::IEvent.
 	*/
-	void ProcessStatusEffectEventContainer(const EventResourceType* Event);
+	void ProcessStatusEffectEventContainer(const EventResourceType* EventContainer);
 
 	/**
 	*

@@ -73,7 +73,6 @@ UCsCoordinator_StatusEffect::UCsCoordinator_StatusEffect(const FObjectInitialize
 	// Event
 	Manager_Events(),
 	Local_Receivers(),
-	Local_Events(),
 	OnEvent_Event(),
 	// Data
 	DataHandler(nullptr)
@@ -394,6 +393,11 @@ const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectType(con
 	return EMCsStatusEffectImpl::Get().GetMAX();
 }
 
+SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const SeResourceType* StatusEffect)
+{
+	return nullptr;
+}
+
 #undef SeResourceType
 #undef StatusEffectType
 
@@ -580,8 +584,24 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 
 	const FString& Context = Str::ProcessStatusEffectEvent;
 
-	CS_IS_PTR_NULL_CHECKED(Event)
+	EventResourceType* Container = CreateCopyOfEvent(Context, Event);
 
+	ProcessStatusEffectEventContainer(Container);
+}
+
+void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventResourceType* EventContainer)
+{
+	using namespace NCsCoordinatorStatusEffect::NCached;
+
+	const FString& Context = Str::ProcessStatusEffectEventContainer;
+
+	const EventType* Event = EventContainer->Get();
+	
+#if !UE_BUILD_SHIPPING
+	//LogEvent(Event);
+#endif // #if !UE_BUILD_SHIPPING
+
+	// Process Event
 	typedef NCsStatusEffect::NData::IData DataType;
 
 	DataType* Data = Event->GetData();
@@ -597,7 +617,7 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 		typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
 		typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
 
-		const TriggerFrequencyParamsType& TriggerParams = TriggerData->GetTriggerFrequencyParams();
+		const TriggerFrequencyParamsType& TriggerParams   = TriggerData->GetTriggerFrequencyParams();
 		const TransferFrequencyParamsType& TransferParams = TriggerData->GetTransferFrequencyParams();
 
 		// TODO: Need to check for Shape
@@ -649,25 +669,19 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 				{
 					Local_Receivers.AddDefaulted();
 					Local_Receivers.Last().SetObject(Receiver);
-
-					// Copy the Event
-					EventResourceType* EventContainer = CreateCopyOfEvent(Context, Event);
-
-					Local_Events.Add(EventContainer);
 				}
 				// TODO: Add check if Receiver doesn't implement the interface?
 			}
 		}
 	}
 
+	// TODO: Log Receivers
+
 	const int32 Count = Local_Receivers.Num();
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsReceiveStatusEffect& Receiver  = Local_Receivers[I];
-		EventResourceType* EventContainer = Local_Events[I];
-
-		EventType* Evt = EventContainer->Get();
+		FCsReceiveStatusEffect& Receiver = Local_Receivers[I];
 
 		if (Receiver.Implements_ICsGetManagerStatusEffect())
 		{
@@ -679,40 +693,14 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Even
 		{
 			Receiver.ApplyStatusEffect(Event);
 		}
-
-#if !UE_BUILD_SHIPPING
-		//LogEvent(Evt);
-#endif // #if !UE_BUILD_SHIPPING
-
-		//OnProcessDamageEvent_Event.Broadcast(Evt);
-		DeallocateEvent(Context, EventContainer);
-
-		Local_Events[I] = nullptr;
 	}
 
+	//OnEvent_Event.Broadcast(Event);
+
 	Local_Receivers.Reset(Local_Receivers.Max());
-	Local_Events.Reset(Local_Events.Max());
-}
 
-void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventResourceType* Event)
-{
-	using namespace NCsCoordinatorStatusEffect::NCached;
-
-	const FString& Context = Str::ProcessStatusEffectEventContainer;
-
-	typedef NCsStatusEffect::NEvent::FManager EventManagerType;
-
-	// Get Type
-	const FECsStatusEffectEvent& Type = GetEventType(Context, Event);
-	EventManagerType& Manager_Event   = Manager_Events[Type.GetValue()];
-
-	check(Manager_Event.IsValidChecked(Context, Event));
-
-	const EventType* IEvent = Event->Get();
-	// Process Event
-	ProcessStatusEffectEvent(IEvent);
 	// Deallocate Event when finished
-	DeallocateEvent(Context, const_cast<EventResourceType*>(Event));
+	DeallocateEvent(Context, const_cast<EventResourceType*>(EventContainer));
 }
 
 #undef EventResourceType

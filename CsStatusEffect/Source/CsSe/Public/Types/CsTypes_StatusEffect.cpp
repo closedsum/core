@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 #include "CsSe.h"
 
 // Library

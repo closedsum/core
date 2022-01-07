@@ -2,7 +2,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 
 // NCsStatusEffect::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)

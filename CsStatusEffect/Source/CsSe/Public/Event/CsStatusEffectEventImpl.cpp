@@ -3,6 +3,8 @@
 
 // Container
 #include "Containers/CsInterfaceMap.h"
+// Library
+#include "Event/CsLibrary_StatusEffectEvent.h"
 
 const FName NCsStatusEffect::NEvent::FImpl::Name = FName("NCsStatusEffect::NEvent::FImpl");;
 
@@ -10,6 +12,17 @@ namespace NCsStatusEffect
 {
 	namespace NEvent
 	{
+		namespace NImpl
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::NEvent::FImpl, Copy);
+				}
+			}
+		}
+
 		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
@@ -37,20 +50,38 @@ namespace NCsStatusEffect
 			delete InterfaceMap;
 		}
 
-		void FImpl::CopyFrom(const FImpl* From)
+		// CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
+		#pragma region
+
+		#define EventType NCsStatusEffect::NEvent::IEvent
+		void FImpl::Copy(const EventType* From)
 		{
-			Data = From->Data;
-			Instigator = From->Instigator;
-			Causer = From->Causer;
-			Receiver = From->Receiver;
+		#undef EventType
 
-			IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), From->IgnoreObjects.Max()));
+			using namespace NCsStatusEffect::NEvent::NImpl::NCached;
 
-			for (TWeakObjectPtr<UObject> O : From->IgnoreObjects)
+			const FString& Context = Str::Copy;
+
+			typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
+
+			const FImpl* FromImpl = SeEventLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+			StatusEffect.Copy(FromImpl->StatusEffect);
+
+			Data	   = FromImpl->Data;
+			Instigator = FromImpl->Instigator;
+			Causer	   = FromImpl->Causer;
+			Receiver   = FromImpl->Receiver;
+
+			IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), FromImpl->IgnoreObjects.Max()));
+
+			for (TWeakObjectPtr<UObject> O : FromImpl->IgnoreObjects)
 			{
 				IgnoreObjects.Add(O);
 			}
 		}
+
+		#pragma endregion CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
 
 		// ICsReset
 		#pragma region

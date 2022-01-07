@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsStatusEffectEvent.h"
 #include "CsSeEditor.h"
 
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 
 #define EnumMapType EMCsStatusEffectEvent
 #define EnumType FECsStatusEffectEvent

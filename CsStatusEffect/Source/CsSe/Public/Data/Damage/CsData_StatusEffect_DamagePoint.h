@@ -7,7 +7,7 @@
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
 #include "Data/Trigger/CsData_StatusEffect_Trigger.h"
 // Types
-#include "CsTypes_StatusEffect.h"
+#include "Types/CsTypes_StatusEffect.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Damage
 #include "Managers/Damage/Data/Point/CsData_DamagePointImpl.h"

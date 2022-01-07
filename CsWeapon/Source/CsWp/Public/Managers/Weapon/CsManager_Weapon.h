@@ -6,7 +6,7 @@
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 // Types
-#include "Modifier/CsTypes_WeaponModifier.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 // Settings
  #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
 // Weapon
@@ -873,6 +873,10 @@ public:
 	* return
 	*/
 	virtual const FECsWeaponModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
+
+	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier);
+
+	ModifierResourceType* CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier);
 
 #undef ModifierResourceType
 #undef ModifierManagerType

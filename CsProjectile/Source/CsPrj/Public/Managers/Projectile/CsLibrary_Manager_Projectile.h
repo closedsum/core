@@ -2,7 +2,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Projectile.h"
-#include "Modifier/CsTypes_ProjectileModifier.h"
+#include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 // Log
@@ -223,7 +223,7 @@ namespace NCsProjectile
 
 			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
 
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext,  const ModifierResourceType* Modifier);
+			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
 
 			static void CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsProjectileModifier& OutType);
 

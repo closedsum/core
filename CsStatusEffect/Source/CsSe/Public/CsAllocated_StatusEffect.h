@@ -33,15 +33,18 @@ namespace NCsStatusEffect
 		/** Status Effect */
 		StatusEffectType* StatusEffect;
 
-		/** The Type (or struct / class) of Modifier. This is used for 
+		/** The Type (or struct / class) of Status Effect. This is used for 
 			quicker deallocation from UCsCoordinator_StatusEffect. */
 		FECsStatusEffect Type;
+
+		FECsStatusEffectImpl ImplType;
 
 		FAllocated() :
 			Root(nullptr),
 			Container(nullptr),
 			StatusEffect(nullptr),
-			Type()
+			Type(),
+			ImplType()
 		{
 		}
 
@@ -51,7 +54,7 @@ namespace NCsStatusEffect
 
 		FORCEINLINE StatusEffectType* Get() const { return StatusEffect; }
 
-		void CopyFrom(UObject* InRoot, const StatusEffectType* From);
+		void Copy(UObject* InRoot, const StatusEffectType* From);
 
 		void Copy(const FAllocated& From);
 
@@ -61,6 +64,7 @@ namespace NCsStatusEffect
 			Container	 = nullptr;
 			StatusEffect = nullptr;
 			Type		 = EMCsStatusEffect::Get().GetMAX();
+			ImplType	 = EMCsStatusEffectImpl::Get().GetMAX();
 		}
 
 		/**

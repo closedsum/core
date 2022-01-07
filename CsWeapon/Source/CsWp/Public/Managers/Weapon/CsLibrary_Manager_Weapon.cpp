@@ -1,11 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_Valid.h"
 #include "Data/CsLibrary_Data_Weapon.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Weapon/CsManager_Weapon.h"
 // Weapon
@@ -257,5 +255,41 @@ namespace NCsWeapon
 		#undef DataType
 
 		#pragma endregion Data
+
+		// Modifier
+		#pragma region
+
+		#define ModifierResourceType NCsWeapon::NModifier::FResource
+		#define ModifierType NCsWeapon::NModifier::IModifier
+		
+		ModifierResourceType* FLibrary::AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocateModifier(Type);
+		}
+
+		void FLibrary::DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier)
+		{
+			GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
+		}
+
+		const FECsWeaponModifier& FLibrary::GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+		{
+			return GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+		}
+
+		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+		{
+			return GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
+		}
+
+		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
+		{
+			return GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
+		}
+
+#		undef ModifierResourceType
+		#undef ModifierType
+
+		#pragma endregion Modifier
 	}
 }

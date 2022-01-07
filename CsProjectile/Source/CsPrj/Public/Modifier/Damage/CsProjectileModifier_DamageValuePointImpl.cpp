@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
@@ -21,11 +22,15 @@ namespace NCsProjectile
 			{
 				namespace NPoint
 				{
-					namespace NCached
+					namespace NImpl
 					{
-						namespace Str
+						namespace NCached
 						{
-							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl, Modify);
+							namespace Str
+							{
+								CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl, Modify);
+								CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl, Copy);
+							}
 						}
 					}
 
@@ -44,12 +49,15 @@ namespace NCsProjectile
 						typedef NCsDamage::NModifier::NValue::IValue DmgModifierValueType;
 						typedef NCsDamage::NModifier::NValue::NPoint::IPoint DmgModifierValuePointType;
 						typedef NCsProjectile::NModifier::IModifier PrjModifierType;
+						typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
 
 						InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
 						InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 						InterfaceMap->Add<DmgModifierValueType>(static_cast<DmgModifierValueType*>(this));
 						InterfaceMap->Add<DmgModifierValuePointType>(static_cast<DmgModifierValuePointType*>(this));
 						InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
+						InterfaceMap->Add<ICsGetProjectileModifierType>(static_cast<ICsGetProjectileModifierType*>(this));
+						InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
 						InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 
 						CS_CTOR_SET_MEMBER_PROXY(Value);
@@ -68,7 +76,7 @@ namespace NCsProjectile
 					#define ValueType NCsDamage::NValue::IValue
 					void FImpl::Modify(ValueType* InValue) const
 					{
-						using namespace NCsProjectile::NModifier::NDamage::NValue::NPoint::NCached;
+						using namespace NCsProjectile::NModifier::NDamage::NValue::NPoint::NImpl::NCached;
 
 						const FString& Context = Str::Modify;
 
@@ -88,11 +96,27 @@ namespace NCsProjectile
 
 					#pragma endregion DmgModifierValueType (NCsDamage::NModifier::NValue::IValue)
 
-					void FImpl::CopyTo(FImpl* To) const
+					// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+					#pragma region
+
+					#define PrjModifierType NCsProjectile::NModifier::IModifier
+					void FImpl::Copy(const PrjModifierType* From)
 					{
-						To->SetValue(GetValue());
-						To->SetApplication(GetApplication());
+					#undef PrjModifierType
+						
+						using namespace NCsProjectile::NModifier::NDamage::NValue::NPoint::NImpl::NCached;
+
+						const FString& Context = Str::Copy;
+						
+						typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+						const FImpl* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+						SetValue(FromImpl->GetValue());
+						SetApplication(FromImpl->GetApplication());
 					}
+
+					#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 
 					bool FImpl::IsValidChecked(const FString& Context) const
 					{

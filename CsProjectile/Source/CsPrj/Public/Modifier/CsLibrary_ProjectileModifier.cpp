@@ -100,53 +100,6 @@ namespace NCsProjectile
 			return EMCsProjectileModifier::Get().GetMAX();
 		}
 
-		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
-		{
-			CS_IS_PTR_NULL_CHECKED(From)
-
-			CS_IS_PTR_NULL_CHECKED(To)
-
-			// Speed
-
-				// Initial
-			{
-				typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
-
-				if (const PrjSpeedModifierType* FromImpl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, From))
-				{
-					PrjSpeedModifierType* ToImpl = StaticCastChecked<PrjSpeedModifierType>(Context, To);
-
-					FromImpl->CopyTo(ToImpl);
-					return true;
-				}
-			}
-				// Max
-			{
-				typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
-
-				if (const PrjSpeedModifierType* FromImpl = SafeStaticCastChecked<PrjSpeedModifierType>(Context, From))
-				{
-					PrjSpeedModifierType* ToImpl = StaticCastChecked<PrjSpeedModifierType>(Context, To);
-
-					FromImpl->CopyTo(ToImpl);
-					return true;
-				}
-			}
-			// DamageValuePoint
-			{
-				typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
-
-				if (const PrjDmgValuePointModiferType* FromImpl = SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, From))
-				{
-					PrjDmgValuePointModiferType* ToImpl = StaticCastChecked<PrjDmgValuePointModiferType>(Context, To);
-
-					FromImpl->CopyTo(ToImpl);
-					return true;
-				}
-			}
-			return false;
-		}
-
 		// Damage
 		#pragma region
 

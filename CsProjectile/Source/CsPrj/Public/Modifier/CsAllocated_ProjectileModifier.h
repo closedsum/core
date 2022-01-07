@@ -1,6 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Modifier/CsTypes_ProjectileModifier.h"
+#include "Modifier/Types/CsTypes_ProjectileModifier.h"
 
 class UObject;
 

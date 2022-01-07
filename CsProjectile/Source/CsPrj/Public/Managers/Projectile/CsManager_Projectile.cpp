@@ -36,6 +36,8 @@
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
+#include "Modifier/Types/CsGetProjectileModifierType.h"
+#include "Modifier/Copy/CsProjectileModifier_Copy.h"
 #include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
 #include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
@@ -815,6 +817,7 @@ void UCsManager_Projectile::ConstructPayloads(const FECsProjectile& Type, const 
 }
 
 #define PayloadType NCsProjectile::NPayload::IPayload
+
 PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 {
 	// TODO: Perform a new in place for all structs.
@@ -869,9 +872,6 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 
 	return InterfaceMap->Get<PayloadType>();
 }
-#undef PayloadType
-
-#define PayloadType NCsProjectile::NPayload::IPayload
 
 PayloadType* UCsManager_Projectile::AllocatePayload(const FECsProjectile& Type)
 {
@@ -1097,8 +1097,9 @@ void UCsManager_Projectile::DeallocateModifier(const FString& Context, const FEC
 	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 
 	// Reset
-	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
-		IReset->Reset();
+	ICsReset* IReset = ModifierLibrary::GetInterfaceChecked<ICsReset>(Context, Modifier->Get());
+	
+	IReset->Reset();
 
 	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
 }
@@ -1107,33 +1108,12 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 {
 	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 
-	// InitialSpeed | 
-	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
-	// NCsProjectile::NModifier::NSpeed::NInitial::FImpl
-	{
-		typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl PrjSpeedModifierType;
+	const ICsGetProjectileModifierType* GetProjectileModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+	const FECsProjectileModifier& PrjModifierType				  = GetProjectileModifierType->GetProjectileModifierType();
 
-		if (ModifierLibrary::SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
-			return NCsProjectileModifier::InitialSpeed;
-	}
-	// MaxSpeed | 
-	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
-	// NCsProjectile::NModifier::NSpeed::NMax::FImpl
-	{
-		typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl PrjSpeedModifierType;
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, PrjModifierType);
 
-		if (ModifierLibrary::SafeStaticCastChecked<PrjSpeedModifierType>(Context, Modifier))
-			return NCsProjectileModifier::InitialSpeed;
-	}
-	// DamageValuePoint | 
-	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
-	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
-	typedef NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl PrjDmgValuePointModiferType;
-
-	if (ModifierLibrary::SafeStaticCastChecked<PrjDmgValuePointModiferType>(Context, Modifier))
-		return NCsProjectileModifier::DamageValuePoint;
-
-	return EMCsProjectileModifier::Get().GetMAX();
+	return PrjModifierType;
 }
 
 #undef ModifierResourceType

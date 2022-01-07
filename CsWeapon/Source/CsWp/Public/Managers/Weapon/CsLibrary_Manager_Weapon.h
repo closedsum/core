@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_Weapon.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 // Log
 #include "Utility/CsWpLog.h"
-
-#pragma once
 
 class UObject;
 class UCsManager_Weapon;
@@ -25,6 +25,11 @@ namespace NCsPooledObject {
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 // NCsWeapon::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
+
+// NCsWeapon::NModifier::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, FResource)
+// NCsWeapon::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
 
 namespace NCsWeapon
 {
@@ -289,6 +294,28 @@ namespace NCsWeapon
 		#undef DataType
 
 		#pragma endregion Data
+
+		// Modifier
+		#pragma region
+		public:
+		
+		#define ModifierResourceType NCsWeapon::NModifier::FResource
+		#define ModifierType NCsWeapon::NModifier::IModifier
+		
+			static ModifierResourceType* AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type);
+
+			static void DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier);
+
+			static const FECsWeaponModifier& GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
+
+		#undef ModifierResourceType
+		#undef ModifierType
+
+		#pragma endregion Modifier
 		};
 	}
 }

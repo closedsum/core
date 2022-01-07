@@ -16,7 +16,6 @@ namespace NCsStatusEffect
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::FAllocated, CopyFrom);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::FAllocated, Copy);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::FAllocated, Reset);
 			}
@@ -30,23 +29,22 @@ namespace NCsStatusEffect
 
 	UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-	void FAllocated::CopyFrom(UObject* InRoot, const StatusEffectType* From)
+	void FAllocated::Copy(UObject* InRoot, const StatusEffectType* From)
 	{
 		using namespace NCsStatusEffect::NAllocated::NCached;
 
-		const FString& Context = Str::CopyFrom;
+		const FString& Context = Str::Copy;
 
 		CS_IS_PTR_NULL_CHECKED(InRoot)
 
 		CS_IS_PTR_NULL_CHECKED(From)
 
 		typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
-		/*
-		Root	  = InRoot;
-		Container = SeCoordinatorLibrary::CreateCopyOfModifierChecked(Context, InRoot, From);
-		Modifier  = Container->Get();
-		Type	  = SeCoordinatorLibrary::GetModifierTypeChecked(Context, InRoot, Modifier);
-		*/
+		
+		Root		 = InRoot;
+		Container	 = SeCoordinatorLibrary::CreateCopyOfStatusEffectChecked(Context, InRoot, From);
+		StatusEffect = Container->Get();
+		ImplType	 = SeCoordinatorLibrary::GetStatusEffectTypeChecked(Context, InRoot, StatusEffect);
 	}
 
 	void FAllocated::Copy(const FAllocated& From)
@@ -62,12 +60,16 @@ namespace NCsStatusEffect
 		if (From.Container)
 		{
 			typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
-			/*
-			Root	  = From->GetRoot();
-			Container = SeCoordinatorLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From->Container);
-			Modifier  = Container->Get();
-			Type	  = SeCoordinatorLibrary::GetModifierTypeChecked(Context, GetRoot(), Modifier);
-			*/
+			
+			Root		 = From.GetRoot();
+			Container	 = SeCoordinatorLibrary::CreateCopyOfStatusEffectChecked(Context, GetRoot(), From.Container);
+			StatusEffect = Container->Get();
+			Type		 = From.Type;
+			ImplType	 = From.ImplType;
+		}
+		else 
+		{
+			StatusEffect = From.StatusEffect;
 		}
 	}
 
@@ -83,7 +85,7 @@ namespace NCsStatusEffect
 
 			typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
 
-			//SeCoordinatorLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
+			SeCoordinatorLibrary::DeallocateStatusEffectChecked(Context, GetRoot(), ImplType, Container);
 		}
 		Clear();
 	}

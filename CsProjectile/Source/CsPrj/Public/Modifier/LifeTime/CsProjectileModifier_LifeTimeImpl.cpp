@@ -3,6 +3,7 @@
 
 // Library
 #include "Cache/CsLibrary_Cache_Projectile.h"
+#include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
@@ -27,6 +28,7 @@ namespace NCsProjectile
 					namespace Str
 					{
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::NLifeTime::FImpl, Modify);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::NLifeTime::FImpl, Copy);
 					}
 				}
 			}
@@ -43,9 +45,12 @@ namespace NCsProjectile
 
 				typedef NCsModifier::IModifier ModifierType;
 				typedef NCsProjectile::NModifier::IModifier PrjModifierType;
+				typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
 
 				InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
 				InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
+				InterfaceMap->Add<ICsGetProjectileModifierType>(static_cast<ICsGetProjectileModifierType*>(this));
+				InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
 				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 
 				CS_CTOR_SET_MEMBER_PROXY(Value);
@@ -82,11 +87,24 @@ namespace NCsProjectile
 
 			#pragma endregion PrjModifierType (NCsProjectile::NModifier::IModifier)
 
-			void FImpl::CopyTo(FImpl* To) const
+			#define PrjModifierType NCsProjectile::NModifier::IModifier
+			void FImpl::Copy(const PrjModifierType* From)
 			{
-				To->SetValue(GetValue());
-				To->SetApplication(GetApplication());
+			#undef PrjModifierType
+						
+				using namespace NCsProjectile::NModifier::NLifeTime::NImpl::NCached;
+
+				const FString& Context = Str::Copy;
+						
+				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+				const FImpl* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
 			}
+
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 
 			bool FImpl::IsValidChecked(const FString& Context) const
 			{

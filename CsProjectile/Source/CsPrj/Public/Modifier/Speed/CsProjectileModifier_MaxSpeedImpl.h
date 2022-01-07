@@ -3,6 +3,8 @@
 // Interfaces
 #include "Modifier/CsModifier.h"
 #include "Modifier/CsProjectileModifier.h"
+#include "Modifier/Types/CsGetProjectileModifierType.h"
+#include "Modifier/Copy/CsProjectileModifier_Copy.h"
 #include "Reset/CsReset.h"
 // Types
 #include "Modifier/CsTypes_Modifier.h"
@@ -21,9 +23,12 @@ namespace NCsProjectile
 			{
 			#define ModifierType NCsModifier::IModifier
 			#define PrjModifierType NCsProjectile::NModifier::IModifier
+			#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
 				struct CSPRJ_API FImpl : public ModifierType,
 										 public PrjModifierType,
+										 public ICsGetProjectileModifierType,
+										 public CopyType,
 										 public ICsReset
 				{
 				public:
@@ -66,6 +71,22 @@ namespace NCsProjectile
 
 				#pragma endregion PrjModifierType (NCsProjectile::NModifier::IModifier)
 
+				// ICsGetProjectileModifierType
+				#pragma region
+				public:
+
+					FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return NCsProjectileModifier::MaxSpeed; }
+
+				#pragma endregion ICsGetProjectileModifierType
+
+				// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+				#pragma region
+				public:
+
+					void Copy(const PrjModifierType* From);
+
+				#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+
 				// ICsReset
 				#pragma region
 				public:
@@ -83,8 +104,6 @@ namespace NCsProjectile
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-					void CopyTo(FImpl* To) const;
-
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
@@ -93,6 +112,7 @@ namespace NCsProjectile
 
 			#undef ModifierType
 			#undef PrjModifierType
+			#undef CopyType
 			}
 		}
 	}

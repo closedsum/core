@@ -31,6 +31,8 @@
 #include "Managers/Weapon/Handler/CsManager_Weapon_ClassHandler.h"
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
 #include "Payload/CsPayload_WeaponImpl.h"
+#include "Modifier/Types/CsGetWeaponModifierType.h"
+#include "Modifier/Copy/CsWeaponModifier_Copy.h"
 #include "Modifier/Projectile/TimeBetweenShots/CsProjectileWeaponModifier_TimeBetweenShotsImpl.h"
 
 #if WITH_EDITOR
@@ -858,17 +860,33 @@ const FECsWeaponModifier& UCsManager_Weapon::GetModifierType(const FString& Cont
 {
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	// PrjWp_TimeBetweenShots | 
-	// ModifierType (NCsModifier::IModifier)
-	// WeaponModifierType (NCsWeapon::NModifier::IModifier)
-	// PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
-	// NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl
-	typedef NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl TimeBetweenShotsModiferType;
+	const ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
+	const FECsWeaponModifier& Type						  = GetWeaponModifierType->GetWeaponModifierType();
 
-	if (ModifierLibrary::SafeStaticCastChecked<TimeBetweenShotsModiferType>(Context, Modifier))
-		return NCsWeaponModifier::PrjWp_TimeBetweenShots;
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponModifier, Type);
 
-	return EMCsWeaponModifier::Get().GetMAX();
+	return Type;
+}
+
+ModifierResourceType* UCsManager_Weapon::CreateCopyOfModifier(const FString& Context, const ModifierType* Modifier)
+{
+	const FECsWeaponModifier& Type	= GetModifierType(Context, Modifier);
+	ModifierResourceType* Container	= AllocateModifier(Type);
+	ModifierType* Copy				= Container->Get();
+
+	typedef NCsWeapon::NModifier::FLibrary WeaponModifierLibrary;
+	typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
+
+	CopyType* ICopy = WeaponModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+
+	ICopy->Copy(Modifier);
+
+	return Container;
+}
+
+ModifierResourceType* UCsManager_Weapon::CreateCopyOfModifier(const FString& Context, const ModifierResourceType* Modifier)
+{
+	return CreateCopyOfModifier(Context, Modifier->Get());
 }
 
 #undef ModifierResourceType

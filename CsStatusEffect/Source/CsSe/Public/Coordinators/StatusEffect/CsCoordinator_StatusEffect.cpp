@@ -412,8 +412,9 @@ SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FStr
 
 	CopyType* ICopy = StatusEffectLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
-	//ICopy->
-	return nullptr;
+	ICopy->Copy(StatusEffect);
+
+	return Container;
 }
 
 SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const SeResourceType* StatusEffect)
@@ -593,6 +594,7 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 	EventImpl->StatusEffect.Container	 = Container;
 	EventImpl->StatusEffect.StatusEffect = StatusEffect;
 	EventImpl->StatusEffect.Type		 = Type;
+	EventImpl->StatusEffect.ImplType	 = ImplType;
 	EventImpl->Data = Data;
 	EventImpl->Instigator = Instigator;
 	EventImpl->Causer = Causer;

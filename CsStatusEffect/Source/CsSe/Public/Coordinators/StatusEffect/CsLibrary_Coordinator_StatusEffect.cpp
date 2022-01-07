@@ -180,5 +180,41 @@ namespace NCsStatusEffect
 		#undef DataType
 
 		#pragma endregion Data
+
+		// StatusEffect
+		#pragma region
+
+		#define SeResourceType NCsStatusEffect::FResource
+		#define StatusEffectType NCsStatusEffect::IStatusEffect
+		
+		SeResourceType* FLibrary::AllocateStatusEffectChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectImpl& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocateStatusEffect(Type);
+		}
+
+		void FLibrary::DeallocateStatusEffectChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectImpl& Type, SeResourceType* StatusEffect)
+		{
+			GetChecked(Context, WorldContext)->DeallocateStatusEffect(Context, Type, StatusEffect);
+		}
+
+		const FECsStatusEffectImpl& FLibrary::GetStatusEffectTypeChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect)
+		{
+			return GetChecked(Context, WorldContext)->GetStatusEffectType(Context, StatusEffect);
+		}
+
+		SeResourceType* FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect)
+		{
+			return GetChecked(Context, WorldContext)->CreateCopyOfStatusEffect(Context, StatusEffect);
+		}
+
+		SeResourceType* FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const SeResourceType* StatusEffect)
+		{
+			return GetChecked(Context, WorldContext)->CreateCopyOfStatusEffect(Context, StatusEffect);
+		}
+
+#		undef SeResourceType
+		#undef StatusEffectType
+
+		#pragma endregion Modifier
 	}
 }

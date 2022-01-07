@@ -64,7 +64,7 @@ namespace NCsWeapon
 				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
 				Root	  = From.GetRoot();
-				//Container = WeaponManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From->Container);
+				Container = WeaponManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
 				Type	  = From.Type;
 			}
@@ -86,7 +86,7 @@ namespace NCsWeapon
 
 				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-				//WeaponManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
+				WeaponManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
 			}
 			Clear();
 		}

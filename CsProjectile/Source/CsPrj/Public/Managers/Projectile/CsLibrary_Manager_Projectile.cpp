@@ -9,6 +9,8 @@
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
+// Projectile
+#include "Modifier/Copy/CsProjectileModifier_Copy.h"
 
 #if WITH_EDITOR
 // Library
@@ -238,10 +240,11 @@ namespace NCsProjectile
 			ModifierType* Copy					= Container->Get();
 
 			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
 
-			bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+			CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
-			checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+			ICopy->Copy(Modifier);
 
 			return Container;
 		}
@@ -264,10 +267,11 @@ namespace NCsProjectile
 			ModifierType* Copy	= OutContainer->Get();
 
 			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
 
-			bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+			CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
-			checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+			ICopy->Copy(Modifier);
 		}
 
 		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)

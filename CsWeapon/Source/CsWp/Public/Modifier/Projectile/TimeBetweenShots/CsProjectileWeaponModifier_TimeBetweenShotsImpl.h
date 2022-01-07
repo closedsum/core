@@ -4,10 +4,12 @@
 #include "Modifier/CsModifier.h"
 #include "Modifier/CsWeaponModifier.h"
 #include "Modifier/Projectile/CsProjectileWeaponModifier.h"
+#include "Modifier/Types/CsGetWeaponModifierType.h"
+#include "Modifier/Copy/CsWeaponModifier_Copy.h"
 #include "Reset/CsReset.h"
 // Types
 #include "Modifier/CsTypes_Modifier.h"
-#include "Modifier/CsTypes_WeaponModifier.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 // Log
 #include "Utility/CsWpLog.h"
 
@@ -28,10 +30,13 @@ namespace NCsWeapon
 			#define ModifierType NCsModifier::IModifier
 			#define WeaponModifierType NCsWeapon::NModifier::IModifier
 			#define PrjWeaponModifierType NCsWeapon::NProjectile::NModifier::IModifier
+			#define CopyType NCsWeapon::NModifier::NCopy::ICopy
 
 				struct CSWP_API FImpl : public ModifierType,
 										public WeaponModifierType,
 										public PrjWeaponModifierType,
+										public ICsGetWeaponModifierType,
+										public CopyType,
 										public ICsReset
 				{
 				public:
@@ -80,6 +85,22 @@ namespace NCsWeapon
 
 				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 
+				// ICsGetWeaponModifierType
+				#pragma region
+				public:
+
+					FORCEINLINE const FECsWeaponModifier& GetWeaponModifierType() const { return NCsWeaponModifier::PrjWp_TimeBetweenShots; }
+
+				#pragma endregion ICsGetWeaponModifierType
+
+				// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
+				#pragma region
+				public:
+
+					void Copy(const WeaponModifierType* From);
+
+				#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
+
 				// ICsReset
 				#pragma region
 				public:
@@ -97,8 +118,6 @@ namespace NCsWeapon
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
-					void CopyTo(FImpl* To) const;
-
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 
@@ -108,6 +127,7 @@ namespace NCsWeapon
 			#undef ModifierType
 			#undef WeaponModifierType
 			#undef PrjWeaponModifierType
+			#undef CopyType
 			}
 		}
 	}

@@ -23,6 +23,11 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 // NCsStatusEffect::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, FInterfaceMap)
 
+// NCsStatusEffect::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, FResource)
+// NCsStatusEffect::IStatusEffect
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, IStatusEffect)
+
 namespace NCsStatusEffect
 {
 	namespace NCoordinator
@@ -187,6 +192,28 @@ namespace NCsStatusEffect
 		#undef DataType
 
 		#pragma endregion Data
+
+		// StatusEffect
+		#pragma region
+		public:
+		
+		#define SeResourceType NCsStatusEffect::FResource
+		#define StatusEffectType NCsStatusEffect::IStatusEffect
+		
+			static SeResourceType* AllocateStatusEffectChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectImpl& Type);
+
+			static void DeallocateStatusEffectChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectImpl& Type, SeResourceType* StatusEffect);
+
+			static const FECsStatusEffectImpl& GetStatusEffectTypeChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect);
+
+			static SeResourceType* CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect);
+
+			static SeResourceType* CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const SeResourceType* StatusEffect);
+
+		#undef SeResourceType
+		#undef StatusEffectType
+
+		#pragma endregion StatusEffect
 		};
 	}
 }

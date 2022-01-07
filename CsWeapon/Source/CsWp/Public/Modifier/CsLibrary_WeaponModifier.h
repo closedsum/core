@@ -3,7 +3,7 @@
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "Modifier/CsTypes_WeaponModifier.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 // Weapon
 #include "Modifier/CsWeaponModifier.h"
 #include "Modifier/CsAllocated_WeaponModifier.h"

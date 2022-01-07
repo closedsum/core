@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Modifier/CsTypes_WeaponModifier.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 
 // WeaponModifier
 #pragma region

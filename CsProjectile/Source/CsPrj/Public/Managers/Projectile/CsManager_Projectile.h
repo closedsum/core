@@ -7,7 +7,7 @@
 #include "Managers/Resource/CsManager_ResourceValueType.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
-#include "Modifier/CsTypes_ProjectileModifier.h"
+#include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Projectile
 #include "Payload/CsPayload_Projectile.h"
 #include "Managers/Projectile/CsProjectile.h"

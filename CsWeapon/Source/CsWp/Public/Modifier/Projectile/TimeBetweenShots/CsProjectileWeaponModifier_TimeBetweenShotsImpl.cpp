@@ -2,6 +2,7 @@
 #include "Modifier/Projectile/TimeBetweenShots/CsProjectileWeaponModifier_TimeBetweenShotsImpl.h"
 
 // Library
+#include "Modifier/CsLibrary_WeaponModifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
@@ -25,6 +26,7 @@ namespace NCsWeapon
 						namespace Str
 						{
 							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl, Modify);
+							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl, Copy);
 						}
 					}
 				}
@@ -42,10 +44,13 @@ namespace NCsWeapon
 					typedef NCsModifier::IModifier ModifierType;
 					typedef NCsWeapon::NModifier::IModifier WeaponModifierType;
 					typedef NCsWeapon::NProjectile::NModifier::IModifier PrjWeaponModifierType;
+					typedef NCsWeapon::NModifier::NCopy::ICopy CopyType;
 
 					InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
 					InterfaceMap->Add<WeaponModifierType>(static_cast<WeaponModifierType*>(this));
 					InterfaceMap->Add<PrjWeaponModifierType>(static_cast<PrjWeaponModifierType*>(this));
+					InterfaceMap->Add<ICsGetWeaponModifierType>(static_cast<ICsGetWeaponModifierType*>(this));
+					InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
 					InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 
 					CS_CTOR_SET_MEMBER_PROXY(Value);
@@ -94,11 +99,27 @@ namespace NCsWeapon
 
 				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
 
-				void FImpl::CopyTo(FImpl* To) const
+				// CopyType (NCsWeapon::NModifier::NCopy::ICopy)
+				#pragma region
+
+				#define WeaponModifierType NCsWeapon::NModifier::IModifier
+				void FImpl::Copy(const WeaponModifierType* From)
 				{
-					To->SetValue(GetValue());
-					To->SetApplication(GetApplication());
+				#undef WeaponModifierType
+						
+					using namespace NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::NImpl::NCached;
+
+					const FString& Context = Str::Copy;
+						
+					typedef NCsWeapon::NModifier::FLibrary WeaponModifierLibrary;
+
+					const FImpl* FromImpl = WeaponModifierLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+					SetValue(FromImpl->GetValue());
+					SetApplication(FromImpl->GetApplication());
 				}
+
+				#pragma endregion CopyType (NCsWeapon::NModifier::NCopy::ICopy)
 
 				bool FImpl::IsValidChecked(const FString& Context) const
 				{

@@ -29,6 +29,7 @@ namespace NCsProjectileModifier
 	typedef FECsProjectileModifier Type;
 	typedef EMCsProjectileModifier EnumMapType;
 
+	extern CSPRJ_API const Type LifeTime;
 	extern CSPRJ_API const Type InitialSpeed;
 	extern CSPRJ_API const Type MaxSpeed;
 	extern CSPRJ_API const Type DamageValuePoint;

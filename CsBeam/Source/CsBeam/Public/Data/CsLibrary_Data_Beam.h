@@ -11,7 +11,7 @@ namespace NCsBeam
 	{
 	#define DataType NCsBeam::NData::IData
 
-		struct CSBEAM_API FLibrary final : public TCsLibrary_InterfaceMap<DataType>
+		struct CSBEAM_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
 		{
 		public:
 

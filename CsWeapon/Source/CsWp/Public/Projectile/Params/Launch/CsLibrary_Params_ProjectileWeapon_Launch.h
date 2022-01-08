@@ -13,7 +13,7 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-				struct CSWP_API FLibrary : public TCsLibrary_InterfaceMap<ILaunch>
+				struct CSWP_API FLibrary : public NCsInterfaceMap::TLibrary<ILaunch>
 				{
 				};
 			}

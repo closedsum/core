@@ -19,7 +19,7 @@ namespace NCsDamage
 		/**
 		* Library for interface: DataType (NCsDamage::NData::IData)
 		*/
-		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<DataType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
 		{
 		public:
 

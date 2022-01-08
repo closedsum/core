@@ -12,7 +12,7 @@ namespace NCsDamage
 		/**
 		* Library for interface: RangeType (NCsDamage::NRange::IRange)
 		*/
-		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<RangeType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<RangeType>
 		{
 			/**
 			* Copy the values from From to To with checks.

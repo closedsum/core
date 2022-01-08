@@ -12,7 +12,7 @@ namespace NCsStatusEffect
 		/**
 		* Library for interface: ModifierType (NCsStatusEffect::NModifier::IModifier)
 		*/
-		struct CSSE_API FLibrary final : public TCsLibrary_InterfaceMap<ModifierType>
+		struct CSSE_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
 		{
 		};
 

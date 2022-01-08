@@ -32,7 +32,7 @@ namespace NCsSkin
 		#define StaticMeshSkinType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
 		#define SkeletalMeshSkinType NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
 
-			struct CSCORE_API FLibrary : TCsLibrary_InterfaceMap<SkinType>
+			struct CSCORE_API FLibrary : NCsInterfaceMap::TLibrary<SkinType>
 			{
 			public:
 

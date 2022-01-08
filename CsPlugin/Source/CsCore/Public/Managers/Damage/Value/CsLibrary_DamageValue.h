@@ -16,7 +16,7 @@ namespace NCsDamage
 		/**
 		* Library for interface: ValueType (NCsDamage::NValue::IValue)
 		*/
-		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<ValueType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<ValueType>
 		{
 		public:
 

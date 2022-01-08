@@ -18,7 +18,7 @@ namespace NCsStaticMeshActor
 	{
 	#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 
-		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<PayloadType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
 		{
 		public:
 

@@ -12,7 +12,7 @@ namespace NCsUserWidget
 
 		/**
 		*/
-		struct CSUI_API FLibrary : public TCsLibrary_InterfaceMap<DataType>
+		struct CSUI_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
 		{
 		};
 

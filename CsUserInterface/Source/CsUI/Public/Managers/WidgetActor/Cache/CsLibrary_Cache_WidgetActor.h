@@ -5,6 +5,6 @@
 
 /**
 */
-struct CSUI_API FCsLibrary_Cache_WidgetActor : public TCsLibrary_InterfaceMap<NCsWidgetActor::NCache::ICache>
+struct CSUI_API FCsLibrary_Cache_WidgetActor : public NCsInterfaceMap::TLibrary<NCsWidgetActor::NCache::ICache>
 {
 };

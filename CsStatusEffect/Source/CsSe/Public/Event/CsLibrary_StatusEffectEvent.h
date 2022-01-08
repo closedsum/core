@@ -12,7 +12,7 @@ namespace NCsStatusEffect
 		/**
 		* Library for interface: EventType (NCsStatusEffect::NEvent::IEvent)
 		*/
-		struct CSSE_API FLibrary final : public TCsLibrary_InterfaceMap<EventType>
+		struct CSSE_API FLibrary final : public NCsInterfaceMap::TLibrary<EventType>
 		{
 			/**
 			* Copy the values from From to To with checks.

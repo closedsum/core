@@ -12,7 +12,7 @@ namespace NCsStatusEffect
 	/**
 	* Library for interface: DataType (NCsStatusEffect::NData::IData)
 	*/
-	struct CSSE_API FLibrary : public TCsLibrary_InterfaceMap<StatusEffectType>
+	struct CSSE_API FLibrary : public NCsInterfaceMap::TLibrary<StatusEffectType>
 	{
 	};
 

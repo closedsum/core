@@ -11,7 +11,7 @@ namespace NCsProjectile
 	{
 	#define DataType NCsProjectile::NData::IData
 
-		struct CSPRJ_API FLibrary final : public TCsLibrary_InterfaceMap<DataType>
+		struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<DataType>
 		{
 		public:
 

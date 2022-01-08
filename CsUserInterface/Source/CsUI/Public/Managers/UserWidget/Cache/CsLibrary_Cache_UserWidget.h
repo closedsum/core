@@ -5,6 +5,6 @@
 
 /**
 */
-struct CSUI_API FCsLibrary_Cache_UserWidget : public TCsLibrary_InterfaceMap<NCsUserWidget::NCache::ICache>
+struct CSUI_API FCsLibrary_Cache_UserWidget : public NCsInterfaceMap::TLibrary<NCsUserWidget::NCache::ICache>
 {
 };

@@ -17,7 +17,7 @@ namespace NCsWeapon
 
 			/**
 			*/
-			struct CSWP_API FLibrary : public TCsLibrary_InterfaceMap<DataType>
+			struct CSWP_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
 			{
 				/**
 				*

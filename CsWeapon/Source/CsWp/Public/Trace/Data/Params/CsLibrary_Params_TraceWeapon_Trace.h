@@ -13,7 +13,7 @@ namespace NCsWeapon
 			{
 			#define ParamsType NCsWeapon::NTrace::NParams::NTrace::ITrace
 
-				struct CSWP_API FLibrary : public TCsLibrary_InterfaceMap<ParamsType>
+				struct CSWP_API FLibrary : public NCsInterfaceMap::TLibrary<ParamsType>
 				{
 					/**
 					*

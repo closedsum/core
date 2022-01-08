@@ -12,7 +12,7 @@ namespace NCsSpawner
 	{
 	#define ParamsType NCsSpawner::NParams::IParams
 
-		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<ParamsType>
+		struct CSCORE_API FLibrary : public NCsInterfaceMap::TLibrary<ParamsType>
 		{
 		public:
 

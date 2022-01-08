@@ -12,7 +12,7 @@ namespace NCsPooledObject
 	{
 	#define CacheType NCsPooledObject::NCache::ICache
 
-		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<CacheType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<CacheType>
 		{
 		public:
 

@@ -16,7 +16,7 @@ namespace NCsDamage
 		/**
 		* Library for interface: (EventType) NCsDamage::NEvent::IEvent
 		*/
-		struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<EventType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<EventType>
 		{
 		public:
 

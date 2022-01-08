@@ -20,7 +20,7 @@ namespace NCsSound
 	{
 	#define PayloadType NCsSound::NPayload::IPayload
 
-		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
+		struct CSCORE_API FLibrary : public NCsInterfaceMap::TLibrary<PayloadType>
 		{
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 		#define PayloadImplType NCsSound::NPayload::FImpl

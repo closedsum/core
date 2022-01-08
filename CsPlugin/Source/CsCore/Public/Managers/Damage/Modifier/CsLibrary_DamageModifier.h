@@ -24,7 +24,7 @@ namespace NCsDamage
 	/**
 	* Library for interface: ModifierType (NCsDamage::NModifier::IModifier)
 	*/
-	struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<ModifierType>
+	struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
 	{
 	#define DataType NCsDamage::NData::IData
 	#define ValueType NCsDamage::NValue::IValue

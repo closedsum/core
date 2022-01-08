@@ -5,6 +5,6 @@
 
 /**
 */
-struct CSUI_API FCsLibrary_Data_WidgetActor : public TCsLibrary_InterfaceMap<ICsData_WidgetActor>
+struct CSUI_API FCsLibrary_Data_WidgetActor : public NCsInterfaceMap::TLibrary<ICsData_WidgetActor>
 { 
 };

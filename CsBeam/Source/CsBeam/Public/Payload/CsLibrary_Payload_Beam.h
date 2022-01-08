@@ -11,7 +11,7 @@ namespace NCsBeam
 
 		/**
 		*/
-		struct CSBEAM_API FLibrary final : public TCsLibrary_InterfaceMap<PayloadType>
+		struct CSBEAM_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
 		{
 		public:
 

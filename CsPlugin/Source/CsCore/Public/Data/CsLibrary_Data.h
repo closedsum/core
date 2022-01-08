@@ -21,7 +21,7 @@ namespace NCsData
 
 	/**
 	*/
-	struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<DataType>
+	struct CSCORE_API FLibrary : public NCsInterfaceMap::TLibrary<DataType>
 	{
 	public:
 

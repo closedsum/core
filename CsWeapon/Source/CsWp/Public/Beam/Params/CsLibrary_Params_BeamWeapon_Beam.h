@@ -13,7 +13,7 @@ namespace NCsWeapon
 			{
 			#define ParamsType NCsWeapon::NBeam::NParams::NBeam::IBeam
 
-				struct CSWP_API FLibrary : public TCsLibrary_InterfaceMap<ParamsType>
+				struct CSWP_API FLibrary : public NCsInterfaceMap::TLibrary<ParamsType>
 				{
 					/**
 					*

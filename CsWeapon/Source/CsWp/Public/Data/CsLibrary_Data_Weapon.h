@@ -11,7 +11,7 @@ namespace NCsWeapon
 	{
 	#define DataType NCsWeapon::NData::IData
 
-		struct CSWP_API FLibrary : TCsLibrary_InterfaceMap<DataType>
+		struct CSWP_API FLibrary : NCsInterfaceMap::TLibrary<DataType>
 		{
 		public:
 

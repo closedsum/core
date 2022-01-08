@@ -11,7 +11,7 @@ namespace NCsProjectile
 
 		/**
 		*/
-		struct CSPRJ_API FLibrary final : public TCsLibrary_InterfaceMap<PayloadType>
+		struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
 		{
 		public:
 

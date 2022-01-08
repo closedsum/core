@@ -5,7 +5,7 @@
 
 /**
 */
-struct CSUI_API FCsLibrary_Payload_WidgetActor : public TCsLibrary_InterfaceMap<NCsWidgetActor::NPayload::IPayload>
+struct CSUI_API FCsLibrary_Payload_WidgetActor : public NCsInterfaceMap::TLibrary<NCsWidgetActor::NPayload::IPayload>
 {
 public:
 

@@ -10,7 +10,7 @@ namespace NCsPooledObject
 	{
 	#define PayloadType NCsPooledObject::NPayload::IPayload
 
-		struct CSCORE_API FLibrary : public TCsLibrary_InterfaceMap<PayloadType>
+		struct CSCORE_API FLibrary : public NCsInterfaceMap::TLibrary<PayloadType>
 		{
 		};
 

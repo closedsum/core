@@ -12,7 +12,7 @@ namespace NCsModifier
 	/**
 	* Library for interface: ModifierType (NCsModifier::IModifier)
 	*/
-	struct CSCORE_API FLibrary final : public TCsLibrary_InterfaceMap<ModifierType>
+	struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
 	{
 	};
 

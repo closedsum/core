@@ -18,7 +18,7 @@ namespace NCsProjectile
 
 		/**
 		*/
-		struct CSPRJ_API FLibrary final : public TCsLibrary_InterfaceMap<CacheType>
+		struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<CacheType>
 		{
 		public:
 

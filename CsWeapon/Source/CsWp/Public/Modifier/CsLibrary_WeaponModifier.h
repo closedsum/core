@@ -19,7 +19,7 @@ namespace NCsWeapon
 	/**
 	* Library for interface: ModifierType (NCsWeapon::NModifier::IModifier)
 	*/
-	struct CSWP_API FLibrary final : public TCsLibrary_InterfaceMap<ModifierType>
+	struct CSWP_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
 	{
 	public:
 

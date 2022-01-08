@@ -22,7 +22,7 @@ namespace NCsProjectile
 	/**
 	* Library for interface: ModifierType (NCsProjectile::NModifier::IModifier)
 	*/
-	struct CSPRJ_API FLibrary final : public TCsLibrary_InterfaceMap<ModifierType>
+	struct CSPRJ_API FLibrary final : public NCsInterfaceMap::TLibrary<ModifierType>
 	{
 	public:
 

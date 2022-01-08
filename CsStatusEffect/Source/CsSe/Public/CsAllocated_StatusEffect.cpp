@@ -44,7 +44,7 @@ namespace NCsStatusEffect
 		Root		 = InRoot;
 		Container	 = SeCoordinatorLibrary::CreateCopyOfStatusEffectChecked(Context, InRoot, From);
 		StatusEffect = Container->Get();
-		ImplType	 = SeCoordinatorLibrary::GetStatusEffectTypeChecked(Context, InRoot, StatusEffect);
+		ImplType	 = SeCoordinatorLibrary::GetStatusEffectImplTypeChecked(Context, InRoot, StatusEffect);
 	}
 
 	void FAllocated::Copy(const FAllocated& From)

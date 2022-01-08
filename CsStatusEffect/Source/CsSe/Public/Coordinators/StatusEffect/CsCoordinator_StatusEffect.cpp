@@ -389,7 +389,7 @@ void UCsCoordinator_StatusEffect::DeallocateStatusEffect(const FString& Context,
 	Manager_StatusEffects[Type.GetValue()].Deallocate(StatusEffect);
 }
 
-const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect)
+const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectImplType(const FString& Context, const StatusEffectType* StatusEffect)
 {
 	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;
 
@@ -403,7 +403,7 @@ const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectType(con
 
 SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect)
 {
-	const FECsStatusEffectImpl& Type = GetStatusEffectType(Context, StatusEffect);
+	const FECsStatusEffectImpl& Type = GetStatusEffectImplType(Context, StatusEffect);
 	SeResourceType* Container		 = AllocateStatusEffect(Type);
 	StatusEffectType* Copy			 = Container->Get();
 

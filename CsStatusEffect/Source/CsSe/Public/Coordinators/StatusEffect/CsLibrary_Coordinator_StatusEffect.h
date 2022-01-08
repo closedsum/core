@@ -204,7 +204,7 @@ namespace NCsStatusEffect
 
 			static void DeallocateStatusEffectChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectImpl& Type, SeResourceType* StatusEffect);
 
-			static const FECsStatusEffectImpl& GetStatusEffectTypeChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect);
+			static const FECsStatusEffectImpl& GetStatusEffectImplTypeChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect);
 
 			static SeResourceType* CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect);
 

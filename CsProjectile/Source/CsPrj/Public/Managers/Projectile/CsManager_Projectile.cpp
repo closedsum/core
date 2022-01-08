@@ -38,6 +38,7 @@
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
+#include "Modifier/LifeTime/CsProjectileModifier_LifeTimeImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
 #include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
@@ -1063,6 +1064,11 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModifier& Type)
 {
+	// LifeTime | 
+	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NLifeTime::ILifeTime 
+	// NCsProjectile::NModifier::NLifeTime::FImpl
+	if (Type == NCsProjectileModifier::LifeTime)
+		return new NCsProjectile::NModifier::NLifeTime::FImpl();
 	// IntialSpeed | 
 	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
 	// NCsProjectile::NModifier::NSpeed::NInitial::FImpl

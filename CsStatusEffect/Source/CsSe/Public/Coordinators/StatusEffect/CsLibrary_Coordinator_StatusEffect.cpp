@@ -197,9 +197,9 @@ namespace NCsStatusEffect
 			GetChecked(Context, WorldContext)->DeallocateStatusEffect(Context, Type, StatusEffect);
 		}
 
-		const FECsStatusEffectImpl& FLibrary::GetStatusEffectTypeChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect)
+		const FECsStatusEffectImpl& FLibrary::GetStatusEffectImplTypeChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect)
 		{
-			return GetChecked(Context, WorldContext)->GetStatusEffectType(Context, StatusEffect);
+			return GetChecked(Context, WorldContext)->GetStatusEffectImplType(Context, StatusEffect);
 		}
 
 		SeResourceType* FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect)

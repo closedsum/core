@@ -157,7 +157,7 @@ public:
 	* @param Value
 	* return
 	*/
-	virtual const FECsStatusEffectImpl& GetStatusEffectType(const FString& Context, const StatusEffectType* StatusEffect);
+	virtual const FECsStatusEffectImpl& GetStatusEffectImplType(const FString& Context, const StatusEffectType* StatusEffect);
 
 	SeResourceType* CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect);
 

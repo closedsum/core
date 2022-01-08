@@ -141,7 +141,7 @@ bool UCsScriptLibrary_Data_Weapon::AddSlice_GetProjectileType(const FString& Con
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSlice_GetProjectileType : Context;
 
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::IData DataType;
 	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
@@ -175,7 +175,7 @@ bool UCsScriptLibrary_Data_Weapon::AddSliceFromObject_GetProjectileType(const FS
 
 	CS_IS_PTR_NULL_RET_NULL(Object)
 
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::IData DataType;
 	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;

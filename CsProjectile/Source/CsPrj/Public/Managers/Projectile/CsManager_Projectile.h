@@ -68,15 +68,15 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 // NCsProjectile::NPayload::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, FInterfaceMap)
 
-// NCsPooledObject::NManager::NHandler::TClass
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TClass
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
 			class TClass; } } }
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -96,8 +96,8 @@ class CSPRJ_API UCsManager_Projectile : public UObject
 #define ManagerParamsType NCsProjectile::FManager::FParams
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsProjectile::NPayload::IPayload
-#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define ClassHandlerType NCsData::NManager::NHandler::TClass
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsProjectile::NData::IData
 
 public:	

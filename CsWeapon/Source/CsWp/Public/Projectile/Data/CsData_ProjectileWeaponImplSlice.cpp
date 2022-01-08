@@ -41,7 +41,7 @@ SliceType* FCsData_ProjectileWeaponImplSlice::AddSafeSlice_Internal(const FStrin
 	if (!IsValid(Context, Log))
 		return nullptr;
 
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::IData DataType;
 	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
@@ -158,7 +158,7 @@ namespace NCsWeapon
 
 				CS_IS_PTR_NULL_RET_NULL(Object)
 
-				#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+				#define DataHandlerType NCsData::NManager::NHandler::TData
 				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 				typedef NCsWeapon::NData::IData DataType;
 				typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;

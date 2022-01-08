@@ -305,7 +305,7 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, DamageDataType.GetFName());
 		}
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
 		DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{

@@ -43,7 +43,7 @@ SliceType* FCsData_WeaponImplSlice::SafeConstruct_Internal(const FString& Contex
 	if (!IsValid(Context, Log))
 		return nullptr;
 
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::IData DataType;
 	typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;
@@ -90,7 +90,7 @@ namespace NCsWeapon
 			}
 		}
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define CS_TEMP_GET_SAFE_DATA_HANDLER \
 			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary; \
 			typedef NCsWeapon::NData::IData DataType; \
@@ -107,7 +107,7 @@ namespace NCsWeapon
 
 			CS_IS_PTR_NULL_RET_NULL(Object)
 
-			#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+			#define DataHandlerType NCsData::NManager::NHandler::TData
 			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 			typedef NCsWeapon::NData::IData DataType;
 			typedef NCsWeapon::NData::FInterfaceMap DataInterfaceMapType;

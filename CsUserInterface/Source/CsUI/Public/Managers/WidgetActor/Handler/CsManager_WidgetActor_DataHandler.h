@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 // Data
@@ -13,7 +13,7 @@ namespace NCsWidgetActor
 	{
 		namespace NHandler
 		{
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsWidgetActor::NData::IData
 #define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
 
@@ -29,13 +29,13 @@ namespace NCsWidgetActor
 
 				FData();
 
-			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			// DataHandlerType (NCsData::NManager::NHandler::TData)
 			#pragma region
 			protected:
 
 				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 			};
 
 #undef DataHandlerType

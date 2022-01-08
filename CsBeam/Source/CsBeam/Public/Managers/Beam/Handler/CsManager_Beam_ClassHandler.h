@@ -1,5 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Handler/CsManager_PooledObject_ClassHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
 // Types
 #include "Types/CsTypes_Beam.h"
 #include "Managers/Beam/CsBeamPooled.h"
@@ -11,7 +11,7 @@ namespace NCsBeam
 	{
 		namespace NHandler
 		{
-		#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
+		#define ClassHandlerType NCsData::NManager::NHandler::TClass
 
 			/**
 			*/

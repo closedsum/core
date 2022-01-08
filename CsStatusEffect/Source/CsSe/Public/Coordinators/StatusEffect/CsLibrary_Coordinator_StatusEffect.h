@@ -8,8 +8,8 @@
 class UObject;
 class UCsCoordinator_StatusEffect;
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -118,7 +118,7 @@ namespace NCsStatusEffect
 
 		#define DataType NCsStatusEffect::NData::IData
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsStatusEffect::NData::FInterfaceMap
 
 			/**

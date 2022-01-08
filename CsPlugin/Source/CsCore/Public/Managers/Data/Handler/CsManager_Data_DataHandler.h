@@ -10,7 +10,7 @@
 class UObject;
 class UDataTable;
 
-namespace NCsPooledObject
+namespace NCsData
 {
 	namespace NManager
 	{
@@ -34,9 +34,9 @@ namespace NCsPooledObject
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
 			class TData
 			{
-				static_assert(std::is_abstract<InterfaceDataType>(), "NCsPooledObject::NManager::NHandler::TData: InterfaceDataType MUST be abstract.");
+				static_assert(std::is_abstract<InterfaceDataType>(), "NCsData::NManager::NHandler::TData: InterfaceDataType MUST be abstract.");
 
-				static_assert(!std::is_abstract<DataContainerType>(), "NCsPooledObject::NManager::NHandler::TData: DataContainerType IS abstract.");
+				static_assert(!std::is_abstract<DataContainerType>(), "NCsData::NManager::NHandler::TData: DataContainerType IS abstract.");
 
 			public:
 
@@ -223,9 +223,9 @@ namespace NCsPooledObject
 				template<typename DataSliceType, typename EnumMapType>
 				DataSliceType* SafeConstructData(const FString& Context, const FString& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
-					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
+					static_assert(!std::is_abstract<DataSliceType>(), "NCsData::NManager::NHandler::TData: DataSliceType IS abstract.");
 
-					static_assert(std::is_base_of<InterfaceDataType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataType.");
+					static_assert(std::is_base_of<InterfaceDataType, DataSliceType>(), "NCsData::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataType.");
 
 					const FName Name_Internal = FName(*Name);
 
@@ -290,11 +290,11 @@ namespace NCsPooledObject
 				template<typename DataSliceType, typename InterfaceDataSliceType>
 				DataSliceType* AddSafeDataSlice(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
-					static_assert(!std::is_abstract<DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType IS abstract.");
+					static_assert(!std::is_abstract<DataSliceType>(), "NCsData::NManager::NHandler::TData: DataSliceType IS abstract.");
 
-					static_assert(std::is_abstract<InterfaceDataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: InterfaceDataSliceType is NOT abstract.");
+					static_assert(std::is_abstract<InterfaceDataSliceType>(), "NCsData::NManager::NHandler::TData: InterfaceDataSliceType is NOT abstract.");
 
-					static_assert(std::is_base_of<InterfaceDataSliceType, DataSliceType>(), "NCsPooledObject::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataSliceType.");
+					static_assert(std::is_base_of<InterfaceDataSliceType, DataSliceType>(), "NCsData::NManager::NHandler::TData: DataSliceType is NOT a child of: InterfaceDataSliceType.");
 
 					if (Name == NAME_None)
 					{

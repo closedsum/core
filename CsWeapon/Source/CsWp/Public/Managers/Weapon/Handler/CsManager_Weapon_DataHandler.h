@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Types/CsTypes_Weapon.h"
 // Data
@@ -13,7 +13,7 @@ namespace NCsWeapon
 	{
 		namespace NHandler
 		{
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsWeapon::NData::IData
 #define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
 
@@ -29,7 +29,7 @@ namespace NCsWeapon
 
 				FData();
 
-			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			// DataHandlerType (NCsData::NManager::NHandler::TData)
 			#pragma region
 			protected:
 
@@ -39,7 +39,7 @@ namespace NCsWeapon
 
 				virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject) override;
 
-			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 
 			protected:
 

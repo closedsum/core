@@ -15,7 +15,7 @@
 class UObject;
 class UDataTable;
 
-namespace NCsPooledObject
+namespace NCsData
 {
 	namespace NManager
 	{

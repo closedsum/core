@@ -1,6 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Types/CsTypes_StatusEffect.h"
 // Data
@@ -13,7 +13,7 @@ namespace NCsStatusEffect
 	{
 		namespace NHandler
 		{
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataType NCsStatusEffect::NData::IData
 		#define DataInterfaceMap NCsStatusEffect::NData::FInterfaceMap
 

@@ -58,14 +58,14 @@ namespace NCsWidgetActor
 class ICsGetManagerWidgetActor;
 class UDataTable;
 
-// NCsPooledObject::NManager::NHandler::TClass
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TClass
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
 			class TClass; } } }
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -85,8 +85,8 @@ class CSUI_API UCsManager_WidgetActor : public UObject
 #define ManagerParamsType NCsWidgetActor::FManager::FParams
 #define PayloadType NCsWidgetActor::NPayload::IPayload
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define ClassHandlerType NCsData::NManager::NHandler::TClass
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsWidgetActor::NData::IData
 #define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
 

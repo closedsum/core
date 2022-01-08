@@ -36,8 +36,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -293,7 +293,7 @@ namespace NCsDamage
 
 		#undef GetDamageDataTypeDataType
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
 
 			/**

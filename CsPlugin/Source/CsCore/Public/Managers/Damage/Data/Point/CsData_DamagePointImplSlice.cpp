@@ -45,7 +45,7 @@ SliceType* FCsData_DamagePointImplSlice::SafeConstruct_Internal(const FString& C
 	if (!IsValid(Context, Log))
 		return nullptr;
 
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 	typedef NCsDamage::NData::IData DataType;
 	typedef NCsDamage::NData::FInterfaceMap DataInterfaceMapType;
@@ -168,7 +168,7 @@ namespace NCsDamage
 
 			/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+				#define DataHandlerType NCsData::NManager::NHandler::TData
 				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 				typedef NCsDamage::NData::IData DataType;
 				typedef NCsDamage::NData::FInterfaceMap DataInterfaceMapType;

@@ -186,7 +186,7 @@ namespace NCsWeapon
 
 		#define DataType NCsWeapon::NData::IData
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
 		DataHandlerType<DataType, FCsData_WeaponPtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{

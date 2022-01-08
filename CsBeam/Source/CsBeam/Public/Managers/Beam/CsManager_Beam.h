@@ -66,15 +66,15 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NData, IData)
 // NCsBeam::NPayload::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsBeam, NPayload, FInterfaceMap)
 
-// NCsPooledObject::NManager::NHandler::TClass
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TClass
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
 			class TClass; } } }
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -94,8 +94,8 @@ class CSBEAM_API UCsManager_Beam : public UObject
 #define ManagerParamsType NCsBeam::FManager::FParams
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsBeam::NPayload::IPayload
-#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define ClassHandlerType NCsData::NManager::NHandler::TClass
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsBeam::NData::IData
 
 public:	

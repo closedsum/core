@@ -39,7 +39,7 @@ namespace NCsWeapon
 			{
 			}
 			 
-			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			// DataHandlerType (NCsData::NManager::NHandler::TData)
 			#pragma region
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
@@ -301,7 +301,7 @@ namespace NCsWeapon
 				}
 			}
 
-			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 
 			const TSet<FECsWeaponData>& FData::GetEmulatedDataInterfaces(const FString& Context, const int32& Index)
 			{

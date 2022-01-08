@@ -68,8 +68,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 // NCsWeapon::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
-// NCsPooledObject::NManager::NHandler::TClass
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TClass
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfacePooledContainerType, typename InterfaceUStructContainerType, typename EnumType>
@@ -78,8 +78,8 @@ namespace NCsPooledObject {
 	}
 }
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -107,8 +107,8 @@ class CSWP_API UCsManager_Weapon : public UObject
 #define ManagerParamsType NCsWeapon::FManager::FParams
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
 #define PayloadType NCsWeapon::NPayload::IPayload
-#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define ClassHandlerType NCsData::NManager::NHandler::TClass
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsWeapon::NData::IData
 
 public:	

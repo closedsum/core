@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Handler/CsManager_PooledObject_DataHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Data
@@ -13,7 +13,7 @@ namespace NCsDamage
 	{
 		namespace NHandler
 		{
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataType NCsDamage::NData::IData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
 

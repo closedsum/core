@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Handler/CsManager_PooledObject_ClassHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
 #include "Managers/WidgetActor/CsWidgetActorPooled.h"
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #pragma once
@@ -10,7 +10,7 @@ namespace NCsWidgetActor
 	{
 		namespace NHandler
 		{
-#define ClassHandlerType NCsPooledObject::NManager::NHandler::TClass
+#define ClassHandlerType NCsData::NManager::NHandler::TClass
 
 			class CSUI_API FClass : public ClassHandlerType<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>
 			{

@@ -65,8 +65,8 @@ class ICsGetManagerDamage;
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -362,7 +362,7 @@ public:
 #pragma region
 protected:
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
 
 	DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* DataHandler;

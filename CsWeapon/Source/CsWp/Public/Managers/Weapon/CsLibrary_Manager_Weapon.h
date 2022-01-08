@@ -11,8 +11,8 @@ class UCsManager_Weapon;
 struct FCsWeapon;
 class UClass;
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -232,7 +232,7 @@ namespace NCsWeapon
 
 		#define DataType NCsWeapon::NData::IData
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsWeapon::NData::FInterfaceMap
 
 			/**

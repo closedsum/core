@@ -19,8 +19,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 // NCsStatusEffect::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, FInterfaceMap)
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -40,7 +40,7 @@ class CSSE_API UCsCoordinator_StatusEffect : public UObject
 #define EventResourceType NCsStatusEffect::NEvent::FResource
 #define EventManagerType NCsStatusEffect::NEvent::FManager
 
-#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+#define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsStatusEffect::NData::IData
 #define DataInterfaceMapType NCsStatusEffect::NData::FInterfaceMap
 

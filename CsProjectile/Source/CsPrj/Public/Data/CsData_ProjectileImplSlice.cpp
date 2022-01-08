@@ -44,7 +44,7 @@ SliceType* FCsData_ProjectileImplSlice::SafeConstruct_Internal(const FString& Co
 	if (!IsValid(Context, Log))
 		return nullptr;
 
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NData::IData DataType;
 	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
@@ -186,7 +186,7 @@ namespace NCsProjectile
 
 		/*static*/ FImplSlice* FImplSlice::SafeConstruct_Internal(const FString& Context, const UObject* WorldContext, const FString& DataName, void(*Log)(const FString&) /*=&FCLog::Warning*/)
 		{
-			#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+			#define DataHandlerType NCsData::NManager::NHandler::TData
 			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 			typedef NCsProjectile::NData::IData DataType;
 			typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;

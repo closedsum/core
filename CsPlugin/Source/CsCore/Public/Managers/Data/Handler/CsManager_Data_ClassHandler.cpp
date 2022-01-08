@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Handler/CsManager_PooledObject_ClassHandler.h"
+#include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
 
 // Cached
 #pragma region
 
-namespace NCsPooledObject
+namespace NCsData
 {
 	namespace NManager
 	{

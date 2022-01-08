@@ -37,7 +37,7 @@ SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSliceAsValue(const FStr
 
 SliceType* FCsData_Projectile_CollisionImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCLog::Warning*/) const
 {
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NData::IData DataType;
 	typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;
@@ -130,7 +130,7 @@ namespace NCsProjectile
 
 				CS_IS_PTR_NULL_RET_NULL(Object)
 
-				#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+				#define DataHandlerType NCsData::NManager::NHandler::TData
 				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 				typedef NCsProjectile::NData::IData DataType;
 				typedef NCsProjectile::NData::FInterfaceMap DataInterfaceMapType;

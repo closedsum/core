@@ -37,7 +37,7 @@ SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSliceAsValue(const FString& C
 
 SliceType* FCsData_Beam_CollisionImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsBeam::FLog::Warning*/) const
 {
-	#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 	typedef NCsBeam::NData::IData DataType;
 	typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;
@@ -133,7 +133,7 @@ namespace NCsBeam
 
 				CS_IS_PTR_NULL_RET_NULL(Object)
 
-				#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+				#define DataHandlerType NCsData::NManager::NHandler::TData
 				typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;
 				typedef NCsBeam::NData::IData DataType;
 				typedef NCsBeam::NData::FInterfaceMap DataInterfaceMapType;

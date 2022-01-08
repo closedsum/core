@@ -16,7 +16,7 @@ namespace NCsWidgetActor
 
 			}
 
-			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			// DataHandlerType (NCsData::NManager::NHandler::TData)
 			#pragma region
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
@@ -37,7 +37,7 @@ namespace NCsWidgetActor
 				OutDataTableSoftObjects.Add(DataTableSoftObject);
 			}
 
-#			pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+#			pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 		}
 	}
 }

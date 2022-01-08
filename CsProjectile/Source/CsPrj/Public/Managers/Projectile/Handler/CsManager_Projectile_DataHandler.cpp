@@ -31,7 +31,7 @@ namespace NCsProjectile
 			{
 			}
 
-			// DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			// DataHandlerType (NCsData::NManager::NHandler::TData)
 			#pragma region
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
@@ -199,7 +199,7 @@ namespace NCsProjectile
 				}
 			}
 
-			#pragma endregion DataHandlerType (NCsPooledObject::NManager::NHandler::TData)
+			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 
 			const TSet<FECsProjectileData>& FData::GetEmulatedDataInterfaces(const FString& Context, const int32& Index)
 			{

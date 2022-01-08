@@ -11,8 +11,8 @@
 class UObject;
 class UCsManager_Projectile;
 
-// NCsPooledObject::NManager::NHandler::TData
-namespace NCsPooledObject {
+// NCsData::NManager::NHandler::TData
+namespace NCsData {
 	namespace NManager {
 		namespace NHandler {
 			template<typename InterfaceDataType, typename DataContainerType, typename DataInterfaceMapType>
@@ -144,7 +144,7 @@ namespace NCsProjectile
 
 		#define DataType NCsProjectile::NData::IData
 
-		#define DataHandlerType NCsPooledObject::NManager::NHandler::TData
+		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsProjectile::NData::FInterfaceMap
 
 			/**

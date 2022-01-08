@@ -195,3 +195,40 @@ namespace NCsProjectile
 	#undef ProjectilePayloadType
 	}
 }
+
+/*
+namespace NCsProjectile
+{
+	namespace NPayload
+	{
+		struct CSPRJ_API FTestTrait
+		{
+		private:
+
+			NCsProjectile::NPayload::RPayload __PrjPayloadTrait__;
+			NCsProjectile::NPayload::TCheck<FTestTrait> __check__1;
+
+		public:
+
+			FTestTrait() :
+				__PrjPayloadTrait__(),
+				__check__1()
+			{
+				__PrjPayloadTrait__.Set__GetType(&FTestTrait::GetType);
+				__PrjPayloadTrait__.Set__GetDirection(&FTestTrait::GetDirection);
+				__PrjPayloadTrait__.Set__GetLocation(&FTestTrait::GetLocation);
+			}
+
+			FORCEINLINE static const FECsProjectile& GetType(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetType)(); }
+			FORCEINLINE static const FVector& GetDirection(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetDirection)(); }
+			FORCEINLINE static const FVector& GetLocation(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetLocation)(); }
+
+			FORCEINLINE const FECsProjectile& GetType() const { return EMCsProjectile::Get().GetMAX(); }
+
+			FORCEINLINE const FVector& GetDirection() const { return FVector::ZeroVector; }
+
+			FORCEINLINE const FVector& GetLocation() const { return FVector::ZeroVector; }
+		};
+	}
+}
+*/

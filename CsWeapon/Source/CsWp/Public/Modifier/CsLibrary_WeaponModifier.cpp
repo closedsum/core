@@ -25,23 +25,6 @@ namespace NCsWeapon
 			return true;
 		}
 
-		const FECsWeaponModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
-		{
-			CS_IS_PTR_NULL_CHECKED(Modifier)
-
-			checkf(0, TEXT("%s: Failed to determine type (FECsWeaponModifier) for Value."), *Context);
-			return EMCsWeaponModifier::Get().GetMAX();
-		}
-
-		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
-		{
-			CS_IS_PTR_NULL_CHECKED(From)
-
-			CS_IS_PTR_NULL_CHECKED(To)
-
-			return false;
-		}
-
 		#undef ModifierType
 	}
 }

@@ -1451,6 +1451,7 @@ namespace NCsValid
 #define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array)
 	// 2D
 #define CS_IS_ARRAY_2D_EMPTY_CHECKED(__Array, __ValueType)
+#define CS_IS_ARRAY_2D_ANY_NULL_CHECKED(__Array, __ValueType)
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 // Object
@@ -1513,6 +1514,32 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str; \
 		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __Interface, __temp__str); \
+	}(Context, __Interface)
+// Assume const FString& Context has been defined
+#define CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
+	[] (const FString& Context, __InterfaceTypeA* __Interface) \
+	{ \
+		static const FString __temp__str__; \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __Interface, __temp__str__, __temp__str__a, __temp__str__b); \
+	}(Context, __Interface)
+// Assume const FString& Context has been defined
+#define CS_CONST_INTERFACE_TO_INTERFACE_CAST_CHECKED(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
+	[] (const FString& Context, const __InterfaceTypeA* __Interface) \
+	{ \
+		static const FString __temp__str__; \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __Interface, __temp__str__, __temp__str__a, __temp__str__b); \
+	}(Context, __Interface)
+// Assume const FString& Context has been defined
+#define CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
+	[] (const FString& Context, __InterfaceType* __Interface) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Delegate
 #define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)

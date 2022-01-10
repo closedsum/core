@@ -9,6 +9,54 @@
 // Physics
 #include "PhysicalMaterials/PhysicalMaterial.h"
 
+// TraceTypeQuery
+#pragma region
+
+namespace NCsTraceTypeQuery
+{
+	namespace Ref
+	{
+		typedef EMCsTraceTypeQuery EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery1, "Trace Type, Query 1");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery2, "Trace Type, Query 2");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery3, "Trace Type, Query 3");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery4, "Trace Type, Query 4");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery5, "Trace Type, Query 5");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery6, "Trace Type, Query 6");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery7, "Trace Type, Query 7");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery8, "Trace Type, Query 8");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery9, "Trace Type, Query 9");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery10, "Trace Type, Query 10");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery11, "Trace Type, Query 11");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery12, "Trace Type, Query 12");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery13, "Trace Type, Query 13");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery14, "Trace Type, Query 14");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery15, "Trace Type, Query 15");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery16, "Trace Type, Query 16");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery17, "Trace Type, Query 17");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery18, "Trace Type, Query 18");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery19, "Trace Type, Query 19");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery20, "Trace Type, Query 20");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery21, "Trace Type, Query 21");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery22, "Trace Type, Query 22");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery23, "Trace Type, Query 23");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery24, "Trace Type, Query 24");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery25, "Trace Type, Query 25");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery26, "Trace Type, Query 26");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery27, "Trace Type, Query 27");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery28, "Trace Type, Query 28");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery29, "Trace Type, Query 29");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery30, "Trace Type, Query 30");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery31, "Trace Type, Query 31");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery32, "Trace Type, Query 32");
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(TraceTypeQuery_MAX, "MAX");
+	}
+}
+
+#pragma endregion TraceTypeQuery
+
 // CollisionEnabled
 #pragma region
 
@@ -111,7 +159,6 @@ namespace NCsCollisionShape
 }
 
 #pragma endregion CollisionShape
-
 
 // FCsCollisionShape
 #pragma region

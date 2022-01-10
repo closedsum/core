@@ -341,7 +341,7 @@ public:
 #pragma region
 public:
 
-	//void LogEventPoint(const NCsStatusEffect::NEvent::IEvent* Event);
+	bool LogEvent(const EventType* Event);
 
 #pragma endregion Log
 

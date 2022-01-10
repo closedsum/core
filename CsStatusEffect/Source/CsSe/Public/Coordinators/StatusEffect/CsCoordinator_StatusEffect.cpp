@@ -622,9 +622,7 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 
 	const EventType* Event = EventContainer->Get();
 	
-#if !UE_BUILD_SHIPPING
-	//LogEvent(Event);
-#endif // #if !UE_BUILD_SHIPPING
+	CS_NON_SHIPPING_EXPR(LogEvent(Event));
 
 	// Process Event
 	typedef NCsStatusEffect::NData::IData DataType;
@@ -806,9 +804,11 @@ void UCsCoordinator_StatusEffect::ProcessDataChecked(const FString& Context, con
 // Log
 #pragma region
 
-/*
-void UCsCoordinator_StatusEffect::LogEventPoint(const NCsDamage::NEvent::IEvent* Event)
+#define EventType NCsStatusEffect::NEvent::IEvent
+bool UCsCoordinator_StatusEffect::LogEvent(const EventType* Event)
 {
+#undef EventType
+/*
 	ICsData_Damage* Data = Event->GetData();
 
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerDamageEvents))
@@ -843,6 +843,8 @@ void UCsCoordinator_StatusEffect::LogEventPoint(const NCsDamage::NEvent::IEvent*
 		UE_LOG(LogCs, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
 		UE_LOG(LogCs, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
 	}
+	*/
+	return true;
 }
-*/
+
 #pragma endregion Log

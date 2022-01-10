@@ -1,13 +1,105 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/CsTypes_Physics.h"
-#include "Engine/EngineTypes.h"
 #include "Types/Enum/CsEnumMap.h"
+#include "Types/CsTypes_Physics.h"
 #include "CollisionShape.h"
+#include "Engine/EngineTypes.h"
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Collision.generated.h"
+
+// TraceTypeQuery
+#pragma region
+
+/**
+*/
+struct CSCORE_API EMCsTraceTypeQuery final : public TCsEnumMap<ETraceTypeQuery>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTraceTypeQuery, ETraceTypeQuery)
+};
+
+namespace NCsTraceTypeQuery
+{
+	typedef ETraceTypeQuery Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type TraceTypeQuery1;
+		extern CSCORE_API const Type TraceTypeQuery2;
+		extern CSCORE_API const Type TraceTypeQuery3;
+		extern CSCORE_API const Type TraceTypeQuery4;
+		extern CSCORE_API const Type TraceTypeQuery5;
+		extern CSCORE_API const Type TraceTypeQuery6;
+		extern CSCORE_API const Type TraceTypeQuery7;
+		extern CSCORE_API const Type TraceTypeQuery8;
+		extern CSCORE_API const Type TraceTypeQuery9;
+		extern CSCORE_API const Type TraceTypeQuery10;
+		extern CSCORE_API const Type TraceTypeQuery11;
+		extern CSCORE_API const Type TraceTypeQuery12;
+		extern CSCORE_API const Type TraceTypeQuery13;
+		extern CSCORE_API const Type TraceTypeQuery14;
+		extern CSCORE_API const Type TraceTypeQuery15;
+		extern CSCORE_API const Type TraceTypeQuery16;
+		extern CSCORE_API const Type TraceTypeQuery17;
+		extern CSCORE_API const Type TraceTypeQuery18;
+		extern CSCORE_API const Type TraceTypeQuery19;
+		extern CSCORE_API const Type TraceTypeQuery20;
+		extern CSCORE_API const Type TraceTypeQuery21;
+		extern CSCORE_API const Type TraceTypeQuery22;
+		extern CSCORE_API const Type TraceTypeQuery23;
+		extern CSCORE_API const Type TraceTypeQuery24;
+		extern CSCORE_API const Type TraceTypeQuery25;
+		extern CSCORE_API const Type TraceTypeQuery26;
+		extern CSCORE_API const Type TraceTypeQuery27;
+		extern CSCORE_API const Type TraceTypeQuery28;
+		extern CSCORE_API const Type TraceTypeQuery29;
+		extern CSCORE_API const Type TraceTypeQuery30;
+		extern CSCORE_API const Type TraceTypeQuery31;
+		extern CSCORE_API const Type TraceTypeQuery32;
+
+		extern CSCORE_API const Type TraceTypeQuery_MAX;
+	}
+}
+
+#pragma endregion TraceTypeQuery
+
+/**
+* 	TraceTypeQuery1 UMETA(Hidden),
+	TraceTypeQuery2 UMETA(Hidden),
+	TraceTypeQuery3 UMETA(Hidden),
+	TraceTypeQuery4 UMETA(Hidden),
+	TraceTypeQuery5 UMETA(Hidden),
+	TraceTypeQuery6 UMETA(Hidden),
+	TraceTypeQuery7 UMETA(Hidden),
+	TraceTypeQuery8 UMETA(Hidden),
+	TraceTypeQuery9 UMETA(Hidden),
+	TraceTypeQuery10 UMETA(Hidden),
+	TraceTypeQuery11 UMETA(Hidden),
+	TraceTypeQuery12 UMETA(Hidden),
+	TraceTypeQuery13 UMETA(Hidden),
+	TraceTypeQuery14 UMETA(Hidden),
+	TraceTypeQuery15 UMETA(Hidden),
+	TraceTypeQuery16 UMETA(Hidden),
+	TraceTypeQuery17 UMETA(Hidden),
+	TraceTypeQuery18 UMETA(Hidden),
+	TraceTypeQuery19 UMETA(Hidden),
+	TraceTypeQuery20 UMETA(Hidden),
+	TraceTypeQuery21 UMETA(Hidden),
+	TraceTypeQuery22 UMETA(Hidden),
+	TraceTypeQuery23 UMETA(Hidden),
+	TraceTypeQuery24 UMETA(Hidden),
+	TraceTypeQuery25 UMETA(Hidden),
+	TraceTypeQuery26 UMETA(Hidden),
+	TraceTypeQuery27 UMETA(Hidden),
+	TraceTypeQuery28 UMETA(Hidden),
+	TraceTypeQuery29 UMETA(Hidden),
+	TraceTypeQuery30 UMETA(Hidden),
+	TraceTypeQuery31 UMETA(Hidden),
+	TraceTypeQuery32 UMETA(Hidden),
+
+	TraceTypeQuery_MAX	UMETA(Hidden)
+*/
 
 // CollisionEnabled
 #pragma region

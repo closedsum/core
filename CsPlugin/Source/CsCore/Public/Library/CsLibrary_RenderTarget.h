@@ -4,6 +4,7 @@
 #include "Engine/TextureRenderTarget2D.h"
 
 class UTextureRenderTarget2D;
+class UMaterialInterface;
 
 namespace NCsRenderTarget
 {
@@ -23,6 +24,18 @@ namespace NCsRenderTarget
 			* @param bAutoGenerateMipMaps	(optional)
 			*/
 			static UTextureRenderTarget2D* CreateChecked(const FString& Context, UObject* WorldContext, const int32& Width = 256, const int32& Height = 256, const ETextureRenderTargetFormat& Format = RTF_RGBA16f, const FLinearColor& ClearColor = FLinearColor::Black, const bool& bAutoGenerateMipMaps = false);
+
+			/**
+			* Renders a quad with the material applied to the specified render target.
+			* This sets the render target even if it is already set, which is an expensive operation.
+			* Use BeginDrawCanvasToRenderTarget / EndDrawCanvasToRenderTarget instead if rendering multiple primitives to the same render target.
+			* 
+			* @param Context				The calling context.
+			* @param WorldContext
+			* @param TextureRenderTarget
+			* @param Material
+			*/
+			static void DrawMaterialToRenderTargetChecked(const FString& Context, UObject* WorldContext, UTextureRenderTarget2D* TextureRenderTarget, UMaterialInterface* Material);
 		};
 	}
 }

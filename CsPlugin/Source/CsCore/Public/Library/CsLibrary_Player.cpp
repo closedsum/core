@@ -381,6 +381,15 @@ namespace NCsPlayer
 
 			return GetSafeId(Context, PlayerContext, nullptr);
 		}
+
+		APlayerCameraManager* FLibrary::GetCameraManagerChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			APlayerController* PC = GetLocalChecked(Context, WorldContext, ControllerId);
+
+			checkf(PC->PlayerCameraManager, TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PC->GetName()));
+
+			return PC->PlayerCameraManager;
+		}
 	}
 
 	namespace NState

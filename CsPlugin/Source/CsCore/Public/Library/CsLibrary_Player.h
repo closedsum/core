@@ -9,6 +9,7 @@ class APlayerState;
 class APawn;
 class UPlayerInput;
 class AHUD;
+class APlayerCameraManager;
 
 namespace NCsPlayer
 {
@@ -185,6 +186,8 @@ namespace NCsPlayer
 			static int32 GetSafeId(const FString& Context, const UObject* PlayerContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			static int32 GetSafeId(const UObject* PlayerContext);
+
+			static APlayerCameraManager* GetCameraManagerChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 		};
 	}
 

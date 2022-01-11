@@ -4,6 +4,8 @@
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
+// Render
+#include "Kismet/KismetRenderingLibrary.h"
 
 namespace NCsRenderTarget
 {
@@ -30,6 +32,28 @@ namespace NCsRenderTarget
 			NewRenderTarget2D->UpdateResourceImmediate(true);
 
 			return NewRenderTarget2D;
+		}
+
+		void FLibrary::DrawMaterialToRenderTargetChecked(const FString& Context, UObject* WorldContext, UTextureRenderTarget2D* TextureRenderTarget, UMaterialInterface* Material)
+		{
+			// TODO: Maybe. Assert?
+			if (!FApp::CanEverRender())
+			{
+				// Returning early to avoid warnings about missing resources that are expected when CanEverRender is false.
+				return;
+			}
+			
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+			CS_IS_PTR_NULL_CHECKED(Material)
+
+			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget)
+
+			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget->Resource)
+
+			UKismetRenderingLibrary::DrawMaterialToRenderTarget(WorldContext, TextureRenderTarget, Material);
 		}
 	}
 }

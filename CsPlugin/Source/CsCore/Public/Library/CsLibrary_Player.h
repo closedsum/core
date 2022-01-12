@@ -312,4 +312,33 @@ namespace NCsPlayer
 			}
 		};
 	}
+
+	namespace NCamera
+	{
+		struct CSCORE_API FLibrary
+		{
+		public:
+
+			/**
+			* Get the PlayerCameraManager associated with PlayerController with ControllerId.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* return				PlayerCameraManager
+			*/
+			static APlayerCameraManager* GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			/**
+			* Get the PlayerCameraManager's location which is associated with PlayerController with
+			* ControllerId.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* return				Location for PlayerCameraManager.
+			*/
+			static FVector GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+		};
+	}
 }

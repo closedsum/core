@@ -399,6 +399,11 @@ namespace NCsMath
 			return FRotator(0.0f, V.Rotation().Yaw + Offset, 0.0f);
 		}
 
+		FORCEINLINE static bool IsAnyComponentZero(const FVector& V)
+		{
+			return V.X == 0.0f || V.Y == 0.0f || V.Z == 0.0f;
+		}
+
 	#pragma endregion Vector
 
 	// Plane

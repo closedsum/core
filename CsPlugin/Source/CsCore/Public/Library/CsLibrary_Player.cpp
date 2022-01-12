@@ -17,6 +17,8 @@
 #include "GameFramework/Pawn.h"
 // Game
 #include "Engine/GameInstance.h"
+// Camera
+#include "Camera/PlayerCameraManager.h"
 // Engine
 #include "Engine/Engine.h"
 
@@ -542,6 +544,27 @@ namespace NCsPlayer
 			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
 				return PC->MyHUD;
 			return nullptr;
+		}
+	}
+
+	namespace NCamera
+	{
+		APlayerCameraManager* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+
+			checkf(PC->PlayerCameraManager, TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PC->GetName()));
+
+			return PC->PlayerCameraManager;
+		}
+
+		FVector FLibrary::GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
+
+			return Cast<AActor>(PCM)->GetActorLocation();
 		}
 	}
 }

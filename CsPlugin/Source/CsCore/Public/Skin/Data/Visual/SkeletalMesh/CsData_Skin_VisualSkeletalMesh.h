@@ -18,7 +18,7 @@ namespace NCsSkin
 			namespace NSkeletalMesh
 			{
 				/**
-				*
+				* Interface of a Skin using a Skeletal Mesh as a visual representation.
 				*/
 				struct CSCORE_API ISkeletalMesh : public ICsGetInterfaceMap
 				{
@@ -90,7 +90,7 @@ class CSCORE_API UCsData_Skin_VisualSkeletalMesh : public UCsGetInterfaceMap
 class USkeletalMesh;
 
 /**
-*
+* Interface of a Skin using a Skeletal Mesh as a visual representation.
 */
 class CSCORE_API ICsData_Skin_VisualSkeletalMesh : public ICsGetInterfaceMap
 {

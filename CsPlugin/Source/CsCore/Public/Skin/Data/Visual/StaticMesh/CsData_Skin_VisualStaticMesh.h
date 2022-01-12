@@ -19,7 +19,7 @@ namespace NCsSkin
 			namespace NStaticMesh
 			{
 				/**
-				*
+				* Interface of a Skin using a Static Mesh as a visual representation.
 				*/
 				struct CSCORE_API IStaticMesh : public ICsGetInterfaceMap
 				{
@@ -49,7 +49,7 @@ class CSCORE_API UCsData_Skin_VisualStaticMesh : public UCsGetInterfaceMap
 class UStaticMesh;
 
 /**
-*
+* Interface of a Skin using a Static Mesh as a visual representation.
 */
 class CSCORE_API ICsData_Skin_VisualStaticMesh : public ICsGetInterfaceMap
 {

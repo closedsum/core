@@ -566,5 +566,10 @@ namespace NCsPlayer
 
 			return Cast<AActor>(PCM)->GetActorLocation();
 		}
+
+		FVector FLibrary::GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		{
+			return GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation();
+		}
 	}
 }

@@ -339,6 +339,17 @@ namespace NCsPlayer
 			* return				Location for PlayerCameraManager.
 			*/
 			static FVector GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			/**
+			* Get the Camera location which is associated with PlayerController with
+			* ControllerId.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* return				Location for Camera.
+			*/
+			static FVector GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 		};
 	}
 }

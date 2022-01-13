@@ -11,6 +11,7 @@
 #include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
 #include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
+#include "Skin/Data/Visual/Scale/CsData_Skin_VisualUniformScale.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -110,6 +111,14 @@ namespace NCsSkin
 
 					checkf(Materials.Num() == Mesh->Materials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num());
 				}
+
+				// UniformScale
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinDataType;
+
+				if (UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
+				{
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScaleSkinData->GetUniformScale(), 0.0f)
+				}
 				return true;
 			}
 
@@ -182,6 +191,14 @@ namespace NCsSkin
 						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num()));
 						return false;
 					}
+				}
+
+				// UniformScale
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinDataType;
+
+				if (UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
+				{
+					CS_IS_FLOAT_GREATER_THAN(UniformScaleSkinData->GetUniformScale(), 0.0f)
 				}
 				return true;
 			}

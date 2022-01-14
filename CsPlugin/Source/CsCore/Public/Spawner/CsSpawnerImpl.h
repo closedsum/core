@@ -321,6 +321,14 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	UObject* Override_SpawnObject(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
+protected:
+
+	int32 CurrentSpawnFillCount;
+
+	TMap<int32, UObject*> SpawnedFillToCountObjectsByIndex;
+
+	void OnObjectDestroyed(const int32& Index, const UObject* Object);
+
 #pragma endregion Spawn
 
 // Log

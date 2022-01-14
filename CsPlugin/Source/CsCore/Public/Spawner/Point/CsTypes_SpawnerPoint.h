@@ -1,8 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 
 #include "CsTypes_SpawnerPoint.generated.h"
-#pragma once
 
 // SpawnerPointCount
 #pragma region
@@ -46,6 +46,9 @@ namespace NCsSpawner
 {
 	namespace NPoint
 	{
+		/**
+		* Describes the number of spawn points for the spawner.
+		*/
 		enum class ECount
 		{
 			/** No count is necessary. This is the case when spawn frequency == Infinite (ECsSpawnerFrequency::Infinite) */

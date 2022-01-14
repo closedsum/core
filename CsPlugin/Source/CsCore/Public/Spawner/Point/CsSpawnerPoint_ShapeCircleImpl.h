@@ -1,8 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Spawner
 #include "Spawner/Point/CsSpawnerPointImpl.h"
-
-#pragma once
 
 class ICsSpawner;
 class AActor;
@@ -24,6 +23,12 @@ namespace NCsSpawner
 			{
 			#define ImplType NCsSpawner::NPoint::IImpl
 
+				/**
+				* Basic implementation of the interface ImplType (NCsSpawner::NPoint::IImpl)
+				* that describes any spawn "points", a place where an object is spawned, for a
+				* Spawner (object that implements the interface: ICsSpawner).
+				* The spawn "points" are distributed in a circle around a "center".
+				*/
 				struct CSCORE_API FImpl : public ImplType
 				{
 				public:
@@ -34,18 +39,26 @@ namespace NCsSpawner
 				#define ShapeParamsType NCsSpawner::NParams::NShape::IShape
 				#define CircleParamsType NCsSpawner::NParams::NShape::ICircle
 
+					/** Reference to the object that will handle spawning objects. */
 					ICsSpawner* Spawner;
+					/** Reference to Spawner as an AActor. */
 					AActor* SpawnerAsActor;
 
+					/** Describes how spawning of objects is tracked (counted). */
 					PointCountType CountType;
+					/** Describes the order in which spawn points are chosen. */
 					OrderType Order;
 
 					ParamsType* Params;
 					ShapeParamsType* ShapeParams;
 					CircleParamsType* CircleParams;
 
+					/** The acting "center", this orientation is played to transform in GetTransform and
+						GetCurrentTransform, as an Actor. */
 					AActor* CenterAsActor;
 
+					/** The acting "center", this orientation is played to transform in GetTransform and
+						GetCurrentTransform, as an Transform. */
 					FTransform CenterAsTransform;
 
 					int32 Index;

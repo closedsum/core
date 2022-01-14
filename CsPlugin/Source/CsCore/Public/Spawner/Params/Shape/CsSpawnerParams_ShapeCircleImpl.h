@@ -10,6 +10,9 @@
 // NCsSpawner::NParams::NShape::NCircle::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSpawner, NParams, NShape, NCircle, FImpl)
 
+/**
+* Spawn Parameters for a Spawner to describe how to spawn objects in a Circle
+*/
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSpawnerParams_ShapeCircleImpl
 {
@@ -27,6 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCsSpawnerFrequencyParams FrequencyParams;
 
+	/** The total time the objects are being spawned for. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TotalTime;
 
@@ -99,6 +103,7 @@ namespace NCsSpawner
 			#define CircleParamsType NCsSpawner::NParams::NShape::ICircle
 
 				/**
+				* Spawn Parameters for a Spawner to describe how to spawn objects in a Circle
 				*/
 				struct CSCORE_API FImpl final : public ParamsType,
 												public ShapeParamsType,
@@ -120,26 +125,35 @@ namespace NCsSpawner
 
 				public:
 
-					// ParamsType (NCsSpawner::NParams::IParams)
+				// ParamsType (NCsSpawner::NParams::IParams)
 
+					/** Parameters describing number (count) of objects "created" when Spawn is called. */
 					CountParamsType CountParams;
 
+					/** Parameters describing the frequency at which Spawn is called after calling Start. */
 					FrequencyParamsType FrequencyParams;
 
+					/** The total time the objects are being spawned for. */
 					float TotalTime;
 
-					// ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
+				// ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
 
+					/** The shape / area of the spawner from which objects are spawned. 
+						This defaults to Circle (NCsSpawner::EShape::Circle). */
 					ShapeType Shape;
 
+					/** Describe what is designed as the "center" of the spawner's shape. */
 					CenterType Center;
 
+					/** How the spawning is distributed over a shape / area. */
 					DistributionType Distribution;
 
-					// CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
+				// CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
 
+					/** Minimum radius of the circle. */
 					float MinRadius;
 
+					/** Maximum radius of the circle. */
 					float MaxRadius;
 
 				public:

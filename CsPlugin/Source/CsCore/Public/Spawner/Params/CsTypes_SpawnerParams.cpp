@@ -79,6 +79,7 @@ namespace NCsSpawnerFrequency
 		CSCORE_API CS_ADD_TO_ENUM_MAP(TimeCount);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(TimeInterval);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Infinite);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(InfiniteFillToCount);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsSpawnerFrequency_MAX, "MAX");
 	}
 
@@ -98,6 +99,7 @@ namespace NCsSpawner
 			CSCORE_API CS_ADD_TO_ENUM_MAP(TimeCount);
 			CSCORE_API CS_ADD_TO_ENUM_MAP(TimeInterval);
 			CSCORE_API CS_ADD_TO_ENUM_MAP(Infinite);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(InfiniteFillToCount);
 			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EFrequency_MAX, "MAX");
 		}
 
@@ -148,6 +150,8 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 	if (Type == ECsSpawnerFrequency::Count)
 	{
 		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context);
+
+		checkf(Interval >= 0.0f, TEXT("%s: Interval MUST be >= 0.0f if Type == ECsSpawnerFrequency::Count."), *Context);
 	}
 	// TimeCount
 	else
@@ -167,6 +171,14 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 	{
 		checkf(Interval > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::Infinite."), *Context);
 	}
+	// InfiniteFillToCount
+	else
+	if (Type == ECsSpawnerFrequency::InfiniteFillToCount)
+	{
+		checkf(Interval > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::InfiniteFillToCount."), *Context);
+
+		checkf(Count >= 1, TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::InfiniteFillToCount."), *Context);
+	}
 	return true;
 }
 
@@ -184,6 +196,12 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context, void(*Log)(const
 		if (Count < 1)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::Count."), *Context));
+			return false;
+		}
+
+		if (Interval < 0.0f)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Interval MUST be >= 0.0f if Type == ECsSpawnerFrequency::Count."), *Context));
 			return false;
 		}
 	}
@@ -314,6 +332,8 @@ namespace NCsSpawner
 			if (GetType() == FrequencyType::Count)
 			{
 				checkf(GetCount() >= 1, TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::Count."), *Context);
+
+				checkf(GetInterval() >= 0.0f, TEXT("%s: etInterval() MUST be >= 0.0f if Type == ECsSpawnerFrequency::Count."), *Context);
 			}
 			// TimeCount
 			else
@@ -352,6 +372,12 @@ namespace NCsSpawner
 				if (GetCount() < 1)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::Count."), *Context));
+					return false;
+				}
+
+				if (GetInterval() < 0.0f)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetInterval() MUST be >= 0.0f if Type == ECsSpawnerFrequency::Count."), *Context));
 					return false;
 				}
 			}

@@ -84,7 +84,9 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	SpawnObjects_Internal_Handles(),
 	OnPreSpawnObject_Event(),
 	OnSpawnObject_ScriptEvent(),
-	bOverride_SpawnObject(false)
+	bOverride_SpawnObject(false),
+	CurrentSpawnFillCount(0),
+	SpawnedFillToCountObjectsByIndex()
 {
 	PrimaryActorTick.bCanEverTick = true;
 #if WITH_EDITOR
@@ -504,6 +506,15 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
 			}
+			// InfinitFillToCount
+			else
+			if (Frequency == FrequencyType::InfiniteFillToCount)
+			{
+				CanSpawn		 = true;
+				HasSpawnInterval = true;
+
+				CS_COROUTINE_WAIT_UNTIL(R, SpawnedFillToCountObjectsByIndex.Num() < FrequencyParams->GetCount());
+			}
 
 			if (HasSpawnInterval)
 			{
@@ -724,6 +735,22 @@ UObject* ACsSpawnerImpl::SpawnObject(const int32& Count, const int32& Group, con
 #endif // #if WITH_EDITOR
 	checkf(0, TEXT("ACsSpawnerImpl::SpawnObject: This MUST be implemented."));
 	return nullptr;
+}
+
+void ACsSpawnerImpl::OnObjectDestroyed(const int32& Index, const UObject* Object)
+{
+	// Check if Object was spawned by Spawner
+	if (UObject** ObjectPtr = SpawnedFillToCountObjectsByIndex.Find(Index))
+	{
+		if (*ObjectPtr == Object)
+		{
+			SpawnedFillToCountObjectsByIndex.Remove(Index);
+
+			--CurrentSpawnFillCount;
+
+			checkf(CurrentSpawnFillCount >= 0, TEXT("ACsSpawnerImpl::OnObjectDestroyed: Currently OnObjectDestroyed is ONLY used for tracking Fill Count."));
+		}
+	}
 }
 
 #pragma endregion Spawn

@@ -91,16 +91,22 @@ namespace NCsSpawner
 UENUM(BlueprintType)
 enum class ECsSpawnerFrequency : uint8
 {
-	/** */
+	/** The spawner only calls Spawn ONE time. */
 	Once						UMETA(DisplayName = "Once"),
-	/** */
+	/** The spawner calls Spawn 'COUNT' number of times at a specified
+		Interval. */
 	Count						UMETA(DisplayName = "Count"),
-	/** */
+	/** The spawner calls Spawn 'COUNT' number of times over Time.
+		The Interval of each Spawn is Time / COUNT. */
 	TimeCount					UMETA(DisplayName = "Time Count"),
-	/** */
+	/** The spawner call Spawn a number of times equal to Time / Interval. */
 	TimeInterval				UMETA(DisplayName = "Time Interval"),
-	/** */
+	/** The spawner keeps calling Spawn every Interval. */
 	Infinite					UMETA(DisplayName = "Infinite"),
+	/** The spawner keeps calling Spawn every Interval as long as the number of 
+		objects active (persistent from being spawned via the spawner) is LESS THAN
+		'COUNT' */
+	InfiniteFillToCount			UMETA(DisplayName = "Infinite Fill to Count"),
 	ECsSpawnerFrequency_MAX		UMETA(Hidden),
 };
 
@@ -120,6 +126,7 @@ namespace NCsSpawnerFrequency
 		extern CSCORE_API const Type TimeCount;
 		extern CSCORE_API const Type TimeInterval;
 		extern CSCORE_API const Type Infinite;
+		extern CSCORE_API const Type InfiniteFillToCount;
 		extern CSCORE_API const Type ECsSpawnerFrequency_MAX;
 	}
 
@@ -133,16 +140,22 @@ namespace NCsSpawner
 	*/
 	enum class EFrequency : uint8
 	{
-		/** */
+		/** The spawner only calls Spawn ONE time. */
 		Once,
-		/** */
+		/** The spawner calls Spawn 'COUNT' number of times at a specified
+			Interval. */
 		Count,
-		/** */
+		/** The spawner calls Spawn 'COUNT' number of times over Time.
+			The Interval of each Spawn is Time / COUNT. */
 		TimeCount,
-		/** */
+		/** The spawner call Spawn a number of times equal to Time / Interval. */
 		TimeInterval,
-		/** */
+		/** The spawner keeps calling Spawn every Interval. */
 		Infinite,
+		/** The spawner keeps calling Spawn every Interval as long as the number of
+			objects active (persistent from being spawned via the spawner) is LESS THAN
+			'COUNT' */
+		InfiniteFillToCount,
 		EFrequency_MAX
 	};
 
@@ -162,6 +175,7 @@ namespace NCsSpawner
 			extern CSCORE_API const Type TimeCount;
 			extern CSCORE_API const Type TimeInterval;
 			extern CSCORE_API const Type Infinite;
+			extern CSCORE_API const Type InfiniteFillToCount;
 			extern CSCORE_API const Type EFrequency_MAX;
 		}
 
@@ -222,6 +236,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
+	/** The total time for Spawning. 
+		Only valid if,
+		Type == ECsSpawnerFrequency::Count
+		Type == ECsSpawnerFrequency::TimeCount
+		Type == ECsSpawnerFrequency::TimeInterval */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Time;
 

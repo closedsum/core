@@ -149,8 +149,12 @@ namespace NCsSpawner
 
 			ParamsType* Params;
 
+			/** The acting "center", this orientation is played to transform in GetTransform and
+				GetCurrentTransform, as an Actor. */ 
 			AActor* CenterAsActor;
 
+			/** The acting "center", this orientation is played to transform in GetTransform and
+				GetCurrentTransform, as an Transform. */
 			FTransform CenterAsTransform;
 
 			int32 Index;

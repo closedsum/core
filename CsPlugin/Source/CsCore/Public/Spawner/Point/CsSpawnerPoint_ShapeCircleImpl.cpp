@@ -84,6 +84,8 @@ namespace NCsSpawner
 
 						checkf(Frequency != FrequencyType::Infinite, TEXT("%s: If CountType == TotalCount (PointCountType::TotalCount), then Params->GetFrequencyParams().GetType() must NOT be Infinite (FrequencyType::Infinite)."), *Context);
 
+						// TODO: Need a way of setting the MAX number of Transform to cache and if / when the Transform list should be regenerated
+						
 						// Once
 						if (Frequency == FrequencyType::Once)
 						{

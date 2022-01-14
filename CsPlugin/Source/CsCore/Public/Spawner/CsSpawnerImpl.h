@@ -157,6 +157,9 @@ public:
 
 #undef PointImplType
 
+	void SetPointCenter(AActor* Center);
+	void SetPointCenter(const FTransform& Center);
+
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Spawner|Point")
 	FTransform PointImpl_GetCurrentTransform();
 
@@ -322,8 +325,6 @@ public:
 	UObject* Override_SpawnObject(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
 protected:
-
-	int32 CurrentSpawnFillCount;
 
 	TMap<int32, UObject*> SpawnedFillToCountObjectsByIndex;
 

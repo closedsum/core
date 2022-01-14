@@ -85,7 +85,6 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	OnPreSpawnObject_Event(),
 	OnSpawnObject_ScriptEvent(),
 	bOverride_SpawnObject(false),
-	CurrentSpawnFillCount(0),
 	SpawnedFillToCountObjectsByIndex()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -234,6 +233,16 @@ void ACsSpawnerImpl::SetPointImpl(const FString& Context, PointImplType* InPoint
 	DeconstructPointImplImpl = InDeconstructPointImplImpl;
 
 	PointImpl->SetSpawner(this);
+}
+
+void ACsSpawnerImpl::SetPointCenter(AActor* Center)
+{
+	PointImpl->SetCenter(Center);
+}
+
+void ACsSpawnerImpl::SetPointCenter(const FTransform& Center)
+{
+	PointImpl->SetCenter(Center);
 }
 
 FTransform ACsSpawnerImpl::PointImpl_GetCurrentTransform()
@@ -745,10 +754,6 @@ void ACsSpawnerImpl::OnObjectDestroyed(const int32& Index, const UObject* Object
 		if (*ObjectPtr == Object)
 		{
 			SpawnedFillToCountObjectsByIndex.Remove(Index);
-
-			--CurrentSpawnFillCount;
-
-			checkf(CurrentSpawnFillCount >= 0, TEXT("ACsSpawnerImpl::OnObjectDestroyed: Currently OnObjectDestroyed is ONLY used for tracking Fill Count."));
 		}
 	}
 }

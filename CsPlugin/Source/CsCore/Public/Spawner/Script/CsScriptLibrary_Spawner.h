@@ -39,4 +39,8 @@ public:
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Spawner", meta = (AutoCreateRefTerm = "Context,Params"))
 	static bool SetParams_ShapeCircleImpl(const FString& Context, UObject* Spawner, const FCsSpawnerParams_ShapeCircleImpl& Params);
+
+	//static bool PointImpl_SetCenterAsActor();
+
+	//static bool PointImpl_SetCenterAsTransform();
 };

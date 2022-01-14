@@ -235,6 +235,22 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context, void(*Log)(const
 			return false;
 		}
 	}
+	// InfiniteFillToCount
+	else
+	if (Type == ECsSpawnerFrequency::InfiniteFillToCount)
+	{
+		if (Interval <= 0.0f)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Interval MUST be > 0.0f if Type == ECsSpawnerFrequency::InfiniteFillToCount."), *Context));
+			return false;
+		}
+
+		if (Count < 1)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Count MUST be >= 1 if Type == ECsSpawnerFrequency::InfiniteFillToCount."), *Context));
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -353,6 +369,14 @@ namespace NCsSpawner
 			{
 				checkf(GetInterval() > 0.0f, TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::Infinite."), *Context);
 			}
+			// InfiniteFillToCount
+			else
+			if (GetType() == FrequencyType::InfiniteFillToCount)
+			{
+				checkf(GetInterval() > 0.0f, TEXT("%s: Interval MUST be > 0.0f if Type == FrequencyType::InfiniteFillToCount."), *Context);
+
+				checkf(GetCount() >= 1, TEXT("%s: Count MUST be >= 1 if Type == FrequencyType::InfiniteFillToCount."), *Context);
+			}
 			return true;
 		}
 
@@ -408,6 +432,22 @@ namespace NCsSpawner
 				if (GetInterval() <= 0.0f)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::Infinite."), *Context));
+					return false;
+				}
+			}
+			// InfiniteFillToCount
+			else
+			if (GetType() == FrequencyType::InfiniteFillToCount)
+			{
+				if (GetInterval() <= 0.0f)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetInterval() MUST be > 0.0f if GetType() == FrequencyType::InfiniteFillToCount."), *Context));
+					return false;
+				}
+
+				if (GetCount() < 1)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetCount() MUST be >= 1 if GetType() == FrequencyType::InfiniteFillToCount."), *Context));
 					return false;
 				}
 			}

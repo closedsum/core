@@ -104,7 +104,8 @@ namespace NCsSpawner
 						// TimeCount | TimeInterval
 						else
 						if (Frequency == FrequencyType::TimeCount ||
-							Frequency == FrequencyType::TimeInterval)
+							Frequency == FrequencyType::TimeInterval ||
+							Frequency == FrequencyType::InfiniteFillToCount)
 						{
 							checkf(FrequencyParams.GetCount() > 0, TEXT("%s: If CountType == TotalCount (PointCountType::TotalCount), then Params->GetFrequencyParams().GetCount() MUST be > 0."), *Context);
 
@@ -163,7 +164,15 @@ namespace NCsSpawner
 					// TotalCount
 					if (CountType == PointCountType::TotalCount)
 					{
-						++Index;
+						typedef NCsSpawner::NParams::FFrequency FrequencyParamsType;
+						typedef NCsSpawner::EFrequency FrequencyType;
+
+						const FrequencyParamsType& FrequencyParams = Params->GetFrequencyParams();
+
+						if (FrequencyParams.GetType() == FrequencyType::InfiniteFillToCount)
+							Index = (Index + 1) % FrequencyParams.GetCount();
+						else
+							++Index;
 					}
 					// CountPerSpawn
 					else

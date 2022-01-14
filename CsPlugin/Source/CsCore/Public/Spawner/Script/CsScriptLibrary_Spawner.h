@@ -40,7 +40,23 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Spawner", meta = (AutoCreateRefTerm = "Context,Params"))
 	static bool SetParams_ShapeCircleImpl(const FString& Context, UObject* Spawner, const FCsSpawnerParams_ShapeCircleImpl& Params);
 
-	//static bool PointImpl_SetCenterAsActor();
+	/**
+	* Set the Center for spawning objects for the Point Implementation on Spawner.
+	* 
+	* @param Context	The calling context
+	* @param Spawner
+	* @param Center
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Spawner", meta = (AutoCreateRefTerm = "Context"))
+	static bool PointImpl_SetCenterAsActor(const FString& Context, UObject* Spawner, AActor* Center);
 
-	//static bool PointImpl_SetCenterAsTransform();
+	/**
+	* Set the Center for spawning objects for the Point Implementation on Spawner.
+	*
+	* @param Context	The calling context
+	* @param Spawner
+	* @param Center
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Spawner", meta = (AutoCreateRefTerm = "Context, Center"))
+	static bool PointImpl_SetCenterAsTransform(const FString& Context, UObject* Spawner, const FTransform& Center);
 };

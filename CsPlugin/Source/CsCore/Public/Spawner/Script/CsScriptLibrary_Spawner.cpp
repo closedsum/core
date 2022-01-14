@@ -2,6 +2,10 @@
 #include "Spawner/Script/CsScriptLibrary_Spawner.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Log
+#include "Utility/CsLog.h"
 // Spawner
 #include "Spawner/CsSpawnerImpl.h"
 #include "Spawner/Point/CsSpawnerPointImpl.h"
@@ -15,6 +19,8 @@ namespace NCsScriptLibrarySpawner
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Spawner, SetParams_DefaultImpl);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Spawner, SetParams_ShapeCircleImpl);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Spawner, PointImpl_SetCenterAsActor);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Spawner, PointImpl_SetCenterAsTransform);
 		}
 	}
 }
@@ -116,5 +122,39 @@ bool UCsScriptLibrary_Spawner::SetParams_ShapeCircleImpl(const FString& Context,
 	ParamsType* ParamsImpl = Params.ConstructParamsImpl();
 
 	Impl->SetParams(Ctxt, ParamsImpl, &ParamsType::Deconstruct, &ParamsType::IsValidChecked);
+	return true;
+}
+
+bool UCsScriptLibrary_Spawner::PointImpl_SetCenterAsActor(const FString& Context, UObject* Spawner, AActor* Center)
+{
+	using namespace NCsScriptLibrarySpawner::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::PointImpl_SetCenterAsActor : Context;
+
+	ACsSpawnerImpl* Impl = GetSpawnerImpl(Ctxt, Spawner);
+
+	if (!Impl)
+		return false;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_PTR_NULL(Center)
+
+	Impl->SetPointCenter(Center);
+	return true;
+}
+
+bool UCsScriptLibrary_Spawner::PointImpl_SetCenterAsTransform(const FString& Context, UObject* Spawner, const FTransform& Center)
+{
+	using namespace NCsScriptLibrarySpawner::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::PointImpl_SetCenterAsTransform : Context;
+
+	ACsSpawnerImpl* Impl = GetSpawnerImpl(Ctxt, Spawner);
+
+	if (!Impl)
+		return false;
+
+	Impl->SetPointCenter(Center);
 	return true;
 }

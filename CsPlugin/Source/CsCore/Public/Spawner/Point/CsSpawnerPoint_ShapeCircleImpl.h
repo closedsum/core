@@ -97,9 +97,9 @@ namespace NCsSpawner
 
 					void SetParams(ParamsType* InParams);
 
-					void SetCenter(AActor* Center) { CenterAsActor = Center; }
+					void SetCenter(AActor* Center);
 
-					void SetCenter(const FTransform& Center) { CenterAsTransform = Center; }
+					void SetCenter(const FTransform& Center);
 
 					void Prepare();
 

@@ -139,6 +139,30 @@ namespace NCsSpawner
 				}
 				#undef ParamsType
 
+				void FImpl::SetCenter(AActor* Center)
+				{
+					typedef NCsSpawner::NShape::ECenter CenterType;
+
+					// TODO: FIX
+					const CenterType* TypePtr = &(ShapeParams->GetCenterType());
+					CenterType* Type		  = const_cast<CenterType*>(TypePtr);
+					*Type					  = CenterType::Actor;
+
+					CenterAsActor = Center;
+				}
+
+				void FImpl::SetCenter(const FTransform& Center) 
+				{ 
+					typedef NCsSpawner::NShape::ECenter CenterType;
+
+					// TODO: FIX
+					const CenterType* TypePtr = &(ShapeParams->GetCenterType());
+					CenterType* Type		  = const_cast<CenterType*>(TypePtr);
+					*Type					  = CenterType::Transform;
+
+					CenterAsTransform = Center; 
+				}
+
 				void FImpl::Prepare()
 				{
 					typedef NCsSpawner::NPoint::ECount PointCountType;

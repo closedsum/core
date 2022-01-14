@@ -1,8 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Debug/CsTypes_Debug.h"
 
 #include "CsSettings_Manager_Trace.generated.h"
-#pragma once
 
 // FCsSettings_Manager_Trace_Debug
 #pragma region

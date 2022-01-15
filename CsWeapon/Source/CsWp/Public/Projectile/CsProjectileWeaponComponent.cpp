@@ -698,7 +698,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 			static TArray<PrjModifierType*> Modifiers;
 			Outer->GetProjectileModifiers(Modifiers);
 
-
+			Slice->SetModifiers(Modifiers);
 		}
 	}
 	return Result;

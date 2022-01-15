@@ -88,6 +88,13 @@ namespace NCsSpawner
 			*/
 			virtual void Advance(const int32& Count, const int32& Group, const int32& CountPerGroup) = 0;
 
+			/**
+			* Get the transform of the acting "center" of the spawner.
+			* 
+			* return Transform
+			*/
+			virtual FTransform GetCenterTransform() const = 0;
+
 			/** 
 			* Get the spawn transform based on Count, Group, and CountPerGroup.
 			* 
@@ -195,6 +202,8 @@ namespace NCsSpawner
 			void Prepare() {}
 
 			void Advance(const int32& Count, const int32& Group, const int32& CountPerGroup);
+
+			FTransform GetCenterTransform() const;
 
 			FTransform GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const { return FTransform::Identity; }
 

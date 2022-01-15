@@ -40,8 +40,8 @@ module.exports = class FJsCore
     GetWorld() { return this.World; }
     GetGameState() { return this.GameState; }
     GetPlayerController() { return this.PlayerController; }
-    GetPlayerState() { this.PlayerState; }
-    GetPlayerPawn() { this.PlayerPawn; }
+    GetPlayerState() { return this.PlayerState; }
+    GetPlayerPawn() { return this.PlayerPawn; }
     GetCoroutineScheduler() { return this.CoroutineScheduler; }
 
     /**

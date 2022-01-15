@@ -799,12 +799,12 @@ void ACsSpawnerImpl::DebugDraw()
 	// Circle
 	if (FCsDebugDrawCircle* Circle = GetDebugDrawCircle())
 	{
-		Circle->Draw(GetWorld(), GetActorTransform());
+		Circle->Draw(GetWorld(), PointImpl->GetCenterTransform());
 	}
 	// Sphere
 	if (FCsDebugDrawSphere* Sphere = GetDebugDrawSphere())
 	{
-		Sphere->Draw(GetWorld(), GetActorTransform());
+		Sphere->Draw(GetWorld(), PointImpl->GetCenterTransform());
 	}
 }
 

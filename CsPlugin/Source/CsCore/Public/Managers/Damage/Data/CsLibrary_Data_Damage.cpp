@@ -12,6 +12,13 @@ namespace NCsDamage
 	{
 		#define DataType NCsDamage::NData::IData
 
+		FString FLibrary::PrintDataAndClass(const DataType* Data)
+		{
+			if (UObject* O = Data->_getUObject())
+				return FString::Printf(TEXT("Data: %s with Class: %s"), *(O->GetName()), *(O->GetClass()->GetName()));
+			return FString::Printf(TEXT("Data: %s (Non-UObject)"), *(Data->GetInterfaceMap()->GetRootName().ToString()));
+		}
+
 		bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
 		{
 			CS_IS_PTR_NULL_CHECKED(Data)

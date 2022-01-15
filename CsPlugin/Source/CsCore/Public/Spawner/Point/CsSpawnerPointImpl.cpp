@@ -26,6 +26,13 @@ namespace NCsSpawner
 			CurrentGroup = Group;
 		}
 
+		FTransform FImpl::GetCenterTransform() const
+		{
+			if (CenterAsActor)
+				return CenterAsActor->GetActorTransform();
+			return CenterAsTransform;
+		}
+
 		#pragma endregion ImplType (NCsSpawner::NPoint::IImpl)
 	}
 }

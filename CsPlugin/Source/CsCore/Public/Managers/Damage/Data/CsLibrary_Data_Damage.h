@@ -23,6 +23,8 @@ namespace NCsDamage
 		{
 		public:
 
+			static FString PrintDataAndClass(const DataType* Data);
+			
 			static bool IsValidChecked(const FString& Context, const DataType* Data);
 
 			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &FCsLog::Warning);

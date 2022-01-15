@@ -1,21 +1,95 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "CsCore.h"
 
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
+#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/CsReceiveDamage.h"
 #include "Managers/Damage/Event/CsGetCurrentDamageEvent.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
+#include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
+#include "Managers/Damage/Value/Range/CsDamageValueRange.h"
+// Material
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 namespace NCsDamage
 {
 	namespace NEvent
 	{
 	#define EventType NCsDamage::NEvent::IEvent
+
+		void FLibrary::LogEvent(const FString& Context, const EventType* Event)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s:"), *Context);
+			UE_LOG(LogCs, Warning, TEXT("- Damage Event"));
+
+			typedef NCsDamage::NData::FLibrary DataLibrary;
+			typedef NCsDamage::NData::IData DataType;
+
+			DataType* Data = Event->GetData();
+
+			// Data
+			UE_LOG(LogCs, Warning, TEXT("-- %s"), *DataLibrary::PrintDataAndClass(Data));
+
+			// Damage
+			{
+				typedef NCsDamage::NValue::FLibrary ValueLibrary;
+				typedef NCsDamage::NValue::IValue ValueType;
+
+				const ValueType* Value = Event->GetDamageValue();
+
+				// Point
+				{
+					typedef NCsDamage::NValue::NPoint::IPoint PointType;
+
+					if (const PointType* Point = ValueLibrary::GetSafeInterfaceChecked<PointType>(Context, Value))
+					{
+						UE_LOG(LogCs, Warning, TEXT("-- Damage: %f"), Point->GetValue());
+					}
+				}
+				// Range
+				{
+					typedef NCsDamage::NValue::NRange::IRange RangeType;
+
+					if (const RangeType* Range = ValueLibrary::GetSafeInterfaceChecked<RangeType>(Context, Value))
+					{
+						UE_LOG(LogCs, Warning, TEXT("-- Damage: %f <-> %f"), Range->GetMinValue(), Range->GetMaxValue());
+					}
+				}
+			}
+
+			UE_LOG(LogCs, Warning, TEXT("-- Type: %s"), Data->GetType().ToChar());
+			// Instigator
+			UE_LOG(LogCs, Warning, TEXT("- Instigator: %s"), Event->GetInstigator() ? *(Event->GetInstigator()->GetName()) : TEXT("None"));
+			// Causer
+			UE_LOG(LogCs, Warning, TEXT("- Causer: %s"), Event->GetCauser() ? *(Event->GetCauser()->GetName()) : TEXT("None"));
+			// HitResult
+			const FHitResult& HitResult = Event->GetHitResult();
+
+			UE_LOG(LogCs, Warning, TEXT("- HitResult"));
+			UE_LOG(LogCs, Warning, TEXT("-- bBlockingHit: %s"), HitResult.bBlockingHit ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("-- bStartPenetrating"), HitResult.bStartPenetrating ? TEXT("True") : TEXT("False"));
+			UE_LOG(LogCs, Warning, TEXT("-- Time: %f"), HitResult.Time);
+			UE_LOG(LogCs, Warning, TEXT("-- Location: %s"), *(HitResult.Location.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("-- ImpactPoint: %s"), *(HitResult.ImpactPoint.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("-- Normal: %s"), *(HitResult.Normal.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("-- ImpactNormal: %s"), *(HitResult.ImpactNormal.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("-- TraceStart: %s"), *(HitResult.TraceStart.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("-- TraceEnd: %s"), *(HitResult.TraceEnd.ToString()));
+			UE_LOG(LogCs, Warning, TEXT("-- PenetrationDepth: %f"), HitResult.PenetrationDepth);
+			UE_LOG(LogCs, Warning, TEXT("-- Item: %d"), HitResult.Item);
+			UE_LOG(LogCs, Warning, TEXT("-- PhysMaterial: %s"), HitResult.PhysMaterial.IsValid() ? *(HitResult.PhysMaterial->GetName()) : TEXT("None"));
+			UE_LOG(LogCs, Warning, TEXT("-- Actor: %s"), HitResult.Actor.IsValid() ? *(HitResult.Actor->GetName()) : TEXT("None"));
+			UE_LOG(LogCs, Warning, TEXT("-- Component: %s"), HitResult.Component.IsValid() ? *(HitResult.Component->GetName()) : TEXT("None"));
+			UE_LOG(LogCs, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
+			UE_LOG(LogCs, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
+		}
 
 		bool FLibrary::CopyChecked(const FString& Context, const EventType* From, EventType* To)
 		{

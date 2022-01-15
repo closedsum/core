@@ -349,7 +349,7 @@ namespace NCsMath
 
 			OutSize = FMath::Sqrt(OutSizeSquared);
 
-			return (1.0f / OutSize) * V;
+			return (1.0f / OutSize) * FVector(V.X, V.Y, 0.f);
 		}
 
 		/**

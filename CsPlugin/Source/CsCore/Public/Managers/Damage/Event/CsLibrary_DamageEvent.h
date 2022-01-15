@@ -20,6 +20,8 @@ namespace NCsDamage
 		{
 		public:
 
+			static void LogEvent(const FString& Context, const EventType* Event);
+
 			/**
 			* Copy the values from From to To with checks.
 			* Currently supports To types of:

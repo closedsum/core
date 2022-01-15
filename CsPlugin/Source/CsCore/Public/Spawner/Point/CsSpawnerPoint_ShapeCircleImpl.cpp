@@ -209,6 +209,13 @@ namespace NCsSpawner
 					}
 				}
 
+				FTransform FImpl::GetCenterTransform() const
+				{
+					if (CenterAsActor)
+						return CenterAsActor->GetActorTransform();
+					return CenterAsTransform;
+				}
+
 				FTransform FImpl::GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const
 				{
 					typedef NCsSpawner::NPoint::ECount PointCountType;

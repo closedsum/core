@@ -105,6 +105,8 @@ namespace NCsSpawner
 
 					void Advance(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
+					FTransform GetCenterTransform() const;
+
 					FTransform GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const;
 
 					FTransform GetCurrentTransform() const;

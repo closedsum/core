@@ -6,6 +6,7 @@
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileState;
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileStateTransition;
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileCanFire;
+extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileLaunchDirection;
 // Scoped Timers
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimer;
 extern CSWP_API TAutoConsoleVariable<int32> CsCVarLogWeaponProjectileScopedTimerFire;
@@ -21,6 +22,7 @@ namespace NCsCVarLog
 	extern CSWP_API const Type LogWeaponProjectileState;
 	extern CSWP_API const Type LogWeaponProjectileStateTransition;
 	extern CSWP_API const Type LogWeaponProjectileCanFire;
+	extern CSWP_API const Type LogWeaponProjectileLaunchDirection;
 	// Scoped Timers
 	extern CSWP_API const Type LogWeaponProjectileScopedTimer;
 	extern CSWP_API const Type LogWeaponProjectileScopedTimerFire;
@@ -33,6 +35,7 @@ namespace NCsCVarLog
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponProjectileState);
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponProjectileStateTransition);
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponProjectileCanFire);
+		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponProjectileLaunchDirection);
 		// Scoped Timers
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimer);
 		extern CSWP_API CS_DECLARE_ADD_TO_CVAR_MAP(LogWeaponProjectileScopedTimerFire);

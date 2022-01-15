@@ -40,6 +40,9 @@ struct FCsProjectilePooled;
 
 class USceneComponent;
 
+// NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
+
 UCLASS(BlueprintType)
 class CSWP_API UCsProjectileWeaponComponent : public UActorComponent,
 											  public ICsUpdate,
@@ -373,6 +376,10 @@ public:
 		virtual FVector GetLaunchLocation();
 
 		virtual FVector GetLaunchDirection();
+
+	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
+		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);
+	#undef LaunchParamsType
 
 		void Launch();
 	};

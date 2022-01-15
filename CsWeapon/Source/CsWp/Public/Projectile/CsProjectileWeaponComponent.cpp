@@ -818,10 +818,18 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			// AActor
 			if (AActor* Actor = Cast<AActor>(TheOwner))
-				return NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+			{
+				const FVector Dir = NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
+				return Dir;
+			}
 			// USceneComponent
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
-				return NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
+			{
+				const FVector Dir = NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
+				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
+				return Dir;
+			}
 			checkf(0, TEXT("%s: Failed to get Direction from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 		}
 	}
@@ -837,7 +845,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		
 		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
 
-		return Rotation.Vector();
+		const FVector Dir = Rotation.Vector();
+		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
+		return Dir;
 	}
 	// Camera
 	if (DirectionType == EDirection::Camera)
@@ -847,7 +857,9 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			typedef NCsCamera::FLibrary CameraLibrary;
 
-			return CameraLibrary::GetDirectionChecked(Context, TheOwner);
+			const FVector Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner);
+			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
+			return Dir;
 		}
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 	}
@@ -1010,16 +1022,41 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		if (Start == LaunchDirection ||
 			FVector::DotProduct(Dir, LaunchDirection) > 0)
 		{
+			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, LaunchDirection));
 			return LaunchDirection;
 		}
+		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 		return Dir;
 	}
 	// Custom
 	if (DirectionType == EDirection::Custom)
 	{
+		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, CustomLaunchDirection));
 		return CustomLaunchDirection;
 	}
+	CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, FVector::ZeroVector));
 	return FVector::ZeroVector;
+}
+
+#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
+void UCsProjectileWeaponComponent::FProjectileImpl::Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction)
+{
+#undef LaunchParamsType
+
+	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
+
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileLaunchDirection))
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection"));
+		UE_LOG(LogCsWp, Warning, TEXT(" Weapon: %s"), *(Outer->GetName()));
+		UE_LOG(LogCsWp, Warning, TEXT(" Class: %s"), *(Outer->GetClass()->GetName()));
+		UE_LOG(LogCsWp, Warning, TEXT(" Owner: %s"), Outer->GetOwner() ? *(Outer->GetOwner()->GetName()) : TEXT("None"));
+
+		const EDirection& DirectionType = LaunchParams->GetDirectionType();
+
+		UE_LOG(LogCsWp, Warning, TEXT(" DirectionType: %s"), EMDirection::Get().ToChar(DirectionType));
+		UE_LOG(LogCsWp, Warning, TEXT(" Direction: %s"), *(Direction.ToString()));
+	}
 }
 
 void UCsProjectileWeaponComponent::FProjectileImpl::Launch()

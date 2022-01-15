@@ -1,5 +1,7 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
+#include "Types/Enum/CsEnumMap.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 
@@ -31,6 +33,24 @@ namespace NCsWeapon
 					Custom
 				};
 
+				struct CSWP_API EMLocation : public TCsEnumMap<ELocation>
+				{
+					CS_ENUM_MAP_BODY(EMLocation, ELocation)
+				};
+
+				namespace NLocation
+				{
+					typedef ELocation Type;
+
+					namespace Ref
+					{
+						extern CSWP_API const Type Owner;
+						extern CSWP_API const Type Bone;
+						extern CSWP_API const Type Component;
+						extern CSWP_API const Type Custom;
+					}
+				}
+
 			#pragma endregion Location
 
 			// Direction
@@ -58,6 +78,26 @@ namespace NCsWeapon
 					Custom
 				};
 				
+				struct CSWP_API EMDirection : public TCsEnumMap<EDirection>
+				{
+					CS_ENUM_MAP_BODY(EMDirection, EDirection)
+				};
+
+				namespace NDirection
+				{
+					typedef EDirection Type;
+
+					namespace Ref
+					{
+						extern CSWP_API const Type Owner;
+						extern CSWP_API const Type Bone;
+						extern CSWP_API const Type Component;
+						extern CSWP_API const Type Camera;
+						extern CSWP_API const Type Trace;
+						extern CSWP_API const Type Custom;
+					}
+				}
+
 			#pragma endregion Direction
 
 				/**

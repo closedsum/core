@@ -202,6 +202,11 @@ namespace NCsStatusEffect
 			return GetChecked(Context, WorldContext)->GetStatusEffectImplType(Context, StatusEffect);
 		}
 
+		SeResourceType* FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect, FECsStatusEffectImpl& OutType)
+		{
+			return GetChecked(Context, WorldContext)->CreateCopyOfStatusEffect(Context, StatusEffect, OutType);
+		}
+
 		SeResourceType* FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect)
 		{
 			return GetChecked(Context, WorldContext)->CreateCopyOfStatusEffect(Context, StatusEffect);

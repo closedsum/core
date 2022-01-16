@@ -696,6 +696,8 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::SetPayload(const FString& Co
 			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
 			static TArray<PrjModifierType*> Modifiers;
+			Modifiers.Reset(Modifiers.Max());
+
 			Outer->GetProjectileModifiers(Modifiers);
 
 			Slice->SetModifiers(Modifiers);

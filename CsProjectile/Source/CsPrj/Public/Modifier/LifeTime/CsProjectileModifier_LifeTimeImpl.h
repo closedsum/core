@@ -4,6 +4,7 @@
 #include "Modifier/CsModifier.h"
 #include "Modifier/CsProjectileModifier.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
+#include "Valid/CsIsValid.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
 #include "Reset/CsReset.h"
 // Types
@@ -26,6 +27,7 @@ namespace NCsProjectile
 			struct CSPRJ_API FImpl : public ModifierType,
 									 public PrjModifierType,
 									 public ICsGetProjectileModifierType,
+									 public ICsIsValid,
 									 public CopyType,
 									 public ICsReset
 			{
@@ -74,6 +76,15 @@ namespace NCsProjectile
 				FORCEINLINE const FECsProjectileModifier& GetProjectileModifierType() const { return NCsProjectileModifier::LifeTime; }
 
 			#pragma endregion ICsGetProjectileModifierType
+			
+			// ICsIsValid
+			#pragma region
+			public:
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+			#pragma endregion ICsIsValid
 
 			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 			#pragma region
@@ -99,9 +110,6 @@ namespace NCsProjectile
 				
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
-
-				bool IsValidChecked(const FString& Context) const;
-				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 
 			#undef ApplicationType
 			};

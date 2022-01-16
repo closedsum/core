@@ -15,7 +15,7 @@ public:
 
 	virtual ~ICsIsValid(){}
 
-	virtual bool IsValidChecked(const FString& Context) = 0;
+	virtual bool IsValidChecked(const FString& Context) const = 0;
 
-	virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) = 0;
+	virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = nullptr) const = 0;
 };

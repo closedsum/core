@@ -313,6 +313,8 @@ void UCsCoordinator_StatusEffect::Initialize()
 
 void UCsCoordinator_StatusEffect::CleanUp()
 {
+	OnBeginCleanUp_Event.Broadcast();
+
 	delete DataHandler;
 
 	// Modifier
@@ -401,11 +403,11 @@ const FECsStatusEffectImpl& UCsCoordinator_StatusEffect::GetStatusEffectImplType
 	return ImplType;
 }
 
-SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect)
+SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect, FECsStatusEffectImpl& OutType)
 {
-	const FECsStatusEffectImpl& Type = GetStatusEffectImplType(Context, StatusEffect);
-	SeResourceType* Container		 = AllocateStatusEffect(Type);
-	StatusEffectType* Copy			 = Container->Get();
+	OutType					  = GetStatusEffectImplType(Context, StatusEffect);
+	SeResourceType* Container = AllocateStatusEffect(OutType);
+	StatusEffectType* Copy	  = Container->Get();
 
 	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;
 	typedef NCsStatusEffect::NCopy::ICopy CopyType;
@@ -415,6 +417,12 @@ SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FStr
 	ICopy->Copy(StatusEffect);
 
 	return Container;
+}
+
+SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect)
+{
+	FECsStatusEffectImpl Type;
+	return CreateCopyOfStatusEffect(Context, StatusEffect, Type);
 }
 
 SeResourceType* UCsCoordinator_StatusEffect::CreateCopyOfStatusEffect(const FString& Context, const SeResourceType* StatusEffect)

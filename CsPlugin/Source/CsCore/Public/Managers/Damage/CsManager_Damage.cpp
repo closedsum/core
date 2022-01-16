@@ -423,8 +423,8 @@ void UCsManager_Damage::DeallocateEvent(const FString& Context, EventResourceTyp
 	typedef NCsDamage::NEvent::FLibrary DamageEventLibrary;
 
 	// Reset
-	if (ICsReset* IReset = DamageEventLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Event->Get()))
-		IReset->Reset();
+	ICsReset* IReset = DamageEventLibrary::GetInterfaceChecked<ICsReset>(Context, Event->Get());
+	IReset->Reset();
 
 	Manager_Event.Deallocate(Event);
 }

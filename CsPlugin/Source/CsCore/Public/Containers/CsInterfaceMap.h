@@ -307,6 +307,19 @@ public:
 	}
 
 	/**
+	* Check whether the object is of type: DerivedType.
+	* 
+	* return Whether the object is of type: DerivedType
+	*/
+	template<typename DerivedType>
+	FORCEINLINE bool Is() const
+	{
+		static_assert(!std::is_abstract<DerivedType>(), "NCsInterfaceMap::StaticCastChecked: DerivedType IS abstract.");
+
+		return bUniqueBasedSlices ? InterfacesByUniqueBasedSliceRootName.Find(DerivedType::Name) != nullptr : DerivedType::Name == RootName;
+	}
+
+	/**
 	* Perform the operation static_cast<DerivedType*>(Interface) with checks.
 	* DerivedType is NOT abstract.
 	*

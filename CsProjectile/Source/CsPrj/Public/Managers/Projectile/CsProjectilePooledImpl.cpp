@@ -38,7 +38,9 @@
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
+#include "Modifier/LifeTime/CsProjectileModifier_LifeTimeImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
+#include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
 // FX
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound
@@ -176,6 +178,14 @@ void ACsProjectilePooledImpl::BeginDestroy()
 		delete Cache;
 		Cache = nullptr;
 	}
+
+	typedef NCsProjectile::NModifier::FAllocated AllocateModifierType;
+
+	for (AllocateModifierType& Modifier : Modifiers)
+	{
+		Modifier.Clear();
+	}
+	Modifiers.Reset();
 }
 
 #pragma endregion UObject Interface
@@ -722,6 +732,24 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Set / Cache any Modifiers from the Payload
 	OnLaunch_SetModifiers(Payload);
 
+	// LifeTime
+	{
+		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
+		typedef NCsProjectile::NModifier::IModifier ModifierType;
+		typedef NCsProjectile::NModifier::NLifeTime::FImpl LifeTimeModifierType;
+
+		for (AllocatedModifierType& AllocatedModifier : Modifiers)
+		{
+			ModifierType* Modifier = AllocatedModifier.Get();
+
+			if (ModifierLibrary::Is<LifeTimeModifierType>(Context, Modifier))
+			{
+				Modifier->Modify(this);
+			}
+		}
+	}
+
 	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
 
 	SetActorHiddenInGame(false);
@@ -868,22 +896,20 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		// Check to apply any Speed Modifiers
 		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
+		typedef NCsProjectile::NModifier::IModifier ModifierType;
 
-			// Initial
+		for (AllocatedModifierType& AllocatedModifier : Modifiers)
 		{
-			typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl SpeedModifierType;
+			ModifierType* Modifier = AllocatedModifier.Get();
 
-			for (AllocatedModifierType& AllocatedModifier : Modifiers)
+			typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl InitialSpeedModifierType;
+			typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl MaxSpeedModifierType;
+
+			if (ModifierLibrary::Is<InitialSpeedModifierType>(Context, Modifier) ||
+				ModifierLibrary::Is<MaxSpeedModifierType>(Context, Modifier))
 			{
-				if (SpeedModifierType* SpeedModifier = ModifierLibrary::SafeStaticCastChecked<SpeedModifierType>(Context, AllocatedModifier.Modifier))
-				{
-					SpeedModifier->Modify(this);
-				}
+				Modifier->Modify(this);
 			}
-		}
-			// Max
-		{
-
 		}
 
 		if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)

@@ -108,6 +108,12 @@ protected:
 
 	virtual void CleanUp();
 
+public:
+
+	DECLARE_MULTICAST_DELEGATE(FOnBeginCleanUp);
+
+	FOnBeginCleanUp OnBeginCleanUp_Event;
+
 private:
 	// Singleton data
 	static UCsCoordinator_StatusEffect* s_Instance;
@@ -158,6 +164,8 @@ public:
 	* return
 	*/
 	virtual const FECsStatusEffectImpl& GetStatusEffectImplType(const FString& Context, const StatusEffectType* StatusEffect);
+
+	SeResourceType* CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect, FECsStatusEffectImpl& OutType);
 
 	SeResourceType* CreateCopyOfStatusEffect(const FString& Context, const StatusEffectType* StatusEffect);
 

@@ -312,6 +312,21 @@ namespace NCsInterfaceMap
 		}
 
 		/**
+		* Check whether the Interface is "rooted" in an object of type: DerivedType.
+		* 
+		* @param Context	The calling context.
+		* @param Interface	Interface that implements the interface: ICsGetInterfaceMap.
+		* return			Whether the Interface is "rooted" in an object of type: DerivedType.
+		*/
+		template<typename DerivedType>
+		FORCEINLINE static bool Is(const FString& Context, const InterfaceType* Interface)
+		{
+			const FCsInterfaceMap* InterfaceMap = GetInterfaceMapChecked(Context, Interface);
+
+			return InterfaceMap->Is<DerivedType>();
+		}
+
+		/**
 		* Check whether the Interface references an interface map (FCsInterfaceMap) stores
 		* unique based interface slices
 		*

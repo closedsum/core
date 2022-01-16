@@ -50,6 +50,7 @@ namespace NCsProjectile
 				InterfaceMap->Add<ModifierType>(static_cast<ModifierType*>(this));
 				InterfaceMap->Add<PrjModifierType>(static_cast<PrjModifierType*>(this));
 				InterfaceMap->Add<ICsGetProjectileModifierType>(static_cast<ICsGetProjectileModifierType*>(this));
+				InterfaceMap->Add<ICsIsValid>(static_cast<ICsIsValid*>(this));
 				InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
 				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 
@@ -87,24 +88,8 @@ namespace NCsProjectile
 
 			#pragma endregion PrjModifierType (NCsProjectile::NModifier::IModifier)
 
-			#define PrjModifierType NCsProjectile::NModifier::IModifier
-			void FImpl::Copy(const PrjModifierType* From)
-			{
-			#undef PrjModifierType
-						
-				using namespace NCsProjectile::NModifier::NLifeTime::NImpl::NCached;
-
-				const FString& Context = Str::Copy;
-						
-				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-				const FImpl* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FImpl>(Context, From);
-
-				SetValue(FromImpl->GetValue());
-				SetApplication(FromImpl->GetApplication());
-			}
-
-			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			// ICsIsValid
+			#pragma region
 
 			bool FImpl::IsValidChecked(const FString& Context) const
 			{
@@ -126,6 +111,30 @@ namespace NCsProjectile
 				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
 				return true;
 			}
+
+			#pragma endregion ICsIsValid
+
+			// CopyType (NCsProjectile::NModifier::NCopy::ICopy)
+			#pragma region
+
+			#define PrjModifierType NCsProjectile::NModifier::IModifier
+			void FImpl::Copy(const PrjModifierType* From)
+			{
+			#undef PrjModifierType
+						
+				using namespace NCsProjectile::NModifier::NLifeTime::NImpl::NCached;
+
+				const FString& Context = Str::Copy;
+						
+				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+				const FImpl* FromImpl = PrjModifierLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+				SetValue(FromImpl->GetValue());
+				SetApplication(FromImpl->GetApplication());
+			}
+
+			#pragma endregion CopyType (NCsProjectile::NModifier::NCopy::ICopy)
 		}
 	}
 }

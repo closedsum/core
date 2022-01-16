@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 
 namespace NCsDamageValue
 {

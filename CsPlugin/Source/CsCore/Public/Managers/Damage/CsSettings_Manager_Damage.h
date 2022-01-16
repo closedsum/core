@@ -1,9 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Damage/CsTypes_Damage.h"
-#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 
 #include "CsSettings_Manager_Damage.generated.h"
-#pragma once
 
 // FCsSettings_Manager_Damage_Event
 #pragma region

@@ -2,6 +2,7 @@
 #pragma once
 // Interfaces
 #include "Managers/Damage/Event/CsDamageEvent.h"
+#include "Managers/Damage/Event/Copy/CsDamageEvent_Copy.h"
 #include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
@@ -23,10 +24,13 @@ namespace NCsDamage
 {
 	namespace NEvent
 	{
+	#define CopyType NCsDamage::NEvent::NCopy::ICopy
+
 		/**
 		* Basic implementation of the interface: NCsDamage::NEvent::IEvent
 		*/
 		struct CSCORE_API FImpl final : public IEvent,
+										public CopyType,
 										public ICsReset
 		{
 		public:
@@ -112,6 +116,10 @@ namespace NCsDamage
 				return Cast<T>(GetCauser());
 			}
 
+		// CopyType (NCsDamage::NEvent::NCopy::ICopy)
+		#pragma region
+		public:
+
 			/**
 			* Copy all elements from another Event 
 			*  EXCEPT:
@@ -119,7 +127,19 @@ namespace NCsDamage
 			*
 			* @param From	Event to copy from.
 			*/
-			void CopyFrom(const FImpl* From);
+			void Copy(const IEvent* From);
+
+		#pragma endregion CopyType (NCsDamage::NEvent::NCopy::ICopy)
+
+		// ICsReset
+		#pragma region
+		public:
+
+			void Reset();
+
+		#pragma endregion ICsReset
+
+		public:
 
 			/**
 			*
@@ -129,12 +149,8 @@ namespace NCsDamage
 			*/
 			bool SetDamageChecked(const FString& Context);
 
-		// ICsReset
-		#pragma region
-
-			void Reset();
-
-		#pragma endregion ICsReset
 		};
+
+	#undef CopyType
 	}
 }

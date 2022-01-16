@@ -5,6 +5,8 @@
 #include "Managers/Damage/Modifier/CsDamageModifier.h"
 #include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
 #include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRange.h"
+#include "Managers/Damage/Modifier/Types/CsGetDamageModifierType.h"
+#include "Reset/CsReset.h"
 // Types
 #include "Modifier/CsTypes_Modifier.h"
 
@@ -30,7 +32,9 @@ namespace NCsDamage
 				struct CSCORE_API FImpl : public ModifierType,
 										  public DmgModifierType,
 										  public DmgValueModifierType,
-										  public DmgValueRangeModifierType
+										  public DmgValueRangeModifierType,
+										  public ICsGetDamageModifierType,
+										  public ICsReset
 				{
 				public:
 
@@ -81,6 +85,28 @@ namespace NCsDamage
 					void Modify(ValueType* Value) const;
 
 				#pragma endregion DmgValueModifierType (NCsDamage::NModifier::NValue::IValue)
+
+				// ICsGetDamageModifierType
+				#pragma region
+				public:
+
+					FORCEINLINE const FECsDamageModifier& GetDamageModifierType() const { return NCsDamageModifier::ValueRange; }
+
+				#pragma endregion ICsGetDamageModifierType
+
+				// ICsReset
+				#pragma region
+				public:
+
+					FORCEINLINE void Reset()
+					{
+						ApplicationMin = ApplicationType::EApplication_MAX;
+						MinValue = 0.0f;
+						ApplicationMax = ApplicationType::EApplication_MAX;
+						MaxValue = 0.0f;
+					}
+
+				#pragma endregion ICsReset
 
 				#undef ValueType
 				#undef ApplicationType

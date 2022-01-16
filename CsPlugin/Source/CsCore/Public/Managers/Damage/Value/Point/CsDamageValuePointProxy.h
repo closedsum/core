@@ -1,8 +1,8 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Interfaces
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
-#pragma once
 
 struct FCsInterfaceMap;
 

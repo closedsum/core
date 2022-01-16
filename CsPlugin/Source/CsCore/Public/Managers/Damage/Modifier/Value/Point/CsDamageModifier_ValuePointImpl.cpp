@@ -30,6 +30,7 @@ namespace NCsDamage
 				FImpl::FImpl() :
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
+					Val(0.0f),
 					Application(NCsModifier::NValue::NIntegral::EApplication::Multiply)
 				{
 					InterfaceMap = new FCsInterfaceMap();
@@ -45,6 +46,8 @@ namespace NCsDamage
 					InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 					InterfaceMap->Add<DmgModifierValueType>(static_cast<DmgModifierValueType*>(this));
 					InterfaceMap->Add<DmgModifierValuePointType>(static_cast<DmgModifierValuePointType*>(this));
+					InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
+					InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 				}
 				
 				FImpl::~FImpl()

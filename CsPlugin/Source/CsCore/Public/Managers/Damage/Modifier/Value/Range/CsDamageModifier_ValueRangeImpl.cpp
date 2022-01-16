@@ -48,6 +48,8 @@ namespace NCsDamage
 					InterfaceMap->Add<DmgModifierType>(static_cast<DmgModifierType*>(this));
 					InterfaceMap->Add<DmgModifierValueType>(static_cast<DmgModifierValueType*>(this));
 					InterfaceMap->Add<DmgModifierRangeType>(static_cast<DmgModifierRangeType*>(this));
+					InterfaceMap->Add<ICsGetDamageModifierType>(static_cast<ICsGetDamageModifierType*>(this));
+					InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 				}
 				
 				FImpl::~FImpl()

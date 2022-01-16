@@ -12,8 +12,8 @@
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
-#include "Managers/Damage/Value/CsTypes_DamageValue.h"
-#include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
+#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
+#include "Managers/Damage/Modifier/Types/CsTypes_DamageModifier.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 
 #include "CsManager_Damage.generated.h"
@@ -226,8 +226,6 @@ public:
 	EventResourceType* AllocateEvent();
 
 	virtual void DeallocateEvent(const FString& Context, EventResourceType* Event);
-
-	virtual bool CopyEvent(const FString& Context, const EventType* From, EventType* To);
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventType* Event);
 

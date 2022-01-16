@@ -24,6 +24,7 @@
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
+#include "Managers/Damage/Modifier/Types/CsGetDamageModifierType.h"
 #include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"
 #include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRangeImpl.h"
 // Unique
@@ -429,17 +430,14 @@ void UCsManager_Damage::DeallocateEvent(const FString& Context, EventResourceTyp
 	Manager_Event.Deallocate(Event);
 }
 
-bool UCsManager_Damage::CopyEvent(const FString& Context, const EventType* From, EventType* To)
-{
-	return NCsDamage::NEvent::FLibrary::CopyChecked(Context, From, To);
-}
-
 EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, const EventType* Event)
 {
 	EventResourceType* Container = AllocateEvent();
-	EventType* Copy	   = Container->Get();
+	EventType* Copy				 = Container->Get();
 
-	bool Success = CopyEvent(Context, Event, Copy);
+	typedef NCsDamage::NEvent::FLibrary EventLibrary;
+
+	bool Success = EventLibrary::CopyChecked(Context, Event, Copy);
 
 	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
 
@@ -771,28 +769,22 @@ void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDam
 	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
 
 	// Reset
-	if (ICsReset* IReset = ModifierLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Modifier->Get()))
-		IReset->Reset();
+	ICsReset* IReset = ModifierLibrary::GetInterfaceChecked<ICsReset>(Context, Modifier->Get());
+	IReset->Reset();
 
 	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
 }
 
 const FECsDamageModifier& UCsManager_Damage::GetModifierType(const FString& Context, const ModifierType* Modifier)
 {
-	/*
-	typedef NCsDamage::NModifier::NValue::IValue ValueType;
-	typedef NCsDamage::NModifier::NRange::IRange RangeType;
+	typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
 
-	typedef NCsDamage::NModifier::FLibrary ValueLibrary;
+	const ICsGetDamageModifierType* GetDamageModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetDamageModifierType>(Context, Modifier);
+	const FECsDamageModifier& Type						  = GetDamageModifierType->GetDamageModifierType();
 
-	// Value
-	if (ValueLibrary::GetSafeInterfaceChecked<ValueType>(Context, Value))
-		return NCsDamageValue::Value;
-	// Range
-	if (ValueLibrary::GetSafeInterfaceChecked<RangeType>(Context, Value))
-		return NCsDamageValue::Range;
-	*/
-	return EMCsDamageModifier::Get().GetMAX();
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, Type);
+
+	return Type;
 }
 
 #undef ModifierResourceType

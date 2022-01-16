@@ -1,5 +1,5 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/CsTypes_DamageModifier.h"
+#include "Managers/Damage/Modifier/Types/CsTypes_DamageModifier.h"
 #pragma once
 
 class UObject;

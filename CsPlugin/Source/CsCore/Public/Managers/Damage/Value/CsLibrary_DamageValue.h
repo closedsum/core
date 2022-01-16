@@ -1,11 +1,11 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 // Damage
 #include "Managers/Damage/Value/CsDamageValue.h"
-#pragma once
 
 namespace NCsDamage
 {

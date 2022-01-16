@@ -1,13 +1,14 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Interfaces
 #include "Managers/Damage/Value/CsDamageValue.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
+#include "Managers/Damage/Value/Copy/CsDamageValue_Copy.h"
 #include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Types
 #include "Types/CsTypes_Macro.h"
-#pragma once
 
 namespace NCsDamage
 {
@@ -15,11 +16,16 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
+		#define ValueType NCsDamage::NValue::IValue
+		#define PointValueType NCsDamage::NValue::NPoint::IPoint
+		#define CopyType NCsDamage::NValue::NCopy::ICopy
+
 			/**
 			* Basic implementation of the interface: NCsDamage::NValue::IValue
 			*/
-			struct CSCORE_API FImpl : public IValue,
-									  public IPoint,
+			struct CSCORE_API FImpl : public ValueType,
+									  public PointValueType,
+									  public CopyType,
 									  public ICsReset
 			{
 			public:
@@ -32,7 +38,7 @@ namespace NCsDamage
 
 				FCsInterfaceMap InterfaceMap;
 
-				// IPoint
+				// PointValueType (NCsDamage::NValue::NPoint::IPoint)
 
 				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
 
@@ -53,19 +59,27 @@ namespace NCsDamage
 
 			#pragma endregion ICsGetInterfaceMap
 
-			// IValue
+			// ValueType (NCsDamage::NValue::IValue)
 			#pragma region
 			public:
 
-			#pragma endregion IValue
+			#pragma endregion ValueType (NCsDamage::NValue::IValue)
 
-			// IPoint
+			// PointValueType (NCsDamage::NValue::NPoint::IPoint)
 			#pragma region
 			public:
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
 
-			#pragma endregion IPoint
+			#pragma endregion PointValueType (NCsDamage::NValue::NPoint::IPoint)
+
+			// CopyType (NCsDamage::NValue::NCopy::ICopy)
+			#pragma region
+			public:
+
+				void Copy(const ValueType* From);
+
+			#pragma endregion CopyType (NCsDamage::NValue::NCopy::ICopy)
 
 			// ICsReset
 			#pragma region
@@ -75,6 +89,10 @@ namespace NCsDamage
 
 			#pragma endregion ICsReset
 			};
+
+		#undef ValueType
+		#undef PointValueType
+		#undef CopyType
 		}
 	}
 }

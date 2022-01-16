@@ -12,6 +12,7 @@
 // Damage
 #include "Managers/Damage/CsReceiveDamage.h"
 #include "Managers/Damage/Event/CsGetCurrentDamageEvent.h"
+#include "Managers/Damage/Event/Copy/CsDamageEvent_Copy.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRange.h"
@@ -93,19 +94,12 @@ namespace NCsDamage
 
 		bool FLibrary::CopyChecked(const FString& Context, const EventType* From, EventType* To)
 		{
-			// NCsDamage::NEvent::FImpl (NCsDamage::NEvent::IEvent)
-			{
-				typedef NCsDamage::NEvent::FImpl ImplType;
+			typedef NCsDamage::NEvent::NCopy::ICopy CopyType;
 
-				if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
-				{
-					const ImplType* FromImpl = PureStaticCastChecked<ImplType>(Context, From);
+			CopyType* Copy = GetInterfaceChecked<CopyType>(Context, To);
 
-					ToImpl->CopyFrom(FromImpl);
-					return true;
-				}
-			}
-			return false;
+			Copy->Copy(From);
+			return true;
 		}
 
 		bool FLibrary::SetDamageChecked(const FString& Context, EventType* Event)

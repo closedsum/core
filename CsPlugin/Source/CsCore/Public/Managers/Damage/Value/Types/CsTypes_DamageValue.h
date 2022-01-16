@@ -1,9 +1,9 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
 #include "CsTypes_DamageValue.generated.h"
-#pragma once
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsDamageValue : public FECsEnum_uint8

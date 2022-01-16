@@ -5,10 +5,9 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Damage
+#include "Managers/Damage/Value/Copy/CsDamageValue_Copy.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePointProxy.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRangeProxy.h"
 
 namespace NCsDamage
 {
@@ -39,43 +38,12 @@ namespace NCsDamage
 		{
 			CS_IS_PTR_NULL_CHECKED(From)
 
-			CS_IS_PTR_NULL_CHECKED(To)
+			typedef NCsDamage::NValue::NCopy::ICopy CopyType;
 
-			// Point
-			{
-				typedef NCsDamage::NValue::NPoint::IPoint PointType;
+			CopyType* Copy = GetInterfaceChecked<CopyType>(Context, To);
 
-				if (const PointType* IFromPoint = GetSafeInterfaceChecked<PointType>(Context, From))
-				{
-					// NCsDamage::NValue::NPoint::FImpl (NCsDamage::NValue::NPoint::IPoint)
-					typedef NCsDamage::NValue::NPoint::FImpl ImplType;
-
-					if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
-					{
-						ToImpl->SetValue(IFromPoint->GetValue());
-						return true;
-					}
-				}
-			}
-			// Range
-			{
-				typedef NCsDamage::NValue::NRange::IRange RangeType;
-
-				if (const RangeType* IFromRange = GetSafeInterfaceChecked<RangeType>(Context, From))
-				{
-					// NCsDamage::NValue::NRange::FImpl (NCsDamage::NValue::NRange::IRange)
-					typedef NCsDamage::NValue::NRange::FImpl ImplType;
-
-					if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
-					{
-						ToImpl->MinValue = IFromRange->GetMinValue();
-						ToImpl->MaxValue = IFromRange->GetMaxValue();
-						return true;
-					}
-				}
-			}
-			checkf(0, TEXT("%s: Failed to copy From to To."), *Context);
-			return false;
+			Copy->Copy(From);
+			return true;
 		}
 
 		#undef ValueType

@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
+#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage
@@ -16,6 +17,17 @@ namespace NCsDamage
 {
 	namespace NEvent
 	{
+		namespace NImpl
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FImpl, Copy);
+				}
+			}
+		}
+
 		FImpl::FImpl() :
 			InterfaceMap(),
 			// IEvent
@@ -31,35 +43,51 @@ namespace NCsDamage
 		{
 			InterfaceMap.SetRoot<FImpl>(this);
 
+			typedef NCsDamage::NEvent::NCopy::ICopy CopyType;
+
 			InterfaceMap.Add<IEvent>(static_cast<IEvent*>(this));
+			InterfaceMap.Add<CopyType>(static_cast<CopyType*>(this));
 			InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 		}
 
-		void FImpl::CopyFrom(const FImpl* From)
+		// CopyType (NCsDamage::NEvent::NCopy::ICopy)
+		#pragma region
+
+		void FImpl::Copy(const IEvent* From)
 		{
-			Damage = From->Damage;
+			using namespace NCsDamage::NEvent::NImpl::NCached;
 
-			checkf(From->DamageValue.GetValue(), TEXT("NCsDamage::NEvent::FImpl::CopyFrom: From->DamageValue.Value is NULL."));
+			const FString& Context = Str::Copy;
 
-			DamageValue.CopyFrom(&(From->DamageValue));
+			typedef NCsDamage::NEvent::FLibrary EventLibrary;
 
-			if (From->DamageRange.GetRange())
-				DamageRange.CopyFrom(&(From->DamageRange));
+			const FImpl* FromImpl = EventLibrary::PureStaticCastChecked<FImpl>(Context, From);
 
-			Data = From->Data;
-			Instigator = From->Instigator;
-			Causer = From->Causer;
-			HitType = From->HitType;
-			Origin = From->Origin;
-			HitResult = From->HitResult;
+			Damage = FromImpl->Damage;
 
-			IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), From->IgnoreObjects.Max()));
+			checkf(FromImpl->DamageValue.GetValue(), TEXT("%s: From->DamageValue.Value is NULL."), *Context);
 
-			for (UObject* O : From->IgnoreObjects)
+			DamageValue.CopyFrom(&(FromImpl->DamageValue));
+
+			if (FromImpl->DamageRange.GetRange())
+				DamageRange.CopyFrom(&(FromImpl->DamageRange));
+
+			Data		= FromImpl->Data;
+			Instigator  = FromImpl->Instigator;
+			Causer		= FromImpl->Causer;
+			HitType		= FromImpl->HitType;
+			Origin		= FromImpl->Origin;
+			HitResult	= FromImpl->HitResult;
+
+			IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), FromImpl->IgnoreObjects.Max()));
+
+			for (UObject* O : FromImpl->IgnoreObjects)
 			{
 				IgnoreObjects.Add(O);
 			}
 		}
+
+		#pragma endregion CopyType (NCsDamage::NEvent::NCopy::ICopy)
 
 		bool FImpl::SetDamageChecked(const FString& Context)
 		{

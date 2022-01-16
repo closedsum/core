@@ -10,7 +10,7 @@
 #include "Types/CsTypes_Beam.h"
 #include "Coroutine/CsRoutineHandle.h"
 #include "Managers/Damage/CsTypes_Damage.h"
-#include "Managers/Damage/Value/CsTypes_DamageValue.h"
+#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 // Damage
 #include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
 

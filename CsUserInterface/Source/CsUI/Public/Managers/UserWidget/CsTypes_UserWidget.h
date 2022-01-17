@@ -1,10 +1,10 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Engine/DataTable.h"
 
 #include "CsTypes_UserWidget.generated.h"
-#pragma once
 
 // UserWidget
 #pragma region

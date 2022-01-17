@@ -595,6 +595,21 @@ void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 #pragma endregion ICsUpdate
 
+// ICsPause
+#pragma region
+
+void ACsProjectilePooledImpl::Pause(bool bPaused)
+{
+	MovementComponent->SetActiveFlag(!bPaused);
+
+	if (bPaused)
+		CollisionComponent->Deactivate();
+	else
+		CollisionComponent->Activate();
+}
+
+#pragma endregion ICsPause
+
 void ACsProjectilePooledImpl::ConstructCache()
 {
 	typedef NCsProjectile::NCache::FImpl CacheImplType;

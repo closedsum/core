@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Projectile/CsProjectile.h"
 #include "Collision/CsGetCollisionHitCount.h"
@@ -54,6 +55,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsUpdate,
+										  public ICsPause,
 										  public ICsPooledObject,
 										  public ICsProjectile,
 										  public ICsGetCollisionHitCount
@@ -158,6 +160,14 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
+
+// ICsPause
+#pragma region
+public:
+
+	void Pause(bool bPaused);
+
+#pragma endregion ICsPause
 
 // PooledObject
 #pragma region

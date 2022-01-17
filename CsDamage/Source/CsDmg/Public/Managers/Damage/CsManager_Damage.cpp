@@ -676,22 +676,11 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamage
 
 void UCsManager_Damage::DeallocateValue(const FString& Context, ValueResourceType* Value)
 {
-	typedef NCsDamage::NValue::NPoint::IPoint PointType;
-	typedef NCsDamage::NValue::NRange::IRange RangeType;
-
 	typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
-	// Point
-	if (PointType* Point = ValueLibrary::GetSafeInterfaceChecked<PointType>(Context, Value->Get()))
-	{
-		DeallocateValue(NCsDamageValue::Point, Value);
-	}
-	// Range
-	else
-	if (RangeType* Range = ValueLibrary::GetSafeInterfaceChecked<RangeType>(Context, Value->Get()))
-	{
-		DeallocateValue(NCsDamageValue::Range, Value);
-	}
+	const FECsDamageValue& Type = ValueLibrary::GetTypeChecked(Context, Value->Get());
+
+	DeallocateValue(Type, Value);
 }
 
 #undef ValueResourceType
@@ -721,8 +710,8 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 	typedef NCsDamage::NRange::FLibrary RangeLibrary;
 
 	// Reset
-	if (ICsReset* IReset = RangeLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Range->Get()))
-		IReset->Reset();
+	ICsReset* IReset = RangeLibrary::GetInterfaceChecked<ICsReset>(Context, Range->Get());
+	IReset->Reset();
 
 	Manager_Range.Deallocate(Range);
 }

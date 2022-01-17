@@ -1,4 +1,5 @@
 // Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Data
@@ -8,7 +9,6 @@
 #include "Utility/CsBeamLog.h"
 
 #include "CsData_Beam_DamagePointImplSlice.generated.h"
-#pragma once
 
 // NCsBeam::NData::NDamage::NPoint::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsBeam, NData, NDamage, NPoint, FImplSlice)

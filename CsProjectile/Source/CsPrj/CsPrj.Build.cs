@@ -18,6 +18,7 @@ public class CsPrj : ModuleRules
                     "AssetRegistry",
                     "DeveloperSettings",
                     "CsCore",
+                    "CsDmg",
                 }
             );
 

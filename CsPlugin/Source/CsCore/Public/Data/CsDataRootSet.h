@@ -54,10 +54,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UDataTable* Payloads;
 
-	/** Damage Datas */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSoftObjectPtr<UDataTable> Damages;
-
 	FCsDataRootSet() :
 		EntryMap(),
 		TransitionEntryToMainMap(),
@@ -66,8 +62,7 @@ public:
 		StartupPayload(NAME_None),
 		Datas(nullptr),
 		DataTables(nullptr),
-		Payloads(nullptr),
-		Damages(nullptr)
+		Payloads(nullptr)
 	{
 	}
 
@@ -88,7 +83,6 @@ public:
 
 	enum class EMember : uint8
 	{
-		Damages
 	};
 
 	bool IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;

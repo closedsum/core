@@ -21,8 +21,6 @@ namespace NCsDataRootSet
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(FCsDataRootSet, AddDataTable);
 
 			CS_DEFINE_CACHED_STRING(GetCsDataRootSet, "GetCsDataRootSet()");
-
-			CS_DEFINE_CACHED_STRING(Damages, "Damages");
 		}
 	}
 }
@@ -150,9 +148,6 @@ bool FCsDataRootSet::IsValidChecked(const FString& Context, const UObject* World
 		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName(), *Str::GetCsDataRootSet, *Str::Member)); \
 	}
 
-	// Damages
-	CS_TEMP_CHECK(Damages)
-
 	#undef CS_TEMP_CHECK
 
 	return true;
@@ -163,13 +158,11 @@ const TSoftObjectPtr<UDataTable>& FCsDataRootSet::GetDataTableSoftObjectChecked(
 	#define CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Member) if (MemberType == EMember::Member) \
 		return Member;
 
-	// Damages
-	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Damages)
-
 	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
 
 	checkf(0, TEXT("%s: Failed to get DataTable SoftObject for MemberType."), *Context);
-	return Damages;
+	static const TSoftObjectPtr<UDataTable> DT;
+	return DT;
 }
 
 UDataTable* FCsDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
@@ -180,9 +173,6 @@ UDataTable* FCsDataRootSet::GetSafeDataTable(const FString& Context, const UObje
 
 	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
 		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsDataRootSet, Member, Str::Member);
-
-	// Damages
-	CS_TEMP_GET_SAFE_DATA_TABLE(Damages)
 
 	#undef CS_TEMP_GET_SAFE_DATA_TABLE
 

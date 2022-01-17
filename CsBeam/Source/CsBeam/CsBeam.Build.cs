@@ -18,6 +18,7 @@ public class CsBeam : ModuleRules
                     "AssetRegistry",
                     "DeveloperSettings",
                     "CsCore",
+                    "CsDmg",
                 }
             );
 

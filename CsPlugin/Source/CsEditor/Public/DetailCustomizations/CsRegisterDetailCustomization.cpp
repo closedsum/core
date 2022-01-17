@@ -26,10 +26,6 @@
 #include "DetailCustomizations/EnumStruct/ECsProcessCustomization.h"
 		// FX
 #include "DetailCustomizations/EnumStruct/FX/ECsFXCustomization.h"
-		// Damage
-#include "DetailCustomizations/EnumStruct/Damage/ECsDamageTypeCustomization.h"
-#include "DetailCustomizations/EnumStruct/Damage/ECsDamageDataCustomization.h"
-#include "DetailCustomizations/EnumStruct/Damage/ECsHitTypeCustomization.h"
 		// Sound
 #include "DetailCustomizations/EnumStruct/Sound/ECsSoundCustomization.h"
 		// StaticMesh
@@ -75,10 +71,6 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsProcess);
 		// FX
 		CS_TEMP_REGISTER(ECsFX);
-		// Damage
-		CS_TEMP_REGISTER(ECsDamageType);
-		CS_TEMP_REGISTER(ECsDamageData);
-		CS_TEMP_REGISTER(ECsHitType);
 		// Sound
 		CS_TEMP_REGISTER(ECsSound);
 		// StaticMesh

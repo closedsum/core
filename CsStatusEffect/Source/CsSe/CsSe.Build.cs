@@ -17,6 +17,7 @@ public class CsSe : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "CsCore",
+                    "CsDmg",
                 }
             );
 

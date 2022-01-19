@@ -175,6 +175,8 @@ namespace NCsPlayer
 
 			static APlayerController* GetOrFirstLocalChecked(const FString& Context, APawn* Pawn);
 
+			static APlayerController* GetChecked(const FString& Context, const UObject* PlayerContext);
+
 			static void GetAllLocal(UWorld* World, TArray<APlayerController*>& OutControllers);
 
 			static void GetAllLocal(const UObject* WorldContext, TArray<APlayerController*>& OutControllers);

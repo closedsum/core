@@ -289,6 +289,15 @@ namespace NCsPlayer
 			return GetFirstLocalChecked(Context, Pawn);
 		}
 
+		APlayerController* FLibrary::GetChecked(const FString& Context, const UObject* PlayerContext)
+		{
+			const APawn* Pawn	    = CS_CONST_CAST_CHECKED(PlayerContext, UObject, APawn);
+			AController* Controller = Pawn->GetController();
+			APlayerController* PC   = CS_CAST_CHECKED(Controller, AController, APlayerController);
+
+			return PC;
+		}
+
 		void FLibrary::GetAllLocal(UWorld* World, TArray<APlayerController*>& OutControllers)
 		{
 			using namespace NCsPlayer::NController::NLibrary::NCached;

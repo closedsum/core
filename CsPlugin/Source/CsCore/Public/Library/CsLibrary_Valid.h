@@ -775,6 +775,18 @@ namespace NCsValid
 				return Other;
 			}
 
+			template<typename ClassType, typename OtherClassType>
+			FORCEINLINE static const OtherClassType* CastToChecked(const FString& Context, const ClassType* A, const FString& AName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+
+				const OtherClassType* Other = Cast<OtherClassType>(A);
+
+				checkf(Other, TEXT("%s: %s: %s with Class: %s does is NOT of type: %s."), *Context, *AName, *(A->GetName()), *(A->GetClass()->GetName()), *(OtherClassType::StaticClass()->GetName()));
+
+				return Other;
+			}
+
 			template<typename ClassType, typename InterfaceType>
 			FORCEINLINE static InterfaceType* InterfaceCast(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
@@ -1284,6 +1296,13 @@ namespace NCsValid
 		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
+#define CS_CONST_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
+	[] (const FString& Context, const __ObjectType* __Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+	}(Context, __Object)
+// Assume const FString& Context has been defined
 #define CS_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
 	[] (const FString& Context, __ObjectType* __Object) \
 	{ \
@@ -1459,6 +1478,13 @@ namespace NCsValid
 // Assume const FString& Context has been defined
 #define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
 	[] (const FString& Context, __ObjectType* __Object) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+	}(Context, __Object)
+// Assume const FString& Context has been defined
+#define CS_CONST_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
+	[] (const FString& Context, const __ObjectType* __Object) \
 	{ \
 		static const FString __temp__str__; \
 		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \

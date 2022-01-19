@@ -14,6 +14,17 @@ namespace NCsGameEvent
 {
 	namespace NCoordinator
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					extern CSCORE_API const FString GetSafe;
+				}
+			}
+		}
+
 		struct CSCORE_API FLibrary
 		{
 		// ContextRoot
@@ -84,10 +95,27 @@ namespace NCsGameEvent
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsCoordinator_GameEvent.
 			*/
 			static UCsCoordinator_GameEvent* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsCoordinator_GameEvent from a ContextObject.
+			*
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* return				UCsCoordinator_GameEvent.
+			*/
+			FORCEINLINE static UCsCoordinator_GameEvent* GetSafe(const UObject* ContextObject)
+			{
+				using namespace NCsGameEvent::NCoordinator::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafe;
+
+				return GetSafe(Context, ContextObject, nullptr);
+			}
 
 		#pragma endregion Get
 

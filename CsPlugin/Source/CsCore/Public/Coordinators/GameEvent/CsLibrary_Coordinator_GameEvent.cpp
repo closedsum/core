@@ -24,6 +24,7 @@ namespace NCsGameEvent
 				namespace Str
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FLibrary, GetSafeContextRoot);
+					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FLibrary, GetSafe);
 				}
 			}
 		}

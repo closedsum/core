@@ -117,6 +117,18 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 			.Font(IDetailLayoutBuilder::GetDetailFont())
 		]
 	];
+
+	// TODO: Figure out how to calculate actual size
+	static const float WIDTH_MULTIPLIER = 9.0f;
+
+	TOptional<float> Width = HeaderRow.ValueContent().MaxWidth;
+
+	for (TSharedPtr<FString>& Name : DisplayNameList)
+	{
+		Width = FMath::Max(Width.Get(0.0f), WIDTH_MULTIPLIER * Name->Len());
+	}
+	HeaderRow.ValueContent().MinWidth = Width;
+	HeaderRow.ValueContent().MaxWidth = Width;
 }
 
 void FECsEnumStructCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle){}

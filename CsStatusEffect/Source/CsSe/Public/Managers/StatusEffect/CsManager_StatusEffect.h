@@ -32,7 +32,7 @@ namespace NCsStatusEffect
 			* A manager handling allocating and deallocating objects of type: NCsStatuseffect::NEvent::NInfo::FImpl and
 			* are wrapped in the container: NCsStatuseffect::NEvent::FResource.
 			*/
-			struct CSSE_API FManager : public TCsManager_ResourceValueType_Fixed<FImpl, FResource, 0>
+			struct CSSE_API FManager : public NCsResource::NManager::NValue::TFixed<FImpl, FResource, 0>
 			{
 			};
 		}

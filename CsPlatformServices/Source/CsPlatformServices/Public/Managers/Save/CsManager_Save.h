@@ -32,7 +32,7 @@ namespace NCsSave
 			{
 			};
 
-			struct CSPLATFORMSERVICES_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 64>
+			struct CSPLATFORMSERVICES_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 64>
 			{
 			};
 

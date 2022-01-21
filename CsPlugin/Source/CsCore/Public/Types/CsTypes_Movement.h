@@ -423,7 +423,7 @@ namespace NCsMovement
 
 				#define CS_PARAMS_PAYLOAD_SIZE 256
 
-				struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
+				struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FParams, FResource, CS_PARAMS_PAYLOAD_SIZE>
 				{
 				};
 

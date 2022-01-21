@@ -46,7 +46,7 @@ namespace NCsFX
 			* A manager handling allocating and deallocating the object FIntType (NCsFX::NParamter::NFloat::FIntType) and
 			* are wrapped in the container: NCsFX::NParameter::NInt::FResource.
 			*/
-			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FIntType, FResource, 0> {};
+			struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FIntType, FResource, 0> {};
 		}
 
 		namespace NFloat
@@ -63,7 +63,7 @@ namespace NCsFX
 			* A manager handling allocating and deallocating the object FFloatType (NCsFX::NParamter::NFloat::FFloatType) and
 			* are wrapped in the container: NCsFX::NParameter::NFloat::FResource.
 			*/
-			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FFloatType, FResource, 0> {};
+			struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FFloatType, FResource, 0> {};
 		}
 
 		namespace NVector
@@ -80,7 +80,7 @@ namespace NCsFX
 			* A manager handling allocating and deallocating the object FVectorType (NCsFX::NParamter::NVector::FVectorType) and
 			* are wrapped in the container: NCsFX::NParameter::NVector::FResource.
 			*/
-			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FVectorType, FResource, 0> {};
+			struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FVectorType, FResource, 0> {};
 		}
 	}
 }

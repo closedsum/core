@@ -23,7 +23,7 @@ namespace NCsTrace
 		{
 		};
 
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<RequestType, FResource, 0>
+		struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<RequestType, FResource, 0>
 		{
 		};
 
@@ -42,7 +42,7 @@ namespace NCsTrace
 		{
 		};
 
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<ResponseType, FResource, 0>
+		struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<ResponseType, FResource, 0>
 		{
 		};
 

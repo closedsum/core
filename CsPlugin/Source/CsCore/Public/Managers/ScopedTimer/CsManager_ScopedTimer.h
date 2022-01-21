@@ -15,7 +15,7 @@ struct CSCORE_API FCsResource_ScopedTimer : public TCsResourceContainer<FCsScope
 {
 };
 
-struct CSCORE_API FCsManager_ScopedTimer_Internal : public TCsManager_ResourceValueType_Fixed<FCsScopedTimer, FCsResource_ScopedTimer, CS_SCOPED_TIMER_SIZE>
+struct CSCORE_API FCsManager_ScopedTimer_Internal : public NCsResource::NManager::NValue::TFixed<FCsScopedTimer, FCsResource_ScopedTimer, CS_SCOPED_TIMER_SIZE>
 {
 };
 

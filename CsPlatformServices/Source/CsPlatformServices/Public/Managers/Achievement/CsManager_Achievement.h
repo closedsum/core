@@ -42,7 +42,7 @@ namespace NCsAchievement
 			* A manager handling allocating and deallocating the object InfoType (NCsAchievement::NAction::NInfo::FInfo) and
 			* are wrapped in the container: NCsAchievement::NAction::NInfo::FResource.
 			*/
-			struct CSPLATFORMSERVICES_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 256>
+			struct CSPLATFORMSERVICES_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 256>
 			{
 			};
 

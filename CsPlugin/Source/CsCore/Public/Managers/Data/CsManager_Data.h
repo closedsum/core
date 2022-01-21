@@ -22,7 +22,7 @@ struct CSCORE_API FCsResource_Payload : public TCsResourceContainer<FCsPayload>
 {
 };
 
-struct CSCORE_API FCsManager_Payload: public TCsManager_ResourceValueType_Fixed<FCsPayload, FCsResource_Payload, 0>
+struct CSCORE_API FCsManager_Payload: public NCsResource::NManager::NValue::TFixed<FCsPayload, FCsResource_Payload, 0>
 {
 };
 
@@ -32,7 +32,7 @@ struct CSCORE_API FCsResource_DataEntry_Data : public TCsResourceContainer<FCsDa
 {
 };
 
-struct CSCORE_API FCsManager_DataEntry_Data : public TCsManager_ResourceValueType_Fixed<FCsDataEntry_Data, FCsResource_DataEntry_Data, 0>
+struct CSCORE_API FCsManager_DataEntry_Data : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_Data, FCsResource_DataEntry_Data, 0>
 {
 };
 
@@ -42,7 +42,7 @@ struct CSCORE_API FCsResource_DataEntry_DataTable : public TCsResourceContainer<
 {
 };
 
-struct CSCORE_API FCsManager_DataEntry_DataTable : public TCsManager_ResourceValueType_Fixed<FCsDataEntry_DataTable, FCsResource_DataEntry_DataTable, 0>
+struct CSCORE_API FCsManager_DataEntry_DataTable : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_DataTable, FCsResource_DataEntry_DataTable, 0>
 {
 };
 

@@ -26,7 +26,7 @@ struct CSCORE_API FCsResource_Input : public TCsResourceContainer<FCsInput>
 {
 };
 
-struct CSCORE_API FCsManager_Input : public TCsManager_ResourceValueType_Fixed<FCsInput, FCsResource_Input, 0>
+struct CSCORE_API FCsManager_Input : public NCsResource::NManager::NValue::TFixed<FCsInput, FCsResource_Input, 0>
 {
 };
 

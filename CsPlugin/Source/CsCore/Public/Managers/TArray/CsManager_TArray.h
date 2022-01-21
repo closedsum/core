@@ -234,7 +234,7 @@ public:
 		{ \
 		}; \
 		\
-		struct FCsManager_TArray_##ValueType : public TCsManager_ResourceValueType_Fixed<TArray<ValueType>, FCsResourceContainer_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		struct FCsManager_TArray_##ValueType : public NCsResource::NManager::NValue::TFixed<TArray<ValueType>, FCsResourceContainer_TArray_##ValueType, CS_MANAGER_TARRAY_POOL_SIZE> \
 		{ \
 		}; \
 	\
@@ -267,7 +267,7 @@ public:
 		{ \
 		}; \
 		\
-		struct FCsManager_TArray_##PointerType : public TCsManager_ResourceValueType_Fixed<TArray<PointerType*>, FCsResourceContainer_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
+		struct FCsManager_TArray_##PointerType : public NCsResource::NManager::NValue::TFixed<TArray<PointerType*>, FCsResourceContainer_TArray_##PointerType, CS_MANAGER_TARRAY_POOL_SIZE> \
 		{ \
 		}; \
 	\

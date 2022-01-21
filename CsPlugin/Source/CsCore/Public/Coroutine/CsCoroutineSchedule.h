@@ -16,7 +16,7 @@ struct CSCORE_API FCsResource_Routine : public TCsResourceContainer<FCsRoutine>
 {
 };
 
-struct CSCORE_API FCsManager_Routine : public TCsManager_ResourceValueType_Fixed<FCsRoutine, FCsResource_Routine, CS_ROUTINE_POOL_SIZE>
+struct CSCORE_API FCsManager_Routine : public NCsResource::NManager::NValue::TFixed<FCsRoutine, FCsResource_Routine, CS_ROUTINE_POOL_SIZE>
 {
 };
 
@@ -30,7 +30,7 @@ namespace NCsCoroutine
 		{
 		};
 
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FImpl, FResource, CS_COROUTINE_PAYLOAD_SIZE>
+		struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FImpl, FResource, CS_COROUTINE_PAYLOAD_SIZE>
 		{
 		};
 	}

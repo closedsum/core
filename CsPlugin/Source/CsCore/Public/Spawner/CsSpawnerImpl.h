@@ -35,7 +35,7 @@ namespace NCsSpawner
 		{
 		};
 
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<ResourceType, FResource, 0>
+		struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<ResourceType, FResource, 0>
 		{
 		};
 

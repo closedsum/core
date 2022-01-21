@@ -33,7 +33,7 @@ namespace NCsRunnable
 	* A manager handling allocating and deallocating of a FCsRunnable and
 	* are wrapped in the container: FResource.
 	*/
-	struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<FCsRunnable, FResource, 0>
+	struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FCsRunnable, FResource, 0>
 	{
 	};
 }
@@ -57,7 +57,7 @@ namespace NCsRunnable
 		* A manager handling allocating and deallocating of a PayloadType (NCsRunnable::NPayload::FImpl) and
 		* are wrapped in the container: FResource.
 		*/
-		struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<PayloadType, FResource, 0>
+		struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<PayloadType, FResource, 0>
 		{
 		};
 
@@ -86,7 +86,7 @@ namespace NCsRunnable
 			* A manager handling allocating and deallocating of a InfoType (NCsRunnable::NTask::NInfo::Info) and
 			* are wrapped in the container: FResource.
 			*/
-			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<InfoType, FResource, 0>
+			struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<InfoType, FResource, 0>
 			{
 			};
 
@@ -116,7 +116,7 @@ namespace NCsRunnable
 			* A manager handling allocating and deallocating of a PayloadType (NCsRunnable::NTask::NPayload::FImpl) and
 			* are wrapped in the container: FResource.
 			*/
-			struct CSCORE_API FManager : public TCsManager_ResourceValueType_Fixed<PayloadType, FResource, 0>
+			struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<PayloadType, FResource, 0>
 			{
 			};
 

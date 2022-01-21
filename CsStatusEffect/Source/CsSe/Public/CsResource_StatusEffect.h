@@ -19,7 +19,7 @@ namespace NCsStatusEffect
 	* A manager handling allocating and deallocating objects that implement the interface: StatusEffectType (NCsStatusEffect::IStatusEffect) and
 	* are wrapped in the container: NCsStatusEffect::FResource.
 	*/
-	struct CSSE_API FManager : public TCsManager_ResourcePointerType_Fixed<StatusEffectType, FResource, 0> {};
+	struct CSSE_API FManager : public NCsResource::NManager::NPointer::TFixed<StatusEffectType, FResource, 0> {};
 
 #undef StatusEffectType
 }

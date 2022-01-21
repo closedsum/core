@@ -3,7 +3,6 @@
 
 #include "UObject/Object.h"
 // Resource
-#include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Managers
 #include "Managers/Pool/CsManager_PooledObject_Map.h"

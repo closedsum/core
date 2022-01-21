@@ -21,6 +21,6 @@ namespace NCsWeapon
 		* A manager handling allocating and deallocating objects that implement the interface: NCsWeapon::NModifier::IModifier and
 		* are wrapped in the container: NCsWeapon::NModifer::FResource.
 		*/
-		struct CSWP_API FManager : public TCsManager_ResourcePointerType_Fixed<IModifier, FResource, 0> {};
+		struct CSWP_API FManager : public NCsResource::NManager::NPointer::TFixed<IModifier, FResource, 0> {};
 	}
 }

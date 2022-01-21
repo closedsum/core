@@ -20,7 +20,7 @@ namespace NCsResource
 			*
 			*/
 			template<typename ResourceType, typename ResourceContainerType = TCsResourceContainer<ResourceType>, uint32 BUCKET_SIZE = 128>
-			class TFixed : public ICsManager_Resource
+			class TFixed : public NCsResource::NManager::IManager
 			{
 				static_assert(std::is_base_of<TCsResourceContainer<ResourceType>, ResourceContainerType>(), "NCsResource::NManager::NValue::TFixed: ResourceContainerType does NOT implement interface: TCsResourceContainer<ResourceType>.");
 
@@ -107,7 +107,7 @@ namespace NCsResource
 
 				/**
 				* Set the name of the Manager.
-				*  Default value is TCsManager_ResourcePointerType_Fixed.
+				*  Default value is NCsResource::NManager::NValue::TFixed.
 				*
 				* @param InName		Name to set for the Manager.
 				*/
@@ -129,7 +129,7 @@ namespace NCsResource
 
 				/**
 				* Set the name of the Manager.
-				*  Default value is TCsManager_ResourcePointerType.
+				*  Default value is NCsResource::NManager::NValue::TFixed.
 				*
 				* @param InName		Name to set for the Manager.
 				*/

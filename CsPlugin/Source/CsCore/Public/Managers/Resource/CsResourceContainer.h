@@ -12,7 +12,7 @@ struct TCsResourceContainer
 {
 private:
 
-	/** Index of the container stored in the internal list in ICsManager_Resource. */
+	/** Index of the container stored in the internal list in NCsResource::NManager::IManager. */
 	int32 Index;
 
 	/** Whether the container is allocated or not. */

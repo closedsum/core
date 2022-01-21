@@ -16,11 +16,11 @@ struct CSCORE_API FCsResourceContainer_SenseInfo : public TCsResourceContainer<I
 {
 };
 
-class CSCORE_API FCsManager_SenseInfo : public TCsManager_ResourceValueType_Abstract<ICsSenseInfo, FCsResourceContainer_SenseInfo>
+class CSCORE_API FCsManager_SenseInfo : public NCsResource::NManager::NValue::TAbstract<ICsSenseInfo, FCsResourceContainer_SenseInfo>
 {
 private:
 
-	typedef TCsManager_ResourceValueType_Abstract<ICsSenseInfo, FCsResourceContainer_SenseInfo> Super;
+	typedef NCsResource::NManager::NValue::TAbstract<ICsSenseInfo, FCsResourceContainer_SenseInfo> Super;
 
 public:
 

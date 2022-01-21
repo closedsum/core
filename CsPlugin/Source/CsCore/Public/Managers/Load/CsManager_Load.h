@@ -15,7 +15,7 @@ struct CSCORE_API FCsResource_ManagerLoad_Task_LoadObjects : public TCsResourceC
 {
 };
 
-struct CSCORE_API FCsManager_ManagerLoad_Task_LoadObjects : public TCsManager_ResourcePointerType_Fixed<UCsManagerLoad_Task_LoadObjects, FCsResource_ManagerLoad_Task_LoadObjects, 0>
+struct CSCORE_API FCsManager_ManagerLoad_Task_LoadObjects : public NCsResource::NManager::NPointer::TFixed<UCsManagerLoad_Task_LoadObjects, FCsResource_ManagerLoad_Task_LoadObjects, 0>
 {
 };
 

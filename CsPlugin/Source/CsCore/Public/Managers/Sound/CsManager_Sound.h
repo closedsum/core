@@ -4,8 +4,6 @@
 #include "UObject/Object.h"
 // Managers
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
-// Resource
-#include "Managers/Resource/CsManager_ResourceValueType.h"
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/Time/CsTypes_Update.h"

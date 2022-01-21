@@ -21,6 +21,6 @@ namespace NCsDamage
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NValue::IValue and
 		* are wrapped in the container: NCsDamage:;NValue::FResource.
 		*/
-		struct CSDMG_API FManager : public TCsManager_ResourcePointerType_Fixed<IValue, FResource, 0> {};
+		struct CSDMG_API FManager : public NCsResource::NManager::NPointer::TFixed<IValue, FResource, 0> {};
 	}
 }

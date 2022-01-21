@@ -3,11 +3,11 @@
 
 #include "UObject/Object.h"
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
-#include "Managers/Resource/CsManager_ResourceValueType.h"
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/Payload/CsPayload_UserWidget.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
 #include "Managers/UserWidget/CsSettings_Manager_UserWidget.h"
+
 #include "CsManager_UserWidget.generated.h"
 
 // Delegates

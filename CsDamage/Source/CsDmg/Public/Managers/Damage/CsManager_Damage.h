@@ -37,7 +37,7 @@ namespace NCsDamage
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NEvent::IEvent and
 		* are wrapped in the container: NCsDamage::NEvent::FResource.
 		*/
-		struct CSDMG_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IEvent, FResource, 0> {};
+		struct CSDMG_API FManager : public NCsResource::NManager::NValue::NAbstract::TFixed<IEvent, FResource, 0> {};
 	}
 
 	namespace NRange
@@ -54,7 +54,7 @@ namespace NCsDamage
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NRange::IRange and
 		* are wrapped in the container: NCsDamage::NRange::FResource.
 		*/
-		struct CSDMG_API FManager : public TCsManager_ResourceValueType_Abstract_Fixed<IRange, FResource, 0> {};
+		struct CSDMG_API FManager : public NCsResource::NManager::NValue::NAbstract::TFixed<IRange, FResource, 0> {};
 	}
 }
 

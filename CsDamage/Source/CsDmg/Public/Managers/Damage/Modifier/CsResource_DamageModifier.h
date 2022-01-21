@@ -21,6 +21,6 @@ namespace NCsDamage
 		* A manager handling allocating and deallocating objects that implement the interface: NCsDamage::NModifier::IModifier and
 		* are wrapped in the container: NCsDamage::NModifer::FResource.
 		*/
-		struct CSDMG_API FManager : public TCsManager_ResourcePointerType_Fixed<IModifier, FResource, 0> {};
+		struct CSDMG_API FManager : public NCsResource::NManager::NPointer::TFixed<IModifier, FResource, 0> {};
 	}
 }

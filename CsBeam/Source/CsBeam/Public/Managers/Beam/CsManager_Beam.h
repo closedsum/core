@@ -4,7 +4,6 @@
 #include "UObject/Object.h"
 // Managers
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
-#include "Managers/Resource/CsManager_ResourceValueType.h"
 // Types
 #include "Types/CsTypes_Beam.h"
 // Beam

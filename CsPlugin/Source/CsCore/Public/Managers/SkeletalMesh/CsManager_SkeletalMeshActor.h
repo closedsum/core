@@ -3,8 +3,6 @@
 // Types
 #include "Managers/Time/CsTypes_Update.h"
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
-// Resource
-#include "Managers/Resource/CsManager_ResourceValueType.h"
 // Managers
  #include "Managers/Pool/CsManager_PooledObject_Map.h"
 // SkeletalMeshActor

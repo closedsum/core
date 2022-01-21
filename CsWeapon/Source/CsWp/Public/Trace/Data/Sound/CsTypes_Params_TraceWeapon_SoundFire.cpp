@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Trace/Data/Sound/CsTypes_Params_TraceWeapon_SoundFire.h"
 
 #include "Trace/Data/Sound/CsParams_TraceWeapon_SoundFire.h"

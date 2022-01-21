@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/ECsWeaponStateCustomization.h"
 
 #include "Types/CsTypes_Weapon.h"

@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 // Spawner
 #include "Spawner/Params/CsSpawnerParams.h"
 #include "Spawner/Params/Shape/CsSpawnerParams_Shape.h"

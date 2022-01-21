@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Collision/CsData_Projectile_CollisionImplSlice.h"
 
 // Library

@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Managers/UserWidget/CsTypes_UserWidget.h"

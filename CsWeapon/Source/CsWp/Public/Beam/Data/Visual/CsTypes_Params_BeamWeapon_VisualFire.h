@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/CsTypes_FX.h"
 
 #include "CsTypes_Params_BeamWeapon_VisualFire.generated.h"

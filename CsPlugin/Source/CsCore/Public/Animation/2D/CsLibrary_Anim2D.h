@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
 #include "Animation/2D/CsTypes_Library_Anim2D.h"

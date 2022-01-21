@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Containers/CsLibrary_InterfaceMap.h"
 #include "Trace/Data/Params/CsParams_TraceWeapon_Trace.h"

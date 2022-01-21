@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/CsTypes_Damage.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"

@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_TwoParams.h"
 

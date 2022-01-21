@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Trace/Data/Damage/CsData_TraceDamage.h"
 #include "CsCore.h"
 

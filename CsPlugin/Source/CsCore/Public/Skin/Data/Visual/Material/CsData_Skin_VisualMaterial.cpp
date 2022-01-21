@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 #include "CsCore.h"
 

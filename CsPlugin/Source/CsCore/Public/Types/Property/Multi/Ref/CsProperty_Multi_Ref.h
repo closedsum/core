@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
 #define CS_PROPERTY_MULTI_REF_TYPE_DEFAULT -1

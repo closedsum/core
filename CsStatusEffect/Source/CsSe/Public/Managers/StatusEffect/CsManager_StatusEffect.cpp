@@ -1,11 +1,16 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/StatusEffect/CsManager_StatusEffect.h"
 #include "CsSe.h"
 
 // Library
 #include "Coordinators/StatusEffect/CsLibrary_Coordinator_StatusEffect.h"
+#include "Data/CsLibrary_Data_StatusEffect.h"
 // Coordinator
 #include "Coordinators/StatusEffect/CsCoordinator_StatusEffect.h"
+// Interface
+#include "Managers/Time/CsUpdate.h"
+// StatusEffect
+#include "CsStatusEffect.h"
 
 // Cached
 #pragma region
@@ -23,19 +28,16 @@ namespace NCsManagerStatusEffect
 
 #pragma endregion Cached
 
-UCsManager_StatusEffect::UCsManager_StatusEffect(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsManager_StatusEffect::UCsManager_StatusEffect(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	MyRoot(),
+	Manager_Allocated()
 {
 }
 
 void UCsManager_StatusEffect::Init(UObject* InRoot)
 {
 	SetMyRoot(InRoot);
-
-	// TODO: Add Config
-
-	static const int32 PoolSize = 32;
-
-	Manager_Event.CreatePool(PoolSize);
 }
 
 void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
@@ -46,29 +48,26 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 
 	// Deallocate any NCsStatusEffect::NEvent::IEvent objects from UCsStatusEffectCoordinator
 	typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
-	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
-	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
+	typedef NCsStatusEffect::NAllocated::FResource AllocatedResourceType;
+	typedef NCsStatusEffect::FAllocated AllocatedType;
 
 	if (UCsCoordinator_StatusEffect* StatusEffectCoordinator = SeCoordinatorLibrary::GetSafe(MyRoot.GetObject()))
 	{
-		TCsDoubleLinkedList<EventInfoResourceType*>* Current = Manager_Event.GetAllocatedHead();
-		TCsDoubleLinkedList<EventInfoResourceType*>* Next	 = Current;
+		TCsDoubleLinkedList<AllocatedResourceType*>* Current = Manager_Allocated.GetAllocatedHead();
+		TCsDoubleLinkedList<AllocatedResourceType*>* Next	 = Current;
 
 		while (Next)
 		{
 			Current							 = Next;
-			EventInfoResourceType* Container = **Current;
+			AllocatedResourceType* Container = **Current;
 			Next							 = Current->GetNextLink();
 
-			EventInfoType* Info = Container->Get();
+			AllocatedType* R = Container->Get();
 
-			if (Info->Container)
-			{
-				StatusEffectCoordinator->DeallocateEvent(Context, Info->Container);
-			}
+			R->Reset();
 		}
 	}
-	Manager_Event.Shutdown();
+	Manager_Allocated.Shutdown();
 }
 	// Root
 #pragma region
@@ -80,22 +79,30 @@ void UCsManager_StatusEffect::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Root
 
+void UCsManager_StatusEffect::CreatePool(const int32& PoolSize)
+{
+	Manager_Allocated.CreatePool(PoolSize);
+}
+
 void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 {
-	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
-	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
+	typedef NCsStatusEffect::NAllocated::FResource AllocatedResourceType;
+	typedef NCsStatusEffect::FAllocated AllocatedType;
 
-	TCsDoubleLinkedList<EventInfoResourceType*>* Current = Manager_Event.GetAllocatedHead();
-	TCsDoubleLinkedList<EventInfoResourceType*>* Next	 = Current;
+	TCsDoubleLinkedList<AllocatedResourceType*>* Current = Manager_Allocated.GetAllocatedHead();
+	TCsDoubleLinkedList<AllocatedResourceType*>* Next	 = Current;
 
 	while (Next)
 	{
 		Current							 = Next;
-		EventInfoResourceType* Container = **Current;
+		AllocatedResourceType* Container = **Current;
 		Next							 = Current->GetNextLink();
 
-		EventInfoType* Info = Container->Get();
+		typedef NCsStatusEffect::IStatusEffect StatusEffectType;
 
+		AllocatedType* R			   = Container->Get();
+		StatusEffectType* StatusEffect = R->Get();
+		/*
 		// Check Apply Status Effect
 		if (Info->CanApply())
 		{
@@ -115,25 +122,8 @@ void UCsManager_StatusEffect::Update(const FCsDeltaTime& DeltaTime)
 		{
 			Info->Update(DeltaTime);
 		}
+		*/
 	}
-}
-
-#define EventResourceType NCsStatusEffect::NEvent::FResource
-void UCsManager_StatusEffect::ApplyStatusEffect(EventResourceType* Event)
-{
-#undef EventResourceType
-
-	checkf(Event, TEXT("UCsManager_StatusEffect::ApplyStatusEffect::Event is NULL."));
-
-	typedef NCsStatusEffect::NEvent::NInfo::FResource EventInfoResourceType;
-	typedef NCsStatusEffect::NEvent::NInfo::FImpl EventInfoType;
-
-	// TODO: Need to create a copy
-
-	EventInfoResourceType* EventInfoContainer = Manager_Event.Allocate();
-	EventInfoType* EventInfo				  = EventInfoContainer->Get();
-
-	EventInfo->SetEvent(Event);
 }
 
 #define EventType NCsStatusEffect::NEvent::IEvent

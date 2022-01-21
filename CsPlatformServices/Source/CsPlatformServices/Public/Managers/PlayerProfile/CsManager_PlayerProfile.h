@@ -1,4 +1,4 @@
-// Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "CoreUObject/Public/UObject/Object.h"
 #include "Managers/PlayerProfile/CsTypes_PlayerProfile.h"

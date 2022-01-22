@@ -46,7 +46,7 @@ void UCsManager_StatusEffect::Shutdown(UObject* InRoot)
 
 	const FString& Context = Str::Shutdown;
 
-	// Deallocate any NCsStatusEffect::NEvent::IEvent objects from UCsStatusEffectCoordinator
+	// Deallocate any AllocatedType (NCsStatusEffect::FAllocated) objects from UCsStatusEffectCoordinator
 	typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
 	typedef NCsStatusEffect::NAllocated::FResource AllocatedResourceType;
 	typedef NCsStatusEffect::FAllocated AllocatedType;

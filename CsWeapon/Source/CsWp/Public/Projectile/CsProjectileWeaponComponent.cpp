@@ -92,7 +92,7 @@ namespace NCsProjectileWeaponComponent
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsProjectileWeaponComponent, Abort_Fire_Internal);
 		}
 
-		namespace TimeBetweenShotsImpl
+		namespace NTimeBetweenShotsImpl
 		{
 			namespace Str
 			{
@@ -106,7 +106,7 @@ namespace NCsProjectileWeaponComponent
 			}
 		}
 
-		namespace ProjectileImpl
+		namespace NProjectileImpl
 		{
 			namespace Str
 			{
@@ -116,7 +116,7 @@ namespace NCsProjectileWeaponComponent
 			}
 		}
 
-		namespace SoundImpl
+		namespace NSoundImpl
 		{
 			namespace Str
 			{
@@ -125,7 +125,7 @@ namespace NCsProjectileWeaponComponent
 			}
 		}
 
-		namespace FXImpl
+		namespace NFXImpl
 		{
 			namespace Str
 			{
@@ -237,7 +237,7 @@ void UCsProjectileWeaponComponent::BeginPlay()
 		}
 		// LaunchScopedHandle
 		{
-			const FString& ScopeName		   = ProjectileImpl::Str::Launch;
+			const FString& ScopeName		   = NProjectileImpl::Str::Launch;
 			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
 			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponProjectileProjectileScopedTimerLaunch;
 
@@ -348,7 +348,8 @@ void UCsProjectileWeaponComponent::Init()
 
 	CurrentAmmo = PrjData->GetMaxAmmo();
 
-	TimeBetweenShots = PrjData->GetTimeBetweenShots();
+	TimeBetweenShotsImpl.Base = PrjData->GetTimeBetweenShots();
+	TimeBetweenShotsImpl.ResetValueToBase();
 }
 
 // State
@@ -449,7 +450,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShots);
+	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShotsImpl.Value);
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
 	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
@@ -464,7 +465,7 @@ bool UCsProjectileWeaponComponent::CanFire() const
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShots);
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShotsImpl.Value);
 		// Pass_Fire
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjData->DoFireOnRelease()), ToChar(PrjData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
@@ -585,7 +586,7 @@ void UCsProjectileWeaponComponent::Fire_Internal_OnEnd(FCsRoutine* R)
 
 void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 {
-	using namespace NCsProjectileWeaponComponent::NCached::TimeBetweenShotsImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NTimeBetweenShotsImpl;
 
 	const FString& Context = Str::OnElapsedTime;
 
@@ -617,7 +618,7 @@ void UCsProjectileWeaponComponent::FTimeBetweenShotsImpl::OnElapsedTime()
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
 
 	static const int32 TIME_BETWEEN_SHOTS = 0;
-	Payload->SetValue_Float(TIME_BETWEEN_SHOTS, Outer->TimeBetweenShots);
+	Payload->SetValue_Float(TIME_BETWEEN_SHOTS, Value);
 
 	Scheduler->Start(Payload);
 }
@@ -715,7 +716,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& C
 
 FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
-	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NProjectileImpl;
 
 	const FString& ScopeName		   = Str::GetLaunchLocation;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
@@ -773,7 +774,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 {
-	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NProjectileImpl;
 
 	const FString& ScopeName		   = Str::GetLaunchDirection;
 	const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
@@ -1065,7 +1066,7 @@ void UCsProjectileWeaponComponent::FProjectileImpl::Launch()
 {
 	CS_SCOPED_TIMER(LaunchScopedHandle);
 
-	using namespace NCsProjectileWeaponComponent::NCached::ProjectileImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NProjectileImpl;
 
 	const FString& Context = Str::Launch;
 
@@ -1124,7 +1125,7 @@ void UCsProjectileWeaponComponent::GetProjectileModifiers(TArray<PrjModifierType
 
 void UCsProjectileWeaponComponent::FSoundImpl::Play()
 {
-	using namespace NCsProjectileWeaponComponent::NCached::SoundImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NSoundImpl;
 
 	const FString& Context = Str::Play;
 
@@ -1163,7 +1164,7 @@ UCsProjectileWeaponComponent::FSoundImpl* UCsProjectileWeaponComponent::Construc
 
 void UCsProjectileWeaponComponent::FFXImpl::Play()
 {
-	using namespace NCsProjectileWeaponComponent::NCached::FXImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
 	const FString& Context = Str::Play;
 
@@ -1199,7 +1200,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 {
 #undef FXPayloadType
 
-	using namespace NCsProjectileWeaponComponent::NCached::FXImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
 
@@ -1262,7 +1263,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, F
 #undef FXPayloadType
 #undef FXDataType
 
-	using namespace NCsProjectileWeaponComponent::NCached::FXImpl;
+	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
 
@@ -1316,6 +1317,11 @@ void UCsProjectileWeaponComponent::FXImpl_SetComponent(USceneComponent* Componen
 #pragma endregion FX
 
 #pragma endregion Fire
+
+void UCsProjectileWeaponComponent::ResetValuesToBase()
+{
+	TimeBetweenShotsImpl.ResetValueToBase();
+}
 
 // Print
 #pragma region

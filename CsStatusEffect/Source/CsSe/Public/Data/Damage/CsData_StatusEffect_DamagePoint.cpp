@@ -24,12 +24,14 @@ namespace NCsStatusEffect
 				Outer(nullptr),
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
-				// StatusEffectDataType (NCsStatusEffect::NData::IData)
+				// SeDataType (NCsStatusEffect::NData::IData)
+				bPersistent(nullptr),
+				Children(nullptr),
+				StatusEffectsToRemove(nullptr),
 				TriggerCondition(nullptr),
 				TriggerFrequencyParams(nullptr),
 				TransferFrequencyParams(nullptr),
-				Children(nullptr),
-				// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
+				// DamageSeDataType (NCsStatusEffect::NData::NDamage::IDamage)
 				DamageData(nullptr)
 			{
 				InterfaceMap = new FCsInterfaceMap();
@@ -37,12 +39,12 @@ namespace NCsStatusEffect
 				InterfaceMap->SetRoot<FPointProxy>(this);
 
 				typedef NCsData::IData DataType;
-				typedef NCsStatusEffect::NData::IData StatusEffectDataType;
-				typedef NCsStatusEffect::NData::NDamage::IDamage StatusEffectDamageDataType;
+				typedef NCsStatusEffect::NData::IData SeDataType;
+				typedef NCsStatusEffect::NData::NDamage::IDamage DamageSeDataType;
 
 				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
-				InterfaceMap->Add<StatusEffectDataType>(static_cast<StatusEffectDataType*>(this));
-				InterfaceMap->Add<StatusEffectDamageDataType>(static_cast<StatusEffectDamageDataType*>(this));
+				InterfaceMap->Add<SeDataType>(static_cast<SeDataType*>(this));
+				InterfaceMap->Add<DamageSeDataType>(static_cast<DamageSeDataType*>(this));
 			}
 
 			FPointProxy::~FPointProxy()
@@ -123,12 +125,14 @@ void UCsData_StatusEffect_DamagePoint::Init()
 
 		DataProxyType* Proxy = (DataProxyType*)DataProxy;
 		Proxy->SetOuter(this);
-		// // NCsStatusEffect::NData::IData
+		// SeDataType (NCsStatusEffect::NData::IData)
+		Proxy->SetIsPersistent(&bPersistent);
+		Proxy->SetChildren(&Children);
+		Proxy->SetStatusEffectsToRemove(&StatusEffectsToRemove);
 		//Proxy->SetTriggerCondition(this);
 		//Proxy->SetTriggerFrequencyParams(this);
 		//Proxy->SetTransferFrequencyParams(this);
-		//Proxy->SetChildren(this);
-		// NCsStatusEffect::NData::NDamage::IDamage
+		// DamageSeDataType (NCsStatusEffect::NData::NDamage::IDamage)
 		//Proxy->SetDamageData();
 	}
 }

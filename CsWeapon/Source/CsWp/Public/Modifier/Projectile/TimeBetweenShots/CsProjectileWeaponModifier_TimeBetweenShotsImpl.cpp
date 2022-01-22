@@ -76,7 +76,7 @@ namespace NCsWeapon
 
 					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Weapon, ICsWeapon, UCsProjectileWeaponComponent);
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, GetValue(), GetApplication());
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShotsImpl.Value, GetValue(), GetApplication());
 				}
 
 				#pragma endregion WeaponModifierType (NCsWeapon::NModifier::IModifier)
@@ -94,7 +94,7 @@ namespace NCsWeapon
 
 					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(ProjectileWeapon, ICsProjectileWeapon, UCsProjectileWeaponComponent);
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShots, GetValue(), GetApplication());
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShotsImpl.Value, GetValue(), GetApplication());
 				}
 
 				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)

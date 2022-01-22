@@ -13,8 +13,6 @@
 
 // NCsStatusEffect::NEvent::IEvent
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, IEvent)
-// NCsStatusEffect::NEvent::FResource
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, FResource)
 
 UCLASS()
 class CSSE_API UCsManager_StatusEffect : public UObject

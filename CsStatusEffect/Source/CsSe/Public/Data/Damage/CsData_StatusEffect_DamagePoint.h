@@ -27,16 +27,16 @@ namespace NCsStatusEffect
 		namespace NDamage
 		{
 		#define DataType NCsData::IData
-		#define StatusEffectDataType NCsStatusEffect::NData::IData
-		#define StatusEffectDamageDataType NCsStatusEffect::NData::NDamage::IDamage
+		#define SeDataType NCsStatusEffect::NData::IData
+		#define DamageSeDataType NCsStatusEffect::NData::NDamage::IDamage
 
 			/**
 			* "Emulates" UCsData_StatusEffect_DamagePoint by mimicking the interfaces and having pointers to the appropriate
 			* members. The idea behind this struct is to keep the code a cleaner and more readable.
 			*/
 			struct CSSE_API FPointProxy : public DataType,
-									      public StatusEffectDataType,
-										  public StatusEffectDamageDataType
+									      public SeDataType,
+										  public DamageSeDataType
 			{
 			public:
 
@@ -54,15 +54,19 @@ namespace NCsStatusEffect
 
 				FCsInterfaceMap* InterfaceMap;
 
-				// StatusEffectDataType (NCsStatusEffect::NData::IData)
+				// SeDataType (NCsStatusEffect::NData::IData)
+
+				bool* bPersistent;
+
+				TArray<FECsStatusEffect>* Children;
+
+				TArray<FECsStatusEffect>* StatusEffectsToRemove;
 
 				FECsStatusEffectTriggerCondition* TriggerCondition;
 
 				TriggerFrequencyParamsType* TriggerFrequencyParams;
 
 				TransferFrequencyParamsType* TransferFrequencyParams;
-
-				TArray<FECsStatusEffect>* Children;
 
 				// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
 
@@ -87,33 +91,39 @@ namespace NCsStatusEffect
 
 			public:
 
+				FORCEINLINE void SetIsPersistent(bool* Value) { bPersistent = Value; }
+				FORCEINLINE void SetChildren(TArray<FECsStatusEffect>* Value) { Children = Value; }
+				FORCEINLINE void SetStatusEffectsToRemove(TArray<FECsStatusEffect>* Value) { StatusEffectsToRemove = Value; }
+
 				FORCEINLINE void SetTriggerCondition(FECsStatusEffectTriggerCondition* Value) { TriggerCondition = Value; }
 				FORCEINLINE void SetTriggerFrequencyParams(TriggerFrequencyParamsType* Value) { TriggerFrequencyParams = Value; }
 				FORCEINLINE void SetTransferFrequencyParams(TransferFrequencyParamsType* Value) { TransferFrequencyParams = Value; }
-				FORCEINLINE void SetChildren(TArray<FECsStatusEffect>* Value) { Children = Value; }
-
-			// StatusEffectDataType (NCsStatusEffect::NData::IData)
+				
+			// SeDataType (NCsStatusEffect::NData::IData)
 			#pragma region
 			public:
+
+				FORCEINLINE const bool& IsPersistent() const { return *bPersistent; }
+				FORCEINLINE const TArray<FECsStatusEffect>& GetChildren() const { return *Children; }
+				FORCEINLINE const TArray<FECsStatusEffect>& GetStatusEffectsToRemove() const { return *StatusEffectsToRemove; }
 
 				FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return *TriggerCondition; }
 				FORCEINLINE const TriggerFrequencyParamsType& GetTriggerFrequencyParams() const { return *TriggerFrequencyParams; }
 				FORCEINLINE const TransferFrequencyParamsType& GetTransferFrequencyParams() const { return *TransferFrequencyParams; }
-				FORCEINLINE const TArray<FECsStatusEffect>& GetChildren() const { return *Children; }
-
-			#pragma endregion StatusEffectDataType (NCsStatusEffect::NData::IData)
+				
+			#pragma endregion SeDataType (NCsStatusEffect::NData::IData)
 
 			public:
 
 				FORCEINLINE void SetDamageData(DamageDataType* Value) { DamageData = Value; }
 
-			// StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
+			// DamageSeDataType (NCsStatusEffect::NData::NDamage::IDamage)
 			#pragma region
 			public:
 
 				FORCEINLINE DamageDataType* GetDamageData() const { return DamageData; }
 
-			#pragma endregion StatusEffectDamageDataType (NCsStatusEffect::NData::NDamage::IDamage)
+			#pragma endregion DamageSeDataType (NCsStatusEffect::NData::NDamage::IDamage)
 
 			#undef TriggerFrequencyParamsType
 			#undef TransferFrequencyParamsType
@@ -121,8 +131,8 @@ namespace NCsStatusEffect
 			};
 
 		#undef DataType
-		#undef StatusEffectDataType
-		#undef StatusEffectDamageDataType
+		#undef SeDataType
+		#undef DamageSeDataType
 		}
 	}
 }
@@ -199,6 +209,19 @@ public:
 
 public:
 
+	/** Whether the Status EFfect should remain on the object or in the world. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bPersistent;
+
+	/** Additional Status Effects to apply when the current Status Effect based on this
+		data is applied. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FECsStatusEffect> Children;
+
+	/** Status Effects to remove when the current Status Effect based on this data is applied. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FECsStatusEffect> StatusEffectsToRemove;
+
 	/** How the status effect will get triggered. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FECsStatusEffectTriggerCondition TriggerCondition;
@@ -212,17 +235,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FCsStatusEffectTransferFrequencyParams TransferFrequencyParams;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FECsStatusEffect> Children;
-
 // ICsData_StatusEffect
 #pragma region
 public:
 
+	FORCEINLINE const bool& IsPersistent() const { return bPersistent; }
+	FORCEINLINE const TArray<FECsStatusEffect>& GetChildren() const { return Children; }
+	FORCEINLINE const TArray<FECsStatusEffect>& GetStatusEffectsToRemove() const { return StatusEffectsToRemove; }
+
 	FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return TriggerCondition; }
 	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const { return TriggerFrequencyParams; }
 	FORCEINLINE const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const { return TransferFrequencyParams; }
-	FORCEINLINE const TArray<FECsStatusEffect>& GetChildren() const { return Children; }
 
 #pragma endregion ICsStatusEffect
 

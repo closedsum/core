@@ -236,8 +236,6 @@ protected:
 
 public:
 
-	float TimeBetweenShots;
-
 	/**
 	*/
 	struct CSWP_API FTimeBetweenShotsImpl
@@ -249,6 +247,12 @@ public:
 		UCsProjectileWeaponComponent* Outer;
 
 	public:
+
+		/** This is the value BEFORE any modifications. */
+		float Base;
+
+		/** This is the value AFTER any modifications. */
+		float Value;
 
 		/**
 		* Delegate type for getting the time elapsed between "shots" after Fire() is called.
@@ -293,6 +297,11 @@ public:
 		}
 
 	private:
+
+		FORCEINLINE void ResetValueToBase()
+		{
+			Value = Base;
+		}
 
 		void OnElapsedTime();
 
@@ -553,6 +562,14 @@ public:
 #pragma endregion FX
 
 #pragma endregion Fire
+
+public:
+
+	/** 
+	* Reset the values of any members that have been modified 
+	* to their base value (BEFORE modification). 
+	*/
+	void ResetValuesToBase();
 
 // Print
 #pragma region

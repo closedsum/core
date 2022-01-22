@@ -27,6 +27,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, FInterfaceMap)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, FResource)
 // NCsStatusEffect::IStatusEffect
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, IStatusEffect)
+// NCsStatusEffect::FAllocated
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, FAllocated)
 
 namespace NCsStatusEffect
 {
@@ -199,6 +201,7 @@ namespace NCsStatusEffect
 		
 		#define SeResourceType NCsStatusEffect::FResource
 		#define StatusEffectType NCsStatusEffect::IStatusEffect
+		#define SeAllocatedType NCsStatusEffect::FAllocated
 		
 			static SeResourceType* AllocateStatusEffectChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectImpl& Type);
 
@@ -212,8 +215,11 @@ namespace NCsStatusEffect
 
 			static SeResourceType* CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const SeResourceType* StatusEffect);
 
+			static void CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect, SeAllocatedType*& OutAllocated);
+
 		#undef SeResourceType
 		#undef StatusEffectType
+		#undef SeAllocatedType
 
 		#pragma endregion StatusEffect
 		};

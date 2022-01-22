@@ -5,6 +5,9 @@
 // StatusEffect
 #include "CsAllocated_StatusEffect.h"
 
+// NCsStatusEffect::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
+
 namespace NCsStatusEffect
 {
 	namespace NAllocated
@@ -21,7 +24,22 @@ namespace NCsStatusEffect
 		* A manager handling allocating and deallocating AllocatedTypes (NCsStatusEffect::FAllocated) and
 		* are wrapped in the container: NCsStatusEffect::NAllocated::FResource.
 		*/
-		struct CSSE_API FManager : public NCsResource::NManager::NValue::TFixed<AllocatedType, FResource, 0> {};
+		struct CSSE_API FManager : public NCsResource::NManager::NValue::TFixed<AllocatedType, FResource, 0> 
+		{
+		public:
+
+		#define DataType NCsStatusEffect::NData::IData
+
+			/**
+			* Remove any Status Effects that share the same type from Data->GetStatusEffectsToRemove().
+			* 
+			* @param Data
+			* return		Whether any Status Effects were removed.
+			*/
+			bool RemoveStatusEffects(const DataType* Data);
+
+		#undef DataType
+		};
 
 	#undef AllocatedType
 	}

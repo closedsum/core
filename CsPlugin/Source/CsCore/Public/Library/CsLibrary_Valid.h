@@ -1062,6 +1062,20 @@ namespace NCsValid
 
 				return Other;
 			}
+
+			/**
+			* InterfaceType A to UObject cast
+			*/
+			template<typename InterfaceType, typename ClassType>
+			FORCEINLINE static const ClassType* CastChecked(const FString& Context, const InterfaceType* A, const FString& AName, const FString& InterfaceName)
+			{
+				UObject* O		 = _getUObjectChecked(Context, A, AName);
+				ClassType* Other = Cast<ClassType>(O);
+
+				checkf(Other, TEXT("%s: %s: %s with Class: %s implementing interface: %s is NOT of type: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceName, *(ClassType::StaticClass()->GetName()));
+
+				return Other;
+			}
 		};
 	}
 }
@@ -1422,6 +1436,14 @@ namespace NCsValid
 		static const FString __temp__str__b = #__InterfaceType; \
 		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
+// Assume const FString& Context has been defined
+#define CS_CONST_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
+	[] (const FString& Context, const __InterfaceType* __Interface) \
+	{ \
+		static const FString __temp__str__a  = #__Interface; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
+	}(Context, __Interface)
 
 #pragma endregion Interface
 
@@ -1562,6 +1584,14 @@ namespace NCsValid
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
 	[] (const FString& Context, __InterfaceType* __Interface) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
+	}(Context, __Interface)
+// Assume const FString& Context has been defined
+#define CS_CONST_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
+	[] (const FString& Context, const __InterfaceType* __Interface) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \

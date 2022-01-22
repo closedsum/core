@@ -24,7 +24,7 @@ namespace NCsStatusEffect
 
 	public:
 
-		/** The Root for UCsCoordinator_StatusEffect. */
+		/** The Root that routes to UCsCoordinator_StatusEffect. */
 		TWeakObjectPtr<UObject> Root;
 
 		/** Container holding a reference to Status Effect. */

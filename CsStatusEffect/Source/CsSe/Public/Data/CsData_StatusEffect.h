@@ -11,6 +11,8 @@ namespace NCsStatusEffect
 	namespace NData
 	{
 		/**
+		* Interface that describes the properties of a Status Effect, object
+		* that implements the interface: NCsStatusEffect::IStatusEffect.
 		*/
 		struct CSSE_API IData : public ICsGetInterfaceMap
 		{
@@ -23,11 +25,30 @@ namespace NCsStatusEffect
 			virtual ~IData(){}
 
 			/**
-			*
+			* Whether the Status EFfect should remain on the object or in the world.
+			*  Status Effect is an object that implements the interface: NCsStatusEffect::IStatusEffect 
+			* NOTE: The duration of the Status Effect (i.e. LifeTime) is part of another interface.
+			* 
+			* return
+			*/
+			virtual const bool& IsPersistent() const = 0;
+
+			/**
+			* Additional Status Effects to apply when the current Status Effect based on this 
+			* data is applied.
+			*  Status Effect is an object that implements the interface: NCsStatusEffect::IStatusEffect
 			*
 			* return
 			*/
 			virtual const TArray<FECsStatusEffect>& GetChildren() const = 0;
+
+			/**
+			* Status Effects to remove when the current Status Effect based on this data is applied.
+			*  Status Effect is an object that implements the interface: NCsStatusEffect::IStatusEffect
+			* 
+			* return
+			*/
+			virtual const TArray<FECsStatusEffect>& GetStatusEffectsToRemove() const = 0;
 		};
 	}
 }
@@ -51,9 +72,28 @@ public:
 public:
 
 	/**
-	*
+	* Whether the Status EFfect should remain on the object or in the world.
+	*  Status Effect is an object that implements the interface: NCsStatusEffect::IStatusEffect 
+	* NOTE: The duration of the Status Effect (i.e. LifeTime) is part of another interface.
+	* 
+	* return
+	*/
+	virtual const bool& IsPersistent() const = 0;
+
+	/**
+	* Additional Status Effect to apply when the current Status Effect based on this
+	* data is applied.
+	*  Status Effect is an object that implements the interface: NCsStatusEffect::IStatusEffect
 	*
 	* return
 	*/
 	virtual const TArray<FECsStatusEffect>& GetChildren() const = 0;
+
+	/**
+	* Status Effects to remove when the current Status Effect based on this data is applied.
+	*  Status Effect is an object that implements the interface: NCsStatusEffect::IStatusEffect
+	*
+	* return
+	*/
+	virtual const TArray<FECsStatusEffect>& GetStatusEffectsToRemove() const = 0;
 };

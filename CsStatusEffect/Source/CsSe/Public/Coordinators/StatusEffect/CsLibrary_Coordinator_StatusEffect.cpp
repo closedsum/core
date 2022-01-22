@@ -6,6 +6,8 @@
 // Library
 #include "Data/CsLibrary_Data_StatusEffect.h"
 #include "Library/CsLibrary_Valid.h"
+// StatusEffect
+#include "CsAllocated_StatusEffect.h"
 
 #if WITH_EDITOR
 // Library
@@ -215,6 +217,22 @@ namespace NCsStatusEffect
 		SeResourceType* FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const SeResourceType* StatusEffect)
 		{
 			return GetChecked(Context, WorldContext)->CreateCopyOfStatusEffect(Context, StatusEffect);
+		}
+
+		#define SeAllocatedType NCsStatusEffect::FAllocated
+		void FLibrary::CreateCopyOfStatusEffectChecked(const FString& Context, const UObject* WorldContext, const StatusEffectType* StatusEffect, SeAllocatedType*& OutAllocated)
+		{
+		#undef SeAllocatedType
+
+			FECsStatusEffectImpl ImplType;
+			SeResourceType* Container = GetChecked(Context, WorldContext)->CreateCopyOfStatusEffect(Context, StatusEffect, ImplType);
+			StatusEffectType* Se	  = Container->Get();
+
+			OutAllocated->Root		   = const_cast<UObject*>(WorldContext);
+			OutAllocated->Type		   = Se->GetStatusEffectType();
+			OutAllocated->Container	   = Container;
+			OutAllocated->StatusEffect = Se;
+			OutAllocated->ImplType	   = ImplType;
 		}
 
 #		undef SeResourceType

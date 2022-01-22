@@ -21,12 +21,14 @@ namespace NCsStatusEffect
 				Outer(nullptr),
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
-				// NCsStatusEffect::NData::IData
+				// SeDataType (NCsStatusEffect::NData::IData)
+				bPersistent(nullptr),
+				Children(nullptr),
+				StatusEffectsToRemove(nullptr),
 				TriggerCondition(nullptr),
 				TriggerFrequencyParams(nullptr),
 				TransferFrequencyParams(nullptr),
-				Children(nullptr),
-				// NCsStatusEffect::NData::NDamage::IDamage
+				// DamageSeDataType (NCsStatusEffect::NData::NDamage::IDamage)
 				DamageData(nullptr)
 			{
 				InterfaceMap = new FCsInterfaceMap();
@@ -34,12 +36,12 @@ namespace NCsStatusEffect
 				InterfaceMap->SetRoot<FSphereProxy>(this);
 
 				typedef NCsData::IData DataType;
-				typedef NCsStatusEffect::NData::IData StatusEffectDataType;
-				typedef NCsStatusEffect::NData::NDamage::IDamage StatusEffectDamageDataType;
+				typedef NCsStatusEffect::NData::IData SeDataType;
+				typedef NCsStatusEffect::NData::NDamage::IDamage DamageSeDataType;
 
 				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
-				InterfaceMap->Add<StatusEffectDataType>(static_cast<StatusEffectDataType*>(this));
-				InterfaceMap->Add<StatusEffectDamageDataType>(static_cast<StatusEffectDamageDataType*>(this));
+				InterfaceMap->Add<SeDataType>(static_cast<SeDataType*>(this));
+				InterfaceMap->Add<DamageSeDataType>(static_cast<DamageSeDataType*>(this));
 			}
 
 			FSphereProxy::~FSphereProxy()
@@ -76,25 +78,10 @@ void UCsData_StatusEffect_DamageSphere::BeginDestroy()
 	Super::BeginDestroy();
 
 	// ICsGetInterfaceMap
-	if (InterfaceMap)
-	{
-		delete InterfaceMap;
-		InterfaceMap = nullptr;
-	}
+	CS_SAFE_DELETE_PTR(InterfaceMap)
 	// ICsStatusEffect_Damage
-	if (DamageSphereProxy)
-	{
-		typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
-
-		SphereDataProxyType* Proxy = static_cast<SphereDataProxyType*>(DamageSphereProxy);
-		delete Proxy;
-		DamageSphereProxy = nullptr;
-	}
-	if (DataProxy)
-	{
-		delete DataProxy;
-		DataProxy = nullptr;
-	}
+	CS_SAFE_DELETE_PTR(DamageSphereProxy)
+	CS_SAFE_DELETE_PTR(DataProxy)
 }
 
 #pragma endregion UObject Interface
@@ -129,12 +116,14 @@ void UCsData_StatusEffect_DamageSphere::Init()
 
 		DataProxyType* Proxy = (DataProxyType*)DataProxy;
 		Proxy->SetOuter(this);
-		// // NCsStatusEffect::NData::IData
+		// SeDataType (NCsStatusEffect::NData::IData)
+		Proxy->SetIsPersistent(&bPersistent);
+		Proxy->SetChildren(&Children);
+		Proxy->SetStatusEffectsToRemove(&StatusEffectsToRemove);
 		//Proxy->SetTriggerCondition(this);
 		//Proxy->SetTriggerFrequencyParams(this);
 		//Proxy->SetTransferFrequencyParams(this);
-		//Proxy->SetChildren(this);
-		// NCsStatusEffect::NData::NDamage::IDamage
+		// DamageSeDataType (NCsStatusEffect::NData::NDamage::IDamage)
 		//Proxy->SetDamageData();
 	}
 }

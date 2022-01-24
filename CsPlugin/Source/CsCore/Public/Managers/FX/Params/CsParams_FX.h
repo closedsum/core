@@ -1,7 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Enum/CsEnumMap.h"
-
 #pragma once
+#include "Types/Enum/CsEnumMap.h"
 
 namespace NCsFX
 {

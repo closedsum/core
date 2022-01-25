@@ -24,14 +24,14 @@ namespace NCsSkin
 		{
 		#define SkinType NCsSkin::NData::NVisual::IVisual
 
-			FString FLibrary::PrintObjectAndClass(SkinType* Skin)
+			FString FLibrary::PrintObjectAndClass(const SkinType* Skin)
 			{
 				if (UObject* O = Skin->_getUObject())
 					return FString::Printf(TEXT("Object: %s with Class: %s"), *(O->GetName()), *(O->GetClass()->GetName()));
 				return FString::Printf(TEXT("INVALID (Non-UObject)"));
 			}
 
-			FString FLibrary::PrintNameAndClass(SkinType* Skin)
+			FString FLibrary::PrintNameAndClass(const SkinType* Skin)
 			{
 				if (UObject* O = Skin->_getUObject())
 					return FString::Printf(TEXT("%s with Class: %s"), *(O->GetName()), *(O->GetClass()->GetName()));
@@ -39,7 +39,7 @@ namespace NCsSkin
 			}
 
 			#define StaticMeshSkinType NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh
-			FString FLibrary::PrintNameAndClass(StaticMeshSkinType* Skin)
+			FString FLibrary::PrintNameAndClass(const StaticMeshSkinType* Skin)
 			{
 			#undef StaticMeshSkinType
 
@@ -49,7 +49,7 @@ namespace NCsSkin
 			}
 
 			#define SkeletalMeshSkinType NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh
-			FString FLibrary::PrintNameAndClass(SkeletalMeshSkinType* Skin)
+			FString FLibrary::PrintNameAndClass(const SkeletalMeshSkinType* Skin)
 			{
 			#undef SkeletalMeshSkinType
 
@@ -58,7 +58,7 @@ namespace NCsSkin
 				return FString::Printf(TEXT("INVALID (Non-UObject)"));
 			}
 
-			bool FLibrary::IsValidChecked(const FString& Context, SkinType* Skin)
+			bool FLibrary::IsValidChecked(const FString& Context, const SkinType* Skin)
 			{
 				CS_IS_PTR_NULL_CHECKED(Skin)
 
@@ -66,7 +66,7 @@ namespace NCsSkin
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
-				MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
+				const MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
 
 				if (MaterialSkin)
 				{
@@ -76,7 +76,7 @@ namespace NCsSkin
 
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
-				StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin);
+				const StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin);
 
 				if (StaticMeshSkin)
 				{
@@ -85,7 +85,7 @@ namespace NCsSkin
 				// SkeletalMeshSkin
 				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
 
-				SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin);
+				const SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin);
 
 				if (SkeletalMeshSkin)
 				{
@@ -115,14 +115,14 @@ namespace NCsSkin
 				// UniformScale
 				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinDataType;
 
-				if (UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
+				if (const UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
 				{
 					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScaleSkinData->GetUniformScale(), 0.0f)
 				}
 				return true;
 			}
 
-			bool FLibrary::IsValid(const FString& Context, SkinType* Skin, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::IsValid(const FString& Context, const SkinType* Skin, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				CS_IS_PTR_NULL(Skin)
 
@@ -130,7 +130,7 @@ namespace NCsSkin
 				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
-				MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
+				const MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin);
 
 				if (MaterialSkin)
 				{
@@ -141,7 +141,7 @@ namespace NCsSkin
 
 				typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshSkinType;
 
-				StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin);
+				const StaticMeshSkinType* StaticMeshSkin = GetSafeInterfaceChecked<StaticMeshSkinType>(Context, Skin);
 
 				if (StaticMeshSkin)
 				{
@@ -154,7 +154,7 @@ namespace NCsSkin
 				// SkeletalMeshSkin
 				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
 
-				SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin);
+				const SkeletalMeshSkinType* SkeletalMeshSkin = GetSafeInterfaceChecked<SkeletalMeshSkinType>(Context, Skin);
 
 				if (SkeletalMeshSkin)
 				{
@@ -196,7 +196,7 @@ namespace NCsSkin
 				// UniformScale
 				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinDataType;
 
-				if (UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
+				if (const UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
 				{
 					CS_IS_FLOAT_GREATER_THAN(UniformScaleSkinData->GetUniformScale(), 0.0f)
 				}

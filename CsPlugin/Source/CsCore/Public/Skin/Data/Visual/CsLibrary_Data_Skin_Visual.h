@@ -38,19 +38,19 @@ namespace NCsSkin
 
 				/**
 				*/
-				static FString PrintObjectAndClass(SkinType* Skin);
+				static FString PrintObjectAndClass(const SkinType* Skin);
 
 				/**
 				*/
-				static FString PrintNameAndClass(SkinType* Skin);
+				static FString PrintNameAndClass(const SkinType* Skin);
 
 				/**
 				*/
-				static FString PrintNameAndClass(StaticMeshSkinType* Skin);
+				static FString PrintNameAndClass(const StaticMeshSkinType* Skin);
 
 				/**
 				*/
-				static FString PrintNameAndClass(SkeletalMeshSkinType* Skin);
+				static FString PrintNameAndClass(const SkeletalMeshSkinType* Skin);
 
 				/**
 				* 
@@ -59,7 +59,7 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
 				* return
 				*/
-				static bool IsValidChecked(const FString& Context, SkinType* Skin);
+				static bool IsValidChecked(const FString& Context, const SkinType* Skin);
 
 				/**
 				*
@@ -69,7 +69,7 @@ namespace NCsSkin
 				* @param Log		(optional)
 				* return
 				*/
-				static bool IsValid(const FString& Context, SkinType* Skin, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool IsValid(const FString& Context, const SkinType* Skin, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				*

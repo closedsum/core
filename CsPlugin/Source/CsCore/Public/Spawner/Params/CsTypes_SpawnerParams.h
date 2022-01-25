@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_SpawnerParams.generated.h"
-#pragma once
 
 // FCsSpawnerCountParams
 #pragma region

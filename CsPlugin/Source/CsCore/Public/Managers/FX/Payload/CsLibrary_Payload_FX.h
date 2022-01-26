@@ -17,9 +17,9 @@ namespace NCsFX
 	{
 		#define PayloadType NCsFX::NPayload::IPayload
 
-		struct CSCORE_API FLibrary : public NCsInterfaceMap::TLibrary<PayloadType>
+		struct CSCORE_API FLibrary final : public NCsInterfaceMap::TLibrary<PayloadType>
 		{
-		
+		public:
 
 			/**
 			* Check if the Payload is Valid with checks.
@@ -49,8 +49,8 @@ namespace NCsFX
 			* @param Context	The calling context.
 			* @param Payload
 			* @param FX
-			* @param Transform	(optional) Transform to apply the sound after allocation and before playing.
-			*					Sound.Transform is applied as an "offset".
+			* @param Transform	(optional) Transform to apply the fx after allocation and before playing.
+			*					FX.Transform is applied as an "offset".
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
@@ -60,8 +60,8 @@ namespace NCsFX
 			* @param Context	The calling context.
 			* @param Payload
 			* @param FX
-			* @param Transform	(optional) Transform to apply the sound after allocation and before playing.
-			*					Sound.Transform is applied as an "offset".
+			* @param Transform	(optional) Transform to apply the fx after allocation and before playing.
+			*					FX.Transform is applied as an "offset".
 			* @param Log		(optional)
 			*/
 			static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -71,8 +71,8 @@ namespace NCsFX
 			*
 			* @param Payload
 			* @param FX
-			* @param Transform	(optional) Transform to apply the sound after allocation and before playing.
-			*					Sound.Transform is applied as an "offset".
+			* @param Transform	(optional) Transform to apply the fx after allocation and before playing.
+			*					FX.Transform is applied as an "offset".
 			*/
 			static void SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
@@ -92,8 +92,8 @@ namespace NCsFX
 			* @param Payload
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			*/
 			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
@@ -104,8 +104,8 @@ namespace NCsFX
 			* @param Payload
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* @param Log			(optional)
 			*/
 			static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -116,8 +116,8 @@ namespace NCsFX
 			* @param Payload
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			*/
 			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
@@ -128,8 +128,8 @@ namespace NCsFX
 			* @param Payload
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			*/
 			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 

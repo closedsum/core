@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Visual/Impact/CsData_Beam_VisualImpact.h"
 #include "CsBeam.h"
 

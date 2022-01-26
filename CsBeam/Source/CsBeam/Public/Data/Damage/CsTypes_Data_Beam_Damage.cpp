@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/Damage/CsTypes_Data_Beam_Damage.h"
 
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"

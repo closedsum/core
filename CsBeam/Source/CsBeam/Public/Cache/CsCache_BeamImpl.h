@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Cache/CsCache_Beam.h"
 #include "Containers/CsWeakObjectPtr.h"

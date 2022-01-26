@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsBeam.h"
 #include "CsBeamEditor.h"
 

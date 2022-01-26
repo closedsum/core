@@ -1,4 +1,4 @@
-// Copyright 2017-2019 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_StaticMesh.h"

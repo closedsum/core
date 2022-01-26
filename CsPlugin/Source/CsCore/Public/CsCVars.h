@@ -653,7 +653,7 @@ namespace NCsCVarDraw
 	}
 }
 
-#define CS_CVAR_DRAW_IS_DRAWING(__Draw) FCsCVarDrawMap::Get().IsShowing(NCsCVarDraw::__Draw)
+#define CS_CVAR_DRAW_IS_DRAWING(__Draw) FCsCVarDrawMap::Get().IsDrawing(NCsCVarDraw::__Draw)
 
 #pragma endregion CVarDraw
 

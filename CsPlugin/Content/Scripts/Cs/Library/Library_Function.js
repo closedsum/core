@@ -325,7 +325,14 @@ module.exports = class NJsFunction
             return true;
         }
 
-        static IsArgCountAndReturn_Bool_Checked(context, fn, argCount, caller) 
+        /**
+         * @param {string}      context
+         * @param {function}    fn 
+         * @param {number}      argCount    int
+         * @param {object}      caller
+         * @returns {boolean} 
+         */
+        static /*bool*/ IsArgCountAndReturn_Bool_Checked(context /*string*/, fn /*function*/, argCount /*int*/, caller /*object*/) 
         {
             let self = NJsFunction.FLibrary;
 

@@ -276,7 +276,6 @@ module.exports = class NJsCommon
 
             if (!self.DoesKeyExist(o, key))
                 return false;
-
             return self.IsBool(o[key]);
         }
   
@@ -292,6 +291,35 @@ module.exports = class NJsCommon
 
             self.check(self.DoesKeyExistChecked(context, o, key));
             self.check(self.IsBoolChecked(context, o[key]));
+            return true;
+        }
+
+        /**
+         * @param {object} o 
+         * @param {string} key
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyOfArrayExist(o /*object*/, key /*string*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            if (!self.DoesKeyExist(o, key))
+                return false;
+            return Array.isArray(o[key]);
+        }
+
+        /**
+         * @param {string} context
+         * @param {object} o 
+         * @param {string} key
+         * @returns {boolean} 
+         */
+        static /*bool*/ DoesKeyOfArrayExistChecked(context /*string*/, o /*object*/, key /*string*/)
+        {
+            let self = NJsCommon.FLibrary;
+
+            self.check(self.DoesKeyExistChecked(context, o, key));
+            self.check(Array.isArray(o[key]), context + ": o[key] is type: " + typeof (o[key]) + " and NOT an array.");
             return true;
         }
 

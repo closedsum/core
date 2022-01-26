@@ -93,7 +93,7 @@ namespace NCsSkin
 				* return			Whether the Skin implements the interface:
 				*					StaticMeshSkinType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				*/
-				static bool ImplementsStaticMeshSkinType(const FString& Context, SkinType* Skin);
+				static bool ImplementsStaticMeshSkinType(const FString& Context, const SkinType* Skin);
 
 				/**
 				* Set the Static Mesh and Materials on a StaticMeshComponent (Component)
@@ -103,7 +103,7 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
 				* @param Component	StaticMeshComponent
 				*/
-				static void SetStaticMeshAndMaterialsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component);
+				static void SetStaticMeshAndMaterialsChecked(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component);
 
 				/**
 				* Safely set the Static Mesh and Materials on a StaticMeshComponent (Component)
@@ -118,7 +118,7 @@ namespace NCsSkin
 				* @param Component	StaticMeshComponent
 				* @param Log		(optional)
 				*/
-				static void SetSafeStaticMeshAndMaterials(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+				static void SetSafeStaticMeshAndMaterials(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Set the Static Mesh and Materials on a StaticMeshComponent (Component)
@@ -129,7 +129,7 @@ namespace NCsSkin
 				* @param Component	StaticMeshComponent
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				*/
-				static void SetStaticMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+				static void SetStaticMeshAndMIDsChecked(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
 
 				/**
 				* Safely set the Static Mesh and Materials on a StaticMeshComponent (Component)
@@ -145,7 +145,7 @@ namespace NCsSkin
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				* @param Log		(optional)
 				*/
-				static void SetSafeStaticMeshAndMIDs(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning);
+				static void SetSafeStaticMeshAndMIDs(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Set the Static Mesh on a StaticMeshComponent (Component)
@@ -155,7 +155,7 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
 				* @param Component	StaticMeshComponent
 				*/
-				static void SetStaticMeshChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component);
+				static void SetStaticMeshChecked(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component);
 
 				/**
 				* Set the Static Mesh on a StaticMeshComponent (Component)
@@ -165,7 +165,7 @@ namespace NCsSkin
 				* @param StaticMeshSkin		Implements the interface: NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh.
 				* @param Component			StaticMeshComponent
 				*/
-				static void SetStaticMeshChecked(const FString& Context, StaticMeshSkinType* StaticMeshSkin, UStaticMeshComponent* Component);
+				static void SetStaticMeshChecked(const FString& Context, const StaticMeshSkinType* StaticMeshSkin, UStaticMeshComponent* Component);
 
 				/**
 				* Safely set the Static Mesh on a StaticMeshComponent (Component)
@@ -179,7 +179,7 @@ namespace NCsSkin
 				* @param Component	StaticMeshComponent
 				* @param Log		(optional)
 				*/
-				static void SetSafeStaticMesh(const FString& Context, SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+				static void SetSafeStaticMesh(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#pragma endregion Static Mesh
 
@@ -195,7 +195,7 @@ namespace NCsSkin
 				* return			Whether the Skin implements the interface:
 				*					SkeletalMeshSkinType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				*/
-				static bool ImplementsSkeletalMeshSkinType(const FString& Context, SkinType* Skin);
+				static bool ImplementsSkeletalMeshSkinType(const FString& Context, const SkinType* Skin);
 
 				/**
 				* Set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
@@ -205,7 +205,7 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
 				* @param Component	SkeletalMeshComponent
 				*/
-				static void SetSkeletalMeshAndMaterialsChecked(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component);
+				static void SetSkeletalMeshAndMaterialsChecked(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component);
 
 				/**
 				* Safely set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
@@ -220,7 +220,7 @@ namespace NCsSkin
 				* @param Component	SkeletalMeshComponent
 				* @param Log		(optional)
 				*/
-				static void SetSafeSkeletalMeshAndMaterials(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+				static void SetSafeSkeletalMeshAndMaterials(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
@@ -231,7 +231,7 @@ namespace NCsSkin
 				* @param Component	SkeletalMeshComponent
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				*/
-				static void SetSkeletalMeshAndMIDsChecked(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+				static void SetSkeletalMeshAndMIDsChecked(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
 
 				/**
 				* Safely set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)
@@ -247,7 +247,7 @@ namespace NCsSkin
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				* @param Log		(optional)
 				*/
-				static void SetSafeSkeletalMeshAndMIDs(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning);
+				static void SetSafeSkeletalMeshAndMIDs(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -257,7 +257,7 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
 				* @param Component	SkeletalMeshComponent
 				*/
-				static void SetSkeletalMeshChecked(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component);
+				static void SetSkeletalMeshChecked(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component);
 
 				/**
 				* Set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -267,7 +267,7 @@ namespace NCsSkin
 				* @param SkeletalMeshSkin	Implements the interface: NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh.
 				* @param Component			SkeletalMeshComponent
 				*/
-				static void SetSkeletalMeshChecked(const FString& Context, SkeletalMeshSkinType* SkeletalMeshSkin, USkeletalMeshComponent* Component);
+				static void SetSkeletalMeshChecked(const FString& Context, const SkeletalMeshSkinType* SkeletalMeshSkin, USkeletalMeshComponent* Component);
 
 				/**
 				* Safely set the Skeletal Mesh on a SkeletalMeshComponent (Component)
@@ -281,7 +281,7 @@ namespace NCsSkin
 				* @param Component	SkeletalMeshComponent
 				* @param Log		(optional)
 				*/
-				static void SetSafeSkeletalMesh(const FString& Context, SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+				static void SetSafeSkeletalMesh(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#pragma endregion Skeletal Mesh
 
@@ -298,7 +298,7 @@ namespace NCsSkin
 				* @param Component	SceneComponent (SHOULD be StaticMeshComponent or SkeletalMeshComponent).
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				*/
-				static void SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, USceneComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+				static void SetMeshAndMIDsChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
 
 				struct FSetMeshAndMIDs
 				{
@@ -324,7 +324,7 @@ namespace NCsSkin
 				* return						0 = None, 1 = StaticMeshComponent, 2 = SkeletalMeshComponent
 				*								TODO: NOTE: Use a enum or wrap in a struct.
 				*/
-				static ResultType SetMeshAndMIDsChecked(const FString& Context, SkinType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& MIDs);
+				static ResultType SetMeshAndMIDsChecked(const FString& Context, const SkinType* Skin, UStaticMeshComponent* StaticMeshComponent, USkeletalMeshComponent* SkeletalMeshComponent, TArray<UMaterialInstanceDynamic*>& MIDs);
 
 				#undef ResultType
 
@@ -346,7 +346,7 @@ namespace NCsSkin
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				* return			Slice from Skin that implements the interface: NCsSkin::NData::NVisual::NMaterial::IMaterial.
 				*/
-				static MaterialSkinDataType* SetMaterialsChecked(const FString& Context, SkinType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
+				static MaterialSkinDataType* SetMaterialsChecked(const FString& Context, const SkinType* Skin, UPrimitiveComponent* Component, TArray<UMaterialInstanceDynamic*>& MIDs);
 
 			#undef MaterialSkinDataType
 

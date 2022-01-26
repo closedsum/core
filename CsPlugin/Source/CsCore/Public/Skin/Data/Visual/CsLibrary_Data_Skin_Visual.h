@@ -56,7 +56,7 @@ namespace NCsSkin
 				* 
 				* 
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* return
 				*/
 				static bool IsValidChecked(const FString& Context, const SkinType* Skin);
@@ -65,7 +65,7 @@ namespace NCsSkin
 				*
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Log		(optional)
 				* return
 				*/
@@ -89,7 +89,7 @@ namespace NCsSkin
 				* StaticMeshSkinType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				* 
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* return			Whether the Skin implements the interface:
 				*					StaticMeshSkinType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				*/
@@ -100,7 +100,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	StaticMeshComponent
 				*/
 				static void SetStaticMeshAndMaterialsChecked(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component);
@@ -114,7 +114,7 @@ namespace NCsSkin
 				*  Check: Materials count > 0 and Materials are NOT NULL for appropriate interface slice. 
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	StaticMeshComponent
 				* @param Log		(optional)
 				*/
@@ -125,7 +125,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	StaticMeshComponent
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				*/
@@ -140,7 +140,7 @@ namespace NCsSkin
 				*  Check: Materials count > 0 and Materials are NOT NULL for appropriate interface slice. 
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	StaticMeshComponent
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				* @param Log		(optional)
@@ -152,7 +152,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	StaticMeshComponent
 				*/
 				static void SetStaticMeshChecked(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component);
@@ -162,7 +162,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context			The calling context.
-				* @param StaticMeshSkin		Implements the interface: NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh.
+				* @param StaticMeshSkin		Implements the interface: StaticMeshSkinType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh).
 				* @param Component			StaticMeshComponent
 				*/
 				static void SetStaticMeshChecked(const FString& Context, const StaticMeshSkinType* StaticMeshSkin, UStaticMeshComponent* Component);
@@ -175,7 +175,7 @@ namespace NCsSkin
 				*  Check: StaticMesh is NOT NULL for appropriate interface slice.
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	StaticMeshComponent
 				* @param Log		(optional)
 				*/
@@ -191,7 +191,7 @@ namespace NCsSkin
 				* SkeletalMeshSkinType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* return			Whether the Skin implements the interface:
 				*					SkeletalMeshSkinType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				*/
@@ -202,7 +202,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				*/
 				static void SetSkeletalMeshAndMaterialsChecked(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component);
@@ -216,7 +216,7 @@ namespace NCsSkin
 				*  Check: Materials count > 0 and Materials are NOT NULL for appropriate interface slice. 
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				* @param Log		(optional)
 				*/
@@ -227,7 +227,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				*/
@@ -242,7 +242,7 @@ namespace NCsSkin
 				*  Check: Materials count > 0 and Materials are NOT NULL for appropriate interface slice. 
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				* @param Log		(optional)
@@ -254,7 +254,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				*/
 				static void SetSkeletalMeshChecked(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component);
@@ -264,7 +264,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context			The calling context.
-				* @param SkeletalMeshSkin	Implements the interface: NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh.
+				* @param SkeletalMeshSkin	Implements the interface: SkeletalMeshSkinType (NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh).
 				* @param Component			SkeletalMeshComponent
 				*/
 				static void SetSkeletalMeshChecked(const FString& Context, const SkeletalMeshSkinType* SkeletalMeshSkin, USkeletalMeshComponent* Component);
@@ -277,7 +277,7 @@ namespace NCsSkin
 				*  Check: SkeletalMesh is NOT NULL for appropriate interface slice.
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				* @param Log		(optional)
 				*/
@@ -294,7 +294,7 @@ namespace NCsSkin
 				* from the given Skin
 				*
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SceneComponent (SHOULD be StaticMeshComponent or SkeletalMeshComponent).
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				*/
@@ -317,7 +317,7 @@ namespace NCsSkin
 				* (depending on which interface SkinType implements) from the given Skin.
 				*
 				* @param Context				The calling context.
-				* @param Skin					Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin					Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param StaticMeshComponent	
 				* @param SkeletalMeshComponent
 				* @param MIDs					Material Instance Dynamics to create from Material in the given Skin.
@@ -341,7 +341,7 @@ namespace NCsSkin
 				* from the given Skin.
 				* 
 				* @param Context	The calling context.
-				* @param Skin		Implements the interface: NCsSkin::NData::NVisual::IVisual.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	PrimitiveComponent (SHOULD be StaticMeshComponent or SkeletalMeshComponent).
 				* @param MIDs		Material Instance Dynamics to create from Material in the given Skin.
 				* return			Slice from Skin that implements the interface: NCsSkin::NData::NVisual::NMaterial::IMaterial.
@@ -351,6 +351,31 @@ namespace NCsSkin
 			#undef MaterialSkinDataType
 
 			#pragma endregion Material
+
+			// Scale
+			#pragma region
+			public:
+
+				/**
+				* Set the relative scale of Component from the given Skin.
+				* 
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
+				* @param Component	Scene Component to scale.
+				*/
+				static void SetUniformScaleRelativeChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component);
+
+				/**
+				* Safely set the relative scale of Component from the given Skin.
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
+				* @param Component	Scene Component to scale.
+				* @param Log		(optional)
+				*/
+				static void SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			#pragma endregion Scale
 			};
 
 		#undef SkinType

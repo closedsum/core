@@ -551,6 +551,46 @@ namespace NCsSkin
 
 		#pragma endregion Material
 
+		// Scale
+		#pragma region
+
+			void FLibrary::SetUniformScaleRelativeChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component)
+			{
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
+
+				const UniformScaleSkinType* UniformScaleSkin = GetInterfaceChecked<UniformScaleSkinType>(Context, Skin);
+
+				CS_IS_PTR_NULL_CHECKED(Component)
+
+				const float& UniformScale = UniformScaleSkin->GetUniformScale();
+
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScale, 0.0f)
+
+				Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+			}
+
+			void FLibrary::SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
+
+				if (const UniformScaleSkinType* UniformScaleSkin = GetSafeInterfaceChecked<UniformScaleSkinType>(Context, Skin))
+				{
+					CS_IS_PTR_NULL_EXIT(Component);
+
+					const float& UniformScale = UniformScaleSkin->GetUniformScale();
+
+					CS_IS_FLOAT_GREATER_THAN_EXIT(UniformScale, 0.0f)
+
+					Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface: %s."), *Context, *PrintNameAndClass(Skin), *(UniformScaleSkinType::Name.ToString())));
+				}
+			}
+
+		#pragma endregion Scale
+
 		#undef SkinType
 		}
 	}

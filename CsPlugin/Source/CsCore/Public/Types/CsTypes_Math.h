@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Math.generated.h"
-#pragma once
 
 // FCsRadius
 #pragma region

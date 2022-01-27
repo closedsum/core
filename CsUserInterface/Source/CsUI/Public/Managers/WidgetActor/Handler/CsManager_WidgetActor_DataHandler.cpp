@@ -20,7 +20,7 @@ namespace NCsWidgetActor
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::WidgetActors;
@@ -32,7 +32,7 @@ namespace NCsWidgetActor
 				OutDataTableSoftObjects.Add(DataTableSoftObject);
 			}
 
-#			pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
+			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 		}
 	}
 }

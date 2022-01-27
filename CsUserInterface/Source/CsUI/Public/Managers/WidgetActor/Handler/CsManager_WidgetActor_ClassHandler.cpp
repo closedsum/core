@@ -20,7 +20,7 @@ namespace NCsWidgetActor
 
 			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::WidgetActorClasses;
@@ -31,7 +31,7 @@ namespace NCsWidgetActor
 
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::WidgetActors;

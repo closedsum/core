@@ -217,7 +217,7 @@ void UCsManager_Fade::CreateFadeWidget()
 #endif // #if !UE_BUILD_SHIPPING
 	}
 
-	typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+	typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 
 	const FCsUIDataRootSet& DataRootSet = DataRootSetLibrary::GetChecked(Context, MyRoot);
 

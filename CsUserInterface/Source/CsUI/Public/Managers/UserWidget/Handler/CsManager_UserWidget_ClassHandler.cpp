@@ -20,7 +20,7 @@ namespace NCsUserWidget
 
 			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::UserWidgetClasses;
@@ -31,7 +31,7 @@ namespace NCsUserWidget
 
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::UserWidgets;
@@ -55,7 +55,7 @@ namespace NCsUserWidget
 
 			void FPooledClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::UserWidgetPooledClasses;
@@ -66,7 +66,7 @@ namespace NCsUserWidget
 
 			void FPooledClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::UserWidgetPooled;

@@ -379,7 +379,7 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 	ClassHandler->PopulateClassMapFromSettings(Context);
 	PooledClassHandler->PopulateClassMapFromSettings(Context);
 
-	const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+	const FCsUIDataRootSet& DataRootSet = NCsUI::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 	if (DataRootSet.bUserWidgetsHasData)
 		DataHandler->PopulateDataMapFromSettings(Context);

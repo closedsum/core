@@ -19,7 +19,7 @@ namespace NCsUserWidget
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsUIDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::UserWidgets;

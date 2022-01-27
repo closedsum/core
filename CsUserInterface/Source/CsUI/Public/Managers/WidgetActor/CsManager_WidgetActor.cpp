@@ -340,7 +340,7 @@ void UCsManager_WidgetActor::InitInternalFromSettings()
 
 	ClassHandler->PopulateClassMapFromSettings(Context);
 
-	const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+	const FCsUIDataRootSet& DataRootSet = NCsUI::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
 	if (DataRootSet.bWidgetActorsHasData)
 		DataHandler->PopulateDataMapFromSettings(Context);

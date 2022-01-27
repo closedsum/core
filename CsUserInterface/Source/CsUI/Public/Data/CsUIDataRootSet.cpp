@@ -34,7 +34,7 @@ bool FCsUIDataRootSet::IsValidChecked(const FString& Context, UObject* Object, c
 {
 	using namespace NCsUIDataRootSet::NCached;
 
-	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::##Member) \
+	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::Member) \
 	{ \
 		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(Object->GetName(), *Str::GetCsUIDataRootSet, *Str::Member)); \
 	}
@@ -57,14 +57,38 @@ bool FCsUIDataRootSet::IsValidChecked(const FString& Context, UObject* Object, c
 	return true;
 }
 
-UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, UObject* Object, const EMember& MemberType) const
+const TSoftObjectPtr<UDataTable>& FCsUIDataRootSet::GetDataTableSoftObjectChecked(const FString& Context, const EMember& MemberType) const
+{
+	#define CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Member) if (MemberType == EMember::Member) \
+		return Member;
+
+	// WidgetActorClasses
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WidgetActorClasses)
+	// WidgetActors
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WidgetActors)
+	// UserWidgetPooledClasses
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgetPooledClasses)
+	// UserWidgetPooled
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgetPooled)
+	// UserWidgetClasses
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgetClasses)
+	// UserWidgets
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgets)
+
+	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
+
+	checkf(0, TEXT("%s: Failed to get DataTable SoftObject for MemberType."), *Context);
+	return WidgetActorClasses;
+}
+
+UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
 	using namespace NCsUIDataRootSet::NCached;
 
 	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
 
-	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::##Member) \
-		return DataRootSetLibrary::GetSafeDataTable(Context, Object, Str::GetCsUIDataRootSet, Member, Str::Member);
+	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
+		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsUIDataRootSet, Member, Str::Member);
 
 	// WidgetActorClasses
 	CS_TEMP_GET_SAFE_DATA_TABLE(WidgetActorClasses)
@@ -83,4 +107,31 @@ UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, UObject* 
 
 	UE_LOG(LogCsUI, Warning, TEXT("%s: Failed to get DataTable for MemberType."));
 	return nullptr;
+}
+
+UDataTable* FCsUIDataRootSet::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
+{
+	using namespace NCsUIDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	return DataRootSetLibrary::GetDataTableChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType));
+}
+
+uint8* FCsUIDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const
+{
+	using namespace NCsUIDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowName);
+}
+
+uint8* FCsUIDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
+{
+	using namespace NCsUIDataRootSet::NCached;
+
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
+
+	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
 }

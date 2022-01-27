@@ -219,8 +219,7 @@ void UCsManager_Fade::CreateFadeWidget()
 
 	typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
 
-	UObject* ContextRoot				= DataRootSetLibrary::GetContextRootChecked(Context, MyRoot);
-	const FCsUIDataRootSet& DataRootSet = DataRootSetLibrary::GetChecked(Context, ContextRoot);
+	const FCsUIDataRootSet& DataRootSet = DataRootSetLibrary::GetChecked(Context, MyRoot);
 
 	UClass* Class = DataRootSet.FadeWidget.Get();
 

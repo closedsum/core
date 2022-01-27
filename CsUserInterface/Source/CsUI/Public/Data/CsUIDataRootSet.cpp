@@ -28,21 +28,13 @@ namespace NCsUIDataRootSet
 	}
 }
 
-/*
-* 		_WidgetActorClasses,
-		_WidgetActors,
-		_UserWidgetPooledClasses,
-		_UserWidgetPooled,
-		_UserWidgetClasses,
-		_UserWidgets
-*/
 #pragma endregion Cached
 
 bool FCsUIDataRootSet::IsValidChecked(const FString& Context, UObject* Object, const EMember& MemberType) const
 {
 	using namespace NCsUIDataRootSet::NCached;
 
-	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::_##Member) \
+	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::##Member) \
 	{ \
 		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(Object->GetName(), *Str::GetCsUIDataRootSet, *Str::Member)); \
 	}
@@ -71,7 +63,7 @@ UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, UObject* 
 
 	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
 
-	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::_##Member) \
+	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::##Member) \
 		return DataRootSetLibrary::GetSafeDataTable(Context, Object, Str::GetCsUIDataRootSet, Member, Str::Member);
 
 	// WidgetActorClasses

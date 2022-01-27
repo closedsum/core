@@ -27,7 +27,7 @@ namespace NCsUserWidget
 				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::_UserWidgetClasses));
+				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgetClasses));
 
 				OutDataTableSoftObject = DataRootSet.UserWidgetClasses;
 
@@ -42,7 +42,7 @@ namespace NCsUserWidget
 				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::_UserWidgets));
+				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgets));
 
 				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.UserWidgets;
 
@@ -70,7 +70,7 @@ namespace NCsUserWidget
 				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::_UserWidgetPooledClasses));
+				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgetPooledClasses));
 
 				OutDataTableSoftObject = DataRootSet.UserWidgetPooledClasses;
 
@@ -85,7 +85,7 @@ namespace NCsUserWidget
 				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
 				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::_UserWidgetPooled));
+				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgetPooled));
 
 				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.UserWidgetPooled;
 

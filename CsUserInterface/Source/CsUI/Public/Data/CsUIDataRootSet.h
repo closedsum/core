@@ -74,12 +74,12 @@ public:
 
 	enum class EMember : uint8
 	{
-		_WidgetActorClasses,
-		_WidgetActors,
-		_UserWidgetPooledClasses,
-		_UserWidgetPooled,
-		_UserWidgetClasses,
-		_UserWidgets
+		WidgetActorClasses,
+		WidgetActors,
+		UserWidgetPooledClasses,
+		UserWidgetPooled,
+		UserWidgetClasses,
+		UserWidgets
 	};
 
 	bool IsValidChecked(const FString& Context, UObject* Object, const EMember& MemberType) const;

@@ -13,9 +13,9 @@ namespace NCsUserWidget
 	{
 		namespace NHandler
 		{
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsUserWidget::NData::IData
-#define DataInterfaceMapType NCsUserWidget::NData::FInterfaceMap
+		#define DataHandlerType NCsData::NManager::NHandler::TData
+		#define DataType NCsUserWidget::NData::IData
+		#define DataInterfaceMapType NCsUserWidget::NData::FInterfaceMap
 
 			/**
 			*/
@@ -35,20 +35,12 @@ namespace NCsUserWidget
 
 				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-				//virtual bool HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const override;
-
-				//virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject) override;
-
 			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
-
-			protected:
-
-				//const TSet<FECsProjectileData>& GetEmulatedDataInterfaces(const FString& Context, const int32& Index);
 			};
 
-#undef DataHandlerType
-#undef DataType
-#undef DataInterfaceMapType
+		#undef DataHandlerType
+		#undef DataType
+		#undef DataInterfaceMapType
 		}
 	}
 }

@@ -234,7 +234,7 @@ public:
 
 	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
 
-	bool IsValidChecked(const FString& Context)
+	bool IsValidChecked(const FString& Context) const
 	{
 		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("%s: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString()));
 

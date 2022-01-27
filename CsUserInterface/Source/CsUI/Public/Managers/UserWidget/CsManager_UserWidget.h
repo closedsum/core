@@ -197,10 +197,37 @@ protected:
 
 	FCsSettings_Manager_UserWidget Settings;
 
-	/** */
+	/** General Idea: Pool Sharing via Mapping of Types.
+		Describes the mapping of a UserWidget type to underlying UserWidget type
+		in terms the pool of UserWidgets.
+
+		i.e. From -> To
+			 TypeMapArray[From] = To.
+
+		i.e. If Type 'A' is mapped to Type 'B' (TypeMapArray[A] = B), then
+			 when a UserWidget of type 'A' is spawned it will be allocated from
+			 the pool of UserWidget of type 'B'.
+
+		The idea behind behind this mapping is UserWidgets of a different type may
+		not have underlying code differences and just be differences in the data
+		each respective character type uses. This provides the ability to save on both
+		the number of pools created and the number of objects created for a pool. */
 	TArray<FECsUserWidgetPooled> TypeMapArray;
 
 public:
+
+	FORCEINLINE const TArray<FECsUserWidgetPooled>& GetTypeMapArray() const { return TypeMapArray; }
+
+protected:
+
+	/** Used for faster lookup to see what types (Froms) are mapped to a particular type (To).
+		To -> [Froms]
+		TypeMapToArray[To] = [Froms] */
+	TArray<TArray<FECsUserWidgetPooled>> TypeMapToArray;
+
+public:
+
+	FORCEINLINE const TArray<TArray<FECsUserWidgetPooled>>& GetTypeMapToArray() const { return TypeMapToArray; }
 
 	FORCEINLINE void SetSettings(const FCsSettings_Manager_UserWidget& InSettings)
 	{
@@ -220,8 +247,12 @@ public:
 	*/
 	FORCEINLINE const FECsUserWidgetPooled& GetTypeFromTypeMap(const FECsUserWidgetPooled& Type)
 	{
+		check(EMCsUserWidgetPooled::Get().IsValidEnum(Type));
+
 		return TypeMapArray[Type.GetValue()];
 	}
+
+	void SetAndAddTypeMapKeyValue(const FECsUserWidgetPooled& Key, const FECsUserWidgetPooled& Value);
 
 #pragma endregion Settings
 

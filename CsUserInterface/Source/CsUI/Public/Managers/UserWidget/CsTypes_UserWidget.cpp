@@ -40,10 +40,6 @@ namespace NCsUserWidget
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsUserInterfaceSettings* ModuleSettings = GetMutableDefault<UCsUserInterfaceSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsUserInterfaceSettings."), *Context);
@@ -88,14 +84,6 @@ namespace NCsUserWidgetClass
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
-		UCsUserInterfaceSettings* ModuleSettings = GetMutableDefault<UCsUserInterfaceSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsUserInterfaceSettings."), *Context);
-
 		EMCsUserWidgetClass::Get().ClearUserDefinedEnums();
 
 		FromDataTable(Context, ContextRoot);
@@ -140,10 +128,6 @@ namespace NCsUserWidgetPooled
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsUserInterfaceSettings* ModuleSettings = GetMutableDefault<UCsUserInterfaceSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsUserInterfaceSettings."), *Context);
@@ -188,14 +172,6 @@ namespace NCsUserWidgetPooledClass
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
-		UCsUserInterfaceSettings* ModuleSettings = GetMutableDefault<UCsUserInterfaceSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsUserInterfaceSettings."), *Context);
-
 		EMCsUserWidgetPooledClass::Get().ClearUserDefinedEnums();
 
 		FromDataTable(Context, ContextRoot);

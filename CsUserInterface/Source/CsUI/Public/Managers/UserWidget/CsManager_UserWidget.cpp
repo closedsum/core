@@ -251,6 +251,28 @@ void UCsManager_UserWidget::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+// Settings
+#pragma region
+
+void UCsManager_UserWidget::SetAndAddTypeMapKeyValue(const FECsUserWidgetPooled& Key, const FECsUserWidgetPooled& Value)
+{
+	check(EMCsUserWidgetPooled::Get().IsValidEnum(Key));
+
+	check(EMCsUserWidgetPooled::Get().IsValidEnum(Value));
+
+	for (int32 I = TypeMapArray.Num() - 1; I < Key.GetValue(); ++I)
+	{
+		TypeMapArray.AddDefaulted_GetRef() = EMCsUserWidgetPooled::Get().GetEnumAt(I + 1);
+
+		TypeMapToArray.AddDefaulted();
+	}
+	TypeMapArray[Key.GetValue()] = Value;
+
+	TypeMapToArray[Value.GetValue()].Add(Key);
+}
+
+#pragma endregion Settings
+
 // Internal
 #pragma region
 
@@ -319,6 +341,30 @@ void UCsManager_UserWidget::SetupInternal()
 		checkf(ModuleSettings, TEXT("UCsManager_UserWidget::SetupInternal: Failed to get settings of type: UCsUserInterfaceSettings."));
 
 		Settings = ModuleSettings->Manager_UserWidget;
+
+		// Populate TypeMapArray
+		{
+			const int32& Count = EMCsUserWidgetPooled::Get().Num();
+
+			TypeMapArray.Reset(Count);
+			TypeMapToArray.Reset(Count);
+
+			for (const FECsUserWidgetPooled& Type : EMCsUserWidgetPooled::Get())
+			{
+				TypeMapArray.Add(Type);
+				TypeMapToArray.AddDefaulted();
+			}
+
+			for (const TPair<FECsUserWidgetPooled, FECsUserWidgetPooled>& Pair : Settings.TypeMap)
+			{
+				const FECsUserWidgetPooled& From = Pair.Key;
+				const FECsUserWidgetPooled& To   = Pair.Value;
+
+				TypeMapArray[From.GetValue()] = To;
+
+				TypeMapToArray[To.GetValue()].Add(From);
+			}
+		}
 
 		InitInternalFromSettings();
 	}

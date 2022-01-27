@@ -2,7 +2,6 @@
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_Classhandler.h"
 
 // Library
-#include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsUILibrary_DataRootSet.h"
 
 namespace NCsUserWidget
@@ -21,32 +20,24 @@ namespace NCsUserWidget
 
 			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				UWorld* World				  = MyRoot->GetWorld();
-				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsUIDataRootSet::EMember MemberType;
 
-				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				const MemberType Member = MemberType::UserWidgetClasses;
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgetClasses));
-
-				OutDataTableSoftObject = DataRootSet.UserWidgetClasses;
-
-				OutDataTable = Manager_Data->GetDataTableChecked(Context, OutDataTableSoftObject);
+				OutDataTable		   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				OutDataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 			}
 
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UWorld* World				  = MyRoot->GetWorld();
-				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsUIDataRootSet::EMember MemberType;
 
-				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				const MemberType Member = MemberType::UserWidgets;
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgets));
-
-				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.UserWidgets;
-
-				UDataTable* DataTable = Manager_Data->GetDataTableChecked(Context, DataTableSoftObject);
+				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 
 				OutDataTables.Add(DataTable);
 				OutDataTableSoftObjects.Add(DataTableSoftObject);
@@ -64,32 +55,24 @@ namespace NCsUserWidget
 
 			void FPooledClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				UWorld* World				  = MyRoot->GetWorld();
-				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsUIDataRootSet::EMember MemberType;
 
-				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				const MemberType Member = MemberType::UserWidgetPooledClasses;
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgetPooledClasses));
-
-				OutDataTableSoftObject = DataRootSet.UserWidgetPooledClasses;
-
-				OutDataTable = Manager_Data->GetDataTableChecked(Context, OutDataTableSoftObject);
+				OutDataTable		   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				OutDataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 			}
 
 			void FPooledClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UWorld* World				  = MyRoot->GetWorld();
-				UCsManager_Data* Manager_Data = UCsManager_Data::Get(World->GetGameInstance());
+				typedef NCsUIDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsUIDataRootSet::EMember MemberType;
 
-				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsUIDataRootSet& DataRootSet = NCsUIDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				const MemberType Member = MemberType::UserWidgetPooled;
 
-				check(DataRootSet.IsValidChecked(Context, DataRootSetImpl, FCsUIDataRootSet::EMember::UserWidgetPooled));
-
-				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSet.UserWidgetPooled;
-
-				UDataTable* DataTable = Manager_Data->GetDataTableChecked(Context, DataTableSoftObject);
+				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 
 				OutDataTables.Add(DataTable);
 				OutDataTableSoftObjects.Add(DataTableSoftObject);

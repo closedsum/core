@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsTypes_Resolution.generated.h"
 #pragma once
+#include "CsTypes_Resolution.generated.h"
 
 // FCsScreenResolution
 #pragma region
@@ -12,13 +12,13 @@ struct FCsScreenResolution
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Resolution", meta = (UIMin = "0", ClampMin = "0"))
 	int32 Width;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Resolution", meta = (UIMin = "0", ClampMin = "0"))
 	int32 Height;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Resolution", meta = (UIMin = "0", ClampMin = "0"))
 	int32 RefreshRate;
 
 	FCsScreenResolution() :

@@ -15,10 +15,10 @@ struct CSCORE_API FCsStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh")
 	TSoftObjectPtr<UStaticMesh> Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
 
 	UPROPERTY(Transient)

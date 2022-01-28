@@ -15,10 +15,10 @@ struct FCsRadius
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radius", meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ClampMin = "0", UIMin = "0"))
 	float Radius;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Radius")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Math")
 	float RadiusSq;
 
 	FCsRadius()
@@ -125,51 +125,51 @@ struct FCsParametricFunctionAxis
 	GENERATED_USTRUCT_BODY()
 
 	/** Types are Polynomial Degree 1 (Linear), Polynomial Degree 2 (Quadratic), Sine, ... etc */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	ECsParametricFunctionType Function;
 
 	/** "Axis" F(T) = A * T + B
 	 *  "Axis" F(T) = A * T^2 + B * T + C
 	 *  "Axis" F(T) = A * sin(B * T + C) + D
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float A;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalA;
-	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalA"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalA"))
 	FFloatInterval IntervalA;
 
 	/** "Axis" F(T) = A * T + B
 	 *  "Axis" F(T) = A * T^2 + B * T + C
 	 *  "Axis" F(T) = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float B;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalB;
-	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalB"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalB"))
 	FFloatInterval IntervalB;
 
 	/** "Axis" F(T) = A * T + B
 	 *  "Axis" F(T) = A * T^2 + B * T + C
 	 *  "Axis" F(T) = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float C;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalC;
-	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalC"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalC"))
 	FFloatInterval IntervalC;
 
 	/** "Axis" F(T) = A * T + B
 	 *  "Axis" F(T) = A * T^2 + B * T + C
 	 *  "Axis" F(T) = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float D;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalD;
-	UPROPERTY(EditAnywhere, Category = "Function", meta = (editcondition = "bIntervalD"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalD"))
 	FFloatInterval IntervalD;
 
 	FCsParametricFunctionAxis()
@@ -264,31 +264,31 @@ struct FCsParametricFunction
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bX;
 	/** X = A * T + B
 	 *  X = A * T^2 + B * T + C
 	 *  X = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bX"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (editcondition = "bX"))
 	FCsParametricFunctionAxis X;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bY;
 	/** Y = A * T + B
 	 *  Y = A * T^2 + B * T + C
 	 *  Y = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bY"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (editcondition = "bY"))
 	FCsParametricFunctionAxis Y;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bZ;
 	/** Z = A * T + B
 	 *  Z = A * T^2 + B * T + C
 	 *  Z = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Function", meta = (editcondition = "bZ"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (editcondition = "bZ"))
 	FCsParametricFunctionAxis Z;
 
 	FCsParametricFunction() :
@@ -545,25 +545,25 @@ struct CSCORE_API FCsOptionalVectorInterval
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	FVector Vector; // 3 x 64 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalX; // 1 bit
 
-	UPROPERTY(EditAnywhere, Category = "Vector", meta = (editcondition = "bIntervalX"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalX"))
 	FFloatInterval IntervalX; // 2 x 16 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalY; // 1 bit
 
-	UPROPERTY(EditAnywhere, Category = "Vector", meta = (editcondition = "bIntervalX"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalX"))
 	FFloatInterval IntervalY; // 2 x 16 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalZ;
 
-	UPROPERTY(EditAnywhere, Category = "Vector", meta = (editcondition = "bIntervalX"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalX"))
 	FFloatInterval IntervalZ;
 
 	FCsOptionalVectorInterval()
@@ -648,25 +648,25 @@ struct CSCORE_API FCsOptionalRotatorInterval
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	FRotator Rotator; // 3 x 64 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalRoll; // 1 bit
 
-	UPROPERTY(EditAnywhere, Category = "Rotator", meta = (editcondition = "bIntervalRoll"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalRoll"))
 	FFloatInterval IntervalRoll; // 2 x 16 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalPitch; // 1 bit
 
-	UPROPERTY(EditAnywhere, Category = "Rotator", meta = (editcondition = "bIntervalPitch"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalPitch"))
 	FFloatInterval IntervalPitch; // 2 x 16 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalYaw;
 
-	UPROPERTY(EditAnywhere, Category = "Rotator", meta = (editcondition = "bIntervalYaw"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Math", meta = (editcondition = "bIntervalYaw"))
 	FFloatInterval IntervalYaw;
 
 	FCsOptionalRotatorInterval()
@@ -755,17 +755,17 @@ struct FCsRay
 public:
 
 	/** Ray origin point */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	FVector Origin;
 
 	/** Ray direction vector (always normalized) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	FVector Direction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Math")
 	FVector End;
 
 	/** Default constructor initializes ray to Zero origin and Z-axis direction */

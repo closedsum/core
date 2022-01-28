@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
 #include "CsTypes_Primitive.generated.h"
-#pragma once
 
 // MemberType
 #pragma region
@@ -65,14 +65,14 @@ struct CSCORE_API FCsBpProperty_bool
 	GENERATED_USTRUCT_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Property bool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool DefaultValue;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Property bool")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool Value;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Property bool")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	bool Last_Value;
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Property bool")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	bool IsDirty;
 public:
 	TMulticastDelegate<void(const bool&)> OnChange_Event;
@@ -167,9 +167,9 @@ struct CSCORE_API FCsUint8Point
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UInt8Point")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	uint8 X; // 8 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UInt8Point")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	uint8 Y; // 8 bits
 
 	FCsUint8Point()
@@ -233,9 +233,9 @@ struct CSCORE_API FCsUint8MatrixDimension
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixDimension")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	uint8 RowSpan; // 8 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixDimension")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	uint8 ColumnSpan; // 8 bits
 
 	FCsUint8MatrixDimension()
@@ -326,9 +326,9 @@ struct CSCORE_API FCsUint8MatrixCoordinate
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixCoordinate")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	uint8 Row; // 8 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Uint8MatrixCoordinate")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	uint8 Column; // 8 bits
 
 	FCsUint8MatrixCoordinate()
@@ -398,11 +398,11 @@ struct CSCORE_API FCsVectorFlag
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool X; // 1 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool Y; // 1 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Vector")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool Z; // 1 bits
 
 	FCsVectorFlag()
@@ -518,11 +518,11 @@ struct CSCORE_API FCsRotatorFlag
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool Roll; // 1 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool Pitch; // 1 bits
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotator")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Primitive")
 	bool Yaw; // 1 bits
 
 	FCsRotatorFlag()
@@ -643,10 +643,10 @@ struct CSCORE_API FCsData_ShortCode
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	uint8 Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data_ShortCode")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	FName ShortCode;
 
 public:
@@ -698,13 +698,13 @@ struct CSCORE_API FCsBool_Array
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	TArray<bool> Flags;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	bool bAnyTrue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Primitive")
 	bool bAnyFalse;
 
 	FCsBool_Array() :

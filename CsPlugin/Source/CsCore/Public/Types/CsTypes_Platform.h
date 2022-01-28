@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 
 #include "CsTypes_Platform.generated.h"
-#pragma once
 
 // Platform
 #pragma region

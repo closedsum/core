@@ -1,8 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "CsTypes_RenderTarget.generated.h"
 #pragma once
-
+#include "CsTypes_RenderTarget.generated.h"
 
 // FCsTextureRenderTarget2D_Array
 #pragma region
@@ -14,7 +12,7 @@ struct CSCORE_API FCsTextureRenderTarget2D_Array
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Render")
 	TArray<UTextureRenderTarget2D*> Textures;
 
 	FCsTextureRenderTarget2D_Array() :

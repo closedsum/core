@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/CsTypes_Math.h"
 
 #include "CsTypes_Physics.generated.h"
-#pragma once
 
 // FCsPhysicalMaterial
 #pragma region
@@ -19,11 +19,11 @@ struct CSCORE_API FCsPhysicalMaterial
 public:
 
 	/** Soft reference to a Physics Material. */
-	UPROPERTY(EditAnywhere, Category = "Material")
+	UPROPERTY(EditAnywhere, Category = "CsCore|Physics")
 	TSoftObjectPtr<UPhysicalMaterial> Material;
 
 	/** */
-	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	/** Hard reference to a Physics Material. */
@@ -72,15 +72,15 @@ struct CSCORE_API FCsPhysicsAsset
 public:
 
 	/** Soft reference to a Physics Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Physics")
 	TSoftObjectPtr<UPhysicsAsset> Physics;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Physics_LoadFlags;
 
 	/** Hard reference to a Physics Asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Physics")
 	UPhysicsAsset* Physics_Internal;
 
 public:
@@ -124,22 +124,22 @@ struct CSCORE_API FCsPhysicsPreset
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	bool bSimulatePhysics;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	bool OverrideMassInKg;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics", meta = (ClampMin = "0.01", UIMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	float MassInKg;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics", meta = (ClampMin = "0.01", UIMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	float LinearDamping;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float AngularDamping;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	bool bEnableGravity;
 
 	FCsPhysicsPreset()
@@ -235,32 +235,32 @@ struct CSCORE_API FCsPhysicsImpulse
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	ECsPhysicsImpulseType Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	FCsOptionalRotatorInterval ImpulseRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	float ImpulseMagnitude;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Physics")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Physics")
 	FVector Impulse;
 
 	/** Used in AddForceAtPosition and AddImpulseAtPosition */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	FCsOptionalVectorInterval Position;
 
 	/** Used in AddForce, AddForceAtPosition, and AddTorque */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	bool bAllowSubstepping;
 
 	/** Used in AddForce and AddTorque */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	bool bAccelChange;
 
 	/** Used in AddAngularImpulse and AddImpulse */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
 	bool bVelChange;
 
 	/** Used in AddForceAtPosition */

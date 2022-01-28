@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_Interpolation.h"
 #include "Managers/Time/CsTypes_Update.h"
@@ -8,7 +9,6 @@
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Movement.generated.h"
-#pragma once
 
 // Mover
 #pragma region
@@ -18,8 +18,8 @@
 UENUM(BlueprintType)
 enum class ECsMover : uint8
 {
-	Actor					UMETA(DisplayName = "Actor"),
-	Component				UMETA(DisplayName = "Component"),
+	Actor			UMETA(DisplayName = "Actor"),
+	Component		UMETA(DisplayName = "Component"),
 	ECsMover_MAX	UMETA(Hidden),
 };
 
@@ -160,40 +160,40 @@ public:
 
 	/** How the object should be interpolated from the 
 		"Start" to the Destination. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	ECsEasingType Easing;
 
 	/** The type of object that is being moved. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	ECsMover Mover;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FVector FromLocation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FName MoveObjectName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FString MoveActorLabel;
 
 	/** Actor that is moving.
 		Only valid if Mover == MoverType::Actor. */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Movement")
 	AActor* MoveActor;
 
 	/** Component that is moving.
 		Only valid if Mover == MoverType::Component */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Movement")
 	USceneComponent* MoveComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	ECsMoveDestination Destination;
 
 	/** If Destination == DestinationType::Location,
 			World location to move to.
 		If Destination != DestinationType::Location (Actor, Component, or Bone),
 			Offset from the ToActor or ToComponent. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FVector ToLocation;
 
 	/** The name of the Object to move to.
@@ -202,39 +202,39 @@ public:
 			then Actor's name.
 		If Destination == DestinationType::Component | DestinationType::Bone,
 			then Component's name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FName ToObjectName;
 
 	/** Label of the Actor to move to.
 		Only valid in EDITOR.
 		Only valid if Destination == DestinationType:: Actor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FString ToActorLabel;
 
 	/** Bone to move to.
 		Only valid if Destination == DestinatinType::Component. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FName ToBone;
 
 	/** Actor to move to.
 		Only valid if Destination == DestinationType::Actor. */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Movement")
 	AActor* ToActor;
 
 	/** Component to move to.
 		Only valid if Destination == DestinationType::Component */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Movement")
 	USceneComponent* ToComponent;
 
 	/** Component to move to.
 		Only valid if Destination == DestinationType::Component */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Movement")
 	USkeletalMeshComponent* ToMeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	float Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FECsUpdateGroup Group;
 
 	FCsMoveByInterp_Params() :
@@ -538,15 +538,15 @@ struct CSCORE_API FCsSpeed
 	GENERATED_USTRUCT_BODY()
 
 	/** UUpS: Unreal Units per Second */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "UUpS: Unreal Units per Second", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement", meta = (DisplayName = "UUpS: Unreal Units per Second", ClampMin = "0.0", UIMin = "0.0"))
 	float UUpS;
 
 	/** MpH: Miles per Hour */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "MpH: Miles per Hour", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement", meta = (DisplayName = "MpH: Miles per Hour", ClampMin = "0.0", UIMin = "0.0"))
 	float MpH;
 
 	/** KpH: Kilometers per Hour */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "KpH: Kilometers per Hour", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement", meta = (DisplayName = "KpH: Kilometers per Hour", ClampMin = "0.0", UIMin = "0.0"))
 	float KpH;
 
 	FCsSpeed() :
@@ -745,17 +745,17 @@ struct CSCORE_API FCsAcceleration
 
 	/** UUpS/S: Unreal Units per Second Second. 
 		 This is only Valid for Method == Delta (ECsAccelerationMethod::Delta). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "UUpS/S: Unreal Units per Second Second", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement", meta = (DisplayName = "UUpS/S: Unreal Units per Second Second", ClampMin = "0.0", UIMin = "0.0"))
 	float UUpSS;
 	 
 	/** MpH/S: Miles per Hour Second Second.
 		 This is only Valid for Method == Delta (ECsAccelerationMethod::Delta). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "MpH/S: Miles per Hour Second", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement", meta = (DisplayName = "MpH/S: Miles per Hour Second", ClampMin = "0.0", UIMin = "0.0"))
 	float MpHS;
 
 	/** KpH/S: Kilometers per Hour Second.
 		 This is only Valid for Method == Delta (ECsAccelerationMethod::Delta). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (DisplayName = "KpH/S: Kilometers per Hour Second", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement", meta = (DisplayName = "KpH/S: Kilometers per Hour Second", ClampMin = "0.0", UIMin = "0.0"))
 	float KpHS;
 
 	FCsAcceleration() :
@@ -808,31 +808,31 @@ struct CSCORE_API FCsSpeedInterpInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	ECsSpeedInterpMethod Method;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	ECsSpeedInterpDirection Direction;
 
 	/** 
 		 This is only Valid for Method == Easing (ECsSpeedInterpMethod::Easing). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	ECsEasingType Easing;
 
 	/**
 		 This is only Valid for Method == Curve (ECsSpeedInterpMethod::Curve). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	UCurveFloat* Curve;
 
 	/** Time (Duration) it should take to go from Min Speed to Max Speed. 
 	     This is only Valid for Methods:
 		   Easing	(ECsSpeedInterpMethod::Easing) 
 		   Curve	(ECsSpeedInterpMethod::Curve) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	float Time;
 
 	/** This is only Valid for Method == Acceleration (ECsSpeedInterpMethod::Acceleration). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FCsAcceleration Acceleration;
 
 	FCsSpeedInterpInfo() :

@@ -7,12 +7,14 @@
 #include "Managers/UserWidget/CsCVars_Manager_UserWidget.h"
 // Library
 #include "Data/CsUILibrary_DataRootSet.h"
-#include "Library/CsLibrary_Property.h"
+#include "Game/CsLibrary_GameInstance.h"
+#include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsUILog.h"
 // Settings
 #include "Settings/CsUserInterfaceSettings.h"
+#include "Managers/UserWidget/CsGetSettingsManagerUserWidget.h"
 // Data
 #include "Data/CsUIDataRootSet.h"
 // UserWidget
@@ -283,13 +285,14 @@ void UCsManager_UserWidget::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	UWorld* World				= MyRoot->GetWorld();
-	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-	NCsUserWidget::PopulateEnumMapFromSettings(Context, GameInstance);
-	NCsUserWidgetClass::PopulateEnumMapFromSettings(Context, GameInstance);
-	NCsUserWidgetPooled::PopulateEnumMapFromSettings(Context, GameInstance);
-	NCsUserWidgetPooledClass::PopulateEnumMapFromSettings(Context, GameInstance);
+	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+
+	NCsUserWidget::PopulateEnumMapFromSettings(Context, ContextRoot);
+	NCsUserWidgetClass::PopulateEnumMapFromSettings(Context, ContextRoot);
+	NCsUserWidgetPooled::PopulateEnumMapFromSettings(Context, ContextRoot);
+	NCsUserWidgetPooledClass::PopulateEnumMapFromSettings(Context, ContextRoot);
 
 	// Class Handler
 	ConstructClassHandler();
@@ -340,7 +343,18 @@ void UCsManager_UserWidget::SetupInternal()
 
 		checkf(ModuleSettings, TEXT("UCsManager_UserWidget::SetupInternal: Failed to get settings of type: UCsUserInterfaceSettings."));
 
-		Settings = ModuleSettings->Manager_UserWidget;
+		if (ModuleSettings->bManagerUserWidgetFromLevel)
+		{
+			typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
+
+			ICsGetSettingsManagerUserWidget* GetSettingsManagerUserWidget = LevelLibrary::GetScriptActorChecked<ICsGetSettingsManagerUserWidget>(Context, MyRoot);
+
+			Settings = GetSettingsManagerUserWidget->GetSettingsManagerUserWidget();
+		}
+		else
+		{
+			Settings = ModuleSettings->Manager_UserWidget;
+		}
 
 		// Populate TypeMapArray
 		{

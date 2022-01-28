@@ -129,6 +129,9 @@ public:
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget")
+	bool bManagerUserWidgetFromLevel;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget")
 	FCsSettings_Manager_UserWidget Manager_UserWidget;
 
 #pragma endregion UserWidget

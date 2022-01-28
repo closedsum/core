@@ -94,7 +94,7 @@ namespace NCsArray
 		}
 
 		template<typename T>
-		static void NullAndEmpty(TArray<T*>& A)
+		FORCEINLINE static void NullAndEmpty(TArray<T*>& A)
 		{
 			const int32 Count = A.Num();
 
@@ -106,7 +106,7 @@ namespace NCsArray
 		}
 
 		template<typename T>
-		static void NullAndEmpty(TArray<TWeakObjectPtr<T>>& A)
+		FORCEINLINE static void NullAndEmpty(TArray<TWeakObjectPtr<T>>& A)
 		{
 			const int32 Count = A.Num();
 
@@ -118,7 +118,7 @@ namespace NCsArray
 		}
 
 		template<typename T>
-		static bool IsAnyElementNull(TArray<T*>& A)
+		FORCEINLINE static bool IsAnyElementNull(TArray<T*>& A)
 		{
 			const int32 Count = A.Num();
 
@@ -131,7 +131,7 @@ namespace NCsArray
 		}
 
 		template<typename T>
-		static bool IsAnyElementNull(TArray<TWeakObjectPtr<T>>& A)
+		FORCEINLINE static bool IsAnyElementNull(TArray<TWeakObjectPtr<T>>& A)
 		{
 			const int32 Count = A.Num();
 
@@ -144,15 +144,34 @@ namespace NCsArray
 		}
 
 		template<typename T>
-		static bool AreAllElementsNotNull(TArray<T*>& A)
+		FORCEINLINE static bool IsAnyElementNotValid(TArray<TSoftObjectPtr<T>>& A)
+		{
+			const int32 Count = A.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				if (!A[I].IsValid())
+					return true;
+			}
+			return false;
+		}
+
+		template<typename T>
+		FORCEINLINE static bool AreAllElementsNotNull(TArray<T*>& A)
 		{
 			return !IsAnyElementNull<T>(A);
 		}
 
 		template<typename T>
-		static bool AreAllElementsNotNull(TArray<TWeakObjectPtr<T>>& A)
+		FORCEINLINE static bool AreAllElementsNotNull(TArray<TWeakObjectPtr<T>>& A)
 		{
 			return !IsAnyElementNull<T>(A);
+		}
+
+		template<typename T>
+		FORCEINLINE static bool AreAllElementsValid(TArray<TSoftObjectPtr<T>>& A)
+		{
+			return !IsAnyElementNotValid<T>(A);
 		}
 
 		template<typename T>

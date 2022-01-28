@@ -578,6 +578,36 @@ void FCsAnim2DFlipbookTexture::OnPostEditChange(const TSet<FString>& PropertyNam
 	Resolve();
 }
 
+void FCsAnim2DFlipbookTexture::OnPostEditChange(const TArray<TSoftObjectPtr<UTexture>>& Textures)
+{
+	const int32 Count = FMath::Min(Textures.Num(), Frames.Num());
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const TSoftObjectPtr<UTexture>& Texture = Textures[I];
+
+		if (!Texture.IsValid())
+			continue;
+
+		FCsAnim2DFlipbookTextureFrame& Frame = Frames[I];
+		Frame.Texture.Texture = Texture;
+	}
+}
+
+void FCsAnim2DFlipbookTexture::GetTextures(TArray<TSoftObjectPtr<UTexture>>& OutTextures)
+{
+	const int32 Count = Frames.Num();
+
+	OutTextures.Reset(Count);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const FCsAnim2DFlipbookTextureFrame& Frame = Frames[I];
+
+		OutTextures.Add(Frame.Texture.Texture);
+	}
+}
+
 namespace NCsAnim
 {
 	namespace N2D

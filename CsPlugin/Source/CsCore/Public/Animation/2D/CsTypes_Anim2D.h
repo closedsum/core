@@ -422,6 +422,9 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void OnPostEditChange(const TSet<FString>& PropertyNames, const FName& PropertyName);
+	void OnPostEditChange(const TArray<TSoftObjectPtr<UTexture>>& Textures);
+
+	void GetTextures(TArray<TSoftObjectPtr<UTexture>>& OutTextures);
 };
 
 namespace NCsAnim

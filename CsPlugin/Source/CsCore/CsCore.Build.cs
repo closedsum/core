@@ -35,12 +35,12 @@ public class CsCore : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
-                    "UnrealEd"
                 }
             );
 
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
+                    "UnrealEd"
                 }
             );
         }

@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-//#include "CsTypes_Delegate.generated.h"
 #pragma once
+//#include "CsTypes_Delegate.generated.h"
 
 // Single
 #pragma region

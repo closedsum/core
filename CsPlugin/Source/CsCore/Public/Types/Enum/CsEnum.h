@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsEnum.generated.h"
 #pragma once
+#include "CsEnum.generated.h"
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum
@@ -13,7 +13,7 @@ private:
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Enum")
 	FName Name_Internal;
 
 	FECsEnum() :

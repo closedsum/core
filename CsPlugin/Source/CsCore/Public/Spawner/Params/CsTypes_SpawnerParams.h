@@ -23,11 +23,11 @@ struct CSCORE_API FCsSpawnerCountParams
 public:
 
 	/** The number of objects to "create" per Spawn call. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "1", UIMin = "1"))
 	int32 CountPerSpawn;
 
 	/** The amount of time between "creating" each object (if CountPerSpawn > 1). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float TimeBetweenCountPerSpawn;
 
 	FCsSpawnerCountParams() :
@@ -211,13 +211,13 @@ public:
 		if Type == ECsSpawnerFrequency::TimeInterval,
 		If Type == ECsSpawnerFrequency::Infinite,
 	     Ignore Count and Interval should be > 0.0f. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params")
 	ECsSpawnerFrequency Type;
 
 	/** The delay before calling Start.
 		If Delay == 0.0f, Spawn will be called at a given interval.
 		If Delay == 0.0f and Interval == 0.0f, Spawn will be called immediately. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Delay;
 
 	/** The number of times to call Spawn after Start is called.
@@ -225,7 +225,7 @@ public:
 		 Type == ECsSpawnerFrequency::Count
 		 Type == ECsSpawnerFrequency::TimeCount
 		Should be > 0. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0", UIMin = "0"))
 	int32 Count;
 
 	/** The time between each Spawn call after Start is called.
@@ -233,7 +233,7 @@ public:
 		Type == ECsSpawnerFrequency::Count
 		Type == ECsSpawnerFrequency::TimeInterval
 		Type == ECsSpawnerFrequency::Infinite */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
 	/** The total time for Spawning. 
@@ -241,7 +241,7 @@ public:
 		Type == ECsSpawnerFrequency::Count
 		Type == ECsSpawnerFrequency::TimeCount
 		Type == ECsSpawnerFrequency::TimeInterval */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Time;
 
 	FCsSpawnerFrequencyParams() :

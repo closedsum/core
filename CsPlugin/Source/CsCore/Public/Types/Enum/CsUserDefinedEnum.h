@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
 #include "CsUserDefinedEnum.generated.h"
-#pragma once
 
 // UserDefinedEnum
 #pragma region
@@ -47,10 +47,10 @@ struct CSCORE_API FCsUserDefinedEnum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Enum")
 	TSoftObjectPtr<UUserDefinedEnum> Enum;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Enum")
 	UUserDefinedEnum* Enum_Internal;
 
 	FCsUserDefinedEnum() :

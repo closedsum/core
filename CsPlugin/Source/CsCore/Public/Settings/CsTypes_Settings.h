@@ -12,10 +12,10 @@ struct CSCORE_API FCsSettings_Enum
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings")
 	FString Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings")
 	FString DisplayName;
 
 	FCsSettings_Enum() :
@@ -84,15 +84,15 @@ struct CSCORE_API FCsSettings_PIE
 {
 	GENERATED_USTRUCT_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings")
 	bool bSwapViewportDimensions;
 
 	/** The width of the new view port window in pixels (0 = use the desktop's screen resolution). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings", meta = (ClampMin = 0))
 	int32 NewWindowWidth;
 
 	/** The height of the new view port window in pixels (0 = use the desktop's screen resolution). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = 0))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings", meta = (ClampMin = 0))
 	int32 NewWindowHeight;
 
 	FCsSettings_PIE() :
@@ -122,10 +122,10 @@ struct CSCORE_API FCsSettings_Entry
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float CompanyLogoDisplayTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Settings", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float GameSplashDisplayTime;
 
 	FCsSettings_Entry() :

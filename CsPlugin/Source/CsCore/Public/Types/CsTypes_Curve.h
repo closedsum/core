@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Curves/RealCurve.h"
 
 #include "CsTypes_Curve.generated.h"
-#pragma once
 
 // UCurveFloat
 #pragma region
@@ -15,13 +15,13 @@ struct CSCORE_API FCsCurveFloat
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
 	TSoftObjectPtr<UCurveFloat> Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
 	UCurveFloat* Curve_Internal;
 
 public:
@@ -60,13 +60,13 @@ struct CSCORE_API FCsCurveVector
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
 	TSoftObjectPtr<UCurveVector> Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
 	UCurveVector* Curve_Internal;
 
 public:

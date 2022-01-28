@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Engine/EngineTypes.h"
 
 #include "CsTypes_AttachDetach.generated.h"
-#pragma once
 
 // AttachmentTransformRules
 #pragma region

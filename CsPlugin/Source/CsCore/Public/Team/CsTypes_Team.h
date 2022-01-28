@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/Enum/CsEnumMask_int32.h"
 #include "Types/Enum/CsEnumStructMaskMap.h"
 
 #include "CsTypes_Team.generated.h"
-#pragma once
 
 // Team
 #pragma region

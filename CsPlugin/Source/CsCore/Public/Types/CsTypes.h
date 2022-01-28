@@ -189,28 +189,28 @@ struct CSCORE_API FCsFpvStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<UStaticMesh> Mesh1P;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<UStaticMesh> Mesh3P;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<UStaticMesh> Mesh3P_Low;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<UStaticMesh> MeshVR;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 MeshVR_LoadFlags;
 
 private:
@@ -299,10 +299,10 @@ struct CSCORE_API FCsTArrayStaticMesh
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Material")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TArray<TSoftObjectPtr<class UStaticMesh>> Meshes;
 
-	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Meshes_LoadFlags;
 
 private:
@@ -384,28 +384,28 @@ struct CSCORE_API FCsFpsSkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<USkeletalMesh> Mesh1P;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<USkeletalMesh> Mesh3P;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<USkeletalMesh> Mesh3P_Low;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<USkeletalMesh> MeshVR;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Mesh3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 MeshVR_LoadFlags;
 
 private:
@@ -494,10 +494,10 @@ struct CSCORE_API FCsTArraySkeletalMesh
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Material")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TArray<TSoftObjectPtr<class USkeletalMesh>> Meshes;
 
-	UPROPERTY(EditAnywhere, Category = "Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Meshes_LoadFlags;
 
 private:
@@ -635,10 +635,10 @@ struct CSCORE_API FCsBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Blueprint")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TSoftObjectPtr<class UBlueprint> Blueprint;
 
-	UPROPERTY(EditAnywhere, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 
 private:
@@ -664,10 +664,10 @@ struct CSCORE_API FCsTArrayBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Blueprint")
+	UPROPERTY(EditAnywhere, Category = "CsCore")
 	TArray<TSoftObjectPtr<class UBlueprint>> Blueprints;
 
-	UPROPERTY(EditAnywhere, Category = "Blueprint", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprints_LoadFlags;
 
 private:
@@ -966,7 +966,7 @@ struct CSCORE_API FCsPlayerData_Inventory_Slot
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore")
 	FCsUint8MatrixCoordinate Position; // 16 bits
 
 	UPROPERTY()
@@ -1056,10 +1056,10 @@ struct CSCORE_API FCsPlayerData_Inventory_Bag
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore")
 	FCsUint8MatrixDimension Dimension; // 16 bits
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore")
 	TArray<FCsPlayerData_Inventory_Slot> Slots; // N * Slot[I].GetBits();
 
 	FCsPlayerData_Inventory_Bag() {}

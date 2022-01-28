@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
@@ -13,7 +14,6 @@
 #include "Engine/DataTable.h"
 
 #include "CsTypes_Load.generated.h"
-#pragma once
 
 #define CS_CVAR_LOAD_UNSET -1
 #define CS_CVAR_LOAD_NONE 0
@@ -270,13 +270,13 @@ struct CSCORE_API FCsResourceSize
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Size")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	int32 Bytes;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Size")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	float Kilobytes;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Size")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	float Megabytes;
 
 	FCsResourceSize()
@@ -335,10 +335,10 @@ struct CSCORE_API FCsSoftObjectPath
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FSoftObjectPath Path;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FCsResourceSize Size;
 
 	FCsSoftObjectPath() :
@@ -378,19 +378,19 @@ struct CSCORE_API FCsTArraySoftObjectPath
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TArray<FCsSoftObjectPath> Paths;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	TSet<FCsSoftObjectPath> Set;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	TArray<FSoftObjectPath> Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	TSet<FSoftObjectPath> InternalSet;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FCsResourceSize Size;
 
 	FCsTArraySoftObjectPath() :
@@ -484,13 +484,13 @@ struct CSCORE_API FCsStringAssetReference
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FString Reference;
 
 	UPROPERTY()
 	FStringAssetReference Reference_Internal;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FCsResourceSize Size;
 
 	FORCEINLINE FStringAssetReference* Get()
@@ -509,10 +509,10 @@ struct CSCORE_API FCsTArrayStringAssetReference
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	TArray<FCsStringAssetReference> References;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Reference")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FCsResourceSize Size;
 
 	void Reset()
@@ -551,19 +551,19 @@ struct CSCORE_API FCsDataMappingEntry
 	GENERATED_USTRUCT_BODY()
 
 	/** Short Name - used to link with Backend */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FName ShortCode;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Data")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	uint16 LookUpCode;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data", meta = (MustImplement = "CsDataInterface"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "CsDataInterface"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, Category = "Data", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Load", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Data")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FCsTArrayStringAssetReference AssetReferences[(uint8)ECsLoadFlags_Editor::ECsLoadFlags_Editor_MAX];
 
 	FCsDataMappingEntry() :
@@ -782,18 +782,18 @@ struct CSCORE_API FCsPayload_Data
 public:
 
 	/** Name of the Data Object. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FName Name;
 
 	/** Object that implements the interface: ICsData. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (MustImplement = "CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	//ECsLoadFlags_Editor Data_LoadFlags;
 
 	/** All ObjectPaths and Resource Sizes (Memory Size) for Data. */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsTArraySoftObjectPath Paths;
 
 	FCsPayload_Data() :
@@ -846,10 +846,10 @@ struct CSCORE_API FCsPayload_DataTable
 public:
 
 	/** Name of the DataTable */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FName Name;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TSoftObjectPtr<UDataTable> DataTable;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -857,20 +857,20 @@ public:
 
 	/** Whether to store all rows or use specific row names of 
 	    the DataTable to store ObjectPaths for in Paths. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	bool bAllRows;
 
 	/** Specific row names of the DataTable to store ObjectPaths 
 		for in Paths. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TSet<FName> Rows;
 
 	/** All ObjectPaths and Resource Sizes (Memory Size) for DataTable. */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsTArraySoftObjectPath Paths;
 
 	/** */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
 
 	FCsPayload_DataTable() :
@@ -931,26 +931,26 @@ public:
 	UPROPERTY()
 	int32 Index;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	bool bUpdateDataRootSetOnSave;
 
 	/** List of all Payload information related to objects that
 	    implement the interface: ICsData. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "Name"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (TitleProperty = "Name"))
 	TArray<FCsPayload_Data> Datas;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	TMap<FName, FCsPayload_Data> DataMap;
 
 	/** List of all Payload information related to DataTables. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "Name"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (TitleProperty = "Name"))
 	TArray<FCsPayload_DataTable> DataTables;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	TMap<FName, FCsPayload_DataTable> DataTableMap;
 
 	/** All ObjectPaths and Resource Sizes (Memory Size) for Datas and DataTables. */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsTArraySoftObjectPath Paths;
 
 	FCsPayload() :
@@ -1116,25 +1116,25 @@ public:
 	UPROPERTY()
 	int32 Index;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load")
 	FName Name;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	bool bPopulateOnSave;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (MustImplement = "CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	//int32 Data_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UObject* Data_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UClass* Data_Class;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsTArraySoftObjectPath Paths;
 
 	FCsDataEntry_Data() :
@@ -1242,32 +1242,32 @@ public:
 	UPROPERTY()
 	int32 Index;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load")
 	FName Name;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	bool bPopulateOnSave;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TSoftObjectPtr<UDataTable> DataTable;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	//int32 DataTable_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UDataTable* DataTable_Internal;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	bool bAllRows;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TSet<FName> Rows;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsTArraySoftObjectPath Paths;
 
 	/** */
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
 
 	FCsDataEntry_DataTable() :
@@ -1369,13 +1369,13 @@ struct CSCORE_API FCsDataRootSetContainer
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, meta = (MustImplement = "CsGetDataRootSet"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load", EditAnywhere, meta = (MustImplement = "CsGetDataRootSet"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UObject* Data_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UClass* Data_Class;
 
 	ICsGetDataRootSet* Interface;
@@ -1425,13 +1425,13 @@ struct CSCORE_API FCsDataTable
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
 	TSoftObjectPtr<UDataTable> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
 	int32 Data_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UDataTable* Data_Internal;
 
 	FCsDataTable() :
@@ -1545,19 +1545,19 @@ struct CSCORE_API FCsActor
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "CsCore|Load")
 	TSoftClassPtr<AActor> Actor;
 
 	UPROPERTY()
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	AActor* Actor_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	UClass* Actor_Class;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")
 	TSubclassOf<AActor> Actor_SubclassOf;
 
 	FCsActor() :
@@ -1637,10 +1637,10 @@ struct CSCORE_API FCsCategoryMemberAssociation
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Member")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FString Category;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Member")
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	TArray<FString> Members;
 };
 
@@ -1651,13 +1651,13 @@ struct CSCORE_API FCsPayloadOld
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
 	FName ShortCode;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
 	FECsDataType DataType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
 	ECsLoadFlags_Editor LoadFlags;
 
 	FORCEINLINE bool operator==(const FCsPayloadOld& B) const
@@ -1682,7 +1682,7 @@ struct CSCORE_API FCsTArrayPayload
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
 	TArray<FCsPayloadOld> Payloads;
 
 	FORCEINLINE FCsTArrayPayload& operator=(const FCsTArrayPayload& B)

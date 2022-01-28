@@ -20,13 +20,13 @@ struct CSCORE_API FCsData_Skin_VisualPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Skin_Visual"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual", meta = (MustImplement = "CsData_Skin_Visual"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
 	UObject* Data_Internal;
 
 	FCsData_Skin_VisualPtr() :

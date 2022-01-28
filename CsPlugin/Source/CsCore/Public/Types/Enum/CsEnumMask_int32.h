@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum.h"
 
 #include "CsEnumMask_int32.generated.h"
-#pragma once
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
@@ -11,10 +11,10 @@ struct CSCORE_API FECsEnumMask_int32 : public FECsEnum
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Enum")
 	uint8 Value;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Enum")
 	int32 Mask;
 
 	FECsEnumMask_int32() :

@@ -13,7 +13,7 @@ struct FCsMap_ObjectByName
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Map")
 	TMap<FName, UObject*> Map;
 
 	FCsMap_ObjectByName() :

@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum.h"
 
 #include "CsEnum_uint8.generated.h"
-#pragma once
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsEnum_uint8 : public FECsEnum
@@ -11,7 +11,7 @@ struct CSCORE_API FECsEnum_uint8 : public FECsEnum
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Enum")
 	uint8 Value;
 
 	FECsEnum_uint8() :

@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_Interpolation.h"
 #include "Animation/CsAnimPlayRate.h"
@@ -12,7 +13,6 @@
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 
 #include "CsTypes_Material_Anim.generated.h"
-#pragma once
 
 // FCsMaterialAnimParameterVector
 #pragma region
@@ -25,16 +25,16 @@ struct CSCORE_API FCsMaterialAnimParameterVector
 {
 	GENERATED_USTRUCT_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	FName Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	ECsEasingType Easing;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	FLinearColor From;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	FLinearColor To;
 
 	FCsMaterialAnimParameterVector() :
@@ -66,16 +66,16 @@ struct CSCORE_API FCsMaterialAnimParameterScalar
 {
 	GENERATED_USTRUCT_BODY()
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	FName Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	ECsEasingType Easing;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	float From;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	float To;
 
 	FCsMaterialAnimParameterScalar() :
@@ -214,13 +214,13 @@ struct CSCORE_API FCsMaterialAnimFrame
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	float Duration;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	TArray<FCsMaterialAnimParameterVector> VectorParameters;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	TArray<FCsMaterialAnimParameterScalar> ScalarParameters;
 
 	FCsMaterialAnimFrame() :
@@ -329,11 +329,11 @@ struct CSCORE_API FCsMaterialAnim
 	GENERATED_USTRUCT_BODY()
 
 	/** Describes how the Frames will be played. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	ECsAnimPlayback Playback;
 
 	/** Describes the time between each Frame. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	ECsAnimPlayRate PlayRate;
 
 	/** Time between each Frame.
@@ -341,7 +341,7 @@ struct CSCORE_API FCsMaterialAnim
 		 PlayRate == ECsAnimPlayRate::CustomDeltaTime. 
 		if PlayRate == EcsAnimPlayRate::Custon, 
 		 this value is ignored. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	float DeltaTime;
 
 	/** Total time to play all Frames. 
@@ -350,13 +350,13 @@ struct CSCORE_API FCsMaterialAnim
 		 TotalTime / Number of Frames. 
 		If PlayRate == ECsAnimPlayRate::Custom: 
 		 Total = Sum of Duration of each Frame (Frame[Index].Duration). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	float TotalTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	TArray<FCsMaterialAnimFrame> Frames;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	int32 TotalCount;
 
 	FCsMaterialAnim() :
@@ -562,21 +562,21 @@ struct CSCORE_API FCsMaterialAnim_Params
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	FCsMaterialAnim Anim;
 
 	/** Material to perform the animation on. */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material")
 	UMaterialInstanceDynamic* MID;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material")
 	UObject* MIDAsObject;
 
 	/** Owner of the Animation */
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material")
 	UObject* Owner;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	FECsUpdateGroup Group;
 
 	FCsMaterialAnim_Params() :

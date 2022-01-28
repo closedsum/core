@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsSettings_Manager_Runnable.generated.h"
 #pragma once
+#include "CsSettings_Manager_Runnable.generated.h"
 
 // FCsSettings_Manager_Runnable
 #pragma region
@@ -12,16 +12,16 @@ struct CSCORE_API FCsSettings_Manager_Runnable
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Runnable", meta = (ClampMin = "1", UIMin = "1"))
 	int32 RunnablePoolSize;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "1", UIMin = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Runnable", meta = (ClampMin = "1", UIMin = "1"))
 	int32 RunnablePayloadSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Runnable", meta = (ClampMin = "4", UIMin = "4"))
 	int32 TaskPoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Runnable", meta = (ClampMin = "4", UIMin = "4"))
 	int32 TaskPayloadSize;
 
 	FCsSettings_Manager_Runnable() :

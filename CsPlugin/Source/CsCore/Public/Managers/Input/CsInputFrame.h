@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Input/CsInput.h"
 #include "Managers/Time/CsTypes_Time.h"
 
 #include "CsInputFrame.generated.h"
-#pragma once
 
 /**
 *
@@ -13,7 +13,7 @@ struct CSCORE_API FCsInputFrame
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	FCsTime Time;
 
 	TArray<FCsInput*> Inputs;

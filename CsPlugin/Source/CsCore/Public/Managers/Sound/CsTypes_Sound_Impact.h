@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Engine/DataTable.h"
 
 #include "CsTypes_Sound_Impact.generated.h"
-#pragma once
 
 // FCsSoundImpact
 #pragma region
@@ -17,10 +17,10 @@ struct CSCORE_API FCsSoundImpact : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TEnumAsByte<EPhysicalSurface> Surface;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	FCsSound Sound;
 
 public:

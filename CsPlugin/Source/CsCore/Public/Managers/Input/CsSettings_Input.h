@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Input/Action/CsInputActionMap.h"
 #include "Managers/Input/GameEvent/CsGameEventDefinition.h"
 
 #include "CsSettings_Input.generated.h"
-#pragma once
 
 // FCsSettings_Input
 #pragma region
@@ -15,10 +15,10 @@ struct CSCORE_API FCsSettings_Input
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
 	TMap<FECsInputActionMap, FCsInputActionSet> InputActionMappings;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
 	TSet<FCsGameEventDefinition> GameEventDefinitions;
 
 	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
@@ -27,7 +27,7 @@ public:
 		 No Completed Value
 		 - No additional value is passed through when the definition is completed.
 		  Usually for Actions, there is NO value. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (DisplayName = "GameEventDefintions: Action - 1 Or Word, No Complete Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input", meta = (DisplayName = "GameEventDefintions: Action - 1 Or Word, No Complete Value"))
 	TSet<FCsGameEventDefinitionActionOneOrWordNoCompletedValue> GameEventDefinitions_ActionOneOrWordNoCompleteValue;
 
 	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
@@ -36,7 +36,7 @@ public:
 		 No Completed Value
 		 - No additional value is passed through when the definition is completed.
 		  Usually for Actions, there is NO value. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (DisplayName = "GameEventDefintions: Action - 1 Or Word, 1 InputEvent, No Complete Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input", meta = (DisplayName = "GameEventDefintions: Action - 1 Or Word, 1 InputEvent, No Complete Value"))
 	TSet<FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue> GameEventDefinitions_ActionOneOrWordOneEventNoCompleteValue;
 
 	/** This is a simplified GameEvent (FECsGameEvent) definition based on an
@@ -47,19 +47,19 @@ public:
 		    accepted.
 		 Pass Through Value
 		  - The raw input value "passes through" unaltered. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (DisplayName = "GameEventDefintions: Axis - 1 Or Word, No Compare, Pass Through Value"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input", meta = (DisplayName = "GameEventDefintions: Axis - 1 Or Word, No Compare, Pass Through Value"))
 	TSet<FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue> GameEventDefinitions_AxisOneOrWordNoComparePassThroughValue;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "CsCore|Input")
 	TArray<FString> GameEventDefinitionSummary;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly,meta = (DisplayName = "GameEventPriorityList", MultiLine = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input", meta = (DisplayName = "GameEventPriorityList", MultiLine = true))
 	FString GameEventPriorityList;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
 	TArray<FECsGameEvent> GameEventPriorityList_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
 	FECsInputAction AnyKeyAction;
 
 	FCsSettings_Input() :

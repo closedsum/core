@@ -14,10 +14,10 @@ struct CSCORE_API FCsSettings_Manager_Input
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input")
 	int32 InputPoolSize;
 	 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Input")
 	TArray<int32> RemappedGamepadControllerIds;
 
 	FCsSettings_Manager_Input() :

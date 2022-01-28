@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Runnable/CsTypes_Runnable.h"
 #pragma once
+#include "Managers/Runnable/CsTypes_Runnable.h"
 
 class UObject;
 

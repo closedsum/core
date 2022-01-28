@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
@@ -6,7 +7,6 @@
 #include "Types/Property/Ref/CsProperty_Ref_Vector.h"
 
 #include "CsTypes_Sense.generated.h"
-#pragma once
 
 // SenseObjectType
 #pragma region
@@ -102,10 +102,10 @@ struct FCsSenseInfo_DEPRECATED
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sense")
 	FECsSenseActorType ActorType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Info")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sense")
 	ECsSenseTeam Team;
 
 	/** TODO: Need to update UniqueObjectId to be FGuid in GameInstance */
@@ -116,107 +116,107 @@ struct FCsSenseInfo_DEPRECATED
 
 	// Me to Actor
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	FVector MeToActorDir;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDistance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDistanceSq;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	FVector MeToActorDirXY;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDistanceXY;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDistanceXYSq;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDot;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorAbsDeltaAngle;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	FRotator MeToActorBodyRotation;
 
 	// View to Actor
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	FVector ViewToActorDir;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	FRotator ViewToActorBodyRotation;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float ViewToActorDot;
 
 	// Sight
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	bool bSeesActorByRadius;
 	TCsBool_Ref bSeesActorByRadiusHandle;
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorByRadius, const uint64&, const uint64&, const bool&);
 	FOnSeesActorByRadius OnSeesActorByRadius_Event;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	bool bSeesActorByDot;
 	TCsBool_Ref bSeesActorByDotHandle;
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorByDot, const uint64&, const uint64&, const bool&);
 	FOnSeesActorByRadius OnSeesActorByDot_Event;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	bool bSeesActor;
 	TCsBool_Ref bSeesActorHandle;
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActor, const uint64&, const uint64&, const bool&);
 	FOnSeesActor OnSeesActor_Event;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	bool bSeesActorBody;
 	TCsBool_Ref bSeesActorBodyHandle;
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorBody, const uint64&, const uint64&, const bool&);
 	FOnSeesActorBody OnSeesActorBody_Event;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	bool bSeesActorHead;
 	TCsBool_Ref bSeesActorHeadHandle;
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnSeesActorHead, const uint64&, const uint64&, const bool&);
 	FOnSeesActorHead OnSeesActorHead_Event;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastTime_SeesActorByRadius;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastTime_SeesActorByDot;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastTime_SeesActor;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float SeesActorBodyTime;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float NotSeesActorBodyTime;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastTime_SeesActorBody;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastTime_SeesActorHead;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float StartTime_TraceMeToActorBody;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float StartTime_TraceMeToActorHead;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	uint8 TraceRequestId_MeToActorBody;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	uint8 TraceRequestId_MeToActorHead;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastKnown_DistanceToActor;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Info")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	FVector LastKnown_ActorLocation;
 	TCsFVector_Ref LastKnown_ActorLocationHandle;
 	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_LastKnown_ActorLocation, const uint64&, const uint64&, const FVector&);
@@ -370,23 +370,23 @@ struct FCsSenseData_DEPRECATED
 	GENERATED_USTRUCT_BODY()
 
 	/** Whether to Sense by Radius */
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (InlineEditConditionToggle))
 	bool bRadius;
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bRadius", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (editcondition = "bRadius", ClampMin = "0.0", UIMin = "0.0"))
 	float Radius;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float RadiusSq;
 
 	/** Minimum View Angle for Sensing */
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Angle;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float Radians;
 	/** Minimum Dot to Target Actor for Sensing */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float Dot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sense")
 	TMap<FECsSenseActorType, float> TraceIntervals;
 
 	FCsSenseData_DEPRECATED()
@@ -451,27 +451,27 @@ struct FCsSenseData_Override_DEPRECATED
 	GENERATED_USTRUCT_BODY()
 
 	/** Whether to Sense by Radius */
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (InlineEditConditionToggle))
 	bool bOverride_Radius;
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bOverride_Radius", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (editcondition = "bOverride_Radius", ClampMin = "0.0", UIMin = "0.0"))
 	float Radius;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float RadiusSq;
 
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (InlineEditConditionToggle))
 	bool bOverride_Angle;
 	/** Minimum View Angle for Sensing */
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (editcondition = "bOverride_Angle", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (editcondition = "bOverride_Angle", ClampMin = "0.0", UIMin = "0.0"))
 	float Angle;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float Radians;
 	/** Minimum Dot to Target Actor for Sensing */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sense")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float Dot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "Sense", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (InlineEditConditionToggle))
 	bool bOverride_TraceIntervals;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sense", meta = (editcondition = "bOverride_TraceIntervals"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sense", meta = (editcondition = "bOverride_TraceIntervals"))
 	TMap<FECsSenseActorType, float> TraceIntervals;
 
 	FCsSenseData_Override_DEPRECATED()

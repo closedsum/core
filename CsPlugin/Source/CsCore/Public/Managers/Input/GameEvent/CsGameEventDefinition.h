@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Input/Definition/CsTypes_InputDefinition.h"
 #include "Managers/Input/GameEvent/CsGameEvent.h"
 
 #include "CsGameEventDefinition.generated.h"
-#pragma once
 
 // FCsInputActionAndEvent
 #pragma region
@@ -14,10 +14,10 @@ struct CSCORE_API FCsInputActionAndEvent
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Game Event")
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Game Event")
 	ECsInputEvent Event;
 
 	FCsInputActionAndEvent() :
@@ -47,13 +47,13 @@ struct FCsGameEventDefinitionSimple
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FECsGameEvent GameEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	ECsInputEvent Event;
 
 	FCsGameEventDefinitionSimple() :
@@ -92,10 +92,10 @@ struct FCsGameEventDefinition
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FECsGameEvent Event;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FCsInputSentence Sentence;
 
 	FCsGameEventDefinition() :
@@ -141,10 +141,10 @@ struct FCsGameEventDefinitionActionOneOrWordNoCompletedValue
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FECsGameEvent GameEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	TArray<FCsInputActionAndEvent> Words;
 
 	FCsGameEventDefinitionActionOneOrWordNoCompletedValue() :
@@ -224,13 +224,13 @@ struct FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FECsGameEvent GameEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	TArray<FECsInputAction> Actions;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	ECsInputEvent Event;
 
 	FCsGameEventDefinitionActionOneOrWordOneEventNoCompletedValue() :
@@ -309,10 +309,10 @@ struct FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	FECsGameEvent GameEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
 	TArray<FECsInputAction> Actions;
 
 	FCsGameEventDefinitionAxisOneOrWordNoComparePassThroughValue() :

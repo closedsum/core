@@ -13,7 +13,7 @@ struct FCsSet_Key
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	TSet<FKey> Set;
 
 	FCsSet_Key() :

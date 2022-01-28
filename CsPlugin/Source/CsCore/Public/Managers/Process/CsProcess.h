@@ -7,6 +7,7 @@
 #include "Types/CsTypes_String.h"
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+
 #include "CsProcess.generated.h"
 
 // Enums
@@ -104,17 +105,17 @@ struct CSCORE_API FCsProcessMonitorOutputEvent
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FString Name;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	ECsProcessMonitorOutputEventPurpose Purpose;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FCsStringParagraph Paragraph;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	bool Completed;
 
 	FCompleted Event;
-	UPROPERTY(BlueprintAssignable, Category = "Process")
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Process")
 	FBindableDynEvent_CsProcessMonitorOutputEvent_Completed ScriptEvent;
 
 public:
@@ -369,33 +370,33 @@ struct FCsProcessCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FECsProcess Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FString Name;
 	/** executable name */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FString URL;
 	/** command line arguments */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FString Params;
 	/** if true, the new process will have its own window */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	bool bLaunchDetached;
 	/** if true, the new process will be minimized in the task bar */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	bool bLaunchHidden;
 	/** if true, the new process will not have a window or be in the task bar */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	bool bLaunchReallyHidden;
 	/** idle, low, normal, high, higher */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	ECsProcessPriorityModifier PriorityModifier;
 	/** Directory to start in when running the program, or NULL to use the current working directory */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	bool bOptionalWorkingDirectory;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	FString OptionalWorkingDirectory;
 
 	FCsProcessCache()
@@ -470,7 +471,7 @@ public:
 
 	bool ReadFlag;
 
-	UFUNCTION(BlueprintCallable, Category = "Process")
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Process")
 	void RunCommand(const FString& Command);
 	
 // Read / Output
@@ -480,7 +481,7 @@ public:
 	static char StartRead_Internal(FCsRoutine* r);
 	FCsRoutine* StartRead_Internal_Routine;
 	
-	UFUNCTION(BlueprintCallable, Category = "Process")
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Process")
 	void StopRead();
 
 private:

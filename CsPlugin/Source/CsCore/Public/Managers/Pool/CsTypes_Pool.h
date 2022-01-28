@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 
 #include "CsTypes_Pool.generated.h"
-#pragma once
 
 // PoolTransaction
 #pragma region
@@ -291,40 +291,40 @@ struct CSCORE_API FCsPooledObjectCache
 
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	int32 Index;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	bool bAllocated;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	ECsPooledObjectState State;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	TWeakObjectPtr<UObject> Instigator;
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	TWeakObjectPtr<UObject> Owner;
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	TWeakObjectPtr<UObject> Parent;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	float WarmUpTime;
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	bool bLifeTime;
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	float LifeTime;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	float Time;
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	float RealTime;
 
 	UPROPERTY()
 	uint64 Frame;
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	int32 Frame_Script;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	float ElapsedTime;
 
 public:

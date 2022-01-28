@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Managers/Runnable/CsTypes_Runnable.h"
-#pragma once
 
 class UObject;
 

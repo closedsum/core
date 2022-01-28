@@ -77,16 +77,16 @@ struct CSCORE_API FCsSound_Spawn_Params
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	FCsSound Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	UObject* Object;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	FCsSpawnerFrequencyParams FrequencyParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	FECsUpdateGroup Group;
 
 	FCsSound_Spawn_Params() :

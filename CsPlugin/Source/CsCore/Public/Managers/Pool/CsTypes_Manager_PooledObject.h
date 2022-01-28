@@ -1,11 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // CVar
 #include "CsCVars.h"
 // Types
 #include "Managers/Pool/CsTypes_Pool.h"
-#pragma once
-
 
 class UWorld;
 class UObject;

@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/Action/CsInputAction.h"
 #include "InputCoreTypes.h"
 
 #include "CsTypes_InputProfile.generated.h"
-#pragma once
 
 // FCsInputActionMapping
 #pragma region
@@ -15,13 +15,13 @@ struct CSCORE_API FCsInputActionMapping
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	FKey Key;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	float Scale;
 
 	FCsInputActionMapping() :
@@ -66,7 +66,7 @@ struct CSCORE_API FCsInputActionMappings
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	TArray<FCsInputActionMapping> Mappings;
 
 	FORCEINLINE FCsInputActionMappings& operator=(const FCsInputActionMappings& B)
@@ -227,10 +227,10 @@ struct CSCORE_API FCsInputProfile
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	uint8 Player;
 
-	UPROPERTY(VisibleDefaultsOnly)
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Input")
 	FCsInputActionMappings DeviceMappings[(uint8)ECsInputDevice::ECsInputDevice_MAX];
 
 	FCsInputProfile()

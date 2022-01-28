@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
 
 #include "CsTypes_Payload_SkeletalMeshActor.generated.h"
-#pragma once
 
 // FCsSkeletalMeshAnimSequenceOneShot
 #pragma region
@@ -27,30 +27,30 @@ public:
 // PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	UObject* Instigator;
 
 	/** The owner of the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	UObject* Owner;
 
 	/** The parent of the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	UObject* Parent;
 
 	/** The current time. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsSkeletalMeshPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload", meta = (Bitmask, BitmaskEnum = "ECsSkeletalMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // SkeletalMeshPayloadType (NCsSkeletalMeshActor::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FCsSkeletalMeshAnimSequenceOneShot Shot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FTransform Transform;
 
 	FCsPayload_SkeletalMesh_AnimSequence_OneShot() :
@@ -98,30 +98,30 @@ public:
 // PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	UObject* Instigator;
 
 	/** The owner of the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	UObject* Owner;
 
 	/** The parent of the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	UObject* Parent;
 
 	/** The current time. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsSkeletalMeshPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload", meta = (Bitmask, BitmaskEnum = "ECsSkeletalMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // SkeletalMeshPayloadType (NCsSkeletalMeshActor::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FCsSkeletalMeshAnimMontageOneShot Shot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FTransform Transform;
 
 	FCsPayload_SkeletalMesh_AnimMontage_OneShot() :

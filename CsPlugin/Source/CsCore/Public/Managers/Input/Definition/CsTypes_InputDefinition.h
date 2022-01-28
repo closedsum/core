@@ -127,25 +127,25 @@ struct CSCORE_API FCsInputCompareValue
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputValue ValueType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	float Value;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputValueRule ValueRule;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FVector Location;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputLocationRule LocationRule;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FRotator Rotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputRotationRule RotationRule;
 
 	FCsInputCompareValue() :
@@ -285,19 +285,19 @@ struct CSCORE_API FCsInputCompletedValue
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	ECsInputValue ValueType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	ECsInputCompletedValueReturnType ReturnType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	float Value;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FVector Location;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FRotator Rotation;
 
 	FCsInputCompletedValue() :
@@ -378,19 +378,19 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bPass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FECsInputAction Action;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputEvent Event;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bAnyEvent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FCsInputCompareValue CompareValue;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	FCsInputCompletedValue CompletedValue;
 
 	FCsInputDescription() :
@@ -465,22 +465,22 @@ struct CSCORE_API FCsInputWord
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bCompleted;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	float CompletedTime;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bConsume;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputDescription> AndInputs;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputDescription> OrInputs;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputCompletedValue> CompletedValues;
 
 	FCsInputWord() :
@@ -618,28 +618,28 @@ struct CSCORE_API FCsInputPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bCompleted;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	float CompletedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
 	bool bInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
 	bool bFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputWord> Words;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputCompletedValue> CompletedValues;
 
 	FCsInputPhrase() :
@@ -753,34 +753,34 @@ struct CSCORE_API FCsInputSentence
 
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bActive;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bCompleted;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	float CompletedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Cooldown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
 	bool bInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
 	bool bFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputPhrase> Phrases;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Input|Definition")
 	TArray<FCsInputCompletedValue> CompletedValues;
 
 	FCsInputSentence() :

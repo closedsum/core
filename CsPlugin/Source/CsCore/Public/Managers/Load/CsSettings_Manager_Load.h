@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsSettings_Manager_Load.generated.h"
 #pragma once
+#include "CsSettings_Manager_Load.generated.h"
 
 // FCsSettings_Manager_Load
 #pragma region
@@ -12,7 +12,7 @@ struct CSCORE_API FCsSettings_Manager_Load
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Load", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 	 
 	FCsSettings_Manager_Load() :

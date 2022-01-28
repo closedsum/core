@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
 
 #include "CsTypes_Input.generated.h"
-#pragma once
 
 // InputDevice
 #pragma region

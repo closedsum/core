@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/Time/CsTypes_Update.h"
 
 #include "CsSettings_Manager_Sound.generated.h"
-#pragma once
 
 // FCsSettings_Manager_Sound_PoolParams
 #pragma region
@@ -21,13 +21,13 @@ struct CSCORE_API FCsSettings_Manager_Sound_PoolParams
 public:
 
 	/** The class of the pooled Sound. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "CsSoundPooled"))
 	TSoftClassPtr<UObject> Class; 
 	/** The maximum size of the pool. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 	/** The maximum payload size. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Sound_PoolParams() :
@@ -50,7 +50,7 @@ struct CSCORE_API FCsSettings_Manager_Sound_TypeArray
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound")
 	TArray<FECsSound> Types;
 
 	FCsSettings_Manager_Sound_TypeArray() :
@@ -76,11 +76,11 @@ public:
 
 	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
 		is important to indicate when a particular Sound type WILL or will NOT get "ticked" or updated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound")
 	TMap<FECsUpdateGroup, FCsSettings_Manager_Sound_TypeArray> TypesByUpdateGroupMap;
 
 	/** Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each Sound type. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound")
 	TMap<FECsSound, FCsSettings_Manager_Sound_PoolParams> PoolParams;
 
 	FCsSettings_Manager_Sound() :
@@ -106,17 +106,17 @@ struct CSCORE_API FCsSettings_Manager_Sound_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (AllowedClasses = "World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsSoundPooled */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_Sound_UnitTest() :

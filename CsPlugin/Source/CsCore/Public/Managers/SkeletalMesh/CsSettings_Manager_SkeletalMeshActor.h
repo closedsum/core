@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 
 #include "CsSettings_Manager_SkeletalMeshActor.generated.h"
-#pragma once
 
 // FCsSettings_Manager_SkeletalMeshActor_PoolParams
 #pragma region
@@ -14,13 +14,13 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> Class;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_SkeletalMeshActor_PoolParams() :
@@ -46,7 +46,7 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh")
 	TMap<FECsSkeletalMeshActor, FCsSettings_Manager_SkeletalMeshActor_PoolParams> PoolParams;
 
 	FCsSettings_Manager_SkeletalMeshActor() :
@@ -71,17 +71,17 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (AllowedClasses = "World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsSkeletalMeshActor */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_SkeletalMeshActor_UnitTest() :

@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/CsTypes_View.h"
@@ -7,7 +8,6 @@
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Sound.generated.h"
-#pragma once
 
 // Sound
 #pragma region
@@ -87,14 +87,14 @@ struct CSCORE_API FCsSoundCue
 	GENERATED_USTRUCT_BODY()
 
 	/** Soft reference to a Sound Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TSoftObjectPtr<USoundCue> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
 	/** Hard reference to a Sound Asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Sound")
 	USoundCue* Sound_Internal;
 
 	FCsSoundCue() :
@@ -138,14 +138,14 @@ struct CSCORE_API FCsSoundBase
 	GENERATED_USTRUCT_BODY()
 
 	/** Soft reference to a Sound Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TSoftObjectPtr<USoundBase> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
 	/** Hard reference to a Sound Asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Sound")
 	USoundBase* Sound_Internal;
 
 	FCsSoundBase() :
@@ -192,13 +192,13 @@ struct CSCORE_API FCsTArraySoundBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TArray<TSoftObjectPtr<USoundBase>> Sounds;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sounds_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Sound")
 	TArray<USoundBase*> Sounds_Internal;
 
 public:
@@ -390,37 +390,37 @@ private:
 public:
 
 	/** Soft reference to a Sound Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TSoftObjectPtr<USoundBase> Sound;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
 	/** Hard reference to a Sound Asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Sound")
 	USoundBase* Sound_Internal;
 
 	/** The Sound Type. This is used to group Sound into different categories 
 	    and can be used by a Manager pooling Sound objects to Spawn the correct
 		Sound object. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	FECsSound Type;
 
 	/** Soft reference to Sound Attenuation Asset. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TSoftObjectPtr<USoundAttenuation> Attenuation;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Attenuation_LoadFlags;
 
 	/** Hard reference to a Sound Attenuation Asset. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Sound")
 	USoundAttenuation* Attenuation_Internal;
 
 	/** Condition to determine when to deallocate the Sound object. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	ECsSoundDeallocateMethod DeallocateMethod;
 
 private:
@@ -439,29 +439,29 @@ public:
 		   LifeTime == 0.0f means the Sound object will stay active forever.
 		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
 	        the Sound object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the Sound is attached to a Parent object or when an Sound object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the Sound will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the Sound is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the Sound. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the Sound.
 		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	FTransform Transform;
 
 public:

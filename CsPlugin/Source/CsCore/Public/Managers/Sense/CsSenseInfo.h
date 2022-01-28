@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Managers/Resource/CsResourceContainer.h"
 #include "Managers/Sense/CsSensedObject.h"
 
 #include "CsSenseInfo.generated.h"
-#pragma once
 
 class ICsSensedObject;
 class ICsSensingObject;

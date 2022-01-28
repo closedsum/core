@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
 #include "CsInputAction.generated.h"
-#pragma once
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FECsInputAction : public FECsEnum_uint8
@@ -65,7 +65,7 @@ struct CSCORE_API FCsInputActionSet
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Input|Action")
 	TSet<FECsInputAction> Actions;
 
 	FCsInputActionSet() :

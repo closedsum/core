@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Types
@@ -8,7 +9,6 @@
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 
 #include "CsParams_SkeletalMeshActor.generated.h"
-#pragma once
 
 struct FCsInterfaceMap;
 class UAnimSequence;
@@ -245,10 +245,10 @@ struct CSCORE_API FCsSkeletalMeshAnimSequenceOneShot
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Params")
 	FCsSkeletalMeshActorPooledInfo Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Params")
 	FCsAnimSequence Anim;
 
 	FCsSkeletalMeshAnimSequenceOneShot() :
@@ -395,16 +395,16 @@ struct CSCORE_API FCsSkeletalMeshAnimMontageOneShot
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Skeletal Mesh|Params")
 	FCsSkeletalMeshActorPooledInfo Mesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Skeletal Mesh|Params")
 	FCsAnimBlueprint AnimBlueprint;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Skeletal Mesh|Params")
 	FCsAnimMontage Anim;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Skeletal Mesh|Params", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float PlayRate;
 
 	FCsSkeletalMeshAnimMontageOneShot() :

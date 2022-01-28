@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
@@ -8,7 +9,6 @@
 #include "Material/CsTypes_Material.h"
 
 #include "CsTypes_SkeletalMeshActor.generated.h"
-#pragma once
 
 // SkeletalMeshActor
 #pragma region
@@ -88,9 +88,9 @@ enum class ECsSkeletalMeshActorDeallocateMethod : uint8
 		  LifeTime == 0.0f means the SkeletalMeshActor will stay active forever.
 		  LifeTime > 0.0f means the SkeletalMeshActor will be deallocated after LifeTime amount of time after
 		   the SkeletalMeshActor has been allocated. */
-	LifeTime								UMETA(DisplayName = "LifeTime"),
+	LifeTime									UMETA(DisplayName = "LifeTime"),
 	/** */
-	Complete								UMETA(DisplayName = "Complete"),
+	Complete									UMETA(DisplayName = "Complete"),
 	ECsSkeletalMeshActorDeallocateMethod_MAX	UMETA(Hidden),
 };
 
@@ -150,11 +150,11 @@ struct CSCORE_API FCsSkeletalMeshActorPooledInfo
 	GENERATED_USTRUCT_BODY()
 
 	/** Mesh */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	FCsSkeletalMesh Mesh;
 
 	/** Materials */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	FCsTArrayMaterialInterface Materials;
 
 	/** The SkeletalMeshActor Type. This is used to group SkeletalMeshActors into different categories 
@@ -163,11 +163,11 @@ struct CSCORE_API FCsSkeletalMeshActorPooledInfo
 		NOTE: SkeletalMeshActor mostly acts as a "container" for a USkeletalMesh. Unless there is a
 		need from some special logic, only one SkeletalMeshActor class (i.e. ACsStatMeshActorPooledImpl) 
 		that will be used. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	FECsSkeletalMeshActor Type;
 
 	/** Condition to determine when to deallocate the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	ECsSkeletalMeshActorDeallocateMethod DeallocateMethod;
 
 private:
@@ -186,38 +186,38 @@ public:
 		   LifeTime == 0.0f means the Sound object will stay active forever.
 		   LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
 	        the SkeletalMeshActor object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the SkeletalMeshActor is attached to a Parent object or when an SkeletalMeshActor object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the SkeletalMeshActor will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the SkeletalMeshActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the SkeletalMeshActor.
 		If the Sound is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	FTransform Transform;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	bool bCastShadow;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	bool bReceivesDecals;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	bool bUseAsOccluder;
 
 public:

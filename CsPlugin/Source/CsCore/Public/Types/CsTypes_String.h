@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 
 #include "CsTypes_String.generated.h"
-#pragma once
 
 // StringEscapeType
 #pragma region
@@ -164,13 +164,13 @@ struct CSCORE_API FCsStringWordInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	FString Value;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	ECsStringWordRule Rule;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	FString Altered;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	ECsStringEscapeType EscapeType;
 
 	FCsStringWordInfo() :
@@ -268,11 +268,11 @@ struct CSCORE_API FCsStringWord
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore:String")
 	bool Completed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	TArray<FCsStringWordInfo> Ands;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	TArray<FCsStringWordInfo> Ors;
 
 	FCsStringWord()
@@ -393,9 +393,9 @@ struct CSCORE_API FCsStringPhrase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	bool Completed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	TArray<FCsStringWord> Words;
 
 	FCsStringPhrase()
@@ -519,9 +519,9 @@ struct CSCORE_API FCsStringSentence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	bool Completed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	TArray<FCsStringPhrase> Phrases;
 
 	FCsStringSentence()
@@ -627,13 +627,13 @@ struct CSCORE_API FCsStringParagraph
 
 	DECLARE_MULTICAST_DELEGATE(FCompletedEvent);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	bool Completed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "String")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|String")
 	TArray<FCsStringSentence> Sentences;
 
 	FCompletedEvent Event;
-	UPROPERTY(BlueprintAssignable, Category = "String")
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|String")
 	FBindableDynEvent_CgStringParagraph_CompletedEvent ScriptEvent;
 
 	FCsStringParagraph()

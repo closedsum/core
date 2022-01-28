@@ -1,10 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Texture.generated.h"
-#pragma once
-
 
 // FCsTexture
 #pragma region
@@ -16,13 +15,13 @@ struct CSCORE_API FCsTexture
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Texture")
 	TSoftObjectPtr<UTexture> Texture;
 
 	UPROPERTY()
 	int32 Texture_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadWrite)
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Texture")
 	UTexture* Texture_Internal;
 
 	FCsTexture() :

@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_TwoParams.h"
 
 #include "CsTypes_View.generated.h"
-#pragma once
 
 // View
 #pragma region
@@ -52,13 +52,13 @@ struct FCsViewFlags
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View")
 	bool Flag1P;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View")
 	bool Flag3P;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View")
 	bool FlagVR;
 
 	bool Get(const ECsViewType& ViewType)
@@ -150,10 +150,10 @@ struct FCsDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View", meta = (ClampMin = "0", UIMin = "0"))
 	float Distance;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|View")
 	float DistanceSq;
 
 	FCsDrawDistance()
@@ -217,16 +217,16 @@ struct FCsFpvDrawDistance
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View", meta = (ClampMin = "0", UIMin = "0"))
 	float Distance1P;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|View")
 	float Distance1PSq;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View", meta = (ClampMin = "0", UIMin = "0"))
 	float Distance3P;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|View")
 	float Distance3PSq;
 
 	FCsFpvDrawDistance()

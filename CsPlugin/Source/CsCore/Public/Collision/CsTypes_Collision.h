@@ -251,21 +251,21 @@ struct CSCORE_API FCsCollisionShape
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	ECsCollisionShapeType Type;
 
 	/** Only Valid if Type == ECsCollisionShapeType::Box. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	FVector HalfExtent;
 
 	/** Only Valid if 
 		 Type == ECsCollisionShapeType::Sphere
 		 Type == ECsCollisionShapeType::Capsule */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
 	/** Only Valid if Type == ECsCollisionShapeType::Capsule */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float HalfHeight;
 
 	FCsCollisionShape() :
@@ -336,22 +336,22 @@ struct CSCORE_API FCsCollisionPreset
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bSimulationGeneratesHitEvents;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	FCsPhysicalMaterial PhysMaterialOverride;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bGenerateOverlapEvents;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	TEnumAsByte<ECollisionEnabled::Type> CollisionEnabled;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	TEnumAsByte<ECollisionChannel> ObjectType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	FCollisionResponseContainer CollisionResponses;
 
 	FCsCollisionPreset() :
@@ -398,22 +398,22 @@ struct FCsOnComponentBeginOverlapInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	UPrimitiveComponent* OverlappedComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	AActor* OtherActor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	UPrimitiveComponent* OtherComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	int32 OtherBodyIndex;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bFromSweep;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	FHitResult SweepResult;
 
 	FCsOnComponentBeginOverlapInfo() :
@@ -488,51 +488,51 @@ struct CSCORE_API FCsCollisionQueryParams
 	GENERATED_USTRUCT_BODY()
 
 	/** Tag used to provide extra information or filtering for debugging of the trace (e.g. Collision Analyzer) */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	FName TraceTag;
 
 	/** Tag used to indicate an owner for this trace */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	FName OwnerTag;
 
 	/** Whether we should trace against complex collision */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bTraceComplex;
 
 	/** Whether we want to find out initial overlap or not. If true, it will return if this was initial overlap. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bFindInitialOverlaps;
 
 	/** Whether we want to return the triangle face index for complex static mesh traces */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bReturnFaceIndex;
 
 	/** Whether we want to include the physical material in the results. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bReturnPhysicalMaterial;
 
 	/** Whether to ignore blocking results. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bIgnoreBlocks;
 
 	/** Whether to ignore touch/overlap results. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bIgnoreTouches;
 
 	/** Whether to skip narrow phase checks (only for overlaps). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	bool bSkipNarrowPhase;
 
 	/** Filters query by mobility types (static vs stationary/movable)*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	ECsQueryMobilityType MobilityType;
 
 	/** TArray typedef of components to ignore. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	TArray<UPrimitiveComponent*> IgnoreComponents;
 
 	/** TArray typedef of actors to ignore. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	TArray<AActor*> IgnoreActors;
 
 	FCsCollisionQueryParams() :
@@ -604,7 +604,7 @@ struct CSCORE_API FCsCollisionObjectQueryParams
 	GENERATED_USTRUCT_BODY()
 
 	/** Set of object type queries that it is interested in **/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypesToQuery;
 
 	FCsCollisionObjectQueryParams() :

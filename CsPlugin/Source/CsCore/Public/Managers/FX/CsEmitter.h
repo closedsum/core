@@ -11,32 +11,32 @@ struct FCsFxCache : public FCsPooledObjectCache
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TWeakObjectPtr<class ACsEmitter> Emitter;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TWeakObjectPtr<class UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	ECsFXPriority Priority;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	float DeathTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	float DeathStartTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	bool IsDying;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Bone;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	float Scale;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FVector Scale3D;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FVector Location;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FRotator Rotation;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cache")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FTransform Transform;
 
 	FCsFxCache()
@@ -110,7 +110,7 @@ class CSCORE_API ACsEmitter : public AEmitter
 
 public:
 
-	UPROPERTY(BlueprintReadWrite, Category = "FX")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|FX")
 	FCsFxCache Cache;
 
 	int32 PoolIndex;

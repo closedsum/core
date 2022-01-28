@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 
 #include "CsRoutineHandle.generated.h"
-#pragma once
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsRoutineHandle
@@ -14,10 +14,10 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Coroutine")
 	int32 Index;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Coroutine")
 	FGuid Handle;
 
 	FCsRoutineHandle() :

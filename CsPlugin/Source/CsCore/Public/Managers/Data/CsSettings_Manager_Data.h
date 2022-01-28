@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsSettings_Manager_Data.generated.h"
 #pragma once
+#include "CsSettings_Manager_Data.generated.h"
 
 // FCsSettings_Manager_Data
 #pragma region
@@ -12,13 +12,13 @@ struct CSCORE_API FCsSettings_Manager_Data
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Data", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadPoolSize;
 	 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Data", meta = (ClampMin = "4", UIMin = "4"))
 	int32 DataEntryDataPoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Data", meta = (ClampMin = "4", UIMin = "4"))
 	int32 DataEntryDataTablePoolSize;
 
 	FCsSettings_Manager_Data() :

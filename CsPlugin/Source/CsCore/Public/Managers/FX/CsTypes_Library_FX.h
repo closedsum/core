@@ -77,16 +77,16 @@ struct CSCORE_API FCsFX_Spawn_Params
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FCsFX FX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	AActor* Actor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FCsSpawnerFrequencyParams FrequencyParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FECsUpdateGroup Group;
 
 	FCsFX_Spawn_Params() :

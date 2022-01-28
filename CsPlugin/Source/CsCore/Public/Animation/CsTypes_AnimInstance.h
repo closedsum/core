@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 //#include "Types/Enum/.h"
 
 #include "CsTypes_AnimInstance.generated.h"
-#pragma once
 
 // FCsAnimInstance_AnimSequence
 #pragma region
@@ -14,15 +14,15 @@ struct CSCORE_API FCsAnimInstance_AnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim;
 
 	TSoftObjectPtr<UAnimSequence> Last_Anim;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly)
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "CsCore|Anim")
 	TWeakObjectPtr<UAnimSequence> Anim_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	bool UseDataValueAsDefault;
 
 public:
@@ -56,15 +56,15 @@ struct CSCORE_API FCsAnimInstance_AnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim;
 
 	TSoftObjectPtr<UAnimMontage> Last_Anim;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly)
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "CsCore|Anim")
 	TWeakObjectPtr<UAnimMontage> Anim_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	bool UseDataValueAsDefault;
 
 public:
@@ -98,15 +98,15 @@ struct CSCORE_API FCsAnimInstance_BlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend;
 
 	TSoftObjectPtr<UBlendSpace1D> Last_Blend;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly)
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "CsCore|Anim")
 	TWeakObjectPtr<UBlendSpace1D> Blend_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	bool UseDataValueAsDefault;
 
 public:
@@ -140,15 +140,15 @@ struct CSCORE_API FCsAnimInstance_BlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend;
 
 	TSoftObjectPtr<UBlendSpace> Last_Blend;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly)
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "CsCore|Anim")
 	TWeakObjectPtr<UBlendSpace> Blend_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	bool UseDataValueAsDefault;
 
 public:
@@ -183,15 +183,15 @@ struct CSCORE_API FCsAnimInstance_AimOffset
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> Blend;
 
 	TSoftObjectPtr<UAimOffsetBlendSpace> Last_Blend;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly, Category = Animation)
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "CsCore|Anim")
 	TWeakObjectPtr<UAimOffsetBlendSpace> Blend_Internal;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	bool UseDataValueAsDefault;
 
 public:
@@ -226,10 +226,10 @@ struct CSCORE_API FCsAnimInstance_Blueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlueprint> Blueprint;
 
-	UPROPERTY(Transient, VisibleDefaultsOnly)
+	UPROPERTY(Transient, VisibleDefaultsOnly, Category = "CsCore|Anim")
 	UBlueprintGeneratedClass* Blueprint_Internal;
 
 public:

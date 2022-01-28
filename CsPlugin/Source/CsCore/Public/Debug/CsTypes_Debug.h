@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "CsCvars.h"
 
 #include "CsTypes_Debug.generated.h"
-#pragma once
 
 // DebugDrawPriority
 #pragma region
@@ -117,41 +117,41 @@ struct CSCORE_API FCsDebugDrawBox
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
 	/** Applied as a translation offset to center and / or transform matrix. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector Location;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawRotation RotationType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FRotator Rotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector Extent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bSolid;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawBox() :
@@ -191,44 +191,44 @@ struct CSCORE_API FCsDebugDrawCircle
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
 	/** Applied as a translation offset to center and / or transform matrix. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector Location;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawRotation RotationType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FRotator Rotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "1.0", ClampMin = "1.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float MinRadius;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "1.0", ClampMin = "1.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float MaxRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	int32 Segments;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawCircle() :
@@ -267,44 +267,44 @@ struct CSCORE_API FCsDebugDrawSphere
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
 	/** Applied as a translation offset to center and / or transform matrix. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector Location;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawRotation RotationType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FRotator Rotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "1.0", ClampMin = "1.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float MinRadius;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "1.0", ClampMin = "1.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
 	float MaxRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	int32 Segments;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawSphere() :
@@ -343,35 +343,35 @@ struct CSCORE_API FCsDebugDrawPoint
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
 	/** Applied as a translation offset to Location. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector Offset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	int32 Segments;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawPoint() :
@@ -407,33 +407,33 @@ struct CSCORE_API FCsDebugDrawLine
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
 	/** Applied as a translation offset to Start. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector StartOffset;
 
 	/** Applied as a translation offset to End. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector EndOffset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawLine() :
@@ -468,39 +468,39 @@ struct CSCORE_API FCsDebugDrawLineAndPoint
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
 	/** Applied as a translation offset to Start. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector StartOffset;
 
 	/** Applied as a translation offset to End. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector EndOffset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	int32 Segments;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Thickness;
 
 	FCsDebugDrawLineAndPoint() :
@@ -543,25 +543,25 @@ struct CSCORE_API FCsDebugDrawTraceLine
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor Color;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor HitColor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
 	FCsDebugDrawTraceLine() :
@@ -595,25 +595,25 @@ struct CSCORE_API FCsDebugDrawTraceBox
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor Color;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor HitColor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
 	FCsDebugDrawTraceBox() :
@@ -647,25 +647,25 @@ struct CSCORE_API FCsDebugDrawTraceSphere
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor Color;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor HitColor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
 	FCsDebugDrawTraceSphere() :
@@ -699,25 +699,25 @@ struct CSCORE_API FCsDebugDrawTraceCapsule
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor Color;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor HitColor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
 	FCsDebugDrawTraceCapsule() :
@@ -753,25 +753,25 @@ struct CSCORE_API FCsDebugDrawTraceShape
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor Color;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FLinearColor HitColor;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
 	FCsDebugDrawTraceShape() :
@@ -869,31 +869,31 @@ struct CSCORE_API FCsDebugDrawString
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FVector LocationOffset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FColor Color;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bDropShadow;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float FontScale;
 
 	FCsDebugDrawString() :

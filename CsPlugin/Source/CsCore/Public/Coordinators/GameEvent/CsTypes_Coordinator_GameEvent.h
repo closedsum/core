@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 
 #include "CsTypes_Coordinator_GameEvent.generated.h"
-#pragma once
 
 // GameEventCoordinatorGroup
 #pragma region

@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsTypes_Mannequin_Silhouette.generated.h"
 #pragma once
+#include "CsTypes_Mannequin_Silhouette.generated.h"
 
 class UStaticMeshComponent;
 class USceneComponent;

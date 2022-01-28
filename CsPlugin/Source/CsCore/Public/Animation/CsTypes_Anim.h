@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_View.h"
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_Anim.generated.h"
-#pragma once
 
 namespace NCsAnimCached
 {
@@ -84,13 +84,13 @@ struct CSCORE_API FCsAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadWrite)
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
 	UAnimSequence* Anim_Internal;
 
 public:
@@ -186,10 +186,10 @@ struct CSCORE_API FCsAnimSequenceInfo
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	FCsAnimSequence Anim;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	float PlayRate;
 
 	FCsAnimSequenceInfo() :
@@ -248,16 +248,16 @@ struct CSCORE_API FCsFpvAnimSequence
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim1P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim3P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim3P_Low;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> AnimVR;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -337,13 +337,13 @@ struct CSCORE_API FCsAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadWrite)
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
 	UAnimMontage* Anim_Internal;
 
 public:
@@ -426,10 +426,10 @@ struct CSCORE_API FCsAnimMontageInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	FCsAnimMontage Anim;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	float PlayRate;
 
 	FCsAnimMontageInfo() :
@@ -488,16 +488,16 @@ struct CSCORE_API FCsFpvAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim1P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim3P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim3P_Low;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> AnimVR;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -671,13 +671,13 @@ struct CSCORE_API FCsAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> Blueprint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadWrite)
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
 	UAnimBlueprintGeneratedClass* Blueprint_Internal;
 
 public:
@@ -760,16 +760,16 @@ struct CSCORE_API FCsFpvAnimBlueprint
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> Blueprint1P;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> Blueprint3P;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> Blueprint3P_Low;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> BlueprintVR;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -883,7 +883,7 @@ struct CSCORE_API FCsBlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -932,16 +932,16 @@ struct CSCORE_API FCsFpvBlendSpace1D
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend1P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend3P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend3P_Low;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> BlendVR;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -1021,7 +1021,7 @@ struct CSCORE_API FCsBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -1072,16 +1072,16 @@ struct CSCORE_API FCsFpvBlendSpace
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend1P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend3P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend3P_Low;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> BlendVR;
 
 	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -1161,7 +1161,7 @@ struct CSCORE_API FCsAimOffset
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> Blend;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
@@ -1197,16 +1197,16 @@ struct CSCORE_API FCsFpvAimOffset
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> Blend1P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> Blend3P;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> Blend3P_Low;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> BlendVR;
 
 	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))

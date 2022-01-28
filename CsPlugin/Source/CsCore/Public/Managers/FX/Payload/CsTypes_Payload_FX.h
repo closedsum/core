@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/FX/CsTypes_FX.h"
 
 #include "CsTypes_Payload_FX.generated.h"
-#pragma once
 
 class UObject;
 class UNiagaraSystem;
@@ -22,27 +22,27 @@ public:
 // PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	UObject* Instigator;
 
 	/** The owner of the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	UObject* Owner;
 
 	/** The parent of the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	UObject* Parent;
 
 	/** The current time. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsFXPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload", meta = (Bitmask, BitmaskEnum = "ECsFXPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // FXPayloadType (NCsFX::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	FCsFX FX;
 
 	FCsPayload_FX() :

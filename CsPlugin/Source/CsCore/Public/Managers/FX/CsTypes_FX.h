@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
@@ -8,7 +9,6 @@
 #include "Utility/CsLog.h"
 
 #include "CsTypes_FX.generated.h"
-#pragma once
 
 // FX
 #pragma region
@@ -54,13 +54,13 @@ struct CSCORE_API FCsParticleSystem
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
 	TSoftObjectPtr<UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Particle_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
 	UParticleSystem* Particle_Internal;
 
 public:
@@ -211,15 +211,15 @@ struct CSCORE_API FCsNiagaraSystem
 public:
 
 	/** Soft reference to an FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
 	UNiagaraSystem* FX_Internal;
 
 	FCsNiagaraSystem() :
@@ -333,11 +333,11 @@ struct CSCORE_API FCsFXParameterInt
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Name;
 
 	/** Value to set for the Niagara Int Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	int32 Value;
 
 	FCsFXParameterInt() :
@@ -375,11 +375,11 @@ struct CSCORE_API FCsFXParameterFloat
 public:
 
 	/** Name of the Niagara Int Parameter. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Name;
 
 	/** Value to set for the Niagara Float Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	float Value;
 
 	FCsFXParameterFloat() :
@@ -417,10 +417,10 @@ struct CSCORE_API FCsFXParameterVector
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Name;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FVector Value;
 
 public:
@@ -467,25 +467,25 @@ public:
 public:
 
 	/** Soft reference to an FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
-	UPROPERTY(Transient, BlueprintReadWrite)
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|FX")
 	UNiagaraSystem* FX_Internal;
 
 	/** The FX Type. This is used to group FX into different categories 
 	    and can be used by a Manager pooling FX objects to Spawn the correct
 		FX object. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FECsFX Type;
 	
 	/** Condition to determine when to deallocate the FX object. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	ECsFXDeallocateMethod DeallocateMethod;
 
 private:
@@ -504,41 +504,41 @@ public:
 		   LifeTime == 0.0f means the FX object will stay active forever.
 		   LifeTime > 0.0f means the FX will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the FX is attached to a Parent object or when an FX object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the FX will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the FX is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.
 		If the FX is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FTransform Transform;
 
 	/** List of all Niagara Int Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TArray<FCsFXParameterInt> IntParameters;
 
 	/** List of all Niagara Float Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TArray<FCsFXParameterFloat> FloatParameters;
 
 	/** List of all Niagara Vector Parameters to change on the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TArray<FCsFXParameterVector> VectorParameters;
 
 public:

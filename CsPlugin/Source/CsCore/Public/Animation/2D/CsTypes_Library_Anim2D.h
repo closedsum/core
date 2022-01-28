@@ -20,23 +20,23 @@ struct CSCORE_API FCsAnim2DTextureFlipbook_Params
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UObject* ContextRoot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	FECsUpdateGroup UpdateGroup;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UObject* Owner;
 
 	//OnAbortType OnAbort;
 
 	//OnEndType OnEnd;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UMaterialInstanceDynamic* MID;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	FCsAnim2DFlipbookTexture Anim;
 
 	FCsAnim2DTextureFlipbook_Params() :
@@ -158,23 +158,23 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook_Params
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UObject* ContextRoot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	FECsUpdateGroup UpdateGroup;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UObject* Owner;
 
 	//OnAbortType OnAbort;
 
 	//OnEndType OnEnd;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	UPrimitiveComponent* Component;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	FCsAnim2DMaterialFlipbook Anim;
 
 	FCsAnim2DMaterialFlipbook_Params() :

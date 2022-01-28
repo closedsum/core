@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Misc/Guid.h"
 
 #include "CsTypes_UniqueObject.generated.h"
-#pragma once
 
 /**
 */
@@ -13,7 +13,7 @@ struct CSCORE_API FCsUniqueObjectId
 
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|UniqueObject")
 	FGuid Id;
 
 	FCsUniqueObjectId() :

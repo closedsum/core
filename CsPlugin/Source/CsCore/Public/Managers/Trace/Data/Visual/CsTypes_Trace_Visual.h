@@ -103,10 +103,10 @@ struct CSCORE_API FCsTracerFX
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	FCsFX FX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	ECsTraceVisualAttach Attach;
 
 private:
@@ -117,7 +117,7 @@ private:
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	ECsTraceVisualTransform Transform;
 
 private:
@@ -129,7 +129,7 @@ private:
 public:
 
 	/** the Niagara Parameter name for the end point of the fx. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	FName EndParameter;
 
 	FCsTracerFX() :

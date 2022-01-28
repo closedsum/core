@@ -85,7 +85,7 @@ public:
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
 	FCsStaticMesh Mesh;
 
 // ICsData_Skin_VisualStaticMesh
@@ -98,7 +98,7 @@ public:
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")
 	FCsTArrayMaterialInterface Materials;
 
 // ICsData_Skin_VisualMaterial

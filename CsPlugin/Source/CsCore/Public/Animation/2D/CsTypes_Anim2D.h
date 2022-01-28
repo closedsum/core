@@ -252,15 +252,15 @@ struct CSCORE_API FCsAnim2DFlipbookTextureFrame
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	FCsTexture Texture;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	FName ParameterName;
 
 	/** How long this frame lasts for.
 		Only Valid if Animation's PlayRate == ECsAnim2DPlayRate::CustomDeltaTimePerFrame. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float DeltaTime;
 
 	FCsAnim2DFlipbookTextureFrame() :
@@ -363,32 +363,32 @@ struct CSCORE_API FCsAnim2DFlipbookTexture
 	GENERATED_USTRUCT_BODY()
 
 	/** Describes how the Frames will be played. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	ECsAnim2DPlayback Playback;
 
 	/** Describes the time between each Frame. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	ECsAnim2DPlayRate PlayRate;
 
 	/** Describes how any time related information for an animation should be scaled. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	ECsAnimPlayScale PlayScale;
 
 	/** Time between each Frame.
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	float DeltaTime;
 
 	/** Total time to play all Frames. The time between each Frame will be
 		TotalTime / Number of Frames. 
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomTotalTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	float TotalTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	TArray<FCsAnim2DFlipbookTextureFrame> Frames;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	int32 TotalCount;
 
 	FCsAnim2DFlipbookTexture() :
@@ -588,15 +588,15 @@ struct CSCORE_API FCsAnim2DMaterialFlipbookFrame
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	FCsMaterialInterface Material;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (UIMin = "0", ClampMin= "0"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim|2D", meta = (UIMin = "0", ClampMin= "0"))
 	int32 Index;
 
 	/** How long this frame lasts for.
 		Only Valid if Animation's PlayRate == ECsAnim2DPlayRate::CustomDeltaTimePerFrame. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float DeltaTime;
 
 	FCsAnim2DMaterialFlipbookFrame() :
@@ -696,32 +696,32 @@ struct CSCORE_API FCsAnim2DMaterialFlipbook
 	GENERATED_USTRUCT_BODY()
 
 	/** Describes how the Frames will be played. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	ECsAnim2DPlayback Playback;
 
 	/** Describes the time between each Frame. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	ECsAnim2DPlayRate PlayRate;
 
 	/** Describes how any time related information for an animation should be scaled. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|2D")
 	ECsAnimPlayScale PlayScale;
 
 	/** Time between each Frame.
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomDeltaTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	float DeltaTime;
 
 	/** Total time to play all Frames. The time between each Frame will be
 		TotalTime / Number of Frames. 
 		Only Valid if PlayRate == ECsAnim2DPlayRate::CustomTotalTime. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	float TotalTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	TArray<FCsAnim2DMaterialFlipbookFrame> Frames;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Anim|2D")
 	int32 TotalCount;
 
 	FCsAnim2DMaterialFlipbook() :

@@ -34,12 +34,12 @@ public:
 
 // SkeletalMeshVisualDataType(NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual")
 	FCsSkeletalMesh Mesh;
 
 // MaterialSkinDataType (NCsSkin::NData::NVisual::NMaterial::IMaterial)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual")
 	FCsTArrayMaterialInterface Materials;
 
 	FCsData_Skin_VisualSkeletalMeshAndMaterialImpl() :

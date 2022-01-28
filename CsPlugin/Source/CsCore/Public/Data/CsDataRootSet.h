@@ -20,16 +20,16 @@ struct CSCORE_API FCsDataRootSet
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
 	FSoftObjectPath EntryMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
 	FSoftObjectPath TransitionEntryToMainMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
 	FSoftObjectPath MainMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
 	FSoftObjectPath ExitMap;
 
 #pragma endregion Flow
@@ -38,20 +38,20 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
 	FName StartupPayload;
 
 #pragma endregion Startup
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
 	UDataTable* Datas;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
 	UDataTable* DataTables;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
 	UDataTable* Payloads;
 
 	FCsDataRootSet() :

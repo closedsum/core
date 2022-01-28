@@ -375,7 +375,7 @@ struct CSCORE_API FCsInputDescription
 
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	bool bPass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")

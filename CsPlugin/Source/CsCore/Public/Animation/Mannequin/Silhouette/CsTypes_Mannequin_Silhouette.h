@@ -104,16 +104,16 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Core
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Height;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Depth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Width;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin")
 	float HeightOffset;
 
 	FCsMannequinSilhouette_BoneControl_Core() :
@@ -161,16 +161,16 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Limb
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Length;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Thickness;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Depth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Width;
 
 	FCsMannequinSilhouette_BoneControl_Limb() :
@@ -218,16 +218,16 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Foot
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Height;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Length;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Width;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Scale;
 
 	FCsMannequinSilhouette_BoneControl_Foot() :
@@ -275,16 +275,16 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Hand
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Length;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Thickness;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Width;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Scale;
 
 	FCsMannequinSilhouette_BoneControl_Hand() :
@@ -332,19 +332,19 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Head
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Height;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Depth;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Width;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.01", ClampMin = "0.01"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin", meta = (UIMin = "0.01", ClampMin = "0.01"))
 	float Scale;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim|Mannequin")
 	float HeightOffset;
 
 	FCsMannequinSilhouette_BoneControl_Head() :

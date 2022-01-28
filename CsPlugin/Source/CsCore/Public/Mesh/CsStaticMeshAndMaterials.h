@@ -6,16 +6,15 @@
 
 #include "CsStaticMeshAndMaterials.generated.h"
 
-
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsStaticMeshAndMaterials
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Mesh")
 	FCsStaticMesh Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Mesh")
 	FCsTArrayMaterialInterface Materials;
 
 public:

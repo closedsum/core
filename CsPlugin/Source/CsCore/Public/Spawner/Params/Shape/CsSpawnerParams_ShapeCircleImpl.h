@@ -23,40 +23,40 @@ public:
 // ParamsType (NCsSpawner::NParams::IParams)
 
 	/** Parameters describing number (count) of objects "created" when Spawn is called. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
 	FCsSpawnerCountParams CountParams;
 
 	/** Parameters describing the frequency at which Spawn is called after calling Start. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
 	FCsSpawnerFrequencyParams FrequencyParams;
 
 	/** The total time the objects are being spawned for. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
 	float TotalTime;
 
 // ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
 
 	/** The shape / area of the spawner from which objects are spawned. 
 		This defaults to Circle (ECsSpawnerShape::Circle). */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params|Shape")
 	ECsSpawnerShape Shape;
 
 	/** Describe what is designed as the "center" of the spawner's shape. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
 	ECsSpawnerShapeCenter Center;
 
 	/** How the spawning is distributed over a shape / area. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
 	ECsSpawnerDistribution Distribution;
 
 // CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
 
 	/** Minimum radius of the circle. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "0.0", ClampMax = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape", meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "0.0", ClampMax = "0.0"))
 	float MinRadius;
 
 	/** Maximum radius of the circle. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "0.0", ClampMax = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape", meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "0.0", ClampMax = "0.0"))
 	float MaxRadius;
 
 	FCsSpawnerParams_ShapeCircleImpl() :

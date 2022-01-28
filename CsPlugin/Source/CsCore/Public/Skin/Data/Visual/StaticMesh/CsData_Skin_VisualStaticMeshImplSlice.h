@@ -29,7 +29,7 @@ public:
 
 // StaticMeshVisualDataType(NCsSkin::NData::NVisual::NStaticMesh::IMaterial)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Static Mesh")
 	FCsStaticMesh Mesh;
 
 	FCsData_Skin_VisualStaticMeshImplSlice() :

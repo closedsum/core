@@ -28,7 +28,7 @@ public:
 
 // SkeletalMeshVisualDataType(NCsSkin::NData::NVisual::NSkeletalMesh::IMaterial)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Skeletal Mesh")
 	FCsSkeletalMesh Mesh;
 
 	FCsData_Skin_VisualSkeletalMeshImplSlice() :

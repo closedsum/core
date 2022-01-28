@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 
 #include "CsTypes_Array.generated.h"
-#pragma once
 
 // FCsArray_int32
 #pragma region
@@ -13,7 +13,7 @@ struct FCsArray_int32
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Array")
 	TArray<int32> Array;
 
 	FCsArray_int32() :

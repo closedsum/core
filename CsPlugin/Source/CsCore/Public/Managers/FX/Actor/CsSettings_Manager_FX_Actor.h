@@ -46,7 +46,7 @@ struct CSCORE_API FCsSettings_Manager_FX_Parameters
 
 public:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "CsCore|Managers|FX")
 	int32 PoolSizes[(uint8)ECsFXParameterValue::ECsFXParameterValue_MAX];
 
 	FCsSettings_Manager_FX_Parameters()

@@ -30,7 +30,7 @@ public:
 
 // UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.001", ClampMin = "0.001"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Scale", meta = (UIMin = "0.001", ClampMin = "0.001"))
 	float Scale;
 
 	FCsData_Skin_VisualUniformScaleImplSlice() :

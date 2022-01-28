@@ -16,15 +16,15 @@ struct CSCORE_API FCsSpawnerParamsImpl
 public:
 
 	/** Describes the number of objects "created" when Spawn is called. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params")
 	FCsSpawnerCountParams CountParams;
 
 	/** Describes how often objects are "created" whens Spawn is called. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params")
 	FCsSpawnerFrequencyParams FrequencyParams;
 
 	/** The total time the objects are being spawned for */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params")
 	float TotalTime;
 
 	FCsSpawnerParamsImpl() :

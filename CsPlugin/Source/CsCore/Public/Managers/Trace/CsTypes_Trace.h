@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 
 #include "CsTypes_Trace.generated.h"
-#pragma once
 
 // TraceType
 #pragma region
@@ -190,13 +190,13 @@ struct CSCORE_API FCsTraceCollisionBox
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float HalfExtentX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float HalfExtentY;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float HalfExtentZ;
 
 	FCsTraceCollisionBox() :
@@ -219,7 +219,7 @@ struct CSCORE_API FCsTraceCollisionSphere
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
 	FCsTraceCollisionSphere() :
@@ -240,10 +240,10 @@ struct CSCORE_API FCsTraceCollisionCapsule
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Radius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float HalfHeight;
 
 	FCsTraceCollisionCapsule() :

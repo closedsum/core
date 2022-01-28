@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
@@ -8,7 +9,6 @@
 #include "Material/CsTypes_Material.h"
 
 #include "CsTypes_StaticMeshActor.generated.h"
-#pragma once
 
 // StaticMeshActor
 #pragma region
@@ -153,11 +153,11 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 	GENERATED_USTRUCT_BODY()
 
 	/** Mesh */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FCsStaticMesh Mesh;
 
 	/** Materials */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FCsTArrayMaterialInterface Materials;
 
 	/** The StaticMeshActor Type. This is used to group StaticMeshActors into different categories 
@@ -166,11 +166,11 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 		NOTE: StaticMeshActor mostly acts as a "container" for a UStaticMesh. Unless there is a
 		need from some special logic, only one StaticMeshActor class (i.e. ACsStatMeshActorPooledImpl) 
 		that will be used. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FECsStaticMeshActor Type;
 
 	/** Condition to determine when to deallocate the StaticMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	ECsStaticMeshActorDeallocateMethod DeallocateMethod;
 
 private:
@@ -189,38 +189,38 @@ public:
 		   LifeTime == 0.0f means the StaticMeshActor object will stay active forever.
 		   LifeTime > 0.0f means the StaticMeshActor will be deallocated after LifeTime amount of time after
 	        the FX object has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the StaticMeshActor is attached to a Parent object or when an StaticMeshActor object is
 		allocated, the Parent field of the payload is set. If the Parent object is NULL,
 		the Sound will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the StaticMeshActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the StaticMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the StaticMeshActor.
 		If the StaticMeshActor is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FTransform Transform;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bCastShadow;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bReceivesDecals;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bUseAsOccluder;
 
 public:

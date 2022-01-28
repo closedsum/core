@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
 #include "Engine/EngineTypes.h"
 
 #include "CsTraceResponse.generated.h"
-#pragma once
 
 // NCsTrace::NResponse::FResponse
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NResponse, FResponse)
@@ -17,15 +17,15 @@ struct CSCORE_API FCsTraceResponse
 	GENERATED_USTRUCT_BODY()
 
 	/** Whether the trace successful hit something. */
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Trace")
 	bool bResult;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Trace")
 	float ElapsedTime;
 
 	/** All hit results as a result of the trace. */
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Trace")
 	TArray<FHitResult> OutHits;
 
 	/** All overlap results as a result of the trace. */

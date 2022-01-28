@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Pool/CsTypes_Pool.h"
 #include "Managers/Time/CsTypes_Time.h"
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 
 #include "CsTypes_Payload_StaticMeshActor.generated.h"
-#pragma once
 
 // FCsPayload_StaticMesh
 #pragma region
@@ -28,31 +28,31 @@ public:
 		pooled object (implements the interface: ICsPooledObject) is controlled
 		by its manager.
 		Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload")
 	ECsPooledObjectUpdate UpdateType;
 
 	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload")
 	UObject* Instigator;
 
 	/** The owner of the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload")
 	UObject* Owner;
 
 	/** The parent of the SkeletalMeshActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload")
 	UObject* Parent;
 
 	/** The current time. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsStaticMeshPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload", meta = (Bitmask, BitmaskEnum = "ECsStaticMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // StaticMeshPayloadType (NCsStaticMeshActor::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh|Payload")
 	FCsStaticMeshActorPooledInfo Mesh;
 
 	FCsPayload_StaticMesh() :

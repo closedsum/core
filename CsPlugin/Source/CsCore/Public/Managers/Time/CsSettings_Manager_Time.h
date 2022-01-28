@@ -17,15 +17,15 @@ struct CSCORE_API FCsSettings_Manager_Time_CustomUpdate
 public:
 
 	/** The input to use for CustomUpdate. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Time")
 	TSet<FKey> Keys;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Time", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float DeltaTime; 
 
 	/** Whether to allow sustained pressing of Key for Update.
 		NOTE: Set to false if the intention is to "Step" 1 "Frame" at a time. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Time")
 	bool bAllowSustained;
 
 	FCsSettings_Manager_Time_CustomUpdate() :
@@ -48,10 +48,10 @@ struct CSCORE_API FCsSettings_Manager_Time
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Time")
 	TMap<FECsUpdateGroup, FCsSet_Key> TogglePauseGroupByKeysMap;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Time")
 	TMap<FECsUpdateGroup, FCsSettings_Manager_Time_CustomUpdate> CustomUpdateMap;
 
 	FCsSettings_Manager_Time() :

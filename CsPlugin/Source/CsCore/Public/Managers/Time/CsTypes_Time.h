@@ -12,13 +12,13 @@ struct CSCORE_API FCsTime
 
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	float Time;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	float RealTime;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	FDateTime DateTime;
 
 	UPROPERTY()
@@ -61,13 +61,13 @@ public:
 
 public:
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	float Time;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	float RealTime;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	FTimespan Timespan;
 
 	UPROPERTY()

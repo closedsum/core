@@ -14,10 +14,10 @@ struct CSCORE_API FCsSettings_Manager_Trace_Debug
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	FCsDebugDrawTraceShape DrawRequest;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	FCsDebugDrawTraceShape DrawResponse;
 
 	FCsSettings_Manager_Trace_Debug() :
@@ -39,13 +39,13 @@ struct CSCORE_API FCsSettings_Manager_Trace
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace", meta = (ClampMin = "4", UIMin = "4"))
 	int32 MaxRequestsProcessedPerTick;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Trace")
 	FCsSettings_Manager_Trace_Debug Debug;
 
 	FCsSettings_Manager_Trace() :

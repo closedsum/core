@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Trace/CsTypes_Trace.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
-#pragma once
 
 // NCsTrace::NRequest::FRequest
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)

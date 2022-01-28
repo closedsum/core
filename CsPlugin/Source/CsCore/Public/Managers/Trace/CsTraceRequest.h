@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/Trace/CsTypes_Trace.h"
 #include "Managers/Time/CsTypes_Time.h"
@@ -10,7 +11,6 @@
 #include "Utility/CsLog.h"
 
 #include "CsTraceRequest.generated.h"
-#pragma once
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsTraceRequest_OnResponse, const FCsTraceResponse&, Response);
 
@@ -30,65 +30,65 @@ struct CSCORE_API FCsTraceRequest
 	GENERATED_USTRUCT_BODY()
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	float StaleTime;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	UObject* Caller;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	bool bAsync;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	ECsTraceType Type;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	ECsTraceMethod Method;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	ECsTraceQuery Query;
 
 	/** The start location of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FVector Start;
 
 	/** The end location of the trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FVector End;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FRotator Rotation;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	TEnumAsByte<ECollisionChannel> Channel;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FName ProfileName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FCsCollisionShape Shape;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FCsCollisionQueryParams Params;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FCsCollisionObjectQueryParams ObjectParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
 	FCsCollisionResponseParams ResponseParams;
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Trace")
 	FCsTraceRequest_OnResponse OnResponse_Event;
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Trace")
 	FCsTraceRequest_OnResponse OnResponse_AsyncEvent;
 
 	FCsTraceRequest() :

@@ -84,7 +84,7 @@ namespace NCsUI
 			template<typename RowStructType>
 			FORCEINLINE static RowStructType* GetSafeDataTableRow(const FString& Context, const UObject* WorldContext, const MemberType& Member, const FName& RowName, void(*Log)(const FString&))
 			{
-				if (const FCsDmgDataRootSet* DataRootSet = GetSafe(Context, WorldContext))
+				if (const FCsUIDataRootSet* DataRootSet = GetSafe(Context, WorldContext))
 					return DataRootSet->GetSafeDataTableRow<RowStructType>(Context, WorldContext, Member, RowName, Log);
 				return nullptr;
 			}

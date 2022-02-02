@@ -203,6 +203,11 @@ public:
 		return Count;
 	}
 
+	FORCEINLINE const int32& NumValid() const
+	{
+		return EndPosition;
+	}
+
 	FORCEINLINE const EnumType& GetMAX() const
 	{
 		return MAX;

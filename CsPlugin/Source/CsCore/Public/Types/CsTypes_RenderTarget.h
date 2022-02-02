@@ -19,6 +19,8 @@ struct CSCORE_API FCsTextureRenderTarget2D_Array
 		Textures()
 	{
 	}
+
+	FORCEINLINE TArray<UTextureRenderTarget2D*>* GetPtr() { return &Textures; }
 };
 
 #pragma endregion FCsTextureRenderTarget2D_Array

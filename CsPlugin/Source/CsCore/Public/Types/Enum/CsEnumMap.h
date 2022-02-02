@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Enum/CsTypes_Enum.h"
 #pragma once
+#include "Types/Enum/CsTypes_Enum.h"
 
 template<typename EnumType>
 struct TCsEnumMap

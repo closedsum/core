@@ -777,7 +777,7 @@ namespace NCsMaterial
 				}
 
 			}
-			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()));
+			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()), *(MID->Parent->GetName()));
 			return false;
 		}
 
@@ -816,7 +816,7 @@ namespace NCsMaterial
 				}
 			}
 
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()), *(MID->Parent->GetName())));
 			return false;
 		}
 
@@ -931,7 +931,7 @@ namespace NCsMaterial
 				}
 
 			}
-			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()));
+			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()), *(MID->Parent->GetName()));
 			return false;
 		}
 
@@ -970,7 +970,7 @@ namespace NCsMaterial
 				}
 
 			}
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()), *(MID->Parent->GetName())));
 			return false;
 		}
 
@@ -1140,7 +1140,7 @@ namespace NCsMaterial
 				}
 
 			}
-			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()));
+			checkf(0, TEXT("%s: Failed to find ParamName: %s in MID: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()), *(MID->Parent->GetName()));
 			return false;
 		}
 
@@ -1179,7 +1179,7 @@ namespace NCsMaterial
 				}
 			}
 
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s."), *Context, *(ParamName.ToString()), *(MID->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in MID: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(MID->GetName()), *(MID->Parent->GetName())));
 			return false;
 		}
 

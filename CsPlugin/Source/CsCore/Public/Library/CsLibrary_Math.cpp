@@ -117,5 +117,50 @@ namespace NCsMath
 		return RayPlaneIntersectionChecked(Context, Ray, Plane, OutT, OutIntersection);
 	}
 
+	bool FLibrary::SegmentPlaneIntersection(const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint)
+	{
+		OutT = FMath::GetTForSegmentPlaneIntersect(StartPoint, EndPoint, Plane);
+		// If the parameter value is not between 0 and 1, there is no intersection
+		if (OutT > -KINDA_SMALL_NUMBER && OutT < 1.f + KINDA_SMALL_NUMBER)
+		{
+			OutIntersectionPoint = StartPoint + OutT * (EndPoint - StartPoint);
+			return true;
+		}
+		return false;
+	}
+
+	bool FLibrary::SegmentQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutTriangleNormal)
+	{
+		FVector Edge1(B - A);
+		Edge1.Normalize();
+		FVector Edge2(C - A);
+		Edge2.Normalize();
+		FVector TriNormal = Edge2 ^ Edge1;
+		TriNormal.Normalize();
+
+		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, FPlane(A, TriNormal), OutT, OutIntersectPoint);
+		if (!Collide)
+		{
+			return false;
+		}
+
+		// Check Triangle ABC
+		FVector BaryCentric = FMath::ComputeBaryCentric2D(OutIntersectPoint, A, B, C);
+		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
+		{
+			OutTriangleNormal = TriNormal;
+			return true;
+		}
+
+		// Check Triangle ADC
+		BaryCentric = FMath::ComputeBaryCentric2D(OutIntersectPoint, A, D, C);
+		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
+		{
+			OutTriangleNormal = TriNormal;
+			return true;
+		}
+		return false;
+	}
+
 	#pragma endregion Intersection
 }

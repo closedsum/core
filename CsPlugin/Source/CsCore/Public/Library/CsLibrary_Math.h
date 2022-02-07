@@ -445,6 +445,22 @@ namespace NCsMath
 		*/
 		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		static bool SegmentPlaneIntersection(const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint);
+
+		/**
+		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
+		* the Quad defined by A, B, C, and D. If there is an intersection, the point is placed in out_IntersectionPoint
+		* 
+		* @param StartPoint			Start point of segment
+		* @param EndPoint			End point of segment
+		* @param A, B, C, D			Points defining the quad
+		* @param OutT				(out)
+		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
+		* @param OutNormal			(out) var for the triangle normal
+		* @return					True if intersection occurred
+		*/
+		static bool SegmentQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutTriangleNormal);
+
 	#pragma endregion Intersection
 
 	// LinearColor

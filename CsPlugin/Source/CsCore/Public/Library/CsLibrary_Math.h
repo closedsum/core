@@ -406,6 +406,54 @@ namespace NCsMath
 
 	#pragma endregion Vector
 
+	// Segment
+	#pragma region
+	public:
+
+		/**
+		* Returns closest point on a segment to a given point.
+		* The idea is to project point on line formed by segment.
+		* Then we see if the closest point on the line is outside of segment or inside.
+		*
+		* @param Point			point for which we find the closest point on the segment
+		* @param StartPoint		StartPoint of segment
+		* @param EndPoint		EndPoint of segment
+		* @param OutT			(out) Percentage the closest point lies between StartPoint (0.0f) and EndPoint (1.0f).
+		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
+		*/
+		static FVector ClosestPointOnSegment(const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT);
+
+		/**
+		* Returns closest point on a segment to a given point.
+		* The idea is to project point on line formed by segment.
+		* Then we see if the closest point on the line is outside of segment or inside.
+		*
+		* @param Context		The calling context.
+		* @param Point			point for which we find the closest point on the segment
+		* @param StartPoint		StartPoint of segment
+		* @param EndPoint		EndPoint of segment
+		* @param OutT			(out) Percentage the closest point lies between StartPoint (0.0f) and EndPoint (1.0f).
+		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
+		*/
+		static FVector ClosestPointOnSegmentChecked(const FString& Context, const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT);
+
+		/**
+		* Safely returns closest point on a segment to a given point.
+		* The idea is to project point on line formed by segment.
+		* Then we see if the closest point on the line is outside of segment or inside.
+		*
+		* @param Context		The calling context.
+		* @param Point			point for which we find the closest point on the segment
+		* @param StartPoint		StartPoint of segment
+		* @param EndPoint		EndPoint of segment
+		* @param OutT			(out) Percentage the closest point lies between StartPoint (0.0f) and EndPoint (1.0f).
+		* @param Log			(optional)
+		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
+		*/
+		static FVector SafeClosestPointOnSegment(const FString& Context, const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Segment
+
 	// Plane
 	#pragma region
 	public:
@@ -445,21 +493,90 @@ namespace NCsMath
 		*/
 		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		/**
+		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
+		* a Plane If there is an intersection, the point is placed in OutIntersectPoint
+		*
+		* @param StartPoint			Start point of segment
+		* @param EndPoint			End point of segment
+		* @param Plane				
+		* @param OutT				(out)
+		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
+		* return					True if intersection occurred
+		*/
 		static bool SegmentPlaneIntersection(const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
-		* the Quad defined by A, B, C, and D. If there is an intersection, the point is placed in out_IntersectionPoint
+		* a Plane If there is an intersection, the point is placed in OutIntersectPoint
+		*
+		* @param Context			The calling context.
+		* @param StartPoint			Start point of segment
+		* @param EndPoint			End point of segment
+		* @param Plane
+		* @param OutT				(out)
+		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
+		* return					True if intersection occurred
+		*/
+		static bool SegmentPlaneIntersectionChecked(const FString& Context, const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint);
+
+		/**
+		* Safely returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
+		* a Plane If there is an intersection, the point is placed in OutIntersectPoint
+		*
+		* @param Context			The calling context.
+		* @param StartPoint			Start point of segment
+		* @param EndPoint			End point of segment
+		* @param Plane
+		* @param OutT				(out)
+		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
+		* @param Log				(optional)
+		* return					True if intersection occurred
+		*/
+		static bool SafeSegmentPlaneIntersection(const FString& Context, const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
+		* the Quad defined by A, B, C, and D. If there is an intersection, the point is placed in OutIntersectPoint.
+		* NOTE: FUTURE: Improve
+		*  Quad Layout
+		*  
+		*  B ---- C
+		*  |	  |
+		*  |      |
+		*  A ---- D
 		* 
 		* @param StartPoint			Start point of segment
 		* @param EndPoint			End point of segment
 		* @param A, B, C, D			Points defining the quad
 		* @param OutT				(out)
 		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
-		* @param OutNormal			(out) var for the triangle normal
+		* @param OutNormal			(out) var for the quad normal
 		* @return					True if intersection occurred
 		*/
-		static bool SegmentQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutTriangleNormal);
+		static bool SegmentQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal);
+
+		/**
+		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
+		* the Quad defined by A, B, C, and D. If there is an intersection, the point is placed in OutIntersectPoint.
+		* NOTE: FUTURE: Improve
+		*  Quad Layout
+		*  
+		*  B ---- C
+		*  |	  |
+		*  |      |
+		*  A ---- D
+		* 
+		* @param StartPoint			Start point of segment
+		* @param EndPoint			End point of segment
+		* @param A, B, C, D			Points defining the quad
+		* @param OutT				(out)
+		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
+		* @param OutNormal			(out) var for the quad normal
+		* @param OutUV				(out) Percentage OutIntersectPoint lies in the U (AB) and V (AD).
+		* @return					True if intersection occurred
+		*/
+		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal, FVector2D& OutUV);
 
 	#pragma endregion Intersection
 

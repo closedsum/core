@@ -185,6 +185,18 @@ namespace NCsInput
 			*/
 			static void SetCenterOfViewportChecked(const FString& Context, const UObject* WorldContext);
 
+			/**
+			* Safely convert the current mouse position in viewport space into a 3D world-space point and direction.
+			* 
+			* @param Context			The calling context.
+			* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param OutWorldPosition	(out)
+			* @param OutWorldDirection	(out)
+			* @parma Log				(optional)
+			* return					Whether the deproject was successful or not.
+			*/
+			static bool GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector& OutWorldPosition, FVector& OutWorldDirection, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		#pragma endregion Get / Set
 
 		public:

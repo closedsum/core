@@ -29,7 +29,7 @@ namespace NCsTrace
 			* Get the Context (Root) for UCsManager_Trace from the WorldContext.
 			*
 			* @param Context		The calling context.
-			* @oaram WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* return				Context for UCsManager_Trace
 			*/
 			static UObject* GetContextRootChecked(const FString& Context, const UObject* WorldContext);

@@ -207,6 +207,19 @@ namespace NCsInput
 			SV->SetMouse(Size.X / 2, Size.Y / 2);
 		}
 
+		bool FLibrary::GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector& OutWorldPosition, FVector& OutWorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			FIntPoint Position;
+			GetSafePosition(Context, WorldContext, Position, Log);
+
+			if (Position == FIntPoint::NoneValue)
+				return false;
+
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+			return ViewportLibrary::SafeDeprojectScreenToWorld(Context, WorldContext, FVector2D(Position.X, Position.Y), OutWorldPosition, OutWorldDirection, Log);
+		}
+
 		#pragma endregion Get / Set
 
 		void FLibrary::RefreshPositionChecked(const FString& Context, const UObject* WorldContext)

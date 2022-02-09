@@ -38,6 +38,8 @@
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
 		// Team
 #include "DetailCustomizations/EnumStruct/Team/ECsTeamCustomization.h"
+	// Data
+#include "DetailCustomizations/Data/CsData_ECsTestCustomization.h"
 
 void FCsRegisterDetailCustomization::Register()
 {
@@ -87,5 +89,9 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsTeam);
 
 #undef CS_TEMP_REGISTER
+	}
+	// Data
+	{
+		PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ECsTest", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(FCsData_ECsTestCustomization::MakeInstance)));
 	}
 }

@@ -79,6 +79,7 @@ void FCsData_ECsTestCustomization::CustomizeChildren(TSharedRef<class IPropertyH
 			]
 			+SVerticalBox::Slot()
 			.AutoHeight()
+			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
 			[
 				SNew(SHorizontalBox)
 				+ SHorizontalBox::Slot()

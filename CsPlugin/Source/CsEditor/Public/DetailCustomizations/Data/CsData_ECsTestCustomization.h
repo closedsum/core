@@ -22,6 +22,13 @@ protected:
 	TSharedPtr<IPropertyTypeCustomization> CustomTypeInterface;
 	TSharedPtr<FDetailWidgetRow> CustomPropertyWidget;
 
+	TSharedPtr<IPropertyHandle> DataHandle;
+	TSharedPtr<STextBlock> DataPathText;
+
+	void OnDataChanged();
+	FReply OnSaveClicked();
+	FReply OnBrowseClicked();
+
 	/** Property viewing widget */
 	TSharedPtr<class IDetailsView> PropertyView;
 };

@@ -17,6 +17,8 @@
 #include "Settings/CsDeveloperSettings.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
+// Helper
+#include "FileHelpers.h"
 
 #define LOCTEXT_NAMESPACE "CsData_ECsTestCustomization"
 
@@ -33,6 +35,10 @@ void FCsData_ECsTestCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> S
 	CustomPropertyWidget = MakeShareable(new FDetailWidgetRow);
 
 	CustomTypeInterface->CustomizeHeader(ActionHandle.ToSharedRef(), CustomPropertyWidget.ToSharedRef().Get(), StructCustomizationUtils);
+	
+	DataHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsTest, Data));
+
+	DataHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateRaw(this, &FCsData_ECsTestCustomization::OnDataChanged));
 
 	HeaderRow.NameContent()
 		[
@@ -47,8 +53,73 @@ void FCsData_ECsTestCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> S
 void FCsData_ECsTestCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	FPropertyEditorModule& EditModule = FModuleManager::Get().GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	FDetailsViewArgs DetailsViewArgs(/*bUpdateFromSelection=*/ false, /*bLockable=*/ false, /*bAllowSearch=*/ false, /*InNameAreaSettings=*/ FDetailsViewArgs::HideNameArea, /*bHideSelectionTip=*/ true);
+	FDetailsViewArgs DetailsViewArgs(/*bUpdateFromSelection=*/ false, /*bLockable=*/ false, /*bAllowSearch=*/ true, /*InNameAreaSettings=*/ FDetailsViewArgs::HideNameArea, /*bHideSelectionTip=*/ true);
 	PropertyView = EditModule.CreateDetailView(DetailsViewArgs);
+
+	SAssignNew(DataPathText, STextBlock);
+
+	StructBuilder.AddCustomRow(LOCTEXT("MyStructRow", "MyStruct"))
+		[
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SHorizontalBox)
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(0.0f, 0.0f, 5.0f, 0.0f)
+				[
+					DataHandle->CreatePropertyNameWidget()
+				]
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					DataHandle->CreatePropertyValueWidget()
+				]
+			]
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					DataPathText.ToSharedRef()
+				]
+			]
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SNew(SButton)
+					.OnClicked(this, &FCsData_ECsTestCustomization::OnSaveClicked)
+					.Content()
+					[
+						SNew(STextBlock).Text(FText::FromString("Save"))
+					]
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SNew(SButton)
+					.OnClicked(this, &FCsData_ECsTestCustomization::OnBrowseClicked)
+					.Content()
+					[
+						SNew(STextBlock).Text(FText::FromString("Browse"))
+					]
+				]
+			]
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				PropertyView.ToSharedRef()
+			]
+		];
+
+	return;
 
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
@@ -71,7 +142,7 @@ void FCsData_ECsTestCustomization::CustomizeChildren(TSharedRef<class IPropertyH
 
 				UClass* C	 = RowPtr->Data.LoadSynchronous();
 				UObject* DOb = C ? C->GetDefaultObject() : nullptr;
-
+				
 				if (DOb)
 				{
 					PropertyView->SetObject(DOb);
@@ -85,6 +156,52 @@ void FCsData_ECsTestCustomization::CustomizeChildren(TSharedRef<class IPropertyH
 			}
 		}
 	}
+}
+
+void FCsData_ECsTestCustomization::OnDataChanged()
+{
+	UObject* O = nullptr;
+	DataHandle->GetValue(O);
+
+	PropertyView->SetObject(O);
+
+	if (O)
+	{
+		FString Path = O->GetPathName();
+		int32 Index = INDEX_NONE;
+		Path.FindLastChar('.', Index);
+		Path = Path.Left(Index);
+		DataPathText->SetText(FText::FromString(Path));
+	}
+}
+
+FReply FCsData_ECsTestCustomization::OnSaveClicked()
+{
+	UObject* O = nullptr;
+	DataHandle->GetValue(O);
+
+	if (O)
+	{
+		TArray<UPackage*> PackagesToSave;
+		PackagesToSave.Add(O->GetOutermost());
+		FEditorFileUtils::PromptForCheckoutAndSave(PackagesToSave, /*bCheckDirty=*/ false, /*bPromptToSave=*/ false);
+	}
+	return FReply::Handled();
+}
+
+FReply FCsData_ECsTestCustomization::OnBrowseClicked()
+{
+	UObject* O = nullptr;
+	DataHandle->GetValue(O);
+
+	if (O)
+	{
+		TArray<UObject*> Objects;
+		Objects.Add(O);
+
+		GEditor->SyncBrowserToObjects(Objects);
+	}
+	return FReply::Handled();
 }
 
 #undef LOCTEXT_NAMESPACE

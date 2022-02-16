@@ -1,6 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.IO;
 
 public class CsCore : ModuleRules
 {
@@ -9,6 +10,8 @@ public class CsCore : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
         bUseUnity = System.Environment.ProcessorCount < 64;
+
+        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

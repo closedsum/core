@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
 // Data
 #include "Data/CsData_Projectile.h"
 #include "Data/CsData_ProjectileInterfaceMap.h"
-#pragma once
 
 namespace NCsProjectile
 {
@@ -35,15 +35,7 @@ namespace NCsProjectile
 
 				virtual void GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects) override;
 
-				virtual bool HasEmulatedDataInterfaces(const FString& Context, const int32& Index) const override;
-
-				virtual void CreateEmulatedDataFromDataTable(const FString& Context, const int32& Index, UDataTable* DataTable, const TSoftObjectPtr<UDataTable>& DataTableSoftObject) override;
-
 			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
-
-			protected:
-
-				const TSet<FECsProjectileData>& GetEmulatedDataInterfaces(const FString& Context, const int32& Index);
 			};
 
 #undef DataHandlerType

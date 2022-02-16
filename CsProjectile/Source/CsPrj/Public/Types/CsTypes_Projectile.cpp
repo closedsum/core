@@ -2,15 +2,14 @@
 #include "Types/CsTypes_Projectile.h"
 #include "CsPrj.h"
 
-// Data
-#include "Data/CsPrjGetDataRootSet.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsProjectileSettings.h"
 // Utility
 #include "Utility/CsPrjLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsPrjPopulateEnumMapFromSettings.h"
+// Data
+#include "Data/CsPrjGetDataRootSet.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 
@@ -56,18 +55,11 @@ namespace NCsProjectile
 		if (!DataRootSet)
 			return;
 
-		for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet->Projectiles)
-		{
-			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, Projectiles.Projectiles, Str::Projectile, &NCsProjectile::FLog::Warning);
-		}
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, DataRootSet->Projectiles, Str::Projectile, &NCsProjectile::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsProjectileSettings."), *Context);
@@ -117,10 +109,6 @@ namespace NCsProjectileClass
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsProjectileSettings."), *Context);
@@ -233,3 +221,43 @@ namespace NCsProjectileData
 }
 
 #pragma endregion ProjectileData
+
+// FCsData_ProjectilePtr
+#pragma region
+
+UObject* FCsData_ProjectilePtr::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+{
+	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
+
+	if (!Path.IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data is NOT Valid."), *Context))
+		return nullptr;
+	}
+
+	UObject* O = Data.LoadSynchronous();
+
+	if (!O)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+		return nullptr;
+	}
+
+	UClass* Class = Cast<UClass>(O);
+
+	if (!Class)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s with Class: %s is NOT of type UClass."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName())))
+		return nullptr;
+	}
+
+	UObject* DOb = Class->GetDefaultObject();
+
+	if (!DOb)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object for Class: %s."), *Context, *(Class->GetName())))
+	}
+	return DOb;
+}
+
+#pragma endregion FCsData_ProjectilePtr

@@ -4,6 +4,8 @@
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
+// Utility
+#include "Utility/CsPrjLog.h"
 // DataTable
 #include "Engine/DataTable.h"
 
@@ -75,6 +77,25 @@ namespace NCsProjectile
 }
 
 #pragma endregion Projectile
+
+// FCsData_ECsProjectile
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsData_ECsProjectile
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
+	FECsProjectile Value;
+
+	FCsData_ECsProjectile() :
+		Value()
+	{
+	}
+};
+
+#pragma endregion FCsData_Projectile
 
 // ProjectileClass
 #pragma region
@@ -421,13 +442,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectile"))
 	TSoftClassPtr<UObject> Projectile;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsPrj")
 	UObject* Projectile_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsPrj")
 	UClass* Projectile_Class;
 
 	FCsProjectilePtr() :
@@ -489,6 +510,8 @@ public:
 	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+
+	UObject* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 };
 
 #pragma endregion FCsData_ProjectilePtr
@@ -504,15 +527,15 @@ struct CSPRJ_API FCsProjectileClassEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsProjectile) name for the projectile class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsProjectile) display name for the projectile class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Soft Reference to a projectile of type: ICsProjectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsProjectilePtr Class;
 
 	FCsProjectileClassEntry() :
@@ -536,20 +559,20 @@ struct CSPRJ_API FCsProjectileEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsProjectile) name for the projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsProjectile) display name for the projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Class Type. This is used to get the actual class from a data table
 	    of projectile classes (FCsPrjDataRootSet.ProjectileClasses). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FECsProjectileClass Class;
 
 	/** Soft Reference to a data of type: ICsData_Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsData_ProjectilePtr Data;
 
 	FCsProjectileEntry() :

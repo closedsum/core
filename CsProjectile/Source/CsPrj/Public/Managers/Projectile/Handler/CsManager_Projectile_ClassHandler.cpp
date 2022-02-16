@@ -2,7 +2,6 @@
 #include "Managers/Projectile/Handler/CsManager_Projectile_Classhandler.h"
 
 // Library
-#include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
 
 namespace NCsProjectile
@@ -21,36 +20,27 @@ namespace NCsProjectile
 
 			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsPrjDataRootSet::EMember MemberType;
 
-				OutDataTableSoftObject = DataRootSet.ProjectileClasses;
+				const MemberType Member = MemberType::ProjectileClasses;
 
-				checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().ProjectileClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
-
-				typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-				OutDataTable = DataManagerLibrary::GetDataTableChecked(Context, MyRoot, OutDataTableSoftObject);
+				OutDataTable		   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				OutDataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 			}
 
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UObject* DataRootSetImpl			 = NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsPrjDataRootSet& DataRootSet = NCsProjectile::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsPrjDataRootSet::EMember MemberType;
 
-				for (const FCsProjectileSettings_DataTable_Projectiles& Projectiles : DataRootSet.Projectiles)
-				{
-					TSoftObjectPtr<UDataTable> DataTableSoftObject = Projectiles.Projectiles;
+				const MemberType Member = MemberType::Projectiles;
 
-					checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsPrjDataRootSet().Projectiles is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 
-					typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-					UDataTable* DataTable = DataManagerLibrary::GetDataTableChecked(Context, MyRoot, DataTableSoftObject);
-
-					OutDataTables.Add(DataTable);
-					OutDataTableSoftObjects.Add(DataTableSoftObject);
-				}
+				OutDataTables.Add(DataTable);
+				OutDataTableSoftObjects.Add(DataTableSoftObject);
 			}
 
 			#pragma endregion ClassHandlerType

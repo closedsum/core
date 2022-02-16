@@ -80,9 +80,22 @@ protected:
 	TSharedRef<SWidget> OnGenerateWidget(TSharedPtr<FString> InItem);
 
 	void OnSelectionChanged(TSharedPtr<FString> DisplayNameItem, ESelectInfo::Type SelectInfo);
+
+public:
+	
+	DECLARE_MULTICAST_DELEGATE(FOnSelectionChanged)
+
+	FOnSelectionChanged OnSelectionChanged_Event;
+
+protected:
+
 	void OnComboBoxOpening();
 
+public:
+
 	TSharedPtr<FString> GetSelectedDisplayName() const;
+
+protected:
 
 	virtual void SetEnumWithDisplayName(const FString& DisplayName);
 

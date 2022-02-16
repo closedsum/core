@@ -150,6 +150,8 @@ void FECsEnumStructCustomization::OnSelectionChanged(TSharedPtr<FString> Display
 	if (DisplayNameItem.IsValid())
 	{
 		SetEnumWithDisplayName(*DisplayNameItem);
+
+		OnSelectionChanged_Event.Broadcast();
 	}
 }
 

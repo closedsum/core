@@ -13,19 +13,27 @@
 #include "DetailCustomizations/EnumStruct/ECsProjectileDataCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProjectilePayloadCustomization.h"
 
+#include "DetailCustomizations/Data/CsData_ProjectilePtrCustomization.h"
+
 void FCsProjectileRegisterDetailCustomization::Register()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
+	#define CS_TEMP_REGISTER(StructName) PropertyModule.RegisterCustomPropertyTypeLayout(#StructName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##StructName##Customization::MakeInstance)))
+
 	// EnumStruct
 	{
 		// ECsProjectile
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectile", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileCustomization::MakeInstance));
-		// ECsProjectileCLass
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileClassCustomization::MakeInstance));
+		CS_TEMP_REGISTER(ECsProjectile);
+		// ECsProjectileClass
+		CS_TEMP_REGISTER(ECsProjectileClass);
 		// ECsProjectileData
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectileData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectileDataCustomization::MakeInstance));
+		CS_TEMP_REGISTER(ECsProjectileData);
 		// ECsProjectilePayload
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsProjectilePayload", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsProjectilePayloadCustomization::MakeInstance));
+		CS_TEMP_REGISTER(ECsProjectilePayload);
 	}
+	// CsData_ProjectilePtr
+	CS_TEMP_REGISTER(CsData_ProjectilePtr);
+
+	#undef CS_TEMP_REGISTER
 }

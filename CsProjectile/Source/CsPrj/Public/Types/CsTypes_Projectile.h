@@ -93,6 +93,8 @@ struct CSPRJ_API FCsData_ECsProjectile
 		Value()
 	{
 	}
+
+	FECsProjectile* GetPtr() { return &Value; }
 };
 
 #pragma endregion FCsData_Projectile
@@ -512,6 +514,8 @@ public:
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 
 	UObject* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 };
 
 #pragma endregion FCsData_ProjectilePtr

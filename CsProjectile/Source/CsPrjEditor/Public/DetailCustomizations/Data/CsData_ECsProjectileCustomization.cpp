@@ -86,6 +86,12 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				+ SHorizontalBox::Slot()
 				.AutoWidth()
 				[
+					SNew(STextBlock).Text(FText::FromString("Data Path:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(5.0f, 0.0f, 0.0f, 0.0f)
+				[
 					DataPathText.ToSharedRef()
 				]
 			]
@@ -128,7 +134,6 @@ UObject* FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue()
 
 	const FString& Context = Str::GetDataAssociatedWithValue;
 
-	ValueTypeInterface					  = FECsProjectileCustomization::MakeInstance();
 	FECsProjectileCustomization* Instance = (FECsProjectileCustomization*)(ValueTypeInterface.Get());
 
 	TSharedPtr<FString> DisplayName = Instance->GetSelectedDisplayName();
@@ -143,7 +148,7 @@ UObject* FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue()
 
 		if (FCsProjectileEntry* Row = DataRootSetLibrary::GetSafeDataTableRow<FCsProjectileEntry>(Context, nullptr, MemberType::Projectiles, Enum.GetFName()))
 		{
-			return Row->Data.SafeLoad(Context);
+			return Row->Data.SafeLoadSoftClass(Context);
 		}
 	}
 	return nullptr;

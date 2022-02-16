@@ -260,4 +260,23 @@ UObject* FCsData_ProjectilePtr::SafeLoad(const FString& Context, void(*Log)(cons
 	return DOb;
 }
 
+UObject* FCsData_ProjectilePtr::SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+{
+	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
+
+	if (!Path.IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data is NOT Valid."), *Context))
+		return nullptr;
+	}
+
+	UObject* O = Data.LoadSynchronous();
+
+	if (!O)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+	}
+	return O;
+}
+
 #pragma endregion FCsData_ProjectilePtr

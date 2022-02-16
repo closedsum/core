@@ -14,6 +14,7 @@
 #include "DetailCustomizations/EnumStruct/ECsProjectilePayloadCustomization.h"
 
 #include "DetailCustomizations/Data/CsData_ProjectilePtrCustomization.h"
+#include "DetailCustomizations/Data/CsData_ECsProjectileCustomization.h"
 
 void FCsProjectileRegisterDetailCustomization::Register()
 {
@@ -34,6 +35,8 @@ void FCsProjectileRegisterDetailCustomization::Register()
 	}
 	// CsData_ProjectilePtr
 	CS_TEMP_REGISTER(CsData_ProjectilePtr);
+	// CsData_ECsProjectile
+	CS_TEMP_REGISTER(CsData_ECsProjectile);
 
 	#undef CS_TEMP_REGISTER
 }

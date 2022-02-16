@@ -2,7 +2,6 @@
 #include "Managers/Weapon/Handler/CsManager_Weapon_Classhandler.h"
 
 // Library
-#include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsWpLibrary_DataRootSet.h"
 
 namespace NCsWeapon
@@ -21,36 +20,27 @@ namespace NCsWeapon
 
 			void FClass::GetClassesDataTableChecked(const FString& Context, UDataTable*& OutDataTable, TSoftObjectPtr<UDataTable>& OutDataTableSoftObject)
 			{
-				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsWpDataRootSet& DataRootSet = NCsWeapon::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsWpDataRootSet::EMember MemberType;
 
-				OutDataTableSoftObject = DataRootSet.WeaponClasses;
+				const MemberType Member = MemberType::WeaponClasses;
 
-				checkf(OutDataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsWpDataRootSet().WeaponClasses is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
-
-				typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-				OutDataTable = DataManagerLibrary::GetDataTableChecked(Context, MyRoot, OutDataTableSoftObject);
+				OutDataTable		   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				OutDataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 			}
 
 			void FClass::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				UObject* DataRootSetImpl			= NCsDataRootSet::FLibrary::GetImplChecked(Context, MyRoot);
-				const FCsWpDataRootSet& DataRootSet = NCsWeapon::NDataRootSet::FLibrary::GetChecked(Context, MyRoot);
+				typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
+				typedef FCsWpDataRootSet::EMember MemberType;
 
-				for (const FCsWeaponSettings_DataTable_Weapons& Weapons : DataRootSet.Weapons)
-				{
-					TSoftObjectPtr<UDataTable> DataTableSoftObject = Weapons.Weapons;
+				const MemberType Member = MemberType::Weapons;
 
-					checkf(DataTableSoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: %s.GetCsWpDataRootSet().Weapons is NOT Valid."), *Context, *(DataRootSetImpl->GetName()));
+				UDataTable* DataTable						   = DataRootSetLibrary::GetDataTableChecked(Context, MyRoot, Member);
+				TSoftObjectPtr<UDataTable> DataTableSoftObject = DataRootSetLibrary::GetDataTableSoftObjectChecked(Context, MyRoot, Member);
 
-					typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-					UDataTable* DataTable = DataManagerLibrary::GetDataTableChecked(Context, MyRoot, DataTableSoftObject);
-
-					OutDataTables.Add(DataTable);
-					OutDataTableSoftObjects.Add(DataTableSoftObject);
-				}
+				OutDataTables.Add(DataTable);
+				OutDataTableSoftObjects.Add(DataTableSoftObject);
 			}
 
 			#pragma endregion ClassHandlerType

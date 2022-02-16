@@ -19,36 +19,50 @@
 #include "DetailCustomizations/EnumStruct/ECsWeaponSoundCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponStateCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponDataCustomization.h"
+	// Data
+#include "DetailCustomizations/Data/CsData_ECsWeaponCustomization.h"
+#include "DetailCustomizations/Data/CsData_WeaponPtrCustomization.h"
 
 void FCsWeaponRegisterDetailCustomization::Register()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
+	#define CS_TEMP_REGISTER(StructName) PropertyModule.RegisterCustomPropertyTypeLayout(#StructName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##StructName##Customization::MakeInstance)))
+
 	// EnumStruct
 	{
-		// FECsWeapon
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeapon", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponCustomization::MakeInstance));
-		// FECsWeaponClass
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponClass", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponClassCustomization::MakeInstance));
-		// FECsWeaponAnim
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnim", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimCustomization::MakeInstance));
-		// FECsWeaponAnimBlueprint
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponAnimBlueprint", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponAnimBlueprintCustomization::MakeInstance));
-		// FECsWeaponBlendSpace
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponBlendSpace", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponBlendSpaceCustomization::MakeInstance));
-		// FECsWeaponFireMode
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponFireMode", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponFireModeCustomization::MakeInstance));
-		// FECsWeaponGrip
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponGrip", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponGripCustomization::MakeInstance));
-		// FECsWeaponOwner
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponOwner", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponOwnerCustomization::MakeInstance));
-		// FECsWeaponSlot
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSlot", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSlotCustomization::MakeInstance));
-		// FECsWeaponSound
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponSound", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponSoundCustomization::MakeInstance));
-		// FECsWeaponState
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponState", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponStateCustomization::MakeInstance));
-		// FECsWeaponData
-		PropertyModule.RegisterCustomPropertyTypeLayout("ECsWeaponData", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FECsWeaponDataCustomization::MakeInstance));
+		// ECsWeapon
+		CS_TEMP_REGISTER(ECsWeapon);
+		// ECsWeaponClass
+		CS_TEMP_REGISTER(ECsWeaponClass);
+		// ECsWeaponAnim
+		CS_TEMP_REGISTER(ECsWeaponAnim);
+		// ECsWeaponAnimBlueprint
+		CS_TEMP_REGISTER(ECsWeaponAnimBlueprint);
+		// ECsWeaponBlendSpace
+		CS_TEMP_REGISTER(ECsWeaponBlendSpace);
+		// ECsWeaponFireMode
+		CS_TEMP_REGISTER(ECsWeaponFireMode);
+		// ECsWeaponGrip
+		CS_TEMP_REGISTER(ECsWeaponGrip);
+		// ECsWeaponOwner
+		CS_TEMP_REGISTER(ECsWeaponOwner);
+		// ECsWeaponSlot
+		CS_TEMP_REGISTER(ECsWeaponSlot);
+		// ECsWeaponSound
+		CS_TEMP_REGISTER(ECsWeaponSound);
+		// ECsWeaponState
+		CS_TEMP_REGISTER(ECsWeaponState);
+		// ECsWeaponData
+		CS_TEMP_REGISTER(ECsWeaponData);
 	}
+	// Data
+	{
+		// CsData_ECsWeapon
+		CS_TEMP_REGISTER(CsData_ECsWeapon);
+		// CsData_WeaponPtr
+		CS_TEMP_REGISTER(CsData_WeaponPtr);
+	}
+
+	#undef CS_TEMP_REGISTER
 }

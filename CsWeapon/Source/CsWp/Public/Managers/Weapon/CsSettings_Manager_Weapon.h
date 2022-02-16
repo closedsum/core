@@ -1,7 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Weapon.h"
-#include "CsSettings_Manager_Weapon.generated.h"
 #pragma once
+#include "Types/CsTypes_Weapon.h"
+
+#include "CsSettings_Manager_Weapon.generated.h"
 
 // FCsSettings_Manager_Weapon_PoolParams
 #pragma region

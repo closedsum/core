@@ -94,7 +94,7 @@ struct CSPRJ_API FCsData_ECsProjectile
 	{
 	}
 
-	FECsProjectile* GetPtr() { return &Value; }
+	FORCEINLINE FECsProjectile* GetPtr() { return &Value; }
 };
 
 #pragma endregion FCsData_Projectile

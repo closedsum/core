@@ -1,12 +1,12 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/Data/CsData_ECsProjectileCustomization.h"
+#include "DetailCustomizations/Data/CsData_ECsWeaponCustomization.h"
 #include "CsEditor.h"
 
 // Types
-#include "Types/CsTypes_Projectile.h"
-#include "DetailCustomizations/EnumStruct/ECsProjectileCustomization.h"
+#include "Types/CsTypes_Weapon.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponCustomization.h"
 // Library
-#include "Data/CsPrjLibrary_DataRootSet.h"
+#include "Data/CsWpLibrary_DataRootSet.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
@@ -19,42 +19,42 @@
 // Helper
 #include "FileHelpers.h"
 
-#define LOCTEXT_NAMESPACE "CsData_ECsTestCustomization"
+#define LOCTEXT_NAMESPACE "CsData_ECsWeaponCustomization"
 
 // Cached
 #pragma region
 
-namespace NCsDataECsProjectileCustomization
+namespace NCsDataECsWeaponCustomization
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			const FString OnDataTableBrowseClicked = TEXT("FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked");
-			const FString GetDataAssociatedWithValue = TEXT("FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue");
-			const FString OnValueChanged = TEXT("FCsData_ECsProjectileCustomization::OnValueChanged");
+			const FString OnDataTableBrowseClicked = TEXT("FCsData_ECsWeaponCustomization::OnDataTableBrowseClicked");
+			const FString GetDataAssociatedWithValue = TEXT("FCsData_ECsWeaponCustomization::GetDataAssociatedWithValue");
+			const FString OnValueChanged = TEXT("FCsData_ECsWeaponCustomization::OnValueChanged");
 		}
 	}
 }
 
 #pragma endregion Cached
 
-TSharedRef<IPropertyTypeCustomization> FCsData_ECsProjectileCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> FCsData_ECsWeaponCustomization::MakeInstance()
 {
-	return MakeShareable(new FCsData_ECsProjectileCustomization);
+	return MakeShareable(new FCsData_ECsWeaponCustomization);
 }
 
-void FCsData_ECsProjectileCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FCsData_ECsWeaponCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsProjectile, Value));
+	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsWeapon, Value));
 
-	ValueTypeInterface  = FECsProjectileCustomization::MakeInstance();
+	ValueTypeInterface  = FECsWeaponCustomization::MakeInstance();
 	ValuePropertyWidget = MakeShareable(new FDetailWidgetRow);
 
 	ValueTypeInterface->CustomizeHeader(ValueHandle.ToSharedRef(), ValuePropertyWidget.ToSharedRef().Get(), StructCustomizationUtils);
 	
-	FECsProjectileCustomization* Instance = (FECsProjectileCustomization*)(ValueTypeInterface.Get());
-	Instance->OnSelectionChanged_Event.AddRaw(this, &FCsData_ECsProjectileCustomization::OnValueChanged);
+	FECsWeaponCustomization* Instance = (FECsWeaponCustomization*)(ValueTypeInterface.Get());
+	Instance->OnSelectionChanged_Event.AddRaw(this, &FCsData_ECsWeaponCustomization::OnValueChanged);
 
 	HeaderRow.NameContent()
 		[
@@ -66,7 +66,7 @@ void FCsData_ECsProjectileCustomization::CustomizeHeader(TSharedRef<IPropertyHan
 		];
 }
 
-void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FCsData_ECsWeaponCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	FPropertyEditorModule& EditModule = FModuleManager::Get().GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	FDetailsViewArgs DetailsViewArgs(/*bUpdateFromSelection=*/ false, /*bLockable=*/ false, /*bAllowSearch=*/ true, /*InNameAreaSettings=*/ FDetailsViewArgs::HideNameArea, /*bHideSelectionTip=*/ true);
@@ -102,7 +102,7 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				.Padding(5.0f, 0.0f, 0.0f, 0.0f)
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked)
+					.OnClicked(this, &FCsData_ECsWeaponCustomization::OnDataTableBrowseClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Browse"))
@@ -134,7 +134,7 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				.AutoWidth()
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnDataSaveClicked)
+					.OnClicked(this, &FCsData_ECsWeaponCustomization::OnDataSaveClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Save"))
@@ -144,7 +144,7 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				.AutoWidth()
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnDataBrowseClicked)
+					.OnClicked(this, &FCsData_ECsWeaponCustomization::OnDataBrowseClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Browse"))
@@ -159,16 +159,16 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 		];
 }
 
-FReply FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked()
+FReply FCsData_ECsWeaponCustomization::OnDataTableBrowseClicked()
 {
-	using namespace NCsDataECsProjectileCustomization::NCached;
+	using namespace NCsDataECsWeaponCustomization::NCached;
 
 	const FString& Context = Str::OnDataTableBrowseClicked;
 
-	typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
-	typedef FCsPrjDataRootSet::EMember MemberType;
+	typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
+	typedef FCsWpDataRootSet::EMember MemberType;
 
-	UObject* O = DataRootSetLibrary::GetSafeDataTable(Context, nullptr, MemberType::Projectiles);
+	UObject* O = DataRootSetLibrary::GetSafeDataTable(Context, nullptr, MemberType::Weapons);
 
 	if (O)
 	{
@@ -180,25 +180,25 @@ FReply FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked()
 	return FReply::Handled();
 }
 
-UObject* FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue()
+UObject* FCsData_ECsWeaponCustomization::GetDataAssociatedWithValue()
 {
-	using namespace NCsDataECsProjectileCustomization::NCached;
+	using namespace NCsDataECsWeaponCustomization::NCached;
 
 	const FString& Context = Str::GetDataAssociatedWithValue;
 
-	FECsProjectileCustomization* Instance = (FECsProjectileCustomization*)(ValueTypeInterface.Get());
+	FECsWeaponCustomization* Instance = (FECsWeaponCustomization*)(ValueTypeInterface.Get());
 
 	TSharedPtr<FString> DisplayName = Instance->GetSelectedDisplayName();
 	const FString& DisplayNameRef	= DisplayName.ToSharedRef().Get();
 
-	if (EMCsProjectile::Get().IsValidEnumByDisplayName(DisplayNameRef))
+	if (EMCsWeapon::Get().IsValidEnumByDisplayName(DisplayNameRef))
 	{
-		FECsProjectile Enum = EMCsProjectile::Get().GetEnumByDisplayName(DisplayNameRef);
+		const FECsWeapon& Enum = EMCsWeapon::Get().GetEnumByDisplayName(DisplayNameRef);
 
-		typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
-		typedef FCsPrjDataRootSet::EMember MemberType;
+		typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
+		typedef FCsWpDataRootSet::EMember MemberType;
 
-		if (FCsProjectileEntry* Row = DataRootSetLibrary::GetSafeDataTableRow<FCsProjectileEntry>(Context, nullptr, MemberType::Projectiles, Enum.GetFName()))
+		if (FCsWeaponEntry* Row = DataRootSetLibrary::GetSafeDataTableRow<FCsWeaponEntry>(Context, nullptr, MemberType::Weapons, Enum.GetFName()))
 		{
 			return Row->Data.SafeLoadSoftClass(Context);
 		}
@@ -206,20 +206,20 @@ UObject* FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue()
 	return nullptr;
 }
 
-void FCsData_ECsProjectileCustomization::OnValueChanged()
+void FCsData_ECsWeaponCustomization::OnValueChanged()
 {
-	using namespace NCsDataECsProjectileCustomization::NCached;
+	using namespace NCsDataECsWeaponCustomization::NCached;
 
 	const FString& Context = Str::OnValueChanged;
 
 	// DataTable
 	{
-		typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
-		typedef FCsPrjDataRootSet::EMember MemberType;
+		typedef NCsWeapon::NDataRootSet::FLibrary DataRootSetLibrary;
+		typedef FCsWpDataRootSet::EMember MemberType;
 
 		FString Path;
 
-		if (DataRootSetLibrary::GetSafeDataTablePath(Context, nullptr, MemberType::Projectiles, Path))
+		if (DataRootSetLibrary::GetSafeDataTablePath(Context, nullptr, MemberType::Weapons, Path))
 		{
 			DataTablePathText->SetText(FText::FromString(Path));
 		}
@@ -239,7 +239,7 @@ void FCsData_ECsProjectileCustomization::OnValueChanged()
 	}
 }
 
-FReply FCsData_ECsProjectileCustomization::OnDataSaveClicked()
+FReply FCsData_ECsWeaponCustomization::OnDataSaveClicked()
 {
 	UObject* O = GetDataAssociatedWithValue();
 
@@ -252,7 +252,7 @@ FReply FCsData_ECsProjectileCustomization::OnDataSaveClicked()
 	return FReply::Handled();
 }
 
-FReply FCsData_ECsProjectileCustomization::OnDataBrowseClicked()
+FReply FCsData_ECsWeaponCustomization::OnDataBrowseClicked()
 {
 	UObject* O = GetDataAssociatedWithValue();
 

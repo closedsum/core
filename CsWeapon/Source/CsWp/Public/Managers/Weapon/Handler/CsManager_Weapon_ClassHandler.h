@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
 // Types
 #include "Types/CsTypes_Weapon.h"
 #include "CsWeapon.h"
-#pragma once
 
 namespace NCsWeapon
 {

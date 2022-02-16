@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "DetailCustomizations/Data/CsData_ProjectilePtrCustomization.h"
-#include "CsPrjEditor.h"
+#include "DetailCustomizations/Data/CsData_WeaponPtrCustomization.h"
+#include "CsWpEditor.h"
 
 // Types
-#include "Types/CsTypes_Projectile.h"
+#include "Types/CsTypes_Weapon.h"
 
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
@@ -17,18 +17,18 @@
 #include "FileHelpers.h"
 #include "PropertyEditor/Private/PropertyEditorHelpers.h"
 
-#define LOCTEXT_NAMESPACE "CsData_ProjectilePtrCustomization"
+#define LOCTEXT_NAMESPACE "CsData_WeaponPtrCustomization"
 
-TSharedRef<IPropertyTypeCustomization> FCsData_ProjectilePtrCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> FCsData_WeaponPtrCustomization::MakeInstance()
 {
-	return MakeShareable(new FCsData_ProjectilePtrCustomization);
+	return MakeShareable(new FCsData_WeaponPtrCustomization);
 }
 
-void FCsData_ProjectilePtrCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FCsData_WeaponPtrCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
-	DataHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ProjectilePtr, Data));
+	DataHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_WeaponPtr, Data));
 
-	DataHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateRaw(this, &FCsData_ProjectilePtrCustomization::OnDataChanged));
+	DataHandle->SetOnPropertyValueChanged(FSimpleDelegate::CreateRaw(this, &FCsData_WeaponPtrCustomization::OnDataChanged));
 
 	HeaderRow.NameContent()
 		[
@@ -36,7 +36,7 @@ void FCsData_ProjectilePtrCustomization::CustomizeHeader(TSharedRef<IPropertyHan
 		];
 }
 
-void FCsData_ProjectilePtrCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
+void FCsData_WeaponPtrCustomization::CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& StructBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
 	FPropertyEditorModule& EditModule = FModuleManager::Get().GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	FDetailsViewArgs DetailsViewArgs(/*bUpdateFromSelection=*/ false, /*bLockable=*/ false, /*bAllowSearch=*/ true, /*InNameAreaSettings=*/ FDetailsViewArgs::HideNameArea, /*bHideSelectionTip=*/ true);
@@ -104,7 +104,7 @@ void FCsData_ProjectilePtrCustomization::CustomizeChildren(TSharedRef<class IPro
 				.AutoWidth()
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ProjectilePtrCustomization::OnSaveClicked)
+					.OnClicked(this, &FCsData_WeaponPtrCustomization::OnSaveClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Save"))
@@ -114,7 +114,7 @@ void FCsData_ProjectilePtrCustomization::CustomizeChildren(TSharedRef<class IPro
 				.AutoWidth()
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ProjectilePtrCustomization::OnBrowseClicked)
+					.OnClicked(this, &FCsData_WeaponPtrCustomization::OnBrowseClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Browse"))
@@ -129,7 +129,7 @@ void FCsData_ProjectilePtrCustomization::CustomizeChildren(TSharedRef<class IPro
 		];
 }
 
-void FCsData_ProjectilePtrCustomization::OnDataChanged()
+void FCsData_WeaponPtrCustomization::OnDataChanged()
 {
 	UObject* O = nullptr;
 	DataHandle->GetValue(O);
@@ -146,7 +146,7 @@ void FCsData_ProjectilePtrCustomization::OnDataChanged()
 	}
 }
 
-FReply FCsData_ProjectilePtrCustomization::OnSaveClicked()
+FReply FCsData_WeaponPtrCustomization::OnSaveClicked()
 {
 	UObject* O = nullptr;
 	DataHandle->GetValue(O);
@@ -160,7 +160,7 @@ FReply FCsData_ProjectilePtrCustomization::OnSaveClicked()
 	return FReply::Handled();
 }
 
-FReply FCsData_ProjectilePtrCustomization::OnBrowseClicked()
+FReply FCsData_WeaponPtrCustomization::OnBrowseClicked()
 {
 	UObject* O = nullptr;
 	DataHandle->GetValue(O);

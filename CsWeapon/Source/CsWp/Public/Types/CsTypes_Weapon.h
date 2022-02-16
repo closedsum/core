@@ -45,6 +45,27 @@ namespace NCsWeapon
 
 #pragma endregion Weapon
 
+// FCsData_ECsWeapon
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsData_ECsWeapon
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
+	FECsWeapon Value;
+
+	FCsData_ECsWeapon() :
+		Value()
+	{
+	}
+
+	FORCEINLINE FECsWeapon* GetPtr() { return &Value; }
+};
+
+#pragma endregion FCsData_ECsWeapon
+
 // WeaponClass
 #pragma region
 
@@ -350,16 +371,16 @@ struct CSWP_API FCsWeaponPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "CsWeapon"))
 	TSoftClassPtr<UObject> Weapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp")
 	UObject* Weapon_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp")
 	UClass* Weapon_Class;
 
 	FCsWeaponPtr() :
@@ -389,16 +410,16 @@ struct CSWP_API FCsData_WeaponPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Weapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "CsData_Weapon"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
 	int32 Load_Flags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp")
 	UObject* Data_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsWp")
 	UClass* Data_Class;
 
 	FCsData_WeaponPtr() :
@@ -415,6 +436,10 @@ public:
 	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+
+	UObject* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 };
 
 #pragma endregion FCsData_WeaponPtr
@@ -428,15 +453,15 @@ struct CSWP_API FCsWeaponClassEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsWeapon) name for the weapon class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsWeapon) display name for the weapon class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Soft Reference to a weapon of type: ICsWeapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsWeaponPtr Class;
 
 	FCsWeaponClassEntry() :
@@ -458,20 +483,20 @@ struct CSWP_API FCsWeaponEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsWeapon) name for the weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString Name;
 
 	/** The enum (FECsWeapon) display name for the weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FString DisplayName;
 
 	/** Class Type. This is used to get the actual class from a data table
 		of weapon classes (FCsWpDataRootSet.WeaponClasses). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FECsWeaponClass Class;
 
 	/** Soft Reference to a weapon data of type: ICsData_Weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsData_WeaponPtr Data;
 
 	FCsWeaponEntry() :

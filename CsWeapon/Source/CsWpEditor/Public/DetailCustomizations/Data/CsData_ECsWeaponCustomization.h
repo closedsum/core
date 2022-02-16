@@ -5,7 +5,7 @@
 
 /**
 */
-class CSPRJEDITOR_API FCsData_ECsProjectileCustomization : public IPropertyTypeCustomization
+class CSWPEDITOR_API FCsData_ECsWeaponCustomization : public IPropertyTypeCustomization
 {
 
 public:

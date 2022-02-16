@@ -11,7 +11,6 @@
 // Data
 #include "Data/CsWpGetDataRootSet.h"
 // Utility
-#include "Utility/CsWpLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsWpPopulateEnumMapFromSettings.h"
 // Interface
@@ -41,18 +40,11 @@ namespace NCsWeapon
 		if (!DataRootSet)
 			return;
 
-		for (const FCsWeaponSettings_DataTable_Weapons& Weapons : DataRootSet->Weapons)
-		{
-			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeapon>(Context, ContextRoot, Weapons.Weapons, Str::Weapon, &NCsWeapon::FLog::Warning);
-		}
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeapon>(Context, ContextRoot, DataRootSet->Weapons, Str::Weapon, &NCsWeapon::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsWeaponSettings."), *Context);
@@ -116,10 +108,6 @@ namespace NCsWeaponClass
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsWeaponSettings."), *Context);
@@ -159,10 +147,6 @@ namespace NCsWeaponState
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsWeaponSettings."), *Context);
-
 		EMCsWeaponState::Get().ClearUserDefinedEnums();
 
 		FromEnumSettings(Context);
@@ -182,3 +166,62 @@ namespace NCsWeaponData
 }
 
 #pragma endregion WeaponData
+
+// FCsData_WeaponPtr
+#pragma region
+
+UObject* FCsData_WeaponPtr::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+{
+	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
+
+	if (!Path.IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data is NOT Valid."), *Context))
+		return nullptr;
+	}
+
+	UObject* O = Data.LoadSynchronous();
+
+	if (!O)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+		return nullptr;
+	}
+
+	UClass* Class = Cast<UClass>(O);
+
+	if (!Class)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data: %s with Class: %s is NOT of type UClass."), *Context, *(Data->GetName()), *(Data->GetClass()->GetName())))
+		return nullptr;
+	}
+
+	UObject* DOb = Class->GetDefaultObject();
+
+	if (!DOb)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object for Class: %s."), *Context, *(Class->GetName())))
+	}
+	return DOb;
+}
+
+UObject* FCsData_WeaponPtr::SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+{
+	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
+
+	if (!Path.IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data is NOT Valid."), *Context))
+		return nullptr;
+	}
+
+	UObject* O = Data.LoadSynchronous();
+
+	if (!O)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+	}
+	return O;
+}
+
+#pragma endregion FCsData_WeaponPtr

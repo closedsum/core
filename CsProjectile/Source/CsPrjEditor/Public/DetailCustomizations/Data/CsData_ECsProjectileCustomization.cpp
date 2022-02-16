@@ -30,6 +30,7 @@ namespace NCsDataECsProjectileCustomization
 	{
 		namespace Str
 		{
+			const FString OnDataTableBrowseClicked = TEXT("FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked");
 			const FString GetDataAssociatedWithValue = TEXT("FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue");
 			const FString OnValueChanged = TEXT("FCsData_ECsProjectileCustomization::OnValueChanged");
 		}
@@ -72,12 +73,42 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 	PropertyView = EditModule.CreateDetailView(DetailsViewArgs);
 
 	SAssignNew(DataPathText, STextBlock);
+	SAssignNew(DataTablePathText, STextBlock);
 
 	OnValueChanged();
 
 	StructBuilder.AddCustomRow(LOCTEXT("MyStructRow", "MyStruct"))
 		[
 			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.AutoHeight()
+			[
+				SNew(SHorizontalBox)
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.VAlign(VAlign_Center)
+				[
+					SNew(STextBlock).Text(FText::FromString("Data Table Path:"))
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(5.0f, 0.0f, 0.0f, 0.0f)
+				.VAlign(VAlign_Center)
+				[
+					DataTablePathText.ToSharedRef()
+				]
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(5.0f, 0.0f, 0.0f, 0.0f)
+				[
+					SNew(SButton)
+					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked)
+					.Content()
+					[
+						SNew(STextBlock).Text(FText::FromString("Browse"))
+					]
+				]
+			]
 			+SVerticalBox::Slot()
 			.AutoHeight()
 			.Padding(0.0f, 0.0f, 0.0f, 2.0f)
@@ -103,7 +134,7 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				.AutoWidth()
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnSaveClicked)
+					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnDataSaveClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Save"))
@@ -113,7 +144,7 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				.AutoWidth()
 				[
 					SNew(SButton)
-					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnBrowseClicked)
+					.OnClicked(this, &FCsData_ECsProjectileCustomization::OnDataBrowseClicked)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Browse"))
@@ -126,6 +157,27 @@ void FCsData_ECsProjectileCustomization::CustomizeChildren(TSharedRef<class IPro
 				PropertyView.ToSharedRef()
 			]
 		];
+}
+
+FReply FCsData_ECsProjectileCustomization::OnDataTableBrowseClicked()
+{
+	using namespace NCsDataECsProjectileCustomization::NCached;
+
+	const FString& Context = Str::OnDataTableBrowseClicked;
+
+	typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
+	typedef FCsPrjDataRootSet::EMember MemberType;
+
+	UObject* O = DataRootSetLibrary::GetSafeDataTable(Context, nullptr, MemberType::Projectiles);
+
+	if (O)
+	{
+		TArray<UObject*> Objects;
+		Objects.Add(O);
+
+		GEditor->SyncBrowserToObjects(Objects);
+	}
+	return FReply::Handled();
 }
 
 UObject* FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue()
@@ -156,6 +208,23 @@ UObject* FCsData_ECsProjectileCustomization::GetDataAssociatedWithValue()
 
 void FCsData_ECsProjectileCustomization::OnValueChanged()
 {
+	using namespace NCsDataECsProjectileCustomization::NCached;
+
+	const FString& Context = Str::OnValueChanged;
+
+	// DataTable
+	{
+		typedef NCsProjectile::NDataRootSet::FLibrary DataRootSetLibrary;
+		typedef FCsPrjDataRootSet::EMember MemberType;
+
+		FString Path;
+
+		if (DataRootSetLibrary::GetSafeDataTablePath(Context, nullptr, MemberType::Projectiles, Path))
+		{
+			DataTablePathText->SetText(FText::FromString(Path));
+		}
+	}
+	// Data
 	UObject* O = GetDataAssociatedWithValue();
 
 	PropertyView->SetObject(O);
@@ -170,7 +239,7 @@ void FCsData_ECsProjectileCustomization::OnValueChanged()
 	}
 }
 
-FReply FCsData_ECsProjectileCustomization::OnSaveClicked()
+FReply FCsData_ECsProjectileCustomization::OnDataSaveClicked()
 {
 	UObject* O = GetDataAssociatedWithValue();
 
@@ -183,7 +252,7 @@ FReply FCsData_ECsProjectileCustomization::OnSaveClicked()
 	return FReply::Handled();
 }
 
-FReply FCsData_ECsProjectileCustomization::OnBrowseClicked()
+FReply FCsData_ECsProjectileCustomization::OnDataBrowseClicked()
 {
 	UObject* O = GetDataAssociatedWithValue();
 

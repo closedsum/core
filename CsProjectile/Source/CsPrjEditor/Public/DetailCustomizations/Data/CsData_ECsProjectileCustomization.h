@@ -22,12 +22,16 @@ protected:
 	TSharedPtr<IPropertyTypeCustomization> ValueTypeInterface;
 	TSharedPtr<FDetailWidgetRow> ValuePropertyWidget;
 
+	TSharedPtr<STextBlock> DataTablePathText;
+	
+	FReply OnDataTableBrowseClicked();
+
 	TSharedPtr<STextBlock> DataPathText;
 
 	UObject* GetDataAssociatedWithValue();
 	void OnValueChanged();
-	FReply OnSaveClicked();
-	FReply OnBrowseClicked();
+	FReply OnDataSaveClicked();
+	FReply OnDataBrowseClicked();
 
 	/** Property viewing widget */
 	TSharedPtr<class IDetailsView> PropertyView;

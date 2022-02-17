@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/Data/CsData_ECsProjectileCustomization.h"
-#include "CsEditor.h"
+#include "CsPrjEditor.h"
 
 // Types
 #include "Types/CsTypes_Projectile.h"

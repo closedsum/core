@@ -2,9 +2,7 @@
 #include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_Datahandler.h"
 
 // Library
-#include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsSeLibrary_DataRootSet.h"
-#include "Library/CsLibrary_Property.h"
 
 namespace NCsStatusEffect
 {
@@ -21,7 +19,7 @@ namespace NCsStatusEffect
 
 			void FData::GetDatasDataTablesChecked(const FString& Context, TArray<UDataTable*>& OutDataTables, TArray<TSoftObjectPtr<UDataTable>>& OutDataTableSoftObjects)
 			{
-				typedef NCsSeDataRootSet::FLibrary DataRootSetLibrary;
+				typedef NCsStatusEffect::NDataRootSet::FLibrary DataRootSetLibrary;
 				typedef FCsSeDataRootSet::EMember MemberType;
 
 				const MemberType Member = MemberType::StatusEffects;

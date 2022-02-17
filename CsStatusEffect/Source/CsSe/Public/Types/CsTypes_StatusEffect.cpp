@@ -53,7 +53,7 @@ namespace NCsStatusEffectEvent
 
 #pragma endregion StatusEffectEvent
 
-// FCData_CharacterPtr
+// FCsData_StatusEffectPtr
 #pragma region
 
 namespace NCDataStatusEffectPtr
@@ -153,4 +153,23 @@ DataType* FCsData_StatusEffectPtr::SafeLoad()
 
 #undef DataType
 
-#pragma endregion FCData_CharacterPtr
+UObject* FCsData_StatusEffectPtr::SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) /*=&NCsStatusEffect::FLog::Warning*/)
+{
+	const FSoftObjectPath& Path = Data.ToSoftObjectPath();
+
+	if (!Path.IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data is NOT Valid."), *Context))
+		return nullptr;
+	}
+
+	UObject* O = Data.LoadSynchronous();
+
+	if (!O)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to load Data at Path: %s."), *Context, *(Path.ToString())))
+	}
+	return O;
+}
+
+#pragma endregion FCsData_StatusEffectPtr

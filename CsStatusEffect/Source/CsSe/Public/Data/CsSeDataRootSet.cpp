@@ -58,6 +58,23 @@ const TSoftObjectPtr<UDataTable>& FCsSeDataRootSet::GetDataTableSoftObjectChecke
 	return StatusEffects;
 }
 
+bool FCsSeDataRootSet::GetSafeDataTableSoftObject(const FString& Context, const EMember& MemberType, TSoftObjectPtr<UDataTable>& OutSoftObject, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	#define CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Member) if (MemberType == EMember::Member) \
+		{ \
+			OutSoftObject = Member; \
+			return true; \
+		}
+
+	// StatusEffects
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(StatusEffects)
+
+	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
+
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get DataTable SoftObject for MemberType."), *Context));
+	return false;
+}
+
 UDataTable* FCsSeDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
 	using namespace NCsSeDataRootSet::NCached;

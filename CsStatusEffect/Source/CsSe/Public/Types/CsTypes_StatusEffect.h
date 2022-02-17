@@ -21,7 +21,7 @@ struct CSSE_API FECsStatusEffect : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
-		CS_ENUM_UINT8_BODY(FECsStatusEffect)
+	CS_ENUM_UINT8_BODY(FECsStatusEffect)
 };
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsStatusEffect)
@@ -44,6 +44,27 @@ namespace NCsStatusEffect
 }
 
 #pragma endregion StatusEffect
+
+// FCsData_ECsStatusEffect
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSSE_API FCsData_ECsStatusEffect
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsSe")
+	FECsStatusEffect Value;
+
+	FCsData_ECsStatusEffect() :
+		Value()
+	{
+	}
+
+	FORCEINLINE FECsStatusEffect* GetPtr() { return &Value; }
+};
+
+#pragma endregion FCsData_ECsStatusEffect
 
 // StatusEffectImpl
 #pragma region
@@ -159,9 +180,7 @@ public:
 
 #undef DataType
 
-private:
-
-	FORCEINLINE void __Nothing() const {}
+	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
 };
 
 #pragma endregion FCsData_StatusEffectPtr

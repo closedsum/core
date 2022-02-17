@@ -1,5 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Log
+#include "Utility/CsSeLog.h"
+// Engine
 #include "Engine/DataTable.h"
 
 #include "CsSeDataRootSet.generated.h"
@@ -28,9 +31,11 @@ public:
 		StatusEffects
 	};
 
-		bool IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
+	bool IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 
 	const TSoftObjectPtr<UDataTable>& GetDataTableSoftObjectChecked(const FString& Context, const EMember& MemberType) const;
+
+	bool GetSafeDataTableSoftObject(const FString& Context, const EMember& MemberType, TSoftObjectPtr<UDataTable>& OutSoftObject, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning) const;
 
 	UDataTable* GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 

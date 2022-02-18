@@ -3,6 +3,8 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Settings
+#include "PhysicsEngine/PhysicsSettings.h"
 // Object
 #include "UniqueObject/CsUniqueObject.h"
 // Components
@@ -128,6 +130,10 @@ namespace NCsTrace
 			{
 				checkf(ObjectParams.IsValid(), TEXT("%s: ObjectParams is NOT Valid."), *Context);
 			}
+			if (Params.bReturnFaceIndex)
+			{
+				checkf(!UPhysicsSettings::Get()->bSuppressFaceRemapTable, TEXT("%s: Returning Face Index is DISABLED globally."));
+			}
 			return true;
 		}
 
@@ -162,6 +168,14 @@ namespace NCsTrace
 				if (!ObjectParams.IsValid())
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ObjectParams is NOT Valid."), *Context));
+					return false;
+				}
+			}
+			if (Params.bReturnFaceIndex)
+			{
+				if (UPhysicsSettings::Get()->bSuppressFaceRemapTable)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Returning Face Index is DISABLED globally.")));
 					return false;
 				}
 			}

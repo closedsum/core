@@ -306,6 +306,20 @@ public:
 	}
 
 	/**
+	* Get the Hard reference to the Material at Index of type: UMaterialInterface.
+	*
+	* @param Context	The calling context.
+	* @param Index
+	* return			Material
+	*/
+	FORCEINLINE UMaterialInterface* GetChecked(const FString& Context, const int32& Index) const
+	{
+		checkf(Index >= 0 && Index < Materials_Internal.Num(), TEXT("%s: Index: %d is NOT in the range [0, %d)."), *Context, Index, Materials_Internal.Num());
+
+		return GetChecked(Context)[Index];
+	}
+
+	/**
 	* Safely get the Hard reference to the array of Materials of type: UMaterialInterface.
 	*
 	* @param Context	The calling context.

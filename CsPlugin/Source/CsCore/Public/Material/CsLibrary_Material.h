@@ -11,6 +11,8 @@ class USkeletalMesh;
 class UPrimitiveComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
+class UMaterial;
+class UMaterialInstance;
 class UMaterialInterface;
 class UMaterialInstanceConstant;
 class UMaterialInstanceDynamic;

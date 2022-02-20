@@ -55,5 +55,18 @@ namespace NCsRenderTarget
 
 			UKismetRenderingLibrary::DrawMaterialToRenderTarget(WorldContext, TextureRenderTarget, Material);
 		}
+
+		void FLibrary::ClearChecked(const FString& Context, UObject* WorldContext, UTextureRenderTarget2D* TextureRenderTarget, const FLinearColor& ClearColor /*=FLinearColor(0, 0, 0, 1)*/)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget)
+
+			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget->Resource)
+
+			UKismetRenderingLibrary::ClearRenderTarget2D(WorldContext, TextureRenderTarget, ClearColor);
+		}
 	}
 }

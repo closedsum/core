@@ -36,6 +36,16 @@ namespace NCsRenderTarget
 			* @param Material
 			*/
 			static void DrawMaterialToRenderTargetChecked(const FString& Context, UObject* WorldContext, UTextureRenderTarget2D* TextureRenderTarget, UMaterialInterface* Material);
+
+			/**
+			* Clears the specified TextureRenderTarget with the given ClearColor.
+			* 
+			* @param Context				The calling context.
+			* @param WorldContext
+			* @param TextureRenderTarget
+			* @param ClearColor				(optional) Default is Black.
+			*/
+			static void ClearChecked(const FString& Context, UObject* WorldContext, UTextureRenderTarget2D* TextureRenderTarget, const FLinearColor& ClearColor = FLinearColor(0, 0, 0, 1));
 		};
 	}
 }

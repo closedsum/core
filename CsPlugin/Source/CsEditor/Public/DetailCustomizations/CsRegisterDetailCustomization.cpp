@@ -40,15 +40,17 @@
 #include "DetailCustomizations/EnumStruct/Team/ECsTeamCustomization.h"
 	// Data
 #include "DetailCustomizations/Data/CsData_ECsTestCustomization.h"
+	// Asset
+#include "DetailCustomizations/Asset/CsMaterialInterfaceCustomization.h"
 
 void FCsRegisterDetailCustomization::Register()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
+	#define CS_TEMP_REGISTER(StructName) PropertyModule.RegisterCustomPropertyTypeLayout(#StructName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##StructName##Customization::MakeInstance)))
+
 	// EnumStruct
 	{
-#define CS_TEMP_REGISTER(EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(#EnumName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##EnumName##Customization::MakeInstance)))
-
 		// CVar
 		CS_TEMP_REGISTER(ECsCVarLog);
 		CS_TEMP_REGISTER(ECsCVarToggle);
@@ -87,11 +89,16 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsSenseActorType);
 		// Team
 		CS_TEMP_REGISTER(ECsTeam);
-
-#undef CS_TEMP_REGISTER
 	}
 	// Data
 	{
 		PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ECsTest", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(FCsData_ECsTestCustomization::MakeInstance)));
 	}
+	// Asset
+	{
+		// CsMaterialInterface
+		CS_TEMP_REGISTER(CsMaterialInterface);
+	}
+
+	#undef CS_TEMP_REGISTER
 }

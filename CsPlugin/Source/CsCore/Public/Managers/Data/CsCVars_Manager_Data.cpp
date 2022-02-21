@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsCVars_Manager_Data.h"
+#include "Managers/Data/CsCVars_Manager_Data.h"
 
 // Managers
 #pragma region

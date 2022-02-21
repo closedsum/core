@@ -17,12 +17,26 @@
     {
       "Name": "CsCore",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms": [
+        "Win64",
+        "Win32",
+        "Mac",
+        "Linux",
+        "Android",
+        "IOS"
+      ]
     },
     {
       "Name": "CsEditor",
       "Type": "Editor",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "Default",
+      "WhitelistPlatforms": [
+        "Win64",
+        "Win32",
+        "Mac",
+        "Linux"
+      ]
     }
   ],
   "Plugins": [

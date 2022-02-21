@@ -12,6 +12,7 @@ public class CsCore : ModuleRules
         bUseUnity = System.Environment.ProcessorCount < 64;
 
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
+        PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

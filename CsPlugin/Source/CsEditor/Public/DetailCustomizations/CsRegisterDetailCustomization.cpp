@@ -41,7 +41,11 @@
 	// Data
 #include "DetailCustomizations/Data/CsData_ECsTestCustomization.h"
 	// Asset
+#include "DetailCustomizations/Asset/CsTextureCustomization.h"
 #include "DetailCustomizations/Asset/CsMaterialInterfaceCustomization.h"
+#include "DetailCustomizations/Asset/CsTArrayMaterialInterfaceCustomization.h"
+#include "DetailCustomizations/Asset/CsStaticMeshCustomization.h"
+#include "DetailCustomizations/Asset/CsSkeletalMeshCustomization.h"
 
 void FCsRegisterDetailCustomization::Register()
 {
@@ -92,12 +96,21 @@ void FCsRegisterDetailCustomization::Register()
 	}
 	// Data
 	{
-		PropertyModule.RegisterCustomPropertyTypeLayout("CsData_ECsTest", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(FCsData_ECsTestCustomization::MakeInstance)));
+		// CsData_ECsTest
+		CS_TEMP_REGISTER(CsData_ECsTest);
 	}
 	// Asset
 	{
+		// CsTexture
+		CS_TEMP_REGISTER(CsTexture);
 		// CsMaterialInterface
 		CS_TEMP_REGISTER(CsMaterialInterface);
+		// CsTArrayMaterialInterface
+		CS_TEMP_REGISTER(CsTArrayMaterialInterface);
+		// CsStaticMesh
+		CS_TEMP_REGISTER(CsStaticMesh);
+		// CsSkeletalMesh
+		CS_TEMP_REGISTER(CsSkeletalMesh);
 	}
 
 	#undef CS_TEMP_REGISTER

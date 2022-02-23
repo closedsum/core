@@ -121,6 +121,16 @@ namespace NCsSkin
 				{
 					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScaleSkinData->GetUniformScale(), 0.0f)
 				}
+
+				// UniformRangeScale
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange UniformRangeScaleSkinDataType;
+
+				if (const UniformRangeScaleSkinDataType* UniformRangeScaleSkinData = GetSafeInterfaceChecked<UniformRangeScaleSkinDataType>(Context, Skin))
+				{
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformRangeScaleSkinData->GetMinUniformScale(), 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformRangeScaleSkinData->GetMaxUniformScale(), 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(UniformRangeScaleSkinData->GetMaxUniformScale(), UniformRangeScaleSkinData->GetMinUniformScale())
+				}
 				return true;
 			}
 
@@ -201,6 +211,16 @@ namespace NCsSkin
 				if (const UniformScaleSkinDataType* UniformScaleSkinData = GetSafeInterfaceChecked<UniformScaleSkinDataType>(Context, Skin))
 				{
 					CS_IS_FLOAT_GREATER_THAN(UniformScaleSkinData->GetUniformScale(), 0.0f)
+				}
+
+				// UniformRangeScale
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange UniformRangeScaleSkinDataType;
+
+				if (const UniformRangeScaleSkinDataType* UniformRangeScaleSkinData = GetSafeInterfaceChecked<UniformRangeScaleSkinDataType>(Context, Skin))
+				{
+					CS_IS_FLOAT_GREATER_THAN(UniformRangeScaleSkinData->GetMinUniformScale(), 0.0f)
+					CS_IS_FLOAT_GREATER_THAN(UniformRangeScaleSkinData->GetMaxUniformScale(), 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(UniformRangeScaleSkinData->GetMaxUniformScale(), UniformRangeScaleSkinData->GetMinUniformScale())
 				}
 				return true;
 			}

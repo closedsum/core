@@ -46,6 +46,9 @@
 #include "DetailCustomizations/Asset/CsTArrayMaterialInterfaceCustomization.h"
 #include "DetailCustomizations/Asset/CsStaticMeshCustomization.h"
 #include "DetailCustomizations/Asset/CsSkeletalMeshCustomization.h"
+#include "DetailCustomizations/Asset/CsAnimSequenceCustomization.h"
+#include "DetailCustomizations/Asset/CsAnimMontageCustomization.h"
+#include "DetailCustomizations/Asset/CsAnimBlueprintCustomization.h"
 
 void FCsRegisterDetailCustomization::Register()
 {
@@ -111,6 +114,12 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(CsStaticMesh);
 		// CsSkeletalMesh
 		CS_TEMP_REGISTER(CsSkeletalMesh);
+		// CsAnimSequence
+		CS_TEMP_REGISTER(CsAnimSequence);
+		// CsAnimMontage
+		CS_TEMP_REGISTER(CsAnimMontage);
+		// CsAnimBlueprint
+		CS_TEMP_REGISTER(CsAnimBlueprint);
 	}
 
 	#undef CS_TEMP_REGISTER

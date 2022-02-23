@@ -5,7 +5,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Managers/Input/CsSettings_Input.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -44,10 +44,9 @@ bool UCsScriptLibrary_Settings_Input::DoesMappingExist(const FString& Context, c
 
 	CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	const FCsSettings_Input& InputSettings = FCsSettings_Input::Get();
 
-	FCsInputActionSet* SetPtr = InputSettings.InputActionMappings.Find(Map);
+	const FCsInputActionSet* SetPtr = InputSettings.InputActionMappings.Find(Map);
 
 	return SetPtr != nullptr;
 }
@@ -64,8 +63,7 @@ bool UCsScriptLibrary_Settings_Input::DoesActionByMapExist(const FString& Contex
 
 	CS_IS_ENUM_STRUCT_VALID(EMCsInputAction, FECsInputAction, Action)
 
-	UCsDeveloperSettings* Settings   = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();
 
 	if (FCsInputActionSet* SetPtr = InputSettings.InputActionMappings.Find(Map))
 	{
@@ -86,8 +84,7 @@ void UCsScriptLibrary_Settings_Input::AddActionToMap(const FString& Context, con
 
 	CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsInputAction, FECsInputAction, Action)
 
-	UCsDeveloperSettings* Settings	 = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();
 
 	FCsInputActionSet* SetPtr = InputSettings.InputActionMappings.Find(Map);
 
@@ -118,8 +115,7 @@ void UCsScriptLibrary_Settings_Input::RemoveActionFromMap(const FString& Context
 
 	CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsInputAction, FECsInputAction, Action)
 
-	UCsDeveloperSettings* Settings	 = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();
 
 	if (FCsInputActionSet* SetPtr = InputSettings.InputActionMappings.Find(Map))
 	{
@@ -137,8 +133,7 @@ void UCsScriptLibrary_Settings_Input::ClearMapping(const FString& Context, const
 
 	CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsInputActionMap, FECsInputActionMap, Map)
 
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();
 
 	InputSettings.InputActionMappings.Remove(Map);
 }

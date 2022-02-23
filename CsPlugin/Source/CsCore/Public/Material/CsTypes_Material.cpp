@@ -65,6 +65,28 @@ bool FCsMaterialParameterFloatRange::IsValid(const FString& Context, void(*Log)(
 	return true;
 }
 
+namespace NCsMaterial
+{
+	namespace NParameter
+	{
+		namespace NFloat
+		{
+			bool FRange::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_NAME_NONE_CHECKED(GetName())
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMax(), GetMin())
+				return true;
+			}
+			bool FRange::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+			{
+				CS_IS_NAME_NONE(GetName())
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMax(), GetMin())
+				return true;
+			}
+		}
+	}
+}
+
 #pragma endregion FCsMaterialParameterFloatRange
 
 // FCsMaterialParameterColor

@@ -635,9 +635,28 @@ namespace NCsMaterial
 			{
 			private:
 
+				CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
+				CS_DECLARE_MEMBER_WITH_PROXY(Min, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(Max, float)
+
 			public:
 
-				
+				FRange() :
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Min, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Max, 0.0f)
+				{
+					CS_CTOR_SET_MEMBER_PROXY(Name);
+					CS_CTOR_SET_MEMBER_PROXY(Min);
+					CS_CTOR_SET_MEMBER_PROXY(Max);
+				}
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Min, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Max, float)
+	
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 			};
 		}
 	}

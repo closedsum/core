@@ -31,6 +31,8 @@ public:
 		TaskPayloadSize(4)
 	{
 	}
+
+	static const FCsSettings_Manager_Runnable& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Runnable

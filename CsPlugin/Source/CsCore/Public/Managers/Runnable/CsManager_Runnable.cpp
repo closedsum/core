@@ -8,7 +8,7 @@
 #include "Library/CsLibrary_Valid.h"
 #include "Managers/Runnable/CsLibrary_Manager_Runnable.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Managers/Runnable/CsSettings_Manager_Runnable.h"
 // Task
 #include "Managers/Runnable/Task/CsRunnableTask.h"
 // Runnable
@@ -212,15 +212,15 @@ UCsManager_Runnable::UCsManager_Runnable(const FObjectInitializer& ObjectInitial
 
 void UCsManager_Runnable::Initialize()
 {
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	const FCsSettings_Manager_Runnable& Settings = FCsSettings_Manager_Runnable::Get();
 
 	// Delegate
 	{
 		// Delegate
 		{
-			checkf(Settings->Manager_Runnable.RunnablePoolSize >= 1, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.RunnablePoolSize should be >= 1."));
+			checkf(Settings.RunnablePoolSize >= 1, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.RunnablePoolSize should be >= 1."));
 
-			Manager_Internal.CreatePool(Settings->Manager_Runnable.RunnablePoolSize);
+			Manager_Internal.CreatePool(Settings.RunnablePoolSize);
 
 			typedef NCsRunnable::FResource ContainerType;
 
@@ -235,9 +235,9 @@ void UCsManager_Runnable::Initialize()
 		}
 		// Payload
 		{
-			checkf(Settings->Manager_Runnable.RunnablePayloadSize >= 1, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.RunnablePayloadSize should be >= 1."));
+			checkf(Settings.RunnablePayloadSize >= 1, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.RunnablePayloadSize should be >= 1."));
 
-			Manager_Payload.CreatePool(Settings->Manager_Runnable.RunnablePayloadSize);
+			Manager_Payload.CreatePool(Settings.RunnablePayloadSize);
 
 			typedef NCsRunnable::NPayload::FResource PayloadContainerType;
 			typedef NCsRunnable::NPayload::FImpl PayloadType;
@@ -256,9 +256,9 @@ void UCsManager_Runnable::Initialize()
 	{
 		// Info
 		{
-			checkf(Settings->Manager_Runnable.TaskPoolSize >= 4, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.TaskPoolSize should be >= 4."));
+			checkf(Settings.TaskPoolSize >= 4, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.TaskPoolSize should be >= 4."));
 
-			Manager_TaskInfo.CreatePool(Settings->Manager_Runnable.TaskPoolSize);
+			Manager_TaskInfo.CreatePool(Settings.TaskPoolSize);
 
 			typedef NCsRunnable::NTask::NInfo::FResource InfoContainerType;
 			typedef NCsRunnable::NTask::NInfo::FInfo InfoType;
@@ -274,9 +274,9 @@ void UCsManager_Runnable::Initialize()
 		}
 		// Payload
 		{
-			checkf(Settings->Manager_Runnable.TaskPayloadSize >= 4, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.TaskPayloadSize should be >= 4."));
+			checkf(Settings.TaskPayloadSize >= 4, TEXT("UCsManager_Runnable::Initialize: UCsDeveloperSettings.Manager_Runnable.TaskPayloadSize should be >= 4."));
 
-			Manager_TaskPayload.CreatePool(Settings->Manager_Runnable.TaskPayloadSize);
+			Manager_TaskPayload.CreatePool(Settings.TaskPayloadSize);
 
 			typedef NCsRunnable::NTask::NPayload::FResource PayloadContainerType;
 			typedef NCsRunnable::NTask::NPayload::FImpl PayloadType;

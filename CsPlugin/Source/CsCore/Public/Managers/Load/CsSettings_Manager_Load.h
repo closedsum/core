@@ -19,6 +19,8 @@ public:
 		PoolSize(64)
 	{
 	}
+
+	static const FCsSettings_Manager_Load& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Load

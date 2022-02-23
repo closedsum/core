@@ -12,6 +12,7 @@
 #include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 #include "Skin/Data/Visual/Scale/CsData_Skin_VisualUniformScale.h"
+#include "Skin/Data/Visual/StaticMesh/Attachment/CsData_Skin_VisualStaticMesh_Attachment.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -349,6 +350,27 @@ namespace NCsSkin
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface: %s"), *Context, *PrintNameAndClass(Skin), *(StaticMeshSkinType::Name.ToString())));
 				}
 			}
+
+			// Attachment
+		#pragma region
+
+			void FLibrary::SetAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments)
+			{
+				typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment AttachmentSkinType;
+				typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+				const AttachmentSkinType* AttachmentSkin  = GetInterfaceChecked<AttachmentSkinType>(Context, Skin);
+				const TArray<AttachmentType>& Attachments = AttachmentSkin->GetStaticMeshAttachments();
+
+				OutAttachments.Reset(FMath::Max(OutAttachments.Max(), Attachments.Num()));
+
+				for (const AttachmentType& Attachment : Attachments)
+				{
+					OutAttachments.Add(Attachment.AttachChecked(Context, WorldContext, Component));
+				}
+			}
+
+		#pragma endregion Attachment
 
 		#pragma endregion Static Mesh
 

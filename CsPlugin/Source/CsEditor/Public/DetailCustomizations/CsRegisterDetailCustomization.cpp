@@ -105,8 +105,8 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(CsTexture);
 		// CsMaterialInterface
 		CS_TEMP_REGISTER(CsMaterialInterface);
-		// CsTArrayMaterialInterface
-		CS_TEMP_REGISTER(CsTArrayMaterialInterface);
+		// CsTArrayMaterialInterface - NOTE: TODO: Eventually Fix
+		//CS_TEMP_REGISTER(CsTArrayMaterialInterface);
 		// CsStaticMesh
 		CS_TEMP_REGISTER(CsStaticMesh);
 		// CsSkeletalMesh

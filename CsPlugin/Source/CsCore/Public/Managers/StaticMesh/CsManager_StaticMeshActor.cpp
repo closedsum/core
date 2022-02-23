@@ -9,6 +9,7 @@
 #include "Library/CsLibrary_Property.h"
 #include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -36,7 +37,6 @@ namespace NCsManagerStaticMeshActor
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_StaticMeshActor, Spawn);
@@ -105,21 +105,24 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::Get(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerStaticMeshActor(InRoot)->GetManager_StaticMeshActor();
 }
 
-#endif // #if WITH_EDITOR
-
-/*static*/ bool UCsManager_StaticMeshActor::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-#if WITH_EDITOR
-	return Get_GetManagerStaticMeshActor(InRoot)->GetManager_StaticMeshActor() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
+	if (ICsGetManagerStaticMeshActor* GetManagerStaticMeshActor = GetSafe_GetManagerStaticMeshActor(Context, InRoot, Log))
+		return GetManagerStaticMeshActor->GetManager_StaticMeshActor();
+	return nullptr;
 }
+
+/*static*/ bool UCsManager_StaticMeshActor::IsValid(const UObject* InRoot /*=nullptr*/)
+{
+	return Get_GetManagerStaticMeshActor(InRoot)->GetManager_StaticMeshActor() != nullptr;
+}
+
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_StaticMeshActor::Init(UObject* InRoot, TSubclassOf<UCsManager_StaticMeshActor> ManagerStaticMeshActorClass, UObject* InOuter /*=nullptr*/)
 {
@@ -182,20 +185,16 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 
 #if WITH_EDITOR
 
-/*static*/ bool UCsManager_StaticMeshActor::HasShutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_StaticMeshActor::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerStaticMeshActor(InRoot)->GetManager_StaticMeshActor() == nullptr;
 }
 
-#endif // #if WITH_EDITOR
-
-#if WITH_EDITOR
-
-/*static*/ ICsGetManagerStaticMeshActor* UCsManager_StaticMeshActor::Get_GetManagerStaticMeshActor(UObject* InRoot)
+/*static*/ ICsGetManagerStaticMeshActor* UCsManager_StaticMeshActor::Get_GetManagerStaticMeshActor(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_StaticMeshActor::Get_GetManagerStaticMeshActor: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_StaticMeshActor::Get_GetManagerStaticMeshActor: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -210,19 +209,15 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 	return GetManagerStaticMeshActor;
 }
 
-/*static*/ ICsGetManagerStaticMeshActor* UCsManager_StaticMeshActor::GetSafe_GetManagerStaticMeshActor(UObject* Object)
+/*static*/ ICsGetManagerStaticMeshActor* UCsManager_StaticMeshActor::GetSafe_GetManagerStaticMeshActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_StaticMeshActor::GetSafe_GetManagerStaticMeshActor: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_StaticMeshActor::GetSafe_GetManagerStaticMeshActor: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -230,36 +225,10 @@ UCsManager_StaticMeshActor::UCsManager_StaticMeshActor(const FObjectInitializer&
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_StaticMeshActor::GetSafe_GetManagerStaticMeshActor: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerStaticMeshActor>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerStaticMeshActor* GetManagerStaticMeshActor = GetSafe_GetManagerStaticMeshActor(Object))
-		return GetManagerStaticMeshActor->GetManager_StaticMeshActor();
-	return nullptr;
-}
-
-/*static*/ UCsManager_StaticMeshActor* UCsManager_StaticMeshActor::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerStaticMeshActor::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsStaticMeshActor::NManager::FLibrary StaticMeshManagerLibrary;
-
-	if (UObject* ContextRoot = StaticMeshManagerLibrary::GetSafe(Context, WorldContextObject))
-	{
-		if (UCsManager_StaticMeshActor* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager FX Actor of type UCsManager_StaticMeshActor from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

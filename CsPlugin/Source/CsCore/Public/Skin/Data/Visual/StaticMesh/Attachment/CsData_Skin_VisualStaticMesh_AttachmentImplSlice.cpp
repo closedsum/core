@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMeshImplSlice.h"
+#include "Skin/Data/Visual/StaticMesh/Attachment/CsData_Skin_VisualStaticMesh_AttachmentImplSlice.h"
 
 // Library
 #include "Library/CsLibrary_Property.h"
@@ -8,26 +8,50 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 #include "Containers/CsDeconstructInterfaceSliceMap.h"
-// Components
-#include "Components/StaticMeshComponent.h"
 
-#define SliceType NCsSkin::NData::NVisual::NStaticMesh::FImplSlice
+#define SliceType NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice
 
-void FCsData_Skin_VisualStaticMeshImplSlice::CopyToSlice(SliceType* Slice)
+void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::CopyToSlice(SliceType* Slice)
 {
-	Slice->SetStaticMesh(Mesh.GetPtr());
+	const int32 Count = Attachments.Num();
+
+	typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+	TArray<AttachmentType>* AttachmentsPtr = Slice->GetStaticMeshAttachmentsPtr();
+
+	AttachmentsPtr->Reset(Count);
+
+	for (FCsStaticMeshAttachment& Attachment : Attachments)
+	{
+		AttachmentType& A = AttachmentsPtr->AddDefaulted_GetRef();
+
+		Attachment.CopyToAttachment(&A);
+	}
 }
 
-void FCsData_Skin_VisualStaticMeshImplSlice::CopyToSliceAsValue(SliceType* Slice) const
+void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
-	Slice->SetStaticMesh(Mesh.Get());
+	const int32 Count = Attachments.Num();
+
+	typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+	TArray<AttachmentType>* AttachmentsPtr = Slice->GetStaticMeshAttachmentsPtr();
+
+	AttachmentsPtr->Reset(Count);
+
+	for (const FCsStaticMeshAttachment& Attachment : Attachments)
+	{
+		AttachmentType& A = AttachmentsPtr->AddDefaulted_GetRef();
+
+		Attachment.CopyToAttachmentAsValue(&A);
+	}
 }
 
-SliceType* FCsData_Skin_VisualStaticMeshImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+SliceType* FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-	typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
+	typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment InterfaceType;
 
 	if (InterfaceMap->Implements(InterfaceType::Name))
 	{
@@ -54,40 +78,48 @@ SliceType* FCsData_Skin_VisualStaticMeshImplSlice::AddSafeSliceAsValue(const FSt
 
 #undef SliceType
 
-bool FCsData_Skin_VisualStaticMeshImplSlice::IsValidChecked(const FString& Context) const
+bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::IsValidChecked(const FString& Context) const
 {
-	check(Mesh.IsValidChecked(Context));
+	for (const FCsStaticMeshAttachment& Attachment : Attachments)
+	{
+		CS_IS_VALID_CHECKED(Attachment);
+	}
 	return true;
 }
 
-bool FCsData_Skin_VisualStaticMeshImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	if (!Mesh.IsValid(Context, Log))
-		return false;
+	for (const FCsStaticMeshAttachment& Attachment : Attachments)
+	{
+		CS_IS_VALID(Attachment)
+	}
 	return true;
 }
 
-void FCsData_Skin_VisualStaticMeshImplSlice::SetChecked(const FString& Context, UStaticMeshComponent* Component) const
+void FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const
 {
 	check(IsValidChecked(Context));
 
-	CS_IS_PTR_NULL_CHECKED(Component);
-
-	Component->SetStaticMesh(Mesh.Get());
+	for (const FCsStaticMeshAttachment& Attachment : Attachments)
+	{
+		Attachment.AttachChecked(Context, Parent, Child);
+	}
 }
 
-bool FCsData_Skin_VisualStaticMeshImplSlice::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualStaticMesh_AttachmentImplSlice::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
 
-	CS_IS_PTR_NULL(Component)
-
-	Component->SetStaticMesh(Mesh.Get());
+	for (const FCsStaticMeshAttachment& Attachment : Attachments)
+	{
+		if (!Attachment.AttachSafe(Context, Parent, Child, Log))
+			return false;
+	}
 	return true;
 }
 
-const FName NCsSkin::NData::NVisual::NStaticMesh::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::FImplSlice");
+const FName NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice::Name = FName("NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice");
 
 namespace NCsSkin
 {
@@ -97,67 +129,49 @@ namespace NCsSkin
 		{
 			namespace NStaticMesh
 			{
-				namespace NImplSlice
+				namespace NAttachment
 				{
-					namespace NCached
+					namespace NImplSlice
 					{
-						namespace Name
+						namespace NCached
 						{
-							const FName VisualStaticMeshSlice = FName("VisualStaticMeshSlice");
+							namespace Name
+							{
+								const FName VisualStaticMeshAttachmentSlice = FName("VisualStaticMeshAttachmentSlice");
 
-							const FName StaticMesh = FName("StaticMesh");
+								const FName StaticMeshAttachments = FName("StaticMeshAttachments");
+							}
 						}
 					}
-				}
 
-				/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
-				{
-					using namespace NCsSkin::NData::NVisual::NStaticMesh::NImplSlice::NCached;
-
-					CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
-
-					typedef NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh InterfaceType;
-
-					if (InterfaceMap->Implements(InterfaceType::Name))
+					/*static*/ FImplSlice* FImplSlice::AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InterfaceMap already contains a reference an interface of type: %s."), *Context, *(InterfaceType::Name.ToString())));
-						return nullptr;
-					}
+						using namespace NCsSkin::NData::NVisual::NStaticMesh::NAttachment::NImplSlice::NCached;
 
-					CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
+						CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
-					CS_IS_PTR_NULL_RET_NULL(Object)
+						typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment InterfaceType;
 
-					// Check for properties matching interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)
-					typedef NCsProperty::FLibrary PropertyLibrary;
+						if (InterfaceMap->Implements(InterfaceType::Name))
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InterfaceMap already contains a reference an interface of type: %s."), *Context, *(InterfaceType::Name.ToString())));
+							return nullptr;
+						}
 
-					FImplSlice* Slice = nullptr;
-					bool Success	  = false;
+						CS_IS_PTR_NULL_RET_NULL(DeconstructInterfaceSliceMap)
 
-					// Try FCsData_Skin_VisualStaticMeshImplSlice
-					typedef FCsData_Skin_VisualStaticMeshImplSlice StructSliceType;
+						CS_IS_PTR_NULL_RET_NULL(Object)
 
-					if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshSlice, nullptr))
-					{
-						Slice = new FImplSlice();
+						// Check for properties matching interface: StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
+						typedef NCsProperty::FLibrary PropertyLibrary;
 
-						// Add slice as type SkinType
-						InterfaceMap->Add<InterfaceType>(InterfaceType::Name, static_cast<InterfaceType*>(Slice));
-						// Set the InterfaceMap of Data to the "root" InterfaceMap
-						Slice->SetInterfaceMap(InterfaceMap);
+						FImplSlice* Slice = nullptr;
+						bool Success	  = false;
 
-						DeconstructInterfaceSliceMap->AddSlice(FImplSlice::Name, Slice);
-						DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(FImplSlice::Name, &FImplSlice::Deconstruct);
+						// Try FCsData_Skin_VisualStaticMesh_AttachmentImplSlice
+						typedef FCsData_Skin_VisualStaticMesh_AttachmentImplSlice StructSliceType;
 
-						SliceAsStruct->CopyToSlice(Slice);
-						Success = true;
-					}
-					// Try individual properties
-					else
-					{
-						FCsStaticMesh* StaticMeshPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsStaticMesh>(Context, Object, Object->GetClass(), Name::StaticMesh, nullptr);
-
-						if (StaticMeshPtr)
+						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualStaticMeshAttachmentSlice, nullptr))
 						{
 							Slice = new FImplSlice();
 
@@ -169,56 +183,110 @@ namespace NCsSkin
 							DeconstructInterfaceSliceMap->AddSlice(FImplSlice::Name, Slice);
 							DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(FImplSlice::Name, &FImplSlice::Deconstruct);
 
-							Slice->SetStaticMesh(StaticMeshPtr->GetPtr());
+							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
 						}
+						// Try individual properties
+						else
+						{
+							TArray<FCsStaticMeshAttachment>* AttachmentsPtr = PropertyLibrary::GetArrayStructPropertyValuePtr<FCsStaticMeshAttachment>(Context, Object, Object->GetClass(), Name::StaticMeshAttachments, nullptr);
+
+							if (AttachmentsPtr)
+							{
+								Slice = new FImplSlice();
+								
+								// Add slice as type SkinType
+								InterfaceMap->Add<InterfaceType>(InterfaceType::Name, static_cast<InterfaceType*>(Slice));
+								// Set the InterfaceMap of Data to the "root" InterfaceMap
+								Slice->SetInterfaceMap(InterfaceMap);
+								
+								DeconstructInterfaceSliceMap->AddSlice(FImplSlice::Name, Slice);
+								DeconstructInterfaceSliceMap->AddDeconstructSliceImpl(FImplSlice::Name, &FImplSlice::Deconstruct);
+
+								// Copy the values to Slice
+								TArray<FCsStaticMeshAttachment>& AttachmentsRef = *AttachmentsPtr;
+
+								const int32 Count = AttachmentsRef.Num();
+
+								typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+								TArray<AttachmentType>* StaticMeshAttachmentsPtr = Slice->GetStaticMeshAttachmentsPtr();
+
+								StaticMeshAttachmentsPtr->Reset(Count);
+
+								for (FCsStaticMeshAttachment& Attachment : AttachmentsRef)
+								{
+									AttachmentType& A = StaticMeshAttachmentsPtr->AddDefaulted_GetRef();
+
+									Attachment.CopyToAttachment(&A);
+								}
+								Success = true;
+							}
+						}
+
+						if (!Success)
+						{
+							if (Log)
+							{
+								typedef NCsObject::FLibrary ObjectLibrary;
+
+								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMesh_AttachmentImplSlice with name: VisualStaticMeshAttachmentSlice."), *Context));
+								Log(FString::Printf(TEXT("%s: - OR"), *Context));
+								Log(FString::Printf(TEXT("%s: - Failed to get array struct property of type: TArray<FCsStaticMeshAttachment> with name: StaticMeshAttachments."), *Context));
+							}
+						}
+						return Slice;
 					}
 
-					if (!Success)
+					bool FImplSlice::IsValidChecked(const FString& Context) const
 					{
-						if (Log)
-						{
-							typedef NCsObject::FLibrary ObjectLibrary;
+						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
 
-							Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: StaticMeshVisualDataType (NCsSkin::NData::NVisual::NStaticMesh::IStaticMesh)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualStaticMeshImplSlice with name: VisualStaticMeshSlice."), *Context));
-							Log(FString::Printf(TEXT("%s: - OR"), *Context));
-							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsStaticMesh with name: StaticMesh."), *Context));
+						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
+						{
+							CS_IS_VALID_CHECKED(Attachment);
+						}
+						return true;
+					}
+
+					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+					{
+						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
+						{
+							CS_IS_VALID(Attachment);
+						}
+						return true;
+					}
+
+					void FImplSlice::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const
+					{
+						check(IsValidChecked(Context));
+
+						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
+						{
+							Attachment.AttachChecked(Context, Parent, Child);
 						}
 					}
-					return Slice;
-				}
 
-				bool FImplSlice::IsValidChecked(const FString& Context) const
-				{
-					CS_IS_PTR_NULL_CHECKED(GetStaticMesh())
-					return true;
-				}
+					bool FImplSlice::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+					{
+						if (!IsValid(Context, Log))
+							return false;
 
-				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
-				{
-					CS_IS_PTR_NULL(GetStaticMesh())
-					return true;
-				}
+						typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
 
-				void FImplSlice::SetChecked(const FString& Context, UStaticMeshComponent* Component) const
-				{
-					check(IsValidChecked(Context));
-
-					CS_IS_PTR_NULL_CHECKED(Component);
-
-					Component->SetStaticMesh(GetStaticMesh());
-				}
-
-				bool FImplSlice::SetSafe(const FString& Context, UStaticMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
-				{
-					if (!IsValid(Context, Log))
-						return false;
-
-					CS_IS_PTR_NULL(Component)
-
-					Component->SetStaticMesh(GetStaticMesh());
-					return true;
+						for (const AttachmentType& Attachment : GetStaticMeshAttachments())
+						{
+							if (!Attachment.AttachSafe(Context, Parent, Child, Log))
+								return false;
+						}
+						return true;
+					}
 				}
 			}
 		}

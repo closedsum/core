@@ -84,7 +84,7 @@ namespace NCsStaticMeshActor
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_StaticMeshActor* Manager_StaticMeshActor = UCsManager_StaticMeshActor::Get(ContextRoot);
+			UCsManager_StaticMeshActor* Manager_StaticMeshActor = UCsManager_StaticMeshActor::GetSafe(Context, ContextRoot, Log);
 
 			if (!Manager_StaticMeshActor)
 			{
@@ -104,8 +104,27 @@ namespace NCsStaticMeshActor
 
 		#pragma endregion Get
 
+		// Payload
+		#pragma region
+
+		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type)
+		{
+		#undef PayloadType
+
+			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
+		}
+
+		#pragma endregion 
 		// Spawn
 		#pragma region
+
+		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+
+		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type, PayloadType* Payload)
+		{
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
@@ -148,6 +167,8 @@ namespace NCsStaticMeshActor
 		}
 
 		#undef PooledPayloadType
+
+		#undef PayloadType
 
 		#pragma endregion Spawn
 	}

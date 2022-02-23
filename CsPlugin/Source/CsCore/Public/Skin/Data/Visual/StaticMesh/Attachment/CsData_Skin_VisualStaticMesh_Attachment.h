@@ -19,7 +19,7 @@ namespace NCsSkin
 				namespace NAttachment
 				{
 					/**
-					* Interface of a Skin using a Static Mesh as a visual representation.
+					* Interface of a Skin having Static Mesh attachments.
 					*/
 					struct CSCORE_API IAttachment : public ICsGetInterfaceMap
 					{
@@ -27,13 +27,21 @@ namespace NCsSkin
 
 						static const FName Name;
 
+
 					public:
 
 						virtual ~IAttachment() {}
 
+					#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+
 						/**
+						* Get the Static Mesh attachments.
+						* 
+						* return
 						*/
-						//virtual UStaticMesh* GetStaticMesh() const = 0;
+						virtual const TArray<AttachmentType>& GetStaticMeshAttachments() const = 0;
+
+					#undef AttachmentType
 					};
 				}
 			}
@@ -50,7 +58,7 @@ class CSCORE_API UCsData_Skin_VisualStaticMesh_Attachment : public UCsGetInterfa
 class UStaticMesh;
 
 /**
-* Interface of a Skin using a Static Mesh as a visual representation.
+* Interface of a Skin having Static Mesh attachments.
 */
 class CSCORE_API ICsData_Skin_VisualStaticMesh_Attachment : public ICsGetInterfaceMap
 {
@@ -62,7 +70,14 @@ public:
 
 public:
 
+#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+
 	/**
+	* Get the Static Mesh attachments.
+	* 
+	* return
 	*/
-	//virtual UStaticMesh* GetStaticMesh() const = 0;
+	virtual const TArray<AttachmentType>& GetStaticMeshAttachments() const = 0;
+
+#undef AttachmentType
 };

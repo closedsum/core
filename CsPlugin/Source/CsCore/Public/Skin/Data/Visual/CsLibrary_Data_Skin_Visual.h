@@ -1,12 +1,13 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
+class USceneComponent;
 class UPrimitiveComponent;
 class UStaticMeshComponent;
 class USkeletalMeshComponent;
@@ -21,6 +22,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NMaterial, IMaterial)
 class ICsDeconstructInterfaceSliceMap;
 
 class UMaterialInstanceDynamic;
+
+struct FCsStaticMeshActorPooled;
 
 namespace NCsSkin
 {
@@ -83,6 +86,7 @@ namespace NCsSkin
 
 			// Static Mesh
 			#pragma region
+			public:
 
 				/**
 				* Check whether Skin implements the interface: 
@@ -180,6 +184,22 @@ namespace NCsSkin
 				* @param Log		(optional)
 				*/
 				static void SetSafeStaticMesh(const FString& Context, const SkinType* Skin, UStaticMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+
+				// Attachment
+			#pragma region
+			public:
+
+				/**
+				* Set Static Mesh attachments on Component from the given Skin.
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Component		SceneComponent to attach Static Mesh attachments to.
+				* @param OutAttachments (out)
+				*/
+				static void SetAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments);
+				
+			#pragma endregion Attachment
 
 			#pragma endregion Static Mesh
 

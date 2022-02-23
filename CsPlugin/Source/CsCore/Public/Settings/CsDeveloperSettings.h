@@ -247,6 +247,9 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsStaticMeshActor>() const { return NCsDeveloperSettings::Str::StaticMeshActor; }
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "Default Value: ECsStaticMeshActor"))
+	FECsStaticMeshActor Default_ECsStaticMeshActor;
+
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "Manager StaticMeshActor"))
 	FCsSettings_Manager_StaticMeshActor Manager_StaticMeshActor;
 

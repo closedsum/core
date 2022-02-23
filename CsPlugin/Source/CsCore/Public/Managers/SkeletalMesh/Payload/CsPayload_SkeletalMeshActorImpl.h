@@ -1,8 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActor.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;

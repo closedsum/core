@@ -1,10 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 // Log
 #include "Utility/CsLog.h"
-
-#pragma once
 
 class UObject;
 class UCsManager_StaticMeshActor;
@@ -12,6 +11,8 @@ struct FCsStaticMeshActorPooled;
 
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsStaticMeshActor::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, IPayload)
 
 namespace NCsStaticMeshActor
 {
@@ -97,31 +98,64 @@ namespace NCsStaticMeshActor
 
 		#pragma endregion Get
 
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+
+			/*
+			* Allocate a Payload (used to Spawn a StaticMeshActor from Manager_StaticMeshActor).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type);
+
+		#undef PayloadType 
+
+		#pragma endregion Payload
+
 		// Spawn
 		#pragma region
 		public:
 
+		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
+
+			/**
+			* Spawn an StaticMeshActor with the given Payload.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			
+			* @param Payload
+			* return				Spawned StaticMeshActor
+			*/
+			static const FCsStaticMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type, PayloadType* Payload);
+
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 			/**
-			* Spawn an StaticMeshActor with the given payload.
+			* Spawn an StaticMeshActor with the given Pooled Payload, Info and Transform.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
-			* @param Shot
+			* @param Info
 			* @param Transform		(optional)
 			* return				Spawned StaticMeshActor
 			*/
 			static const FCsStaticMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform = FTransform::Identity);
 
 			/**
-			* Safely spawn an StaticMeshActor with the given payload.
+			* Safely spawn an StaticMeshActor with the given Pooled Payload, Info and Transform.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
-			* @param Shot
+			* @param Info
 			* @param Transform		(optional)
 			* @param Log			(optional)
 			* return				Spawned StaticMeshActor
@@ -129,6 +163,8 @@ namespace NCsStaticMeshActor
 			static const FCsStaticMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef PooledPayloadType
+
+		#undef PayloadType
 
 		#pragma endregion Spawn
 		};

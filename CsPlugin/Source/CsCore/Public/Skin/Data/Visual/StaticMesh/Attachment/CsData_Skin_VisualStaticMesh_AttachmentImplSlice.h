@@ -4,14 +4,15 @@
 #include "Types/CsTypes_Macro.h"
 #include "Mesh/CsStaticMeshAttachment.h"
 // Data
-#include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh_Attachment.h"
+#include "Skin/Data/Visual/StaticMesh/Attachment/CsData_Skin_VisualStaticMesh_Attachment.h"
 
 #include "CsData_Skin_VisualStaticMesh_AttachmentImplSlice.generated.h"
 
 // NCsSkin::NData::NVisual::NStaticMesh::NAttachment::NImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsSkin, NData, NVisual, NStaticMesh, NAttachment, FImplSlice)
 
-class UPrimitiveComponent;
+class USceneComponent;
+class UStaticMeshComponent;
 struct FCsInterfaceMap;
 class ICsDeconstructInterfaceSliceMap;
 
@@ -33,7 +34,7 @@ public:
 	TArray<FCsStaticMeshAttachment> Attachments;
 
 	FCsData_Skin_VisualStaticMesh_AttachmentImplSlice() :
-		Mesh()
+		Attachments()
 	{
 	}
 
@@ -49,12 +50,13 @@ public:
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-	void AttachChecked(const FString& Context, UPrimitiveComponent* Component) const;
-	bool AttachSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
+	bool AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 struct FCsInterfaceMap;
-class UPrimitiveComponent;
+class USceneComponent;
+class UStaticMeshComponent;
 class ICsDeconstructInterfaceSliceMap;
 
 namespace NCsSkin
@@ -85,6 +87,8 @@ namespace NCsSkin
 
 						static const FName Name;
 
+					#define AttachmentType NCsStaticMesh::NAttachment::FAttachment
+
 					private:
 
 						// ICsGetInterfaceMap
@@ -95,15 +99,15 @@ namespace NCsSkin
 
 						// StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
 
-						CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, UStaticMesh*)
+						CS_DECLARE_MEMBER_WITH_PROXY(StaticMeshAttachments, TArray<AttachmentType>)
 
 					public:
 
 						FImplSlice() :
 							InterfaceMap(nullptr),
-							CS_CTOR_INIT_MEMBER_WITH_PROXY(StaticMesh, nullptr)
+							CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(StaticMeshAttachments)
 						{
-							CS_CTOR_SET_MEMBER_PROXY(StaticMesh);
+							CS_CTOR_SET_MEMBER_PROXY(StaticMeshAttachments);
 						}
 
 						~FImplSlice()
@@ -130,7 +134,7 @@ namespace NCsSkin
 					#pragma region
 					public:
 
-						CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(StaticMesh, UStaticMesh)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(StaticMeshAttachments, TArray<AttachmentType>)
 
 					#pragma endregion StaticMeshAttachmentDataType (NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment)
 
@@ -138,7 +142,7 @@ namespace NCsSkin
 
 						static void Deconstruct(void* Ptr)
 						{
-							delete static_cast<NCsSkin::NData::NVisual::NStaticMesh::FImplSlice*>(Ptr);
+							delete static_cast<NCsSkin::NData::NVisual::NStaticMesh::NAttachment::FImplSlice*>(Ptr);
 						}
 
 						static FImplSlice* AddSafeSlice(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -146,8 +150,10 @@ namespace NCsSkin
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-						void AttachChecked(const FString& Context, UPrimitiveComponent* Component) const;
-						bool AttachSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
+						void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
+						bool AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+					#undef AttachmentType
 					};
 
 				#undef StaticMeshAttachmentDataType

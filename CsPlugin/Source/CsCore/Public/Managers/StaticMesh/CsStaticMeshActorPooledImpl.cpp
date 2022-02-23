@@ -11,6 +11,7 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_SkeletalMesh.h"
 // StaticMesh
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
@@ -28,6 +29,7 @@ namespace NCsStaticMeshActorImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Handle_SetStaticMesh);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Handle_SetMaterials);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsStaticMeshActorPooledImpl, Handle_AttachAndSetTransform);
 		}
 	}
 }
@@ -391,6 +393,10 @@ void ACsStaticMeshActorPooledImpl::Log_SetMaterials(StaticMeshPayloadType* Paylo
 
 void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* StaticMeshPayload)
 {
+	using namespace NCsStaticMeshActorImpl::NCached;
+
+	const FString& Context = Str::Handle_AttachAndSetTransform;
+
 	CS_NON_SHIPPING_EXPR(Log_AttachAndSetTransform(Payload, StaticMeshPayload));
 
 	// If the Parent is set, attach the StaticMeshActor to the Parent
@@ -437,6 +443,10 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 		if (PerformAttach)
 		{
 			AttachToBone = Bone;
+
+			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
+
+			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
 			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
 			ChangeCounter::Get().AddChanged();

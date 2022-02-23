@@ -1,11 +1,12 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 class UObject;
 class USkeletalMesh;
 class USkeletalMeshComponent;
+class USceneComponent;
 
 namespace NCsSkeletalMesh
 {
@@ -184,5 +185,55 @@ namespace NCsSkeletalMesh
 		static FVector GetSocketNormalChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket, const int32& Rules);
 
 	#pragma endregion Socket
+
+	public:
+
+		/**
+		* Check if the Bone or Socket is valid for given SkeletalMeshComponent.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return				Whether the BoneOrSocket is valid.
+		*/
+		static bool IsBoneOrSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket);
+
+		/**
+		* Safely check if the Bone or Socket is valid for given SkeletalMeshComponent.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		* @param Log			(optional)
+		*
+		* return				Whether the BoneOrSocket is valid.
+		*/
+		static bool SafeIsBoneOrSocketValid(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Check if the Bone or Socket is valid for given Component.
+		* NOTE: Conditional check for Component being of type: USkeletalMeshComponent.
+		* 
+		* @param Context		The calling Context.
+		* @param Component		SceneComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return				Whether the BoneOrSocket is valid.
+		*/
+		static bool ConditionalIsBoneOrSocketValidChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket);
+
+		/**
+		* Check if the Bone or Socket is valid for given Component.
+		* NOTE: Conditional check for Component being of type: USkeletalMeshComponent.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SceneComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		* @param Log			(optional)
+		*
+		* return				Whether the BoneOrSocket is valid.
+		*/
+		static bool ConditionalSafeIsBoneOrSocketValid(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket, void(*Log)(const FString&) = &FCsLog::Warning);
 	};
 }

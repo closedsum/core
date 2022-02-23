@@ -130,4 +130,76 @@ namespace NCsSkeletalMesh
 	}
 
 	#pragma endregion Socket
+
+	bool FLibrary::IsBoneOrSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
+	{
+		CS_IS_PTR_NULL_CHECKED(Component)
+
+		CS_IS_NAME_NONE_CHECKED(BoneOrSocket)
+
+		USkeletalMesh* Mesh = Component->SkeletalMesh;
+
+		checkf(Mesh, TEXT("%s: SkeletalMesh is NULL for Component: %s."), *Context, *(Component->GetName()));
+
+		bool Exists = false;
+
+		Exists = Component->DoesSocketExist(BoneOrSocket);
+
+		if (Exists)
+			return true;
+
+		Exists = Component->GetBoneIndex(BoneOrSocket) != INDEX_NONE;
+
+		if (Exists)	
+			return true;
+		checkf(0, TEXT("%s: BoneOrSocket: %s does NOT exist on Component: %s with SkeletalMesh: %s."), *Context, *(BoneOrSocket.ToString()), *(Component->GetName()), *(Mesh->GetName()));
+		return false;
+	}
+
+	bool FLibrary::SafeIsBoneOrSocketValid(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(Component)
+
+		CS_IS_NAME_NONE(BoneOrSocket)
+
+		USkeletalMesh* Mesh = Component->SkeletalMesh;
+
+		if (!Mesh)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: SkeletalMesh is NULL for Component: %s."), *Context, *(Component->GetName())));
+			return false;
+		}
+
+		bool Exists = false;
+
+		Exists = Component->DoesSocketExist(BoneOrSocket);
+
+		if (Exists)
+			return true;
+
+		Exists = Component->GetBoneIndex(BoneOrSocket) != INDEX_NONE;
+
+		if (Exists)
+			return true;
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: BoneOrSocket: %s does NOT exist on Component: %s with SkeletalMesh: %s."), *Context, *(BoneOrSocket.ToString()), *(Component->GetName()), *(Mesh->GetName())));
+		return false;
+	}
+
+	bool FLibrary::ConditionalIsBoneOrSocketValidChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket)
+	{
+		CS_IS_PTR_NULL_CHECKED(Component)
+
+		if (USkeletalMeshComponent* C = Cast<USkeletalMeshComponent>(Component))
+			return IsBoneOrSocketValidChecked(Context, C, BoneOrSocket);
+		return true;
+	}
+
+	bool FLibrary::ConditionalSafeIsBoneOrSocketValid(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(Component)
+
+		if (USkeletalMeshComponent* C = Cast<USkeletalMeshComponent>(Component))
+			return SafeIsBoneOrSocketValid(Context, C, BoneOrSocket, Log);
+		return true;
+	}
 }

@@ -75,43 +75,53 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_StaticMeshActor* Get(UObject* InRoot = nullptr);
+	static UCsManager_StaticMeshActor* Get(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static UCsManager_StaticMeshActor* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_StaticMeshActor* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
 	
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
 
-	static bool IsValid(UObject* InRoot = nullptr);
+#if WITH_EDITOR
+	static UCsManager_StaticMeshActor* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_StaticMeshActor* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+	static bool IsValid(const UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_StaticMeshActor> ManagerSoundClass, UObject* InOuter = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
-	static bool HasShutdown(UObject* InRoot = nullptr);
+	static bool HasShutdown(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static bool HasShutdown(UObject* InRoot = nullptr){ return s_bShutdown; }
+	FORCEINLINE static bool HasShutdown(const UObject* InRoot = nullptr){ return s_bShutdown; }
 #endif // #if WITH_EDITOR
 
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerStaticMeshActor* Get_GetManagerStaticMeshActor(UObject* InRoot);
-	static ICsGetManagerStaticMeshActor* GetSafe_GetManagerStaticMeshActor(UObject* Object);
-
-	static UCsManager_StaticMeshActor* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_StaticMeshActor* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerStaticMeshActor* Get_GetManagerStaticMeshActor(const UObject* InRoot);
+	static ICsGetManagerStaticMeshActor* GetSafe_GetManagerStaticMeshActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

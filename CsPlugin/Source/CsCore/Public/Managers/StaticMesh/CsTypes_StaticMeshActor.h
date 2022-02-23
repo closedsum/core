@@ -35,6 +35,8 @@ namespace NCsStaticMeshActor
 	CSCORE_API void FromEnumSettings(const FString& Context);
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
+	CSCORE_API const FECsStaticMeshActor& GetDefault();
 }
 
 #pragma endregion StaticMeshActor
@@ -118,7 +120,7 @@ namespace NCsStaticMeshActor
 	enum class EDeallocateMethod : uint8
 	{
 		/** If a StaticMeshActor is attached to a parent object,
-			  LifeTime == 0.of means the StaticMeshActor will be deallocated immediately
+			  LifeTime == 0.0f means the StaticMeshActor will be deallocated immediately
 			   when the parent has been destroyed / deallocated.
 			  LifeTime > 0.0f will be the time after the parent object has been
 			   destroyed / deallocated to deallocate the StaticMeshActor.

@@ -28,23 +28,6 @@ namespace NCsStaticMeshActor
 		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsStaticMeshActor, FECsStaticMeshActor>(Context, Str::StaticMeshActor, &FCsLog::Warning);
 	}
 
-	/*
-	const FCsDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
-	{
-		return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, ContextRoot);
-	}
-	*/
-	/*
-	void FromDataTable(const FString& Context, UObject* ContextRoot)
-	{
-		const FCsDataRootSet* DataRootSet = FCsPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
-
-		if (!DataRootSet)
-			return;
-
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsStaticMeshActor>(Context, ContextRoot, DataRootSet->WidgetActorClasses, Str::StaticMeshActor, &FCsLog::Warning);
-	}
-	*/
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
 		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
@@ -54,8 +37,15 @@ namespace NCsStaticMeshActor
 		EMCsStaticMeshActor::Get().ClearUserDefinedEnums();
 
 		FromEnumSettings(Context);
+	}
 
-		//FromDataTable(Context, ContextRoot);
+	const FECsStaticMeshActor& GetDefault()
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+		checkf(Settings, TEXT("NCsStaticMeshActor::GetDefault: Failed to file settings of type: UCsDeveloperSettings."));
+
+		return Settings->Default_ECsStaticMeshActor; 
 	}
 }
 

@@ -4,11 +4,23 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
 // Log
 #include "Utility/CsLog.h"
 
 // FCsSettings_Input
 #pragma region
+
+const FCsSettings_Input& FCsSettings_Input::Get()
+{
+	return GetMutableDefault<UCsDeveloperSettings>()->Input;
+}
+
+FCsSettings_Input& FCsSettings_Input::GetEditable()
+{
+	return GetMutableDefault<UCsDeveloperSettings>()->Input;
+}
 
 void FCsSettings_Input::PopulateGameEventDefintionSummary()
 {

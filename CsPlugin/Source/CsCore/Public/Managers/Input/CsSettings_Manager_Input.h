@@ -25,6 +25,8 @@ public:
 		RemappedGamepadControllerIds()
 	{
 	}
+
+	static const FCsSettings_Manager_Input& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Input

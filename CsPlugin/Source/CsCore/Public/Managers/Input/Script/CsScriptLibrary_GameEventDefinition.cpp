@@ -7,7 +7,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Managers/Input/CsSettings_Input.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -36,8 +36,7 @@ bool UCsScriptLibrary_GameEventDefinition::DoesExist(const FString& Context, con
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::DoesExist : Context;
 
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	const FCsSettings_Input& InputSettings = FCsSettings_Input::Get();
 
 	return InputSettings.DoesExist(Ctxt, Event);
 }
@@ -55,8 +54,7 @@ bool UCsScriptLibrary_GameEventDefinition::Add(const FString& Context, const FCs
 		return false;
 	}
 
-	UCsDeveloperSettings* Settings	 = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();
 
 	bool Found = false;
 
@@ -90,8 +88,7 @@ bool UCsScriptLibrary_GameEventDefinition::Add_ActionOneOrWordNoCompletedValue(c
 		return false;
 	}
 
-	UCsDeveloperSettings* Settings	 = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();
 
 	bool Found = false;
 
@@ -120,8 +117,7 @@ void UCsScriptLibrary_GameEventDefinition::Remove(const FString& Context, const 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Remove : Context;
 
-	UCsDeveloperSettings* Settings   = GetMutableDefault<UCsDeveloperSettings>();
-	FCsSettings_Input& InputSettings = Settings->Input;
+	FCsSettings_Input& InputSettings = FCsSettings_Input::GetEditable();;
 
 	InputSettings.Remove(Context, Event);
 }

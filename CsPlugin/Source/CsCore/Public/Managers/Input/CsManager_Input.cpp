@@ -10,7 +10,8 @@
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Viewport.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Managers/Input/CsSettings_Input.h"
+#include "Managers/Input/CsSettings_Manager_Input.h"
 // Player
 #include "GameFramework/PlayerController.h"
 //#include "Player/CsPlayerController.h"
@@ -123,9 +124,7 @@ void UCsManager_Input::Init()
 
 	EKeys::GetAllKeys(AllKeys);
 
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-	const FCsSettings_Manager_Input& ManagerSettings = Settings->Manager_Input;
+	const FCsSettings_Manager_Input& ManagerSettings = FCsSettings_Manager_Input::Get();
 
 	Manager_Inputs.CreatePool(ManagerSettings.InputPoolSize);
 
@@ -133,7 +132,7 @@ void UCsManager_Input::Init()
 	SetupInputActionMapping();
 	SetupGameEventDefinitions();
 
-	const FCsSettings_Input& InputSettings = Settings->Input;
+	const FCsSettings_Input& InputSettings = FCsSettings_Input::Get();
 
 	// Initialize CurrentGameEventInfos
 	const int32 EventCount = EMCsGameEvent::Get().Num();
@@ -1417,9 +1416,7 @@ void UCsManager_Input::SetupInputActionEventInfos()
 
 	// AnyKey
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		const FECsInputAction& AnyKeyAction = Settings->Input.AnyKeyAction;
+		const FECsInputAction& AnyKeyAction = FCsSettings_Input::Get().AnyKeyAction;
 
 		// Check AnyKeyAction is actually bound to EKeys::AnyKey
 		bool Found = false;
@@ -1629,8 +1626,7 @@ void UCsManager_Input::SetupInputActionMapping()
 		InputActionMapping.Add(0);
 	}
 
-	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
-	const FCsSettings_Input& InputSettings = Settings->Input;
+	const FCsSettings_Input& InputSettings = FCsSettings_Input::Get();
 
 	const TMap<FECsInputActionMap, FCsInputActionSet>& InputActionMappings = InputSettings.InputActionMappings;
 
@@ -1708,8 +1704,7 @@ FCsInput* UCsManager_Input::GetPreviousPreviousInputAction(const FECsInputAction
 void UCsManager_Input::SetupGameEventDefinitions()
 {
 	// Populate GameEventDefinitions
-	UCsDeveloperSettings* Settings		   = GetMutableDefault<UCsDeveloperSettings>();
-	const FCsSettings_Input& InputSettings = Settings->Input;
+	const FCsSettings_Input& InputSettings = FCsSettings_Input::Get();
 
 	GameEventDefinitions.Reset();
 	InputSentenceByGameEventMap.Reset();

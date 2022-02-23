@@ -74,6 +74,9 @@ public:
 	{
 	}
 
+	static const FCsSettings_Input& Get();
+	static FCsSettings_Input& GetEditable();
+
 	void PopulateGameEventDefintionSummary();
 
 	void PopulateGameEventPriorityList();

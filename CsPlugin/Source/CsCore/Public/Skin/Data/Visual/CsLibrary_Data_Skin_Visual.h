@@ -392,8 +392,23 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	Scene Component to scale.
 				* @param Log		(optional)
+				* return			Whether the scale was set
 				*/
-				static void SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+
+				/**
+				* Safely set the relative scale of Component from the given Skin.
+				* NOTE: Try default scale skin types
+				*		- UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)
+				*		- UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
+				* @param Component	Scene Component to scale.
+				* @param Log		(optional)
+				* return			Whether the scale was set
+				*/
+				static bool SetSafeScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#pragma endregion Scale
 			};

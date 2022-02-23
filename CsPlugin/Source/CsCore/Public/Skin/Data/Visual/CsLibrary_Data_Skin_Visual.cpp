@@ -12,6 +12,7 @@
 #include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 #include "Skin/Data/Visual/Scale/CsData_Skin_VisualUniformScale.h"
+#include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_UniformRange.h"
 #include "Skin/Data/Visual/StaticMesh/Attachment/CsData_Skin_VisualStaticMesh_Attachment.h"
 // Components
 #include "Components/StaticMeshComponent.h"
@@ -591,24 +592,65 @@ namespace NCsSkin
 				Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
 			}
 
-			void FLibrary::SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
 
 				if (const UniformScaleSkinType* UniformScaleSkin = GetSafeInterfaceChecked<UniformScaleSkinType>(Context, Skin))
 				{
-					CS_IS_PTR_NULL_EXIT(Component);
+					CS_IS_PTR_NULL(Component);
 
 					const float& UniformScale = UniformScaleSkin->GetUniformScale();
 
-					CS_IS_FLOAT_GREATER_THAN_EXIT(UniformScale, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
 
 					Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+					return true;
 				}
 				else
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface: %s."), *Context, *PrintNameAndClass(Skin), *(UniformScaleSkinType::Name.ToString())));
+					return false;
 				}
+			}
+
+			bool FLibrary::SetSafeScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				// Uniform
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
+
+				if (const UniformScaleSkinType* UniformScaleSkin = GetSafeInterfaceChecked<UniformScaleSkinType>(Context, Skin))
+				{
+					CS_IS_PTR_NULL(Component);
+
+					const float& UniformScale = UniformScaleSkin->GetUniformScale();
+
+					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
+
+					Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+					return true;
+				}
+				// UniformRange
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange UniformRangeScaleSkinType;
+
+				if (const UniformRangeScaleSkinType* UniformRangeScaleSkin = GetSafeInterfaceChecked<UniformRangeScaleSkinType>(Context, Skin))
+				{
+					CS_IS_PTR_NULL(Component);
+
+					const float& Min = UniformRangeScaleSkin->GetMinUniformScale();
+					const float& Max = UniformRangeScaleSkin->GetMaxUniformScale();
+
+					CS_IS_FLOAT_GREATER_THAN(Min, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN(Max, 0.0f)
+
+					if (Min == Max)
+						Component->SetRelativeScale3D(Min * FVector::OneVector);
+					else
+						Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+					return true;
+				}
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin)));
+				return false;
 			}
 
 		#pragma endregion Scale

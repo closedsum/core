@@ -84,6 +84,8 @@ public:
 		Parameters()
 	{
 	}
+
+	static const FCsSettings_Manager_FX& GetChecked(const FString& Context);
 };
 
 #pragma endregion FCsSettings_Manager_FX

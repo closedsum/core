@@ -9,8 +9,6 @@
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Library/CsLibrary_Valid.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Data
@@ -375,21 +373,15 @@ void UCsManager_FX_Actor::SetupInternal()
 #endif // #if !UE_BUILD_SHIPPING
 		// If any settings have been set for Manager_Creep, apply them
 	{
-		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to get settings of type: UCsDeveloperSettings."), *Context);
-
-		Settings = ModuleSettings->Manager_FX;
+		Settings = FCsSettings_Manager_FX::GetChecked(Context);
 
 		InitInternalFromSettings();
 	}
 	// Params
 	{
-		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
+		const FCsSettings_Manager_FX& Manager_FX = FCsSettings_Manager_FX::GetChecked(Context);
 
-		checkf(ModuleSettings, TEXT("%s: Failed to get settings of type: UCsDeveloperSettings."), *Context);
-
-		const int32 (&PoolSizes)[(uint8)ECsFXParameterValue::ECsFXParameterValue_MAX] = ModuleSettings->Manager_FX.Parameters.PoolSizes;
+		const int32 (&PoolSizes)[(uint8)ECsFXParameterValue::ECsFXParameterValue_MAX] = Manager_FX.Parameters.PoolSizes;
 		
 		// Int
 		{

@@ -597,6 +597,54 @@ struct CSCORE_API FCsMaterialParameterFloat
 
 #pragma endregion FCsMaterialParameterFloat
 
+// FCsMaterialParameterFloatRange
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialParameterFloatRange
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
+	float Min;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
+	float Max;
+
+	FCsMaterialParameterFloatRange() :
+		Name(NAME_None),
+		Min(0.0f),
+		Max(0.0f)
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+namespace NCsMaterial
+{
+	namespace NParameter
+	{
+		namespace NFloat
+		{
+			struct CSCORE_API FRange final
+			{
+			private:
+
+			public:
+
+				
+			};
+		}
+	}
+}
+
+#pragma endregion FCsMaterialParameterFloatRange
+
 // FCsMaterialParameterColor
 #pragma region
 
@@ -622,3 +670,48 @@ struct CSCORE_API FCsMaterialParameterColor
 };
 
 #pragma endregion FCsMaterialParameterColor
+
+// FCsMaterialInterface_WithRangeParameters
+#pragma region
+
+// NCsMaterial::NInterface::FWithRangeParameters
+//CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkin, NData, NVisual, IVisual)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialInterface_WithRangeParameters
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
+	FCsMaterialInterface Material;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
+	TArray<FCsMaterialParameterFloatRange> FloatParameters;
+
+	FCsMaterialInterface_WithRangeParameters() :
+		Material(),
+		FloatParameters()
+	{
+	}
+};
+
+namespace NMaterial
+{
+	namespace NInterface
+	{
+		struct CSCORE_API FWithRangeParameters final
+		{
+		private:
+
+		public:
+
+			FWithRangeParameters()
+			{
+			}
+		};
+	}
+}
+
+#pragma endregion FCsMaterialInterface_WithRangeParameters

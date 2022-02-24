@@ -241,7 +241,7 @@ bool FCsMaterialParameterColorRange::IsValidChecked(const FString& Context, UMat
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	return MaterialLibrary::IsScalarParameterValidChecked(Context, Material, Name);
+	return MaterialLibrary::IsVectorParameterValidChecked(Context, Material, Name);
 }
 
 bool FCsMaterialParameterColorRange::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -251,7 +251,7 @@ bool FCsMaterialParameterColorRange::IsValid(const FString& Context, UMaterialIn
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	return MaterialLibrary::IsScalarParameterValid(Context, Material, Name, Log);
+	return MaterialLibrary::IsVectorParameterValid(Context, Material, Name, Log);
 }
 
 void FCsMaterialParameterColorRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
@@ -297,7 +297,7 @@ namespace NCsMaterial
 
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
-				return MaterialLibrary::IsScalarParameterValidChecked(Context, Material, GetName());
+				return MaterialLibrary::IsVectorParameterValidChecked(Context, Material, GetName());
 			}
 
 			bool FRange::IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -307,7 +307,7 @@ namespace NCsMaterial
 
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
-				return MaterialLibrary::IsScalarParameterValid(Context, Material, GetName(), Log);
+				return MaterialLibrary::IsVectorParameterValid(Context, Material, GetName(), Log);
 			}
 
 			void FRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const

@@ -652,7 +652,7 @@ namespace NCsMaterial
 				}
 			}
 		}
-
+		
 		// MaterialInstance
 		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
 		{
@@ -714,7 +714,7 @@ namespace NCsMaterial
 				}
 			}
 		}
-		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
 		return false;
 	}
 

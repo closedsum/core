@@ -855,10 +855,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	FCsMaterialInterface Material;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TArray<FCsMaterialParameterFloatRange> FloatParameters;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TArray<FCsMaterialParameterColorRange> ColorParameters;
 
 	FCsMaterialInterface_WithRangeParameters() :

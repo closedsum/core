@@ -297,6 +297,144 @@ namespace NCsMaterial
 		* @param Mesh
 		*/
 		static void ClearOverride(USkeletalMeshComponent* Mesh);
+
+		// Scalar
+		#pragma region
+		public:
+
+			/**
+			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			Whether there IS a Scalar Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsScalarParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName);
+
+			/**
+			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* @param Log
+			* return			Whether there IS a Scalar Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsScalarParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether there is a Scalar Parameter Value with name: ParamName for MID.
+			*
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			Whether there IS a Scalar Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsScalarParameterValid(UMaterialInterface* Material, const FName& ParamName);
+
+			/**
+			* Get the value of the Scalar Parameter Value with name: ParamName on MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Scalar Parameter Value.
+			* return			The value of the Scalar Parameter Value with name: ParamName.
+			*/
+			static float GetScalarParameterValueChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName);
+
+		#pragma endregion Scalar
+
+		// Vector
+		#pragma region
+		public:
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			* 
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsVectorParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName);
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* @param Log
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsVectorParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether there is a Vector Parameter Value with name: ParamName for MID.
+			*
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			Whether there IS a Vector Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsVectorParameterValid(UMaterialInterface* Material, const FName& ParamName);
+
+			/**
+			* Get the value of the Vector Parameter Value with name: ParamName on MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Vector Parameter Value.
+			* return			The value of the Vector Parameter Value with name: ParamName.
+			*/
+			static FLinearColor GetVectorParameterValueChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName);
+
+		#pragma endregion Vector
+
+		// Texture
+		#pragma region
+		public:
+
+			/**
+			* Check whether there is a Texture Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* return			Whether there IS a Texture Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsTextureParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName);
+
+			/**
+			* Check whether there is a Texture Parameter Value with name: ParamName for MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* @param Log
+			* return			Whether there IS a Texture Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsTextureParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Check whether there is a Texture Parameter Value with name: ParamName for MID.
+			*
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* return			Whether there IS a Texture Parameter Value with name: ParamName or NOT.
+			*/
+			static bool IsTextureParameterValid(UMaterialInterface* Material, const FName& ParamName);
+
+			/**
+			* Get the value of the Texture Parameter Value with name: ParamName on MID.
+			*
+			* @param Context	The calling context.
+			* @param Material	Material Interface.
+			* @param ParamName	Name of the Texture Parameter Value.
+			* return			The value of the Texture Parameter Value with name: ParamName.
+			*/
+			static UTexture* GetTextureParameterValueChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName);
+
+		#pragma endregion Texture
 	};
 
 	namespace NMID

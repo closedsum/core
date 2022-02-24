@@ -76,10 +76,20 @@ bool FCsMaterialParameterFloatRange::IsValidChecked(const FString& Context) cons
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Max, Min)
 	return true;
 }
+
 bool FCsMaterialParameterFloatRange::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Max, Min)
+	return true;
+}
+
+bool FCsMaterialParameterFloatRange::IsValidChecked(const FString& Context, UMaterialInterface* Material) const
+{
+	check(IsValidChecked(Context));
+
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
 	return true;
 }
 
@@ -133,6 +143,7 @@ bool FCsMaterialParameterColor::IsValidChecked(const FString& Context) const
 	CS_IS_NAME_NONE_CHECKED(Name)
 	return true;
 }
+
 bool FCsMaterialParameterColor::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
@@ -144,15 +155,72 @@ bool FCsMaterialParameterColor::IsValid(const FString& Context, void(*Log)(const
 // FCsMaterialParameterColorRange
 #pragma region
 
+#define ParamsType NCsMaterial::NParameter::NColor::FRange
+
+void FCsMaterialParameterColorRange::CopyToParams(ParamsType* Params)
+{
+	Params->SetName(&Name);
+	Params->SetFrom(&From);
+	Params->SetTo(&To);
+}
+
+void FCsMaterialParameterColorRange::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetName(Name);
+	Params->SetFrom(From);
+	Params->SetTo(To);
+}
+
+#undef ParamsType
+
 bool FCsMaterialParameterColorRange::IsValidChecked(const FString& Context) const
 {
 	CS_IS_NAME_NONE_CHECKED(Name)
 	return true;
 }
+
 bool FCsMaterialParameterColorRange::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
 	return true;
+}
+
+void FCsMaterialParameterColorRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
+{
+	check(IsValidChecked(Context));
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	MIDLibrary::SetVectorParameterValueChecked(Context, MID, Name, CalculateValue());
+}
+
+namespace NCsMaterial
+{
+	namespace NParameter
+	{
+		namespace NColor
+		{
+			bool FRange::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_NAME_NONE_CHECKED(GetName())
+				return true;
+			}
+			bool FRange::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+			{
+				CS_IS_NAME_NONE(GetName())
+				return true;
+			}
+
+			void FRange::SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const
+			{
+				check(IsValidChecked(Context));
+
+				typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+				MIDLibrary::SetVectorParameterValueChecked(Context, MID, GetName(), CalculateValue());
+			}
+		}
+	}
 }
 
 #pragma endregion FCsMaterialParameterColorRange
@@ -182,6 +250,22 @@ void FCsMaterialInterface_WithRangeParameters::CopyToMaterial(MaterialType* Mat)
 			P.CopyToParams(&Param);
 		}
 	}
+	// Color
+	{
+		typedef NCsMaterial::NParameter::NColor::FRange ParamType;
+
+		TArray<ParamType>* Params = Mat->GetColorParametersPtr();
+
+		const int32 Count = ColorParameters.Num();
+
+		Params->Reset(Count);
+
+		for (FCsMaterialParameterColorRange& P : ColorParameters)
+		{
+			ParamType& Param = Params->AddDefaulted_GetRef();
+			P.CopyToParams(&Param);
+		}
+	}
 }
 
 void FCsMaterialInterface_WithRangeParameters::CopyToMaterialAsValue(MaterialType* Mat) const
@@ -204,6 +288,22 @@ void FCsMaterialInterface_WithRangeParameters::CopyToMaterialAsValue(MaterialTyp
 			P.CopyToParamsAsValue(&Param);
 		}
 	}
+	// Color
+	{
+		typedef NCsMaterial::NParameter::NColor::FRange ParamType;
+
+		TArray<ParamType>* Params = Mat->GetColorParametersPtr();
+
+		const int32 Count = ColorParameters.Num();
+
+		Params->Reset(Count);
+
+		for (const FCsMaterialParameterColorRange& P : ColorParameters)
+		{
+			ParamType& Param = Params->AddDefaulted_GetRef();
+			P.CopyToParamsAsValue(&Param);
+		}
+	}
 }
 
 #undef MaterialType
@@ -211,8 +311,13 @@ void FCsMaterialInterface_WithRangeParameters::CopyToMaterialAsValue(MaterialTyp
 bool FCsMaterialInterface_WithRangeParameters::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(Material);
-
+	// Float
 	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	// Color
+	for (const FCsMaterialParameterColorRange& Param : ColorParameters)
 	{
 		CS_IS_VALID_CHECKED(Param);
 	}
@@ -222,10 +327,15 @@ bool FCsMaterialInterface_WithRangeParameters::IsValidChecked(const FString& Con
 bool FCsMaterialInterface_WithRangeParameters::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_VALID(Material)
-
+	// Float
 	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
 	{
 		CS_IS_VALID(Param)
+	}
+	// Color
+	for (const FCsMaterialParameterColorRange& Param : ColorParameters)
+	{
+		CS_IS_VALID(Param);
 	}
 	return true;
 }
@@ -237,8 +347,13 @@ void FCsMaterialInterface_WithRangeParameters::SetChecked(const FString& Context
 	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	MIDLibrary::SetChecked(Context, Component, Material.GetChecked(Context), Index, OutMID);
-
+	// Float
 	for (const FCsMaterialParameterFloatRange& Param : FloatParameters)
+	{
+		Param.SetChecked(Context, OutMID);
+	}
+	// Color
+	for (const FCsMaterialParameterColorRange& Param : ColorParameters)
 	{
 		Param.SetChecked(Context, OutMID);
 	}
@@ -251,10 +366,17 @@ namespace NCsMaterial
 		bool FWithRangeParameters::IsValidChecked(const FString& Context) const
 		{
 			CS_IS_PTR_NULL_CHECKED(GetMaterial());
-
+			// Float
 			typedef NCsMaterial::NParameter::NFloat::FRange FloatParameterType;
 
 			for (const FloatParameterType& Param : GetFloatParameters())
+			{
+				CS_IS_VALID_CHECKED(Param);
+			}
+			// Color
+			typedef NCsMaterial::NParameter::NColor::FRange ColorParameterType;
+
+			for (const ColorParameterType& Param : GetColorParameters())
 			{
 				CS_IS_VALID_CHECKED(Param);
 			}
@@ -264,10 +386,17 @@ namespace NCsMaterial
 		bool FWithRangeParameters::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 		{
 			CS_IS_PTR_NULL(GetMaterial());
-
+			// Float
 			typedef NCsMaterial::NParameter::NFloat::FRange FloatParameterType;
 
 			for (const FloatParameterType& Param : GetFloatParameters())
+			{
+				CS_IS_VALID(Param);
+			}
+			// Color
+			typedef NCsMaterial::NParameter::NColor::FRange ColorParameterType;
+
+			for (const ColorParameterType& Param : GetColorParameters())
 			{
 				CS_IS_VALID(Param);
 			}
@@ -281,10 +410,17 @@ namespace NCsMaterial
 			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 			MIDLibrary::SetChecked(Context, Component, GetMaterial(), Index, OutMID);
-
+			// Float
 			typedef NCsMaterial::NParameter::NFloat::FRange FloatParameterType;
-
+			
 			for (const FloatParameterType& Param : GetFloatParameters())
+			{
+				Param.SetChecked(Context, OutMID);
+			}
+			// Color
+			typedef NCsMaterial::NParameter::NColor::FRange ColorParameterType;
+
+			for (const ColorParameterType& Param : GetColorParameters())
 			{
 				Param.SetChecked(Context, OutMID);
 			}

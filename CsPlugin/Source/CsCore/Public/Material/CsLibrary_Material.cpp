@@ -33,6 +33,9 @@ namespace NCsMaterial
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, SetSafe);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, Set);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, ClearOverride);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, IsScalarParameterValid);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, IsVectorParameterValid);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::FLibrary, IsTextureParameterValid);
 			}
 		}
 	}
@@ -625,6 +628,627 @@ namespace NCsMaterial
 		if (Count > 0)
 			Mesh->MarkRenderStateDirty();
 	}
+
+	// Scalar
+	#pragma region
+
+	bool FLibrary::IsScalarParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
+	{
+		// Check Material is Valid
+		CS_IS_PTR_NULL_CHECKED(Material)
+		// Check ParamName is Valid
+		CS_IS_NAME_NONE_CHECKED(ParamName)
+
+		typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+		// Material
+		if (UMaterial* M = Cast<UMaterial>(Material))
+		{
+			static TArray<FMaterialParameterInfo> Infos;
+			static TArray<FGuid> Ids;
+
+			ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+			for (const FMaterialParameterInfo& Info : Infos)
+			{
+				if (Info.Name == ParamName)
+				{
+					return true;
+				}
+			}
+		}
+
+		// MaterialInstance
+		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
+		{
+			for (const FScalarParameterValue& Value : MI->ScalarParameterValues)
+			{
+				if (Value.ParameterInfo.Name == ParamName)
+				{
+					return true;
+				}
+			}
+
+			// Check Parent
+
+			// Material instance
+			UMaterialInstance* MINST = Cast<UMaterialInstance>(MI->Parent);
+
+			while (MINST)
+			{
+				for (const FScalarParameterValue& Value : MINST->ScalarParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MINST->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						if (Info.Name == ParamName)
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				MINST = Cast<UMaterialInstance>(MINST->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		return false;
+	}
+
+	bool FLibrary::IsScalarParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check Material is Valid
+		CS_IS_PTR_NULL(Material)
+		// Check ParamName is Valid
+		CS_IS_NAME_NONE(ParamName)
+
+		typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+		// Material
+		if (UMaterial* M = Cast<UMaterial>(Material))
+		{
+			static TArray<FMaterialParameterInfo> Infos;
+			static TArray<FGuid> Ids;
+
+			ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+			for (const FMaterialParameterInfo& Info : Infos)
+			{
+				if (Info.Name == ParamName)
+				{
+					return true;
+				}
+			}
+		}
+
+		// MaterialInstance
+		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
+		{
+			for (const FScalarParameterValue& Value : MI->ScalarParameterValues)
+			{
+				if (Value.ParameterInfo.Name == ParamName)
+				{
+					return true;
+				}
+			}
+
+			// Check Parent
+
+			// Material instance
+			UMaterialInstance* MINST = Cast<UMaterialInstance>(MI->Parent);
+
+			while (MINST)
+			{
+				for (const FScalarParameterValue& Value : MINST->ScalarParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MINST->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						if (Info.Name == ParamName)
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				MINST = Cast<UMaterialInstance>(MINST->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in Material: %s."), *Context, *(ParamName.ToString()), *(Material->GetName())));
+		return false;
+	}
+
+	bool FLibrary::IsScalarParameterValid(UMaterialInterface* Material, const FName& ParamName)
+	{
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::IsScalarParameterValid;
+
+		return IsScalarParameterValid(Context, Material, ParamName, nullptr);
+	}
+
+	float FLibrary::GetScalarParameterValueChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
+	{
+		check(IsScalarParameterValidChecked(Context, Material, ParamName));
+
+		FHashedMaterialParameterInfo ParameterInfo(ParamName, EMaterialParameterAssociation::GlobalParameter, INDEX_NONE);
+	
+		float Value;
+		Material->GetScalarParameterValue(ParameterInfo, Value);
+		return Value;
+	}
+
+	#pragma endregion Scalar
+
+	// Vector
+	#pragma region
+
+	bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
+	{
+		// Check Material is Valid
+		CS_IS_PTR_NULL_CHECKED(Material)
+		// Check ParamName is Valid
+		CS_IS_NAME_NONE_CHECKED(ParamName)
+
+		typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+		// Material
+		if (UMaterial* M = Cast<UMaterial>(Material))
+		{
+			static TArray<FMaterialParameterInfo> Infos;
+			static TArray<FGuid> Ids;
+
+			ParameterLibrary::GetAllVectorParameterInfoChecked(Context, M, Infos, Ids);
+
+			for (const FMaterialParameterInfo& Info : Infos)
+			{
+				if (Info.Name == ParamName)
+				{
+					return true;
+				}
+			}
+		}
+
+		// MaterialInstance
+		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
+		{
+			for (const FVectorParameterValue& Value : MI->VectorParameterValues)
+			{
+				if (Value.ParameterInfo.Name == ParamName)
+				{
+					return true;
+				}
+			}
+
+			// Check Parent
+
+			// Material instance
+			UMaterialInstance* MINST = Cast<UMaterialInstance>(MI->Parent);
+
+			while (MINST)
+			{
+				for (const FVectorParameterValue& Value : MINST->VectorParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MINST->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllVectorParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						if (Info.Name == ParamName)
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				MINST = Cast<UMaterialInstance>(MINST->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllVectorParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		return false;
+	}
+
+	bool FLibrary::IsVectorParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check Material is Valid
+		CS_IS_PTR_NULL(Material)
+		// Check ParamName is Valid
+		CS_IS_NAME_NONE(ParamName)
+
+		typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+		// Material
+		if (UMaterial* M = Cast<UMaterial>(Material))
+		{
+			static TArray<FMaterialParameterInfo> Infos;
+			static TArray<FGuid> Ids;
+
+			ParameterLibrary::GetAllVectorParameterInfoChecked(Context, M, Infos, Ids);
+
+			for (const FMaterialParameterInfo& Info : Infos)
+			{
+				if (Info.Name == ParamName)
+				{
+					return true;
+				}
+			}
+		}
+
+		// MaterialInstance
+		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
+		{
+			for (const FVectorParameterValue& Value : MI->VectorParameterValues)
+			{
+				if (Value.ParameterInfo.Name == ParamName)
+				{
+					return true;
+				}
+			}
+
+			// Check Parent
+
+			// Material instance
+			UMaterialInstance* MINST = Cast<UMaterialInstance>(MI->Parent);
+
+			while (MINST)
+			{
+				for (const FVectorParameterValue& Value : MINST->VectorParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MINST->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllVectorParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						if (Info.Name == ParamName)
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				MINST = Cast<UMaterialInstance>(MINST->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllVectorParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in Material: %s."), *Context, *(ParamName.ToString()), *(Material->GetName())));
+		return false;
+	}
+
+	bool FLibrary::IsVectorParameterValid(UMaterialInterface* Material, const FName& ParamName)
+	{
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::IsVectorParameterValid;
+
+		return IsVectorParameterValid(Context, Material, ParamName, nullptr);
+	}
+
+	FLinearColor FLibrary::GetVectorParameterValueChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
+	{
+		check(IsVectorParameterValidChecked(Context, Material, ParamName));
+
+		FHashedMaterialParameterInfo ParameterInfo(ParamName, EMaterialParameterAssociation::GlobalParameter, INDEX_NONE);
+
+		FLinearColor Value;
+		Material->GetVectorParameterValue(ParameterInfo, Value);
+		return Value;
+	}
+
+	#pragma endregion Vector
+
+	// Texture
+	#pragma region
+
+	bool FLibrary::IsTextureParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
+	{
+		// Check Material is Valid
+		CS_IS_PTR_NULL_CHECKED(Material)
+		// Check ParamName is Valid
+		CS_IS_NAME_NONE_CHECKED(ParamName)
+
+		typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+		// Material
+		if (UMaterial* M = Cast<UMaterial>(Material))
+		{
+			static TArray<FMaterialParameterInfo> Infos;
+			static TArray<FGuid> Ids;
+
+			ParameterLibrary::GetAllTextureParameterInfoChecked(Context, M, Infos, Ids);
+
+			for (const FMaterialParameterInfo& Info : Infos)
+			{
+				if (Info.Name == ParamName)
+				{
+					return true;
+				}
+			}
+		}
+
+		// MaterialInstance
+		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
+		{
+			for (const FTextureParameterValue& Value : MI->TextureParameterValues)
+			{
+				if (Value.ParameterInfo.Name == ParamName)
+				{
+					return true;
+				}
+			}
+
+			// Check Parent
+
+			// Material instance
+			UMaterialInstance* MINST = Cast<UMaterialInstance>(MI->Parent);
+
+			while (MINST)
+			{
+				for (const FTextureParameterValue& Value : MINST->TextureParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MINST->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllTextureParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						if (Info.Name == ParamName)
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				MINST = Cast<UMaterialInstance>(MINST->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllTextureParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		checkf(0, TEXT("%s: Failed to find ParamName: %s in Material: %s with Parent: %s."), *Context, *(ParamName.ToString()), *(Material->GetName()));
+		return false;
+	}
+
+	bool FLibrary::IsTextureParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		// Check Material is Valid
+		CS_IS_PTR_NULL(Material)
+		// Check ParamName is Valid
+		CS_IS_NAME_NONE(ParamName)
+
+		typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+		// Material
+		if (UMaterial* M = Cast<UMaterial>(Material))
+		{
+			static TArray<FMaterialParameterInfo> Infos;
+			static TArray<FGuid> Ids;
+
+			ParameterLibrary::GetAllTextureParameterInfoChecked(Context, M, Infos, Ids);
+
+			for (const FMaterialParameterInfo& Info : Infos)
+			{
+				if (Info.Name == ParamName)
+				{
+					return true;
+				}
+			}
+		}
+
+		// MaterialInstance
+		if (UMaterialInstance* MI = Cast<UMaterialInstance>(Material))
+		{
+			for (const FTextureParameterValue& Value : MI->TextureParameterValues)
+			{
+				if (Value.ParameterInfo.Name == ParamName)
+				{
+					return true;
+				}
+			}
+
+			// Check Parent
+
+			// Material instance
+			UMaterialInstance* MINST = Cast<UMaterialInstance>(MI->Parent);
+
+			while (MINST)
+			{
+				for (const FTextureParameterValue& Value : MINST->TextureParameterValues)
+				{
+					if (Value.ParameterInfo.Name == ParamName)
+					{
+						return true;
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MINST->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllTextureParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						if (Info.Name == ParamName)
+						{
+							return true;
+						}
+					}
+					break;
+				}
+				MINST = Cast<UMaterialInstance>(MINST->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllTextureParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					if (Info.Name == ParamName)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find ParamName: %s in Material: %s."), *Context, *(ParamName.ToString()), *(Material->GetName())));
+		return false;
+	}
+
+	bool FLibrary::IsTextureParameterValid(UMaterialInterface* Material, const FName& ParamName)
+	{
+		using namespace NCsMaterial::NLibrary::NCached;
+
+		const FString& Context = Str::IsTextureParameterValid;
+
+		return IsTextureParameterValid(Context, Material, ParamName, nullptr);
+	}
+
+	UTexture* FLibrary::GetTextureParameterValueChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
+	{
+		check(IsTextureParameterValidChecked(Context, Material, ParamName));
+
+		FHashedMaterialParameterInfo ParameterInfo(ParamName, EMaterialParameterAssociation::GlobalParameter, INDEX_NONE);
+
+		UTexture* Value;
+		Material->GetTextureParameterValue(ParameterInfo, Value);
+		return Value;
+	}
+
+	#pragma endregion Scalar
 
 	namespace NMID
 	{

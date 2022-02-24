@@ -600,6 +600,11 @@ struct CSCORE_API FCsMaterialParameterFloat
 // FCsMaterialParameterFloatRange
 #pragma region
 
+// NCsMaterial::NParameter::NFloat::FRange
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsMaterial, NParameter, NFloat, FRange)
+
+class UMaterialInstanceDynamic;
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsMaterialParameterFloatRange
 {
@@ -621,8 +626,20 @@ struct CSCORE_API FCsMaterialParameterFloatRange
 	{
 	}
 
+#define ParamsType NCsMaterial::NParameter::NFloat::FRange
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	FORCEINLINE float CalculateValue() const
+	{
+		return FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f));
+	}
+
+	void SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
 };
 
 namespace NCsMaterial
@@ -657,6 +674,20 @@ namespace NCsMaterial
 	
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+				void CopyAsValue(const FRange& From)
+				{
+					SetName(From.GetName());
+					SetMin(From.GetMin());
+					SetMax(From.GetMax());
+				}
+
+				FORCEINLINE float CalculateValue() const
+				{
+					return FMath::Lerp(GetMin(), GetMax(), FMath::RandRange(0.0f, 1.0f));
+				}
+
+				void SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
 			};
 		}
 	}
@@ -690,11 +721,44 @@ struct CSCORE_API FCsMaterialParameterColor
 
 #pragma endregion FCsMaterialParameterColor
 
+// FCsMaterialParameterColorRange
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialParameterColorRange
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
+	FName Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
+	FLinearColor From;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
+	FLinearColor To;
+
+	FCsMaterialParameterColorRange() :
+		Name(NAME_None),
+		From(FLinearColor::White),
+		To(FLinearColor::White)
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsMaterialParameterColorRange
+
 // FCsMaterialInterface_WithRangeParameters
 #pragma region
 
 // NCsMaterial::NInterface::FWithRangeParameters
-//CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkin, NData, NVisual, IVisual)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsMaterial, NInterface, FWithRangeParameters)
+
+class UPrimitiveComponent;
+class UMaterialInstanceDynamic;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsMaterialInterface_WithRangeParameters
@@ -714,21 +778,70 @@ public:
 		FloatParameters()
 	{
 	}
+
+#define MaterialType NCsMaterial::NInterface::FWithRangeParameters
+	void CopyToMaterial(MaterialType* Mat);
+	void CopyToMaterialAsValue(MaterialType* Mat) const;
+#undef MaterialType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
 };
 
-namespace NMaterial
+class UMaterialInterface;
+
+namespace NCsMaterial
 {
 	namespace NInterface
 	{
 		struct CSCORE_API FWithRangeParameters final
 		{
+		#define FloatParameterType NCsMaterial::NParameter::NFloat::FRange
+
 		private:
+
+			CS_DECLARE_MEMBER_WITH_PROXY(Material, UMaterialInterface*)
+			CS_DECLARE_MEMBER_WITH_PROXY(FloatParameters, TArray<FloatParameterType>)
 
 		public:
 
-			FWithRangeParameters()
+			FWithRangeParameters() :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Material, nullptr),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(FloatParameters)
 			{
+				CS_CTOR_SET_MEMBER_PROXY(Material);
+				CS_CTOR_SET_MEMBER_PROXY(FloatParameters);
 			}
+
+			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Material, UMaterialInterface)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FloatParameters, TArray<FloatParameterType>)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			void CopyAsValue(const FWithRangeParameters& From)
+			{
+				SetMaterial(From.GetMaterial());
+
+				// Float
+				{
+					TArray<FloatParameterType>* Params = GetFloatParametersPtr();
+
+					Params->Reset(From.GetFloatParameters().Num());
+
+					for (const FloatParameterType& Param : From.GetFloatParameters())
+					{
+						FloatParameterType& P = Params->AddDefaulted_GetRef();
+						P.CopyAsValue(Param);
+					}
+				}
+			}
+
+			void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
+
+		#undef FloatParameterType
 		};
 	}
 }

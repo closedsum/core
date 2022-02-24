@@ -91,6 +91,36 @@ namespace NCsMaterial
 		static bool IsValid(const FString& Context, USkeletalMesh* Mesh, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
+		* Check if Index is a valid Material Index for Mesh.
+		* 
+		* @param Context	The calling context.
+		* @param Mesh
+		* @param Index
+		* return
+		*/
+		static bool IsValidChecked(const FString& Context, USkeletalMesh* Mesh, const int32& Index);
+
+		/**
+		* Check if Index is a valid Material Index for Mesh.
+		*
+		* @param Context	The calling context.
+		* @param Mesh
+		* @param Index
+		* return
+		*/
+		static bool IsValidChecked(const FString& Context, UStaticMesh* Mesh, const int32& Index);
+
+		/**
+		* Check if Index is a valid Material Index for Mesh.
+		*
+		* @param Context	The calling context.
+		* @param Mesh
+		* @param Index
+		* return
+		*/
+		static bool IsValidChecked(const FString& Context, UPrimitiveComponent* Mesh, const int32& Index);
+
+		/**
 		* Set the Material at ALL indices on Component
 		*
 		* @param Context	The calling context
@@ -222,6 +252,15 @@ namespace NCsMaterial
 		static void SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials);
 
 		/**
+		* Clear the override material at Index on Component.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param Index
+		*/
+		static void ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index);
+
+		/**
 		* Clear the override materials on Component.
 		*
 		* @param Context	The calling context.
@@ -230,12 +269,28 @@ namespace NCsMaterial
 		static void ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component);
 
 		/**
+		* Clear the override material at Index on a StaticMeshComponent.
+		*
+		* @param Mesh
+		* @param Index
+		*/
+		static void ClearOverride(UStaticMeshComponent* Mesh, const int32& Index);
+
+		/**
 		* Clear the override materials on a StaticMeshComponent.
 		* 
 		* @param Mesh
 		*/
 		static void ClearOverride(UStaticMeshComponent* Mesh);
 	
+		/**
+		* Clear the override material at Index on a SkeletalMeshComponent.
+		*
+		* @param Mesh
+		* @param Index
+		*/
+		static void ClearOverride(USkeletalMeshComponent* Mesh, const int32& Index);
+
 		/**
 		* Clear the override materials on a SkeletalMeshComponent.
 		*
@@ -292,12 +347,29 @@ namespace NCsMaterial
 			static void Set(USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
 
 			/**
+			* Create and apply the OutMID to the Mesh (i.e. call Mesh->SetMaterial(Index, OutMID).
+			*
+			* @param Context	The calling context.
+			* @param Mesh		The PrimitiveComponent to apply OutMID at Index.
+			* @param Material
+			* @param Index
+			* @param OutMID		(out) The Material Instance Dynamics applied to Mesh at Index.
 			*/
-			static void SetChecked(const FString& Context, UPrimitiveComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+			static void SetChecked(const FString& Context, UPrimitiveComponent* Mesh, UMaterialInterface* Material, const int32& Index, UMaterialInstanceDynamic*& OutMID);
+
+			/**
+			* Create and apply the MIDs to the Mesh (i.e. call Mesh->SetMaterial(I, MIDs[I]).
+			*
+			* @param Context	The calling context.
+			* @param Mesh		The PrimitiveComponent to apply the MIDs to.
+			* @param OutMIDs	(out) The array of Material Instance Dynamics to apply to Mesh.
+			* @param Materials
+			*/
+			static void SetChecked(const FString& Context, UPrimitiveComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials);
 
 			/**
 			*/
-			static void SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+			static void SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials);
 
 			/**
 			* Apply the MIDs to the Mesh (i.e. call Mesh->SetMaterial(I, MIDs[I]).
@@ -306,11 +378,17 @@ namespace NCsMaterial
 			* @param Mesh		The StaticMeshComponent to apply the MIDs to.
 			* @param MIDs		The array of Material Instance Dynamics to apply to Mesh.
 			*/
-			static void SetChecked(const FString& Context, UStaticMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs);
+			static void SetChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInstanceDynamic*>& MIDs);
 
 			/**
+			* Create and apply the MIDs to the Mesh (i.e. call Mesh->SetMaterial(I, MIDs[I]).
+			*
+			* @param Context	The calling context.
+			* @param Mesh		The SkeletalMeshComponent to apply the MIDs to.
+			* @param OutMIDs	(out) The array of Material Instance Dynamics to apply to Mesh.
+			* @param Materials
 			*/
-			static void SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs, const TArray<UMaterialInterface*>& Materials);
+			static void SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& OutMIDs, const TArray<UMaterialInterface*>& Materials);
 
 			/**
 			* Apply the MIDs to the Mesh (i.e. call Mesh->SetMaterial(I, MIDs[I]).
@@ -319,7 +397,7 @@ namespace NCsMaterial
 			* @param Mesh		The SkeletalMeshComponent to apply the MIDs to.
 			* @param MIDs		The array of Material Instance Dynamics to apply to Mesh.
 			*/
-			static void SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, TArray<UMaterialInstanceDynamic*>& MIDs);
+			static void SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInstanceDynamic*>& MIDs);
 
 			/**
 			*/

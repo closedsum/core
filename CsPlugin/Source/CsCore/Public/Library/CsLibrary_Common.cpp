@@ -1059,13 +1059,15 @@ void UCsLibrary_Common::ClearComponent(USceneComponent* Component)
 	// Mesh Component
 	if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 	{
-		MaterialLibrary::ClearOverride(Mesh);
+		// TODO:
+		//MaterialLibrary::ClearOverrideChecked(Context, Mesh);
 		Mesh->SetStaticMesh(nullptr);
 	}
 	// Skeletal Mesh Component
 	if (USkeletalMeshComponent* Mesh = Cast<USkeletalMeshComponent>(Component))
 	{
-		MaterialLibrary::ClearOverride(Mesh);
+		// TODO:
+		//MaterialLibrary::ClearOverrideChecked(Context, Mesh);
 		Mesh->SetSkeletalMesh(nullptr);
 	}
 }

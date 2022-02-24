@@ -712,7 +712,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	// Mesh
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
-	MaterialLibrary::ClearOverride(MeshComponent);
+	MaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
 	MeshComponent->SetStaticMesh(nullptr);
 	MeshComponent->SetVisibility(false);
 	MeshComponent->SetHiddenInGame(true);

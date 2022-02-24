@@ -636,6 +636,7 @@ struct CSCORE_API FCsMaterialParameterFloatRange
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	bool IsValidChecked(const FString& Context, UMaterialInterface* Material) const;
+	bool IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	FORCEINLINE float CalculateValue() const
 	{
@@ -643,6 +644,7 @@ struct CSCORE_API FCsMaterialParameterFloatRange
 	}
 
 	void SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
+	bool SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 namespace NCsMaterial
@@ -678,6 +680,9 @@ namespace NCsMaterial
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+				bool IsValidChecked(const FString& Context, UMaterialInterface* Material) const;
+				bool IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 				void CopyAsValue(const FRange& From)
 				{
 					SetName(From.GetName());
@@ -691,6 +696,7 @@ namespace NCsMaterial
 				}
 
 				void SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
+				bool SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 			};
 		}
 	}
@@ -761,12 +767,16 @@ struct CSCORE_API FCsMaterialParameterColorRange
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+	bool IsValidChecked(const FString& Context, UMaterialInterface* Material) const;
+	bool IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 	FORCEINLINE FLinearColor CalculateValue() const
 	{
 		return FMath::Lerp(From, To, FMath::RandRange(0.0f, 1.0f));
 	}
 
 	void SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
+	bool SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 namespace NCsMaterial
@@ -802,6 +812,9 @@ namespace NCsMaterial
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+				bool IsValidChecked(const FString& Context, UMaterialInterface* Material) const;
+				bool IsValid(const FString& Context, UMaterialInterface* Material, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 				void CopyAsValue(const FRange& Value)
 				{
 					SetName(Value.GetName());
@@ -815,6 +828,7 @@ namespace NCsMaterial
 				}
 
 				void SetChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
+				bool SetSafe(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 			};
 		}
 	}
@@ -863,6 +877,7 @@ public:
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
+	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UMaterialInterface;
@@ -932,6 +947,7 @@ namespace NCsMaterial
 			}
 
 			void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
+			bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 		#undef FloatParameterType
 		#undef ColorParameterType

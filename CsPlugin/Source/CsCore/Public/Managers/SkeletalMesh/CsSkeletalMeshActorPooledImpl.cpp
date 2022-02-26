@@ -240,6 +240,7 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);
+	Component->ComponentTags.Reset(Component->ComponentTags.Max());
 
 	SetActorTickEnabled(false);
 

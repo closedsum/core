@@ -1,6 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Damage_Collision.h"
+#include "Engine/EngineTypes.h"
 
 #include "CsData_DamageCollision.generated.h"
 
@@ -24,7 +27,13 @@ namespace NCsDamage
 
 				virtual ~ICollision(){}
 
-				virtual bool IgnoreHitResultObject() const = 0;
+			#define CollisionMethodType NCsDamage::NCollision::EMethod
+
+				virtual const CollisionMethodType& GetCollisionMethod() const = 0;
+
+				virtual const ECollisionChannel& GetCollisionChannel() const = 0;
+
+			#undef CollisionMethodType
 			};
 		}
 	}
@@ -50,5 +59,11 @@ public:
 
 public:
 
-	virtual bool IgnoreHitResultObject() const = 0;
+#define CollisionMethodType NCsDamage::NCollision::EMethod
+
+	virtual const CollisionMethodType& GetCollisionMethod() const = 0;
+
+	virtual const ECollisionChannel& GetCollisionChannel() const = 0;
+
+#undef CollisionMethodType
 };

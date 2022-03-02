@@ -2,7 +2,7 @@
 #include "Data/Damage/CsTypes_Data_Beam_Damage.h"
 
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
-#include "Managers/Damage/Data/Shape/CsData_DamageSphereProxy.h"
+#include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphereImpl.h"
 
 // FCsBeamData_DamagePoint
 #pragma region
@@ -27,11 +27,11 @@ void FCsBeamData_DamageSphere::SetData(SphereDataProxyType* Data)
 	Data->SetMaxDamage(&MaxDamage);
 	Data->SetMinRadius(&MinRadius);
 	Data->SetMaxRadius(&MaxRadius);
-	Data->SetInterpoloationMethod(&InterpolationMethod);
+	Data->SetInterpolationMethod(&InterpolationMethod);
 	Data->SetEasingType(&EasingType);
-	Data->SetCurve(&Curve);
+	Data->SetCurve(Curve.GetPtr());
 	// ICsData_DamageCollision
-	Data->SetIgnoreHitResultObject(&bIgnoreHitResultObject);
+	//Data->SetIgnoreHitResultObject(&bIgnoreHitResultObject);
 }
 
 #pragma endregion FCsBeamData_DamageSphere

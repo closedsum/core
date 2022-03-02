@@ -7,7 +7,7 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Data/Shape/CsData_DamageSphereProxy.h"
+#include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphereImpl.h"
 
 const FName NCsStatusEffect::NData::NDamage::FSphereProxy::Name = FName("NCsStatusEffect::NData::NDamage::FSphereProxy");
 
@@ -103,10 +103,10 @@ void UCsData_StatusEffect_DamageSphere::Init()
 	// ICsStatusEffect_Damage
 	if (!DamageSphereProxy)
 	{
-		typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
+		typedef NCsDamage::NData::NShape::NSphere::FImpl SphereDataProxyType;
 
 		DamageSphereProxy = new SphereDataProxyType();
-		DamageSphere.SetData(static_cast<SphereDataProxyType*>(DamageSphereProxy));
+		//DamageSphere.SetData(static_cast<SphereDataProxyType*>(DamageSphereProxy));
 	}
 	if (!DataProxy)
 	{

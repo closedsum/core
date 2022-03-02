@@ -2,7 +2,10 @@
 #pragma once
 // Interfaces
 #include "Managers/Damage/Range/CsDamageRange.h"
+#include "Managers/Damage/Range/Copy/CsDamageRange_Copy.h"
 #include "Reset/CsReset.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 
@@ -10,10 +13,14 @@ namespace NCsDamage
 {
 	namespace NRange
 	{
+	#define RangeType NCsDamage::NRange::IRange
+	#define CopyType NCsDamage::NRange::NCopy::ICopy
+
 		/**
-		* Basic implementation of the interface: NCsDamage::NRange::IRange
+		* Basic implementation of the interface: RangeType (NCsDamage::NRange::IRange)
 		*/
-		struct CSDMG_API FImpl : public IRange,
+		struct CSDMG_API FImpl : public RangeType,
+								 public CopyType,
 								 public ICsReset
 		{
 		public:
@@ -24,11 +31,10 @@ namespace NCsDamage
 
 			FCsInterfaceMap InterfaceMap;
 
-		public:
+			// RangeType (NCsDamage::NRange::IRange)
 
-			float MinRange;
-
-			float MaxRange;
+			CS_DECLARE_MEMBER_WITH_PROXY(MinRange, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(MaxRange, float)
 
 		public:
 
@@ -44,14 +50,22 @@ namespace NCsDamage
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// IRange
+		// RangeType (NCsDamage::NRange::IRange)
 		#pragma region
 		public:
 
-			FORCEINLINE const float& GetMinRange() const { return MinRange; }
-			FORCEINLINE const float& GetMaxRange() const { return MaxRange; }
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRange, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRange, float)
 
-		#pragma endregion IRange
+		#pragma endregion RangeType (NCsDamage::NRange::IRange)
+
+		// CopyType (NCsDamage::NRange::NCopy::ICopy)
+		#pragma region
+		public:
+
+			void Copy(const RangeType* From);
+
+		#pragma endregion CopyType (NCsDamage::NRange::NCopy::ICopy)
 
 		// ICsReset
 		#pragma region
@@ -61,5 +75,8 @@ namespace NCsDamage
 
 		#pragma endregion ICsReset
 		};
+
+	#undef RangeType
+	#undef CopyType
 	}
 }

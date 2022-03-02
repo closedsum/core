@@ -1,7 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
 #include "Types/Enum/CsEnumMap.h"
 #include "Curves/RealCurve.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_Curve.generated.h"
 
@@ -32,19 +35,96 @@ public:
 	{
 	}
 
-	FORCEINLINE bool operator==(const FCsCurveFloat& B) const
-	{
-		return Curve == B.Curve && Curve_LoadFlags == B.Curve_LoadFlags && Curve_Internal == B.Curve_Internal;
-	}
+	/**
+	* Get the Hard reference to the UCurveFloat asset.
+	*
+	* return Curve Float
+	*/
+	FORCEINLINE UCurveFloat* Get() const { return Curve_Internal; }
 
-	FORCEINLINE bool operator!=(const FCsCurveFloat& B) const
-	{
-		return !(*this == B);
-	}
+	/**
+	* Get the pointer to the Hard reference to the UCurveFloat asset.
+	*
+	* return Curve Float
+	*/
+	FORCEINLINE UCurveFloat** GetPtr() { return &Curve_Internal; }
 
-	FORCEINLINE UCurveFloat* Get() const
+	/**
+	* Get the Hard reference to the UCurveFloat asset.
+	*
+	* @param Context	The calling context.
+	* return			Curve Float
+	*/
+	FORCEINLINE UCurveFloat* GetChecked(const FString& Context) const
 	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("%s: Curve is NULL."), *Context);
+
+		checkf(Curve_Internal, TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString()));
+
 		return Curve_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UCurveFloat asset.
+	*
+	* return Curve Float
+	*/
+	FORCEINLINE UCurveFloat* GetChecked() const
+	{
+		checkf(Curve.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialInterface::GetChecked: Curve is NULL."));
+
+		checkf(Curve_Internal, TEXT("FCsMaterialInterface::GetChecked: Curve has NOT been loaded from Path @ %s."), *(Curve.ToSoftObjectPath().ToString()));
+
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveFloat asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Curve Float
+	*/
+	UCurveFloat* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Curve_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Curve has NOT been loaded from Path @ %s."), *Context, *(Curve.ToSoftObjectPath().ToString())));
+		}
+		return Curve_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UCurveFloat asset.
+	*
+	* return Curve Float
+	*/
+	UCurveFloat* GetSafe()
+	{
+		if (!Curve.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Curve_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
 	}
 };
 

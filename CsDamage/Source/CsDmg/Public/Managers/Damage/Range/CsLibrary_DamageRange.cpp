@@ -3,7 +3,7 @@
 #include "CsDmg.h"
 
 // Damage
-#include "Managers/Damage/Range/CsDamageRangeImpl.h"
+#include "Managers/Damage/Range/Copy/CsDamageRange_Copy.h"
 
 namespace NCsDamage
 {
@@ -13,17 +13,14 @@ namespace NCsDamage
 		bool FLibrary::CopyChecked(const FString& Context, const RangeType* From, RangeType* To)
 		{
 		#undef RangeType
-			// NCsDamage::NRange::FImpl (NCsDamage::NRange::IRange)
-			{
-				typedef NCsDamage::NRange::FImpl ImplType;
 
-				if (ImplType* ToImpl = SafePureStaticCastChecked<ImplType>(Context, To))
-				{
-					ToImpl->MinRange = From->GetMinRange();
-					ToImpl->MaxRange = From->GetMaxRange();
-					return true;
-				}
-			}
+			typedef NCsDamage::NRange::NCopy::ICopy CopyType;
+
+			CopyType* ToC = GetInterfaceChecked<CopyType>(Context, To);
+
+			check(ImplementsChecked<CopyType>(Context, From));
+
+			ToC->Copy(From);
 			return false;
 		}
 	}

@@ -436,10 +436,11 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 	EventType* Copy				 = Container->Get();
 
 	typedef NCsDamage::NEvent::FLibrary EventLibrary;
+	typedef NCsDamage::NEvent::NCopy::ICopy CopyType;
 
-	bool Success = EventLibrary::CopyChecked(Context, Event, Copy);
+	CopyType* ICopy = EventLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
-	checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+	ICopy->Copy(Event);
 
 	return Container;
 }
@@ -460,7 +461,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 {
-	TArray<ModifierResourceType*> Modifiers;
+	static TArray<ModifierResourceType*> Modifiers;
 	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
 }
 
@@ -500,7 +501,10 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, DamageValue);
 	}
 
-	EventImpl->Data		  = Data;
+	EventImpl->Data	= Data;
+
+	EventImpl->SetDamageChecked(Context);
+
 	EventImpl->Instigator = Instigator;
 	EventImpl->Causer	  = Causer;
 	EventImpl->Origin	  = HitResult;
@@ -511,7 +515,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 {
-	TArray<ModifierResourceType*> Modifiers;
+	static TArray<ModifierResourceType*> Modifiers;
 	return CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
 }
 
@@ -525,7 +529,22 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 
 	const FString& Context = Str::ProcessDamageEvent;
 
-	CS_IS_PTR_NULL_CHECKED(Event)
+	EventResourceType* Container = CreateCopyOfEvent(Context, Event);
+
+	ProcessDamageEventContainer(Container);
+}
+
+void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* EventContainer)
+{
+	using namespace NCsManagerDamage::NCached;
+
+	const FString& Context = Str::ProcessDamageEventContainer;
+
+	check(Manager_Event.IsValidChecked(Context, EventContainer));
+
+	const EventType* Event = EventContainer->Get();
+
+	CS_NON_SHIPPING_EXPR(LogEvent(Event));
 
 	typedef NCsDamage::NData::IData DataType;
 
@@ -546,8 +565,6 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 	{
 		const FHitResult& HitResult = Event->GetHitResult();
 		
-		bool ShouldCopyEvent = false;
-		
 		// Actor
 		if (AActor* Actor = HitResult.GetActor())
 		{
@@ -558,8 +575,6 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 			{
 				Local_Receivers.AddDefaulted();
 				Local_Receivers.Last().SetObject(Actor);
-
-				ShouldCopyEvent = true;
 			}
 		}
 		// Component
@@ -573,23 +588,7 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 			{
 				Local_Receivers.AddDefaulted();
 				Local_Receivers.Last().SetObject(Component);
-
-				ShouldCopyEvent = true;
 			}
-		}
-
-		if (ShouldCopyEvent)
-		{
-			// Copy the Event
-			EventResourceType* EventContainer = CreateCopyOfEvent(Context, Event);
-			EventType* Evt					  = EventContainer->Get();
-
-			// Set the Damage
-			typedef NCsDamage::NEvent::FLibrary DamageEventLibrary;
-
-			DamageEventLibrary::SetDamageChecked(Context, Evt);
-
-			Local_Events.Add(EventContainer);
 		}
 	}
 
@@ -597,37 +596,16 @@ void UCsManager_Damage::ProcessDamageEvent(const EventType* Event)
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		FCsReceiveDamage& Receiver		  = Local_Receivers[I];
-		EventResourceType* EventContainer = Local_Events[I];
+		FCsReceiveDamage& Receiver = Local_Receivers[I];
 
-		EventType* Evt = EventContainer->Get();
-
-		Receiver.Damage(Evt);
-
-		CS_NON_SHIPPING_EXPR(LogEvent(Evt));
-
-		OnProcessDamageEvent_Event.Broadcast(Evt);
-		DeallocateEvent(Context, EventContainer);
-
-		Local_Events[I] = nullptr;
+		Receiver.Damage(Event);
 	}
 
+	OnProcessDamageEvent_Event.Broadcast(Event);
+
 	Local_Receivers.Reset(Local_Receivers.Max());
-	Local_Events.Reset(Local_Events.Max());
-}
 
-void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Event)
-{
-	using namespace NCsManagerDamage::NCached;
-
-	const FString& Context = Str::ProcessDamageEventContainer;
-
-	check(Manager_Event.IsValidChecked(Context, Event));
-
-	const EventType* IEvent = Event->Get();
-
-	ProcessDamageEvent(IEvent);
-	DeallocateEvent(Context, const_cast<EventResourceType*>(Event));
+	DeallocateEvent(Context, const_cast<EventResourceType*>(EventContainer));
 }
 
 #undef EventResourceType
@@ -661,15 +639,15 @@ ValueResourceType* UCsManager_Damage::AllocateValue(const FECsDamageValue& Type)
 
 void UCsManager_Damage::DeallocateValue(const FString& Context, const FECsDamageValue& Type, ValueResourceType* Value)
 {
-	checkf(EMCsDamageValue::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::DeallocateValue: Type: %s is NOT Valid."), Type.ToChar());
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageValue, Type);
 
 	CS_IS_PTR_NULL_CHECKED(Value)
 
 	typedef NCsDamage::NValue::FLibrary ValueLibrary;
 
 	// Reset
-	if (ICsReset* IReset = ValueLibrary::GetSafeInterfaceChecked<ICsReset>(Context, Value->Get()))
-		IReset->Reset();
+	ICsReset* IReset = ValueLibrary::GetInterfaceChecked<ICsReset>(Context, Value->Get());
+	IReset->Reset();
 
 	Manager_Values[Type.GetValue()].Deallocate(Value);
 }
@@ -751,7 +729,7 @@ ModifierResourceType* UCsManager_Damage::AllocateModifier(const FECsDamageModifi
 
 void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier)
 {
-	checkf(EMCsDamageModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::DeallocateModifier: Type: %s is NOT Valid."), Type.ToChar());
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, Type);
 
 	CS_IS_PTR_NULL_CHECKED(Modifier)
 

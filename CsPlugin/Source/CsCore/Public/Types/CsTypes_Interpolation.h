@@ -8,6 +8,7 @@
 #pragma region
 
 /**
+* Describes the direction a value should be interpolated / blended.
 */
 UENUM(BlueprintType)
 enum class ECsBlendDirection : uint8
@@ -40,6 +41,7 @@ namespace NCsBlendDirection
 #pragma region
 
 /**
+* Describes which easing method / function should be used for interpolating a value.
 */
 UENUM(BlueprintType)
 enum class ECsEasingType : uint8
@@ -91,6 +93,7 @@ typedef float(*TCsEasingFunction)(const float&, const float&, const float&, cons
 #pragma region
 
 /**
+* Describes with method to use for interpolating a set of values.
 */
 UENUM(BlueprintType)
 enum class ECsInterpolatingMethod : uint8

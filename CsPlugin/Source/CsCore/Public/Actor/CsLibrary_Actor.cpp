@@ -881,5 +881,33 @@ namespace NCsActor
 		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
 	}
 
+	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const FVector& B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+
+		const FVector VA = A->GetActorLocation();
+
+		const FVector& V = B - VA;
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
+	}
+
+	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const FVector& B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
+
+		const FVector VA = A->GetActorLocation();
+
+		const FVector& V = B - VA;
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
+
+		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
+	}
+
 	#pragma endregion Normal
 }

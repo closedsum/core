@@ -1,8 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsDmgLibrary_DataRootSet.h"
 
-// Utility
-#include "Utility/CsDmgLog.h"
 // Data
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsDmgGetDataRootSet.h"
@@ -62,6 +60,23 @@ namespace NCsDamage
 			const FCsDmgDataRootSet& DataRootSet = GetChecked(Context, WorldContext);
 
 			return DataRootSet.GetDataTableRowChecked(Context, WorldContext, Member, RowStruct, RowName);
+		}
+
+		bool FLibrary::GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		{
+			if (const FCsDmgDataRootSet* DataRootSet = GetSafe(Context, WorldContext))
+			{
+				TSoftObjectPtr<UDataTable> SoftObject;
+				if (DataRootSet->GetSafeDataTableSoftObject(Context, Member, SoftObject, Log))
+				{
+					OutPath = SoftObject.ToString();
+					int32 Index = INDEX_NONE;
+					OutPath.FindLastChar('.', Index);
+					OutPath = OutPath.Left(Index);
+					return true;
+				}
+			}
+			return false;
 		}
 
 		#undef MemberType

@@ -59,6 +59,23 @@ const TSoftObjectPtr<UDataTable>& FCsDmgDataRootSet::GetDataTableSoftObjectCheck
 	return Damages;
 }
 
+bool FCsDmgDataRootSet::GetSafeDataTableSoftObject(const FString& Context, const EMember& MemberType, TSoftObjectPtr<UDataTable>& OutSoftObject, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+{
+	#define CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Member) if (MemberType == EMember::Member) \
+		{ \
+			OutSoftObject = Member; \
+			return true; \
+		}
+
+	// Damages
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Damages)
+
+	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
+
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get DataTable SoftObject for MemberType."), *Context));
+	return false;
+}
+
 UDataTable* FCsDmgDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
 	using namespace NCsDmgDataRootSet::NCached;

@@ -3,6 +3,8 @@
 // Types
 #include "Types/CsTypes_Damage.h"
 #include "Engine/DataTable.h"
+// Log
+#include "Utility/CsDmgLog.h"
 
 #include "CsTypes_Data_Damage.generated.h"
 
@@ -35,6 +37,30 @@ namespace NCsDamageData
 }
 
 #pragma endregion DamageData
+
+// FCsData_ECsDamageData
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSDMG_API FCsData_ECsDamageData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg")
+	FECsDamageData Value;
+
+	FCsData_ECsDamageData() :
+		Value()
+	{
+	}
+
+	FORCEINLINE FECsDamageData* GetPtr() { return &Value; }
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+};
+
+#pragma endregion FCsData_ECsDamageData
 
 // FCsData_DamagePtr
 #pragma region
@@ -75,6 +101,8 @@ public:
 	FORCEINLINE T* Get() const { return Cast<T>(Get()); }
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
+
+	UObject* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 };
 
 #pragma endregion FCsData_DamagePtr

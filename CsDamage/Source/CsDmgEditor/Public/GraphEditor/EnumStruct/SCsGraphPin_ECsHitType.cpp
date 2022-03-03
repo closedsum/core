@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsHitType.h"
 #include "CsDmgEditor.h"
 
-#include "Managers/Damage/CsTypes_Damage.h"
+#include "Types/CsTypes_Damage.h"
 
 #define EnumMapType EMCsHitType
 #define EnumType FECsHitType

@@ -9,7 +9,7 @@
 #include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
-#include "Managers/Damage/CsTypes_Damage.h"
+#include "Types/CsTypes_Damage.h"
 #include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"

@@ -4,7 +4,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Engine/EngineTypes.h"
-#include "Managers/Damage/CsTypes_Damage.h"
+#include "Types/CsTypes_Damage.h"
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)

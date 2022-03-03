@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Managers/Damage/CsTypes_Damage.h"
+#include "Types/CsTypes_Damage.h"
 
 #include "CsScriptLibrary_DamageType.generated.h"
 

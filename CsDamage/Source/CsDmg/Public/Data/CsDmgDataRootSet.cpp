@@ -80,10 +80,10 @@ UDataTable* FCsDmgDataRootSet::GetSafeDataTable(const FString& Context, const UO
 {
 	using namespace NCsDmgDataRootSet::NCached;
 
-	typedef NCsDamage::NDataRootSet::FLibrary DataRootSetLibrary;
+	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
 
 	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
-		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, EMember::Member);
+		return DataRootSetLibrary::GetSafeDataTable(Context, WorldContext, Str::GetCsDmgDataRootSet, Member, Str::Member);
 
 	// Damages
 	CS_TEMP_GET_SAFE_DATA_TABLE(Damages)

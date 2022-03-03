@@ -44,16 +44,29 @@ namespace NCsAnimMontage
 	public:
 
 		/**
+		* Check if Anim on the AnimInstance associated with Component is playing.
+		* NOTE:
+		*  Component MUST be of type: USkeletalMeshComponent.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param Anim
+		* return			Whether the Anim is playing or not.
+		*/
+		static bool IsPlayingChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim);
+
+		/**
 		* Play Anim on the AnimInstance associated with Component.
 		* NOTE: 
-		*  Component MUST be of type USkeletalMeshComponent.
+		*  Component MUST be of type: USkeletalMeshComponent.
 		*  Anim must NOT already be playing.
 		* 
 		* @param Context	The calling context.
 		* @param Component
 		* @param Anim
+		* @param PlayRate	(optional)
 		*/
-		static void PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim);
+		static void PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate = 1.0f);
 
 	#pragma endregion Play
 	};

@@ -10,6 +10,8 @@
 // Blueprint
 #include "Animation/AnimBlueprintGeneratedClass.h"
 #include "Animation/AnimBlueprint.h"
+// Component
+#include "Components/SkeletalMeshComponent.h"
 
 namespace NCsAnimInstance
 {
@@ -60,6 +62,18 @@ namespace NCsAnimInstance
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get AnimBlueprintGeneratedClass from Blueprint: %s with Class: %s."), *Context, *(Blueprint->GetName()), *(Blueprint->GetClass()->GetName())));
 		}
 		return (UAnimBlueprintGeneratedClass*)(O);
+	}
+
+	UAnimInstance* FLibrary::GetChecked(const FString& Context, UPrimitiveComponent* Component)
+	{
+		CS_IS_PTR_NULL_CHECKED(Component);
+
+		USkeletalMeshComponent* SMC = CS_CAST_CHECKED(Component, UPrimitiveComponent, USkeletalMeshComponent);
+		UAnimInstance* AnimInstance = SMC->GetAnimInstance();
+
+		checkf(AnimInstance, TEXT("%s: Failed to get AnimInstance from Component: %s."), *Context, *(Component->GetName()));
+
+		return AnimInstance;
 	}
 
 	#pragma endregion Get

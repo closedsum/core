@@ -3,9 +3,12 @@
 #include "CsCore.h"
 
 // Library
+#include "Animation/CsLibrary_AnimInstance.h"
 #include "Object/CsLibrary_Object.h"
-// Blueprint
+#include "Library/CsLibrary_Valid.h"
+// Anim
 #include "Animation/AnimMontage.h"
+#include "Animation/AnimInstance.h"
 
 namespace NCsAnimMontage
 {
@@ -31,9 +34,28 @@ namespace NCsAnimMontage
 	// Play
 	#pragma region
 
-	void FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim)
+	bool FLibrary::IsPlayingChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim)
 	{
+		typedef NCsAnimInstance::FLibrary AnimInstanceLibrary;
 
+		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetChecked(Context, Component);
+
+		CS_IS_PTR_NULL_CHECKED(Anim)
+
+		if (FAnimMontageInstance* MontageInstance = AnimInstance->GetActiveInstanceForMontage(Anim))
+			return MontageInstance->IsPlaying();
+		return false;
+	}
+
+	void FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate /*=1.0f*/)
+	{
+		checkf(!IsPlayingChecked(Context, Component, Anim), TEXT("%s: Anim: %s is ALREADY playing."), *Context, *(Anim->GetName()));
+
+		typedef NCsAnimInstance::FLibrary AnimInstanceLibrary;
+
+		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetChecked(Context, Component);
+
+		AnimInstance->Montage_Play(Anim, PlayRate);
 	}
 
 	#pragma endregion Play

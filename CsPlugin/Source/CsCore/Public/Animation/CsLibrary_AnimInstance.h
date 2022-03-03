@@ -6,6 +6,8 @@
 class UObject;
 class UAnimBlueprint;
 class UAnimBlueprintGeneratedClass;
+class UAnimInstance;
+class UPrimitiveComponent;
 
 namespace NCsAnimInstance
 {
@@ -45,6 +47,16 @@ namespace NCsAnimInstance
 	public:
 
 		static UAnimBlueprintGeneratedClass* GetSafeClass(const FString& Context, UAnimBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the AnimInstance associated with Component.
+		* NOTE: Component MUST be of type: USkeletalMeshComponent.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* return			Anim Instance.
+		*/
+		static UAnimInstance* GetChecked(const FString& Context, UPrimitiveComponent* Component);
 
 	#pragma endregion Get
 	};

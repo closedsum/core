@@ -27,4 +27,14 @@ namespace NCsAnimMontage
 	}
 
 	#pragma endregion Load
+
+	// Play
+	#pragma region
+
+	void FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim)
+	{
+
+	}
+
+	#pragma endregion Play
 }

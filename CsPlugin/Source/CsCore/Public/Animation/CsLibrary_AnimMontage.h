@@ -38,5 +38,23 @@ namespace NCsAnimMontage
 		static UAnimMontage* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Load
+
+	// Play
+	#pragma region
+	public:
+
+		/**
+		* Play Anim on the AnimInstance associated with Component.
+		* NOTE: 
+		*  Component MUST be of type USkeletalMeshComponent.
+		*  Anim must NOT already be playing.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param Anim
+		*/
+		static void PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim);
+
+	#pragma endregion Play
 	};
 }

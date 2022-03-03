@@ -235,6 +235,11 @@ namespace NCsDamage
 
 				#pragma endregion CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 
+				public:
+
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
+
 				#undef ValueType
 				#undef RangeType
 				#undef CollisionMethodType

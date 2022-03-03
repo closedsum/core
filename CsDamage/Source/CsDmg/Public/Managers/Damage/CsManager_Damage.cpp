@@ -14,13 +14,15 @@
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDamageSettings.h"
+// Data
+#include "Managers/Damage/Data/CsData_Damage.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
+#include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Reset
 #include "Reset/CsReset.h"
 // Damage
 #include "Managers/Damage/Handler/CsManager_Damage_DataHandler.h"
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
-#include "Managers/Damage/Data/CsData_Damage.h"
-#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"
@@ -552,43 +554,52 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 	checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
 
-	// ICsData_DamageShape
+	// Shape
 	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-	if (ShapeDataType* Shape = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+	if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 	{
+		// Collision
+		typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
+		typedef NCsDamage::NCollision::EMethod CollisionMethodType;
 
+		if (CollisionDataType* CollisionData = DamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		{
+			// PhysicsOverlap
+			if (CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsOverlap)
+			{
+				typedef NCsDamage::NEvent::FLibrary EventLibrary;
+
+				static TArray<FHitResult> Hits;
+
+				EventLibrary::OverlapChecked(Context, MyRoot, Event, Hits);
+
+				if (Hits.Num() > CS_EMPTY)
+				{
+					for (const FHitResult& Hit : Hits)
+					{
+						if (UObject* O = EventLibrary::Implements_ICsReceiveDamage(Context, Hit, nullptr))
+						{
+							Local_Receivers.AddDefaulted();
+							Local_Receivers.Last().SetObject(O);
+						}
+					}
+				}
+			}
+		}
 	}
 	// Point
 	else
 	{
+		typedef NCsDamage::NEvent::FLibrary EventLibrary;
+
 		const FHitResult& HitResult = Event->GetHitResult();
 		
-		// Actor
-		if (AActor* Actor = HitResult.GetActor())
+		if (UObject* O = EventLibrary::Implements_ICsReceiveDamage(Context, HitResult, nullptr))
 		{
-			// Check if Actor implements interface: ICsReceiveDamage
-			UClass* Class = Actor->GetClass();
-			
-			if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
-			{
-				Local_Receivers.AddDefaulted();
-				Local_Receivers.Last().SetObject(Actor);
-			}
-		}
-		// Component
-		else
-		if (UPrimitiveComponent* Component = HitResult.GetComponent())
-		{
-			// Check if Component implements interface: ICsReceiveDamage
-			UClass* Class = Component->GetClass();
-
-			if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
-			{
-				Local_Receivers.AddDefaulted();
-				Local_Receivers.Last().SetObject(Component);
-			}
+			Local_Receivers.AddDefaulted();
+			Local_Receivers.Last().SetObject(O);
 		}
 	}
 

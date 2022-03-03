@@ -5,10 +5,14 @@
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
+// Data
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
+#include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Damage
 #include "Managers/Damage/CsReceiveDamage.h"
 #include "Managers/Damage/Event/CsGetCurrentDamageEvent.h"
@@ -16,8 +20,15 @@
 #include "Managers/Damage/Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRange.h"
+#include "Managers/Damage/Range/CsDamageRange.h"
 // Material
 #include "PhysicalMaterials/PhysicalMaterial.h"
+// Trace
+#include "Managers/Trace/CsTraceRequest.h"
+// Component
+#include "Components/PrimitiveComponent.h"
+// Engine
+#include "GameFramework/Actor.h"
 
 namespace NCsDamage
 {
@@ -200,6 +211,103 @@ namespace NCsDamage
 				return false;
 			OutObjects = Event->GetIgnoreObjects();
 			return true;
+		}
+
+		UObject* FLibrary::Implements_ICsReceiveDamage(const FString& Context, const FHitResult& Hit, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		{
+			// Actor
+			if (AActor* Actor = Hit.GetActor())
+			{
+				// Check if Actor implements interface: ICsReceiveDamage
+				UClass* Class = Actor->GetClass();
+			
+				if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
+				{
+					return Actor;
+				}
+			}
+			// Component
+			if (UPrimitiveComponent* Component = Hit.GetComponent())
+			{
+				// Check if Component implements interface: ICsReceiveDamage
+				UClass* Class = Component->GetClass();
+
+				if (Class->ImplementsInterface(UCsReceiveDamage::StaticClass()))
+				{
+					return Component;
+				}
+			}
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Hit.GetActor() or Hit.GetComponent() do NOT implement the interface: ICsReceiveDamage."), *Context));
+			return nullptr;
+		}
+
+		void FLibrary::OverlapChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, TArray<FHitResult>& OutHits)
+		{
+			CS_IS_PTR_NULL_CHECKED(Event)
+
+			typedef NCsDamage::NData::IData DataType;
+
+			DataType* Data = Event->GetData();
+
+			checkf(Data, TEXT("%s: Data is NULL. No Damage Data found for Event."), *Context);
+
+			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+			typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
+
+			ShapeDataType* ShapeData		 = DamageDataLibrary::GetInterfaceChecked<ShapeDataType>(Context, Data);
+			CollisionDataType* CollisionData = DamageDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data);
+
+			typedef NCsDamage::NCollision::EMethod CollisionMethodType;
+
+			checkf(CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsOverlap, TEXT("%s: GetCollisionMethod() is NOT CollisionMethodType::PhysicsOverlap."), *Context);
+
+			typedef NCsDamage::NRange::IRange RangeType;
+
+			const RangeType* Range = Event->GetDamageRange();
+
+			checkf(Range, TEXT("%s: Range is NULL. No DamageRange set for Event."), *Context);
+
+			// NOTE: FUTURE: May need flag to exclude Instigator, Causer, ... etc
+			//				 For now, exclude Instigator and Causer
+
+			typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
+			typedef NCsTrace::NRequest::FRequest RequestType;
+
+			RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, WorldContext);
+
+			Request->Caller = Event->GetInstigator();
+			Request->Type   = ECsTraceType::Sweep;
+			Request->Method = ECsTraceMethod::Multi;
+			Request->Query  = ECsTraceQuery::ObjectType;
+
+			const FHitResult& Hit = Event->GetHitResult();
+
+			Request->Start = Hit.ImpactPoint;
+			Request->End   = Hit.ImpactPoint;
+			Request->Channel = CollisionData->GetCollisionChannel();
+
+			Request->Shape.SetSphere(Range->GetMaxRange());
+
+			if (AActor* Instigator = Cast<AActor>(Event->GetInstigator()))
+				Request->Params.AddIgnoredActor(Instigator);
+
+			if (AActor* Causer = Cast<AActor>(Event->GetCauser()))
+				Request->Params.AddIgnoredActor(Causer);
+
+			Request->ObjectParams.AddObjectTypesToQuery(CollisionData->GetCollisionChannel());
+			
+			typedef NCsTrace::NResponse::FResponse ResponseType;
+
+			if (ResponseType* Response = TraceManagerLibrary::TraceChecked(Context, WorldContext, Request))
+			{
+				OutHits.Reset(FMath::Max(OutHits.Max(), Response->OutHits.Num()));
+
+				for (const FHitResult& OutHit : Response->OutHits)
+				{
+					OutHits.Add(OutHit);
+				}
+			}
 		}
 
 	#undef EventType

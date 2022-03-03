@@ -1,6 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphereImpl.h"
 
+// Types
+#include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Library/Load/CsLibrary_Load.h"
@@ -18,21 +20,76 @@
 
 void FCsData_DamageSphere::CopyToSphere(SphereType* Sphere)
 {
+	Sphere->SetType(&Type);
+	Sphere->SetMinDamage(&MinDamage);
+	Sphere->SetMaxDamage(&MaxDamage);
+	Sphere->SetMinRadius(&MinRadius);
+	Sphere->SetMaxRadius(&MaxRadius);
+	Sphere->SetInterpolationMethod(&InterpolationMethod);
+	Sphere->SetEasingType(&EasingType);
+	Sphere->SetCurve(Curve.GetPtr());
+
+	typedef NCsDamage::NCollision::EMethod CollisionMethodType;
+
+	Sphere->SetCollisionMethod((CollisionMethodType*)(&CollisionMethod));
+	Sphere->SetCollisionChannel((ECollisionChannel*)(&CollisionChannel));
 }
 
 void FCsData_DamageSphere::CopyToSphereAsValue(SphereType* Sphere)
 {
+	Sphere->SetType(Type);
+	Sphere->SetMinDamage(MinDamage);
+	Sphere->SetMaxDamage(MaxDamage);
+	Sphere->SetMinRadius(MinRadius);
+	Sphere->SetMaxRadius(MaxRadius);
+	Sphere->SetInterpolationMethod(InterpolationMethod);
+	Sphere->SetEasingType(EasingType);
+	Sphere->SetCurve(Curve.Get());
+
+	typedef NCsDamage::NCollision::EMethod CollisionMethodType;
+
+	Sphere->SetCollisionMethod((CollisionMethodType)(CollisionMethod));
+	Sphere->SetCollisionChannel((ECollisionChannel)(CollisionChannel));
 }
 
 #undef SphereType
 
 bool FCsData_DamageSphere::IsValidChecked(const FString& Context) const
 {
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageType, Type);
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(MinDamage, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxDamage, MinDamage)
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(MinRadius, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxRadius, MinRadius)
+	CS_IS_ENUM_VALID_CHECKED(EMCsInterpolatingMethod, InterpolationMethod);
+	CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, EasingType);
+
+	if (InterpolationMethod == ECsInterpolatingMethod::Curve)
+	{
+		Curve.IsValidChecked(Context);
+	}
+	CS_IS_ENUM_VALID_CHECKED(EMCsDamageCollisionMethod, CollisionMethod);
+	CS_IS_ENUM_VALID_CHECKED(EMCsCollisionChannel, CollisionChannel);
 	return true;
 }
 
 bool FCsData_DamageSphere::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 {
+	CS_IS_ENUM_STRUCT_VALID(EMCsDamageType, FECsDamageType, Type);
+	CS_IS_FLOAT_GREATER_THAN(MinDamage, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MaxDamage, MinDamage)
+	CS_IS_FLOAT_GREATER_THAN(MinRadius, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MaxRadius, MinRadius)
+	CS_IS_ENUM_VALID(EMCsInterpolatingMethod, ECsInterpolatingMethod, InterpolationMethod);
+	CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, EasingType);
+
+	if (InterpolationMethod == ECsInterpolatingMethod::Curve)
+	{
+		if (!Curve.IsValid(Context))
+			return false;
+	}
+	CS_IS_ENUM_VALID(EMCsDamageCollisionMethod, ECsDamageCollisionMethod, CollisionMethod);
+	CS_IS_ENUM_VALID(EMCsCollisionChannel, ECollisionChannel, CollisionChannel);
 	return true;
 }
 
@@ -141,6 +198,16 @@ namespace NCsDamage
 				}
 
 				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
+
+				bool FImpl::IsValidChecked(const FString& Context) const
+				{
+					return true;
+				}
+				
+				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+				{
+					return true;
+				}
 			}
 		}
 	}

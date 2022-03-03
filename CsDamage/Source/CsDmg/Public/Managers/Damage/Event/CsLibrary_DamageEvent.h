@@ -6,6 +6,7 @@
 #include "Utility/CsDmgLog.h"
 
 class ICsGetCurrentDamageEvent;
+class ICsReceiveDamage;
 
 namespace NCsDamage
 {
@@ -73,6 +74,30 @@ namespace NCsDamage
 			static const FHitResult& GetSafeHitResult(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			static bool GetSafeIgnoreObjects(const FString& Context, UObject* Object, TArray<UObject*>& OutObjects, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+
+			/**
+			* Safely check if Hit.GetActor() or Hit.GetComponent() implements the interface: ICsReceiveDamage.
+			* If Hit.GetActor() or Hit.GetComponent() does, return the object.
+			* 
+			* @param Context	The calling context.
+			* @param Hit
+			* @param Log		(optional)
+			* return
+			*/
+			static UObject* Implements_ICsReceiveDamage(const FString& Context, const FHitResult& Hit, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+
+			/**
+			* Perform a physics overlap with Event (EventType: NCsDamage::NEvent::IEvent).
+			* NOTE: Event->GetData() MUST implement the interfaces: 
+			*		- ShapeDataType (NCsDamage::NData::NShape::IShape)
+			*		- CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Event
+			* @param OutHits		(out)
+			*/
+			static void OverlapChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, TArray<FHitResult>& OutHits);
 		};
 
 	#undef EventType

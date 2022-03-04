@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
+#include "Value/Types/CsTypes_DamageValue.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Damage
 #include "Modifier/CsAllocated_DamageModifier.h"

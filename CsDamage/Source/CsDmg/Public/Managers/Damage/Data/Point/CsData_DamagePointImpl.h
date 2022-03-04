@@ -4,7 +4,7 @@
 #include "Data/CsData.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Damage
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
 // Log
 #include "Utility/CsLog.h"
 

@@ -6,7 +6,7 @@
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Damage
-#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
+#include "Value/Range/CsDamageValueRangeImpl.h"
 // Log
 #include "Utility/CsDmgLog.h"
 

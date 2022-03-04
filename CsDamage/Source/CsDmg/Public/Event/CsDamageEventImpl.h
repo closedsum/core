@@ -7,7 +7,7 @@
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Types
-#include "Managers/Damage/Value/CsAllocated_DamageValue.h"
+#include "Value/CsAllocated_DamageValue.h"
 #include "Range/CsAllocated_DamageRange.h"
 
 class UObject;

@@ -5,7 +5,7 @@
 // Data
 #include "Managers/Damage/Data/CsData_Damage.h"
 // Damage
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
 
 #include "CsData_DamagePointImplSlice.generated.h"
 

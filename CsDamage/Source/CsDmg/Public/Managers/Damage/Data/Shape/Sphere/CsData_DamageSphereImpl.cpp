@@ -4,13 +4,13 @@
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Valid.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
+#include "Value/Range/CsDamageValueRangeImpl.h"
 #include "Range/CsDamageRangeImpl.h"
 
 // FCsData_DamageSphere

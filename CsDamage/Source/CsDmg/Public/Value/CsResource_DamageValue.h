@@ -3,7 +3,7 @@
 // Resource
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Damage
-#include "Managers/Damage/Value/CsDamageValue.h"
+#include "Value/CsDamageValue.h"
 
 namespace NCsDamage
 {

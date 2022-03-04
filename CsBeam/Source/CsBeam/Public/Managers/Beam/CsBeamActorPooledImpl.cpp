@@ -17,7 +17,7 @@
 #include "Data/CsLibrary_Data_Beam.h"
 #include "Payload/CsLibrary_Payload_Beam.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Collision/CsTypes_Collision.h"
 #include "Library/CsLibrary_Common.h"
@@ -48,8 +48,8 @@
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Damage
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
+#include "Value/Range/CsDamageValueRangeImpl.h"
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 

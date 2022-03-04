@@ -3,11 +3,11 @@
 #include "CsDmg.h"
 
 // Library
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
+#include "Value/Point/CsDamageValuePoint.h"
 
 const FName NCsDamage::NModifier::NValue::NPoint::FImpl::Name = FName("NCsDamage::NModifier::NValue::NPoint::FImpl");
 

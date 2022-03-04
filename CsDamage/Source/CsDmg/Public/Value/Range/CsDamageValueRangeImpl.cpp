@@ -1,17 +1,17 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Value/Range/CsDamageValueRangeImpl.h"
 #include "CsDmg.h"
 
 // Library
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 
-const FName NCsDamage::NValue::NPoint::FImpl::Name = FName("NCsDamage::NValue::NPoint::FImpl");
+const FName NCsDamage::NValue::NRange::FImpl::Name = FName("NCsDamage::NValue::NRange::FImpl");
 
 namespace NCsDamage
 {
 	namespace NValue
 	{
-		namespace NPoint
+		namespace NRange
 		{
 			namespace NImpl
 			{
@@ -19,31 +19,31 @@ namespace NCsDamage
 				{
 					namespace Str
 					{
-						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NValue::NPoint::FImpl, Copy);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NValue::NRange::FImpl, Copy);
 					}
 				}
 			}
 
 			FImpl::FImpl() :
-				// ICsGetInterfaceMap
 				InterfaceMap(),
-				// PointValueType (NCsDamage::NValue::NPoint::IPoint)
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f)
+				// RangeValueType (NCsDamage::NValue::NRange::IRange)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MinValue, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxValue, 0.0f)
 			{
-				// ICsGetInterfaceMap
 				InterfaceMap.SetRoot<FImpl>(this);
 
 				typedef NCsDamage::NValue::IValue ValueType;
-				typedef NCsDamage::NValue::NPoint::IPoint PointValueType;
+				typedef NCsDamage::NValue::NRange::IRange RangeValueType;
 				typedef NCsDamage::NValue::NCopy::ICopy CopyType;
 
 				InterfaceMap.Add<ValueType>(static_cast<ValueType*>(this));
-				InterfaceMap.Add<PointValueType>(static_cast<PointValueType*>(this));
+				InterfaceMap.Add<RangeValueType>(static_cast<RangeValueType*>(this));
 				InterfaceMap.Add<ICsGetDamageValueType>(static_cast<ICsGetDamageValueType*>(this));
 				InterfaceMap.Add<CopyType>(static_cast<CopyType*>(this));
 				InterfaceMap.Add<ICsReset>(static_cast<ICsReset*>(this));
 
-				CS_CTOR_SET_MEMBER_PROXY(Value);
+				CS_CTOR_SET_MEMBER_PROXY(MinValue);
+				CS_CTOR_SET_MEMBER_PROXY(MaxValue);
 			}
 
 			// CopyType (NCsDamage::NValue::NCopy::ICopy)
@@ -54,7 +54,7 @@ namespace NCsDamage
 			{
 			#undef ValueType
 
-				using namespace NCsDamage::NValue::NPoint::NImpl::NCached;
+				using namespace NCsDamage::NValue::NRange::NImpl::NCached;
 
 				const FString& Context = Str::Copy;
 
@@ -62,7 +62,8 @@ namespace NCsDamage
 
 				const FImpl* FromImpl = ValueLibrary::PureStaticCastChecked<FImpl>(Context, From);
 
-				SetValue(FromImpl->GetValue());
+				SetMinValue(FromImpl->GetMinValue());
+				SetMaxValue(FromImpl->GetMaxValue());
 			}
 
 			#pragma endregion CopyType (NCsDamage::NValue::NCopy::ICopy)
@@ -72,7 +73,8 @@ namespace NCsDamage
 
 			void FImpl::Reset()
 			{
-				CS_RESET_MEMBER_WITH_PROXY(Value, 0.0f)
+				CS_RESET_MEMBER_WITH_PROXY(MinValue, 0.0f)
+				CS_RESET_MEMBER_WITH_PROXY(MaxValue, 0.0f)
 			}
 
 			#pragma endregion ICsReset

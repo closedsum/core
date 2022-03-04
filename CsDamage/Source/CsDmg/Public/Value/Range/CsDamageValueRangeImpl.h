@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Interfaces
-#include "Managers/Damage/Value/CsDamageValue.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
-#include "Managers/Damage/Value/Types/CsGetDamageValueType.h"
-#include "Managers/Damage/Value/Copy/CsDamageValue_Copy.h"
+#include "Value/CsDamageValue.h"
+#include "Value/Range/CsDamageValueRange.h"
+#include "Value/Types/CsGetDamageValueType.h"
+#include "Value/Copy/CsDamageValue_Copy.h"
 #include "Reset/CsReset.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
@@ -13,17 +13,17 @@ namespace NCsDamage
 {
 	namespace NValue
 	{
-		namespace NPoint
+		namespace NRange
 		{
 		#define ValueType NCsDamage::NValue::IValue
-		#define PointValueType NCsDamage::NValue::NPoint::IPoint
+		#define RangeValueType NCsDamage::NValue::NRange::IRange
 		#define CopyType NCsDamage::NValue::NCopy::ICopy
 
 			/**
 			* Basic implementation of the interface: NCsDamage::NValue::IValue
 			*/
 			struct CSDMG_API FImpl : public ValueType,
-									 public PointValueType,
+									 public RangeValueType,
 									 public ICsGetDamageValueType,
 									 public CopyType,
 									 public ICsReset
@@ -34,13 +34,12 @@ namespace NCsDamage
 
 			private:
 
-				// ICsGetInterfaceMap
-
 				FCsInterfaceMap InterfaceMap;
 
-				// PointValueType (NCsDamage::NValue::NPoint::IPoint)
+			public:
 
-				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(MinValue, float)
+				CS_DECLARE_MEMBER_WITH_PROXY(MaxValue, float)
 
 			public:
 
@@ -65,19 +64,20 @@ namespace NCsDamage
 
 			#pragma endregion ValueType (NCsDamage::NValue::IValue)
 
-			// PointValueType (NCsDamage::NValue::NPoint::IPoint)
+			// RangeValueType (NCsDamage::NValue::NRange::IRange)
 			#pragma region
 			public:
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinValue, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxValue, float)
 
-			#pragma endregion PointValueType (NCsDamage::NValue::NPoint::IPoint)
+			#pragma endregion RangeValueType (NCsDamage::NValue::NRange::IRange)
 
 			// ICsGetDamageValueType
 			#pragma region
 			public:
 
-				FORCEINLINE const FECsDamageValue& GetDamageValueType() const { return NCsDamageValue::Point; }
+				FORCEINLINE const FECsDamageValue& GetDamageValueType() const { return NCsDamageValue::Range; }
 
 			#pragma endregion ICsGetDamageValueType
 
@@ -99,7 +99,7 @@ namespace NCsDamage
 			};
 
 		#undef ValueType
-		#undef PointValueType
+		#undef RangeValueType
 		#undef CopyType
 		}
 	}

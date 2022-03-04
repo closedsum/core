@@ -7,7 +7,7 @@
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Data
@@ -18,8 +18,8 @@
 #include "Event/CsGetCurrentDamageEvent.h"
 #include "Event/Copy/CsDamageEvent_Copy.h"
 #include "Event/CsDamageEventImpl.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRange.h"
+#include "Value/Point/CsDamageValuePoint.h"
+#include "Value/Range/CsDamageValueRange.h"
 #include "Range/CsDamageRange.h"
 // Material
 #include "PhysicalMaterials/PhysicalMaterial.h"

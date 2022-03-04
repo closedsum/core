@@ -2,13 +2,13 @@
 #include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
 
 // Library
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
+#include "Value/Point/CsDamageValuePoint.h"
 
 const FName NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl::Name = FName("NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl");
 

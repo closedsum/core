@@ -2,7 +2,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
+#include "Value/Types/CsTypes_DamageValue.h"
 
 /**
 * Interface to describe which Damage Value implementation type.

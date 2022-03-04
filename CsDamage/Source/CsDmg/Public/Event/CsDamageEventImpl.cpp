@@ -4,12 +4,12 @@
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Event/CsLibrary_DamageEvent.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
+#include "Value/Point/CsDamageValuePoint.h"
 
 const FName NCsDamage::NEvent::FImpl::Name = FName("NCsDamage::NEvent::FImpl");;
 

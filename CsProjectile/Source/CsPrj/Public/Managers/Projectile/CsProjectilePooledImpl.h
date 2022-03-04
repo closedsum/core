@@ -10,7 +10,7 @@
 // Types
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Damage.h"
-#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
+#include "Value/Types/CsTypes_DamageValue.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 

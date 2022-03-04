@@ -12,7 +12,7 @@
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Material/CsLibrary_Material.h"
@@ -46,8 +46,8 @@
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Damage
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
+#include "Value/Range/CsDamageValueRangeImpl.h"
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 

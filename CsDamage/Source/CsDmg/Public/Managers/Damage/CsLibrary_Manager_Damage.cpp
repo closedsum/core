@@ -3,7 +3,7 @@
 
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Range/CsLibrary_DamageRange.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Library/CsLibrary_Valid.h"

@@ -1,14 +1,14 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Value/CsAllocated_DamageValue.h"
+#include "Value/CsAllocated_DamageValue.h"
 #include "CsDmg.h"
 
 // Library
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
-#include "Managers/Damage/Value/CsResource_DamageValue.h"
+#include "Value/CsResource_DamageValue.h"
 
 namespace NCsDamage 
 {

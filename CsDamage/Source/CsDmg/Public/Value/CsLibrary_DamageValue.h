@@ -3,9 +3,9 @@
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
-#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
+#include "Value/Types/CsTypes_DamageValue.h"
 // Damage
-#include "Managers/Damage/Value/CsDamageValue.h"
+#include "Value/CsDamageValue.h"
 
 namespace NCsDamage
 {

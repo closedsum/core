@@ -6,7 +6,7 @@
 #include "Managers/Damage/CsCVars_Manager_Damage.h"
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Range/CsLibrary_DamageRange.h"
 #include "Event/CsLibrary_DamageEvent.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
@@ -23,8 +23,8 @@
 // Damage
 #include "Managers/Damage/Handler/CsManager_Damage_DataHandler.h"
 #include "Event/CsDamageEventImpl.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
-#include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
+#include "Value/Range/CsDamageValueRangeImpl.h"
 #include "Range/CsDamageRangeImpl.h"
 #include "Modifier/Types/CsGetDamageModifierType.h"
 #include "Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"

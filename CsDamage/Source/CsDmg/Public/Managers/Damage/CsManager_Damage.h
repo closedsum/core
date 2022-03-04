@@ -6,13 +6,13 @@
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Damage
 #include "Event/CsDamageEvent.h"
-#include "Managers/Damage/Value/CsResource_DamageValue.h"
+#include "Value/CsResource_DamageValue.h"
 #include "Range/CsDamageRange.h"
 #include "Modifier/CsResource_DamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
-#include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
+#include "Value/Types/CsTypes_DamageValue.h"
 #include "Modifier/Types/CsTypes_DamageModifier.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 

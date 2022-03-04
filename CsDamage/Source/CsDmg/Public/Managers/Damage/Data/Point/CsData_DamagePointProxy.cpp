@@ -2,12 +2,12 @@
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
 // Library
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Value/CsDamageValue.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Value/CsDamageValue.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
 
 const FName NCsDamage::NData::NPoint::FProxy::Name = FName("NCsDamage::NData::NPoint::FProxy");
 

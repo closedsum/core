@@ -2,14 +2,14 @@
 #include "Managers/Damage/Data/Point/CsData_DamagePointImpl.h"
 
 // Library
-#include "Managers/Damage/Value/CsLibrary_DamageValue.h"
+#include "Value/CsLibrary_DamageValue.h"
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Valid.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Damage
-#include "Managers/Damage/Value/CsDamageValue.h"
-#include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
+#include "Value/CsDamageValue.h"
+#include "Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"
 
 // FCsData_DamagePoint

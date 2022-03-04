@@ -5,7 +5,7 @@
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
-#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Modifier/CsLibrary_DamageModifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Damage/CsManager_Damage.h"

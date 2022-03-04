@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"
+#include "Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"
 #include "CsDmg.h"
 
 // Library

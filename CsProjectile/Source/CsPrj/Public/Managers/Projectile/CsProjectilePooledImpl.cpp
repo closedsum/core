@@ -13,7 +13,7 @@
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
-#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Modifier/CsLibrary_DamageModifier.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"

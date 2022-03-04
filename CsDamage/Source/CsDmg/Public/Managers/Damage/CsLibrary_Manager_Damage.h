@@ -4,7 +4,7 @@
 #include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Damage
-#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
+#include "Modifier/CsAllocated_DamageModifier.h"
 // Log
 #include "Utility/CsLog.h"
 

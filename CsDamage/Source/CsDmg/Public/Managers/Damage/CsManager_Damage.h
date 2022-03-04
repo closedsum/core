@@ -8,12 +8,12 @@
 #include "Event/CsDamageEvent.h"
 #include "Managers/Damage/Value/CsResource_DamageValue.h"
 #include "Managers/Damage/Range/CsDamageRange.h"
-#include "Managers/Damage/Modifier/CsResource_DamageModifier.h"
+#include "Modifier/CsResource_DamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 #include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
-#include "Managers/Damage/Modifier/Types/CsTypes_DamageModifier.h"
+#include "Modifier/Types/CsTypes_DamageModifier.h"
 #include "UniqueObject/CsTypes_UniqueObject.h"
 
 #include "CsManager_Damage.generated.h"

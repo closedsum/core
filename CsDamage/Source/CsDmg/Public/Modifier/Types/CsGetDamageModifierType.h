@@ -2,7 +2,7 @@
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Managers/Damage/Modifier/Types/CsTypes_DamageModifier.h"
+#include "Modifier/Types/CsTypes_DamageModifier.h"
 
 /**
 * Interface to get the Damage Modifier "type".

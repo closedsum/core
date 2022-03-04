@@ -1,15 +1,15 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Modifier/CsLibrary_DamageModifier.h"
 #include "CsDmg.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
 // Damage
-#include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
-#include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
-#include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRange.h"
-#include "Managers/Damage/Modifier/CsDamageModifierRange.h"
-#include "Managers/Damage/Modifier/CsResource_DamageModifier.h"
+#include "Modifier/Value/CsDamageModifier_Value.h"
+#include "Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
+#include "Modifier/Value/Range/CsDamageModifier_ValueRange.h"
+#include "Modifier/CsDamageModifierRange.h"
+#include "Modifier/CsResource_DamageModifier.h"
 
 #define CS_TEMP_ECHECK NCsDamage::NModifier::FLibrary::FModify::ECheck
 

@@ -18,7 +18,7 @@
 #include "Payload/CsLibrary_Payload_Beam.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
-#include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
+#include "Modifier/CsLibrary_DamageModifier.h"
 #include "Collision/CsTypes_Collision.h"
 #include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"

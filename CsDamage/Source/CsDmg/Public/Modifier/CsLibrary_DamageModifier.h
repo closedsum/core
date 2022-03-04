@@ -3,8 +3,8 @@
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Damage
-#include "Managers/Damage/Modifier/CsDamageModifier.h"
-#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
+#include "Modifier/CsDamageModifier.h"
+#include "Modifier/CsAllocated_DamageModifier.h"
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)

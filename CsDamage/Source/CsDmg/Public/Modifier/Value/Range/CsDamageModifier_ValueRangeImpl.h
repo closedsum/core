@@ -2,10 +2,10 @@
 #pragma once
 // Interfaces
 #include "Modifier/CsModifier.h"
-#include "Managers/Damage/Modifier/CsDamageModifier.h"
-#include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
-#include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRange.h"
-#include "Managers/Damage/Modifier/Types/CsGetDamageModifierType.h"
+#include "Modifier/CsDamageModifier.h"
+#include "Modifier/Value/CsDamageModifier_Value.h"
+#include "Modifier/Value/Range/CsDamageModifier_ValueRange.h"
+#include "Modifier/Types/CsGetDamageModifierType.h"
 #include "Reset/CsReset.h"
 // Types
 #include "Modifier/CsTypes_Modifier.h"

@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/Value/Range/CsDamageModifier_ValueRangeImpl.h"
+#include "Modifier/Value/Range/CsDamageModifier_ValueRangeImpl.h"
 #include "CsDmg.h"
 
 // Library

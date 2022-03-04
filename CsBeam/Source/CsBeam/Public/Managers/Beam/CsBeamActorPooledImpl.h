@@ -12,7 +12,7 @@
 #include "Types/CsTypes_Damage.h"
 #include "Managers/Damage/Value/Types/CsTypes_DamageValue.h"
 // Damage
-#include "Managers/Damage/Modifier/CsAllocated_DamageModifier.h"
+#include "Modifier/CsAllocated_DamageModifier.h"
 
 #include "CsBeamActorPooledImpl.generated.h"
 

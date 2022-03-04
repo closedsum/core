@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/CsDamageModifier.h"
+#include "Modifier/CsDamageModifier.h"
 #include "CsDmg.h"
 
 const FName NCsDamage::NModifier::IModifier::Name = FName("NCsDamage::NModifier::IModifier");

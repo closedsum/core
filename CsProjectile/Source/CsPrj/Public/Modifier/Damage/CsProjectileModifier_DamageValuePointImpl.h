@@ -2,9 +2,9 @@
 #pragma once
 // Interfaces
 #include "Modifier/CsModifier.h"
-#include "Managers/Damage/Modifier/CsDamageModifier.h"
-#include "Managers/Damage/Modifier/Value/CsDamageModifier_Value.h"
-#include "Managers/Damage/Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
+#include "Modifier/CsDamageModifier.h"
+#include "Modifier/Value/CsDamageModifier_Value.h"
+#include "Modifier/Value/Point/CsDamageModifier_ValuePoint.h"
 #include "Modifier/CsProjectileModifier.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Valid/CsIsValid.h"

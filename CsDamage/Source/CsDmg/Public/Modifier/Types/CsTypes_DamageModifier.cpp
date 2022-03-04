@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Modifier/Types/CsTypes_DamageModifier.h"
+#include "Modifier/Types/CsTypes_DamageModifier.h"
 
 // DamageModifier
 #pragma region

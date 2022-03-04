@@ -108,10 +108,10 @@ namespace NCsDamage
 					// ICsGetInterfaceMap
 					InterfaceMap(),
 					// DataType (NCsDamage::NData::IData)
-					DamageValue(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, nullptr),
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
 					// ShapeDataType (NCsDamage::NData::NShape::IShape)
-					DamageRange(nullptr),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Range, nullptr),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDamage, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDamage, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinRadius, 0.0f),
@@ -157,8 +157,9 @@ namespace NCsDamage
 						Impl->SetMinValue(GetMinDamagePtr());
 						Impl->SetMaxValue(GetMaxDamagePtr());
 
-						DamageValue = Impl;
+						Value = Impl;
 					}
+					CS_CTOR_SET_MEMBER_PROXY(Value);
 
 					// NCsDamage::NRange::IRange
 					{
@@ -168,15 +169,16 @@ namespace NCsDamage
 						Impl->SetMinRange(GetMinRadiusPtr());
 						Impl->SetMaxRange(GetMaxRadiusPtr());
 
-						DamageRange = Impl;
+						Range = Impl;
 					}
+					CS_CTOR_SET_MEMBER_PROXY(Range);
 				}
 
 				FImpl::~FImpl()
 				{
 					delete InterfaceMap;
-					delete DamageValue;
-					delete DamageRange;
+					delete Value;
+					delete Range;
 				}
 
 				// ShapeDataType (NCsDamage::NData::NShape::IShape)
@@ -184,7 +186,7 @@ namespace NCsDamage
 
 				#define ValueType NCsDamage::NValue::IValue
 				#define RangeType NCsDamage::NRange::IRange
-				float FImpl::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const
+				float FImpl::CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const
 				{
 				#undef ValueType
 				#undef RangeType
@@ -295,7 +297,7 @@ void UCsData_DamageSphereImpl::Init()
 		Proxy->SetOuter(this);
 		// DataType (NCsDamage::NData::IData)
 		
-		// NCsDamage::NValue::NRange::IRange
+		// ValueRangeType (NCsDamage::NValue::NRange::IRange)
 		{
 			typedef NCsDamage::NValue::NRange::FImpl ValueImplType;
 			ValueImplType* Impl = new ValueImplType();
@@ -305,11 +307,10 @@ void UCsData_DamageSphereImpl::Init()
 
 			DamageValue = Impl;
 		}
-		Proxy->SetMinDamage(&MinDamage);
-		Proxy->SetMaxDamage(&MaxDamage);
+		Proxy->SetValue(&DamageValue);
 		Proxy->SetType(&Type);
 
-		// NCsDamage::NRange::IRange
+		// RangeType (NCsDamage::NRange::IRange)
 		{
 			typedef NCsDamage::NRange::FImpl RangeImplType;
 			RangeImplType* Impl = new RangeImplType();
@@ -319,6 +320,19 @@ void UCsData_DamageSphereImpl::Init()
 
 			DamageRange = Impl;
 		}
+		Proxy->SetRange(&DamageRange);
+		Proxy->SetMinDamage(&MinDamage);
+		Proxy->SetMaxDamage(&MaxDamage);
+		Proxy->SetMinRadius(&MinRadius);
+		Proxy->SetMaxRadius(&MaxRadius);
+		Proxy->SetInterpolationMethod(&InterpolationMethod);
+		Proxy->SetEasingType(&EasingType);
+		Proxy->SetCurve(Curve.GetPtr());
+
+		typedef NCsDamage::NCollision::EMethod CollisionMethodType;
+
+		Proxy->SetCollisionMethod((CollisionMethodType*)(&CollisionMethod));
+		Proxy->SetCollisionChannel((ECollisionChannel*)(&CollisionChannel));
 	}
 }
 

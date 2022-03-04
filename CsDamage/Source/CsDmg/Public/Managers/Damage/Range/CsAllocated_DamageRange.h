@@ -24,10 +24,13 @@ namespace NCsDamage
 		{
 		private:
 
+			/** The Root for UCsManager_Damage. */
 			TWeakObjectPtr<UObject> Root;
 
+			/** Container holding a reference to Range (a Damage Range). */
 			FResource* Container;
 
+			/** Damage Range */
 			IRange* Range;
 
 		public:

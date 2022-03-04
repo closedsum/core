@@ -21,7 +21,7 @@ namespace NCsDamage
 			check(ImplementsChecked<CopyType>(Context, From));
 
 			ToC->Copy(From);
-			return false;
+			return true;
 		}
 	}
 }

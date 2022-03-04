@@ -8,6 +8,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Damage/CsManager_Damage.h"
+// Data
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 
 namespace NCsDamage
 {
@@ -52,19 +54,20 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_EXIT(Data)
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
-			const IRange* From = DamageDataLibrary::GetSafeInterfaceChecked<IRange>(Context, Data);
+			const ShapeDataType* From = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data);
 
 			if (!From)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data does NOT implement the interface: %s."), *Context, *(IRange::Name.ToString())));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data does NOT implement the interface: %s."), *Context, *(ShapeDataType::Name.ToString())));
 				return;
 			}
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From);
+			Container = DamageManagerLibrary::CreateCopyOfRangeChecked(Context, GetRoot(), From->GetRange());
 			Range	  = Container->Get();
 		}
 

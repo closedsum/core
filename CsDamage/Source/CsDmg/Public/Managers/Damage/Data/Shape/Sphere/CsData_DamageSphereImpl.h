@@ -147,24 +147,14 @@ namespace NCsDamage
 
 					FCsInterfaceMap* InterfaceMap;
 
-				public:
-
 				// DamageDataType (NCsDamage::NData::IData)
 
-					ValueType* DamageValue;
-
-				private:
-
+					CS_DECLARE_MEMBER_WITH_PROXY(Value, ValueType*)
 					CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
-
-				public:
 
 				// ShapeDataType (NCsDamage::NData::NShape::IShape)
 
-					RangeType* DamageRange;
-
-				private:
-
+					CS_DECLARE_MEMBER_WITH_PROXY(Range, RangeType*)
 					CS_DECLARE_MEMBER_WITH_PROXY(MinDamage, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(MaxDamage, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(MinRadius, float)
@@ -199,7 +189,7 @@ namespace NCsDamage
 				#pragma region
 				public:
 
-					FORCEINLINE const ValueType* GetValue() const { return DamageValue; }
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Value, ValueType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
 				#pragma endregion DamageDataType (NCsDamage::NData::IData)
@@ -218,9 +208,9 @@ namespace NCsDamage
 				#pragma region
 				public:
 
-					FORCEINLINE const RangeType* GetRange() const { return DamageRange; }
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Range, RangeType)
 
-					float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const;
+					float CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const;
 
 					bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 

@@ -488,7 +488,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	// Copy Range from Data, this can change with modifiers
 	typedef NCsDamage::NRange::IRange RangeType;
 
-	EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, Data);
+	EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, Data, nullptr);
 	RangeType* Range = EventImpl->DamageRange.GetRange();
 
 	// Apply Modifiers

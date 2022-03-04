@@ -70,6 +70,8 @@ namespace NCsStaticMeshActor
 
 			bool bUseAsOccluder;
 
+			TArray<FName> Tags;
+
 		public:
 
 			FImpl();
@@ -139,6 +141,7 @@ namespace NCsStaticMeshActor
 			FORCEINLINE const bool& CastShadow() const { return bCastShadow; }
 			FORCEINLINE const bool& ReceivesDecals() const { return bReceivesDecals; }
 			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }
+			FORCEINLINE const TArray<FName>& GetTags() const { return Tags; }
 
 		#pragma endregion StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 

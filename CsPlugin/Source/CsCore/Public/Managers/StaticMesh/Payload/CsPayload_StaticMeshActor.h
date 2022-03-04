@@ -110,12 +110,21 @@ namespace NCsStaticMeshActor
 			virtual const bool& ReceivesDecals() const = 0;
 
 			/**
-			 * Whether to render the StaticMeshActor in the depth only pass.
-			 * This should generally be true for all objects, and let the renderer make decisions about whether to render objects in the depth only pass.
-			 *
-			 * return
-			 */
+			* Whether to render the StaticMeshActor in the depth only pass.
+			* This should generally be true for all objects, and let the renderer make decisions about whether to render objects in the depth only pass.
+			*
+			* return
+			*/
 			virtual const bool& UseAsOccluder() const = 0;
+
+			/**
+			* Get the Tags to append to the StaticMeshActor's Tags list.
+			* If the StaticMeshActor is being attached to a Parent object, instead
+			* append to the StaticMeshActor's RootComponent (StaticMeshComponent's ComponentTags list).
+			* 
+			* return
+			*/
+			virtual const TArray<FName>& GetTags() const = 0;
 
 		#undef DeallocateMethodType
 		};

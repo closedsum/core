@@ -32,7 +32,8 @@ namespace NCsStaticMeshActor
 			Transform(FTransform::Identity),
 			bCastShadow(false),
 			bReceivesDecals(false),
-			bUseAsOccluder(false)
+			bUseAsOccluder(false),
+			Tags()
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -78,6 +79,7 @@ namespace NCsStaticMeshActor
 			bCastShadow = false;
 			bReceivesDecals = false;
 			bUseAsOccluder = false;
+			Tags.Reset(Tags.Max());
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

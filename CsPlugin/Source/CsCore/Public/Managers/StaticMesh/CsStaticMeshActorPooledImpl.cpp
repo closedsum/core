@@ -12,6 +12,7 @@
 #include "Managers/StaticMesh/Payload/CsLibrary_Payload_StaticMeshActor.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_SkeletalMesh.h"
+#include "Library/CsLibrary_Array.h"
 // StaticMesh
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
@@ -168,6 +169,8 @@ void ACsStaticMeshActorPooledImpl::Deallocate_Internal()
 
 	Handle_ClearAttachAndTransform();
 	Handle_ClearStaticMesh();
+
+	Tags.Reset(Tags.Max());
 
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);
@@ -419,6 +422,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
 	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
 	#define ChangeHelper NCsStaticMeshActor::NPayload::NChange
+	typedef NCsArray::FLibrary ArrayLibrary;
 
 	if (Parent)
 	{
@@ -450,7 +454,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
 			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
-			ChangeCounter::Get().AddChanged();
+			ChangeCounter::Get().AddChanged();	
 		}
 
 		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
@@ -476,6 +480,8 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 			ChangeCounter::Get().AddChanged();
 		}
 		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+
+		ArrayLibrary::Append<FName>(GetMeshComponent()->ComponentTags, StaticMeshPayload->GetTags());
 	}
 	// NO Parent, set the World Transform of the StaticMeshComponent
 	else
@@ -501,6 +507,8 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 		}
 
 		AttachToBone = NAME_None;
+
+		ArrayLibrary::Append<FName>(Tags, StaticMeshPayload->GetTags());
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 

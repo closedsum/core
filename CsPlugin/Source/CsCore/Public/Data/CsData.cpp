@@ -2,7 +2,7 @@
 #include "Data/CsData.h"
 #include "CsCore.h"
 
-const FName NCsData::IData::Name = FName("NCsData::IData::Name");
+const FName NCsData::IData::Name = FName("NCsData::IData");
 
 const FName ICsData::Name = FName("ICsData");
 

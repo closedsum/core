@@ -202,4 +202,18 @@ namespace NCsSkeletalMesh
 			return SafeIsBoneOrSocketValid(Context, C, BoneOrSocket, Log);
 		return true;
 	}
+
+	FVector FLibrary::GetBoneOrSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
+	{
+		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
+
+		return Component->GetBoneLocation(BoneOrSocket);
+	}
+
+	FVector FLibrary::GetBoneOrSocketLocationChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket)
+	{
+		USkeletalMeshComponent* C = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
+
+		return GetBoneOrSocketLocationChecked(Context, C, BoneOrSocket);
+	}
 }

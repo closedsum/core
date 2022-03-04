@@ -383,6 +383,13 @@ namespace NCsArray
 			A.RemoveAt(A.Num() - 1, 1, false);
 		}
 
+		template<typename T>
+		FORCEINLINE static void Append(TArray<T>& A, const TArray<T>& B)
+		{
+			A.Reset(FMath::Max(A.Max(), B.Num()));
+			A.Append(B);
+		}
+
 	#pragma endregion TArray
 
 	// Fixed Array

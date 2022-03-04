@@ -24,6 +24,7 @@ void FCsStaticMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 	Attachment->SetBone(&Bone);
 	Attachment->SetTransformRules(&TransformRules);
 	Attachment->SetTransform(&Transform);
+	Attachment->SetTags(&Tags);
 }
 
 void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment) const
@@ -43,6 +44,7 @@ void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment
 	Attachment->SetBone(Bone);
 	Attachment->SetTransformRules(TransformRules);
 	Attachment->SetTransform(Transform);
+	Attachment->SetTags(Tags);
 }
 
 #undef AttachmentType
@@ -66,6 +68,8 @@ bool FCsStaticMeshAttachment::IsValidChecked(const FString& Context) const
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	check(MaterialLibrary::IsValidChecked(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context)))
+	// Check Tags is Valid
+	CS_IS_ARRAY_ANY_NONE_CHECKED(Tags)
 	return true;
 }
 
@@ -93,6 +97,8 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 
 	if (!MaterialLibrary::IsValid(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context), Log))
 		return false;
+	// Check Tags is Valid
+	CS_IS_ARRAY_ANY_NONE(Tags)
 	return true;
 }
 
@@ -163,6 +169,8 @@ FCsStaticMeshActorPooled* FCsStaticMeshAttachment::AttachChecked(const FString& 
 	PayloadImpl->Bone			= Bone;
 	PayloadImpl->TransformRules = TransformRules;
 	PayloadImpl->Transform		= Transform;
+	PayloadImpl->Tags.Reset(FMath::Max(PayloadImpl->Tags.Max(), Tags.Num()));
+	PayloadImpl->Tags.Append(Tags);
 
 	const FCsStaticMeshActorPooled* Object = StaticMeshManagerLibrary::SpawnChecked(Context, WorldContext, DefaultType, Payload);
 
@@ -193,6 +201,8 @@ namespace NCsStaticMesh
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
 			check(MaterialLibrary::IsValidChecked(Context, GetMesh(), GetMaterials()))
+			// Check GetTags() is Valid
+			CS_IS_ARRAY_ANY_NONE_CHECKED(GetTags())
 			return true;
 		}
 
@@ -221,6 +231,8 @@ namespace NCsStaticMesh
 
 			if (!MaterialLibrary::IsValid(Context, GetMesh(), GetMaterials(), Log))
 				return false;
+			// Check GetTags() is Valid
+			CS_IS_ARRAY_ANY_NONE(GetTags())
 			return true;
 		}
 
@@ -291,6 +303,8 @@ namespace NCsStaticMesh
 			PayloadImpl->Bone			= GetBone();
 			PayloadImpl->TransformRules = GetTransformRules();
 			PayloadImpl->Transform		= GetTransform();
+			PayloadImpl->Tags.Reset(FMath::Max(PayloadImpl->Tags.Max(), GetTags().Num()));
+			PayloadImpl->Tags.Append(GetTags());
 
 			const FCsStaticMeshActorPooled* Object = StaticMeshManagerLibrary::SpawnChecked(Context, WorldContext, DefaultType, Payload);
 

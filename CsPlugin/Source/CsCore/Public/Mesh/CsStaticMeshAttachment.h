@@ -47,6 +47,10 @@ struct CSCORE_API FCsStaticMeshAttachment
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FTransform Transform;
 
+	/** Any Tags to applied to the StaticMeshComponent (i.e. appended to ComponentTags). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
+	TArray<FName> Tags;
+
 public:
 
 	FCsStaticMeshAttachment() :
@@ -55,15 +59,14 @@ public:
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity)
+		Transform(FTransform::Identity),
+		Tags()
 	{
 	}
 
 #define AttachmentType NCsStaticMesh::NAttachment::FAttachment
-
 	void CopyToAttachment(AttachmentType* Attachment);
 	void CopyToAttachmentAsValue(AttachmentType* Attachment) const;
-
 #undef AttachmentType
 
 	bool IsValidChecked(const FString& Context) const;
@@ -93,6 +96,7 @@ namespace NCsStaticMesh
 			CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
 			CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
+			CS_DECLARE_MEMBER_WITH_PROXY(Tags, TArray<FName>)
 
 		public:
 
@@ -102,7 +106,8 @@ namespace NCsStaticMesh
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 7), // NCsTransformRules::All
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
+				CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Tags)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Mesh);
 				CS_CTOR_SET_MEMBER_PROXY(Materials);
@@ -110,6 +115,7 @@ namespace NCsStaticMesh
 				CS_CTOR_SET_MEMBER_PROXY(Bone);
 				CS_CTOR_SET_MEMBER_PROXY(TransformRules);
 				CS_CTOR_SET_MEMBER_PROXY(Transform);
+				CS_CTOR_SET_MEMBER_PROXY(Tags);
 			}
 
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, UStaticMesh)
@@ -118,6 +124,7 @@ namespace NCsStaticMesh
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Tags, TArray<FName>)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

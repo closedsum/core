@@ -8,7 +8,7 @@
 #include "Containers/CsInterfaceMap.h"
 // Types
 #include "Managers/Damage/Value/CsAllocated_DamageValue.h"
-#include "Managers/Damage/Range/CsAllocated_DamageRange.h"
+#include "Range/CsAllocated_DamageRange.h"
 
 class UObject;
 struct FCsInterfaceMap;

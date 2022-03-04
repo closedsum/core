@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Range/CsAllocated_DamageRange.h"
+#include "Range/CsAllocated_DamageRange.h"
 #include "CsDmg.h"
 
 // Library

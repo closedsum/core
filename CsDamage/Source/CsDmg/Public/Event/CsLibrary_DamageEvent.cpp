@@ -20,7 +20,7 @@
 #include "Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRange.h"
-#include "Managers/Damage/Range/CsDamageRange.h"
+#include "Range/CsDamageRange.h"
 // Material
 #include "PhysicalMaterials/PhysicalMaterial.h"
 // Trace

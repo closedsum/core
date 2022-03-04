@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Range/CsDamageRangeImpl.h"
+#include "Range/CsDamageRangeImpl.h"
 #include "CsDmg.h"
 
 // Library
-#include "Managers/Damage/Range/CsLibrary_DamageRange.h"
+#include "Range/CsLibrary_DamageRange.h"
 
 const FName NCsDamage::NRange::FImpl::Name = FName("NCsDamage::NRange::FImpl");
 

@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Interfaces
-#include "Managers/Damage/Range/CsDamageRange.h"
-#include "Managers/Damage/Range/Copy/CsDamageRange_Copy.h"
+#include "Range/CsDamageRange.h"
+#include "Range/Copy/CsDamageRange_Copy.h"
 #include "Reset/CsReset.h"
 // Types
 #include "Types/CsTypes_Macro.h"

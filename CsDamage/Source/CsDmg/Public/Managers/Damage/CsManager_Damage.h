@@ -7,7 +7,7 @@
 // Damage
 #include "Event/CsDamageEvent.h"
 #include "Managers/Damage/Value/CsResource_DamageValue.h"
-#include "Managers/Damage/Range/CsDamageRange.h"
+#include "Range/CsDamageRange.h"
 #include "Modifier/CsResource_DamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 // Types

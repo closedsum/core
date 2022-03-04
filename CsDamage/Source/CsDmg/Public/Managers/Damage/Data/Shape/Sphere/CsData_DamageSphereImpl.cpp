@@ -11,7 +11,7 @@
 #include "Containers/CsInterfaceMap.h"
 // Damage
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
-#include "Managers/Damage/Range/CsDamageRangeImpl.h"
+#include "Range/CsDamageRangeImpl.h"
 
 // FCsData_DamageSphere
 #pragma region

@@ -5,7 +5,7 @@
 #include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Damage
-#include "Managers/Damage/Event/CsDamageEvent.h"
+#include "Event/CsDamageEvent.h"
 #include "Managers/Damage/Value/CsResource_DamageValue.h"
 #include "Managers/Damage/Range/CsDamageRange.h"
 #include "Managers/Damage/Modifier/CsResource_DamageModifier.h"

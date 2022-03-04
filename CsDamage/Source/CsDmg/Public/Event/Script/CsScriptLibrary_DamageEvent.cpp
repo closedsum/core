@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Event/Script/CsScriptLibrary_DamageEvent.h"
+#include "Event/Script/CsScriptLibrary_DamageEvent.h"
 #include "CsDmg.h"
 
 // Library
-#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "Event/CsLibrary_DamageEvent.h"
 
 // Cached
 #pragma region

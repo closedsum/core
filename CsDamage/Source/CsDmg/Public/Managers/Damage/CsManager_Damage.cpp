@@ -8,7 +8,7 @@
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Managers/Damage/Range/CsLibrary_DamageRange.h"
-#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "Event/CsLibrary_DamageEvent.h"
 #include "Managers/Damage/Modifier/CsLibrary_DamageModifier.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
@@ -22,7 +22,7 @@
 #include "Reset/CsReset.h"
 // Damage
 #include "Managers/Damage/Handler/CsManager_Damage_DataHandler.h"
-#include "Managers/Damage/Event/CsDamageEventImpl.h"
+#include "Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePointImpl.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRangeImpl.h"
 #include "Managers/Damage/Range/CsDamageRangeImpl.h"

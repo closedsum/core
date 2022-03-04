@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/Damage/Event/CsDamageEvent.h"
+#include "Event/CsDamageEvent.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Log
 #include "Utility/CsDmgLog.h"

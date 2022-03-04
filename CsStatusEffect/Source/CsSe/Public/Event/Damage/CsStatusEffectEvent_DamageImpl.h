@@ -4,7 +4,7 @@
 #include "Event/Damage/CsStatusEffectEvent_Damage.h"
 #include "Reset/CsReset.h"
 // Types
-#include "Managers/Damage/Event/CsAllocated_DamageEvent.h"
+#include "Event/CsAllocated_DamageEvent.h"
 
 class UObject;
 struct FCsInterfaceMap;

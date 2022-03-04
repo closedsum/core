@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "Event/CsLibrary_DamageEvent.h"
 #include "CsDmg.h"
 
 // Types
@@ -15,9 +15,9 @@
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Damage
 #include "Managers/Damage/CsReceiveDamage.h"
-#include "Managers/Damage/Event/CsGetCurrentDamageEvent.h"
-#include "Managers/Damage/Event/Copy/CsDamageEvent_Copy.h"
-#include "Managers/Damage/Event/CsDamageEventImpl.h"
+#include "Event/CsGetCurrentDamageEvent.h"
+#include "Event/Copy/CsDamageEvent_Copy.h"
+#include "Event/CsDamageEventImpl.h"
 #include "Managers/Damage/Value/Point/CsDamageValuePoint.h"
 #include "Managers/Damage/Value/Range/CsDamageValueRange.h"
 #include "Managers/Damage/Range/CsDamageRange.h"

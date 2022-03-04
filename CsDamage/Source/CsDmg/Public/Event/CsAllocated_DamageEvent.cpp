@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Event/CsAllocated_DamageEvent.h"
+#include "Event/CsAllocated_DamageEvent.h"
 #include "CsDmg.h"
 
 // Managers

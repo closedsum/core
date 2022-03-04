@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Event/CsDamageEventImpl.h"
+#include "Event/CsDamageEventImpl.h"
 
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
-#include "Managers/Damage/Event/CsLibrary_DamageEvent.h"
+#include "Event/CsLibrary_DamageEvent.h"
 #include "Managers/Damage/Value/CsLibrary_DamageValue.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage

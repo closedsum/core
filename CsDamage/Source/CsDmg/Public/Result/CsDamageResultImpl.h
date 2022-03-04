@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Managers/Damage/Result/CsDamageResult.h"
+#include "Result/CsDamageResult.h"
 
 class UObject;
 struct FCsInterfaceMap;

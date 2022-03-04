@@ -178,7 +178,7 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	GetMeshComponent()->bNoSkeletonUpdate		 = false;
 	GetMeshComponent()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	GetMeshComponent()->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipSimulatingBones;
-
+	GetMeshComponent()->bPauseAnims = false;
 	GetMeshComponent()->SetHiddenInGame(false);
 	GetMeshComponent()->SetComponentTickEnabled(true);
 

@@ -46,6 +46,8 @@ TSharedRef<IPropertyTypeCustomization> FCsData_ECsStatusEffectCustomization::Mak
 
 void FCsData_ECsStatusEffectCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	StructPropertyHandle->MarkResetToDefaultCustomized();
+
 	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsStatusEffect, Value));
 
 	ValueTypeInterface  = FECsStatusEffectCustomization::MakeInstance();

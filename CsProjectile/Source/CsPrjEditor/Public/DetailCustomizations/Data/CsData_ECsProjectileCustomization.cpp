@@ -46,6 +46,8 @@ TSharedRef<IPropertyTypeCustomization> FCsData_ECsProjectileCustomization::MakeI
 
 void FCsData_ECsProjectileCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	StructPropertyHandle->MarkResetToDefaultCustomized();
+
 	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsProjectile, Value));
 
 	ValueTypeInterface  = FECsProjectileCustomization::MakeInstance();

@@ -46,6 +46,8 @@ TSharedRef<IPropertyTypeCustomization> FCsData_ECsWeaponCustomization::MakeInsta
 
 void FCsData_ECsWeaponCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	StructPropertyHandle->MarkResetToDefaultCustomized();
+
 	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsWeapon, Value));
 
 	ValueTypeInterface  = FECsWeaponCustomization::MakeInstance();

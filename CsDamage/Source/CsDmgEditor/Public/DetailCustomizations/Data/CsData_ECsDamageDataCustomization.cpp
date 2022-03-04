@@ -46,6 +46,8 @@ TSharedRef<IPropertyTypeCustomization> FCsData_ECsDamageDataCustomization::MakeI
 
 void FCsData_ECsDamageDataCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils)
 {
+	StructPropertyHandle->MarkResetToDefaultCustomized();
+
 	ValueHandle = StructPropertyHandle->GetChildHandle(GET_MEMBER_NAME_CHECKED(FCsData_ECsDamageData, Value));
 
 	ValueTypeInterface  = FECsDamageDataCustomization::MakeInstance();

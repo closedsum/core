@@ -128,7 +128,7 @@ namespace NCsDamage
 
 					InterfaceMap->SetRoot<FImpl>(this);
 
-					typedef NData::IData DataType;
+					typedef NCsData::IData DataType;
 					typedef NCsDamage::NData::IData DamageDataType;
 					typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 					typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
@@ -279,7 +279,6 @@ void UCsData_DamageSphereImpl::Init()
 		typedef ICsData_Damage DamageDataType;
 		typedef ICsData_DamageShape DamageShapeDataType;
 		typedef ICsData_DamageCollision DamageCollisionDataType;
-
 
 		InterfaceMap->Add<DataType>(Cast<DataType>(this));
 		InterfaceMap->Add<DamageDataType>(Cast<DamageDataType>(this));

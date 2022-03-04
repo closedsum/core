@@ -94,6 +94,8 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 		SetEnumWithDisplayName(*InitialSelectedDisplayName.Get());
 	}
 
+	StructPropertyHandle->MarkResetToDefaultCustomized();
+
 	HeaderRow.NameContent()
 	[
 		SNew(STextBlock)
@@ -102,33 +104,31 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 	]
 	.ValueContent()
 	[
-		SAssignNew(DisplayNameComboBox, SComboBox<TSharedPtr<FString>>)
-		.OptionsSource(&DisplayNameList)
-		.OnGenerateWidget(this, &FECsEnumStructCustomization::OnGenerateWidget)
-		.OnSelectionChanged(this, &FECsEnumStructCustomization::OnSelectionChanged)
-		.OnComboBoxOpening(this, &FECsEnumStructCustomization::OnComboBoxOpening)
-		.InitiallySelectedItem(InitialSelectedDisplayName)
-		.IsEnabled(FSlateApplication::Get().GetNormalExecutionAttribute())
-		.ContentPadding(FMargin(2.0f, 2.0f))
-		.Content()
+		SNew(SHorizontalBox)
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
 		[
-			SNew(STextBlock)
-			.Text(this, &FECsEnumStructCustomization::GetComboBoxContent)
-			.Font(IDetailLayoutBuilder::GetDetailFont())
+			SAssignNew(DisplayNameComboBox, SComboBox<TSharedPtr<FString>>)
+			.OptionsSource(&DisplayNameList)
+			.OnGenerateWidget(this, &FECsEnumStructCustomization::OnGenerateWidget)
+			.OnSelectionChanged(this, &FECsEnumStructCustomization::OnSelectionChanged)
+			.OnComboBoxOpening(this, &FECsEnumStructCustomization::OnComboBoxOpening)
+			.InitiallySelectedItem(InitialSelectedDisplayName)
+			.IsEnabled(FSlateApplication::Get().GetNormalExecutionAttribute())
+			.ContentPadding(FMargin(2.0f, 2.0f))
+			.Content()
+			[
+				SNew(STextBlock)
+				.Text(this, &FECsEnumStructCustomization::GetComboBoxContent)
+				.Font(IDetailLayoutBuilder::GetDetailFont())
+			]
+		]
+		+ SHorizontalBox::Slot()
+		.AutoWidth()
+		[
+			StructPropertyHandle->CreateDefaultPropertyButtonWidgets()
 		]
 	];
-
-	// TODO: Figure out how to calculate actual size
-	static const float WIDTH_MULTIPLIER = 9.0f;
-
-	TOptional<float> Width = HeaderRow.ValueContent().MaxWidth;
-
-	for (TSharedPtr<FString>& Name : DisplayNameList)
-	{
-		Width = FMath::Max(Width.Get(0.0f), WIDTH_MULTIPLIER * Name->Len());
-	}
-	HeaderRow.ValueContent().MinWidth = Width;
-	HeaderRow.ValueContent().MaxWidth = Width;
 }
 
 void FECsEnumStructCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle){}

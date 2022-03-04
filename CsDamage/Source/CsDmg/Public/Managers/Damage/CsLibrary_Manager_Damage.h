@@ -309,13 +309,15 @@ namespace NCsDamage
 
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 		#define ValueType NCsDamage::NValue::IValue
+		#define RangeType NCsDamage::NRange::IRange
 
 			/**
-			* 
+			* Process, create a Damage Event, and broadcast the Event with Data, Instigator, Causer, HitResult, and Modifiers
+			*  Modifiers are applied to the Value and/or Range after the Event is created.
 			* 
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Data
+			* @param Data			Object that implements the interface: DataType (NCsDamage::NData::IData).
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
@@ -324,12 +326,13 @@ namespace NCsDamage
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 
 			/**
-			*
+			* Process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
+			* with Damage Data (NCsDamage::NData::IData) associated with type: Data, Instigator, Causer, and HitResult.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Value
-			* @param Data
+			* @param Value			Object that implements the interface: ValueType (NCsDamage::NValue::IValue).
+			* @param Data			Type associated with object that implements the interface: DataType (NCsDamage::NData::IData).
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
@@ -337,41 +340,46 @@ namespace NCsDamage
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
 			/**
-			*
+			* Process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
+			* with Data, Instigator, Causer, HitResult, and Modifiers
+			*  Modifiers are applied to the Value and/or Range after the Event is created.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Data
+			* @param Data			Object that implements the interface: DataType (NCsDamage::NData::IData).
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
 			* @param Modifiers
 			* @param Log			(optional)
-			* return
+			* return				Whether the Damage Event was created or not.
 			*/
 			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			*
+			* Safely process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
+			* with Data (NCsDamage::NData::IData) associated with DataName, Instigator, Causer, and HitResult.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param DataName
+			* @param DataName		Name associated with Data that implements the interface: DataType (NCsDamage::NData::IData).
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
 			* @param Log			(optional)
-			* return
+			* return				Whether the Damage Event was created or not.
 			*/
 			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			*
+			* Process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event 
+			* with Data, Value, Instigator, Causer, HitResult, and Modifiers
+			*  Modifiers are applied to the Value and/or Range after the Event is created.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Value
-			* @param Data
+			* @param Value			Object that implements the interface: ValueType (NCsDamage::NValue::IValue).
+			* @param Data			Object that implements the interface: DataType (NCsDamage::NData::IData).
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
@@ -379,20 +387,50 @@ namespace NCsDamage
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 
 			/**
-			*
+			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Value
-			* @param Data
+			* @param Value			Object that implements the interface: ValueType (NCsDamage::NValue::IValue).
+			* @param Data			Object that implements the interface: DataType (NCsDamage::NData::IData).
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
 			*/
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
+			/**
+			* Process, create a Damage Event, and broadcast the Event with Data, Value, Range, Instigator, Causer, HitResult, and Modifiers
+			*  Modifiers are applied to the Value and/or Range after the Event is created.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value			Object that implements the interface: ValueType (NCsDamage::NValue::IValue).
+			* @param Range			Object that implements the interface: RangeType (NCsDamage::NRange::IRange).
+			* @param Data			Object that implements the interface: DataType (NCsDamage::NData::IData).
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+
+			/**
+			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value			Object that implements the interface: ValueType (NCsDamage::NValue::IValue).
+			* @param Range			Object that implements the interface: RangeType (NCsDamage::NRange::IRange).
+			* @param Data			Object that implements the interface: DataType (NCsDamage::NData::IData).
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+
 		#undef ModifierResourceType
 		#undef ValueType
+		#undef RangeType
 
 		#undef DataType
 

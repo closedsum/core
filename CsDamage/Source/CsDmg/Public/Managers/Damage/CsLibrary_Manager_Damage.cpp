@@ -321,6 +321,7 @@ namespace NCsDamage
 	
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 		#define ValueType NCsDamage::NValue::IValue
+		#define RangeType NCsDamage::NRange::IRange
 
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 		{
@@ -371,7 +372,7 @@ namespace NCsDamage
 
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 		{
-			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
+			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
 		}
 
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
@@ -379,8 +380,19 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Data, Instigator, Causer, HitResult);
 		}
 
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+		{
+			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
+		}
+
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+		{
+			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult);
+		}
+
 		#undef ModifierResourceType
 		#undef ValueType
+		#undef RangeType
 
 		#undef DataType
 

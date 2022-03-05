@@ -616,14 +616,14 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 		if (CollisionDataType* CollisionData = DamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
-			// PhysicsOverlap
-			if (CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsOverlap)
+			// PhysicsSweep
+			if (CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsSweep)
 			{
 				typedef NCsDamage::NEvent::FLibrary EventLibrary;
 
 				static TArray<FHitResult> Hits;
 
-				EventLibrary::OverlapChecked(Context, MyRoot, Event, Hits);
+				EventLibrary::SweepChecked(Context, MyRoot, Event, Hits);
 
 				if (Hits.Num() > CS_EMPTY)
 				{

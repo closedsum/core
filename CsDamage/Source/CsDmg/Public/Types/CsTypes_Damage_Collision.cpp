@@ -10,6 +10,7 @@ namespace NCsDamageCollisionMethod
 	{
 		typedef EMCsDamageCollisionMethod EnumMapType;
 
+		CSDMG_API CS_ADD_TO_ENUM_MAP_CUSTOM(PhysicsSweep, "Physics Sweep");
 		CSDMG_API CS_ADD_TO_ENUM_MAP_CUSTOM(PhysicsOverlap, "Physics Overlap");
 		CSDMG_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsDamageCollisionMethod_MAX, "MAX");
 	}
@@ -25,6 +26,7 @@ namespace NCsDamage
 			{
 				typedef EMMethod EnumMapType;
 
+				CSDMG_API CS_ADD_TO_ENUM_MAP_CUSTOM(PhysicsSweep, "Physics Sweep");
 				CSDMG_API CS_ADD_TO_ENUM_MAP_CUSTOM(PhysicsOverlap, "Physics Overlap");
 				CSDMG_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMethod_MAX, "MAX");
 			}

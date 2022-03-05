@@ -8,6 +8,7 @@
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 #include "Value/CsLibrary_DamageValue.h"
+#include "Range/CsLibrary_DamageRange.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Data
@@ -213,6 +214,26 @@ namespace NCsDamage
 			return true;
 		}
 
+		float FLibrary::GetOrCalculateDamageChecked(const FString& Context, const EventType* Event, const FVector& Point)
+		{
+			CS_IS_PTR_NULL_CHECKED(Event)
+
+			typedef NCsDamage::NData::IData DataType;
+
+			DataType* Data = Event->GetData();
+
+			checkf(Data, TEXT("%s: Event->GetData() is NULL."), *Context);
+
+			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+
+			if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+			{
+				return ShapeData->CalculateDamage(Event->GetDamageValue(), Event->GetDamageRange(), Event->GetHitResult().ImpactPoint, Point);
+			}
+			return Event->GetDamage();
+		}
+
 		UObject* FLibrary::Implements_ICsReceiveDamage(const FString& Context, const FHitResult& Hit, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			// Actor
@@ -241,7 +262,7 @@ namespace NCsDamage
 			return nullptr;
 		}
 
-		void FLibrary::OverlapChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, TArray<FHitResult>& OutHits)
+		void FLibrary::SweepChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, TArray<FHitResult>& OutHits)
 		{
 			CS_IS_PTR_NULL_CHECKED(Event)
 
@@ -260,13 +281,15 @@ namespace NCsDamage
 
 			typedef NCsDamage::NCollision::EMethod CollisionMethodType;
 
-			checkf(CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsOverlap, TEXT("%s: GetCollisionMethod() is NOT CollisionMethodType::PhysicsOverlap."), *Context);
+			checkf(CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsSweep, TEXT("%s: GetCollisionMethod() is NOT CollisionMethodType::PhysicsSweep."), *Context);
 
+			typedef NCsDamage::NRange::FLibrary RangeLibrary;
 			typedef NCsDamage::NRange::IRange RangeType;
 
 			const RangeType* Range = Event->GetDamageRange();
 
 			checkf(Range, TEXT("%s: Range is NULL. No DamageRange set for Event."), *Context);
+			check(RangeLibrary::IsValidChecked(Context, Range));
 
 			// NOTE: FUTURE: May need flag to exclude Instigator, Causer, ... etc
 			//				 For now, exclude Instigator and Causer
@@ -274,40 +297,115 @@ namespace NCsDamage
 			typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 			typedef NCsTrace::NRequest::FRequest RequestType;
 
-			RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, WorldContext);
+			// Max Range
+			static TArray<FHitResult> MaxRangeHits;
 
-			Request->Caller = Event->GetInstigator();
-			Request->Type   = ECsTraceType::Sweep;
-			Request->Method = ECsTraceMethod::Multi;
-			Request->Query  = ECsTraceQuery::ObjectType;
-
-			const FHitResult& Hit = Event->GetHitResult();
-
-			Request->Start = Hit.ImpactPoint;
-			Request->End   = Hit.ImpactPoint;
-			Request->Channel = CollisionData->GetCollisionChannel();
-
-			Request->Shape.SetSphere(Range->GetMaxRange());
-
-			if (AActor* Instigator = Cast<AActor>(Event->GetInstigator()))
-				Request->Params.AddIgnoredActor(Instigator);
-
-			if (AActor* Causer = Cast<AActor>(Event->GetCauser()))
-				Request->Params.AddIgnoredActor(Causer);
-
-			Request->ObjectParams.AddObjectTypesToQuery(CollisionData->GetCollisionChannel());
-			
-			typedef NCsTrace::NResponse::FResponse ResponseType;
-
-			if (ResponseType* Response = TraceManagerLibrary::TraceChecked(Context, WorldContext, Request))
+			const float& MaxRange = Range->GetMaxRange();
 			{
-				OutHits.Reset(FMath::Max(OutHits.Max(), Response->OutHits.Num()));
+				RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, WorldContext);
 
-				for (const FHitResult& OutHit : Response->OutHits)
+				Request->Caller = Event->GetInstigator();
+				Request->Type   = ECsTraceType::Sweep;
+				Request->Method = ECsTraceMethod::Multi;
+				Request->Query  = ECsTraceQuery::ObjectType;
+
+				const FHitResult& Hit = Event->GetHitResult();
+
+				Request->Start = Hit.ImpactPoint;
+				Request->End   = Hit.ImpactPoint;
+				Request->Channel = CollisionData->GetCollisionChannel();
+
+				Request->Shape.SetSphere(MaxRange);
+
+				if (AActor* Instigator = Cast<AActor>(Event->GetInstigator()))
+					Request->Params.AddIgnoredActor(Instigator);
+
+				if (AActor* Causer = Cast<AActor>(Event->GetCauser()))
+					Request->Params.AddIgnoredActor(Causer);
+
+				Request->ObjectParams.AddObjectTypesToQuery(CollisionData->GetCollisionChannel());
+			
+				typedef NCsTrace::NResponse::FResponse ResponseType;
+
+				if (ResponseType* Response = TraceManagerLibrary::TraceChecked(Context, WorldContext, Request))
 				{
-					OutHits.Add(OutHit);
+					MaxRangeHits.Reset(FMath::Max(MaxRangeHits.Max(), Response->OutHits.Num()));
+					MaxRangeHits.Append(Response->OutHits);
+				}
+				else
+				{
+					MaxRangeHits.Reset(MaxRangeHits.Max());
 				}
 			}
+
+			if (MaxRangeHits.Num() == CS_EMPTY)
+				return;
+
+			// Min Range
+			static TArray<FHitResult> MinRangeHits;
+
+			const float& MinRange = Range->GetMinRange();
+
+			if (MinRange > 0.0f)
+			{
+				RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, WorldContext);
+
+				Request->Caller = Event->GetInstigator();
+				Request->Type   = ECsTraceType::Sweep;
+				Request->Method = ECsTraceMethod::Multi;
+				Request->Query  = ECsTraceQuery::ObjectType;
+
+				const FHitResult& Hit = Event->GetHitResult();
+
+				Request->Start = Hit.ImpactPoint;
+				Request->End   = Hit.ImpactPoint;
+				Request->Channel = CollisionData->GetCollisionChannel();
+
+				Request->Shape.SetSphere(MinRange);
+
+				if (AActor* Instigator = Cast<AActor>(Event->GetInstigator()))
+					Request->Params.AddIgnoredActor(Instigator);
+
+				if (AActor* Causer = Cast<AActor>(Event->GetCauser()))
+					Request->Params.AddIgnoredActor(Causer);
+
+				Request->ObjectParams.AddObjectTypesToQuery(CollisionData->GetCollisionChannel());
+			
+				typedef NCsTrace::NResponse::FResponse ResponseType;
+
+				if (ResponseType* Response = TraceManagerLibrary::TraceChecked(Context, WorldContext, Request))
+				{
+					MinRangeHits.Reset(FMath::Max(MinRangeHits.Max(), Response->OutHits.Num()));
+					MinRangeHits.Append(Response->OutHits);
+				}
+				else
+				{
+					MinRangeHits.Reset(MinRangeHits.Max());
+				}
+			}
+			else
+			{
+				MinRangeHits.Reset(MinRangeHits.Max());
+			}
+
+			for (const FHitResult& HitA : MinRangeHits)
+			{
+				const int32 Count = MaxRangeHits.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
+				{
+					FHitResult& HitB = MaxRangeHits[I];
+
+					if ((HitA.GetActor() && HitA.GetActor() == HitB.GetActor()) ||
+						(HitA.GetComponent() && HitB.GetComponent() == HitB.GetComponent()))
+					{
+						MaxRangeHits.RemoveAt(I, 1, false);
+					}
+				}
+			}
+
+			OutHits.Reset(FMath::Max(OutHits.Max(), MaxRangeHits.Num()));
+			OutHits.Append(MaxRangeHits);
 		}
 
 	#undef EventType

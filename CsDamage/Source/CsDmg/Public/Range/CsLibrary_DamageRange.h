@@ -14,6 +14,8 @@ namespace NCsDamage
 		*/
 		struct CSDMG_API FLibrary final : public NCsInterfaceMap::TLibrary<RangeType>
 		{
+			static bool IsValidChecked(const FString& Context, const RangeType* Range);
+
 			/**
 			* Copy the values from From to To with checks.
 			* Currently supports To types of:

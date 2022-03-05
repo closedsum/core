@@ -75,6 +75,8 @@ namespace NCsDamage
 
 			static bool GetSafeIgnoreObjects(const FString& Context, UObject* Object, TArray<UObject*>& OutObjects, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
+			static float GetOrCalculateDamageChecked(const FString& Context, const EventType* Event, const FVector& Point);
+
 			/**
 			* Safely check if Hit.GetActor() or Hit.GetComponent() implements the interface: ICsReceiveDamage.
 			* If Hit.GetActor() or Hit.GetComponent() does, return the object.
@@ -87,7 +89,7 @@ namespace NCsDamage
 			static UObject* Implements_ICsReceiveDamage(const FString& Context, const FHitResult& Hit, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
-			* Perform a physics overlap with Event (EventType: NCsDamage::NEvent::IEvent).
+			* Perform a physics sweep with Event (EventType: NCsDamage::NEvent::IEvent).
 			* NOTE: Event->GetData() MUST implement the interfaces: 
 			*		- ShapeDataType (NCsDamage::NData::NShape::IShape)
 			*		- CollisionDataType (NCsDamage::NData::NCollision::ICollision)
@@ -97,7 +99,7 @@ namespace NCsDamage
 			* @param Event
 			* @param OutHits		(out)
 			*/
-			static void OverlapChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, TArray<FHitResult>& OutHits);
+			static void SweepChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, TArray<FHitResult>& OutHits);
 		};
 
 	#undef EventType

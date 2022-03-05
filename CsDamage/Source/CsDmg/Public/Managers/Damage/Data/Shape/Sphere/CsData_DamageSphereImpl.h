@@ -55,17 +55,20 @@ struct CSDMG_API FCsData_DamageSphere
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxRadius;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (InlineEditConditionToggle))
+	bool bInterpolate;
+
 	/** Describes with method to use for interpolating a set of values. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (editcondition = "bInterpolate"))
 	ECsInterpolatingMethod InterpolationMethod;
 
 	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
 	    Easing method for interpolating values between Min Damage and Max Damage. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (editcondition = "bInterpolate"))
 	ECsEasingType EasingType;
 
 	/** Curve [0,1] for interpolating values between Min Damage and Max Damage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (editcondition = "bInterpolate"))
 	FCsCurveFloat Curve;
 
 // ICsData_DamageCollision
@@ -84,10 +87,11 @@ public:
 		MaxDamage(0.0f),
 		MinRadius(0.0f),
 		MaxRadius(0.0f),
+		bInterpolate(false),
 		InterpolationMethod(ECsInterpolatingMethod::Easing),
 		EasingType(ECsEasingType::Linear),
 		Curve(),
-		CollisionMethod(ECsDamageCollisionMethod::PhysicsOverlap),
+		CollisionMethod(ECsDamageCollisionMethod::PhysicsSweep),
 		CollisionChannel(ECollisionChannel::ECC_WorldDynamic)
 	{
 	}
@@ -159,6 +163,7 @@ namespace NCsDamage
 					CS_DECLARE_MEMBER_WITH_PROXY(MaxDamage, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(MinRadius, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(MaxRadius, float)
+					CS_DECLARE_MEMBER_WITH_PROXY(bInterpolate, bool)
 					CS_DECLARE_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod)
 					CS_DECLARE_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
 					CS_DECLARE_MEMBER_WITH_PROXY(Curve, UCurveFloat*)
@@ -200,6 +205,7 @@ namespace NCsDamage
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDamage, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRadius, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRadius, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInterpolate, bool)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
 					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Curve, UCurveFloat)
@@ -359,17 +365,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float MaxRadius;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
+	bool bInterpolate;
+
 	/** Describes with method to use for interpolating a set of values. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterpolate"))
 	ECsInterpolatingMethod InterpolationMethod;
 
 	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
 	    Easing method for interpolating values between Min Damage and Max Damage. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterpolate"))
 	ECsEasingType EasingType;
 
 	/** Curve [0,1] for interpolating values between Min Damage and Max Damage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterpolate"))
 	FCsCurveFloat Curve;
 
 private:

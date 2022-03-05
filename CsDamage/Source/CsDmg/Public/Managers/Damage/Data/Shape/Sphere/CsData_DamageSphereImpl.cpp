@@ -6,10 +6,12 @@
 // Library
 #include "Value/CsLibrary_DamageValue.h"
 #include "Library/Load/CsLibrary_Load.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Container
 #include "Containers/CsInterfaceMap.h"
 // Damage
+#include "Value/Point/CsDamageValuePoint.h"
 #include "Value/Range/CsDamageValueRangeImpl.h"
 #include "Range/CsDamageRangeImpl.h"
 
@@ -25,6 +27,7 @@ void FCsData_DamageSphere::CopyToSphere(SphereType* Sphere)
 	Sphere->SetMaxDamage(&MaxDamage);
 	Sphere->SetMinRadius(&MinRadius);
 	Sphere->SetMaxRadius(&MaxRadius);
+	Sphere->SetbInterpolate(&bInterpolate);
 	Sphere->SetInterpolationMethod(&InterpolationMethod);
 	Sphere->SetEasingType(&EasingType);
 	Sphere->SetCurve(Curve.GetPtr());
@@ -42,6 +45,7 @@ void FCsData_DamageSphere::CopyToSphereAsValue(SphereType* Sphere)
 	Sphere->SetMaxDamage(MaxDamage);
 	Sphere->SetMinRadius(MinRadius);
 	Sphere->SetMaxRadius(MaxRadius);
+	Sphere->SetbInterpolate(bInterpolate);
 	Sphere->SetInterpolationMethod(InterpolationMethod);
 	Sphere->SetEasingType(EasingType);
 	Sphere->SetCurve(Curve.Get());
@@ -64,7 +68,8 @@ bool FCsData_DamageSphere::IsValidChecked(const FString& Context) const
 	CS_IS_ENUM_VALID_CHECKED(EMCsInterpolatingMethod, InterpolationMethod);
 	CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, EasingType);
 
-	if (InterpolationMethod == ECsInterpolatingMethod::Curve)
+	if (bInterpolate &&
+		InterpolationMethod == ECsInterpolatingMethod::Curve)
 	{
 		Curve.IsValidChecked(Context);
 	}
@@ -83,7 +88,8 @@ bool FCsData_DamageSphere::IsValid(const FString& Context, void(*Log)(const FStr
 	CS_IS_ENUM_VALID(EMCsInterpolatingMethod, ECsInterpolatingMethod, InterpolationMethod);
 	CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, EasingType);
 
-	if (InterpolationMethod == ECsInterpolatingMethod::Curve)
+	if (bInterpolate &&
+		InterpolationMethod == ECsInterpolatingMethod::Curve)
 	{
 		if (!Curve.IsValid(Context))
 			return false;
@@ -103,6 +109,17 @@ namespace NCsDamage
 		{
 			namespace NSphere
 			{
+				namespace NImpl
+				{
+					namespace NCached
+					{
+						namespace Str
+						{
+							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NData::NShape::NSphere::FImpl, CalculateDamage);
+						}
+					}
+				}
+
 				FImpl::FImpl() :
 					Outer(nullptr),
 					// ICsGetInterfaceMap
@@ -116,11 +133,12 @@ namespace NCsDamage
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDamage, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinRadius, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxRadius, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bInterpolate, false),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod::Easing),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(EasingType, ECsEasingType::Linear),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Curve, nullptr),
 					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionMethod, NCsDamage::NCollision::EMethod::PhysicsOverlap),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionMethod, NCsDamage::NCollision::EMethod::PhysicsSweep),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionChannel, ECollisionChannel::ECC_WorldDynamic)
 				{
 					// ICsGetInterfaceMap
@@ -143,6 +161,7 @@ namespace NCsDamage
 					CS_CTOR_SET_MEMBER_PROXY(MaxDamage);
 					CS_CTOR_SET_MEMBER_PROXY(MinRadius);
 					CS_CTOR_SET_MEMBER_PROXY(MaxRadius);
+					CS_CTOR_SET_MEMBER_PROXY(bInterpolate);
 					CS_CTOR_SET_MEMBER_PROXY(InterpolationMethod);
 					CS_CTOR_SET_MEMBER_PROXY(EasingType);
 					CS_CTOR_SET_MEMBER_PROXY(Curve);
@@ -191,7 +210,58 @@ namespace NCsDamage
 				#undef ValueType
 				#undef RangeType
 
-					return 0.0f;
+					using namespace NCsDamage::NData::NShape::NSphere::NImpl::NCached;
+
+					const FString& Context = Str::CalculateDamage;
+
+					CS_IS_PTR_NULL_CHECKED(InValue)
+					CS_IS_PTR_NULL_CHECKED(InRange)
+
+					// Value
+					typedef NCsDamage::NValue::FLibrary ValueLibrary;
+					typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
+					typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
+
+					float MinValue = 0.0f;
+					float MaxValue = 0.0f;
+
+					// Point
+					if (const ValuePointType* ValuePoint = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, InValue))
+					{
+						MinValue = ValuePoint->GetValue();
+						MaxValue = MinValue;
+					}
+					// Range
+					else
+					if (const ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, InValue))
+					{
+						MinValue = ValueRange->GetMinValue();
+						MaxValue = ValueRange->GetMaxValue();
+					}
+					else
+					{
+						checkf(0, TEXT("%s: Failed to get Min Value or Max Value from InValue."), *Context);
+					}
+
+					// Range
+					const float& MinRange = InRange->GetMinRange();
+					const float& MaxRange = InRange->GetMaxRange();
+
+					if (GetbInterpolate())
+					{
+						if (GetInterpolationMethod() == ECsInterpolatingMethod::Easing)
+						{
+							typedef NCsMath::FLibrary MathLibrary;
+
+							const float Distance = (Point - Origin).Size();
+							const float Alpha1	 = (Distance - MinRange) / (MaxRange - MinRange);
+							const float Alpha2   = MathLibrary::Ease(GetEasingType(), Alpha1, 0.0f, 1.0f, 1.0f);
+
+							return FMath::Lerp(MinValue, MaxValue, Alpha2);
+						}
+						checkf(0, TEXT("%s: GetInterpolationMethod(): %s currently NOT supported."), *Context, EMCsInterpolatingMethod::Get().ToChar(GetInterpolationMethod()));
+					}
+					return MaxValue;
 				}
 
 				bool FImpl::IsInBounds(const FVector& Origin, const FVector& Point) const
@@ -232,12 +302,13 @@ UCsData_DamageSphereImpl::UCsData_DamageSphereImpl(const FObjectInitializer& Obj
 	MaxDamage(0.0f),
 	MinRadius(0.0f),
 	MaxRadius(0.0f),
+	bInterpolate(false),
 	InterpolationMethod(ECsInterpolatingMethod::Easing),
 	EasingType(ECsEasingType::Linear),
 	Curve(),
 	DamageRange(nullptr),
 	// ICsData_DamageCollision
-	CollisionMethod(ECsDamageCollisionMethod::PhysicsOverlap),
+	CollisionMethod(ECsDamageCollisionMethod::PhysicsSweep),
 	CollisionChannel(ECollisionChannel::ECC_WorldDynamic)
 {
 }
@@ -325,6 +396,7 @@ void UCsData_DamageSphereImpl::Init()
 		Proxy->SetMaxDamage(&MaxDamage);
 		Proxy->SetMinRadius(&MinRadius);
 		Proxy->SetMaxRadius(&MaxRadius);
+		Proxy->SetbInterpolate(&bInterpolate);
 		Proxy->SetInterpolationMethod(&InterpolationMethod);
 		Proxy->SetEasingType(&EasingType);
 		Proxy->SetCurve(Curve.GetPtr());

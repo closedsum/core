@@ -15,6 +15,7 @@
 UENUM(BlueprintType)
 enum class ECsDamageCollisionMethod : uint8
 {
+	PhysicsSweep					UMETA(DisplayName = "Physics Sweep"),
 	PhysicsOverlap					UMETA(DisplayName = "Physics Overlap"),
 	ECsDamageCollisionMethod_MAX	UMETA(Hidden),
 };
@@ -30,6 +31,7 @@ namespace NCsDamageCollisionMethod
 
 	namespace Ref
 	{
+		extern CSDMG_API const Type PhysicsSweep;
 		extern CSDMG_API const Type PhysicsOverlap;
 		extern CSDMG_API const Type ECsDamageCollisionMethod_MAX;
 	}
@@ -46,6 +48,7 @@ namespace NCsDamage
 		*/
 		enum class EMethod : uint8
 		{
+			PhysicsSweep,
 			PhysicsOverlap,
 			EMethod_MAX
 		};
@@ -61,6 +64,7 @@ namespace NCsDamage
 
 			namespace Ref
 			{
+				extern CSDMG_API const Type PhysicsSweep;
 				extern CSDMG_API const Type PhysicsOverlap;
 				extern CSDMG_API const Type EMethod_MAX;
 			}

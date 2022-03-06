@@ -10,7 +10,10 @@
 #include "Value/CsLibrary_DamageValue.h"
 #include "Range/CsLibrary_DamageRange.h"
 #include "Object/CsLibrary_Object.h"
+#include "Debug/CsTypes_Debug.h"
 #include "Library/CsLibrary_Valid.h"
+// Settings
+#include "Settings/CsSettings_Damage.h"
 // Data
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
@@ -102,6 +105,41 @@ namespace NCsDamage
 			UE_LOG(LogCsDmg, Warning, TEXT("-- Component: %s"), HitResult.Component.IsValid() ? *(HitResult.Component->GetName()) : TEXT("None"));
 			UE_LOG(LogCsDmg, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
 			UE_LOG(LogCsDmg, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
+		}
+
+		void FLibrary::Draw(const FString& Context, const EventType* Event)
+		{
+			CS_IS_PTR_NULL_CHECKED(Event)
+
+			typedef NCsDamage::NData::IData DataType;
+
+			DataType* Data = Event->GetData();
+
+			checkf(Data, TEXT("%s: Event->GetData() is NULL."), *Context);
+
+			const FCsSettings_Damage_Debug& Debug = FCsSettings_Damage_Debug::Get();
+
+			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
+			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+			// Shape - for now just assume sphere
+			if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+			{
+				typedef NCsDamage::NRange::IRange RangeType;
+
+				const RangeType* Range = ShapeData->GetRange();
+
+				checkf(Range, TEXT("%s: Failed to get Range from %s."), *Context, *DamageDataLibrary::PrintDataAndClass(Data));
+
+				if (Debug.bSphereAsCircle)
+					Debug.Circle.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+				else
+					Debug.Sphere.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+			}
+			// Point
+			else
+			{
+
+			}
 		}
 
 		bool FLibrary::CopyChecked(const FString& Context, const EventType* From, EventType* To)

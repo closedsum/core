@@ -2,6 +2,9 @@
 #include "Settings/CsDamageSettings.h"
 #include "CsDmg.h"
 
-UCsDamageSettings::UCsDamageSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsDamageSettings::UCsDamageSettings(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Damage(),
+	Manager_Damage()
 {
 }

@@ -4,11 +4,12 @@
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
+#include "Library/CsLibrary_World.h"
 #include "Debug/CsLibrary_Debug_Draw.h"
 // Collision
 #include "CollisionShape.h"
-// World
-#include "Engine/World.h"
+// Engine
+#include "GameFramework/Actor.h"
 
 // DebugDrawPriority
 #pragma region
@@ -115,8 +116,12 @@ void FCsDebugDrawBox::Draw(UWorld* World, const FTransform& Transform) const
 // FCsDebugDrawCircle
 #pragma region
 
-bool FCsDebugDrawCircle::CanDraw(UWorld* World) const
+bool FCsDebugDrawCircle::CanDraw(const UObject* WorldContext) const
 {
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 	if (!World)
 		return false;
 
@@ -143,47 +148,112 @@ bool FCsDebugDrawCircle::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawCircle::Draw(UWorld* World, const FTransform& Transform) const
+bool FCsDebugDrawCircle::CanDraw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar) const
 {
-	if (CanDraw(World))
+	if (CanDraw(WorldContext))
+		return true;
+
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
 	{
-		const float Min = FMath::Min(MinRadius, MaxRadius);
-		const float Max = FMath::Max(MinRadius, MaxRadius);
+		return FCsCVarDrawMap::Get().IsDrawing(OtherCVar);
+	}
+	return false;
+}
 
-		if (Max == 0.0f)
-			return;
+void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FTransform& Transform) const
+{
+	if (CanDraw(WorldContext))
+	{
+		Draw_Internal(WorldContext, Transform);
+	}
+}
 
-		// Draw Circle
-		if (Min == 0.0f || Min == Max)
-		{
-			DrawDebugCircle(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
-		}
-		// Draws 2D Donut
-		else
-		{
-			FTransform AdjustedTransfrom = Transform;
-			AdjustedTransfrom.AddToTranslation(Location);
+void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const
+{
+	if (CanDraw(WorldContext, OtherCVar))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(InLocation);
 
-			// Absolute
-			if (RotationType == ECsDebugDrawRotation::Absolute)
-			{
-				AdjustedTransfrom.SetRotation(Rotation.Quaternion());
-			}
-			// Offset
-			else
-			if (RotationType == ECsDebugDrawRotation::Offset)
-			{
-				FQuat Quat   = AdjustedTransfrom.GetRotation();
-				FRotator Rot = Quat.Rotator();
-				Rot			+= Rotation;
+		Draw_Internal(WorldContext, InTransform, InMinRadius, InMaxRadius);
+	}
+}
+
+void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const
+{
+	if (CanDraw(WorldContext))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(InLocation);
+
+		Draw_Internal(WorldContext, InTransform, InMinRadius, InMaxRadius);
+	}
+}
+
+void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InMinRadius, const float& InMaxRadius) const
+{
+	if (CanDraw(Actor, OtherCVar))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(Actor->GetActorLocation());
+
+		Draw_Internal(Actor, InTransform, InMinRadius, InMaxRadius);
+	}
+}
+
+void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const
+{
+	Draw_Internal(WorldContext, Transform, MinRadius, MaxRadius);
+}
+
+void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	const float Min = FMath::Min(InMinRadius, InMaxRadius);
+	const float Max = FMath::Max(InMinRadius, InMaxRadius);
+
+	if (Max == 0.0f)
+		return;
+
+	FTransform AdjustedTransfrom = Transform;
+	AdjustedTransfrom.AddToTranslation(Location);
+
+	// Absolute
+	if (RotationType == ECsDebugDrawRotation::Absolute)
+	{
+		AdjustedTransfrom.SetRotation(Rotation.Quaternion());
+	}
+	// Offset
+	else
+	if (RotationType == ECsDebugDrawRotation::Offset)
+	{
+		FQuat Quat   = AdjustedTransfrom.GetRotation();
+		FRotator Rot = Quat.Rotator();
+		Rot			+= Rotation;
 				
-				AdjustedTransfrom.SetRotation(Rot.Quaternion());
-			}
+		AdjustedTransfrom.SetRotation(Rot.Quaternion());
+	}
 
-			FMatrix Matrix = AdjustedTransfrom.ToMatrixNoScale();
+	FMatrix Matrix = AdjustedTransfrom.ToMatrixNoScale();
 
-			DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
-		}
+	// Draw Circle
+	if (Min == 0.0f || Min == Max)
+	{
+		DrawDebugCircle(World, Matrix, Max, Segments, Color, false, LifeTime, 0, Thickness);
+	}
+	// Draws 2D Donut
+	else
+	{
+		DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
@@ -192,8 +262,12 @@ void FCsDebugDrawCircle::Draw(UWorld* World, const FTransform& Transform) const
 // FCsDebugDrawSphere
 #pragma region
 
-bool FCsDebugDrawSphere::CanDraw(UWorld* World) const
+bool FCsDebugDrawSphere::CanDraw(const UObject* WorldContext) const
 {
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 	if (!World)
 		return false;
 
@@ -220,49 +294,82 @@ bool FCsDebugDrawSphere::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawSphere::Draw(UWorld* World, const FTransform& Transform) const
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform& Transform) const
 {
-	if (CanDraw(World))
+	if (CanDraw(WorldContext))
 	{
-		const float Min = FMath::Min(MinRadius, MaxRadius);
-		const float Max = FMath::Max(MinRadius, MaxRadius);
+		Draw_Internal(WorldContext, Transform);
+	}
+}
 
-		if (Max == 0.0f)
-			return;
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const
+{
+	if (CanDraw(WorldContext))
+	{
+		Draw_Internal(WorldContext, Transform, InMinRadius, InMaxRadius);
+	}
+}
 
-		// Draw Sphere
-		if (Min == 0.0f || Min == Max)
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const
+{
+	if (CanDraw(WorldContext))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(InLocation);
+
+		Draw_Internal(WorldContext, InTransform, InMinRadius, InMaxRadius);
+	}
+}
+
+void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const
+{
+	Draw_Internal(WorldContext, Transform, MinRadius, MaxRadius);
+}
+
+void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	const float Min = FMath::Min(InMinRadius, InMaxRadius);
+	const float Max = FMath::Max(InMinRadius, InMaxRadius);
+
+	if (Max == 0.0f)
+		return;
+
+	// Draw Sphere
+	if (Min == 0.0f || Min == Max)
+	{
+		DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
+	}
+	// Draw Sphere + 2D Donut
+	else
+	{
+		DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
+
+		FTransform AdjustedTransfrom = Transform;
+		AdjustedTransfrom.AddToTranslation(Location);
+
+		// Absolute
+		if (RotationType == ECsDebugDrawRotation::Absolute)
 		{
-			DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
+			AdjustedTransfrom.SetRotation(Rotation.Quaternion());
 		}
-		// Draw Sphere + 2D Donut
+		// Offset
 		else
+		if (RotationType == ECsDebugDrawRotation::Offset)
 		{
-			DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
-
-			FTransform AdjustedTransfrom = Transform;
-			AdjustedTransfrom.AddToTranslation(Location);
-
-			// Absolute
-			if (RotationType == ECsDebugDrawRotation::Absolute)
-			{
-				AdjustedTransfrom.SetRotation(Rotation.Quaternion());
-			}
-			// Offset
-			else
-			if (RotationType == ECsDebugDrawRotation::Offset)
-			{
-				FQuat Quat   = AdjustedTransfrom.GetRotation();
-				FRotator Rot = Quat.Rotator();
-				Rot			+= Rotation;
+			FQuat Quat   = AdjustedTransfrom.GetRotation();
+			FRotator Rot = Quat.Rotator();
+			Rot			+= Rotation;
 				
-				AdjustedTransfrom.SetRotation(Rot.Quaternion());
-			}
-
-			FMatrix Matrix = AdjustedTransfrom.ToMatrixNoScale();
-
-			DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
+			AdjustedTransfrom.SetRotation(Rot.Quaternion());
 		}
+
+		FMatrix Matrix = AdjustedTransfrom.ToMatrixNoScale();
+
+		DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
 	}
 }
 

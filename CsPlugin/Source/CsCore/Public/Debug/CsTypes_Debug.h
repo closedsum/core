@@ -180,7 +180,8 @@ public:
 // FCsDebugDrawCircle
 #pragma region
 
-class UWorld;
+class UObject;
+class AActor;
 
 /**
 */
@@ -248,9 +249,19 @@ public:
 	{
 	}
 
-	bool CanDraw(UWorld* World) const;
+	bool CanDraw(const UObject* WorldContext) const;
+	bool CanDraw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar) const;
 
-	void Draw(UWorld* World, const FTransform& Transform) const;
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
+	void Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
+
+	void DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InMinRadius, const float& InMaxRadius) const;
+
+private:
+
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const;
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 };
 
 #pragma endregion FCsDebugDrawCircle
@@ -258,7 +269,7 @@ public:
 // FCsDebugDrawSphere
 #pragma region
 
-class UWorld;
+class UObject;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDebugDrawSphere
@@ -324,9 +335,16 @@ public:
 	{
 	}
 
-	bool CanDraw(UWorld* World) const;
+	bool CanDraw(const UObject* WorldContext) const;
 
-	void Draw(UWorld* World, const FTransform& Transform) const;
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
+	void Draw(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
+
+private:
+
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const;
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 };
 
 #pragma endregion FCsDebugDrawSphere

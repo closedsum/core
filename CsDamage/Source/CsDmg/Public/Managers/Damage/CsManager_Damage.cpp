@@ -596,7 +596,10 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 	const EventType* Event = EventContainer->Get();
 
+	typedef NCsDamage::NEvent::FLibrary EventLibrary;
+
 	CS_NON_SHIPPING_EXPR(LogEvent(Event));
+	CS_NON_SHIPPING_EXPR(EventLibrary::Draw(Context, Event));
 
 	typedef NCsDamage::NData::IData DataType;
 
@@ -619,8 +622,6 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 			// PhysicsSweep
 			if (CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsSweep)
 			{
-				typedef NCsDamage::NEvent::FLibrary EventLibrary;
-
 				static TArray<FHitResult> Hits;
 
 				EventLibrary::SweepChecked(Context, MyRoot, Event, Hits);
@@ -642,8 +643,6 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 	// Point
 	else
 	{
-		typedef NCsDamage::NEvent::FLibrary EventLibrary;
-
 		const FHitResult& HitResult = Event->GetHitResult();
 		
 		if (UObject* O = EventLibrary::Implements_ICsReceiveDamage(Context, HitResult, nullptr))

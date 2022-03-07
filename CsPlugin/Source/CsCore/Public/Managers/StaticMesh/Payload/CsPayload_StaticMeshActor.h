@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Containers/CsGetInterfaceMap.h"
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
-#pragma once
 
 class UStaticMesh;
 
@@ -36,6 +36,14 @@ namespace NCsStaticMeshActor
 			* return Materials
 			*/
 			virtual const TArray<UMaterialInterface*>& GetMaterials() const = 0;
+
+			/**
+			* Whether to generate Material Instance Dynamic(s) or MIDs for 
+			* the materials on the StaticMesh.
+			* 
+			* return Whether MIDs should be generated or not.
+			*/
+			virtual const bool& ShouldGenerateMIDs() const = 0;
 
 			/**
 			* Get the Deallocate Method. Used to determine the conditions

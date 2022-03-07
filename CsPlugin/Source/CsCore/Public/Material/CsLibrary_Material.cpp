@@ -1620,7 +1620,7 @@ namespace NCsMaterial
 			MID->SetScalarParameterValue(ParamName, Value);
 		}
 
-		void FLibrary::SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
+		void FLibrary::SetScalarParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
@@ -1650,7 +1650,7 @@ namespace NCsMaterial
 			return SetSafeScalarParameterValue(Context, MID, ParamName, Value, nullptr);
 		}
 
-		bool FLibrary::SetSafeScalarParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeScalarParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
@@ -1662,7 +1662,7 @@ namespace NCsMaterial
 			return true;
 		}
 
-		bool FLibrary::SetSafeScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
+		bool FLibrary::SetSafeScalarParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
@@ -1839,7 +1839,7 @@ namespace NCsMaterial
 			MID->SetVectorParameterValue(ParamName, Value);
 		}
 
-		void FLibrary::SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
@@ -1869,7 +1869,7 @@ namespace NCsMaterial
 			return SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
@@ -1881,7 +1881,7 @@ namespace NCsMaterial
 			return true;
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
@@ -1916,7 +1916,7 @@ namespace NCsMaterial
 			return SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
 		}
 
-		void FLibrary::SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
@@ -1927,7 +1927,7 @@ namespace NCsMaterial
 				}
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
@@ -1939,7 +1939,7 @@ namespace NCsMaterial
 			return true;
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
+		bool FLibrary::SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
@@ -2116,7 +2116,7 @@ namespace NCsMaterial
 			MID->SetTextureParameterValue(ParamName, Value);
 		}
 
-		void FLibrary::SetTextureParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
+		void FLibrary::SetTextureParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
@@ -2146,7 +2146,7 @@ namespace NCsMaterial
 			return SetSafeTextureParameterValue(Context, MID, ParamName, Value, nullptr);
 		}
 
-		bool FLibrary::SetSafeTextureParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeTextureParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
 			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
@@ -2158,7 +2158,7 @@ namespace NCsMaterial
 			return true;
 		}
 
-		bool FLibrary::SetSafeTextureParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
+		bool FLibrary::SetSafeTextureParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 

@@ -20,7 +20,7 @@
 // Cached
 #pragma region
 
-namespace NCsStaticMeshActorImpl
+namespace NCsStaticMeshActorPooledImpl
 {
 	namespace NCached
 	{
@@ -37,7 +37,18 @@ namespace NCsStaticMeshActorImpl
 
 #pragma endregion Cached
 
-ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// PooledObject
+	Cache(nullptr),
+	CacheImpl(nullptr),
+	PreserveChangesToDefaultMask(0),
+	ChangesToDefaultMask(0),
+	ChangesFromLastMask(0),
+	// Materials
+	MIDs(),
+	// Set / Clear Changes
+	AttachToBone(NAME_None)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
 	PrimaryActorTick.bStartWithTickEnabled = false;
@@ -67,6 +78,10 @@ void ACsStaticMeshActorPooledImpl::BeginDestroy()
 		Cache = nullptr;
 		CacheImpl = nullptr;
 	}
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	MIDLibrary::Destroy(MIDs);
 }
 
 #pragma endregion UObject Interface
@@ -102,7 +117,7 @@ void ACsStaticMeshActorPooledImpl::OutsideWorldBounds()
 
 void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Update;
 
@@ -110,6 +125,9 @@ void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 }
 
 #pragma endregion ICsUpdate
+
+// PooledObject
+#pragma region
 
 void ACsStaticMeshActorPooledImpl::ConstructCache()
 {
@@ -119,6 +137,8 @@ void ACsStaticMeshActorPooledImpl::ConstructCache()
 	Cache	  = CacheImpl;
 }
 
+#pragma endregion PooledObject
+
 // ICsPooledObject
 #pragma region
 
@@ -127,7 +147,7 @@ void ACsStaticMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 {
 #undef PooledPayloadType
 
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
 
@@ -164,6 +184,9 @@ void ACsStaticMeshActorPooledImpl::Deallocate()
 
 #pragma endregion ICsPooledObject
 
+// PooledOject
+#pragma region
+
 void ACsStaticMeshActorPooledImpl::Deallocate_Internal()
 {
 	UStaticMeshComponent* Component = GetStaticMeshComponent();
@@ -186,6 +209,11 @@ void ACsStaticMeshActorPooledImpl::Deallocate_Internal()
 
 	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
+
+#pragma region PooledObject
+
+// Set / Clear Changes
+#pragma region
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define StaticMeshPayloadType NCsStaticMeshActor::NPayload::IPayload
@@ -225,7 +253,7 @@ void ACsStaticMeshActorPooledImpl::Handle_SetStaticMesh(StaticMeshPayloadType* P
 
 void ACsStaticMeshActorPooledImpl::Log_SetStaticMesh(StaticMeshPayloadType* Payload)
 {
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_SetStaticMesh;
 
@@ -264,7 +292,7 @@ void ACsStaticMeshActorPooledImpl::Log_SetStaticMesh(StaticMeshPayloadType* Payl
 
 void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Payload)
 {
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_SetMaterials;
 
@@ -273,6 +301,7 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
 	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
 	typedef NCsMaterial::FLibrary MaterialLibrary;
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	UStaticMeshComponent* Component				 = GetMeshComponent();
 	const TArray<UMaterialInterface*>& Materials = Payload->GetMaterials();
@@ -297,7 +326,10 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 
 		if (Different)
 		{
-			MaterialLibrary::SetChecked(Context, Component, Materials);
+			if (Payload->ShouldGenerateMIDs())
+				MIDLibrary::SetChecked(Context, Component, Materials, MIDs);
+			else
+				MaterialLibrary::SetChecked(Context, Component, Materials);
 			ChangeCounter::Get().AddChanged();
 		}
 		else
@@ -309,7 +341,10 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 	{
 		if (Materials.Num() > CS_EMPTY)
 		{
-			MaterialLibrary::SetChecked(Context, GetMeshComponent(), Materials);
+			if (Payload->ShouldGenerateMIDs())
+				MIDLibrary::SetChecked(Context, Component, Materials, MIDs);
+			else
+				MaterialLibrary::SetChecked(Context, Component, Materials);
 			ChangeCounter::Get().AddChanged();
 		}
 	}
@@ -318,7 +353,7 @@ void ACsStaticMeshActorPooledImpl::Handle_SetMaterials(StaticMeshPayloadType* Pa
 
 void ACsStaticMeshActorPooledImpl::Log_SetMaterials(StaticMeshPayloadType* Payload)
 {
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_SetMaterials;
 
@@ -400,7 +435,7 @@ void ACsStaticMeshActorPooledImpl::Log_SetMaterials(StaticMeshPayloadType* Paylo
 
 void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload, StaticMeshPayloadType* StaticMeshPayload)
 {
-	using namespace NCsStaticMeshActorImpl::NCached;
+	using namespace NCsStaticMeshActorPooledImpl::NCached;
 
 	const FString& Context = Str::Handle_AttachAndSetTransform;
 
@@ -529,6 +564,7 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearStaticMesh()
 {
 	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
 	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	// If StaticMesh is SET and meant to be PRESERVED, Do Nothing
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::StaticMesh) &&
@@ -541,6 +577,7 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearStaticMesh()
 	else
 	{
 		GetMeshComponent()->SetStaticMesh(nullptr);
+		MIDLibrary::Destroy(MIDs);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::StaticMesh);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 		ChangeCounter::Get().AddCleared();
@@ -602,3 +639,5 @@ void ACsStaticMeshActorPooledImpl::LogChangeCounter()
 		UE_LOG(LogCs, Warning, TEXT("ACsStaticMeshActorPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
 	}
 }
+
+#pragma endregion Set / Clear Changes

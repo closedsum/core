@@ -211,6 +211,20 @@ namespace NCsProperty
 		return Property;
 	}
 
+	FArrayProperty* FLibrary::FindArrayNamePropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FArrayProperty* Property = FindArrayPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		if (FNameProperty* NameProperty = CastField<FNameProperty>(Property->Inner))
+			return Property;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TArray of FName but a TArray of %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->Inner->GetName())));
+		return nullptr;
+	}
+
 	FArrayProperty* FLibrary::FindArrayStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		FArrayProperty* Property = FindArrayPropertyByName(Context, Struct, PropertyName, Log);

@@ -20,6 +20,7 @@ void FCsStaticMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 {
 	Attachment->SetMesh(Mesh.GetPtr());
 	Attachment->SetMaterials(Materials.GetPtr());
+	Attachment->SetbGenerateMIDs(&bGenerateMIDs);
 	Attachment->SetAttachmentTransformRules(&AttachmentTransformRules);
 	Attachment->SetBone(&Bone);
 	Attachment->SetTransformRules(&TransformRules);
@@ -43,6 +44,7 @@ void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment
 	MatsPtr->Reset(Count);
 	MatsPtr->Append(Mats);
 
+	Attachment->SetbGenerateMIDs(bGenerateMIDs);
 	Attachment->SetAttachmentTransformRules(AttachmentTransformRules);
 	Attachment->SetBone(Bone);
 	Attachment->SetTransformRules(TransformRules);
@@ -178,6 +180,7 @@ FCsStaticMeshActorPooled* FCsStaticMeshAttachment::AttachChecked(const FString& 
 	PayloadImpl->Parent = Parent;
 	PayloadImpl->Mesh   = Mesh.GetChecked(Context);
 	PayloadImpl->SetMaterials(Materials.GetChecked(Context));
+	PayloadImpl->bGenerateMIDs  = bGenerateMIDs;
 	PayloadImpl->Bone			= Bone;
 	PayloadImpl->TransformRules = TransformRules;
 	PayloadImpl->Transform		= Transform;
@@ -321,6 +324,7 @@ namespace NCsStaticMesh
 			PayloadImpl->Parent = Parent;
 			PayloadImpl->Mesh   = GetMesh();
 			PayloadImpl->SetMaterials(GetMaterials());
+			PayloadImpl->bGenerateMIDs  = GetbGenerateMIDs();
 			PayloadImpl->Bone			= GetBone();
 			PayloadImpl->TransformRules = GetTransformRules();
 			PayloadImpl->Transform		= GetTransform();

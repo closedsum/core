@@ -25,6 +25,11 @@ struct CSCORE_API FCsStaticMeshAttachment
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh")
 	FCsTArrayMaterialInterface Materials;
 
+	/** Whether to generate Material Instance Dynamic(s) or MIDs for
+		the Materials applied to Mesh. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh")
+	bool bGenerateMIDs;
+
 	/** Valid if the StaticMeshComponent is attached to a Parent object or when an StaticMeshActor object is
 		allocated, the Parent field of the payload is set. If the Parent object is NULL,
 		the Sound will NOT be attached. */
@@ -69,6 +74,7 @@ public:
 	FCsStaticMeshAttachment() :
 		Mesh(),
 		Materials(),
+		bGenerateMIDs(false),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
@@ -109,6 +115,10 @@ namespace NCsStaticMesh
 			CS_DECLARE_MEMBER_WITH_PROXY(Mesh, UStaticMesh*)
 			CS_DECLARE_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 
+			/** Whether to generate Material Instance Dynamic(s) or MIDs for
+				the Materials applied to Mesh. */
+			CS_DECLARE_MEMBER_WITH_PROXY(bGenerateMIDs, bool)
+
 			/** Valid if the StaticMeshComponent is attached to a Parent object or when an StaticMeshActor object is
 				allocated, the Parent field of the payload is set. If the Parent object is NULL,
 				the Sound will NOT be attached. */
@@ -145,6 +155,7 @@ namespace NCsStaticMesh
 			FAttachment() :
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Mesh, nullptr),
 				CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Materials),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bGenerateMIDs, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 7), // NCsTransformRules::All
@@ -156,6 +167,7 @@ namespace NCsStaticMesh
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Mesh);
 				CS_CTOR_SET_MEMBER_PROXY(Materials);
+				CS_CTOR_SET_MEMBER_PROXY(bGenerateMIDs);
 				CS_CTOR_SET_MEMBER_PROXY(AttachmentTransformRules);
 				CS_CTOR_SET_MEMBER_PROXY(Bone);
 				CS_CTOR_SET_MEMBER_PROXY(TransformRules);
@@ -168,6 +180,7 @@ namespace NCsStaticMesh
 
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, UStaticMesh)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bGenerateMIDs, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)

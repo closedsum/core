@@ -11,15 +11,14 @@
 
 #include "CsStaticMeshActorPooledImpl.generated.h"
 
-class UAudioComponent;
-class UDamageType;
-
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsStaticMeshActor::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, IPayload)
 // NCsStaticMeshActor::NCache::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NCache, FImpl)
+
+class UMaterialInstanceDynamic;
 
 /**
 * 
@@ -65,6 +64,8 @@ public:
 
 #pragma endregion ICsUpdate
 
+// PooledObject
+#pragma region
 protected:
 
 	CacheType* Cache;
@@ -76,6 +77,8 @@ protected:
 	uint32 PreserveChangesToDefaultMask;
 	uint32 ChangesToDefaultMask;
 	uint32 ChangesFromLastMask;
+
+#pragma endregion PooledObject
 
 // ICsPooledObject
 #pragma region
@@ -89,20 +92,35 @@ public:
 
 #pragma endregion ICsPooledObject
 
+// PooledObject
+#pragma region
+protected:
+
+	void Deallocate_Internal();
+
+#pragma endregion PooledObject
+
 // ICsStaticMeshActor
 #pragma region
 public:
 
-	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const
-	{
-		return GetStaticMeshComponent();
-	}
+	FORCEINLINE UStaticMeshComponent* GetMeshComponent() const { return GetStaticMeshComponent(); }
+	FORCEINLINE const TArray<UMaterialInstanceDynamic*>& GetMIDs() const { return  MIDs; }
 
 #pragma endregion ICsStaticMeshActor
 
+// Materials
+#pragma region
 protected:
 
-	void Deallocate_Internal();
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> MIDs;
+
+#pragma endregion Materials
+
+// Set / Clear Changes
+#pragma region
+protected:
 
 	void Handle_SetStaticMesh(StaticMeshPayloadType* Payload);
 	void Log_SetStaticMesh(StaticMeshPayloadType* Payload);
@@ -119,6 +137,8 @@ protected:
 	void Handle_ClearAttachAndTransform();
 
 	void LogChangeCounter();
+
+#pragma endregion Set / Clear Changes
 
 #undef CacheType
 #undef CacheImplType

@@ -257,6 +257,8 @@ public:
 	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
 
 	void DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InMinRadius, const float& InMaxRadius) const;
+	void DrawAtLocation(AActor* Actor, const float& InMinRadius, const float& InMaxRadius) const;
+	void DrawAtLocation(AActor* Actor, const float& Radius) const;
 
 private:
 

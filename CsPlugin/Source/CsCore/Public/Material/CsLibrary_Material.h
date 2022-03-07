@@ -643,7 +643,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Scalar Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetScalarParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+			static void SetScalarParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
 
 			/**
 			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.
@@ -677,7 +677,7 @@ namespace NCsMaterial
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SetSafeScalarParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeScalarParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
@@ -687,7 +687,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeScalarParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+			static bool SetSafeScalarParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
 
 			/**
 			* Get the value of the Scalar Parameter Value with name: ParamName on MID.
@@ -753,7 +753,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Vector Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static void SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -787,7 +787,7 @@ namespace NCsMaterial
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -797,7 +797,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
 			* Set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -839,7 +839,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Vector Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+			static void SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -851,7 +851,7 @@ namespace NCsMaterial
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -861,7 +861,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+			static bool SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
 
 			/**
 			* Get the value of the Vector Parameter Value with name: ParamName on MID.
@@ -927,7 +927,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Texture Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetTextureParameterValueChecked(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
+			static void SetTextureParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
 
 			/**
 			* Safely set the Texture Parameter Value with name: ParamName with value Value on MID.
@@ -961,7 +961,7 @@ namespace NCsMaterial
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SetSafeTextureParameterValue(const FString& Context, TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeTextureParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the Texture Parameter Value with name: ParamName with value Value on MIDs.
@@ -971,7 +971,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeTextureParameterValue(TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
+			static bool SetSafeTextureParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
 
 			/**
 			* Get the value of the Texture Parameter Value with name: ParamName on MID.

@@ -24,6 +24,7 @@ namespace NCsStaticMeshActor
 			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 			Mesh(nullptr),
 			Materials(),
+			bGenerateMIDs(),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
@@ -70,6 +71,7 @@ namespace NCsStaticMeshActor
 			// StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)
 			Mesh = nullptr;
 			Materials.Reset(Materials.Max());
+			bGenerateMIDs = false;
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;

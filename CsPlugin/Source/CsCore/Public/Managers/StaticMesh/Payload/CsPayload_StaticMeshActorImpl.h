@@ -52,6 +52,8 @@ namespace NCsStaticMeshActor
 
 			TArray<UMaterialInterface*> Materials;
 
+			bool bGenerateMIDs;
+
 			DeallocateMethodType DeallocateMethod;
 
 			float LifeTime;
@@ -132,6 +134,7 @@ namespace NCsStaticMeshActor
 
 			FORCEINLINE UStaticMesh* GetStaticMesh() const { return Mesh; }
 			FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return Materials; }
+			FORCEINLINE const bool& ShouldGenerateMIDs() const { return bGenerateMIDs; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }

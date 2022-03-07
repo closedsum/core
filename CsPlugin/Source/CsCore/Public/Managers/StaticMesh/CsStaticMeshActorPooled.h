@@ -8,6 +8,8 @@
 #pragma region
 
 class ICsStaticMeshActor;
+class UStaticMeshComponent;
+class UMaterialInstanceDynamic;
 
 struct CSCORE_API FCsStaticMeshActorPooled : public FCsPooledObject
 {
@@ -48,6 +50,21 @@ public:
 		 The Object implements a script interface of type: ICsStaticMeshActor. */
 	FScript_GetMeshComponent Script_GetMeshComponent_Impl;
 
+	/**
+	* Delegate type for getting the Material Instance Dynamic(s) or MIDs
+	* associated with the Static Mesh on GetMeshComponent() (GetMeshComponent()->GetStaticMesh()).
+	*  The Object implements a script interface of type: ICsStaticMeshActor.
+	*
+	* @param Object					An object of type: ICsStaticMeshActor.
+	* return MIDs					Array of Material Instance Dynamic.
+	*/
+	DECLARE_DELEGATE_RetVal_OneParam(const TArray<UMaterialInstanceDynamic*>& /*MIDs*/, FScript_GetMIDs, UObject* /*Object*/);
+
+	/** Delegate for getting the Material Instance Dynamic(s) or MIDs
+		associated with the Static Mesh on GetMeshComponent() (GetMeshComponent()->GetStaticMesh()).
+		 The Object implements a script interface of type: ICsStaticMeshActor. */
+	FScript_GetMIDs Script_GetMIDs_Impl;
+
 #pragma endregion ICsStaticMeshActor
 
 #pragma endregion Script
@@ -76,27 +93,14 @@ public:
 
 	UStaticMeshComponent* GetMeshComponent() const;
 
+	const TArray<UMaterialInstanceDynamic*>& GetMIDs() const;
+
 #pragma endregion ICsStaticMeshActor
 
-	FORCEINLINE void SetScriptStaticMeshActor()
-	{
-		bScriptStaticMeshActor = true;
-	}
-
-	FORCEINLINE const bool& IsScriptStaticMeshActor() const
-	{
-		return bScriptStaticMeshActor;
-	}
-
-	FORCEINLINE ICsStaticMeshActor* GetStaticMeshActor() const
-	{
-		return StaticMeshActor;
-	}
-
-	FORCEINLINE void SetStaticMeshActorPooled(ICsStaticMeshActor* InStaticMeshActor)
-	{
-		StaticMeshActor = InStaticMeshActor;
-	}
+	FORCEINLINE void SetScriptStaticMeshActor() { bScriptStaticMeshActor = true; }
+	FORCEINLINE const bool& IsScriptStaticMeshActor() const { return bScriptStaticMeshActor; }
+	FORCEINLINE ICsStaticMeshActor* GetStaticMeshActor() const { return StaticMeshActor; }
+	FORCEINLINE void SetStaticMeshActorPooled(ICsStaticMeshActor* InStaticMeshActor) { StaticMeshActor = InStaticMeshActor; }
 
 public:
 

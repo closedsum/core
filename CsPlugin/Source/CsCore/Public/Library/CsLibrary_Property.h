@@ -332,6 +332,17 @@ namespace NCsProperty
 		static FArrayProperty* FindArrayEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
+		* Find the Array Property (TArray of FName) from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				Property.
+		*/
+		static FArrayProperty* FindArrayNamePropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Find the Array Property (TArray of UStructs) from Struct with name: PropertyName.
 		*
 		* @param Context		The calling context.
@@ -848,6 +859,33 @@ namespace NCsProperty
 				return nullptr;
 
 			TArray<EnumType>* Value = Property->ContainerPtrToValuePtr<TArray<EnumType>>(StructValue);
+
+			if (!Value)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return Value;
+		}
+
+		/**
+		* Get the Array of FName with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* return				TArray<FName>*.
+		*/
+		static TArray<FName>* GetArrayNamePropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FArrayProperty* Property = FindArrayNamePropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!Property)
+				return nullptr;
+
+			TArray<FName>* Value = Property->ContainerPtrToValuePtr<TArray<FName>>(StructValue);
 
 			if (!Value)
 			{

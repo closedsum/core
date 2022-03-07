@@ -207,6 +207,22 @@ void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const FECsCVarDraw& Other
 	}
 }
 
+void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const float& InMinRadius, const float& InMaxRadius) const
+{
+	if (CanDraw(Actor))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(Actor->GetActorLocation());
+
+		Draw_Internal(Actor, InTransform, InMinRadius, InMaxRadius);
+	}
+}
+
+void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const float& Radius) const
+{
+	DrawAtLocation(Actor, Radius, Radius);
+}
+
 void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const
 {
 	Draw_Internal(WorldContext, Transform, MinRadius, MaxRadius);

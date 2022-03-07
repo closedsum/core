@@ -292,7 +292,6 @@ enum class ECsStaticMeshPayloadChange : uint8
 	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap to Target not Including Scale"),	// 4
 	SnapToTargetIncludingScale		UMETA(DisplayName = "Snap to Target Including Scale"),		// 5
 	Transform						UMETA(DisplayName = "Transform"),							// 6
-	AnimInstance					UMETA(DisplayName = "AnimInstance"),						// 7
 };
 
 struct CSCORE_API EMCsStaticMeshPayloadChange : public TCsEnumFlagMap<ECsStaticMeshPayloadChange>
@@ -312,6 +311,7 @@ namespace NCsStaticMeshPayloadChange
 		extern CSCORE_API const Type KeepWorldTransform;
 		extern CSCORE_API const Type SnapToTargetNotIncludingScale;
 		extern CSCORE_API const Type SnapToTargetIncludingScale;
+		extern CSCORE_API const Type Transform;
 	}
 
 	extern CSCORE_API const int32 None;

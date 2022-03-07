@@ -10,7 +10,8 @@ FCsStaticMeshActorPooled::FCsStaticMeshActorPooled() :
 	Super(),
 	StaticMeshActor(nullptr),
 	bScriptStaticMeshActor(false),
-	Script_GetMeshComponent_Impl()
+	Script_GetMeshComponent_Impl(),
+	Script_GetMIDs_Impl()
 {
 }
 
@@ -74,6 +75,13 @@ UStaticMeshComponent* FCsStaticMeshActorPooled::GetMeshComponent() const
 	if (bScriptStaticMeshActor)
 		return Script_GetMeshComponent_Impl.Execute(Object);
 	return StaticMeshActor->GetMeshComponent();
+}
+
+const TArray<UMaterialInstanceDynamic*>& FCsStaticMeshActorPooled::GetMIDs() const
+{
+	if (bScriptStaticMeshActor)
+		return Script_GetMIDs_Impl.Execute(Object);
+	return StaticMeshActor->GetMIDs();
 }
 
 #pragma endregion ICsStaticMeshActor

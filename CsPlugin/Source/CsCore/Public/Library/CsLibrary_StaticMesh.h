@@ -1,10 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 class UObject;
 class UStaticMesh;
+class UStaticMeshComponent;
 
 namespace NCsStaticMesh
 {
@@ -57,5 +58,20 @@ namespace NCsStaticMesh
 		static UStaticMesh* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Load
+
+	// Set
+	#pragma region
+	public:
+
+		/**
+		* Set Mesh on the Component.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param Mesh
+		*/
+		static void SetChecked(const FString& Context, UStaticMeshComponent* Component, UStaticMesh* Mesh);
+
+	#pragma endregion Set
 	};
 }

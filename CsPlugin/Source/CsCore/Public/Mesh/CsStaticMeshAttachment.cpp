@@ -24,6 +24,9 @@ void FCsStaticMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 	Attachment->SetBone(&Bone);
 	Attachment->SetTransformRules(&TransformRules);
 	Attachment->SetTransform(&Transform);
+	Attachment->SetbCastShadow(&bCastShadow);
+	Attachment->SetbReceivesDecals(&bReceivesDecals);
+	Attachment->SetbUseAsOccluder(&bUseAsOccluder);
 	Attachment->SetTags(&Tags);
 }
 
@@ -44,6 +47,9 @@ void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment
 	Attachment->SetBone(Bone);
 	Attachment->SetTransformRules(TransformRules);
 	Attachment->SetTransform(Transform);
+	Attachment->SetbCastShadow(bCastShadow);
+	Attachment->SetbReceivesDecals(bReceivesDecals);
+	Attachment->SetbUseAsOccluder(bUseAsOccluder);
 	Attachment->SetTags(Tags);
 }
 
@@ -117,6 +123,9 @@ void FCsStaticMeshAttachment::AttachChecked(const FString& Context, USceneCompon
 	Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentTransformRules), Bone);
 	NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
 	Child->SetStaticMesh(Mesh.GetChecked(Context));
+	Child->SetCastShadow(bCastShadow);
+	Child->SetReceivesDecals(bReceivesDecals);
+	Child->bUseAsOccluder = bUseAsOccluder;
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -140,6 +149,9 @@ bool FCsStaticMeshAttachment::AttachSafe(const FString& Context, USceneComponent
 	Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentTransformRules), Bone);
 	NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
 	Child->SetStaticMesh(Mesh.GetChecked(Context));
+	Child->SetCastShadow(bCastShadow);
+	Child->SetReceivesDecals(bReceivesDecals);
+	Child->bUseAsOccluder = bUseAsOccluder;
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -169,6 +181,9 @@ FCsStaticMeshActorPooled* FCsStaticMeshAttachment::AttachChecked(const FString& 
 	PayloadImpl->Bone			= Bone;
 	PayloadImpl->TransformRules = TransformRules;
 	PayloadImpl->Transform		= Transform;
+	PayloadImpl->bCastShadow	= bCastShadow;
+	PayloadImpl->bReceivesDecals = bReceivesDecals;
+	PayloadImpl->bUseAsOccluder = bUseAsOccluder;
 	PayloadImpl->Tags.Reset(FMath::Max(PayloadImpl->Tags.Max(), Tags.Num()));
 	PayloadImpl->Tags.Append(Tags);
 
@@ -251,6 +266,9 @@ namespace NCsStaticMesh
 			Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 			Child->SetStaticMesh(GetMesh());
+			Child->SetCastShadow(GetbCastShadow());
+			Child->SetReceivesDecals(GetbReceivesDecals());
+			Child->bUseAsOccluder = GetbUseAsOccluder();
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -274,6 +292,9 @@ namespace NCsStaticMesh
 			Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 			Child->SetStaticMesh(GetMesh());
+			Child->SetCastShadow(GetbCastShadow());
+			Child->SetReceivesDecals(GetbReceivesDecals());
+			Child->bUseAsOccluder = GetbUseAsOccluder();
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -303,6 +324,9 @@ namespace NCsStaticMesh
 			PayloadImpl->Bone			= GetBone();
 			PayloadImpl->TransformRules = GetTransformRules();
 			PayloadImpl->Transform		= GetTransform();
+			PayloadImpl->bCastShadow	= GetbCastShadow();
+			PayloadImpl->bReceivesDecals = GetbReceivesDecals();
+			PayloadImpl->bUseAsOccluder = GetbUseAsOccluder();
 			PayloadImpl->Tags.Reset(FMath::Max(PayloadImpl->Tags.Max(), GetTags().Num()));
 			PayloadImpl->Tags.Append(GetTags());
 

@@ -6,8 +6,11 @@
 #include "Types/CsTypes_Math.h"
 // Library
 #include "Object/CsLibrary_Object.h"
+#include "Library/CsLibrary_Valid.h"
 // Mesh
 #include "Engine/StaticMesh.h"
+// Component
+#include "Components/StaticMeshComponent.h"
 
 namespace NCsStaticMesh
 {
@@ -43,4 +46,17 @@ namespace NCsStaticMesh
 	}
 
 	#pragma endregion Load
+
+	// Set
+	#pragma region
+
+	void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Component, UStaticMesh* Mesh)
+	{
+		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PTR_NULL_CHECKED(Mesh)
+
+		Component->SetStaticMesh(Mesh);
+	}
+
+	#pragma endregion Set
 }

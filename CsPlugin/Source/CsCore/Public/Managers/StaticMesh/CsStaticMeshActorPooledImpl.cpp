@@ -147,6 +147,9 @@ void ACsStaticMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	SetActorTickEnabled(true);
 
+	GetMeshComponent()->SetCastShadow(StaticMeshPayload->CastShadow());
+	GetMeshComponent()->SetReceivesDecals(StaticMeshPayload->ReceivesDecals());
+	GetMeshComponent()->bUseAsOccluder = StaticMeshPayload->UseAsOccluder();
 	GetMeshComponent()->SetHiddenInGame(false);
 	GetMeshComponent()->SetComponentTickEnabled(true);
 

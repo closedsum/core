@@ -216,12 +216,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	FTransform Transform;
 
+	/** Controls whether the StaticMeshComponent should cast a shadow or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bCastShadow;
 
+	/** Whether the StaticMeshComponent receives decals. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bReceivesDecals;
 
+	/** Whether to render the StatisMeshComponent in the depth only pass.
+		This should generally be true for all objects, and let the renderer make decisions about whether to render objects in the depth only pass. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bUseAsOccluder;
 

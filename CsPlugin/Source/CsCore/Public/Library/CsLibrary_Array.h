@@ -384,9 +384,17 @@ namespace NCsArray
 		}
 
 		template<typename T>
-		FORCEINLINE static void Append(TArray<T>& A, const TArray<T>& B)
+		FORCEINLINE static void ResetAndAppend(TArray<T>& A, const TArray<T>& B)
 		{
 			A.Reset(FMath::Max(A.Max(), B.Num()));
+			A.Append(B);
+		}
+
+		template<typename T>
+		FORCEINLINE static void ConditionalResetAndAppend(TArray<T>& A, const TArray<T>& B)
+		{
+			if (A.Num() == 0)
+				A.Reset(FMath::Max(A.Max(), B.Num()));
 			A.Append(B);
 		}
 

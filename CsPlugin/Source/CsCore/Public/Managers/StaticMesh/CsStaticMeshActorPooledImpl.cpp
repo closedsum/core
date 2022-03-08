@@ -519,7 +519,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 		}
 		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 
-		ArrayLibrary::Append<FName>(GetMeshComponent()->ComponentTags, StaticMeshPayload->GetTags());
+		ArrayLibrary::ResetAndAppend<FName>(GetMeshComponent()->ComponentTags, StaticMeshPayload->GetTags());
 	}
 	// NO Parent, set the World Transform of the StaticMeshComponent
 	else
@@ -546,7 +546,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 
 		AttachToBone = NAME_None;
 
-		ArrayLibrary::Append<FName>(Tags, StaticMeshPayload->GetTags());
+		ArrayLibrary::ResetAndAppend<FName>(Tags, StaticMeshPayload->GetTags());
 	}
 	CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 

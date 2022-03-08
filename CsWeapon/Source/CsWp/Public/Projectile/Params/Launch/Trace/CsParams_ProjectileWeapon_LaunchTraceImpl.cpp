@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
+#include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 
 // Types
-#include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
+#include "Projectile/Params/Launch/Trace/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 #include "Data/CsLibrary_Data_Weapon.h"

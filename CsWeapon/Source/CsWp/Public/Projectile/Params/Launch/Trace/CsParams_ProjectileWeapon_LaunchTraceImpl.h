@@ -2,7 +2,7 @@
 #pragma once
 // Interfaces
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_Launch.h"
-#include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
+#include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTrace.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Log

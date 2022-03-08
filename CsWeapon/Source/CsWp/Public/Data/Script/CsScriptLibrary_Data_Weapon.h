@@ -8,7 +8,7 @@
 #include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFireImplSlice.h"
 #include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFireImplSlice.h"
 // Params
-#include "Projectile/Params/Launch/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
+#include "Projectile/Params/Launch/Trace/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"
 
 #include "CsScriptLibrary_Data_Weapon.generated.h"
 

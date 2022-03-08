@@ -8,7 +8,7 @@
 // Weapon
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
 // Params
-#include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
+#include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTraceImpl.h"
 
 #define SliceType NCsWeapon::NProjectile::NData::FImplSlice
 

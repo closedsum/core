@@ -51,7 +51,7 @@
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Params
-#include "Projectile/Params/Launch/CsParams_ProjectileWeapon_LaunchTrace.h"
+#include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTrace.h"
 #include "Projectile/Data/Sound/CsParams_ProjectileWeapon_SoundFire.h"
 
 // Cached 

@@ -803,7 +803,7 @@ class UMaterialInterface;
 class UMaterialInstanceDynamic;
 
 /**
-* Describes a Material Color Parameters (Vector as FLinearColor).
+* Describes a Material Color Parameter (Vector as FLinearColor).
 */
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsMaterialParameterColor

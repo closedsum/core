@@ -25,18 +25,20 @@ struct FCsRoutine;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
+
 // NCsProjectile::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // NCsSound::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 // NCsFX::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
+
 // NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
+
 // NCsProjectile::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
-struct FCsProjectilePooled;
 
 class USceneComponent;
 

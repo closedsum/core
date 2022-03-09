@@ -31,6 +31,34 @@ namespace NCsProjectileWeaponLaunchTraceStart
 	CSWP_API const uint8 MAX = (uint8)Type::ECsProjectileWeaponLaunchTraceStart_MAX;
 }
 
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NTraceStart
+				{
+					namespace Ref
+					{
+						typedef EMTraceStart EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(LaunchLocation, "Launch Location");
+						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ETraceStart_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
+}
+
 #pragma endregion ProjectileWeaponLaunchTraceStart
 
 // ProjectileWeaponLaunchTraceDirection
@@ -51,6 +79,33 @@ namespace NCsProjectileWeaponLaunchTraceDirection
 	}
 
 	CSWP_API const uint8 MAX = (uint8)Type::ECsProjectileWeaponLaunchTraceDirection_MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NTraceDirection
+				{
+					namespace Ref
+					{
+						typedef EMTraceDirection EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ETraceDirection_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
 }
 
 #pragma endregion ProjectileWeaponLaunchTraceDirection

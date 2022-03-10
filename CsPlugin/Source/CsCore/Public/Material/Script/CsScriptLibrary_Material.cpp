@@ -185,7 +185,7 @@ FCsRoutineHandle UCsScriptLibrary_Material::PlayAnim(const FString& Context, con
 
 	FCsMaterialAnim_Params* ParamsPtr = const_cast<FCsMaterialAnim_Params*>(&Params);
 
-	ParamsPtr->ConditionalSetSafeMID(Ctxt);
+	ParamsPtr->ConditionalSetSafeMIDs(Ctxt);
 	ParamsPtr->Anim.UpdateFromPlaybackAndPlayRate();
 
 	if (!Params.IsValid(Ctxt))

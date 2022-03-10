@@ -237,6 +237,8 @@ struct CSCORE_API FCsMaterialAnimFrame
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 	bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UMaterialInstanceDynamic;
@@ -291,6 +293,12 @@ namespace NCsMaterial
 
 			bool IsValidChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
 			bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			bool IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs) const;
+			bool IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			bool IsValidChecked(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs) const;
+			bool IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 			FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
 			{
@@ -387,6 +395,8 @@ struct CSCORE_API FCsMaterialAnim
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 	bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	bool IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UMaterialInstanceDynamic;
@@ -428,6 +438,8 @@ namespace NCsMaterial
 
 			TArray<FrameType> Frames;
 
+			int32 FrameCount;
+
 		private:
 
 			CS_DECLARE_MEMBER_WITH_PROXY(TotalCount, int32)
@@ -440,6 +452,7 @@ namespace NCsMaterial
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(DeltaTime, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 				Frames(),
+				FrameCount(0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalCount, 0)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Playback);
@@ -460,9 +473,18 @@ namespace NCsMaterial
 				TotalTime = B.GetTotalTime();
 				SetTotalTime(&TotalTime);
 
-				typedef NCsArray::FLibrary ArrayLibrary;
+				FrameCount = B.FrameCount;
 
-				ArrayLibrary::Copy<FrameType>(Frames, B.Frames);
+				if (FrameCount > Frames.Num())
+				{
+					Frames.Reset(FMath::Max(Frames.Max(), FrameCount));
+					Frames.AddDefaulted(FrameCount);
+				}
+
+				for (int32 I = 0; I < FrameCount; ++I)
+				{
+					Frames[I] = B.Frames[I];
+				}
 
 				TotalCount = B.GetTotalCount();
 				SetTotalCount(&TotalCount);
@@ -509,6 +531,12 @@ namespace NCsMaterial
 
 			bool IsValidChecked(const FString& Context, UMaterialInstanceDynamic* MID) const;
 			bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			bool IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs) const;
+			bool IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			bool IsValidChecked(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs) const;
+			bool IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 			FORCEINLINE bool AreProxyPtrsDefaultChecked(const FString& Context) const
 			{
@@ -567,10 +595,10 @@ public:
 
 	/** Material to perform the animation on. */
 	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material")
-	UMaterialInstanceDynamic* MID;
+	TArray<UMaterialInstanceDynamic*> MIDs;
 
 	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material")
-	UObject* MIDAsObject;
+	TArray<UObject*> MIDsAsObjects;
 
 	/** Owner of the Animation */
 	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material")
@@ -581,14 +609,14 @@ public:
 
 	FCsMaterialAnim_Params() :
 		Anim(),
-		MID(nullptr),
-		MIDAsObject(nullptr),
+		MIDs(),
+		MIDsAsObjects(),
 		Owner(nullptr),
 		Group()
 	{
 	}
 
-	void ConditionalSetSafeMID(const FString& Context);
+	void ConditionalSetSafeMIDs(const FString& Context);
 
 #define ParamsType NCsMaterial::NAnim::NParams::FParams
 	void CopyToParamsAsValue(ParamsType* Params) const;
@@ -613,7 +641,9 @@ namespace NCsMaterial
 
 			private:
 
-				TWeakObjectPtr<UMaterialInstanceDynamic> MID;
+				TArray<TWeakObjectPtr<UMaterialInstanceDynamic>> MIDs;
+
+				TArray<UMaterialInstanceDynamic*> MIDs_Internal;
 
 				TWeakObjectPtr<UObject> Owner;
 
@@ -625,7 +655,8 @@ namespace NCsMaterial
 			
 				FParams() :
 					Anim(),
-					MID(nullptr),
+					MIDs(),
+					MIDs_Internal(),
 					Owner(nullptr),
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Group)
 				{
@@ -634,16 +665,9 @@ namespace NCsMaterial
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Group, FECsUpdateGroup)
 
-				void SetMID(UMaterialInstanceDynamic* Value);
-				UMaterialInstanceDynamic* GetMID() const;
-				FORCEINLINE UMaterialInstanceDynamic* GetMIDChecked(const FString& Context) const 
-				{
-					UMaterialInstanceDynamic* Value = GetMID();
-
-					checkf(Value, TEXT("%s: MID is NULL."), *Context);
-
-					return Value;
-				}
+				void SetMIDs(const TArray<UMaterialInstanceDynamic*>& Value);
+				FORCEINLINE const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>> GetMIDs() const { return MIDs; }
+				const TArray<UMaterialInstanceDynamic*>& ResolveAndGetMIDsChecked(const FString& Context);
 
 				FORCEINLINE void SetOwner(UObject* Value) { Owner = Value; }
 				UObject* GetOwner() const;

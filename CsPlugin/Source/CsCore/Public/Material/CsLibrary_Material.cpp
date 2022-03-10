@@ -2268,7 +2268,7 @@ namespace NCsMaterial
 			ParamsResourceType* Resource = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 			ParamsType* Params			 = Resource->Get();
 
-			UMaterialInstanceDynamic* MID = Params->GetMIDChecked(Context);
+			const TArray<UMaterialInstanceDynamic*>& MIDs = Params->ResolveAndGetMIDsChecked(Context);
 
 			// Anim
 			typedef NCsMaterial::NAnim::FAnim AnimType;
@@ -2279,7 +2279,7 @@ namespace NCsMaterial
 
 			const PlaybackType& Playback = Params->Anim.GetPlayback();
 			const bool LoopingForever	 = Params->Anim.IsLoopingForever();
-			const int32 FrameCount		 = Anim.Frames.Num();
+			const int32 FrameCount		 = Anim.FrameCount;
 			const int32& TotalCount		 = Anim.GetTotalCount();
 
 			static const int32 COUNT = 0;
@@ -2332,7 +2332,7 @@ namespace NCsMaterial
 						{
 							if (Percent == 0.0f)
 							{
-								SetVectorParameterValueChecked(Context, MID, Param.GetName(), End);
+								SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), End);
 							}
 						}
 						else
@@ -2350,7 +2350,7 @@ namespace NCsMaterial
 
 							FLinearColor Current = Start + Alpha * Distance * Normal;
 
-							SetVectorParameterValueChecked(Context, MID, Param.GetName(), Current);
+							SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), Current);
 						};
 					}
 					// Scalar
@@ -2364,7 +2364,7 @@ namespace NCsMaterial
 						{
 							if (Percent == 0.0f)
 							{
-								SetScalarParameterValueChecked(Context, MID, Param.GetName(), End);
+								SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), End);
 							}
 						}
 						else
@@ -2377,7 +2377,7 @@ namespace NCsMaterial
 							const float Delta = End - Start;
 							float Final		  = Start + Alpha * Delta;
 
-							SetScalarParameterValueChecked(Context, MID, Param.GetName(), Final);
+							SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), Final);
 						};
 					}
 
@@ -2390,12 +2390,12 @@ namespace NCsMaterial
 						// Vector
 						for (const VectorType& Param : Frame.VectorParameters)
 						{
-							SetVectorParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
+							SetVectorParameterValueChecked(Context, MIDs, Param.GetName(), Param.GetTo());
 						}
 						// Float
 						for (const ScalarType& Param : Frame.ScalarParameters)
 						{
-							SetScalarParameterValueChecked(Context, MID, Param.GetName(), Param.GetTo());
+							SetScalarParameterValueChecked(Context, MIDs, Param.GetName(), Param.GetTo());
 						}
 
 						ElapsedTime.Reset();

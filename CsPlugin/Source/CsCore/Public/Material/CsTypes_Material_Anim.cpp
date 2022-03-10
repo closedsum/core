@@ -174,6 +174,62 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, UMaterialInstanceDyna
 	return true;
 }
 
+bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return false;
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	// Check VectorParameters is Valid
+	for (const FCsMaterialAnimParameterVector& Param : VectorParameters)
+	{
+		for (UMaterialInstanceDynamic* MID : MIDs)
+		{
+			if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
+				return false;
+		}
+	}
+	// Check ScalarParameters is Valid
+	for (const FCsMaterialAnimParameterScalar& Param : ScalarParameters)
+	{
+		for (UMaterialInstanceDynamic* MID : MIDs)
+		{
+			if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
+				return false;
+		}
+	}
+	return true;
+}
+
+bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return false;
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	// Check VectorParameters is Valid
+	for (const FCsMaterialAnimParameterVector& Param : VectorParameters)
+	{
+		for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
+		{
+			if (!MIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
+				return false;
+		}
+	}
+	// Check ScalarParameters is Valid
+	for (const FCsMaterialAnimParameterScalar& Param : ScalarParameters)
+	{
+		for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
+		{
+			if (!MIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
+				return false;
+		}
+	}
+	return true;
+}
+
 namespace NCsMaterial
 {
 	namespace NAnim
@@ -267,6 +323,128 @@ namespace NCsMaterial
 			{
 				if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
 					return false;
+			}
+			return true;
+		}
+
+		bool FFrame::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs) const
+		{
+			check(IsValidChecked(Context));
+
+			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+			// Check VectorParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FVectorType VectorType;
+
+			for (const VectorType& Param : VectorParameters)
+			{
+				for (UMaterialInstanceDynamic* MID : MIDs)
+				{
+					check(MIDLibrary::IsVectorParameterValidChecked(Context, MID, Param.GetName()));
+				}
+			}
+			// Check ScalarParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FScalarType ScalarType;
+
+			for (const ScalarType& Param : ScalarParameters)
+			{
+				for (UMaterialInstanceDynamic* MID : MIDs)
+				{
+					check(MIDLibrary::IsScalarParameterValidChecked(Context, MID, Param.GetName()));
+				}
+			}
+			return true;
+		}
+
+		bool FFrame::IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			if (!IsValid(Context, Log))
+				return false;
+
+			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+			// Check VectorParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FVectorType VectorType;
+
+			for (const VectorType& Param : VectorParameters)
+			{
+				for (UMaterialInstanceDynamic* MID : MIDs)
+				{
+					if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.GetName(), Log))
+						return false;
+				}
+			}
+			// Check ScalarParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FScalarType ScalarType;
+
+			for (const ScalarType& Param : ScalarParameters)
+			{
+				for (UMaterialInstanceDynamic* MID : MIDs)
+				{
+					if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.GetName(), Log))
+						return false;
+				}
+			}
+			return true;
+		}
+
+		bool FFrame::IsValidChecked(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs) const
+		{
+			check(IsValidChecked(Context));
+
+			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+			// Check VectorParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FVectorType VectorType;
+
+			for (const VectorType& Param : VectorParameters)
+			{
+				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
+				{
+					check(MIDLibrary::IsVectorParameterValidChecked(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName()));
+				}
+			}
+			// Check ScalarParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FScalarType ScalarType;
+
+			for (const ScalarType& Param : ScalarParameters)
+			{
+				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
+				{
+					check(MIDLibrary::IsScalarParameterValidChecked(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName()));
+				}
+			}
+			return true;
+		}
+
+		bool FFrame::IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			if (!IsValid(Context, Log))
+				return false;
+
+			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+			// Check VectorParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FVectorType VectorType;
+
+			for (const VectorType& Param : VectorParameters)
+			{
+				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
+				{
+					if (!MIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName(), Log))
+						return false;
+				}
+			}
+			// Check ScalarParameters is Valid
+			typedef NCsMaterial::NAnim::NParameter::FScalarType ScalarType;
+
+			for (const ScalarType& Param : ScalarParameters)
+			{
+				for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
+				{
+					if (!MIDLibrary::IsScalarParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.GetName(), Log))
+						return false;
+				}
 			}
 			return true;
 		}
@@ -401,6 +579,7 @@ void FCsMaterialAnim::CopyToAnim(AnimType* Anim)
 
 		FromFrame.CopyToFrame(&ToFrame);
 	}
+	Anim->FrameCount = Frames.Num();
 
 	Anim->SetTotalCount(&TotalCount);
 }
@@ -428,6 +607,7 @@ void FCsMaterialAnim::CopyToAnimAsValue(AnimType* Anim) const
 
 		FromFrame.CopyToFrameAsValue(&ToFrame);
 	}
+	Anim->FrameCount = Frames.Num();
 
 	Anim->SetTotalCount(TotalCount);
 }
@@ -519,6 +699,34 @@ bool FCsMaterialAnim::IsValid(const FString& Context, UMaterialInstanceDynamic* 
 	for (const FCsMaterialAnimFrame& Frame : Frames)
 	{
 		if (!Frame.IsValid(Context, MID, Log))
+			return false;
+	}
+	return true;
+}
+
+bool FCsMaterialAnim::IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return false;
+
+	// Check Frames
+	for (const FCsMaterialAnimFrame& Frame : Frames)
+	{
+		if (!Frame.IsValid(Context, MIDs, Log))
+			return false;
+	}
+	return true;
+}
+
+bool FCsMaterialAnim::IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (!IsValid(Context, Log))
+		return false;
+
+	// Check Frames
+	for (const FCsMaterialAnimFrame& Frame : Frames)
+	{
+		if (!Frame.IsValid(Context, MIDs, Log))
 			return false;
 	}
 	return true;
@@ -669,9 +877,9 @@ namespace NCsMaterial
 
 			CS_IS_ARRAY_EMPTY_CHECKED(Frames, FrameType)
 
-			for (const FrameType& Frame : Frames)
+			for (int32 I = 0; I < FrameCount; ++I)
 			{
-				check(Frame.IsValidChecked(Context));
+				check(Frames[I].IsValidChecked(Context));
 			}
 			return true;
 		}
@@ -751,9 +959,9 @@ namespace NCsMaterial
 
 			CS_IS_ARRAY_EMPTY(Frames, FrameType)
 
-			for (const FrameType& Frame : Frames)
+			for (int32 I = 0; I < FrameCount; ++I)
 			{
-				if (!Frame.IsValid(Context, Log))
+				if (!Frames[I].IsValid(Context, Log))
 					return false;
 			}
 			return true;
@@ -766,9 +974,9 @@ namespace NCsMaterial
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
 
-			for (const FrameType& Frame : Frames)
+			for (int32 I = 0; I < FrameCount; ++I)
 			{
-				check(Frame.IsValidChecked(Context, MID));
+				check(Frames[I].IsValidChecked(Context, MID));
 			}
 			return true;
 		}
@@ -781,9 +989,69 @@ namespace NCsMaterial
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
 
-			for (const FrameType& Frame : Frames)
+			for (int32 I = 0; I < FrameCount; ++I)
 			{
-				if (!Frame.IsValid(Context, MID, Log))
+				if (!Frames[I].IsValid(Context, MID, Log))
+					return false;
+			}
+			return true;
+		}
+
+		bool FAnim::IsValidChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs) const
+		{
+			check(IsValidChecked(Context));
+
+			// Check Frames
+			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			for (int32 I = 0; I < FrameCount; ++I)
+			{
+				check(Frames[I].IsValidChecked(Context, MIDs));
+			}
+			return true;
+		}
+
+		bool FAnim::IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			if (!IsValid(Context, Log))
+				return false;
+
+			// Check Frames
+			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			for (int32 I = 0; I < FrameCount; ++I)
+			{
+				if (!Frames[I].IsValid(Context, MIDs, Log))
+					return false;
+			}
+			return true;
+		}
+
+		bool FAnim::IsValidChecked(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs) const
+		{
+			check(IsValidChecked(Context));
+
+			// Check Frames
+			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			for (int32 I = 0; I < FrameCount; ++I)
+			{
+				check(Frames[I].IsValidChecked(Context, MIDs));
+			}
+			return true;
+		}
+
+		bool FAnim::IsValid(const FString& Context, const TArray<TWeakObjectPtr<UMaterialInstanceDynamic>>& MIDs, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			if (!IsValid(Context, Log))
+				return false;
+
+			// Check Frames
+			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			for (int32 I = 0; I < FrameCount; ++I)
+			{
+				if (!Frames[I].IsValid(Context, MIDs, Log))
 					return false;
 			}
 			return true;
@@ -796,25 +1064,39 @@ namespace NCsMaterial
 // FCsMaterialAnim_Params
 #pragma region
 
-void FCsMaterialAnim_Params::ConditionalSetSafeMID(const FString& Context)
+void FCsMaterialAnim_Params::ConditionalSetSafeMIDs(const FString& Context)
 {
-	if (MID)
+	if (MIDs.Num() > CS_EMPTY)
 	{
-		MIDAsObject = MID;
+		MIDsAsObjects.Reset(FMath::Max(MIDsAsObjects.Max(), MIDs.Num()));
+
+		for (UMaterialInstanceDynamic* MID : MIDs)
+		{
+			MIDsAsObjects.Add(MID);
+		}
 	}
 	else
-	if (MIDAsObject)
+	if (MIDsAsObjects.Num() > CS_EMPTY)
 	{
-		MID = Cast<UMaterialInstanceDynamic>(MIDAsObject);
+		const int32 Count = MIDsAsObjects.Num();
 
-		if (!MID)
+		MIDs.Reset(FMath::Max(MIDs.Max(), Count));
+
+		for (int32 I = 0; I < Count; ++I)
 		{
-			UE_LOG(LogCs, Warning, TEXT("%s: MIDAsObject: %s with Class: %s is NOT of type: UMaterialInstanceDynamic."), *Context, *(MIDAsObject->GetName()), *(MIDAsObject->GetClass()->GetName()));
+			UObject* MIDAsObject		  = MIDsAsObjects[I];
+			UMaterialInstanceDynamic* MID = Cast<UMaterialInstanceDynamic>(MIDsAsObjects[I]);
+
+			if (!MID)
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s: MIDsAsObjects[%d]: %s with Class: %s is NOT of type: UMaterialInstanceDynamic."), *Context, I, *(MIDAsObject->GetName()), *(MIDAsObject->GetClass()->GetName()));
+			}
+			MIDs.Add(MID);
 		}
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: MID is NULL and MIDAsObject is NULL."), *Context);
+		UE_LOG(LogCs, Warning, TEXT("%s: MIDs is EMPTY and MIDsAsObjects is EMPTY."), *Context);
 	}
 }
 
@@ -824,7 +1106,7 @@ void FCsMaterialAnim_Params::CopyToParamsAsValue(ParamsType* Params) const
 #undef ParamsType
 
 	Anim.CopyToAnimAsValue(&(Params->Anim));
-	Params->SetMID(MID);
+	Params->SetMIDs(MIDs);
 	Params->SetOwner(Owner);
 	Params->SetGroup(Group);
 }
@@ -832,9 +1114,10 @@ void FCsMaterialAnim_Params::CopyToParamsAsValue(ParamsType* Params) const
 bool FCsMaterialAnim_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	// Check MID is Valid
-	CS_IS_PTR_NULL(MID)
+	CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+	CS_IS_ARRAY_ANY_NULL(MIDs, UMaterialInstanceDynamic)
 	// Check Anim is Valid
-	if (!Anim.IsValid(Context, MID, Log))
+	if (!Anim.IsValid(Context, MIDs, Log))
 		return false;
 	// Check Owner is Valid
 	CS_IS_PTR_NULL(Owner)
@@ -849,17 +1132,43 @@ namespace NCsMaterial
 	{
 		namespace NParams
 		{
-			void FParams::SetMID(UMaterialInstanceDynamic* Value) { MID = Value; }
-			UMaterialInstanceDynamic* FParams::GetMID() const { return MID.IsValid() ? MID.Get() : nullptr; }
+			void FParams::SetMIDs(const TArray<UMaterialInstanceDynamic*>& Value)
+			{
+				MIDs.Reset(FMath::Max(MIDs.Max(), Value.Num()));
+
+				for (UMaterialInstanceDynamic* MID : Value)
+				{
+					MIDs.Add(MID);
+				}
+			}
+
+			const TArray<UMaterialInstanceDynamic*>& FParams::ResolveAndGetMIDsChecked(const FString& Context)
+			{
+				MIDs_Internal.Reset(MIDs_Internal.Max());
+
+				const int32 Count = MIDs.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					TWeakObjectPtr<UMaterialInstanceDynamic>& MID = MIDs[I];
+					UMaterialInstanceDynamic* M					  = MID.IsValid() ? MID.Get() : nullptr;
+
+					checkf(M, TEXT("%s: MIDs[%d] is NULL."), *Context, I);
+
+					MIDs_Internal.Add(M);
+				}
+				return MIDs_Internal;
+			}
 
 			UObject* FParams::GetOwner() const { return Owner.IsValid() ? Owner.Get() : nullptr; }
 
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
 				// Check MID is Valid
-				CS_IS_PTR_NULL_CHECKED(GetMID())
+				CS_IS_ARRAY_EMPTY_CHECKED(GetMIDs(), TWeakObjectPtr<UMaterialInstanceDynamic>)
+				CS_IS_ARRAY_ANY_NULL_CHECKED(GetMIDs(), UMaterialInstanceDynamic)
 				// Check Anim is Valid
-				check(Anim.IsValidChecked(Context, GetMID()));
+				check(Anim.IsValidChecked(Context, GetMIDs()));
 				// Check Owner is Valid
 				CS_IS_PTR_NULL_CHECKED(GetOwner())
 				// Check Group is Valid
@@ -870,9 +1179,10 @@ namespace NCsMaterial
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				// Check MID is Valid
-				CS_IS_PTR_NULL(GetMID())
+				CS_IS_ARRAY_EMPTY(GetMIDs(), TWeakObjectPtr<UMaterialInstanceDynamic>)
+				CS_IS_ARRAY_ANY_NULL(GetMIDs(), UMaterialInstanceDynamic)
 				// Check Anim is Valid
-				if (!Anim.IsValid(Context, GetMID(), Log))
+				if (!Anim.IsValid(Context, GetMIDs(), Log))
 					return false;
 				// Check Owner is Valid
 				CS_IS_PTR_NULL(GetOwner())
@@ -884,7 +1194,8 @@ namespace NCsMaterial
 			void FParams::Reset()
 			{
 				Anim.Reset();
-				MID = nullptr;
+				MIDs.Reset(MIDs.Max());
+				MIDs_Internal.Reset(MIDs_Internal.Max());
 				Owner = nullptr;
 				CS_RESET_MEMBER_WITH_PROXY(Group, EMCsUpdateGroup::Get().GetMAX())
 			}

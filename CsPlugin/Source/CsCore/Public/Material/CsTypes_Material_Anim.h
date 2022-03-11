@@ -182,6 +182,15 @@ namespace NCsMaterial
 					From = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 					To = FLinearColor(0.0f, 0.0f, 0.0f, 0.0f);
 				}
+
+				FORCEINLINE FVectorType& operator=(const FVectorType& B)
+				{
+					SetName(B.GetName());
+					SetEasing(B.GetEasing());
+					SetFrom(B.GetFrom());
+					SetTo(B.GetTo());
+					return *this;
+				}
 			};
 
 			struct CSCORE_API FScalarType final : TValueType<float>
@@ -197,6 +206,15 @@ namespace NCsMaterial
 				{
 					From = 0.0f;
 					To = 0.0f;
+				}
+
+				FORCEINLINE FScalarType& operator=(const FScalarType& B)
+				{
+					SetName(B.GetName());
+					SetEasing(B.GetEasing());
+					SetFrom(B.GetFrom());
+					SetTo(B.GetTo());
+					return *this;
 				}
 			};
 		}
@@ -274,13 +292,20 @@ namespace NCsMaterial
 
 			FORCEINLINE FFrame& operator=(const FFrame& B)
 			{
-				Duration = B.GetDuration();
-				SetDuration(&Duration);
+				SetDuration(B.GetDuration());
 
 				typedef NCsArray::FLibrary ArrayLibrary;
 
-				ArrayLibrary::Copy<VectorType>(VectorParameters, B.VectorParameters);
-				ArrayLibrary::Copy<ScalarType>(ScalarParameters, B.ScalarParameters);
+				ScalarParameters.Reset(FMath::Max(ScalarParameters.Max(), B.ScalarParameters.Num()));
+
+				for (const ScalarType& Param : B.ScalarParameters)
+				{
+					ScalarType& Scalar = ScalarParameters.AddDefaulted_GetRef();
+					Scalar			   = Param;
+				}
+
+				//ArrayLibrary::Copy<VectorType>(VectorParameters, B.VectorParameters);
+				//ArrayLibrary::Copy<ScalarType>(ScalarParameters, B.ScalarParameters);
 				return *this;
 			}
 
@@ -314,6 +339,13 @@ namespace NCsMaterial
 					check(Param.AreProxyPtrsDefaultChecked(Context));
 				}
 				return true;
+			}
+
+			FORCEINLINE void Reset()
+			{
+				CS_RESET_MEMBER_WITH_PROXY(Duration, 0.0f)
+				VectorParameters.Reset(VectorParameters.Max());
+				ScalarParameters.Reset(ScalarParameters.Max());
 			}
 
 		#undef VectorType
@@ -464,14 +496,10 @@ namespace NCsMaterial
 
 			FORCEINLINE FAnim& operator=(const FAnim& B)
 			{
-				Playback = B.GetPlayback();
-				SetPlayback(&Playback);
-				PlayRate = B.GetPlayRate();
-				SetPlayRate(&PlayRate);
-				DeltaTime = B.GetDeltaTime();
-				SetDeltaTime(&DeltaTime);
-				TotalTime = B.GetTotalTime();
-				SetTotalTime(&TotalTime);
+				SetPlayback(B.GetPlayback());
+				SetPlayRate(B.GetPlayRate());
+				SetDeltaTime(B.GetDeltaTime());
+				SetTotalTime(B.GetTotalTime());
 
 				FrameCount = B.FrameCount;
 
@@ -486,8 +514,7 @@ namespace NCsMaterial
 					Frames[I] = B.Frames[I];
 				}
 
-				TotalCount = B.GetTotalCount();
-				SetTotalCount(&TotalCount);
+				SetTotalCount(B.GetTotalCount());
 				return *this;
 			}
 
@@ -526,6 +553,17 @@ namespace NCsMaterial
 
 			void UpdateFromPlaybackAndPlayRateChecked(const FString& Context);
 
+			FORCEINLINE void AddFrame(const FrameType& Frame)
+			{
+				if (Frames.Num() == CS_EMPTY ||
+					(Frames.Num() > CS_EMPTY && FrameCount >= Frames.Num()))
+				{
+					Frames.AddDefaulted();
+				}
+				Frames[FrameCount] = Frame;
+				++FrameCount;
+			}
+
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
@@ -560,8 +598,12 @@ namespace NCsMaterial
 				CS_RESET_MEMBER_WITH_PROXY(PlayRate, PlayRateType::PR_60Fps)
 				CS_RESET_MEMBER_WITH_PROXY(DeltaTime, 0.0f)
 				CS_RESET_MEMBER_WITH_PROXY(TotalTime, 0.0f)
-				// TODO: Since there are arrays contained in each Frame, look into handling this better in the future.
-				Frames.Reset(Frames.Max());
+
+				for (FrameType& Frame : Frames)
+				{
+					Frame.Reset();
+				}
+				FrameCount = 0;
 
 				CS_RESET_MEMBER_WITH_PROXY(TotalCount, 0)
 			}

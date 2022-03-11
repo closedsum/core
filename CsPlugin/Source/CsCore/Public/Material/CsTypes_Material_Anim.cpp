@@ -748,13 +748,13 @@ namespace NCsMaterial
 			{
 				if (Playback == PlaybackType::PingPong)
 				{
-					TotalTime = (2 * Frames.Num() - 1) * DeltaTime;
-					TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+					TotalTime = (2 * FrameCount - 1) * DeltaTime;
+					TotalCount = IsLoopingForever() ? 0 : (2 * FrameCount - 1);
 				}
 				else
 				{
-					TotalTime = Frames.Num() * DeltaTime;
-					TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+					TotalTime = FrameCount * DeltaTime;
+					TotalCount = IsLoopingForever() ? 0 : FrameCount;
 				}
 			}
 			// CustomTotalTime
@@ -763,13 +763,13 @@ namespace NCsMaterial
 			{
 				if (Playback == PlaybackType::PingPong)
 				{
-					DeltaTime = TotalTime > 0.0f && (2 * Frames.Num() - 1) > 0 ? TotalTime / (2 * Frames.Num() - 1) : 0.0f;
-					TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
+					DeltaTime = TotalTime > 0.0f && (2 * FrameCount - 1) > 0 ? TotalTime / (2 * FrameCount - 1) : 0.0f;
+					TotalCount = IsLoopingForever() ? 0 : (2 * FrameCount - 1);
 				}
 				else
 				{
-					DeltaTime = TotalTime > 0.0f && Frames.Num() > 0 ? TotalTime / Frames.Num() : 0.0f;
-					TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+					DeltaTime = TotalTime > 0.0f && FrameCount > 0 ? TotalTime / FrameCount : 0.0f;
+					TotalCount = IsLoopingForever() ? 0 : FrameCount;
 				}
 			}
 			// CustomDeltaTimeAndTotalTime | Custom
@@ -795,14 +795,14 @@ namespace NCsMaterial
 				if (Playback == PlaybackType::PingPong)
 				{
 					DeltaTime  = NPlayRate::GetDeltaTime(PlayRate);
-					TotalTime  = (2 * Frames.Num() - 1) * DeltaTime;
+					TotalTime  = (2 * FrameCount - 1) * DeltaTime;
 					TotalCount = IsLoopingForever() ? 0 : (2 * Frames.Num() - 1);
 				}
 				else
 				{
 					DeltaTime  = NPlayRate::GetDeltaTime(PlayRate);
-					TotalTime  = Frames.Num() * DeltaTime;
-					TotalCount = IsLoopingForever() ? 0 : Frames.Num();
+					TotalTime  = FrameCount * DeltaTime;
+					TotalCount = IsLoopingForever() ? 0 : FrameCount;
 				}
 			}
 

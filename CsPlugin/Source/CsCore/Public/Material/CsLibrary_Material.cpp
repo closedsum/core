@@ -2258,6 +2258,23 @@ namespace NCsMaterial
 			return PlayAnimChecked(Context, WorldContext, Params);
 		}
 
+		#define AnimType NCsMaterial::NAnim::FAnim
+
+		FCsRoutineHandle FLibrary::PlayAnimChecked(const FString& Context, const UObject* WorldContext, const AnimType& Anim, const TArray<UMaterialInstanceDynamic*>& MIDs, UObject* Owner, const FECsUpdateGroup& Group)
+		{
+			ParamsResourceType* Resource = Get().AllocateAnimParams();
+			ParamsType* Params			 = Resource->Get();
+
+			Params->Anim = Anim;
+			Params->SetMIDs(MIDs);
+			Params->SetOwner(Owner);
+			Params->SetGroup(Group);
+
+			return PlayAnimChecked(Context, WorldContext, Resource);
+		}
+
+		#undef AnimType
+
 		char FLibrary::PlayAnim_Internal(FCsRoutine* R)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;

@@ -19,6 +19,7 @@ class UMaterialInstanceDynamic;
 struct FSkeletalMaterial;
 class UTexture;
 struct FCsRoutine;
+class UObject;
 
 namespace NCsMaterial
 {
@@ -1009,7 +1010,7 @@ namespace NCsMaterial
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Params			Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
-			* return				Handle to the movement coroutine.
+			* return				Handle to the animation coroutine.
 			*/
 			static FCsRoutineHandle PlayAnimChecked(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params);
 
@@ -1020,9 +1021,26 @@ namespace NCsMaterial
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Params			Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
 			* @param Log
-			* return				Handle to the movement coroutine.
+			* return				Handle to the animation coroutine.
 			*/
 			static FCsRoutineHandle SafePlayAnim(const FString& Context, const UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#define AnimType NCsMaterial::NAnim::FAnim
+
+			/**
+			* Animate any number of parameters on a MaterialInstanceDynamic with the given Anim.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Anim			Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
+			* @param MIDs
+			* @param Owner
+			* @param Group
+			* return				Handle to the animation coroutine.
+			*/
+			static FCsRoutineHandle PlayAnimChecked(const FString& Context, const UObject* WorldContext, const AnimType& Anim, const TArray<UMaterialInstanceDynamic*>& MIDs, UObject* Owner, const FECsUpdateGroup& Group);
+
+		#undef AnimType
 
 		private:
 

@@ -1014,7 +1014,7 @@ namespace NCsMaterial
 
 #pragma endregion FCsMaterialParameterColorRange
 
-// FCsMaterialInterface_WithRangeParameters
+// FCsMaterialInterface_WithParameters
 #pragma region
 
 // NCsMaterial::NInterface::FWithParameters
@@ -1142,6 +1142,9 @@ namespace NCsMaterial
 }
 
 #pragma endregion FCsMaterialInterface_WithParameters
+
+// FCsMaterialInterface_WithRangeParameters
+#pragma region
 
 // NCsMaterial::NInterface::FWithRangeParameters
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsMaterial, NInterface, FWithRangeParameters)

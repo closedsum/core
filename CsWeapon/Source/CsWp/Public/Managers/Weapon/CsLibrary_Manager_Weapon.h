@@ -9,6 +9,7 @@
 class UObject;
 class UCsManager_Weapon;
 struct FCsWeapon;
+struct FCsWeaponClass;
 class UClass;
 
 // NCsData::NManager::NHandler::TData
@@ -130,7 +131,7 @@ namespace NCsWeapon
 			* @param Type			Type of the weapon.
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
-			static FCsWeapon* GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
+			static FCsWeaponClass* GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
 
 			/**
 			* Safely get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -142,7 +143,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
-			static FCsWeapon* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static FCsWeaponClass* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
 			/**
 			* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -154,7 +155,7 @@ namespace NCsWeapon
 			* @param Type			Class type of the weapon.
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
-			static FCsWeapon* GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type);
+			static FCsWeaponClass* GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type);
 
 			/**
 			* Safely get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -166,7 +167,7 @@ namespace NCsWeapon
 			* @param Log			(optional)
 			* return				Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 			*/
-			static FCsWeapon* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+			static FCsWeaponClass* GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
 
 			/**
 			* Get the Class associated with Weapon of Type.

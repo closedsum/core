@@ -5,7 +5,7 @@
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 // Weapon
-#include "CsWeapon.h"
+#include "CsWeaponClass.h"
 // Log
 #include "Utility/CsWpLog.h"
 
@@ -46,7 +46,7 @@ UClass* UCsScriptLibrary_Manager_Weapon::GetClassByType(const FString& Context, 
 
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-	if (FCsWeapon* Weapon = WeaponManagerLibrary::GetSafeWeapon(Ctxt, WorldContextObject, Type, Log))
+	if (FCsWeaponClass* Weapon = WeaponManagerLibrary::GetSafeWeapon(Ctxt, WorldContextObject, Type, Log))
 	{
 		return Weapon->GetClass();
 	}
@@ -63,7 +63,7 @@ UClass* UCsScriptLibrary_Manager_Weapon::GetClassByClassType(const FString& Cont
 
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 
-	if (FCsWeapon* Weapon = WeaponManagerLibrary::GetSafeWeapon(Ctxt, WorldContextObject, Type, Log))
+	if (FCsWeaponClass* Weapon = WeaponManagerLibrary::GetSafeWeapon(Ctxt, WorldContextObject, Type, Log))
 	{
 		return Weapon->GetClass();
 	}

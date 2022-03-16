@@ -3,7 +3,7 @@
 #include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
 // Types
 #include "Types/CsTypes_Weapon.h"
-#include "CsWeapon.h"
+#include "CsWeaponClass.h"
 
 namespace NCsWeapon
 {
@@ -15,11 +15,11 @@ namespace NCsWeapon
 
 			/**
 			*/
-			class CSWP_API FClass : public ClassHandlerType<FCsWeapon, FCsWeaponPtr, FECsWeaponClass>
+			class CSWP_API FClass : public ClassHandlerType<FCsWeaponClass, FCsWeaponPtr, FECsWeaponClass>
 			{
 			private:
 
-				typedef ClassHandlerType<FCsWeapon, FCsWeaponPtr, FECsWeaponClass> Super;
+				typedef ClassHandlerType<FCsWeaponClass, FCsWeaponPtr, FECsWeaponClass> Super;
 
 			public:
 

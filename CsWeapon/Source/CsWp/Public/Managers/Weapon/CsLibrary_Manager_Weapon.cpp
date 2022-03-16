@@ -106,12 +106,12 @@ namespace NCsWeapon
 		// Class
 		#pragma region
 
-		FCsWeapon* FLibrary::GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
+		FCsWeaponClass* FLibrary::GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
 		{
 			return GetChecked(Context, WorldContext)->GetWeaponChecked(Context, Type);
 		}
 
-		FCsWeapon* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		FCsWeaponClass* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
@@ -120,12 +120,12 @@ namespace NCsWeapon
 			return nullptr;
 		}
 
-		FCsWeapon* FLibrary::GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type)
+		FCsWeaponClass* FLibrary::GetWeaponChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type)
 		{
 			return GetChecked(Context, WorldContext)->GetWeaponChecked(Context, Type);
 		}
 
-		FCsWeapon* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+		FCsWeaponClass* FLibrary::GetSafeWeapon(const FString& Context, const UObject* WorldContext, const FECsWeaponClass& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
@@ -143,7 +143,7 @@ namespace NCsWeapon
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
-				FCsWeapon* Weapon = Manager_Weapon->GetSafeWeapon(Context, Type);
+				FCsWeaponClass* Weapon = Manager_Weapon->GetSafeWeapon(Context, Type);
 
 				return Weapon->GetClass();
 			}
@@ -154,7 +154,7 @@ namespace NCsWeapon
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
-				FCsWeapon* Weapon = Manager_Weapon->GetSafeWeapon(Context, Type);
+				FCsWeaponClass* Weapon = Manager_Weapon->GetSafeWeapon(Context, Type);
 
 				return Weapon->GetClass();
 			}

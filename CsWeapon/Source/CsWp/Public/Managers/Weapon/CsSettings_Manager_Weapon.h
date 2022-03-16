@@ -29,6 +29,9 @@ public:
 		PayloadSize(4)
 	{
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
 
 #pragma endregion FCsSettings_Manager_Weapon_PoolParams
@@ -54,6 +57,8 @@ public:
 		PoolSize(256)
 	{
 	}
+
+	static const FCsSettings_Manager_Weapon_Modifiers& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Weapon_Modifiers
@@ -100,6 +105,8 @@ public:
 		Modifiers()
 	{
 	}
+
+	static const FCsSettings_Manager_Weapon& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Weapon

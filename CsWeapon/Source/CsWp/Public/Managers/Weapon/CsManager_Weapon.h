@@ -12,6 +12,7 @@
 #include "Payload/CsPayload_Weapon.h"
 #include "CsWeapon.h"
 #include "CsWeaponPooled.h"
+#include "CsWeaponClass.h"
 #include "Modifier/CsResource_WeaponModifier.h"
 
 #include "CsManager_Weapon.generated.h"
@@ -206,10 +207,39 @@ protected:
 
 	FCsSettings_Manager_Weapon Settings;
 
-	/** */
+	/** General Idea: Pool Sharing via Mapping of Types.
+		Describes the mapping of a Weapon type to underlying Weapon type
+		in terms the pool of Weapons.
+
+		i.e. From -> To
+			 TypeMapArray[From] = To.
+
+		i.e. If Type 'A' is mapped to Type 'B' (TypeMapArray[A] = B), then
+			 when a Weapon of type 'A' is spawned it will be allocated from
+			 the pool of Weapons of type 'B'.
+
+		The idea behind behind this mapping is Weapons of a different type may
+		not have underlying code differences and just be differences in the data
+		each respective weapon type uses. This provides the ability to save on both
+		the number of pools created and the number of objects created for a pool. */
 	TArray<FECsWeapon> TypeMapArray;
 
 public:
+
+	FORCEINLINE const TArray<FECsWeapon>& GetTypeMapArray() const { return TypeMapArray; }
+
+protected:
+
+	/** Used for faster lookup to see what types (Froms) are mapped to a particular type (To).
+		To -> [Froms] 
+		TypeMapToArray[To] = [Froms] */
+	TArray<TArray<FECsWeapon>> TypeMapToArray;
+
+public:
+
+	FORCEINLINE const TArray<TArray<FECsWeapon>>& GetTypeMapToArray() const { return TypeMapToArray; }
+
+	FORCEINLINE bool IsTypeMappedToType(const FECsWeapon& From, const FECsWeapon& To) const { return TypeMapArray[From] == To; }
 
 	FORCEINLINE void SetSettings(const FCsSettings_Manager_Weapon& InSettings)
 	{
@@ -231,6 +261,10 @@ public:
 	{
 		return TypeMapArray[Type.GetValue()];
 	}
+
+	void SetAndAddTypeMapKeyValue(const FECsWeapon& Key, const FECsWeapon& Value);
+
+	void AddPoolParams(const FECsWeapon& Type, const FCsSettings_Manager_Weapon_PoolParams& InPoolParams);
 
 #pragma endregion Settings
 
@@ -695,7 +729,7 @@ public:
 #pragma region
 protected:
 
-	ClassHandlerType<FCsWeapon, FCsWeaponPtr, FECsWeaponClass>* ClassHandler;
+	ClassHandlerType<FCsWeaponClass, FCsWeaponPtr, FECsWeaponClass>* ClassHandler;
 
 	virtual void ConstructClassHandler();
 
@@ -708,7 +742,7 @@ public:
 	* @param Type	Type of the weapon.
 	* return		Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
-	FCsWeapon* GetWeapon(const FECsWeapon& Type);
+	FCsWeaponClass* GetWeapon(const FECsWeapon& Type);
 
 	/**
 	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -719,7 +753,7 @@ public:
 	* @param Type		Type of the weapon.
 	* return			Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
-	FCsWeapon* GetWeaponChecked(const FString& Context, const FECsWeapon& Type);
+	FCsWeaponClass* GetWeaponChecked(const FString& Context, const FECsWeapon& Type);
 
 	/**
 	* Safely get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -729,7 +763,7 @@ public:
 	* @param Type		Type of the weapon.
 	* return			Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
-	FCsWeapon* GetSafeWeapon(const FString& Context, const FECsWeapon& Type);
+	FCsWeaponClass* GetSafeWeapon(const FString& Context, const FECsWeapon& Type);
 
 	/**
 	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -738,7 +772,7 @@ public:
 	* @param Type	Class type of the weapon.
 	* return		Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
-	FCsWeapon* GetWeapon(const FECsWeaponClass& Type);
+	FCsWeaponClass* GetWeapon(const FECsWeaponClass& Type);
 
 	/**
 	* Get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -749,7 +783,7 @@ public:
 	* @param Type		Class type of the weapon.
 	* return			Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
-	FCsWeapon* GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type);
+	FCsWeaponClass* GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type);
 
 	/**
 	* Safely get the Weapon container (Interface (ICsWeapon), UObject, and / or UClass) associated
@@ -759,7 +793,7 @@ public:
 	* @param Type		Class type of the weapon.
 	* return			Weapon container (Interface (ICsWeapon), UObject, and / or UClass).
 	*/
-	FCsWeapon* GetSafeWeapon(const FString& Context, const FECsWeaponClass& Type);
+	FCsWeaponClass* GetSafeWeapon(const FString& Context, const FECsWeaponClass& Type);
 
 	bool SafeAddClass(const FString& Context, const FECsWeapon& Type, UObject* Class);
 

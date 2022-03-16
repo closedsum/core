@@ -4,20 +4,19 @@
 #include "CsWp.h"
 
 // CVars
-//#include "Managers/Weapon/CsCVars_Manager_Weapon.h"
+#include "Managers/Weapon/CsCVars_Manager_Weapon.h"
 // Types
 #include "Projectile/CsTypes_ProjectileWeapon.h"
 // Library
 #include "Modifier/CsLibrary_WeaponModifier.h"
-#include "Library/CsLibrary_Property.h"
-#include "Library/Load/CsLibrary_Load.h"
 #include "Data/CsLibrary_Data.h"
+#include "Game/CsLibrary_GameInstance.h"
+#include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsWpLog.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
-#include "Settings/CsWeaponSettings.h"
+#include "Managers/Weapon/CsGetSettingsManagerWeapon.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
 // Data
@@ -53,6 +52,7 @@ namespace NCsManagerWeapon
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, AddPoolParams);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Weapon, InitInternalFromSettings);
 			CS_DEFINE_CACHED_STRING(Class, "Class");
@@ -281,6 +281,83 @@ void UCsManager_Weapon::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+// Settings
+#pragma region
+
+void UCsManager_Weapon::SetAndAddTypeMapKeyValue(const FECsWeapon& Key, const FECsWeapon& Value)
+{
+	check(EMCsWeapon::Get().IsValidEnum(Key));
+
+	check(EMCsWeapon::Get().IsValidEnum(Value));
+
+	for (int32 I = TypeMapArray.Num() - 1; I < Key.GetValue(); ++I)
+	{
+		TypeMapArray.AddDefaulted_GetRef() = EMCsWeapon::Get().GetEnumAt(I + 1);
+
+		TypeMapToArray.AddDefaulted();
+	}
+	TypeMapArray[Key.GetValue()] = Value;
+	
+	TypeMapToArray[Value.GetValue()].Add(Key);
+}
+
+void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_Manager_Weapon_PoolParams& InPoolParams)
+{
+	using namespace NCsManagerWeapon::NCached;
+
+	const FString& Context = Str::AddPoolParams;
+
+	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Type));
+
+	if (Settings.PoolParams.Find(Type))
+	{
+		UE_LOG(LogCsWp, Warning, TEXT("%s: PoolParams ALREADY exist for %s."), *Context, Type.ToChar());
+		return;
+	}
+
+	check(InPoolParams.IsValidChecked(Context));
+
+	typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+	PoolParamsType PoolParams;
+
+	// Get Class
+	const FECsWeaponClass& ClassType = InPoolParams.Class;
+	FCsWeaponClass* Weapon			 = GetWeaponChecked(Context, ClassType);
+	UClass* Class					 = Weapon->GetClass();
+
+	checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
+
+	PoolParams.Name								= TEXT("UCManager_Weapon::NCsWeapon::FManager_") + Type.GetName();
+	PoolParams.World							= MyRoot->GetWorld();
+	PoolParams.ConstructParams.Outer			= this;
+	PoolParams.ConstructParams.Class			= Class;
+	PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+	PoolParams.bConstructPayloads				= true;
+	PoolParams.PayloadSize						= InPoolParams.PayloadSize;
+	PoolParams.bCreatePool						= true;
+	PoolParams.PoolSize							= InPoolParams.PoolSize;
+
+	// Add CVars
+
+	// Scoped Timer CVars
+	PoolParams.ScopedGroup = NCsScopedGroup::ManagerWeapon;
+
+	PoolParams.CreatePoolScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerCreatePool;
+	PoolParams.UpdateScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerUpdate;
+	PoolParams.UpdateObjectScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerUpdateObject;
+	PoolParams.AllocateScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerAllocate;
+	PoolParams.AllocateObjectScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerAllocateObject;
+	PoolParams.DeallocateScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerDeallocate;
+	PoolParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerDeallocateObject;
+	PoolParams.SpawnScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerSpawn;
+	PoolParams.DestroyScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerDestroy;
+
+	Internal.Init(Type, PoolParams);
+}
+
+#pragma endregion Settings
+
 // Internal
 #pragma region
 
@@ -291,12 +368,13 @@ void UCsManager_Weapon::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	UWorld* World				= MyRoot->GetWorld();
-	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
+	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-	NCsWeapon::PopulateEnumMapFromSettings(Context, GameInstance);
-	NCsWeaponClass::PopulateEnumMapFromSettings(Context, GameInstance);
-	NCsWeaponState::PopulateEnumMapFromSettings(Context, GameInstance);
+	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+
+	NCsWeapon::PopulateEnumMapFromSettings(Context, ContextRoot);
+	NCsWeaponClass::PopulateEnumMapFromSettings(Context, ContextRoot);
+	NCsWeaponState::PopulateEnumMapFromSettings(Context, ContextRoot);
 
 	// Modifier
 	{
@@ -306,9 +384,9 @@ void UCsManager_Weapon::SetupInternal()
 		Manager_Modifiers.AddDefaulted(Count);
 
 		// Create Pool
-		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
+		const FCsSettings_Manager_Weapon_Modifiers& ModifierSettings = FCsSettings_Manager_Weapon_Modifiers::Get();
 
-		const int32& PoolSize = ModuleSettings->Manager_Weapon.Modifiers.PoolSize;
+		const int32& PoolSize = ModifierSettings.PoolSize;
 
 		for (const FECsWeaponModifier& Modifier : EMCsWeaponModifier::Get())
 		{
@@ -365,26 +443,33 @@ void UCsManager_Weapon::SetupInternal()
 #endif // #if !UE_BUILD_SHIPPING
 		// If any settings have been set for Manager_Weapon, apply them
 	{
-		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
+		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-		checkf(ModuleSettings, TEXT("UCsManager_Weapon::SetupInternal: Failed to get settings of type: UCsWeaponSettings."));
+		ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = LevelLibrary::GetScriptActorChecked<ICsGetSettingsManagerWeapon>(Context, MyRoot);
 
-		Settings = ModuleSettings->Manager_Weapon;
+		Settings = GetSettingsManagerWeapon->GetSettingsManagerWeapon();
 
 		// Populate TypeMapArray
 		{
 			const int32& Count = EMCsWeapon::Get().Num();
 
 			TypeMapArray.Reset(Count);
+			TypeMapToArray.Reset(Count);
 
 			for (const FECsWeapon& Type : EMCsWeapon::Get())
 			{
 				TypeMapArray.Add(Type);
+				TypeMapToArray.AddDefaulted();
 			}
 
 			for (const TPair<FECsWeapon, FECsWeapon>& Pair : Settings.TypeMap)
 			{
-				TypeMapArray[Pair.Key.GetValue()] = Pair.Value;
+				const FECsWeapon& From = Pair.Key;
+				const FECsWeapon& To   = Pair.Value;
+
+				TypeMapArray[From.GetValue()] = To;
+
+				TypeMapToArray[To.GetValue()].Add(From);
 			}
 		}
 
@@ -426,8 +511,8 @@ void UCsManager_Weapon::InitInternalFromSettings()
 
 			check(EMCsWeaponClass::Get().IsValidEnumChecked(Context, Str::Class, ClassType));
 
-			FCsWeapon* Weapon = GetWeaponChecked(Context, ClassType);
-			UClass* Class	  = Weapon->GetClass();
+			FCsWeaponClass* Weapon = GetWeaponChecked(Context, ClassType);
+			UClass* Class		   = Weapon->GetClass();
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
@@ -449,9 +534,33 @@ void UCsManager_Weapon::InitInternalFromSettings()
 #define ManagerParamsType NCsWeapon::FManager::FParams
 void UCsManager_Weapon::InitInternal(const ManagerParamsType& Params)
 {
-#undef ManagerParamsType
+	// Add CVars
+	{
+		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
+
+		typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+		for (TPair<FECsWeapon, PoolParamsType>& Pair : P.ObjectParams)
+		{
+			PoolParamsType& PoolParams = Pair.Value;
+
+			// Scoped Timer CVars
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerWeapon;
+
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerWeaponScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerWeaponScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerWeaponScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerWeaponScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerWeaponScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerWeaponScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerWeaponScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerWeaponScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerWeaponScopedTimerDestroy;
+		}
+	}
 	Internal.Init(Params);
 }
+#undef ManagerParamsType
 
 void UCsManager_Weapon::Clear()
 {
@@ -705,8 +814,7 @@ void UCsManager_Weapon::ConstructClassHandler()
 	ClassHandler->MyRoot = MyRoot;
 }
 
-
-FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
+FCsWeaponClass* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
 {
 	using namespace NCsManagerWeapon::NCached;
 
@@ -715,17 +823,17 @@ FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeapon& Type)
 	return ClassHandler->GetClassByType<EMCsWeapon, FECsWeapon>(Context, Type);
 }
 
-FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeapon& Type)
+FCsWeaponClass* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeapon& Type)
 {
 	return ClassHandler->GetClassByTypeChecked<EMCsWeapon>(Context, Type);
 }
 
-FCsWeapon* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWeapon& Type)
+FCsWeaponClass* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWeapon& Type)
 {
 	return ClassHandler->GetSafeClassByType<EMCsWeapon>(Context, Type);
 }
 
-FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
+FCsWeaponClass* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 {
 	using namespace NCsManagerWeapon::NCached;
 
@@ -734,12 +842,12 @@ FCsWeapon* UCsManager_Weapon::GetWeapon(const FECsWeaponClass& Type)
 	return ClassHandler->GetClassByClassType<EMCsWeaponClass>(Context, Type);
 }
 
-FCsWeapon* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type)
+FCsWeaponClass* UCsManager_Weapon::GetWeaponChecked(const FString& Context, const FECsWeaponClass& Type)
 {
 	return ClassHandler->GetClassByClassTypeChecked<EMCsWeaponClass>(Context, Type);
 }
 
-FCsWeapon* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWeaponClass& Type)
+FCsWeaponClass* UCsManager_Weapon::GetSafeWeapon(const FString& Context, const FECsWeaponClass& Type)
 {
 	return ClassHandler->GetSafeClassByClassType<EMCsWeaponClass>(Context, Type);
 }

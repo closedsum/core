@@ -1,14 +1,12 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Containers/CsGetInterfaceMap.h"
-// Types
-#include "Types/CsTypes_Weapon.h"
 
 namespace NCsWeapon
 {
-	namespace NPayload
+	namespace NCache
 	{
-		struct CSWP_API IPayload : public ICsGetInterfaceMap
+		struct CSWP_API ICache : public ICsGetInterfaceMap
 		{
 		public:
 
@@ -16,11 +14,7 @@ namespace NCsWeapon
 
 		public:
 
-			virtual ~IPayload() {}
-
-			/**
-			*/
-			virtual const FECsWeapon& GetType() const = 0;
+			virtual ~ICache() {}
 		};
 	}
 }

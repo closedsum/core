@@ -1,8 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Payload/CsPayload_Weapon.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;
@@ -42,6 +41,10 @@ namespace NCsWeapon
 			FCsTime Time;
 
 			uint32 PreserveChangesFromDefaultMask;
+
+			// PayloadType NCsWeapon::NPayload::IPayload
+
+			FECsWeapon Type;
 
 		public:
 
@@ -97,6 +100,8 @@ namespace NCsWeapon
 		// PayloadType (NCsWeapon::NPayload::IPayload)
 		#pragma region
 		public:
+
+			FORCEINLINE const FECsWeapon& GetType() const { return Type; }
 
 		#pragma endregion PayloadType (NCsWeapon::NPayload::IPayload)
 		};

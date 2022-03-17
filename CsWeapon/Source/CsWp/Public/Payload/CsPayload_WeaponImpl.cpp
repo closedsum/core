@@ -19,8 +19,9 @@ namespace NCsWeapon
 			Owner(nullptr),
 			Parent(nullptr),
 			Time(),
-			PreserveChangesFromDefaultMask(0)
+			PreserveChangesFromDefaultMask(0),
 			// PayloadType (NCsWeapon::NPayload::IPayload)
+			Type()
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -52,6 +53,9 @@ namespace NCsWeapon
 			Time.Reset();
 
 			PreserveChangesFromDefaultMask = 0;
+
+			// PayloadType NCsWeapon::NPayload::IPayload
+			Type = EMCsWeapon::Get().GetMAX();
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

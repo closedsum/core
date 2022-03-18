@@ -46,6 +46,10 @@ namespace NCsWeapon
 
 			FECsWeapon Type;
 
+			FCsUpdateGroup UpdateGroup;
+
+			FTransform Transform;
+
 		public:
 
 			FImpl();
@@ -102,6 +106,8 @@ namespace NCsWeapon
 		public:
 
 			FORCEINLINE const FECsWeapon& GetType() const { return Type; }
+			FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
+			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 
 		#pragma endregion PayloadType (NCsWeapon::NPayload::IPayload)
 		};

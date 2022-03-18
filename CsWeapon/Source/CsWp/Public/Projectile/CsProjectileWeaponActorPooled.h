@@ -31,6 +31,12 @@ struct FCsRoutine;
 
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
+// NCsWeapon::NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NCsProjectile, NData, IData)
+
+class USkeletalMeshComponent;
+class UStaticMeshComponent;
+class UPrimitiveComponent;
 
 // NCsProjectile::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
@@ -45,7 +51,6 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire,
 // NCsProjectile::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
-
 class USceneComponent;
 
 // NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
@@ -53,16 +58,17 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILau
 
 UCLASS(BlueprintType)
 class CSWP_API ACsProjectileWeaponActorPooled : public AActor,
-											  public ICsUpdate,
-											  public ICsPooledObject,
-											  public ICsWeapon,
-											  public ICsProjectileWeapon
+											    public ICsUpdate,
+											    public ICsPooledObject,
+											    public ICsWeapon,
+											    public ICsProjectileWeapon
 {
 	GENERATED_UCLASS_BODY()
 
 #define PooledCacheType NCsPooledObject::NCache::ICache
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define DataType NCsWeapon::NData::IData
+#define PrjWeaponDataType NCsWeapon::NProjectile::NData::IData
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
 #define SoundPayloadType NCsSound::NPayload::IPayload
 #define FXPayloadType NCsFX::NPayload::IPayload
@@ -144,6 +150,8 @@ protected:
 
 	DataType* Data;
 
+	PrjWeaponDataType* PrjWeaponData;
+
 // ICsWeapon
 #pragma region
 public:
@@ -199,6 +207,26 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Init();
+
+// Skin
+#pragma region
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* SkeletalMeshComponent;
+
+public:
+
+	FORCEINLINE USkeletalMeshComponent* GetSkeletalMeshComponent() const { return SkeletalMeshComponent; }
+
+protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* StaticMeshComponent;
+
+	UPrimitiveComponent* VisualMeshComponent;
+
+#pragma endregion Skin
 
 // State
 #pragma region
@@ -621,6 +649,7 @@ public:
 #undef PooledCacheType
 #undef PooledPayloadType
 #undef DataType
+#undef PrjWeaponDataType
 #undef ProjectilePayloadType
 #undef SoundPayloadType
 #undef FXPayloadType

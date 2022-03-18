@@ -21,7 +21,9 @@ namespace NCsWeapon
 			Time(),
 			PreserveChangesFromDefaultMask(0),
 			// PayloadType (NCsWeapon::NPayload::IPayload)
-			Type()
+			Type(),
+			UpdateGroup(),
+			Transform(FTransform::Identity)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -56,6 +58,8 @@ namespace NCsWeapon
 
 			// PayloadType NCsWeapon::NPayload::IPayload
 			Type = EMCsWeapon::Get().GetMAX();
+			UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
+			Transform = FTransform::Identity;
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

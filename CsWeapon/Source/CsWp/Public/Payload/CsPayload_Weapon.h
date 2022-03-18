@@ -3,6 +3,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Types/CsTypes_Weapon.h"
+#include "Managers/Time/CsTypes_Update.h"
 
 namespace NCsWeapon
 {
@@ -21,6 +22,14 @@ namespace NCsWeapon
 			/**
 			*/
 			virtual const FECsWeapon& GetType() const = 0;
+
+			/**
+			*/
+			virtual const FECsUpdateGroup& GetUpdateGroup() const = 0;
+
+			/**
+			*/
+			virtual const FTransform& GetTransform() const = 0;
 		};
 	}
 }

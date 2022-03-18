@@ -8,20 +8,20 @@
 // Types
 #include "Types/CsCached.h"
 // Library
-#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
-#include "Payload/CsLibrary_Payload_Projectile.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
+#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Projectile.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
-#include "Managers/Trace/CsLibrary_Manager_Trace.h"
-#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
-#include "Coroutine/CsLibrary_CoroutineScheduler.h"
-#include "Managers/Time/CsLibrary_Manager_Time.h"
-#include "Managers/Sound/CsLibrary_Manager_Sound.h"
-#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -36,11 +36,14 @@
 #include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFire.h"
 #include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
 #include "Data/CsData_Projectile.h"
+#include "Data/Types/CsData_GetProjectileType.h"
 #include "Data/Collision/CsData_Projectile_Collision.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Pooled
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// Weapon
+#include "Payload/CsPayload_WeaponImpl.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
@@ -65,6 +68,8 @@ namespace NCsProjectileWeaponActorPooled
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetUpdateGroup);
 			CS_DEFINE_CACHED_STRING(Group, "Group");
+
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Allocate);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetWeaponType);
 			CS_DEFINE_CACHED_STRING(Type, "Type");
@@ -282,6 +287,123 @@ void ACsProjectileWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group
 void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 {
 #undef PooledPayloadType
+
+	using namespace NCsProjectileWeaponActorPooled::NCached;
+
+	const FString& Context = Str::Allocate;
+
+	typedef NCsPooledObject::NPayload::FLibrary PayloadLibrary;
+	typedef NCsWeapon::NPayload::IPayload PaylaodType;
+
+	PayloadType* WeaponPayload = PayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+
+	SetWeaponType(WeaponPayload->GetType());
+
+	// Get Data
+	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
+	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
+
+	Data		  = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType);
+	PrjWeaponData = WeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
+
+	ICsData_GetProjectileType* GetProjectileType = WeaponDataLibrary::GetInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
+
+	SetProjectileType(GetProjectileType->GetProjectileType());
+
+	// If the Parent is set, attach the Weapon to the Parent
+	USceneComponent* Parent = nullptr;
+
+	UObject* Object = Payload->GetParent();
+
+	// SceneComponent
+	if (USceneComponent* Component = Cast<USceneComponent>(Object))
+		Parent = Component;
+	// Actor -> Get RootComponent
+	else
+	if (AActor* Actor = Cast<AActor>(Object))
+		Parent = Actor->GetRootComponent();
+
+	const FTransform& Transform = WeaponPayload->GetTransform();
+
+	if (Parent)
+	{
+		const ECsAttachmentTransformRules& Rule = FXPayload->GetAttachmentTransformRule();
+		const FName& Bone						= FXPayload->GetBone();
+
+		bool PerformAttach = true;
+		bool IsPreserved = false;
+
+		// If Attach and Transform are the SAME, Do Nothing
+		if (FXComponent->GetAttachParent() == Parent &&
+			AttachToBone == Bone)
+		{
+			// Check Attachment Rule
+			IsPreserved   = ChangeHelper::HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
+			PerformAttach = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Attach
+		if (PerformAttach)
+		{
+			AttachToBone = Bone;
+
+			FXComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			ChangeCounter::Get().AddChanged();
+		}
+
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
+
+		bool PerformTransform = true;
+		IsPreserved			  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(FXComponent->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		// Set Transform
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetRelativeTransform(FXComponent, Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
+	}
+	// NO Parent, set the World Transform of the FX Component
+	else
+	{
+		bool PerformTransform = true;
+		bool IsPreserved	  = false;
+
+		// If Transform has NOT changed, don't update it.
+		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
+			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
+		{
+			IsPreserved		 = NCsTransformRules::AreTransformsEqual(FXComponent->GetRelativeTransform(), Transform, TransformRules);
+			PerformTransform = !IsPreserved;
+
+			if (IsPreserved)
+				ChangeCounter::Get().AddPreserved();
+		}
+
+		if (PerformTransform)
+		{
+			NCsTransformRules::SetTransform(FX, Transform, TransformRules);
+			ChangeCounter::Get().AddChanged();
+		}
+
+		AttachToBone = NAME_None;
+	}
 }
 
 void ACsProjectileWeaponActorPooled::Deallocate()
@@ -307,7 +429,7 @@ void ACsProjectileWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
 
 	const FString& Context = Str::SetWeaponType;
 
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::Type, Type));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, Type);
 
 	WeaponType = Type;
 }
@@ -323,7 +445,7 @@ void ACsProjectileWeaponActorPooled::SetProjectileType(const FECsProjectile& Typ
 
 	const FString& Context = Str::SetProjectileType;
 
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::Type, Type));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Type);
 
 	ProjectileType = Type;
 }
@@ -365,9 +487,7 @@ void ACsProjectileWeaponActorPooled::Init()
 	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
 
 	// Set States
-	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
-
-	check(Settings->ProjectileWeaponImpl.IsValidChecked(Context));
+	check(FCsWeaponSettings_ProjectileWeaponImpl::Get().IsValidChecked(Context));
 
 	CurrentState = IdleState;
 
@@ -392,7 +512,9 @@ void ACsProjectileWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& D
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
-	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileState))
@@ -473,7 +595,9 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 
 	const FString& Context = Str::CanFire;
 	
-	const FCsDeltaTime& TimeSinceStart = UCsManager_Time::Get(GetWorld()->GetGameInstance())->GetTimeSinceStart(UpdateGroup);
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;

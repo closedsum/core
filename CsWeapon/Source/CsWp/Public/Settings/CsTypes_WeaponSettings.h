@@ -48,14 +48,9 @@ struct CSWP_API FCsWeaponSettings_ProjectileWeaponImpl
 	{
 	}
 
-	bool IsValidChecked(const FString& Context) const
-	{
-		// Check IdleState is Valid.
-		check(EMCsWeaponState::Get().IsValidEnumChecked(Context, IdleState));
-		// Check FireState is Valid.
-		check(EMCsWeaponState::Get().IsValidEnumChecked(Context, FireState));
-		return true;
-	}
+	bool IsValidChecked(const FString& Context) const;
+
+	static const FCsWeaponSettings_ProjectileWeaponImpl& Get();
 };
 
 #pragma endregion FCsWeaponSettings_ProjectileWeaponImpl

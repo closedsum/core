@@ -431,31 +431,13 @@ void ACsProjectileWeaponActorPooled::Init()
 
 	const FString& Context = Str::Init;
 
-	check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Str::UpdateGroup, UpdateGroup));
-
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Str::WeaponType, WeaponType));
-
-	// Get Data
-	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-	Data = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType);
-
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
-
 	// Set States
-	check(FCsWeaponSettings_ProjectileWeaponImpl::Get().IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(FCsWeaponSettings_ProjectileWeaponImpl::Get());
 
 	CurrentState = IdleState;
+	CurrentAmmo  = PrjWeaponData->GetMaxAmmo();
 
-	// Ammo
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
-
-	CurrentAmmo = PrjData->GetMaxAmmo();
-
-	TimeBetweenShotsImpl.Base = PrjData->GetTimeBetweenShots();
+	TimeBetweenShotsImpl.Base = PrjWeaponData->GetTimeBetweenShots();
 	TimeBetweenShotsImpl.ResetValueToBase();
 }
 
@@ -555,19 +537,14 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
-
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShotsImpl.Value);
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
-	const bool Pass_Fire = bFire && !PrjData->DoFireOnRelease() && (PrjData->IsFullAuto() || !bFire_Last);
+	const bool Pass_Fire = bFire && !PrjWeaponData->DoFireOnRelease() && (PrjWeaponData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
-	const bool Pass_FireOnRelease = !bFire && PrjData->DoFireOnRelease() && bFire_Last;
+	const bool Pass_FireOnRelease = !bFire && PrjWeaponData->DoFireOnRelease() && bFire_Last;
 	// Check if has ammo to fire.
-	const bool Pass_Ammo = PrjData->HasInfiniteAmmo() || CurrentAmmo > 0;
+	const bool Pass_Ammo = PrjWeaponData->HasInfiniteAmmo() || CurrentAmmo > 0;
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileCanFire))
@@ -578,11 +555,11 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 		// Pass_Time
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShotsImpl.Value);
 		// Pass_Fire
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjData->DoFireOnRelease()), ToChar(PrjData->IsFullAuto()), ToChar(!bFire_Last));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjWeaponData->DoFireOnRelease()), ToChar(PrjWeaponData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PrjData->DoFireOnRelease()), ToChar(bFire_Last));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PrjWeaponData->DoFireOnRelease()), ToChar(bFire_Last));
 		// Pass_Ammo
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PrjData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PrjWeaponData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
 
 		// Result
 		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Ammo));
@@ -629,15 +606,9 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	#undef COROUTINE
 
-	// Cache pointer to ICsData_ProjectileWeapon
-	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
-
-	Payload->SetValue_Flag(CS_FIRST, PrjData->HasInfiniteAmmo());
-	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShot());
-	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenProjectilesPerShot());
+	Payload->SetValue_Flag(CS_FIRST, PrjWeaponData->HasInfiniteAmmo());
+	Payload->SetValue_Int(CS_FIRST, PrjWeaponData->GetProjectilesPerShot());
+	Payload->SetValue_Float(CS_FIRST, PrjWeaponData->GetTimeBetweenProjectilesPerShot());
 
 	bHasFired = true;
 
@@ -725,8 +696,6 @@ void ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 	// Get total elapsed time (= TimeBetweenShots)
 	typedef NCsWeapon::NProjectile::NData::IData ProjectileDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Outer->GetData());
 
 	static const int32 TIME_BETWEEN_SHOTS = 0;
 	Payload->SetValue_Float(TIME_BETWEEN_SHOTS, Value);

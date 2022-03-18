@@ -22,6 +22,7 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -44,6 +45,7 @@
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Weapon
 #include "Payload/CsPayload_WeaponImpl.h"
+#include "Cache/CsCache_WeaponImpl.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
@@ -292,12 +294,17 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	const FString& Context = Str::Allocate;
 
+	CS_IS_PTR_NULL_CHECKED(Payload)
+
+	Cache->Allocate(Payload);
+
 	typedef NCsPooledObject::NPayload::FLibrary PayloadLibrary;
-	typedef NCsWeapon::NPayload::IPayload PaylaodType;
+	typedef NCsWeapon::NPayload::IPayload PayloadType;
 
 	PayloadType* WeaponPayload = PayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	SetWeaponType(WeaponPayload->GetType());
+	SetUpdateGroup(WeaponPayload->GetUpdateGroup());
 
 	// Get Data
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
@@ -311,104 +318,51 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 	SetProjectileType(GetProjectileType->GetProjectileType());
 
+	// TODO: May need to streamline this logic slightly
+	
+	// TODO: Set Skin
+	
+
 	// If the Parent is set, attach the Weapon to the Parent
-	USceneComponent* Parent = nullptr;
-
-	UObject* Object = Payload->GetParent();
-
-	// SceneComponent
-	if (USceneComponent* Component = Cast<USceneComponent>(Object))
-		Parent = Component;
-	// Actor -> Get RootComponent
-	else
-	if (AActor* Actor = Cast<AActor>(Object))
-		Parent = Actor->GetRootComponent();
-
-	const FTransform& Transform = WeaponPayload->GetTransform();
-
-	if (Parent)
+	if (VisualMeshComponent)
 	{
-		const ECsAttachmentTransformRules& Rule = FXPayload->GetAttachmentTransformRule();
-		const FName& Bone						= FXPayload->GetBone();
+		USceneComponent* Parent = nullptr;
 
-		bool PerformAttach = true;
-		bool IsPreserved = false;
+		UObject* Object = Payload->GetParent();
 
-		// If Attach and Transform are the SAME, Do Nothing
-		if (FXComponent->GetAttachParent() == Parent &&
-			AttachToBone == Bone)
+		// SceneComponent
+		if (USceneComponent* Component = Cast<USceneComponent>(Object))
+			Parent = Component;
+		// Actor -> Get RootComponent
+		else
+		if (AActor* Actor = Cast<AActor>(Object))
+			Parent = Actor->GetRootComponent();
+
+		const FTransform& Transform = WeaponPayload->GetTransform();
+
+		if (Parent)
 		{
-			// Check Attachment Rule
-			IsPreserved   = ChangeHelper::HasAttach(PreserveChangesToDefaultMask & ChangesToDefaultMask, Rule);
-			PerformAttach = !IsPreserved;
+			// TODO: Get Bone Name
+			const FName Bone = NAME_None;
+			// TODO: Get Attachment Rule
+			const FAttachmentTransformRules Rule = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 
-			if (IsPreserved)
-				ChangeCounter::Get().AddPreserved();
+			VisualMeshComponent->AttachToComponent(Parent, Rule, Bone);
 		}
-
-		// Attach
-		if (PerformAttach)
+		// NO Parent, set the Actor Transform
+		else
 		{
-			AttachToBone = Bone;
-
-			FXComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
-			ChangeCounter::Get().AddChanged();
+			SetActorTransform(Transform);
 		}
-
-		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeHelper::FromTransformAttachmentRule(Rule));
-
-		bool PerformTransform = true;
-		IsPreserved			  = false;
-
-		// If Transform has NOT changed, don't update it.
-		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
-			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
-		{
-			IsPreserved		 = NCsTransformRules::AreTransformsEqual(FXComponent->GetRelativeTransform(), Transform, TransformRules);
-			PerformTransform = !IsPreserved;
-
-			if (IsPreserved)
-				ChangeCounter::Get().AddPreserved();
-		}
-
-		// Set Transform
-		if (PerformTransform)
-		{
-			NCsTransformRules::SetRelativeTransform(FXComponent, Transform, TransformRules);
-			ChangeCounter::Get().AddChanged();
-		}
-		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
-	}
-	// NO Parent, set the World Transform of the FX Component
-	else
-	{
-		bool PerformTransform = true;
-		bool IsPreserved	  = false;
-
-		// If Transform has NOT changed, don't update it.
-		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::Transform) &&
-			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::Transform))
-		{
-			IsPreserved		 = NCsTransformRules::AreTransformsEqual(FXComponent->GetRelativeTransform(), Transform, TransformRules);
-			PerformTransform = !IsPreserved;
-
-			if (IsPreserved)
-				ChangeCounter::Get().AddPreserved();
-		}
-
-		if (PerformTransform)
-		{
-			NCsTransformRules::SetTransform(FX, Transform, TransformRules);
-			ChangeCounter::Get().AddChanged();
-		}
-
-		AttachToBone = NAME_None;
 	}
 }
 
 void ACsProjectileWeaponActorPooled::Deallocate()
 {
+	Data = nullptr;
+	PrjWeaponData = nullptr;
 
+	Cache->Deallocate();
 }
 
 #pragma endregion ICsPooledObject
@@ -418,7 +372,9 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 
 void ACsProjectileWeaponActorPooled::ConstructCache()
 {
+	typedef NCsWeapon::NCache::FImpl CacheImplType;
 
+	Cache = new CacheImplType();
 }
 
 #pragma endregion PooledObject

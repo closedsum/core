@@ -32,7 +32,7 @@ struct FCsRoutine;
 // NCsWeapon::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, IData)
 // NCsWeapon::NCsProjectile::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NCsProjectile, NData, IData)
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NProjectile, NData, IData)
 
 class USkeletalMeshComponent;
 class UStaticMeshComponent;

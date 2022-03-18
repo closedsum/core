@@ -20,6 +20,7 @@ namespace NCsWpDataRootSet
 
 			CS_DEFINE_CACHED_STRING(WeaponClasses, "WeaponClasses");
 			CS_DEFINE_CACHED_STRING(Weapons, "Weapons");
+			CS_DEFINE_CACHED_STRING(WeaponSkins, "WeaponSkins");
 		}
 	}
 }
@@ -40,6 +41,8 @@ bool FCsWpDataRootSet::IsValidChecked(const FString& Context, const UObject* Wor
 	CS_TEMP_CHECK(WeaponClasses)
 	// Weapons
 	CS_TEMP_CHECK(Weapons)
+	// WeaponSkins
+	CS_TEMP_CHECK(WeaponSkins)
 
 	#undef CS_TEMP_CHECK
 
@@ -55,6 +58,8 @@ const TSoftObjectPtr<UDataTable>& FCsWpDataRootSet::GetDataTableSoftObjectChecke
 	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WeaponClasses)
 	// Weapons
 	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Weapons)
+	// WeaponSkins
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WeaponSkins)
 
 	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
 
@@ -74,6 +79,8 @@ bool FCsWpDataRootSet::GetSafeDataTableSoftObject(const FString& Context, const 
 	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WeaponClasses)
 	// Weapons
 	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Weapons)
+	// WeaponSkins
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WeaponSkins)
 
 	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
 
@@ -94,6 +101,8 @@ UDataTable* FCsWpDataRootSet::GetSafeDataTable(const FString& Context, const UOb
 	CS_TEMP_GET_SAFE_DATA_TABLE(WeaponClasses)
 	// Weapons
 	CS_TEMP_GET_SAFE_DATA_TABLE(Weapons)
+	// WeaponSkins
+	CS_TEMP_GET_SAFE_DATA_TABLE(WeaponSkins)
 
 	#undef CS_TEMP_GET_SAFE_DATA_TABLE
 

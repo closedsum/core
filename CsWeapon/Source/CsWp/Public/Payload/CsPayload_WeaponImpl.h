@@ -46,7 +46,7 @@ namespace NCsWeapon
 
 			FECsWeapon Type;
 
-			FCsUpdateGroup UpdateGroup;
+			FECsUpdateGroup UpdateGroup;
 
 			FTransform Transform;
 

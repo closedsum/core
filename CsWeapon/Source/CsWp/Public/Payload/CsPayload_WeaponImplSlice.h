@@ -12,6 +12,8 @@ namespace NCsWeapon
 {
 	namespace NPayload
 	{
+	#define PayloadType NCsWeapon::NPayload::IPayload
+
 		/**
 		* Basic implementation of the interface: PayloadType (NCsWeapon::NPayload::IPayload).
 		*/

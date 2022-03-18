@@ -24,16 +24,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
 	TSoftObjectPtr<UDataTable> Weapons;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
+	TSoftObjectPtr<UDataTable> WeaponSkins;
+
 	FCsWpDataRootSet() :
 		WeaponClasses(nullptr),
-		Weapons(nullptr)
+		Weapons(nullptr),
+		WeaponSkins(nullptr)
 	{
 	}
 
 	enum class EMember : uint8
 	{
 		WeaponClasses,
-		Weapons
+		Weapons,
+		WeaponSkins
 	};
 
 	bool IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;

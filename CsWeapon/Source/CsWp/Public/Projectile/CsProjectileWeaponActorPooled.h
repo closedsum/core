@@ -278,8 +278,6 @@ protected:
 
 	int32 FireCount;
 
-	FCsRoutineHandle FireRoutineHandle;
-
 	/**
 	*
 	*/
@@ -296,6 +294,8 @@ protected:
 	/**
 	*/
 	void Fire_Internal_OnEnd(FCsRoutine* R);
+
+	FCsRoutineHandle FireHandle;
 
 	FCsScopedTimerHandleWrapper FireScopedHandle;
 

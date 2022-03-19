@@ -58,6 +58,11 @@
 // Params
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTrace.h"
 #include "Projectile/Data/Sound/CsParams_ProjectileWeapon_SoundFire.h"
+// Component
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
+// Animation
+#include "Animation/AnimInstance.h"
 
 // Cached 
 #pragma region
@@ -149,11 +154,19 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	: Super(ObjectInitializer),
 	// ICsUpdate
 	UpdateGroup(),
+	// ICsPooledObject
+	Cache(nullptr),
 	WeaponType(),
 	Data(nullptr),
+	PrjWeaponData(nullptr),
 	ProjectileType(),
+	// Owner
 	MyOwner(nullptr),
 	MyOwnerAsActor(nullptr),
+	// Skin
+	SkeletalMeshComponent(nullptr),
+	StaticMeshComponent(nullptr),
+	VisualMeshComponent(nullptr),
 	// State
 	CurrentState(),
 	IdleState(),
@@ -166,7 +179,7 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	bFire_Last(false),
 	Fire_StartTime(0.0f),
 	FireCount(0),
-	FireRoutineHandle(),
+	FireHandle(),
 	// Projectile
 	CurrentProjectilePerShotIndex(0),
 	ProjectileImpl(nullptr),
@@ -174,6 +187,31 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	// Sound
 	SoundImpl(nullptr)
 {
+	// StatisMeshComponent
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	StaticMeshComponent->SetNotifyRigidBodyCollision(false);
+	StaticMeshComponent->SetGenerateOverlapEvents(false);
+	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	StaticMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	StaticMeshComponent->SetHiddenInGame(true);
+	StaticMeshComponent->SetCastShadow(false);
+	StaticMeshComponent->SetReceivesDecals(false);
+	StaticMeshComponent->bUseAsOccluder = false;
+	StaticMeshComponent->SetComponentTickEnabled(false);
+	// SkeletalMeshComponent
+	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	SkeletalMeshComponent->SetNotifyRigidBodyCollision(false);
+	SkeletalMeshComponent->SetGenerateOverlapEvents(false);
+	SkeletalMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SkeletalMeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	SkeletalMeshComponent->SetHiddenInGame(true);
+	SkeletalMeshComponent->SetCastShadow(false);
+	SkeletalMeshComponent->SetReceivesDecals(false);
+	SkeletalMeshComponent->bUseAsOccluder = false;
+	SkeletalMeshComponent->SetComponentTickEnabled(false);
+	SkeletalMeshComponent->bNoSkeletonUpdate = true;
+	SkeletalMeshComponent->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+	SkeletalMeshComponent->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
 }
 
 // UObject Interface
@@ -214,9 +252,6 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 void ACsProjectileWeaponActorPooled::BeginPlay()
 {
 	Super::BeginPlay();
-
-	MyOwner		   = GetOwner();
-	MyOwnerAsActor = GetOwner();
 
 	TimeBetweenShotsImpl.Outer = this;
 
@@ -306,6 +341,9 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	SetWeaponType(WeaponPayload->GetType());
 	SetUpdateGroup(WeaponPayload->GetUpdateGroup());
 
+	MyOwner		   = Payload->GetOwner();
+	MyOwnerAsActor = Cast<AActor>(MyOwner);
+
 	// Get Data
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
@@ -317,6 +355,9 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	ICsData_GetProjectileType* GetProjectileType = WeaponDataLibrary::GetInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
 
 	SetProjectileType(GetProjectileType->GetProjectileType());
+
+	SetActorHiddenInGame(false);
+	SetActorTickEnabled(true);
 
 	// TODO: May need to streamline this logic slightly
 	
@@ -359,15 +400,71 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 void ACsProjectileWeaponActorPooled::Deallocate()
 {
+	// End Routines
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(this))
+	{
+		Scheduler->End(UpdateGroup, FireHandle);
+	}
+	FireHandle.Invalidate();
+
+	// Skin
+	SetRootComponent(nullptr);
+
+	StaticMeshComponent->SetComponentTickEnabled(false);
+	StaticMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+	StaticMeshComponent->SetRelativeLocation(FVector::ZeroVector);
+	StaticMeshComponent->SetHiddenInGame(true);
+	StaticMeshComponent->ComponentTags.Reset(StaticMeshComponent->ComponentTags.Max());
+
+	// TODO: FUTURE: Look into what can be preserved
+
+	if (UAnimInstance* AnimInstance = SkeletalMeshComponent->GetAnimInstance())
+		AnimInstance->StopAllMontages(0.0f);
+
+	SkeletalMeshComponent->SetSkeletalMesh(nullptr);
+	SkeletalMeshComponent->SetAnimInstanceClass(nullptr);
+	SkeletalMeshComponent->SetComponentTickEnabled(false);
+	SkeletalMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+	SkeletalMeshComponent->SetRelativeLocation(FVector::ZeroVector);
+	SkeletalMeshComponent->SetHiddenInGame(false);
+	SkeletalMeshComponent->ComponentTags.Reset(SkeletalMeshComponent->ComponentTags.Max());
+
+	VisualMeshComponent = nullptr;
+
+	WeaponType = EMCsWeapon::Get().GetMAX();
+
 	Data = nullptr;
 	PrjWeaponData = nullptr;
+
+	ProjectileType = EMCsProjectile::Get().GetMAX();
+	
+	MyOwner = nullptr;
+	MyOwnerAsActor = nullptr;
+
+	SkeletalMeshComponent = nullptr;
+	StaticMeshComponent = nullptr;
+	VisualMeshComponent = nullptr;
+
+	CurrentState = IdleState;
+
+	CurrentAmmo = 0;
+	
+	bHasFired = false;
+	bFire = false;
+	bFire_Last = false;
+	Fire_StartTime = 0.0f;
+	FireCount = 0;
+	
+	// bOverride_ProjectileImpl_GetLaunchDirection = false;
 
 	Cache->Deallocate();
 }
 
 #pragma endregion ICsPooledObject
 
-	// PooledObject
+// PooledObject
 #pragma region
 
 void ACsProjectileWeaponActorPooled::ConstructCache()
@@ -432,9 +529,14 @@ void ACsProjectileWeaponActorPooled::Init()
 	const FString& Context = Str::Init;
 
 	// Set States
-	CS_IS_VALID_CHECKED(FCsWeaponSettings_ProjectileWeaponImpl::Get());
+	const FCsWeaponSettings_ProjectileWeaponImpl& Settings = FCsWeaponSettings_ProjectileWeaponImpl::Get();
 
+	CS_IS_VALID_CHECKED(Settings);
+
+	IdleState	 = Settings.IdleState;
+	FireState	 = Settings.FireState;
 	CurrentState = IdleState;
+
 	CurrentAmmo  = PrjWeaponData->GetMaxAmmo();
 
 	TimeBetweenShotsImpl.Base = PrjWeaponData->GetTimeBetweenShots();
@@ -580,7 +682,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
 
 	// End previous Fire Routine
-	Scheduler->End(UpdateGroup, FireRoutineHandle);
+	Scheduler->End(UpdateGroup, FireHandle);
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
@@ -612,7 +714,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	bHasFired = true;
 
-	FireRoutineHandle = Scheduler->Start(Payload);
+	FireHandle = Scheduler->Start(Payload);
 }
 
 char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)

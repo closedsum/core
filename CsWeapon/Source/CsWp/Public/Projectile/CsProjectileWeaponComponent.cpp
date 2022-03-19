@@ -8,20 +8,21 @@
 // Types
 #include "Types/CsCached.h"
 // Library
-#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
-#include "Payload/CsLibrary_Payload_Projectile.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Managers/Trace/CsLibrary_Manager_Trace.h"
+#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+#include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Projectile.h"
+#include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
-#include "Managers/Trace/CsLibrary_Manager_Trace.h"
-#include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
-#include "Coroutine/CsLibrary_CoroutineScheduler.h"
-#include "Managers/Time/CsLibrary_Manager_Time.h"
-#include "Managers/Sound/CsLibrary_Manager_Sound.h"
-#include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
 // Managers
@@ -334,10 +335,12 @@ void UCsProjectileWeaponComponent::Init()
 	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Str::ProjectileType, ProjectileType));
 
 	// Set States
-	UCsWeaponSettings* Settings = GetMutableDefault<UCsWeaponSettings>();
+	const FCsWeaponSettings_ProjectileWeaponImpl& Settings = FCsWeaponSettings_ProjectileWeaponImpl::Get();
 
-	check(Settings->ProjectileWeaponImpl.IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(Settings);
 
+	IdleState	 = Settings.IdleState;
+	FireState    = Settings.FireState;
 	CurrentState = IdleState;
 
 	// Ammo

@@ -599,6 +599,33 @@ public:
 	*/
 	PayloadType* AllocatePayload(const FECsWeapon& Type);
 
+		/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: NCsWeapon::NPayload::IPayload.
+	*
+	* @param Context	Calling context.
+	* @param Type		Type of payload.
+	* return			Payload that implements the interface: NCsWeapon::NPayload::IPayload.
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsWeapon& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(Context, GetTypeFromTypeMap(Type));
+	}
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: NCsWeapon::NPayload::IPayload.
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: NCsWeapon::NPayload::IPayload.
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload(const FECsWeapon& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(GetTypeFromTypeMap(Type));
+	}
+
 #pragma endregion Payload
 
 	// Spawn

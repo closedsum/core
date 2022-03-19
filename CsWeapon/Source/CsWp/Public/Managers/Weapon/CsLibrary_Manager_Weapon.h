@@ -8,6 +8,13 @@
 
 class UObject;
 class UCsManager_Weapon;
+struct FCsWeaponPooled;
+
+// NCsWeapon::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NPayload, IPayload)
+// NCsWeapon::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NPayload, FImpl)
+
 struct FCsWeapon;
 struct FCsWeaponClass;
 class UClass;
@@ -116,6 +123,70 @@ namespace NCsWeapon
 			static UCsManager_Weapon* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsWeapon::NPayload::IPayload
+		#define PayloadImplType NCsWeapon::NPayload::FImpl
+
+			/*
+			* Allocate a Payload (used to Spawn an Weapon from Manager_Weapon).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
+
+			/*
+			* Allocate a Payload (used to Spawn an Weapon from Manager_Weapon).
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type);
+
+		#undef PayloadType
+		#undef PayloadImplType
+
+		#pragma endregion Payload
+
+		// Spawn
+		#pragma region
+		public:
+
+			/**
+			* Spawn an Weapon, object that implements the interface: ICsWeapon, and pass the Owner and Type.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Owner
+			* @param Type
+			* return
+			*/
+			static const FCsWeaponPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Owner, const FECsWeapon& Type);
+
+		#define PayloadType NCsWeapon::NPayload::IPayload
+
+			/**
+			* Spawn an Weapon, object that implements the interface: ICsWeapon, and pass the Owner and Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Payload
+			* return
+			*/
+			static const FCsWeaponPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, PayloadType* Payload);
+
+		#undef PayloadType
+
+		#pragma endregion Spawn
 
 		// Class
 		#pragma region

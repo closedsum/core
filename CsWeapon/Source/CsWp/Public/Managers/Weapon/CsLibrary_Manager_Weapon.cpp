@@ -8,6 +8,7 @@
 #include "Managers/Weapon/CsManager_Weapon.h"
 // Weapon
 #include "CsWeapon.h"
+#include "Payload/CsPayload_WeaponImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -102,6 +103,52 @@ namespace NCsWeapon
 		}
 
 		#pragma endregion Get
+
+		// Payload
+		#pragma region
+
+		#define PayloadType NCsWeapon::NPayload::IPayload
+		#define PayloadImplType NCsWeapon::NPayload::FImpl
+
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
+		}
+
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocatePayload<PayloadImplType>(Type);
+		}
+
+		#undef PayloadType
+		#undef PayloadImplType
+
+		#pragma endregion Payload
+
+		// Spawn
+		#pragma region
+	
+		const FCsWeaponPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Owner, const FECsWeapon& Type)
+		{
+			typedef NCsWeapon::NPayload::FImpl PayloadImplType;
+
+			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, Type);
+
+			Payload->Owner = Owner;
+			Payload->Type  = Type;
+
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
+
+		#define PayloadType NCsWeapon::NPayload::IPayload
+		const FCsWeaponPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, PayloadType* Payload)
+		{
+		#undef PayloadType
+
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
+
+		#pragma endregion Spawn
 
 		// Class
 		#pragma region

@@ -203,11 +203,6 @@ public:
 
 #pragma endregion Owner
 
-public:
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	virtual void Init();
-
 // Skin
 #pragma region
 protected:

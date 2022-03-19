@@ -396,6 +396,20 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 			SetActorTransform(Transform);
 		}
 	}
+
+	// Set States
+	const FCsWeaponSettings_ProjectileWeaponImpl& Settings = FCsWeaponSettings_ProjectileWeaponImpl::Get();
+
+	CS_IS_VALID_CHECKED(Settings);
+
+	IdleState	 = Settings.IdleState;
+	FireState	 = Settings.FireState;
+	CurrentState = IdleState;
+
+	CurrentAmmo = PrjWeaponData->GetMaxAmmo();
+
+	TimeBetweenShotsImpl.Base = PrjWeaponData->GetTimeBetweenShots();
+	TimeBetweenShotsImpl.ResetValueToBase();
 }
 
 void ACsProjectileWeaponActorPooled::Deallocate()
@@ -521,27 +535,6 @@ void ACsProjectileWeaponActorPooled::StopFire()
 }
 
 #pragma endregion ICsProjectileWeapon
-
-void ACsProjectileWeaponActorPooled::Init()
-{
-	using namespace NCsProjectileWeaponActorPooled::NCached;
-
-	const FString& Context = Str::Init;
-
-	// Set States
-	const FCsWeaponSettings_ProjectileWeaponImpl& Settings = FCsWeaponSettings_ProjectileWeaponImpl::Get();
-
-	CS_IS_VALID_CHECKED(Settings);
-
-	IdleState	 = Settings.IdleState;
-	FireState	 = Settings.FireState;
-	CurrentState = IdleState;
-
-	CurrentAmmo  = PrjWeaponData->GetMaxAmmo();
-
-	TimeBetweenShotsImpl.Base = PrjWeaponData->GetTimeBetweenShots();
-	TimeBetweenShotsImpl.ResetValueToBase();
-}
 
 // State
 #pragma region

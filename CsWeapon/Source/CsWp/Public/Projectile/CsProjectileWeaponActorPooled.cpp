@@ -362,7 +362,6 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	// TODO: May need to streamline this logic slightly
 	
 	// TODO: Set Skin
-	
 
 	// If the Parent is set, attach the Weapon to the Parent
 	if (VisualMeshComponent)

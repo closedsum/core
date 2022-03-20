@@ -150,6 +150,21 @@ namespace NCsWeapon
 
 		#pragma endregion Spawn
 
+		// Destroy
+		#pragma region
+		
+		bool FLibrary::DestroyChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, ICsWeapon* Weapon)
+		{
+			return GetChecked(Context, WorldContext)->Destroy(Type, Weapon);
+		}
+
+		bool FLibrary::DestroyChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, FCsWeaponPooled* Weapon)
+		{
+			return GetChecked(Context, WorldContext)->Destroy(Type, Weapon->GetWeapon());
+		}
+
+		#pragma endregion Destroy
+
 		// Class
 		#pragma region
 

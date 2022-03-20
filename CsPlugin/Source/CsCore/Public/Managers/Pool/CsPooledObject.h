@@ -288,6 +288,13 @@ public:
 
 	FORCEINLINE ICsUpdate* GetUpdate() const { return _Update; }
 
+	FORCEINLINE ICsUpdate* GetUpdateChecked(const FString& Context) const
+	{
+		checkf(_Update, TEXT("%s: _Update is NULL."), *Context);
+
+		return _Update;
+	}
+
 // ICsOnConstructObject
 #pragma region
 public:

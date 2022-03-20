@@ -607,17 +607,17 @@ TMulticastDelegate<void(const FCsWeaponPooled*, const ConstructParamsType&)>& UC
 
 const FCsWeaponPooled* UCsManager_Weapon::AddToPool(const FECsWeapon& Type, ICsWeapon* Object)
 {
-	return Internal.AddToPool(Type, Object);
+	return Internal.AddToPool(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::AddToPool(const FECsWeapon& Type, const FCsWeaponPooled* Object)
 {
-	return Internal.AddToPool(Type, Object->GetObject());
+	return Internal.AddToPool(GetTypeFromTypeMap(Type), Object->GetObject());
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::AddToPool(const FECsWeapon& Type, UObject* Object)
 {
-	return Internal.AddToPool(Type, Object);
+	return Internal.AddToPool(GetTypeFromTypeMap(Type), Object);
 }
 
 #pragma endregion Pool
@@ -627,17 +627,17 @@ const FCsWeaponPooled* UCsManager_Weapon::AddToPool(const FECsWeapon& Type, UObj
 
 const FCsWeaponPooled* UCsManager_Weapon::AddToAllocatedObjects(const FECsWeapon& Type, ICsWeapon* Projectile, UObject* Object)
 {
-	return Internal.AddToAllocatedObjects(Type, Projectile, Object);
+	return Internal.AddToAllocatedObjects(GetTypeFromTypeMap(Type), Projectile, Object);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::AddToAllocatedObjects(const FECsWeapon& Type, ICsWeapon* Object)
 {
-	return Internal.AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::AddToAllocatedObjects(const FECsWeapon& Type, UObject* Object)
 {
-	return Internal.AddToAllocatedObjects(Type, Object);
+	return Internal.AddToAllocatedObjects(GetTypeFromTypeMap(Type), Object);
 }
 
 #pragma endregion Allocated Objects
@@ -646,27 +646,27 @@ const FCsWeaponPooled* UCsManager_Weapon::AddToAllocatedObjects(const FECsWeapon
 
 const TArray<FCsWeaponPooled*>& UCsManager_Weapon::GetPool(const FECsWeapon& Type)
 {
-	return Internal.GetPool(Type);
+	return Internal.GetPool(GetTypeFromTypeMap(Type));
 }
 
 const TArray<FCsWeaponPooled*>& UCsManager_Weapon::GetAllocatedObjects(const FECsWeapon& Type)
 {
-	return Internal.GetAllocatedObjects(Type);
+	return Internal.GetAllocatedObjects(GetTypeFromTypeMap(Type));
 }
 
 const int32& UCsManager_Weapon::GetPoolSize(const FECsWeapon& Type)
 {
-	return Internal.GetPoolSize(Type);
+	return Internal.GetPoolSize(GetTypeFromTypeMap(Type));
 }
 
 int32 UCsManager_Weapon::GetAllocatedObjectsSize(const FECsWeapon& Type)
 {
-	return Internal.GetAllocatedObjectsSize(Type);
+	return Internal.GetAllocatedObjectsSize(GetTypeFromTypeMap(Type));
 }
 
 bool UCsManager_Weapon::IsExhausted(const FECsWeapon& Type)
 {
-	return Internal.IsExhausted(Type);
+	return Internal.IsExhausted(GetTypeFromTypeMap(Type));
 }
 
 	// Find
@@ -674,32 +674,32 @@ bool UCsManager_Weapon::IsExhausted(const FECsWeapon& Type)
 
 const FCsWeaponPooled* UCsManager_Weapon::FindObject(const FECsWeapon& Type, const int32& Index)
 {
-	return Internal.FindObject(Type, Index);
+	return Internal.FindObject(GetTypeFromTypeMap(Type), Index);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::FindObject(const FECsWeapon& Type, ICsWeapon* Object)
 {
-	return Internal.FindObject(Type, Object);
+	return Internal.FindObject(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::FindObject(const FECsWeapon& Type, UObject* Object)
 {
-	return Internal.FindObject(Type, Object);
+	return Internal.FindObject(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::FindSafeObject(const FECsWeapon& Type, const int32& Index)
 {
-	return Internal.FindSafeObject(Type, Index);
+	return Internal.FindSafeObject(GetTypeFromTypeMap(Type), Index);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::FindSafeObject(const FECsWeapon& Type, ICsWeapon* Object)
 {
-	return Internal.FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(GetTypeFromTypeMap(Type), Object);
 }
 
 const FCsWeaponPooled* UCsManager_Weapon::FindSafeObject(const FECsWeapon& Type, UObject* Object)
 {
-	return Internal.FindSafeObject(Type, Object);
+	return Internal.FindSafeObject(GetTypeFromTypeMap(Type), Object);
 }
 
 #pragma endregion Find
@@ -736,7 +736,7 @@ void UCsManager_Weapon::OnPostUpdate_Pool(const FECsWeapon& Type)
 
 void UCsManager_Weapon::ConstructPayloads(const FECsWeapon& Type, const int32& Size)
 {
-	Internal.ConstructPayloads(Type, Size);
+	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
 #define PayloadType NCsWeapon::NPayload::IPayload
@@ -753,7 +753,7 @@ PayloadType* UCsManager_Weapon::ConstructPayload(const FECsWeapon& Type)
 PayloadType* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 {
 #undef PayloadType
-	return Internal.AllocatePayload(Type);
+	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
 
 #pragma endregion Payload
@@ -765,7 +765,7 @@ PayloadType* UCsManager_Weapon::AllocatePayload(const FECsWeapon& Type)
 const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, PayloadType* Payload)
 {
 #undef PayloadType
-	return Internal.Spawn(Type, Payload);
+	return Internal.Spawn(GetTypeFromTypeMap(Type), Payload);
 }
 
 #pragma endregion Spawn
@@ -775,7 +775,7 @@ const FCsWeaponPooled* UCsManager_Weapon::Spawn(const FECsWeapon& Type, PayloadT
 
 bool UCsManager_Weapon::Destroy(const FECsWeapon& Type, ICsWeapon* Weapon)
 {
-	return Internal.Destroy(Type, Weapon);
+	return Internal.Destroy(GetTypeFromTypeMap(Type), Weapon);
 }
 
 bool UCsManager_Weapon::Destroy(ICsWeapon* Weapon)

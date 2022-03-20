@@ -908,7 +908,6 @@ bool UCsManager_Projectile::Destroy(ICsProjectile* Projectile)
 	return Internal.Destroy(Projectile);
 }
 
-
 #pragma endregion Destroy
 
 	// Log

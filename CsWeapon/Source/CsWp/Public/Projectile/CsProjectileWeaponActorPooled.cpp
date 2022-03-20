@@ -221,6 +221,12 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+	}
+
 	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
 
 	if (ProjectileImpl)
@@ -252,6 +258,8 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 void ACsProjectileWeaponActorPooled::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ConstructCache();
 
 	TimeBetweenShotsImpl.Outer = this;
 

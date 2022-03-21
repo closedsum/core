@@ -95,25 +95,13 @@ public:
 
 	void SetPooledObject(const FCsPooledObject& PooledObject);
 
-	FORCEINLINE void SetScriptWeapon()
-	{
-		bScriptWeapon = true;
-	}
+	FORCEINLINE void SetScriptWeapon() { bScriptWeapon = true; }
 
-	FORCEINLINE const bool& IsScriptWeapon() const 
-	{
-		return bScriptWeapon;
-	}
+	FORCEINLINE const bool& IsScriptWeapon() const  { return bScriptWeapon; }
 
-	FORCEINLINE ICsWeapon* GetWeapon() const
-	{
-		return Weapon;
-	}
+	FORCEINLINE ICsWeapon* GetWeapon() const { return Weapon; }
 
-	FORCEINLINE void SetWeapon(ICsWeapon* InWeapon)
-	{
-		Weapon = InWeapon;
-	}
+	FORCEINLINE void SetWeapon(ICsWeapon* InWeapon) { Weapon = InWeapon; }
 
 #undef DataType
 };

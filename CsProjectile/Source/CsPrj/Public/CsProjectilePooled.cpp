@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/CsProjectilePooled.h"
+#include "CsProjectilePooled.h"
 #include "CsPrj.h"
 
-#include "Managers/Projectile/CsProjectile.h"
+#include "CsProjectile.h"
 
 const FCsProjectilePooled FCsProjectilePooled::Empty;
 

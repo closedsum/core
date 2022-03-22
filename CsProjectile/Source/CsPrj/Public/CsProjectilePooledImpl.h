@@ -5,7 +5,7 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
-#include "Managers/Projectile/CsProjectile.h"
+#include "CsProjectile.h"
 #include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"

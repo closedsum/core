@@ -9,8 +9,8 @@
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Projectile
 #include "Payload/CsPayload_Projectile.h"
-#include "Managers/Projectile/CsProjectile.h"
-#include "Managers/Projectile/CsProjectilePooled.h"
+#include "CsProjectile.h"
+#include "CsProjectilePooled.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "Modifier/CsResource_ProjectileModifier.h"
 

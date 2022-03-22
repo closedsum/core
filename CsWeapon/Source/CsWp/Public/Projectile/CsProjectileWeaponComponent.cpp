@@ -46,7 +46,7 @@
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
-#include "Managers/Projectile/CsProjectilePooledImpl.h"
+#include "CsProjectilePooledImpl.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // FX

@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/CsCVars_Projectile.h"
+#include "CsCVars_Projectile.h"
 
 TAutoConsoleVariable<int32> CsCVarLogProjectileCollision(
 	TEXT("log.projectile.collision"),

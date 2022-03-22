@@ -7,8 +7,8 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Projectile
-#include "Managers/Projectile/CsProjectilePooledImpl.h"
-#include "Managers/Projectile/CsProjectileMovementComponent.h"
+#include "CsProjectilePooledImpl.h"
+#include "CsProjectileMovementComponent.h"
 
 const FName NCsProjectile::NModifier::NSpeed::NInitial::FImpl::Name = FName("NCsProjectile::NModifier::NSpeed::NInitial::FImpl");
 

@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/CsProjectilePooledImpl.h"
+#include "CsProjectilePooledImpl.h"
 #include "CsPrj.h"
 
 // CVar
-#include "Managers/Projectile/CsCVars_Projectile.h"
+#include "CsCVars_Projectile.h"
 // Library
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
@@ -21,7 +21,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Components
 #include "Components/SphereComponent.h"
-#include "Managers/Projectile/CsProjectileMovementComponent.h"
+#include "CsProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
 // Data
 #include "Data/CsData_Projectile.h"

@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/CsProjectileMovementComponent.h"
+#include "CsProjectileMovementComponent.h"
 
 // Interface
 #include "Collision/CsGetCollisionHitCount.h"

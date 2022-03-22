@@ -2,7 +2,7 @@
 #include "Settings/CsProjectileSettings.h"
 #include "CsPrj.h"
 
-#include "Managers/Projectile/CsProjectile.h"
+#include "CsProjectile.h"
 
 // Cached
 #pragma region

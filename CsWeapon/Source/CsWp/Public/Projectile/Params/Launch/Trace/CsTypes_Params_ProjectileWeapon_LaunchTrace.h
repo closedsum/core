@@ -224,9 +224,11 @@ struct CSWP_API FCsProjectileWeaponLaunchTraceParams
 
 public:
 
+	/** Describes the different methods to get the Location from which a Projectile will be launched from a Weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsProjectileWeaponLaunchLocation LocationType;
 
+	/** Describes the different methods to get the Direction from which a Projectile will be launched from a Weapon. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsProjectileWeaponLaunchDirection DirectionType;
 
@@ -239,9 +241,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsTraceMethod TraceMethod;
 
+	/** Describes how the start of a trace should be chosen. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsProjectileWeaponLaunchTraceStart TraceStartType;
 
+	/** Describes how the direction (end) of a trace should be chosen. The normalized
+		direction is used to project outward GetTraceDistance() from the start of the
+		trace. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsProjectileWeaponLaunchTraceDirection TraceDirectionType;
 

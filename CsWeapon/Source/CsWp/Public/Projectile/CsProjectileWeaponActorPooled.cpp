@@ -464,10 +464,6 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 	MyOwner = nullptr;
 	MyOwnerAsActor = nullptr;
 
-	SkeletalMeshComponent = nullptr;
-	StaticMeshComponent = nullptr;
-	VisualMeshComponent = nullptr;
-
 	CurrentState = IdleState;
 
 	CurrentAmmo = 0;

@@ -198,6 +198,9 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	StaticMeshComponent->SetReceivesDecals(false);
 	StaticMeshComponent->bUseAsOccluder = false;
 	StaticMeshComponent->SetComponentTickEnabled(false);
+
+	RootComponent = StaticMeshComponent;
+
 	// SkeletalMeshComponent
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 	SkeletalMeshComponent->SetNotifyRigidBodyCollision(false);
@@ -212,6 +215,8 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	SkeletalMeshComponent->bNoSkeletonUpdate = true;
 	SkeletalMeshComponent->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	SkeletalMeshComponent->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
+
+	SkeletalMeshComponent->SetupAttachment(RootComponent);
 }
 
 // UObject Interface
@@ -258,6 +263,8 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 void ACsProjectileWeaponActorPooled::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SkeletalMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
 
 	ConstructCache();
 

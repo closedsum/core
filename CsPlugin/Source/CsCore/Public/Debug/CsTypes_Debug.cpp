@@ -337,6 +337,11 @@ void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector& InLoca
 	}
 }
 
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector& InLocation, const float& Radius) const
+{
+	Draw(WorldContext, InLocation, Radius, Radius);
+}
+
 void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const
 {
 	Draw_Internal(WorldContext, Transform, MinRadius, MaxRadius);

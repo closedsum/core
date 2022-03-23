@@ -1,6 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Types/CsTypes_Projectile.h"
+#include "Debug/CsTypes_Debug.h"
 
 #include "CsTypes_ProjectileSettings.generated.h"
 
@@ -14,10 +15,10 @@ struct CSPRJ_API FCsProjectileSettings_DataTable_Projectiles
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TSoftObjectPtr<UDataTable> Projectiles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TSet<FECsProjectileData> EmulatedDataInterfaces;
 
 	FCsProjectileSettings_DataTable_Projectiles() :
@@ -28,3 +29,45 @@ struct CSPRJ_API FCsProjectileSettings_DataTable_Projectiles
 };
 
 #pragma endregion FCsProjectileSettings_DataTable_Projectiles
+
+// FCsSettings_Projectile_Debug
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsSettings_Projectile_Debug
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
+	FCsDebugDrawSphere Collision;
+
+	FCsSettings_Projectile_Debug() :
+		Collision()
+	{
+	}
+
+	static const FCsSettings_Projectile_Debug& Get();
+};
+
+#pragma endregion FCsSettings_Projectile_Debug
+
+// FCsSettings_Projectile
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsSettings_Projectile
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
+	FCsSettings_Projectile_Debug Debug;
+
+	FCsSettings_Projectile() :
+		Debug()
+	{
+	}
+
+	static const FCsSettings_Projectile& Get();
+};
+
+#pragma endregion FCsSettings_Projectile

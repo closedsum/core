@@ -17,12 +17,8 @@
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
-// Containers
-#include "Containers/CsGetInterfaceMap.h"
-// Components
-#include "Components/SphereComponent.h"
-#include "CsProjectileMovementComponent.h"
-#include "Components/StaticMeshComponent.h"
+// Settings
+#include "Settings/CsTypes_ProjectileSettings.h"
 // Data
 #include "Data/CsData_Projectile.h"
 #include "Data/Collision/CsData_Projectile_Collision.h"
@@ -33,6 +29,12 @@
 #include "Data/Damage/CsData_Projectile_Damage.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
+// Containers
+#include "Containers/CsGetInterfaceMap.h"
+// Components
+#include "Components/SphereComponent.h"
+#include "CsProjectileMovementComponent.h"
+#include "Components/StaticMeshComponent.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
@@ -214,9 +216,8 @@ void ACsProjectilePooledImpl::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	/*
 	OnTick_HandleCVars(DeltaSeconds);
-
+	/*
 	Cache.ElapsedTime += DeltaSeconds;
 
 	OnTick_HandleMovementFunction(DeltaSeconds);
@@ -241,18 +242,11 @@ void ACsProjectilePooledImpl::OutsideWorldBounds()
 
 void ACsProjectilePooledImpl::OnTick_HandleCVars(const float& DeltaSeconds)
 {
-	/*
-	if (CsCVarDrawProjectileCollision->GetInt() == CS_CVAR_DRAW)
-	{
-		if (Cache.Relevance != ECsProjectileRelevance::Fake)
-		{
-			const FVector Location = GetActorLocation();
-			const float Radius	   = CollisionComponent->GetScaledSphereRadius();
-
-			DrawDebugSphere(GetWorld(), Location, Radius, 16, FColor::Green, false, DeltaSeconds + 0.005f, 0, 0.25f);
-		}
-	}
-	*/
+#if WITH_EDITOR
+	const FCsSettings_Projectile_Debug& Debug = FCsSettings_Projectile_Debug::Get();
+	
+	Debug.Collision.Draw(this, GetActorLocation(), CollisionComponent->GetScaledSphereRadius());
+#endif // #if WITH_EDITOR
 }
 
 void ACsProjectilePooledImpl::OnTick_HandleMovementFunction(const float& DeltaSeconds)

@@ -86,6 +86,9 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
 	FCsSettings_Manager_Projectile Manager_Projectile;
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FCsSettings_Projectile Projectile;
+
 // Unit Test
 #pragma region
 public:

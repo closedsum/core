@@ -342,6 +342,7 @@ public:
 	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
 	void Draw(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const;
 	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& Radius) const;
 
 private:
 

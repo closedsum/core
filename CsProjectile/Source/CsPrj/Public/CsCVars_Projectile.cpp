@@ -4,70 +4,110 @@
 TAutoConsoleVariable<int32> CsCVarLogProjectileCollision(
 	TEXT("log.projectile.collision"),
 	0,
-	TEXT("Log Projectile Collision."),
+	TEXT("Log Projectile Collision.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarDrawProjectileImpactNormal(
 	TEXT("draw.projectile.impactnormal"),
 	0,
-	TEXT("Draw the Impact Normal for a Projectile hitting a surface."),
+	TEXT("Draw the Impact Normal for a Projectile hitting a surface.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalLength(
 	TEXT("draw.projectile.impactnormallength"),
 	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_LENGTH,
-	TEXT("Length of the Impact Normal to be drawn from the surface hit by a Projectile."),
+	TEXT("Length of the Impact Normal to be drawn from the surface hit by a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalThickness(
 	TEXT("draw.projectile.impactnormalthickness"),
 	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS,
-	TEXT("Thickness of the Impact Normal to be drawn from the surface hit by a Projectile."),
+	TEXT("Thickness of the Impact Normal to be drawn from the surface hit by a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawProjectileImpactNormalDuration(
 	TEXT("draw.projectile.impactnormalduration"),
 	CS_CVAR_DRAW_PROJECTILE_IMPACT_NORMAL_THICKNESS,
-	TEXT("Duration of the Impact Normal to be drawn from the surface hit by a Projectile."),
+	TEXT("Duration of the Impact Normal to be drawn from the surface hit by a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarDrawProjectileCollision(
 	TEXT("draw.projectile.collision"),
 	0,
-	TEXT("Draw the Collision for a Projectile."),
+	TEXT("Draw the Collision for a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarDrawProjectilePath(
 	TEXT("draw.projectile.path"),
 	0,
-	TEXT("Draw the Path for a Projectile."),
+	TEXT("Draw the Path for a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawProjectilePathInterval(
 	TEXT("draw.projectile.pathinterval"),
 	CS_CVAR_DRAW_PROJECTILE_PATH_INTERVAL,
-	TEXT("The interval at which segments are drawn for the Path of a Projectile."),
+	TEXT("The interval at which segments are drawn for the Path of a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarDrawProjectilePathSegmentsPerInterval(
 	TEXT("draw.projectile.pathsegmentsperinterval"),
 	CS_CVAR_DRAW_PROJECTILE_PATH_SEGMENTS_PER_INTERVAL,
-	TEXT("Number of segments used to draw the Path for a Projectile."),
+	TEXT("Number of segments used to draw the Path for a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 	TEXT("draw.projectile.paththickness"),
 	CS_CVAR_DRAW_PROJECTILE_PATH_THICKNESS,
-	TEXT("Thickness of the Path to be drawn for a Projectile."),
+	TEXT("Thickness of the Path to be drawn for a Projectile.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) HIDE	drawing.\n")
+	TEXT("1 -			SHOW	drawing."),
 	ECVF_SetByConsole
 );
 
@@ -76,21 +116,33 @@ TAutoConsoleVariable<float> CsCVarDrawProjectilePathThickness(
 TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimer(
 	TEXT("log.projectile.scopedtimer"),
 	0,
-	TEXT("Log Projectile Scoped Timer."),
+	TEXT("Log Projectile Scoped Timer.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimerLaunchSetCollision(
 	TEXT("log.projectile.scopedtimer.launch.setcollision"),
 	0,
-	TEXT("Log Projectile Scoped Timer Launch Set Collision."),
+	TEXT("Log Projectile Scoped Timer Launch Set Collision.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogProjectileScopedTimerLaunchSetTrailVisual(
 	TEXT("log.projectile.scopedtimer.launch.settrailvisual"),
 	0,
-	TEXT("Log Projectile Scoped Timer Launch Set Trail Visual."),
+	TEXT("Log Projectile Scoped Timer Launch Set Trail Visual.")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 

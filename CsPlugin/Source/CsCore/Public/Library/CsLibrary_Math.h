@@ -274,6 +274,19 @@ namespace NCsMath
 			return FRotator(AngleClamp360(Rotation.Pitch), AngleClamp360(Rotation.Yaw), AngleClamp360(Rotation.Roll));
 		}
 
+		FORCEINLINE static float LerpAngle(const float& Angle1, const float& Angle2, const float& Rate, const float& DeltaTime)
+		{
+			const int32 Mag		   = Angle2 - Angle1 > 0 ? 1 : -1;
+			const float DeltaAngle = Angle2 - Angle1;
+			const float Direction  = FMath::Abs(DeltaAngle) > 180.0f ? -Mag : Mag;
+
+			if (Direction > 0.0f)
+				return FMath::Min(DeltaTime * Rate + Angle1, Angle2);
+			if (Direction < 0.0f)
+				return FMath::Max(-1.0f * DeltaTime * Rate + Angle1, Angle2);
+			return Angle2;
+		}
+
 	#pragma endregion Angle
 
 	// Vector
@@ -396,7 +409,20 @@ namespace NCsMath
 		*/
 		FORCEINLINE static FRotator ToRotatorOnlyYaw(const FVector& V, const float& Offset = 0.0f)
 		{
-			return FRotator(0.0f, V.Rotation().Yaw + Offset, 0.0f);
+			FRotator R = FRotator::ZeroRotator;
+
+			R.Yaw = FMath::Atan2(V.Y, V.X) * (180.f / PI);
+
+#if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
+			if (R.ContainsNaN())
+			{
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::ToRotatorOnlyYaw(): Rotator result %s contains NaN! Input FVector = %s"), *(R.ToString()), *(V.ToString()));
+				R = FRotator::ZeroRotator;
+			}
+#endif
+			R.Yaw += Offset;
+
+			return R;
 		}
 
 		FORCEINLINE static bool IsAnyComponentZero(const FVector& V)

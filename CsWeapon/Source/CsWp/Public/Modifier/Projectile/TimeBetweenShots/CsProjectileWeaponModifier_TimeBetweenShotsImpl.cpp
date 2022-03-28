@@ -7,7 +7,7 @@
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Weapon
-#include "Projectile/CsProjectileWeaponComponent.h"
+#include "Projectile/CsProjectileWeaponActorPooled.h"
 
 const FName NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl::Name = FName("NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl");
 
@@ -74,9 +74,9 @@ namespace NCsWeapon
 
 					check(IsValidChecked(Context));
 
-					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Weapon, ICsWeapon, UCsProjectileWeaponComponent);
+					ACsProjectileWeaponActorPooled* Actor = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Weapon, ICsWeapon, ACsProjectileWeaponActorPooled);
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShotsImpl.Value, GetValue(), GetApplication());
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Actor->TimeBetweenShotsImpl.Value, GetValue(), GetApplication());
 				}
 
 				#pragma endregion WeaponModifierType (NCsWeapon::NModifier::IModifier)
@@ -92,9 +92,9 @@ namespace NCsWeapon
 
 					check(IsValidChecked(Context));
 
-					UCsProjectileWeaponComponent* Component = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(ProjectileWeapon, ICsProjectileWeapon, UCsProjectileWeaponComponent);
+					ACsProjectileWeaponActorPooled* Actor = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(ProjectileWeapon, ICsProjectileWeapon, ACsProjectileWeaponActorPooled);
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(Component->TimeBetweenShotsImpl.Value, GetValue(), GetApplication());
+					NCsModifier::NValue::NIntegral::NApplication::Modify(Actor->TimeBetweenShotsImpl.Value, GetValue(), GetApplication());
 				}
 
 				#pragma endregion PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)

@@ -430,6 +430,20 @@ namespace NCsMath
 			return V.X == 0.0f || V.Y == 0.0f || V.Z == 0.0f;
 		}
 
+		FORCEINLINE static FVector Limit2D(const FVector& V, const float& Max)
+		{
+			if (Max == 0.0f)
+				return FVector::ZeroVector;
+
+			const float DSq = V.SizeSquared2D();
+			
+			if (DSq > (Max * Max))
+			{
+				return (Max / DSq) * V;
+			}
+			return V;
+		}
+
 	#pragma endregion Vector
 
 	// Segment

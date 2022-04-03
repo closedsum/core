@@ -11,14 +11,17 @@
 #pragma region
 
 	// Routine
-
-struct CSCORE_API FCsResource_Routine : public TCsResourceContainer<FCsRoutine>
+	
+namespace NCsRoutine
 {
-};
+	struct CSCORE_API FResource : public TCsResourceContainer<FCsRoutine>
+	{
+	};
 
-struct CSCORE_API FCsManager_Routine : public NCsResource::NManager::NValue::TFixed<FCsRoutine, FCsResource_Routine, CS_ROUTINE_POOL_SIZE>
-{
-};
+	struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FCsRoutine, FResource, CS_ROUTINE_POOL_SIZE>
+	{
+	};
+}
 
 	// Payload
 
@@ -47,6 +50,9 @@ public:
 	virtual ~FCsCoroutineSchedule();
 
 private:
+
+	typedef NCsRoutine::FResource RoutineResourceType;
+	typedef NCsRoutine::FManager RoutineManagerType;
 
 	typedef NCsCoroutine::EMessage MessageType;
 	typedef NCsCoroutine::ETransaction TransactionType;
@@ -77,7 +83,7 @@ public:
 protected:
 
 	/** */
-	FCsManager_Routine Manager_Routine;
+	RoutineManagerType Manager_Routine;
 
 public:
 
@@ -87,7 +93,7 @@ public:
 	* @param Handle
 	* return
 	*/
-	FCsResource_Routine* GetRoutineContainer(const FCsRoutineHandle& Handle) const;
+	RoutineResourceType* GetRoutineContainer(const FCsRoutineHandle& Handle) const;
 
 	/**
 	*

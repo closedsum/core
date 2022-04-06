@@ -201,3 +201,36 @@ UObject* FCsUserWidgetPtr::GetObject() const
 }
 
 #pragma endregion FCsUserWidgetPtr
+
+// UserWidgetDeallocateMethod
+#pragma region
+
+namespace NCsUserWidgetDeallocateMethod
+{
+	namespace Ref
+	{
+		typedef EMCsUserWidgetDeallocateMethod EnumMapType;
+
+		CSUI_API CS_ADD_TO_ENUM_MAP(LifeTime);
+		CSUI_API CS_ADD_TO_ENUM_MAP(Complete);
+		CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsUserWidgetDeallocateMethod_MAX, "MAX");
+	}
+
+	CSUI_API const uint8 MAX = (uint8)Type::ECsUserWidgetDeallocateMethod_MAX;
+}
+
+namespace NCsUserWidget
+{
+	namespace NDeallocateMethod
+	{
+		namespace Ref
+		{
+			typedef EMDeallocateMethod EnumMapType;
+
+			CSUI_API CS_ADD_TO_ENUM_MAP(LifeTime);
+			CSUI_API CS_ADD_TO_ENUM_MAP(Complete);
+		}
+	}
+}
+
+#pragma endregion UserWidgetDeallocateMethod

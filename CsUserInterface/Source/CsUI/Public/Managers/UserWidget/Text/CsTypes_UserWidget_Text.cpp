@@ -4,20 +4,19 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
-// FCsUI_UserWidget_Text_OutlineSettings
+// FCsUserWidget_Text_OutlineSettings
 #pragma region
-
 
 #define SettingsType NCsUserWidget::NText::FOutline
 
-void FCsUI_UserWidget_Text_OutlineSettings::CopyToSettings(SettingsType* Settings)
+void FCsUserWidget_Text_OutlineSettings::CopyToSettings(SettingsType* Settings)
 {
 	Settings->SetSize(&Size);
 	Settings->SetbApplyOutlineToDropShadow(&bApplyOutlineToDropShadow);
 	Settings->SetColor(&Color);
 }
 
-void FCsUI_UserWidget_Text_OutlineSettings::CopyToSettingsAsValue(SettingsType* Settings) const
+void FCsUserWidget_Text_OutlineSettings::CopyToSettingsAsValue(SettingsType* Settings) const
 {
 	Settings->SetSize(Size);
 	Settings->SetbApplyOutlineToDropShadow(bApplyOutlineToDropShadow);
@@ -26,12 +25,12 @@ void FCsUI_UserWidget_Text_OutlineSettings::CopyToSettingsAsValue(SettingsType* 
 
 #undef SettingsType
 
-bool FCsUI_UserWidget_Text_OutlineSettings::IsValidChecked(const FString& Context) const
+bool FCsUserWidget_Text_OutlineSettings::IsValidChecked(const FString& Context) const
 {
 	return true;
 }
 
-bool FCsUI_UserWidget_Text_OutlineSettings::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+bool FCsUserWidget_Text_OutlineSettings::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
 {
 	return true;
 }
@@ -52,21 +51,20 @@ namespace NCsUserWidget
 	}
 }
 
-#pragma endregion FCDamage_Text_OutlineSettings
+#pragma endregion FCsUserWidget_Text_OutlineSettings
 
-// FCDamage_Text_ShadowSettings
+// FCsUserWidget_Text_ShadowSettings
 #pragma region
-
 
 #define SettingsType NCsUserWidget::NText::FShadow
 
-void FCsUI_UserWidget_Text_ShadowSettings::CopyToSettings(SettingsType* Settings)
+void FCsUserWidget_Text_ShadowSettings::CopyToSettings(SettingsType* Settings)
 {
 	Settings->SetOffset(&Offset);
 	Settings->SetColor(&Color);
 }
 
-void FCsUI_UserWidget_Text_ShadowSettings::CopyToSettingsAsValue(SettingsType* Settings) const
+void FCsUserWidget_Text_ShadowSettings::CopyToSettingsAsValue(SettingsType* Settings) const
 {
 	Settings->SetOffset(Offset);
 	Settings->SetColor(Color);
@@ -74,12 +72,12 @@ void FCsUI_UserWidget_Text_ShadowSettings::CopyToSettingsAsValue(SettingsType* S
 
 #undef SettingsType
 
-bool FCsUI_UserWidget_Text_ShadowSettings::IsValidChecked(const FString& Context) const
+bool FCsUserWidget_Text_ShadowSettings::IsValidChecked(const FString& Context) const
 {
 	return true;
 }
 
-bool FCsUI_UserWidget_Text_ShadowSettings::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+bool FCsUserWidget_Text_ShadowSettings::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
 {
 	return true;
 }
@@ -100,4 +98,4 @@ namespace NCsUserWidget
 	}
 }
 
-#pragma endregion FCsUI_UserWidget_Text_ShadowSettings
+#pragma endregion FCsUserWidget_Text_ShadowSettings

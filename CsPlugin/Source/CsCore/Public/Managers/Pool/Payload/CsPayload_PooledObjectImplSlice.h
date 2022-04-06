@@ -88,6 +88,7 @@ namespace NCsPooledObject
 
 			void AddReset(ICsReset* InReset);
 
+			bool Copy(const FImplSlice* From);
 			bool CopyFrom(const FImplSlice* From);
 
 			FORCEINLINE static void Deconstruct(void* Ptr)

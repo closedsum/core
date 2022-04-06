@@ -67,14 +67,19 @@ namespace NCsPooledObject
 			Resets.Add(InReset);
 		}
 
-		bool FImplSlice::CopyFrom(const FImplSlice* From)
+		bool FImplSlice::Copy(const FImplSlice* From)
 		{
 			UpdateType = From->UpdateType;
 			Instigator = From->Instigator;
-			Owner = From->Owner;
-			Parent = From->Parent;
-			Time = From->Time;
+			Owner	   = From->Owner;
+			Parent	   = From->Parent;
+			Time	   = From->Time;
 			return true;
+		}
+
+		bool FImplSlice::CopyFrom(const FImplSlice* From)
+		{
+			return Copy(From);
 		}
 	}
 }

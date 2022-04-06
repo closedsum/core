@@ -7,7 +7,7 @@
 
 #include "CsTypes_UserWidget_Text.generated.h"
 
-// FCsUI_UserWidget_Text_OutlineSettings
+// FCsUserWidget_Text_OutlineSettings
 #pragma region
 
 // NCsUserWidget::NText::FOutline
@@ -17,7 +17,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NText, FOutline)
 * Describes any Outline Settings for Damage Text.
 */
 USTRUCT(BlueprintType)
-struct CSUI_API FCsUI_UserWidget_Text_OutlineSettings
+struct CSUI_API FCsUserWidget_Text_OutlineSettings
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI")
 	FLinearColor Color;
 
-	FCsUI_UserWidget_Text_OutlineSettings() :
+	FCsUserWidget_Text_OutlineSettings() :
 		Size(0),
 		bApplyOutlineToDropShadow(false),
 		Color(FLinearColor::Black)
@@ -89,13 +89,20 @@ namespace NCsUserWidget
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
+
+			FORCEINLINE void Reset()
+			{
+				CS_RESET_MEMBER_WITH_PROXY(Size, 0)
+				CS_RESET_MEMBER_WITH_PROXY(bApplyOutlineToDropShadow, false)
+				CS_RESET_MEMBER_WITH_PROXY(Color, FLinearColor::Black)
+			}
 		};
 	}
 }
 
-#pragma endregion FCsUI_UserWidget_Text_OutlineSettings
+#pragma endregion FCsUserWidget_Text_OutlineSettings
 
-// FCsUI_UserWidget_Text_ShadowSettings
+// FCsUserWidget_Text_ShadowSettings
 #pragma region
 
 // NCsUserWidget::NText::FShadow
@@ -105,7 +112,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NText, FShadow)
 * Describes any Shadow Settings for Damage Text.
 */
 USTRUCT(BlueprintType)
-struct CSUI_API FCsUI_UserWidget_Text_ShadowSettings
+struct CSUI_API FCsUserWidget_Text_ShadowSettings
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -119,7 +126,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI")
 	FLinearColor Color;
 	
-	FCsUI_UserWidget_Text_ShadowSettings() :
+	FCsUserWidget_Text_ShadowSettings() :
 		Offset(1.0f),
 		Color(FLinearColor::Transparent)
 	{
@@ -166,8 +173,14 @@ namespace NCsUserWidget
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
+
+			FORCEINLINE void Reset()
+			{
+				CS_RESET_MEMBER_WITH_PROXY(Offset, FVector2D::UnitVector)
+				CS_RESET_MEMBER_WITH_PROXY(Color, FLinearColor::Transparent)
+			}
 		};
 	}
 }
 
-#pragma endregion FCsUI_UserWidget_Text_ShadowSettings
+#pragma endregion FCsUserWidget_Text_ShadowSettings

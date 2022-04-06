@@ -2,6 +2,7 @@
 #pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+#include "Types/Enum/CsEnumMap.h"
 #include "Engine/DataTable.h"
 
 #include "CsTypes_UserWidget.generated.h"
@@ -495,6 +496,87 @@ struct CSUI_API FCsUserWidgetPooledEntry : public FTableRowBase
 };
 
 #pragma endregion FCsUserWidgetPooledEntry
+
+// UserWidgetDeallocateMethod
+#pragma region
+
+/**
+* Type for different ways to deallocate a pooled UserWidget.
+*  UserWidget is an object that implements the interface: ICsUserWidgetPooled.
+*/
+UENUM(BlueprintType)
+enum class ECsUserWidgetDeallocateMethod : uint8
+{
+	/** If an UserWidget is attached to a parent object,
+		  LifeTime == 0.of means the UserWidget object will be deallocated immediately
+		   when the parent has been destroyed / deallocated.
+		  LifeTime > 0.0f will be the time after the parent object has been
+		   destroyed / deallocated to deallocate the UserWidget object.
+		If an UserWidget is NOT attached to a parent object,
+		  LifeTime == 0.0f means the UserWidget object will stay active forever.
+		  LifeTime > 0.0f means the UserWidget will be deallocated after LifeTime amount of time after
+		   the UserWidget object has been allocated. */
+	LifeTime						  UMETA(DisplayName = "LifeTime"),
+	/** */
+	Complete						  UMETA(DisplayName = "Complete"),
+	ECsUserWidgetDeallocateMethod_MAX UMETA(Hidden),
+};
+
+struct CSUI_API EMCsUserWidgetDeallocateMethod final : public TCsEnumMap<ECsUserWidgetDeallocateMethod>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsUserWidgetDeallocateMethod, ECsUserWidgetDeallocateMethod)
+};
+
+namespace NCsUserWidgetDeallocateMethod
+{
+	typedef ECsUserWidgetDeallocateMethod Type;
+
+	namespace Ref
+	{
+		extern CSUI_API const Type LifeTime;
+		extern CSUI_API const Type Complete;
+		extern CSUI_API const Type ECsUserWidgetDeallocateMethod_MAX;
+	}
+
+	extern CSUI_API const uint8 MAX;
+}
+
+namespace NCsUserWidget
+{
+	enum class EDeallocateMethod : uint8
+	{
+		/** If an UserWidget is attached to a parent object,
+		  LifeTime == 0.of means the UserWidget object will be deallocated immediately
+		   when the parent has been destroyed / deallocated.
+		  LifeTime > 0.0f will be the time after the parent object has been
+		   destroyed / deallocated to deallocate the UserWidget object.
+		If an UserWidget is NOT attached to a parent object,
+		  LifeTime == 0.0f means the UserWidget object will stay active forever.
+		  LifeTime > 0.0f means the UserWidget will be deallocated after LifeTime amount of time after
+		   the UserWidget object has been allocated. */
+		LifeTime,
+		/** */
+		Complete
+	};
+
+	struct CSUI_API EMDeallocateMethod final : public TCsEnumMap<EDeallocateMethod>
+	{
+		CS_ENUM_MAP_BODY(EMDeallocateMethod, EDeallocateMethod)
+	};
+
+	namespace NDeallocateMethod
+	{
+		namespace Ref
+		{
+			typedef EDeallocateMethod Type;
+
+			extern CSUI_API const Type LifeTime;
+			extern CSUI_API const Type Complete;
+		}
+	}
+}
+
+#pragma endregion UserWidgetDeallocateMethod
 
 // NCsUserWidget::NPayload::EChange
 #pragma region

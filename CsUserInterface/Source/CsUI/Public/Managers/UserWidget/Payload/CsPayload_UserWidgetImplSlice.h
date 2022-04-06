@@ -15,8 +15,8 @@ namespace NCsUserWidget
 		/**
 		* Basic implementation of the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
 		*/
-		struct CSUI_API FImplSlice : public PayloadType,
-									 public ICsReset
+		struct CSUI_API FImplSlice final : public PayloadType,
+										   public ICsReset
 		{
 		public:
 

@@ -15,8 +15,8 @@ namespace NCsUserWidget
 		{
 		#define PayloadType NCsUserWidget::NPayload::NText::IText
 
-			struct CSUI_API FImplSlice : public PayloadType,
-										 public ICsReset
+			struct CSUI_API FImplSlice final : public PayloadType,
+											   public ICsReset
 			{
 			public:
 
@@ -82,6 +82,9 @@ namespace NCsUserWidget
 			#pragma endregion ICsReset
 
 			public:
+
+				FORCEINLINE OutlineSettingsType* GetOutlineSettingsPtr() { return &OutlineSettings; }
+				FORCEINLINE ShadowSettingsType* GetShadowSettingsPtr() { return &ShadowSettings; }
 
 				FORCEINLINE static void Deconstruct(void* Ptr)
 				{

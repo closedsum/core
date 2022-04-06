@@ -853,9 +853,8 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 		// NOTE: Do NOT add to map. Internal will take care of deconstruction.
 	}
 
-	UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
-	
-	const TSet<FECsProjectilePayload> PayloadTypes = ModuleSettings->Manager_Projectile.PayloadTypes;
+	const FCsSettings_Manager_Projectile& ManagerSettings = FCsSettings_Manager_Projectile::Get();
+	const TSet<FECsProjectilePayload> PayloadTypes		  = ManagerSettings.PayloadTypes;
 
 	// NCsProjectile::NPayload::NModifier::FImplSlice
 	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileModifier))

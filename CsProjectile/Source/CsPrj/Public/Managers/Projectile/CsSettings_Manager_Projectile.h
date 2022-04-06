@@ -110,7 +110,7 @@ public:
 
 		The idea behind behind this mapping is Projectiles of a different type may
 		not have underlying code differences and just be differences in the data
-		each respective character type uses. This provides the ability to save on both
+		each respective projectile type uses. This provides the ability to save on both
 		the number of pools created and the number of objects created for a pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsProjectile, FECsProjectile> TypeMap;

@@ -49,7 +49,18 @@ struct CSUI_API FCsSettings_Manager_UserWidget
 
 public:
 
-	/** */
+	/** General Idea: Pool Sharing via Mapping of Types.
+		Describes the mapping of a UserWidget type to underlying UserWidget type
+		in terms the pool of UserWidget.
+
+		i.e. If Type 'A' is mapped to Type 'B' (TypeMap[A] = B), then
+			 when a UserWidget of type 'A' is spawned it will be allocated from
+			 the pool of UserWidget of type 'B'.
+
+		The idea behind behind this mapping is UserWidgets of a different type may
+		not have underlying code differences and just be differences in the data
+		each respective user widget type uses. This provides the ability to save on both
+		the number of pools created and the number of objects created for a pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsUserWidgetPooled, FECsUserWidgetPooled> TypeMap;
 
@@ -57,6 +68,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsUserWidgetPooled DefaultType;
 
+	/** Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each UserWidget type. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsUserWidgetPooled, FCsSettings_Manager_UserWidget_PoolParams> PoolParams;
 
@@ -66,6 +78,8 @@ public:
 		PoolParams()
 	{
 	}
+
+	static const FCsSettings_Manager_UserWidget& Get();
 };
 
 #pragma endregion FCsSettings_Manager_UserWidget

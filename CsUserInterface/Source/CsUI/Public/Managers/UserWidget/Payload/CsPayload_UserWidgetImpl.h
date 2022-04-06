@@ -1,8 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/UserWidget/Payload/CsPayload_UserWidget.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;
@@ -31,7 +30,7 @@ namespace NCsUserWidget
 
 		public:
 
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 			NCsPooledObject::EUpdate UpdateType;
 
@@ -45,11 +44,15 @@ namespace NCsUserWidget
 
 			uint32  PreserveChangesFromDefaultMask;
 
-			// NCsUserWidget::NPayload::IPayload
+			// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
 
 			ESlateVisibility Visibility;
 
 			bool bAddToViewport;
+
+			float RenderScale;
+
+			float LifeTime;
 
 		public:
 
@@ -64,7 +67,7 @@ namespace NCsUserWidget
 
 		#pragma endregion ICsGetInterfaceMap
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 		public:
 
@@ -80,7 +83,7 @@ namespace NCsUserWidget
 
 			FORCEINLINE const uint32& GetPreserveChangesFromDefaultMask() const { return PreserveChangesFromDefaultMask; }
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 
 		public:
 
@@ -93,18 +96,19 @@ namespace NCsUserWidget
 			template<typename T>
 			FORCEINLINE T* GetParent() const { return Cast<T>(GetParent()); }
 
-		// NCsUserWidget::NPayload::IPayload
+		// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
 		#pragma region
 		public:
 
 			FORCEINLINE const ESlateVisibility& GetVisibility() const { return Visibility; }
-			FORCEINLINE bool ShouldAddToViewport() const { return bAddToViewport; }
+			FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
+			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 
-		#pragma endregion NCsUserWidget::NPayload::IPayload
+		#pragma endregion WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
 		};
 
 	#undef PooledPayloadType
 	#undef WidgetPayloadType
-	#undef DeallocateParamsType
 	}
 }

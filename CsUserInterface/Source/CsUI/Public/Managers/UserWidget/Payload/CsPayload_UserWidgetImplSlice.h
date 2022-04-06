@@ -1,8 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/UserWidget/Payload/CsPayload_UserWidget.h"
 #include "Reset/CsReset.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;
@@ -11,10 +10,12 @@ namespace NCsUserWidget
 {
 	namespace NPayload
 	{
+	#define PayloadType NCsUserWidget::NPayload::IPayload
+
 		/**
-		* Basic implementation of the interface: NCsUserWidget::NPayload::IPayload.
+		* Basic implementation of the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
 		*/
-		struct CSUI_API FImplSlice : public IPayload,
+		struct CSUI_API FImplSlice : public PayloadType,
 									 public ICsReset
 		{
 		public:
@@ -29,9 +30,15 @@ namespace NCsUserWidget
 
 		public:
 
-			// IPayload
+			// PayloadType (NCsUserWidget::NPayload::IPayload)
 
 			ESlateVisibility Visibility;
+
+			bool bAddToViewport;
+
+			float RenderScale;
+
+			float LifeTime;
 
 		public:
 
@@ -41,10 +48,7 @@ namespace NCsUserWidget
 		#pragma region
 		public:
 
-			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const
-			{
-				return InterfaceMap;
-			}
+			FORCEINLINE FCsInterfaceMap* GetInterfaceMap() const { return InterfaceMap; }
 
 		#pragma endregion ICsGetInterfaceMap
 
@@ -52,16 +56,16 @@ namespace NCsUserWidget
 
 			void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
-		// IPayload
+		// PayloadType (NCsUserWidget::NPayload::IPayload)
 		#pragma region
 		public:
 
-			FORCEINLINE const ESlateVisibility& GetVisibility() const
-			{
-				return Visibility;
-			}
+			FORCEINLINE const ESlateVisibility& GetVisibility() const { return Visibility; }
+			FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
+			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
+			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 
-		#pragma endregion IPayload
+		#pragma endregion PayloadType (NCsUserWidget::NPayload::IPayload)
 
 		// ICsReset
 		#pragma region
@@ -70,10 +74,8 @@ namespace NCsUserWidget
 			void Reset();
 
 		#pragma endregion ICsReset
-
-		public:
-
-			bool CopyFrom(const FImplSlice* From);
 		};
+
+	#undef PayloadType
 	}
 }

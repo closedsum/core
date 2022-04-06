@@ -12,7 +12,7 @@ namespace NCsUserWidget
 		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated(false),
 			UpdateType(NCsPooledObject::EUpdate::Manager),
 			Instigator(nullptr),
@@ -20,9 +20,11 @@ namespace NCsUserWidget
 			Parent(nullptr),
 			Time(),
 			PreserveChangesFromDefaultMask(0),
-			// NCsUserWidget::NPayload::IPayload
+			// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
 			Visibility(ESlateVisibility::SelfHitTestInvisible),
-			bAddToViewport(false)
+			bAddToViewport(false),
+			RenderScale(1.0f),
+			LifeTime(0.0f)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -40,12 +42,12 @@ namespace NCsUserWidget
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NPayload::IPayload
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		#pragma region
 
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NPayload::IPayload
+			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
 			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
@@ -54,11 +56,13 @@ namespace NCsUserWidget
 			PreserveChangesFromDefaultMask = 0;
 
 			Time.Reset();
-			// NCsUserWidget::NPayload::IPayload
+			// WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
 			Visibility = ESlateVisibility::SelfHitTestInvisible;
 			bAddToViewport = false;
+			RenderScale = 1.0f;
+			LifeTime = 0.0f;
 		}
 
-		#pragma endregion NCsPooledObject::NPayload::IPayload
+		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 	}
 }

@@ -12,8 +12,11 @@ namespace NCsUserWidget
 		FImplSlice::FImplSlice() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
-			// ICsPayload_UserWidget
-			Visibility(ESlateVisibility::SelfHitTestInvisible)
+			// PayloadType (NCsUserWidget::NPayload::IPayload)
+			Visibility(ESlateVisibility::SelfHitTestInvisible),
+			bAddToViewport(false),
+			RenderScale(1.0f),
+			LifeTime(0.0f)
 		{
 		}
 
@@ -28,22 +31,18 @@ namespace NCsUserWidget
 			InterfaceMap->Add<IPayload>(FImplSlice::Name, static_cast<IPayload*>(this));
 		}
 
-
 		// ICsReset
 		#pragma region
 
 		void FImplSlice::Reset()
 		{
-			// ICsPayload_UserWidget
+			// PayloadType (NCsUserWidget::NPayload::IPayload)
 			Visibility = ESlateVisibility::SelfHitTestInvisible;
+			bAddToViewport = false;
+			RenderScale = 1.0f;
+			LifeTime = 0.0f;
 		}
 
 		#pragma endregion ICsReset
-
-		bool FImplSlice::CopyFrom(const FImplSlice* From)
-		{
-			Visibility = From->Visibility;
-			return true;
-		}
 	}
 }

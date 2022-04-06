@@ -1,16 +1,14 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 #include "UObject/Interface.h"
 
 #include "CsDeconstructInterfaceSliceMap.generated.h"
-#pragma once
 
 UINTERFACE()
 class CSCORE_API UCsDeconstructInterfaceSliceMap : public UInterface
 {
 	GENERATED_UINTERFACE_BODY()
 };
-
 
 class CSCORE_API ICsDeconstructInterfaceSliceMap
 {

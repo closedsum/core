@@ -120,7 +120,7 @@ public:
 	TSet<FECsProjectilePayload> PayloadTypes;
 
 	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
-		is important to indicate when a particular Sound type WILL or will NOT get "ticked" or updated. */
+		is important to indicate when a particular Projectile type WILL or will NOT get "ticked" or updated. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsUpdateGroup, FCsSettings_Manager_Projectile_TypeArray> TypesByUpdateGroupMap;
 
@@ -140,6 +140,8 @@ public:
 		Modifiers()
 	{
 	}
+
+	static const FCsSettings_Manager_Projectile& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Projectile

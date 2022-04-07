@@ -332,7 +332,7 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 	PoolParams.World							= MyRoot->GetWorld();
 	PoolParams.ConstructParams.Outer			= this;
 	PoolParams.ConstructParams.Class			= Class;
-	PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+	PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Actor;
 	PoolParams.bConstructPayloads				= true;
 	PoolParams.PayloadSize						= InPoolParams.PayloadSize;
 	PoolParams.bCreatePool						= true;
@@ -520,7 +520,7 @@ void UCsManager_Weapon::InitInternalFromSettings()
 			PoolParams.World							= ManagerParams.World;
 			//PoolParams.LogType
 			PoolParams.ConstructParams.Class			= Class;
-			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Actor;
 			PoolParams.bConstructPayloads				= true;
 			PoolParams.PayloadSize						= Params.PayloadSize;
 			PoolParams.bCreatePool						= true;

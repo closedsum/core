@@ -8,6 +8,38 @@
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImplSlice.h"
 #include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_TextImplSlice.h"
 
+#define InfoType NCsUserWidget::NText::FInfo
+
+void FCsUserWidget_TextPooledInfo::CopyToInfo(InfoType* Info)
+{
+	Info->SetType(&Type);
+
+	typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
+
+	Info->SetDeallocateMethod((DeallocateMethodType*)(&DeallocateMethod));
+	Info->SetRenderScale(&RenderScale);
+	Info->SetLifeTime(&LifeTime);
+	Info->SetColor(&Color);
+	OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
+	ShadowSettings.CopyToSettings(Info->GetShadowSettingsPtr());
+}
+
+void FCsUserWidget_TextPooledInfo::CopyToInfoAsValue(InfoType* Info) const
+{
+	Info->SetType(Type);
+
+	typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
+
+	Info->SetDeallocateMethod((DeallocateMethodType)(DeallocateMethod));
+	Info->SetRenderScale(RenderScale);
+	Info->SetLifeTime(LifeTime);
+	Info->SetColor(Color);
+	OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
+	ShadowSettings.CopyToSettingsAsValue(Info->GetShadowSettingsPtr());
+}
+
+#undef InfoType
+
 #define PayloadType NCsUserWidget::NPayload::IPayload
 
 void FCsUserWidget_TextPooledInfo::SetPayloadChecked(const FString& Context, PayloadType* Payload) const
@@ -126,6 +158,12 @@ bool FCsUserWidget_TextPooledInfo::IsValidChecked(const FString& Context) const
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooled, Type);
 	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetDeallocateMethod, DeallocateMethod);
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(RenderScale, 0.0f)
+
+	if (DeallocateMethod == ECsUserWidgetDeallocateMethod::LifeTime)
+	{
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(LifeTime, 0.0f)
+	}
+
 	CS_IS_VALID_CHECKED(OutlineSettings);
 	CS_IS_VALID_CHECKED(ShadowSettings);
 	return true;
@@ -136,7 +174,60 @@ bool FCsUserWidget_TextPooledInfo::IsValid(const FString& Context, void(*Log)(co
 	CS_IS_ENUM_STRUCT_VALID(EMCsUserWidgetPooled, FECsUserWidgetPooled, Type)
 	CS_IS_ENUM_VALID(EMCsUserWidgetDeallocateMethod, ECsUserWidgetDeallocateMethod, DeallocateMethod)
 	CS_IS_FLOAT_GREATER_THAN(RenderScale, 0.0f)
+
+	if (DeallocateMethod == ECsUserWidgetDeallocateMethod::LifeTime)
+	{
+		CS_IS_FLOAT_GREATER_THAN(LifeTime, 0.0f)
+	}
+
 	CS_IS_VALID(OutlineSettings)
 	CS_IS_VALID(ShadowSettings)
 	return true;
+}
+
+namespace NCsUserWidget
+{
+	namespace NText
+	{
+		bool FInfo::IsValidChecked(const FString& Context) const
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooled, GetType());
+
+			typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
+
+			CS_IS_ENUM_VALID_CHECKED(DeallocateMethodMapType, GetDeallocateMethod());
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRenderScale(), 0.0f)
+
+			typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
+
+			if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+			{
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLifeTime(), 0.0f)
+			}
+
+			CS_IS_VALID_CHECKED(GetOutlineSettings());
+			CS_IS_VALID_CHECKED(GetShadowSettings());
+			return true;
+		}
+
+		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsUserWidgetPooled, FECsUserWidgetPooled, GetType())
+
+			typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
+			typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
+
+			CS_IS_ENUM_VALID(DeallocateMethodMapType, DeallocateMethodType, GetDeallocateMethod())
+			CS_IS_FLOAT_GREATER_THAN(GetRenderScale(), 0.0f)
+
+			if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+			{
+				CS_IS_FLOAT_GREATER_THAN(GetLifeTime(), 0.0f)
+			}
+
+			CS_IS_VALID(GetOutlineSettings())
+			CS_IS_VALID(GetShadowSettings())
+			return true;
+		}
+	}
 }

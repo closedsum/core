@@ -1,7 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/UserWidget/CsTypes_UserWidget.h"
-#include "CsSettings_Manager_UserWidget.generated.h"
 #pragma once
+#include "Managers/UserWidget/CsTypes_UserWidget.h"
+
+#include "CsSettings_Manager_UserWidget.generated.h"
 
 // FCsSettings_Manager_UserWidget_PoolParams
 #pragma region

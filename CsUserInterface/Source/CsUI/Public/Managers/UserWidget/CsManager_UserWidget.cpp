@@ -41,6 +41,7 @@ namespace NCsManagerUserWidget
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, InitInternalFromSettings);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, PopulateDataMapFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, CustomNewObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidgetPooled);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetUserWidget);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget, GetData);
@@ -428,16 +429,25 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 
 			checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
 
-			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
-			PoolParams.World							= ManagerParams.World;
-			PoolParams.ConstructParams.Outer			= this;
-			PoolParams.ConstructParams.Class			= Class;
-			PoolParams.ConstructParams.TypeName			= Params.Widget.GetFName();
-			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
-			PoolParams.bConstructPayloads				= true;
-			PoolParams.PayloadSize						= Params.PayloadSize;
-			PoolParams.bCreatePool						= true;
-			PoolParams.PoolSize							= Params.PoolSize;
+			PoolParams.Name						= ManagerParams.Name + TEXT("_") + Type.ToChar();
+			PoolParams.World					= ManagerParams.World;
+			PoolParams.ConstructParams.Outer	= this;
+			PoolParams.ConstructParams.Class	= Class;
+			PoolParams.ConstructParams.TypeName	= Params.Widget.GetFName();
+
+			if (Cast<UUserWidget>(Class))
+			{
+				PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::CustomObject;
+				PoolParams.ConstructParams.CustomNewObject_Impl.BindUObject(this, &UCsManager_UserWidget::CustomNewObject);
+			}
+			else
+			{
+				PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Object;
+			}
+			PoolParams.bConstructPayloads	= true;
+			PoolParams.PayloadSize			= Params.PayloadSize;
+			PoolParams.bCreatePool			= true;
+			PoolParams.PoolSize				= Params.PoolSize;
 		}
 
 		InitInternal(ManagerParams);
@@ -506,11 +516,33 @@ FCsUserWidgetPooled* UCsManager_UserWidget::ConstructContainer(const FECsUserWid
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
+
+UObject* UCsManager_UserWidget::CustomNewObject(const ConstructParamsType& Params)
+{
+	using namespace NCsManagerUserWidget::NCached;
+
+	const FString& Context = Str::CustomNewObject;
+
+	UClass* Class = Params.Class;
+	
+	CS_IS_PTR_NULL_CHECKED(Class);
+
+	checkf(Class->IsChildOf<UUserWidget>(), TEXT("%s: Class: %s is NOT a child of: UUserWidget."), *Context, *(Class->GetName()));
+
+	UWorld* World = MyRoot->GetWorld();
+
+	checkf(World, TEXT("%s: Failed to get a UWorld from MyRoot: %s with Class: %s."), *Context, *(MyRoot->GetName()), *(MyRoot->GetClass()->GetName()));
+
+	UUserWidget* UserWidget = CreateWidget(World, Class);
+	return UserWidget;
+}
+
 TMulticastDelegate<void(const FCsUserWidgetPooled*, const ConstructParamsType&)>& UCsManager_UserWidget::GetOnConstructObject_Event(const FECsUserWidgetPooled& Type)
 {
-#undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
 }
+
+#undef ConstructParamsType
  
 		// Add
 #pragma region

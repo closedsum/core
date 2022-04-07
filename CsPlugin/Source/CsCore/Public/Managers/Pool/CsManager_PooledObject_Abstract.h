@@ -447,7 +447,7 @@ namespace NCsPooledObject
 				UObject* Object = nullptr;
 
 				// Actor
-				if (Params.ConstructionType == ECsPooledObjectConstruction::Actor)
+				if (Params.ConstructionType == NCsPooledObject::EConstruction::Actor)
 				{
 					AActor* Actor = GetCurrentWorld()->template SpawnActor<AActor>(Class, Params.ConstructionInfo);
 
@@ -464,11 +464,21 @@ namespace NCsPooledObject
 				}
 				// Object
 				else
-				if (Params.ConstructionType == ECsPooledObjectConstruction::Object)
+				if (Params.ConstructionType == NCsPooledObject::EConstruction::Object)
 				{
-					checkf(Params.Outer, TEXT("%s::ConstructObject: Params.Outer is NULL. This should be Valid if Params.ConstructionType == ECsPooledObjectConstruction::Object"), *Name)
+					checkf(Params.Outer, TEXT("%s::ConstructObject: Params.Outer is NULL. This should be Valid if Params.ConstructionType == NCsPooledObject::EConstruction::Object."), *Name)
 
 					Object = NewObject<UObject>(Params.Outer, Class);
+
+					checkf(Object, TEXT("%s::ConstructObject: Object is NULL. Class: %s. Object did NOT get constructed."), *Name, *(Class->GetName()));
+				}
+				// Custom Object
+				else
+				if (Params.ConstructionType == NCsPooledObject::EConstruction::CustomObject)
+				{
+					checkf(Params.CustomNewObject_Impl.IsBound(), TEXT("%s::ConstructObject: Params.CustomNewObject_Impl is NOT Bound. This should be Bound if Params.ConstructionType == NCsPooledObject::EConstruction::CustomObject."), *Name);
+
+					Object = Params.CustomNewObject_Impl.Execute(Params);
 
 					checkf(Object, TEXT("%s::ConstructObject: Object is NULL. Class: %s. Object did NOT get constructed."), *Name, *(Class->GetName()));
 				}

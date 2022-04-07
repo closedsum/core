@@ -97,10 +97,27 @@ namespace NCsPooledObjectConstruction
 
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Object);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(CustomObject, "Custom Object");
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPooledObjectConstruction_MAX, "MAX");
 	}
 
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsPooledObjectConstruction_MAX;
+}
+
+namespace NCsPooledObject
+{
+	namespace NConstruction
+	{
+		namespace Ref
+		{
+			typedef EMConstruction EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Object);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Actor);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(CustomObject, "Custom Object");
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EConstruction_MAX, "MAX");
+		}
+	}
 }
 
 #pragma endregion PooledObjectConstruction

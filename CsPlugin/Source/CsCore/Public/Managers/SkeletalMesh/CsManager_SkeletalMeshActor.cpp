@@ -420,7 +420,7 @@ void UCsManager_SkeletalMeshActor::InitInternalFromSettings()
 			PoolParams.World							= ManagerParams.World;
 			PoolParams.ConstructParams.Outer			= this;
 			PoolParams.ConstructParams.Class			= Class;
-			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Actor;
 			PoolParams.bConstructPayloads				= true;
 			PoolParams.PayloadSize						= Params.PayloadSize;
 			PoolParams.bCreatePool						= true;

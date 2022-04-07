@@ -496,7 +496,7 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 			PoolParams.World						  = ManagerParams.World;
 			PoolParams.ConstructParams.Outer		  = this;
 			PoolParams.ConstructParams.Class		  = Class;
-			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Object;
+			PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Object;
 			PoolParams.bConstructPayloads			  = true;
 			PoolParams.PayloadSize					  = Params.PayloadSize;
 			PoolParams.bCreatePool					  = true;

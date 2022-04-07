@@ -16,7 +16,6 @@ namespace NCsPooledObject
 		// FConstructParams
 		#pragma region
 
-
 		/**
 		*/
 		struct CSCORE_API FConstructParams
@@ -35,9 +34,16 @@ namespace NCsPooledObject
 				normal cases. Can be used a additional Type information for a nested object. */
 			FName ClassTypeName;
 
-			ECsPooledObjectConstruction ConstructionType;
+			NCsPooledObject::EConstruction ConstructionType;
 
 			FActorSpawnParameters ConstructionInfo;
+
+			/**
+			* Custom delegate to construct a UObject (usually UObject is constructed via NewObject).
+			*
+			* return UObject
+			*/
+			TDelegate<UObject* /*Object*/(const FConstructParams& /*Params*/)> CustomNewObject_Impl;
 
 			bool bReplicates;
 

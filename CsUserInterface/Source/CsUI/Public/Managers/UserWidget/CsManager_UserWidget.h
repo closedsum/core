@@ -55,8 +55,6 @@ namespace NCsUserWidget
 #pragma endregion Internal
 
 class ICsGetManagerUserWidget;
-class ICsData_FX;
-class UDataTable;
 
 // NCsData::NManager::NHandler::TClass
 namespace NCsData {
@@ -308,6 +306,14 @@ public:
 	* return
 	*/
 	virtual FCsUserWidgetPooled* ConstructContainer(const FECsUserWidgetPooled& Type);
+
+	/**
+	* Custom implementation for constructing a UObject (usually UObject is constructed via NewObject).
+	* 
+	* @param Params
+	* return			UObject.
+	*/
+	UObject* CustomNewObject(const ConstructParamsType& Params);
 
 	/**
 	*

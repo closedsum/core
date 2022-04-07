@@ -10,7 +10,7 @@ namespace NCsPooledObject
 			Class(nullptr),
 			TypeName(NAME_None),
 			ClassTypeName(NAME_None),
-			ConstructionType(ECsPooledObjectConstruction::Object),
+			ConstructionType(NCsPooledObject::EConstruction::Object),
 			ConstructionInfo(),
 			bReplicates(false)
 		{

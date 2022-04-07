@@ -376,7 +376,7 @@ void UCsManager_WidgetActor::InitInternalFromSettings()
 			PoolParams.Name								= ManagerParams.Name + TEXT("_") + Type.ToChar();
 			PoolParams.World							= ManagerParams.World;
 			PoolParams.ConstructParams.Class			= Class;
-			PoolParams.ConstructParams.ConstructionType = ECsPooledObjectConstruction::Actor;
+			PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Actor;
 			PoolParams.bConstructPayloads				= true;
 			PoolParams.PayloadSize						= Params.PayloadSize;
 			PoolParams.bCreatePool						= true;

@@ -72,8 +72,8 @@ public:
 	}
 
 #define InfoType NCsUserWidget::NText::FInfo
-	//void CopyToInfo(InfoType* Info);
-	//void CopyToInfoAsValue(InfoType* Info) const;
+	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info) const;
 #undef InfoType
 
 #define PayloadType NCsUserWidget::NPayload::IPayload
@@ -129,9 +129,34 @@ namespace NCsUserWidget
 
 		public:
 
-			FInfo()
+			FInfo() :
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(RenderScale, 1.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Color, FLinearColor::White),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(OutlineSettings),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ShadowSettings)
 			{
+				CS_CTOR_SET_MEMBER_PROXY(Type);
+				CS_CTOR_SET_MEMBER_PROXY(DeallocateMethod);
+				CS_CTOR_SET_MEMBER_PROXY(RenderScale);
+				CS_CTOR_SET_MEMBER_PROXY(LifeTime);
+				CS_CTOR_SET_MEMBER_PROXY(Color);
+				CS_CTOR_SET_MEMBER_PROXY(OutlineSettings);
+				CS_CTOR_SET_MEMBER_PROXY(ShadowSettings);
 			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsUserWidgetPooled)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RenderScale, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OutlineSettings, OutlineSettingsType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ShadowSettings, ShadowSettingsType)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 
 		#undef DeallocateMethodType
 		#undef OutlineSettingsType

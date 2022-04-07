@@ -167,11 +167,19 @@ namespace NCsPooledObject
 // PooledObjectConstruction
 #pragma region
 
+/**
+* Describes what type of pooled object to construct.
+* NOTE: Currently only objects of type: UObject are supported
+*/
 UENUM(BlueprintType)
 enum class ECsPooledObjectConstruction : uint8
 {
+	/** Construct a UObject via NewObject */
 	Object							UMETA(DisplayName = "Object"),
+	/** Construct a AActor via SpawnActor */
 	Actor							UMETA(DisplayName = "Actor"),
+	/** Construct a UObject via a custom method */
+	CustomObject					UMETA(DisplayName = "Custom Object"),
 	ECsPooledObjectConstruction_MAX	UMETA(Hidden),
 };
 
@@ -188,10 +196,47 @@ namespace NCsPooledObjectConstruction
 	{
 		extern CSCORE_API const Type Object;
 		extern CSCORE_API const Type Actor;
+		extern CSCORE_API const Type CustomObject;
 		extern CSCORE_API const Type ECsPooledObjectConstruction_MAX;
 	}
 
 	extern CSCORE_API const uint8 MAX;
+}
+
+namespace NCsPooledObject
+{
+	/**
+	* Describes what type of pooled object to construct.
+	* NOTE: Currently only objects of type: UObject are supported
+	*/
+	enum class EConstruction : uint8 
+	{
+		/** Construct a UObject via NewObject */
+		Object,
+		/** Construct a AActor via SpawnActor */
+		Actor,
+		/** Construct a UObject via a custom method */
+		CustomObject,
+		EConstruction_MAX
+	};
+
+	struct CSCORE_API EMConstruction final : public TCsEnumMap<EConstruction>
+	{
+		CS_ENUM_MAP_BODY(EMConstruction, EConstruction)
+	};
+
+	namespace NConstruction
+	{
+		namespace Ref
+		{
+			typedef EConstruction Type;
+
+			extern CSCORE_API const Type Object;
+			extern CSCORE_API const Type Actor;
+			extern CSCORE_API const Type CustomObject;
+			extern CSCORE_API const Type EConstruction_MAX;
+		}
+	}
 }
 
 #pragma endregion PooledObjectContruction

@@ -128,6 +128,19 @@ namespace NCsUI
 				return Row;
 			}
 
+			/**
+			* Safely get the relative file path to the DataTable associated with Member.
+			* NOTE: This path is trimmed (i.e. the path after '.' is removed).
+			*
+			* @param Context		The calling context
+			* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+			* @param Member			The DataTable member.
+			* @param OutPath		(out) String path to DataTable. This path is trimmed.
+			* @param Log			(optional)
+			* return				Whether a string path was found.
+			*/
+			static bool GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
 		#undef MemberType
 		};
 	}

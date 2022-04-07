@@ -2,6 +2,8 @@
 #pragma once
 // DataTable
 #include "Engine/DataTable.h"
+// Log
+#include "Utility/CsUILog.h"
 
 #include "CsUIDataRootSet.generated.h"
 
@@ -85,6 +87,8 @@ public:
 	bool IsValidChecked(const FString& Context, UObject* Object, const EMember& MemberType) const;
 
 	const TSoftObjectPtr<UDataTable>& GetDataTableSoftObjectChecked(const FString& Context, const EMember& MemberType) const;
+
+	bool GetSafeDataTableSoftObject(const FString& Context, const EMember& MemberType, TSoftObjectPtr<UDataTable>& OutSoftObject, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 
 	UDataTable* GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 

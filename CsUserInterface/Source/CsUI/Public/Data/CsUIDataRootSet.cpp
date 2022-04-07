@@ -81,6 +81,33 @@ const TSoftObjectPtr<UDataTable>& FCsUIDataRootSet::GetDataTableSoftObjectChecke
 	return WidgetActorClasses;
 }
 
+bool FCsUIDataRootSet::GetSafeDataTableSoftObject(const FString& Context, const EMember& MemberType, TSoftObjectPtr<UDataTable>& OutSoftObject, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+{
+	#define CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(Member) if (MemberType == EMember::Member) \
+		{ \
+			OutSoftObject = Member; \
+			return true; \
+		}
+
+	// WidgetActorClasses
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WidgetActorClasses)
+	// WidgetActors
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(WidgetActors)
+	// UserWidgetPooledClasses
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgetPooledClasses)
+	// UserWidgetPooled
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgetPooled)
+	// UserWidgetClasses
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgetClasses)
+	// UserWidgets
+	CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED(UserWidgets)
+
+	#undef CS_TEMP_GET_DATA_TABLE_SOFT_OBJECT_CHECKED
+
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get DataTable SoftObject for MemberType."), *Context));
+	return false;
+}
+
 UDataTable* FCsUIDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
 	using namespace NCsUIDataRootSet::NCached;

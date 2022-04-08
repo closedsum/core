@@ -587,7 +587,8 @@ namespace NCsUserWidget
 	{
 		enum class EChange : uint32
 		{
-			AddedToViewport = 1<<0
+			AddedToViewport = 1<<0,
+			ZOrder			= 1<<1
 		};
 	}
 }

@@ -7,51 +7,60 @@
 // Cached
 #pragma region
 
-namespace NCsGraphPinUserWidgetCached
+namespace NCsGraphPinUserWidget
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsUserWidget::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsUserWidget::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsUserWidget
+#define EnumType FECsUserWidget
+
 void SCsGraphPin_ECsUserWidget::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsUserWidget, FECsUserWidget>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsUserWidget::CustomPopulateEnumMap()
 {
-	using namespace NCsGraphPinUserWidgetCached;
+	using namespace NCsGraphPinUserWidget::NCached;
 
 	NCsUserWidget::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsUserWidget::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsUserWidget>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsUserWidget::OnGetText() const
 {
-	return OnGetText_Internal<EMCsUserWidget, FECsUserWidget>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsUserWidget::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsUserWidget, FECsUserWidget>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsUserWidget::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsUserWidget>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
 FText SCsGraphPin_ECsUserWidget::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsUserWidget>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef EnumMapType
+#undef EnumType

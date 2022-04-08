@@ -16,7 +16,9 @@ namespace NCsUserWidget
 			Visibility(ESlateVisibility::SelfHitTestInvisible),
 			bAddToViewport(false),
 			RenderScale(1.0f),
-			LifeTime(0.0f)
+			LifeTime(0.0f),
+			Position(FVector2D::ZeroVector),
+			ZOrder(0)
 		{
 		}
 
@@ -41,6 +43,8 @@ namespace NCsUserWidget
 			bAddToViewport = false;
 			RenderScale = 1.0f;
 			LifeTime = 0.0f;
+			Position = FVector2D::ZeroVector;
+			ZOrder = 0;
 		}
 
 		#pragma endregion ICsReset

@@ -56,6 +56,9 @@ namespace NCsUserWidget
 
 class ICsGetManagerUserWidget;
 
+// NCsUserWidget::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NData, IData)
+
 // NCsData::NManager::NHandler::TClass
 namespace NCsData {
 	namespace NManager {
@@ -72,10 +75,11 @@ namespace NCsData {
 struct FCsUserWidgetPtr;
 struct FCsData_UserWidgetPtr;
 
-// NCsUserWidget::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NData, IData)
 // NCsUserWidget::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NData, FInterfaceMap)
+
+// NCsUserWidget::NPayload::FInterfaceMap
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, FInterfaceMap)
 
 UCLASS()
 class CSUI_API UCsManager_UserWidget : public UObject
@@ -575,6 +579,11 @@ protected:
 
 	// Payload
 #pragma region
+protected:
+
+	/** <InterfaceMapPtr> */
+	TArray<NCsUserWidget::NPayload::FInterfaceMap*> PayloadInterfaceMaps;
+
 public:
 
 	/**
@@ -603,15 +612,29 @@ public:
 
 	/**
 	* Get a payload object from a pool of payload objects for the appropriate Type.
-	*  Payload implements the interface: NCsUserWidget::NPayload::IPayload.
+	*  Payload implements the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
 	*
-	* @param Type	Type of payload.
-	* return		Payload that implements the interface: NCsUserWidget::NPayload::IPayload.
+	* @param Context	The calling context.
+	* @param Type		Type of payload.
+	* return			Payload that implements the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
 	*/
 	template<typename PayloadTypeImpl>
-	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FECsUserWidgetPooled& Type)
+	FORCEINLINE PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsUserWidgetPooled& Type)
 	{
-		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
+		return Internal.AllocatePayload<PayloadTypeImpl>(Context, GetTypeFromTypeMap(Type));
+	}
+
+	/**
+	* Get a payload object from a pool of payload objects for the appropriate Type.
+	*  Payload implements the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
+	*
+	* @param Type	Type of payload.
+	* return		Payload that implements the interface: PayloadType (NCsUserWidget::NPayload::IPayload).
+	*/
+	template<typename PayloadTypeImpl>
+	PayloadTypeImpl* AllocatePayload(const FECsUserWidgetPooled& Type)
+	{
+		return Internal.AllocatePayload<PayloadTypeImpl>(GetTypeFromTypeMap(Type));
 	}
 
 #pragma endregion Payload

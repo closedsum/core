@@ -17,11 +17,16 @@
 #include "Managers/UserWidget/CsGetSettingsManagerUserWidget.h"
 // Data
 #include "Data/CsUIDataRootSet.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // UserWidget
 #include "Blueprint/UserWidget.h"
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_ClassHandler.h"
 #include "Managers/UserWidget/Handler/CsManager_UserWidget_DataHandler.h"
+#include "Managers/UserWidget/Payload/CsPayload_UserWidgetInterfaceMap.h"
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImpl.h"
+#include "Managers/UserWidget/Payload/CsPayload_UserWidgetImplSlice.h"
+#include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_TextImplSlice.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -228,6 +233,13 @@ void UCsManager_UserWidget::Initialize()
 void UCsManager_UserWidget::CleanUp()
 {
 	Internal.Shutdown();
+
+	for (NCsUserWidget::NPayload::FInterfaceMap* Map : PayloadInterfaceMaps)
+	{
+		delete Map;
+	}
+	PayloadInterfaceMaps.Reset();
+
 	Pool.Reset();
 
 	delete ClassHandler;
@@ -435,7 +447,7 @@ void UCsManager_UserWidget::InitInternalFromSettings()
 			PoolParams.ConstructParams.Class	= Class;
 			PoolParams.ConstructParams.TypeName	= Params.Widget.GetFName();
 
-			if (Cast<UUserWidget>(Class))
+			if (Class->IsChildOf<UUserWidget>())
 			{
 				PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::CustomObject;
 				PoolParams.ConstructParams.CustomNewObject_Impl.BindUObject(this, &UCsManager_UserWidget::CustomNewObject);
@@ -686,25 +698,71 @@ void UCsManager_UserWidget::OnPostUpdate_Pool(const FECsUserWidgetPooled& Type)
 
 void UCsManager_UserWidget::ConstructPayloads(const FECsUserWidgetPooled& Type, const int32& Size)
 {
-	Internal.ConstructPayloads(Type, Size);
+	Internal.ConstructPayloads(GetTypeFromTypeMap(Type), Size);
 }
 
 #define PayloadType NCsUserWidget::NPayload::IPayload
+
 PayloadType* UCsManager_UserWidget::ConstructPayload(const FECsUserWidgetPooled& Type)
 {
-#undef PayloadType
+	// TODO: Perform a new in place for all structs.
+	//		 Need to call dtor manually
 
-	typedef NCsUserWidget::NPayload::FImpl PayloadImplType;
+	NCsUserWidget::NPayload::FInterfaceMap* PayloadInterfaceMap = new NCsUserWidget::NPayload::FInterfaceMap();
 
-	return new PayloadImplType();
+	PayloadInterfaceMaps.Add(PayloadInterfaceMap);
+
+	FCsInterfaceMap* InterfaceMap = PayloadInterfaceMap->GetInterfaceMap();
+
+	// BaseSliceType (NCsPooledObject::NPayload::FImplSlice)
+	typedef NCsPooledObject::NPayload::FImplSlice BaseSliceType;
+
+	BaseSliceType* BaseSlice = new BaseSliceType();
+
+	{
+		BaseSlice->SetInterfaceMap(InterfaceMap);
+		// Add to map
+		PayloadInterfaceMap->AddSlice(BaseSliceType::Name, BaseSlice);
+		PayloadInterfaceMap->AddDeconstructSliceImpl(BaseSliceType::Name, &BaseSliceType::Deconstruct);
+	}
+
+	// SliceType (NCsProjectile::NPayload::FImplSice)
+	{
+		typedef NCsUserWidget::NPayload::FImplSlice SliceType;
+
+		SliceType* Slice = new SliceType();
+
+		Slice->SetInterfaceMap(InterfaceMap);
+		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
+		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
+		// NOTE: Do NOT add to map. Internal will take care of deconstruction.
+	}
+
+	const TSet<FECsUserWidgetPayload>& PayloadTypes	= Settings.PayloadTypes;
+
+	// TextSliceType (NCsUserWidget::NPayload::NText::FImplSlice)
+	if (PayloadTypes.Contains(NCsUserWidgetPayload::Text))
+	{
+		typedef NCsUserWidget::NPayload::NText::FImplSlice SliceType;
+
+		SliceType* Slice = new SliceType();
+
+		Slice->SetInterfaceMap(InterfaceMap);
+		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
+		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
+		// Add to map
+		PayloadInterfaceMap->AddSlice(SliceType::Name, Slice);
+		PayloadInterfaceMap->AddDeconstructSliceImpl(SliceType::Name, &SliceType::Deconstruct);
+	}
+	return InterfaceMap->Get<PayloadType>();
 }
 
-#define PayloadType NCsUserWidget::NPayload::IPayload
 PayloadType* UCsManager_UserWidget::AllocatePayload(const FECsUserWidgetPooled& Type)
 {
-#undef PayloadType
-	return Internal.AllocatePayload(Type);
+	return Internal.AllocatePayload(GetTypeFromTypeMap(Type));
 }
+
+#undef PayloadType
 
 #pragma endregion Payload
 

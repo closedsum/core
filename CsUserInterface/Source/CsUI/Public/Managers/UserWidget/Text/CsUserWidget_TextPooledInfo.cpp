@@ -2,8 +2,12 @@
 #include "Managers/UserWidget/Text/CsUserWidget_TextPooledInfo.h"
 
 // Library
+#include "Managers/UserWidget/CsLibrary_Manager_UserWidget.h"
 #include "Managers/UserWidget/Payload/CsLibrary_Payload_UserWidget.h"
+#include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Valid.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // UserWidget
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImplSlice.h"
 #include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_TextImplSlice.h"
@@ -19,6 +23,8 @@ void FCsUserWidget_TextPooledInfo::CopyToInfo(InfoType* Info)
 	Info->SetDeallocateMethod((DeallocateMethodType*)(&DeallocateMethod));
 	Info->SetRenderScale(&RenderScale);
 	Info->SetLifeTime(&LifeTime);
+	Info->SetOffset(&Offset);
+	Info->SetZOrder(&ZOrder);
 	Info->SetColor(&Color);
 	OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
 	ShadowSettings.CopyToSettings(Info->GetShadowSettingsPtr());
@@ -33,6 +39,8 @@ void FCsUserWidget_TextPooledInfo::CopyToInfoAsValue(InfoType* Info) const
 	Info->SetDeallocateMethod((DeallocateMethodType)(DeallocateMethod));
 	Info->SetRenderScale(RenderScale);
 	Info->SetLifeTime(LifeTime);
+	Info->SetOffset(Offset);
+	Info->SetZOrder(ZOrder);
 	Info->SetColor(Color);
 	OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
 	ShadowSettings.CopyToSettingsAsValue(Info->GetShadowSettingsPtr());
@@ -228,6 +236,60 @@ namespace NCsUserWidget
 			CS_IS_VALID(GetOutlineSettings())
 			CS_IS_VALID(GetShadowSettings())
 			return true;
+		}
+
+		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const
+		{
+			typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
+			typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
+			typedef NCsUserWidget::NPayload::IPayload PayloadType;
+
+			PayloadType* Payload = UserWidgetManagerLibrary::AllocatePayloadChecked(Context, WorldContext, GetType());
+
+			// Pooled
+			typedef NCsPooledObject::NPayload::IPayload PoolePayloadType;
+			typedef NCsPooledObject::NPayload::FImplSlice PooledSliceType;
+
+			PooledSliceType* PooledSlice = PayloadLibrary::StaticCastChecked<PooledSliceType, PoolePayloadType>(Context, Payload);
+
+			PooledSlice->Instigator = Instigator;
+			PooledSlice->Owner		= Owner;
+			PooledSlice->PreserveChangesFromDefaultMask |= (uint32)NCsUserWidget::NPayload::EChange::AddedToViewport;
+
+			// UserWidget
+			typedef NCsUserWidget::NPayload::FImplSlice SliceType;
+
+			SliceType* Slice = PayloadLibrary::StaticCastChecked<SliceType>(Context, Payload);
+
+			Slice->bAddToViewport = true;
+			Slice->Visibility	  = ESlateVisibility::HitTestInvisible;
+			Slice->RenderScale	  = GetRenderScale();
+			Slice->LifeTime		  = GetLifeTime();
+
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, WorldContext, Location, Slice->Position);
+
+			Slice->Position += GetOffset();
+			Slice->ZOrder   = GetZOrder();
+
+			// NOTE: Not sure if the spawning should be skipped if the Position is off screen.
+			// FUTURE: Add an option on whether the spawning should be "forced"
+			
+			//check(Result);
+
+			// UserWidget Text
+			typedef NCsUserWidget::NPayload::NText::IText TextPayloadType;
+			typedef NCsUserWidget::NPayload::NText::FImplSlice TextSliceType;
+
+			TextSliceType* TextSlice = PayloadLibrary::StaticCastChecked<TextSliceType, TextPayloadType>(Context, Payload);
+
+			TextSlice->Text = FText::FromString(FString::Printf(TEXT("%f"), Value));
+			TextSlice->Color = GetColor();
+			TextSlice->OutlineSettings.Copy(GetOutlineSettings());
+			TextSlice->ShadowSettings.Copy(GetShadowSettings());
+
+			return UserWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
 		}
 	}
 }

@@ -7,6 +7,7 @@ class UObject;
 class UWidget;
 class UUserWidget;
 class UClass;
+class UCanvasPanelSlot;
 class UWidgetAnimation;
 class UTextBlock;
 class UButton;
@@ -30,6 +31,24 @@ namespace NCsWidget
 		* @param Log				(optional)
 		*/
 		static UUserWidget* CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+		/**
+		* Get the order priority this widget is rendered in. Higher values are rendered last (and so they will appear to be on top).
+		* 
+		* @param Context	The calling context
+		* @param Widget
+		* return			ZOrder
+		*/
+		static int32 GetZOrderChecked(const FString& Context, const UUserWidget* Widget);
+
+		/**
+		* Set the order this widget is rendered in. Higher values are rendered last (and so they will appear to be on top).
+		* 
+		* @param Context	The calling context.
+		* @param Widget
+		* @param ZOrder
+		*/
+		static void SetZOrderChecked(const FString& Context, UUserWidget* Widget, const int32& ZOrder);
 
 	// Load
 	#pragma region

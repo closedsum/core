@@ -87,15 +87,16 @@ namespace NCsUserWidget
 			FORCEINLINE void Init(const int32& InIndex) { Index = InIndex; }
 			FORCEINLINE const int32& GetIndex() const { return Index; }
 
-			void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+			void Allocate(PayloadType* Payload);
+		#undef PayloadType
 
 			FORCEINLINE const bool& IsAllocated() const { return bAllocated; }
 
 			void Deallocate();
 
-			void QueueDeallocate();
-
-			bool ShouldDeallocate() const;
+			FORCEINLINE void QueueDeallocate() { bQueueDeallocate = true; }
+			FORCEINLINE bool ShouldDeallocate() const { return bQueueDeallocate; }
 
 			FORCEINLINE const NCsPooledObject::EState& GetState() const { return State; }
 			FORCEINLINE const NCsPooledObject::EUpdate& GetUpdateType() const { return UpdateType; }
@@ -107,7 +108,7 @@ namespace NCsUserWidget
 			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
 			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
-			bool HasLifeTimeExpired();
+			FORCEINLINE bool HasLifeTimeExpired() { return LifeTime > 0.0f && ElapsedTime.Time > LifeTime; }
 
 			void Reset();
 
@@ -125,7 +126,7 @@ namespace NCsUserWidget
 
 		public:
 
-			void Update(const FCsDeltaTime& DeltaTime);
+			FORCEINLINE void Update(const FCsDeltaTime& DeltaTime) { ElapsedTime += DeltaTime; }
 
 			//void SetData(ICsData_Projectile* InData);
 		};

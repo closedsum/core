@@ -8,13 +8,16 @@
 #include "Types/CsTypes_Math.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Library/CsLibrary_Player.h"
+#include "Library/CsLibrary_Widget.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
 // Pooled Object
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // UserWidget
 #include "Managers/UserWidget/Cache/CsCache_UserWidgetImpl.h"
-#include "Managers/UserWidget/Payload/CsPayload_UserWidgetImpl.h"
+#include "Managers/UserWidget/Payload/CsPayload_UserWidget.h"
+#include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_Text.h"
 // Component
 #include "Components/TextBlock.h"
 
@@ -30,6 +33,7 @@ namespace NCsUserWidgetTextPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, OnConstructObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Handle_AddToViewport);
 		}
 	}
 }
@@ -42,6 +46,7 @@ UCsUserWidget_TextPooledImpl::UCsUserWidget_TextPooledImpl(const FObjectInitiali
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
 	ChangesToDefaultMask(0),
+	CurrentZOrder(0),
 	MyText(nullptr)
 {
 }
@@ -112,15 +117,26 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 
 	PreserveChangesToDefaultMask = Payload->GetPreserveChangesFromDefaultMask();
 
-	typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
 	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+	typedef NCsUserWidget::NPayload::IPayload WidgetPayloadType;
 
-	UserWidgetPayloadType* UserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
+	WidgetPayloadType* WidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<WidgetPayloadType>(Context, Payload);
 
-	SetVisibility(UserWidgetPayload->GetVisibility());
+	SetVisibility(WidgetPayload->GetVisibility());
 	SetIsEnabled(true);
 
-	Handle_AddToViewport(UserWidgetPayload);
+	// NOTE: FUTURE: Add ability to "attach" / follow to the Parent object.
+	//				 Add Handle_AddToCanvasPanelSlot
+
+	Handle_AddToViewport(WidgetPayload);
+
+	SetPositionInViewport(WidgetPayload->GetPosition());
+
+	typedef NCsUserWidget::NPayload::NText::IText TextPayloadType;
+
+	TextPayloadType* TextPayload = PooledPayloadLibrary::GetInterfaceChecked<TextPayloadType>(Context, Payload);
+
+	MyText->SetText(TextPayload->GetText());
 }
 
 void UCsUserWidget_TextPooledImpl::Deallocate()
@@ -128,18 +144,7 @@ void UCsUserWidget_TextPooledImpl::Deallocate()
 	SetVisibility(ESlateVisibility::Collapsed);
 	SetIsEnabled(false);
 
-	typedef NCsUserWidget::NPayload::EChange ChangeType;
-
-	// Keep in viewport
-	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AddedToViewport) &&
-		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport))
-	{
-		// Do Nothing
-	}
-	else
-	{
-		RemoveFromViewport();
-	}
+	Handle_RemoveFromViewport();
 
 	PreserveChangesToDefaultMask = 0;
 
@@ -162,27 +167,78 @@ void UCsUserWidget_TextPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* P
 {
 #undef UserWidgetPayloadType
 
+	using namespace NCsUserWidgetTextPooledImpl::NCached;
+
+	const FString& Context = Str::Handle_AddToViewport;
+
 	typedef NCsUserWidget::NPayload::EChange ChangeType;
 
 	// If ADD to viewport, Mark the change
 	if (Payload->ShouldAddToViewport())
 	{
+		const int32& ZOrder = Payload->GetZOrder();
+
 		// If ALREADY added to viewport, Do Nothing
 		if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::AddedToViewport) &&
 			CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport))
 		{
-			// Do Nothing
+			// If ZOrder is the SAME, Do Nothing
+			if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::ZOrder) &&
+				CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::ZOrder) &&
+				CurrentZOrder == ZOrder)
+			{
+				// Do Nothing
+			}
+			else
+			{
+				RemoveFromViewport();
+
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, this);
+
+				AddToScreen(Player, ZOrder);
+			}
 		}
 		else
 		{
-			AddToViewport();
+			typedef NCsPlayer::FLibrary PlayerLibrary;
+
+			ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, this);
+
+			AddToScreen(Player, ZOrder);
 		}
+
+		CurrentZOrder = ZOrder;
+
 		// Mark the change
 		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport);
+		CS_SET_BITFLAG(ChangesToDefaultMask, ChangeType::ZOrder);
 	}
 	// Clear change
 	else
 	{
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::ZOrder);
+	}
+}
+
+void UCsUserWidget_TextPooledImpl::Handle_RemoveFromViewport()
+{
+	typedef NCsUserWidget::NPayload::EChange ChangeType;
+
+	const uint32 Mask = PreserveChangesToDefaultMask & ChangesToDefaultMask;
+
+	// Keep in viewport
+	if (CS_TEST_BITFLAG(Mask, ChangeType::AddedToViewport))
+	{
+		// Do Nothing
+	}
+	else
+	{
+		RemoveFromViewport();
+		CurrentZOrder = 0;
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport);
+		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::ZOrder);
 	}
 }

@@ -24,7 +24,9 @@ namespace NCsUserWidget
 			Visibility(ESlateVisibility::SelfHitTestInvisible),
 			bAddToViewport(false),
 			RenderScale(1.0f),
-			LifeTime(0.0f)
+			LifeTime(0.0f),
+			Position(FVector2D::ZeroVector),
+			ZOrder(0)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -61,6 +63,8 @@ namespace NCsUserWidget
 			bAddToViewport = false;
 			RenderScale = 1.0f;
 			LifeTime = 0.0f;
+			Position = FVector2D::ZeroVector;
+			ZOrder = 0;
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

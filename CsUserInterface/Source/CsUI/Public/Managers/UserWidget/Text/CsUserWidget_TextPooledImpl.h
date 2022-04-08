@@ -92,7 +92,11 @@ public:
 
 protected:
 
+	int32 CurrentZOrder;
+
 	void Handle_AddToViewport(UserWidgetPayloadType* Payload);
+
+	void Handle_RemoveFromViewport();
 
 public:
 

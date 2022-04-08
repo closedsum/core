@@ -12,6 +12,10 @@
 
 class UObject;
 class UCsManager_UserWidget;
+struct FCsUserWidgetPooled;
+
+// NCsUserWidget::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
 namespace NCsUserWidget
 {
@@ -99,6 +103,49 @@ namespace NCsUserWidget
 
 		#pragma endregion Get
 
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsUserWidget::NPayload::IPayload
+
+			/*
+			* Allocate a Payload (used to Spawn a UserWidget from Manager_UserWidget).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type);
+
+		#undef PayloadType 
+
+		#pragma endregion Payload
+
+		// Spawn
+		#pragma region
+		public:
+
+		#define PayloadType NCsUserWidget::NPayload::IPayload
+
+			/**
+			* Spawn a UserWidget with the given Payload.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			
+			* @param Payload
+			* return				Spawned StaticMeshActor
+			*/
+			static const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type, PayloadType* Payload);
+
+		#undef PayloadType
+
+		#pragma endregion Spawn
+
+		// Data
+		#pragma region
 		public:
 
 			/**
@@ -122,6 +169,8 @@ namespace NCsUserWidget
 
 				return DataLibrary::GetInterfaceChecked<InterfaceType>(Context, Data);
 			}
+
+		#pragma endregion Data
 		};
 	}
 }

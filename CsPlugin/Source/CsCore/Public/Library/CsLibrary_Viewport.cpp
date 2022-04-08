@@ -78,6 +78,41 @@ namespace NCsViewport
 				return CanSafeProjectWorldToScreen(Context, WorldContext, nullptr);
 			}
 
+			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const FVector& WorldPosition, FVector2D& ScreenPosition, bool bPlayerViewportRelative /*=false*/)
+			{
+				check(CanProjectWorldToScreenChecked(Context, WorldContext));
+
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+
+				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+
+				FViewport* Viewport = GVC->Viewport;
+
+				checkf(Viewport, TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName()));
+
+				// Get the projection data
+				FSceneViewProjectionData ProjectionData;
+				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				{
+					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
+					bool bResult					   = FSceneView::ProjectWorldToScreen(WorldPosition, ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, ScreenPosition);
+
+					if (bPlayerViewportRelative)
+					{
+						ScreenPosition -= FVector2D(ProjectionData.GetConstrainedViewRect().Min);
+					}
+
+					//bResult = bResult && PlayerController->PostProcessWorldToScreen(WorldPosition, ScreenPosition, bPlayerViewportRelative);
+					return bResult;
+				}
+				ScreenPosition = FVector2D::ZeroVector;
+				return false;
+			}
+
 			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;

@@ -669,7 +669,7 @@ public:
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FString& Context, const FECsProjectile& Type)
 	{
-		return Internal.AllocatePayload<PayloadTypeImpl>(Context, Type);
+		return Internal.AllocatePayload<PayloadTypeImpl>(Context, GetTypeFromTypeMap(Type));
 	}
 
 	/**
@@ -682,7 +682,7 @@ public:
 	template<typename PayloadTypeImpl>
 	PayloadTypeImpl* AllocatePayload(const FECsProjectile& Type)
 	{
-		return Internal.AllocatePayload<PayloadTypeImpl>(Type);
+		return Internal.AllocatePayload<PayloadTypeImpl>(GetTypeFromTypeMap(Type));
 	}
 
 #pragma endregion Payload

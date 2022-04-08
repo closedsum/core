@@ -115,7 +115,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsProjectile, FECsProjectile> TypeMap;
 
-	/** */
+	/** Which payload to support. The payload is "dynamically" built to some extent.
+		The approach assume a UOWYN (Use Only What you Need). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSet<FECsProjectilePayload> PayloadTypes;
 

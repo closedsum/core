@@ -9,25 +9,31 @@
 // Cached
 #pragma region
 
-namespace NCsUserWidgetClassCustomizationCached
+namespace NCsUserWidgetClassCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsUserWidgetClassCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsUserWidgetClassCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsUserWidgetClass
+#define EnumType FECsUserWidgetClass
+
 FECsUserWidgetClassCustomization::FECsUserWidgetClassCustomization() :
 	Super()
 {
-	Init<EMCsUserWidgetClass, FECsUserWidgetClass>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsUserWidgetClassCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsUserWidgetClassCustomizationCached;
+	using namespace NCsUserWidgetClassCustomization::NCached;
 
 	NCsUserWidgetClass::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
@@ -39,17 +45,20 @@ TSharedRef<IPropertyTypeCustomization> FECsUserWidgetClassCustomization::MakeIns
 
 void FECsUserWidgetClassCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsUserWidgetClass>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsUserWidgetClassCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsUserWidgetClass, FECsUserWidgetClass>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsUserWidgetClassCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsUserWidgetClass, FECsUserWidgetClass>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

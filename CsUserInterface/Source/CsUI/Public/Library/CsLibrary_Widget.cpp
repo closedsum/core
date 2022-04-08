@@ -88,6 +88,32 @@ namespace NCsWidget
 		return Widget;
 	}
 
+	int32 FLibrary::GetZOrderChecked(const FString& Context, const UUserWidget* Widget)
+	{
+		CS_IS_PTR_NULL_CHECKED(Widget)
+
+		checkf(Widget->Slot, TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName()));
+
+		const UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
+
+		checkf(Slot, TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName()));
+
+		return Slot->GetZOrder();
+	}
+
+	void FLibrary::SetZOrderChecked(const FString& Context, UUserWidget* Widget, const int32& ZOrder)
+	{
+		CS_IS_PTR_NULL_CHECKED(Widget)
+
+		checkf(Widget->Slot, TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName()));
+
+		UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
+
+		checkf(Slot, TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName()));
+
+		Slot->SetZOrder(ZOrder);
+	}
+
 	// Load
 	#pragma region
 

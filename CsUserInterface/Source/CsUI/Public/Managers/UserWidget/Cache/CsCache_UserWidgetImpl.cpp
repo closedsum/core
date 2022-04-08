@@ -5,8 +5,7 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-// Component
-#include "Components/SceneComponent.h"
+#include "Managers/UserWidget/Payload/CsPayload_UserWidget.h"
 
 const FName NCsUserWidget::NCache::FImpl::Name = FName("NCsUserWidget::NCache::FImpl");
 
@@ -14,18 +13,21 @@ namespace NCsUserWidget
 {
 	namespace NCache
 	{
-		namespace NImplCached
+		namespace NImpl
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsUserWidget::NCache::FImpl, Allocate);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsUserWidget::NCache::FImpl, Allocate);
+				}
 			}
 		}
 
 		FImpl::FImpl() :
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			Index(INDEX_NONE),
 			bAllocated(false),
 			bQueueDeallocate(false),
@@ -58,11 +60,16 @@ namespace NCsUserWidget
 		// NCsPooledObject::NCache::ICache
 		#pragma region
 
-		void FImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+		#define PayloadType NCsPooledObject::NPayload::IPayload
+		void FImpl::Allocate(PayloadType* Payload)
 		{
-			using namespace NImplCached;
+		#undef PayloadType
 
-			// NCsPooledObject::NCache::ICache
+			using namespace NCsUserWidget::NCache::NImpl::NCached;
+
+			const FString& Context = Str::Allocate;
+
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
 			State	   = NCsPooledObject::EState::Active;
 			UpdateType = Payload->GetUpdateType();
@@ -70,6 +77,13 @@ namespace NCsUserWidget
 			Owner	   = Payload->GetOwner();
 			Parent	   = Payload->GetParent();
 			StartTime  = Payload->GetTime();
+
+			typedef NCsPooledObject::NPayload::FLibrary PayloadLibrary;
+			typedef NCsUserWidget::NPayload::IPayload WidgetPayloadType;
+
+			WidgetPayloadType* WidgetPayload = PayloadLibrary::GetInterfaceChecked<WidgetPayloadType>(Context, Payload);
+
+			LifeTime = WidgetPayload->GetLifeTime();
 		}
 
 		void FImpl::Deallocate()
@@ -77,24 +91,9 @@ namespace NCsUserWidget
 			Reset();
 		}
 
-		void FImpl::QueueDeallocate()
-		{
-			bQueueDeallocate = true;
-		}
-
-		bool FImpl::ShouldDeallocate() const
-		{
-			return bQueueDeallocate;
-		}
-
-		bool FImpl::HasLifeTimeExpired()
-		{
-			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
-		}
-
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = NCsPooledObject::EState::Inactive;
@@ -109,10 +108,5 @@ namespace NCsUserWidget
 		}
 
 		#pragma endregion NCsPooledObject::NCache::ICache
-
-		void FImpl::Update(const FCsDeltaTime& DeltaTime)
-		{
-			ElapsedTime += DeltaTime;
-		}
 	}
 }

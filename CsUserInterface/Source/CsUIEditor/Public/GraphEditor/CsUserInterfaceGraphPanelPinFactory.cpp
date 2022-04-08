@@ -6,6 +6,7 @@
 #include "Managers/Menu/CsTypes_Menu.h"
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
+#include "Managers/UserWidget/Payload/CsTypes_Payload_UserWidget.h"
 
 // EnumStructs
 	// Menu
@@ -18,6 +19,7 @@
 #include "GraphEditor/EnumStruct/UserWidget/SCsGraphPin_ECsUserWidgetClass.h"
 #include "GraphEditor/EnumStruct/UserWidget/SCsGraphPin_ECsUserWidgetPooled.h"
 #include "GraphEditor/EnumStruct/UserWidget/SCsGraphPin_ECsUserWidgetPooledClass.h"
+#include "GraphEditor/EnumStruct/UserWidget/SCsGraphPin_ECsUserWidgetPayload.h"
 
 TSharedPtr<SGraphPin> FCsUserInterfacePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -50,6 +52,8 @@ TSharedPtr<SGraphPin> FCsUserInterfacePanelGraphPinFactory::CreatePin(UEdGraphPi
 		CS_TEMP_CREATE(ECsUserWidgetPooled)
 		// FECsUserWidgetPooledClass
 		CS_TEMP_CREATE(ECsUserWidgetPooledClass)
+		// FECsUserWidgetPayload
+		CS_TEMP_CREATE(ECsUserWidgetPayload)
 	}
 
 #undef CS_TEMP_CREATE

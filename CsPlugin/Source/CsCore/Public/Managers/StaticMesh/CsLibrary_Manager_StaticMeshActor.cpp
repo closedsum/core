@@ -116,6 +116,7 @@ namespace NCsStaticMeshActor
 		}
 
 		#pragma endregion 
+
 		// Spawn
 		#pragma region
 

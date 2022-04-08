@@ -37,6 +37,22 @@ namespace NCsUserWidget
 			* return Time
 			*/
 			virtual const float& GetLifeTime() const = 0;
+
+			/**
+			* Get the viewport position for the widget (set via SetPositionInViewport(GetPosition()).
+			* If the UserWidget is being "attached" (following) to a Parent object, the Position is applied 
+			* as an additive offset to the Location of the Parent object.
+			* 
+			* return Position
+			*/
+			virtual const FVector2D& GetPosition() const = 0;
+
+			/** 
+			* Get the order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top).
+			* 
+			* return Order
+			*/
+			virtual const int32& GetZOrder() const = 0;
 		};
 	}
 }

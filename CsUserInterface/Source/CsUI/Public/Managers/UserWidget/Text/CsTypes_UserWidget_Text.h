@@ -90,6 +90,13 @@ namespace NCsUserWidget
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 
+			void Copy(const FOutline& From)
+			{
+				SetSize(From.GetSize());
+				SetbApplyOutlineToDropShadow(From.GetbApplyOutlineToDropShadow());
+				SetColor(From.GetColor());
+			}
+
 			FORCEINLINE void Reset()
 			{
 				CS_RESET_MEMBER_WITH_PROXY(Size, 0)
@@ -173,6 +180,12 @@ namespace NCsUserWidget
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
+
+			void Copy(const FShadow& From)
+			{
+				SetOffset(From.GetOffset());
+				SetColor(From.GetColor());
+			}
 
 			FORCEINLINE void Reset()
 			{

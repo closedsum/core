@@ -97,5 +97,29 @@ namespace NCsUserWidget
 		}
 
 		#pragma endregion Get
+
+		// Payload
+		#pragma region
+
+		#define PayloadType NCsUserWidget::NPayload::IPayload
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type)
+		{
+		#undef PayloadType
+			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
+		}
+
+		#pragma endregion Payload
+
+		// Spawn
+		#pragma region
+
+		#define PayloadType NCsUserWidget::NPayload::IPayload
+		const FCsUserWidgetPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsUserWidgetPooled& Type, PayloadType* Payload)
+		{
+		#undef PayloadType
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
+
+		#pragma endregion Spawn
 	}
 }

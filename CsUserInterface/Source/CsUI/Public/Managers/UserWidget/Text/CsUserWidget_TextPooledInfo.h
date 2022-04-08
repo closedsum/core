@@ -46,15 +46,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
-	/** Get the color of the text. */
+	/** The offset to apply to the position of the UserWidget. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
+	FVector2D Offset;
+
+	/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
+	int32 ZOrder;
+
+	/** The color of the text. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
 	FLinearColor Color;
 
-	/** Get any information describing the Outline Settings for the text. */
+	/** Any information describing the Outline Settings for the text. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
 	FCsUserWidget_Text_OutlineSettings OutlineSettings;
 
-	/** Get any information describing the Shadow Settings for the text. */
+	/** Any information describing the Shadow Settings for the text. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
 	FCsUserWidget_Text_ShadowSettings ShadowSettings;
 
@@ -65,6 +73,8 @@ public:
 		DeallocateMethod(ECsUserWidgetDeallocateMethod::Complete),
 		RenderScale(1.0f),
 		LifeTime(0.0f),
+		Offset(FVector2D::ZeroVector),
+		ZOrder(0),
 		Color(FLinearColor::White),
 		OutlineSettings(),
 		ShadowSettings()
@@ -84,6 +94,9 @@ public:
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 };
+
+class UObject;
+struct FCsUserWidgetPooled;
 
 namespace NCsUserWidget
 {
@@ -118,6 +131,12 @@ namespace NCsUserWidget
 				  the UserWidget object has been allocated. */
 			CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
 
+			/** The offset to apply to the position of the UserWidget. */
+			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector2D)
+
+			/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
+			CS_DECLARE_MEMBER_WITH_PROXY(ZOrder, int32)
+
 			/** Get the color of the text. */
 			CS_DECLARE_MEMBER_WITH_PROXY(Color, FLinearColor)
 
@@ -134,6 +153,8 @@ namespace NCsUserWidget
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(RenderScale, 1.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, FVector2D::ZeroVector),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(ZOrder, 0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Color, FLinearColor::White),
 				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(OutlineSettings),
 				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ShadowSettings)
@@ -142,6 +163,8 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(DeallocateMethod);
 				CS_CTOR_SET_MEMBER_PROXY(RenderScale);
 				CS_CTOR_SET_MEMBER_PROXY(LifeTime);
+				CS_CTOR_SET_MEMBER_PROXY(Offset);
+				CS_CTOR_SET_MEMBER_PROXY(ZOrder);
 				CS_CTOR_SET_MEMBER_PROXY(Color);
 				CS_CTOR_SET_MEMBER_PROXY(OutlineSettings);
 				CS_CTOR_SET_MEMBER_PROXY(ShadowSettings);
@@ -151,12 +174,27 @@ namespace NCsUserWidget
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RenderScale, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector2D)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ZOrder, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OutlineSettings, OutlineSettingsType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ShadowSettings, ShadowSettingsType)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
+
+			/**
+			* Spawn a UserWidget Text object with the appropriate text information from that Data. 
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Instigator
+			* @param Owner
+			* @param Value
+			* @param Location		Location in World Space
+			* return
+			*/
+			const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const;
 
 		#undef DeallocateMethodType
 		#undef OutlineSettingsType

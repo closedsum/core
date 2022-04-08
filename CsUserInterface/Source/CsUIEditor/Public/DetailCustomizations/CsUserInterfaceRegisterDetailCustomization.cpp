@@ -17,6 +17,7 @@
 #include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetClassCustomization.h"
 #include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetPooledCustomization.h"
 #include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetPooledClassCustomization.h"
+#include "DetailCustomizations/EnumStruct/UserWidget/ECsUserWidgetPayloadCustomization.h"
 
 void FCsUserInterfaceRegisterDetailCustomization::Register()
 {
@@ -48,6 +49,8 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 			CS_TEMP_REGISTER(ECsUserWidgetPooled);
 			// ECsUserWidgetPooledClass
 			CS_TEMP_REGISTER(ECsUserWidgetPooledClass);
+			// ECsUserWidgetPayload
+			CS_TEMP_REGISTER(ECsUserWidgetPayload);
 		}
 
 #undef CS_TEMP_REGISTER

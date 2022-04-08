@@ -54,6 +54,10 @@ namespace NCsUserWidget
 
 			float LifeTime;
 
+			FVector2D Position;
+
+			int32 ZOrder;
+
 		public:
 
 			FImpl();
@@ -104,6 +108,9 @@ namespace NCsUserWidget
 			FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
 			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const FVector2D& GetPosition() const { return Position; }
+			FORCEINLINE const int32& GetZOrder() const { return ZOrder;
+			}
 
 		#pragma endregion WidgetPayloadType (NCsUserWidget::NPayload::IPayload)
 		};

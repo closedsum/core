@@ -1,6 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
+#include "Managers/UserWidget/Payload/CsTypes_Payload_UserWidget.h"
 
 #include "CsSettings_Manager_UserWidget.generated.h"
 
@@ -65,6 +67,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FECsUserWidgetPooled, FECsUserWidgetPooled> TypeMap;
 
+	/** Which payload to support. The payload is "dynamically" built to some extent.
+		The approach assume a UOWYN (Use Only What you Need). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSet<FECsUserWidgetPayload> PayloadTypes;
+
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsUserWidgetPooled DefaultType;
@@ -75,6 +82,7 @@ public:
 
 	FCsSettings_Manager_UserWidget() :
 		TypeMap(),
+		PayloadTypes(),
 		DefaultType(),
 		PoolParams()
 	{

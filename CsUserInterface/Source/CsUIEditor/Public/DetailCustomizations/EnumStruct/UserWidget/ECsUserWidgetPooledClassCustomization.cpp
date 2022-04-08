@@ -9,25 +9,31 @@
 // Cached
 #pragma region
 
-namespace NCsUserWidgetPooledClassCustomizationCached
+namespace NCsUserWidgetPooledClassCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsUserWidgetPooledClassCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsUserWidgetPooledClassCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsUserWidgetPooledClass
+#define EnumType FECsUserWidgetPooledClass
+
 FECsUserWidgetPooledClassCustomization::FECsUserWidgetPooledClassCustomization() :
 	Super()
 {
-	Init<EMCsUserWidgetPooledClass, FECsUserWidgetPooledClass>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsUserWidgetPooledClassCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsUserWidgetPooledClassCustomizationCached;
+	using namespace NCsUserWidgetPooledClassCustomization::NCached;
 
 	NCsUserWidgetPooledClass::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
@@ -39,17 +45,20 @@ TSharedRef<IPropertyTypeCustomization> FECsUserWidgetPooledClassCustomization::M
 
 void FECsUserWidgetPooledClassCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsUserWidgetPooledClass>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsUserWidgetPooledClassCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsUserWidgetPooledClass, FECsUserWidgetPooledClass>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsUserWidgetPooledClassCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsUserWidgetPooledClass, FECsUserWidgetPooledClass>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

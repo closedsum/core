@@ -74,6 +74,7 @@ namespace NCsPooledObject
 			Owner	   = From->Owner;
 			Parent	   = From->Parent;
 			Time	   = From->Time;
+			PreserveChangesFromDefaultMask = From->PreserveChangesFromDefaultMask;
 			return true;
 		}
 

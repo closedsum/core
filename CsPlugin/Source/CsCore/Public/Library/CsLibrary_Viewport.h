@@ -53,6 +53,18 @@ namespace NCsViewport
 				*/
 				static bool CanSafeProjectWorldToScreen(const UObject* WorldContext);
 
+				/** 
+				* Transforms the given 3D world-space point into a its 2D screen space coordinate.
+				* 
+				* @param Context					The calling context.
+				* @param WorldContext				Object that contains a reference to a World (GetWorld() is Valid).
+				* @param WorldPosition				World position to project.
+				* @param ScreenPosition				(out) Corresponding 2D position in screen space
+				* @param bPlayerViewportRelative	Should this be relative to the player viewport subregion (useful when using player attached widgets in split screen)
+				* return							Whether the project was successful or not.
+				*/
+				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const FVector& WorldPosition, FVector2D& ScreenPosition, bool bPlayerViewportRelative = false);
+
 				/**
 				* Check whether the First Local Player's Viewport can de-project a screen position to a 
 				* world location.

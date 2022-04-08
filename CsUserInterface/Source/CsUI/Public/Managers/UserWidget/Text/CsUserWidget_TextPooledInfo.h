@@ -184,6 +184,32 @@ namespace NCsUserWidget
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 
 			/**
+			* Spawn a UserWidget Text object with the appropriate text information from that Data.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Instigator
+			* @param Owner
+			* @param Value
+			* @param Location		Location in World Space
+			* return
+			*/
+			const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const;
+
+			/**
+			* Spawn a UserWidget Text object with the appropriate text information from that Data.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Instigator
+			* @param Owner
+			* @param Value
+			* @param Location		Location in World Space
+			* return
+			*/
+			const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector& Location) const;
+
+			/**
 			* Spawn a UserWidget Text object with the appropriate text information from that Data. 
 			*
 			* @param Context		The calling context.
@@ -195,6 +221,19 @@ namespace NCsUserWidget
 			* return
 			*/
 			const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const;
+
+			/**
+			* Spawn a UserWidget Text object with the appropriate text information from that Data.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Instigator
+			* @param Owner
+			* @param Value
+			* @param Location		Location in World Space
+			* return
+			*/
+			const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector& Location) const;
 
 		#undef DeallocateMethodType
 		#undef OutlineSettingsType

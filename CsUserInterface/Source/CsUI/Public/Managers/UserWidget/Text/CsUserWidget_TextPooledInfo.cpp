@@ -238,7 +238,7 @@ namespace NCsUserWidget
 			return true;
 		}
 
-		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const
+		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const
 		{
 			typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
 			typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
@@ -284,12 +284,27 @@ namespace NCsUserWidget
 
 			TextSliceType* TextSlice = PayloadLibrary::StaticCastChecked<TextSliceType, TextPayloadType>(Context, Payload);
 
-			TextSlice->Text = FText::FromString(FString::Printf(TEXT("%f"), Value));
+			TextSlice->Text = Value;
 			TextSlice->Color = GetColor();
 			TextSlice->OutlineSettings.Copy(GetOutlineSettings());
 			TextSlice->ShadowSettings.Copy(GetShadowSettings());
 
 			return UserWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
+		}
+
+		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector& Location) const
+		{
+			return SpawnChecked(Context, WorldContext, Instigator, Owner, FText::FromString(Value), Location);
+		}
+
+		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const
+		{
+			return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%f"), Value), Location);
+		}
+
+		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector& Location) const
+		{
+			return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%d"), Value), Location);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-/// <reference path="../../typings/ue.d.ts">/>
+/// <reference path="../../Cs/Library/Library_Common.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
 
 "use strict"
@@ -7,6 +7,7 @@
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
 // "typedefs" - classes
+/** @type {CommonLibrary} */
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions

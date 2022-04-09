@@ -1,5 +1,5 @@
-/// <reference path="../../typings/ue.d.ts">/>
 // require('Cs/Library/Library_Common.js');
+
 declare namespace NJsCommon {
     class FLibrary {
 

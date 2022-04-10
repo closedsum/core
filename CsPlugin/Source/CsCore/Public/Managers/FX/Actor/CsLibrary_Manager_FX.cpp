@@ -128,6 +128,14 @@ namespace NCsFX
 			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform);
 		}
 
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location)
+		{
+			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
+			FTransform T = FTransform::Identity;
+			T.SetTranslation(Location);
+			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, T);
+		}
+
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
@@ -183,6 +191,13 @@ namespace NCsFX
 				Payload->Parameters.Add(VectorType);
 			}
 			return Payload;
+		}
+
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location)
+		{
+			FTransform T = FTransform::Identity;
+			T.SetTranslation(Location);
+			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, T);
 		}
 
 		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
@@ -284,6 +299,16 @@ namespace NCsFX
 			const FString& Context = Str::SafeSpawn;
 
 			return SafeSpawn(Context, WorldContext, PooledPayload, FX, Transform, nullptr);
+		}
+
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location)
+		{
+			// Allocate Payload
+			typedef NCsFX::NPayload::FImpl PayloadImplType;
+
+			PayloadImplType* Payload = AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Location);
+
+			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
 		#undef PooledPayloadType

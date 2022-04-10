@@ -151,6 +151,18 @@ namespace NCsFX
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param PooledPayload
+			* @param FX
+			* @param Location		
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
+
+			/**
+			* Allocate a Payload given the FX information
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param FX
 			* @param Transform		(optional)
 			* return				Payload
@@ -172,6 +184,18 @@ namespace NCsFX
 			* return				Payload
 			*/
 			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+			/**
+			* Allocate a Payload given the FX information
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param PooledPayload
+			* @param FX
+			* @param Location		
+			* return				Payload
+			*/
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
 
 			/**
 			* Allocate a Payload given the FX information
@@ -212,8 +236,8 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
 			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
@@ -225,8 +249,8 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* @param Log			(optional)
 			* return				Spawned FX
 			*/
@@ -238,11 +262,24 @@ namespace NCsFX
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param PooledPayload
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
 			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+
+			/**
+			* Spawn an FX with the given payload.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param PooledPayload
+			* @param FX
+			* @param Location		Location to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
+			* return				Spawned FX
+			*/
+			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
 
 		#undef PooledPayloadType
 
@@ -252,8 +289,8 @@ namespace NCsFX
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
 			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
@@ -264,8 +301,8 @@ namespace NCsFX
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* @param Log			(optional)
 			* return				Spawned FX
 			*/
@@ -276,8 +313,8 @@ namespace NCsFX
 			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param FX
-			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
-			*						Sound.Transform is applied as an "offset".
+			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
+			*						FX.Transform is applied as an "offset".
 			* return				Spawned FX
 			*/
 			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);

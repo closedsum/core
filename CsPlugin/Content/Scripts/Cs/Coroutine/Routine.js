@@ -39,7 +39,7 @@ var MessageType = NJsCoroutine.EMessage;
 
 var Core;
 
-module.exports = class JsRoutine
+module.exports = class FJsRoutine
 {
     constructor()
     {

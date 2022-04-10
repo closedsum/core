@@ -1,4 +1,4 @@
-/// <reference path="../../typings/ue.d.ts">/>
+/// <reference path="../../Cs/custom_typings/Cs.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
 
 "use strict"
@@ -11,6 +11,7 @@ const INDEX_NONE = -1;
 const ROUTINE_VALUE_SIZE = 16;
 
 // "typedefs" - class
+/** @type {CommonLibrary} */
 var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
@@ -19,7 +20,7 @@ var check = CommonLibrary.check;
 module.exports = class NJsCoroutine
 {
     static EState =
-        {
+        {   
             Free:       { Value: 0, Name: "Free" },
             Init:       { Value: 1, Name: "Init" },
             Update:     { Value: 2, Name: "Update" },

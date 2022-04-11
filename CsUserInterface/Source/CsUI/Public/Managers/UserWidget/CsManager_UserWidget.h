@@ -111,7 +111,7 @@ public:
 #endif // #if WITH_EDITOR
 
 	template<typename T>
-	static T* Get(UObject* InRoot = nullptr)
+	FORCEINLINE static T* Get(UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
 	}
@@ -124,6 +124,12 @@ public:
 		return s_bShutdown ? nullptr : s_Instance;
 	}
 #endif // #if WITH_EDITOR
+
+	template<typename T>
+	FORCEINLINE static T* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return Cast<T>(GetSafe(Context, InRoot, Log));
+	}
 
 #if WITH_EDITOR
 	static bool IsValid(UObject* InRoot = nullptr);

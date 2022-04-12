@@ -143,4 +143,16 @@ public:
 	FORCEINLINE bool HasOnStart() const { return bOnStart; }
 
 #pragma endregion Editor
+
+// Transition
+#pragma region
+protected:
+
+	bool bFinishedTransition;
+
+public:
+
+	FORCEINLINE bool HasFinishedTransition() const { return bFinishedTransition; }
+
+#pragma endregion Transition
 };

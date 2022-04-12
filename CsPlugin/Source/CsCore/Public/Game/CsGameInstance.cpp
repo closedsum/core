@@ -71,7 +71,9 @@ UCsGameInstance::UCsGameInstance(const FObjectInitializer& ObjectInitializer) :
 	bPIE(false),
 	bStandaloneFromEditor(false),
 	bStandaloneMobileFromEditor(false),
-	bOnStart(false)
+	bOnStart(false),
+	// Transition
+	bFinishedTransition(false)
 {
 }
 

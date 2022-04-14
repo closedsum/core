@@ -179,6 +179,8 @@ void ACsSkeletalMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	GetMeshComponent()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 	GetMeshComponent()->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipSimulatingBones;
 	GetMeshComponent()->bPauseAnims = false;
+	GetMeshComponent()->SetRenderCustomDepth(SkeletalMeshPayload->UseRenderCustomDepth());
+	GetMeshComponent()->SetCustomDepthStencilValue(SkeletalMeshPayload->GetCustomDepthStencilValue());
 	GetMeshComponent()->SetHiddenInGame(false);
 	GetMeshComponent()->SetComponentTickEnabled(true);
 
@@ -235,6 +237,8 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 	Component->bNoSkeletonUpdate = true;
 	Component->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 	Component->KinematicBonesUpdateType = EKinematicBonesUpdateToPhysics::SkipAllBones;
+	Component->SetRenderCustomDepth(false);
+	Component->SetCustomDepthStencilValue(0);
 
 	Handle_ClearSkeletalMesh();
 

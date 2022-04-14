@@ -74,6 +74,10 @@ namespace NCsSkeletalMeshActor
 
 			bool bUseAsOccluder;
 
+			bool bRenderCustomDepth;
+
+			int32 CustomDepthStencilValue;
+
 			ParamsType* Params;
 
 		public:
@@ -145,6 +149,8 @@ namespace NCsSkeletalMeshActor
 			FORCEINLINE const bool& CastShadow() const { return bCastShadow; }
 			FORCEINLINE const bool& ReceivesDecals() const { return bReceivesDecals; }
 			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }
+			FORCEINLINE const bool& UseRenderCustomDepth() const { return bRenderCustomDepth; }
+			FORCEINLINE const int32& GetCustomDepthStencilValue() const { return CustomDepthStencilValue; }
 			FORCEINLINE ParamsType* GetParams() const { return Params; }
 
 		#pragma endregion SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)

@@ -28,6 +28,8 @@ void FCsStaticMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 	Attachment->SetbCastShadow(&bCastShadow);
 	Attachment->SetbReceivesDecals(&bReceivesDecals);
 	Attachment->SetbUseAsOccluder(&bUseAsOccluder);
+	Attachment->SetbRenderCustomDepth(&bRenderCustomDepth);
+	Attachment->SetCustomDepthStencilValue(&CustomDepthStencilValue);
 	Attachment->SetTags(&Tags);
 }
 
@@ -52,6 +54,8 @@ void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment
 	Attachment->SetbCastShadow(bCastShadow);
 	Attachment->SetbReceivesDecals(bReceivesDecals);
 	Attachment->SetbUseAsOccluder(bUseAsOccluder);
+	Attachment->SetbRenderCustomDepth(bRenderCustomDepth);
+	Attachment->SetCustomDepthStencilValue(CustomDepthStencilValue);
 	Attachment->SetTags(Tags);
 }
 
@@ -76,6 +80,8 @@ bool FCsStaticMeshAttachment::IsValidChecked(const FString& Context) const
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	check(MaterialLibrary::IsValidChecked(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context)))
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 0)
+	CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 255)
 	// Check Tags is Valid
 	CS_IS_ARRAY_ANY_NONE_CHECKED(Tags)
 	return true;
@@ -105,6 +111,9 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 
 	if (!MaterialLibrary::IsValid(Context, Mesh.GetChecked(Context), Materials.GetChecked(Context), Log))
 		return false;
+
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(CustomDepthStencilValue, 0)
+	CS_IS_INT_LESS_THAN_OR_EQUAL(CustomDepthStencilValue, 255)
 	// Check Tags is Valid
 	CS_IS_ARRAY_ANY_NONE(Tags)
 	return true;
@@ -128,6 +137,8 @@ void FCsStaticMeshAttachment::AttachChecked(const FString& Context, USceneCompon
 	Child->SetCastShadow(bCastShadow);
 	Child->SetReceivesDecals(bReceivesDecals);
 	Child->bUseAsOccluder = bUseAsOccluder;
+	Child->SetRenderCustomDepth(bRenderCustomDepth);
+	Child->SetCustomDepthStencilValue(CustomDepthStencilValue);
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -154,6 +165,8 @@ bool FCsStaticMeshAttachment::AttachSafe(const FString& Context, USceneComponent
 	Child->SetCastShadow(bCastShadow);
 	Child->SetReceivesDecals(bReceivesDecals);
 	Child->bUseAsOccluder = bUseAsOccluder;
+	Child->SetRenderCustomDepth(bRenderCustomDepth);
+	Child->SetCustomDepthStencilValue(CustomDepthStencilValue);
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -187,6 +200,8 @@ FCsStaticMeshActorPooled* FCsStaticMeshAttachment::AttachChecked(const FString& 
 	PayloadImpl->bCastShadow	= bCastShadow;
 	PayloadImpl->bReceivesDecals = bReceivesDecals;
 	PayloadImpl->bUseAsOccluder = bUseAsOccluder;
+	PayloadImpl->bRenderCustomDepth = bRenderCustomDepth;
+	PayloadImpl->CustomDepthStencilValue = CustomDepthStencilValue;
 	PayloadImpl->Tags.Reset(FMath::Max(PayloadImpl->Tags.Max(), Tags.Num()));
 	PayloadImpl->Tags.Append(Tags);
 
@@ -219,6 +234,8 @@ namespace NCsStaticMesh
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
 			check(MaterialLibrary::IsValidChecked(Context, GetMesh(), GetMaterials()))
+			CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCustomDepthStencilValue(), 0)
+			CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(GetCustomDepthStencilValue(), 255)
 			// Check GetTags() is Valid
 			CS_IS_ARRAY_ANY_NONE_CHECKED(GetTags())
 			return true;
@@ -249,6 +266,9 @@ namespace NCsStaticMesh
 
 			if (!MaterialLibrary::IsValid(Context, GetMesh(), GetMaterials(), Log))
 				return false;
+
+			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCustomDepthStencilValue(), 0)
+			CS_IS_INT_LESS_THAN_OR_EQUAL(GetCustomDepthStencilValue(), 255)
 			// Check GetTags() is Valid
 			CS_IS_ARRAY_ANY_NONE(GetTags())
 			return true;
@@ -272,6 +292,8 @@ namespace NCsStaticMesh
 			Child->SetCastShadow(GetbCastShadow());
 			Child->SetReceivesDecals(GetbReceivesDecals());
 			Child->bUseAsOccluder = GetbUseAsOccluder();
+			Child->bRenderCustomDepth = GetbRenderCustomDepth();
+			Child->CustomDepthStencilValue = GetCustomDepthStencilValue();
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -298,6 +320,8 @@ namespace NCsStaticMesh
 			Child->SetCastShadow(GetbCastShadow());
 			Child->SetReceivesDecals(GetbReceivesDecals());
 			Child->bUseAsOccluder = GetbUseAsOccluder();
+			Child->bRenderCustomDepth = GetbRenderCustomDepth();
+			Child->CustomDepthStencilValue = GetCustomDepthStencilValue();
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -331,6 +355,8 @@ namespace NCsStaticMesh
 			PayloadImpl->bCastShadow	= GetbCastShadow();
 			PayloadImpl->bReceivesDecals = GetbReceivesDecals();
 			PayloadImpl->bUseAsOccluder = GetbUseAsOccluder();
+			PayloadImpl->bRenderCustomDepth = GetbRenderCustomDepth();
+			PayloadImpl->CustomDepthStencilValue = GetCustomDepthStencilValue();
 			PayloadImpl->Tags.Reset(FMath::Max(PayloadImpl->Tags.Max(), GetTags().Num()));
 			PayloadImpl->Tags.Append(GetTags());
 

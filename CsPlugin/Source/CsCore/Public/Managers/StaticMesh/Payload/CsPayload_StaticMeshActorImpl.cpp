@@ -34,6 +34,8 @@ namespace NCsStaticMeshActor
 			bCastShadow(false),
 			bReceivesDecals(false),
 			bUseAsOccluder(false),
+			bRenderCustomDepth(false),
+			CustomDepthStencilValue(0),
 			Tags()
 		{
 			InterfaceMap = new FCsInterfaceMap();
@@ -81,6 +83,8 @@ namespace NCsStaticMeshActor
 			bCastShadow = false;
 			bReceivesDecals = false;
 			bUseAsOccluder = false;
+			bRenderCustomDepth = false;
+			CustomDepthStencilValue = 0;
 			Tags.Reset(Tags.Max());
 		}
 

@@ -3,8 +3,8 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_Valid.h"
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Utility
@@ -30,10 +30,6 @@ namespace NCsStaticMeshActor
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		EMCsStaticMeshActor::Get().ClearUserDefinedEnums();
 
 		FromEnumSettings(Context);
@@ -134,6 +130,8 @@ void FCsStaticMeshActorPooledInfo::SetPayloadChecked(const FString& Context, Pay
 	Payload->bCastShadow = bCastShadow;
 	Payload->bReceivesDecals = bReceivesDecals;
 	Payload->bUseAsOccluder = bUseAsOccluder;
+	Payload->bRenderCustomDepth = bRenderCustomDepth;
+	Payload->CustomDepthStencilValue = CustomDepthStencilValue;
 }
 
 bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, PayloadType* Payload, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -164,6 +162,8 @@ bool FCsStaticMeshActorPooledInfo::SetSafePayload(const FString& Context, Payloa
 	Payload->bCastShadow = bCastShadow;
 	Payload->bReceivesDecals = bReceivesDecals;
 	Payload->bUseAsOccluder = bUseAsOccluder;
+	Payload->bRenderCustomDepth = bRenderCustomDepth;
+	Payload->CustomDepthStencilValue = CustomDepthStencilValue;
 	return true;
 }	
 
@@ -189,6 +189,8 @@ bool FCsStaticMeshActorPooledInfo::IsValidChecked(const FString& Context) const
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 0)
+	CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 255)
 	return true;
 }
 
@@ -219,6 +221,8 @@ bool FCsStaticMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(co
 			return true;
 		}
 	}
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(CustomDepthStencilValue, 0)
+	CS_IS_INT_LESS_THAN_OR_EQUAL(CustomDepthStencilValue, 255)
 	return true;
 }
 

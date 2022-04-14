@@ -170,6 +170,8 @@ void ACsStaticMeshActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	GetMeshComponent()->SetCastShadow(StaticMeshPayload->CastShadow());
 	GetMeshComponent()->SetReceivesDecals(StaticMeshPayload->ReceivesDecals());
 	GetMeshComponent()->bUseAsOccluder = StaticMeshPayload->UseAsOccluder();
+	GetMeshComponent()->SetRenderCustomDepth(StaticMeshPayload->UseRenderCustomDepth());
+	GetMeshComponent()->SetCustomDepthStencilValue(StaticMeshPayload->GetCustomDepthStencilValue());
 	GetMeshComponent()->SetHiddenInGame(false);
 	GetMeshComponent()->SetComponentTickEnabled(true);
 
@@ -198,6 +200,8 @@ void ACsStaticMeshActorPooledImpl::Deallocate_Internal()
 
 	Tags.Reset(Tags.Max());
 
+	Component->SetRenderCustomDepth(false);
+	Component->SetCustomDepthStencilValue(0);
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);
 	Component->ComponentTags.Reset(Component->ComponentTags.Max());

@@ -72,6 +72,10 @@ namespace NCsStaticMeshActor
 
 			bool bUseAsOccluder;
 
+			bool bRenderCustomDepth;
+
+			int32 CustomDepthStencilValue;
+
 			TArray<FName> Tags;
 
 		public:
@@ -144,6 +148,8 @@ namespace NCsStaticMeshActor
 			FORCEINLINE const bool& CastShadow() const { return bCastShadow; }
 			FORCEINLINE const bool& ReceivesDecals() const { return bReceivesDecals; }
 			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }
+			FORCEINLINE const bool& UseRenderCustomDepth() const { return bRenderCustomDepth; }
+			FORCEINLINE const int32& GetCustomDepthStencilValue() const { return CustomDepthStencilValue; }
 			FORCEINLINE const TArray<FName>& GetTags() const { return Tags; }
 
 		#pragma endregion StaticMeshPayloadType (NCsStaticMeshActor::NPayload::IPayload)

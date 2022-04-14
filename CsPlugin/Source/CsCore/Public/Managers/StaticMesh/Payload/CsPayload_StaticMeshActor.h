@@ -125,6 +125,20 @@ namespace NCsStaticMeshActor
 			*/
 			virtual const bool& UseAsOccluder() const = 0;
 
+			/** 
+			* If true, the StatisMeshComponent will be rendered in the CustomDepth pass (usually used for outlines) 
+			* 
+			* return
+			*/
+			virtual const bool& UseRenderCustomDepth() const = 0;
+
+			/** 
+			* Optionally write this 0-255 value to the stencil buffer in CustomDepth pass (Requires project setting or r.CustomDepth == 3) 
+			* 
+			* return
+			*/
+			virtual const int32& GetCustomDepthStencilValue() const = 0;
+
 			/**
 			* Get the Tags to append to the StaticMeshActor's Tags list.
 			* If the StaticMeshActor is being attached to a Parent object, instead

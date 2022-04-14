@@ -65,6 +65,14 @@ struct CSCORE_API FCsStaticMeshAttachment
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bUseAsOccluder;
 
+	/** If true, the StatisMeshComponent will be rendered in the CustomDepth pass (usually used for outlines) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
+	bool bRenderCustomDepth;
+
+	/** Optionally write this 0-255 value to the stencil buffer in CustomDepth pass (Requires project setting or r.CustomDepth == 3) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh", meta = (UIMin = "0", ClampMin = "0", UIMax = "255", ClampMax = "255"))
+	int32 CustomDepthStencilValue;
+
 	/** Any Tags to applied to the StaticMeshComponent (i.e. appended to ComponentTags). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	TArray<FName> Tags;
@@ -82,6 +90,8 @@ public:
 		bCastShadow(false),
 		bReceivesDecals(false),
 		bUseAsOccluder(false),
+		bRenderCustomDepth(false),
+		CustomDepthStencilValue(0),
 		Tags()
 	{
 	}
@@ -147,6 +157,12 @@ namespace NCsStaticMesh
 				This should generally be true for all objects, and let the renderer make decisions about whether to render objects in the depth only pass. */
 			CS_DECLARE_MEMBER_WITH_PROXY(bUseAsOccluder, bool)
 
+			/** If true, the StatisMeshComponent will be rendered in the CustomDepth pass (usually used for outlines) */
+			CS_DECLARE_MEMBER_WITH_PROXY(bRenderCustomDepth, bool)
+
+			/** Optionally write this 0-255 value to the stencil buffer in CustomDepth pass (Requires project setting or r.CustomDepth == 3) */
+			CS_DECLARE_MEMBER_WITH_PROXY(CustomDepthStencilValue, int32)
+
 			/** Any Tags to applied to the StaticMeshComponent (i.e. appended to ComponentTags). */
 			CS_DECLARE_MEMBER_WITH_PROXY(Tags, TArray<FName>)
 
@@ -163,6 +179,8 @@ namespace NCsStaticMesh
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bCastShadow, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bReceivesDecals, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bUseAsOccluder, false),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bRenderCustomDepth, false),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(CustomDepthStencilValue, 0),
 				CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Tags)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Mesh);
@@ -175,6 +193,8 @@ namespace NCsStaticMesh
 				CS_CTOR_SET_MEMBER_PROXY(bCastShadow);
 				CS_CTOR_SET_MEMBER_PROXY(bReceivesDecals);
 				CS_CTOR_SET_MEMBER_PROXY(bUseAsOccluder);
+				CS_CTOR_SET_MEMBER_PROXY(bRenderCustomDepth);
+				CS_CTOR_SET_MEMBER_PROXY(CustomDepthStencilValue);
 				CS_CTOR_SET_MEMBER_PROXY(Tags);
 			}
 
@@ -188,6 +208,8 @@ namespace NCsStaticMesh
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bCastShadow, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bReceivesDecals, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bUseAsOccluder, bool)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bRenderCustomDepth, bool)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CustomDepthStencilValue, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Tags, TArray<FName>)
 
 			bool IsValidChecked(const FString& Context) const;

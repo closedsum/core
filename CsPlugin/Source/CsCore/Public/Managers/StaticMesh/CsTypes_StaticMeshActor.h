@@ -229,6 +229,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	bool bUseAsOccluder;
 
+	/** If true, the StatisMeshComponent will be rendered in the CustomDepth pass (usually used for outlines) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
+	bool bRenderCustomDepth;
+
+	/** Optionally write this 0-255 value to the stencil buffer in CustomDepth pass (Requires project setting or r.CustomDepth == 3) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh", meta = (UIMin = "0", ClampMin = "0", UIMax = "255", ClampMax = "255"))
+	int32 CustomDepthStencilValue;
+
 public:
 
 	FCsStaticMeshActorPooledInfo() :
@@ -244,7 +252,9 @@ public:
 		Transform(FTransform::Identity),
 		bCastShadow(false),
 		bReceivesDecals(false),
-		bUseAsOccluder(false)
+		bUseAsOccluder(false),
+		bRenderCustomDepth(false),
+		CustomDepthStencilValue(0)
 	{
 	}
 	

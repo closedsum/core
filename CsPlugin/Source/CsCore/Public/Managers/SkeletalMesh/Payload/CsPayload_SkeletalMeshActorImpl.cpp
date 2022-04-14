@@ -32,6 +32,8 @@ namespace NCsSkeletalMeshActor
 			bCastShadow(false),
 			bReceivesDecals(false),
 			bUseAsOccluder(false),
+			bRenderCustomDepth(false),
+			CustomDepthStencilValue(0),
 			Params(nullptr)
 		{
 			InterfaceMap = new FCsInterfaceMap();
@@ -76,6 +78,8 @@ namespace NCsSkeletalMeshActor
 			bCastShadow = false;
 			bReceivesDecals = false;
 			bUseAsOccluder = false;
+			bRenderCustomDepth = false;
+			CustomDepthStencilValue = 0;
 			Params = nullptr;
 		}
 

@@ -63,6 +63,41 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			FORCEINLINE static bool LessThanChecked(const FString& Context, const int32& A, const FString& AName, const int32& B)
+			{
+				checkf(A < B, TEXT("%s: %s: %d is NOT < %d."), *Context, *AName, A, B);
+				return true;
+			}
+
+			FORCEINLINE static bool LessThan(const FString& Context, const int32& A, const FString& AName, const int32& B, void(*Log)(const FString&))
+			{
+				if (A >= B)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %d is NOT < %d."), *Context, *AName, A, B));
+					return false;
+				}
+				return true;
+			}
+
+			FORCEINLINE static bool LessThanOrEqualChecked(const FString& Context, const int32& A, const FString& AName, const int32& B)
+			{
+				checkf(A <= B, TEXT("%s: %s: %d is NOT <= %d."), *Context, *AName, A, B);
+				return true;
+			}
+
+			FORCEINLINE static bool LessThanOrEqual(const FString& Context, const int32& A, const FString& AName, const int32& B, void(*Log)(const FString&))
+			{
+				if (A > B)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %d is NOT <= %d."), *Context, *AName, A, B));
+					return false;
+				}
+				return true;
+			}
+
 		};
 	}
 
@@ -1140,6 +1175,18 @@ namespace NCsValid
 		static const FString __temp__str__ = #__A; \
 		check(NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqualChecked(Context, __A, __temp__str__, __B, __C)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_INT_LESS_THAN_CHECKED(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NInt::FLibrary::LessThanChecked(Context, __A, __temp__str__, __B)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NInt::FLibrary::LessThanOrEqualChecked(Context, __A, __temp__str__, __B)); \
+	}
 
 #pragma endregion Int
 
@@ -1498,6 +1545,8 @@ namespace NCsValid
 #define CS_IS_INT_GREATER_THAN_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
 #define CS_IS_INT_GREATER_THAN_AND_LESS_THAN_OR_EQUAL_CHECKED(__A, __B, __C)
+#define CS_IS_INT_LESS_THAN_CHECKED(__A, __B)
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(__A, __B)
 // Float
 #define CS_IS_FLOAT_EQUAL_CHECKED(__A, __B)
 #define CS_IS_FLOAT_NOT_EQUAL_CHECKED(__A, __B)
@@ -1707,6 +1756,42 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NInt::FLibrary::GreaterThanAndLessThanOrEqual(Context, __A, __temp__str__, __B, __C, Log)) { return nullptr; } \
+	}
+	// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_RET_NULL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_INT_LESS_THAN_OR_EQUAL_RET_VALUE(__A, __B, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NInt::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
 	}
 
 #pragma endregion Int

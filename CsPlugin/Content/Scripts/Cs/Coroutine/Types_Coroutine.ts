@@ -1,4 +1,7 @@
-/// <reference path="../../Cs/custom_typings/Cs.ts">/>
+/// <reference path="../../typings/ue.d.ts">/>
+// ; typing info for auto-completion in Visual Studio Code
+
+// require('Cs/Coroutine/Types_Coroutine.js')
 
 declare namespace NJsCoroutine {
     var EState:

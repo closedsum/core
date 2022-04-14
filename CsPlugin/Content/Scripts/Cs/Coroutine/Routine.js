@@ -1,10 +1,17 @@
-/// <reference path="../../typings/ue.d.ts">/>
+/// <reference path="../../Cs/Coroutine/Types_Coroutine.ts">/>
+/// <reference path="../../Cs/Library/Library_Common.ts">/>
+/// <reference path="../../Cs/Types/Property/Property.ts">/>
+/// <reference path="../../Cs/Types/Yield/Yield_Enum.ts">/>
+/// <reference path="../../Cs/Types/Yield/Yield_Function.ts">/>
+/// <reference path="../../Cs/Types/Yield/Yield_RoutineHandle.ts">/>
+/// <reference path="../../Cs/Core.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
 
 "use strict"
 
 // Types
-var NJsCoroutine = require('Cs/Coroutine/Types_Coroutine.js');
+var NJsCoroutine1 = require('Cs/Coroutine/Types_Coroutine.js');
+/** @type {FJsProperty} */
 var FJsProperty = require('Cs/Types/Property/Property.js');
 var NJsYield1 = require('Cs/Types/Yield/Yield_Enum.js');
 var NJsYield2 = require('Cs/Types/Yield/Yield_RoutineHandle.js');
@@ -22,6 +29,7 @@ const ROUTINE_END = -1;
 const ROUTINE_FREE = -2;
 
 // "typedefs" - class
+/** @type {CommonLibrary} */
 var CommonLibrary = NJsCommon.FLibrary;
 var EnumYieldType = NJsYield1.FEnum;
 var RoutineHandleYieldType = NJsYield2.FRoutineHandle;
@@ -33,55 +41,55 @@ var IsValidObject = CommonLibrary.IsValidObject;
 var IsInstanceOf = CommonLibrary.IsInstanceOf;
 
 // "typedefs" - enums
-var StateType = NJsCoroutine.EState;
-var EndReasonType = NJsCoroutine.EEndReason;
-var MessageType = NJsCoroutine.EMessage;
+/** @type {NJsCoroutine.EState} */ 		var StateType = NJsCoroutine1.EState;
+/** @type {NJsCoroutine.EEndReason} */ 	var EndReasonType = NJsCoroutine1.EEndReason;
+/** @type {NJsCoroutine.EMessage} */	var MessageType = NJsCoroutine1.EMessage;
 
-var Core;
+/** @type {FJsCore} */	var Core;
 
 module.exports = class FJsRoutine
 {
     constructor()
     {
-		this.self = this;
+		/** @type {FJsRoutine} */	this.self = this;
 
 		let UpdateGroupLibrary	= CsScriptLibrary_UpdateGroup;
 		this.Group				= UpdateGroupLibrary.GetMax();
 
 		// Time
-		this.StartTime = new CsTime(); /*CsTime*/
-		this.ElapsedTime = new CsDeltaTime(); /*CsDeltaTime*/
-		this.DeltaTime = new CsDeltaTime(); /*CsDeltaTime*/
-		this.TickCount = 0;
-		this.Delay = 0;
+		/** @type {CsTime} */ 		this.StartTime = new CsTime();
+		/** @type {CsDeltaTime} */ 	this.ElapsedTime = new CsDeltaTime();
+		/** @type {CsDeltaTime} */  this.DeltaTime = new CsDeltaTime();
+		/** @type {number} int */ 	this.TickCount = 0;
+		/** @type {number} float */	this.Delay = 0;
 
-		this.Handle = new CsRoutineHandle();
+		/** @type {FJsRoutine} */	this.Handle = new CsRoutineHandle();
 		
 		this.AbortImpls = [];
 		this.OnAborts = [];
 
-		this.State = StateType.Free;
+		/** @type {NJsCoroutine.EState} */	this.State = StateType.Free;
 
-		this.Index = INDEX_NONE;
+		/** @type {number} int */	this.Index = INDEX_NONE;
 
-		this.Name = "";
+		/** @type {string} */ this.Name = "";
 
 		// End
-		this.EndReason = EndReasonType.EEndReason_MAX;
+		/** @type {NJsCoroutine.EEndReason} */	this.EndReason = EndReasonType.EEndReason_MAX;
 
 		this.OnEnds = [];
 
 		// Owner
-		let OwnerType = NJsCoroutine.FOwner;
-		this.Owner    = new OwnerType();
+		/** @type {NJsCoroutine.FOwner} */	let OwnerType = NJsCoroutine1.FOwner;
+		/** @type {NJsCoroutine.FOwner} */	this.Owner    = new OwnerType();
 
 		// Children
 
-        this.Parent = null;
-		this.Children = [];
-
-		let RegisterMapType = NJsCoroutine.NRegister.FMap;
-		this.RegisterMap	= new RegisterMapType();
+		/** @type {FJsRoutine} */   this.Parent = null;
+		/** @type {FJsRoutine[]} */	this.Children = [];
+		
+		/** @type {NJsCoroutine.NRegister.FMap} */	let RegisterMapType = NJsCoroutine1.NRegister.FMap;
+		/** @type {NJsCoroutine.NRegister.FMap} */	this.RegisterMap	= new RegisterMapType();
 
 		this.Messages = [[], []];
 		this.Messages_Recieved = [[], []];
@@ -95,25 +103,25 @@ module.exports = class FJsRoutine
 			}
         }
 
-		this.bWaitForFrame = false; /*bool*/
-		this.WaitForFrameCounter = 0; /*int*/
-		this.WaitForFrame = 0; /*int*/
-		this.WaitForFrameType = null; /*FJsProperty*/
-		this.bWaitForTime = false; /*bool*/
-		this.WaitForTime = 0.0; /*float*/
-		this.WaitForTimeTimer = 0.0; /*float*/
-		this.WaitForTimeType = null; /*FJsProperty*/
-		this.bWaitForFlag = false; /*bool*/
-		this.WaitForFlagType = null; /*FJsProperty*/
-		this.bWaitForListenMessage = false; /*bool*/
-		this.WaitForListenMessage = null; /*string*/
-		this.WaitForListenMessageType = null; /*FJsProperty*/
-		this.bWaitForEnum = false; /*bool*/
-		this.WaitForEnum = new EnumYieldType(); /*EnumYieldType (NJsYield.FEnum)*/
-		this.bWaitForRoutineHandle = false; /*bool*/
-		this.WaitForRoutineHandle = new RoutineHandleYieldType(); /*RoutineHandleYieldType (NJsYield.FRoutineHandle)*/
-		this.bWaitForFunction = false; /*bool*/
-		this.WaitForFunction = new FunctionYieldType(); /*FunctionYieldType (NJsYield.FFunction)*/
+		/** @type {boolean} */		this.bWaitForFrame = false;
+		/** @type {number} int */ 	this.WaitForFrameCounter = 0;
+		/** @type {number} int */	this.WaitForFrame = 0;
+		/** @type {FJsProperty} */	this.WaitForFrameType = null;
+		/** @type {boolean} */		this.bWaitForTime = false;
+		/** @type {number} float */	this.WaitForTime = 0.0;
+		/** @type {number} float */	this.WaitForTimeTimer = 0.0;
+		/** @type {FJsProperty} */	this.WaitForTimeType = null;
+		/** @type {boolean} */		this.bWaitForFlag = false;
+		/** @type {FJsProperty} */ 	this.WaitForFlagType = null;
+		/** @type {boolean} */		this.bWaitForListenMessage = false;
+		/** @type {string} */		this.WaitForListenMessage = null;
+		/** @type {FJsProperty} */	this.WaitForListenMessageType = null;
+		/** @type {boolean} */		this.bWaitForEnum = false;
+		/** @type {NJsYield.FEnum} */	this.WaitForEnum = new EnumYieldType(); /*EnumYieldType (NJsYield.FEnum)*/
+		/** @type {boolean} */		this.bWaitForRoutineHandle = false;
+		/** @type {NJsYield.FRoutineHandle} */	this.WaitForRoutineHandle = new RoutineHandleYieldType(); /*RoutineHandleYieldType (NJsYield.FRoutineHandle)*/
+		/** @type {boolean} */		this.bWaitForFunction = false;
+		/** @type {NJsYield.FFunction} */	this.WaitForFunction = new FunctionYieldType(); /*FunctionYieldType (NJsYield.FFunction)*/
     }
 
 	SetCore(core)
@@ -174,13 +182,14 @@ module.exports = class FJsRoutine
 		this.Handle		   = RoutineLibrary.New(this.Handle).$;
     }
 
-	StartUpdate() { this.State = NJsCoroutine.EState.Update; }
+	StartUpdate() { this.State = StateType.Update; }
 
-	Update(deltaTime)
+	/**
+	* @param {number} deltaTime		float
+	*/
+	Update(deltaTime /*float*/)
 	{
 		// Check for Abort Messages
-		let MessageType = NJsCoroutine.EMessage;
-
 		let msgs		  = this.Messages[MessageType.Abort.Value];
 		let msgs_recieved = this.Messages_Recieved[MessageType.Abort.Value];
 
@@ -597,14 +606,21 @@ module.exports = class FJsRoutine
 		}
 	}
 
-	IsRunning() { return State.Value === NJsCoroutine.EState.Update.Value; }
+	IsRunning() { return this.State.Value === StateType.Update.Value; }
 
-    End(endReason)
+	/**
+	* @param {NJsCoroutine.EEndReason} endReason 
+	*/
+    End(endReason /*NJsCoroutine.EEndReason*/)
     {
 		this.EndChildren();
 
-		this.State	   = StateType.End;
-		this.EndReason = endReason;
+		this.State = StateType.End;
+
+		if (typeof endReason == "undefined")
+			this.EndReason = EndReasonType.EndOfExecution;
+		else
+			this.EndReason = endReason;
 
 		for (let i = 0; i < this.OnEnds.length; ++i)
 		{
@@ -612,10 +628,10 @@ module.exports = class FJsRoutine
         }
     }
 
-	HasJustEnded() { return State.Value === NJsCoroutine.EState.End.Value; }
+	HasJustEnded() { return this.State.Value === StateType.End.Value; }
     HasEnded()
 	{
-		return State.Value === StateType.End.Value || State.Value === StateType.Free.Value;
+		return this.State.Value === StateType.End.Value || this.State.Value === StateType.Free.Value;
 	}
 
     Reset()
@@ -723,12 +739,20 @@ module.exports = class FJsRoutine
 		}
 	}
 
-	SetValue(index, value)
+	/**
+	* @param {number} index 	int
+	* @param {any} value 
+	*/
+	SetValue(index /*int*/, value /*any*/)
 	{
 		this.RegisterMap.SetValue(index, value);
 	}
 
-	GetValue(index)
+	/**
+	* @param {number} index		int
+	* @returns {any}
+	*/
+	GetValue(index /*int*/)
 	{
 		return this.RegisterMap.GetValue(index);
 	}

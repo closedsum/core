@@ -168,7 +168,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, UMaterialInstanceDyna
 	// Check ScalarParameters is Valid
 	for (const FCsMaterialAnimParameterScalar& Param : ScalarParameters)
 	{
-		if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
+		if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.Name, Log))
 			return false;
 	}
 	return true;
@@ -195,7 +195,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<UMateria
 	{
 		for (UMaterialInstanceDynamic* MID : MIDs)
 		{
-			if (!MIDLibrary::IsVectorParameterValid(Context, MID, Param.Name, Log))
+			if (!MIDLibrary::IsScalarParameterValid(Context, MID, Param.Name, Log))
 				return false;
 		}
 	}
@@ -223,7 +223,7 @@ bool FCsMaterialAnimFrame::IsValid(const FString& Context, const TArray<TWeakObj
 	{
 		for (const TWeakObjectPtr<UMaterialInstanceDynamic>& MID : MIDs)
 		{
-			if (!MIDLibrary::IsVectorParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
+			if (!MIDLibrary::IsScalarParameterValid(Context, MID.IsValid() ? MID.Get() : nullptr, Param.Name, Log))
 				return false;
 		}
 	}
@@ -696,6 +696,8 @@ bool FCsMaterialAnim::IsValid(const FString& Context, UMaterialInstanceDynamic* 
 		return false;
 
 	// Check Frames
+	CS_IS_ARRAY_EMPTY(Frames, FCsMaterialAnimFrame)
+
 	for (const FCsMaterialAnimFrame& Frame : Frames)
 	{
 		if (!Frame.IsValid(Context, MID, Log))
@@ -710,6 +712,8 @@ bool FCsMaterialAnim::IsValid(const FString& Context, const TArray<UMaterialInst
 		return false;
 
 	// Check Frames
+	CS_IS_ARRAY_EMPTY(Frames, FCsMaterialAnimFrame)
+
 	for (const FCsMaterialAnimFrame& Frame : Frames)
 	{
 		if (!Frame.IsValid(Context, MIDs, Log))
@@ -724,6 +728,8 @@ bool FCsMaterialAnim::IsValid(const FString& Context, const TArray<TWeakObjectPt
 		return false;
 
 	// Check Frames
+	CS_IS_ARRAY_EMPTY(Frames, FCsMaterialAnimFrame)
+
 	for (const FCsMaterialAnimFrame& Frame : Frames)
 	{
 		if (!Frame.IsValid(Context, MIDs, Log))
@@ -974,6 +980,8 @@ namespace NCsMaterial
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
 
+			CS_IS_ARRAY_EMPTY_CHECKED(Frames, FrameType)
+
 			for (int32 I = 0; I < FrameCount; ++I)
 			{
 				check(Frames[I].IsValidChecked(Context, MID));
@@ -988,6 +996,8 @@ namespace NCsMaterial
 
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			CS_IS_ARRAY_EMPTY(Frames, FrameType)
 
 			for (int32 I = 0; I < FrameCount; ++I)
 			{
@@ -1004,6 +1014,8 @@ namespace NCsMaterial
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
 
+			CS_IS_ARRAY_EMPTY_CHECKED(Frames, FrameType)
+
 			for (int32 I = 0; I < FrameCount; ++I)
 			{
 				check(Frames[I].IsValidChecked(Context, MIDs));
@@ -1018,6 +1030,8 @@ namespace NCsMaterial
 
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			CS_IS_ARRAY_EMPTY(Frames, FrameType)
 
 			for (int32 I = 0; I < FrameCount; ++I)
 			{
@@ -1034,6 +1048,8 @@ namespace NCsMaterial
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
 
+			CS_IS_ARRAY_EMPTY_CHECKED(Frames, FrameType)
+
 			for (int32 I = 0; I < FrameCount; ++I)
 			{
 				check(Frames[I].IsValidChecked(Context, MIDs));
@@ -1048,6 +1064,8 @@ namespace NCsMaterial
 
 			// Check Frames
 			typedef NCsMaterial::NAnim::FFrame FrameType;
+
+			CS_IS_ARRAY_EMPTY(Frames, FrameType)
 
 			for (int32 I = 0; I < FrameCount; ++I)
 			{

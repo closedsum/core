@@ -823,8 +823,12 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 			PayloadImplType PayloadImpl;
-			PayloadImpl.Owner = this;
-			PayloadImpl.Parent = MeshComponent;
+			PayloadImpl.Owner  = this;
+
+			if (MeshComponent->GetStaticMesh())
+				PayloadImpl.Parent = MeshComponent;
+			else
+				PayloadImpl.Parent = CollisionComponent;
 
 			const FCsFX& TrailFX = VisualData->GetTrailFX();
 

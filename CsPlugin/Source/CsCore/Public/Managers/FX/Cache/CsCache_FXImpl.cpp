@@ -64,7 +64,8 @@ namespace NCsFX
 			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
-			DeallocateState(EDeallocateState::None)
+			DeallocateState(EDeallocateState::None),
+			bHideOnQueueDeallocate(false)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -84,7 +85,7 @@ namespace NCsFX
 			delete InterfaceMap;
 		}
 
-		// NCsPooledObject::NCache::ICache
+		// PooledCacheType (NCsPooledObject::NCache::ICache)
 		#pragma region
 		
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
@@ -113,6 +114,8 @@ namespace NCsFX
 
 			DeallocateMethod = FXPayload->GetDeallocateMethod();
 			LifeTime		 = FXPayload->GetLifeTime();
+
+			bHideOnQueueDeallocate = FXPayload->ShouldHideOnQueueDeallocate();
 		}
 
 		void FImpl::Deallocate()
@@ -130,6 +133,11 @@ namespace NCsFX
 			checkf(FXComponent, TEXT("NCsFX::NCache::FImpl::QueueDeallocate: FXComponent is NULL."));
 
 			FXComponent->Deactivate();
+
+			if (bHideOnQueueDeallocate)
+			{
+				FXComponent->SetHiddenInGame(true);
+			}
 
 			// Transition to EDeallocateState::Complete
 			// This is to hopefully prevent the GameThread from stalling when
@@ -149,7 +157,7 @@ namespace NCsFX
 
 		void FImpl::Reset()
 		{
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = false;
 			bQueueDeallocate = false;
 			State = NCsPooledObject::EState::Inactive;
@@ -161,12 +169,13 @@ namespace NCsFX
 			LifeTime = 0.0f;
 			StartTime.Reset();
 			ElapsedTime.Reset();
-			// NCsFX::NCache::ICache
+			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent = nullptr;
 			DeallocateState = EDeallocateState::None;
+			bHideOnQueueDeallocate = false;
 		}
 
-		#pragma endregion NCsPooledObject::NCache::ICache
+		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
 
 		void FImpl::Update(const FCsDeltaTime& DeltaTime)
 		{

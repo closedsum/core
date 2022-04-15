@@ -507,6 +507,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
+	/** Whether to Hide the FX when FX->GetCache()->QueueDeallocate() is called.
+		The main purpose of this is for FX that should be deallocated "immediately" after
+		QueueDeallocate() is called. Normally, the FX is allowed to "complete" / deactivate
+		gracefully. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bHideOnQueueDeallocate;
+
 	/** Valid if the FX is attached to a Parent object or when an FX object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the FX will NOT be attached. */
@@ -551,6 +558,7 @@ public:
 		DeallocateMethod(ECsFXDeallocateMethod::Complete),
 		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
+		bHideOnQueueDeallocate(false),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
@@ -571,6 +579,7 @@ public:
 		DeallocateMethod = B.DeallocateMethod;
 		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 		LifeTime = B.LifeTime;
+		bHideOnQueueDeallocate = B.bHideOnQueueDeallocate;
 		AttachmentTransformRules = B.AttachmentTransformRules;
 		Bone = B.Bone;
 		TransformRules = B.TransformRules;

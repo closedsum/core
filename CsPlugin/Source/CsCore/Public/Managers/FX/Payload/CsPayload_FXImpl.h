@@ -64,6 +64,8 @@ namespace NCsFX
 
 			float LifeTime;
 	
+			bool bHideOnQueueDeallocate;
+
 			ECsAttachmentTransformRules AttachmentTransformRules;
 
 			FName Bone;
@@ -128,6 +130,7 @@ namespace NCsFX
 			FORCEINLINE UNiagaraSystem* GetFXSystem() const { return FXSystem; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const bool& ShouldHideOnQueueDeallocate() const { return bHideOnQueueDeallocate; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }

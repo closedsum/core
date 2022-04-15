@@ -91,6 +91,7 @@ namespace NCsFX
 			Payload->FXSystem				  = FX.GetChecked(Context);
 			Payload->DeallocateMethod		  = FX.GetDeallocateMethod();
 			Payload->LifeTime				  = FX.LifeTime;
+			Payload->bHideOnQueueDeallocate	  = FX.bHideOnQueueDeallocate;
 			Payload->AttachmentTransformRules = FX.AttachmentTransformRules;
 			Payload->Bone					  = FX.Bone;
 			Payload->TransformRules			  = FX.TransformRules;

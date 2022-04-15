@@ -62,6 +62,16 @@ namespace NCsFX
 			virtual const float& GetLifeTime() const = 0;
 
 			/**
+			* Whether to Hide the FX when FX->GetCache()->QueueDeallocate() is called.
+			* The main purpose of this is for FX that should be deallocated "immediately" after
+			* QueueDeallocate() is called. Normally, the FX is allowed to "complete" / deactivate
+			* gracefully.
+			* 
+			* return Whether to Hide the FX on QueueDeallocate() or not
+			*/
+			virtual const bool& ShouldHideOnQueueDeallocate() const = 0;
+
+			/**
 			* Relevant if the FX is attached to a Parent object or when an FX object is
 			* allocated, the Parent field of the payload is set. If the Parent object is NULL, 
 			* the FX will NOT be attached.

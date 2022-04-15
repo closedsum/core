@@ -46,6 +46,7 @@ namespace NCsFXActorPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Handle_SetFXSystem);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, Handle_ClearFXSystem);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsFXActorPooledImpl, WaitForSystemComplete);
 		}
 
 		namespace Name
@@ -179,7 +180,6 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	typedef NCsFX::NCache::FImpl CacheImplType;
 	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
 
-	// TODO: Add IsValidChecked in PayloadLibrary
 	CacheImpl->Allocate(Payload);
 
 	UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
@@ -214,6 +214,7 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	}
 
 	FX->SetActorTickEnabled(true);
+	FXComponent->SetHiddenInGame(false);
 	FX->SetActorHiddenInGame(false);
 
 	{
@@ -232,6 +233,16 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 void UCsFXActorPooledImpl::Deallocate()
 {
 	using namespace NCsFXActorPooledImpl::NCached;
+
+	// Check if beginning Shutdown
+	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
+	const bool IsBeginningShutdown		  = Manager_FX_Actor->IsBeginningShutdown();
+
+	if (IsBeginningShutdown)
+	{
+		ChangesToDefaultMask = 0;
+		PreserveChangesToDefaultMask = 0;
+	}
 
 	Handle_ClearAttachAndTransform();
 
@@ -576,10 +587,13 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 
 void UCsFXActorPooledImpl::WaitForSystemComplete()
 {
+	using namespace NCsFXActorPooledImpl::NCached;
+
+	const FString& Context = Str::WaitForSystemComplete;
+
 	// Check to Wait for System to "complete"
 	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
-
-	const bool IsBeginningShutdown = Manager_FX_Actor->IsBeginningShutdown();
+	const bool IsBeginningShutdown		  = Manager_FX_Actor->IsBeginningShutdown();
 
 	FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
 
@@ -594,11 +608,11 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 			{
 				if (UNiagaraSystem* NS = System->GetSystem())
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: IsBeginningShutdown and System != NULL. NiagaraSystem: %s. Set WaitForSystem = true."), *(NS->GetName()));
+					UE_LOG(LogCs, Warning, TEXT("%s: IsBeginningShutdown and System != NULL. NiagaraSystem: %s. Set WaitForSystem = true."), *Context, *(NS->GetName()));
 				}
 				else
 				{
-					UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: IsBeginningShutdown and System != NULL. Set WaitForSystem = true."))
+					UE_LOG(LogCs, Warning, TEXT("%s: IsBeginningShutdown and System != NULL. Set WaitForSystem = true."), *Context);
 				}
 			}
 #endif // #if !UE_BUILD_SHIPPING
@@ -613,7 +627,7 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 		if (WaitForSystem &&
 			CS_CVAR_LOG_IS_SHOWING(LogFXPooledWaitForSystemComplete))
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsFXActorPooledImpl::WaitForSystemComplete: System != NULL. NiagaraSystem: %s. Set WaitForSystem = true."), *(System->GetSystem()->GetName()));
+			UE_LOG(LogCs, Warning, TEXT("%s: System != NULL. NiagaraSystem: %s. Set WaitForSystem = true."), *Context, *(System->GetSystem()->GetName()));
 		}
 #endif // #if !UE_BUILD_SHIPPING
 	}

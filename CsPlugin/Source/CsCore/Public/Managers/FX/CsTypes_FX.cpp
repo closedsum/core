@@ -409,6 +409,7 @@ void FCsFX::Reset()
 	DeallocateMethod = ECsFXDeallocateMethod::Complete;
 	DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	LifeTime = 0.0f;
+	bHideOnQueueDeallocate = false;
 	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;
 	TransformRules =7; // NCsTransformRules::All

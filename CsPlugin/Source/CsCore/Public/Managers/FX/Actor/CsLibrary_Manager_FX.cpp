@@ -105,6 +105,16 @@ namespace NCsFX
 
 		#pragma endregion Get
 
+		// State
+		#pragma region
+
+		bool FLibrary::IsBeginningShutdownChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->IsBeginningShutdown();
+		}
+
+		#pragma endregion State
+
 		// Pool
 		#pragma region
 		
@@ -347,5 +357,20 @@ namespace NCsFX
 		}
 
 		#pragma endregion Spawn
+
+		// Params
+		#pragma region
+
+		#define ParameterType NCsFX::NParameter::IParameter
+		void FLibrary::DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value)
+		{
+		#undef ParameterType
+
+			CS_IS_PTR_NULL_CHECKED(Value);
+			
+			GetChecked(Context, WorldContext)->DeallocateValue(Value);
+		}
+		
+		#pragma endregion Params
 	}
 }

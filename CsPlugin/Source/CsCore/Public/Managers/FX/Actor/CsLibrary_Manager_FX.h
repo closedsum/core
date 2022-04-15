@@ -16,6 +16,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
+// NCsFX::NParameter::IParameter
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
+
 namespace NCsFX
 {
 	namespace NManager
@@ -110,6 +113,21 @@ namespace NCsFX
 			static UCsManager_FX_Actor* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
+
+		// State
+		#pragma region
+		public:
+
+			/**
+			* Get whether UCsManager_FX_Actor is beginning shutdown or not (UCsManager_FX_Actor->IsBeginningShutdown()).
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Whether Manager_FX is beginning shutdown or not.
+			*/
+			static bool IsBeginningShutdownChecked(const FString& Context, const UObject* WorldContext);
+
+		#pragma endregion State
 
 		// Pool
 		#pragma region
@@ -320,6 +338,25 @@ namespace NCsFX
 			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 		#pragma endregion Spawn
+
+		// Params
+		#pragma region
+		public:
+
+		#define ParameterType NCsFX::NParameter::IParameter
+
+			/**
+			* Deallocate parameter Value, ParameterType (NCsFX::NParameter::IParameter).
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value
+			*/
+			static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value);
+
+		#undef ParameterType
+
+		#pragma endregion Params
 		};
 	}
 }

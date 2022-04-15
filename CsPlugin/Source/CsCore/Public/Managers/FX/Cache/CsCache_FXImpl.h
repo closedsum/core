@@ -100,6 +100,8 @@ namespace NCsFX
 
 			EDeallocateState DeallocateState;
 
+			bool bHideOnQueueDeallocate;
+
 		public:
 
 			FImpl();

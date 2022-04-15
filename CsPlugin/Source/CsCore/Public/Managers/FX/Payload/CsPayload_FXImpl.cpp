@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
-// Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+// Library
+#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 
@@ -12,6 +12,17 @@ namespace NCsFX
 {
 	namespace NPayload
 	{
+		namespace NImpl
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFX::NPayload::NImpl, Reset);
+				}
+			}
+		}
+
 		#define DeallocateMethodType NCsFX::EDeallocateMethod
 
 		FImpl::FImpl() :
@@ -30,6 +41,7 @@ namespace NCsFX
 			FXSystem(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
+			bHideOnQueueDeallocate(false),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
@@ -59,6 +71,10 @@ namespace NCsFX
 
 		void FImpl::Reset()
 		{
+			using namespace NCsFX::NPayload::NImpl::NCached;
+
+			const FString& Context = Str::Reset;
+
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			bAllocated = false;
 			UpdateType = NCsPooledObject::EUpdate::Manager;
@@ -76,18 +92,18 @@ namespace NCsFX
 			FXSystem = nullptr;
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
+			bHideOnQueueDeallocate = false;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
 
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(Root);
-
+			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 			typedef NCsFX::NParameter::IParameter ParameterType;
 
 			for (ParameterType* Param : Parameters)
 			{
-				Manager_FX->DeallocateValue(Param);
+				FXManagerLibrary::DeallocateValueChecked(Context, Root, Param);
 			}
 			Parameters.Reset(Parameters.Max());
 		}

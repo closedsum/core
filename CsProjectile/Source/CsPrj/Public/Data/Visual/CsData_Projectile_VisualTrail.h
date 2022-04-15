@@ -15,6 +15,8 @@ namespace NCsProjectile
 			namespace NTrail
 			{
 				/**
+				* Interface describes the Trail visual information for a Projectile.
+				*  Projectile is an object that implements the interface: ICsProjectile.
 				*/
 				struct CSPRJ_API ITrail : public ICsGetInterfaceMap
 				{
@@ -25,6 +27,15 @@ namespace NCsProjectile
 				public:
 
 					/**
+					* Get the Trail FX to play when Projectile is Launched.
+					* If 
+					*  The Projectile Data implements the interface: 
+					*  StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) then
+					*  the Trail with be attached to the Mesh associated with Projectile.
+					* Else
+					*  The Trail is attached to the Collision of the Projectile.
+					* 
+					* return Trail FX
 					*/
 					virtual const FCsFX& GetTrailFX() const = 0;
 				};
@@ -40,6 +51,8 @@ class CSPRJ_API UCsData_Projectile_VisualTrail : public UCsGetInterfaceMap
 };
 
 /**
+* Interface describes the Trail visual information for a Projectile.
+*  Projectile is an object that implements the interface: ICsProjectile.
 */
 class CSPRJ_API ICsData_Projectile_VisualTrail : public ICsGetInterfaceMap
 {
@@ -52,6 +65,15 @@ public:
 public:
 
 	/**
+	* Get the Trail FX to play when Projectile is Launched.
+	* If
+	*  The Projectile Data implements the interface:
+	*  StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) then
+	*  the Trail with be attached to the Mesh associated with Projectile.
+	* Else
+	*  The Trail is attached to the Collision of the Projectile.
+	*
+	* return Trail FX
 	*/
 	virtual const FCsFX& GetTrailFX() const = 0;
 };

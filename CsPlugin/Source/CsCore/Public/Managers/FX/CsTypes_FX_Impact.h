@@ -17,10 +17,10 @@ struct CSCORE_API FCsFXImpact : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	TEnumAsByte<EPhysicalSurface> Surface;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	FCsFX FX;
 
 public:
@@ -30,6 +30,9 @@ public:
 		FX()
 	{
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsFXImpact

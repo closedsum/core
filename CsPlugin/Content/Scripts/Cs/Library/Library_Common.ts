@@ -16,6 +16,13 @@ declare namespace NJsCommon {
         check(condition: boolean): void;
  
         /**
+        * 
+        * @param {any} o
+        * @returns {boolean} 
+        */
+        IsDefined(o: any): boolean;
+
+        /**
         * @param {object} o 
         * @returns {boolean}
         */

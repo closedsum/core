@@ -1,4 +1,4 @@
-// Copyright 2017 Respawn Entertainment, Inc. All rights reserved.
+// Copyright 2017-2022 Closed Sum Games, Inc. All rights reserved.
 #include "Library/CsLibrary_RenderTarget.h"
 
 // Library

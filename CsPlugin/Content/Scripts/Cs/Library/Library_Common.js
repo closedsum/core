@@ -34,6 +34,15 @@ module.exports = class NJsCommon
         }
 
         /**
+         * @param {any} o 
+         * @returns {boolean}
+         */
+        static /*bool*/ IsDefined(o /*any*/)
+        {
+            return typeof o !== "undefined";    
+        }
+
+        /**
          * @param {object} o 
          * @returns {boolean}
          */

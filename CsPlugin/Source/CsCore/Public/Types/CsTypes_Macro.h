@@ -28,6 +28,12 @@
 #define CS_NON_SHIPPING_EXPR(__Expr)
 #endif // #if !UE_BUILD_SHIPPING
 
+#if WITH_EDITOR
+#define CS_EDITOR_EXPR(__Expr) __Expr
+#else
+#define CS_EDITOR_EXPR(__Expr)
+#endif // #if WITH_EDITOR
+
 #if !UE_BUILD_SHIPPING
 #define CS_CONDITIONAL_LOG(__Str) if (Log) \
 	Log(__Str);

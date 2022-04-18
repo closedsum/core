@@ -162,7 +162,7 @@ public:
 		Location(FVector::ZeroVector),
 		RotationType(ECsDebugDrawRotation::Absolute),
 		Rotation(FRotator::ZeroRotator),
-		Extent(FVector::OneVector),
+		Extent(FVector::ZeroVector),
 		Color(FColor::Red),
 		LifeTime(0.1f),
 		bSolid(false),
@@ -173,6 +173,12 @@ public:
 	bool CanDraw(const UObject* WorldContext) const;
 
 	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
+
+	void Draw(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const;
+
+private:
+
+	void Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const;
 };
 
 #pragma endregion FCsDebugDrawBox
@@ -552,6 +558,66 @@ public:
 
 #pragma endregion FCsDebugDrawLineAndPoint
 
+// FCsDebugDrawString
+#pragma region
+
+class UWorld;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawString
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to Location. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FVector Offset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bDrawShadow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float FontScale;
+
+	FCsDebugDrawString() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Offset(FVector::ZeroVector),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		bDrawShadow(false),
+		FontScale(1.0f)
+	{
+	}
+
+	bool CanDraw(const UObject* WorldContext) const;
+
+	void Draw(const UObject* WorldContext, const FVector& Location, const FString& Text) const;
+};
+
+#pragma endregion FCsDebugDrawString
+
 // FCsDebugDrawTraceLine
 #pragma region
 
@@ -577,29 +643,39 @@ public:
 	bool bEnableInPlay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	FLinearColor Color;
+	FColor Color;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	FLinearColor HitColor;
+	FColor HitColor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float HitSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float LifeTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Thickness;
 
 	FCsDebugDrawTraceLine() :
 		CVar(),
 		bEnableInPreview(false),
 		PriorityInPlay(ECsDebugDrawPriority::Any),
 		bEnableInPlay(false),
-		Color(FLinearColor::Red),
-		HitColor(FLinearColor::Green),
-		LifeTime(0.1f)
+		Color(FColor::Red),
+		HitColor(FColor::Green),
+		HitSize(16.0f),
+		LifeTime(0.1f),
+		Thickness(1.0f)
 	{
 		
 	}
 
-	bool CanDraw(UWorld* World) const;
+	bool CanDraw(const UObject* WorldContext) const;
 
-	void Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const FHitResult& Hit) const;
+
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const bool& BlockingHit, const FVector& ImpactPoint) const;
 };
 
 #pragma endregion FCsDebugDrawTraceLine
@@ -877,62 +953,3 @@ public:
 };
 
 #pragma endregion FCsDebugDrawTraceShape
-
-// FCsDebugDrawString
-#pragma region
-
-/**
-*/
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsDebugDrawString
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	FECsCVarDraw CVar;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	bool bEnableInPreview;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	ECsDebugDrawPriority PriorityInPlay;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	bool bEnableInPlay;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	FVector LocationOffset;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	FColor Color;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float LifeTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
-	bool bDropShadow;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float FontScale;
-
-	FCsDebugDrawString() :
-		CVar(),
-		bEnableInPreview(false),
-		PriorityInPlay(ECsDebugDrawPriority::Any),
-		bEnableInPlay(false),
-		LocationOffset(FVector::ZeroVector),
-		Color(FColor::Red),
-		LifeTime(0.1f),
-		bDropShadow(false),
-		FontScale(1.0f)
-	{
-	}
-
-	bool CanDraw(UWorld* World) const;
-
-	void Draw(UWorld* World, const FVector& Location, const FString& Text) const;
-};
-
-#pragma endregion FCsDebugDrawString

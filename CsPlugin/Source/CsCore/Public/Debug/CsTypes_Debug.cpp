@@ -108,15 +108,28 @@ void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform& Transf
 {
 	if (CanDraw(WorldContext))
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
-		UWorld* World = WorldLibrary::GetSafe(WorldContext);
-
-		if (bSolid)
-			DrawDebugSolidBox(World, Transform.GetTranslation() + Location, Extent, Rotation.Quaternion(), Color, false, LifeTime, 0);
-		else
-			DrawDebugBox(World, Transform.GetTranslation() + Location, Extent, Rotation.Quaternion(), Color, false, LifeTime, 0, Thickness);
+		Draw_Internal(WorldContext, Transform, FVector::ZeroVector);
 	}
+}
+
+void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const
+{
+	if (CanDraw(WorldContext))
+	{
+		Draw_Internal(WorldContext, Transform, InExtent);
+	}
+}
+
+void FCsDebugDrawBox::Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	if (bSolid)
+		DrawDebugSolidBox(World, Transform.GetTranslation() + Location, InExtent + Extent, Rotation.Quaternion() * Transform.GetRotation(), Color, false, LifeTime, 0);
+	else
+		DrawDebugBox(World, Transform.GetTranslation() + Location, InExtent + Extent, Rotation.Quaternion() * Transform.GetRotation(), Color, false, LifeTime, 0, Thickness);
 }
 
 #pragma endregion FCsDebugDrawBox
@@ -550,11 +563,15 @@ void FCsDebugDrawLineAndPoint::DrawOnlyPoint(UWorld* World, const FVector& Locat
 
 #pragma endregion FCsDebugDrawLineAndPoint
 
-// FCsDebugDrawTraceLine
+// FCsDebugDrawString
 #pragma region
 
-bool FCsDebugDrawTraceLine::CanDraw(UWorld* World) const
+bool FCsDebugDrawString::CanDraw(const UObject* WorldContext) const
 {
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 	if (!World)
 		return false;
 
@@ -581,12 +598,83 @@ bool FCsDebugDrawTraceLine::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawTraceLine::Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const
+void FCsDebugDrawString::Draw(const UObject* WorldContext, const FVector& Location, const FString& Text) const
 {
-	if (CanDraw(World))
+	if (CanDraw(WorldContext))
 	{
-		NCsDebug::NDraw::FLibrary::LineTraceSingle(World, Start, End, EDrawDebugTrace::ForDuration, Hit.bBlockingHit, Hit, Color, HitColor, LifeTime);
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+		DrawDebugString(World, Location, Text, nullptr, Color, LifeTime, bDrawShadow, FontScale);
 	}
+}
+
+#pragma endregion FCsDebugDrawString
+
+// FCsDebugDrawTraceLine
+#pragma region
+
+bool FCsDebugDrawTraceLine::CanDraw(const UObject* WorldContext) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const FHitResult& Hit) const
+{
+	if (CanDraw(WorldContext))
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+		if (Hit.bBlockingHit)
+		{
+			DrawDebugLine(World, Start, Hit.ImpactPoint, Color, false, LifeTime, 0 , Thickness);
+			DrawDebugLine(World, Hit.ImpactPoint, End, HitColor, false, LifeTime, 0, Thickness);
+			DrawDebugPoint(World, Hit.ImpactPoint, HitSize, HitColor, false, LifeTime);
+		}
+		else
+		{
+			DrawDebugLine(World, Start, End, Color, false, LifeTime, 0, Thickness);
+		}
+	}
+}
+
+void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const bool& BlockingHit, const FVector& ImpactPoint) const
+{
+	FHitResult Hit;
+	Hit.bBlockingHit = BlockingHit;
+	Hit.ImpactPoint  = ImpactPoint;
+
+	Draw(WorldContext, Start, End, Hit);
 }
 
 #pragma endregion FCsDebugDrawTraceLine
@@ -810,44 +898,3 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 }
 
 #pragma endregion FCsDebugDrawTraceShape
-
-// FCsDebugDrawString
-#pragma region
-
-bool FCsDebugDrawString::CanDraw(UWorld* World) const
-{
-	if (!World)
-		return false;
-
-	// Preview
-	if (World->WorldType == EWorldType::Editor ||
-		World->WorldType == EWorldType::EditorPreview)
-	{
-		return bEnableInPreview;
-	}
-	// Play
-	if (World->WorldType == EWorldType::Game ||
-		World->WorldType == EWorldType::PIE)
-	{
-		// Any
-		if (PriorityInPlay == ECsDebugDrawPriority::Any)
-			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
-		// CVar
-		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
-			return FCsCVarDrawMap::Get().IsDrawing(CVar);
-		// Flag
-		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
-			return bEnableInPlay;
-	}
-	return false;
-}
-
-void FCsDebugDrawString::Draw(UWorld* World, const FVector& Location, const FString& Text) const
-{
-	if (CanDraw(World))
-	{
-		NCsDebug::NDraw::FLibrary::String(World, Location + LocationOffset, Text, nullptr, Color, LifeTime, bDropShadow, FontScale);
-	}
-}
-
-#pragma endregion FCsDebugDrawString

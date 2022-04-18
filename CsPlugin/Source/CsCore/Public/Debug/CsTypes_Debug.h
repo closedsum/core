@@ -170,9 +170,9 @@ public:
 	{
 	}
 
-	bool CanDraw(UWorld* World) const;
+	bool CanDraw(const UObject* WorldContext) const;
 
-	void Draw(UWorld* World, const FTransform& Transform) const;
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
 };
 
 #pragma endregion FCsDebugDrawBox

@@ -72,8 +72,12 @@ namespace NCsDebugDrawRotation
 // FCsDebugDrawBox
 #pragma region
 
-bool FCsDebugDrawBox::CanDraw(UWorld* World) const
+bool FCsDebugDrawBox::CanDraw(const UObject* WorldContext) const
 {
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 	if (!World)
 		return false;
 
@@ -100,10 +104,14 @@ bool FCsDebugDrawBox::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawBox::Draw(UWorld* World, const FTransform& Transform) const
+void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform& Transform) const
 {
-	if (CanDraw(World))
+	if (CanDraw(WorldContext))
 	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 		if (bSolid)
 			DrawDebugSolidBox(World, Transform.GetTranslation() + Location, Extent, Rotation.Quaternion(), Color, false, LifeTime, 0);
 		else

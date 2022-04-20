@@ -1,16 +1,19 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "UObject/Object.h"
+// Types
+#include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 
 #include "CsScriptLibrary_Manager_Projectile.generated.h"
-#pragma once
 
 // Delegates
 #pragma region
 
 #pragma endregion Delegates
 
+class UCsManager_Projectile;
 class ICsProjectile;
 
 UCLASS()
@@ -18,20 +21,60 @@ class CSPRJ_API UCsScriptLibrary_Manager_Projectile : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the reference to UCsManager_Projectile from a WorldContext.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* return				UCsManager_Projectile.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projecitle", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static UCsManager_Projectile* Get(const FString& Context, const UObject* WorldContextObject);
+
+#pragma endregion Get
+
 // Settings
 #pragma region
 public:
 
 	/**
 	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutTypes			(out)
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool GetTypeToSetAsArray(const FString& Context, const UObject* WorldContextObject, TArray<FECsProjectile>& OutTypes);
+
+	/**
 	*
-	* @param WorldContextObject
-	* @param Projectile
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Key
 	* @param Value
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Key,Value"))
 	static void SetTypeMapKeyValue(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Key, const FECsProjectile& Value);
+
+	
+	/**
+	* 
+	* 
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Type
+	* @param PoolParams
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Type,PoolParams"))
+	static bool AddPoolParams(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams);
+
 
 #pragma endregion Settings
 

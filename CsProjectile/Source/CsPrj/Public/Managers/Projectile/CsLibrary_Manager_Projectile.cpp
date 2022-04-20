@@ -109,6 +109,11 @@ namespace NCsProjectile
 		// Settings
 		#pragma region
 
+		const TArray<TArray<FECsProjectile>>& FLibrary::GetTypeMapToArrayChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->GetTypeMapToArray();
+		}
+
 		void FLibrary::SetAndAddTypeMapKeyValueChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Key, const FECsProjectile& Value)
 		{
 			check(EMCsProjectile::Get().IsValidEnumChecked(Context, Key));
@@ -128,6 +133,54 @@ namespace NCsProjectile
 			{
 				Manager_Projectile->SetAndAddTypeMapKeyValue(Key, Value);
 			}
+		}
+
+		void FLibrary::AddPoolParamsChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Type);
+
+			CS_IS_VALID_CHECKED(PoolParams);
+
+			UCsManager_Projectile* Manager_Projectile = GetChecked(Context, WorldContext);
+
+			// Get Class
+			const FECsProjectileClass& ClassType = PoolParams.Class;
+			FCsProjectilePooled* Projectile		 = Manager_Projectile->GetProjectileChecked(Context, ClassType);
+
+			check(Projectile->GetClassChecked(Context));
+
+			Manager_Projectile->AddPoolParams(Type, PoolParams);
+		}
+
+		bool FLibrary::SafeAddPoolParams(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Type)
+
+			CS_IS_VALID(PoolParams)
+
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				// Get Class
+				const FECsProjectileClass& ClassType = PoolParams.Class;
+				FCsProjectilePooled* Projectile		 = Manager_Projectile->GetSafeProjectile(Context, ClassType);
+
+				if (!Projectile)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Projectile class from ClassType: %s."), *Context, ClassType.ToChar()));
+					return false;
+				}
+
+				UClass* Class = Projectile->GetClass();
+
+				if (!Class)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar()));
+					return false;
+				}
+				Manager_Projectile->AddPoolParams(Type, PoolParams);
+				return true;
+			}
+			return false;
 		}
 
 		#pragma endregion Settings

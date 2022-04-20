@@ -14,8 +14,8 @@
 
 class UObject;
 
-// NCsProjectile::NPayload::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, FImpl)
+// NCsProjectile::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsPayload_Projectile
@@ -71,7 +71,7 @@ public:
 	{
 	}
 
-#define PayloadType NCsProjectile::NPayload::FImpl
+#define PayloadType NCsProjectile::NPayload::IPayload
 	void CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const;
 #undef PayloadType
 

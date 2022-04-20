@@ -45,9 +45,11 @@ public:
 	/** The class of the pooled Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FECsProjectileClass Class;
+
 	/** The maximum size of the pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
+
 	/** The maximum payload size. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
@@ -58,6 +60,9 @@ public:
 		PayloadSize(4)
 	{
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
 
 #pragma endregion FCsSettings_Manager_Projectile_PoolParams

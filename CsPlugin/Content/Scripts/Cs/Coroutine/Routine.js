@@ -628,6 +628,11 @@ module.exports = class FJsRoutine
         }
     }
 
+	EndOfExecution()
+	{
+		this.End(EndReasonType.EndOfExecution);
+	}
+
 	HasJustEnded() { return this.State.Value === StateType.End.Value; }
     HasEnded()
 	{

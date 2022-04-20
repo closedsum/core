@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Types/CsTypes_Projectile.h"
+#include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
@@ -116,6 +116,16 @@ namespace NCsProjectile
 		public:
 
 			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return
+			*/
+			static const TArray<TArray<FECsProjectile>>& GetTypeMapToArrayChecked(const FString& Context, const UObject* WorldContext);
+
+
+			/**
 			* 
 			* 
 			* @param Context		The calling context.
@@ -135,6 +145,26 @@ namespace NCsProjectile
 			* @param Log			(optional)
 			*/
 			static void SafeSetAndAddTypeMapKeyValue(const FString& Context, const UObject* WorldContext, const FECsProjectile& Key, const FECsProjectile& Value, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+			/**
+			* Add and create a pool in Manager_Character with the specified PoolParams.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param PoolParams
+			*/
+			static void AddPoolParamsChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams);
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param PoolParams
+			*/
+			static bool SafeAddPoolParams(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& PoolParams, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
 		#pragma endregion Settings
 

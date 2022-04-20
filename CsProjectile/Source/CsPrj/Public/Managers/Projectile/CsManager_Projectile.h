@@ -221,7 +221,16 @@ public:
 
 	FORCEINLINE const TArray<TArray<FECsProjectile>>& GetTypeMapToArray() const { return TypeMapToArray; }
 
+protected:
+
+	/** Set of all types that have been mapped To (a list of Froms has been mapped to each To). */
+	TSet<FECsProjectile> TypeToSet;
+
 public:
+
+	FORCEINLINE const TSet<FECsProjectile>& GetTypeToSet() const { return TypeToSet; }
+
+	FORCEINLINE bool IsTypeMappedToType(const FECsProjectile& From, const FECsProjectile& To) const { return TypeMapArray[From] == To; }
 
 	/**
 	*
@@ -252,6 +261,8 @@ public:
 	}
 
 	void SetAndAddTypeMapKeyValue(const FECsProjectile& Key, const FECsProjectile& Value);
+
+	void AddPoolParams(const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& InPoolParams);
 
 #pragma endregion Settings
 
@@ -831,6 +842,17 @@ public:
 
 	/**
 	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
+	* with the Projectile Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Type of the Projectile.
+	* return			Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
+	*/
+	FCsProjectilePooled* GetSafeProjectile(const FString& Context, const FECsProjectile& Type);
+
+	/**
+	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
 	* with the projectile class Type.
 	*
 	* @param Type	Class type of the projectile.
@@ -848,6 +870,18 @@ public:
 	* return			Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
 	*/
 	FCsProjectilePooled* GetProjectileChecked(const FString& Context, const FECsProjectileClass& Type);
+
+	/**
+	* Get the Projectile container (Interface (ICsProjectile), UObject, and / or UClass) associated
+	* with the Projectile class Type.
+	* "Checked" in regards to returning a valid pointer.
+	*
+	* @param Context	The calling context.
+	* @param Type		Class type of the Projectile.
+	* return			Projectile container (Interface (ICsProjectile), UObject, and / or UClass).
+	*/
+	FCsProjectilePooled* GetSafeProjectile(const FString& Context, const FECsProjectileClass& Type);
+
 
 #pragma endregion Class
 

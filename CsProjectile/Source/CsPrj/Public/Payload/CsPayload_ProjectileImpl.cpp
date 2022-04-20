@@ -1,26 +1,60 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/CsPayload_ProjectileImpl.h"
 
+// Library
+#include "Payload/CsLibrary_Payload_Projectile.h"
+// Containers
 #include "Containers/CsInterfaceMap.h"
+// Pool
+#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// Projectile
+#include "Payload/CsPayload_ProjectileImplSlice.h"
 
 // FCsPayload_Projectile
 #pragma region
 
-#define PayloadType NCsProjectile::NPayload::FImpl
+#define PayloadType NCsProjectile::NPayload::IPayload
 void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload) const
 {
-#undef PayloadType
-	
-	Payload->Instigator = Instigator;
-	Payload->Owner = Owner;
-	Payload->Parent = Parent;
-	//Payload->Time = Time;
-	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
 
-	Payload->Type		= Type;
-	Payload->Location	= Location;
-	Payload->Direction	= Direction;
+	if (PayloadLibrary::HasUniqueBasedSlices(Context, Payload))
+	{
+		typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+		typedef NCsPooledObject::NPayload::FImplSlice PooledPayloadSliceType;
+
+		PooledPayloadSliceType* PooledPayloadSlice = PayloadLibrary::StaticCastChecked<PooledPayloadSliceType, PooledPayloadType>(Context, Payload);
+		PooledPayloadSlice->Instigator = Instigator;
+		PooledPayloadSlice->Owner		= Owner;
+		PooledPayloadSlice->Parent		= Parent;
+		//PooledPayloadSlice->Time = Time;
+		PooledPayloadSlice->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+
+		typedef NCsProjectile::NPayload::FImplSlice PayloadSliceType;
+
+		PayloadSliceType* PayloadSlice = PayloadLibrary::StaticCastChecked<PayloadSliceType, PayloadType>(Context, Payload);
+
+		PayloadSlice->Type		= Type;
+		PayloadSlice->Location	= Location;
+		PayloadSlice->Direction	= Direction;
+	}
+	else
+	{
+		typedef NCsProjectile::NPayload::FImpl PayloadImplType;
+
+		PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
+		PayloadImpl->Instigator = Instigator;
+		PayloadImpl->Owner		= Owner;
+		PayloadImpl->Parent		= Parent;
+		//Payload->Time = Time;
+		PayloadImpl->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+
+		PayloadImpl->Type		= Type;
+		PayloadImpl->Location	= Location;
+		PayloadImpl->Direction	= Direction;
+	}
 }
+#undef PayloadType
 
 bool FCsPayload_Projectile::IsValidChecked(const FString& Context) const
 {

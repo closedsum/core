@@ -63,10 +63,7 @@ namespace NCsManagerProjectile
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateClassMapFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, CreateEmulatedDataFromDataTable);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, PopulateDataMapFromDataTable);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, AddPoolParams);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetProjectile);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetData);
 		}
@@ -349,6 +346,61 @@ void UCsManager_Projectile::SetAndAddTypeMapKeyValue(const FECsProjectile& Key, 
 	TypeMapToArray[Value.GetValue()].Add(Key);
 }
 
+void UCsManager_Projectile::AddPoolParams(const FECsProjectile& Type, const FCsSettings_Manager_Projectile_PoolParams& InPoolParams)
+{
+	using namespace NCsManagerProjectile::NCached;
+
+	const FString& Context = Str::AddPoolParams;
+
+	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Type));
+
+	if (Settings.PoolParams.Find(Type))
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: PoolParams ALREADY exist for %s."), *Context, Type.ToChar());
+		return;
+	}
+
+	check(InPoolParams.IsValidChecked(Context));
+
+	typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
+
+	PoolParamsType PoolParams;
+
+	// Get Class
+	const FECsProjectileClass& ClassType	= InPoolParams.Class;
+	FCsProjectilePooled* Projectile			= GetProjectileChecked(Context, ClassType);
+	UClass* Class							= Projectile->GetClass();
+
+	checkf(Class, TEXT("%s: Failed to get class for Type: %s ClassType: %s."), *Context, Type.ToChar(), ClassType.ToChar());
+
+	PoolParams.Name								= TEXT("UCsManager_Projectile::NCsProjectile::FManager_") + Type.GetName();
+	PoolParams.World							= MyRoot->GetWorld();
+	PoolParams.ConstructParams.Outer			= this;
+	PoolParams.ConstructParams.Class			= Class;
+	PoolParams.ConstructParams.ConstructionType = NCsPooledObject::EConstruction::Actor;
+	PoolParams.bConstructPayloads				= true;
+	PoolParams.PayloadSize						= InPoolParams.PayloadSize;
+	PoolParams.bCreatePool						= true;
+	PoolParams.PoolSize							= InPoolParams.PoolSize;
+
+	// Add CVars
+
+	// Scoped Timer CVars
+	PoolParams.ScopedGroup = NCsScopedGroup::ManagerProjectile;
+
+	PoolParams.CreatePoolScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerCreatePool;
+	PoolParams.UpdateScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerUpdate;
+	PoolParams.UpdateObjectScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerUpdateObject;
+	PoolParams.AllocateScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerAllocate;
+	PoolParams.AllocateObjectScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerAllocateObject;
+	PoolParams.DeallocateScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerDeallocate;
+	PoolParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerDeallocateObject;
+	PoolParams.SpawnScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerSpawn;
+	PoolParams.DestroyScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerDestroy;
+
+	Internal.Init(Type, PoolParams);
+}
+
 #pragma endregion Settings
 
 // Internal
@@ -464,6 +516,7 @@ void UCsManager_Projectile::SetupInternal()
 				TypeMapArray[From.GetValue()] = To;
 
 				TypeMapToArray[To.GetValue()].Add(From);
+				TypeToSet.Add(To);
 			}
 		}
 
@@ -978,6 +1031,11 @@ FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectile& 
 	return ClassHandler->GetClassByType<EMCsProjectile, FECsProjectile>(Context, Type);
 }
 
+FCsProjectilePooled* UCsManager_Projectile::GetSafeProjectile(const FString& Context, const FECsProjectile& Type)
+{
+	return ClassHandler->GetSafeClassByType<EMCsProjectile, FECsProjectile>(Context, Type);
+}
+
 FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectileClass& Type)
 {
 	using namespace NCsManagerProjectile::NCached;
@@ -990,6 +1048,11 @@ FCsProjectilePooled* UCsManager_Projectile::GetProjectile(const FECsProjectileCl
 FCsProjectilePooled* UCsManager_Projectile::GetProjectileChecked(const FString& Context, const FECsProjectileClass& Type)
 {
 	return ClassHandler->GetClassByClassTypeChecked<EMCsProjectileClass>(Context, Type);
+}
+
+FCsProjectilePooled* UCsManager_Projectile::GetSafeProjectile(const FString& Context, const FECsProjectileClass& Type)
+{
+	return ClassHandler->GetSafeClassByClassType<EMCsProjectileClass>(Context, Type);
 }
 
 #pragma endregion Class

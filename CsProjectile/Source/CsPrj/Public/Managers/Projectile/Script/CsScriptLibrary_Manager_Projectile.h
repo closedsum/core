@@ -40,15 +40,16 @@ public:
 public:
 
 	/**
+	* Spawn a Projectile with the given Payload
 	* 
-	*
-	* @param WorldContextObject
-	* @param Projectile
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Payload
+	* @param OutIndex			(out)
 	* return					Object of type ICsProjectile
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Projectile,Payload"))
-	static int32 Spawn(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Projectile, const FCsPayload_Projectile& Payload);
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Type,Payload"))
+	static UObject* Spawn(const FString& Context, const UObject* WorldContextObject, const FCsPayload_Projectile& Payload, int32& OutIndex);
 
 #pragma endregion Spawn
 };

@@ -51,7 +51,7 @@ void UCsScriptLibrary_Manager_Projectile::SetTypeMapKeyValue(const FString& Cont
 // Spawn
 #pragma region
 
-int32 UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Projectile, const FCsPayload_Projectile& Payload)
+UObject* UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, const UObject* WorldContextObject, const FCsPayload_Projectile& Payload, int32& OutIndex)
 {
 	using namespace NCsScriptLibraryManagerProjectile::NCached;
 
@@ -59,15 +59,17 @@ int32 UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, const U
 
 	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
+	OutIndex = INDEX_NONE;
+
 	// Check Payload is Valid
 	if (!Payload.IsValid(Ctxt))
-		return INDEX_NONE;
+		return nullptr;
 
 	// Try to allocate a native payload
 	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetSafe(Ctxt, WorldContextObject);
 
 	if (!Manager_Projectile)
-		return INDEX_NONE;
+		return nullptr;
 
 	typedef NCsProjectile::NPayload::FImpl PayloadImplType;
 
@@ -78,7 +80,16 @@ int32 UCsScriptLibrary_Manager_Projectile::Spawn(const FString& Context, const U
 
 	const FCsProjectilePooled* PrjPooled = Manager_Projectile->Spawn(Type, PayloadImpl);
 
-	return PrjPooled->GetCache()->GetIndex();
+	UObject* O = PrjPooled->GetSafeObject();
+
+	if (!O)
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Projectile of type: %s is NOT a UObject."), *Ctxt, Type.ToChar());
+		return nullptr;
+	}
+
+	OutIndex = PrjPooled->GetCache()->GetIndex();
+	return PrjPooled->GetSafeObject();
 }
 
 #pragma endregion Spawn

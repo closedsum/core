@@ -23,7 +23,7 @@ namespace NCsRenderTarget
 			* @param ClearColor				(optional)
 			* @param bAutoGenerateMipMaps	(optional)
 			*/
-			static UTextureRenderTarget2D* CreateChecked(const FString& Context, UObject* WorldContext, const int32& Width = 256, const int32& Height = 256, const ETextureRenderTargetFormat& Format = RTF_RGBA16f, const FLinearColor& ClearColor = FLinearColor::Black, const bool& bAutoGenerateMipMaps = false);
+			static UTextureRenderTarget2D* CreateChecked(const FString& Context, const UObject* WorldContext, const int32& Width = 256, const int32& Height = 256, const ETextureRenderTargetFormat& Format = RTF_RGBA16f, const FLinearColor& ClearColor = FLinearColor::Black, const bool& bAutoGenerateMipMaps = false);
 
 			/**
 			* Renders a quad with the material applied to the specified render target.

@@ -11,7 +11,7 @@ namespace NCsRenderTarget
 {
 	namespace N2D
 	{
-		UTextureRenderTarget2D* FLibrary::CreateChecked(const FString& Context, UObject* WorldContext, const int32& Width /*=256*/, const int32& Height /*=256*/, const ETextureRenderTargetFormat& Format /*=RTF_RGBA16f*/, const FLinearColor& ClearColor /*=FLinearColor::Black*/, const bool& bAutoGenerateMipMaps /*=false*/)
+		UTextureRenderTarget2D* FLibrary::CreateChecked(const FString& Context, const UObject* WorldContext, const int32& Width /*=256*/, const int32& Height /*=256*/, const ETextureRenderTargetFormat& Format /*=RTF_RGBA16f*/, const FLinearColor& ClearColor /*=FLinearColor::Black*/, const bool& bAutoGenerateMipMaps /*=false*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -21,7 +21,7 @@ namespace NCsRenderTarget
 
 			CS_IS_INT_GREATER_THAN_CHECKED(Height, 0)
 
-			UTextureRenderTarget2D* NewRenderTarget2D = NewObject<UTextureRenderTarget2D>(WorldContext);
+			UTextureRenderTarget2D* NewRenderTarget2D = NewObject<UTextureRenderTarget2D>(World);
 
 			checkf(NewRenderTarget2D, TEXT("%s: Failed to create TextureRenderTarget2D from WorldContext: %s."), *Context, *(WorldContext)->GetName());
 

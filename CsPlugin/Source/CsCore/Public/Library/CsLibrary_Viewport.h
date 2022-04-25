@@ -7,6 +7,7 @@
 
 class UObject;
 class FSceneViewport;
+class UGameViewportClient;
 
 // NCsTrace::NRequest::FRequest
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTrace, NRequest, FRequest)
@@ -19,7 +20,7 @@ namespace NCsViewport
 	{
 		namespace NPlayer
 		{
-			class CSCORE_API FLibrary
+			class CSCORE_API FLibrary final
 			{
 			public:
 
@@ -285,5 +286,22 @@ namespace NCsViewport
 			#pragma endregion Trace
 			};
 		}
+	}
+
+	namespace NGame
+	{
+		class CSCORE_API FLibrary final
+		{
+		public:
+
+			/**
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			*
+			* return
+			*/
+			static UGameViewportClient* GetClientChecked(const FString& Context, const UObject* WorldContext);
+		};
 	}
 }

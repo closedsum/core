@@ -39,6 +39,15 @@ namespace NCsWorld
 		*/
 		static UWorld* GetSafe(const UObject* WorldContext);
 
+		/**
+		* Get World as UObject from WorldContext.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* return				World
+		*/
+		static UObject* GetAsObjectChecked(const FString& Context, const UObject* WorldContext);
+
 		static bool IsPlayInGame(UWorld* World);
 
 		static bool IsPlayInEditor(UWorld* World);

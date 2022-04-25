@@ -5,6 +5,7 @@
 // Types
 #include "Managers/Trace/CsTraceRequest.h"
 // Library
+#include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Math.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
@@ -12,6 +13,8 @@
 // Player
 #include "GameFramework/PlayerController.h"
 #include "Engine/LocalPlayer.h"
+// Game
+#include "Engine/GameInstance.h"
 // World
 #include "Engine/World.h"
 // View
@@ -421,6 +424,21 @@ namespace NCsViewport
 		#undef RequestType
 
 		#pragma endregion Trace
+		}
+	}
+
+	namespace NGame
+	{
+		UGameViewportClient* FLibrary::GetClientChecked(const FString& Context, const UObject* WorldContext)
+		{
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
+			UGameViewportClient* GVC	= GameInstance->GetGameViewportClient();
+
+			checkf(GVC, TEXT("%s: Failed to get GameViewportClient from GameInstance."), *Context);
+
+			return GVC;
 		}
 	}
 }

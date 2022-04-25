@@ -864,8 +864,9 @@ namespace NCsResource
 
 						while (Next)
 						{
-							Current = Next;
+							Current					 = Next;
 							ResourceContainerType* M = **Current;
+							Next					 = Current->GetNextLink();
 
 							const int32& Index = M->GetIndex();
 

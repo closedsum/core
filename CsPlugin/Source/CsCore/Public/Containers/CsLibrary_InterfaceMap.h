@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Containers/CsInterfaceMap.h"
 #pragma once
+#include "Containers/CsInterfaceMap.h"
 
 namespace NCsInterfaceMap
 {

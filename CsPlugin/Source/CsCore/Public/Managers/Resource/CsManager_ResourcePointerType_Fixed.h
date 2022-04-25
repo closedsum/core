@@ -282,6 +282,17 @@ namespace NCsResource
 				}
 
 				/**
+				* Get the number of resources that have been created.
+				* This is less or equal to (<=) the Pool Size (GetPoolSize()).
+				* 
+				* return Resources Size
+				*/
+				FORCEINLINE int32 GetResourcesSize() const
+				{
+					return Resources.Num();
+				}
+
+				/**
 				* Get the number of allocated elements.
 				*
 				* return Allocated Size.
@@ -867,8 +878,9 @@ namespace NCsResource
 
 					while (Next)
 					{
-						Current = Next;
+						Current					 = Next;
 						ResourceContainerType* M = **Current;
+						Next					 = Current->GetNextLink();
 
 						const int32& Index = M->GetIndex();
 

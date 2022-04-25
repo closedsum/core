@@ -62,6 +62,11 @@ namespace NCsWorld
 		return GetSafe(Context, WorldContext, nullptr);
 	}
 
+	UObject* FLibrary::GetAsObjectChecked(const FString& Context, const UObject* WorldContext)
+	{
+		return GetChecked(Context, WorldContext);
+	}
+
 	bool FLibrary::IsPlayInGame(UWorld* World)
 	{
 		return World && World->WorldType == EWorldType::Game;

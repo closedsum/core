@@ -41,6 +41,7 @@ namespace NCsFX
 			FXSystem(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
+			DeathTime(0.0f),
 			bHideOnQueueDeallocate(false),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
@@ -92,6 +93,7 @@ namespace NCsFX
 			FXSystem = nullptr;
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
+			DeathTime = 0.0f;
 			bHideOnQueueDeallocate = false;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;

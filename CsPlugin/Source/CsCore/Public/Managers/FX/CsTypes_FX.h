@@ -507,6 +507,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
+	/** The time to wait after LifeTime or Complete (completion of the FX) before gracefully
+		deallocating the FX. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float DeathTime;
+
 	/** Whether to Hide the FX when FX->GetCache()->QueueDeallocate() is called.
 		The main purpose of this is for FX that should be deallocated "immediately" after
 		QueueDeallocate() is called. Normally, the FX is allowed to "complete" / deactivate
@@ -558,6 +563,7 @@ public:
 		DeallocateMethod(ECsFXDeallocateMethod::Complete),
 		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
+		DeathTime(0.0f),
 		bHideOnQueueDeallocate(false),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),

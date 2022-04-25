@@ -61,6 +61,14 @@ namespace NCsFX
 			*/
 			virtual const float& GetLifeTime() const = 0;
 
+			/** 
+			* Get the time to wait after LifeTime or Complete (completion of the FX) before gracefully
+			* deallocating the FX.
+			* 
+			* return Death Time
+			*/
+			virtual const float& GetDeathTime() const = 0;
+
 			/**
 			* Whether to Hide the FX when FX->GetCache()->QueueDeallocate() is called.
 			* The main purpose of this is for FX that should be deallocated "immediately" after

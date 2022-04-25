@@ -504,5 +504,29 @@ namespace NCsFX
 			   ExecutionState == ENiagaraExecutionState::Disabled;
 	}
 
+	bool FLibrary::IsInactiveChecked(const FString& Context, UNiagaraComponent* Component)
+	{
+		CS_IS_PTR_NULL_CHECKED(Component)
+	
+		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+
+		checkf(SystemInstance, TEXT("%s: SystemInstance is NULL on FXComponent: %s."), *Context, *(Component->GetName()));
+
+		const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
+
+		return ExecutionState == ENiagaraExecutionState::Inactive;
+	}
+
+	void FLibrary::ResetAllChecked(const FString& Context, UNiagaraComponent* Component)
+	{
+		CS_IS_PTR_NULL_CHECKED(Component)
+
+		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+
+		checkf(SystemInstance, TEXT("%s: SystemInstance is NULL on FXComponent: %s."), *Context, *(Component->GetName()));
+
+		SystemInstance->Reset(FNiagaraSystemInstance::EResetMode::ReInit);
+	}
+
 	#pragma endregion State
 }

@@ -1,10 +1,12 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Interface
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Managers/FX/Cache/CsCache_FX.h"
+// Types
 #include "Managers/FX/CsTypes_FX.h"
+// Container
 #include "Containers/CsWeakObjectPtr.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;
@@ -18,7 +20,8 @@ namespace NCsFX
 	{
 		None,
 		Complete,
-		LifeTime
+		LifeTime,
+		DeathTime
 	};
 
 	struct CSCORE_API EMDeallocateState final : public TCsEnumMap<EDeallocateState>
@@ -101,6 +104,8 @@ namespace NCsFX
 			EDeallocateState DeallocateState;
 
 			bool bHideOnQueueDeallocate;
+
+			float DeathTime;
 
 		public:
 

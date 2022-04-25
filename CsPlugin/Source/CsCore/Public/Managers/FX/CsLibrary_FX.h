@@ -225,6 +225,24 @@ namespace NCsFX
 		*/
 		static bool IsCompleteChecked(const FString& Context, UNiagaraComponent* Component);
 
+		/**
+		* Check whether the NiagaraSystem on the NiagaraComponent is "Inactive".
+		* Inactive is:
+		*	ActualExecutionState == ENiagaraExecutionState::Inactve
+		*
+		* @param Context	The calling context.
+		* @param Component
+		*/
+		static bool IsInactiveChecked(const FString& Context, UNiagaraComponent* Component);
+
+		/**
+		* Requests the the simulation be reset on the next tick.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		*/
+		static void ResetAllChecked(const FString& Context, UNiagaraComponent* Component);
+
 	#pragma endregion State
 	};
 }

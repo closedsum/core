@@ -65,7 +65,8 @@ namespace NCsFX
 			FXComponent(nullptr),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			DeallocateState(EDeallocateState::None),
-			bHideOnQueueDeallocate(false)
+			bHideOnQueueDeallocate(false),
+			DeathTime(0.0f)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -114,6 +115,7 @@ namespace NCsFX
 
 			DeallocateMethod = FXPayload->GetDeallocateMethod();
 			LifeTime		 = FXPayload->GetLifeTime();
+			DeathTime		 = FXPayload->GetDeathTime();
 
 			bHideOnQueueDeallocate = FXPayload->ShouldHideOnQueueDeallocate();
 		}
@@ -171,8 +173,13 @@ namespace NCsFX
 			ElapsedTime.Reset();
 			// FXCacheType (NCsFX::NCache::ICache)
 			FXComponent = nullptr;
+
+			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+
+			DeallocateMethod = DeallocateMethodType::Complete;
 			DeallocateState = EDeallocateState::None;
 			bHideOnQueueDeallocate = false;
+			DeathTime = 0.0f;
 		}
 
 		#pragma endregion PooledCacheType (NCsPooledObject::NCache::ICache)
@@ -185,8 +192,7 @@ namespace NCsFX
 
 			typedef NCsFX::FLibrary FXLibrary;
 			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
-
-			
+	
 			// Complete
 			if (DeallocateMethod == DeallocateMethodType::Complete)
 			{
@@ -194,11 +200,20 @@ namespace NCsFX
 				if (DeallocateState == EDeallocateState::None ||
 					DeallocateState == EDeallocateState::Complete)
 				{
-					// (None | Complete) -> LifeTime
+					// (None | Complete) -> DeathTime
+					if (DeathTime > 0.0f)
+					{
+						// Reset ElapsedTime
+						ElapsedTime.Reset();
+
+						DeallocateState = EDeallocateState::DeathTime;
+					}
+					// (None | Complete) -> LifeTime (graceful deallocate)
 					
 					// If Complete, transition to EDeallocateState::LifeTime
 					// This is to hopefully prevent the GameThread from stalling when
 					// Deactivating the System.
+					else
 					if (FXLibrary::IsCompleteChecked(Context, FXComponent))
 					{
 						// Reset ElapsedTime
@@ -207,6 +222,25 @@ namespace NCsFX
 						LifeTime = 1.0f;
 
 						DeallocateState = EDeallocateState::LifeTime;
+					}
+				}
+				// DeathTime
+				else
+				if (DeallocateState == EDeallocateState::DeathTime)
+				{
+					// DeathTime -> LifeTime (graceful deallocate)
+					if (ElapsedTime.Time >= DeathTime)
+					{
+						if (FXLibrary::IsInactiveChecked(Context, FXComponent) ||
+							FXLibrary::IsCompleteChecked(Context, FXComponent))
+						{
+							// Reset ElapsedTime
+							ElapsedTime.Reset();
+							// Set LifeTime
+							LifeTime = 1.0f;
+
+							DeallocateState = EDeallocateState::LifeTime;
+						}
 					}
 				}
 			}
@@ -219,7 +253,7 @@ namespace NCsFX
 				// None
 				if (DeallocateState == EDeallocateState::None)
 				{
-					// None -> Complete
+					// None -> (DeathTime or Complete)
 					if (HasLifeTimeExpired())
 					{
 						// Deactivate FX Component
@@ -229,7 +263,19 @@ namespace NCsFX
 
 						LifeTime = 0.0f;
 
-						DeallocateState = EDeallocateState::Complete;
+						// None -> DeathTime
+						if (DeathTime > 0.0f)
+						{
+							// Reset ElapsedTime
+							ElapsedTime.Reset();
+
+							DeallocateState = EDeallocateState::DeathTime;
+						}
+						// None -> Complete
+						else
+						{
+							DeallocateState = EDeallocateState::Complete;
+						}
 					}
 				}
 				// Complete

@@ -4,6 +4,7 @@
 
 // Library
 #include "Managers/FX/CsLibrary_FX.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Param
@@ -321,11 +322,23 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	check(GetChecked(Context));
 	// Check Type is Valid
 	check(EMCsFX::Get().IsValidEnumChecked(Context, Type));
+	// Check DeallocateMethod is Valid
+	CS_IS_ENUM_VALID_CHECKED(EMCsFXDeallocateMethod, DeallocateMethod);
+	// Check LifeTime is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(LifeTime, 0.0f)
+
+	if (DeallocateMethod == ECsFXDeallocateMethod::LifeTime)
+	{
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(LifeTime, 0.0f)
+	}
+	// Check DeathTime is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(DeathTime, 0.0f)
 
 	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
+
 	// Character Parameters are Valid.
 	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NParameter::EValue ParameterValueType;
@@ -368,6 +381,17 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLo
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar()));
 		return false;
 	}
+	// Check DeallocateMethod is Valid
+	CS_IS_ENUM_VALID(EMCsFXDeallocateMethod, ECsFXDeallocateMethod, DeallocateMethod);
+	// Check LifeTime is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(LifeTime, 0.0f)
+
+	if (DeallocateMethod == ECsFXDeallocateMethod::LifeTime)
+	{
+		CS_IS_FLOAT_GREATER_THAN(LifeTime, 0.0f)
+	}
+	// Check DeathTime is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(DeathTime, 0.0f)
 
 	if (!Transform.Equals(FTransform::Identity) &&
 		TransformRules == 0)
@@ -409,6 +433,7 @@ void FCsFX::Reset()
 	DeallocateMethod = ECsFXDeallocateMethod::Complete;
 	DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	LifeTime = 0.0f;
+	DeathTime = 0.0f;
 	bHideOnQueueDeallocate = false;
 	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;

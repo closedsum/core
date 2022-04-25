@@ -530,6 +530,7 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 
 	const FString& Context = Str::Handle_ClearFXSystem;
 
+	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NPayload::EChange ChangeType;
 	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
 

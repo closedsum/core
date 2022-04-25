@@ -34,6 +34,20 @@ namespace NCsFX
 			CS_IS_PTR_NULL_CHECKED(Payload)
 			// Check FX System is Valid.
 			checkf(Payload->GetFXSystem(), TEXT("%s: FX System is NULL."), *Context);
+			// Check DeallocateMethod is Valid
+			typedef NCsFX::EMDeallocateMethod DeallocateMethodMapType;
+			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+
+			CS_IS_ENUM_VALID_CHECKED(DeallocateMethodMapType, Payload->GetDeallocateMethod());
+			// Check LifeTime is Valid
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Payload->GetLifeTime(), 0.0f)
+
+			if (Payload->GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+			{
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(Payload->GetLifeTime(), 0.0f)
+			}
+			// Check DeathTime is Valid
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Payload->GetDeathTime(), 0.0f)
 			// Check Parameters are Valid.
 			typedef NCsFX::NParameter::IParameter ParameterType;
 
@@ -61,6 +75,20 @@ namespace NCsFX
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get FX System from Payload."), *Context));
 				return false;
 			}
+			// Check DeallocateMethod is Valid
+			typedef NCsFX::EMDeallocateMethod DeallocateMethodMapType;
+			typedef NCsFX::EDeallocateMethod DeallocateMethodType;
+
+			CS_IS_ENUM_VALID(DeallocateMethodMapType, DeallocateMethodType, Payload->GetDeallocateMethod())
+			// Check LifeTime is Valid
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Payload->GetLifeTime(), 0.0f)
+
+			if (Payload->GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+			{
+				CS_IS_FLOAT_GREATER_THAN(Payload->GetLifeTime(), 0.0f)
+			}
+			// Check DeathTime is Valid
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Payload->GetDeathTime(), 0.0f)
 			// Check Parameters are Valid
 			typedef NCsFX::NParameter::IParameter ParameterType;
 
@@ -91,6 +119,7 @@ namespace NCsFX
 			Payload->FXSystem				  = FX.GetChecked(Context);
 			Payload->DeallocateMethod		  = FX.GetDeallocateMethod();
 			Payload->LifeTime				  = FX.LifeTime;
+			Payload->DeathTime				  = FX.DeathTime;
 			Payload->bHideOnQueueDeallocate	  = FX.bHideOnQueueDeallocate;
 			Payload->AttachmentTransformRules = FX.AttachmentTransformRules;
 			Payload->Bone					  = FX.Bone;

@@ -497,14 +497,14 @@ public:
 
 	protected:
 
-		UCsProjectileWeaponComponent* Weapon;
+		UCsProjectileWeaponComponent* Outer;
 
 		USceneComponent* Component;
 
 	public:
 
 		FFXImpl() :
-			Weapon(nullptr),
+			Outer(nullptr),
 			Component(nullptr)
 		{
 		}

@@ -14,6 +14,7 @@
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
+#include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
@@ -277,7 +278,7 @@ void ACsProjectileWeaponActorPooled::BeginPlay()
 	SoundImpl->Weapon = this;
 
 	FXImpl = ConstructFXImpl();
-	FXImpl->Weapon = this;
+	FXImpl->Outer = this;
 
 	// ScopedHandles
 #if !UE_BUILD_SHIPPING
@@ -1357,7 +1358,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play()
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Weapon->GetData()))
+	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
 		typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
 
@@ -1367,7 +1368,9 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play()
 		UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
 		// Get Manager
-		UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(Weapon->GetWorld()->GetGameState());
+		typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+		UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
 		// Allocate payload
 		typedef NCsFX::NPayload::IPayload PayloadType;
 
@@ -1394,8 +1397,8 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload,
 
 	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
-	PayloadImpl->Instigator					= Weapon;
-	PayloadImpl->Owner						= Weapon->GetMyOwner();
+	PayloadImpl->Instigator					= Outer;
+	PayloadImpl->Owner						= Outer->GetMyOwner();
 	PayloadImpl->FXSystem					= FX.GetChecked(Context);
 	PayloadImpl->DeallocateMethod			= FX.GetDeallocateMethod();
 	PayloadImpl->LifeTime					= FX.LifeTime;
@@ -1407,7 +1410,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload,
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Weapon->GetData());
+	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Outer->GetData());
 
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
 
@@ -1420,13 +1423,18 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload,
 	// None
 	if (Type == AttachType::None)
 	{
-		// Do Nothing
+		const FVector Location = Outer->ProjectileImpl->GetLaunchLocation();
+		PayloadImpl->Transform.SetTranslation(Location);
+
+		const FVector Direction = Outer->ProjectileImpl->GetLaunchDirection();
+		FQuat Rotation			= FX.Transform.GetRotation();
+		PayloadImpl->Transform.SetRotation(Direction.ToOrientationQuat() * Rotation);
 	}
 	// Owner
 	else
 	if (Type == AttachType::Owner)
 	{
-		PayloadImpl->Parent = Weapon->GetMyOwner();
+		PayloadImpl->Parent = Outer->GetMyOwner();
 	}
 	// Component
 	else
@@ -1474,7 +1482,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload,
 	else
 	if (Type == AttachType::Owner)
 	{
-		PayloadImpl->Parent = Weapon->GetMyOwner();
+		PayloadImpl->Parent = Outer->GetMyOwner();
 	}
 	// Component
 	else

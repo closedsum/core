@@ -384,9 +384,13 @@ public:
 		*/
 		virtual bool CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To);
 
+	public:
+
 		virtual FVector GetLaunchLocation();
 
 		virtual FVector GetLaunchDirection();
+
+	protected:
 
 	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);

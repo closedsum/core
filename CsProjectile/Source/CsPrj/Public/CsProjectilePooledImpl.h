@@ -154,6 +154,12 @@ protected:
 
 	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHit, ACsProjectilePooledImpl* /*Projectile*/, const FHitResult& /*Hit*/);
+
+	FOnHit OnHit_Event;
+
 #pragma endregion Collision
 
 // ICsUpdate
@@ -217,8 +223,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetCache_Index();
 
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAllocate, ACsProjectilePooledImpl*, PooledPayloadType*);
+
+	FOnAllocate OnAllocate_Event;
+
 	UPROPERTY(BlueprintAssignable)
 	FCsProjectilePooledImpl_OnAllocate OnAllocate_ScriptEvent;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeallocate_Start, ACsProjectilePooledImpl*);
+
+	FOnDeallocate_Start OnDeallocate_Start_Event;
 
 	UPROPERTY(BlueprintAssignable)
 	FCsProjectilePooledImpl_OnDeallocate_Start OnDeallocate_Start_ScriptEvent;

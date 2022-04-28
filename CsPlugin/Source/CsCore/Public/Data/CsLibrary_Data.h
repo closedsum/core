@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Data
 #include "Data/CsData.h"
 // Containers
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 namespace NCsData
 {

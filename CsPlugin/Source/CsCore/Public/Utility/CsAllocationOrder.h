@@ -1,8 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // Containers
 #include "Containers/CsDoubleLinkedList.h"
-#pragma once
 
 /**
 */
@@ -240,4 +239,10 @@ public:
 	{
 		MoveToHead(Index);
 	}
+};
+
+enum class CSCORE_API ECsAdvancePoolIndex : uint8 
+{
+	Order,
+	Increment
 };

@@ -105,6 +105,9 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
+	OnAllocate_Event(),
+	OnAllocate_ScriptEvent(),
+	OnDeallocate_Start_ScriptEvent(),
 	// ICsProjectile
 	Data(nullptr),
 	// Launch
@@ -651,6 +654,7 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	if (bLaunchOnAllocate)
 		Launch(ProjectilePayload);
 
+	OnAllocate_Event.Broadcast(this, Payload);
 	OnAllocate_ScriptEvent.Broadcast(this);
 }
 
@@ -671,6 +675,7 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 	const FString& Context = Str::Deallocate_Internal;
 
+	OnDeallocate_Start_Event.Broadcast(this);
 	OnDeallocate_Start_ScriptEvent.Broadcast(this);
 
 	// FX

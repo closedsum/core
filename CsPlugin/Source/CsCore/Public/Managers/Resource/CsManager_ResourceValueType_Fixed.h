@@ -583,6 +583,15 @@ namespace NCsResource
 			#pragma region
 			public:
 
+				FORCEINLINE void SetAdvancePoolIndex(const ECsAdvancePoolIndex& Type)
+				{
+					if (Type == ECsAdvancePoolIndex::Order)
+						AdvancePoolIndex = &TFixed<ResourceType, ResourceContainerType, BUCKET_SIZE>::AdvancePoolIndexByOrder;
+					else
+					if (Type == ECsAdvancePoolIndex::Increment)
+						AdvancePoolIndex = &TFixed<ResourceType, ResourceContainerType, BUCKET_SIZE>::AdvancePoolIndexByIncrement;
+				}
+
 				/**
 				* Allocate a ResourceType and add the corresponding linked list element to the 
 				*  end of the list

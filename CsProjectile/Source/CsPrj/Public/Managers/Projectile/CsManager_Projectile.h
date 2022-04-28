@@ -253,7 +253,7 @@ public:
 	* @param Type
 	* return Projectile Type 
 	*/
-	FORCEINLINE const FECsProjectile& GetTypeFromTypeMap(const FECsProjectile& Type)
+	FORCEINLINE const FECsProjectile& GetTypeFromTypeMap(const FECsProjectile& Type) const
 	{
 		check(EMCsProjectile::Get().IsValidEnum(Type));
 
@@ -439,6 +439,14 @@ public:
 	* return		Pool associated with the type.
 	*/
 	const TArray<FCsProjectilePooled*>& GetPool(const FECsProjectile& Type);
+
+	/**
+	* Determine whether a pool as been created for the appropriate Type.
+	*
+	* @param Type	Type of pool.
+	* return		Whether the pool of Type has been created.
+	*/
+	bool HasPool(const FECsProjectile& Type) const;
 
 	/**
 	* Get the allocated objects for the appropriate Type.

@@ -650,6 +650,8 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	
 	if (bLaunchOnAllocate)
 		Launch(ProjectilePayload);
+
+	OnAllocate_ScriptEvent.Broadcast(this);
 }
 
 void ACsProjectilePooledImpl::Deallocate()
@@ -668,6 +670,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Deallocate_Internal;
+
+	OnDeallocate_Start_ScriptEvent.Broadcast(this);
 
 	// FX
 	if (TrailFXPooled)
@@ -721,6 +725,11 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
 
 	Cache->Reset();
+}
+
+int32 ACsProjectilePooledImpl::GetCache_Index()
+{
+	return Cache->GetIndex();
 }
 
 #pragma endregion PooledObject
@@ -944,6 +953,16 @@ UObject* ACsProjectilePooledImpl::GetInstigator() const
 }
 
 #pragma endregion ICsProjectile
+
+// Projectile
+#pragma region
+
+UObject* ACsProjectilePooledImpl::GetDataAsObject()
+{
+	return Data->_getUObject();
+}
+
+#pragma endregion Projectile
 
 // Launch
 #pragma region

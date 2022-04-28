@@ -185,6 +185,47 @@ namespace NCsProjectile
 
 		#pragma endregion Settings
 
+		// Pool
+		#pragma region
+		
+		bool FLibrary::SafeHasPool(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) /*=&FCLog::Warning*/)
+		{
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Type)
+
+				return Manager_Projectile->HasPool(Type);
+			}
+			return false;
+		}
+
+		bool FLibrary::GetSafePool(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, TArray<UObject*>& OutPool, void(*Log)(const FString&) /*=&FCLog::Warning*/)
+		{
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Type)
+
+				if (Manager_Projectile->HasPool(Type))
+				{
+					const TArray<FCsProjectilePooled*>& Pool = Manager_Projectile->GetPool(Type);
+
+					OutPool.Reset(Pool.Num());
+
+					for (const FCsProjectilePooled* Projectile : Pool)
+					{
+						OutPool.Add(Projectile->GetSafeObject());
+					}
+					return true;
+				}
+
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Pool of Type: %s exists."), *Context, Type.ToChar()));
+				return false;
+			}
+			return false;
+		}
+
+		#pragma endregion Pool
+
 		// Data
 		#pragma region
 

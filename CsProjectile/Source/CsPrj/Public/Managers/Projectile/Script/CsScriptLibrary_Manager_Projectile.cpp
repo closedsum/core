@@ -26,6 +26,9 @@ namespace NCsScriptLibraryManagerProjectile
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, SetTypeMapKeyValue);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, AddPoolParams);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, Spawn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, FindObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, HasPool);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, GetPool);
 		}
 	}
 }
@@ -103,6 +106,71 @@ bool UCsScriptLibrary_Manager_Projectile::AddPoolParams(const FString& Context, 
 }
 
 #pragma endregion Settings
+
+// Pool
+#pragma region
+
+UObject* UCsScriptLibrary_Manager_Projectile::FindObject(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, const int32& Index)
+{
+	using namespace NCsScriptLibraryManagerProjectile::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::FindObject : Context;
+
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	UObject* ContextRoot = PrjManagerLibrary::GetSafeContextRoot(Ctxt, WorldContextObject);
+
+#if WITH_EDITOR
+	if (!ContextRoot)
+		return nullptr;
+#endif // #if WITH_EDITOR
+
+	if (!EMCsProjectile::Get().IsValidEnum(Type))
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Type: %s is NOT Valid."), *Ctxt, Type.ToChar());
+		return nullptr;
+	}
+
+	UCsManager_Projectile* Manager_Projectile = UCsManager_Projectile::Get(ContextRoot);
+
+	if (Index < 0 || Index >= Manager_Projectile->GetPoolSize(Type))
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s: Index: %d is NOT [0, %d] Inclusive."), *Ctxt, Index, Manager_Projectile->GetPoolSize(Type));
+		return nullptr;
+	}
+
+	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->FindObject(Type, Index);
+
+	if (ProjectilePooled)
+	{
+		return ProjectilePooled->GetSafeObject();
+	}
+	return nullptr;
+}
+
+bool UCsScriptLibrary_Manager_Projectile::HasPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type)
+{
+	using namespace NCsScriptLibraryManagerProjectile::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::HasPool : Context;
+
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	return PrjManagerLibrary::SafeHasPool(Ctxt, WorldContextObject, Type);
+}
+
+bool UCsScriptLibrary_Manager_Projectile::GetPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, TArray<UObject*>& OutPool)
+{
+	using namespace NCsScriptLibraryManagerProjectile::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetPool : Context;
+
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	return PrjManagerLibrary::GetSafePool(Ctxt, WorldContextObject, Type, OutPool);
+}
+
+#pragma endregion Pool
 
 // Spawn
 #pragma region

@@ -78,6 +78,50 @@ public:
 
 #pragma endregion Settings
 
+// Pool
+#pragma region
+public:
+
+	/**
+	* Find a pooled Projectile Object that implements the interface: ICsProjectile with the
+	* given Type and Index.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Type
+	* @param Index
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Type,Index"))
+	static UObject* FindObject(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, const int32& Index);
+
+	/**
+	* Determine whether a pool as been created for the appropriate Type.
+	*
+	* @oaran Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Type				Type of pool.
+	* return					Whether the pool of Type has been created.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Type"))
+	static bool HasPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type);
+
+	/**
+	* Get the pool for the appropriate Type.
+	*  Pool is an array of containers holding references to objects that
+	*  implement the interface: ICsProjectile.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Type				Type of pool to get.
+	* @param OutPool			(out)
+	* return				
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Type"))
+	static bool GetPool(const FString& Context, const UObject* WorldContextObject, const FECsProjectile& Type, TArray<UObject*>& OutPool);
+
+#pragma endregion Pool
+
 // Spawn
 #pragma region
 public:

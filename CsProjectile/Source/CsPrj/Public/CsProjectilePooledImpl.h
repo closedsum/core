@@ -19,6 +19,9 @@
 // Delegates
 #pragma region
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnAllocate, ACsProjectilePooledImpl*, Projectile);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnDeallocate_Start, ACsProjectilePooledImpl*, Projectile);
+
 #pragma endregion Delegates
 
 class USphereComponent;
@@ -209,6 +212,17 @@ protected:
 
 	void Deallocate_Internal();
 
+public:
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetCache_Index();
+
+	UPROPERTY(BlueprintAssignable)
+	FCsProjectilePooledImpl_OnAllocate OnAllocate_ScriptEvent;
+
+	UPROPERTY(BlueprintAssignable)
+	FCsProjectilePooledImpl_OnDeallocate_Start OnDeallocate_Start_ScriptEvent;
+
 #pragma endregion PooledObject
 
 // ICsProjectile
@@ -230,6 +244,11 @@ public:
 protected:
 
 	DataType* Data;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	UObject* GetDataAsObject();
 
 #pragma endregion Projectile
 

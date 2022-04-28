@@ -168,6 +168,37 @@ namespace NCsProjectile
 
 		#pragma endregion Settings
 
+		// Pool
+		#pragma region
+		public:
+
+			/**
+			* Safely determine whether a pool as been created for the appropriate Type.
+			*
+			* @oaran Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Type of pool.
+			* @param Log			(optional)
+			* return				Whether the pool of Type has been created.
+			*/
+			static bool SafeHasPool(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+			/**
+			* Get the pool for the appropriate Type.
+			*  Pool is an array of containers holding references to objects that
+			*  implement the interface: ICsProjectile.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Type of pool to get.
+			* @param OutPool		(out)
+			* @param Log			(optional)
+			* return				
+			*/
+			static bool GetSafePool(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, TArray<UObject*>& OutPool, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		#pragma endregion Pool
+
 		// Data
 		#pragma region
 		public:

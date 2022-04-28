@@ -731,6 +731,11 @@ const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetPool(const FECsPro
 	return Internal.GetPool(GetTypeFromTypeMap(Type));
 }
 
+bool UCsManager_Projectile::HasPool(const FECsProjectile& Type) const
+{
+	return Internal.HasPool(GetTypeFromTypeMap(Type));
+}
+
 const TArray<FCsProjectilePooled*>& UCsManager_Projectile::GetAllocatedObjects(const FECsProjectile& Type)
 {
 	return Internal.GetAllocatedObjects(GetTypeFromTypeMap(Type));

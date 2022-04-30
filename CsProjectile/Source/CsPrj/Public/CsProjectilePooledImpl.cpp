@@ -574,6 +574,8 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 	if (bDeallocateOnHit && HitCount <= 0)
 		Cache->QueueDeallocate();
+
+	OnHit_Event.Broadcast(this, Hit);
 }
 
 void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)

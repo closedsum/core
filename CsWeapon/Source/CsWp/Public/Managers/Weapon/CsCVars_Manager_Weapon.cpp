@@ -2,7 +2,7 @@
 #include "Managers/Weapon/CsCVars_Manager_Weapon.h"
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponTransactions(
-	TEXT("log.manager.character.transactions"),
+	TEXT("log.manager.weapon.transactions"),
 	0,
 	TEXT("Log Manager Weapon Allocation and DeAllocation."),
 	ECVF_SetByConsole
@@ -11,70 +11,70 @@ TAutoConsoleVariable<int32> CsCVarLogManagerWeaponTransactions(
 // Scoped Timer
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimer(
-	TEXT("log.manager.character.scopedtimer"),
+	TEXT("log.manager.weapon.scopedtimer"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerCreatePool(
-	TEXT("log.manager.character.scopedtimer.createpool"),
+	TEXT("log.manager.weapon.scopedtimer.createpool"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Create Pool."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerUpdate(
-	TEXT("log.manager.character.scopedtimer.update"),
+	TEXT("log.manager.weapon.scopedtimer.update"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Update."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerUpdateObject(
-	TEXT("log.manager.character.scopedtimer.updateobject"),
+	TEXT("log.manager.weapon.scopedtimer.updateobject"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Update Object."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerAllocate(
-	TEXT("log.manager.character.scopedtimer.allocate"),
+	TEXT("log.manager.weapon.scopedtimer.allocate"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Allocate."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerAllocateObject(
-	TEXT("log.manager.character.scopedtimer.allocateobject"),
+	TEXT("log.manager.weapon.scopedtimer.allocateobject"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Allocate Object."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerDeallocate(
-	TEXT("log.manager.character.scopedtimer.deallocate"),
+	TEXT("log.manager.weapon.scopedtimer.deallocate"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Deallocate."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerDeallocateObject(
-	TEXT("log.manager.character.scopedtimer.deallocateobject"),
+	TEXT("log.manager.weapon.scopedtimer.deallocateobject"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Deallocate Object."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerSpawn(
-	TEXT("log.manager.character.scopedtimer.spawn"),
+	TEXT("log.manager.weapon.scopedtimer.spawn"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Spawn."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerWeaponScopedTimerDestroy(
-	TEXT("log.manager.character.scopedtimer.destroy"),
+	TEXT("log.manager.weapon.scopedtimer.destroy"),
 	0,
 	TEXT("Log Manager Weapon Scoped Timer Destroy."),
 	ECVF_SetByConsole

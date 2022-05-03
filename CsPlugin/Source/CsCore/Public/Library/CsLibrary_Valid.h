@@ -1398,11 +1398,11 @@ namespace NCsValid
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, __ObjectType* __Object) \
+	[] (const FString& Context, __ObjectType* __In##__Object) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __In##__Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
@@ -1485,44 +1485,44 @@ namespace NCsValid
 
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_GET_UOBJECT_CHECKED(__Interface, __InterfaceType) \
-	[](const FString& Context, const __InterfaceType* __Interface) \
+	[](const FString& Context, const __InterfaceType* __In__##__Interface) \
 	{ \
 		static const FString __temp__str = #__Interface; \
-		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __Interface, __temp__str); \
+		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __In__##__Interface, __temp__str); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
-	[] (const FString& Context, __InterfaceTypeA* __Interface) \
+	[] (const FString& Context, __InterfaceTypeA* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__  = #__Interface; \
 		static const FString __temp__str__a = #__InterfaceTypeA; \
 		static const FString __temp__str__b = #__InterfaceTypeB; \
-		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __Interface, __temp__str__, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __In__##__Interface, __temp__str__, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_TO_INTERFACE_CAST_CHECKED(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
-	[] (const FString& Context, const __InterfaceTypeA* __Interface) \
+	[] (const FString& Context, const __InterfaceTypeA* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__  = #__Interface; \
 		static const FString __temp__str__a = #__InterfaceTypeA; \
 		static const FString __temp__str__b = #__InterfaceTypeB; \
-		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __Interface, __temp__str__, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __In__##__Interface, __temp__str__, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
-	[] (const FString& Context, __InterfaceType* __Interface) \
+	[] (const FString& Context, __InterfaceType* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__a  = #__Interface; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __In__##__Interface, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
-	[] (const FString& Context, const __InterfaceType* __Interface) \
+	[] (const FString& Context, const __InterfaceType* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__a  = #__Interface; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __In__##__Interface, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 
 #pragma endregion Interface
@@ -1581,49 +1581,49 @@ namespace NCsValid
 #define CS_IS_OBJ_CLASS_OF_CHECKED(__Object, __ObjectType, __ClassType)
 // Assume const FString& Context has been defined
 #define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
-	[] (const FString& Context, __ObjectType* __Object) \
+	[] (const FString& Context, __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__; \
-		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context,__In__## __Object, __temp__str__); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_CONST_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
-	[] (const FString& Context, const __ObjectType* __Object) \
+	[] (const FString& Context, const __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__; \
-		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __In__##__Object, __temp__str__); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, __ObjectType* __Object) \
+	[] (const FString& Context, __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, const __ObjectType* __Object) \
+	[] (const FString& Context, const __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_NEW_CHECKED(__ObjectType, __Outer, __Class) \
-	[] (const FString& Context, UObject* __Outer, UClass* __Class) \
+	[] (const FString& Context, UObject* __In__##__Outer, UClass* __In__##__Class) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __In__##__Outer, __temp__str__a, __In__##__Class, __temp__str__b); \
 	}(Context, __Outer, __Class)
 // Assume const FString& Context has been defined and this is passed out Outer for NewObject
 #define CS_NEW_BY_THIS_AND_SUBCLASS_OF_CHECKED(__ObjectType, __Class) \
-	[] (const FString& Context, UObject* __Outer, TSubclassOf<__ObjectType>& __Class) \
+	[] (const FString& Context, UObject* __In__##__Outer, TSubclassOf<__ObjectType>& __In__##__Class) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __In__##__Outer, __temp__str__a, __In__##__Class, __temp__str__b); \
 	}(Context, this, __Class)	
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
@@ -1633,51 +1633,51 @@ namespace NCsValid
 #define CS_IS_SUBCLASS_OF_NULL_CHECKED(__Class, __ObjectType)
 // Actor
 #define CS_SPAWN_ACTOR_CHECKED(__ActorType, __Class) \
-	[] (const FString& Context, UWorld* __World, UClass* __Class) \
+	[] (const FString& Context, UWorld* __In__##__World, UClass* __In__##__Class) \
 	{ \
 		static const FString __temp__str__a; \
-		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __World, __Class, __temp__str__a); \
+		return NCsValid::NActor::FLibrary::SpawnChecked<__ActorType>(Context, __In__##__World, __In__##__Class, __temp__str__a); \
 	}(Context, GetWorld(), __Class)
 // Interface
 #define CS_INTERFACE_GET_UOBJECT_CHECKED(__Interface, __InterfaceType) \
-	[](const FString& Context, const __InterfaceType* __Interface) \
+	[](const FString& Context, const __InterfaceType* __In__##__Interface) \
 	{ \
 		static const FString __temp__str; \
-		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __Interface, __temp__str); \
+		return NCsValid::NInterface::FLibrary::_getUObjectChecked<__InterfaceType>(Context, __In__##__Interface, __temp__str); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
-	[] (const FString& Context, __InterfaceTypeA* __Interface) \
+	[] (const FString& Context, __InterfaceTypeA* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__; \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __Interface, __temp__str__, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __In__##__Interface, __temp__str__, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_TO_INTERFACE_CAST_CHECKED(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
-	[] (const FString& Context, const __InterfaceTypeA* __Interface) \
+	[] (const FString& Context, const __InterfaceTypeA* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__; \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __Interface, __temp__str__, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::InterfaceCastChecked<__InterfaceTypeA, __InterfaceTypeB>(Context, __In__##__Interface, __temp__str__, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
-	[] (const FString& Context, __InterfaceType* __Interface) \
+	[] (const FString& Context, __InterfaceType* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __In__##__Interface, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_TO_UOBJECT_CAST_CHECKED(__Interface, __InterfaceType, __ClassType) \
-	[] (const FString& Context, const __InterfaceType* __Interface) \
+	[] (const FString& Context, const __InterfaceType* __In__##__Interface) \
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __Interface, __temp__str__a, __temp__str__b); \
+		return NCsValid::NInterface::FLibrary::CastChecked<__InterfaceType, __ClassType>(Context, __In__##__Interface, __temp__str__a, __temp__str__b); \
 	}(Context, __Interface)
 // Delegate
 #define CS_IS_DELEGATE_BOUND_CHECKED(__Delegate)
@@ -2108,33 +2108,33 @@ namespace NCsValid
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_CAST(__Object, __ObjectType, __OtherObjectType) \
-	[] (const FString& Context, __ObjectType* __Object, void(*Log)(const FString&)) \
+	[] (const FString& Context, __ObjectType* __In__##__Object, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__ = #__Object; \
-		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__, Log); \
+		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __In__##__Object, __temp__str__, Log); \
 	}(Context, __Object, Log)
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_CONST_CAST(__Object, __ObjectType, __OtherObjectType) \
-	[] (const FString& Context, const __ObjectType* __Object, void(*Log)(const FString&)) \
+	[] (const FString& Context, const __ObjectType* __In__##__Object, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__ = #__Object; \
-		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__, Log); \
+		return NCsValid::NObject::FLibrary::CastTo<__ObjectType, __OtherObjectType>(Context, __In__##__Object, __temp__str__, Log); \
 	}(Context, __Object, Log)
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_INTERFACE_CAST(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, __ObjectType* __Object, void(*Log)(const FString&)) \
+	[] (const FString& Context, __ObjectType* __In__##__Object, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log); \
+		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b, Log); \
 	}(Context, __Object, Log)
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_CONST_INTERFACE_CAST(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, const __ObjectType* __Object, void(*Log)(const FString&)) \
+	[] (const FString& Context, const __ObjectType* __In__##__Object, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b, Log); \
+		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b, Log); \
 	}(Context, __Object, Log)
 
 #pragma endregion Object
@@ -2210,10 +2210,10 @@ namespace NCsValid
 
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_INTERFACE_GET_UOBJECT(__Interface, __InterfaceType) \
-	[](const FString& Context, const __InterfaceType* __Interface, void(*Log)(const FString&)) \
+	[](const FString& Context, const __InterfaceType* __In__##__Interface, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str = #__Interface; \
-		return NCsValid::NInterface::FLibrary::_getUObject<__InterfaceType>(Context, __Interface, __temp__str, Log); \
+		return NCsValid::NInterface::FLibrary::_getUObject<__InterfaceType>(Context, __In__##__Interface, __temp__str, Log); \
 	}(Context, __Interface, Log)
 
 #pragma endregion Interface

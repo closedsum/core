@@ -2,6 +2,8 @@
 #pragma once
 // Log
 #include "Utility/CsLog.h"
+// Engine
+#include "Engine/DataTable.h"
 
 #include "CsTypes_Texture.generated.h"
 
@@ -11,17 +13,17 @@
 class UTexture;
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsTexture
+struct CSCORE_API FCsTexture : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Texture")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = DataTable)
 	TSoftObjectPtr<UTexture> Texture;
 
 	UPROPERTY()
 	int32 Texture_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Texture")
+	UPROPERTY(Transient, BlueprintReadWrite, Category = DataTable)
 	UTexture* Texture_Internal;
 
 	FCsTexture() :

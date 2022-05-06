@@ -434,6 +434,20 @@ namespace NCsData
 					return *Ptr;
 				}
 
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE const EnumType& GetTypeChecked(const FString& Context, const InterfaceDataType* Data) const
+				{
+					for (const TPair<FName, InterfaceDataType*>& Pair : DataMap)
+					{
+						if (Data == Pair.Value)
+						{
+							return EnumMap::Get().GetEnum(Pair.Key);
+						}
+					}
+					checkf(0, TEXT("%s: Failed to get Type associated with Data."), *Context);
+					return EnumMap::Get().GetMAX();
+				}
+
 			protected:
 
 				void ResetDataContainers()

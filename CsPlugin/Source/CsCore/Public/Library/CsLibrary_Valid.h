@@ -208,6 +208,40 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			FORCEINLINE static bool LessThanChecked(const FString& Context, const float& A, const FString& AName, const float& B)
+			{
+				checkf(A < B, TEXT("%s: %s: %d is NOT < %d."), *Context, *AName, A, B);
+				return true;
+			}
+
+			FORCEINLINE static bool LessThan(const FString& Context, const float& A, const FString& AName, const float& B, void(*Log)(const FString&))
+			{
+				if (A >= B)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %d is NOT < %d."), *Context, *AName, A, B));
+					return false;
+				}
+				return true;
+			}
+
+			FORCEINLINE static bool LessThanOrEqualChecked(const FString& Context, const float& A, const FString& AName, const float& B)
+			{
+				checkf(A <= B, TEXT("%s: %s: %d is NOT <= %d."), *Context, *AName, A, B);
+				return true;
+			}
+
+			FORCEINLINE static bool LessThanOrEqual(const FString& Context, const float& A, const FString& AName, const float& B, void(*Log)(const FString&))
+			{
+				if (A > B)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %d is NOT <= %d."), *Context, *AName, A, B));
+					return false;
+				}
+				return true;
+			}
 		};
 
 		namespace NCompare
@@ -1238,6 +1272,18 @@ namespace NCsValid
 		static const FString __temp__str__b__ = #__B; \
 		check(NCsValid::NFloat::NCompare::FLibrary::LessThanChecked(Context, __A, __temp__str__a__, __B, __temp__str__b__)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_FLOAT_LESS_THAN_CHECKED(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NFloat::FLibrary::LessThanChecked(Context, __A, __temp__str__, __B)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NFloat::FLibrary::LessThanOrEqualChecked(Context, __A, __temp__str__, __B)); \
+	}
 
 #pragma endregion Float
 
@@ -1555,6 +1601,8 @@ namespace NCsValid
 #define CS_IS_FLOAT_GREATER_THAN_TWO_VALUES_CHECKED(__A, __B)
 #define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(__A, __B)
 #define CS_IS_FLOAT_COMPARE_LESS_THAN_CHECKED(__A, __B)
+#define CS_IS_FLOAT_LESS_THAN_CHECKED(__A, __B)
+#define CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(__A, __B)
 // FName
 #define CS_IS_NAME_NONE_CHECKED(__A)
 // FString
@@ -1861,6 +1909,36 @@ namespace NCsValid
 		static const FString __temp__str__a__ = #__A; \
 		static const FString __temp__str__b__ = #__B; \
 		if (!NCsValid::NFloat::NCompare::FLibrary::LessThan(Context, __A, __temp__str__a__, __B, __temp__str__b__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_LESS_THAN(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_LESS_THAN_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_LESS_THAN_RET_NULL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_LESS_THAN_RET_VALUE(__A, __B, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::LessThan(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_LESS_THAN_OR_EQUAL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::LessThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
 	}
 
 #pragma endregion Float

@@ -527,7 +527,32 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 {
-	CS_IS_PTR_NULL_CHECKED(Data)
+	typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+
+	static ProcessPayloadType ProcessPayload;
+	ProcessPayload.Reset();
+
+	ProcessPayload.Value = const_cast<ValueType*>(Value);
+	ProcessPayload.SetRange(const_cast<RangeType*>(Range));
+	ProcessPayload.Data		  = Data;
+	ProcessPayload.Instigator = Instigator;
+	ProcessPayload.Causer	  = Causer;
+	ProcessPayload.HitResult  = HitResult;
+	ProcessPayload.Modifiers.Append(Modifiers);
+
+	return CreateEvent(Context, ProcessPayload);
+}
+
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
+{
+	static TArray<ModifierResourceType*> Modifiers;
+	return CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
+}
+
+#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload)
+{
+	CS_IS_PTR_NULL_CHECKED(ProcessPayload.Data)
 	
 	// Get Container from Manager_Damage
 	EventResourceType* Container = AllocateEvent();
@@ -540,35 +565,39 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	EventImplType* EventImpl = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
 
 	// Copy Value this can changed with modifiers
-	EventImpl->DamageValue.CopyFrom(Context, MyRoot, Value);
+	EventImpl->DamageValue.CopyFrom(Context, MyRoot, ProcessPayload.Value);
 	ValueType* DamageValue = EventImpl->DamageValue.GetValue();
 
 	// Copy Range this can changed with modifiers
-	EventImpl->DamageRange.CopyFrom(Context, MyRoot, Range);
-	RangeType* DamageRange = EventImpl->DamageRange.GetRange();
-
-	// Apply Modifiers
 	typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 
-	DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, DamageValue, DamageRange);
+	if (ProcessPayload.HasSetRange())
+	{
+		EventImpl->DamageRange.CopyFrom(Context, MyRoot, ProcessPayload.GetRange());
 
-	EventImpl->Data	= Data;
+		RangeType* DamageRange = EventImpl->DamageRange.GetRange();
+
+		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, DamageValue, DamageRange);
+	}
+	else
+	{
+		EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, ProcessPayload.Data, nullptr);
+		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, DamageValue);
+	}
+
+	EventImpl->Data	= ProcessPayload.Data;
 
 	EventImpl->SetDamageChecked(Context);
 
-	EventImpl->Instigator = Instigator;
-	EventImpl->Causer	  = Causer;
-	EventImpl->Origin	  = HitResult;
-	EventImpl->HitResult  = HitResult;
+	EventImpl->Instigator = ProcessPayload.Instigator;
+	EventImpl->Causer	  = ProcessPayload.Causer;
+	EventImpl->DamageDirection = ProcessPayload.Direction;
+	EventImpl->Origin	  = ProcessPayload.HitResult;
+	EventImpl->HitResult  = ProcessPayload.HitResult;
 
 	return Container;
 }
-
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	static TArray<ModifierResourceType*> Modifiers;
-	return CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
-}
+#undef ProcessPayloadType
 
 #undef DataType
 #undef ModifierResourceType
@@ -894,6 +923,17 @@ void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Val
 	static TArray<ModifierResourceType*> Modifiers;
 	ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 }
+
+#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+void UCsManager_Damage::ProcessData(const FString& Context, const ProcessPayloadType& ProcessPayload)
+{
+	typedef NCsDamage::NEvent::FResource EventResourceType;
+
+	const EventResourceType* Container = CreateEvent(Context, ProcessPayload);
+
+	ProcessDamageEventContainer(Container);
+}
+#undef ProcessPayloadType
 
 #undef ModifierResourceType
 #undef ValueType

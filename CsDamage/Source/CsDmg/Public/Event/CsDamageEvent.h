@@ -79,6 +79,13 @@ namespace NCsDamage
 			virtual UObject* GetCauser() const = 0;
 
 			/**
+			* 
+			* 
+			* return
+			*/
+			virtual const FVector& GetDamageDirection() const = 0;
+
+			/**
 			*
 			*
 			* return

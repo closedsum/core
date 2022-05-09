@@ -69,6 +69,8 @@ namespace NCsDamage
 
 			static UObject* GetSafeCauser(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
+			static FVector GetSafeDamageDirection(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+
 			static const FECsHitType& GetSafeHitType(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			static const FHitResult& GetSafeOrigin(const FString& Context, UObject* Object, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);

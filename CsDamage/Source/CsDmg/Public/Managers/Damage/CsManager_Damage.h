@@ -10,6 +10,7 @@
 #include "Range/CsDamageRange.h"
 #include "Modifier/CsResource_DamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
+#include "Process/Payload/CsProcessDamageDataPayload.h"
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 #include "Value/Types/CsTypes_DamageValue.h"
@@ -100,6 +101,8 @@ class CSDMG_API UCsManager_Damage : public UObject
 #define ModifierType NCsDamage::NModifier::IModifier
 
 #define DataType NCsDamage::NData::IData
+
+#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
 
 // Singleton
 #pragma region
@@ -239,6 +242,8 @@ public:
 
 	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+
+	EventResourceType* CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload);
 
 private:
 
@@ -407,6 +412,8 @@ public:
 	void ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 	void ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
+	void ProcessData(const FString& Context, const ProcessPayloadType& ProcessPayload);
+
 #pragma endregion Data
 
 // Log
@@ -434,4 +441,6 @@ public:
 #undef ModifierType
 
 #undef DataType
+
+#undef ProcessPayloadType
 };

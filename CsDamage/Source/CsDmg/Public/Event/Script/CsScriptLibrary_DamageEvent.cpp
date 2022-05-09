@@ -17,6 +17,7 @@ namespace NCsScriptLibraryDamageEvent
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetDamage);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetInstigator);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetCauser);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetDamageDirection);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetHitType);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetOrigin);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_DamageEvent, GetHitResult);
@@ -63,6 +64,17 @@ UObject* UCsScriptLibrary_DamageEvent::GetCauser(const FString& Context, UObject
 	typedef NCsDamage::NEvent::FLibrary DamageEventLibrary;
 
 	return DamageEventLibrary::GetSafeCauser(Ctxt, Object);
+}
+
+FVector UCsScriptLibrary_DamageEvent::GetDamageDirection(const FString& Context, UObject* Object)
+{
+	using namespace NCsScriptLibraryDamageEvent::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDamageDirection : Context;
+
+	typedef NCsDamage::NEvent::FLibrary DamageEventLibrary;
+
+	return DamageEventLibrary::GetSafeDamageDirection(Ctxt, Object);
 }
 
 FECsHitType UCsScriptLibrary_DamageEvent::GetHitType(const FString& Context, UObject* Object)

@@ -390,6 +390,15 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult);
 		}
 
+		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+		
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload)
+		{
+			GetChecked(Context, WorldContext)->ProcessData(Context, ProcessPayload);
+		}
+
+		#undef ProcessPayloadType
+
 		#undef ModifierResourceType
 		#undef ValueType
 		#undef RangeType

@@ -61,6 +61,16 @@ public:
 	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CImpl|Library|Damage|Event", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static FVector GetDamageDirection(const FString& Context, UObject* Object);
+
+	/**
+	*
+	*
+	* @param Context	The calling context.
+	* @param Object
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CImpl|Library|Damage|Event", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static FECsHitType GetHitType(const FString& Context, UObject* Object);
 
 	/**

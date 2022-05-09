@@ -541,8 +541,20 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			DamageModifierLibrary::ConditionalModifyChecked(Context, DamageImpl.Modifiers, DamageImpl.GetValue());
 
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
-			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData, GetCache()->GetInstigator(), this, Hit);
+			static ProcessPayloadType ProcessPayload;
+			ProcessPayload.Reset();
+
+			ProcessPayload.Value	  = DamageImpl.GetValue();
+			ProcessPayload.Data		  = DamageData;
+			ProcessPayload.Instigator = GetCache()->GetInstigator();
+			ProcessPayload.Causer	  = this;
+			// TODO: Maybe store this value each tick / update
+			ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+			ProcessPayload.HitResult  = Hit;
+
+			DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
 		}
 	}
 

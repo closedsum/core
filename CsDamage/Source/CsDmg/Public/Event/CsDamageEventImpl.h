@@ -63,6 +63,8 @@ namespace NCsDamage
 
 			UObject* Causer;
 
+			FVector DamageDirection;
+
 			FECsHitType HitType;
 
 			FHitResult Origin;
@@ -95,6 +97,7 @@ namespace NCsDamage
 			FORCEINLINE DataType* GetData() const { return Data; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetCauser() const { return Causer; }
+			FORCEINLINE const FVector& GetDamageDirection() const { return DamageDirection; }
 			FORCEINLINE const FECsHitType& GetHitType() const { return HitType; }
 			FORCEINLINE const FHitResult& GetOrigin() const { return Origin; }
 			FORCEINLINE const FHitResult& GetHitResult() const { return HitResult; }

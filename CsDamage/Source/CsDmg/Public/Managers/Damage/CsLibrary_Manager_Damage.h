@@ -5,6 +5,7 @@
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Damage
 #include "Modifier/CsAllocated_DamageModifier.h"
+#include "Process/Payload/CsProcessDamageDataPayload.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -427,6 +428,19 @@ namespace NCsDamage
 			* @param HitResult
 			*/
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+
+		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+
+			/**
+			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ProcessPayload
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload);
+
+		#undef ProcessPayloadType
 
 		#undef ModifierResourceType
 		#undef ValueType

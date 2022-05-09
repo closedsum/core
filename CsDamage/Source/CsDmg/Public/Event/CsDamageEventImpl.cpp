@@ -37,6 +37,7 @@ namespace NCsDamage
 			Data(nullptr),
 			Instigator(nullptr),
 			Causer(nullptr),
+			DamageDirection(0.0f),
 			HitType(),
 			HitResult(),
 			IgnoreObjects()
@@ -75,6 +76,7 @@ namespace NCsDamage
 			Data		= FromImpl->Data;
 			Instigator  = FromImpl->Instigator;
 			Causer		= FromImpl->Causer;
+			DamageDirection = FromImpl->DamageDirection;
 			HitType		= FromImpl->HitType;
 			Origin		= FromImpl->Origin;
 			HitResult	= FromImpl->HitResult;
@@ -128,6 +130,7 @@ namespace NCsDamage
 			Data = nullptr;
 			Instigator = nullptr;
 			Causer = nullptr;
+			DamageDirection = FVector::ZeroVector;
 			HitType = EMCsHitType::Get().GetMAX();
 			HitResult.Reset(0.0f, false);
 			IgnoreObjects.Reset(IgnoreObjects.Max());

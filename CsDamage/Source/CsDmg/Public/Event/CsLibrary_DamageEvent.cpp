@@ -85,6 +85,8 @@ namespace NCsDamage
 			UE_LOG(LogCsDmg, Warning, TEXT("- Instigator: %s"), Event->GetInstigator() ? *(Event->GetInstigator()->GetName()) : TEXT("None"));
 			// Causer
 			UE_LOG(LogCsDmg, Warning, TEXT("- Causer: %s"), Event->GetCauser() ? *(Event->GetCauser()->GetName()) : TEXT("None"));
+			// Damage Direction
+			UE_LOG(LogCsDmg, Warning, TEXT("- DamageDirection: %s"), *(Event->GetDamageDirection().ToString()));
 			// HitResult
 			const FHitResult& HitResult = Event->GetHitResult();
 
@@ -213,6 +215,15 @@ namespace NCsDamage
 			if (!Event)
 				return nullptr;
 			return Event->GetCauser();
+		}
+
+		FVector FLibrary::GetSafeDamageDirection(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		{
+			const EventType* Event = GetSafeCurrentDamageEvent(Context, Object, Log);
+
+			if (!Event)
+				return FVector::ZeroVector;
+			return Event->GetDamageDirection();
 		}
 
 		const FECsHitType& FLibrary::GetSafeHitType(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)

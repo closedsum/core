@@ -572,21 +572,22 @@ public:
 
 class UAnimMontage;
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct CSCORE_API FCsTArrayAnimMontage
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TArray<TSoftObjectPtr<UAnimMontage>> Anims;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anims_LoadFlags;
 
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Material")
 	TArray<UAnimMontage*> Anims_Internal;
 
 public:
+
 	FCsTArrayAnimMontage() :
 		Anims(),
 		Anims_LoadFlags(0),
@@ -594,23 +595,256 @@ public:
 	{
 	}
 
-	FORCEINLINE TArray<UAnimMontage*>* Get()
-	{
-		return &Anims_Internal;
-	}
+	FORCEINLINE const TArray<UAnimMontage*>& Get() const { return Anims_Internal; }
 
-	FORCEINLINE UAnimMontage* Get(const int32 Index)
-	{
-		return Index < Anims_Internal.Num() ? Anims_Internal[Index] : NULL;
-	}
+	FORCEINLINE TArray<UAnimMontage*>* GetPtr() { return &Anims_Internal; }
+	FORCEINLINE const TArray<UAnimMontage*>* GetPtr() const { return &Anims_Internal; }
 
-	FORCEINLINE uint8 Find(UAnimMontage* Anim)
+	FORCEINLINE UAnimMontage* Get(const int32& Index) const { return Index < Anims_Internal.Num() ? Anims_Internal[Index] : nullptr; }
+
+	FORCEINLINE int32 Find(UAnimMontage* Anim) const
 	{
-		int index;
+		int32 index;
 		if (Anims_Internal.Find(Anim, index))
 			return (uint8)index;
 		else
 			return INDEX_NONE;
+	}
+
+	/**
+	* Get the Hard references to the array of Anims of type: UAnimMontage.
+	*
+	* @param Context	The calling context.
+	* return			Anims
+	*/
+	FORCEINLINE const TArray<UAnimMontage*>& GetChecked(const FString& Context) const
+	{ 
+		checkf(Anims.Num() > CS_EMPTY, TEXT("%s: No Anims set."), *Context);
+
+		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num());
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d] is NULL."), *Context, I);
+
+			UAnimMontage* Anim = Anims_Internal[I];
+	
+			checkf(Anim, TEXT("%s: Anims[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Anims_Internal;
+	}
+
+	/**
+	* Get the Hard references to the array of Anims of type: UAnimMontage.
+	*
+	* @param Context	The calling context.
+	* return			Anims
+	*/
+	FORCEINLINE const TArray<UAnimMontage*>& GetChecked() const
+	{
+		checkf(Anims.Num() > CS_EMPTY, TEXT("FCsTArrayAnimMontage::GetChecked: No Anims set."));
+
+		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("FCsTArrayAnimMontage::GetChecked: Mismatch between Soft and Hard references to anims, %d != %d."), Anims.Num(), Anims_Internal.Num());
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("FCsTArrayAnimMontage::GetChecked: Anims[%d] is NULL."), I);
+
+			UAnimMontage* Anim = Anims_Internal[I];
+
+			checkf(Anim, TEXT("FCsTArrayAnimMontage::GetChecked: Anims[%d] has NOT been loaded from Path @ %s."), I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return Anims_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the Anim at Index of type: UAnimMontage.
+	*
+	* @param Context	The calling context.
+	* @param Index
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetChecked(const FString& Context, const int32& Index) const
+	{
+		checkf(Index >= 0 && Index < Anims_Internal.Num(), TEXT("%s: Index: %d is NOT in the range [0, %d)."), *Context, Index, Anims_Internal.Num());
+
+		return GetChecked(Context)[Index];
+	}
+
+	/**
+	* Get the Hard reference to the Anim at Index of type: UAnimMontage.
+	*
+	* @param Index
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetChecked(const int32& Index) const
+	{
+		checkf(Index >= 0 && Index < Anims_Internal.Num(), TEXT("FCsTArrayAnimMontage::GetChecked: Index: %d is NOT in the range [0, %d)."), Index, Anims_Internal.Num());
+
+		return GetChecked()[Index];
+	}
+
+	/**
+	* Safely get the Hard reference to the array of Anims of type: UAnimMontage.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Anims
+	*/
+	const TArray<UAnimMontage*>* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Anims.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Anims set."), *Context));
+			return nullptr;
+		}
+
+		if (Anims.Num() != Anims_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num()));
+			return nullptr;
+		}
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Anims[%d] is NULL."), *Context, I));
+				return nullptr;
+			}
+
+			UAnimMontage* Anim = Anims_Internal[I];
+
+			if (!Anim)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Anims[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString())));
+				return nullptr;
+			}
+		}
+		return &Anims_Internal;
+	}
+
+	/**
+	* Get the Hard reference to a random Anim of type: UAnimMontage in Anims.
+	*
+	* @param Context	The calling context.
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetRandomChecked(const FString& Context) const
+	{
+		return GetChecked(Context)[FMath::RandRange(0, Anims_Internal.Num() - 1)];
+	}
+
+	/**
+	* Get the Hard reference to a random Anim of type: UAnimMontage in Anims.
+	*
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetRandomChecked() const
+	{
+		return GetChecked()[FMath::RandRange(0, Anims_Internal.Num() - 1)];
+	}
+
+	/**
+	* Get the Hard reference to a random Anim of type: UAnimMontage in Anims.
+	*
+	* @param Context	The calling context.
+	* @param OutIndex
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetRandomChecked(const FString& Context, int32& OutIndex) const
+	{
+		OutIndex = FMath::RandRange(0, Anims_Internal.Num() - 1);
+		return GetChecked(Context)[OutIndex];
+	}
+
+	/**
+	* Get the Hard reference to a random Anim of type: UAnimMontage in Anims.
+	*
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetRandomChecked(int32& OutIndex) const
+	{
+		OutIndex = FMath::RandRange(0, Anims_Internal.Num() - 1);
+		return GetChecked()[OutIndex];
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Anims.Num() > CS_EMPTY, TEXT("%s: No Anims set."), *Context);
+
+		checkf(Anims.Num() == Anims_Internal.Num(), TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num());
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			checkf(SoftObject.ToSoftObjectPath().IsValid(), TEXT("%s: Anims[%d] is NULL."), *Context, I);
+
+			UAnimMontage* Material = Anims_Internal[I];
+
+			checkf(Material, TEXT("%s: Anims[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString()));
+		}
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Anims.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Anims set."), *Context));
+			return false;
+		}
+
+		if (Anims.Num() != Anims_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to anims, %d != %d."), *Context, Anims.Num(), Anims_Internal.Num()));
+			return false;
+		}
+
+		const int32 Count = Anims.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			const TSoftObjectPtr<UAnimMontage>& SoftObject = Anims[I];
+
+			if (!SoftObject.ToSoftObjectPath().IsValid())
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Anims[%d] is NULL."), *Context, I));
+				return false;
+			}
+
+			UAnimMontage* Anim = Anims_Internal[I];
+
+			if (!Anim)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Anims[%d] has NOT been loaded from Path @ %s."), *Context, I, *(SoftObject.ToSoftObjectPath().ToString())));
+				return false;
+			}
+		}
+		return true;
 	}
 };
 

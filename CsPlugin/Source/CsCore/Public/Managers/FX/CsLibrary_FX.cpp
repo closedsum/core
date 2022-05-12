@@ -19,6 +19,9 @@
 #include "NiagaraActor.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
+#include "NiagaraDataInterfaceArrayInt.h"
+#include "NiagaraDataInterfaceArrayFloat.h"
+#include "NiagaraFunctionLibrary.h"
 
 namespace NCsFX
 {
@@ -267,6 +270,51 @@ namespace NCsFX
 	}
 
 	#undef ParameterType
+
+	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector)
+
+		UNiagaraDataInterfaceArrayFloat3* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat3>(System, OverrideName);
+	
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<FVector> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		ArrayDI->FloatData = ArrayData;
+		ArrayDI->MarkRenderDataDirty();
+	}
+
+	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FQuat)
+
+		UNiagaraDataInterfaceArrayQuat* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayQuat>(System, OverrideName);
+
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<FQuat> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		ArrayDI->QuatData = ArrayData;
+		ArrayDI->MarkRenderDataDirty();
+	}
+
+	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, int32)
+
+		UNiagaraDataInterfaceArrayInt32* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayInt32>(System, OverrideName);
+
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<int32> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+		
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		ArrayDI->IntData = ArrayData;
+		ArrayDI->MarkRenderDataDirty();
+	}
 
 	#pragma endregion Parameter
 

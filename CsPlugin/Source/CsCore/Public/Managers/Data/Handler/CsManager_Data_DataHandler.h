@@ -75,11 +75,23 @@ namespace NCsData
 				// <EntryName, Data>
 				TMap<FName, InterfaceDataType*> DataMap;
 
+			public:
+
+				FORCEINLINE const TMap<FName, InterfaceDataType*>& GetDataMap() const { return DataMap; }
+
+			protected:
+
 				// <Path, <RowName, RowPtr>>
 				TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
 
 				/** <DataName, InterfacePtr> */
 				TMap<FName, InterfaceDataType*> ImplDataMap;
+
+			public:
+
+				FORCEINLINE const TMap<FName, InterfaceDataType*>& GetImplDataMap() const { return ImplDataMap; }
+
+			protected:
 
 				/** <DataName, InterfaceMapPtr> */
 				TMap<FName, DataInterfaceMapType*> ImplDataInterfaceMap;

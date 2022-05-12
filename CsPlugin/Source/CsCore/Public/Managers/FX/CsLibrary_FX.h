@@ -146,6 +146,12 @@ namespace NCsFX
 	#undef ParameterType
 	#undef ParameterValueType
 
+		static void SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData);
+
+		static void SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData);
+
+		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData);
+
 	#pragma endregion Parameter
 
 	// Spawn

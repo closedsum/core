@@ -297,6 +297,19 @@ namespace NCsResource
 				*
 				*
 				* @param Index
+				* return ResourceContainerType
+				*/
+				FORCEINLINE ResourceContainerType* GetAtChecked(const FString& Context, const int32& Index) const
+				{
+					checkf(Index > INDEX_NONE && Index < PoolSize, TEXT("%s: Index is >= 0 and < PoolSize: %d"), *Context, PoolSize);
+
+					return Pool[Index];
+				}
+
+				/**
+				*
+				*
+				* @param Index
 				* return ResourceType
 				*/
 				FORCEINLINE ResourceType* GetResourceAt(const int32& Index) const
@@ -746,6 +759,12 @@ namespace NCsResource
 					if (AllocatedHead)
 						return AllocateBefore(**AllocatedHead);
 					return Allocate();
+				}
+
+				bool IsAllocatedChecked(const FString& Context, const int32& Index) const
+				{
+					ResourceContainerType* Container = GetAtChecked(Context, Index);
+					return Container->IsAllocated();
 				}
 
 			#pragma endregion Allocate

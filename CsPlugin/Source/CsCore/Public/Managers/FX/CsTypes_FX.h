@@ -230,13 +230,95 @@ public:
 	}
 
 	/**
-	* Get the Hard reference to the FX System.
+	* Get the Hard reference to the UNiagaraSystem.
 	*
-	* return FX System
+	* return System
 	*/
-	FORCEINLINE UNiagaraSystem* Get() const
+	FORCEINLINE UNiagaraSystem* Get() const { return FX_Internal; }
+
+	/**
+	* Get the pointer to the Hard reference to the UNiagaraSystem asset.
+	*
+	* return System
+	*/
+	FORCEINLINE UNiagaraSystem** GetPtr() { return &FX_Internal; }
+
+	/**
+	* Get the Hard reference to the UNiagaraSystem asset.
+	*
+	* @param Context	The calling context.
+	* return			System
+	*/
+	FORCEINLINE UNiagaraSystem* GetChecked(const FString& Context) const
 	{
+		checkf(FX.ToSoftObjectPath().IsValid(), TEXT("%s: FX is NULL."), *Context);
+
+		checkf(FX_Internal, TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString()));
+
 		return FX_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UNiagaraSystem asset.
+	*
+	* return System
+	*/
+	FORCEINLINE UNiagaraSystem* GetChecked() const
+	{
+		checkf(FX.ToSoftObjectPath().IsValid(), TEXT("FCsNiagaraSystem::GetChecked: FX is NULL."));
+
+		checkf(FX_Internal, TEXT("FCsNiagaraSystem::GetChecked: FX has NOT been loaded from Path @ %s."), *(FX.ToSoftObjectPath().ToString()));
+
+		return FX_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UNiagaraSystem asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			System
+	*/
+	UNiagaraSystem* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!FX.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: FX is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!FX_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: FX has NOT been loaded from Path @ %s."), *Context, *(FX.ToSoftObjectPath().ToString())));
+		}
+		return FX_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UNiagaraSystem asset.
+	*
+	* return Material
+	*/
+	UNiagaraSystem* GetSafe()
+	{
+		if (!FX.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return FX_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
 	}
 };
 

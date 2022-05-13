@@ -286,6 +286,87 @@ namespace NCsFX
 		ArrayDI->MarkRenderDataDirty();
 	}
 
+	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData, TArray<int32>& Indices)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector)
+		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+
+		UNiagaraDataInterfaceArrayFloat3* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat3>(System, OverrideName);
+	
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<FVector> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		
+		if (ArrayData.Num() > ArrayDI->FloatData.Num())
+		{
+			ArrayDI->FloatData = ArrayData;
+			Indices.Reset(Indices.Max());
+		}
+		else
+		{
+			const int32 Count = Indices.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				const int32& Index = Indices[I];
+
+				ArrayDI->FloatData[Index] = ArrayData[Index];
+				Indices.RemoveAt(I, 1, false);
+			}
+		}
+		ArrayDI->MarkRenderDataDirty();
+	}
+
+	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4>& ArrayData)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector4)
+
+		UNiagaraDataInterfaceArrayFloat4* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat4>(System, OverrideName);
+	
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<FVector> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		ArrayDI->FloatData = ArrayData;
+		ArrayDI->MarkRenderDataDirty();
+	}
+
+	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4>& ArrayData, TArray<int32>& Indices)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector4)
+		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+
+		UNiagaraDataInterfaceArrayFloat4* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat4>(System, OverrideName);
+	
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<FVector> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		
+		if (ArrayData.Num() > ArrayDI->FloatData.Num())
+		{
+			ArrayDI->FloatData = ArrayData;
+			Indices.Reset(Indices.Max());
+		}
+		else
+		{
+			const int32 Count = Indices.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				const int32& Index = Indices[I];
+
+				ArrayDI->FloatData[Index] = ArrayData[Index];
+				Indices.RemoveAt(I, 1, false);
+			}
+		}
+		ArrayDI->MarkRenderDataDirty();
+	}
+
 	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData)
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
@@ -301,6 +382,39 @@ namespace NCsFX
 		ArrayDI->MarkRenderDataDirty();
 	}
 
+	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData, TArray<int32>& Indices)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FQuat)
+		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+
+		UNiagaraDataInterfaceArrayQuat* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayQuat>(System, OverrideName);
+
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<FQuat> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+		
+		if (ArrayData.Num() > ArrayDI->QuatData.Num())
+		{
+			ArrayDI->QuatData = ArrayData;
+			Indices.Reset(Indices.Max());
+		}
+		else
+		{
+			const int32 Count = Indices.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				const int32& Index = Indices[I];
+
+				ArrayDI->QuatData[Index] = ArrayData[Index];
+				Indices.RemoveAt(I, 1, false);
+			}
+		}
+		ArrayDI->MarkRenderDataDirty();
+	}
+
 	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData)
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
@@ -313,6 +427,39 @@ namespace NCsFX
 		
 		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
 		ArrayDI->IntData = ArrayData;
+		ArrayDI->MarkRenderDataDirty();
+	}
+
+	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData, TArray<int32>& Indices)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(OverrideName)
+		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, int32)
+		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+
+		UNiagaraDataInterfaceArrayInt32* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayInt32>(System, OverrideName);
+
+		checkf(ArrayDI, TEXT("%s: Failed to find TArray<int32> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
+		
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+
+		if (ArrayData.Num() > ArrayDI->IntData.Num())
+		{
+			ArrayDI->IntData = ArrayData;
+			Indices.Reset(Indices.Max());
+		}
+		else
+		{
+			const int32 Count = Indices.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				const int32& Index = Indices[I];
+
+				ArrayDI->IntData[Index] = ArrayData[Index];
+				Indices.RemoveAt(I, 1, false);
+			}
+		}
 		ArrayDI->MarkRenderDataDirty();
 	}
 

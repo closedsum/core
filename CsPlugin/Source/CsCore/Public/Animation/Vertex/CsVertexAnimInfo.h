@@ -139,6 +139,8 @@ namespace NCsAnim
 			*/
 			float GetAlpha_BlendIn(const float& ElapsedTime) const;
 
+			FORCEINLINE bool CanStartBlendOut(const float& ElapsedTime) const { return GetBlendOutTime() > 0.0f && (GetLength() - ElapsedTime) <= GetBlendOutTime(); }
+
 			/**
 			* NOTE: This should be called when / if the Blend Out is being carried out and
 			*		for the duration of the Blend Out.

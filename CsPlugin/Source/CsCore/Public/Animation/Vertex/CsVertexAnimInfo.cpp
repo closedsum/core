@@ -105,7 +105,7 @@ namespace NCsAnim
 
 		float FInfo::GetAlpha_BlendOut(const float& ElapsedTime) const
 		{
-			const float Percent = FMath::Clamp(ElapsedTime / GetLength(), 0.0f, 1.0f);
+			const float Percent = FMath::Clamp((GetLength() - ElapsedTime) / GetBlendOutTime(), 0.0f, 1.0f);
 
 			//typedef NCsMath::FLibrary MathLibrary;
 

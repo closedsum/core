@@ -146,6 +146,14 @@ namespace NCsFX
 	#undef ParameterType
 	#undef ParameterValueType
 
+		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData);
+
+		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData, TArray<int32>& Indices);
+
+		static void SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData);
+
+		static void SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData, TArray<int32>& Indices);
+
 		static void SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData);
 
 		static void SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData, TArray<int32>& Indices);
@@ -157,10 +165,6 @@ namespace NCsFX
 		static void SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData);
 
 		static void SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData, TArray<int32>& Indices);
-
-		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData);
-
-		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData, TArray<int32>& Indices);
 
 	#pragma endregion Parameter
 

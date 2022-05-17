@@ -26,6 +26,7 @@ namespace NCsDeveloperSettings
 		CSCORE_API CS_DEFINE_CACHED_STRING(Sound, "UCsDeveloperSettings::Sound");
 		CSCORE_API CS_DEFINE_CACHED_STRING(StaticMeshActor, "UCsDeveloperSettings::StaticMeshActor");
 		CSCORE_API CS_DEFINE_CACHED_STRING(SkeletalMeshActor, "UCsDeveloperSettings::SkeletalMeshActor");
+		CSCORE_API CS_DEFINE_CACHED_STRING(VertexAnimNotify, "UCsDeveloperSettings::VertexAnimNotify");
 	}
 }
 

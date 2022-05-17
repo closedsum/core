@@ -2,6 +2,8 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Interpolation.h"
+// Anim
+#include "Animation/Vertex/CsVertexAnimNotify.h"
 // Log
 #include "Utility/CsLog.h"
 

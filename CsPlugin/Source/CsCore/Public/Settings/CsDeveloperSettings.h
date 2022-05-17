@@ -32,6 +32,8 @@
 #include "Managers/StaticMesh/CsSettings_Manager_StaticMeshActor.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
+// Anim
+#include "Animation/Vertex/CsVertexAnimNotify.h"
 
 #include "CsDeveloperSettings.generated.h"
 
@@ -48,6 +50,7 @@ namespace NCsDeveloperSettings
 		extern CSCORE_API const FString Sound;
 		extern CSCORE_API const FString StaticMeshActor;
 		extern CSCORE_API const FString SkeletalMeshActor;
+		extern CSCORE_API const FString VertexAnimNotify;
 	}
 }
 
@@ -284,6 +287,23 @@ public:
 #pragma endregion Unit Test
 
 #pragma endregion SkeletalMesh
+
+// Anim
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Anim", meta = (DisplayName = "ECsVertexAnimNotify - Populate Enum Map Method"))
+	ECsPopulateEnumMapMethod ECsVertexAnimNotify_PopulateEnumMapMethod;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Anim", meta = (DisplayName = "ECsVertexAnimNotify", TitleProperty = "Name"))
+	TArray<FCsSettings_Enum> ECsVertexAnimNotify;
+
+	template<>
+	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsVertexAnimNotify>() const { return ECsVertexAnimNotify; }
+	template<>
+	const FString& GetSettingsEnumPath<FECsVertexAnimNotify>() const { return NCsDeveloperSettings::Str::VertexAnimNotify; }
+
+#pragma endregion Anim
 
 // Entry
 #pragma region

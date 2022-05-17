@@ -77,7 +77,13 @@ namespace NCsAnim
 		*/
 		struct CSCORE_API FNotify
 		{
+		public:
+
+			static const FNotify Invalid;
+
 		private:
+
+			bool bTriggered;
 
 			CS_DECLARE_MEMBER_WITH_PROXY(Notify, FECsVertexAnimNotify)
 			CS_DECLARE_MEMBER_WITH_PROXY(Time, float)
@@ -85,12 +91,31 @@ namespace NCsAnim
 		public:
 
 			FNotify() :
+				bTriggered(false),
 				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Notify),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Time, 0.0f)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Notify);
 				CS_CTOR_SET_MEMBER_PROXY(Time);
 			}
+
+			FNotify(const FECsVertexAnimNotify& InNotify,
+				    const float& InTime) :
+				bTriggered(false),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Notify, InNotify),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Time, InTime)
+			{
+				CS_CTOR_SET_MEMBER_PROXY(Notify);
+				CS_CTOR_SET_MEMBER_PROXY(Time);
+			}
+
+			void CopyAsValue(const FNotify& From)
+			{
+				SetNotify(From.GetNotify());
+				SetTime(From.GetTime());
+			}
+
+			void Trigger() { bTriggered = true; }
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Notify, FECsVertexAnimNotify)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)

@@ -16,6 +16,19 @@ void FCsVertexAnimInfo::CopyToInfo(InfoType* Info)
 	Info->SetPlayRate(&PlayRate);
 	Info->SetBlendInTime(&BlendInTime);
 	Info->SetBlendOutTime(&BlendOutTime);
+
+	typedef NCsAnim::NVertex::FNotify NotifyType;
+
+	const int32 Count = Info->Notifies.Num();
+
+	Info->Notifies.Reset(Count);
+
+	for (FCsVertexAnimNotify& N : Notifies)
+	{
+		NotifyType& Notify = Info->Notifies.AddDefaulted_GetRef();
+
+		N.CopyToNotify(&Notify);
+	}
 }
 
 void FCsVertexAnimInfo::CopyToInfoAsValue(InfoType* Info) const
@@ -27,6 +40,19 @@ void FCsVertexAnimInfo::CopyToInfoAsValue(InfoType* Info) const
 	Info->SetPlayRate(PlayRate);
 	Info->SetBlendInTime(BlendInTime);
 	Info->SetBlendOutTime(BlendOutTime);
+
+	typedef NCsAnim::NVertex::FNotify NotifyType;
+
+	const int32 Count = Info->Notifies.Num();
+
+	Info->Notifies.Reset(Count);
+
+	for (const FCsVertexAnimNotify& N : Notifies)
+	{
+		NotifyType& Notify = Info->Notifies.AddDefaulted_GetRef();
+
+		N.CopyToNotifyAsValue(&Notify);
+	}
 }
 
 #undef InfoType
@@ -42,6 +68,11 @@ bool FCsVertexAnimInfo::IsValidChecked(const FString& Context) const
 	CS_IS_FLOAT_LESS_THAN_CHECKED(BlendInTime, Length)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(BlendOutTime, 0.0f)
 	CS_IS_FLOAT_LESS_THAN_CHECKED(BlendOutTime, Length)
+
+	for (const FCsVertexAnimNotify& Notify : Notifies)
+	{
+		CS_IS_VALID_CHECKED(Notify);
+	}
 	return true;
 }
 
@@ -56,6 +87,11 @@ bool FCsVertexAnimInfo::IsValid(const FString& Context, void(*Log)(const FString
 	CS_IS_FLOAT_LESS_THAN(BlendInTime, Length)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(BlendOutTime, 0.0f)
 	CS_IS_FLOAT_LESS_THAN(BlendOutTime, Length)
+
+	for (const FCsVertexAnimNotify& Notify : Notifies)
+	{
+		CS_IS_VALID(Notify)
+	}
 	return true;
 }
 
@@ -76,6 +112,13 @@ namespace NCsAnim
 			CS_IS_FLOAT_LESS_THAN_CHECKED(GetBlendInTime(), GetLength())
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetBlendOutTime(), 0.0f)
 			CS_IS_FLOAT_LESS_THAN_CHECKED(GetBlendOutTime(), GetLength())
+
+			typedef NCsAnim::NVertex::FNotify NotifyType;
+
+			for (const NotifyType& Notify : Notifies)
+			{
+				CS_IS_VALID_CHECKED(Notify);
+			}
 			return true;
 		}
 
@@ -90,6 +133,13 @@ namespace NCsAnim
 			CS_IS_FLOAT_LESS_THAN(GetBlendInTime(), GetLength())
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetBlendOutTime(), 0.0f)
 			CS_IS_FLOAT_LESS_THAN(GetBlendOutTime(), GetLength())
+
+			typedef NCsAnim::NVertex::FNotify NotifyType;
+
+			for (const NotifyType& Notify : Notifies)
+			{
+				CS_IS_VALID(Notify);
+			}
 			return true;
 		}
 

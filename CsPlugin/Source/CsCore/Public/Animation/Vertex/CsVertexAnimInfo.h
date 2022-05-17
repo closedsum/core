@@ -38,6 +38,9 @@ struct CSCORE_API FCsVertexAnimInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float BlendOutTime;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
+	TArray<FCsVertexAnimNotify> Notifies;
+
 public:
 
 	FCsVertexAnimInfo() :
@@ -47,7 +50,8 @@ public:
 		Length(0.0f),
 		PlayRate(0.0f),
 		BlendInTime(0.0f),
-		BlendOutTime(0.0f)
+		BlendOutTime(0.0f),
+		Notifies()
 	{
 	}
 
@@ -72,6 +76,8 @@ namespace NCsAnim
 
 		private:
 
+		#define NotifyType NCsAnim::NVertex::FNotify
+
 			CS_DECLARE_MEMBER_WITH_PROXY(NumFrames, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(AnimStartGenerated, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(SpeedGenerated, float)
@@ -82,6 +88,8 @@ namespace NCsAnim
 
 		public:
 
+			TArray<NotifyType> Notifies;
+
 			FInfo() :
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(NumFrames, 0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(AnimStartGenerated, 0),
@@ -89,7 +97,8 @@ namespace NCsAnim
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Length, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(BlendInTime, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(BlendOutTime, 0.0f)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(BlendOutTime, 0.0f),
+				Notifies()
 			{
 				CS_CTOR_SET_MEMBER_PROXY(NumFrames);
 				CS_CTOR_SET_MEMBER_PROXY(AnimStartGenerated);
@@ -148,6 +157,8 @@ namespace NCsAnim
 			*		for the duration of the Blend Out.
 			*/
 			float GetAlpha_BlendOut(const float& ElapsedTime) const;
+
+		#undef NotifyType
 		};
 	}
 }

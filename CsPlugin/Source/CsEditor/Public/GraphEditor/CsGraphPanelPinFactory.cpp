@@ -25,6 +25,8 @@
 #include "Managers/Input/Action/CsInputAction.h"
 // GameEvent
 #include "Managers/Input/GameEvent/CsGameEvent.h"
+// Anim
+#include "Animation/Vertex/CsVertexAnimNotify.h"
 
 #include "SlateBasics.h"
 
@@ -72,6 +74,8 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
 	// Team
 #include "GraphEditor/EnumStruct/Team/SCsGraphPin_ECsTeam.h"
+	// Anim
+#include "GraphEditor/EnumStruct/Anim/SCsGraphPin_ECsVertexAnimNotify.h"
 
 // Managers
 #include "Managers/Process/CsProcess.h"
@@ -180,6 +184,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 	{
 		// FECsTeam
 		CS_TEMP_CREATE(ECsTeam)
+	}
+	// Anim
+	{
+		// FECsVertexAnimNotify
+		CS_TEMP_CREATE(ECsVertexAnimNotify)
 	}
 
 #undef CS_TEMP_CREATE

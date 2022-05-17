@@ -91,6 +91,8 @@ bool FCsVertexAnimNotify::IsValid(const FString& Context, void(*Log)(const FStri
 	return true;
 }
 
+const NCsAnim::NVertex::FNotify NCsAnim::NVertex::FNotify::Invalid = NCsAnim::NVertex::FNotify(EMCsVertexAnimNotify::Get().GetMAX(), -1.0f);
+
 namespace NCsAnim
 {
 	namespace NVertex

@@ -38,6 +38,8 @@
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
 		// Team
 #include "DetailCustomizations/EnumStruct/Team/ECsTeamCustomization.h"
+		// Anim
+#include "DetailCustomizations/EnumStruct/Anim/ECsVertexAnimNotifyCustomization.h"
 	// Data
 #include "DetailCustomizations/Data/CsData_ECsTestCustomization.h"
 	// Asset
@@ -96,6 +98,8 @@ void FCsRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsSenseActorType);
 		// Team
 		CS_TEMP_REGISTER(ECsTeam);
+		// Anim
+		CS_TEMP_REGISTER(ECsVertexAnimNotify);
 	}
 	// Data
 	{

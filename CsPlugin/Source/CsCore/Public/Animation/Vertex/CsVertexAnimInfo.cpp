@@ -12,6 +12,7 @@ void FCsVertexAnimInfo::CopyToInfo(InfoType* Info)
 	Info->SetNumFrames(&NumFrames);
 	Info->SetAnimStartGenerated(&AnimStartGenerated);
 	Info->SetSpeedGenerated(&SpeedGenerated);
+	Info->SetbLooping(&bLooping);
 	Info->SetLength(&Length);
 	Info->SetPlayRate(&PlayRate);
 	Info->SetBlendInTime(&BlendInTime);
@@ -36,6 +37,7 @@ void FCsVertexAnimInfo::CopyToInfoAsValue(InfoType* Info) const
 	Info->SetNumFrames(NumFrames);
 	Info->SetAnimStartGenerated(AnimStartGenerated);
 	Info->SetSpeedGenerated(SpeedGenerated);
+	Info->SetbLooping(bLooping);
 	Info->SetLength(Length);
 	Info->SetPlayRate(PlayRate);
 	Info->SetBlendInTime(BlendInTime);
@@ -95,7 +97,7 @@ bool FCsVertexAnimInfo::IsValid(const FString& Context, void(*Log)(const FString
 	return true;
 }
 
-const NCsAnim::NVertex::FInfo NCsAnim::NVertex::FInfo::Invalid = NCsAnim::NVertex::FInfo(-1, -1, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f);
+const NCsAnim::NVertex::FInfo NCsAnim::NVertex::FInfo::Invalid = NCsAnim::NVertex::FInfo(-1, -1, -1.0f, false, -1.0f, -1.0f, -1.0f, -1.0f);
 
 namespace NCsAnim
 {

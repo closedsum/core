@@ -26,6 +26,9 @@ struct CSCORE_API FCsVertexAnimInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float SpeedGenerated;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
+	bool bLooping;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Length;
 
@@ -47,6 +50,7 @@ public:
 		NumFrames(0),
 		AnimStartGenerated(0),
 		SpeedGenerated(0.0f),
+		bLooping(false),
 		Length(0.0f),
 		PlayRate(0.0f),
 		BlendInTime(0.0f),
@@ -81,6 +85,7 @@ namespace NCsAnim
 			CS_DECLARE_MEMBER_WITH_PROXY(NumFrames, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(AnimStartGenerated, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(SpeedGenerated, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(bLooping, bool)
 			CS_DECLARE_MEMBER_WITH_PROXY(Length, float)
 			CS_DECLARE_MEMBER_WITH_PROXY(PlayRate, float)
 			CS_DECLARE_MEMBER_WITH_PROXY(BlendInTime, float)
@@ -94,6 +99,7 @@ namespace NCsAnim
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(NumFrames, 0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(AnimStartGenerated, 0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(SpeedGenerated, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bLooping, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Length, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(BlendInTime, 0.0f),
@@ -103,6 +109,7 @@ namespace NCsAnim
 				CS_CTOR_SET_MEMBER_PROXY(NumFrames);
 				CS_CTOR_SET_MEMBER_PROXY(AnimStartGenerated);
 				CS_CTOR_SET_MEMBER_PROXY(SpeedGenerated);
+				CS_CTOR_SET_MEMBER_PROXY(bLooping);
 				CS_CTOR_SET_MEMBER_PROXY(Length);
 				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 				CS_CTOR_SET_MEMBER_PROXY(BlendInTime);
@@ -111,7 +118,8 @@ namespace NCsAnim
 
 			FInfo(const int32& InNumFrames, 
 				  const int32& InAnimStartGenerated,
-				  const float& InSpeedGenerated, 
+				  const float& InSpeedGenerated,
+				  const bool& InLooping,
 				  const float& InLength,
 				  const float& InPlayRate,
 				  const float& InBlendInTime,
@@ -119,6 +127,7 @@ namespace NCsAnim
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(NumFrames, InNumFrames),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(AnimStartGenerated, InAnimStartGenerated),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(SpeedGenerated, InSpeedGenerated),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bLooping, InLooping),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Length, InLength),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(PlayRate, InPlayRate),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(BlendInTime, InBlendInTime),
@@ -127,6 +136,7 @@ namespace NCsAnim
 				CS_CTOR_SET_MEMBER_PROXY(NumFrames);
 				CS_CTOR_SET_MEMBER_PROXY(AnimStartGenerated);
 				CS_CTOR_SET_MEMBER_PROXY(SpeedGenerated);
+				CS_CTOR_SET_MEMBER_PROXY(bLooping);
 				CS_CTOR_SET_MEMBER_PROXY(Length);
 				CS_CTOR_SET_MEMBER_PROXY(PlayRate);
 				CS_CTOR_SET_MEMBER_PROXY(BlendInTime);
@@ -136,6 +146,7 @@ namespace NCsAnim
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(NumFrames, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AnimStartGenerated, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(SpeedGenerated, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bLooping, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Length, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(BlendInTime, float)

@@ -115,7 +115,15 @@ namespace NCsAnim
 				SetTime(From.GetTime());
 			}
 
-			void Trigger() { bTriggered = true; }
+			FORCEINLINE bool Trigger() { return bTriggered = true; }
+
+			// NOTE: With how this is used, assume ElapsedTime is always <= Anim's Length
+			FORCEINLINE bool CanTrigger(const float& ElapsedTime) const
+			{
+				return !bTriggered && (ElapsedTime >= GetTime());
+			}
+
+			FORCEINLINE void ResetTrigger() { bTriggered = false; }
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Notify, FECsVertexAnimNotify)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)

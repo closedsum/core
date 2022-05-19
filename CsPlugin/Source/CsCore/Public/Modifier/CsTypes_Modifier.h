@@ -4,27 +4,27 @@
 
 #include "CsTypes_Modifier.generated.h"
 
-// IntegralValueModifierApplication
+// NumericValueModifierApplication
 #pragma region
 
 UENUM(BlueprintType)
-enum class ECsIntegralValueModifierApplication : uint8
+enum class ECsNumericValueModifierApplication : uint8
 {
 	Multiply								UMETA(DisplayName = "Multiply"),
 	Add										UMETA(DisplayName = "Add"),
 	Replace									UMETA(DisplayName = "Replace"),
 	ReplaceOnlyIfGreater					UMETA(DisplayName = "Replace Only If Greater"),
-	ECsIntegralValueModifierApplication_MAX	UMETA(Hidden),
+	ECsNumericValueModifierApplication_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsIntegralValueModifierApplication : public TCsEnumMap<ECsIntegralValueModifierApplication>
+struct CSCORE_API EMCsNumericValueModifierApplication : public TCsEnumMap<ECsNumericValueModifierApplication>
 {
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsIntegralValueModifierApplication, ECsIntegralValueModifierApplication)
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsNumericValueModifierApplication, ECsNumericValueModifierApplication)
 };
 
-namespace NCsIntegralValueModifierApplication
+namespace NCsNumericValueModifierApplication
 {
-	typedef ECsIntegralValueModifierApplication Type;
+	typedef ECsNumericValueModifierApplication Type;
 
 	namespace Ref
 	{
@@ -32,7 +32,7 @@ namespace NCsIntegralValueModifierApplication
 		extern CSCORE_API const Type Add;
 		extern CSCORE_API const Type Replace;
 		extern CSCORE_API const Type ReplaceOnlyIfGreater;
-		extern CSCORE_API const Type ECsIntegralValueModifierApplication_MAX;
+		extern CSCORE_API const Type ECsNumericValueModifierApplication_MAX;
 	}
 }
 
@@ -40,7 +40,7 @@ namespace NCsModifier
 {
 	namespace NValue
 	{
-		namespace NIntegral
+		namespace NNumeric
 		{
 			enum class EApplication : uint8
 			{
@@ -69,32 +69,33 @@ namespace NCsModifier
 					extern CSCORE_API const Type EApplication_MAX;
 				}
 
-				FORCEINLINE void Modify(float& ValueToModify, const float& Modifier, const EApplication& Type)
+				FORCEINLINE float Modify(const float& InValue, const float& Modifier, const EApplication& Type)
 				{
 					if (Type == EApplication::Multiply)
 					{
-						ValueToModify *= Modifier;
+						return InValue * Modifier;
 					}
 					else
 					if (Type == EApplication::Add)
 					{
-						ValueToModify += Modifier;
+						return InValue + Modifier;
 					}
 					else
 					if (Type == EApplication::Replace)
 					{
-						ValueToModify = Modifier;
+						return Modifier;
 					}
 					else
 					if (Type == EApplication::ReplaceOnlyIfGreater)
 					{
-						if (Modifier > ValueToModify)
-							ValueToModify = Modifier;
+						if (Modifier > InValue)
+							return Modifier;
 					}
+					return InValue;
 				}
 			}
 		}
 	}
 }
 
-#pragma endregion IntegralValueModifierApplication
+#pragma endregion NumericValueModifierApplication

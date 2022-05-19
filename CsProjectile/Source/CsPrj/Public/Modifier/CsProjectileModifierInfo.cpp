@@ -17,7 +17,7 @@ void FCsProjectileModifier_LifeTimeInfo::CopyToImpl(ImplType* Impl)
 {
 	Impl->SetValue(&Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType*)(&Application));
 }
@@ -26,7 +26,7 @@ void FCsProjectileModifier_LifeTimeInfo::CopyToImplAsValue(ImplType* Impl) const
 {
 	Impl->SetValue(Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType)Application);
 }
@@ -46,7 +46,7 @@ bool FCsProjectileModifier_LifeTimeInfo::IsValid(const FString& Context, void(*L
 {
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Value, 0.0f)
 
-	typedef EMCsIntegralValueModifierApplication ApplicationMapType;
+	typedef EMCsNumericValueModifierApplication ApplicationMapType;
 
 	CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application);
 	return true;
@@ -63,7 +63,7 @@ void FCsProjectileModifier_InitialSpeedInfo::CopyToImpl(ImplType* Impl)
 {
 	Impl->SetValue(&Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType*)(&Application));
 }
@@ -72,7 +72,7 @@ void FCsProjectileModifier_InitialSpeedInfo::CopyToImplAsValue(ImplType* Impl) c
 {
 	Impl->SetValue(Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType)Application);
 }
@@ -92,7 +92,7 @@ bool FCsProjectileModifier_InitialSpeedInfo::IsValid(const FString& Context, voi
 {
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Value, 0.0f)
 
-	typedef EMCsIntegralValueModifierApplication ApplicationMapType;
+	typedef EMCsNumericValueModifierApplication ApplicationMapType;
 
 	CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application);
 	return true;
@@ -109,7 +109,7 @@ void FCsProjectileModifier_MaxSpeedInfo::CopyToImpl(ImplType* Impl)
 {
 	Impl->SetValue(&Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType*)(&Application));
 }
@@ -118,7 +118,7 @@ void FCsProjectileModifier_MaxSpeedInfo::CopyToImplAsValue(ImplType* Impl) const
 {
 	Impl->SetValue(Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType)Application);
 }
@@ -138,7 +138,7 @@ bool FCsProjectileModifier_MaxSpeedInfo::IsValid(const FString& Context, void(*L
 {
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Value, 0.0f)
 
-	typedef EMCsIntegralValueModifierApplication ApplicationMapType;
+	typedef EMCsNumericValueModifierApplication ApplicationMapType;
 
 	CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application);
 	return true;

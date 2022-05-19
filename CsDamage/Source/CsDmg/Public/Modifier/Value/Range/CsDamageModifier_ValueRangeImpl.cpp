@@ -30,9 +30,9 @@ namespace NCsDamage
 				FImpl::FImpl() :
 					// ICsGetInterfaceMap
 					InterfaceMap(nullptr),
-					ApplicationMin(NCsModifier::NValue::NIntegral::EApplication::Multiply),
+					ApplicationMin(NCsModifier::NValue::NNumeric::EApplication::Multiply),
 					MinValue(0.0f),
-					ApplicationMax(NCsModifier::NValue::NIntegral::EApplication::Multiply),
+					ApplicationMax(NCsModifier::NValue::NNumeric::EApplication::Multiply),
 					MaxValue(0.0f)
 				{
 					InterfaceMap = new FCsInterfaceMap();
@@ -79,13 +79,13 @@ namespace NCsDamage
 					const float& MinValueRef = ValueRange->GetMinValue();
 					float* MinValuePtr	    = const_cast<float*>((const float*)(&MinValueRef));
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(*MinValuePtr, MinValue, ApplicationMin);
+					NCsModifier::NValue::NNumeric::NApplication::Modify(*MinValuePtr, MinValue, ApplicationMin);
 
 					// Max
 					const float& MaxValueRef = ValueRange->GetMinValue();
 					float* MaxValuePtr	    = const_cast<float*>((const float*)(&MaxValueRef));
 
-					NCsModifier::NValue::NIntegral::NApplication::Modify(*MaxValuePtr, MaxValue, ApplicationMax);
+					NCsModifier::NValue::NNumeric::NApplication::Modify(*MaxValuePtr, MaxValue, ApplicationMax);
 				}
 				#undef ValueType
 

@@ -37,7 +37,7 @@ namespace NCsProjectile
 				// ICsGetInterfaceMap
 				InterfaceMap(nullptr),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NIntegral::EApplication::Multiply)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
@@ -81,7 +81,7 @@ namespace NCsProjectile
 				CacheType* Cache = ProjectilePooled->GetCache();
 				float LifeTime	 = Cache->GetLifeTime();
 
-				NCsModifier::NValue::NIntegral::NApplication::Modify(LifeTime, GetValue(), GetApplication());
+				NCsModifier::NValue::NNumeric::NApplication::Modify(LifeTime, GetValue(), GetApplication());
 
 				CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime);
 			}
@@ -95,7 +95,7 @@ namespace NCsProjectile
 			{
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetValue(), 0.0f)
 
-				typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
+				typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
 
 				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
 				return true;
@@ -105,8 +105,8 @@ namespace NCsProjectile
 			{
 				CS_IS_FLOAT_GREATER_THAN(GetValue(), 0.0f)
 
-				typedef NCsModifier::NValue::NIntegral::EMApplication ApplicationMapType;
-				typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+				typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
+				typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
 				return true;

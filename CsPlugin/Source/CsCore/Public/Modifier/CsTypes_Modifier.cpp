@@ -1,20 +1,20 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Modifier/CsTypes_Modifier.h"
 
-// IntegralValueModifierApplication
+// NumericValueModifierApplication
 #pragma region
 
-namespace NCsIntegralValueModifierApplication
+namespace NCsNumericValueModifierApplication
 {
 	namespace Ref
 	{
-		typedef EMCsIntegralValueModifierApplication EnumMapType;
+		typedef EMCsNumericValueModifierApplication EnumMapType;
 
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Multiply);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Add);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Replace);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(ReplaceOnlyIfGreater);
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsIntegralValueModifierApplication_MAX, "MAX");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsNumericValueModifierApplication_MAX, "MAX");
 	}
 }
 
@@ -22,7 +22,7 @@ namespace NCsModifier
 {
 	namespace NValue
 	{
-		namespace NIntegral
+		namespace NNumeric
 		{
 			namespace NApplication
 			{
@@ -41,4 +41,4 @@ namespace NCsModifier
 	}
 }
 
-#pragma endregion IntegralValueModifierApplication
+#pragma endregion NumericValueModifierApplication

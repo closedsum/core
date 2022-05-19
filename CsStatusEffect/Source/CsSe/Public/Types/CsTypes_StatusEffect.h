@@ -62,6 +62,9 @@ struct CSSE_API FCsData_ECsStatusEffect
 	}
 
 	FORCEINLINE FECsStatusEffect* GetPtr() { return &Value; }
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning) const;
 };
 
 #pragma endregion FCsData_ECsStatusEffect
@@ -71,7 +74,7 @@ struct CSSE_API FCsData_ECsStatusEffect
 
 /**
 * Describes the Status Effect implementation "type".
-* Provies "enum" like access to the Status Effect implementation.
+* Provides "enum" like access to the Status Effect implementation.
 */
 USTRUCT(BlueprintType)
 struct CSSE_API FECsStatusEffectImpl : public FECsEnum_uint8

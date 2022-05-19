@@ -52,7 +52,7 @@ namespace NCsProjectile
 						static const FName Name;
 
 					#define ValueType NCsDamage::NValue::IValue
-					#define ApplicationType NCsModifier::NValue::NIntegral::EApplication
+					#define ApplicationType NCsModifier::NValue::NNumeric::EApplication
 
 					private:
 

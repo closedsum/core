@@ -15,7 +15,7 @@ void FCsProjectileWeaponModifier_TimeBetweenShotsInfo::CopyToImpl(ImplType* Impl
 {
 	Impl->SetValue(&Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType*)(&Application));
 }
@@ -24,7 +24,7 @@ void FCsProjectileWeaponModifier_TimeBetweenShotsInfo::CopyToImplAsValue(ImplTyp
 {
 	Impl->SetValue(Value);
 
-	typedef NCsModifier::NValue::NIntegral::EApplication ApplicationType;
+	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Impl->SetApplication((ApplicationType)Application);
 }
@@ -44,7 +44,7 @@ bool FCsProjectileWeaponModifier_TimeBetweenShotsInfo::IsValid(const FString& Co
 {
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Value, 0.0f)
 
-	typedef EMCsIntegralValueModifierApplication ApplicationMapType;
+	typedef EMCsNumericValueModifierApplication ApplicationMapType;
 
 	CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, Application);
 	return true;

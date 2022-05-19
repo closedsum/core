@@ -28,11 +28,11 @@ struct CSPRJ_API FCsProjectileModifier_LifeTimeInfo
 
 	/** How Value is applied to the existing LifeTime property.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsIntegralValueModifierApplication Application;
+	ECsNumericValueModifierApplication Application;
 
 	FCsProjectileModifier_LifeTimeInfo() :
 		Value(0.0f),
-		Application(ECsIntegralValueModifierApplication::Multiply)
+		Application(ECsNumericValueModifierApplication::Multiply)
 	{
 	}
 
@@ -70,11 +70,11 @@ struct CSPRJ_API FCsProjectileModifier_InitialSpeedInfo
 
 	/** How Value is applied to the existing InitialSpeed property.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsIntegralValueModifierApplication Application;
+	ECsNumericValueModifierApplication Application;
 
 	FCsProjectileModifier_InitialSpeedInfo() :
 		Value(0.0f),
-		Application(ECsIntegralValueModifierApplication::Multiply)
+		Application(ECsNumericValueModifierApplication::Multiply)
 	{
 	}
 
@@ -112,11 +112,11 @@ struct CSPRJ_API FCsProjectileModifier_MaxSpeedInfo
 
 	/** How Value is applied to the existing MaxSpeed property.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsIntegralValueModifierApplication Application;
+	ECsNumericValueModifierApplication Application;
 
 	FCsProjectileModifier_MaxSpeedInfo() :
 		Value(0.0f),
-		Application(ECsIntegralValueModifierApplication::Multiply)
+		Application(ECsNumericValueModifierApplication::Multiply)
 	{
 	}
 

@@ -4,6 +4,7 @@
 
 // Library
 #include "Data/CsLibrary_Data.h"
+#include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsSeLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
@@ -41,6 +42,23 @@ namespace NCsStatusEffect
 }
 
 #pragma endregion StatusEffect
+
+// FCsData_ECsStatusEffect
+#pragma region
+
+bool FCsData_ECsStatusEffect::IsValidChecked(const FString& Context) const
+{
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsStatusEffect, Value)
+	return true;
+}
+
+bool FCsData_ECsStatusEffect::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsStatusEffect::FLog::Warning*/) const
+{
+	CS_IS_ENUM_STRUCT_VALID(EMCsStatusEffect, FECsStatusEffect, Value)
+	return true;
+}
+
+#pragma endregion FCsData_ECsStatusEffect
 
 // StatusEffectEvent
 #pragma region

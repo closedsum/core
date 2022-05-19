@@ -28,11 +28,11 @@ struct CSWP_API FCsProjectileWeaponModifier_TimeBetweenShotsInfo
 
 	/** How Value is applied to the existing LifeTime property.*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsIntegralValueModifierApplication Application;
+	ECsNumericValueModifierApplication Application;
 
 	FCsProjectileWeaponModifier_TimeBetweenShotsInfo() :
 		Value(0.0f),
-		Application(ECsIntegralValueModifierApplication::Multiply)
+		Application(ECsNumericValueModifierApplication::Multiply)
 	{
 	}
 

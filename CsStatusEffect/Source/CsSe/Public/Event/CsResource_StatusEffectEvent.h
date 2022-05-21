@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 #include "Event/CsStatusEffectEvent.h"
-#pragma once
 
 namespace NCsStatusEffect
 {

@@ -93,6 +93,31 @@ namespace NCsModifier
 					}
 					return InValue;
 				}
+
+				FORCEINLINE int32 Modify(const int32& InValue, const int32& Modifier, const EApplication& Type)
+				{
+					if (Type == EApplication::Multiply)
+					{
+						return InValue * Modifier;
+					}
+					else
+					if (Type == EApplication::Add)
+					{
+						return InValue + Modifier;
+					}
+					else
+					if (Type == EApplication::Replace)
+					{
+						return Modifier;
+					}
+					else
+					if (Type == EApplication::ReplaceOnlyIfGreater)
+					{
+						if (Modifier > InValue)
+							return Modifier;
+					}
+					return InValue;
+				}
 			}
 		}
 	}

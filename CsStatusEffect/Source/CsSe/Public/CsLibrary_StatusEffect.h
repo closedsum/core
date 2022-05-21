@@ -10,7 +10,7 @@ namespace NCsStatusEffect
 #define StatusEffectType NCsStatusEffect::IStatusEffect
 
 	/**
-	* Library for interface: DataType (NCsStatusEffect::NData::IData)
+	* Library for interface: StatusEffectType (NCsStatusEffect::IStatusEffect)
 	*/
 	struct CSSE_API FLibrary : public NCsInterfaceMap::TLibrary<StatusEffectType>
 	{

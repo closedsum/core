@@ -117,6 +117,7 @@ void FCsManager_ScopedTimer::ClearHandle(const FCsScopedTimerHandle& Handle)
 		return;
 	}
 
+	ScopedTimer->Reset();
 	Internal.Deallocate(Resource);
 }
 
@@ -139,6 +140,7 @@ void FCsManager_ScopedTimer::SilentClearHandle(const FCsScopedTimerHandle& Handl
 	if (Handle != ScopedTimer->Handle)
 		return;
 
+	ScopedTimer->Reset();
 	Internal.Deallocate(Resource);
 }
 

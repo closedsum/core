@@ -64,9 +64,9 @@ void FCsScopedTimer::SetTime(const double& InTime)
 {
 	++Ticks;
 
-	Time      = InTime;
-	AvgTime   = (AvgTime + Time) / Ticks;
+	Time       = InTime;
 	TotalTime += Time;
+	AvgTime	   = TotalTime / Ticks;
 }
 
 void FCsScopedTimer::Reset()

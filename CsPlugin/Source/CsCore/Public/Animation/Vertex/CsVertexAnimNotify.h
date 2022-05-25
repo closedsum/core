@@ -30,6 +30,7 @@ class UObject;
 namespace NCsVertexAnimNotify
 {
 	typedef FECsVertexAnimNotify Type;
+	typedef EMCsVertexAnimNotify EnumMapType;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 }

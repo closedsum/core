@@ -202,9 +202,8 @@ public:
 	void CopyToInfo(InfoType* Info);
 #undef InfoType
 
-private:
-
-	FORCEINLINE void __Nothing() const {}
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UAnimSequence;
@@ -232,6 +231,9 @@ namespace NCsAnim
 
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimSequence)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 		};
 	}
 }
@@ -442,9 +444,8 @@ struct CSCORE_API FCsAnimMontageInfo
 	void CopyToInfo(InfoType* Info);
 #undef InfoType
 
-private:
-
-	FORCEINLINE void __Nothing() const {}
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 class UAnimMontage;
@@ -472,6 +473,9 @@ namespace NCsAnim
 
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Anim, UAnimMontage)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PlayRate, float)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 		};
 	}
 }

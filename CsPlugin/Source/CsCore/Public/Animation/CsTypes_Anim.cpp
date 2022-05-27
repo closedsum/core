@@ -1,6 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Animation/CsTypes_Anim.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 namespace NCsAnimCached
 {
 	namespace Str
@@ -53,6 +56,40 @@ void FCsAnimSequenceInfo::CopyToInfo(InfoType* Info)
 	Info->SetPlayRate(&PlayRate);
 }
 
+bool FCsAnimSequenceInfo::IsValidChecked(const FString& Context) const
+{
+	CS_IS_VALID_CHECKED(Anim);
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(PlayRate, 0.0f)
+	return true;
+}
+
+bool FCsAnimSequenceInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_VALID(Anim)
+	CS_IS_FLOAT_GREATER_THAN(PlayRate, 0.0f)
+	return true;
+}
+
+namespace NCsAnim
+{
+	namespace NSequence
+	{
+		bool FInfo::IsValidChecked(const FString& Context) const
+		{
+			CS_IS_PTR_NULL_CHECKED(GetAnim())
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetPlayRate(), 0.0f)
+			return true;
+		}
+
+		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			CS_IS_PTR_NULL(GetAnim())
+			CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
+			return true;
+		}
+	}
+}
+
 #pragma endregion FCsAnimSequenceInfo
 
 // FCsAnimMontageInfo
@@ -66,6 +103,41 @@ void FCsAnimMontageInfo::CopyToInfo(InfoType* Info)
 	Info->SetAnim(Anim.GetPtr());
 	Info->SetPlayRate(&PlayRate);
 }
+
+bool FCsAnimMontageInfo::IsValidChecked(const FString& Context) const
+{
+	CS_IS_VALID_CHECKED(Anim);
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(PlayRate, 0.0f)
+	return true;
+}
+
+bool FCsAnimMontageInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_VALID(Anim)
+	CS_IS_FLOAT_GREATER_THAN(PlayRate, 0.0f)
+	return true;
+}
+
+namespace NCsAnim
+{
+	namespace NMontage
+	{
+		bool FInfo::IsValidChecked(const FString& Context) const
+		{
+			CS_IS_PTR_NULL_CHECKED(GetAnim())
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetPlayRate(), 0.0f)
+			return true;
+		}
+
+		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			CS_IS_PTR_NULL(GetAnim())
+			CS_IS_FLOAT_GREATER_THAN(GetPlayRate(), 0.0f)
+			return true;
+		}
+	}
+}
+
 
 #pragma endregion FCsAnimMontageInfo
 

@@ -1224,6 +1224,11 @@ namespace NCsPooledObject
 				return GetManagerPooledObjects(Type)->template AllocatePayload<PayloadImplType>();
 			}
 
+			FORCEINLINE void DeallocatePayload(const KeyType& Type, PayloadType* Payload)
+			{
+				GetManagerPooledObjects(Type)->DeallocatePayload(Payload);
+			}
+
 			/**
 			*
 			*

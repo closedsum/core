@@ -119,6 +119,7 @@ namespace NCsPooledObject
 			DeallocateAll,
 			ConstructPayloads,
 			AllocatePayload,
+			DeallocatePayload,
 			Spawn,
 			EFunctionNames_MAX,
 		};
@@ -254,6 +255,7 @@ namespace NCsPooledObject
 				FunctionNames[(uint8)EFunctionNames::DeallocateAll]		= Name + TEXT("::DeallocateAll");
 				FunctionNames[(uint8)EFunctionNames::ConstructPayloads] = Name + TEXT("::ConstructPayloads");
 				FunctionNames[(uint8)EFunctionNames::AllocatePayload]	= Name + TEXT("::AllocatePayload");
+				FunctionNames[(uint8)EFunctionNames::DeallocatePayload] = Name + TEXT("::DeallocatePayload");
 				FunctionNames[(uint8)EFunctionNames::Spawn]				= Name + TEXT("::Spawn");
 
 				// Set Scoped Timer CVars
@@ -1751,6 +1753,20 @@ namespace NCsPooledObject
 				return AllocatePayload<PayloadImplType>(Context);
 			}
 
+			FORCEINLINE void DeallocatePayload(const FString& Context, PayloadType* Payload) 
+			{ 
+				PooledPayloadType* P = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType, PayloadType>(Context, Payload);
+
+				P->Reset();
+			}
+
+			FORCEINLINE void DeallocatePayload(PayloadType* Payload)
+			{
+				const FString& Context = FunctionNames[(uint8)EFunctionNames::DeallocatePayload];
+
+				DeallocatePayload(Context, Payload);
+			}
+
 			/**
 			*
 			*
@@ -1803,11 +1819,7 @@ namespace NCsPooledObject
 				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Allocate, O);
 		#endif // #if !UE_BUILD_SHIPPING
 
-				// Get Pooled Object Payload
-				PooledPayloadType* P = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType, PayloadType>(Context, Payload);
-
-				P->Reset();
-
+				DeallocatePayload(Context, Payload);
 				AddToAllocatedObjects_Internal(O);
 				OnSpawn_Event.Broadcast(O);
 				return O;
@@ -1835,11 +1847,7 @@ namespace NCsPooledObject
 				LogTransaction_Impl.Execute(Context, ECsPoolTransaction::Spawn, O);
 		#endif // #if !UE_BUILD_SHIPPING
 
-				// Get PooledObjectPayload
-				PooledPayloadType* PooledObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType, PayloadType>(Context, P);
-		
-				PooledObjectPayload->Reset();
-
+				DeallocatePayload(Context, P);
 				AddToAllocatedObjects_Internal(O);
 				OnSpawn_Event.Broadcast(O);
 				return static_cast<OtherContainerType*>(O);

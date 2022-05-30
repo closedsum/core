@@ -329,6 +329,35 @@ namespace NCsStaticMesh
 			return true;
 		}
 
+		void FAttachment::AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, TArray<UMaterialInstanceDynamic*>& OutMIDs) const
+		{
+			CS_IS_PTR_NULL_CHECKED(Parent)
+
+			CS_IS_PTR_NULL_CHECKED(Child);
+
+			check(IsValidChecked(Context));
+
+			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
+
+			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
+
+			Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
+			Child->SetStaticMesh(GetMesh());
+			Child->SetCastShadow(GetbCastShadow());
+			Child->SetReceivesDecals(GetbReceivesDecals());
+			Child->bUseAsOccluder = GetbUseAsOccluder();
+			Child->bRenderCustomDepth = GetbRenderCustomDepth();
+			Child->CustomDepthStencilValue = GetCustomDepthStencilValue();
+
+			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+			MIDLibrary::SetChecked(Context, Child, GetMaterials(), OutMIDs);
+
+			Child->SetComponentTickEnabled(true);
+			Child->SetHiddenInGame(false);
+		}
+
 		FCsStaticMeshActorPooled* FAttachment::AttachChecked(const FString& Context, const UObject* WorldContext, USceneComponent* Parent) const
 		{
 			CS_IS_PTR_NULL_CHECKED(Parent)

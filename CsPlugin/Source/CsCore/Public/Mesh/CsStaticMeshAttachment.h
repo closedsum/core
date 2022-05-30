@@ -112,6 +112,7 @@ public:
 
 class UStaticMesh;
 class UMaterialInterface;
+class UMaterialInstanceDynamic;
 struct FCsStaticMeshActorPooled;
 
 namespace NCsStaticMesh
@@ -217,6 +218,8 @@ namespace NCsStaticMesh
 
 			void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
 			bool AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			void AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, TArray<UMaterialInstanceDynamic*>& OutMIDs) const;
 
 			FCsStaticMeshActorPooled* AttachChecked(const FString& Context, const UObject* WorldContext, USceneComponent* Parent) const;
 		};

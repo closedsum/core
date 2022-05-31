@@ -454,6 +454,15 @@ namespace NCsMath
 
 	#pragma endregion Rotator
 
+	// Quat
+	#pragma region
+	public:
+
+		FORCEINLINE static FVector GetRight(const FQuat& Q) { return GetRight(Q.Rotator()); }
+
+	#pragma endregion Quat
+
+	
 	// Segment
 	#pragma region
 	public:

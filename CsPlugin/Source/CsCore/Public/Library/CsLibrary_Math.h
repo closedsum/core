@@ -451,6 +451,15 @@ namespace NCsMath
 	public:
 
 		FORCEINLINE static FVector GetRight(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Y); }
+		FORCEINLINE static FVector GetUp(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Z); }
+
+		FORCEINLINE static void GetForwardRightAndUp(const FRotator& R, FVector& OutForward, FVector& OutRight, FVector& OutUp)
+		{
+			FRotationMatrix M(R);
+			OutForward = M.GetScaledAxis(EAxis::X);
+			OutRight = M.GetScaledAxis(EAxis::Y);
+			OutUp = M.GetScaledAxis(EAxis::Z);
+		}
 
 	#pragma endregion Rotator
 
@@ -459,6 +468,15 @@ namespace NCsMath
 	public:
 
 		FORCEINLINE static FVector GetRight(const FQuat& Q) { return GetRight(Q.Rotator()); }
+		FORCEINLINE static FVector GetUp(const FQuat& Q) { return GetUp(Q.Rotator()); }
+
+		FORCEINLINE static void GetForwardRightAndUp(const FQuat& Q, FVector& OutForward, FVector& OutRight, FVector& OutUp)
+		{
+			FMatrix M = FRotationMatrix::Make(Q);
+			OutForward = M.GetScaledAxis(EAxis::X);
+			OutRight = M.GetScaledAxis(EAxis::Y);
+			OutUp = M.GetScaledAxis(EAxis::Z);
+		}
 
 	#pragma endregion Quat
 

@@ -955,6 +955,12 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation()
 
 		return LaunchComponentTransform->GetComponentLocation();
 	}
+	// Custom
+	if (LocationType == ELocation::Custom)
+	{
+		return CustomLaunchLocation;
+	}
+	checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	return FVector::ZeroVector;
 }
 

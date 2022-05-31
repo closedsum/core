@@ -114,27 +114,13 @@ public:
 
 	void Init(const FString* InName, const FECsScopedGroup& InGroup, const FECsCVarLog& InCVar);
 
-	FORCEINLINE const FECsScopedGroup& GetGroup() const 
-	{
-		return Group;
-	}
+	FORCEINLINE const FECsScopedGroup& GetGroup() const { return Group; }
 
 	void SetTime(const double& InTime);
 
-	FORCEINLINE void MarkDirty()
-	{
-		bDirty = true;
-	}
-
-	FORCEINLINE void ClearDirty()
-	{
-		bDirty = false;
-	}
-
-	FORCEINLINE bool IsDirty() const
-	{
-		return bDirty;
-	}
+	FORCEINLINE void MarkDirty() { bDirty = true; }
+	FORCEINLINE void ClearDirty() { bDirty = false; }
+	FORCEINLINE bool IsDirty() const { return bDirty; }
 
 	void Reset();
 

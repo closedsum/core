@@ -337,6 +337,39 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			template<typename EnumMapType, typename EnumType>
+			FORCEINLINE static bool IsValidChecked(const FString& Context, const TArray<EnumType>& Array, const FString& ArrayName)
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const EnumType& Enum = Array[I];
+
+					checkf(EnumMapType::Get().IsValidEnum(Enum), TEXT("%s: %s[%d] = %s is NOT Valid."), *Context, *ArrayName, I, EnumMapType::Get().ToChar(Enum));
+				}
+				return true;
+			}
+
+			template<typename EnumMapType, typename EnumType>
+			FORCEINLINE static bool IsValid(const FString& Context, const TArray<EnumType>& Array, const FString& ArrayName, void(*Log)(const FString&))
+			{
+				const int32 Count = Array.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const EnumType& Enum = Array[I];
+
+					if (!EnumMapType::Get().IsValidEnum(Enum))
+					{
+						if (Log)
+							Log(FString::Printf(TEXT("%s: %s[%d] = %s is NOT Valid."), *Context, *ArrayName, I, EnumMapType::Get().ToChar(Enum)));
+						return false;
+					}
+				}
+				return true;
+			}
 		};
 
 		namespace NStruct
@@ -344,6 +377,39 @@ namespace NCsValid
 			struct CSCORE_API FLibrary final
 			{
 			public:
+
+				template<typename EnumMapType, typename EnumType>
+				FORCEINLINE static bool IsValidChecked(const FString& Context, const TArray<EnumType>& Array, const FString& ArrayName)
+				{
+					const int32 Count = Array.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						const EnumType& Enum = Array[I];
+
+						checkf(EnumMapType::Get().IsValidEnum(Enum), TEXT("%s: %s[%d] = %s is NOT Valid."), *Context, *ArrayName, I, Enum.ToChar());
+					}
+					return true;
+				}
+
+				template<typename EnumMapType, typename EnumType>
+				FORCEINLINE static bool IsValid(const FString& Context, const TArray<EnumType>& Array, const FString& ArrayName, void(*Log)(const FString&))
+				{
+					const int32 Count = Array.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						const EnumType& Enum = Array[I];
+
+						if (!EnumMapType::Get().IsValidEnum(Enum))
+						{
+							if (Log)
+								Log(FString::Printf(TEXT("%s: %s[%d] = %s is NOT Valid."), *Context, *ArrayName, I, Enum.ToChar()));
+							return false;
+						}
+					}
+					return true;
+				}
 
 				template<typename EnumMapType, typename EnumType>
 				FORCEINLINE static bool IsValidChecked(const FString& Context, const TSet<EnumType>& Set, const FString& SetName)
@@ -1320,6 +1386,12 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Enum; \
 		check(__EnumMapType::Get().IsValidEnumChecked(Context, __temp__str__, __Enum)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_ENUM_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check((NCsValid::NEnum::FLibrary::IsValidChecked<__EnumMapType, __EnumType>(Context, __Array, __temp__str__))); \
+	}
 
 #pragma endregion Enum
 
@@ -1331,6 +1403,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		check(__EnumMapType::Get().IsValidEnumChecked(Context, __temp__str__, __Enum)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_ENUM_STRUCT_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check((NCsValid::NEnum::NStruct::FLibrary::IsValidChecked<__EnumMapType, __EnumType>(Context, __Array, __temp__str__))); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_ENUM_STRUCT_SET_VALID_CHECKED(__EnumMapType, __EnumType, __Set) \
@@ -1609,8 +1687,10 @@ namespace NCsValid
 #define CS_IS_STRING_EMPTY_CHECKED(__A)
 // Enum
 #define CS_IS_ENUM_VALID_CHECKED(__EnumMapType, __Enum)
+#define CS_IS_ENUM_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array)
 // EnumStruct
 #define CS_IS_ENUM_STRUCT_VALID_CHECKED(__EnumMapType, __Enum)
+#define CS_IS_ENUM_STRUCT_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array)
 #define CS_IS_ENUM_STRUCT_SET_VALID_CHECKED(__EnumMapType, __EnumType, __Set)
 #define CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(__EnumMapType, __EnumType, __Set)
 // FVector
@@ -2012,12 +2092,17 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return nullptr; } \
 	}
-
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_ENUM_VALID_RET_VALUE(__EnumMapType, __EnumType, __Enum, __Value) \
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return __Value; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_ARRAY_VALID(__EnumMapType, __EnumType, __Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NEnum::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Array, __temp__str__, Log)) { return false; } \
 	}
 
 #pragma endregion Enum
@@ -2048,6 +2133,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Enum; \
 		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Enum, __temp__str__, Log)) { return __Value; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ENUM_STRUCT_ARRAY_VALID(__EnumMapType, __EnumType, __Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NEnum::NStruct::FLibrary::IsValid<__EnumMapType, __EnumType>(Context, __Array, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_ENUM_STRUCT_SET_VALID(__EnumMapType, __EnumType, __Set) \

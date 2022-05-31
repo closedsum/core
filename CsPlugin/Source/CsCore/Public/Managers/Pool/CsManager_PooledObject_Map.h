@@ -285,7 +285,6 @@ namespace NCsPooledObject
 				for (TPair<KeyType, ManagerAbstractType*>& Pair : Pools)
 				{
 					ManagerAbstractType* Pool = Pair.Value;
-					Pool->Shutdown();
 					delete Pool;
 					Pair.Value = nullptr;
 				}

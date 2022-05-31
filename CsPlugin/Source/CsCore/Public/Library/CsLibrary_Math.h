@@ -446,6 +446,14 @@ namespace NCsMath
 
 	#pragma endregion Vector
 
+	// Rotator
+	#pragma region
+	public:
+
+		FORCEINLINE static FVector GetRight(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Y); }
+
+	#pragma endregion Rotator
+
 	// Segment
 	#pragma region
 	public:

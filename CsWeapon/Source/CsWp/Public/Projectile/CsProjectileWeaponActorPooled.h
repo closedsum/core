@@ -396,6 +396,8 @@ public:
 
 	public:
 
+		FVector CustomLaunchLocation;
+
 		FVector CustomLaunchDirection;
 
 	public:
@@ -404,6 +406,7 @@ public:
 			Outer(nullptr),
 			LaunchComponentTransform(nullptr),
 			LaunchScopedHandle(),
+			CustomLaunchLocation(FVector::ZeroVector),
 			CustomLaunchDirection(FVector::ZeroVector)
 		{
 		}

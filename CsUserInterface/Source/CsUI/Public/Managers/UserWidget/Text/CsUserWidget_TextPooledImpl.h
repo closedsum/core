@@ -6,6 +6,8 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
+// Types
+#include "Managers/UserWidget/CsTypes_UserWidget.h"
 
 #include "CsUserWidget_TextPooledImpl.generated.h"
 
@@ -91,6 +93,14 @@ public:
 #pragma endregion ICsUserWidgetPooled
 
 protected:
+
+	NCsUserWidget::EPosition PositionType;
+
+	FVector Position;
+
+	NCsUserWidget::EPosition OffsetType;
+
+	FVector Offset;
 
 	int32 CurrentZOrder;
 

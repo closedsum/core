@@ -578,6 +578,84 @@ namespace NCsUserWidget
 
 #pragma endregion UserWidgetDeallocateMethod
 
+// UserWidgetPosition
+#pragma region
+
+/**
+* Type for different ways to interpret Position information for being
+*  converted to screen space for a UserWidget.
+*  UserWidget is an object that implements the interface: ICsUserWidgetPooled.
+*/
+UENUM(BlueprintType)
+enum class ECsUserWidgetPosition : uint8
+{
+	/** */
+	Screen						UMETA(DisplayName = "Screen"),
+	/** Position is in World Space and converted to Screen Space */
+	World						UMETA(DisplayName = "World"),
+	/** Position is retrieved from a Parent object and converted to Screen Space */
+	Parent						UMETA(DisplayName = "Parent"),
+	ECsUserWidgetPosition_MAX	UMETA(Hidden),
+};
+
+struct CSUI_API EMCsUserWidgetPosition final : public TCsEnumMap<ECsUserWidgetPosition>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsUserWidgetPosition, ECsUserWidgetPosition)
+};
+
+namespace NCsUserWidgetPosition
+{
+	typedef ECsUserWidgetPosition Type;
+
+	namespace Ref
+	{
+		extern CSUI_API const Type Screen;
+		extern CSUI_API const Type World;
+		extern CSUI_API const Type Parent;
+		extern CSUI_API const Type ECsUserWidgetPosition_MAX;
+	}
+
+	extern CSUI_API const uint8 MAX;
+}
+
+namespace NCsUserWidget
+{
+	/**
+	* Type for different ways to interpret Position information for being
+	*  converted to screen space for a UserWidget.
+	*  UserWidget is an object that implements the interface: ICsUserWidgetPooled.
+	*/
+	enum class EPosition : uint8
+	{
+		Screen,
+		/** Position is in World Space and converted to Screen Space */
+		World,
+		/** Position is retrieved from a Parent object and converted to Screen Space */
+		Parent,
+		EPosition_MAX
+	};
+
+	struct CSUI_API EMPosition final : public TCsEnumMap<EPosition>
+	{
+		CS_ENUM_MAP_BODY(EMPosition, EPosition)
+	};
+
+	namespace NPosition
+	{
+		namespace Ref
+		{
+			typedef EPosition Type;
+
+			extern CSUI_API const Type Screen;
+			extern CSUI_API const Type World;
+			extern CSUI_API const Type Parent;
+			extern CSUI_API const Type EPosition_MAX;
+		}
+	}
+}
+
+#pragma endregion UserWidgetPosition
+
 // NCsUserWidget::NPayload::EChange
 #pragma region
 

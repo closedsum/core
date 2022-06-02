@@ -3,6 +3,7 @@
 // Types
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/Text/CsTypes_UserWidget_Text.h"
+#include "Types/CsTypes_UserWidget_Anim.h"
 // Log
 #include "Utility/CsUILog.h"
 
@@ -46,9 +47,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
+	/** Way to interpret Position information for being converted to screen space. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
+	ECsUserWidgetPosition PositionType;
+
+	/** Way to interpret Offset information for being converted to screen space. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
+	ECsUserWidgetPosition OffsetType;
+
 	/** The offset to apply to the position of the UserWidget. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
-	FVector2D Offset;
+	FVector Offset;
 
 	/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
@@ -66,6 +75,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
 	FCsUserWidget_Text_ShadowSettings ShadowSettings;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (InlineEditConditionToggle))
+	bool bAnimParams;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (EditCondition = "bAnimParams"))
+	FCsUserWidgetAnimPlayParams AnimParams;
+
 public:
 
 	FCsUserWidget_TextPooledInfo() :
@@ -73,11 +88,15 @@ public:
 		DeallocateMethod(ECsUserWidgetDeallocateMethod::Complete),
 		RenderScale(1.0f),
 		LifeTime(0.0f),
-		Offset(FVector2D::ZeroVector),
+		PositionType(ECsUserWidgetPosition::Screen),
+		OffsetType(ECsUserWidgetPosition::Screen),
+		Offset(FVector::ZeroVector),
 		ZOrder(0),
 		Color(FLinearColor::White),
 		OutlineSettings(),
-		ShadowSettings()
+		ShadowSettings(),
+		bAnimParams(false),
+		AnimParams()
 	{
 	}
 
@@ -111,6 +130,7 @@ namespace NCsUserWidget
 		#define DeallocateMethodType NCsUserWidget::EDeallocateMethod
 		#define OutlineSettingsType NCsUserWidget::NText::FOutline
 		#define ShadowSettingsType NCsUserWidget::NText::FShadow
+		#define AnimParamsType NCsUserWidget::NAnim::NPlay::FParams
 
 		private:
 
@@ -131,8 +151,14 @@ namespace NCsUserWidget
 				  the UserWidget object has been allocated. */
 			CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
 
+			/** Way to interpret Position information for being converted to screen space. */
+			CS_DECLARE_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition)
+
+			/** Way to interpret Offset information for being converted to screen space. */
+			CS_DECLARE_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition)
+
 			/** The offset to apply to the position of the UserWidget. */
-			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector2D)
+			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
 
 			/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
 			CS_DECLARE_MEMBER_WITH_PROXY(ZOrder, int32)
@@ -146,6 +172,10 @@ namespace NCsUserWidget
 			/** Get any information describing the Shadow Settings for the text. */
 			CS_DECLARE_MEMBER_WITH_PROXY(ShadowSettings, ShadowSettingsType)
 
+			CS_DECLARE_MEMBER_WITH_PROXY(bAnimParams, bool)
+
+			CS_DECLARE_MEMBER_WITH_PROXY(AnimParams, AnimParamsType)
+
 		public:
 
 			FInfo() :
@@ -153,32 +183,44 @@ namespace NCsUserWidget
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(RenderScale, 1.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, FVector2D::ZeroVector),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition::Screen),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition::Screen),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, FVector::ZeroVector),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(ZOrder, 0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Color, FLinearColor::White),
 				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(OutlineSettings),
-				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ShadowSettings)
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ShadowSettings),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bAnimParams, false),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(AnimParams)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Type);
 				CS_CTOR_SET_MEMBER_PROXY(DeallocateMethod);
 				CS_CTOR_SET_MEMBER_PROXY(RenderScale);
 				CS_CTOR_SET_MEMBER_PROXY(LifeTime);
+				CS_CTOR_SET_MEMBER_PROXY(PositionType);
+				CS_CTOR_SET_MEMBER_PROXY(OffsetType);
 				CS_CTOR_SET_MEMBER_PROXY(Offset);
 				CS_CTOR_SET_MEMBER_PROXY(ZOrder);
 				CS_CTOR_SET_MEMBER_PROXY(Color);
 				CS_CTOR_SET_MEMBER_PROXY(OutlineSettings);
 				CS_CTOR_SET_MEMBER_PROXY(ShadowSettings);
+				CS_CTOR_SET_MEMBER_PROXY(bAnimParams);
+				CS_CTOR_SET_MEMBER_PROXY(AnimParams);
 			}
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsUserWidgetPooled)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RenderScale, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector2D)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ZOrder, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OutlineSettings, OutlineSettingsType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ShadowSettings, ShadowSettingsType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bAnimParams, bool)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AnimParams, AnimParamsType)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
@@ -238,6 +280,7 @@ namespace NCsUserWidget
 		#undef DeallocateMethodType
 		#undef OutlineSettingsType
 		#undef ShadowSettingsType
+		#undef AnimParamsType
 		};
 	}
 }

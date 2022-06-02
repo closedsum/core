@@ -10,6 +10,8 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Widget.h"
+#include "Library/CsLibrary_Viewport.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
 // Pooled Object
@@ -97,6 +99,32 @@ void UCsUserWidget_TextPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	const FString& Context = Str::Update;
 
 	CacheImpl->Update(DeltaTime);
+
+	// TODO: Move to Batch call
+	
+	// World
+	if (PositionType == NCsUserWidget::EPosition::World)
+	{
+		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+		if (OffsetType == NCsUserWidget::EPosition::Screen)
+		{
+			FVector2D Pos;
+			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, this, Position, Pos);
+
+			Pos += FVector2D(Offset);
+
+			SetPositionInViewport(Pos);
+		}
+		else
+		if (OffsetType == NCsUserWidget::EPosition::World)
+		{
+			FVector2D Pos;
+			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, this, Position + Offset, Pos);
+
+			SetPositionInViewport(Pos);
+		}
+	}
 }
 
 #pragma endregion ICsUpdate
@@ -130,13 +158,60 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 
 	Handle_AddToViewport(WidgetPayload);
 
-	SetPositionInViewport(WidgetPayload->GetPosition());
+	PositionType = WidgetPayload->GetPositionType();
+	Position	 = WidgetPayload->GetPosition();
+	OffsetType	 = WidgetPayload->GetOffsetType();
+	Offset		 = WidgetPayload->GetOffset();
+
+	// Screen
+	if (PositionType == NCsUserWidget::EPosition::Screen)
+	{
+		SetPositionInViewport(FVector2D(Position));
+	}
+	// World
+	else
+	if (PositionType == NCsUserWidget::EPosition::World)
+	{
+		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+		if (OffsetType == NCsUserWidget::EPosition::Screen)
+		{
+			FVector2D Pos;
+			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, this, Position, Pos);
+
+			Pos += FVector2D(Offset);
+
+			SetPositionInViewport(Pos);
+		}
+		else
+		if (OffsetType == NCsUserWidget::EPosition::World)
+		{
+			FVector2D Pos;
+			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, this, Position + Offset, Pos);
+
+			SetPositionInViewport(Pos);
+		}
+	}
+	// Parent
+	else
+	if (PositionType == NCsUserWidget::EPosition::Parent)
+	{
+		// TODO:
+	}
 
 	typedef NCsUserWidget::NPayload::NText::IText TextPayloadType;
 
 	TextPayloadType* TextPayload = PooledPayloadLibrary::GetInterfaceChecked<TextPayloadType>(Context, Payload);
 
 	MyText->SetText(TextPayload->GetText());
+
+	// Anim
+	if (WidgetPayload->HasAnimParams())
+	{
+		typedef NCsWidget::NAnimation::FLibrary AnimLibrary;
+
+		AnimLibrary::PlayChecked(Context, this, WidgetPayload->GetAnimParams());
+	}
 }
 
 void UCsUserWidget_TextPooledImpl::Deallocate()

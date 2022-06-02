@@ -25,8 +25,13 @@ namespace NCsUserWidget
 			bAddToViewport(false),
 			RenderScale(1.0f),
 			LifeTime(0.0f),
-			Position(FVector2D::ZeroVector),
-			ZOrder(0)
+			PositionType(NCsUserWidget::EPosition::Screen),
+			Position(FVector::ZeroVector),
+			OffsetType(NCsUserWidget::EPosition::Screen),
+			Offset(FVector::ZeroVector),
+			ZOrder(0),
+			bAnimParams(false),
+			AnimParams()
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -63,8 +68,13 @@ namespace NCsUserWidget
 			bAddToViewport = false;
 			RenderScale = 1.0f;
 			LifeTime = 0.0f;
-			Position = FVector2D::ZeroVector;
+			PositionType = NCsUserWidget::EPosition::Screen;
+			Position = FVector::ZeroVector;
+			OffsetType = NCsUserWidget::EPosition::Screen;
+			Offset = FVector::ZeroVector;
 			ZOrder = 0;
+			bAnimParams = false;
+			AnimParams.Reset();
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

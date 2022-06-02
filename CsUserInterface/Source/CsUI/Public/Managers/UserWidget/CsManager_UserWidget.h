@@ -926,6 +926,38 @@ public:
 
 #pragma endregion Data
 
+private:
+
+	struct FSetPositionInViewports
+	{
+		TArray<FVector> WorldPositions;
+
+		TArray<FVector2D> ScreenPositions;
+
+		TArray<FVector2D> Offsets;
+
+		FSetPositionInViewports() :
+			WorldPositions(),
+			ScreenPositions(),
+			Offsets()
+		{
+		}
+
+		FORCEINLINE void SetSize(const int32& InSize)
+		{
+			WorldPositions.Reset(InSize);
+			WorldPositions.AddDefaulted(InSize);
+
+			ScreenPositions.Reset(InSize);
+			ScreenPositions.AddDefaulted(InSize);
+
+			Offsets.Reset(InSize);
+			Offsets.AddDefaulted(InSize);
+		}
+
+
+	};
+
 #undef ManagerType
 #undef ManagerParamsType
 #undef PayloadType

@@ -674,6 +674,8 @@ const FCsUserWidgetPooled* UCsManager_UserWidget::FindSafeObject(const FECsUserW
 void UCsManager_UserWidget::Update(const FCsDeltaTime& DeltaTime)
 {
 	Internal.Update(DeltaTime);
+
+
 }
 
 void UCsManager_UserWidget::OnPreUpdate_Pool(const FECsUserWidgetPooled& Type)

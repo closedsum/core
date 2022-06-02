@@ -23,11 +23,15 @@ void FCsUserWidget_TextPooledInfo::CopyToInfo(InfoType* Info)
 	Info->SetDeallocateMethod((DeallocateMethodType*)(&DeallocateMethod));
 	Info->SetRenderScale(&RenderScale);
 	Info->SetLifeTime(&LifeTime);
+	Info->SetPositionType((NCsUserWidget::EPosition*)(&PositionType));
+	Info->SetOffsetType((NCsUserWidget::EPosition*)(&OffsetType));
 	Info->SetOffset(&Offset);
 	Info->SetZOrder(&ZOrder);
 	Info->SetColor(&Color);
 	OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
 	ShadowSettings.CopyToSettings(Info->GetShadowSettingsPtr());
+	Info->SetbAnimParams(&bAnimParams);
+	AnimParams.CopyToParams(Info->GetAnimParamsPtr());
 }
 
 void FCsUserWidget_TextPooledInfo::CopyToInfoAsValue(InfoType* Info) const
@@ -39,11 +43,15 @@ void FCsUserWidget_TextPooledInfo::CopyToInfoAsValue(InfoType* Info) const
 	Info->SetDeallocateMethod((DeallocateMethodType)(DeallocateMethod));
 	Info->SetRenderScale(RenderScale);
 	Info->SetLifeTime(LifeTime);
+	Info->SetPositionType((NCsUserWidget::EPosition)PositionType);
+	Info->SetOffsetType((NCsUserWidget::EPosition)OffsetType);
 	Info->SetOffset(Offset);
 	Info->SetZOrder(ZOrder);
 	Info->SetColor(Color);
 	OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
 	ShadowSettings.CopyToSettingsAsValue(Info->GetShadowSettingsPtr());
+	Info->SetbAnimParams(bAnimParams);
+	AnimParams.CopyToParamsAsValue(Info->GetAnimParamsPtr());
 }
 
 #undef InfoType
@@ -171,9 +179,15 @@ bool FCsUserWidget_TextPooledInfo::IsValidChecked(const FString& Context) const
 	{
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(LifeTime, 0.0f)
 	}
-
+	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetPosition, PositionType)
+	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetPosition, OffsetType)
 	CS_IS_VALID_CHECKED(OutlineSettings);
 	CS_IS_VALID_CHECKED(ShadowSettings);
+	
+	if (bAnimParams)
+	{
+		CS_IS_VALID_CHECKED(AnimParams);
+	}
 	return true;
 }
 
@@ -188,8 +202,15 @@ bool FCsUserWidget_TextPooledInfo::IsValid(const FString& Context, void(*Log)(co
 		CS_IS_FLOAT_GREATER_THAN(LifeTime, 0.0f)
 	}
 
+	CS_IS_ENUM_VALID(EMCsUserWidgetPosition, ECsUserWidgetPosition, PositionType)
+	CS_IS_ENUM_VALID(EMCsUserWidgetPosition, ECsUserWidgetPosition, OffsetType)
 	CS_IS_VALID(OutlineSettings)
 	CS_IS_VALID(ShadowSettings)
+
+	if (bAnimParams)
+	{
+		CS_IS_VALID(AnimParams)
+	}
 	return true;
 }
 
@@ -213,8 +234,15 @@ namespace NCsUserWidget
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLifeTime(), 0.0f)
 			}
 
+			CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetPositionType())
+			CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetOffsetType())
 			CS_IS_VALID_CHECKED(GetOutlineSettings());
 			CS_IS_VALID_CHECKED(GetShadowSettings());
+
+			if (GetbAnimParams())
+			{
+				CS_IS_VALID_CHECKED(GetAnimParams());
+			}
 			return true;
 		}
 
@@ -233,13 +261,22 @@ namespace NCsUserWidget
 				CS_IS_FLOAT_GREATER_THAN(GetLifeTime(), 0.0f)
 			}
 
+			CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetPositionType())
+			CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetOffsetType())
 			CS_IS_VALID(GetOutlineSettings())
 			CS_IS_VALID(GetShadowSettings())
+
+			if (GetbAnimParams())
+			{
+				CS_IS_VALID(GetAnimParams())
+			}
 			return true;
 		}
 
 		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const
 		{
+			check(IsValidChecked(Context));
+
 			typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
 			typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
 			typedef NCsUserWidget::NPayload::IPayload PayloadType;
@@ -268,10 +305,35 @@ namespace NCsUserWidget
 
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, WorldContext, Location, Slice->Position);
+			Slice->PositionType = GetPositionType();
+			Slice->Position		= Location;
+			Slice->OffsetType   = GetOffsetType();
+			Slice->Offset		= GetOffset();
 
-			Slice->Position += GetOffset();
-			Slice->ZOrder   = GetZOrder();
+			if (GetPositionType() == NCsUserWidget::EPosition::Screen)
+			{
+				FVector WorldLocation = Location;
+
+				if (GetOffsetType() == NCsUserWidget::EPosition::World)
+				{
+					WorldLocation += GetOffset();
+				}
+
+				FVector2D Pos;
+				const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, WorldContext, Location, Pos);
+
+				Slice->Position.X = Pos.X;
+				Slice->Position.Y = Pos.Y;
+
+				if (GetOffsetType() == NCsUserWidget::EPosition::Screen)
+				{
+					Slice->Position += GetOffset();
+				}
+			}
+			Slice->ZOrder = GetZOrder();
+
+			Slice->bAnimParams = GetbAnimParams();
+			Slice->AnimParams.Copy(GetAnimParams());
 
 			// NOTE: Not sure if the spawning should be skipped if the Position is off screen.
 			// FUTURE: Add an option on whether the spawning should be "forced"

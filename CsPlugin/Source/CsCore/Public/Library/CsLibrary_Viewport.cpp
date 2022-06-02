@@ -116,6 +116,49 @@ namespace NCsViewport
 				return false;
 			}
 
+			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector>& WorldPositions, TArray<FVector2D>& OutScreenPositions)
+			{
+				check(CanProjectWorldToScreenChecked(Context, WorldContext));
+
+				typedef NCsPlayer::FLibrary PlayerLibrary;
+
+				ULocalPlayer* LocalPlayer = PlayerLibrary::GetFirstLocalChecked(Context, WorldContext);
+
+				UGameViewportClient* GVC = LocalPlayer->ViewportClient;
+
+				checkf(GVC, TEXT("%s: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
+
+				FViewport* Viewport = GVC->Viewport;
+
+				checkf(Viewport, TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName()));
+
+				if (OutScreenPositions.Num() != WorldPositions.Num())
+				{
+					OutScreenPositions.Reset(FMath::Max(WorldPositions.Num(), OutScreenPositions.Num()));
+					OutScreenPositions.AddDefaulted(WorldPositions.Num());
+				}
+
+				bool Result = false;
+
+				// Get the projection data
+				FSceneViewProjectionData ProjectionData;
+				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				{
+					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
+
+					const int32 Count = WorldPositions.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						const FVector& WorldPosition = WorldPositions[I];
+						FVector2D& ScreenPosition	 = OutScreenPositions[I];
+
+						Result &= FSceneView::ProjectWorldToScreen(WorldPosition, ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, ScreenPosition);
+					}
+				}
+				return Result;
+			}
+
 			bool FLibrary::CanDeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
 				typedef NCsPlayer::FLibrary PlayerLibrary;

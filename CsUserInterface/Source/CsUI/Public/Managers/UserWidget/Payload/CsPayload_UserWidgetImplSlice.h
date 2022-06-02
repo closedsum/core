@@ -22,6 +22,8 @@ namespace NCsUserWidget
 
 			static const FName Name;
 
+		#define AnimParamsType NCsUserWidget::NAnim::NPlay::FParams
+
 		private:
 
 			// ICsGetInterfaceMap
@@ -40,9 +42,19 @@ namespace NCsUserWidget
 
 			float LifeTime;
 
-			FVector2D Position;
+			NCsUserWidget::EPosition PositionType;
+
+			FVector Position;
+
+			NCsUserWidget::EPosition OffsetType;
+
+			FVector Offset;
 
 			int32 ZOrder;
+
+			bool bAnimParams;
+
+			AnimParamsType AnimParams;
 
 		public:
 
@@ -68,8 +80,13 @@ namespace NCsUserWidget
 			FORCEINLINE const bool& ShouldAddToViewport() const { return bAddToViewport; }
 			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const FVector2D& GetPosition() const { return Position; }
+			FORCEINLINE const NCsUserWidget::EPosition& GetPositionType() const { return PositionType; }
+			FORCEINLINE const FVector& GetPosition() const { return Position; }
+			FORCEINLINE const NCsUserWidget::EPosition& GetOffsetType() const { return OffsetType; }
+			FORCEINLINE const FVector& GetOffset() const { return Offset; }
 			FORCEINLINE const int32& GetZOrder() const { return ZOrder; }
+			FORCEINLINE const bool& HasAnimParams() const { return bAnimParams; }
+			FORCEINLINE const AnimParamsType& GetAnimParams() const { return AnimParams; }
 
 		#pragma endregion PayloadType (NCsUserWidget::NPayload::IPayload)
 
@@ -80,6 +97,8 @@ namespace NCsUserWidget
 			void Reset();
 
 		#pragma endregion ICsReset
+
+		#undef AnimParamsType
 		};
 
 	#undef PayloadType

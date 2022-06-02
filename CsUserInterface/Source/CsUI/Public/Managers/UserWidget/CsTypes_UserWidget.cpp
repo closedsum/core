@@ -234,3 +234,39 @@ namespace NCsUserWidget
 }
 
 #pragma endregion UserWidgetDeallocateMethod
+
+// UserWidgetPosition
+#pragma region
+
+namespace NCsUserWidgetPosition
+{
+	namespace Ref
+	{
+		typedef EMCsUserWidgetPosition EnumMapType;
+
+		CSUI_API CS_ADD_TO_ENUM_MAP(Screen);
+		CSUI_API CS_ADD_TO_ENUM_MAP(World);
+		CSUI_API CS_ADD_TO_ENUM_MAP(Parent);
+		CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsUserWidgetPosition_MAX, "MAX");
+	}
+
+	CSUI_API const uint8 MAX = (uint8)Type::ECsUserWidgetPosition_MAX;
+}
+
+namespace NCsUserWidget
+{
+	namespace NPosition
+	{
+		namespace Ref
+		{
+			typedef EMPosition EnumMapType;
+
+			CSUI_API CS_ADD_TO_ENUM_MAP(Screen);
+			CSUI_API CS_ADD_TO_ENUM_MAP(World);
+			CSUI_API CS_ADD_TO_ENUM_MAP(Parent);
+			CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(EPosition_MAX, "MAX");
+		}
+	}
+}
+
+#pragma endregion UserWidgetPosition

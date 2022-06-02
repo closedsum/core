@@ -1,13 +1,84 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_UserWidget_Anim.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+
+// UserWidgetAnimPlayMode
+#pragma region
+
+namespace NCsUserWidgetAnimPlayMode
+{
+	namespace Ref
+	{
+		typedef EMCsUserWidgetAnimPlayMode EnumMapType;
+
+		CSUI_API CS_ADD_TO_ENUM_MAP(Forward);
+		CSUI_API CS_ADD_TO_ENUM_MAP(Reverse);
+		CSUI_API CS_ADD_TO_ENUM_MAP(PingPong);
+		CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsUserWidgetAnimPlayMode_MAX, "MAX");
+	}
+
+	CSUI_API const uint8 MAX = (uint8)Type::ECsUserWidgetAnimPlayMode_MAX;
+}
+
+namespace NCsUserWidget
+{
+	namespace NAnim
+	{
+		namespace NPlay
+		{
+			namespace NMode
+			{
+				namespace Ref
+				{
+					typedef EMMode EnumMapType;
+
+					CSUI_API CS_ADD_TO_ENUM_MAP(Forward);
+					CSUI_API CS_ADD_TO_ENUM_MAP(Reverse);
+					CSUI_API CS_ADD_TO_ENUM_MAP(PingPong);
+					CSUI_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMode_MAX, "MAX");
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FXDeallocateMethod
+
 // FCsUserWidgetAnimPlayParams
 #pragma region
+
+#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
+
+void FCsUserWidgetAnimPlayParams::CopyToParams(ParamsType* Params)
+{
+	Params->SetName(&Name);
+	Params->SetStartAtTime(&StartAtTime);
+	Params->SetEndAtTime(&EndAtTime);
+	Params->SetNumLoopsToPlay(&NumLoopsToPlay);
+
+	typedef NCsUserWidget::NAnim::NPlay::EMode PlayModeType;
+
+	Params->SetPlayMode((PlayModeType*)(&PlayMode));
+	Params->SetPlaybackSpeed(&PlaybackSpeed);
+}
+
+void FCsUserWidgetAnimPlayParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetName(Name);
+	Params->SetStartAtTime(StartAtTime);
+	Params->SetEndAtTime(EndAtTime);
+	Params->SetNumLoopsToPlay(NumLoopsToPlay);
+
+	typedef NCsUserWidget::NAnim::NPlay::EMode PlayModeType;
+
+	Params->SetPlayMode((PlayModeType)PlayMode);
+	Params->SetPlaybackSpeed(PlaybackSpeed);
+}
+
+#undef ParamsType
 
 bool FCsUserWidgetAnimPlayParams::IsValidChecked(const FString& Context) const
 {
@@ -20,7 +91,7 @@ bool FCsUserWidgetAnimPlayParams::IsValidChecked(const FString& Context) const
 	// Check NumLoopsToPlay is Valid
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(NumLoopsToPlay, 0)
 	// Check PlayMode is Valid
-	checkf(PlayMode != ECsUserWidgetAnimPlayMode::ECsUserWidgetAnimPlayMode_MAX, TEXT("%s: PlayMode: ECsUserWidgetAnimPlayMode_MAX is NOT Valid."), *Context);
+	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetAnimPlayMode, PlayMode)
 	// Check PlaybackSpeed is Valid
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(PlaybackSpeed, 0.0f)
 	return true;
@@ -41,11 +112,7 @@ bool FCsUserWidgetAnimPlayParams::IsValid(const FString& Context, void(*Log)(con
 	// Check NumLoopsToPlay is Valid
 	CS_IS_INT_GREATER_THAN_OR_EQUAL(NumLoopsToPlay, 0)
 	// Check PlayMode is Valid
-	if (PlayMode == ECsUserWidgetAnimPlayMode::ECsUserWidgetAnimPlayMode_MAX)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayMode: ECsUserWidgetAnimPlayMode_MAX is NOT Valid."), *Context));
-		return false;
-	}
+	CS_IS_ENUM_VALID(EMCsUserWidgetAnimPlayMode, ECsUserWidgetAnimPlayMode, PlayMode)
 	// Check PlaybackSpeed is Valid
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(PlaybackSpeed, 0.0f)
 	return true;
@@ -59,46 +126,44 @@ namespace NCsUserWidget
 		{
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
-				CS_IS_NAME_NONE_CHECKED(Name)
+				CS_IS_NAME_NONE_CHECKED(GetName())
 				// Check StartAtTime is Valid
-				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(StartAtTime, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetStartAtTime(), 0.0f)
 				// Check EndAtTime is Valid
-				checkf(EndAtTime >= 0.0f && EndAtTime <= StartAtTime, TEXT("%s: EndAtTime: %f is NOT >= 0.0f and <= %f (StartAtTime)."), *Context, EndAtTime, StartAtTime);
+				checkf(GetEndAtTime() >= 0.0f && GetEndAtTime() <= GetStartAtTime(), TEXT("%s: GetEndAtTime(): %f is NOT >= 0.0f and <= %f (GetStartAtTime())."), *Context, GetEndAtTime(), GetStartAtTime());
 				// Check NumLoopsToPlay is Valid
-				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(NumLoopsToPlay, 0)
+				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetNumLoopsToPlay(), 0)
 				// Check PlayMode is Valid
-				typedef NCsUserWidget::NAnim::NPlay::EMode PlaydModeType;
+				typedef NCsUserWidget::NAnim::NPlay::EMMode PlayModeMapType;
+				typedef NCsUserWidget::NAnim::NPlay::EMode PlayModeType;
 
-				checkf(PlayMode != PlaydModeType::EMode_MAX, TEXT("%s: PlayMode: EMode_MAX is NOT Valid."), *Context);
+				CS_IS_ENUM_VALID_CHECKED(PlayModeMapType, GetPlayMode())
 				// Check PlaybackSpeed is Valid
-				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(PlaybackSpeed, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetPlaybackSpeed(), 0.0f)
 				return true;
 			}
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
 			{
 			// Check Name is Valid
-			CS_IS_NAME_NONE(Name)
+			CS_IS_NAME_NONE(GetName())
 			// Check StartAtTime is Valid
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(StartAtTime, 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetStartAtTime(), 0.0f)
 			// Check EndAtTime is Valid
-			if (EndAtTime < 0.0f || EndAtTime > StartAtTime)
+			if (GetEndAtTime() < 0.0f || GetEndAtTime() > GetStartAtTime())
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: EndAtTime: %f is NOT >= 0.0f and <= %f (StartAtTime)."), *Context, EndAtTime, StartAtTime));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetEndAtTime(): %f is NOT >= 0.0f and <= %f (GetStartAtTime())."), *Context, GetEndAtTime(), GetStartAtTime()));
 				return false;
 			}
 			// Check NumLoopsToPlay is Valid
-			CS_IS_INT_GREATER_THAN_OR_EQUAL(NumLoopsToPlay, 0)
+			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetNumLoopsToPlay(), 0)
 			// Check PlayMode is Valid
-			typedef NCsUserWidget::NAnim::NPlay::EMode PlaydModeType;
+			typedef NCsUserWidget::NAnim::NPlay::EMMode PlayModeMapType;
+			typedef NCsUserWidget::NAnim::NPlay::EMode PlayModeType;
 
-			if (PlayMode == PlaydModeType::EMode_MAX)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayMode: EMode_MAX is NOT Valid."), *Context));
-				return false;
-			}
+			CS_IS_ENUM_VALID(PlayModeMapType, PlayModeType, GetPlayMode())
 			// Check PlaybackSpeed is Valid
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(PlaybackSpeed, 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetPlaybackSpeed(), 0.0f)
 			return true;
 			}
 		}

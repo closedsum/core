@@ -568,36 +568,35 @@ namespace NCsWidget
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
 
-			check(Params.IsValidChecked(Context));
+			CS_IS_VALID_CHECKED(Params);
 
 			typedef NCsProperty::FLibrary PropertyLibrary;
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName());
 
-			if (Params.EndAtTime > 0.0f)
-				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			if (Params.GetEndAtTime() > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.GetStartAtTime(), Params.GetEndAtTime(), Params.GetNumLoopsToPlay(), (EUMGSequencePlayMode::Type)Params.GetPlayMode(), Params.GetPlaybackSpeed());
 			else
-				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+				Widget->PlayAnimation(Animation, Params.GetStartAtTime(), Params.GetNumLoopsToPlay(), (EUMGSequencePlayMode::Type)Params.GetPlayMode(), Params.GetPlaybackSpeed());
 		}
 
 		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_EXIT(Widget)
 
-			if (!Params.IsValid(Context, Log))
-				return;
+			CS_IS_VALID_EXIT(Params)
 
 			typedef NCsProperty::FLibrary PropertyLibrary;
 
-			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName(), Log);
 
 			if (!Animation)
 				return;
 
-			if (Params.EndAtTime > 0.0f)
-				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			if (Params.GetEndAtTime() > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.GetStartAtTime(), Params.GetEndAtTime(), Params.GetNumLoopsToPlay(), (EUMGSequencePlayMode::Type)Params.GetPlayMode(), Params.GetPlaybackSpeed());
 			else
-				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+				Widget->PlayAnimation(Animation, Params.GetStartAtTime(), Params.GetNumLoopsToPlay(), (EUMGSequencePlayMode::Type)Params.GetPlayMode(), Params.GetPlaybackSpeed());
 		}
 
 		void FLibrary::SafePlay(UUserWidget* Widget, const ParamsType& Params)
@@ -615,7 +614,7 @@ namespace NCsWidget
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
 
-			check(Params.IsValidChecked(Context));
+			CS_IS_VALID_CHECKED(Params);
 
 			typedef NCsProperty::FLibrary PropertyLibrary;
 
@@ -631,8 +630,7 @@ namespace NCsWidget
 		{
 			CS_IS_PTR_NULL_EXIT(Widget)
 
-			if (!Params.IsValid(Context, Log))
-				return;
+			CS_IS_VALID_EXIT(Params)
 
 			typedef NCsProperty::FLibrary PropertyLibrary;
 

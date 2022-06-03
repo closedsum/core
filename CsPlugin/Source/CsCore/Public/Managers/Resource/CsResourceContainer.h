@@ -1,6 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#ifndef __CS_RESOURCE_CONTAINER_H__
-#define __CS_RESOURCE_CONTAINER_H__
+#pragma once
 
 /**
 * Container to store any resource. Usually the resource will be a struct.
@@ -87,5 +86,3 @@ public:
 		Resource = InResource;
 	}
 };
-
-#endif // #ifndef __CS_RESOURCE_CONTAINER_H__

@@ -9,6 +9,7 @@
 #include "Data/CsUILibrary_DataRootSet.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Level/CsLibrary_Level.h"
+#include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsUILog.h"
@@ -56,6 +57,17 @@ namespace NCsManagerUserWidget
 		{
 		}
 	}
+
+	namespace NSetPositionInViewports
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget::FSetPositionInViewports, Update);
+			}
+		}
+	}
 }
 
 #pragma endregion Cached
@@ -78,7 +90,8 @@ UCsManager_UserWidget* UCsManager_UserWidget::s_Instance;
 bool UCsManager_UserWidget::s_bShutdown = false;
 
 UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	SetPositionInViewports()
 {
 }
 
@@ -219,6 +232,9 @@ UCsManager_UserWidget::UCsManager_UserWidget(const FObjectInitializer& ObjectIni
 void UCsManager_UserWidget::Initialize()
 {
 	SetupInternal();
+
+	//SetPositionInViewports.Outer = this;
+	//SetPositionInViewports.SetSize(Settings.SetPositionInViewports_PoolSize);
 
 	bInitialized = true;
 }
@@ -674,8 +690,7 @@ const FCsUserWidgetPooled* UCsManager_UserWidget::FindSafeObject(const FECsUserW
 void UCsManager_UserWidget::Update(const FCsDeltaTime& DeltaTime)
 {
 	Internal.Update(DeltaTime);
-
-
+	SetPositionInViewports.Update(DeltaTime);
 }
 
 void UCsManager_UserWidget::OnPreUpdate_Pool(const FECsUserWidgetPooled& Type)
@@ -976,3 +991,86 @@ DataType* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FE
 #undef DataType
 
 #pragma endregion Data
+
+void UCsManager_UserWidget::FSetPositionInViewports::SetSize(const int32& InSize)
+{
+	/*
+	Manager_ID.CreatePool(InSize);
+
+	typedef  NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
+
+	const TArray<ResourceType*>& Resources = Manager_ID.GetPool();
+
+	for (int32 I = 0; I < InSize; ++I)
+	{
+		ResourceType* C  = Resources[I];
+		int32& Index	 = C->GetRef();
+		Index			 = I;
+	}
+	*/
+
+	AllocatedIDs.Reset(InSize);
+	AllocatedIDs.AddDefaulted(InSize);
+
+	UserWidgets.Reset(InSize);
+	UserWidgets.AddDefaulted(InSize);
+
+	WorldPositions.Reset(InSize);
+	WorldPositions.AddDefaulted(InSize);
+
+	ScreenPositions.Reset(InSize);
+	ScreenPositions.AddDefaulted(InSize);
+
+	Offsets.Reset(InSize);
+	Offsets.AddDefaulted(InSize);
+}
+
+void UCsManager_UserWidget::FSetPositionInViewports::Update(const FCsDeltaTime& DeltaTime)
+{
+	using namespace NCsManagerUserWidget::NSetPositionInViewports::NCached;
+
+	const FString& Context = Str::Update;
+
+	// Populate List of Allocated IDs
+	int32 AllocatedCount = 0;
+	/*
+	{
+		typedef  NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
+
+		TCsDoubleLinkedList<ResourceType*>* Current = Manager_ID.GetAllocatedHead();
+		TCsDoubleLinkedList<ResourceType*>* Next	= Current;
+
+		while (Next)
+		{
+			Current			= Next;
+			ResourceType* C = **Current;
+			Next			= Current->GetNextLink();
+
+			int32& ID = C->GetRef();
+
+			AllocatedIDs[AllocatedCount] = ID;
+
+			++AllocatedCount;
+		}
+	}
+	*/
+
+	if (AllocatedCount == CS_EMPTY)
+		return;
+
+	// Get Screen Positions
+	// NOTE: Assume WorldPositions and Offsets are already set in Internal.Update(), 
+	//		 i.e. the Update associated with each pooled User Widget.
+	typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+	ViewportLibrary::ProjectWorldToScreenChecked(Context, Outer->GetMyRoot(), WorldPositions, AllocatedIDs, AllocatedCount, ScreenPositions);
+
+	// SetPositionInViewport
+	// NOTE: FUTURE: MAYBE: This can be batched?
+	for (int32 I = 0; I < AllocatedCount; ++I)
+	{
+		const int32& ID = AllocatedIDs[I];
+
+		UserWidgets[ID]->SetPositionInViewport(ScreenPositions[ID]);
+	}
+}

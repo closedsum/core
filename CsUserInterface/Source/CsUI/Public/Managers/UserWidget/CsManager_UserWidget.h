@@ -1,11 +1,16 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Object.h"
-#include "Managers/Pool/CsManager_PooledObject_Map.h"
+// Types
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
+// Pool
+#include "Managers/Pool/CsManager_PooledObject_Map.h"
+// Resource
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed_Int32.h"
+// UserWidget
 #include "Managers/UserWidget/Payload/CsPayload_UserWidget.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
+// Settings
 #include "Managers/UserWidget/CsSettings_Manager_UserWidget.h"
 
 #include "CsManager_UserWidget.generated.h"
@@ -54,6 +59,11 @@ namespace NCsUserWidget
 
 #pragma endregion Internal
 
+// Managers
+#pragma region
+
+#pragma endregion Managers
+
 class ICsGetManagerUserWidget;
 
 // NCsUserWidget::NData::IData
@@ -80,6 +90,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NData, FInterfaceMap)
 
 // NCsUserWidget::NPayload::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, FInterfaceMap)
+
+class UUserWidget;
 
 UCLASS()
 class CSUI_API UCsManager_UserWidget : public UObject
@@ -926,10 +938,26 @@ public:
 
 #pragma endregion Data
 
-private:
+public:
 
 	struct FSetPositionInViewports
 	{
+		friend class UCsManager_UserWidget;
+
+	private:
+
+		UCsManager_UserWidget* Outer;
+
+	public:
+
+	//#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
+
+		//IDManagerType Manager_ID;
+
+		TArray<int32> AllocatedIDs;
+
+		TArray<UUserWidget*> UserWidgets;
+
 		TArray<FVector> WorldPositions;
 
 		TArray<FVector2D> ScreenPositions;
@@ -937,26 +965,26 @@ private:
 		TArray<FVector2D> Offsets;
 
 		FSetPositionInViewports() :
+			Outer(nullptr),
+			//Manager_ID(),
+			AllocatedIDs(),
+			UserWidgets(),
 			WorldPositions(),
 			ScreenPositions(),
 			Offsets()
 		{
 		}
 
-		FORCEINLINE void SetSize(const int32& InSize)
-		{
-			WorldPositions.Reset(InSize);
-			WorldPositions.AddDefaulted(InSize);
+		void SetSize(const int32& InSize);
 
-			ScreenPositions.Reset(InSize);
-			ScreenPositions.AddDefaulted(InSize);
+		void Update(const FCsDeltaTime& DeltaTime);
 
-			Offsets.Reset(InSize);
-			Offsets.AddDefaulted(InSize);
-		}
-
-
+	//#undef IDManagerType
 	};
+
+private:
+
+	FSetPositionInViewports SetPositionInViewports;
 
 #undef ManagerType
 #undef ManagerParamsType

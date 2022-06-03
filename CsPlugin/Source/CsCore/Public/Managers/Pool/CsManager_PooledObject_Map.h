@@ -2,7 +2,6 @@
 
 #pragma once
 #include "Managers/Pool/CsManager_PooledObject_Abstract.h"
-#include "Managers/Pool/CsPooledObject.h"
 #include "CsCVars.h"
 
 class UWorld;

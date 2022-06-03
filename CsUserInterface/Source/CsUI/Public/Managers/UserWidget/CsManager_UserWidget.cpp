@@ -64,6 +64,7 @@ namespace NCsManagerUserWidget
 		{
 			namespace Str
 			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget::FSetPositionInViewports, Allocate);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_UserWidget::FSetPositionInViewports, Update);
 			}
 		}
@@ -233,8 +234,8 @@ void UCsManager_UserWidget::Initialize()
 {
 	SetupInternal();
 
-	//SetPositionInViewports.Outer = this;
-	//SetPositionInViewports.SetSize(Settings.SetPositionInViewports_PoolSize);
+	SetPositionInViewports.Outer = this;
+	SetPositionInViewports.SetSize(Settings.SetPositionInViewports_PoolSize);
 
 	bInitialized = true;
 }
@@ -994,7 +995,6 @@ DataType* UCsManager_UserWidget::GetDataChecked(const FString& Context, const FE
 
 void UCsManager_UserWidget::FSetPositionInViewports::SetSize(const int32& InSize)
 {
-	/*
 	Manager_ID.CreatePool(InSize);
 
 	typedef  NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
@@ -1007,7 +1007,6 @@ void UCsManager_UserWidget::FSetPositionInViewports::SetSize(const int32& InSize
 		int32& Index	 = C->GetRef();
 		Index			 = I;
 	}
-	*/
 
 	AllocatedIDs.Reset(InSize);
 	AllocatedIDs.AddDefaulted(InSize);
@@ -1025,6 +1024,35 @@ void UCsManager_UserWidget::FSetPositionInViewports::SetSize(const int32& InSize
 	Offsets.AddDefaulted(InSize);
 }
 
+int32 UCsManager_UserWidget::FSetPositionInViewports::Allocate(UUserWidget* Widget)
+{
+	using namespace NCsManagerUserWidget::NSetPositionInViewports::NCached;
+
+	const FString& Context = Str::Allocate;
+
+	CS_IS_PTR_NULL_CHECKED(Widget);
+
+	const int32 ID  = Manager_ID.Allocate()->GetRef();
+	UserWidgets[ID] = Widget;
+
+	return ID;
+}
+
+void UCsManager_UserWidget::FSetPositionInViewports::Deallocate(const int32& ID)
+{
+	UserWidgets[ID] = nullptr;
+
+	Manager_ID.DeallocateAt(ID);
+}
+
+void UCsManager_UserWidget::FSetPositionInViewports::UpdateWorldPositionAndOffset(const int32& ID, const FVector& WorldPosition, const FVector2D& Offset)
+{
+	checkf(UserWidgets[ID], TEXT(": ID has NOT been allocated and NO UserWidget has been set."));
+
+	WorldPositions[ID]  = WorldPosition;
+	Offsets[ID]			= Offset;
+}
+
 void UCsManager_UserWidget::FSetPositionInViewports::Update(const FCsDeltaTime& DeltaTime)
 {
 	using namespace NCsManagerUserWidget::NSetPositionInViewports::NCached;
@@ -1033,7 +1061,6 @@ void UCsManager_UserWidget::FSetPositionInViewports::Update(const FCsDeltaTime& 
 
 	// Populate List of Allocated IDs
 	int32 AllocatedCount = 0;
-	/*
 	{
 		typedef  NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
 
@@ -1053,7 +1080,6 @@ void UCsManager_UserWidget::FSetPositionInViewports::Update(const FCsDeltaTime& 
 			++AllocatedCount;
 		}
 	}
-	*/
 
 	if (AllocatedCount == CS_EMPTY)
 		return;

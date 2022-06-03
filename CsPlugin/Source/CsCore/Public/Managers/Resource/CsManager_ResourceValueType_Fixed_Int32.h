@@ -12,11 +12,11 @@ namespace NCsResource
 			{
 				namespace NInt32
 				{
-					struct CSCORE_API FResource final : public TCsResourceContainer<int32>
+					struct FResource final : public TCsResourceContainer<int32>
 					{
 					};
 
-					struct CSCORE_API FManager final : public NCsResource::NManager::NValue::TFixed<int32, FResource, 0>
+					struct FManager final : public NCsResource::NManager::NValue::TFixed<int32, FResource, 0>
 					{
 					};
 				}

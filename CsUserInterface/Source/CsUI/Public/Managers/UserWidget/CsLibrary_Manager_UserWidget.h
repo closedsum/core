@@ -17,6 +17,8 @@ struct FCsUserWidgetPooled;
 // NCsUserWidget::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
+class UUserWidget;
+
 namespace NCsUserWidget
 {
 	namespace NManager
@@ -172,5 +174,19 @@ namespace NCsUserWidget
 
 		#pragma endregion Data
 		};
+
+		namespace NSetPositionInViewports
+		{
+			struct CSUI_API FLibrary
+			{
+			public:
+
+				static int32 AllocateChecked(const FString& Context, const UObject* WorldContext, UUserWidget* Widget);
+
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& ID);
+
+				static void UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector& WorldPosition, const FVector2D& Offset);
+			};
+		}
 	}
 }

@@ -94,13 +94,7 @@ public:
 
 protected:
 
-	NCsUserWidget::EPosition PositionType;
-
-	FVector Position;
-
-	NCsUserWidget::EPosition OffsetType;
-
-	FVector Offset;
+	int32 SetPositionInViewport_ID;
 
 	int32 CurrentZOrder;
 

@@ -121,5 +121,29 @@ namespace NCsUserWidget
 		}
 
 		#pragma endregion Spawn
+
+		namespace NSetPositionInViewports
+		{
+			int32 FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, UUserWidget* Widget)
+			{
+				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
+
+				return UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Allocate(Widget);
+			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& ID)
+			{
+				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
+
+				UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Deallocate(ID);
+			}
+
+			void FLibrary::UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector& WorldPosition, const FVector2D& Offset)
+			{
+				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
+
+				UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.UpdateWorldPositionAndOffset(ID, WorldPosition, Offset);
+			}
+		}
 	}
 }

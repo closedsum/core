@@ -948,11 +948,11 @@ public:
 
 		UCsManager_UserWidget* Outer;
 
-	public:
+	private:
 
-	//#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
+	#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
 
-		//IDManagerType Manager_ID;
+		IDManagerType Manager_ID;
 
 		TArray<int32> AllocatedIDs;
 
@@ -963,6 +963,8 @@ public:
 		TArray<FVector2D> ScreenPositions;
 
 		TArray<FVector2D> Offsets;
+
+	public:
 
 		FSetPositionInViewports() :
 			Outer(nullptr),
@@ -977,12 +979,18 @@ public:
 
 		void SetSize(const int32& InSize);
 
+		int32 Allocate(UUserWidget* Widget);
+		
+		void Deallocate(const int32& ID);
+
+		void UpdateWorldPositionAndOffset(const int32& ID, const FVector& WorldPosition, const FVector2D& Offset);
+
 		void Update(const FCsDeltaTime& DeltaTime);
 
-	//#undef IDManagerType
+	#undef IDManagerType
 	};
 
-private:
+public:
 
 	FSetPositionInViewports SetPositionInViewports;
 

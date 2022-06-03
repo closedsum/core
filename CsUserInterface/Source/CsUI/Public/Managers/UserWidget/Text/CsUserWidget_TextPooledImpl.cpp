@@ -7,6 +7,7 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_Math.h"
 // Library
+#include "Managers/UserWidget/CsLibrary_Manager_UserWidget.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Widget.h"
@@ -103,6 +104,7 @@ void UCsUserWidget_TextPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 	// TODO: Move to Batch call
 	
 	// World
+	/*
 	if (PositionType == NCsUserWidget::EPosition::World)
 	{
 		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
@@ -125,6 +127,7 @@ void UCsUserWidget_TextPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 			SetPositionInViewport(Pos);
 		}
 	}
+	*/
 }
 
 #pragma endregion ICsUpdate
@@ -158,39 +161,38 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 
 	Handle_AddToViewport(WidgetPayload);
 
-	PositionType = WidgetPayload->GetPositionType();
-	Position	 = WidgetPayload->GetPosition();
-	OffsetType	 = WidgetPayload->GetOffsetType();
-	Offset		 = WidgetPayload->GetOffset();
+	const NCsUserWidget::EPosition& PositionType = WidgetPayload->GetPositionType();
+	const NCsUserWidget::EPosition& OffsetType	 = WidgetPayload->GetOffsetType();
 
 	// Screen
 	if (PositionType == NCsUserWidget::EPosition::Screen)
 	{
-		SetPositionInViewport(FVector2D(Position));
+		SetPositionInViewport(FVector2D(WidgetPayload->GetPosition()));
 	}
 	// World
 	else
 	if (PositionType == NCsUserWidget::EPosition::World)
 	{
+		typedef NCsUserWidget::NManager::NSetPositionInViewports::FLibrary SetPositionInViewportsLibrary;
+
+		SetPositionInViewport_ID = SetPositionInViewportsLibrary::AllocateChecked(Context, this, this);
+
 		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+		FVector WorldPosition = WidgetPayload->GetPosition();
+		FVector2D Offset	  = FVector2D::ZeroVector;
 
 		if (OffsetType == NCsUserWidget::EPosition::Screen)
 		{
-			FVector2D Pos;
-			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, this, Position, Pos);
-
-			Pos += FVector2D(Offset);
-
-			SetPositionInViewport(Pos);
+			Offset = FVector2D(WidgetPayload->GetOffset());
 		}
 		else
 		if (OffsetType == NCsUserWidget::EPosition::World)
 		{
-			FVector2D Pos;
-			const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, this, Position + Offset, Pos);
-
-			SetPositionInViewport(Pos);
+			WorldPosition += WidgetPayload->GetOffset();
 		}
+
+		SetPositionInViewportsLibrary::UpdateWorldPositionAndOffsetChecked(Context, this, SetPositionInViewport_ID, WorldPosition, Offset);
 	}
 	// Parent
 	else

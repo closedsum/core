@@ -175,8 +175,8 @@ namespace NCsViewport
 
 				checkf(Viewport, TEXT("%s: Failed to get Viewport from ViewportClient: %s for LocalPlayer: %s."), *Context, *(GVC->GetName()), *(LocalPlayer->GetName()));
 
-				checkf(WorldPositions.Num() != Indices.Num(), TEXT("%s: Mismatch between the WorldPositions.Num() != Indices.Num() (%d != %d)."), *Context, WorldPositions.Num(), Indices.Num());
-				checkf(WorldPositions.Num() != OutScreenPositions.Num(), TEXT("%s: Mismatch between the WorldPositions.Num() != OutScreenPositions.Num() (%d != %d)."), *Context, WorldPositions.Num(), OutScreenPositions.Num());
+				checkf(WorldPositions.Num() == Indices.Num(), TEXT("%s: Mismatch between the WorldPositions.Num() != Indices.Num() (%d != %d)."), *Context, WorldPositions.Num(), Indices.Num());
+				checkf(WorldPositions.Num() == OutScreenPositions.Num(), TEXT("%s: Mismatch between the WorldPositions.Num() != OutScreenPositions.Num() (%d != %d)."), *Context, WorldPositions.Num(), OutScreenPositions.Num());
 				checkf(Indices.Num() >= Count, TEXT("%s: Count > Indices.Num() (%d > %d)."), *Context, Count, Indices.Num());
 
 				bool Result = false;

@@ -565,7 +565,7 @@ namespace NCsResource
 				*
 				* return Allocated Head.
 				*/
-				FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetAllocatedHead()
+				FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetAllocatedHead() const
 				{
 					return AllocatedHead;
 				}
@@ -575,7 +575,7 @@ namespace NCsResource
 				*
 				* return Allocated Head's Resource.
 				*/
-				FORCEINLINE ResourceType* GetAllocatedResourceHead()
+				FORCEINLINE ResourceType* GetAllocatedResourceHead() const
 				{
 					return AllocatedHead ? (**AllocatedHead)->Get() : nullptr;
 				}
@@ -585,7 +585,7 @@ namespace NCsResource
 				*
 				* return Active Tail.
 				*/
-				FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetAllocatedTail()
+				FORCEINLINE TCsDoubleLinkedList<ResourceContainerType*>* GetAllocatedTail() const
 				{
 					return AllocatedTail;
 				}

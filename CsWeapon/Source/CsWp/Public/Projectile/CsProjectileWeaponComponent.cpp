@@ -1329,11 +1329,6 @@ void UCsProjectileWeaponComponent::FXImpl_SetComponent(USceneComponent* Componen
 
 #pragma endregion Fire
 
-void UCsProjectileWeaponComponent::ResetValuesToBase()
-{
-	TimeBetweenShotsImpl.ResetValueToBase();
-}
-
 // Print
 #pragma region
 

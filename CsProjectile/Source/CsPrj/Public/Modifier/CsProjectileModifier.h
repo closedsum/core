@@ -17,8 +17,6 @@ namespace NCsProjectile
 		public:
 
 			virtual ~IModifier() {}
-
-			virtual void Modify(ICsProjectile* Projectile) = 0;
 		};
 	}
 }

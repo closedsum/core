@@ -9,9 +9,13 @@
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
+	// Data
 #include "Data/CsLibrary_Data_Projectile.h"
+	// Payload
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+	// Cache
+#include "Cache/CsLibrary_Cache_Projectile.h"
 #include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
@@ -43,6 +47,9 @@
 #include "Modifier/LifeTime/CsProjectileModifier_LifeTimeImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
 #include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
+// Modifier
+#include "Modifier/Types/CsGetProjectileModifierType.h"
+#include "Modifier/CsModifier_Float.h"
 // FX
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 // Sound
@@ -771,20 +778,29 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 	// LifeTime
 	{
+		float LifeTime = Cache->GetLifeTime();
+
 		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
 		typedef NCsProjectile::NModifier::IModifier ModifierType;
-		typedef NCsProjectile::NModifier::NLifeTime::FImpl LifeTimeModifierType;
+		typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
 		for (AllocatedModifierType& AllocatedModifier : Modifiers)
 		{
-			ModifierType* Modifier = AllocatedModifier.Get();
+			ModifierType* Modifier							 = AllocatedModifier.Get();
+			ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+			const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
 
-			if (ModifierLibrary::Is<LifeTimeModifierType>(Context, Modifier))
+			if (PrjModifierType == NCsProjectileModifier::LifeTime)
 			{
-				Modifier->Modify(this);
+				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+				LifeTime						 = FloatModifier->Modify(LifeTime);
 			}
 		}
+
+		typedef NCsProjectile::NCache::FLibrary CacheLibrary;
+
+		CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime);
 	}
 
 	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
@@ -931,27 +947,36 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		MovementComponent->InitialSpeed			  = Data->GetInitialSpeed();
-		MovementComponent->MaxSpeed				  = Data->GetMaxSpeed();
+		float InitialSpeed = Data->GetInitialSpeed();
+		float MaxSpeed	   = Data->GetMaxSpeed();
 
 		// Check to apply any Speed Modifiers
 		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
 		typedef NCsProjectile::NModifier::IModifier ModifierType;
+		typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
 		for (AllocatedModifierType& AllocatedModifier : Modifiers)
 		{
 			ModifierType* Modifier = AllocatedModifier.Get();
+			ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+			const FECsProjectileModifier& PrjModifierType = GetPrjModifierType->GetProjectileModifierType();
 
-			typedef NCsProjectile::NModifier::NSpeed::NInitial::FImpl InitialSpeedModifierType;
-			typedef NCsProjectile::NModifier::NSpeed::NMax::FImpl MaxSpeedModifierType;
-
-			if (ModifierLibrary::Is<InitialSpeedModifierType>(Context, Modifier) ||
-				ModifierLibrary::Is<MaxSpeedModifierType>(Context, Modifier))
+			if (PrjModifierType == NCsProjectileModifier::InitialSpeed)
 			{
-				Modifier->Modify(this);
+				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+				InitialSpeed = FloatModifier->Modify(InitialSpeed);
+			}
+
+			if (PrjModifierType == NCsProjectileModifier::MaxSpeed)
+			{
+				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+				MaxSpeed						 = FloatModifier->Modify(MaxSpeed);
 			}
 		}
+
+		MovementComponent->InitialSpeed = InitialSpeed;
+		MovementComponent->MaxSpeed     = MaxSpeed;
 
 		if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
 			MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;

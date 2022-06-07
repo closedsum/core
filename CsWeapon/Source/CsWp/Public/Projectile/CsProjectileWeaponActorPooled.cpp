@@ -22,6 +22,7 @@
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
+#include "Modifier/CsLibrary_WeaponModifier.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
@@ -47,11 +48,14 @@
 // Weapon
 #include "Payload/CsPayload_WeaponImpl.h"
 #include "Cache/CsCache_WeaponImpl.h"
+#include "Modifier/Types/CsGetWeaponModifierType.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "CsProjectilePooledImpl.h"
+// Modifier
+#include "Modifier/CsModifier_Float.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // FX
@@ -94,6 +98,8 @@ namespace NCsProjectileWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, CanFire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenShots);
+
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, FireProjectile);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetProjectilePayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, LaunchProjectile);
@@ -643,8 +649,10 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
 
+	const float TimeBetweenShots = GetTimeBetweenShots();
+
 	// Check if enough time has elapsed to fire again.
-	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShotsImpl.Value);
+	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShots);
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
 	const bool Pass_Fire = bFire && !PrjWeaponData->DoFireOnRelease() && (PrjWeaponData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
@@ -659,7 +667,7 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 
 		UE_LOG(LogCsWp, Warning, TEXT("%s"), *Context);
 		// Pass_Time
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShotsImpl.Value);
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShots);
 		// Pass_Fire
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PrjWeaponData->DoFireOnRelease()), ToChar(PrjWeaponData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
@@ -841,6 +849,41 @@ char ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime_Intern
 	OnComplete_Event.Broadcast(Outer);
 
 	CS_COROUTINE_END(R);
+}
+
+float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
+{ 
+	using namespace NCsProjectileWeaponActorPooled::NCached;
+
+	const FString& Context = Str::GetTimeBetweenShots;
+
+	typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+	static TArray<ModifierType*> Modifiers;
+	Modifiers.Reset(Modifiers.Max());
+
+	GetWeaponModifiers(Modifiers);
+
+	float Value = TimeBetweenShotsImpl.GetValue();
+
+	// TODO: Priority
+
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+	typedef NCsModifier::NFloat::IFloat FloatModifierType;
+
+	for (ModifierType* Modifier : Modifiers)
+	{
+		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
+		const FECsWeaponModifier& WeaponModifierType	= GetWeaponModifierType->GetWeaponModifierType();
+
+		if (WeaponModifierType == NCsWeaponModifier::PrjWp_TimeBetweenShots)
+		{
+			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+			Value = FloatModifier->Modify(Value);
+		}
+	}
+	return Value;
 }
 
 	// Projectile
@@ -1304,12 +1347,6 @@ void ACsProjectileWeaponActorPooled::ProjectileImpl_SetLaunchComponentTransform(
 	ProjectileImpl->SetLaunchComponentTransform(Component);
 }
 
-#define PrjModifierType NCsProjectile::NModifier::IModifier
-void ACsProjectileWeaponActorPooled::GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers)
-{
-#undef PrjModifierType
-}
-
 #pragma endregion Projectile
 
 	// Sound
@@ -1516,11 +1553,6 @@ void ACsProjectileWeaponActorPooled::FXImpl_SetComponent(USceneComponent* Compon
 #pragma endregion FX
 
 #pragma endregion Fire
-
-void ACsProjectileWeaponActorPooled::ResetValuesToBase()
-{
-	TimeBetweenShotsImpl.ResetValueToBase();
-}
 
 // Print
 #pragma region

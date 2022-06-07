@@ -300,10 +300,9 @@ public:
 
 	private:
 
-		FORCEINLINE void ResetValueToBase()
-		{
-			Value = Base;
-		}
+		FORCEINLINE const float& GetValue() const { return Value; }
+
+		FORCEINLINE void ResetValueToBase() { Value = Base; }
 
 		void OnElapsedTime();
 
@@ -568,14 +567,6 @@ public:
 #pragma endregion FX
 
 #pragma endregion Fire
-
-public:
-
-	/** 
-	* Reset the values of any members that have been modified 
-	* to their base value (BEFORE modification). 
-	*/
-	void ResetValuesToBase();
 
 // Print
 #pragma region

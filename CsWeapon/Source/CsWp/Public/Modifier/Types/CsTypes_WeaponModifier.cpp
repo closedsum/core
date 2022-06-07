@@ -6,7 +6,9 @@
 
 namespace NCsWeaponModifier
 {
-	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PrjWp_TimeBetweenShots, "NCsWeapon::NModifier::NProjectile::NTimeBetweenShots::FImpl");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PrjWp_ProjectilesPerShot, "Projectiles per Shot");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PrjWp_TimeBetweenShots, "Time Between Shots");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PrjWp_TimeBetweenProjectilesPerShot, "Time Between Projectiles per Shot");
 }
 
 #pragma endregion WeaponModifier

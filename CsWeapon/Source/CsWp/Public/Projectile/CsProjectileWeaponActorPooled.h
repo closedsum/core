@@ -48,6 +48,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NPayload, IPayload)
 // NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, IFire)
 
+// NCsWEapon::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
+
 // NCsProjectile::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
 
@@ -237,6 +240,12 @@ protected:
 
 #pragma endregion State
 
+protected:
+
+#define WeaponModifierType NCsWeapon::NModifier::IModifier
+	virtual void GetWeaponModifiers(TArray<WeaponModifierType*>& OutModifiers) const {}
+#undef WeaponModifierType
+
 // Ammo
 #pragma region
 protected:
@@ -358,10 +367,9 @@ public:
 
 	private:
 
-		FORCEINLINE void ResetValueToBase()
-		{
-			Value = Base;
-		}
+		FORCEINLINE const float& GetValue() const { return Value; }
+
+		FORCEINLINE void ResetValueToBase() { Value = Base; }
 
 		void OnElapsedTime();
 
@@ -369,6 +377,10 @@ public:
 	};
 
 	FTimeBetweenShotsImpl TimeBetweenShotsImpl;
+
+protected:
+
+	float GetTimeBetweenShots() const;
 
 	// Projectile
 #pragma region
@@ -495,7 +507,7 @@ protected:
 public:
 
 #define PrjModifierType NCsProjectile::NModifier::IModifier
-	virtual void GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers);
+	virtual void GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers) const {}
 #undef PrjModifierType
 
 #pragma endregion Projectile
@@ -625,14 +637,6 @@ public:
 #pragma endregion FX
 
 #pragma endregion Fire
-
-public:
-
-	/** 
-	* Reset the values of any members that have been modified 
-	* to their base value (BEFORE modification). 
-	*/
-	void ResetValuesToBase();
 
 // Print
 #pragma region

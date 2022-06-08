@@ -8,24 +8,30 @@
 // Cached
 #pragma region
 
-namespace NCsWeaponCustomizationCached
+namespace NCsWeaponCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsWeaponCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsWeaponCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsWeapon
+#define EnumType FECsWeapon
+
 FECsWeaponCustomization::FECsWeaponCustomization()
 {
-	Init<EMCsWeapon, FECsWeapon>();
+	Init<EnumMapType, EnumType>();
 }
 
 void FECsWeaponCustomization::CustomPopulateEnumMap()
 {
-	using namespace NCsWeaponCustomizationCached;
+	using namespace NCsWeaponCustomization::NCached;
 
 	NCsWeapon::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
@@ -37,17 +43,21 @@ TSharedRef<IPropertyTypeCustomization> FECsWeaponCustomization::MakeInstance()
 
 void FECsWeaponCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsWeapon>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsWeaponCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsWeapon, FECsWeapon>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsWeaponCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsWeapon, FECsWeapon>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
+
 
 #undef LOCTEXT_NAMESPACE

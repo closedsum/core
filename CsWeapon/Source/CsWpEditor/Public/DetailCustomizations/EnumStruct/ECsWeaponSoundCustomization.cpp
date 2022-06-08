@@ -5,10 +5,12 @@
 
 #define LOCTEXT_NAMESPACE "ECsWeaponSoundCustomization"
 
+#define EnumMapType EMCsWeaponSound
+#define EnumType FECsWeaponSound
 
 FECsWeaponSoundCustomization::FECsWeaponSoundCustomization()
 {
-	Init<EMCsWeaponSound, FECsWeaponSound>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsWeaponSoundCustomization::MakeInstance()
@@ -18,17 +20,20 @@ TSharedRef<IPropertyTypeCustomization> FECsWeaponSoundCustomization::MakeInstanc
 
 void FECsWeaponSoundCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsWeaponSound>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsWeaponSoundCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsWeaponSound, FECsWeaponSound>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsWeaponSoundCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsWeaponSound, FECsWeaponSound>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

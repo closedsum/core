@@ -5,10 +5,12 @@
 
 #define LOCTEXT_NAMESPACE "ECsWeaponFireModeCustomization"
 
+#define EnumMapType EMCsWeaponFireMode
+#define EnumType FECsWeaponFireMode
 
 FECsWeaponFireModeCustomization::FECsWeaponFireModeCustomization()
 {
-	Init<EMCsWeaponFireMode, FECsWeaponFireMode>();
+	Init<EnumMapType, EnumType>();
 }
 
 TSharedRef<IPropertyTypeCustomization> FECsWeaponFireModeCustomization::MakeInstance()
@@ -18,17 +20,20 @@ TSharedRef<IPropertyTypeCustomization> FECsWeaponFireModeCustomization::MakeInst
 
 void FECsWeaponFireModeCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsWeaponFireMode>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
 void FECsWeaponFireModeCustomization::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsWeaponFireMode, FECsWeaponFireMode>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
 void FECsWeaponFireModeCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsWeaponFireMode, FECsWeaponFireMode>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

@@ -38,10 +38,8 @@
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
-#include "Modifier/LifeTime/CsProjectileModifier_LifeTimeImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
-#include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
+// Modifier
+#include "Modifier/CsProjectileModifierImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -1130,26 +1128,15 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModifier& Type)
 {
-	// LifeTime | 
-	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NLifeTime::ILifeTime 
-	// NCsProjectile::NModifier::NLifeTime::FImpl
-	if (Type == NCsProjectileModifier::LifeTime)
-		return new NCsProjectile::NModifier::NLifeTime::FImpl();
-	// IntialSpeed | 
-	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
-	// NCsProjectile::NModifier::NSpeed::NInitial::FImpl
-	if (Type == NCsProjectileModifier::InitialSpeed)
-		return new NCsProjectile::NModifier::NSpeed::NInitial::FImpl();
-	// MaxSpeed | 
-	// NCsProjectile::NModifier::IModifier | NCsProjectile::NModifier::NSpeed::ISpeed 
-	// NCsProjectile::NModifier::NSpeed::NMax::FImpl
-	if (Type == NCsProjectileModifier::MaxSpeed)
-		return new NCsProjectile::NModifier::NSpeed::NMax::FImpl();
-	// DamageValuePoint | 
-	// NCsProjectile::NModifier::IModifier | NCsDamage::NModifier::NValue::NPoint::IPoint 
-	// NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl
-	if (Type == NCsProjectileModifier::DamageValuePoint)
-		return new NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl();
+	// LifeTime | IntialSpeed | MaxSpeed | DamageValuePoint
+	// NCsProjectile::NModifier::IModifier
+	if (Type == NCsProjectileModifier::LifeTime ||
+		Type == NCsProjectileModifier::InitialSpeed ||
+		Type == NCsProjectileModifier::MaxSpeed ||
+		Type == NCsProjectileModifier::DamageValuePoint)
+	{
+		return new NCsProjectile::NModifier::FFloat();
+	}
 	return nullptr;
 }
 

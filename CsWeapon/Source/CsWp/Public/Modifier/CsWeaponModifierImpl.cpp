@@ -442,3 +442,94 @@ namespace NCsWeapon
 }
 
 #pragma endregion FCsWeaponModifier_Toggle
+
+// FCsWeaponModifierInfo
+#pragma region
+
+#define ModifierType NCsWeapon::NModifier::IModifier
+void FCsWeaponModifierInfo::ConstructModifiers(TArray<ModifierType*>& OutModifiers)
+{
+#undef ModifierType
+
+	// Make Space for all
+	{
+		int32 Count = 0;
+		Count += IntModifiers.Num();
+		Count += FloatModifiers.Num();
+		Count += ToggleModifiers.Num();
+
+		OutModifiers.Reset(Count);
+		OutModifiers.AddDefaulted(Count);
+	}
+
+	// Int
+	{
+		typedef NCsWeapon::NModifier::FInt IntModifierType;
+
+		const int32 Start = 0;
+		const int32 Count = IntModifiers.Num();
+
+		for (int32 I = Start; I < Start + Count; ++I)
+		{
+			FCsWeaponModifier_Int& Modifier = IntModifiers[I - Start];
+			IntModifierType* ModifierPtr	= new IntModifierType();
+
+			Modifier.CopyToModifier(ModifierPtr);
+
+			OutModifiers[I] = ModifierPtr;
+		}
+	}
+	// Float
+	{
+		typedef NCsWeapon::NModifier::FFloat FloatModifierType;
+
+		const int32 Start = IntModifiers.Num();
+		const int32 Count = FloatModifiers.Num();
+
+		for (int32 I = Start; I < Start + Count; ++I)
+		{
+			FCsWeaponModifier_Float& Modifier = FloatModifiers[I - Start];
+			FloatModifierType* ModifierPtr	  = new FloatModifierType();
+
+			Modifier.CopyToModifier(ModifierPtr);
+
+			OutModifiers[I] = ModifierPtr;
+		}
+	}
+	// Toggle
+	{
+		typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
+
+		const int32 Start = IntModifiers.Num() + FloatModifiers.Num();
+		const int32 Count = ToggleModifiers.Num();
+
+		for (int32 I = Start; I < Start + Count; ++I)
+		{
+			FCsWeaponModifier_Toggle& Modifier = ToggleModifiers[I - Start];
+			ToggleModifierType* ModifierPtr	   = new ToggleModifierType();
+
+			Modifier.CopyToModifier(ModifierPtr);
+
+			OutModifiers[I] = ModifierPtr;
+		}
+	}
+}
+
+bool FCsWeaponModifierInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	for (const FCsWeaponModifier_Int& Modifier : IntModifiers)
+	{
+		CS_IS_VALID(Modifier)
+	}
+	for (const FCsWeaponModifier_Float& Modifier : FloatModifiers)
+	{
+		CS_IS_VALID(Modifier)
+	}
+	for (const FCsWeaponModifier_Toggle& Modifier : ToggleModifiers)
+	{
+		CS_IS_VALID(Modifier)
+	}
+	return true;
+}
+
+#pragma endregion FCsWeaponModifierInfo

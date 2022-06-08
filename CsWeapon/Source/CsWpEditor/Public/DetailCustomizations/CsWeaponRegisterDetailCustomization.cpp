@@ -19,6 +19,7 @@
 #include "DetailCustomizations/EnumStruct/ECsWeaponSoundCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponStateCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsWeaponDataCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsWeaponModifierCustomization.h"
 	// Data
 #include "DetailCustomizations/Data/CsData_ECsWeaponCustomization.h"
 #include "DetailCustomizations/Data/CsData_WeaponPtrCustomization.h"
@@ -55,6 +56,8 @@ void FCsWeaponRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsWeaponState);
 		// ECsWeaponData
 		CS_TEMP_REGISTER(ECsWeaponData);
+		// ECsWeaponModifier
+		CS_TEMP_REGISTER(ECsWeaponModifier);
 	}
 	// Data
 	{

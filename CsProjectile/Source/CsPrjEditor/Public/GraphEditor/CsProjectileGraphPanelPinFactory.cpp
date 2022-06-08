@@ -5,6 +5,7 @@
 // Types
 #include "Types/CsTypes_Projectile.h"
 #include "Payload/CsTypes_Payload_Projectile.h"
+#include "Modifier/Types/CsTypes_ProjectileModifier.h"
 
 // EnumStructs
 	// Projectile
@@ -12,6 +13,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileClass.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileData.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectilePayload.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsProjectileModifier.h"
 
 TSharedPtr<SGraphPin> FCsProjectilePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -20,17 +22,24 @@ TSharedPtr<SGraphPin> FCsProjectilePanelGraphPinFactory::CreatePin(UEdGraphPin* 
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
+#define CS_TEMP_CREATE(EnumName) if (DoesPinUseScriptStruct<F##EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumName, InPin); }
+
 	// Projectile
 	{
 		// FECsProjectile
-		if (DoesPinUseScriptStruct<FECsProjectile>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectile, InPin); }
+		CS_TEMP_CREATE(ECsProjectile)
 		// FECsProjectileClass
-		if (DoesPinUseScriptStruct<FECsProjectileClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectileClass, InPin); }
+		CS_TEMP_CREATE(ECsProjectileClass)
 		// FECsProjectileData
-		if (DoesPinUseScriptStruct<FECsProjectileData>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectileData, InPin); }
+		CS_TEMP_CREATE(ECsProjectileData)
 		// FECsProjectilePayload
-		if (DoesPinUseScriptStruct<FECsProjectilePayload>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsProjectilePayload, InPin); }
+		CS_TEMP_CREATE(ECsProjectilePayload)
+		// FECsProjectileModifier
+		CS_TEMP_CREATE(ECsProjectileModifier)
 	}
+
+#undef CS_TEMP_CREATE
+
 	return nullptr;
 }
 

@@ -4,6 +4,7 @@
 
 // Types
 #include "Types/CsTypes_Weapon.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 
 // EnumStructs
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeapon.h"
@@ -18,6 +19,7 @@
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponSound.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponState.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponData.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsWeaponModifier.h"
 
 TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -26,30 +28,37 @@ TSharedPtr<SGraphPin> FCsWeaponPanelGraphPinFactory::CreatePin(UEdGraphPin* InPi
 	Check if pin is struct, and then check if that pin is of struct type we want customize
 	*/
 
+#define CS_TEMP_CREATE(EnumName) if (DoesPinUseScriptStruct<F##EnumName>(InPin, K2Schema)) { return SNew(SCsGraphPin_##EnumName, InPin); }
+
 	// FECsWeapon
-	if (DoesPinUseScriptStruct<FECsWeapon>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeapon, InPin); }
+	CS_TEMP_CREATE(ECsWeapon)
 	// FECsWeaponClass
-	if (DoesPinUseScriptStruct<FECsWeaponClass>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponClass, InPin); }
+	CS_TEMP_CREATE(ECsWeaponClass)
 	// FECsWeaponAnim
-	if (DoesPinUseScriptStruct<FECsWeaponAnim>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnim, InPin); }
+	CS_TEMP_CREATE(ECsWeaponAnim)
 	// FECsWeaponAnimBlueprint
-	if (DoesPinUseScriptStruct<FECsWeaponAnimBlueprint>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponAnimBlueprint, InPin); }
+	CS_TEMP_CREATE(ECsWeaponAnimBlueprint)
 	// FECsWeaponBlendSpace
-	if (DoesPinUseScriptStruct<FECsWeaponBlendSpace>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponBlendSpace, InPin); }
+	CS_TEMP_CREATE(ECsWeaponBlendSpace)
 	// FECsWeaponFireMode
-	if (DoesPinUseScriptStruct<FECsWeaponFireMode>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponFireMode, InPin); }
+	CS_TEMP_CREATE(ECsWeaponFireMode)
 	// FECsWeaponGrip
-	if (DoesPinUseScriptStruct<FECsWeaponGrip>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponGrip, InPin); }
+	CS_TEMP_CREATE(ECsWeaponGrip)
 	// FECsWeaponOwner
-	if (DoesPinUseScriptStruct<FECsWeaponOwner>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponOwner, InPin); }
+	CS_TEMP_CREATE(ECsWeaponOwner)
 	// FECsWeaponSlot
-	if (DoesPinUseScriptStruct<FECsWeaponSlot>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSlot, InPin); }
+	CS_TEMP_CREATE(ECsWeaponSlot)
 	// FECsWeaponSound
-	if (DoesPinUseScriptStruct<FECsWeaponSound>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponSound, InPin); }
+	CS_TEMP_CREATE(ECsWeaponSound)
 	// FECsWeaponState
-	if (DoesPinUseScriptStruct<FECsWeaponState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponState, InPin); }
+	CS_TEMP_CREATE(ECsWeaponState)
 	// FECsWeaponData
-	if (DoesPinUseScriptStruct<FECsWeaponData>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsWeaponData, InPin); }
+	CS_TEMP_CREATE(ECsWeaponData)
+	// FECsWeaponModifier
+	CS_TEMP_CREATE(ECsWeaponModifier)
+
+#undef CS_TEMP_CREATE
+
 	return nullptr;
 }
 

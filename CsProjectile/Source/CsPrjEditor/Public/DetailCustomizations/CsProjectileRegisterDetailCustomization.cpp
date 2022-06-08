@@ -12,7 +12,8 @@
 #include "DetailCustomizations/EnumStruct/ECsProjectileClassCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProjectileDataCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsProjectilePayloadCustomization.h"
-
+#include "DetailCustomizations/EnumStruct/ECsProjectileModifierCustomization.h"
+	// Data
 #include "DetailCustomizations/Data/CsData_ProjectilePtrCustomization.h"
 #include "DetailCustomizations/Data/CsData_ECsProjectileCustomization.h"
 
@@ -32,6 +33,8 @@ void FCsProjectileRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsProjectileData);
 		// ECsProjectilePayload
 		CS_TEMP_REGISTER(ECsProjectilePayload);
+		// ECsProjectileModifier
+		CS_TEMP_REGISTER(ECsProjectileModifier);
 	}
 	// CsData_ProjectilePtr
 	CS_TEMP_REGISTER(CsData_ProjectilePtr);

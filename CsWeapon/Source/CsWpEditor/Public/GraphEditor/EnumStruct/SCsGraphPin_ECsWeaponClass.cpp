@@ -7,51 +7,60 @@
 // Cached
 #pragma region
 
-namespace NCsGraphPinWeaponClassCached
+namespace NCsGraphPinWeaponClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsWeaponClass::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsWeaponClass::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define EnumMapType EMCsWeaponClass
+#define EnumType FECsWeaponClass
+
 void SCsGraphPin_ECsWeaponClass::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsWeaponClass, FECsWeaponClass>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsWeaponClass::CustomPopulateEnumMap()
 {
-	using namespace NCsGraphPinWeaponClassCached;
+	using namespace NCsGraphPinWeaponClass::NCached;
 
 	NCsWeaponClass::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
 void SCsGraphPin_ECsWeaponClass::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsWeaponClass>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
 FString SCsGraphPin_ECsWeaponClass::OnGetText() const
 {
-	return OnGetText_Internal<EMCsWeaponClass, FECsWeaponClass>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
 void SCsGraphPin_ECsWeaponClass::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsWeaponClass, FECsWeaponClass>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
 FText SCsGraphPin_ECsWeaponClass::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsWeaponClass>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
 FText SCsGraphPin_ECsWeaponClass::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsWeaponClass>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef EnumMapType
+#undef EnumType

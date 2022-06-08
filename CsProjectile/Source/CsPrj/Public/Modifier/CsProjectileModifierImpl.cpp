@@ -442,3 +442,94 @@ namespace NCsProjectile
 }
 
 #pragma endregion FCsProjectileModifier_Toggle
+
+// FCsProjectileModifierInfo
+#pragma region
+
+#define ModifierType NCsProjectile::NModifier::IModifier
+void FCsProjectileModifierInfo::ConstructModifiers(TArray<ModifierType*>& OutModifiers)
+{
+#undef ModifierType
+
+	// Make Space for all
+	{
+		int32 Count = 0;
+		Count += IntModifiers.Num();
+		Count += FloatModifiers.Num();
+		Count += ToggleModifiers.Num();
+
+		OutModifiers.Reset(Count);
+		OutModifiers.AddDefaulted(Count);
+	}
+
+	// Int
+	{
+		typedef NCsProjectile::NModifier::FInt IntModifierType;
+
+		const int32 Start = 0;
+		const int32 Count = IntModifiers.Num();
+
+		for (int32 I = Start; I < Start + Count; ++I)
+		{
+			FCsProjectileModifier_Int& Modifier = IntModifiers[I - Start];
+			IntModifierType* ModifierPtr	    = new IntModifierType();
+
+			Modifier.CopyToModifier(ModifierPtr);
+
+			OutModifiers[I] = ModifierPtr;
+		}
+	}
+	// Float
+	{
+		typedef NCsProjectile::NModifier::FFloat FloatModifierType;
+
+		const int32 Start = IntModifiers.Num();
+		const int32 Count = FloatModifiers.Num();
+
+		for (int32 I = Start; I < Start + Count; ++I)
+		{
+			FCsProjectileModifier_Float& Modifier = FloatModifiers[I - Start];
+			FloatModifierType* ModifierPtr		  = new FloatModifierType();
+
+			Modifier.CopyToModifier(ModifierPtr);
+
+			OutModifiers[I] = ModifierPtr;
+		}
+	}
+	// Toggle
+	{
+		typedef NCsProjectile::NModifier::FToggle ToggleModifierType;
+
+		const int32 Start = IntModifiers.Num() + FloatModifiers.Num();
+		const int32 Count = ToggleModifiers.Num();
+
+		for (int32 I = Start; I < Start + Count; ++I)
+		{
+			FCsProjectileModifier_Toggle& Modifier = ToggleModifiers[I - Start];
+			ToggleModifierType* ModifierPtr		   = new ToggleModifierType();
+
+			Modifier.CopyToModifier(ModifierPtr);
+
+			OutModifiers[I] = ModifierPtr;
+		}
+	}
+}
+
+bool FCsProjectileModifierInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	for (const FCsProjectileModifier_Int& Modifier : IntModifiers)
+	{
+		CS_IS_VALID(Modifier)
+	}
+	for (const FCsProjectileModifier_Float& Modifier : FloatModifiers)
+	{
+		CS_IS_VALID(Modifier)
+	}
+	for (const FCsProjectileModifier_Toggle& Modifier : ToggleModifiers)
+	{
+		CS_IS_VALID(Modifier)
+	}
+	return true;
+}
+
+#pragma endregion FCsProjectileModifierInfo

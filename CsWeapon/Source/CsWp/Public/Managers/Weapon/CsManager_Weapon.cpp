@@ -32,7 +32,8 @@
 #include "Payload/CsPayload_WeaponImpl.h"
 #include "Modifier/Types/CsGetWeaponModifierType.h"
 #include "Modifier/Copy/CsWeaponModifier_Copy.h"
-#include "Modifier/Projectile/TimeBetweenShots/CsProjectileWeaponModifier_TimeBetweenShotsImpl.h"
+// Modifier
+#include "Modifier/CsWeaponModifierImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -932,13 +933,14 @@ void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
 
 ModifierType* UCsManager_Weapon::ConstructModifier(const FECsWeaponModifier& Type)
 {
-	// PrjWp_TimeBetweenShots | 
+	// PrjWp_TimeBetweenShots | PrjWp_TimeBetweenShots | PrjWp_TimeBetweenProjectilesPerShot
 	// ModifierType (NCsModifier::IModifier)
-	// WeaponModifierType (NCsWeapon::NModifier::IModifier)
-	// PrjWeaponModifierType (NCsWeapon::NProjectile::NModifier::IModifier)
-	// NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl
-	if (Type == NCsWeaponModifier::PrjWp_TimeBetweenShots)
-		return new NCsWeapon::NProjectile::NModifier::NTimeBetweenShots::FImpl();
+	if (Type == NCsWeaponModifier::PrjWp_ProjectilesPerShot ||
+		Type == NCsWeaponModifier::PrjWp_TimeBetweenShots ||
+		Type == NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot)
+	{
+		return new NCsWeapon::NModifier::FFloat();
+	}
 	return nullptr;
 }
 

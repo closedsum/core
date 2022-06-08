@@ -492,3 +492,39 @@ namespace NCsWeapon
 }
 
 #pragma endregion FCsWeaponModifier_Toggle
+
+// FCsWeaponModifierInfo
+#pragma region
+
+// NCsWeapon::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
+
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponModifierInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Modifier")
+	TArray<FCsWeaponModifier_Int> IntModifiers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Modifier")
+	TArray<FCsWeaponModifier_Float> FloatModifiers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Modifier")
+	TArray<FCsWeaponModifier_Toggle> ToggleModifiers;
+
+	FCsWeaponModifierInfo() :
+		IntModifiers(),
+		FloatModifiers(),
+		ToggleModifiers()
+	{
+	}
+
+#define ModifierType NCsWeapon::NModifier::IModifier
+	void ConstructModifiers(TArray<ModifierType*>& OutModifiers);
+#undef ModifierType
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
+
+#pragma endregion FCsWeaponModifierInfo

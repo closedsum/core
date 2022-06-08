@@ -492,3 +492,39 @@ namespace NCsProjectile
 }
 
 #pragma endregion FCsWeaponModifier_Toggle
+
+// FCsProjectileModifierInfo
+#pragma region
+
+// NCsProjectile::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectileModifierInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
+	TArray<FCsProjectileModifier_Int> IntModifiers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
+	TArray<FCsProjectileModifier_Float> FloatModifiers;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
+	TArray<FCsProjectileModifier_Toggle> ToggleModifiers;
+
+	FCsProjectileModifierInfo() :
+		IntModifiers(),
+		FloatModifiers(),
+		ToggleModifiers()
+	{
+	}
+
+#define ModifierType NCsProjectile::NModifier::IModifier
+	void ConstructModifiers(TArray<ModifierType*>& OutModifiers);
+#undef ModifierType
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+#pragma endregion FCsProjectileModifierInfo

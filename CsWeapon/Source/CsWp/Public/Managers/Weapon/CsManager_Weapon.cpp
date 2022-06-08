@@ -5,8 +5,6 @@
 
 // CVars
 #include "Managers/Weapon/CsCVars_Manager_Weapon.h"
-// Types
-#include "Projectile/CsTypes_ProjectileWeapon.h"
 // Library
 #include "Modifier/CsLibrary_WeaponModifier.h"
 #include "Data/CsLibrary_Data.h"

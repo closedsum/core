@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Projectile/Params/Spread/CsParams_ProjectileWeapon_Spread.h"
 
 #include "CsData_ProjectileWeapon.generated.h"
 
@@ -25,13 +25,12 @@ namespace NCsWeapon
 
 				static const FName Name;
 
-			private:
-
-				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
-
 			public:
 
 				virtual ~IData(){}
+
+			#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
+			#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
 
 				/**
 				*
@@ -95,6 +94,13 @@ namespace NCsWeapon
 				* return
 				*/
 				virtual const LaunchParamsType* GetLaunchParams() const = 0;
+
+				virtual const bool& UseSpreadParams() const = 0;
+
+				virtual const SpreadParamsType& GetSpreadParams() const = 0;
+
+			#undef LaunchParamsType
+			#undef SpreadParamsType
 			};
 		}
 	}
@@ -121,6 +127,9 @@ public:
 	static const FName Name;
 
 public:
+
+#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
+#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
 
 	/**
 	*
@@ -178,12 +187,17 @@ public:
 	*/
 	virtual const float& GetTimeBetweenProjectilesPerShot() const = 0;
 
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
-
 	/**
 	*
 	*
 	* return
 	*/
 	virtual const LaunchParamsType* GetLaunchParams() const = 0;
+
+	virtual const bool& UseSpreadParams() const = 0;
+
+	virtual const SpreadParamsType& GetSpreadParams() const = 0;
+
+#undef LaunchParamsType
+#undef SpreadParamsType
 };

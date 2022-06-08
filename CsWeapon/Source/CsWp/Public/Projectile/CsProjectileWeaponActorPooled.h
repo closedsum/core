@@ -299,7 +299,7 @@ protected:
 	*/
 	void Fire_Internal_OnEnd(FCsRoutine* R);
 
-	FCsRoutineHandle FireHandle;
+	TSet<FCsRoutineHandle> FireHandles;
 
 	FCsScopedTimerHandleWrapper FireScopedHandle;
 

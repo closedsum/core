@@ -2,7 +2,7 @@
 #pragma once
 #include "Types/Enum/CsEnumMap.h"
 
-#include "CsTypes_ProjectileWeapon.generated.h"
+#include "CsTypes_ProjectileWeapon_Spread.generated.h"
 
 // ProjectileWeaponSpreadAngle
 #pragma region
@@ -14,7 +14,7 @@
 UENUM(BlueprintType)
 enum class ECsProjectileWeaponSpreadAngle : uint8
 {
-	/** The angle between each projectile the Spread Angle divide by the 
+	/** The angle between each projectile is the Spread Angle divide by the 
 		number Projectiles per Shot. */
 	DivideByCount						UMETA(DisplayName = "Divide by Count"),
 	/** The Spread Angle is the angle between each projectile in a Shot.

@@ -2,10 +2,10 @@
 #pragma once
 
 #include "UObject/Object.h"
-// Managers
-#include "Managers/Pool/CsManager_PooledObject_Map.h"
 // Types
 #include "Modifier/Types/CsTypes_WeaponModifier.h"
+// Pool
+#include "Managers/Pool/CsManager_PooledObject_Map.h"
 // Settings
  #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
 // Weapon
@@ -14,6 +14,7 @@
 #include "CsWeaponPooled.h"
 #include "CsWeaponClass.h"
 #include "Modifier/CsResource_WeaponModifier.h"
+#include "Projectile/Params/Spread/CsProjectileWeapon_Spread_Variables.h"
 
 #include "CsManager_Weapon.generated.h"
 
@@ -943,6 +944,27 @@ public:
 #undef ModifierType
 
 #pragma endregion Modifier
+
+// Spread
+#pragma region
+private:
+
+#define SpreadVariablesManagerType NCsWeapon::NProjectile::NSpread::NVariables::FManager
+#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+
+	SpreadVariablesManagerType SpreadVariablesManagers;
+
+public:
+	
+	FORCEINLINE SpreadVariablesResourceType* AllocateSpreadVariables() { return SpreadVariablesManagers.Allocate(); }
+
+	FORCEINLINE void DeallocateSpreadVariables(SpreadVariablesResourceType* Resource) { SpreadVariablesManagers.Deallocate(Resource); }
+	FORCEINLINE void DeallocateSpreadVariables(const int32& Index) { SpreadVariablesManagers.DeallocateAt(Index); }
+
+#undef SpreadVariablesManagerType
+#undef SpreadVariablesResourceType
+
+#pragma endregion Spread
 
 #undef ManagerType
 #undef ManagerParamsType

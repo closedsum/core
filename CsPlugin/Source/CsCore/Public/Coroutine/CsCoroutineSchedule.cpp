@@ -167,7 +167,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::Start(PayloadResourceType* Payload
 
 	Payload->Reset();
 	Manager_Payload.Deallocate(PayloadContainer);
-	return R->GetHandle();
+	return R->HasEnded() ? FCsRoutineHandle::Invalid : R->GetHandle();
 }
 
 const FCsRoutineHandle& FCsCoroutineSchedule::Start(PayloadType* Payload)
@@ -219,7 +219,7 @@ const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(PayloadResourceType* Pa
 
 	Payload->Reset();
 	//UE_LOG(LogCs, Warning, TEXT("UCsCoroutineScheduler::StartChild: No free Routines. Look for Runaway Coroutines or consider raising the pool size."));
-	return R->GetHandle();
+	return R->HasEnded() ? FCsRoutineHandle::Invalid : R->GetHandle();
 }
 
 const FCsRoutineHandle& FCsCoroutineSchedule::StartChild(PayloadType* Payload)

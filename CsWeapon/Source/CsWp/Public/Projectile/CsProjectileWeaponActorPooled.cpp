@@ -189,7 +189,7 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	bFire_Last(false),
 	Fire_StartTime(0.0f),
 	FireCount(0),
-	FireHandle(),
+	FireHandles(),
 	// Projectile
 	ProjectileImpl(nullptr),
 	bOverride_ProjectileImpl_GetLaunchDirection(false),
@@ -442,9 +442,12 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 
 	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(this))
 	{
-		Scheduler->End(UpdateGroup, FireHandle);
+		for (const FCsRoutineHandle& Handle : FireHandles)
+		{
+			Scheduler->End(UpdateGroup, Handle);
+		}
 	}
-	FireHandle.Invalidate();
+	FireHandles.Reset();
 
 	// Skin
 	SetRootComponent(nullptr);
@@ -695,9 +698,6 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
 
-	// End previous Fire Routine
-	Scheduler->End(UpdateGroup, FireHandle);
-
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
@@ -728,7 +728,10 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	bHasFired = true;
 
-	FireHandle = Scheduler->Start(Payload);
+	FCsRoutineHandle Handle = Scheduler->Start(Payload);
+
+	if (Handle.IsValid())
+		FireHandles.Add(Handle);
 }
 
 char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)

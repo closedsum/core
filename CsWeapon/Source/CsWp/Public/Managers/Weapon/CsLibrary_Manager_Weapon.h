@@ -40,6 +40,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, FResource)
 // NCsWeapon::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
 
+// NCsWeapon::NProjectile::NSpread::NVariables::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NSpread, NVariables, FResource)
+
 namespace NCsWeapon
 {
 	namespace NManager
@@ -415,6 +418,22 @@ namespace NCsWeapon
 		#undef ModifierType
 
 		#pragma endregion Modifier
+
+		// Spread
+		#pragma region
+		public:
+
+		#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+
+			static SpreadVariablesResourceType* AllocateSpreadVariables(const FString& Context, const UObject* WorldContext);
+
+			static void DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource);
+
+			static void DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, const int32& Index);
+
+		#undef SpreadVariablesResourceType
+
+		#pragma endregion Spread
 		};
 	}
 }

@@ -1,6 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/CsLibrary_Data_Projectile.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 
 namespace NCsProjectile
 {

@@ -353,5 +353,29 @@ namespace NCsWeapon
 		#undef ModifierType
 
 		#pragma endregion Modifier
+
+		// Spread
+		#pragma region
+
+		#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+
+		SpreadVariablesResourceType* FLibrary::AllocateSpreadVariables(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext)->AllocateSpreadVariables();
+		}
+
+		void FLibrary::DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource)
+		{
+			GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Resource);
+		}
+
+		void FLibrary::DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, const int32& Index)
+		{
+			GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Index);
+		}
+
+		#undef SpreadVariablesResourceType
+
+		#pragma endregion Spread
 	}
 }

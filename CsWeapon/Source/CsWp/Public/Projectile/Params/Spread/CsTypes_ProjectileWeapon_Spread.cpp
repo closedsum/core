@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Projectile/CsTypes_ProjectileWeapon.h"
+#include "Projectile/Params/Spread/CsTypes_ProjectileWeapon_Spread.h"
 
 // ProjectileWeaponSpreadAngle
 #pragma region

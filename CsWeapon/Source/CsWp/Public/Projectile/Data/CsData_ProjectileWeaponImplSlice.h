@@ -1,11 +1,13 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Types
+#include "Projectile/Params/Spread/CsParams_ProjectileWeapon_Spread.h"
 // Log
 #include "Utility/CsWpLog.h"
 // Data
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 
 #include "CsData_ProjectileWeaponImplSlice.generated.h"
-#pragma once
 
 // NCsWeapon::NProjectile::NData::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NProjectile, NData, FImplSlice)
@@ -25,36 +27,42 @@ public:
 // CollisionDataType (NCsProjectile::NData::NCollision::IData)
 
 	/** Whether to perform a Fire action on input pressed or released. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	bool bDoFireOnRelease;
 
 	/** Whether the Fire action continues to execute when the Fire action is
 	    active. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	bool bFullAuto;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	bool bInfiniteAmmo;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data", meta = (UIMin = "0", ClampMin = "0"))
 	int32 MaxAmmo;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "1", ClampMin = "1"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data", meta = (UIMin = "1", ClampMin = "1"))
 	int32 ProjectilesPerShot;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	float TimeBetweenShots;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	float TimeBetweenAutoShots;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	float TimeBetweenProjectilesPerShot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
+	bool bSpreadParams;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
+	FCsProjectileWeapon_SpreadParams SpreadParams;
 
 	FCsData_ProjectileWeaponImplSlice() :
 		bDoFireOnRelease(false),
@@ -64,7 +72,9 @@ public:
 		ProjectilesPerShot(1),
 		TimeBetweenShots(0.0f),
 		TimeBetweenAutoShots(0.0f),
-		TimeBetweenProjectilesPerShot(0.0f)
+		TimeBetweenProjectilesPerShot(0.0f),
+		bSpreadParams(false),
+		SpreadParams()
 	{
 	}
 
@@ -138,6 +148,12 @@ namespace NCsWeapon
 				LaunchParamsType* LaunchParams;
 				FName LaunchParamsName;
 
+				CS_DECLARE_MEMBER_WITH_PROXY(bSpreadParams, bool)
+
+				typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
+
+				SpreadParamsType SpreadParams;
+
 			public:
 
 				FImplSlice() :
@@ -153,7 +169,9 @@ namespace NCsWeapon
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenAutoShots, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, 0.0f),
 					LaunchParams(nullptr),
-					LaunchParamsName(NAME_None)
+					LaunchParamsName(NAME_None),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bSpreadParams, false),
+					SpreadParams()
 				{
 					CS_CTOR_SET_MEMBER_PROXY(bDoFireOnRelease);
 					CS_CTOR_SET_MEMBER_PROXY(bFullAuto);
@@ -163,6 +181,7 @@ namespace NCsWeapon
 					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenShots);
 					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenAutoShots);
 					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenProjectilesPerShot);
+					CS_CTOR_SET_MEMBER_PROXY(bSpreadParams);
 				}
 
 				~FImplSlice();
@@ -227,6 +246,12 @@ namespace NCsWeapon
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, float)
 
 				FORCEINLINE const LaunchParamsType* GetLaunchParams() const { return LaunchParams; }
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bSpreadParams, bool)
+
+				FORCEINLINE const bool& UseSpreadParams() const { return GetbSpreadParams(); }
+				FORCEINLINE const SpreadParamsType& GetSpreadParams() const { return SpreadParams; }
+				FORCEINLINE SpreadParamsType* GetSpreadParamsPtr() { return &SpreadParams; }
 
 			#pragma endregion PrjWeaponDataType (NCsWeapon::NProjectile::NData::IData)
 

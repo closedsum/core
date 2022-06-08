@@ -55,6 +55,7 @@
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "CsProjectilePooledImpl.h"
 // Modifier
+#include "Modifier/CsModifier_Int.h"
 #include "Modifier/CsModifier_Float.h"
 // Sound
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
@@ -99,6 +100,8 @@ namespace NCsProjectileWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenShots);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetProjectilesPerShot);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenProjectilesPerShot);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, FireProjectile);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetProjectilePayload);
@@ -188,7 +191,6 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	FireCount(0),
 	FireHandle(),
 	// Projectile
-	CurrentProjectilePerShotIndex(0),
 	ProjectileImpl(nullptr),
 	bOverride_ProjectileImpl_GetLaunchDirection(false),
 	// Sound
@@ -721,8 +723,8 @@ void ACsProjectileWeaponActorPooled::Fire()
 	#undef COROUTINE
 
 	Payload->SetValue_Flag(CS_FIRST, PrjWeaponData->HasInfiniteAmmo());
-	Payload->SetValue_Int(CS_FIRST, PrjWeaponData->GetProjectilesPerShot());
-	Payload->SetValue_Float(CS_FIRST, PrjWeaponData->GetTimeBetweenProjectilesPerShot());
+	Payload->SetValue_Int(CS_FIRST, GetProjectilesPerShot());
+	Payload->SetValue_Float(CS_FIRST, GetTimeBetweenProjectilesPerShot());
 
 	bHasFired = true;
 
@@ -736,6 +738,9 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	const bool& bInfiniteAmmo				   = R->GetValue_Flag(CS_FIRST);
 	const int32& ProjectilesPerShot			   = R->GetValue_Int(CS_FIRST);
 	const float& TimeBetweenProjectilesPerShot = R->GetValue_Float(CS_FIRST);
+
+	static const int32 CURRENT_PROJECTIVE_PER_SHOT_INDEX = 1;
+	int32& CurrentProjectilePerShotIndex = R->GetValue_Int(CURRENT_PROJECTIVE_PER_SHOT_INDEX);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -888,6 +893,76 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 
 	// Projectile
 #pragma region
+
+int32 ACsProjectileWeaponActorPooled::GetProjectilesPerShot() const
+{
+	using namespace NCsProjectileWeaponActorPooled::NCached;
+
+	const FString& Context = Str::GetProjectilesPerShot;
+
+	typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+	static TArray<ModifierType*> Modifiers;
+	Modifiers.Reset(Modifiers.Max());
+
+	GetWeaponModifiers(Modifiers);
+
+	float Value = PrjWeaponData->GetProjectilesPerShot();
+
+	// TODO: Priority
+
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+	typedef NCsModifier::NInt::IInt IntModifierType;
+
+	for (ModifierType* Modifier : Modifiers)
+	{
+		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
+		const FECsWeaponModifier& WeaponModifierType	= GetWeaponModifierType->GetWeaponModifierType();
+
+		if (WeaponModifierType == NCsWeaponModifier::PrjWp_ProjectilesPerShot)
+		{
+			IntModifierType* IntModifier = ModifierLibrary::GetInterfaceChecked<IntModifierType>(Context, Modifier);
+
+			Value = IntModifier->Modify(Value);
+		}
+	}
+	return Value;
+}
+
+float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
+{
+	using namespace NCsProjectileWeaponActorPooled::NCached;
+
+	const FString& Context = Str::GetTimeBetweenProjectilesPerShot;
+
+	typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+	static TArray<ModifierType*> Modifiers;
+	Modifiers.Reset(Modifiers.Max());
+
+	GetWeaponModifiers(Modifiers);
+
+	float Value = PrjWeaponData->GetTimeBetweenProjectilesPerShot();
+
+	// TODO: Priority
+
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+	typedef NCsModifier::NFloat::IFloat FloatModifierType;
+
+	for (ModifierType* Modifier : Modifiers)
+	{
+		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
+		const FECsWeaponModifier& WeaponModifierType	= GetWeaponModifierType->GetWeaponModifierType();
+
+		if (WeaponModifierType == NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot)
+		{
+			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+			Value = FloatModifier->Modify(Value);
+		}
+	}
+	return Value;
+}
 
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
 

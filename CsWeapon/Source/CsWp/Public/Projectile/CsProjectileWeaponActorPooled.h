@@ -386,9 +386,9 @@ protected:
 #pragma region
 protected:
 
-	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "Weapon|Fire|Projectile", meta = (AllowPrivateAccess))
-	int32 CurrentProjectilePerShotIndex;
+	int32 GetProjectilesPerShot() const;
+
+	float GetTimeBetweenProjectilesPerShot() const;
 
 public:
 

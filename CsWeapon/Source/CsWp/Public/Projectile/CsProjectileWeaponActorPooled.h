@@ -430,6 +430,43 @@ public:
 			LaunchComponentTransform = Component;
 		}
 
+	public:
+
+		struct FLaunchParams
+		{
+		public:
+
+			bool bSpread;
+
+			struct FSpread
+			{
+			public:
+
+				FVector Offset;
+
+				float Yaw;
+
+				float Pitch;
+
+				FSpread() :
+					Offset(0.0f),
+					Yaw(0.0f),
+					Pitch(0.0f)
+				{
+				}
+			};
+
+			FSpread Spread;
+
+			FLaunchParams() :
+				bSpread(false),
+				Spread()
+			{
+			}
+		};
+
+	#define ParamsType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchParams
+
 	protected:
 
 		/**
@@ -442,7 +479,7 @@ public:
 		* @param Payload	The payload to set.
 		* return			Whether the payload was successfully set.
 		*/
-		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload);
+		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload, const ParamsType& Params);
 
 		/**
 		* Copy the slice of values from From to To with checks.
@@ -456,7 +493,11 @@ public:
 		* return			Whether the From copied to To successfully.
 		*/
 		virtual bool CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To);
+		/*
+		virtual FVector GetLaunchLocation(const ParamsType& Params);
 
+		virtual FVector GetLaunchDirection(const ParamsType& Params);
+		*/
 		virtual FVector GetLaunchLocation();
 
 		virtual FVector GetLaunchDirection();
@@ -465,7 +506,10 @@ public:
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);
 	#undef LaunchParamsType
 
-		void Launch();
+	
+		void Launch(const ParamsType& Params);
+
+	#undef ParamsType
 	};
 
 	FProjectileImpl* ProjectileImpl;
@@ -503,6 +547,8 @@ protected:
 	*/
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector Override_ProjectileImpl_GetLaunchDirection();
+
+	bool UseSpreadParams() const;
 
 public:
 

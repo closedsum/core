@@ -151,6 +151,8 @@ namespace NCsProjectileWeaponSpreadDistribution
 		extern CSWP_API const Type Random;
 		extern CSWP_API const Type ECsProjectileWeaponSpreadDistribution_MAX;
 	}
+
+	FORCEINLINE bool ShouldPrecalculate(const Type& InType) { return InType != Type::Random; }
 }
 
 namespace NCsWeapon
@@ -210,9 +212,33 @@ namespace NCsWeapon
 					extern CSWP_API const Type Random;
 					extern CSWP_API const Type EDistribution_MAX;
 				}
+
+				FORCEINLINE bool ShouldPrecalculate(const EDistribution& InType) { return InType != EDistribution::Random; }
 			}
 		}
 	}
 }
 
 #pragma endregion ProjectileWeaponSpreadDistribution
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NSpread
+		{
+			struct CSWP_API FLibrary
+			{
+			public:
+
+			#define SpreadAngleType NCsWeapon::NProjectile::NSpread::EAngle
+			#define DistributionType NCsWeapon::NProjectile::NSpread::EDistribution
+
+				FORCEINLINE void GetAnglesChecked(const FString& Context, const int32& Count, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution, TArray<float>& OutAngles);
+
+			#undef SpreadAngleType
+			#undef DistributionType
+			};
+		}
+	}
+}

@@ -939,6 +939,10 @@ ModifierType* UCsManager_Weapon::ConstructModifier(const FECsWeaponModifier& Typ
 	{
 		return new NCsWeapon::NModifier::FFloat();
 	}
+	if (Type == NCsWeaponModifier::PrjWp_UseSpreadParams)
+	{
+		return new NCsWeapon::NModifier::FToggle();
+	}
 	return nullptr;
 }
 

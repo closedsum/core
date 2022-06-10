@@ -14,13 +14,13 @@ namespace NCsWeapon
 				{
 				public:
 
-					TArray<FVector> Locations;
+					TArray<FVector> Offsets;
 
 					TArray<float> Yaws;
 					TArray<float> Pitches;
 
 					FVariables() :
-						Locations(),
+						Offsets(),
 						Yaws(),
 						Pitches()
 					{
@@ -28,8 +28,8 @@ namespace NCsWeapon
 
 					void SetSizeAndAddDefaulted(const int32& Size)
 					{
-						Locations.Reset(FMath::Max(Locations.Max(), Size));
-						Locations.AddDefaulted(Size);
+						Offsets.Reset(FMath::Max(Offsets.Max(), Size));
+						Offsets.AddDefaulted(Size);
 
 						Yaws.Reset(FMath::Max(Yaws.Max(), Size));
 						Yaws.AddDefaulted(Size);

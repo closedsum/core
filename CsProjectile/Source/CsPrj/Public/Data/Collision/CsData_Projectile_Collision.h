@@ -68,10 +68,6 @@ namespace NCsProjectile
 				* return
 				*/
 				virtual const TArray<TSubclassOf<UObject>>& GetIgnoreHitObjectClasses() const = 0;
-
-				// TODO:
-
-				// virtual const bool& AllowStartPenetrationOnHit const = 0;
 			};
 		}
 	}

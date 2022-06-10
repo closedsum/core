@@ -231,6 +231,7 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 void UCsManager_Weapon::Initialize()
 {
 	SetupInternal();
+	SetupSpreadVariables();
 	
 	bInitialized = true;
 }
@@ -306,7 +307,7 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 
 	const FString& Context = Str::AddPoolParams;
 
-	check(EMCsWeapon::Get().IsValidEnumChecked(Context, Type));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeapon, Type)
 
 	if (Settings.PoolParams.Find(Type))
 	{
@@ -314,7 +315,7 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 		return;
 	}
 
-	check(InPoolParams.IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(InPoolParams);
 
 	typedef NCsPooledObject::NManager::FPoolParams PoolParamsType;
 
@@ -384,6 +385,8 @@ void UCsManager_Weapon::SetupInternal()
 
 		// Create Pool
 		const FCsSettings_Manager_Weapon_Modifiers& ModifierSettings = FCsSettings_Manager_Weapon_Modifiers::Get();
+
+		CS_IS_VALID_CHECKED(ModifierSettings);
 
 		const int32& PoolSize = ModifierSettings.PoolSize;
 
@@ -1005,3 +1008,13 @@ ModifierResourceType* UCsManager_Weapon::CreateCopyOfModifier(const FString& Con
 #undef ModifierType
 
 #pragma endregion Modifier
+
+// Spread
+#pragma region
+
+void UCsManager_Weapon::SetupSpreadVariables()
+{
+	SpreadVariablesManager.CreatePool(Settings.Spread.PoolSize);
+}
+
+#pragma endregion Spread

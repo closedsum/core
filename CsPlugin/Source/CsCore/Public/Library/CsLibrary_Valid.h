@@ -515,6 +515,68 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			FORCEINLINE static bool ComponentsGreaterThanChecked(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName)
+			{
+				checkf(V.X > A, TEXT("%s: %s.X: %f is NOT > %s: %f."), *Context, *VName, V.X, *AName, A);
+				checkf(V.Y > A, TEXT("%s: %s.Y: %f is NOT > %s: %f."), *Context, *VName, V.Y, *AName, A);
+				checkf(V.Z > A, TEXT("%s: %s.Z: %f is NOT > %s: %f."), *Context, *VName, V.Z, *AName, A);
+				return true;
+			}
+
+			FORCEINLINE static bool ComponentsGreaterThan(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (V.X <= A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.X: %f is NOT > %s: %f."), *Context, *VName, V.X, *AName, A));
+					return false;
+				}
+				if (V.Y <= A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Y: %f is NOT > %s: %f."), *Context, *VName, V.Y, *AName, A));
+					return false;
+				}
+				if (V.Z <= A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Z: %f is NOT > %s: %f."), *Context, *VName, V.Z, *AName, A));
+					return false;
+				}
+				return true;
+			}
+
+			FORCEINLINE static bool ComponentsGreaterThanOrEqualChecked(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName)
+			{
+				checkf(V.X >= A, TEXT("%s: %s.X: %f is NOT >= %s: %f."), *Context, *VName, V.X, *AName, A);
+				checkf(V.Y >= A, TEXT("%s: %s.Y: %f is NOT >= %s: %f."), *Context, *VName, V.Y, *AName, A);
+				checkf(V.Z >= A, TEXT("%s: %s.Z: %f is NOT >= %s: %f."), *Context, *VName, V.Z, *AName, A);
+				return true;
+			}
+
+			FORCEINLINE static bool ComponentsGreaterThanOrEqual(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (V.X < A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.X: %f is NOT >= %s: %f."), *Context, *VName, V.X, *AName, A));
+					return false;
+				}
+				if (V.Y < A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Y: %f is NOT >= %s: %f."), *Context, *VName, V.Y, *AName, A));
+					return false;
+				}
+				if (V.Z < A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Z: %f is NOT >= %s: %f."), *Context, *VName, V.Z, *AName, A));
+					return false;
+				}
+				return true;
+			}
 		};
 	}
 
@@ -542,9 +604,47 @@ namespace NCsValid
 			}
 
 			template<typename ValueType>
+			FORCEINLINE static bool SizeChecked(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size)
+			{
+				checkf(Array.Num() == Size, TEXT("%s: %s.Num(): %d != %d."), *Context, *ArrayName, Array.Num(), Size);
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool Size(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size, void(*Log)(const FString&))
+			{
+				if (Array.Num() != Size)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Num(): %d != %d."), *Context, *ArrayName, Array.Num(), Size));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool GreaterThanOrEqualSizeChecked(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size)
+			{
+				checkf(Array.Num() >= Size, TEXT("%s: %s.Num(): %d < %d."), *Context, *ArrayName, Array.Num(), Size);
+				return true;
+			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool GreaterThanOrEqualSize(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size, void(*Log)(const FString&))
+			{
+				if (Array.Num() < Size)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s.Num(): %d < %d."), *Context, *ArrayName, Array.Num(), Size));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ValueType>
 			FORCEINLINE static bool LessThanOrEqualSizeChecked(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const int32& Size)
 			{
-				checkf(Array.Num() <= Size, TEXT("%s: %s.Num() > %d."), *Context, *ArrayName, Size);
+				checkf(Array.Num() <= Size, TEXT("%s: %s.Num(): %d > %d."), *Context, *ArrayName, Array.Num(), Size);
 				return true;
 			}
 
@@ -554,7 +654,7 @@ namespace NCsValid
 				if (Array.Num() > Size)
 				{
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s.Num() > %d."), *Context, *ArrayName, Size));
+						Log(FString::Printf(TEXT("%s: %s.Num(): %d > %d."), *Context, *ArrayName, Array.Num(), Size));
 					return false;
 				}
 				return true;
@@ -1434,6 +1534,20 @@ namespace NCsValid
 		static const FString __temp__str__ = #__V; \
 		check(NCsValid::NVector::FLibrary::IsZeroChecked(Context, __V, __temp__str__)); \
 	}
+// Assume const FString& Context has been defined
+#define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_CHECKED(__V, __A) \
+	{ \
+		static const FString __temp__str__v = #__V; \
+		static const FString __temp__str__a = #__A; \
+		check(NCsValid::NVector::FLibrary::ComponentsGreaterThanChecked(Context, __V, __temp__str__v, __A, __temp__str__a)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_OR_EQUAL_CHECKED(__V, __A) \
+	{ \
+		static const FString __temp__str__v = #__V; \
+		static const FString __temp__str__a = #__A; \
+		check(NCsValid::NVector::FLibrary::ComponentsGreaterThanOrEqualChecked(Context, __V, __temp__str__v, __A, __temp__str__a)); \
+	}
 
 #pragma endregion FVector
 
@@ -1445,6 +1559,18 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Array; \
 		check(NCsValid::NArray::FLibrary::EmptyChecked<__ValueType>(Context, __Array, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_SIZE_CHECKED(__Array, __ValueType, __Size) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::SizeChecked<__ValueType>(Context, __Array, __temp__str__, __Size)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_IS_ARRAY_GREATER_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		check(NCsValid::NArray::FLibrary::GreaterThanOrEqualSizeChecked<__ValueType>(Context, __Array, __temp__str__, __Size)); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size) \
@@ -1695,8 +1821,12 @@ namespace NCsValid
 #define CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(__EnumMapType, __EnumType, __Set)
 // FVector
 #define CS_IS_VECTOR_ZERO_CHECKED(__V)
+#define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_CHECKED(__V, __A)
+#define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_OR_EQUAL_CHECKED(__V, __A)
 // Array
 #define CS_IS_ARRAY_EMPTY_CHECKED(__Array, __ValueType)
+#define CS_IS_ARRAY_SIZE_CHECKED(__Array, __ValueType, __Size)
+#define CS_IS_ARRAY_GREATER_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
 #define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __Size)
 #define CS_IS_ARRAY_ANY_NULL_CHECKED(__Array, __ValueType)
 #define CS_IS_ARRAY_ANY_NONE_CHECKED(__Array)
@@ -2164,6 +2294,20 @@ namespace NCsValid
 		static const FString __temp__str__ = #__V; \
 		if (!NCsValid::NVector::FLibrary::IsZero(Context, __V, __temp__str__, Log)) { return false; } \
 	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VECTOR_COMPONENTS_GREATER_THAN(__V, __A) \
+	{ \
+		static const FString __temp__str__v = #__V; \
+		static const FString __temp__str__a = #__A; \
+		if (!NCsValid::NVector::FLibrary::ComponentsGreaterThan(Context, __V, __temp__str__v, __A, __temp__str__a, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_OR_EQUAL(__V, __A) \
+	{ \
+		static const FString __temp__str__v = #__V; \
+		static const FString __temp__str__a = #__A; \
+		if (!NCsValid::NVector::FLibrary::ComponentsGreaterThanOrEqual(Context, __V, __temp__str__v, __A, __temp__str__a, Log)) { return false; } \
+	}
 
 #pragma endregion FVector
 
@@ -2181,6 +2325,18 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Array; \
 		if (!NCsValid::NArray::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ARRAY_SIZE(__Array, __ValueType, __Size) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::Size<__ValueType>(Context, __Array, __temp__str__, __Size, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_ARRAY_GREATER_THAN_OR_EQUAL_SIZE(__Array, __ValueType, __Size) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::GreaterThanOrEqualSize<__ValueType>(Context, __Array, __temp__str__, __Size, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(__Array, __ValueType, __Size) \

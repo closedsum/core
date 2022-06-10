@@ -432,7 +432,7 @@ public:
 
 	public:
 
-		struct FLaunchParams
+		struct FLaunchPayload
 		{
 		public:
 
@@ -442,30 +442,69 @@ public:
 			{
 			public:
 
+				bool bOffset;
 				FVector Offset;
 
+				bool bYaw;
 				float Yaw;
 
+				bool bPitch;
 				float Pitch;
 
 				FSpread() :
+					bOffset(false),
 					Offset(0.0f),
+					bYaw(false),
 					Yaw(0.0f),
+					bPitch(false),
 					Pitch(0.0f)
 				{
+				}
+
+				FORCEINLINE bool HasOffset() const { return bOffset; }
+				
+				FORCEINLINE void SetOffset(const FVector& Value)
+				{
+					if (Value != FVector::ZeroVector)
+					{
+						Offset = Value;
+						bOffset = true;
+					}
+				}
+
+				FORCEINLINE bool HasYaw() const { return bYaw; }
+
+				FORCEINLINE void SetYaw(const float& Value)
+				{
+					if (Value != 0.0f)
+					{
+						Yaw = Value;
+						bYaw = true;
+					}
+				}
+
+				FORCEINLINE bool HasPitch() const { return bPitch; }
+
+				FORCEINLINE void SetPitch(const float& Value)
+				{
+					if (Value != 0.0f)
+					{
+						Pitch = Value;
+						bPitch = true;
+					}
 				}
 			};
 
 			FSpread Spread;
 
-			FLaunchParams() :
+			FLaunchPayload() :
 				bSpread(false),
 				Spread()
 			{
 			}
 		};
 
-	#define ParamsType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchParams
+	#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
 
 	protected:
 
@@ -479,37 +518,20 @@ public:
 		* @param Payload	The payload to set.
 		* return			Whether the payload was successfully set.
 		*/
-		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload, const ParamsType& Params);
+		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload);
 
-		/**
-		* Copy the slice of values from From to To with checks.
-		* Currently supports To types of:
-		*  NCsPooledObject::NPayload::FImplSlice (NCsPooledObject::NPayload::IPayload)
-		*  NCsProjectile::NPayload::FImplSlice (NCsProjectile::NPayload::IPayload)
-		*
-		* @param Context	The calling context.
-		* @param From		What to copy.
-		* @param To			What to copy to.
-		* return			Whether the From copied to To successfully.
-		*/
-		virtual bool CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To);
-		/*
-		virtual FVector GetLaunchLocation(const ParamsType& Params);
+		virtual FVector GetLaunchLocation(const LaunchPayloadType& LaunchPayload);
 
-		virtual FVector GetLaunchDirection(const ParamsType& Params);
-		*/
-		virtual FVector GetLaunchLocation();
-
-		virtual FVector GetLaunchDirection();
+		virtual FVector GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
 
 	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);
 	#undef LaunchParamsType
 
 	
-		void Launch(const ParamsType& Params);
+		void Launch(const LaunchPayloadType& LaunchPayload);
 
-	#undef ParamsType
+	#undef LaunchPayloadType
 	};
 
 	FProjectileImpl* ProjectileImpl;
@@ -637,9 +659,11 @@ public:
 
 	protected:
 
+#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
+
 		/**
 		*/
-		void Play();
+		void Play(const LaunchPayloadType& LaunchPayload);
 	
 	public:
 
@@ -649,7 +673,9 @@ public:
 		* @param Payload
 		* @param FX
 		*/
-		void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
+		void SetPayload(FXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload);
+
+#undef LaunchPayloadType
 
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 		/**

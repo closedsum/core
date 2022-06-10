@@ -15,15 +15,21 @@
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+	// Data
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Projectile.h"
+	// Payload
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
+	// Params
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
+	// Modifier
 #include "Modifier/CsLibrary_WeaponModifier.h"
+	// Common
 #include "Library/CsLibrary_Camera.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -731,8 +737,12 @@ void ACsProjectileWeaponActorPooled::Fire()
 	int32 ProjectilesPerShot = GetProjectilesPerShot();
 	Payload->SetValue_Int(PROJECTILES_PER_SHOT, ProjectilesPerShot);
 
-
 	Payload->SetValue_Float(CS_FIRST, GetTimeBetweenProjectilesPerShot());
+
+	static const int32 SPREAD_SHAPE_RANDOM = 0;
+	Payload->SetValue_Flag(SPREAD_SHAPE_RANDOM, false);
+	static const int32 SPREAD_YAW_RANDOM = 1;
+	Payload->SetValue_Flag(SPREAD_YAW_RANDOM, false);
 
 	// Spread
 	if (UseSpreadParams())
@@ -744,18 +754,33 @@ void ACsProjectileWeaponActorPooled::Fire()
 		CS_IS_VALID_CHECKED(SpreadParams);
 
 		typedef NCsWeapon::NProjectile::NSpread::NAngle::FParams SpreadAngleParamsType;
-		typedef NCsWeapon::NProjectile::NSpread::EDistribution DistributionType;
 		typedef NCsWeapon::NProjectile::NSpread::NVariables::FResource SpreadVariablesResourceType;
 		typedef NCsWeapon::NProjectile::NSpread::NVariables::FVariables SpreadVariablesType;
 
 		SpreadVariablesResourceType* Resource = nullptr;
 
+		// Shape
+		if (SpreadParams.GetbShape())
+		{
+			typedef NCsWeapon::NProjectile::NSpread::NShape::FParams SpreadShapeParamsType;
+
+			const SpreadShapeParamsType& ShapeParams = SpreadParams.GetShapeParams();
+
+			if (ShapeParams.ShouldPrecalculate())
+			{
+				// TODO:
+			}
+			else
+			{
+				Payload->SetValue_Flag(SPREAD_SHAPE_RANDOM, true);
+			}
+		}
 		// Yaw
+		if (SpreadParams.GetbYaw())
 		{
 			const SpreadAngleParamsType& YawParams = SpreadParams.GetYawParams();
-			const DistributionType& Distribution   = YawParams.GetDistribution();
 
-			if (NCsWeapon::NProjectile::NSpread::NDistribution::ShouldPrecalculate(Distribution))
+			if (YawParams.ShouldPrecalculate())
 			{
 				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 				
@@ -763,7 +788,11 @@ void ACsProjectileWeaponActorPooled::Fire()
 				SpreadVariablesType* Variables = Resource->Get();
 
 				Variables->SetSizeAndAddDefaulted(ProjectilesPerShot);
-
+				YawParams.SetAnglesChecked(Context, ProjectilesPerShot, Variables->Yaws);
+			}
+			else
+			{
+				Payload->SetValue_Flag(SPREAD_YAW_RANDOM, true);
 			}
 		}
 		// TODO: Pitch
@@ -787,6 +816,8 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached;
 
+	const FString& Context = Str::Fire_Internal;
+
 	// bInfiniteAmmo
 	const bool& bInfiniteAmmo = R->GetValue_Flag(CS_FIRST);
 	// ProjectilesPerShot
@@ -806,8 +837,14 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	SpreadVariablesResourceType* SpreadVariablesResource = R->GetValue_Void<SpreadVariablesResourceType>(SPREAD_VARIABLES_RESOURCE);
 	SpreadVariablesType* SpreadVariables = SpreadVariablesResource ? SpreadVariablesResource->Get() : nullptr;
 
-	static const int32 SPREAD_INDEX = 1;
+	static const int32 SPREAD_INDEX = 2;
 	int32& SpreadIndex = R->GetValue_Int(SPREAD_INDEX);
+		// Shape
+	static const int32 SPREAD_SHAPE_RANDOM = 0;
+	const bool& IsSpreadShapeRandom = R->GetValue_Flag(SPREAD_SHAPE_RANDOM);
+		// Yaw
+	static const int32 SPREAD_YAW_RANDOM = 1;
+	const bool& IsSpreadYawRandom = R->GetValue_Flag(SPREAD_YAW_RANDOM);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -828,21 +865,45 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 				ConsumeAmmo();
 
 			{
-				typedef ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchParams ParamsType;
+				typedef ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload LaunchPayloadType;
 
-				ParamsType Params;
+				LaunchPayloadType LaunchPayload;
 				// Spread
 				if (SpreadVariables)
 				{
-					Params.bSpread		 = true;
-					Params.Spread.Offset = SpreadVariables->Locations[SpreadIndex];
-					Params.Spread.Yaw	 = SpreadVariables->Yaws[SpreadIndex];
-					Params.Spread.Pitch  = SpreadVariables->Pitches[SpreadIndex];
+					LaunchPayload.bSpread = true;
+					LaunchPayload.Spread.SetOffset(SpreadVariables->Offsets[SpreadIndex]);
+					LaunchPayload.Spread.SetYaw(SpreadVariables->Yaws[SpreadIndex]);
+					LaunchPayload.Spread.SetPitch(SpreadVariables->Pitches[SpreadIndex]);
 				}
-				ProjectileImpl->Launch(Params);
+					// Shape
+				if (IsSpreadShapeRandom)
+				{
+					typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
+
+					LaunchPayload.bSpread = true;
+
+					const SpreadParamsType& SpreadParams = PrjWeaponData->GetSpreadParams();
+
+					LaunchPayload.Spread.SetOffset(SpreadParams.GetShapeParams().GetRandomOffsetChecked(Context));
+				}
+					// Yaw
+				if (IsSpreadYawRandom)
+				{
+					typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
+
+					LaunchPayload.bSpread = true;
+
+					const SpreadParamsType& SpreadParams = PrjWeaponData->GetSpreadParams();
+
+					LaunchPayload.Spread.SetYaw(SpreadParams.GetYawParams().GetRandomAngleChecked(Context));
+				}
+					// TODO: Pitch
+
+				ProjectileImpl->Launch(LaunchPayload);
+				SoundImpl->Play();
+				FXImpl->Play(LaunchPayload);
 			}
-			SoundImpl->Play();
-			FXImpl->Play();
 
 			// Increment the shot index
 			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, ProjectilesPerShot);
@@ -858,6 +919,14 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
 		}
 	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
+
+	if (SpreadVariables)
+	{
+		typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+		WeaponManagerLibrary::DeallocateSpreadVariables(Context, this, SpreadVariablesResource);
+	}
+	FireHandles.Remove(R->GetHandle());
 
 	CS_COROUTINE_END(R);
 }
@@ -1047,9 +1116,9 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
 }
 
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
-#define ParamsType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchParams
+#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
 
-bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload, const ParamsType& Params)
+bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload)
 {
 	bool Result = true;
 
@@ -1071,8 +1140,8 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 
 		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
 		Slice->Type		 = Outer->GetProjectileType();
-		Slice->Location  = GetLaunchLocation();
-		Slice->Direction = GetLaunchDirection();
+		Slice->Location  = GetLaunchLocation(LaunchPayload);
+		Slice->Direction = GetLaunchDirection(LaunchPayload);
 	}
 	// Projectile Modifiers
 	{
@@ -1094,14 +1163,9 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 	return Result;
 }
 
-bool ACsProjectileWeaponActorPooled::FProjectileImpl::CopyPayload(const FString& Context, const ProjectilePayloadType* From, ProjectilePayloadType* To)
-{
-	return NCsProjectile::NPayload::FLibrary::CopyChecked(Context, From, To);
-}
-
 #undef ProjectilePayloadType
 
-FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation()
+FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const LaunchPayloadType& LaunchPayload)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached::NProjectileImpl;
 
@@ -1159,13 +1223,32 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation()
 	// Custom
 	if (LocationType == ELocation::Custom)
 	{
-		return CustomLaunchLocation;
+		FVector Location = CustomLaunchLocation;
+
+		// TODO: Get the Launch Direction properly
+		
+		// TEMP: Just assume DirectionType is Custom
+
+		const EDirection& DirectionType = LaunchParams->GetDirectionType();
+
+		if (DirectionType == EDirection::Custom)
+		{
+			if (LaunchPayload.bSpread &&
+				LaunchPayload.Spread.HasOffset())
+			{
+				typedef NCsMath::FLibrary MathLibrary;
+
+				Location += LaunchPayload.Spread.Offset.X * MathLibrary::GetRightFromNormal(CustomLaunchDirection);
+				Location += LaunchPayload.Spread.Offset.Y * FVector::UpVector;
+			}
+		}
+		return Location;
 	}
 	checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	return FVector::ZeroVector;
 }
 
-FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection()
+FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(const LaunchPayloadType& LaunchPayload)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached::NProjectileImpl;
 
@@ -1274,7 +1357,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection()
 		// LaunchLocation
 		if (TraceStart == ETraceStart::LaunchLocation)
 		{
-			Start = GetLaunchLocation();
+			Start = GetLaunchLocation(LaunchPayload);
 		}
 		// Owner
 		else
@@ -1410,7 +1493,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection()
 			LookAtLocation = Start + Distance * Dir;
 		}
 
-		const FVector LaunchLocation  = GetLaunchLocation();
+		const FVector LaunchLocation  = GetLaunchLocation(LaunchPayload);
 		const FVector LaunchDirection = (LookAtLocation - LaunchLocation).GetSafeNormal();
 
 		// Check the direction is in FRONT of the Start. The trace could produce a result BEHIND the start
@@ -1426,9 +1509,13 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection()
 	}
 	// Custom
 	if (DirectionType == EDirection::Custom)
-	{
-		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, CustomLaunchDirection));
-		return CustomLaunchDirection;
+	{		
+		const FVector Direction = LaunchPayload.bSpread && LaunchPayload.Spread.HasYaw() ? CustomLaunchDirection.RotateAngleAxis(LaunchPayload.Spread.Yaw, FVector::UpVector) : CustomLaunchDirection;
+
+		// TODO: Include Pitch
+
+		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Direction));
+		return Direction;
 	}
 	CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, FVector::ZeroVector));
 	return FVector::ZeroVector;
@@ -1455,7 +1542,7 @@ void ACsProjectileWeaponActorPooled::FProjectileImpl::Log_GetLaunchDirection(con
 	}
 }
 
-void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const ParamsType& Params)
+void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const LaunchPayloadType& LaunchPayload)
 {
 	CS_SCOPED_TIMER(LaunchScopedHandle);
 
@@ -1470,32 +1557,18 @@ void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const ParamsType& P
 
 	// Get Payload
 	const FECsProjectile& PrjType = Outer->GetProjectileType();
-
-	PayloadType* Payload1 = Manager_Projectile->AllocatePayload(PrjType);
+	PayloadType* Payload		  = Manager_Projectile->AllocatePayload(PrjType);
 
 	// Set appropriate members on Payload
-	const bool SetSuccess = SetPayload(Context, Payload1, Params);
+	const bool SetSuccess = SetPayload(Context, Payload, LaunchPayload);
 
-	checkf(SetSuccess, TEXT("%s: Failed to set Payload1."), *Context);
-
-	// Cache copy of Payload for Launch
-	PayloadType* Payload2 = Manager_Projectile->AllocatePayload(PrjType);
-
-	const bool CopySuccess = CopyPayload(Context, Payload1, Payload2);
-
-	checkf(CopySuccess, TEXT("%s: Failed to copy Payload1 to Payload2."), *Context);
+	checkf(SetSuccess, TEXT("%s: Failed to set Payload."), *Context);
 
 	// Spawn
-	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(PrjType, Payload1);
-
-	// Release payload so it returns to the pool
-	typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-
-	PooledPayloadType* ObjectPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Context, Payload2);
-	ObjectPayload->Reset();
+	const FCsProjectilePooled* ProjectilePooled = Manager_Projectile->Spawn(PrjType, Payload);
 }
 
-#undef ParamsType
+#undef LaunchPayloadType
 
 ACsProjectileWeaponActorPooled::FProjectileImpl* ACsProjectileWeaponActorPooled::ConstructProjectileImpl()
 {
@@ -1586,7 +1659,9 @@ ACsProjectileWeaponActorPooled::FSoundImpl* ACsProjectileWeaponActorPooled::Cons
 	// FX
 #pragma region
 
-void ACsProjectileWeaponActorPooled::FFXImpl::Play()
+#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
+
+void ACsProjectileWeaponActorPooled::FFXImpl::Play(const LaunchPayloadType& LaunchPayload)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached::NFXImpl;
 
@@ -1614,7 +1689,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play()
 
 		PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 		// Set appropriate values on payload
-		SetPayload(Payload, FX);
+		SetPayload(Payload, FX, LaunchPayload);
 		SetPayload(Payload, FXData);
 
 		Manager_FX->Spawn(FX.Type, Payload);
@@ -1622,7 +1697,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play()
 }
 
 #define FXPayloadType NCsFX::NPayload::IPayload
-void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX)
+void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload)
 {
 #undef FXPayloadType
 
@@ -1661,10 +1736,10 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload,
 	// None
 	if (Type == AttachType::None)
 	{
-		const FVector Location = Outer->ProjectileImpl->GetLaunchLocation();
+		const FVector Location = Outer->ProjectileImpl->GetLaunchLocation(LaunchPayload);
 		PayloadImpl->Transform.SetTranslation(Location);
 
-		const FVector Direction = Outer->ProjectileImpl->GetLaunchDirection();
+		const FVector Direction = Outer->ProjectileImpl->GetLaunchDirection(LaunchPayload);
 		FQuat Rotation			= FX.Transform.GetRotation();
 		PayloadImpl->Transform.SetRotation(Direction.ToOrientationQuat() * Rotation);
 	}
@@ -1686,6 +1761,8 @@ void ACsProjectileWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload,
 		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
 	}
 }
+
+#undef LaunchPayloadType
 
 #define FXPayloadType NCsFX::NPayload::IPayload
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire

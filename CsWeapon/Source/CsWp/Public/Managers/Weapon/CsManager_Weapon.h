@@ -952,14 +952,16 @@ private:
 #define SpreadVariablesManagerType NCsWeapon::NProjectile::NSpread::NVariables::FManager
 #define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
 
-	SpreadVariablesManagerType SpreadVariablesManagers;
+	SpreadVariablesManagerType SpreadVariablesManager;
+
+	void SetupSpreadVariables();
 
 public:
 	
-	FORCEINLINE SpreadVariablesResourceType* AllocateSpreadVariables() { return SpreadVariablesManagers.Allocate(); }
+	FORCEINLINE SpreadVariablesResourceType* AllocateSpreadVariables() { return SpreadVariablesManager.Allocate(); }
 
-	FORCEINLINE void DeallocateSpreadVariables(SpreadVariablesResourceType* Resource) { SpreadVariablesManagers.Deallocate(Resource); }
-	FORCEINLINE void DeallocateSpreadVariables(const int32& Index) { SpreadVariablesManagers.DeallocateAt(Index); }
+	FORCEINLINE void DeallocateSpreadVariables(SpreadVariablesResourceType* Resource) { SpreadVariablesManager.Deallocate(Resource); }
+	FORCEINLINE void DeallocateSpreadVariables(const int32& Index) { SpreadVariablesManager.DeallocateAt(Index); }
 
 #undef SpreadVariablesManagerType
 #undef SpreadVariablesResourceType

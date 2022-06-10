@@ -59,9 +59,41 @@ public:
 	}
 
 	static const FCsSettings_Manager_Weapon_Modifiers& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
 
 #pragma endregion FCsSettings_Manager_Weapon_Modifiers
+
+// FCsSettings_Manager_Weapon_Spread
+#pragma region
+
+/** 
+* Describes any settings related to Weapon Spread.
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsSettings_Manager_Weapon_Spread
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	int32 PoolSize;
+
+	FCsSettings_Manager_Weapon_Spread() :
+		PoolSize(256)
+	{
+	}
+
+	static const FCsSettings_Manager_Weapon_Spread& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
+
+#pragma endregion FCsSettings_Manager_Weapon_Spread
 
 // FCsSettings_Manager_Weapon
 #pragma region
@@ -99,14 +131,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FCsSettings_Manager_Weapon_Modifiers Modifiers;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsSettings_Manager_Weapon_Spread Spread;
+
 	FCsSettings_Manager_Weapon() :
 		TypeMap(),
 		PoolParams(),
-		Modifiers()
+		Modifiers(),
+		Spread()
 	{
 	}
 
 	static const FCsSettings_Manager_Weapon& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
 
 #pragma endregion FCsSettings_Manager_Weapon

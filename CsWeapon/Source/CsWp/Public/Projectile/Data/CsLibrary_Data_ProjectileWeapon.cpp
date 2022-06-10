@@ -31,12 +31,10 @@ namespace NCsWeapon
 				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
 				if (Data->GetProjectilesPerShot() > 1)
 				{
-					checkf(Data->GetTimeBetweenProjectilesPerShot() > 0.0f, TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context);
+					checkf(Data->GetTimeBetweenProjectilesPerShot() >= 0.0f, TEXT("%s: TimeBetweenProjectilesPerShot must be >= 0.0f when ProjectilesPerShot > 1."), *Context);
 				}
 				if (Data->UseSpreadParams())
 				{
-					checkf(Data->GetSpreadParams().GetbYaw() || Data->GetSpreadParams().GetbPitch(), TEXT("%s: If UseSpeedParams() is true, then SpeedParams().GetbYaw() or SpeedParams.GetbPitch() must be true."), *Context);
-
 					CS_IS_VALID_CHECKED(Data->GetSpreadParams());
 				}
 				return true;
@@ -58,19 +56,14 @@ namespace NCsWeapon
 				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
 				if (Data->GetProjectilesPerShot() > 1)
 				{
-					if (Data->GetTimeBetweenProjectilesPerShot() <= 0.0f)
+					if (Data->GetTimeBetweenProjectilesPerShot() < 0.0f)
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TimeBetweenProjectilesPerShot must be >= 0.0f when ProjectilesPerShot > 1."), *Context));
 						return false;
 					}
 				}
 				if (Data->UseSpreadParams())
 				{
-					if (!Data->GetSpreadParams().GetbYaw() && !Data->GetSpreadParams().GetbPitch())
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If UseSpeedParams() is true, then SpeedParams().GetbYaw() or SpeedParams.GetbPitch() must be true."), *Context));
-						return false;
-					}
 					CS_IS_VALID(Data->GetSpreadParams())
 				}
 				return true;

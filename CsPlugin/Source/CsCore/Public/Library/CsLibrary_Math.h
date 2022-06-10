@@ -444,6 +444,14 @@ namespace NCsMath
 			return V;
 		}
 
+		FORCEINLINE static FVector GetUpFromNormal(const FVector& N) { return GetUp(N.Rotation()); }
+		FORCEINLINE static FVector GetUp(const FVector& V) { return GetUpFromNormal(V.GetSafeNormal()); }
+
+		FORCEINLINE static FVector GetRightFromNormal(const FVector& N) { return GetRight(N.Rotation()); }
+		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
+
+		FORCEINLINE static FVector RotateNormalAngleUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetUpFromNormal(N)); }
+
 	#pragma endregion Vector
 
 	// Rotator

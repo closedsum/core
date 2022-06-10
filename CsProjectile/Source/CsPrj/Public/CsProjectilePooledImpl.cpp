@@ -668,10 +668,6 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	OnHit_Event.Broadcast(this, Hit);
 }
 
-void ACsProjectilePooledImpl::OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-}
-
 #pragma endregion Collision
 
 // ICsUpdate

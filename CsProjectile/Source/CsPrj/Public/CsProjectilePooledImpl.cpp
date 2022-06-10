@@ -415,6 +415,75 @@ bool ACsProjectilePooledImpl::IsIgnored(UPrimitiveComponent* Component) const
 	return false;
 }
 
+void ACsProjectilePooledImpl::ClearHitObjects()
+{
+	for (TWeakObjectPtr<AActor>& A : IgnoredHitActors)
+	{
+		if (!A.IsValid() || !A.Get())
+			continue;
+
+		int32 Count = IgnoreActors.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			TWeakObjectPtr<AActor>& B = IgnoreActors[I];
+
+			if (B.IsValid() &&
+				A.Get() == B.Get())
+			{
+				IgnoreActors.RemoveAt(I, 1, false);
+			}
+		}
+
+		Count = CollisionComponent->MoveIgnoreActors.Num();
+		
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			AActor* B = CollisionComponent->MoveIgnoreActors[I];
+
+			if (A.Get() == B)
+			{
+				CollisionComponent->MoveIgnoreActors.RemoveAt(I, 1, false);
+			}
+		}
+	}
+
+	IgnoredHitActors.Reset(IgnoredHitActors.Max());
+
+	for (TWeakObjectPtr<UPrimitiveComponent>& A : IgnoredHitComponents)
+	{
+		if (!A.IsValid() || !A.Get())
+			continue;
+
+		int32 Count = IgnoreComponents.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			TWeakObjectPtr<UPrimitiveComponent>& B = IgnoreComponents[I];
+
+			if (B.IsValid() &&
+				A.Get() == B.Get())
+			{
+				IgnoreComponents.RemoveAt(I, 1, false);
+			}
+		}
+
+		Count = CollisionComponent->MoveIgnoreComponents.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			UPrimitiveComponent* B = CollisionComponent->MoveIgnoreComponents[I];
+
+			if (A.Get() == B)
+			{
+				CollisionComponent->MoveIgnoreComponents.RemoveAt(I, 1, false);
+			}
+		}
+	}
+
+	IgnoredHitComponents.Reset(IgnoredHitComponents.Max());
+}
+
 void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	using namespace NCsProjectilePooledImpl::NCached;
@@ -456,6 +525,8 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		UE_LOG(LogCsPrj, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
 	}
 #endif // #if !UE_BUILD_SHIPPING
+
+	ClearHitObjects();
 
 	// Get Physics Surface
 	UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;

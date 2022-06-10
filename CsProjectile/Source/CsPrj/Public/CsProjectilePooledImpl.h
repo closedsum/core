@@ -139,6 +139,12 @@ protected:
 	bool IsIgnored(AActor* Actor) const;
 	bool IsIgnored(UPrimitiveComponent* Component) const;
 
+	TArray<TWeakObjectPtr<AActor>> IgnoredHitActors;
+
+	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoredHitComponents;
+
+	void ClearHitObjects();
+
 public:
 
 	/** Whether to deallocate the projectile on hit (and HitCount <= 0). */

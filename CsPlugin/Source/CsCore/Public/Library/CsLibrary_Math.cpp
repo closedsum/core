@@ -271,5 +271,33 @@ namespace NCsMath
 		return false;
 	}
 
+	bool FLibrary::SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, const FPlane& Plane, const FVector& Normal, const float& InvArea, float& OutT, FVector& OutIntersectPoint, FVector2D& OutUV)
+	{
+		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, Plane, OutT, OutIntersectPoint);
+		if (!Collide)
+		{
+			return false;
+		}
+
+		// Check Triangle ABC
+		FVector BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, B, C, Normal, InvArea);
+		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
+		{
+			ClosestPointOnSegment(OutIntersectPoint, A, B, OutUV.X);
+			ClosestPointOnSegment(OutIntersectPoint, A, D, OutUV.Y);
+			return true;
+		}
+
+		// Check Triangle ADC
+		BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, D, C, Normal, InvArea);
+		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
+		{
+			ClosestPointOnSegment(OutIntersectPoint, A, B, OutUV.X);
+			ClosestPointOnSegment(OutIntersectPoint, A, D, OutUV.Y);
+			return true;
+		}
+		return false;
+	}
+
 	#pragma endregion Intersection
 }

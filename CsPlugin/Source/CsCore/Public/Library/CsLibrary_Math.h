@@ -661,7 +661,62 @@ namespace NCsMath
 		*/
 		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal, FVector2D& OutUV);
 
+		/**
+		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
+		* the Quad defined by A, B, C, and D. If there is an intersection, the point is placed in OutIntersectPoint.
+		* NOTE: FUTURE: Improve
+		*  Quad Layout
+		*
+		*  B ---- C
+		*  |	  |
+		*  |      |
+		*  A ---- D
+		*
+		* @param StartPoint			Start point of segment
+		* @param EndPoint			End point of segment
+		* @param A, B, C, D			Points defining the quad
+		* @param Plane
+		* @param Normal
+		* @param InvArea
+		* @param OutT				(out)
+		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
+		* @param OutUV				(out) Percentage OutIntersectPoint lies in the U (AB) and V (AD).
+		* @return					True if intersection occurred
+		*/
+		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, const FPlane& Plane, const FVector& Normal, const float& InvArea, float& OutT, FVector& OutIntersectPoint, FVector2D& OutUV);
+
 	#pragma endregion Intersection
+
+	// Triangle
+	#pragma region
+	public:
+
+		/**
+		* Computes the barycentric coordinates for a given point in a triangle
+		*
+		* @param	Point			point to convert to barycentric coordinates (in plane of ABC)
+		* @param	A,B,C			three non-collinear points defining a triangle in CCW
+		* @param	Normal			Normal to triangle ABC
+		* @param	InvArea			Twice area of triangle ABC
+		*
+		* @return Vector containing the three weights a,b,c such that Point = a*A + b*B + c*C
+		*		  or Point = A + b*(B-A) + c*(C-A) = (1-b-c)*A + b*B + c*C
+		*/
+		FORCEINLINE static FVector ComputeBaryCentric2D(const FVector& Point, const FVector& A, const FVector& B, const FVector& C, const FVector& Normal, const float& InvArea)
+		{
+			// Compute a contribution
+			const float AreaPBC = Normal | ((B - Point) ^ (C - Point));
+			const float a		= AreaPBC * InvArea;
+
+			// Compute b contribution
+			const float AreaPCA = Normal | ((C - Point) ^ (A - Point));
+			const float b		= AreaPCA * InvArea;
+
+			// Compute c contribution
+			return FVector(a, b, 1.0f - a - b);
+		}
+
+	#pragma endregion Triangle
 
 	// LinearColor
 	#pragma region

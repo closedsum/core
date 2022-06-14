@@ -77,7 +77,9 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);	
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
+			// Modifier
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, ApplyMovementModifiers);
 		}
 
 		namespace ScopedTimer
@@ -105,10 +107,6 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	Super(ObjectInitializer),
 	Type(),
 	State(),
-	// Collision
-	IgnoreActors(),
-	bDeallocateOnHit(true),
-	HitCount(0),
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
@@ -119,6 +117,14 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	Data(nullptr),
 	// Launch
 	bLaunchOnAllocate(true),
+	// Collision
+	IgnoreActors(),
+	IgnoreComponents(),
+	IgnoredHitActors(),
+	IgnoredHitComponents(),
+	bDeallocateOnHit(true),
+	HitCount(0),
+	OnHit_Event(),
 	// FX
 	TrailFXPooled(nullptr),
 	// Damage
@@ -356,6 +362,411 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 	}
 }
 
+// ICsUpdate
+#pragma region
+
+void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
+{
+	CacheImpl->Update(DeltaTime);
+}
+
+#pragma endregion ICsUpdate
+
+// ICsPause
+#pragma region
+
+void ACsProjectilePooledImpl::Pause(bool bPaused)
+{
+	MovementComponent->SetActiveFlag(!bPaused);
+
+	if (bPaused)
+		CollisionComponent->Deactivate();
+	else
+		CollisionComponent->Activate();
+}
+
+#pragma endregion ICsPause
+
+void ACsProjectilePooledImpl::ConstructCache()
+{
+	typedef NCsProjectile::NCache::FImpl CacheImplType;
+
+	CacheImpl = new CacheImplType();
+	Cache	  = CacheImpl;
+}
+
+// ICsPooledObject
+#pragma region
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
+{
+#undef PooledPayloadType
+
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Allocate;
+
+	CS_IS_PTR_NULL_CHECKED(Payload)
+
+	// Set Type
+	typedef NCsProjectile::NPayload::IPayload PayloadType;
+	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
+
+	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
+
+	Type = ProjectilePayload->GetType();
+
+	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Type));
+
+	// Get Data associated with Type
+	// TODO: FUTURE: Add to list of preserved changes
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
+
+	// TODO: Need to determine best place to set LifeTime from Data
+
+	// Set Data on Cache
+	CacheImpl->Allocate(Payload);
+	CacheImpl->SetData(Data);
+	
+	if (bLaunchOnAllocate)
+		Launch(ProjectilePayload);
+
+	OnAllocate_Event.Broadcast(this, Payload);
+	OnAllocate_ScriptEvent.Broadcast(this);
+}
+
+void ACsProjectilePooledImpl::Deallocate()
+{
+	Deallocate_Internal();
+	Cache->Deallocate();
+}
+
+#pragma endregion ICsPooledObject
+
+// PooledObject
+#pragma region
+
+void ACsProjectilePooledImpl::Deallocate_Internal()
+{
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Deallocate_Internal;
+
+	OnDeallocate_Start_Event.Broadcast(this);
+	OnDeallocate_Start_ScriptEvent.Broadcast(this);
+
+	// FX
+	if (TrailFXPooled)
+	{
+		// Deactivate the Trail FX
+		typedef NCsPooledObject::NCache::ICache CacheType;
+
+		CacheType* FXCache = TrailFXPooled->GetCache();
+
+		FXCache->QueueDeallocate();
+
+		TrailFXPooled = nullptr;
+	}
+
+	// Collision
+	IgnoreActors.Reset(IgnoreActors.Max());
+	IgnoreComponents.Reset(IgnoreComponents.Max());
+	IgnoredHitActors.Reset(IgnoredHitActors.Max());
+	IgnoredHitComponents.Reset(IgnoredHitComponents.Max());
+
+	HitCount = 0;
+
+	CollisionComponent->Deactivate();
+	CollisionComponent->MoveIgnoreActors.Reset(CollisionComponent->MoveIgnoreActors.Max());
+	CollisionComponent->MoveIgnoreComponents.Reset(CollisionComponent->MoveIgnoreComponents.Max());
+	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionComponent->SetComponentTickEnabled(false);
+	CollisionComponent->SetGenerateOverlapEvents(false);
+	CollisionComponent->SetNotifyRigidBodyCollision(false);
+	// Movement
+	MovementComponent->StopMovementImmediately();
+	MovementComponent->SetComponentTickEnabled(false);
+	MovementComponent->Deactivate();
+
+	// Deallocate attachments
+
+	// Mesh
+	typedef NCsMaterial::FLibrary MaterialLibrary;
+
+	MaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
+	MeshComponent->SetStaticMesh(nullptr);
+	MeshComponent->SetVisibility(false);
+	MeshComponent->SetHiddenInGame(true);
+	MeshComponent->SetComponentTickEnabled(false);
+	MeshComponent->Deactivate();
+
+	SetActorHiddenInGame(true);
+	SetActorTickEnabled(false);
+	
+	// Modifiers
+	Modifiers.Reset(Modifiers.Max());
+	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
+
+	Cache->Reset();
+}
+
+int32 ACsProjectilePooledImpl::GetCache_Index()
+{
+	return Cache->GetIndex();
+}
+
+#pragma endregion PooledObject
+
+// ICsProjectile
+#pragma region
+
+#define PayloadType NCsProjectile::NPayload::IPayload
+void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
+{
+#undef PayloadType
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Launch;
+
+	CS_IS_PTR_NULL_CHECKED(Payload)
+
+	// Set / Cache any Modifiers from the Payload
+	OnLaunch_SetModifiers(Payload);
+
+	// LifeTime
+	{
+		float LifeTime = Cache->GetLifeTime();
+
+		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
+		typedef NCsProjectile::NModifier::IModifier ModifierType;
+		typedef NCsModifier::NFloat::IFloat FloatModifierType;
+
+		for (AllocatedModifierType& AllocatedModifier : Modifiers)
+		{
+			ModifierType* Modifier							 = AllocatedModifier.Get();
+			ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+			const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
+
+			if (PrjModifierType == NCsProjectileModifier::LifeTime)
+			{
+				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+				LifeTime						 = FloatModifier->Modify(LifeTime);
+			}
+		}
+
+		typedef NCsProjectile::NCache::FLibrary CacheLibrary;
+
+		CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime);
+	}
+
+	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
+
+	SetActorHiddenInGame(false);
+
+	// Real Visible
+	//if (Relevance == ECsProjectileRelevance::RealVisible)
+	{
+		RootComponent = CollisionComponent;
+
+		MovementComponent->UpdatedComponent = CollisionComponent;
+		MovementComponent->Activate();
+		MovementComponent->SetComponentTickEnabled(true);
+	}
+	
+	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+
+	// VisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
+	{
+		typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
+
+		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		{
+			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
+
+			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+			UStaticMesh* Mesh = VisualData->GetStaticMesh().Mesh.GetChecked(Context);
+
+			MeshComponent->SetStaticMesh(Mesh);
+			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
+			MeshComponent->Activate();
+			MeshComponent->SetVisibility(true);
+			MeshComponent->SetHiddenInGame(false);
+			MeshComponent->SetComponentTickEnabled(true);
+		}
+	}
+
+	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;// Data_Projectile->GetMovementType();
+
+	// Simulated
+	if (MovementType == ECsProjectileMovement::Simulated)
+	{
+		const FVector& Direction = Payload->GetDirection();
+		FRotator Rotation		 = Direction.Rotation();
+
+		TeleportTo(Payload->GetLocation(), Rotation, false, true);
+	}
+
+	// Trail FX
+	{
+		const FString& ScopeName		   = ScopedTimer::SetTrailVisual;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetTrailVisual;
+
+		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+		
+		typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
+
+		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		{
+			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+			PayloadImplType PayloadImpl;
+			PayloadImpl.Owner  = this;
+
+			if (MeshComponent->GetStaticMesh())
+				PayloadImpl.Parent = MeshComponent;
+			else
+				PayloadImpl.Parent = CollisionComponent;
+
+			const FCsFX& TrailFX = VisualData->GetTrailFX();
+
+			TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, this, &PayloadImpl, TrailFX));
+		}
+	}
+
+	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
+	{
+		const FString& ScopeName		   = ScopedTimer::SetCollision;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetCollision;
+
+		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+
+		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		{
+			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
+
+			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
+			{
+				typedef NCsProjectile::NPayload::FLibrary ProjectilePayloadLibrary;
+				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
+
+				PooledPayloadType* PooledPayload = ProjectilePayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
+
+				// Instigator
+				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
+					IgnoreActors.Add(Actor);
+				// Owner
+				if (AActor* Actor = Cast<AActor>(PooledPayload->GetOwner()))
+					IgnoreActors.Add(Actor);
+				// Parent
+				if (AActor* Actor = Cast<AActor>(PooledPayload->GetParent()))
+					IgnoreActors.Add(Actor);
+
+				const int32 Count = IgnoreActors.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					AActor* Actor = IgnoreActors[I].IsValid() ? IgnoreActors[I].Get() : nullptr;
+
+					if (!Actor)
+						continue;
+
+					CollisionComponent->MoveIgnoreActors.Add(Actor);
+				}
+
+				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
+				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
+				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
+
+				CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
+				CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
+
+				CollisionComponent->Activate();
+				CollisionComponent->SetComponentTickEnabled(true);
+
+				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
+			}
+
+			HitCount = CollisionData->GetHitCount();
+			// TODO: Move to Data
+			MovementComponent->bHandleDeflection = false;
+		}
+	}
+	
+	SetActorTickEnabled(true);
+
+	// Simulated
+	if (MovementType == ECsProjectileMovement::Simulated)
+	{
+		ApplyMovementModifiers(Context, Payload->GetDirection());
+	}
+}
+
+UObject* ACsProjectilePooledImpl::GetOwner() const
+{
+	return Cache->GetOwner();
+}
+
+UObject* ACsProjectilePooledImpl::GetInstigator() const
+{
+	return Cache->GetInstigator();
+}
+
+#pragma endregion ICsProjectile
+
+// Projectile
+#pragma region
+
+UObject* ACsProjectilePooledImpl::GetDataAsObject()
+{
+	return Data->_getUObject();
+}
+
+#pragma endregion Projectile
+
+// Launch
+#pragma region
+
+#define PayloadType NCsProjectile::NPayload::IPayload
+void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
+{
+#undef PayloadType
+
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::OnLaunch_SetModifiers;
+
+	// ModifierPayloadType (NCsProjectile::NPayload::NModifier::IModifier)
+	{
+		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
+		typedef NCsProjectile::NPayload::NModifier::IModifier ModifierPayloadType;
+
+		if (ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
+		{
+			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+			typedef NCsProjectile::NModifier::IModifier ModifierType;
+
+			PrjManagerLibrary::CreateCopyOfModifiersChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
+
+			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+			ModifierLibrary::GetDamageModifiersChecked(Context, Modifiers, DamageImpl.Modifiers);
+		}
+	}
+}
+
+#pragma endregion Launch
+
 // Collision
 #pragma region
 
@@ -413,6 +824,16 @@ bool ACsProjectilePooledImpl::IsIgnored(UPrimitiveComponent* Component) const
 			return true;
 	}
 	return false;
+}
+
+void ACsProjectilePooledImpl::AddIgnoredHitActor(AActor* Actor)
+{
+	IgnoredHitActors.Add(Actor);
+}
+
+void ACsProjectilePooledImpl::AddIgnoredHitComponent(UPrimitiveComponent* Component)
+{
+	IgnoredHitComponents.Add(Component);
 }
 
 void ACsProjectilePooledImpl::ClearHitObjects()
@@ -646,12 +1067,14 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			// Actor
 			if (OtherActor)
 			{
+				AddIgnoredHitActor(OtherActor);
 				AddIgnoreActor(OtherActor);
 				CollisionComponent->MoveIgnoreActors.Add(OtherActor);
 			}
 			// Component
 			if (OtherComp)
 			{
+				AddIgnoredHitComponent(OtherComp);
 				AddIgnoreComponent(OtherComp);
 				CollisionComponent->MoveIgnoreComponents.Add(OtherComp);
 			}
@@ -670,443 +1093,50 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 #pragma endregion Collision
 
-// ICsUpdate
+// Modifier
 #pragma region
 
-void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
+void ACsProjectilePooledImpl::ApplyMovementModifiers(const FString& Context, const FVector& Direction)
 {
-	CacheImpl->Update(DeltaTime);
-}
+	float InitialSpeed = Data->GetInitialSpeed();
+	float MaxSpeed	   = Data->GetMaxSpeed();
 
-#pragma endregion ICsUpdate
+	// Check to apply any Movement Modifiers
+	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+	typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
+	typedef NCsProjectile::NModifier::IModifier ModifierType;
+	typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-// ICsPause
-#pragma region
-
-void ACsProjectilePooledImpl::Pause(bool bPaused)
-{
-	MovementComponent->SetActiveFlag(!bPaused);
-
-	if (bPaused)
-		CollisionComponent->Deactivate();
-	else
-		CollisionComponent->Activate();
-}
-
-#pragma endregion ICsPause
-
-void ACsProjectilePooledImpl::ConstructCache()
-{
-	typedef NCsProjectile::NCache::FImpl CacheImplType;
-
-	CacheImpl = new CacheImplType();
-	Cache	  = CacheImpl;
-}
-
-// ICsPooledObject
-#pragma region
-
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
-{
-#undef PooledPayloadType
-
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::Allocate;
-
-	CS_IS_PTR_NULL_CHECKED(Payload)
-
-	// Set Type
-	typedef NCsProjectile::NPayload::IPayload PayloadType;
-	typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
-
-	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
-
-	Type = ProjectilePayload->GetType();
-
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Type));
-
-	// Get Data associated with Type
-	// TODO: FUTURE: Add to list of preserved changes
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
-
-	// TODO: Need to determine best place to set LifeTime from Data
-
-	// Set Data on Cache
-	CacheImpl->Allocate(Payload);
-	CacheImpl->SetData(Data);
-	
-	if (bLaunchOnAllocate)
-		Launch(ProjectilePayload);
-
-	OnAllocate_Event.Broadcast(this, Payload);
-	OnAllocate_ScriptEvent.Broadcast(this);
-}
-
-void ACsProjectilePooledImpl::Deallocate()
-{
-	Deallocate_Internal();
-	Cache->Deallocate();
-}
-
-#pragma endregion ICsPooledObject
-
-// PooledObject
-#pragma region
-
-void ACsProjectilePooledImpl::Deallocate_Internal()
-{
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::Deallocate_Internal;
-
-	OnDeallocate_Start_Event.Broadcast(this);
-	OnDeallocate_Start_ScriptEvent.Broadcast(this);
-
-	// FX
-	if (TrailFXPooled)
+	for (AllocatedModifierType& AllocatedModifier : Modifiers)
 	{
-		// Deactivate the Trail FX
-		typedef NCsPooledObject::NCache::ICache CacheType;
-
-		CacheType* FXCache = TrailFXPooled->GetCache();
-
-		FXCache->QueueDeallocate();
-
-		TrailFXPooled = nullptr;
-	}
-
-	// Collision
-	IgnoreActors.Reset(IgnoreActors.Max());
-	IgnoreComponents.Reset(IgnoreComponents.Max());
-
-	HitCount = 0;
-
-	CollisionComponent->Deactivate();
-	CollisionComponent->MoveIgnoreActors.Reset(CollisionComponent->MoveIgnoreActors.Max());
-	CollisionComponent->MoveIgnoreComponents.Reset(CollisionComponent->MoveIgnoreComponents.Max());
-	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CollisionComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-	CollisionComponent->SetComponentTickEnabled(false);
-	CollisionComponent->SetGenerateOverlapEvents(false);
-	CollisionComponent->SetNotifyRigidBodyCollision(false);
-	// Movement
-	MovementComponent->StopMovementImmediately();
-	MovementComponent->SetComponentTickEnabled(false);
-	MovementComponent->Deactivate();
-
-	// Deallocate attachments
-
-	// Mesh
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
-	MaterialLibrary::ClearOverrideChecked(Context, MeshComponent);
-	MeshComponent->SetStaticMesh(nullptr);
-	MeshComponent->SetVisibility(false);
-	MeshComponent->SetHiddenInGame(true);
-	MeshComponent->SetComponentTickEnabled(false);
-	MeshComponent->Deactivate();
-
-	SetActorHiddenInGame(true);
-	SetActorTickEnabled(false);
-	
-	// Modifiers
-	Modifiers.Reset(Modifiers.Max());
-	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
-
-	Cache->Reset();
-}
-
-int32 ACsProjectilePooledImpl::GetCache_Index()
-{
-	return Cache->GetIndex();
-}
-
-#pragma endregion PooledObject
-
-// ICsProjectile
-#pragma region
-
-#define PayloadType NCsProjectile::NPayload::IPayload
-void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
-{
-#undef PayloadType
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::Launch;
-
-	CS_IS_PTR_NULL_CHECKED(Payload)
-
-	// Set / Cache any Modifiers from the Payload
-	OnLaunch_SetModifiers(Payload);
-
-	// LifeTime
-	{
-		float LifeTime = Cache->GetLifeTime();
-
-		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
-		typedef NCsProjectile::NModifier::IModifier ModifierType;
-		typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-		for (AllocatedModifierType& AllocatedModifier : Modifiers)
+		ModifierType* Modifier							 = AllocatedModifier.Get();
+		ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+		const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
+		// InitialSpeed
+		if (PrjModifierType == NCsProjectileModifier::InitialSpeed)
 		{
-			ModifierType* Modifier							 = AllocatedModifier.Get();
-			ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
-			const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
-
-			if (PrjModifierType == NCsProjectileModifier::LifeTime)
-			{
-				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-				LifeTime						 = FloatModifier->Modify(LifeTime);
-			}
+			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+			InitialSpeed					 = FloatModifier->Modify(InitialSpeed);
 		}
-
-		typedef NCsProjectile::NCache::FLibrary CacheLibrary;
-
-		CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime);
-	}
-
-	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
-
-	SetActorHiddenInGame(false);
-
-	// Real Visible
-	//if (Relevance == ECsProjectileRelevance::RealVisible)
-	{
-		RootComponent = CollisionComponent;
-
-		MovementComponent->UpdatedComponent = CollisionComponent;
-		MovementComponent->Activate();
-		MovementComponent->SetComponentTickEnabled(true);
-	}
-	
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-	// VisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
-	{
-		typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh VisualDataType;
-
-		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+		// MaxSpeed
+		if (PrjModifierType == NCsProjectileModifier::MaxSpeed)
 		{
-			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
-
-			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-			UStaticMesh* Mesh = VisualData->GetStaticMesh().Mesh.GetChecked(Context);
-
-			MeshComponent->SetStaticMesh(Mesh);
-			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
-			MeshComponent->Activate();
-			MeshComponent->SetVisibility(true);
-			MeshComponent->SetHiddenInGame(false);
-			MeshComponent->SetComponentTickEnabled(true);
+			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+			MaxSpeed						 = FloatModifier->Modify(MaxSpeed);
 		}
 	}
 
-	const ECsProjectileMovement MovementType = ECsProjectileMovement::Simulated;// Data_Projectile->GetMovementType();
+	MovementComponent->InitialSpeed = InitialSpeed;
+	MovementComponent->MaxSpeed		= MaxSpeed;
 
-	// Simulated
-	if (MovementType == ECsProjectileMovement::Simulated)
-	{
-		const FVector& Direction = Payload->GetDirection();
-		FRotator Rotation		 = Direction.Rotation();
+	if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
+		MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
 
-		TeleportTo(Payload->GetLocation(), Rotation, false, true);
-	}
-
-	// Trail FX
-	{
-		const FString& ScopeName		   = ScopedTimer::SetTrailVisual;
-		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
-		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetTrailVisual;
-
-		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
-		
-		typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
-
-		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
-		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType PayloadImpl;
-			PayloadImpl.Owner  = this;
-
-			if (MeshComponent->GetStaticMesh())
-				PayloadImpl.Parent = MeshComponent;
-			else
-				PayloadImpl.Parent = CollisionComponent;
-
-			const FCsFX& TrailFX = VisualData->GetTrailFX();
-
-			TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, this, &PayloadImpl, TrailFX));
-		}
-	}
-
-	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
-	{
-		const FString& ScopeName		   = ScopedTimer::SetCollision;
-		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
-		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetCollision;
-
-		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
-
-		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
-
-		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
-		{
-			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
-
-			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
-			{
-				typedef NCsProjectile::NPayload::FLibrary ProjectilePayloadLibrary;
-				typedef NCsPooledObject::NPayload::IPayload PooledPayloadType;
-
-				PooledPayloadType* PooledPayload = ProjectilePayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
-
-				// Instigator
-				if (AActor* Actor = Cast<AActor>(PooledPayload->GetInstigator()))
-					IgnoreActors.Add(Actor);
-				// Owner
-				if (AActor* Actor = Cast<AActor>(PooledPayload->GetOwner()))
-					IgnoreActors.Add(Actor);
-				// Parent
-				if (AActor* Actor = Cast<AActor>(PooledPayload->GetParent()))
-					IgnoreActors.Add(Actor);
-
-				const int32 Count = IgnoreActors.Num();
-
-				for (int32 I = 0; I < Count; ++I)
-				{
-					AActor* Actor = IgnoreActors[I].IsValid() ? IgnoreActors[I].Get() : nullptr;
-
-					if (!Actor)
-						continue;
-
-					CollisionComponent->MoveIgnoreActors.Add(Actor);
-				}
-
-				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
-				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
-				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
-
-				CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
-				CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
-
-				CollisionComponent->Activate();
-				CollisionComponent->SetComponentTickEnabled(true);
-
-				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
-			}
-
-			HitCount = CollisionData->GetHitCount();
-			// TODO: Move to Data
-			MovementComponent->bHandleDeflection = false;
-		}
-	}
-	
-	SetActorTickEnabled(true);
-
-	// Simulated
-	if (MovementType == ECsProjectileMovement::Simulated)
-	{
-		float InitialSpeed = Data->GetInitialSpeed();
-		float MaxSpeed	   = Data->GetMaxSpeed();
-
-		// Check to apply any Speed Modifiers
-		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
-		typedef NCsProjectile::NModifier::IModifier ModifierType;
-		typedef NCsModifier::NFloat::IFloat FloatModifierType;
-
-		for (AllocatedModifierType& AllocatedModifier : Modifiers)
-		{
-			ModifierType* Modifier = AllocatedModifier.Get();
-			ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
-			const FECsProjectileModifier& PrjModifierType = GetPrjModifierType->GetProjectileModifierType();
-
-			if (PrjModifierType == NCsProjectileModifier::InitialSpeed)
-			{
-				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-				InitialSpeed = FloatModifier->Modify(InitialSpeed);
-			}
-
-			if (PrjModifierType == NCsProjectileModifier::MaxSpeed)
-			{
-				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-				MaxSpeed						 = FloatModifier->Modify(MaxSpeed);
-			}
-		}
-
-		MovementComponent->InitialSpeed = InitialSpeed;
-		MovementComponent->MaxSpeed     = MaxSpeed;
-
-		if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
-			MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
-
-		MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Payload->GetDirection();
-		MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
-	}
+	MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Direction;
+	MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
 }
 
-UObject* ACsProjectilePooledImpl::GetOwner() const
-{
-	return Cache->GetOwner();
-}
-
-UObject* ACsProjectilePooledImpl::GetInstigator() const
-{
-	return Cache->GetInstigator();
-}
-
-#pragma endregion ICsProjectile
-
-// Projectile
-#pragma region
-
-UObject* ACsProjectilePooledImpl::GetDataAsObject()
-{
-	return Data->_getUObject();
-}
-
-#pragma endregion Projectile
-
-// Launch
-#pragma region
-
-#define PayloadType NCsProjectile::NPayload::IPayload
-void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
-{
-#undef PayloadType
-
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::OnLaunch_SetModifiers;
-
-	// ModifierPayloadType (NCsProjectile::NPayload::NModifier::IModifier)
-	{
-		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
-		typedef NCsProjectile::NPayload::NModifier::IModifier ModifierPayloadType;
-
-		if (ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
-		{
-			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-			typedef NCsProjectile::NModifier::IModifier ModifierType;
-
-			PrjManagerLibrary::CreateCopyOfModifiersChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
-
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
-			ModifierLibrary::GetDamageModifiersChecked(Context, Modifiers, DamageImpl.Modifiers);
-		}
-	}
-}
-
-#pragma endregion Launch
+#pragma endregion Modifier
 
 // Damage
 #pragma region

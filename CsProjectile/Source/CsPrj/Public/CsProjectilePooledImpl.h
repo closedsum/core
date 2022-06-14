@@ -118,56 +118,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Projectile")
 	ECsProjectileState State;
 
-// Collision
-#pragma region
-protected:
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
-
-	void AddIgnoreActor(AActor* Actor);
-
-	AActor* GetIgnoreActor(const int32& Index);
-
-	UPROPERTY()
-	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
-
-	void AddIgnoreComponent(UPrimitiveComponent* Component);
-
-	UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
-
-	bool IsIgnored(AActor* Actor) const;
-	bool IsIgnored(UPrimitiveComponent* Component) const;
-
-	TArray<TWeakObjectPtr<AActor>> IgnoredHitActors;
-
-	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoredHitComponents;
-
-	void ClearHitObjects();
-
-public:
-
-	/** Whether to deallocate the projectile on hit (and HitCount <= 0). */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
-	bool bDeallocateOnHit;
-
-protected:
-
-	int32 HitCount;
-
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {}
-
-public:
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHit, ACsProjectilePooledImpl* /*Projectile*/, const FHitResult& /*Hit*/);
-
-	FOnHit OnHit_Event;
-
-#pragma endregion Collision
-
 // ICsUpdate
 #pragma region
 public:
@@ -222,7 +172,7 @@ public:
 #pragma region
 protected:
 
-	void Deallocate_Internal();
+	virtual void Deallocate_Internal();
 
 public:
 
@@ -292,6 +242,60 @@ public:
 
 #pragma endregion ICsGetCollisionHitCount
 
+// Collision
+#pragma region
+protected:
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<AActor>> IgnoreActors;
+
+	void AddIgnoreActor(AActor* Actor);
+
+	AActor* GetIgnoreActor(const int32& Index);
+
+	UPROPERTY()
+	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoreComponents;
+
+	void AddIgnoreComponent(UPrimitiveComponent* Component);
+
+	UPrimitiveComponent* GetIgnoreComponent(const int32& Index);
+
+	bool IsIgnored(AActor* Actor) const;
+	bool IsIgnored(UPrimitiveComponent* Component) const;
+
+	TArray<TWeakObjectPtr<AActor>> IgnoredHitActors;
+
+	virtual void AddIgnoredHitActor(AActor* Actor);
+
+	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoredHitComponents;
+
+	virtual void AddIgnoredHitComponent(UPrimitiveComponent* Component);
+
+	virtual void ClearHitObjects();
+
+public:
+
+	/** Whether to deallocate the projectile on hit (and HitCount <= 0). */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
+	bool bDeallocateOnHit;
+
+protected:
+
+	int32 HitCount;
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {}
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHit, ACsProjectilePooledImpl* /*Projectile*/, const FHitResult& /*Hit*/);
+
+	FOnHit OnHit_Event;
+
+#pragma endregion Collision
+
 // FX
 #pragma region
 public:
@@ -307,6 +311,8 @@ protected:
 #define AllocateModifierType NCsProjectile::NModifier::FAllocated
 	TArray<AllocateModifierType> Modifiers;
 #undef AllocateModifierType
+
+	void ApplyMovementModifiers(const FString& Context, const FVector& Direction);
 
 #pragma endregion Modifier
 

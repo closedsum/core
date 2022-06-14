@@ -395,6 +395,54 @@ namespace NCsProjectile
 			}
 		}
 
+		void FLibrary::CreateCopyOfAndAddModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+		{
+			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+
+			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+			const int32 FromCount = From.Num();
+			const int32 ToCount	  = To.Num();
+			const int32 Total	  = FromCount + ToCount;
+
+			if (To.Max() >= Total)
+			{
+				for (int32 I = ToCount; I < Total; ++I)
+				{
+					AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
+					Allocated.Copy(ContextRoot, From[I - ToCount]);
+				}
+			}
+			else
+			{
+				static TArray<AllocatedModifierType> Temp;
+
+				Temp.Reset(FMath::Max(Temp.Max(), ToCount));
+				Temp.AddDefaulted(ToCount);
+
+				for (int32 I = 0; I < ToCount; ++I)
+				{
+					Temp[I].Copy(To[I]);
+				}
+
+				To.Reset(Total);
+				To.AddDefaulted(Total);
+
+				for (int32 I = 0; I < Total; ++I)
+				{
+					if (I < ToCount)
+					{
+						To[I].Copy(Temp[I]);
+					}
+					else
+					{
+						To[I].Copy(ContextRoot, From[I - ToCount]);
+					}
+				}
+				Temp.Reset(Temp.Max());
+			}
+		}
+
 #		undef ModifierResourceType
 		#undef ModifierType
 		#undef AllocatedModifierType

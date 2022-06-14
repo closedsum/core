@@ -683,7 +683,7 @@ namespace NCsMath
 		* @param OutUV				(out) Percentage OutIntersectPoint lies in the U (AB) and V (AD).
 		* @return					True if intersection occurred
 		*/
-		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, const FPlane& Plane, const FVector& Normal, const float& InvArea, float& OutT, FVector& OutIntersectPoint, FVector2D& OutUV);
+		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, const FPlane& Plane, const FVector& ABC_Normal, const float& ABC_InvArea, const FVector& ADC_Normal, const float& ADC_InvArea, float& OutT, FVector& OutIntersectPoint, FVector2D& OutUV);
 
 	#pragma endregion Intersection
 

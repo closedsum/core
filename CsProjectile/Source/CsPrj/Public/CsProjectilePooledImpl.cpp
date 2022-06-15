@@ -44,9 +44,6 @@
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
-#include "Modifier/LifeTime/CsProjectileModifier_LifeTimeImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/CsModifier_Float.h"

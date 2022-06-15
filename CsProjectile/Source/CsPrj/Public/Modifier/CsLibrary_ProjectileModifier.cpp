@@ -8,9 +8,8 @@
 #include "Valid/CsIsValid.h"
 // Projectile
 #include "Modifier/Types/CsGetProjectileModifierType.h"
-#include "Modifier/Damage/CsProjectileModifier_DamageValuePointImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_InitialSpeedImpl.h"
-#include "Modifier/Speed/CsProjectileModifier_MaxSpeedImpl.h"
+// Damage
+#include "Modifier/CsDamageModifier.h"
 
 namespace NCsProjectile
 {

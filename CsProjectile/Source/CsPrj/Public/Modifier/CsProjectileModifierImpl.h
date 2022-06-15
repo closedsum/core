@@ -25,8 +25,8 @@
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FInt)
 
 /**
-* Describes how to modify any int properties on a Weapon.
-*  Weapon is an object that implements the interface: ICsWeapon.
+* Describes how to modify any int properties on a Projectile.
+*  Projectile is an object that implements the interface: ICsProjectile.
 */
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsProjectileModifier_Int
@@ -74,6 +74,10 @@ namespace NCsProjectile
 	#define PrjModifierType NCsProjectile::NModifier::IModifier
 	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
+		/**
+		* Describes how to modify any int properties on a Projectile.
+		*  Projectile is an object that implements the interface: ICsProjectile.
+		*/
 		struct CSPRJ_API FInt : public ModifierType,
 								public IntModifierType,
 								public PrjModifierType,
@@ -236,6 +240,10 @@ namespace NCsProjectile
 	#define PrjModifierType NCsProjectile::NModifier::IModifier
 	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
+		/**
+		* Describes how to modify any float properties on a Projectile.
+		*  Projectile is an object that implements the interface: ICsProjectile.
+		*/
 		struct CSPRJ_API FFloat : public ModifierType,
 								  public FloatModifierType,
 								  public PrjModifierType,
@@ -393,6 +401,10 @@ namespace NCsProjectile
 	#define PrjModifierType NCsProjectile::NModifier::IModifier
 	#define CopyType NCsProjectile::NModifier::NCopy::ICopy
 
+		/**
+		* Describes whether to toggle any properties on a Projectile.
+		*  Projectile is an object that implements the interface: ICsProjectile.
+		*/
 		struct CSPRJ_API FToggle : public ModifierType,
 								   public ToggleModifierType,
 								   public PrjModifierType,
@@ -528,3 +540,97 @@ struct CSPRJ_API FCsProjectileModifierInfo
 };
 
 #pragma endregion FCsProjectileModifierInfo
+
+// FCsProjectileModifier_Create_Int
+#pragma region
+
+// NCsProjectile::NModifier::NCreate::FInt
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FInt)
+
+/**
+* Describes how to create a modifier for an int properties on a Projectile.
+*  Projectile is an object that implements the interface: ICsProjectile.
+*/
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectileModifier_Create_Int
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
+	ECsNumericValueCreateModifier Type;
+
+	/** Used another value determined by Type. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
+	int32 Value;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
+	FCsProjectileModifier_Int Modifier;
+
+	FCsProjectileModifier_Create_Int() :
+		Type(),
+		Value(0),
+		Modifier()
+	{
+	}
+
+#define CreateModifierType NCsProjectile::NModifier::NCreate::FInt
+	void CopyToCreateModifier(CreateModifierType* CreateModifier);
+	void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const;
+#undef CreateModifierType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+class UObject;
+
+namespace NCsProjectile
+{
+	namespace NModifier
+	{
+		namespace NCreate
+		{
+			struct CSPRJ_API FInt
+			{
+			#define CreateType NCsModifier::NValue::NNumeric::ECreate
+			#define ModifierType NCsProjectile::NModifier::FInt
+
+			private:
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, CreateType)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
+
+			public:
+
+				ModifierType Modifier;
+
+				FInt() :
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
+					Modifier()
+				{
+					CS_CTOR_SET_MEMBER_PROXY(Type);
+					CS_CTOR_SET_MEMBER_PROXY(Value);
+				}
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, CreateType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
+				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
+
+			#define PrjModifierType NCsProjectile::NModifier::IModifier
+				PrjModifierType* CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue);
+			#undef PrjModifierType
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+			#undef CreateType
+			#undef ModifierType
+			};
+		}
+	}
+}
+
+#pragma endregion FCsProjectileModifier_Int

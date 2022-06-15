@@ -2,6 +2,8 @@
 #include "Types/CsTypes_Projectile.h"
 #include "CsPrj.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsProjectileSettings.h"
 // Utility
@@ -81,6 +83,23 @@ namespace NCsProjectile
 }
 
 #pragma endregion Projectile
+
+// FCsData_ECsProjectile
+#pragma region
+
+bool FCsData_ECsProjectile::IsValidChecked(const FString& Context) const
+{
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Value)
+	return true;
+}
+
+bool FCsData_ECsProjectile::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Value)
+	return true;
+}
+
+#pragma endregion FCsData_Projectile
 
 // ProjectileClass
 #pragma region

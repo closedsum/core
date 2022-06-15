@@ -42,3 +42,43 @@ namespace NCsModifier
 }
 
 #pragma endregion NumericValueModifierApplication
+
+// NumericValueCreateModifier
+#pragma region
+
+namespace NCsNumericValueCreateModifier
+{
+	namespace Ref
+	{
+		typedef EMCsNumericValueCreateModifier EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Current);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(CurrentAndMultiplyBy);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(CurrentAndAddTo);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsNumericValueCreateModifier_MAX, "MAX");
+	}
+}
+
+namespace NCsModifier
+{
+	namespace NValue
+	{
+		namespace NNumeric
+		{
+			namespace NCreate
+			{
+				namespace Ref
+				{
+					typedef EMCreate EnumMapType;
+
+					CSCORE_API CS_ADD_TO_ENUM_MAP(Current);
+					CSCORE_API CS_ADD_TO_ENUM_MAP(CurrentAndMultiplyBy);
+					CSCORE_API CS_ADD_TO_ENUM_MAP(CurrentAndAddTo);
+					CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECreate_MAX, "MAX");
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion NumericValueCreateModifier

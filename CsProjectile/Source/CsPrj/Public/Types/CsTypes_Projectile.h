@@ -95,6 +95,9 @@ struct CSPRJ_API FCsData_ECsProjectile
 	}
 
 	FORCEINLINE FECsProjectile* GetPtr() { return &Value; }
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
 
 #pragma endregion FCsData_Projectile

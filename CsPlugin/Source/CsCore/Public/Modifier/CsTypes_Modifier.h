@@ -124,3 +124,108 @@ namespace NCsModifier
 }
 
 #pragma endregion NumericValueModifierApplication
+
+// NumericValueCreateModifier
+#pragma region
+
+/** Describes the method to create a numeric value Modifier.
+	Modifier is an object that implements the interface: NCsModifier::IModifier. */
+UENUM(BlueprintType)
+enum class ECsNumericValueCreateModifier : uint8
+{
+	/** Create the numeric value modifier from the current value on the object with
+		the SAME numeric value modifier type it is associated with.
+		(i.e. If a modifier changes the Health parameter on an object, then
+			  Current will create a numeric value modifier associated with Health
+			  and pass the Current value of Health to the modifier. ) */
+	Current								UMETA(DisplayName = "Current"),
+	/** Create the numeric value modifier from the current value on the object with
+		the SAME numeric value modifier type it is associated with and Multiply it by
+		a predefined Value.
+		(i.e. If a modifier changes the Health parameter on an object, then
+			  Current will create a numeric value modifier associated with Health
+			  and pass the Current value of Health multiplied by a predefined Value to the modifier. ) */
+	CurrentAndMultiplyBy				UMETA(DisplayName = "Current and Multiply By"),
+	/** Create the numeric value modifier from the current value on the object with
+		the SAME numeric value modifier type it is associated with and Add it by
+		a predefined Value.
+		(i.e. If a modifier changes the Health parameter on an object, then
+			  Current will create a numeric value modifier associated with Health
+			  and pass the Current value of Health added by a predefined Value to the modifier. ) */
+	CurrentAndAddTo						UMETA(DisplayName = "Current and Add To"),
+	ECsNumericValueCreateModifier_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsNumericValueCreateModifier : public TCsEnumMap<ECsNumericValueCreateModifier>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsNumericValueCreateModifier, ECsNumericValueCreateModifier)
+};
+
+namespace NCsNumericValueCreateModifier
+{
+	typedef ECsNumericValueCreateModifier Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Current;
+		extern CSCORE_API const Type CurrentAndMultiplyBy;
+		extern CSCORE_API const Type CurrentAndAddTo;
+		extern CSCORE_API const Type ECsNumericValueCreateModifier_MAX;
+	}
+}
+
+namespace NCsModifier
+{
+	namespace NValue
+	{
+		namespace NNumeric
+		{
+			/** Describes the method to create a numeric value Modifier.
+				Modifier is an object that implements the interface: NCsModifier::IModifier. */
+			enum class ECreate : uint8
+			{
+				/** Create the numeric value modifier from the current value on the object with
+					the SAME numeric value modifier type it is associated with.
+					(i.e. If a modifier changes the Health parameter on an object, then
+						  Current will create a numeric value modifier associated with Health
+						  and pass the Current value of Health to the modifier. ) */
+				Current,
+				/** Create the numeric value modifier from the current value on the object with
+					the SAME numeric value modifier type it is associated with and Multiply it by
+					a predefined Value.
+					(i.e. If a modifier changes the Health parameter on an object, then
+						  Current will create a numeric value modifier associated with Health
+						  and pass the Current value of Health multiplied by a predefined Value to the modifier. ) */
+				CurrentAndMultiplyBy,
+				/** Create the numeric value modifier from the current value on the object with
+					the SAME numeric value modifier type it is associated with and Add it by
+					a predefined Value.
+					(i.e. If a modifier changes the Health parameter on an object, then
+						  Current will create a numeric value modifier associated with Health
+						  and pass the Current value of Health added by a predefined Value to the modifier. ) */
+				CurrentAndAddTo,
+				ECreate_MAX
+			};
+
+			struct CSCORE_API EMCreate : public TCsEnumMap<ECreate>
+			{
+				CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCreate, ECreate)
+			};
+
+			namespace NCreate
+			{
+				namespace Ref
+				{
+					typedef ECreate Type;
+
+					extern CSCORE_API const Type Current;
+					extern CSCORE_API const Type CurrentAndMultiplyBy;
+					extern CSCORE_API const Type CurrentAndAddTo;
+					extern CSCORE_API const Type ECreate_MAX;
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion NumericValueCreateModifier

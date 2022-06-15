@@ -533,3 +533,57 @@ bool FCsProjectileModifierInfo::IsValid(const FString& Context, void(*Log)(const
 }
 
 #pragma endregion FCsProjectileModifierInfo
+
+// FCsProjectileModifier_Create_Int
+#pragma region
+
+#define CreateModifierType NCsProjectile::NModifier::NCreate::FInt
+
+void FCsProjectileModifier_Create_Int::CopyToCreateModifier(CreateModifierType* CreateModifier)
+{
+}
+
+void FCsProjectileModifier_Create_Int::CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const
+{
+}
+
+#undef CreateModifierType
+
+bool FCsProjectileModifier_Create_Int::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsProjectileModifier_Create_Int::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	return true;
+}
+
+namespace NCsProjectile
+{
+	namespace NModifier
+	{
+		namespace NCreate
+		{
+			#define PrjModifierType NCsProjectile::NModifier::IModifier
+			PrjModifierType* FInt::CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue)
+			{
+			#undef PrjModifierType
+
+				return nullptr;
+			}
+
+			bool FInt::IsValidChecked(const FString& Context) const
+			{
+				return true;
+			}
+
+			bool FInt::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+			{
+				return true;
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileModifier_Create_Int

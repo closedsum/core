@@ -747,7 +747,7 @@ void UCsManager_Damage::DeallocateValue(const FString& Context, ValueResourceTyp
 
 	const FECsDamageValue& Type = ValueLibrary::GetTypeChecked(Context, Value->Get());
 
-	DeallocateValue(Type, Value);
+	DeallocateValue(Context, Type, Value);
 }
 
 #undef ValueResourceType

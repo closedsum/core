@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/WidgetActor/Handler/CsManager_WidgetActor_Classhandler.h"
+#include "Managers/WidgetActor/Handler/CsManager_WidgetActor_ClassHandler.h"
 
 // Library
 #include "Data/CsUILibrary_DataRootSet.h"

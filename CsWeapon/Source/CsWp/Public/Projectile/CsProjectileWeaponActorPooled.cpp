@@ -1156,8 +1156,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 			Modifiers.Reset(Modifiers.Max());
 
 			Outer->GetProjectileModifiers(Modifiers);
-			// TODO: Should use Copy
-			Slice->SetModifiers(Modifiers);
+			Slice->CopyFromModifiers(Outer, Modifiers);
 		}
 	}
 	return Result;

@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Weapon/Handler/CsManager_Weapon_Datahandler.h"
+#include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
 
 // Library
 #include "Data/CsWpLibrary_DataRootSet.h"

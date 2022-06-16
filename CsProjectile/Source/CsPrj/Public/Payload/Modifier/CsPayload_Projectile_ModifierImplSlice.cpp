@@ -69,16 +69,14 @@ namespace NCsProjectile
 
 				const FString& Context = Str::CopyFromModifiers;
 
-				CS_IS_ARRAY_EMPTY_CHECKED(FromModifiers, ModifierType*)
-
 				CS_IS_ARRAY_ANY_NULL_CHECKED(FromModifiers, ModifierType)
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
 				typedef NCsArray::FLibrary ArrayLibrary;
 
-				ArrayLibrary::ResetChecked<ModifierType>(Context, Modifiers, FromModifiers.Num());
-				ArrayLibrary::ResetChecked<AllocatedModifierType>(Context, Modifiers_Internal, FromModifiers.Num());
+				Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
+				Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
 				
 				for (ModifierType* Modifier : FromModifiers)
 				{
@@ -106,8 +104,8 @@ namespace NCsProjectile
 
 				typedef NCsArray::FLibrary ArrayLibrary;
 
-				ArrayLibrary::ResetChecked<ModifierType>(Context, Modifiers, FromModifiers.Num());
-				ArrayLibrary::ResetChecked<AllocatedModifierType>(Context, Modifiers_Internal, FromModifiers.Num());
+				Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
+				Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
 
 				for (const AllocatedModifierType& From : FromModifiers)
 				{

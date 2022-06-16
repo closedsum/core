@@ -348,6 +348,7 @@ public:
 			CustomLaunchDirection(FVector::ZeroVector)
 		{
 		}
+		virtual ~FProjectileImpl() {}
 
 	public:
 

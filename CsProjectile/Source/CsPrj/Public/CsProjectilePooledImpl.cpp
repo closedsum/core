@@ -415,13 +415,15 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 
 	Type = ProjectilePayload->GetType();
 
-	check(EMCsProjectile::Get().IsValidEnumChecked(Context, Type));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Type)
 
 	// Get Data associated with Type
 	// TODO: FUTURE: Add to list of preserved changes
 	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
 	Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
+
+	CS_EDITOR_EXPR(IsValidChecked_Data(Context));
 
 	// TODO: Need to determine best place to set LifeTime from Data
 
@@ -1014,7 +1016,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 	// Get Physics Surface
 	UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
-	EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+	EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 

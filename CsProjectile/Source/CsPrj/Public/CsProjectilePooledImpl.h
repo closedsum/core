@@ -215,6 +215,8 @@ protected:
 
 	DataType* Data;
 
+	virtual void IsValidChecked_Data(const FString& Context){}
+
 public:
 
 	UFUNCTION(BlueprintCallable)

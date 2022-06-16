@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Beam/Handler/CsManager_Beam_Datahandler.h"
+#include "Managers/Beam/Handler/CsManager_Beam_DataHandler.h"
 
 // Types
 #include "Collision/CsTypes_Collision.h"

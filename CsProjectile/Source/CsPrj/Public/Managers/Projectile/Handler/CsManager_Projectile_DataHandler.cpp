@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Projectile/Handler/CsManager_Projectile_Datahandler.h"
+#include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
 
 // Library
 #include "Data/CsPrjLibrary_DataRootSet.h"

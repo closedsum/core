@@ -885,6 +885,55 @@ namespace NCsProjectile
 	{
 		namespace NCreate
 		{
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+
+			void FInfo::CreateChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers)
+			{
+				OutModifiers.Reset(FMath::Max(OutModifiers.Max(), GetTotalSize()));
+				AddChecked(Context, WorldContext, IntValues, FloatValues, OutModifiers);
+			}
+
+			void FInfo::AddChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers)
+			{
+				check(IsValidChecked(Context));
+
+				checkf(Ints.Num() == IntValues.Num(), TEXT("%s: Mismatch between Ints.Num() != IntValues.Num() (%d != %d)."), *Context, Ints.Num(), IntValues.Num());
+				checkf(Floats.Num() == FloatValues.Num(), TEXT("%s: Mismatch between Floats.Num() != FloatValues.Num() (%d != %d)."), *Context, Floats.Num(), FloatValues.Num());
+			
+				checkf(OutModifiers.Max() - OutModifiers.Num() >= GetTotalSize(), TEXT("%s: OutModifiers does not have enough space."), *Context);
+
+				// Ints
+				{
+					const int32 Count = Ints.Num();
+
+					typedef NCsProjectile::NModifier::NCreate::FInt CreateIntModifierType;
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						CreateIntModifierType& Int				 = Ints[I];
+						AllocatedModifierType& AllocatedModifier = OutModifiers.AddDefaulted_GetRef();
+
+						Int.CreateChecked(Context, WorldContext, IntValues[I], AllocatedModifier);
+					}
+				}
+				// Floats
+				{
+					const int32 Count = Floats.Num();
+
+					typedef NCsProjectile::NModifier::NCreate::FFloat CreateFloatModifierType;
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						CreateFloatModifierType& Float			 = Floats[I];
+						AllocatedModifierType& AllocatedModifier = OutModifiers.AddDefaulted_GetRef();
+
+						Float.CreateChecked(Context, WorldContext, FloatValues[I], AllocatedModifier);
+					}
+				}
+			}
+
+			#undef AllocatedModifierType
+
 			bool FInfo::IsValidChecked(const FString& Context) const
 			{
 				// Int

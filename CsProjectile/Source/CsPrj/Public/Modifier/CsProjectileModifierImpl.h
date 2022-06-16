@@ -578,9 +578,11 @@ namespace NCsProjectile
 			FORCEINLINE const TArray<ModifierType*>& GetModifiers() const { return Modifiers; }
 			FORCEINLINE TArray<ModifierType*>* GetModifiersPtr() { return &Modifiers; }
 
+			FORCEINLINE int32 GetTotalSize() const { return Ints.Num() + Floats.Num() + Toggles.Num(); }
+
 			FORCEINLINE void PopulateModifiers()
 			{
-				Modifiers.Reset(Ints.Num() + Floats.Num() + Toggles.Num());
+				Modifiers.Reset(GetTotalSize());
 
 				for (IntModifierType& Modifier : Ints)
 				{
@@ -855,6 +857,13 @@ namespace NCsProjectile
 					Floats()
 				{
 				}
+
+				FORCEINLINE int32 GetTotalSize() const { return Ints.Num() + Floats.Num(); }
+
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+				void CreateChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers);
+				void AddChecked(const FString& Context, const UObject* WorldContext, const TArray<int32>& IntValues, const TArray<float>& FloatValues, TArray<AllocatedModifierType>& OutModifiers);
+			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;

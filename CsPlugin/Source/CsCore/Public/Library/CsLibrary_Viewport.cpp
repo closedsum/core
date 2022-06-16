@@ -475,9 +475,9 @@ namespace NCsViewport
 
 		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(ScreenPosition.X, 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_NULL(ScreenPosition.X, 0.0f)
 
-			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(ScreenPosition.Y, 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_NULL(ScreenPosition.Y, 0.0f)
 
 			FVector WorldPosition;
 			FVector WorldDirection;

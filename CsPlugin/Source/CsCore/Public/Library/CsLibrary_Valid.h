@@ -1634,49 +1634,49 @@ namespace NCsValid
 	}
 // Assume const FString& Context has been defined
 #define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
-	[] (const FString& Context, __ObjectType* __Object) \
+	[] (const FString& Context, __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__ = #__Object; \
-		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __In__##__Object, __temp__str__); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_CONST_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
-	[] (const FString& Context, const __ObjectType* __Object) \
+	[] (const FString& Context, const __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__ = #__Object; \
-		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __Object, __temp__str__); \
+		return NCsValid::NObject::FLibrary::CastToChecked<__ObjectType, __OtherObjectType>(Context, __In__##__Object, __temp__str__); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, __ObjectType* __In##__Object) \
+	[] (const FString& Context, __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __In##__Object, __temp__str__a, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_CONST_INTERFACE_CAST_CHECKED(__Object, __ObjectType, __InterfaceType) \
-	[] (const FString& Context, const __ObjectType* __Object) \
+	[] (const FString& Context, const __ObjectType* __In__##__Object) \
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
-		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::InterfaceCastChecked<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b); \
 	}(Context, __Object)
 // Assume const FString& Context has been defined
 #define CS_NEW_CHECKED(__ObjectType, __Outer, __Class) \
-	[] (const FString& Context, UObject* __Outer, UClass* __Class) \
+	[] (const FString& Context, UObject* __In__##__Outer, UClass* __In__##__Class) \
 	{ \
 		static const FString __temp__str__a = #__Outer; \
 		static const FString __temp__str__b = #__Class; \
-		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __In__##__Outer, __temp__str__a, __In__##__Class, __temp__str__b); \
 	}(Context, __Outer, __Class)
 // Assume const FString& Context has been defined and this is passed out Outer for NewObject
 #define CS_NEW_BY_THIS_AND_SUBCLASS_OF_CHECKED(__ObjectType, __Class) \
-	[] (const FString& Context, UObject* __Outer, TSubclassOf<__ObjectType>& __Class) \
+	[] (const FString& Context, UObject* __In__##__Outer, TSubclassOf<__ObjectType>& __In__##__Class) \
 	{ \
 		static const FString __temp__str__a = TEXT("this"); \
 		static const FString __temp__str__b = #__Class; \
-		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __Outer, __temp__str__a, __Class, __temp__str__b); \
+		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __In__##__Outer, __temp__str__a, __In__##__Class, __temp__str__b); \
 	}(Context, this, __Class)
 
 #pragma endregion Object
@@ -2112,6 +2112,18 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NFloat::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_NULL(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_VALUE(__A, __B, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return __Value; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_FLOAT_COMPARE_LESS_THAN(__A, __B) \

@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Data/CsData_Projectile.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Log
 #include "Utility/CsPrjLog.h"
-#pragma once
 
 namespace NCsProjectile
 {

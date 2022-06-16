@@ -8,7 +8,7 @@
 #include "Library/CsLibrary_Valid.h"
 // World
 #include "Engine/World.h"
-#include "GameFrameWork/GameStateBase.h"
+#include "GameFramework/GameStateBase.h"
 
 namespace NCsGameState
 {

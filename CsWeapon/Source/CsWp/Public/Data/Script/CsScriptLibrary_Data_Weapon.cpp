@@ -173,7 +173,7 @@ bool UCsScriptLibrary_Data_Weapon::AddSliceFromObject_GetProjectileType(const FS
 
 	void(*Log)(const FString&) = &NCsWeapon::FLog::Warning;
 
-	CS_IS_PTR_NULL_RET_NULL(Object)
+	CS_IS_PTR_NULL(Object)
 
 	#define DataHandlerType NCsData::NManager::NHandler::TData
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;

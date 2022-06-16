@@ -70,8 +70,8 @@ public:
 
 #define CS_ENUM_UINT8_BODY(Enum) \
 	public: \
-		Enum() {} \
-		Enum(const uint8& InValue, const FString& InName, const FString& InDisplayName) \
+		Enum() : Super() {} \
+		Enum(const uint8& InValue, const FString& InName, const FString& InDisplayName) : Super() \
 		{ \
 			Value = InValue; \
 			Name_Internal = FName(*InName); \

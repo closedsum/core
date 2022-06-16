@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Damage/Handler/CsManager_Damage_Datahandler.h"
+#include "Managers/Damage/Handler/CsManager_Damage_DataHandler.h"
 
 // Library
 #include "Data/CsDmgLibrary_DataRootSet.h"

@@ -241,7 +241,7 @@ namespace NCsProjectile
 		{
 			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
 			{
-				CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Type)
+				CS_IS_ENUM_STRUCT_VALID_RET_NULL(EMCsProjectile, FECsProjectile, Type)
 
 				return Manager_Projectile->AllocatePayload(Type);
 			}

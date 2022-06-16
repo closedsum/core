@@ -408,7 +408,7 @@ namespace NCsWeapon
 
 					// Get Physics Surface
 					UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
-					EPhysicalSurface SurfaceType	= PhysMaterial ? PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+					EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
 					// ImpactVisualDataType (NCsTrace::NData::NVisual::NImpact::IImpact)
 					FXImpl->TryImpact(TraceData, Hit);

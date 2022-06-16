@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Trace/Data/Sound/CsData_Trace_SoundImpact.h"
-#include "CSCore.h"
+#include "CsCore.h"
 
 const FName NCsTrace::NData::NSound::NImpact::IImpact::Name = FName("NCsTrace::NData::NSound::NImpact::IImpact");
 

@@ -4,7 +4,7 @@
 #include "Managers/Input/CsTypes_Input.h"
 #include "InputCoreTypes.h"
 // Input
-#include "GameFrameWork/PlayerInput.h"
+#include "GameFramework/PlayerInput.h"
 #include "Managers/Input/Action/CsInputAction.h"
 
 #include "UObject/Object.h"

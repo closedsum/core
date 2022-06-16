@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_Datahandler.h"
+#include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_DataHandler.h"
 
 // Library
 #include "Data/CsSeLibrary_DataRootSet.h"

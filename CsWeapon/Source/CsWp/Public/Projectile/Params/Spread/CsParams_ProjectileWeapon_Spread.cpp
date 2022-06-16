@@ -360,7 +360,7 @@ namespace NCsWeapon
 					CS_IS_VALID(PitchParams)
 				}
 
-				if (GetbShape() || !GetbYaw() && !GetbPitch())
+				if (GetbShape() || (!GetbYaw() && !GetbPitch()))
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetbShape() or GetbYaw() or GetbPitch() must be true."), *Context));
 					return false;

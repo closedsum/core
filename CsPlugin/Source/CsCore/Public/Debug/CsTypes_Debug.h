@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Types/Enum/CsEnumMap.h"
-#include "CsCvars.h"
+#include "CsCVars.h"
 
 #include "CsTypes_Debug.generated.h"
 

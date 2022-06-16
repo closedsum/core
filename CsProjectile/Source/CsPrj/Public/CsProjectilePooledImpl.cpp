@@ -43,6 +43,7 @@
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
+#include "Payload/Collision/CsPayload_Projectile_Collision.h"
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
@@ -681,6 +682,22 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 					CollisionComponent->MoveIgnoreActors.Add(Actor);
 				}
 
+				typedef NCsProjectile::NPayload::NCollision::ICollision CollisionPayloadType;
+
+				CollisionPayloadType* CollisionPayload = ProjectilePayloadLibrary::GetInterfaceChecked<CollisionPayloadType>(Context, Payload);
+
+				for (AActor* Actor : CollisionPayload->GetIgnoreActorsOnHit())
+				{
+					IgnoredHitActors.Add(Actor);
+					CollisionComponent->MoveIgnoreActors.Add(Actor);
+				}
+
+				for (UPrimitiveComponent* Component : CollisionPayload->GetIgnoreComponentsOnHit())
+				{
+					IgnoredHitComponents.Add(Component);
+					CollisionComponent->MoveIgnoreComponents.Add(Component);
+				}
+
 				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
 				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
 				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
@@ -705,7 +722,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		ApplyMovementModifiers(Context, Payload->GetDirection());
+		StartMovementFromModifiers(Context, Payload->GetDirection());
 	}
 }
 
@@ -763,6 +780,23 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 }
 
 #pragma endregion Launch
+
+// Movement
+#pragma region
+
+void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
+{
+	MovementComponent->InitialSpeed = Data->GetInitialSpeed();
+	MovementComponent->MaxSpeed		= Data->GetMaxSpeed();
+
+	if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
+		MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
+
+	MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Direction;
+	MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
+}
+
+#pragma endregion Movement
 
 // Collision
 #pragma region
@@ -828,9 +862,41 @@ void ACsProjectilePooledImpl::AddIgnoredHitActor(AActor* Actor)
 	IgnoredHitActors.Add(Actor);
 }
 
+bool ACsProjectilePooledImpl::IsIgnoredOnHit(AActor* Actor) const
+{
+	if (IsIgnored(Actor))
+		return true;
+
+	for (const TWeakObjectPtr<AActor>& A : IgnoredHitActors)
+	{
+		if (!A.IsValid())
+			continue;
+
+		if (Actor == A.Get())
+			return true;
+	}
+	return false;
+}
+
 void ACsProjectilePooledImpl::AddIgnoredHitComponent(UPrimitiveComponent* Component)
 {
 	IgnoredHitComponents.Add(Component);
+}
+
+bool ACsProjectilePooledImpl::IsIgnoredOnHit(UPrimitiveComponent* Component) const
+{
+	if (IsIgnored(Component))
+		return false;
+
+	for (const TWeakObjectPtr<UPrimitiveComponent>& C : IgnoredHitComponents)
+	{
+		if (!C.IsValid())
+			continue;
+
+		if (Component == C.Get())
+			return true;
+	}
+	return false;
 }
 
 void ACsProjectilePooledImpl::ClearHitObjects()
@@ -908,10 +974,10 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 	const FString& Context = Str::OnHit;
 
-	if (IsIgnored(OtherActor))
+	if (IsIgnoredOnHit(OtherActor))
 		return;
 
-	if (IsIgnored(OtherComp))
+	if (IsIgnoredOnHit(OtherComp))
 		return;
 
 #if !UE_BUILD_SHIPPING
@@ -1093,7 +1159,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 // Modifier
 #pragma region
 
-void ACsProjectilePooledImpl::ApplyMovementModifiers(const FString& Context, const FVector& Direction)
+void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
 {
 	float InitialSpeed = Data->GetInitialSpeed();
 	float MaxSpeed	   = Data->GetMaxSpeed();

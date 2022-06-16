@@ -242,6 +242,14 @@ public:
 
 #pragma endregion ICsGetCollisionHitCount
 
+// Movement
+#pragma region
+protected:
+
+	void StartMovementFromData(const FVector& Direction);
+
+#pragma endregion Movement
+
 // Collision
 #pragma region
 protected:
@@ -267,9 +275,13 @@ protected:
 
 	virtual void AddIgnoredHitActor(AActor* Actor);
 
+	bool IsIgnoredOnHit(AActor* Actor) const;
+
 	TArray<TWeakObjectPtr<UPrimitiveComponent>> IgnoredHitComponents;
 
 	virtual void AddIgnoredHitComponent(UPrimitiveComponent* Component);
+
+	bool IsIgnoredOnHit(UPrimitiveComponent* Component) const;
 
 	virtual void ClearHitObjects();
 
@@ -312,7 +324,7 @@ protected:
 	TArray<AllocateModifierType> Modifiers;
 #undef AllocateModifierType
 
-	void ApplyMovementModifiers(const FString& Context, const FVector& Direction);
+	void StartMovementFromModifiers(const FString& Context, const FVector& Direction);
 
 #pragma endregion Modifier
 

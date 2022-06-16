@@ -2,7 +2,6 @@
 #pragma once
 // Types
 #include "Modifier/CsTypes_Modifier.h"
-#include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Interface
 #include "Modifier/CsModifier.h"
 #include "Modifier/CsModifier_Int.h"
@@ -13,6 +12,8 @@
 #include "Valid/CsIsValid.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
 #include "Reset/CsReset.h"
+// Projectile
+#include "Modifier/CsAllocated_ProjectileModifier.h"
 // Log
 #include "Utility/CsPrjLog.h"
 
@@ -35,15 +36,15 @@ struct CSPRJ_API FCsProjectileModifier_Int
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier")
 	FECsProjectileModifier Type;
 
 	/** The value to apply to the Int property. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier", meta = (UIMin = "0", ClampMin = "0"))
 	int32 Value;
 
 	/** How Value is applied to the existing Int property.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier")
 	ECsNumericValueModifierApplication Application;
 
 	FCsProjectileModifier_Int() :
@@ -201,15 +202,15 @@ struct CSPRJ_API FCsProjectileModifier_Float
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier")
 	FECsProjectileModifier Type;
 
 	/** The value to apply to the Float property. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Value;
 
 	/** How Value is applied to the existing Float property.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier")
 	ECsNumericValueModifierApplication Application;
 
 	FCsProjectileModifier_Float() :
@@ -367,11 +368,11 @@ struct CSPRJ_API FCsProjectileModifier_Toggle
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier")
 	FECsProjectileModifier Type;
 
 	/** Whether the property associated with Type is enabled or not. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj|Modifier", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	bool bEnable;
 
 	FCsProjectileModifier_Toggle() :
@@ -508,8 +509,8 @@ namespace NCsProjectile
 // FCsProjectileModifierInfo
 #pragma region
 
-// NCsProjectile::NModifier::IModifier
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, IModifier)
+// NCsProjectile::NModifier::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NModifier, FInfo)
 
 USTRUCT(BlueprintType)
 struct CSPRJ_API FCsProjectileModifierInfo
@@ -517,27 +518,96 @@ struct CSPRJ_API FCsProjectileModifierInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
-	TArray<FCsProjectileModifier_Int> IntModifiers;
+	TArray<FCsProjectileModifier_Int> Ints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
-	TArray<FCsProjectileModifier_Float> FloatModifiers;
+	TArray<FCsProjectileModifier_Float> Floats;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
-	TArray<FCsProjectileModifier_Toggle> ToggleModifiers;
+	TArray<FCsProjectileModifier_Toggle> Toggles;
 
 	FCsProjectileModifierInfo() :
-		IntModifiers(),
-		FloatModifiers(),
-		ToggleModifiers()
+		Ints(),
+		Floats(),
+		Toggles()
 	{
 	}
 
-#define ModifierType NCsProjectile::NModifier::IModifier
-	void ConstructModifiers(TArray<ModifierType*>& OutModifiers);
-#undef ModifierType
+#define InfoType NCsProjectile::NModifier::FInfo
+	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info) const;
+#undef InfoType
 
+	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
+
+namespace NCsProjectile
+{
+	namespace NModifier
+	{
+		struct CSPRJ_API FInfo
+		{
+		#define IntModifierType NCsProjectile::NModifier::FInt
+		#define FloatModifierType NCsProjectile::NModifier::FFloat
+		#define ToggleModifierType NCsProjectile::NModifier::FToggle
+		#define ModifierType NCsProjectile::NModifier::IModifier
+
+		public:
+
+			TArray<IntModifierType> Ints;
+
+			TArray<FloatModifierType> Floats;
+
+			TArray<ToggleModifierType> Toggles;
+
+		private:
+
+			TArray<ModifierType*> Modifiers;
+
+		public:
+
+			FInfo() :
+				Ints(),
+				Floats(),
+				Toggles(),
+				Modifiers()
+			{
+			}
+
+			FORCEINLINE const TArray<ModifierType*>& GetModifiers() const { return Modifiers; }
+			FORCEINLINE TArray<ModifierType*>* GetModifiersPtr() { return &Modifiers; }
+
+			FORCEINLINE void PopulateModifiers()
+			{
+				Modifiers.Reset(Ints.Num() + Floats.Num() + Toggles.Num());
+
+				for (IntModifierType& Modifier : Ints)
+				{
+					Modifiers.Add(&Modifier);
+				}
+
+				for (FloatModifierType& Modifier : Floats)
+				{
+					Modifiers.Add(&Modifier);
+				}
+
+				for (ToggleModifierType& Modifier : Toggles)
+				{
+					Modifiers.Add(&Modifier);
+				}
+			}
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+		#undef IntModifierType
+		#undef FloatModifierType
+		#undef ToggleModifierType
+		#undef ModifierType
+		};
+	}
+}
 
 #pragma endregion FCsProjectileModifierInfo
 
@@ -619,9 +689,9 @@ namespace NCsProjectile
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
 				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
 
-			#define PrjModifierType NCsProjectile::NModifier::IModifier
-				PrjModifierType* CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue);
-			#undef PrjModifierType
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+				void CreateChecked(const FString& Context, const UObject* WorldContext, const int32& InValue, AllocatedModifierType& OutModifier);
+			#undef AllocatedModifierType
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
@@ -634,3 +704,166 @@ namespace NCsProjectile
 }
 
 #pragma endregion FCsProjectileModifier_Int
+
+// FCsProjectileModifier_Create_Float
+#pragma region
+
+// NCsProjectile::NModifier::NCreate::FFloat
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FFloat)
+
+/**
+* Describes how to create a modifier for an float properties on a Projectile.
+*  Projectile is an object that implements the interface: ICsProjectile.
+*/
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectileModifier_Create_Float
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
+	ECsNumericValueCreateModifier Type;
+
+	/** Used another value determined by Type. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
+	float Value;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
+	FCsProjectileModifier_Float Modifier;
+
+	FCsProjectileModifier_Create_Float() :
+		Type(),
+		Value(0.0f),
+		Modifier()
+	{
+	}
+
+#define CreateModifierType NCsProjectile::NModifier::NCreate::FFloat
+	void CopyToCreateModifier(CreateModifierType* CreateModifier);
+	void CopyToCreateModifierAsValue(CreateModifierType* CreateModifier) const;
+#undef CreateModifierType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+class UObject;
+
+namespace NCsProjectile
+{
+	namespace NModifier
+	{
+		namespace NCreate
+		{
+			struct CSPRJ_API FFloat
+			{
+			#define CreateType NCsModifier::NValue::NNumeric::ECreate
+			#define ModifierType NCsProjectile::NModifier::FFloat
+
+			private:
+
+				CS_DECLARE_MEMBER_WITH_PROXY(Type, CreateType)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
+
+			public:
+
+				ModifierType Modifier;
+
+				FFloat() :
+					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
+					Modifier()
+				{
+					CS_CTOR_SET_MEMBER_PROXY(Type);
+					CS_CTOR_SET_MEMBER_PROXY(Value);
+				}
+
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, CreateType)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+				FORCEINLINE ModifierType* GetModifierPtr() { return &Modifier; }
+
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+				void CreateChecked(const FString& Context, const UObject* WorldContext, const float& InValue, AllocatedModifierType& OutModifier);
+			#undef AllocatedModifierType
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+			#undef CreateType
+			#undef ModifierType
+			};
+		}
+	}
+}
+
+#pragma endregion FCsProjectileModifier_Float
+
+// FCsProjectileModifier_CreateInfo
+#pragma region
+
+// NCsProjectile::NModifier::NCreate::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NModifier, NCreate, FInfo)
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsProjectileModifier_CreateInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
+	TArray<FCsProjectileModifier_Create_Int> Ints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Modifier")
+	TArray<FCsProjectileModifier_Create_Float> Floats;
+
+	FCsProjectileModifier_CreateInfo() :
+		Ints(),
+		Floats()
+	{
+	}
+
+#define InfoType NCsProjectile::NModifier::NCreate::FInfo
+	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info) const;
+#undef InfoType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+namespace NCsProjectile
+{
+	namespace NModifier
+	{
+		namespace NCreate
+		{
+			struct CSPRJ_API FInfo
+			{
+			#define CreateIntModifierType NCsProjectile::NModifier::NCreate::FInt
+			#define CreateFloatModifierType NCsProjectile::NModifier::NCreate::FFloat
+
+			public:
+
+				TArray<CreateIntModifierType> Ints;
+
+				TArray<CreateFloatModifierType> Floats;
+
+			public:
+
+				FInfo() :
+					Ints(),
+					Floats()
+				{
+				}
+
+				bool IsValidChecked(const FString& Context) const;
+				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+			#undef CreateIntModifierType
+			#undef CreateFloatModifierType
+			};
+		}
+	}
+}
+
+#pragma endregion FCsProjectileModifier_CreateInfo

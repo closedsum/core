@@ -61,13 +61,13 @@ namespace NCsProjectile
 			#pragma endregion ICsReset
 
 			#define ModifierType NCsProjectile::NModifier::IModifier
-			void FImplSlice::CopyFromModifiers(UObject* Root, const TArray<ModifierType*>& FromModifiers)
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+
+			void FImplSlice::CopyFromModifiers(const UObject* WorldContext, const TArray<ModifierType*>& FromModifiers)
 			{
 				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
 
 				const FString& Context = Str::CopyFromModifiers;
-
-				CS_IS_PTR_NULL_CHECKED(Root)
 
 				CS_IS_ARRAY_EMPTY_CHECKED(FromModifiers, ModifierType*)
 
@@ -76,7 +76,6 @@ namespace NCsProjectile
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
 				typedef NCsArray::FLibrary ArrayLibrary;
-				typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
 
 				ArrayLibrary::ResetChecked<ModifierType>(Context, Modifiers, FromModifiers.Num());
 				ArrayLibrary::ResetChecked<AllocatedModifierType>(Context, Modifiers_Internal, FromModifiers.Num());
@@ -87,16 +86,43 @@ namespace NCsProjectile
 
 					AllocatedModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
-					Allocated.Root = Root;
+					Allocated.Root = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
-					PrjManagerLibrary::CreateCopyOfModifierChecked(Context, Root, Modifier, Allocated.Container, Allocated.Type);
+					PrjManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
 					
 					Allocated.Modifier = Allocated.Container->Get();
 
 					Modifiers.Add(Allocated.Modifier);
 				}
 			}
+
+			void FImplSlice::CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedModifierType>& FromModifiers)
+			{
+				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
+
+				const FString& Context = Str::CopyFromModifiers;
+
+				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
+
+				typedef NCsArray::FLibrary ArrayLibrary;
+
+				ArrayLibrary::ResetChecked<ModifierType>(Context, Modifiers, FromModifiers.Num());
+				ArrayLibrary::ResetChecked<AllocatedModifierType>(Context, Modifiers_Internal, FromModifiers.Num());
+
+				for (const AllocatedModifierType& From : FromModifiers)
+				{
+					typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+					AllocatedModifierType& To = Modifiers_Internal.AddDefaulted_GetRef();
+
+					To.Copy(From);
+
+					Modifiers.Add(To.Modifier);
+				}
+			}
+
 			#undef ModifierType
+			#undef AllocatedModifierType
 		}
 	}
 }

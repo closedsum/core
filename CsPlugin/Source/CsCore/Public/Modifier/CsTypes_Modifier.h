@@ -223,6 +223,30 @@ namespace NCsModifier
 					extern CSCORE_API const Type CurrentAndAddTo;
 					extern CSCORE_API const Type ECreate_MAX;
 				}
+
+				FORCEINLINE int32 GetNewValue(const ECreate& Type, const int32& Current, const int32& Value)
+				{
+					if (Type == ECreate::Current)
+						return Current;
+					if (Type == ECreate::CurrentAndMultiplyBy)
+						return Current * Value;
+					if (Type == ECreate::CurrentAndAddTo)
+						return Current + Value;
+					checkf(0, TEXT("NCsModifier::NValue::NNumeric::NCreate:GetNewValue: Type: %s is NOT Valid."), EMCreate::Get().ToChar(Type));
+					return Current;
+				}
+
+				FORCEINLINE float GetNewValue(const ECreate& Type, const float& Current, const float& Value)
+				{
+					if (Type == ECreate::Current)
+						return Current;
+					if (Type == ECreate::CurrentAndMultiplyBy)
+						return Current * Value;
+					if (Type == ECreate::CurrentAndAddTo)
+						return Current + Value;
+					checkf(0, TEXT("NCsModifier::NValue::NNumeric::NCreate:GetNewValue: Type: %s is NOT Valid."), EMCreate::Get().ToChar(Type));
+					return Current;
+				}
 			}
 		}
 	}

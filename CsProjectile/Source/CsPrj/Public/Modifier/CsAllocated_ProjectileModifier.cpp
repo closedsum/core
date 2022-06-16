@@ -19,6 +19,7 @@ namespace NCsProjectile
 				namespace Str
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FAllocated, Copy);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FAllocated, Transfer);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NModifier::FAllocated, Reset);
 				}
 			}
@@ -31,22 +32,20 @@ namespace NCsProjectile
 
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::Copy(UObject* InRoot, const IModifier* From)
+		void FAllocated::Copy(const UObject* WorldContext, const IModifier* From)
 		{
 			using namespace NCsProjectile::NModifier::NAllocated::NCached;
 
 			const FString& Context = Str::Copy;
 
-			CS_IS_PTR_NULL_CHECKED(InRoot)
-
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
-			Root	  = InRoot;
-			Container = PrjManagerLibrary::CreateCopyOfModifierChecked(Context, InRoot, From);
+			Root	  = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
+			Container = PrjManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, From);
 			Modifier  = Container->Get();
-			Type	  = PrjManagerLibrary::GetModifierTypeChecked(Context, InRoot, Modifier);
+			Type	  = PrjManagerLibrary::GetModifierTypeChecked(Context, WorldContext, Modifier);
 		}
 
 		void FAllocated::Copy(const FAllocated& From)
@@ -72,6 +71,30 @@ namespace NCsProjectile
 			{
 				Modifier = From.Modifier;
 			}
+		}
+
+		void FAllocated::Transfer(FAllocated& To)
+		{
+			using namespace NCsProjectile::NModifier::NAllocated::NCached;
+
+			const FString& Context = Str::Transfer;
+
+			checkf(!To.Container, TEXT("%s: Container is already SET."), *Context);
+
+			if (Container)
+			{
+				CS_IS_PTR_NULL_CHECKED(GetRoot())
+
+				To.Root		  = GetRoot();
+				To.Container  = Container;
+				To.Modifier   = Modifier;
+				To.Type		  = Type;
+			}
+			else
+			{
+				To.Modifier = Modifier;
+			}
+			Reset();
 		}
 
 		void FAllocated::Reset()

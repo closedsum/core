@@ -35,6 +35,7 @@
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
+#include "Payload/Collision/CsPayload_Projectile_CollisionImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
@@ -911,6 +912,20 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 
 	const FCsSettings_Manager_Projectile& ManagerSettings = FCsSettings_Manager_Projectile::Get();
 	const TSet<FECsProjectilePayload> PayloadTypes		  = ManagerSettings.PayloadTypes;
+
+	// NCsProjectile::NPayload::NCollision::FImplSlice
+	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileCollision))
+	{
+		typedef NCsProjectile::NPayload::NCollision::FImplSlice SliceType;
+
+		SliceType* Slice = new SliceType();
+
+		Slice->SetInterfaceMap(InterfaceMap);
+		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
+		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
+		// Add to map
+		PayloadInterfaceMap->AddDeconstruct(SliceType::Name, &SliceType::Deconstruct);
+	}
 
 	// NCsProjectile::NPayload::NModifier::FImplSlice
 	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileModifier))

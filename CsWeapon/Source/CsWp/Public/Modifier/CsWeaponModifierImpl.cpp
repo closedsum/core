@@ -446,90 +446,165 @@ namespace NCsWeapon
 // FCsWeaponModifierInfo
 #pragma region
 
-#define ModifierType NCsWeapon::NModifier::IModifier
-void FCsWeaponModifierInfo::ConstructModifiers(TArray<ModifierType*>& OutModifiers)
+#define InfoType NCsWeapon::NModifier::FInfo
+
+void FCsWeaponModifierInfo::CopyToInfo(InfoType* Info)
 {
-#undef ModifierType
+	// Ints
+	typedef NCsWeapon::NModifier::FInt IntModifierType;
 
-	// Make Space for all
+	Info->Ints.Reset(Ints.Num());
+
+	for (FCsWeaponModifier_Int& From : Ints)
 	{
-		int32 Count = 0;
-		Count += IntModifiers.Num();
-		Count += FloatModifiers.Num();
-		Count += ToggleModifiers.Num();
-
-		OutModifiers.Reset(Count);
-		OutModifiers.AddDefaulted(Count);
+		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+		From.CopyToModifier(&To);
 	}
+	// Floats
+	typedef NCsWeapon::NModifier::FFloat FloatModifierType;
 
-	// Int
+	Info->Floats.Reset(Floats.Num());
+
+	for (FCsWeaponModifier_Float& From : Floats)
 	{
-		typedef NCsWeapon::NModifier::FInt IntModifierType;
-
-		const int32 Start = 0;
-		const int32 Count = IntModifiers.Num();
-
-		for (int32 I = Start; I < Start + Count; ++I)
-		{
-			FCsWeaponModifier_Int& Modifier = IntModifiers[I - Start];
-			IntModifierType* ModifierPtr	= new IntModifierType();
-
-			Modifier.CopyToModifier(ModifierPtr);
-
-			OutModifiers[I] = ModifierPtr;
-		}
+		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+		From.CopyToModifier(&To);
 	}
-	// Float
+	// Toggles
+	typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
+
+	Info->Toggles.Reset(Toggles.Num());
+
+	for (FCsWeaponModifier_Toggle& From : Toggles)
 	{
-		typedef NCsWeapon::NModifier::FFloat FloatModifierType;
-
-		const int32 Start = IntModifiers.Num();
-		const int32 Count = FloatModifiers.Num();
-
-		for (int32 I = Start; I < Start + Count; ++I)
-		{
-			FCsWeaponModifier_Float& Modifier = FloatModifiers[I - Start];
-			FloatModifierType* ModifierPtr	  = new FloatModifierType();
-
-			Modifier.CopyToModifier(ModifierPtr);
-
-			OutModifiers[I] = ModifierPtr;
-		}
+		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+		From.CopyToModifier(&To);
 	}
-	// Toggle
-	{
-		typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
-
-		const int32 Start = IntModifiers.Num() + FloatModifiers.Num();
-		const int32 Count = ToggleModifiers.Num();
-
-		for (int32 I = Start; I < Start + Count; ++I)
-		{
-			FCsWeaponModifier_Toggle& Modifier = ToggleModifiers[I - Start];
-			ToggleModifierType* ModifierPtr	   = new ToggleModifierType();
-
-			Modifier.CopyToModifier(ModifierPtr);
-
-			OutModifiers[I] = ModifierPtr;
-		}
-	}
+	Info->PopulateModifiers();
 }
+
+void FCsWeaponModifierInfo::CopyToInfoAsValue(InfoType* Info)
+{
+	// Ints
+	typedef NCsWeapon::NModifier::FInt IntModifierType;
+
+	Info->Ints.Reset(Ints.Num());
+
+	for (const FCsWeaponModifier_Int& From : Ints)
+	{
+		IntModifierType& To = Info->Ints.AddDefaulted_GetRef();
+		From.CopyToModifierAsValue(&To);
+	}
+	// Floats
+	typedef NCsWeapon::NModifier::FFloat FloatModifierType;
+
+	Info->Floats.Reset(Floats.Num());
+
+	for (const FCsWeaponModifier_Float& From : Floats)
+	{
+		FloatModifierType& To = Info->Floats.AddDefaulted_GetRef();
+		From.CopyToModifierAsValue(&To);
+	}
+	// Toggles
+	typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
+
+	Info->Toggles.Reset(Toggles.Num());
+
+	for (const FCsWeaponModifier_Toggle& From : Toggles)
+	{
+		ToggleModifierType& To = Info->Toggles.AddDefaulted_GetRef();
+		From.CopyToModifierAsValue(&To);
+	}
+	Info->PopulateModifiers();
+}
+
+#undef InfoType
 
 bool FCsWeaponModifierInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	for (const FCsWeaponModifier_Int& Modifier : IntModifiers)
+	for (const FCsWeaponModifier_Int& Modifier : Ints)
 	{
 		CS_IS_VALID(Modifier)
 	}
-	for (const FCsWeaponModifier_Float& Modifier : FloatModifiers)
+	for (const FCsWeaponModifier_Float& Modifier : Floats)
 	{
 		CS_IS_VALID(Modifier)
 	}
-	for (const FCsWeaponModifier_Toggle& Modifier : ToggleModifiers)
+	for (const FCsWeaponModifier_Toggle& Modifier : Toggles)
 	{
 		CS_IS_VALID(Modifier)
 	}
 	return true;
+}
+
+namespace NCsWeapon
+{
+	namespace NModifier
+	{
+		bool FInfo::IsValidChecked(const FString& Context) const
+		{
+			typedef NCsWeapon::NModifier::FInt IntModifierType;
+
+			for (const IntModifierType& Modifier : Ints)
+			{
+				CS_IS_VALID_CHECKED(Modifier);
+			}
+
+			typedef NCsWeapon::NModifier::FFloat FloatModifierType;
+
+			for (const FloatModifierType& Modifier : Floats)
+			{
+				CS_IS_VALID_CHECKED(Modifier);
+			}
+
+			typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
+
+			for (const ToggleModifierType& Modifier : Toggles)
+			{
+				CS_IS_VALID_CHECKED(Modifier);
+			}
+
+			typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
+
+			CS_IS_ARRAY_SIZE_CHECKED(Modifiers, ModifierType*, Total)
+			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			return true;
+		}
+
+		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+		{
+			typedef NCsWeapon::NModifier::FInt IntModifierType;
+
+			for (const IntModifierType& Modifier : Ints)
+			{
+				CS_IS_VALID(Modifier)
+			}
+
+			typedef NCsWeapon::NModifier::FFloat FloatModifierType;
+
+			for (const FloatModifierType& Modifier : Floats)
+			{
+				CS_IS_VALID(Modifier)
+			}
+
+			typedef NCsWeapon::NModifier::FToggle ToggleModifierType;
+
+			for (const ToggleModifierType& Modifier : Toggles)
+			{
+				CS_IS_VALID(Modifier)
+			}
+
+			typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+			const int32 Total = Ints.Num() + Floats.Num() + Toggles.Num();
+
+			CS_IS_ARRAY_SIZE(Modifiers, ModifierType*, Total)
+			CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierType)
+			return true;
+		}
+	}
 }
 
 #pragma endregion FCsWeaponModifierInfo

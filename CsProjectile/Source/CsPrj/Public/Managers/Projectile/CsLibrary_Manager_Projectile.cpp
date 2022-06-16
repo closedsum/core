@@ -10,6 +10,7 @@
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Projectile
+#include "Payload/CsPayload_Projectile.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
 
 #if WITH_EDITOR
@@ -225,6 +226,44 @@ namespace NCsProjectile
 		}
 
 		#pragma endregion Pool
+
+		// Payload
+		#pragma region
+
+		#define PayloadType NCsProjectile::NPayload::IPayload
+
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
+		}
+
+		PayloadType* FLibrary::SafeAllocatePayload(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Type)
+
+				return Manager_Projectile->AllocatePayload(Type);
+			}
+			return nullptr;
+		}
+
+		#undef PayloadType
+
+		#pragma endregion Payload
+
+		// Spawn
+		#pragma region
+
+		#define PayloadType NCsProjectile::NPayload::IPayload
+		const FCsProjectilePooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload)
+		{
+		#undef PayloadType
+
+			return GetChecked(Context, WorldContext)->Spawn(Payload->GetType(), Payload);
+		}
+
+		#pragma endregion Spawn
 
 		// Data
 		#pragma region

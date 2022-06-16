@@ -23,8 +23,12 @@ namespace NCsData {
 
 // NCsProjectile::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
+// NCsProjectile::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 // NCsProjectile::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, FInterfaceMap)
+
+struct FCsProjectilePooled;
 
 namespace NCsProjectile
 {
@@ -198,6 +202,58 @@ namespace NCsProjectile
 			static bool GetSafePool(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, TArray<UObject*>& OutPool, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
 		#pragma endregion Pool
+
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsProjectile::NPayload::IPayload
+
+			/*
+			* Allocate a Payload (used to Spawn a Projectile from Manager_Projectile).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type);
+
+			/*
+			* Safely allocate a Payload (used to Spawn a Projectile from Manager_Projectile).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Log			(optional)
+			* return				Payload
+			*/
+			static PayloadType* SafeAllocatePayload(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		#undef PayloadType
+
+		#pragma endregion Payload
+
+		// Spawn
+		#pragma region
+		public:
+
+		#define PayloadType NCsProjectile::NPayload::IPayload
+
+			/**
+			* Spawn a Projectile with the given Payload.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Payload
+			* @param Log			(optional)
+			* return
+			*/
+			static const FCsProjectilePooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload);
+
+		#undef PayloadType
+
+		#pragma endregion Spawn
 
 		// Data
 		#pragma region

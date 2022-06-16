@@ -35,15 +35,15 @@ struct CSWP_API FCsWeaponModifier_Int
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier")
 	FECsWeaponModifier Type;
 
 	/** The value to apply to the Int property. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0", ClampMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier", meta = (UIMin = "0", ClampMin = "0"))
 	int32 Value;
 
 	/** How Value is applied to the existing Int property.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier")
 	ECsNumericValueModifierApplication Application;
 
 	FCsWeaponModifier_Int() :
@@ -197,15 +197,15 @@ struct CSWP_API FCsWeaponModifier_Float
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier")
 	FECsWeaponModifier Type;
 
 	/** The value to apply to the Float property. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Value;
 
 	/** How Value is applied to the existing Float property.*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier")
 	ECsNumericValueModifierApplication Application;
 
 	FCsWeaponModifier_Float() :
@@ -359,11 +359,11 @@ struct CSWP_API FCsWeaponModifier_Toggle
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier")
 	FECsWeaponModifier Type;
 
 	/** Whether the property associated with Type is enabled or not. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (UIMin = "0.0", ClampMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Modifier", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	bool bEnable;
 
 	FCsWeaponModifier_Toggle() :
@@ -496,8 +496,8 @@ namespace NCsWeapon
 // FCsWeaponModifierInfo
 #pragma region
 
-// NCsWeapon::NModifier::IModifier
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, IModifier)
+// NCsWeapon::NModifier::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NModifier, FInfo)
 
 USTRUCT(BlueprintType)
 struct CSWP_API FCsWeaponModifierInfo
@@ -505,26 +505,94 @@ struct CSWP_API FCsWeaponModifierInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Modifier")
-	TArray<FCsWeaponModifier_Int> IntModifiers;
+	TArray<FCsWeaponModifier_Int> Ints;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Modifier")
-	TArray<FCsWeaponModifier_Float> FloatModifiers;
+	TArray<FCsWeaponModifier_Float> Floats;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Modifier")
-	TArray<FCsWeaponModifier_Toggle> ToggleModifiers;
+	TArray<FCsWeaponModifier_Toggle> Toggles;
 
 	FCsWeaponModifierInfo() :
-		IntModifiers(),
-		FloatModifiers(),
-		ToggleModifiers()
+		Ints(),
+		Floats(),
+		Toggles()
 	{
 	}
 
-#define ModifierType NCsWeapon::NModifier::IModifier
-	void ConstructModifiers(TArray<ModifierType*>& OutModifiers);
-#undef ModifierType
+#define InfoType NCsWeapon::NModifier::FInfo
+	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info);
+#undef InfoType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
+
+namespace NCsWeapon
+{
+	namespace NModifier
+	{
+		struct CSWP_API FInfo
+		{
+		#define IntModifierType NCsWeapon::NModifier::FInt
+		#define FloatModifierType NCsWeapon::NModifier::FFloat
+		#define ToggleModifierType NCsWeapon::NModifier::FToggle
+		#define ModifierType NCsWeapon::NModifier::IModifier
+
+		public:
+
+			TArray<IntModifierType> Ints;
+
+			TArray<FloatModifierType> Floats;
+
+			TArray<ToggleModifierType> Toggles;
+
+		private:
+
+			TArray<ModifierType*> Modifiers;
+
+		public:
+
+			FInfo() :
+				Ints(),
+				Floats(),
+				Toggles(),
+				Modifiers()
+			{
+			}
+
+			FORCEINLINE const TArray<ModifierType*>& GetModifiers() const { return Modifiers; }
+			FORCEINLINE TArray<ModifierType*>* GetModifiersPtr() { return &Modifiers; }
+
+			FORCEINLINE void PopulateModifiers()
+			{
+				Modifiers.Reset(Ints.Num() + Floats.Num() + Toggles.Num());
+
+				for (IntModifierType& Modifier : Ints)
+				{
+					Modifiers.Add(&Modifier);
+				}
+
+				for (FloatModifierType& Modifier : Floats)
+				{
+					Modifiers.Add(&Modifier);
+				}
+
+				for (ToggleModifierType& Modifier : Toggles)
+				{
+					Modifiers.Add(&Modifier);
+				}
+			}
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+		#undef IntModifierType
+		#undef FloatModifierType
+		#undef ToggleModifierType
+		#undef ModifierType
+		};
+	}
+}
 
 #pragma endregion FCsWeaponModifierInfo

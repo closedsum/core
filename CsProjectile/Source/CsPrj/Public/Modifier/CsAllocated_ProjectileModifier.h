@@ -50,9 +50,11 @@ namespace NCsProjectile
 
 			FORCEINLINE IModifier* Get() const { return Modifier; }
 
-			void Copy(UObject* InRoot, const IModifier* From);
+			void Copy(const UObject* WorldContext, const IModifier* From);
 
 			void Copy(const FAllocated& From);
+
+			void Transfer(FAllocated& To);
 
 			FORCEINLINE void Clear()
 			{

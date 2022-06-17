@@ -29,9 +29,6 @@ class UCsProjectileMovementComponent;
 class UStaticMeshComponent;
 class UPrimitiveComponent;
 
-// NCsProjectile::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
-
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
 // NCsProjectile::NCache::FImpl
@@ -43,6 +40,11 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 
 class ICsFXActorPooled;
 struct FCsFXActorPooled;
+
+// NCsProjectile::NData::IData
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
+// NCsProjectile::NData::NCollision::ICollision
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NData, NCollision, ICollision)
 
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
@@ -325,6 +327,10 @@ protected:
 #define AllocateModifierType NCsProjectile::NModifier::FAllocated
 	TArray<AllocateModifierType> Modifiers;
 #undef AllocateModifierType
+
+#define CollisionDataType NCsProjectile::NData::NCollision::ICollision
+	void ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData);
+#undef CollisionDataType
 
 	void StartMovementFromModifiers(const FString& Context, const FVector& Direction);
 

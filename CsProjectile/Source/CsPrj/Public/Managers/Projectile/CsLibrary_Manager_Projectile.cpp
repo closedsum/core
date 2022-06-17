@@ -471,7 +471,7 @@ namespace NCsProjectile
 				{
 					if (I < ToCount)
 					{
-						To[I].Copy(Temp[I]);
+						Temp[I].Transfer(To[I]);
 					}
 					else
 					{

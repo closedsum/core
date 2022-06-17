@@ -32,8 +32,11 @@ namespace NCsProjectileModifier
 	extern CSPRJ_API const Type LifeTime;
 	extern CSPRJ_API const Type InitialSpeed;
 	extern CSPRJ_API const Type MaxSpeed;
+	// Damage
 	extern CSPRJ_API const Type DamageValuePoint;
-	//extern CSPRJ_API const Type ValueRange;
+	// Collision
+	extern CSPRJ_API const Type CollisionRadius;
+	extern CSPRJ_API const Type HitCount;
 }
 
 #pragma endregion ProjectileModifier

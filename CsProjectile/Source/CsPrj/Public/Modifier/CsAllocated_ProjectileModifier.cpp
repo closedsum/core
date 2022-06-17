@@ -94,7 +94,7 @@ namespace NCsProjectile
 			{
 				To.Modifier = Modifier;
 			}
-			Reset();
+			Clear();
 		}
 
 		void FAllocated::Reset()

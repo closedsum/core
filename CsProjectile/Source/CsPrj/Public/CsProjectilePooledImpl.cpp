@@ -47,6 +47,7 @@
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
+#include "Modifier/CsModifier_Int.h"
 #include "Modifier/CsModifier_Float.h"
 // FX
 #include "Managers/FX/Actor/CsFXActorPooled.h"
@@ -713,7 +714,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
 			}
 
-			HitCount = CollisionData->GetHitCount();
+			ApplyHitCountModifiers(Context, CollisionData);
 			// TODO: Move to Data
 			MovementComponent->bHandleDeflection = false;
 		}
@@ -1160,6 +1161,31 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 // Modifier
 #pragma region
+
+#define CollisionDataType NCsProjectile::NData::NCollision::ICollision
+void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData)
+{
+#undef CollisionDataType
+	HitCount = CollisionData->GetHitCount();
+
+	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+	typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
+	typedef NCsProjectile::NModifier::IModifier ModifierType;
+	typedef NCsModifier::NInt::IInt IntModifierType;
+
+	for (AllocatedModifierType& AllocatedModifier : Modifiers)
+	{
+		ModifierType* Modifier							 = AllocatedModifier.Get();
+		ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+		const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
+		// HitCount
+		if (PrjModifierType == NCsProjectileModifier::HitCount)
+		{
+			IntModifierType* IntModifier = ModifierLibrary::GetInterfaceChecked<IntModifierType>(Context, Modifier);
+			HitCount					 = IntModifier->Modify(HitCount);
+		}
+	}
+}
 
 void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
 {

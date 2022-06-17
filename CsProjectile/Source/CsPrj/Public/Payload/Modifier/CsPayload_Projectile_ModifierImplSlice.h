@@ -74,6 +74,8 @@ namespace NCsProjectile
 					}
 				}
 
+				void TransferFromModifiers(TArray<AllocatedModifierType>& FromModifiers);
+
 			// IModifier
 			#pragma region
 			public:

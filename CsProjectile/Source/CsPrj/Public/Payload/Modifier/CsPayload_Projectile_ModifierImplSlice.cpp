@@ -25,6 +25,7 @@ namespace NCsProjectile
 					namespace Str
 					{
 						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::FImplSlice, CopyFromModifiers);
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::FImplSlice, TransferFromModifiers);
 					}
 				}
 			}
@@ -109,14 +110,34 @@ namespace NCsProjectile
 
 				for (const AllocatedModifierType& From : FromModifiers)
 				{
-					typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
 					AllocatedModifierType& To = Modifiers_Internal.AddDefaulted_GetRef();
 
 					To.Copy(From);
-
 					Modifiers.Add(To.Modifier);
 				}
+			}
+
+			void FImplSlice::TransferFromModifiers(TArray<AllocatedModifierType>& FromModifiers)
+			{
+				using namespace NCsProjectile::NPayload::NModifier::NImplSlice::NCached;
+
+				const FString& Context = Str::TransferFromModifiers;
+
+				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
+
+				typedef NCsArray::FLibrary ArrayLibrary;
+
+				Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
+				Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
+
+				for (AllocatedModifierType& From : FromModifiers)
+				{
+					AllocatedModifierType& To = Modifiers_Internal.AddDefaulted_GetRef();
+
+					From.Transfer(To);
+					Modifiers.Add(To.Modifier);
+				}
+				FromModifiers.Reset(FromModifiers.Max());
 			}
 
 			#undef ModifierType

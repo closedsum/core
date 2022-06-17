@@ -1143,12 +1143,23 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModifier& Type)
 {
-	// LifeTime | IntialSpeed | MaxSpeed | DamageValuePoint
+	// HitCount
+	if (// Collision
+		Type == NCsProjectileModifier::HitCount)
+	{
+		return new NCsProjectile::NModifier::FInt();
+	}
+	// LifeTime | IntialSpeed | MaxSpeed | 
+	// DamageValuePoint
+	// CollisionRadius
 	// NCsProjectile::NModifier::IModifier
 	if (Type == NCsProjectileModifier::LifeTime ||
 		Type == NCsProjectileModifier::InitialSpeed ||
 		Type == NCsProjectileModifier::MaxSpeed ||
-		Type == NCsProjectileModifier::DamageValuePoint)
+		// Damage
+		Type == NCsProjectileModifier::DamageValuePoint ||
+		// Collision
+		Type == NCsProjectileModifier::CollisionRadius)
 	{
 		return new NCsProjectile::NModifier::FFloat();
 	}

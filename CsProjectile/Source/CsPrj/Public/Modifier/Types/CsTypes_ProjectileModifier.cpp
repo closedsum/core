@@ -6,11 +6,14 @@
 
 namespace NCsProjectileModifier
 {
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(LifeTime, "NCsProjectile::NModifier::NLifeTime::FImpl");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(InitialSpeed, "NCsProjectile::NModifier::NSpeed::NInitial::FImpl");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(MaxSpeed, "NCsProjectile::NModifier::NSpeed::NMax::FImpl");
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageValuePoint, "NCsProjectile::NModifier::NDamage::NValue::NPoint::FImpl");
-	//CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValueRange, "NCsDamage::NModifier::NValue::NRange::IRange");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT(LifeTime);
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(InitialSpeed, "Initial Speed");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(MaxSpeed, "Max Speed");
+	// Damage
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageValuePoint, "Damage: Value Point");
+	// Collision
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(CollisionRadius, "Collision Radius");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(HitCount, "Hit Count");
 }
 
 #pragma endregion ProjectileModifier

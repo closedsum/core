@@ -107,6 +107,7 @@ namespace NCsProjectileWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, CanFire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal_OnEnd);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenShots);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetProjectilesPerShot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenProjectilesPerShot);
@@ -920,19 +921,30 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 		}
 	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
 
-	if (SpreadVariables)
-	{
-		typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
-
-		WeaponManagerLibrary::DeallocateSpreadVariables(Context, this, SpreadVariablesResource);
-	}
-	FireHandles.Remove(R->GetHandle());
-
 	CS_COROUTINE_END(R);
 }
 
 void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 {
+	using namespace NCsProjectileWeaponActorPooled::NCached;
+
+	const FString& Context = Str::Fire_Internal_OnEnd;
+
+	if (R->GetSafeOwnerAsObject())
+	{
+		typedef NCsWeapon::NProjectile::NSpread::NVariables::FResource SpreadVariablesResourceType;
+
+		static const int32 SPREAD_VARIABLES_RESOURCE = 0;
+		SpreadVariablesResourceType* SpreadVariablesResource = R->GetValue_Void<SpreadVariablesResourceType>(SPREAD_VARIABLES_RESOURCE);
+
+		if (SpreadVariablesResource)
+		{
+			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+			WeaponManagerLibrary::DeallocateSpreadVariables(Context, this, SpreadVariablesResource);
+		}
+		FireHandles.Remove(R->GetHandle());
+	}
 	--FireCount;
 }
 

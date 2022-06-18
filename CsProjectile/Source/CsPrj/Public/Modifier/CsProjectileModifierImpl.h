@@ -2,6 +2,7 @@
 #pragma once
 // Types
 #include "Modifier/CsTypes_Modifier.h"
+#include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Interface
 #include "Modifier/CsModifier.h"
 #include "Modifier/CsModifier_Int.h"

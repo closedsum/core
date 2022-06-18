@@ -7,12 +7,16 @@
 // Types
 #include "Types/CsTypes_Projectile.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
+// Coroutine
+#include "Coroutine/CsRoutineHandle.h"
 // Projectile
 #include "Payload/CsPayload_Projectile.h"
 #include "CsProjectile.h"
 #include "CsProjectilePooled.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "Modifier/CsResource_ProjectileModifier.h"
+#include "Params/OnHit/Spawn/Projectile/CsProjectile_OnHit_SpawnProjectile_Variables.h"
+#include "Params/OnHit/Spawn/Projectile/CsProjectile_OnHit_SpawnProjectile_Spread_Variables.h"
 
 #include "CsManager_Projectile.generated.h"
 
@@ -1000,6 +1004,136 @@ public:
 #undef ModifierType
 
 #pragma endregion Modifier
+
+// OnHit
+#pragma region
+public:
+
+	struct FOnHit
+	{
+		friend class UCsManager_Projectile;
+
+	private:
+
+		UCsManager_Projectile* Outer;
+
+	public:
+
+		struct FSpawn
+		{
+			friend class UCsManager_Projectile;
+			friend struct UCsManager_Projectile::FOnHit;
+
+		private:
+
+			UCsManager_Projectile::FOnHit* Outer;
+
+		public:
+
+			struct FProjectile
+			{
+				friend class UCsManager_Projectile;
+				friend struct UCsManager_Projectile::FOnHit::FSpawn;
+
+			private:
+
+				UCsManager_Projectile::FOnHit::FSpawn* Outer;
+
+			public:
+
+			#define VariablesManagerType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FManager
+			#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
+
+				VariablesManagerType VariablesManager;
+
+				TSet<FCsRoutineHandle> Handles;
+
+				struct FSpread
+				{
+					friend class UCsManager_Projectile;
+					friend struct UCsManager_Projectile::FOnHit::FSpawn;
+					friend struct UCsManager_Projectile::FOnHit::FSpawn::FProjectile;
+
+				#define SpreadVariablesManagerType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FManager
+				#define SpreadVariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+
+				private: 
+
+					UCsManager_Projectile::FOnHit::FSpawn::FProjectile* Outer;
+
+				public:
+
+					SpreadVariablesManagerType VariablesManager;
+
+					FSpread() :
+						Outer(nullptr),
+						VariablesManager()
+					{
+					}
+
+					void Setup();
+
+					FORCEINLINE SpreadVariablesResourceType* AllocateVariables() { return VariablesManager.Allocate(); }
+
+					FORCEINLINE void DeallocateVariables(SpreadVariablesResourceType* Resource) { VariablesManager.Deallocate(Resource); }
+					FORCEINLINE void DeallocateVariables(const int32& Index) { VariablesManager.DeallocateAt(Index); }
+
+				#undef SpreadVariablesManagerType
+				#undef SpreadVariablesResourceType
+				};
+
+				FSpread Spread;
+
+				FProjectile() :
+					Outer(nullptr),
+					VariablesManager(),
+					Handles(),
+					Spread()
+				{
+					Spread.Outer = this;
+				}
+
+				void Setup();
+
+				FORCEINLINE VariablesResourceType* AllocateVariables() { return VariablesManager.Allocate(); }
+
+				FORCEINLINE void DeallocateVariables(VariablesResourceType* Resource) { VariablesManager.Deallocate(Resource); }
+				FORCEINLINE void DeallocateVariables(const int32& Index) { VariablesManager.DeallocateAt(Index); }
+
+				FORCEINLINE void AddHandle(const FCsRoutineHandle& Handle) { Handles.Add(Handle); }
+				FORCEINLINE void RemoveHandle(const FCsRoutineHandle& Handle) { Handles.Remove(Handle); }
+
+			#undef VariablesManagerType
+			#undef VariablesResourceType
+			};
+
+			FProjectile Projectile;
+
+			FSpawn() :
+				Outer(nullptr),
+				Projectile()
+			{
+				Projectile.Outer = this;
+			}
+		};
+
+		FSpawn Spawn;
+
+		FOnHit() :
+			Outer(nullptr),
+			Spawn()
+		{
+			Spawn.Outer = this;
+		}
+
+		void Setup();
+	};
+
+	FOnHit OnHit;
+
+	void SetupOnHit();
+
+#pragma endregion OnHit
 
 #undef ManagerType
 #undef ManagerParamsType

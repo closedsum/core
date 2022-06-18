@@ -487,5 +487,82 @@ namespace NCsProjectile
 		#undef AllocatedModifierType
 
 		#pragma endregion Modifier
+
+		namespace NOnHit
+		{
+			namespace NSpawn
+			{
+				namespace NProjectile
+				{
+					#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
+
+					VariablesResourceType* FLibrary::AllocateVariablesChecked(const FString& Context, const UObject* WorldContext)
+					{
+						typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+						return PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.AllocateVariables();
+					}
+
+					void FLibrary::DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource)
+					{
+						typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+						return PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.DeallocateVariables(Resource);
+					}
+
+					void FLibrary::DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, const int32& Index)
+					{
+						typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+						return PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.DeallocateVariables(Index);
+					}
+
+					void FLibrary::AddHandleChecked(const FString& Context, const UObject* WorldContext, const FCsRoutineHandle& Handle)
+					{
+						typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+						return PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.RemoveHandle(Handle);
+					}
+
+					void FLibrary::RemoveHandleChecked(const FString& Context, const UObject* WorldContext, const FCsRoutineHandle& Handle) 
+					{
+						typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+						return PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.AddHandle(Handle);
+					}
+
+					#undef VariablesResourceType
+
+					namespace NSpread
+					{
+
+						#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+
+						VariablesResourceType* FLibrary::AllocateVariablesChecked(const FString& Context, const UObject* WorldContext)
+						{
+							typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+							return PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.Spread.AllocateVariables();
+						}
+
+						void FLibrary::DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource)
+						{
+							typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+							PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.Spread.DeallocateVariables(Resource);
+						}
+
+						void FLibrary::DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, const int32& Index)
+						{
+							typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+							PrjManagerLibrary::GetChecked(Context, WorldContext)->OnHit.Spawn.Projectile.Spread.DeallocateVariables(Index);
+						}
+
+						#undef VariablesResourceType
+					}
+				}
+			}
+		}
 	}
 }

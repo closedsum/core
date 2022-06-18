@@ -3,6 +3,8 @@
 // Types
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
+// Coroutine
+#include "Coroutine/CsRoutineHandle"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 // Log
@@ -29,6 +31,11 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, FInterfaceMap)
 
 struct FCsProjectilePooled;
+
+// NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NVariables, FResource)
+// NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NVariables, FResource)
 
 namespace NCsProjectile
 {
@@ -380,5 +387,49 @@ namespace NCsProjectile
 
 		#pragma endregion Modifier
 		};
+
+		namespace NOnHit
+		{
+			namespace NSpawn
+			{
+				namespace NProjectile
+				{
+					struct CSPRJ_API FLibrary final
+					{
+					public:
+
+					#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
+
+						static VariablesResourceType* AllocateVariablesChecked(const FString& Context, const UObject* WorldContext);
+
+						static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
+						static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
+
+					#undef VariablesResourceType
+
+						static void AddHandleChecked(const FString& Context, const UObject* WorldContext, const FCsRoutineHandle& Handle);
+						
+						static void RemoveHandleChecked(const FString& Context, const UObject* WorldContext, const FCsRoutineHandle& Handle);
+					};
+
+					namespace NSpread
+					{
+						struct CSPRJ_API FLibrary final
+						{
+						public:
+
+						#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
+
+							static VariablesResourceType* AllocateVariablesChecked(const FString& Context, const UObject* WorldContext);
+
+							static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
+							static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
+
+						#undef VariablesResourceType
+						};
+					}
+				}
+			}
+		}
 	}
 }

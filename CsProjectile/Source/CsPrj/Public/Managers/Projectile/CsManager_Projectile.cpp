@@ -1205,3 +1205,32 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 #undef ModifierType
 
 #pragma endregion Modifier
+
+// OnHit
+#pragma region
+
+void UCsManager_Projectile::FOnHit::FSpawn::FProjectile::FSpread::Setup()
+{
+	// TODO: Get from Settings
+	VariablesManager.CreatePool(1024);
+}
+
+void UCsManager_Projectile::FOnHit::FSpawn::FProjectile::Setup()
+{
+	Spread.Setup();
+
+	// TODO: Get from Settings
+	VariablesManager.CreatePool(1024);
+}
+
+void UCsManager_Projectile::FOnHit::Setup()
+{
+	Spawn.Projectile.Setup();
+}
+
+void UCsManager_Projectile::SetupOnHit()
+{
+	OnHit.Outer = this;
+}
+
+#pragma endregion OnHit

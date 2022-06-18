@@ -36,6 +36,7 @@ namespace NCsUserWidgetTextPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, OnConstructObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Deallocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsUserWidget_TextPooledImpl, Handle_AddToViewport);
 		}
 	}
@@ -49,6 +50,7 @@ UCsUserWidget_TextPooledImpl::UCsUserWidget_TextPooledImpl(const FObjectInitiali
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
 	ChangesToDefaultMask(0),
+	SetPositionInViewport_ID(INDEX_NONE),
 	CurrentZOrder(0),
 	MyText(nullptr)
 {
@@ -218,10 +220,23 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 
 void UCsUserWidget_TextPooledImpl::Deallocate()
 {
+	using namespace NCsUserWidgetTextPooledImpl::NCached;
+
+	const FString& Context = Str::Deallocate;
+
 	SetVisibility(ESlateVisibility::Collapsed);
 	SetIsEnabled(false);
 
 	Handle_RemoveFromViewport();
+
+	if (SetPositionInViewport_ID != INDEX_NONE)
+	{
+		typedef NCsUserWidget::NManager::NSetPositionInViewports::FLibrary SetPositionInViewportsLibrary;
+
+		 SetPositionInViewportsLibrary::DeallocateChecked(Context, this, SetPositionInViewport_ID);
+	}
+
+	SetPositionInViewport_ID = INDEX_NONE;
 
 	PreserveChangesToDefaultMask = 0;
 

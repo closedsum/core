@@ -57,6 +57,7 @@ void FCsProjectile_OnHit_SpawnProjectile_DirectionParams::CopyToParams(ParamsTyp
 	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
 
 	Params->SetType((DirectionType*)(&Type));
+	Params->SetRadius(&Radius);
 	Params->SetbYaw(&bYaw);
 	Params->SetYaw(&Yaw);
 	Params->SetbPitch(&bPitch);
@@ -68,6 +69,7 @@ void FCsProjectile_OnHit_SpawnProjectile_DirectionParams::CopyToParamsAsValue(Pa
 	typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
 
 	Params->SetType((DirectionType)Type);
+	Params->SetRadius(Radius);
 	Params->SetbYaw(bYaw);
 	Params->SetYaw(Yaw);
 	Params->SetbPitch(bPitch);
@@ -80,6 +82,10 @@ bool FCsProjectile_OnHit_SpawnProjectile_DirectionParams::IsValidChecked(const F
 {
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileOnHitSpawnProjectileDirection, Type)
 
+	if (Type == ECsProjectileOnHitSpawnProjectileDirection::ClosestTarget)
+	{
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(Radius, 0.0f)
+	}
 	if (bYaw)
 	{
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Yaw, -90.0f)
@@ -97,6 +103,10 @@ bool FCsProjectile_OnHit_SpawnProjectile_DirectionParams::IsValid(const FString&
 {
 	CS_IS_ENUM_VALID(EMCsProjectileOnHitSpawnProjectileDirection, ECsProjectileOnHitSpawnProjectileDirection, Type)
 
+	if (Type == ECsProjectileOnHitSpawnProjectileDirection::ClosestTarget)
+	{
+		CS_IS_FLOAT_GREATER_THAN(Radius, 0.0f)
+	}
 	if (bYaw)
 	{
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Yaw, -90.0f)
@@ -123,9 +133,14 @@ namespace NCsProjectile
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EMDirection DirectionMapType;
+						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::EDirection DirectionType;
 
 						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetType())
 
+						if (GetType() == DirectionType::ClosestTarget)
+						{
+							CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRadius(), 0.0f)
+						}
 						if (GetbYaw())
 						{
 							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetYaw(), -90.0f)
@@ -146,6 +161,10 @@ namespace NCsProjectile
 
 						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetType())
 
+						if (GetType() == DirectionType::ClosestTarget)
+						{
+							CS_IS_FLOAT_GREATER_THAN(GetRadius(), 0.0f)
+						}
 						if (GetbYaw())
 						{
 							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetYaw(), -90.0f)
@@ -562,11 +581,11 @@ void FCsProjectile_OnHit_SpawnProjectileParams::CopyToParams(ParamsType* Params)
 {
 	Params->SetProjectile(Projectile.GetPtr());
 	Params->SetProjectilesPerSpawn(&ProjectilesPerSpawn);
-	Params->SetTimeBetweenSpawns(&TimeBetweenSpawns);
 	Params->SetTimeBetweenProjectilesPerSpawn(&TimeBetweenProjectilesPerSpawn);
 	Params->SetbUntilGenerationCount(&bUntilGenerationCount);
 	Params->SetGenerationCount(&GenerationCount);
 	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
+	Params->SetbSpreadParams(&bSpreadParams);
 	SpreadParams.CopyToParams(Params->GetSpreadParamsPtr());
 	Params->SetbInheritModifiers(&bInheritModifiers);
 	CreateModifiers.CopyToInfo(Params->GetCreateModifiersPtr());
@@ -577,11 +596,11 @@ void FCsProjectile_OnHit_SpawnProjectileParams::CopyToParamsAsValue(ParamsType* 
 {
 	Params->SetProjectile(Projectile.Value);
 	Params->SetProjectilesPerSpawn(ProjectilesPerSpawn);
-	Params->SetTimeBetweenSpawns(TimeBetweenSpawns);
 	Params->SetTimeBetweenProjectilesPerSpawn(TimeBetweenProjectilesPerSpawn);
 	Params->SetbUntilGenerationCount(bUntilGenerationCount);
 	Params->SetGenerationCount(GenerationCount);
 	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
+	Params->SetbSpreadParams(bSpreadParams);
 	SpreadParams.CopyToParamsAsValue(Params->GetSpreadParamsPtr());
 	Params->SetbInheritModifiers(bInheritModifiers);
 	CreateModifiers.CopyToInfoAsValue(Params->GetCreateModifiersPtr());
@@ -594,7 +613,6 @@ bool FCsProjectile_OnHit_SpawnProjectileParams::IsValidChecked(const FString& Co
 {
 	CS_IS_VALID_CHECKED(Projectile);
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(ProjectilesPerSpawn, 1)
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(TimeBetweenSpawns, 0.0f)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(TimeBetweenProjectilesPerSpawn, 0.0f)
 	
 	if (bUntilGenerationCount)
@@ -603,7 +621,11 @@ bool FCsProjectile_OnHit_SpawnProjectileParams::IsValidChecked(const FString& Co
 	}
 	
 	CS_IS_VALID_CHECKED(DirectionParams);
-	CS_IS_VALID_CHECKED(SpreadParams);
+
+	if (bSpreadParams)
+	{
+		CS_IS_VALID_CHECKED(SpreadParams);
+	}
 	CS_IS_VALID_CHECKED(CreateModifiers);
 	CS_IS_VALID_CHECKED(Modifiers);
 	return true;
@@ -613,7 +635,6 @@ bool FCsProjectile_OnHit_SpawnProjectileParams::IsValid(const FString& Context, 
 {
 	CS_IS_VALID(Projectile)
 	CS_IS_INT_GREATER_THAN_OR_EQUAL(ProjectilesPerSpawn, 1)
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(TimeBetweenSpawns, 0.0f)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(TimeBetweenProjectilesPerSpawn, 0.0f)
 	
 	if (bUntilGenerationCount)
@@ -622,7 +643,11 @@ bool FCsProjectile_OnHit_SpawnProjectileParams::IsValid(const FString& Context, 
 	}
 	
 	CS_IS_VALID(DirectionParams)
-	CS_IS_VALID(SpreadParams)
+
+	if (bSpreadParams)
+	{
+		CS_IS_VALID(SpreadParams)
+	}
 	CS_IS_VALID(CreateModifiers)
 	CS_IS_VALID(Modifiers)
 	return true;
@@ -640,7 +665,6 @@ namespace NCsProjectile
 				{
 					CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, GetProjectile())
 					CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetProjectilesPerSpawn(), 1)
-					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetTimeBetweenSpawns(), 0.0f)
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetTimeBetweenProjectilesPerSpawn(), 0.0f)
 	
 					if (GetbUntilGenerationCount())
@@ -649,7 +673,11 @@ namespace NCsProjectile
 					}
 
 					CS_IS_VALID_CHECKED(DirectionParams);
-					CS_IS_VALID_CHECKED(SpreadParams);
+
+					if (GetbSpreadParams())
+					{
+						CS_IS_VALID_CHECKED(SpreadParams);
+					}
 					CS_IS_VALID_CHECKED(CreateModifiers);
 					CS_IS_VALID_CHECKED(Modifiers);
 					return true;
@@ -659,7 +687,6 @@ namespace NCsProjectile
 				{
 					CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, GetProjectile())
 					CS_IS_INT_GREATER_THAN_OR_EQUAL(GetProjectilesPerSpawn(), 1)
-					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetTimeBetweenSpawns(), 0.0f)
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetTimeBetweenProjectilesPerSpawn(), 0.0f)
 	
 					if (GetbUntilGenerationCount())
@@ -668,7 +695,11 @@ namespace NCsProjectile
 					}
 
 					CS_IS_VALID(DirectionParams)
-					CS_IS_VALID(SpreadParams)
+
+					if (GetbSpreadParams())
+					{
+						CS_IS_VALID(SpreadParams)
+					}
 					CS_IS_VALID(CreateModifiers)
 					CS_IS_VALID(Modifiers)
 					return true;

@@ -1097,8 +1097,16 @@ public:
 
 				FORCEINLINE VariablesResourceType* AllocateVariables() { return VariablesManager.Allocate(); }
 
-				FORCEINLINE void DeallocateVariables(VariablesResourceType* Resource) { VariablesManager.Deallocate(Resource); }
-				FORCEINLINE void DeallocateVariables(const int32& Index) { VariablesManager.DeallocateAt(Index); }
+				FORCEINLINE void DeallocateVariables(VariablesResourceType* Resource) 
+				{ 
+					Resource->Get()->Reset();
+					VariablesManager.Deallocate(Resource); 
+				}
+				FORCEINLINE void DeallocateVariables(const int32& Index) 
+				{ 
+					VariablesManager.GetAt(Index)->Get()->Reset();
+					VariablesManager.DeallocateAt(Index);
+				}
 
 				FORCEINLINE void AddHandle(const FCsRoutineHandle& Handle) { Handles.Add(Handle); }
 				FORCEINLINE void RemoveHandle(const FCsRoutineHandle& Handle) { Handles.Remove(Handle); }

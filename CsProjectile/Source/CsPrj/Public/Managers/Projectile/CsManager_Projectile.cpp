@@ -269,6 +269,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 void UCsManager_Projectile::Initialize()
 {
 	SetupInternal();
+	SetupOnHit();
 
 	bInitialized = true;
 }
@@ -1231,6 +1232,7 @@ void UCsManager_Projectile::FOnHit::Setup()
 void UCsManager_Projectile::SetupOnHit()
 {
 	OnHit.Outer = this;
+	OnHit.Setup();
 }
 
 #pragma endregion OnHit

@@ -114,6 +114,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit")
 	ECsProjectileOnHitSpawnProjectileDirection Type;
 
+	/** NOTE: Only valid if Type == ECsProjectileOnHitSpawnProjectileDirection::ClosestTarget. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Radius;
+
 	/** Whether to apply a Yaw (offset in degrees) to the movement direction of the Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (InlineEditConditionToggle))
 	bool bYaw;
@@ -133,6 +137,7 @@ public:
 
 	FCsProjectile_OnHit_SpawnProjectile_DirectionParams() :
 		Type(ECsProjectileOnHitSpawnProjectileDirection::Parent),
+		Radius(0.0f),
 		bYaw(false),
 		Yaw(0.0f),
 		bPitch(false),
@@ -166,6 +171,7 @@ namespace NCsProjectile
 					private:
 
 						CS_DECLARE_MEMBER_WITH_PROXY(Type, DirectionType)
+						CS_DECLARE_MEMBER_WITH_PROXY(Radius, float)
 						CS_DECLARE_MEMBER_WITH_PROXY(bYaw, bool)
 						CS_DECLARE_MEMBER_WITH_PROXY(Yaw, float)
 						CS_DECLARE_MEMBER_WITH_PROXY(bPitch, bool)
@@ -175,12 +181,14 @@ namespace NCsProjectile
 
 						FParams() :
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, DirectionType::Parent),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Radius, 0.0f),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(bYaw, false),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(Yaw, 0.0f),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(bPitch, false),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(Pitch, 0.0f)
 						{
 							CS_CTOR_SET_MEMBER_PROXY(Type);
+							CS_CTOR_SET_MEMBER_PROXY(Radius);
 							CS_CTOR_SET_MEMBER_PROXY(bYaw);
 							CS_CTOR_SET_MEMBER_PROXY(Yaw);
 							CS_CTOR_SET_MEMBER_PROXY(bPitch);
@@ -188,6 +196,7 @@ namespace NCsProjectile
 						}
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, DirectionType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Radius, float)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bYaw, bool)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Yaw, float)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bPitch, bool)
@@ -611,9 +620,6 @@ public:
 	int32 ProjectilesPerSpawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (UIMin = "0.0", ClampMin = "0.0"))
-	float TimeBetweenSpawns;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float TimeBetweenProjectilesPerSpawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (InlineEditConditionToggle))
@@ -643,7 +649,6 @@ public:
 	FCsProjectile_OnHit_SpawnProjectileParams() :
 		Projectile(),
 		ProjectilesPerSpawn(1),
-		TimeBetweenSpawns(0.0f),
 		TimeBetweenProjectilesPerSpawn(0.0f),
 		bUntilGenerationCount(false),
 		GenerationCount(1),
@@ -688,7 +693,6 @@ namespace NCsProjectile
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Projectile, FECsProjectile)
 					CS_DECLARE_MEMBER_WITH_PROXY(ProjectilesPerSpawn, int32)
-					CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenSpawns, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerSpawn, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(bUntilGenerationCount, bool)
 					CS_DECLARE_MEMBER_WITH_PROXY(GenerationCount, int32)
@@ -720,7 +724,6 @@ namespace NCsProjectile
 					FParams() :
 						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Projectile),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(ProjectilesPerSpawn, 1),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenSpawns, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerSpawn, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(bUntilGenerationCount, false),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(GenerationCount, 1),
@@ -733,7 +736,6 @@ namespace NCsProjectile
 					{
 						CS_CTOR_SET_MEMBER_PROXY(Projectile);
 						CS_CTOR_SET_MEMBER_PROXY(ProjectilesPerSpawn);
-						CS_CTOR_SET_MEMBER_PROXY(TimeBetweenSpawns);
 						CS_CTOR_SET_MEMBER_PROXY(TimeBetweenProjectilesPerSpawn);
 						CS_CTOR_SET_MEMBER_PROXY(bUntilGenerationCount);
 						CS_CTOR_SET_MEMBER_PROXY(GenerationCount);
@@ -743,13 +745,14 @@ namespace NCsProjectile
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Projectile, FECsProjectile)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ProjectilesPerSpawn, int32)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenSpawns, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerSpawn, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bUntilGenerationCount, bool)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(GenerationCount, int32)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bSpreadParams, bool)
 
+					FORCEINLINE const DirectionParamsType& GetDirectionParams() const { return DirectionParams; }
 					FORCEINLINE DirectionParamsType* GetDirectionParamsPtr() { return &DirectionParams; }
+					FORCEINLINE const SpreadParamsType& GetSpreadParams() const { return SpreadParams; }
 					FORCEINLINE SpreadParamsType* GetSpreadParamsPtr() { return &SpreadParams; }
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInheritModifiers, bool)

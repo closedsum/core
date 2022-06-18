@@ -590,6 +590,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
 
 			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			MeshComponent->SetRelativeLocation(FVector::ZeroVector);
 
 			UStaticMesh* Mesh = VisualData->GetStaticMesh().Mesh.GetChecked(Context);
 

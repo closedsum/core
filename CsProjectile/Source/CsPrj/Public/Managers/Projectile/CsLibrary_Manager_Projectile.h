@@ -4,7 +4,7 @@
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
 #include "Modifier/Types/CsTypes_ProjectileModifier.h"
 // Coroutine
-#include "Coroutine/CsRoutineHandle"
+#include "Coroutine/CsRoutineHandle.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 // Log

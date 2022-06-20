@@ -102,6 +102,30 @@ struct CSPRJ_API FCsData_ECsProjectile
 
 #pragma endregion FCsData_Projectile
 
+// FCsDataNoPropertyView_ECsProjectile
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsDataNoPropertyView_ECsProjectile
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
+	FECsProjectile Value;
+
+	FCsDataNoPropertyView_ECsProjectile() :
+		Value()
+	{
+	}
+
+	FORCEINLINE FECsProjectile* GetPtr() { return &Value; }
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+#pragma endregion FCsDataNoPropertyView_ECsProjectile
+
 // ProjectileClass
 #pragma region
 

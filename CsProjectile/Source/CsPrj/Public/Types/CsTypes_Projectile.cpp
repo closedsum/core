@@ -101,6 +101,23 @@ bool FCsData_ECsProjectile::IsValid(const FString& Context, void(*Log)(const FSt
 
 #pragma endregion FCsData_Projectile
 
+// FCsDataNoPropertyView_ECsProjectile
+#pragma region
+
+bool FCsDataNoPropertyView_ECsProjectile::IsValidChecked(const FString& Context) const
+{
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Value)
+	return true;
+}
+
+bool FCsDataNoPropertyView_ECsProjectile::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	CS_IS_ENUM_STRUCT_VALID(EMCsProjectile, FECsProjectile, Value)
+	return true;
+}
+
+#pragma endregion FCsDataNoPropertyView_ECsProjectile
+
 // ProjectileClass
 #pragma region
 

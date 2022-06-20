@@ -16,6 +16,7 @@
 	// Data
 #include "DetailCustomizations/Data/CsData_ProjectilePtrCustomization.h"
 #include "DetailCustomizations/Data/CsData_ECsProjectileCustomization.h"
+#include "DetailCustomizations/Data/CsDataNoPropertyView_ECsProjectileCustomization.h"
 
 void FCsProjectileRegisterDetailCustomization::Register()
 {
@@ -40,6 +41,8 @@ void FCsProjectileRegisterDetailCustomization::Register()
 	CS_TEMP_REGISTER(CsData_ProjectilePtr);
 	// CsData_ECsProjectile
 	CS_TEMP_REGISTER(CsData_ECsProjectile);
+	// CsDataNoPropertyView_ECsProjectile
+	CS_TEMP_REGISTER(CsDataNoPropertyView_ECsProjectile);
 
 	#undef CS_TEMP_REGISTER
 }

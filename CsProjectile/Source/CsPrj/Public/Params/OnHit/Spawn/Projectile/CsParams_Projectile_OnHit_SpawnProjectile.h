@@ -614,7 +614,7 @@ struct CSPRJ_API FCsProjectile_OnHit_SpawnProjectileParams
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit")
-	FCsData_ECsProjectile Projectile;
+	FCsDataNoPropertyView_ECsProjectile Projectile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (UIMin = "1", ClampMin = "1"))
 	int32 ProjectilesPerSpawn;

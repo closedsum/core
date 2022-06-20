@@ -27,6 +27,8 @@ namespace NCsProjectile
 					#define SpawnProjectileOnHitDataType NCsProjectile::NData::NOnHit::NSpawn::NProjectile::IProjectile
 					#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
 
+						int32 Generation;
+
 						UObject* Instigator;
 
 						UObject* Owner;
@@ -44,6 +46,7 @@ namespace NCsProjectile
 						TArray<AllocatedModifierType> Modifiers;
 
 						FVariables() :
+							Generation(0),
 							Instigator(nullptr),
 							Owner(nullptr),
 							Location(0.0f),
@@ -57,6 +60,7 @@ namespace NCsProjectile
 
 						FORCEINLINE void Reset()
 						{
+							Generation = 0;
 							Instigator = nullptr;
 							Owner = nullptr;
 							Location = FVector::ZeroVector;

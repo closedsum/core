@@ -30,42 +30,48 @@ public:
 		pooled object (implements the interface: ICsPooledObject) is controlled
 		by its manager.
 		Usually the default value is UpdateType::Manager (NCsPooledObject::EUpdate). */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	ECsPooledObjectUpdate UpdateType;
 
 	/** The object "instigating" or starting the spawn. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	UObject* Instigator;
 
 	/** The owner of the Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	UObject* Owner;
 
 	/** The parent of the Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	UObject* Parent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	int32 PreserveChangesFromDefaultMask;
 
 // PrjPayloadType (NCsProjectile::Payload::IPayload)
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	FECsProjectile Type;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj", meta = (UIMin = "0", ClampMin = "0"))
+	int32 Generation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	FVector Location;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
 	FVector Direction;
 
 	FCsPayload_Projectile() :
+		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 		UpdateType(ECsPooledObjectUpdate::Manager),
 		Instigator(nullptr),
 		Owner(nullptr),
 		Parent(nullptr),
 		PreserveChangesFromDefaultMask(0),
+		// PrjPayloadType (NCsProjectile::Payload::IPayload)
 		Type(),
+		Generation(0),
 		Location(0.0f),
 		Direction(0.0f)
 	{
@@ -131,6 +137,8 @@ namespace NCsProjectile
 
 			FECsProjectile Type;
 
+			int32 Generation;
+
 			FVector Direction;
 
 			FVector Location;
@@ -185,6 +193,7 @@ namespace NCsProjectile
 		public:
 
 			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
+			FORCEINLINE const int32& GetGeneration() const { return Generation; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 

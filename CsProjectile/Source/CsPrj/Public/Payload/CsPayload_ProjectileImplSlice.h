@@ -34,6 +34,8 @@ namespace NCsProjectile
 
 			FECsProjectile Type;
 
+			int32 Generation;
+
 			FVector Direction;
 
 			FVector Location;
@@ -60,6 +62,7 @@ namespace NCsProjectile
 		public:
 
 			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
+			FORCEINLINE const int32& GetGeneration() const { return Generation; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 

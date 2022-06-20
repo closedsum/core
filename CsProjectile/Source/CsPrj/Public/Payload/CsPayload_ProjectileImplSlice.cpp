@@ -14,6 +14,7 @@ namespace NCsProjectile
 			InterfaceMap(nullptr),
 			// IPayload
 			Type(),
+			Generation(0),
 			Direction(0.0f),
 			Location(0.0f)
 		{
@@ -38,6 +39,7 @@ namespace NCsProjectile
 		{
 			// IPayload
 			Type = EMCsProjectile::Get().GetMAX();
+			Generation = 0;
 			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
 		}
@@ -46,6 +48,7 @@ namespace NCsProjectile
 
 		bool FImplSlice::CopyFrom(const FImplSlice* From)
 		{
+			Generation = From->Generation;
 			Direction = From->Direction;
 			Location = From->Location;
 			return true;

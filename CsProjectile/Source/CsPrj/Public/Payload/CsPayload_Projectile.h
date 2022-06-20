@@ -23,6 +23,8 @@ namespace NCsProjectile
 
 			virtual const FECsProjectile& GetType() const = 0;
 
+			virtual const int32& GetGeneration() const = 0;
+
 			virtual const FVector& GetDirection() const = 0;
 
 			virtual const FVector& GetLocation() const = 0;

@@ -105,6 +105,7 @@ namespace NCsProjectilePooledImpl
 ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	Type(),
+	Generation(0),
 	State(),
 	// ICsPooledObject
 	Cache(nullptr),
@@ -415,6 +416,8 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	PayloadType* ProjectilePayload = PooledPayloadLibrary::GetInterfaceChecked<PayloadType>(Context, Payload);
 
 	Type = ProjectilePayload->GetType();
+
+	Generation = ProjectilePayload->GetGeneration();
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Type)
 

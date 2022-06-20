@@ -115,6 +115,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	FECsProjectile Type;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
+	int32 Generation;
+
 	void SetType(const FECsProjectile& InType);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Projectile")

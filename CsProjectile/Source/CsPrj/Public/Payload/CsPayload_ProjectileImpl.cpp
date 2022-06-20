@@ -35,6 +35,7 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 		PayloadSliceType* PayloadSlice = PayloadLibrary::StaticCastChecked<PayloadSliceType, PayloadType>(Context, Payload);
 
 		PayloadSlice->Type		= Type;
+		PayloadSlice->Generation = Generation;
 		PayloadSlice->Location	= Location;
 		PayloadSlice->Direction	= Direction;
 	}
@@ -50,6 +51,7 @@ void FCsPayload_Projectile::CopyToPayloadAsValueChecked(const FString& Context, 
 		PayloadImpl->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
 
 		PayloadImpl->Type		= Type;
+		PayloadImpl->Generation = Generation;
 		PayloadImpl->Location	= Location;
 		PayloadImpl->Direction	= Direction;
 	}
@@ -87,6 +89,7 @@ namespace NCsProjectile
 			PreserveChangesFromDefaultMask(0),
 			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 			Type(),
+			Generation(0),
 			Direction(0.0f),
 			Location(0.0f)
 		{
@@ -122,6 +125,7 @@ namespace NCsProjectile
 			Time.Reset();
 			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 			Type = EMCsProjectile::Get().GetMAX();
+			Generation = 0;
 			Direction = FVector::ZeroVector;
 			Location = FVector::ZeroVector;
 		}

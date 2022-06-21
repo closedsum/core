@@ -176,6 +176,8 @@ namespace NCsSkin
 					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformRangeScaleSkinData->GetMaxUniformScale(), 0.0f)
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(UniformRangeScaleSkinData->GetMaxUniformScale(), UniformRangeScaleSkinData->GetMinUniformScale())
 				}
+
+				// TODO: Attachments
 				return true;
 			}
 

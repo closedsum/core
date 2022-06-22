@@ -5,6 +5,9 @@
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 
+// Location (NCsWeapon::NProjectile::NParams::NLaunch::ELocation)
+#pragma region
+
 namespace NCsWeapon
 {
 	namespace NProjectile
@@ -13,9 +16,6 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-			// Location
-			#pragma region
-
 				/**
 				* Describes the different methods to get the Location from which a projectile of type:
 				* ICsProjectile will be launched from a weapon of type: ICsProjectileWeapon.
@@ -25,8 +25,8 @@ namespace NCsWeapon
 					/** Owner's Location. If the Owner is of type: AActor, then it will
 						be GetActorLocation(). */
 					Owner,
-					/** If there is a SkeletalMesh that acts as the root object for the 
-						Weapon, use the Bone / Socket location. */ 
+					/** If there is a SkeletalMesh that acts as the root object for the
+						Weapon, use the Bone / Socket location. */
 					Bone,
 					/** SceneComponent's Location. The Component is marked as the Launch Component Transform. */
 					Component,
@@ -50,12 +50,24 @@ namespace NCsWeapon
 						extern CSWP_API const Type Custom;
 					}
 				}
+			}
+		}
+	}
+}
 
-			#pragma endregion Location
+#pragma endregion Location (NCsWeapon::NProjectile::NParams::NLaunch::ELocation)
 
-			// Direction
-			#pragma region
+// Direction (NCsWeapon::NProjectile::NParams::NLaunch::EDirection)
+#pragma region
 
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
 				/**
 				* Describes the different methods to get the Direction from which a projectile of type:
 				* ICsProjectile will be launched from a weapon of type: ICsProjectileWeapon.
@@ -65,19 +77,19 @@ namespace NCsWeapon
 					/** Owner's Rotation. If the Owner is of type: AActor, then it will
 						be GetActorRotation(). */
 					Owner,
-					/** If there is a SkeletalMesh that acts as the root object for the Weapon, 
+					/** If there is a SkeletalMesh that acts as the root object for the Weapon,
 						use the Bone / Socket's rotation. */
 					Bone,
 					/** SceneComponent's Rotation. The Component is marked as the Launch Component Transform. */
 					Component,
 					/** Owner's Camera's Rotation. */
 					Camera,
-					/** A trace is used to determine the direction. The start and end points of the 
+					/** A trace is used to determine the direction. The start and end points of the
 						trace are determined by other parameters. */
 					Trace,
 					Custom
 				};
-				
+
 				struct CSWP_API EMDirection : public TCsEnumMap<EDirection>
 				{
 					CS_ENUM_MAP_BODY(EMDirection, EDirection)
@@ -97,9 +109,21 @@ namespace NCsWeapon
 						extern CSWP_API const Type Custom;
 					}
 				}
+			}
+		}
+	}
+}
 
-			#pragma endregion Direction
+#pragma endregion Direction (NCsWeapon::NProjectile::NParams::NLaunch::EDirection)
 
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
 				/**
 				* Interface describing the Launch Parameters for a weapon of type: ICsProjectileWeapon. The
 				* parameters are usually used to location and direction of a projectile being fired from the weapon.

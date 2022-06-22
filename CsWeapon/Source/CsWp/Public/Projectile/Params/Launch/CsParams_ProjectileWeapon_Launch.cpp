@@ -1,7 +1,16 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_Launch.h"
 
-const FName NCsWeapon::NProjectile::NParams::NLaunch::ILaunch::Name = FName("NCsWeapon::NProjectile::NParams::NLaunch::ILaunch");
+// Types
+#include "Types/CsTypes_Math.h"
+// Library
+#include "Data/CsLibrary_Data_Weapon.h"
+#include "Library/CsLibrary_Valid.h"
+// Data
+#include "Projectile/Data/CsData_ProjectileWeapon.h"
+
+// Location (NCsWeapon::NProjectile::NParams::NLaunch::ELocation)
+#pragma region
 
 namespace NCsWeapon
 {
@@ -11,9 +20,6 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-			// Location
-			#pragma region
-
 				namespace NLocation
 				{
 					namespace Ref
@@ -26,12 +32,24 @@ namespace NCsWeapon
 						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
 					}
 				}
+			}
+		}
+	}
+}
 
-			#pragma endregion Location
+#pragma endregion Location (NCsWeapon::NProjectile::NParams::NLaunch::ELocation)
 
-			// Direction
-			#pragma region
+// Direction (NCsWeapon::NProjectile::NParams::NLaunch::EDirection)
+#pragma region
 
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
 				namespace NDirection
 				{
 					namespace Ref
@@ -46,9 +64,11 @@ namespace NCsWeapon
 						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
 					}
 				}
-
-			#pragma endregion Direction
 			}
 		}
 	}
 }
+
+#pragma endregion Direction (NCsWeapon::NProjectile::NParams::NLaunch::EDirection)
+
+const FName NCsWeapon::NProjectile::NParams::NLaunch::ILaunch::Name = FName("NCsWeapon::NProjectile::NParams::NLaunch::ILaunch");

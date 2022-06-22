@@ -15,12 +15,15 @@
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+	// Data
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Projectile.h"
+	// Payload
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
+	// Params
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Library/CsLibrary_Valid.h"

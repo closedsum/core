@@ -1297,6 +1297,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 
 	const ELocation& LocationType   = LaunchParams->GetLocationType();
 	const EDirection& DirectionType = LaunchParams->GetDirectionType();
+	int32 DirectionScalar			= LaunchParams->InvertDirection() ? -1.0f : 1.0f;
 	const int32& DirectionRules		= LaunchParams->GetDirectionRules();
 
 	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Launchparams for Data."), *Context);
@@ -1309,14 +1310,14 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 			// AActor
 			if (AActor* Actor = Cast<AActor>(TheOwner))
 			{
-				const FVector Dir = NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+				const FVector Dir = DirectionScalar * NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
 			// USceneComponent
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			{
-				const FVector Dir = NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
+				const FVector Dir = DirectionScalar * NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
@@ -1335,7 +1336,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		
 		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
 
-		const FVector Dir = Rotation.Vector();
+		const FVector Dir = DirectionScalar * Rotation.Vector();
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 		return Dir;
 	}
@@ -1347,7 +1348,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		{
 			typedef NCsCamera::FLibrary CameraLibrary;
 
-			const FVector Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner);
+			const FVector Dir = DirectionScalar * CameraLibrary::GetDirectionChecked(Context, TheOwner);
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 			return Dir;
 		}
@@ -1512,16 +1513,16 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		if (Start == LaunchDirection ||
 			FVector::DotProduct(Dir, LaunchDirection) > 0)
 		{
-			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, LaunchDirection));
+			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, DirectionScalar * LaunchDirection));
 			return LaunchDirection;
 		}
-		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
+		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, DirectionScalar * Dir));
 		return Dir;
 	}
 	// Custom
 	if (DirectionType == EDirection::Custom)
 	{		
-		const FVector Direction = LaunchPayload.bSpread && LaunchPayload.Spread.HasYaw() ? CustomLaunchDirection.RotateAngleAxis(LaunchPayload.Spread.Yaw, FVector::UpVector) : CustomLaunchDirection;
+		const FVector Direction = DirectionScalar * (LaunchPayload.bSpread && LaunchPayload.Spread.HasYaw() ? CustomLaunchDirection.RotateAngleAxis(LaunchPayload.Spread.Yaw, FVector::UpVector) : CustomLaunchDirection);
 
 		// TODO: Include Pitch
 

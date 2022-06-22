@@ -115,12 +115,25 @@ namespace NCsWeapon
 					virtual ~ILaunch() {}
 
 					/**
+					* Get the different methods to get the Location from which a Projectile will be launched from a Weapon.
+					* 
+					* return
 					*/
 					virtual const ELocation& GetLocationType() const = 0;
 
 					/**
+					* Get the different methods to get the Direction from which a Projectile will be launched from a Weapon.
+					* 
+					* return
 					*/
 					virtual const EDirection& GetDirectionType() const = 0;
+
+					/**
+					* Get whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f).
+					* 
+					* return
+					*/
+					virtual const bool& InvertDirection() const = 0;
 
 					/**
 					*/

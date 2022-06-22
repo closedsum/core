@@ -232,6 +232,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ECsProjectileWeaponLaunchDirection DirectionType;
 
+	/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bInvertDirection;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
 	int32 DirectionRules;
 
@@ -257,6 +261,7 @@ public:
 	FCsProjectileWeaponLaunchTraceParams() :
 		LocationType(ECsProjectileWeaponLaunchLocation::Owner),
 		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
+		bInvertDirection(false),
 		DirectionRules(CS_ROTATION_FLAGS_NONE),
 		TraceType(ECsTraceType::Line),
 		TraceMethod(ECsTraceMethod::Single),

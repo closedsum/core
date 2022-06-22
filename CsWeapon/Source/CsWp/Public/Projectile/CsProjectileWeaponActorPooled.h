@@ -521,9 +521,15 @@ public:
 		*/
 		virtual bool SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload);
 
+	public:
+
 		virtual FVector GetLaunchLocation(const LaunchPayloadType& LaunchPayload);
+		FORCEINLINE FVector GetLaunchLocation() { return GetLaunchLocation(LaunchPayloadType()); }
 
 		virtual FVector GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
+		FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); }
+
+	protected:
 
 	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);

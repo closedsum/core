@@ -146,6 +146,13 @@ namespace NCsWeapon
 					virtual const ELocation& GetLocationType() const = 0;
 
 					/**
+					* Get the offset to apply to the Location determined from GetLocationType().
+					* 
+					* return
+					*/
+					virtual const FVector& GetLocationOffset() const = 0;
+
+					/**
 					* Get the different methods to get the Direction from which a Projectile will be launched from a Weapon.
 					* 
 					* return

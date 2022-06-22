@@ -85,7 +85,7 @@ public:
 	* @param Slice
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|Weapon", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name,Slice"))
-	static bool AddToSlice_ProjectileWeapon_LaunchTraceParams(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsProjectileWeaponLaunchTraceParams& Params);
+	static bool AddToSlice_ProjectileWeapon_LaunchTraceParams(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsProjectileWeapon_LaunchTraceParams& Params);
 
 	/**
 	* Adds the LaunchParams of type: NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl which implements the interfaces:

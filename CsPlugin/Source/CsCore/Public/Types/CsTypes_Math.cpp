@@ -239,7 +239,7 @@ namespace NCsRotationRules
 
 		const FString& Context = Str::GetRotation;
 
-		checkf(Actor, TEXT("%s: Actor is NULL"), *Context);
+		CS_IS_PTR_NULL_CHECKED(Actor)
 
 		return GetRotation(Actor->GetActorRotation(), Rules);
 	}
@@ -250,7 +250,7 @@ namespace NCsRotationRules
 
 		const FString& Context = Str::GetRotation;
 
-		checkf(Component, TEXT("%s: Component is NULL"), *Context);
+		CS_IS_PTR_NULL_CHECKED(Component)
 
 		return GetRotation(Component->GetComponentRotation(), Rules);
 	}

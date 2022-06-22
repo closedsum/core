@@ -1187,22 +1187,19 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 	CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 
 	const FString& Context = Str::GetLaunchLocation;
-
-	// Get Data Slice
-	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
 
-	const ILaunch* LaunchParams = WeaponData->GetLaunchParams();
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::FLibrary ParamsLibrary;
 
-	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
+	const ILaunch* LaunchParams = ParamsLibrary::GetChecked(Context, Outer->GetData());
 
 	const ELocation& LocationType = LaunchParams->GetLocationType();
+	const FVector& LocationOffset = LaunchParams->GetLocationOffset();
 
+	// TODO: Have "Apply Spread" for other Location Types
+	
 	// Owner
 	if (LocationType == ELocation::Owner)
 	{
@@ -1212,10 +1209,10 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 
 		// Actor
 		if (AActor* Actor = Cast<AActor>(TheOwner))
-			return Actor->GetActorLocation();
+			return Actor->GetActorLocation() + LocationOffset;
 		// Component
 		if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
-			return Component->GetComponentLocation();
+			return Component->GetComponentLocation() + LocationOffset;
 
 		checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	}
@@ -1227,14 +1224,14 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 	// Component
 	if (LocationType == ELocation::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+		CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
 
-		return LaunchComponentTransform->GetComponentLocation();
+		return LaunchComponentTransform->GetComponentLocation() + LocationOffset;
 	}
 	// Custom
 	if (LocationType == ELocation::Custom)
 	{
-		FVector Location = CustomLaunchLocation;
+		FVector Location = CustomLaunchLocation + LocationOffset;
 
 		// TODO: Get the Launch Direction properly
 		
@@ -1282,18 +1279,12 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 	}
 #endif // #if WITH_EDITOR
 
-	// Get Data Slice
-	typedef NCsWeapon::NProjectile::NData::IData WeaponDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
-	
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
 
-	const ILaunch* LaunchParams = WeaponData->GetLaunchParams();
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::FLibrary ParamsLibrary;
 
-	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
+	const ILaunch* LaunchParams = ParamsLibrary::GetChecked(Context, Outer->GetData());
 
 	const ELocation& LocationType   = LaunchParams->GetLocationType();
 	const EDirection& DirectionType = LaunchParams->GetDirectionType();
@@ -1332,7 +1323,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 	// Component
 	if (DirectionType == EDirection::Component)
 	{
-		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+		CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
 		
 		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
 
@@ -1387,7 +1378,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		else
 		if (TraceStart == ETraceStart::Component)
 		{
-			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+			CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
 
 			Start = LaunchComponentTransform->GetComponentLocation();
 		}
@@ -1429,7 +1420,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		else
 		if (TraceDirection == ETraceDirection::Component)
 		{
-			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
+			CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
 
 			const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform->GetComponentRotation(), DirectionRules);
 

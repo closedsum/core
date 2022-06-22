@@ -110,12 +110,12 @@ namespace NCsWeapon
 
 #pragma endregion ProjectileWeaponLaunchTraceDirection
 
-// FCsProjectileWeaponLaunchTraceParams
+// FCsProjectileWeapon_LaunchTraceParams
 #pragma region
 
 #define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
 
-ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 {
 	ParamsType* Params = AddSafeToSlice_Internal(Context, WorldContext, Name, Log);
 
@@ -126,7 +126,7 @@ ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSlice(const FString& 
 	return Params;
 }
 
-ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSliceAsValue(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	ParamsType* Params = AddSafeToSlice_Internal(Context, WorldContext, Name, Log);
 
@@ -137,7 +137,7 @@ ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSliceAsValue(const FS
 	return Params;
 }
 
-ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return nullptr;
@@ -176,9 +176,10 @@ ParamsType* FCsProjectileWeaponLaunchTraceParams::AddSafeToSlice_Internal(const 
 	return Params;
 }
 
-void FCsProjectileWeaponLaunchTraceParams::CopyToParams(ParamsType* Params)
+void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 {
 	Params->SetLocationType(&LocationType);
+	Params->SetLocationOffset(&LocationOffset);
 	Params->SetDirectionType(&DirectionType);
 	Params->SetbInvertDirection(&bInvertDirection);
 	Params->SetDirectionRules(&DirectionRules);
@@ -189,9 +190,10 @@ void FCsProjectileWeaponLaunchTraceParams::CopyToParams(ParamsType* Params)
 	Params->SetTraceDistance(&TraceDistance);
 }
 
-void FCsProjectileWeaponLaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
+void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetLocationType(LocationType);
+	Params->SetLocationOffset(LocationOffset);
 	Params->SetDirectionType(DirectionType);
 	Params->SetbInvertDirection(bInvertDirection);
 	Params->SetDirectionRules(DirectionRules);
@@ -204,7 +206,7 @@ void FCsProjectileWeaponLaunchTraceParams::CopyToParamsAsValue(ParamsType* Param
 
 #undef ParamsType
 
-bool FCsProjectileWeaponLaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	if (DirectionRules == NCsRotationRules::None)
 	{
@@ -216,4 +218,4 @@ bool FCsProjectileWeaponLaunchTraceParams::IsValid(const FString& Context, void(
 	return true;
 }
 
-#pragma endregion FCsProjectileWeaponLaunchTraceParams
+#pragma endregion FCsProjectileWeapon_LaunchTraceParams

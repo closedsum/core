@@ -109,7 +109,7 @@ bool UCsScriptLibrary_Data_Weapon::AddSliceFromObject_ProjectileWeapon(const FSt
 	return DataSlice && DataSlice->IsValid(Ctxt);
 }
 
-bool UCsScriptLibrary_Data_Weapon::AddToSlice_ProjectileWeapon_LaunchTraceParams(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsProjectileWeaponLaunchTraceParams& Params)
+bool UCsScriptLibrary_Data_Weapon::AddToSlice_ProjectileWeapon_LaunchTraceParams(const FString& Context, const UObject* WorldContextObject, const FString& Name, const FCsProjectileWeapon_LaunchTraceParams& Params)
 {
 	using namespace NCsScriptLibraryDataWeapon::NCached;
 

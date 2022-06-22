@@ -211,55 +211,59 @@ namespace NCsWeapon
 }
 #pragma endregion ProjectileWeaponLaunchTraceDirection
 
-// FCsScriptProjectileWeaponLaunchTraceParams
+// FCsProjectileWeapon_LaunchTraceParams
 #pragma region
 
 // NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FImpl)
 
 USTRUCT(BlueprintType)
-struct CSWP_API FCsProjectileWeaponLaunchTraceParams
+struct CSWP_API FCsProjectileWeapon_LaunchTraceParams
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
 
 	/** Describes the different methods to get the Location from which a Projectile will be launched from a Weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchLocation LocationType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FVector LocationOffset;
+
 	/** Describes the different methods to get the Direction from which a Projectile will be launched from a Weapon. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchDirection DirectionType;
 
 	/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	bool bInvertDirection;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
 	int32 DirectionRules;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsTraceType TraceType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsTraceMethod TraceMethod;
 
 	/** Describes how the start of a trace should be chosen. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchTraceStart TraceStartType;
 
 	/** Describes how the direction (end) of a trace should be chosen. The normalized
 		direction is used to project outward GetTraceDistance() from the start of the
 		trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchTraceDirection TraceDirectionType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float TraceDistance;
 
-	FCsProjectileWeaponLaunchTraceParams() :
+	FCsProjectileWeapon_LaunchTraceParams() :
 		LocationType(ECsProjectileWeaponLaunchLocation::Owner),
+		LocationOffset(0.0f),
 		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
 		bInvertDirection(false),
 		DirectionRules(CS_ROTATION_FLAGS_NONE),
@@ -290,4 +294,4 @@ public:
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 };
 
-#pragma endregion FCsScriptProjectileWeaponLaunchTraceParams
+#pragma endregion FCsProjectileWeapon_LaunchTraceParams

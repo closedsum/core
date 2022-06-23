@@ -64,10 +64,9 @@ void FCsData_ProjectileWeaponImplSlice::CopyToSlice(SliceType* Slice)
 	Slice->SetFullAuto(&bFullAuto);
 	Slice->SetInfiniteAmmo(&bInfiniteAmmo);
 	Slice->SetMaxAmmo(&MaxAmmo);
-	Slice->SetProjectilesPerShot(&ProjectilesPerShot);
 	Slice->SetTimeBetweenShots(&TimeBetweenShots);
 	Slice->SetTimeBetweenAutoShots(&TimeBetweenAutoShots);
-	Slice->SetTimeBetweenProjectilesPerShot(&TimeBetweenProjectilesPerShot);
+	ProjectilesPerShotParams.CopyToParams(Slice->GetProjectilesPerShotParamsPtr());
 	Slice->SetbSpreadParams(&bSpreadParams);
 	SpreadParams.CopyToParams(Slice->GetSpreadParamsPtr());
 }
@@ -78,10 +77,9 @@ void FCsData_ProjectileWeaponImplSlice::CopyToSliceAsValue(SliceType* Slice) con
 	Slice->SetFullAuto(bFullAuto);
 	Slice->SetInfiniteAmmo(bInfiniteAmmo);
 	Slice->SetMaxAmmo(MaxAmmo);
-	Slice->SetProjectilesPerShot(ProjectilesPerShot);
 	Slice->SetTimeBetweenShots(TimeBetweenShots);
 	Slice->SetTimeBetweenAutoShots(TimeBetweenAutoShots);
-	Slice->SetTimeBetweenProjectilesPerShot(TimeBetweenProjectilesPerShot);
+	ProjectilesPerShotParams.CopyToParamsAsValue(Slice->GetProjectilesPerShotParamsPtr());
 	Slice->SetbSpreadParams(bSpreadParams);
 	SpreadParams.CopyToParamsAsValue(Slice->GetSpreadParamsPtr());
 }
@@ -97,17 +95,9 @@ bool FCsData_ProjectileWeaponImplSlice::IsValid(const FString& Context, void(*Lo
 	}
 	// Check TimeBetweenShots > 0.0f
 	CS_IS_FLOAT_GREATER_THAN(TimeBetweenShots, 0.0f)
-	// Check ProjectilesPerShot >= 1
-	CS_IS_INT_GREATER_THAN_OR_EQUAL(ProjectilesPerShot, 1)
-	// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
-	if (ProjectilesPerShot > 1)
-	{
-		if (TimeBetweenProjectilesPerShot <= 0.0f)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context));
-			return false;
-		}
-	}
+	// Check ProjectilesPerShot
+	CS_IS_VALID_CHECKED(ProjectilesPerShotParams);
+	// Check Spread
 	if (bSpreadParams)
 	{
 		CS_IS_VALID_CHECKED(SpreadParams);
@@ -135,10 +125,9 @@ namespace NCsWeapon
 						const FName bFullAuto = FName("bFullAuto");
 						const FName bInfiniteAmmo = FName("bInfiniteAmmo");
 						const FName MaxAmmo = FName("MaxAmmo");
-						const FName ProjectilesPerShot = FName("ProjectilesPerShot");
 						const FName TimeBetweenShots = FName("TimeBetweenShots");
 						const FName TimeBetweenAutoShots = FName("TimeBetweenAutoShots");
-						const FName TimeBetweenProjectilesPerShot = FName("TimeBetweenProjectilesPerShot");
+						const FName ProjectilesPerShotParams = FName("ProjectilesPerShotParams");
 						const FName bSpreadParams = FName("bSpreadParams");
 						const FName SpreadParams = FName("SpreadParams");
 					}
@@ -211,10 +200,9 @@ namespace NCsWeapon
 					bool* bFullAutoPtr						= CS_TEMP_GET_SAFE_BOOL_PTR(bFullAuto);
 					bool* bInfiniteAmmoPtr					= CS_TEMP_GET_SAFE_BOOL_PTR(bInfiniteAmmo);
 					int32* MaxAmmoPtr						= CS_TEMP_GET_SAFE_INT_PTR(MaxAmmo);
-					int32* ProjectilesPerShotPtr			= CS_TEMP_GET_SAFE_INT_PTR(ProjectilesPerShot);
 					float* TimeBetweenShotsPtr				= CS_TEMP_GET_SAFE_FLOAT_PTR(TimeBetweenShots);
 					float* TimeBetweenAutoShotsPtr			= CS_TEMP_GET_SAFE_FLOAT_PTR(TimeBetweenAutoShots);
-					float* TimeBetweenProjectilesPerShotPtr = CS_TEMP_GET_SAFE_FLOAT_PTR(TimeBetweenProjectilesPerShot);
+					FCsProjectileWeapon_Shot_ProjectileParams* ProjectilesPerShotParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsProjectileWeapon_Shot_ProjectileParams>(Context, Object, Object->GetClass(), Name::ProjectilesPerShotParams, nullptr);
 					bool* bSpreadParamsPtr					= CS_TEMP_GET_SAFE_BOOL_PTR(bSpreadParams);
 
 					FCsProjectileWeapon_SpreadParams* SpreadParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<FCsProjectileWeapon_SpreadParams>(Context, Object, FCsProjectileWeapon_SpreadParams::StaticStruct(), Name::SpreadParams, nullptr);
@@ -227,10 +215,9 @@ namespace NCsWeapon
 						bFullAutoPtr &&
 						bInfiniteAmmoPtr &&
 						MaxAmmoPtr &&
-						ProjectilesPerShotPtr &&
 						TimeBetweenShotsPtr &&
 						TimeBetweenAutoShotsPtr &&
-						TimeBetweenProjectilesPerShotPtr &&
+						ProjectilesPerShotParamsPtr &&
 						bSpreadParamsPtr &&
 						SpreadParamsPtr)
 					{
@@ -238,10 +225,9 @@ namespace NCsWeapon
 						Slice->SetFullAuto(bFullAutoPtr);
 						Slice->SetInfiniteAmmo(bInfiniteAmmoPtr);
 						Slice->SetMaxAmmo(MaxAmmoPtr);
-						Slice->SetProjectilesPerShot(ProjectilesPerShotPtr);
 						Slice->SetTimeBetweenShots(TimeBetweenShotsPtr);
 						Slice->SetTimeBetweenAutoShots(TimeBetweenAutoShotsPtr);
-						Slice->SetTimeBetweenProjectilesPerShot(TimeBetweenProjectilesPerShotPtr);
+						ProjectilesPerShotParamsPtr->CopyToParams(Slice->GetProjectilesPerShotParamsPtr());
 						Slice->SetbSpreadParams(bSpreadParamsPtr);
 						SpreadParamsPtr->CopyToParams(Slice->GetSpreadParamsPtr());
 						Success = true;
@@ -259,10 +245,9 @@ namespace NCsWeapon
 						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bFullAuto."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bInfiniteAmmo."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: MaxAmmo."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get int property with name: ProjectilesPerShot."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: TimeBetweenShots."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: TimeBetweenAutoShots."), *Context));
-						Log(FString::Printf(TEXT("%s: - Failed to get float property with name: TimeBetweenProjectilesPerShot."), *Context));
+						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_Shot_ProjectileParams with name: ProjectilesPerShotParams."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bSpreadParams."), *Context));
 						Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_SpreadParams with name: SpreadParams."), *Context));
 					}
@@ -279,13 +264,9 @@ namespace NCsWeapon
 				} 
 				// Check TimeBetweenShots > 0.0f
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetTimeBetweenShots(), 0.0f)
-				// Check ProjectilesPerShot >= 1
-				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetProjectilesPerShot(), 1)
-				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
-				if (GetProjectilesPerShot() > 1)
-				{
-					checkf(GetTimeBetweenProjectilesPerShot() > 0.0f, TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context);
-				}
+				// Check ProjectilesPerShot
+				CS_IS_VALID_CHECKED(ProjectilesPerShotParams);
+				// Check Spread
 				if (GetbSpreadParams())
 				{
 					CS_IS_VALID_CHECKED(GetSpreadParams());
@@ -302,17 +283,9 @@ namespace NCsWeapon
 				}
 				// Check TimeBetweenShots > 0.0f
 				CS_IS_FLOAT_GREATER_THAN(GetTimeBetweenShots(), 0.0f)
-				// Check ProjectilesPerShot >= 1
-				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetProjectilesPerShot(), 1)
-				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
-				if (GetProjectilesPerShot() > 1)
-				{
-					if (GetTimeBetweenProjectilesPerShot() <= 0.0f)
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TimeBetweenProjectilesPerShot must be > 0.0f when ProjectilesPerShot > 1."), *Context));
-						return false;
-					}
-				}
+				// Check ProjectilesPerShot
+				CS_IS_VALID(ProjectilesPerShotParams);
+				// Check Spread
 				if (GetbSpreadParams())
 				{
 					CS_IS_VALID(GetSpreadParams())

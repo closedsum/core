@@ -734,18 +734,41 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	Payload->SetValue_Flag(CS_FIRST, PrjWeaponData->HasInfiniteAmmo());
 
+	// ProjectilePerShot
 	static const int32 PROJECTILES_PER_SHOT = 0;
 	int32 ProjectilesPerShot = GetProjectilesPerShot();
 	Payload->SetValue_Int(PROJECTILES_PER_SHOT, ProjectilesPerShot);
 
 	Payload->SetValue_Float(CS_FIRST, GetTimeBetweenProjectilesPerShot());
 
-	static const int32 SPREAD_SHAPE_RANDOM = 0;
-	Payload->SetValue_Flag(SPREAD_SHAPE_RANDOM, false);
-	static const int32 SPREAD_YAW_RANDOM = 1;
-	Payload->SetValue_Flag(SPREAD_YAW_RANDOM, false);
+	const bool CanCacheLaunchLocationOrDireciton = PrjWeaponData->GetProjectilesPerShotParams().CanCacheLocationOrDirection();
+		// Cache Launch Location
+	const bool UseCachedLaunchLocation = CanCacheLaunchLocationOrDireciton && !PrjWeaponData->GetProjectilesPerShotParams().GetbCurrentLaunchLocation();
+	static const int32 USE_CACHED_LAUNCH_LOCATION = 0;
+	Payload->SetValue_Flag(USE_CACHED_LAUNCH_LOCATION, UseCachedLaunchLocation);
+
+	if (UseCachedLaunchLocation)
+	{
+		static const int32 CACHED_LAUNCH_LOCATION = 0;
+		Payload->SetValue_Vector(CACHED_LAUNCH_LOCATION, ProjectileImpl->GetLaunchLocation());
+	}
+		// Cache Launch Direction
+	const bool UseCachedLaunchDirection = CanCacheLaunchLocationOrDireciton && !PrjWeaponData->GetProjectilesPerShotParams().GetbCurrentLaunchDirection();
+	static const int32 USE_CACHED_LAUNCH_DIRECTION = 1;
+	Payload->SetValue_Flag(USE_CACHED_LAUNCH_DIRECTION, UseCachedLaunchDirection);
+
+	if (UseCachedLaunchDirection)
+	{
+		static const int32 CACHED_LAUNCH_DIRECTION = 1;
+		Payload->SetValue_Vector(CACHED_LAUNCH_DIRECTION, ProjectileImpl->GetLaunchDirection());
+	}
 
 	// Spread
+	static const int32 SPREAD_SHAPE_RANDOM = 2;
+	Payload->SetValue_Flag(SPREAD_SHAPE_RANDOM, false);
+	static const int32 SPREAD_YAW_RANDOM = 3;
+	Payload->SetValue_Flag(SPREAD_YAW_RANDOM, false);
+
 	if (UseSpreadParams())
 	{
 		typedef NCsWeapon::NProjectile::NSpread::FParams SpreadParamsType;
@@ -824,11 +847,21 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	// ProjectilesPerShot
 	static const int32 PROJECTILES_PER_SHOT = 0;
 	const int32& ProjectilesPerShot			= R->GetValue_Int(PROJECTILES_PER_SHOT);
-	// TimeBetweenProjectilesPerShot
+		// TimeBetweenProjectilesPerShot
 	const float& TimeBetweenProjectilesPerShot = R->GetValue_Float(CS_FIRST);
 
 	static const int32 CURRENT_PROJECTIVE_PER_SHOT_INDEX = 1;
 	int32& CurrentProjectilePerShotIndex = R->GetValue_Int(CURRENT_PROJECTIVE_PER_SHOT_INDEX);
+		// bLaunchLocation
+	static const int32 USE_CACHED_LAUNCH_LOCATION = 0;
+	const bool& UseCachedLaunchLocation = R->GetValue_Flag(USE_CACHED_LAUNCH_LOCATION);
+	static const int32 CACHED_LAUNCH_LOCATION = 0;
+	const FVector& CachedLaunchLocation = R->GetValue_Vector(CACHED_LAUNCH_LOCATION);
+		// bLaunchDirection
+	static const int32 USE_CACHED_LAUNCH_DIRECTION = 1;
+	const bool& UseCachedLaunchDirection = R->GetValue_Flag(USE_CACHED_LAUNCH_DIRECTION);
+	static const int32 CACHED_LAUNCH_DIRECTION = 1;
+	const FVector& CachedLaunchDirection = R->GetValue_Vector(CACHED_LAUNCH_DIRECTION);
 
 	// Spread
 	typedef NCsWeapon::NProjectile::NSpread::NVariables::FResource SpreadVariablesResourceType;
@@ -841,10 +874,10 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	static const int32 SPREAD_INDEX = 2;
 	int32& SpreadIndex = R->GetValue_Int(SPREAD_INDEX);
 		// Shape
-	static const int32 SPREAD_SHAPE_RANDOM = 0;
+	static const int32 SPREAD_SHAPE_RANDOM = 2;
 	const bool& IsSpreadShapeRandom = R->GetValue_Flag(SPREAD_SHAPE_RANDOM);
 		// Yaw
-	static const int32 SPREAD_YAW_RANDOM = 1;
+	static const int32 SPREAD_YAW_RANDOM = 3;
 	const bool& IsSpreadYawRandom = R->GetValue_Flag(SPREAD_YAW_RANDOM);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
@@ -869,6 +902,19 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 				typedef ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload LaunchPayloadType;
 
 				LaunchPayloadType LaunchPayload;
+
+				// ProjectilesPerShot
+
+				if (UseCachedLaunchLocation)
+				{
+					LaunchPayload.Shot.SetCachedLaunchLocation(CachedLaunchLocation);
+				}
+
+				if (UseCachedLaunchDirection)
+				{
+					LaunchPayload.Shot.SetCachedLaunchDirection(CachedLaunchDirection);
+				}
+
 				// Spread
 				if (SpreadVariables)
 				{
@@ -1071,7 +1117,7 @@ int32 ACsProjectileWeaponActorPooled::GetProjectilesPerShot() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PrjWeaponData->GetProjectilesPerShot();
+	float Value = PrjWeaponData->GetProjectilesPerShotParams().GetCount();
 
 	// TODO: Priority
 
@@ -1106,7 +1152,7 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PrjWeaponData->GetTimeBetweenProjectilesPerShot();
+	float Value = PrjWeaponData->GetProjectilesPerShotParams().GetInterval();
 
 	// TODO: Priority
 
@@ -1189,6 +1235,9 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 
 	const FString& Context = Str::GetLaunchLocation;
 	
+	if (LaunchPayload.Shot.UseCachedLaunchLocation())
+		return GetLaunchSpreadLocation(LaunchPayload.Shot.CachedLaunchLocation, LaunchPayload);
+
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
 
@@ -1308,6 +1357,9 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		return Outer->Override_ProjectileImpl_GetLaunchDirection();
 	}
 #endif // #if WITH_EDITOR
+
+	if (LaunchPayload.Shot.UseCachedLaunchDirection())
+		return GetLaunchSpreadDirection(LaunchPayload.Shot.CachedLaunchDirection, LaunchPayload);
 
 	// Get Launch Params
 	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
@@ -1579,15 +1631,29 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		CustomLaunchDirection = CustomLaunchDirection.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(CustomLaunchDirection));
 		CustomLaunchDirection = CustomLaunchDirection.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
 
-		const FVector Direction = DirectionScalar * (LaunchPayload.bSpread && LaunchPayload.Spread.HasYaw() ? CustomLaunchDirection.RotateAngleAxis(LaunchPayload.Spread.Yaw, FVector::UpVector) : CustomLaunchDirection);
-
-		// TODO: Include Pitch
+		const FVector Direction = DirectionScalar * GetLaunchSpreadDirection(CustomLaunchDirection, LaunchPayload);
 
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Direction));
 		return Direction;
 	}
 	CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, FVector::ZeroVector));
 	return FVector::ZeroVector;
+}
+
+FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchSpreadDirection(const FVector& InDirection, const LaunchPayloadType& LaunchPayload)
+{
+	FVector Direction = InDirection;
+
+	if (LaunchPayload.bSpread)
+	{
+		if (LaunchPayload.Spread.HasYaw())
+		{
+			Direction = Direction.RotateAngleAxis(LaunchPayload.Spread.Yaw, FVector::UpVector);
+		}
+
+		// TODO: Include Pitch
+	}
+	return Direction;
 }
 
 #define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch

@@ -532,8 +532,8 @@ void UCsProjectileWeaponComponent::Fire()
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
 	Payload->SetValue_Flag(CS_FIRST, PrjData->HasInfiniteAmmo());
-	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShot());
-	Payload->SetValue_Float(CS_FIRST, PrjData->GetTimeBetweenProjectilesPerShot());
+	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShotParams().GetCount());
+	Payload->SetValue_Float(CS_FIRST, PrjData->GetProjectilesPerShotParams().GetInterval());
 
 	bHasFired = true;
 

@@ -26,13 +26,9 @@ namespace NCsWeapon
 				}
 				// Check TimeBetweenShots > 0.0f
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(Data->GetTimeBetweenShots(), 0.0f)
-				// Check ProjectilesPerShot >= 1
-				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Data->GetProjectilesPerShot(), 1)
-				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
-				if (Data->GetProjectilesPerShot() > 1)
-				{
-					checkf(Data->GetTimeBetweenProjectilesPerShot() >= 0.0f, TEXT("%s: TimeBetweenProjectilesPerShot must be >= 0.0f when ProjectilesPerShot > 1."), *Context);
-				}
+				// Check ProjectilePerShot
+				CS_IS_VALID_CHECKED(Data->GetProjectilesPerShotParams());
+				// Check Spread
 				if (Data->UseSpreadParams())
 				{
 					CS_IS_VALID_CHECKED(Data->GetSpreadParams());
@@ -51,17 +47,9 @@ namespace NCsWeapon
 				}
 				// Check TimeBetweenShots > 0.0f
 				CS_IS_FLOAT_GREATER_THAN(Data->GetTimeBetweenShots(), 0.0f)
-				// Check ProjectilesPerShot >= 1
-				CS_IS_INT_GREATER_THAN_OR_EQUAL(Data->GetProjectilesPerShot(), 1)
-				// Check TimeBetweenProjectilesPerShot is valid when ProjectilesPerShot > 1
-				if (Data->GetProjectilesPerShot() > 1)
-				{
-					if (Data->GetTimeBetweenProjectilesPerShot() < 0.0f)
-					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: TimeBetweenProjectilesPerShot must be >= 0.0f when ProjectilesPerShot > 1."), *Context));
-						return false;
-					}
-				}
+				// Check ProjectilePerShot
+				CS_IS_VALID(Data->GetProjectilesPerShotParams())
+				// Check Spread
 				if (Data->UseSpreadParams())
 				{
 					CS_IS_VALID(Data->GetSpreadParams())

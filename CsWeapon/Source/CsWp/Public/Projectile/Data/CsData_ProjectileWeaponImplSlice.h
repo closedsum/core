@@ -1,6 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
+#include "Projectile/Params/Shot/Projectile/CsParams_ProjectileWeapon_Shot_Projectile.h"
 #include "Projectile/Params/Spread/CsParams_ProjectileWeapon_Spread.h"
 // Log
 #include "Utility/CsWpLog.h"
@@ -43,10 +44,6 @@ public:
 	int32 MaxAmmo;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data", meta = (UIMin = "1", ClampMin = "1"))
-	int32 ProjectilesPerShot;
-
-	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	float TimeBetweenShots;
 
@@ -56,7 +53,7 @@ public:
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
-	float TimeBetweenProjectilesPerShot;
+	FCsProjectileWeapon_Shot_ProjectileParams ProjectilesPerShotParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	bool bSpreadParams;
@@ -69,10 +66,9 @@ public:
 		bFullAuto(false),
 		bInfiniteAmmo(false),
 		MaxAmmo(0),
-		ProjectilesPerShot(1),
 		TimeBetweenShots(0.0f),
 		TimeBetweenAutoShots(0.0f),
-		TimeBetweenProjectilesPerShot(0.0f),
+		ProjectilesPerShotParams(),
 		bSpreadParams(false),
 		SpreadParams()
 	{
@@ -138,10 +134,12 @@ namespace NCsWeapon
 				CS_DECLARE_MEMBER_WITH_PROXY(bFullAuto, bool)
 				CS_DECLARE_MEMBER_WITH_PROXY(bInfiniteAmmo, bool)
 				CS_DECLARE_MEMBER_WITH_PROXY(MaxAmmo, int32)
-				CS_DECLARE_MEMBER_WITH_PROXY(ProjectilesPerShot, int32)
 				CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenShots, float)
 				CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenAutoShots, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, float)
+
+				typedef NCsWeapon::NProjectile::NShot::NProjectile::FParams ProjectilesPerShotParamsType;
+
+				ProjectilesPerShotParamsType ProjectilesPerShotParams;
 
 				typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
@@ -164,10 +162,9 @@ namespace NCsWeapon
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bFullAuto, false),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bInfiniteAmmo, false),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxAmmo, 0),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(ProjectilesPerShot, 0),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenShots, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenAutoShots, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, 0.0f),
+					ProjectilesPerShotParams(),
 					LaunchParams(nullptr),
 					LaunchParamsName(NAME_None),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bSpreadParams, false),
@@ -177,10 +174,8 @@ namespace NCsWeapon
 					CS_CTOR_SET_MEMBER_PROXY(bFullAuto);
 					CS_CTOR_SET_MEMBER_PROXY(bInfiniteAmmo);
 					CS_CTOR_SET_MEMBER_PROXY(MaxAmmo);
-					CS_CTOR_SET_MEMBER_PROXY(ProjectilesPerShot);
 					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenShots);
 					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenAutoShots);
-					CS_CTOR_SET_MEMBER_PROXY(TimeBetweenProjectilesPerShot);
 					CS_CTOR_SET_MEMBER_PROXY(bSpreadParams);
 				}
 
@@ -240,10 +235,11 @@ namespace NCsWeapon
 				FORCEINLINE const bool& HasInfiniteAmmo() const { return *bInfiniteAmmo_Proxy; }
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxAmmo, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ProjectilesPerShot, int32)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenShots, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenAutoShots, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenProjectilesPerShot, float)
+
+				FORCEINLINE const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const { return ProjectilesPerShotParams; }
+				FORCEINLINE ProjectilesPerShotParamsType* GetProjectilesPerShotParamsPtr() { return &ProjectilesPerShotParams; }
 
 				FORCEINLINE const LaunchParamsType* GetLaunchParams() const { return LaunchParams; }
 

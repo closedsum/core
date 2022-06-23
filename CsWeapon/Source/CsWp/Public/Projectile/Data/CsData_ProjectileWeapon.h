@@ -3,6 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
+#include "Projectile/Params/Shot/Projectile/CsParams_ProjectileWeapon_Shot_Projectile.h"
 #include "Projectile/Params/Spread/CsParams_ProjectileWeapon_Spread.h"
 
 #include "CsData_ProjectileWeapon.generated.h"
@@ -29,6 +30,7 @@ namespace NCsWeapon
 
 				virtual ~IData(){}
 
+			#define ProjectilesPerShotParamsType NCsWeapon::NProjectile::NShot::NProjectile::FParams
 			#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 			#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
 
@@ -65,13 +67,6 @@ namespace NCsWeapon
 				*
 				* return
 				*/
-				virtual const int32& GetProjectilesPerShot() const = 0;
-
-				/**
-				*
-				*
-				* return
-				*/
 				virtual const float& GetTimeBetweenShots() const = 0;
 
 				/**
@@ -81,12 +76,7 @@ namespace NCsWeapon
 				*/
 				virtual const float& GetTimeBetweenAutoShots() const = 0;
 
-				/**
-				*
-				*
-				* return
-				*/
-				virtual const float& GetTimeBetweenProjectilesPerShot() const = 0;
+				virtual const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
 
 				/**
 				*
@@ -99,6 +89,7 @@ namespace NCsWeapon
 
 				virtual const SpreadParamsType& GetSpreadParams() const = 0;
 
+			#undef ProjectilesPerShotParamsType
 			#undef LaunchParamsType
 			#undef SpreadParamsType
 			};
@@ -128,6 +119,7 @@ public:
 
 public:
 
+#define ProjectilesPerShotParamsType NCsWeapon::NProjectile::NShot::NProjectile::FParams
 #define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 #define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
 
@@ -164,13 +156,6 @@ public:
 	*
 	* return
 	*/
-	virtual const int32& GetProjectilesPerShot() const = 0;
-
-	/**
-	*
-	*
-	* return
-	*/
 	virtual const float& GetTimeBetweenShots() const = 0;
 
 	/**
@@ -180,12 +165,7 @@ public:
 	*/
 	virtual const float& GetTimeBetweenAutoShots() const = 0;
 
-	/**
-	*
-	*
-	* return
-	*/
-	virtual const float& GetTimeBetweenProjectilesPerShot() const = 0;
+	virtual const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
 
 	/**
 	*
@@ -198,6 +178,7 @@ public:
 
 	virtual const SpreadParamsType& GetSpreadParams() const = 0;
 
+#undef ProjectilesPerShotParamsType
 #undef LaunchParamsType
 #undef SpreadParamsType
 };

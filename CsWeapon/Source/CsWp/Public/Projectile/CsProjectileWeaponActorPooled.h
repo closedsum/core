@@ -438,12 +438,49 @@ public:
 		{
 		public:
 
+			struct FShot
+			{
+			public:
+
+				bool bCachedLaunchLocation;
+				FVector CachedLaunchLocation;
+
+				bool bCachedLaunchDirection;
+				FVector CachedLaunchDirection;
+
+				FShot() :
+					bCachedLaunchLocation(false),
+					CachedLaunchLocation(0.0f),
+					bCachedLaunchDirection(false),
+					CachedLaunchDirection(0.0f)
+				{
+				}
+
+				FORCEINLINE bool UseCachedLaunchLocation() const { return bCachedLaunchLocation; }
+
+				FORCEINLINE void SetCachedLaunchLocation(const FVector& Value)
+				{
+					CachedLaunchLocation = Value;
+					bCachedLaunchLocation = true;
+				}
+
+				FORCEINLINE bool UseCachedLaunchDirection() const { return bCachedLaunchDirection; }
+
+				FORCEINLINE void SetCachedLaunchDirection(const FVector& Value)
+				{
+					CachedLaunchDirection = Value;
+					bCachedLaunchDirection = true;
+				}
+			};
+
+			FShot Shot;
+
 			bool bSpread;
 
 			struct FSpread
 			{
 			public:
-
+	
 				bool bOffset;
 				FVector Offset;
 
@@ -503,6 +540,7 @@ public:
 			FSpread Spread;
 
 			FLaunchPayload() :
+				Shot(),
 				bSpread(false),
 				Spread()
 			{
@@ -540,6 +578,8 @@ public:
 		FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); }
 
 	protected:
+
+		FVector GetLaunchSpreadDirection(const FVector& InDirection, const LaunchPayloadType& LaunchPayload);
 
 	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);

@@ -10,6 +10,8 @@ class UNiagaraSystem;
 
 // NCsFX::NParameter::IParameter
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
+// NCsFX::NParameter::NScaled::IScaled
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 
 namespace NCsFX
 {
@@ -29,6 +31,7 @@ namespace NCsFX
 
 		#define DeallocateMethodType NCsFX::EDeallocateMethod
 		#define ParameterType NCsFX::NParameter::IParameter
+		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
 
 		private:
 
@@ -77,6 +80,8 @@ namespace NCsFX
 			FTransform Transform;
 
 			TArray<ParameterType*> Parameters;
+
+			TArray<ScaledParameterType*> ScaledParameters;
 
 		public:
 
@@ -139,11 +144,13 @@ namespace NCsFX
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
 			FORCEINLINE const TArray<ParameterType*>& GetParameters() const { return Parameters; }
+			FORCEINLINE const TArray<ScaledParameterType*>& GetScaledParameters() const { return ScaledParameters; }
 
 		#pragma endregion FXPayloadType (NCsFX::Payload::IPayload)
 
 		#undef DeallocateMethodType
 		#undef ParameterType
+		#undef ScaledParameterType
 		};
 
 	#undef PooledPayloadType

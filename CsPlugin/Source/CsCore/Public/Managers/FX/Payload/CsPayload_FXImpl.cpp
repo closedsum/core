@@ -47,7 +47,8 @@ namespace NCsFX
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
-			Parameters()
+			Parameters(),
+			ScaledParameters()
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -102,12 +103,19 @@ namespace NCsFX
 
 			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 			typedef NCsFX::NParameter::IParameter ParameterType;
+			typedef NCsFX::NParameter::NScaled::IScaled ScaledParameterType;
 
 			for (ParameterType* Param : Parameters)
 			{
 				FXManagerLibrary::DeallocateValueChecked(Context, Root, Param);
 			}
 			Parameters.Reset(Parameters.Max());
+
+			for (ScaledParameterType* Param : ScaledParameters)
+			{
+				FXManagerLibrary::DeallocateValueChecked(Context, Root, Param);
+			}
+			ScaledParameters.Reset(ScaledParameters.Max());
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

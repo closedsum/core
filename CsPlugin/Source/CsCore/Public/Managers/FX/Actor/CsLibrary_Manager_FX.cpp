@@ -371,6 +371,16 @@ namespace NCsFX
 			GetChecked(Context, WorldContext)->DeallocateValue(Value);
 		}
 		
+		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+		void FLibrary::DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value)
+		{
+		#undef ScaledParameterType
+
+			CS_IS_PTR_NULL_CHECKED(Value);
+			
+			GetChecked(Context, WorldContext)->DeallocateValue(Value);
+		}
+
 		#pragma endregion Params
 	}
 }

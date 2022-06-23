@@ -10,6 +10,8 @@ class UNiagaraSystem;
 
 // NCsFX::NParameter::IParameter
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
+// NCsFX::NParameter::NScaled::IScaled
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 
 namespace NCsFX
 {
@@ -25,6 +27,7 @@ namespace NCsFX
 
 		#define DeallocateMethodType NCsFX::EDeallocateMethod
 		#define ParameterType NCsFX::NParameter::IParameter
+		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
 
 		public:
 
@@ -117,8 +120,13 @@ namespace NCsFX
 			*/
 			virtual const TArray<ParameterType*>& GetParameters() const = 0;
 
+			/**
+			*/
+			virtual const TArray<ScaledParameterType*>& GetScaledParameters() const = 0;
+
 		#undef DeallocateMethodType
 		#undef ParameterType
+		#undef ScaledParameterType
 		};
 	}
 }

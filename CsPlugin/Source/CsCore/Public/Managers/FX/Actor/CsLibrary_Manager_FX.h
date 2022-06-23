@@ -18,6 +18,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
 // NCsFX::NParameter::IParameter
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
+// NCsFX::NParameter::NScaled::IScaled
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 
 namespace NCsFX
 {
@@ -355,6 +357,19 @@ namespace NCsFX
 			static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value);
 
 		#undef ParameterType
+
+		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+
+			/**
+			* Deallocate parameter Value, ScaledParameterType (NCsFX::NParameter::NScaled::IScaled).
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Value
+			*/
+			static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value);
+
+		#undef ScaledParameterType
 
 		#pragma endregion Params
 		};

@@ -446,6 +446,73 @@ void UCsManager_FX_Actor::SetupInternal()
 				R->SetIndex(I);
 			}
 		}
+
+		// Scaled
+		{
+			// Int
+			{
+				const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Int];
+
+				checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Int] is NOT > 0."), *Context);
+
+				Manager_ScaledParameterInt.CreatePool(Size);
+
+				typedef NCsFX::NParameter::NScaled::NInt::FResource ResourceContainerType;
+				typedef NCsFX::NParameter::NScaled::NInt::FIntType ResourceType;
+
+				const TArray<ResourceContainerType*>& ParamPool = Manager_ScaledParameterInt.GetPool();
+
+				const int32 Count = ParamPool.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ResourceType* R = ParamPool[I]->Get();
+					R->SetIndex(I);
+				}
+			}
+			// Float
+			{
+				const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Float];
+
+				checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Float] is NOT > 0."), *Context);
+
+				Manager_ScaledParameterFloat.CreatePool(Size);
+
+				typedef NCsFX::NParameter::NScaled::NFloat::FResource ResourceContainerType;
+				typedef NCsFX::NParameter::NScaled::NFloat::FFloatType ResourceType;
+
+				const TArray<ResourceContainerType*>& ParamPool = Manager_ScaledParameterFloat.GetPool();
+	
+				const int32 Count = ParamPool.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ResourceType* R = ParamPool[I]->Get();
+					R->SetIndex(I);
+				}
+			}
+			// Vector
+			{
+				const int32& Size = PoolSizes[(uint8)ECsFXParameterValue::Float];
+
+				checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Vector] is NOT > 0."), *Context);
+
+				Manager_ScaledParameterVector.CreatePool(Size);
+
+				typedef NCsFX::NParameter::NScaled::NVector::FResource ResourceContainerType;
+				typedef NCsFX::NParameter::NScaled::NVector::FVectorType ResourceType;
+
+				const TArray<ResourceContainerType*>& ParamPool = Manager_ScaledParameterVector.GetPool();
+
+				const int32 Count = ParamPool.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ResourceType* R = ParamPool[I]->Get();
+					R->SetIndex(I);
+				}
+			}
+		}
 	}
 
 	typedef NCsFX::NPayload::NChange::FCounter ChangeCounter;
@@ -958,5 +1025,33 @@ void UCsManager_FX_Actor::DeallocateValue(ParameterType* Value)
 	if (ValueType == ParameterValueType::Vector)
 		DeallocateValue((NCsFX::NParameter::NVector::FVectorType*)Value);
 }
+
+	// Scaled
+#pragma region
+
+#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+void UCsManager_FX_Actor::DeallocateValue(ScaledParameterType* Value)
+{
+#undef ScaledParameterType
+	checkf(Value, TEXT("UCsManager_FX_Actor::DeallocateValue: Value is NULL."));
+
+	typedef NCsFX::NParameter::EValue ParameterValueType;
+
+	const ParameterValueType& ValueType = Value->GetParameter()->GetValueType();
+
+	// Int
+	if (ValueType == ParameterValueType::Int)
+		DeallocateValue((NCsFX::NParameter::NScaled::NInt::FIntType*)Value);
+	// Float
+	if (ValueType == ParameterValueType::Float)
+		DeallocateValue((NCsFX::NParameter::NScaled::NFloat::FFloatType*)Value);
+	// Vector
+	else
+	if (ValueType == ParameterValueType::Vector)
+		DeallocateValue((NCsFX::NParameter::NScaled::NVector::FVectorType*)Value);
+}
+
+
+#pragma endregion Scaled
 
 #pragma endregion Params

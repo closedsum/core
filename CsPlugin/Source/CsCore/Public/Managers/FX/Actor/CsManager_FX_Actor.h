@@ -81,6 +81,60 @@ namespace NCsFX
 			*/
 			struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FVectorType, FResource, 0> {};
 		}
+
+		namespace NScaled
+		{
+			namespace NInt
+			{
+				// FIntType (NCsFX::NParamter::NScaled::NInt::FIntType)
+
+				/**
+				* Container for holding a reference to the object FIntType (NCsFX::NParamter::NScaled::NInt::FIntType).
+				* This serves as an easy way for a Manager Resource to keep track of the resource.
+				*/
+				struct CSCORE_API FResource : public TCsResourceContainer<FIntType> {};
+
+				/**
+				* A manager handling allocating and deallocating the object FIntType (NCsFX::NParamter::NScaled::NInt::FIntType) and
+				* are wrapped in the container: NCsFX::NParameter::NScaled::NInt::FResource.
+				*/
+				struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FIntType, FResource, 0> {};
+			}
+
+			namespace NFloat
+			{
+				// FFloatType (NCsFX::NParamter::NScaled::NFloat::FFloatType)
+
+				/**
+				* Container for holding a reference to the object FFloatType (NCsFX::NParamter::NScaled::NFloat::FFloatType).
+				* This serves as an easy way for a Manager Resource to keep track of the resource.
+				*/
+				struct CSCORE_API FResource : public TCsResourceContainer<FFloatType> {};
+
+				/**
+				* A manager handling allocating and deallocating the object FFloatType (NCsFX::NParamter::NScaled::NFloat::FFloatType) and
+				* are wrapped in the container: NCsFX::NParameter::NScaled::NFloat::FResource.
+				*/
+				struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FFloatType, FResource, 0> {};
+			}
+
+			namespace NVector
+			{
+				// FVectorType (NCsFX::NParamter::NScaled::NVector::FVectorType)
+
+				/**
+				* Container for holding a reference to the object FVectorType (NCsFX::NParamter::NScaled::NVector::FVectorType).
+				* This serves as an easy way for a Manager Resource to keep track of the resource.
+				*/
+				struct CSCORE_API FResource : public TCsResourceContainer<FVectorType> {};
+
+				/**
+				* A manager handling allocating and deallocating the object FVectorType (NCsFX::NParamter::NScaled::NVector::FVectorType) and
+				* are wrapped in the container: NCsFX::NParameter::NScaled::NVector::FResource.
+				*/
+				struct CSCORE_API FManager : public NCsResource::NManager::NValue::TFixed<FVectorType, FResource, 0> {};
+			}
+		}
 	}
 }
 
@@ -890,6 +944,95 @@ private:
 #undef ParameterVectorManagerType
 
 #pragma endregion Vector
+
+	// Scaled
+#pragma region
+public:
+
+#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+
+	/**
+	*
+	*
+	* @param Value 
+	*/
+	void DeallocateValue(ScaledParameterType* Value);
+
+#undef ScaledParameterType
+
+		// Int
+#pragma region
+
+#define ScaledParameterIntType NCsFX::NParameter::NScaled::NInt::FIntType
+#define ScaledParameterIntManagerType NCsFX::NParameter::NScaled::NInt::FManager
+
+private:
+
+	ScaledParameterIntManagerType Manager_ScaledParameterInt;
+
+public:
+
+	template<>
+	FORCEINLINE ScaledParameterIntType* AllocateValue<ScaledParameterIntType>() { return Manager_ScaledParameterInt.AllocateResource(); }
+
+private:
+
+	FORCEINLINE void DeallocateValue(ScaledParameterIntType* Value) { Manager_ScaledParameterInt.DeallocateAt(Value, Value->GetIndex()); }
+
+#undef ScaledParameterIntType
+#undef ScaledParameterIntManagerType
+
+#pragma endregion Float
+
+		// Float
+#pragma region
+
+#define ScaledParameterFloatType NCsFX::NParameter::NScaled::NFloat::FFloatType
+#define ScaledParameterFloatManagerType NCsFX::NParameter::NScaled::NFloat::FManager
+
+private:
+
+	ScaledParameterFloatManagerType Manager_ScaledParameterFloat;
+
+public:
+
+	template<>
+	FORCEINLINE ScaledParameterFloatType* AllocateValue<ScaledParameterFloatType>() { return Manager_ScaledParameterFloat.AllocateResource(); }
+
+private:
+
+	FORCEINLINE void DeallocateValue(ScaledParameterFloatType* Value) { Manager_ScaledParameterFloat.DeallocateAt(Value, Value->GetIndex()); }
+
+#undef ScaledParameterFloatType
+#undef ScaledParameterFloatManagerType
+
+#pragma endregion Float
+
+		// Vector
+#pragma region
+
+#define ScaledParameterVectorType NCsFX::NParameter::NScaled::NVector::FVectorType
+#define ScaledParameterVectorManagerType NCsFX::NParameter::NScaled::NVector::FManager
+
+private:
+
+	ScaledParameterVectorManagerType Manager_ScaledParameterVector;
+
+public:
+
+	template<>
+	FORCEINLINE ScaledParameterVectorType* AllocateValue<ScaledParameterVectorType>() { return Manager_ScaledParameterVector.AllocateResource(); }
+
+private:
+
+	FORCEINLINE void DeallocateValue(ScaledParameterVectorType* Value){ Manager_ScaledParameterVector.DeallocateAt(Value, Value->GetIndex()); }
+
+#undef ScaledParameterVectorType
+#undef ScaledParameterVectorManagerType
+
+#pragma endregion Vector
+
+#pragma endregion Scaled
 
 #pragma endregion Params
 

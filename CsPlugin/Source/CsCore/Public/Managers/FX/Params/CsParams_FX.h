@@ -269,3 +269,255 @@ namespace NCsFX
 		}
 	}
 }
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
+		namespace NScaled
+		{
+			struct CSCORE_API IScaled
+			{
+			public:
+
+				virtual ~IScaled() {}
+
+			#define ParameterType NCsFX::NParameter::IParameter
+
+				virtual const int32& GetIndex() const = 0;
+
+				virtual const ParameterType* GetParameter() const = 0;
+
+				virtual const bool& ShouldSetValue() const = 0;
+
+				virtual const bool& ShouldApplyInverse() const = 0;
+
+				virtual const float& GetScale() const = 0;
+
+			#undef ParameterType
+			};
+
+			namespace NInt
+			{
+				/**
+				* Container holding information for Niagara Int Parameter that will scale based on the FX scale.
+				*/
+				struct CSCORE_API FIntType : IScaled
+				{
+				#define ParameterType NCsFX::NParameter::IParameter
+				#define ParameterIntType NCsFX::NParameter::NInt::FIntType
+
+				private:
+
+					int32 Index;
+
+				public:
+
+					ParameterIntType Parameter;
+
+				private:
+
+					CS_DECLARE_MEMBER_WITH_PROXY(bValue, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(bInverse, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(Scale, float)
+
+				public:
+
+					FIntType() :
+						Index(INDEX_NONE),
+						Parameter(),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bValue, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInverse, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Scale, 1.0f)
+					{
+						CS_CTOR_SET_MEMBER_PROXY(bValue);
+						CS_CTOR_SET_MEMBER_PROXY(bInverse);
+						CS_CTOR_SET_MEMBER_PROXY(Scale);
+					}
+
+					FORCEINLINE void SetIndex(const int32& InIndex) 
+					{ 
+						Index = InIndex;
+
+						Parameter.SetIndex(Index);
+					}
+
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bValue, bool)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInverse, bool)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, float)
+
+					FORCEINLINE ParameterIntType* GetParameterPtr() { return &Parameter; }
+
+				// IScaled
+				#pragma region
+				public:
+
+					FORCEINLINE const int32& GetIndex() const { return Index; }
+					FORCEINLINE const ParameterType* GetParameter() const { return &Parameter; }
+					FORCEINLINE const bool& ShouldSetValue() const { return GetbValue(); }
+					FORCEINLINE const bool& ShouldApplyInverse() const { return GetbInverse(); }
+					//FORCEINLINE const float& GetScale() const;
+
+				#pragma endregion IScaled
+
+					FORCEINLINE bool IsValidChecked(const FString& Context) const
+					{
+						check(Parameter.IsValidChecked(Context));
+						return true;
+					}
+
+				#undef ParameterType
+				#undef ParameterIntType
+				};
+			}
+
+			namespace NFloat
+			{
+				/**
+				* Container holding information for Niagara Float Parameter that will scale based on the FX scale.
+				*/
+				struct CSCORE_API FFloatType : IScaled
+				{
+				#define ParameterType NCsFX::NParameter::IParameter
+				#define ParameterFloatType NCsFX::NParameter::NFloat::FFloatType
+
+				private:
+
+					int32 Index;
+
+				public:
+
+					ParameterFloatType Parameter;
+
+				private:
+
+					CS_DECLARE_MEMBER_WITH_PROXY(bValue, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(bInverse, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(Scale, float)
+
+				public:
+
+					FFloatType() :
+						Index(INDEX_NONE),
+						Parameter(),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bValue, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInverse, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Scale, 1.0f)
+					{
+						CS_CTOR_SET_MEMBER_PROXY(bValue);
+						CS_CTOR_SET_MEMBER_PROXY(bInverse);
+						CS_CTOR_SET_MEMBER_PROXY(Scale);
+					}
+
+					FORCEINLINE void SetIndex(const int32& InIndex) 
+					{ 
+						Index = InIndex;
+
+						Parameter.SetIndex(Index);
+					}
+
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bValue, bool)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInverse, bool)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, float)
+
+					FORCEINLINE ParameterFloatType* GetParameterPtr() { return &Parameter; }
+
+				// IScaled
+				#pragma region
+				public:
+
+					FORCEINLINE const int32& GetIndex() const { return Index; }
+					FORCEINLINE const ParameterType* GetParameter() const { return &Parameter; }
+					FORCEINLINE const bool& ShouldSetValue() const { return GetbValue(); }
+					FORCEINLINE const bool& ShouldApplyInverse() const { return GetbInverse(); }
+					//FORCEINLINE const float& GetScale() const;
+
+				#pragma endregion IScaled
+
+					FORCEINLINE bool IsValidChecked(const FString& Context) const
+					{
+						check(Parameter.IsValidChecked(Context));
+						return true;
+					}
+
+				#undef ParameterType
+				#undef ParameterFloatType
+				};
+			}
+
+			namespace NVector
+			{
+				/**
+				* Container holding information for Niagara Vector Parameter that will scale based on the FX scale.
+				*/
+				struct CSCORE_API FVectorType : IScaled
+				{
+				#define ParameterType NCsFX::NParameter::IParameter
+				#define ParameterVectorType NCsFX::NParameter::NVector::FVectorType
+
+				private:
+
+					int32 Index;
+
+				public:
+
+					ParameterVectorType Parameter;
+
+				private:
+
+					CS_DECLARE_MEMBER_WITH_PROXY(bValue, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(bInverse, bool)
+					CS_DECLARE_MEMBER_WITH_PROXY(Scale, float)
+
+				public:
+
+					FVectorType() :
+						Index(INDEX_NONE),
+						Parameter(),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bValue, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInverse, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Scale, 1.0f)
+					{
+						CS_CTOR_SET_MEMBER_PROXY(bValue);
+						CS_CTOR_SET_MEMBER_PROXY(bInverse);
+						CS_CTOR_SET_MEMBER_PROXY(Scale);
+					}
+
+					FORCEINLINE void SetIndex(const int32& InIndex) 
+					{ 
+						Index = InIndex;
+
+						Parameter.SetIndex(Index);
+					}
+
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bValue, bool)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInverse, bool)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, float)
+
+					FORCEINLINE ParameterVectorType* GetParameterPtr() { return &Parameter; }
+
+				// IScaled
+				#pragma region
+				public:
+
+					FORCEINLINE const int32& GetIndex() const { return Index; }
+					FORCEINLINE const ParameterType* GetParameter() const { return &Parameter; }
+					FORCEINLINE const bool& ShouldSetValue() const { return GetbValue(); }
+					FORCEINLINE const bool& ShouldApplyInverse() const { return GetbInverse(); }
+					//FORCEINLINE const float& GetScale() const;
+
+				#pragma endregion IScaled
+
+					FORCEINLINE bool IsValidChecked(const FString& Context) const
+					{
+						check(Parameter.IsValidChecked(Context));
+						return true;
+					}
+
+				#undef ParameterType
+				#undef ParameterVectorType
+				};
+			}
+		}
+	}
+}

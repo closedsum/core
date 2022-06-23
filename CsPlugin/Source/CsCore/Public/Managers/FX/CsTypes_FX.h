@@ -528,6 +528,207 @@ public:
 
 #pragma endregion FCsFXParameterVector
 
+// FCsFX_Parameter_Scaled_Int
+#pragma region
+
+// NCsFX::NParameter::NScaled::NInt::FIntType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NInt, FIntType)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Parameter_Scaled_Int
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Niagara Int Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FName Name;
+
+	/** Whether the Value should be set before apply any scaling or just
+		get the current Value from the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bValue;
+
+	/** Value to set for the Niagara Int Parameter with Name. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	int32 Value;
+
+	/** Whether to apply the FX scale inversely. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bInverse;
+
+	/** Additional scale to apply to Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	float Scale;
+
+	FCsFX_Parameter_Scaled_Int() :
+		Name(NAME_None),
+		bValue(false),
+		Value(0),
+		bInverse(false),
+		Scale(1.0f)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NScaled::NInt::FIntType
+	void CopyToParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
+#undef ParameterType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsFX_Parameter_Scaled_Int
+
+// FCsFX_Parameter_Scaled_Float
+#pragma region
+
+// NCsFX::NParameter::NScaled::NFloat::FFloatType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NFloat, FFloatType)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Parameter_Scaled_Float
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Niagara Float Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FName Name;
+
+	/** Whether the Value should be set before apply any scaling or just
+		get the current Value from the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bValue;
+
+	/** Value to set for the Niagara Float Parameter with Name. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	float Value;
+
+	/** Whether to apply the FX scale inversely. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bInverse;
+
+	/** Additional scale to apply to Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	float Scale;
+
+	FCsFX_Parameter_Scaled_Float() :
+		Name(NAME_None),
+		bValue(false),
+		Value(0.0f),
+		bInverse(false),
+		Scale(1.0f)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NScaled::NFloat::FFloatType
+	void CopyToParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
+#undef ParameterType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsFX_Parameter_Scaled_Float
+
+// FCsFX_Parameter_Scaled_Vector
+#pragma region
+
+// NCsFX::NParameter::NScaled::NFloat::FFloatType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NScaled, NVector, FVectorType)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Parameter_Scaled_Vector
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Niagara Vector Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FName Name;
+
+	/** Whether the Value should be set before apply any scaling or just
+		get the current Value from the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bValue;
+
+	/** Value to set for the Niagara Vector Parameter with Name. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FVector Value;
+
+	/** Whether to apply the FX scale inversely. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bInverse;
+
+	/** Additional scale to apply to Parameter. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	float Scale;
+
+	FCsFX_Parameter_Scaled_Vector() :
+		Name(NAME_None),
+		bValue(false),
+		Value(0.0f),
+		bInverse(false),
+		Scale(1.0f)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NScaled::NVector::FVectorType
+	void CopyToParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
+#undef ParameterType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsFX_Parameter_Scaled_Vector
+
+// FCsFX_Parameters_Scaled
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Parameters_Scaled
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	TArray<FCsFX_Parameter_Scaled_Int> Ints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	TArray<FCsFX_Parameter_Scaled_Float> Floats;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	TArray<FCsFX_Parameter_Scaled_Vector> Vectors;
+
+	FCsFX_Parameters_Scaled() :
+		Ints(),
+		Floats(),
+		Vectors()
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	FORCEINLINE void Reset()
+	{
+		Ints.Reset(Ints.Max());
+		Floats.Reset(Floats.Max());
+		Vectors.Reset(Vectors.Max());
+	}
+};
+
+#pragma endregion FCsFX_Parameters_Scaled
+
 // FCsFX
 #pragma region
 
@@ -623,6 +824,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FTransform Transform;
 
+// TODO: Eventually deprecate and combine into 1 struct
+
 	/** List of all Niagara Int Parameters to change on the FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TArray<FCsFXParameterInt> IntParameters;
@@ -634,6 +837,10 @@ public:
 	/** List of all Niagara Vector Parameters to change on the FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	TArray<FCsFXParameterVector> VectorParameters;
+
+	/** List of all Niagara Parameters that will get scaled with the FX scale. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FCsFX_Parameters_Scaled ScaledParameters;
 
 public:
 
@@ -653,7 +860,8 @@ public:
 		Transform(FTransform::Identity),
 		IntParameters(),
 		FloatParameters(),
-		VectorParameters()
+		VectorParameters(),
+		ScaledParameters()
 	{
 		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	}

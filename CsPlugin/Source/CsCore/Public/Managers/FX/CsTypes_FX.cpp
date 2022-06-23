@@ -311,6 +311,162 @@ bool FCsFXParameterVector::IsValid(const FString& Context, void(*Log)(const FStr
 
 #pragma endregion FCsFXParameterVector
 
+// FCsFX_Parameter_Scaled_Int
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NScaled::NInt::FIntType
+
+void FCsFX_Parameter_Scaled_Int::CopyToParams(ParameterType* Params)
+{
+	Params->GetParameterPtr()->SetName(&Name);
+	Params->SetbValue(&bValue);
+	Params->GetParameterPtr()->SetValue(&Value);
+	Params->SetbInverse(&bInverse);
+	Params->SetScale(&Scale);
+}
+
+void FCsFX_Parameter_Scaled_Int::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->GetParameterPtr()->SetName(Name);
+	Params->SetbValue(bValue);
+	Params->GetParameterPtr()->SetValue(Value);
+	Params->SetbInverse(bInverse);
+	Params->SetScale(Scale);
+}
+
+#undef ParameterType
+
+bool FCsFX_Parameter_Scaled_Int::IsValidChecked(const FString& Context) const
+{
+	CS_IS_NAME_NONE_CHECKED(Name)
+	return true;
+}
+
+bool FCsFX_Parameter_Scaled_Int::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_NAME_NONE(Name)
+	return true;
+}
+
+#pragma endregion FCsFX_Parameter_Scaled_Int
+
+// FCsFX_Parameter_Scaled_Float
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NScaled::NFloat::FFloatType
+
+void FCsFX_Parameter_Scaled_Float::CopyToParams(ParameterType* Params)
+{
+	Params->GetParameterPtr()->SetName(&Name);
+	Params->SetbValue(&bValue);
+	Params->GetParameterPtr()->SetValue(&Value);
+	Params->SetbInverse(&bInverse);
+	Params->SetScale(&Scale);
+}
+
+void FCsFX_Parameter_Scaled_Float::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->GetParameterPtr()->SetName(Name);
+	Params->SetbValue(bValue);
+	Params->GetParameterPtr()->SetValue(Value);
+	Params->SetbInverse(bInverse);
+	Params->SetScale(Scale);
+}
+
+#undef ParameterType
+
+bool FCsFX_Parameter_Scaled_Float::IsValidChecked(const FString& Context) const
+{
+	CS_IS_NAME_NONE_CHECKED(Name)
+	return true;
+}
+
+bool FCsFX_Parameter_Scaled_Float::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_NAME_NONE(Name)
+	return true;
+}
+
+#pragma endregion FCsFX_Parameter_Scaled_Float
+
+// FCsFX_Parameter_Scaled_Vector
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NScaled::NVector::FVectorType
+
+void FCsFX_Parameter_Scaled_Vector::CopyToParams(ParameterType* Params)
+{
+	Params->GetParameterPtr()->SetName(&Name);
+	Params->SetbValue(&bValue);
+	Params->GetParameterPtr()->SetValue(&Value);
+	Params->SetbInverse(&bInverse);
+	Params->SetScale(&Scale);
+}
+
+void FCsFX_Parameter_Scaled_Vector::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->GetParameterPtr()->SetName(Name);
+	Params->SetbValue(bValue);
+	Params->GetParameterPtr()->SetValue(Value);
+	Params->SetbInverse(bInverse);
+	Params->SetScale(Scale);
+}
+
+#undef ParameterType
+
+bool FCsFX_Parameter_Scaled_Vector::IsValidChecked(const FString& Context) const
+{
+	CS_IS_NAME_NONE_CHECKED(Name)
+	return true;
+}
+
+bool FCsFX_Parameter_Scaled_Float::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_NAME_NONE(Name)
+	return true;
+}
+
+#pragma endregion FCsFX_Parameter_Scaled_Vector
+
+// FCsFX_Parameters_Scaled
+#pragma region
+
+bool FCsFX_Parameters_Scaled::IsValidChecked(const FString& Context) const
+{
+	for (const FCsFX_Parameter_Scaled_Int& Param : Ints)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	for (const FCsFX_Parameter_Scaled_Float& Param : Floats)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	for (const FCsFX_Parameter_Scaled_Vector& Param : Vectors)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	return true;
+}
+
+bool FCsFX_Parameters_Scaled::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	for (const FCsFX_Parameter_Scaled_Int& Param : Ints)
+	{
+		CS_IS_VALID(Param)
+	}
+	for (const FCsFX_Parameter_Scaled_Float& Param : Floats)
+	{
+		CS_IS_VALID(Param)
+	}
+	for (const FCsFX_Parameter_Scaled_Vector& Param : Vectors)
+	{
+		CS_IS_VALID(Param)
+	}
+	return true;
+}
+
+#pragma endregion FCsFX_Parameters_Scaled
+
 // FCsFX
 #pragma region
 
@@ -355,6 +511,24 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	}
 		// Vector
 	for (const FCsFXParameterVector& Param : VectorParameters)
+	{
+		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
+	}
+
+		// Scaled
+		
+			// Int
+	for (const FCsFX_Parameter_Scaled_Int& Param : ScaledParameters.Ints)
+	{
+		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Int));
+	}
+			// Float
+	for (const FCsFX_Parameter_Scaled_Float& Param : ScaledParameters.Floats)
+	{
+		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Float));
+	}
+			// Vector
+	for (const FCsFX_Parameter_Scaled_Vector& Param : ScaledParameters.Vectors)
 	{
 		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
 	}
@@ -421,6 +595,27 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLo
 		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
 			return false;
 	}
+	
+		// Scaled
+
+			// Int
+	for (const FCsFX_Parameter_Scaled_Int& Param : ScaledParameters.Ints)
+	{
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Int, Log))
+			return false;
+	}
+			// Float
+	for (const FCsFX_Parameter_Scaled_Float& Param : ScaledParameters.Floats)
+	{
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Float, Log))
+			return false;
+	}
+			// Vector
+	for (const FCsFX_Parameter_Scaled_Vector& Param : ScaledParameters.Vectors)
+	{
+		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
+			return false;
+	}
 	return true;
 }
 
@@ -442,6 +637,7 @@ void FCsFX::Reset()
 	IntParameters.Reset(IntParameters.Max());
 	FloatParameters.Reset(FloatParameters.Max());
 	VectorParameters.Reset(VectorParameters.Max());
+	ScaledParameters.Reset();
 }
 
 #pragma endregion FCsFX

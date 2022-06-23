@@ -402,7 +402,9 @@ public:
 
 		ACsProjectileWeaponActorPooled* Outer;
 
-		USceneComponent* LaunchComponentTransform;
+		USceneComponent* LaunchComponentLocation;
+
+		USceneComponent* LaunchComponentDirection;
 
 		FCsScopedTimerHandle LaunchScopedHandle;
 
@@ -416,7 +418,8 @@ public:
 
 		FProjectileImpl() :
 			Outer(nullptr),
-			LaunchComponentTransform(nullptr),
+			LaunchComponentLocation(nullptr),
+			LaunchComponentDirection(nullptr),
 			LaunchScopedHandle(),
 			CustomLaunchLocation(FVector::ZeroVector),
 			CustomLaunchDirection(FVector::ZeroVector)
@@ -426,10 +429,8 @@ public:
 
 	public:
 
-		FORCEINLINE void SetLaunchComponentTransform(USceneComponent* Component)
-		{
-			LaunchComponentTransform = Component;
-		}
+		FORCEINLINE void SetLaunchComponentLocation(USceneComponent* Component) { LaunchComponentLocation = Component; }
+		FORCEINLINE void SetLaunchComponentDirection(USceneComponent* Component) { LaunchComponentDirection = Component; }
 
 	public:
 
@@ -550,7 +551,10 @@ protected:
 public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon|Fire|Projectile")
-	void ProjectileImpl_SetLaunchComponentTransform(USceneComponent* Component);
+	void ProjectileImpl_SetLaunchComponentLocation(USceneComponent* Component);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon|Fire|Projectile")
+	void ProjectileImpl_SetLaunchComponentDirection(USceneComponent* Component);
 
 protected:
 

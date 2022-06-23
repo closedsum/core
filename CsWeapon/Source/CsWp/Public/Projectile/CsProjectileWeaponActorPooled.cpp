@@ -1224,9 +1224,9 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 	// Component
 	if (LocationType == ELocation::Component)
 	{
-		CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
+		CS_IS_PTR_NULL_CHECKED(LaunchComponentLocation)
 
-		return LaunchComponentTransform->GetComponentLocation() + LocationOffset;
+		return LaunchComponentLocation->GetComponentLocation() + LocationOffset;
 	}
 	// Custom
 	if (LocationType == ELocation::Custom)
@@ -1323,9 +1323,9 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 	// Component
 	if (DirectionType == EDirection::Component)
 	{
-		CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
+		CS_IS_PTR_NULL_CHECKED(LaunchComponentDirection)
 		
-		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
+		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentDirection, DirectionRules);
 
 		const FVector Dir = DirectionScalar * Rotation.Vector();
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
@@ -1378,9 +1378,9 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		else
 		if (TraceStart == ETraceStart::Component)
 		{
-			CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
+			CS_IS_PTR_NULL_CHECKED(LaunchComponentLocation)
 
-			Start = LaunchComponentTransform->GetComponentLocation();
+			Start = LaunchComponentLocation->GetComponentLocation();
 		}
 		// Camera
 		else
@@ -1420,9 +1420,9 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		else
 		if (TraceDirection == ETraceDirection::Component)
 		{
-			CS_IS_PTR_NULL_CHECKED(LaunchComponentTransform)
+			CS_IS_PTR_NULL_CHECKED(LaunchComponentDirection)
 
-			const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform->GetComponentRotation(), DirectionRules);
+			const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentDirection->GetComponentRotation(), DirectionRules);
 
 			Dir = Rotation.Vector();
 		}
@@ -1578,9 +1578,14 @@ ACsProjectileWeaponActorPooled::FProjectileImpl* ACsProjectileWeaponActorPooled:
 	return new ACsProjectileWeaponActorPooled::FProjectileImpl();
 }
 
-void ACsProjectileWeaponActorPooled::ProjectileImpl_SetLaunchComponentTransform(USceneComponent* Component)
+void ACsProjectileWeaponActorPooled::ProjectileImpl_SetLaunchComponentLocation(USceneComponent* Component)
 {
-	ProjectileImpl->SetLaunchComponentTransform(Component);
+	ProjectileImpl->SetLaunchComponentLocation(Component);
+}
+
+void ACsProjectileWeaponActorPooled::ProjectileImpl_SetLaunchComponentDirection(USceneComponent* Component)
+{
+	ProjectileImpl->SetLaunchComponentDirection(Component);
 }
 
 bool ACsProjectileWeaponActorPooled::UseSpreadParams() const

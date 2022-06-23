@@ -447,6 +447,8 @@ public:
 				bool bOffset;
 				FVector Offset;
 
+				int32 Axis;
+
 				bool bYaw;
 				float Yaw;
 
@@ -456,6 +458,7 @@ public:
 				FSpread() :
 					bOffset(false),
 					Offset(0.0f),
+					Axis(0),
 					bYaw(false),
 					Yaw(0.0f),
 					bPitch(false),
@@ -526,6 +529,12 @@ public:
 
 		virtual FVector GetLaunchLocation(const LaunchPayloadType& LaunchPayload);
 		FORCEINLINE FVector GetLaunchLocation() { return GetLaunchLocation(LaunchPayloadType()); }
+
+	protected:
+
+		FVector GetLaunchSpreadLocation(const FVector& InLocation, const LaunchPayloadType& LaunchPayload);
+
+	public:
 
 		virtual FVector GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
 		FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); }

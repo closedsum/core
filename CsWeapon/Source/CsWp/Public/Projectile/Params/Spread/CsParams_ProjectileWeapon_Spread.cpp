@@ -16,6 +16,10 @@ void FCsProjectileWeapon_Spread_ShapeParams::CopyToParams(ParamsType* Params)
 	Params->SetShape((ShapeType*)(&Shape));
 	Params->SetExtents(&Extents);
 
+	typedef NCsWeapon::NProjectile::NSpread::NShape::EAxis AxisType;
+
+	Params->SetAxis((AxisType*)(&Axis));
+
 	typedef NCsWeapon::NProjectile::NSpread::NShape::EDistribution DistributionType;
 
 	Params->SetDistribution((DistributionType*)(&Distribution));
@@ -28,6 +32,10 @@ void FCsProjectileWeapon_Spread_ShapeParams::CopyToParamsAsValue(ParamsType* Par
 	Params->SetShape((ShapeType)Shape);
 	Params->SetExtents(Extents);
 
+	typedef NCsWeapon::NProjectile::NSpread::NShape::EAxis AxisType;
+
+	Params->SetAxis((AxisType)Axis);
+
 	typedef NCsWeapon::NProjectile::NSpread::NShape::EDistribution DistributionType;
 
 	Params->SetDistribution((DistributionType)Distribution);
@@ -39,6 +47,7 @@ bool FCsProjectileWeapon_Spread_ShapeParams::IsValidChecked(const FString& Conte
 {
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponSpreadShape, Shape)
 	CS_IS_VECTOR_ZERO_CHECKED(Extents)
+	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponSpreadShapeAxis, Axis)
 	CS_IS_VECTOR_COMPONENTS_GREATER_THAN_OR_EQUAL_CHECKED(Extents, 0.0f)
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponSpreadShapeDistribution, Distribution)
 
@@ -68,6 +77,7 @@ bool FCsProjectileWeapon_Spread_ShapeParams::IsValid(const FString& Context, voi
 {
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponSpreadShape, ECsProjectileWeaponSpreadShape, Shape)
 	CS_IS_VECTOR_ZERO(Extents)
+	CS_IS_ENUM_VALID(EMCsProjectileWeaponSpreadShapeAxis, ECsProjectileWeaponSpreadShapeAxis, Axis)
 	CS_IS_VECTOR_COMPONENTS_GREATER_THAN_OR_EQUAL(Extents, 0.0f)
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponSpreadShapeDistribution, ECsProjectileWeaponSpreadShapeDistribution, Distribution)
 
@@ -130,6 +140,10 @@ namespace NCsWeapon
 					CS_IS_ENUM_VALID_CHECKED(ShapeMapType, GetShape())
 					CS_IS_VECTOR_ZERO_CHECKED(GetExtents())
 
+					typedef NCsWeapon::NProjectile::NSpread::NShape::EMAxis AxisMapType;
+
+					CS_IS_ENUM_VALID_CHECKED(AxisMapType, GetAxis())
+
 					typedef NCsWeapon::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
 
 					CS_IS_ENUM_VALID_CHECKED(DistributionMapType, GetDistribution())
@@ -143,6 +157,11 @@ namespace NCsWeapon
 
 					CS_IS_ENUM_VALID(ShapeMapType, ShapeType, GetShape())
 					CS_IS_VECTOR_ZERO(GetExtents())
+
+					typedef NCsWeapon::NProjectile::NSpread::NShape::EMAxis AxisMapType;
+					typedef NCsWeapon::NProjectile::NSpread::NShape::EAxis AxisType;
+
+					CS_IS_ENUM_VALID(AxisMapType, AxisType, GetAxis())
 
 					typedef NCsWeapon::NProjectile::NSpread::NShape::EMDistribution DistributionMapType;
 					typedef NCsWeapon::NProjectile::NSpread::NShape::EDistribution DistributionType;

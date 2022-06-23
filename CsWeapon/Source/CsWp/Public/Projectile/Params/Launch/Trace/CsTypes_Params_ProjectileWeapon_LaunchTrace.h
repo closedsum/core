@@ -235,6 +235,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchDirection DirectionType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FRotator DirectionOffset;
+
 	/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	bool bInvertDirection;
@@ -265,6 +268,7 @@ public:
 		LocationType(ECsProjectileWeaponLaunchLocation::Owner),
 		LocationOffset(0.0f),
 		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
+		DirectionOffset(0.0f),
 		bInvertDirection(false),
 		DirectionRules(CS_ROTATION_FLAGS_NONE),
 		TraceType(ECsTraceType::Line),

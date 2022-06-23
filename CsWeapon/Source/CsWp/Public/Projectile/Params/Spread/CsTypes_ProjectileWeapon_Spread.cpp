@@ -84,6 +84,47 @@ namespace NCsWeapon
 
 #pragma endregion ProjectileWeaponSpreadShapeDistribution
 
+// ProjectileWeaponSpreadShapeAxis
+#pragma region
+
+namespace NCsProjectileWeaponSpreadShapeAxis
+{
+	namespace Ref
+	{
+		typedef EMCsProjectileWeaponSpreadShapeAxis EnumMapType;
+
+		CSWP_API CS_ADD_TO_ENUM_MAP(Up);
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(LaunchDirection, "Launch Direction");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsProjectileWeaponSpreadShapeAxis_MAX, "MAX");
+	}
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NSpread
+		{
+			namespace NShape
+			{
+				namespace NAxis
+				{
+					namespace Ref
+					{
+						typedef EMAxis EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP(Up);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(LaunchDirection, "Launch Direction");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EAxis_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion ProjectileWeaponSpreadShapeAxis
+
 // ProjectileWeaponSpreadAngle
 #pragma region
 

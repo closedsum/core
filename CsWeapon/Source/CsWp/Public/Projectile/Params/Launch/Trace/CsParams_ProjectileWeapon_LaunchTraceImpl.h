@@ -47,6 +47,7 @@ namespace NCsWeapon
 						CS_DECLARE_MEMBER_WITH_PROXY(LocationType, ELocation)
 						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffset, FVector)
 						CS_DECLARE_MEMBER_WITH_PROXY(DirectionType, EDirection)
+						CS_DECLARE_MEMBER_WITH_PROXY(DirectionOffset, FRotator)
 						CS_DECLARE_MEMBER_WITH_PROXY(bInvertDirection, bool)
 						CS_DECLARE_MEMBER_WITH_PROXY(DirectionRules, int32)
 
@@ -95,6 +96,7 @@ namespace NCsWeapon
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationType, ELocation)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffset, FVector)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionType, EDirection)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionOffset, FRotator)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInvertDirection, bool)
 						FORCEINLINE const bool& InvertDirection() const { return GetbInvertDirection(); }
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionRules, int32)

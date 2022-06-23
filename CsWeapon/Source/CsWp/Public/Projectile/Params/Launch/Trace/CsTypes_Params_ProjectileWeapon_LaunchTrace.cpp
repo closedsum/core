@@ -181,6 +181,7 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 	Params->SetLocationType(&LocationType);
 	Params->SetLocationOffset(&LocationOffset);
 	Params->SetDirectionType(&DirectionType);
+	Params->SetDirectionOffset(&DirectionOffset);
 	Params->SetbInvertDirection(&bInvertDirection);
 	Params->SetDirectionRules(&DirectionRules);
 	Params->SetTraceType(&TraceType);
@@ -195,6 +196,7 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Para
 	Params->SetLocationType(LocationType);
 	Params->SetLocationOffset(LocationOffset);
 	Params->SetDirectionType(DirectionType);
+	Params->SetDirectionOffset(DirectionOffset);
 	Params->SetbInvertDirection(bInvertDirection);
 	Params->SetDirectionRules(DirectionRules);
 	Params->SetTraceType(TraceType);

@@ -46,6 +46,7 @@ namespace NCsWeapon
 								const FName LocationType = FName("LocationType");
 								const FName LocationOffset = FName("LocationOffset");
 								const FName DirectionType = FName("DirectionType");
+								const FName DirectionOffset = FName("DirectionOffset");
 								const FName bInvertDirection = FName("bInvertDirection");
 								const FName DirectionRules = FName("DirectionRules");
 								const FName TraceType = FName("TraceType");
@@ -64,6 +65,7 @@ namespace NCsWeapon
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationType, ELocation::Owner),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationOffset, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionType, EDirection::Owner),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionOffset, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInvertDirection, false),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionRules, 0),
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
@@ -87,6 +89,7 @@ namespace NCsWeapon
 						CS_CTOR_SET_MEMBER_PROXY(LocationType);
 						CS_CTOR_SET_MEMBER_PROXY(LocationOffset);
 						CS_CTOR_SET_MEMBER_PROXY(DirectionType);
+						CS_CTOR_SET_MEMBER_PROXY(DirectionOffset);
 						CS_CTOR_SET_MEMBER_PROXY(bInvertDirection);
 						CS_CTOR_SET_MEMBER_PROXY(DirectionRules);
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
@@ -160,8 +163,10 @@ namespace NCsWeapon
 
 							ECsProjectileWeaponLaunchLocation* LocationTypePtr				= CS_TEMP_GET_SAFE_ENUM_PTR(CsProjectileWeaponLaunchLocation, LocationType);
 							// NOTE: This may need to fixed. FVector might not be treated as a Struct Property
-							//FVector* LocationOffsetPtr										= PropertyLibrary::GetStructPropertyValuePtr<FVector>(Context, Object, Object->GetClass(), Name::LocationOffset, nullptr);
+							//FVector* LocationOffsetPtr									= PropertyLibrary::GetStructPropertyValuePtr<FVector>(Context, Object, Object->GetClass(), Name::LocationOffset, nullptr);
 							ECsProjectileWeaponLaunchDirection* DirectionTypePtr			= CS_TEMP_GET_SAFE_ENUM_PTR(CsProjectileWeaponLaunchDirection, DirectionType);
+							// NOTE: This may need to fixed. FRotator might not be treated as a Struct Property
+							//FRotator* DirectionOffsetPtr									= PropertyLibrary::GetStructPropertyValuePtr<FRotator>(Context, Object, Object->GetClass(), Name::DirectionOffset, nullptr);
 							bool* bInvertDirectionPtr										= CS_TEMP_GET_SAFE_BOOL_PTR(bInvertDirection);
 							int32* DirectionRulesPtr										= CS_TEMP_GET_SAFE_INT_PTR(DirectionRules);
 							ECsTraceType* TraceTypePtr										= CS_TEMP_GET_SAFE_ENUM_PTR(CsTraceType, TraceType);
@@ -177,6 +182,7 @@ namespace NCsWeapon
 							if (LocationTypePtr &&
 								//LocationOffsetPtr &&
 								DirectionTypePtr &&
+								//DirectionOffsetPtr &&
 								bInvertDirectionPtr &&
 								DirectionRulesPtr &&
 								TraceTypePtr &&
@@ -211,6 +217,7 @@ namespace NCsWeapon
 								Log(FString::Printf(TEXT("%s: - Failed to get byte property of enum type: ECsProjectileWeaponLaunchLocation with name: LocationType."), *Context));
 								//Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FVector with name: LocationOffset."), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get byte property of enum type: ECsProjectileWeaponLaunchDirection with name: DirectionType."), *Context));
+								//Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FRotator with name: DirectionOffset."), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bInvertDirection."), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get int property with name: DirectionRules."), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get byte property of enum type: ECsTraceType with name: TraceType."), *Context));

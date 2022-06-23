@@ -160,6 +160,13 @@ namespace NCsWeapon
 					virtual const EDirection& GetDirectionType() const = 0;
 
 					/**
+					* Get the offset to apply to the Rotation determined from GetDirectionType().
+					*
+					* return
+					*/
+					virtual const FRotator& GetDirectionOffset() const = 0;
+
+					/**
 					* Get whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f).
 					* 
 					* return

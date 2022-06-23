@@ -165,6 +165,82 @@ namespace NCsWeapon
 
 #pragma endregion ProjectileWeaponSpreadShapeDistribution
 
+// ProjectileWeaponSpreadShapeAxis
+#pragma region
+
+/**
+* Describes the Axis by which the start locations within a Spread Shape are Distributed for a Projectile Weapon.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*/
+UENUM(BlueprintType)
+enum class ECsProjectileWeaponSpreadShapeAxis: uint8
+{
+	/** Up Vector */
+	Up										UMETA(DisplayName = "Up"),
+	/* In the direction of the Projectile is fired. */
+	LaunchDirection							UMETA(DisplayName = "Launch Direction"),
+	ECsProjectileWeaponSpreadShapeAxis_MAX	UMETA(Hidden),
+};
+
+struct CSWP_API EMCsProjectileWeaponSpreadShapeAxis : public TCsEnumMap<ECsProjectileWeaponSpreadShapeAxis>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileWeaponSpreadShapeAxis, ECsProjectileWeaponSpreadShapeAxis)
+};
+
+namespace NCsProjectileWeaponSpreadShapeAxis
+{
+	typedef ECsProjectileWeaponSpreadShapeAxis Type;
+
+	namespace Ref
+	{
+		extern CSWP_API const Type Up;
+		extern CSWP_API const Type LaunchDirection;
+		extern CSWP_API const Type ECsProjectileWeaponSpreadShapeAxis_MAX;
+	}
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NSpread
+		{
+			namespace NShape
+			{
+				/**
+				* Describes the distribution of start locations within a Spread Shape for a Projectile Weapon.
+				*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+				*/
+				enum class EAxis : uint8
+				{
+					Up,
+					LaunchDirection,
+					EAxis_MAX
+				};
+
+				struct CSWP_API EMAxis : public TCsEnumMap<EAxis>
+				{
+					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMAxis, EAxis)
+				};
+
+				namespace NAxis
+				{
+					namespace Ref
+					{
+						typedef EAxis Type;
+
+						extern CSWP_API const Type Up;
+						extern CSWP_API const Type LaunchDirection;
+						extern CSWP_API const Type EAxis_MAX;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion ProjectileWeaponSpreadShapeAxis
+
 // ProjectileWeaponSpreadAngle
 #pragma region
 

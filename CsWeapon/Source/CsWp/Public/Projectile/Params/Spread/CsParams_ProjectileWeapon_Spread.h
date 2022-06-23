@@ -47,6 +47,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	FVector Extents;
 
+	/** Describes the Axis by which the start locations within a Spread Shape are Distributed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
+	ECsProjectileWeaponSpreadShapeAxis Axis;
+
 	/** Describes the distribution of start locations within a Spread Shape. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	ECsProjectileWeaponSpreadShapeDistribution Distribution;
@@ -54,6 +58,7 @@ public:
 	FCsProjectileWeapon_Spread_ShapeParams() :
 		Shape(ECsProjectileWeaponSpreadShape::Line),
 		Extents(0.0f),
+		Axis(ECsProjectileWeaponSpreadShapeAxis::Up),
 		Distribution(ECsProjectileWeaponSpreadShapeDistribution::Random)
 	{
 	}
@@ -82,6 +87,7 @@ namespace NCsWeapon
 				struct CSWP_API FParams
 				{
 				#define ShapeType NCsWeapon::NProjectile::NSpread::EShape
+				#define AxisType NCsWeapon::NProjectile::NSpread::NShape::EAxis
 				#define DistributionType NCsWeapon::NProjectile::NSpread::NShape::EDistribution
 
 				private:
@@ -105,6 +111,8 @@ namespace NCsWeapon
 							default Launch Direction and World Up vector.
 					*/
 					CS_DECLARE_MEMBER_WITH_PROXY(Extents, FVector)
+					/** Describes the Axis by which the start locations within a Spread Shape are Distributed. */
+					CS_DECLARE_MEMBER_WITH_PROXY(Axis, AxisType)
 					/** Describes the distribution of start locations within a Spread Shape. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
@@ -113,14 +121,17 @@ namespace NCsWeapon
 					FParams() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Shape, ShapeType::Line),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Extents, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Axis, AxisType::Up),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Distribution, DistributionType::Random)
 					{
 						CS_CTOR_SET_MEMBER_PROXY(Shape);
+						CS_CTOR_SET_MEMBER_PROXY(Axis);
 						CS_CTOR_SET_MEMBER_PROXY(Extents);
 						CS_CTOR_SET_MEMBER_PROXY(Distribution);
 					}
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Shape, ShapeType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Axis, AxisType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Extents, FVector)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
@@ -141,6 +152,7 @@ namespace NCsWeapon
 					}
 
 				#undef ShapeType
+				#undef AxisType
 				#undef DistributionType
 				};
 			}

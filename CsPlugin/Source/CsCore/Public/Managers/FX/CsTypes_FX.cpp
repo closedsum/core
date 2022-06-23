@@ -420,7 +420,7 @@ bool FCsFX_Parameter_Scaled_Vector::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsFX_Parameter_Scaled_Float::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsFX_Parameter_Scaled_Vector::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
 	return true;

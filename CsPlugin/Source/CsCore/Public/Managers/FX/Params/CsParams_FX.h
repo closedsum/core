@@ -317,8 +317,13 @@ namespace NCsFX
 
 				private:
 
+					/** Whether the Value should be set before apply any scaling or just
+						get the current Value from the FX System.
+						NOTE: Currently NOT used. Need to research how to get default value properly. */
 					CS_DECLARE_MEMBER_WITH_PROXY(bValue, bool)
+					/** Whether to apply the FX scale inversely. */
 					CS_DECLARE_MEMBER_WITH_PROXY(bInverse, bool)
+					/** Additional scale to apply to Parameter. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Scale, float)
 
 				public:
@@ -326,7 +331,7 @@ namespace NCsFX
 					FIntType() :
 						Index(INDEX_NONE),
 						Parameter(),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(bValue, false),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bValue, true),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInverse, false),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Scale, 1.0f)
 					{

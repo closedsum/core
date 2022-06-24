@@ -546,7 +546,8 @@ public:
 	FName Name;
 
 	/** Whether the Value should be set before apply any scaling or just
-		get the current Value from the FX System. */
+		get the current Value from the FX System. 
+		NOTE: Currently NOT used. Need to research how to get default value properly. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	bool bValue;
 
@@ -564,7 +565,7 @@ public:
 
 	FCsFX_Parameter_Scaled_Int() :
 		Name(NAME_None),
-		bValue(false),
+		bValue(true),
 		Value(0),
 		bInverse(false),
 		Scale(1.0f)

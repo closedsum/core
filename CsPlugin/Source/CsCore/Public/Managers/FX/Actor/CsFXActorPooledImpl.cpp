@@ -204,11 +204,19 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	// Set Parameters
 	typedef NCsFX::NParameter::IParameter ParameterType;
+	typedef NCsFX::NParameter::NScaled::IScaled ScaledParameterType;
 	typedef NCsFX::FLibrary FXLibrary;
 
 	const TArray<ParameterType*>& Parameters = FXPayload->GetParameters();
 
 	for (const ParameterType* Param : Parameters)
+	{
+		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
+	}
+
+	const TArray<ScaledParameterType*>& ScaledParameters = FXPayload->GetScaledParameters();
+
+	for (const ScaledParameterType* Param : ScaledParameters)
 	{
 		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
 	}

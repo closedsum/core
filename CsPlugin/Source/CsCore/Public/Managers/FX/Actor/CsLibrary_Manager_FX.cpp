@@ -200,6 +200,39 @@ namespace NCsFX
 				Param.CopyToParamsAsValue(VectorType);
 				Payload->Parameters.Add(VectorType);
 			}
+
+			// Scaled
+
+				// Int
+			for (const FCsFX_Parameter_Scaled_Int& Param : FX.ScaledParameters.Ints)
+			{
+				typedef NCsFX::NParameter::NScaled::NInt::FIntType ParameterIntType;
+
+				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
+
+				Param.CopyToParamsAsValue(IntType);
+				Payload->ScaledParameters.Add(IntType);
+			}
+				// Float
+			for (const FCsFX_Parameter_Scaled_Float& Param : FX.ScaledParameters.Floats)
+			{
+				typedef NCsFX::NParameter::NScaled::NFloat::FFloatType ParameterFloatType;
+
+				ParameterFloatType* FloatType = Manager_FX->AllocateValue<ParameterFloatType>();
+
+				Param.CopyToParamsAsValue(FloatType);
+				Payload->ScaledParameters.Add(FloatType);
+			}
+				// Vector
+			for (const FCsFX_Parameter_Scaled_Vector& Param : FX.ScaledParameters.Vectors)
+			{
+				typedef NCsFX::NParameter::NScaled::NVector::FVectorType ParameterVectorType;
+
+				ParameterVectorType* VectorType = Manager_FX->AllocateValue<ParameterVectorType>();
+
+				Param.CopyToParamsAsValue(VectorType);
+				Payload->ScaledParameters.Add(VectorType);
+			}
 			return Payload;
 		}
 
@@ -251,6 +284,39 @@ namespace NCsFX
 
 				Param.CopyToParamsAsValue(VectorType);
 				Payload->Parameters.Add(VectorType);
+			}
+
+			// Scaled
+
+				// Int
+			for (const FCsFX_Parameter_Scaled_Int& Param : FX.ScaledParameters.Ints)
+			{
+				typedef NCsFX::NParameter::NScaled::NInt::FIntType ParameterIntType;
+
+				ParameterIntType* IntType = Manager_FX->AllocateValue<ParameterIntType>();
+
+				Param.CopyToParamsAsValue(IntType);
+				Payload->ScaledParameters.Add(IntType);
+			}
+				// Float
+			for (const FCsFX_Parameter_Scaled_Float& Param : FX.ScaledParameters.Floats)
+			{
+				typedef NCsFX::NParameter::NScaled::NFloat::FFloatType ParameterFloatType;
+
+				ParameterFloatType* FloatType = Manager_FX->AllocateValue<ParameterFloatType>();
+
+				Param.CopyToParamsAsValue(FloatType);
+				Payload->ScaledParameters.Add(FloatType);
+			}
+				// Vector
+			for (const FCsFX_Parameter_Scaled_Vector& Param : FX.ScaledParameters.Vectors)
+			{
+				typedef NCsFX::NParameter::NScaled::NVector::FVectorType ParameterVectorType;
+
+				ParameterVectorType* VectorType = Manager_FX->AllocateValue<ParameterVectorType>();
+
+				Param.CopyToParamsAsValue(VectorType);
+				Payload->ScaledParameters.Add(VectorType);
 			}
 			return Payload;
 		}

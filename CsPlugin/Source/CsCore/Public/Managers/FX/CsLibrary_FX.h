@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Managers/FX/CsTypes_Library_FX.h"
 #include "Managers/FX/Params/CsParams_FX.h"
 #include "Coroutine/CsRoutineHandle.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 class ANiagaraActor;
 class UNiagaraSystem;
@@ -14,6 +14,10 @@ struct FCsRoutine;
 
 // NCsFX::NParamter::IParamter
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
+// NCsFX::NParamter::NScaled::IScaled
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
+
+struct FNiagaraVariable;
 
 namespace NCsFX
 {
@@ -66,6 +70,7 @@ namespace NCsFX
 	#pragma region
 
 	#define ParameterType NCsFX::NParameter::IParameter
+	#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
 	#define ParameterValueType NCsFX::NParameter::EValue
 
 	public:
@@ -134,6 +139,16 @@ namespace NCsFX
 		static bool SafeHasParameter(UNiagaraSystem* System, const ParameterType* Parameter);
 
 		/**
+		* Check if the Niagara System has an exposed variable: Parameter.
+		*
+		* @param Context	The calling context.
+		* @param System		Niagara System.
+		* @param Parameter
+		* return			Whether the exposed variable: Parameter exists or not.
+		*/
+		static bool HasParameterChecked(const FString& Context, UNiagaraSystem* System, const ScaledParameterType* Parameter);
+
+		/**
 		* 
 		* 
 		* @param Context	The calling context.
@@ -143,7 +158,26 @@ namespace NCsFX
 		*/
 		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
 
+		/**
+		*
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param Parameter
+		* return
+		*/
+		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter);
+
+		static FNiagaraVariable* GetVariableChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+
+		static int32 GetVariableIntChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+
+		static float GetVariableFloatChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+
+		static FVector GetVariableVectorChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+
 	#undef ParameterType
+	#undef ScaledParameterType
 	#undef ParameterValueType
 
 		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData);

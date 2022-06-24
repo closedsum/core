@@ -98,7 +98,10 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 	// Params
 	Manager_ParameterInt(),
 	Manager_ParameterFloat(),
-	Manager_ParameterVector()
+	Manager_ParameterVector(),
+	Manager_ScaledParameterInt(),
+	Manager_ScaledParameterFloat(),
+	Manager_ScaledParameterVector()
 {
 }
 
@@ -309,6 +312,9 @@ void UCsManager_FX_Actor::CleanUp()
 	Manager_ParameterInt.Shutdown();
 	Manager_ParameterFloat.Shutdown();
 	Manager_ParameterVector.Shutdown();
+	Manager_ScaledParameterInt.Shutdown();
+	Manager_ScaledParameterFloat.Shutdown();
+	Manager_ScaledParameterVector.Shutdown();
 
 	State = EState::None;
 	bInitialized = false;

@@ -297,7 +297,16 @@ namespace NCsFX
 		// Int
 		if (ValueType == ParameterValueType::Int)
 		{
-			int32 Value = ParameterLibrary::GetIntChecked(Context, Parameter);
+			int32 Value = 0.0f;
+
+			if (ScaledParameter->ShouldSetValue())
+			{
+				Value = ParameterLibrary::GetIntChecked(Context, Parameter);
+			}
+			else
+			{
+				Value = GetDefaultVariableIntChecked(Context, System, Parameter);
+			}
 
 			const float Max	  = Component->GetComponentScale().GetMax();
 			const float Scale = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
@@ -309,7 +318,16 @@ namespace NCsFX
 		else
 		if (ValueType == ParameterValueType::Float)
 		{
-			float Value = ParameterLibrary::GetFloatChecked(Context, Parameter);
+			float Value = 0.0f;
+
+			if (ScaledParameter->ShouldSetValue())
+			{
+				Value = ParameterLibrary::GetFloatChecked(Context, Parameter);
+			}
+			else
+			{
+				Value = GetDefaultVariableFloatChecked(Context, System, Parameter);
+			}
 
 			const float Max	  = Component->GetComponentScale().GetMax();
 			const float Scale = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
@@ -321,7 +339,16 @@ namespace NCsFX
 		else
 		if (ValueType == ParameterValueType::Vector)
 		{
-			FVector Value = ParameterLibrary::GetVectorChecked(Context, Parameter);
+			FVector Value = FVector::ZeroVector;
+
+			if (ScaledParameter->ShouldSetValue())
+			{
+				Value = ParameterLibrary::GetVectorChecked(Context, Parameter);
+			}
+			else
+			{
+				Value = GetDefaultVariableVectorChecked(Context, System, Parameter);
+			}
 
 			const float Max	  = Component->GetComponentScale().GetMax();
 			const float Scale = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
@@ -331,40 +358,23 @@ namespace NCsFX
 		}
 	}
 
-	FNiagaraVariable* FLibrary::GetVariableChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter)
+	FNiagaraVariable* FLibrary::GetDefaultVariableChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PTR_NULL_CHECKED(System)
 
-		UNiagaraSystem* System = Component->GetAsset();
-
-		checkf(System, TEXT("%s: Asset on Component: %s is NULL."), *Context, *(Component->GetName()));
-		
 		// Check Parameter is Valid
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
 		check(ParameterLibrary::IsValidChecked(Context, Parameter));
 
-		// Try to see if Component already had Parameter overridden
-		const FNiagaraParameterStore& ParameterStore = Component->GetOverrideParameters();
+		const FNiagaraSystemCompiledData& CompiledData = System->GetSystemCompiledData();
 
 		static TArray<FNiagaraVariable> Parameters;
 		Parameters.Reset(Parameters.Max());
 
-		ParameterStore.GetParameters(Parameters);
+		CompiledData.InstanceParamStore.GetParameters(Parameters);
 
 		const FName& Name = Parameter->GetName();
-
-		for (FNiagaraVariable& Var : Parameters)
-		{
-			if (Name == Var.GetName())
-			{
-				return &Var;
-			}
-		}
-
-		Parameters.Reset(Parameters.Max());
-
-		System->GetExposedParameters().GetParameters(Parameters);
 
 		for (FNiagaraVariable& Var : Parameters)
 		{
@@ -377,40 +387,49 @@ namespace NCsFX
 		return nullptr;
 	}
 
-	int32 FLibrary::GetVariableIntChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter)
+	int32 FLibrary::GetDefaultVariableIntChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
-		FNiagaraVariable* Var = GetVariableChecked(Context, Component, Parameter);
+		FNiagaraVariable* Var = GetDefaultVariableChecked(Context, System, Parameter);
+
+		const FNiagaraSystemCompiledData& CompiledData = System->GetSystemCompiledData();
+		const FNiagaraParameterStore& Store			   = CompiledData.InstanceParamStore;
 
 		// Check Parameter's Type is the same as Var's Type
 		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
 
 		checkf(Parameter->GetSizeInBytes() == Var->GetSizeInBytes(), TEXT("%s: Parameter type: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(Parameter->GetValueType()));
 
-		return Var->GetValue<int32>();
+		return Store.GetParameterValue<int32>(*Var);
 	}
 
-	float FLibrary::GetVariableFloatChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter)
+	float FLibrary::GetDefaultVariableFloatChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
-		FNiagaraVariable* Var = GetVariableChecked(Context, Component, Parameter);
+		FNiagaraVariable* Var = GetDefaultVariableChecked(Context, System, Parameter);
+
+		const FNiagaraSystemCompiledData& CompiledData = System->GetSystemCompiledData();
+		const FNiagaraParameterStore& Store			   = CompiledData.InstanceParamStore;
 
 		// Check Parameter's Type is the same as Var's Type
 		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
 
 		checkf(Parameter->GetSizeInBytes() == Var->GetSizeInBytes(), TEXT("%s: Parameter type: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(Parameter->GetValueType()));
 
-		return Var->GetValue<float>();
+		return Store.GetParameterValue<float>(*Var);
 	}
 
-	FVector FLibrary::GetVariableVectorChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter)
+	FVector FLibrary::GetDefaultVariableVectorChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
-		FNiagaraVariable* Var = GetVariableChecked(Context, Component, Parameter);
+		FNiagaraVariable* Var = GetDefaultVariableChecked(Context, System, Parameter);
+
+		const FNiagaraSystemCompiledData& CompiledData = System->GetSystemCompiledData();
+		const FNiagaraParameterStore& Store			   = CompiledData.InstanceParamStore;
 
 		// Check Parameter's Type is the same as Var's Type
 		typedef NCsFX::NParameter::EMValue ParameterValueMapType;
 
 		checkf(Parameter->GetSizeInBytes() == Var->GetSizeInBytes(), TEXT("%s: Parameter type: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(Parameter->GetValueType()));
 
-		return Var->GetValue<FVector>();
+		return Store.GetParameterValue<FVector>(*Var);
 	}
 
 	#undef ParameterType

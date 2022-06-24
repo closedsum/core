@@ -545,9 +545,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Name;
 
-	/** Whether the Value should be set before apply any scaling or just
-		get the current Value from the FX System. 
-		NOTE: Currently NOT used. Need to research how to get default value properly. */
+	/** Whether Value should be used for applying any scaling or just
+		use the default Value from the FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	bool bValue;
 
@@ -600,8 +599,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Name;
 
-	/** Whether the Value should be set before apply any scaling or just
-		get the current Value from the FX System. */
+	/** Whether Value should be used for applying any scaling or just
+		use the default Value from the FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	bool bValue;
 
@@ -654,8 +653,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FName Name;
 
-	/** Whether the Value should be set before apply any scaling or just
-		get the current Value from the FX System. */
+	/** Whether Value should be used for applying any scaling or just
+		use the default Value from the FX System. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	bool bValue;
 

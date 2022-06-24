@@ -168,13 +168,13 @@ namespace NCsFX
 		*/
 		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter);
 
-		static FNiagaraVariable* GetVariableChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+		static FNiagaraVariable* GetDefaultVariableChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
 
-		static int32 GetVariableIntChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+		static int32 GetDefaultVariableIntChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
 
-		static float GetVariableFloatChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+		static float GetDefaultVariableFloatChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
 
-		static FVector GetVariableVectorChecked(const FString& Context, UNiagaraComponent* Component, const ParameterType* Parameter);
+		static FVector GetDefaultVariableVectorChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
 
 	#undef ParameterType
 	#undef ScaledParameterType

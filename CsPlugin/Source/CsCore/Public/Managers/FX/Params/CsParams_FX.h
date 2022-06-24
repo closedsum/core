@@ -288,10 +288,26 @@ namespace NCsFX
 
 				virtual const ParameterType* GetParameter() const = 0;
 
+				/** 
+				* Whether Value should be used for applying any scaling or just
+				* use the default Value from the FX System. 
+				*
+				* return
+				*/
 				virtual const bool& ShouldSetValue() const = 0;
 
+				/**
+				* Whether to apply the FX scale inversely.
+				* 
+				* return
+				*/
 				virtual const bool& ShouldApplyInverse() const = 0;
 
+				/** 
+				* Additional scale to apply to Parameter.
+				* 
+				* return
+				*/
 				virtual const float& GetScale() const = 0;
 
 			#undef ParameterType
@@ -317,9 +333,8 @@ namespace NCsFX
 
 				private:
 
-					/** Whether the Value should be set before apply any scaling or just
-						get the current Value from the FX System.
-						NOTE: Currently NOT used. Need to research how to get default value properly. */
+					/** Whether Value should be used for applying any scaling or just
+						use the default Value from the FX System. */
 					CS_DECLARE_MEMBER_WITH_PROXY(bValue, bool)
 					/** Whether to apply the FX scale inversely. */
 					CS_DECLARE_MEMBER_WITH_PROXY(bInverse, bool)

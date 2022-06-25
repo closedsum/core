@@ -119,20 +119,20 @@ public:
 	float Radius;
 
 	/** Whether to apply a Yaw (offset in degrees) to the movement direction of the Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (ScriptName = "m_bYaw", InlineEditConditionToggle))
 	bool bYaw;
 
 	/** The offset in degrees relative to the World Up vector to apply to the movement direction of the Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (editcondition = "bYaw", UIMin = "-90.0", ClampMin = "-90.0", UIMax = "90.0", ClampMax = "90.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (ScriptName = "m_Yaw", editcondition = "bYaw", UIMin = "-90.0", ClampMin = "-90.0", UIMax = "90.0", ClampMax = "90.0"))
 	float Yaw;
 
 	/** Whether to apply a Pitch (offset in degrees) to the movement direction of the Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (ScriptName = "m_bPitch", InlineEditConditionToggle))
 	bool bPitch;
 
 	/** The offset in degrees relative to the Right vector with respect to the movement direction and
 		World Up vector to apply to the movement direction of the Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (editcondition = "bPitch", UIMin = "-90.0", ClampMin = "-90.0", UIMax = "90.0", ClampMax = "90.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (ScriptName = "m_Pitch", editcondition = "bPitch", UIMin = "-90.0", ClampMin = "-90.0", UIMax = "90.0", ClampMax = "90.0"))
 	float Pitch;
 
 	FCsProjectile_OnHit_SpawnProjectile_DirectionParams() :
@@ -631,10 +631,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit")
 	FCsProjectile_OnHit_SpawnProjectile_DirectionParams DirectionParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (ScriptName = "m_bSpreadParams", InlineEditConditionToggle))
 	bool bSpreadParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (editcondition = "bSpreadParams"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit", meta = (ScriptName = "m_SpreadParams", editcondition = "bSpreadParams"))
 	FCsProjectile_OnHit_SpawnProjectile_SpreadParams SpreadParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|OnHit")

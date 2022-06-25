@@ -325,7 +325,7 @@ public:
 	bool bOverridePIESettings;
 
 	/** Whether to swap the DataRootSet to the mobile specific one. */
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE", meta = (ScriptName = "m_bPIE_Mobile"))
 	bool bPIE_Mobile;
 
 	/** If bOverridePIESettings == true,
@@ -335,7 +335,7 @@ public:
 
 	/** If bOverridePIESettings == true,
 		any settings to apply to the "Mobile" PIE instance (i.e. viewport dimensions). */
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE", meta = (ScriptName = "m_PIE_Mobile"))
 	FCsSettings_PIE PIE_Mobile;
 
 	/** If bOverridePIESettings == true,

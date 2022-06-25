@@ -5,7 +5,7 @@
 // Log
 #include "Utility/CsPrjLog.h"
 
-#include "CsParams_Projectile_ONHit_Ricochet.generated.h"
+#include "CsParams_Projectile_OnHit_Ricochet.generated.h"
 
 // FCsProjectile_OnHit_RicochetParams
 #pragma region

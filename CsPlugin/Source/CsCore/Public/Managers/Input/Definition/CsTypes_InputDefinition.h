@@ -624,16 +624,16 @@ struct CSCORE_API FCsInputPhrase
 	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	float CompletedTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_bInterval", InlineEditConditionToggle))
 	bool bInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_Interval", editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_bFrames", InlineEditConditionToggle))
 	bool bFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_Frames", editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")
@@ -765,16 +765,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Cooldown;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_bInterval", InlineEditConditionToggle))
 	bool bInterval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_Interval", editcondition = "bInterval", ClampMin = "0.0", UIMin = "0.0"))
 	float Interval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_bFrames", InlineEditConditionToggle))
 	bool bFrames;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition", meta = (ScriptName = "m_Frames", editcondition = "bFrames", ClampMin = "0", UIMin = "0"))
 	int32 Frames;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Definition")

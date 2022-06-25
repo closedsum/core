@@ -394,9 +394,9 @@ struct FCsProcessCache : public FCsPooledObjectCache
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
 	ECsProcessPriorityModifier PriorityModifier;
 	/** Directory to start in when running the program, or NULL to use the current working directory */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process", meta = (ScriptName = "m_bOptionalWorkingDirectory"))
 	bool bOptionalWorkingDirectory;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Process", meta = (ScriptName = "m_OptionalWorkingDirectory"))
 	FString OptionalWorkingDirectory;
 
 	FCsProcessCache()

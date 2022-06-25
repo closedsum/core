@@ -370,9 +370,9 @@ struct FCsSenseData_DEPRECATED
 	GENERATED_USTRUCT_BODY()
 
 	/** Whether to Sense by Radius */
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (ScriptName = "m_bRadius", InlineEditConditionToggle))
 	bool bRadius;
-	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (editcondition = "bRadius", ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadwrite, Category = "CsCore|Sense", meta = (ScriptName = "m_Radius", editcondition = "bRadius", ClampMin = "0.0", UIMin = "0.0"))
 	float Radius;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float RadiusSq;

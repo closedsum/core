@@ -354,9 +354,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
 	float WarmUpTime;
-	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool", meta = (ScriptName = "m_bLifeTime"))
 	bool bLifeTime;
-	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool", meta = (ScriptName = "m_LifeTime"))
 	float LifeTime;
 
 	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Pool")

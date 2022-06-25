@@ -547,11 +547,11 @@ public:
 
 	/** Whether Value should be used for applying any scaling or just
 		use the default Value from the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_bValue"))
 	bool bValue;
 
 	/** Value to set for the Niagara Int Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
 	int32 Value;
 
 	/** Whether to apply the FX scale inversely. */
@@ -601,11 +601,11 @@ public:
 
 	/** Whether Value should be used for applying any scaling or just
 		use the default Value from the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_bValue"))
 	bool bValue;
 
 	/** Value to set for the Niagara Float Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
 	float Value;
 
 	/** Whether to apply the FX scale inversely. */
@@ -655,11 +655,11 @@ public:
 
 	/** Whether Value should be used for applying any scaling or just
 		use the default Value from the FX System. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_bValue"))
 	bool bValue;
 
 	/** Value to set for the Niagara Vector Parameter with Name. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
 	FVector Value;
 
 	/** Whether to apply the FX scale inversely. */

@@ -162,19 +162,19 @@ struct CSDMG_API FCsDamageFalloff
 	float MaxDistance;
 
 	/** Whether to use an Easing Function to determine the Falloff */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ScriptName = "m_bEasingType", InlineEditConditionToggle))
 	bool bEasingType;
 	/** Easing method for interpolating values between the Maximum Distance and the Current Distance */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bEasingType"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ScriptName = "m_EasingType", editcondition = "bEasingType"))
 	ECsEasingType EasingType;
 
 	TCsEasingFunction EasingFunction;
 
 	/** Whether to use a Curve [0,1] determine the Falloff */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ScriptName = "m_bCurve", InlineEditConditionToggle))
 	bool bCurve;
 	/** Curve [0,1] for interpolating values between the Maximum Distance and the Current Distance*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bCurve"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ScriptName = "m_Curve", editcondition = "bCurve"))
 	FCsCurveFloat Curve;
 
 	FCsDamageFalloff() :
@@ -243,10 +243,10 @@ struct CSDMG_API FCsDamageRadial
 	TCsEasingFunction EasingFunction;
 
 	/** Whether to use a Curve [0,1] instead of an Easing method to interpolate values between Min and Max */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ScriptName = "m_bCurve", InlineEditConditionToggle))
 	bool bCurve;
 	/** Curve [0,1] for interpolating values between Min and Max */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (editcondition = "bCurve"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ScriptName = "m_Curve", editcondition = "bCurve"))
 	FCsCurveFloat Curve;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (ClampMin = "0.0", UIMin = "0.0"))

@@ -75,10 +75,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
 	FCsUserWidget_Text_ShadowSettings ShadowSettings;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ScriptName = "m_bAnimParams", InlineEditConditionToggle))
 	bool bAnimParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (EditCondition = "bAnimParams"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ScriptName = "m_AnimParams", EditCondition = "bAnimParams"))
 	FCsUserWidgetAnimPlayParams AnimParams;
 
 public:

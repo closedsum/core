@@ -55,10 +55,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
 	FCsProjectileWeapon_Shot_ProjectileParams ProjectilesPerShotParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data", meta = (ScriptName = "m_bSpreadParams"))
 	bool bSpreadParams;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsWp|Projectile|Data", meta = (ScriptName = "m_SpreadParams"))
 	FCsProjectileWeapon_SpreadParams SpreadParams;
 
 	FCsData_ProjectileWeaponImplSlice() :

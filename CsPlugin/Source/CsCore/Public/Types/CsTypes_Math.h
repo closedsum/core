@@ -264,31 +264,31 @@ struct FCsParametricFunction
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ScriptName = "m_bX", InlineEditConditionToggle))
 	bool bX;
 	/** X = A * T + B
 	 *  X = A * T^2 + B * T + C
 	 *  X = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (editcondition = "bX"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ScriptName = "m_X", editcondition = "bX"))
 	FCsParametricFunctionAxis X;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ScriptName = "m_bY", InlineEditConditionToggle))
 	bool bY;
 	/** Y = A * T + B
 	 *  Y = A * T^2 + B * T + C
 	 *  Y = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (editcondition = "bY"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ScriptName = "m_Y", editcondition = "bY"))
 	FCsParametricFunctionAxis Y;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ScriptName = "m_bZ", InlineEditConditionToggle))
 	bool bZ;
 	/** Z = A * T + B
 	 *  Z = A * T^2 + B * T + C
 	 *  Z = A * sin(B * T + C) + D
 	*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (editcondition = "bZ"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (ScriptName = "m_Z", editcondition = "bZ"))
 	FCsParametricFunctionAxis Z;
 
 	FCsParametricFunction() :

@@ -488,7 +488,6 @@ namespace NCsMath
 
 	#pragma endregion Quat
 
-	
 	// Segment
 	#pragma region
 	public:

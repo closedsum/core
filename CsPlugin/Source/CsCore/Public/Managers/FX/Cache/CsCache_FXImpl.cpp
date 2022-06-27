@@ -98,7 +98,7 @@ namespace NCsFX
 
 			const FString& Context = Str::Allocate;
 
-			// NCsPooledObject::NCache::ICache
+			// PooledCacheType (NCsPooledObject::NCache::ICache)
 			bAllocated = true;
 			State	   = NCsPooledObject::EState::Active;
 			UpdateType = Payload->GetUpdateType();
@@ -107,7 +107,7 @@ namespace NCsFX
 			Parent	   = Payload->GetParent();
 			StartTime  = Payload->GetTime();
 
-			// NCsFX::NCache::ICache
+			// FXCacheType (NCsFX::NCache::ICache)
 			typedef NCsFX::NPayload::IPayload FXPayloadType;
 			typedef NCsPooledObject::NPayload::FLibrary PooledPayloadLibrary;
 
@@ -127,6 +127,10 @@ namespace NCsFX
 
 		void FImpl::QueueDeallocate()
 		{
+			// NOTE: FUTURE: Currently this extra check is added to prevent a crash when exiting the game.
+			//				 Look into a more graceful way the FX can be deallocated.
+			if (!bAllocated)
+				return;
 			if (bQueueDeallocate)
 				return;
 

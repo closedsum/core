@@ -328,6 +328,10 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE", meta = (ScriptName = "m_bPIE_Mobile"))
 	bool bPIE_Mobile;
 
+	/** Whether Vulkan Preview for PIE is for Mobile*/
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")
+	bool bPIE_VulkanPreviewMobile;
+
 	/** If bOverridePIESettings == true,
 		any settings to apply to the PIE instance (i.e. viewport dimensions). */
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|PIE")

@@ -7,6 +7,8 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+	// Common
+#include "Game/CsLibrary_GameInstance.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
@@ -903,6 +905,17 @@ namespace NCsFX
 
 		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
 
+		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
+	#if WITH_EDITOR
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+		{
+			if (!SystemInstance)
+				return true;
+		}
+	#endif // #if WITH_EDITOR
+
 		checkf(SystemInstance, TEXT("%s: SystemInstance is NULL on FXComponent: %s."), *Context, *(Component->GetName()));
 
 		const ENiagaraExecutionState ExecutionState = SystemInstance->GetActualExecutionState();
@@ -916,6 +929,17 @@ namespace NCsFX
 		CS_IS_PTR_NULL_CHECKED(Component)
 	
 		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+
+		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
+	#if WITH_EDITOR
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+		{
+			if (!SystemInstance)
+				return true;
+		}
+	#endif // #if WITH_EDITOR
 
 		checkf(SystemInstance, TEXT("%s: SystemInstance is NULL on FXComponent: %s."), *Context, *(Component->GetName()));
 

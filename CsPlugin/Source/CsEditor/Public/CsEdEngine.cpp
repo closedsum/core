@@ -159,9 +159,13 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 
 	Standalone.bActive = true;
 
+	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
 	// If Mobile, set the appropriate DataRootSet
 	if (Params.SessionPreviewTypeOverride.IsSet() &&
-		Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::MobilePreview)
+		(Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::MobilePreview ||
+		 (Params.SessionPreviewTypeOverride == EPlaySessionPreviewType::VulkanPreview &&
+		  Settings->bPIE_VulkanPreviewMobile)))
 	{
 		FString& CmdParams = OpCmdParams.GetValue();
 
@@ -169,8 +173,6 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 		{
 			CmdParams += TEXT(" -") + Str::StandaloneMobileFromEditor;
 		}
-
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
 
 		Settings->DataRootSet = Settings->GetDataRootSet(ECsPlatform::Android);
 

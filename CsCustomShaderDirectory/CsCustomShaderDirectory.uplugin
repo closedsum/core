@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "Version": 2,
+  "VersionName": "0.0.1",
+  "FriendlyName": "Closed Sum Games: Custom Shader Directory",
+  "Description": "Closed Sum Games Custom Shader Directory",
+  "Category": "Programming",
+  "CreatedBy": "Closed Sum Games LLC",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "4.26.0",
+  "CanContainContent": true,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "CsCustomShaderDirectory",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

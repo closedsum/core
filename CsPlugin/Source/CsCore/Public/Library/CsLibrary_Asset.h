@@ -7,6 +7,7 @@
 #include "AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
+#include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"
 
 #include "Factories/BlueprintFactory.h"
 #endif // #if WITH_EDITOR

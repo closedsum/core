@@ -286,7 +286,7 @@ public:
 
 #if WITH_EDITOR
 
-	virtual void PreEditChange(FEditPropertyChain& e) override;
+	virtual void PreEditChange(FProperty* PropertyThatWillChange) override;
 	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& e) override;
 
 	void OnObjectModified(UObject* Object);

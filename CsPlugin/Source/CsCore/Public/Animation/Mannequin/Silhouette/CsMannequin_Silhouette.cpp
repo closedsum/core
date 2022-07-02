@@ -477,8 +477,10 @@ void ACsMannequin_Silhouette::SetupAttachements()
 
 #if WITH_EDITOR
 
-void ACsMannequin_Silhouette::PreEditChange(FEditPropertyChain& e)
+void ACsMannequin_Silhouette::PreEditChange(FProperty* PropertyThatWillChange)
 {
+	// TODO: Fix
+	/*
 	TSet<FString> PropertyNames;
 
 	for (FProperty* N : e)
@@ -514,8 +516,8 @@ void ACsMannequin_Silhouette::PreEditChange(FEditPropertyChain& e)
 	CS_TEMP_CHECK_IS_MODIFIED(HeadControl)
 
 	#undef CS_TEMP_CHECK_IS_MODIFIED
-
-	UObject::PreEditChange(e);
+	*/
+	UObject::PreEditChange(PropertyThatWillChange);
 }
 
 void ACsMannequin_Silhouette::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)

@@ -134,7 +134,7 @@ public:
 			}
 
 			if (Pass)
-				return Cast<T>(OutAssetData[I].GetAsset());
+				return Cast<T>(OutAssetDatas[I].GetAsset());
 		}
 		return nullptr;
 	}
@@ -196,7 +196,7 @@ public:
 
 			for (int32 J = 0; J < KeywordCount; ++J)
 			{
-				Pass &= NCsStringCompare::Compare(AssetStringName, KeywordsORLower[J], CompareType);
+				Pass &= NCsStringCompare::Compare(AssetStringName, KeywordsANDLower[J], CompareType);
 
 				if (!Pass)
 					break;
@@ -344,7 +344,7 @@ public:
 	static void GetBlueprintDefaultObjects(const TArray<FString>& KeywordsAND, const ECsStringCompare& CompareType, UClass* InParentClass, TArray<T*>& OutDefaultObjects)
 	{
 		TArray<UBlueprint*> OutAssets;
-		GetAssets<UBlueprint>(KeywordsAND, OutAssets, CompareType);
+		GetAssets<UBlueprint>(KeywordsAND, CompareType, OutAssets);
 
 		OutDefaultObjects.Reset();
 

@@ -11,6 +11,7 @@
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Damage.h"
 #include "Value/Types/CsTypes_DamageValue.h"
+#include "Managers/FX/CsTypes_FX.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 
@@ -21,6 +22,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnAllocate, ACsProjectilePooledImpl*, Projectile);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnDeallocate_Start, ACsProjectilePooledImpl*, Projectile);
+// FX
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_TrailFX, ACsProjectilePooledImpl*, Projectile);
 
 #pragma endregion Delegates
 
@@ -317,9 +320,20 @@ public:
 
 // FX
 #pragma region
-public:
+protected:
 
 	FCsFXActorPooled* TrailFXPooled;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Projectile|FX", meta = (AllowPrivateAccess = "true"))
+	bool bOverride_TrailFX;
+
+public:
+
+	UPROPERTY(BlueprintAssignable, Category = "Projectile|FX")
+	FCsProjectilePooledImpl_OnOverride_TrailFX OnOverride_TrailFX_ScriptEvent;
+
+	UFUNCTION(BlueprintCallable)
+	void SetTrailFXPooled(const FString& Context, const FECsFX& FX, const int32& Index);
 
 #pragma endregion FX
 

@@ -144,6 +144,14 @@ namespace NCsFX
 			*/
 			static bool IsNoneAllocatedChecked(const FString& Context, const UObject* WorldContext);
 
+			// Find
+		#pragma region
+		public:
+
+			static const FCsFXActorPooled* FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsFX& Type, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Find
+
 		#pragma endregion Pool
 
 		// Allocate / Deallocate

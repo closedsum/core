@@ -123,6 +123,20 @@ namespace NCsFX
 			return GetChecked(Context, WorldContext)->IsNoneAllocated();
 		}
 
+			// Find
+		#pragma region
+		
+		const FCsFXActorPooled* FLibrary::FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsFX& Type, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_FX_Actor* Manager_FX = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_FX->FindSafeObject(Type, Index);
+			}
+			return nullptr;
+		}
+
+		#pragma endregion Find
+
 		#pragma endregion Pool
 
 		// Allocate / Deallocate

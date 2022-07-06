@@ -21,6 +21,8 @@
 #include "Modifier/CsLibrary_ProjectileModifier.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
+// Managers
+#include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // Settings
 #include "Settings/CsTypes_ProjectileSettings.h"
 // Data
@@ -127,6 +129,8 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	OnHit_Event(),
 	// FX
 	TrailFXPooled(nullptr),
+	bOverride_TrailFX(false),
+	OnOverride_TrailFX_ScriptEvent(),
 	// Damage
 	DamageImpl()
 {
@@ -625,24 +629,38 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
 		
-		typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
-
-		if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+#if WITH_EDITOR
+		if (bOverride_TrailFX)
 		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+			if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+			{
+				UE_LOG(LogCsPrj, Warning, TEXT("%s: Trail FX is OVERRIDDEN for %s."), *Context, *(GetName()));
+			}
 
-			PayloadImplType PayloadImpl;
-			PayloadImpl.Owner  = this;
+			OnOverride_TrailFX_ScriptEvent.Broadcast(this);
+		}
+		else
+#endif // #if WITH_EDITOR
+		{
+			typedef NCsProjectile::NData::NVisual::NTrail::ITrail VisualDataType;
 
-			if (MeshComponent->GetStaticMesh())
-				PayloadImpl.Parent = MeshComponent;
-			else
-				PayloadImpl.Parent = CollisionComponent;
+			if (VisualDataType* VisualData = PrjDataLibrary::GetSafeInterfaceChecked<VisualDataType>(Context, Data))
+			{
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
-			const FCsFX& TrailFX = VisualData->GetTrailFX();
+				PayloadImplType PayloadImpl;
+				PayloadImpl.Owner  = this;
 
-			TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, this, &PayloadImpl, TrailFX));
+				if (MeshComponent->GetStaticMesh())
+					PayloadImpl.Parent = MeshComponent;
+				else
+					PayloadImpl.Parent = CollisionComponent;
+
+				const FCsFX& TrailFX = VisualData->GetTrailFX();
+
+				TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, this, &PayloadImpl, TrailFX));
+			}
 		}
 	}
 
@@ -1162,6 +1180,22 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 }
 
 #pragma endregion Collision
+
+// FX
+#pragma region
+
+void ACsProjectilePooledImpl::SetTrailFXPooled(const FString& Context, const FECsFX& FX, const int32& Index)
+{
+	void(*Log)(const FString&) = &NCsProjectile::FLog::Warning;
+
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_EXIT(Index, 0)
+
+	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+	TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::FindSafeObject(Context, this, FX, Index, Log));
+}
+
+#pragma endregion FX
 
 // Modifier
 #pragma region

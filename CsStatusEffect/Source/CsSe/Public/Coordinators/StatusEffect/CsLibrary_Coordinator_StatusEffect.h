@@ -180,6 +180,19 @@ namespace NCsStatusEffect
 			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
 
 			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Status Effect type.
+			* @param Data			Object that implements the interface: DataType (NCsStatusEffect::NData::IData).
+			* @param Instigator
+			* @param Causer
+			* @param Receiver
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver);
+
+			/**
 			* 
 			* 
 			* @param Context		The calling context.

@@ -174,6 +174,11 @@ namespace NCsStatusEffect
 			return nullptr;
 		}
 
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
+		{
+			GetChecked(Context, WorldContext)->ProcessDataChecked(Context, Type, Data, Instigator, Causer, Receiver);
+		}
+
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver)
 		{
 			GetChecked(Context, WorldContext)->ProcessDataChecked(Context, Type, Instigator, Causer, Receiver);

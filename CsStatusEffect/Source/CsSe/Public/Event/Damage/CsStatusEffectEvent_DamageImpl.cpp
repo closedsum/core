@@ -3,6 +3,8 @@
 
 // Container
 #include "Containers/CsInterfaceMap.h"
+// Library
+#include "Event/CsLibrary_StatusEffectEvent.h"
 
 const FName NCsStatusEffect::NEvent::NDamage::FImpl::Name = FName("NCsStatusEffect::NEvent::NDamage::FImpl");;
 
@@ -12,11 +14,22 @@ namespace NCsStatusEffect
 	{
 		namespace NDamage
 		{
+			namespace NImpl
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsStatusEffect::NEvent::NDamage::FImpl, Copy);
+					}
+				}
+			}
+
 			FImpl::FImpl() :
 				// ICsGetInterfaceMap
 				InterfaceMap(),
-				// StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
-				StatusEffect(nullptr),
+				// EventType (NCsStatusEffect::NEvent::IEvent)
+				StatusEffect(),
 				Data(nullptr),
 				Instigator(nullptr),
 				Causer(nullptr),
@@ -29,11 +42,14 @@ namespace NCsStatusEffect
 
 				InterfaceMap->SetRoot<FImpl>(this);
 
-				typedef NCsStatusEffect::NEvent::IEvent StatusEffectEventType;
+				typedef NCsStatusEffect::NEvent::IEvent EventType;
 				typedef NCsStatusEffect::NEvent::NDamage::IDamage DamageSeEventType;
+				typedef NCsStatusEffect::NEvent::NCopy::ICopy CopyType;
 		
-				InterfaceMap->Add<StatusEffectEventType>(static_cast<StatusEffectEventType*>(this));
+				InterfaceMap->Add<EventType>(static_cast<EventType*>(this));
+				InterfaceMap->Add<ICsGetStatusEffectEventType>(static_cast<ICsGetStatusEffectEventType*>(this));
 				InterfaceMap->Add<DamageSeEventType>(static_cast<DamageSeEventType*>(this));
+				InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
 				InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 			}
 
@@ -42,33 +58,51 @@ namespace NCsStatusEffect
 				delete InterfaceMap;
 			}
 
-			void FImpl::CopyFrom(const FImpl* From)
+			// CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
+			#pragma region
+
+			#define EventType NCsStatusEffect::NEvent::IEvent
+			void FImpl::Copy(const EventType* From)
 			{
-				// StatusEffectEventType(NCsStatusEffect::NEvent::IEvent)
+			#undef EventType
+				
+				using namespace NCsStatusEffect::NEvent::NDamage::NImpl::NCached;
 
-				Data = From->Data;
-				Instigator = From->Instigator;
-				Causer = From->Causer;
-				Receiver = From->Receiver;
+				const FString& Context = Str::Copy;
 
-				IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), From->IgnoreObjects.Max()));
+				typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 
-				for (TWeakObjectPtr<UObject> O : From->IgnoreObjects)
+				const FImpl* FromImpl = SeEventLibrary::PureStaticCastChecked<FImpl>(Context, From);
+
+				// EventType(NCsStatusEffect::NEvent::IEvent)
+
+				StatusEffect.Copy(FromImpl->StatusEffect);
+
+				Data		= FromImpl->Data;
+				Instigator  = FromImpl->Instigator;
+				Causer		= FromImpl->Causer;
+				Receiver	= FromImpl->Receiver;
+
+				IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), FromImpl->IgnoreObjects.Max()));
+
+				for (TWeakObjectPtr<UObject> O : FromImpl->IgnoreObjects)
 				{
 					IgnoreObjects.Add(O);
 				}
 
 				// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 
-				DamageEvent.CopyFrom(&(From->DamageEvent));
+				DamageEvent.Copy(FromImpl->DamageEvent);
 			}
+
+			#pragma endregion CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
 
 			// ICsReset
 			#pragma region
 
 			void FImpl::Reset()
 			{
-				StatusEffect = nullptr;
+				StatusEffect.Reset();
 				Data = nullptr;
 				Instigator = nullptr;
 				Causer = nullptr;

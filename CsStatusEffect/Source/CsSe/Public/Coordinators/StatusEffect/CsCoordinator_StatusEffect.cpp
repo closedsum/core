@@ -25,6 +25,7 @@
 #include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_DataHandler.h"
 #include "Data/Types/CsData_GetStatusEffectImplType.h"
 #include "Types/CsGetStatusEffectImplType.h"
+#include "Types/CsGetStatusEffectEventType.h"
 #include "Copy/CsStatusEffect_Copy.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
@@ -513,12 +514,12 @@ const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FSt
 {
 	typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 
-	// Damage
-	typedef NCsStatusEffect::NEvent::NDamage::IDamage DamageEventType;
+	const ICsGetStatusEffectEventType* GetStatusEffectEventType = SeEventLibrary::GetInterfaceChecked<ICsGetStatusEffectEventType>(Context, Event);
+	const FECsStatusEffectEvent& EventImplType					= GetStatusEffectEventType->GetStatusEffectEventType();
 
-	if (SeEventLibrary::GetSafeInterfaceChecked<DamageEventType>(Context, Event))
-		return NCsStatusEffectEvent::Damage;
-	return NCsStatusEffectEvent::Default;
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsStatusEffectEvent, EventImplType);
+
+	return EventImplType;
 }
 
 const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FString& Context, const EventResourceType* Event)
@@ -591,6 +592,9 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 	Copy->CopyFromData(Type, Data);
 
 	// TODO: MAYBE: Fix
+
+	// TODO: FUTURE: Have event composed of slices?
+
 	typedef NCsStatusEffect::NEvent::FLibrary EventLibrary;
 	typedef NCsStatusEffect::NEvent::FImpl EventImplType;
 

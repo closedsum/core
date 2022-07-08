@@ -42,9 +42,9 @@ namespace NCsDamage
 
 			void Set(UObject* InRoot, FResource* InContainer);
 
-			void CopyFrom(UObject* InRoot, const IEvent* From);
+			void Copy(UObject* InRoot, const IEvent* From);
 
-			void CopyFrom(const FAllocated* Event);
+			void Copy(const FAllocated& From);
 
 			/**
 			* Clear / null out all members and deallocate the Container.

@@ -2,19 +2,26 @@
 #include "Event/CsAllocated_DamageEvent.h"
 #include "CsDmg.h"
 
+// Library
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
+	// Common
+#include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/Damage/CsManager_Damage.h"
+#include "Managers/Damage/CsManager_Damage.h" // TODO: Fix: Potentially put resources into separate file?
 
 namespace NCsDamage
 {
 	namespace NEvent
 	{
-		namespace NAllocatedCached
+		namespace NAllocated
 		{
-			namespace Str
+			namespace NCached
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, CopyFrom);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Reset);
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Copy);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NEvent::FAllocated, Reset);
+				}
 			}
 		}
 
@@ -31,50 +38,56 @@ namespace NCsDamage
 			Event	  = Container->Get();
 		}
 
-		void FAllocated::CopyFrom(UObject* InRoot, const IEvent* From)
+		void FAllocated::Copy(UObject* InRoot, const IEvent* From)
 		{
-			using namespace NAllocatedCached;
+			using namespace NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
-			checkf(InRoot, TEXT("%s: InRoot is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(InRoot)
 
-			checkf(From, TEXT("%s: From is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(From)
+
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
 			Root	  = InRoot;
-			Container = UCsManager_Damage::Get(Root)->CreateCopyOfEvent(Context, From);
+			Container = DamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From);
 			Event	  = Container->Get();
 		}
 
-		void FAllocated::CopyFrom(const FAllocated* From)
+		void FAllocated::Copy(const FAllocated& From)
 		{
-			using namespace NAllocatedCached;
+			using namespace NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
-			checkf(From->Root, TEXT("%s: From->Root is NULL."), *Context);
+			CS_IS_PTR_NULL_CHECKED(From.Root)
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-			if (From->Container)
+			if (From.Container)
 			{
-				Root	  = From->Root;
-				Container = UCsManager_Damage::Get(Root)->CreateCopyOfEvent(Context, From->Container);
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+				Root	  = From.Root;
+				Container = DamageManagerLibrary::CreateCopyOfEventChecked(Context, Root, From.Container->Get());
 				Event	  = Container->Get();
 			}
 		}
 
 		void FAllocated::Reset()
 		{
-			using namespace NAllocatedCached;
+			using namespace NAllocated::NCached;
 
 			const FString& Context = Str::Reset;
 
 			if (Container)
 			{
-				checkf(Root, TEXT("%s: Root is NULL."), *Context);
+				CS_IS_PTR_NULL_CHECKED(Root)
 
-				UCsManager_Damage::Get(Root)->DeallocateEvent(Context, Container);
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+				DamageManagerLibrary::DeallocateEventChecked(Context, Root, Container);
 			}
 
 			Root	  = nullptr;

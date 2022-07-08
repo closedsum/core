@@ -48,7 +48,7 @@ namespace NCsDamage
 			FImpl::FImpl() :
 				// ICsInterfaceMap
 				InterfaceMap(nullptr),
-				// DataType (NCsDamage::NData::IData)
+				// DamageDataType (NCsDamage::NData::IData)
 				Value(),
 				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type)
 			{
@@ -58,9 +58,11 @@ namespace NCsDamage
 
 				InterfaceMap->SetRoot<FImpl>(this);
 
-				typedef NCsDamage::NData::IData DataType;
+				typedef NCsData::IData DataType;
+				typedef NCsDamage::NData::IData DamageDataType;
 
 				InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
+				InterfaceMap->Add<DamageDataType>(static_cast<DamageDataType*>(this));
 
 				CS_CTOR_SET_MEMBER_PROXY(Type);
 			}

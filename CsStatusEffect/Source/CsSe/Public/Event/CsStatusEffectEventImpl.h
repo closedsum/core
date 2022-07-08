@@ -2,6 +2,7 @@
 #pragma once
 // Interfaces
 #include "Event/CsStatusEffectEvent.h"
+#include "Types/CsGetStatusEffectEventType.h"
 #include "Event/Copy/CsStatusEffectEvent_Copy.h"
 #include "Reset/CsReset.h"
 // StatusEffect
@@ -21,6 +22,8 @@ namespace NCsStatusEffect
 	#define CopyType NCsStatusEffect::NEvent::NCopy::ICopy
 
 		struct CSSE_API FImpl final : public EventType,
+									  public ICsGetStatusEffectEventType,
+									  public CopyType,
 									  public ICsReset
 		{
 		public:
@@ -78,6 +81,14 @@ namespace NCsStatusEffect
 			FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const { return IgnoreObjects; }
 
 		#pragma endregion EventType (NCsStatusEffect::NEvent::IEvent)
+
+		// ICsGetStatusEffectEventType
+		#pragma region
+		public:
+
+			FORCEINLINE const FECsStatusEffectEvent& GetStatusEffectEventType() const { return NCsStatusEffectEvent::Default; }
+
+		#pragma endregion ICsGetStatusEffectEventType
 
 		// CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
 		#pragma region

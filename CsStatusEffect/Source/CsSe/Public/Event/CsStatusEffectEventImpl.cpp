@@ -39,8 +39,11 @@ namespace NCsStatusEffect
 			InterfaceMap->SetRoot<FImpl>(this);
 
 			typedef NCsStatusEffect::NEvent::IEvent EventType;
+			typedef NCsStatusEffect::NEvent::NCopy::ICopy CopyType;
 
 			InterfaceMap->Add<EventType>(static_cast<EventType*>(this));
+			InterfaceMap->Add<ICsGetStatusEffectEventType>(static_cast<ICsGetStatusEffectEventType*>(this));
+			InterfaceMap->Add<CopyType>(static_cast<CopyType*>(this));
 			InterfaceMap->Add<ICsReset>(static_cast<ICsReset*>(this));
 		}
 

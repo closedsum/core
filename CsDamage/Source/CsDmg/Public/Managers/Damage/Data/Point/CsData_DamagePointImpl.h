@@ -49,12 +49,14 @@ namespace NCsDamage
 	{
 		namespace NPoint
 		{
-		#define DataType NCsDamage::NData::IData
+		#define DataType NCsData::IData
+		#define DamageDataType NCsDamage::NData::IData
 
 			/**
 			*
 			*/
-			struct CSDMG_API FImpl : public DataType
+			struct CSDMG_API FImpl : public DataType,
+									 public DamageDataType
 			{
 			public:
 
@@ -65,11 +67,11 @@ namespace NCsDamage
 
 			private:
 
-				// ICsGetInterfaceMap
+			// ICsGetInterfaceMap
 
 				FCsInterfaceMap* InterfaceMap;
 
-				// DataType (NCsDamage::NData::IData)
+			// DataType (NCsDamage::NData::IData)
 
 				ValueImplType Value;
 
@@ -95,14 +97,14 @@ namespace NCsDamage
 				FORCEINLINE void SetValue(const float& InValue) { Value.SetValue(InValue); }
 				FORCEINLINE void SetValue(float* InValue) { Value.SetValue(InValue); }
 
-			// DataType (NCsDamage::NData::IData)
+			// DamageDataType (NCsDamage::NData::IData)
 			#pragma region
 			public:
 
 				FORCEINLINE const ValueType* GetValue() const { return &Value; }
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
-			#pragma endregion DataType (NCsDamage::NData::IData)
+			#pragma endregion DamageDataType (NCsDamage::NData::IData)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -112,6 +114,7 @@ namespace NCsDamage
 			};
 
 		#undef DataType
+		#undef DamageDataType
 		}
 	}
 }

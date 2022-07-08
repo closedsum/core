@@ -1,9 +1,13 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Event/CsStatusEffectEvent.h"
+#include "Types/CsGetStatusEffectEventType.h"
 #include "Event/Damage/CsStatusEffectEvent_Damage.h"
+#include "Event/Copy/CsStatusEffectEvent_Copy.h"
 #include "Reset/CsReset.h"
-// Types
+// StatusEffect
+#include "CsAllocated_StatusEffect.h"
+// Damage
 #include "Event/CsAllocated_DamageEvent.h"
 
 class UObject;
@@ -20,13 +24,16 @@ namespace NCsStatusEffect
 	{
 		namespace NDamage
 		{
-		#define StatusEffectEventType NCsStatusEffect::NEvent::IEvent
+		#define EventType NCsStatusEffect::NEvent::IEvent
 		#define DamageSeEventType NCsStatusEffect::NEvent::NDamage::IDamage
-		
+		#define CopyType NCsStatusEffect::NEvent::NCopy::ICopy
+
 			/**
 			*/
-			struct CSSE_API FImpl final : public StatusEffectEventType,
+			struct CSSE_API FImpl final : public EventType,
+										  public ICsGetStatusEffectEventType,
 										  public DamageSeEventType,
+										  public CopyType,
 										  public ICsReset
 			{
 			public:
@@ -34,6 +41,7 @@ namespace NCsStatusEffect
 				static const FName Name;
 
 			#define StatusEffectType NCsStatusEffect::IStatusEffect
+			#define AllocatedStatusEffectType NCsStatusEffect::FAllocated
 			#define DataType NCsStatusEffect::NData::IData
 
 			private:
@@ -46,9 +54,9 @@ namespace NCsStatusEffect
 
 			public:
 
-				// StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
+				// EventType (NCsStatusEffect::NEvent::IEvent)
 
-				StatusEffectType* StatusEffect;
+				AllocatedStatusEffectType StatusEffect;
 
 				DataType* Data;
 
@@ -79,18 +87,26 @@ namespace NCsStatusEffect
 
 			#pragma endregion ICsGetInterfaceMap
 
-			// StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
+			// EventType (NCsStatusEffect::NEvent::IEvent)
 			#pragma region
 			public:
 
-				FORCEINLINE StatusEffectType* GetStatusEffect() const { return StatusEffect; }
+				FORCEINLINE StatusEffectType* GetStatusEffect() const { return StatusEffect.Get(); }
 				FORCEINLINE DataType* GetData() const { return Data; }
 				FORCEINLINE UObject* GetInstigator() const { return Instigator.IsValid() ? Instigator.Get() : nullptr; }
 				FORCEINLINE UObject* GetCauser() const { return Causer.IsValid() ? Causer.Get() : nullptr; }
 				FORCEINLINE UObject* GetReceiver() const { return Receiver.IsValid() ? Receiver.Get() : nullptr; }
 				FORCEINLINE const TArray<TWeakObjectPtr<UObject>>& GetIgnoreObjects() const { return IgnoreObjects; }
 
-			#pragma endregion StatusEffectEventType (NCsStatusEffect::NEvent::IEvent)
+			#pragma endregion EventType (NCsStatusEffect::NEvent::IEvent)
+
+			// ICsGetStatusEffectEventType
+			#pragma region
+			public:
+
+				FORCEINLINE const FECsStatusEffectEvent& GetStatusEffectEventType() const { return NCsStatusEffectEvent::Damage; }
+
+			#pragma endregion ICsGetStatusEffectEventType
 
 			// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 			#pragma region
@@ -100,22 +116,13 @@ namespace NCsStatusEffect
 
 			#pragma endregion DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 
+			// CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
+			#pragma region
 			public:
 
-				template<typename T>
-				FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
+				void Copy(const EventType* From);
 
-				template<typename T>
-				FORCEINLINE T* GetCauser() const { return Cast<T>(GetCauser()); }
-
-				/**
-				* Copy all elements from another Event 
-				*  EXCEPT:
-				*   InterfaceMap: This needs to be unique per instance.
-				*
-				* @param From	Event to copy from.
-				*/
-				void CopyFrom(const FImpl* From);
+			#pragma endregion CopyType (NCsStatusEffect::NEvent::NCopy::ICopy)
 
 			// ICsReset
 			#pragma region
@@ -125,12 +132,22 @@ namespace NCsStatusEffect
 
 			#pragma endregion ICsReset
 
+			public:
+
+				template<typename T>
+				FORCEINLINE T* GetInstigator() const { return Cast<T>(GetInstigator()); }
+
+				template<typename T>
+				FORCEINLINE T* GetCauser() const { return Cast<T>(GetCauser()); }
+
 			#undef StatusEffectType
+			#undef AllocatedStatusEffectType
 			#undef DataType
 			};
 
-		#undef StatusEffectEventType
+		#undef EventType
 		#undef DamageSeEventType
+		#undef CopyType
 		}
 	}
 }

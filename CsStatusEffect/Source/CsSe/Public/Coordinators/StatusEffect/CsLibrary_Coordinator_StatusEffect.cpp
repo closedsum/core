@@ -174,6 +174,13 @@ namespace NCsStatusEffect
 			return nullptr;
 		}
 
+		#define ProcessPayloadType NCsStatusEffect::NData::NProcess::FPayload
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload)
+		{
+		#undef ProcessPayloadType
+			GetChecked(Context, WorldContext)->ProcessDataChecked(Context, ProcessPayload);
+		}
+
 		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
 		{
 			GetChecked(Context, WorldContext)->ProcessDataChecked(Context, Type, Data, Instigator, Causer, Receiver);

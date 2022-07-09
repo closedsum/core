@@ -35,10 +35,7 @@ namespace NCsDamage
 			{
 			}
 
-			FORCEINLINE const IEvent* GetEvent() const
-			{
-				return Event;
-			}
+			FORCEINLINE const IEvent* GetEvent() const { return Event; }
 
 			void Set(UObject* InRoot, FResource* InContainer);
 

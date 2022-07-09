@@ -9,6 +9,7 @@
 #include "CsReceiveStatusEffect.h"
 // StatusEffect
 #include "CsResource_StatusEffect.h"
+#include "Process/Payload/CsProcessStatusEffectDataPayload.h"
 
 #include "CsCoordinator_StatusEffect.generated.h"
 
@@ -43,6 +44,8 @@ class CSSE_API UCsCoordinator_StatusEffect : public UObject
 #define DataHandlerType NCsData::NManager::NHandler::TData
 #define DataType NCsStatusEffect::NData::IData
 #define DataInterfaceMapType NCsStatusEffect::NData::FInterfaceMap
+
+#define ProcessPayloadType NCsStatusEffect::NData::NProcess::FPayload
 
 // Singleton
 #pragma region
@@ -239,7 +242,26 @@ public:
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
-	EventResourceType* CreateEvent(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver);
+	EventResourceType* CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload);
+
+	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver, const FHitResult& HitResult)
+	{
+		static ProcessPayloadType ProcessPayload;
+		ProcessPayload.Reset();
+
+		ProcessPayload.Type		 = Type;
+		ProcessPayload.Data		 = Data;
+		ProcessPayload.Instigator = Instigator;
+		ProcessPayload.Causer	 = Causer;
+		ProcessPayload.Receiver	 = Receiver;
+		ProcessPayload.HitResult = HitResult;
+
+		return CreateEvent(Context, ProcessPayload);
+	}
+	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
+	{
+		return CreateEvent(Context, Type, Data, Instigator, Causer, Receiver, FHitResult());
+	}
 
 private:
 
@@ -339,9 +361,29 @@ public:
 	*/
 	DataType* GetSafeData(const FString& Context, const FECsStatusEffect& Type);
 
-	void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver);
+	FORCEINLINE void ProcessDataChecked(const FString& Context, const ProcessPayloadType& ProcessPayload)
+	{
+		EventResourceType* Container = CreateEvent(Context, ProcessPayload);
 
-	void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver);
+		ProcessStatusEffectEventContainer(Container);
+	}
+
+	FORCEINLINE void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver, const FHitResult& HitResult)
+	{
+		EventResourceType* Container = CreateEvent(Context, Type, Data, Instigator, Causer, Receiver);
+
+		ProcessStatusEffectEventContainer(Container);
+	}
+
+	FORCEINLINE void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
+	{
+		ProcessDataChecked(Context, Type, Data, Instigator, Causer, Receiver, FHitResult());
+	}
+
+	FORCEINLINE void ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver)
+	{
+		ProcessDataChecked(Context, Type, GetDataChecked(Context, Type), Instigator, Causer, Receiver, FHitResult());
+	}
 
 #pragma endregion Data
 
@@ -362,4 +404,6 @@ public:
 #undef DataHandlerType
 #undef DataType
 #undef DataInterfaceMapType
+
+#undef ProcessPayloadType
 };

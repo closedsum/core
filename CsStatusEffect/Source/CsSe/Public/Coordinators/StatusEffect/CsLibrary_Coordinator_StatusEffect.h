@@ -2,6 +2,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_StatusEffect.h"
+#include "Process/Payload/CsProcessStatusEffectDataPayload.h"
 // Log
 #include "Utility/CsSeLog.h"
 
@@ -178,6 +179,19 @@ namespace NCsStatusEffect
 			* return				Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 			*/
 			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsStatusEffect& Type, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+		#define ProcessPayloadType NCsStatusEffect::NData::NProcess::FPayload
+
+			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ProcessPayload
+			*/
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload);
+
+		#undef ProcessPayloadType
 
 			/**
 			*

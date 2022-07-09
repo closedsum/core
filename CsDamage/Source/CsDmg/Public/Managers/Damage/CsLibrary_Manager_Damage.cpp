@@ -3,6 +3,7 @@
 
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
+	// Damage
 #include "Value/CsLibrary_DamageValue.h"
 #include "Range/CsLibrary_DamageRange.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
@@ -126,6 +127,45 @@ namespace NCsDamage
 		{
 			OutEventContainer = CreateCopyOfEventChecked(Context, WorldContext, Event);
 			OutEvent = OutEventContainer->Get();
+		}
+
+		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
+		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+
+		EventResourceType* FLibrary::CreateEventChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload)
+		{
+			return GetChecked(Context, WorldContext)->CreateEvent(Context, ProcessPayload);
+		}
+
+		EventResourceType* FLibrary::CreateEventChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, const ProcessPayloadType& ProcessPayload)
+		{
+			typedef NCsDamage::NData::IData DataType;
+
+			DataType* Data = GetDataChecked(Context, WorldContext, GetDamageDataType);
+
+			ProcessPayloadType* ProcessPayloadPtr = const_cast<ProcessPayloadType*>(&ProcessPayload);
+			ProcessPayloadPtr->Data	 = Data;
+
+			typedef NCsDamage::NData::FLibrary DataLibrary;
+			typedef NCsDamage::NValue::IValue ValueType;
+			typedef NCsDamage::NRange::IRange RangeType;
+
+			ProcessPayloadPtr->Value = const_cast<ValueType*>(Data->GetValue());
+
+			if (const RangeType* Range = DataLibrary::GetSafeRange(Context, Data, nullptr))
+			{
+				ProcessPayloadPtr->SetRange(const_cast<RangeType*>(Range));
+			}
+
+			return GetChecked(Context, WorldContext)->CreateEvent(Context, ProcessPayload);
+		}
+
+		#undef GetDamageDataTypeDataType
+		#undef ProcessPayloadType
+
+		void FLibrary::ProcessEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event)
+		{
+			GetChecked(Context, WorldContext)->ProcessDamageEvent(Event);
 		}
 
 		#undef EventResourceType

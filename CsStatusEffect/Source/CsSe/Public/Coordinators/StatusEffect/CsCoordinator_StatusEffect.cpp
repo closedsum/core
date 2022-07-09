@@ -5,9 +5,13 @@
 // CVar
 #include "Coordinators/StatusEffect/CsCVars_Coordinator_StatusEffect.h"
 // Library
+#include "Managers/Damage/CsLibrary_Manager_Damage.h"
+	// Data
 #include "Data/CsLibrary_Data_StatusEffect.h"
+	// Event
 #include "Event/CsLibrary_StatusEffectEvent.h"
 #include "CsLibrary_StatusEffect.h"
+	// Common
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
@@ -15,15 +19,19 @@
 #include "Managers/StatusEffect/CsGetManagerStatusEffect.h"
 #include "Managers/Damage/CsManager_Damage.h"
 // Data
+#include "Data/Types/CsData_GetStatusEffectImplType.h"
+#include "Data/Types/CsData_GetStatusEffectEventType.h"
 #include "Data/Trigger/CsData_StatusEffect_Trigger.h"
 #include "Data/Shape/CsData_StatusEffect_Shape.h"
 #include "Data/Damage/CsData_StatusEffect_Damage.h"
+	// Damage
+#include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
+#include "Process/Payload/CsProcessDamageDataPayload.h"
 // StatusEffect
 #include "CsReceiveStatusEffect.h"
 #include "Event/CsStatusEffectEventImpl.h"
 #include "Event/Damage/CsStatusEffectEvent_DamageImpl.h"
 #include "Coordinators/StatusEffect/Handler/CsManager_StatusEffect_DataHandler.h"
-#include "Data/Types/CsData_GetStatusEffectImplType.h"
 #include "Types/CsGetStatusEffectImplType.h"
 #include "Types/CsGetStatusEffectEventType.h"
 #include "Copy/CsStatusEffect_Copy.h"
@@ -494,12 +502,12 @@ void UCsCoordinator_StatusEffect::Remove(ICsReceiveStatusEffect* Object)
 EventType* UCsCoordinator_StatusEffect::ConstructEvent(const FECsStatusEffectEvent& Type)
 {
 	// Default
-	// NCsStatusEffect::NEvent::IEvent
+		// NCsStatusEffect::NEvent::IEvent
 	if (Type == NCsStatusEffectEvent::Default)
 		return new NCsStatusEffect::NEvent::FImpl();
 	// Damage
-	// NCsStatusEffect::NEvent::IEvent
-	// NCsStatusEffect::NEvent::NDamage::IDamage
+		// NCsStatusEffect::NEvent::IEvent
+		// NCsStatusEffect::NEvent::NDamage::IDamage
 	if (Type == NCsStatusEffectEvent::Damage)
 		return new NCsStatusEffect::NEvent::NDamage::FImpl();
 	return nullptr;
@@ -570,15 +578,15 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString&
 	return CreateCopyOfEvent(Context, Event->Get());
 }
 
-#define DataType NCsStatusEffect::NData::IData
-EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
+#define ProcessPayloadType NCsStatusEffect::NData::NProcess::FPayload
+EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload)
 {
-#undef DataType
+#undef ProcessPayloadType
 
 	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
 
-	ICsData_GetStatusEffectImplType* GetStatusEffectImplType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectImplType>(Context, Data);
-	const FECsStatusEffectImpl& ImplType					 = GetStatusEffectImplType->GetStatusEffectImplType();
+	const ICsData_GetStatusEffectImplType* GetStatusEffectImplType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectImplType>(Context, ProcessPayload.Data);
+	const FECsStatusEffectImpl& ImplType						   = GetStatusEffectImplType->GetStatusEffectImplType();
 
 	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;	
 	typedef NCsStatusEffect::FResource SeResourceType;
@@ -589,29 +597,80 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 	StatusEffectType* StatusEffect = Container->Get();
 	CopyType* Copy				   = StatusEffectLibrary::GetInterfaceChecked<CopyType>(Context, StatusEffect);
 
-	Copy->CopyFromData(Type, Data);
+	Copy->CopyFromData(ProcessPayload.Type, ProcessPayload.Data);
 
 	// TODO: MAYBE: Fix
 
 	// TODO: FUTURE: Have event composed of slices?
 
-	typedef NCsStatusEffect::NEvent::FLibrary EventLibrary;
-	typedef NCsStatusEffect::NEvent::FImpl EventImplType;
+	const ICsData_GetStatusEffectEventType* GetStatusEffectEventType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectEventType>(Context, ProcessPayload.Data);
+	const FECsStatusEffectEvent& EventImplType						 = GetStatusEffectEventType->GetStatusEffectEventType();
 
-	EventResourceType* EventContainer = AllocateEvent(NCsStatusEffectEvent::Default);
+	EventResourceType* EventContainer = AllocateEvent(EventImplType);
 	EventType* Event				  = EventContainer->Get();
-	EventImplType* EventImpl		  = EventLibrary::PureStaticCastChecked<EventImplType>(Context, Event);
 
-	EventImpl->StatusEffect.Root		 = MyRoot;
-	EventImpl->StatusEffect.Container	 = Container;
-	EventImpl->StatusEffect.StatusEffect = StatusEffect;
-	EventImpl->StatusEffect.Type		 = Type;
-	EventImpl->StatusEffect.ImplType	 = ImplType;
-	EventImpl->Data = Data;
-	EventImpl->Instigator = Instigator;
-	EventImpl->Causer = Causer;
-	EventImpl->Receiver = Receiver;
+	typedef NCsStatusEffect::NEvent::FLibrary EventLibrary;
 
+	// Default
+	if (EventImplType == NCsStatusEffectEvent::Default)
+	{
+		typedef NCsStatusEffect::NEvent::FImpl DefaultEventType;
+
+		DefaultEventType* EventImpl	= EventLibrary::PureStaticCastChecked<DefaultEventType>(Context, Event);
+
+		// EventType (NCsStatusEffect::NEvent::IEvent)
+		EventImpl->StatusEffect.Root		 = MyRoot;
+		EventImpl->StatusEffect.Container	 = Container;
+		EventImpl->StatusEffect.StatusEffect = StatusEffect;
+		EventImpl->StatusEffect.Type		 = ProcessPayload.Type;
+		EventImpl->StatusEffect.ImplType	 = ImplType;
+		EventImpl->Data						 = ProcessPayload.Data;
+		EventImpl->Instigator				 = ProcessPayload.Instigator;
+		EventImpl->Causer					 = ProcessPayload.Causer;
+		EventImpl->Receiver					 = ProcessPayload.Receiver;
+	}
+	// Damage
+	else
+	if (EventImplType == NCsStatusEffectEvent::Damage)
+	{
+		typedef NCsStatusEffect::NEvent::NDamage::FImpl DamageSeEventType;
+
+		DamageSeEventType* EventImpl = EventLibrary::PureStaticCastChecked<DamageSeEventType>(Context, Event);
+
+		// EventType (NCsStatusEffect::NEvent::IEvent)
+		EventImpl->StatusEffect.Root		 = MyRoot;
+		EventImpl->StatusEffect.Container	 = Container;
+		EventImpl->StatusEffect.StatusEffect = StatusEffect;
+		EventImpl->StatusEffect.Type		 = ProcessPayload.Type;
+		EventImpl->StatusEffect.ImplType	 = ImplType;
+		EventImpl->Data						 = ProcessPayload.Data;
+		EventImpl->Instigator				 = ProcessPayload.Instigator;
+		EventImpl->Causer					 = ProcessPayload.Causer;
+		EventImpl->Receiver					 = ProcessPayload.Receiver;
+
+		// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
+		typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
+		typedef NCsDamage::NEvent::FResource DmgEventResourceType;
+
+		GetDamageDataTypeDataType* GetDamageDataTypeData = SeDataLibrary::GetInterfaceChecked<GetDamageDataTypeDataType>(Context, ProcessPayload.Data);
+
+		typedef NCsDamage::NData::NProcess::FPayload DmgProcessPayloadType;
+
+		static DmgProcessPayloadType DmgProcessPayload;
+		DmgProcessPayload.Reset();
+
+		DmgProcessPayload.Instigator = ProcessPayload.Instigator;
+		DmgProcessPayload.Causer	 = ProcessPayload.Causer;
+		DmgProcessPayload.Direction  = ProcessPayload.Direction;
+		DmgProcessPayload.HitResult  = ProcessPayload.HitResult;
+
+		DmgEventResourceType* DmgEventResource = DamageManagerLibrary::CreateEventChecked(Context, MyRoot, GetDamageDataTypeData, DmgProcessPayload);
+
+		EventImpl->DamageEvent.Root		 = MyRoot;
+		EventImpl->DamageEvent.Container = DmgEventResource;
+		EventImpl->DamageEvent.Event	 = DmgEventResource->Get();
+	}
 	return EventContainer;
 }
 
@@ -665,20 +724,20 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 			TransferParams.Type == TransferFrequencyType::None)
 		{
 			// SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
-
 			typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 			typedef NCsStatusEffect::NEvent::NDamage::IDamage SeDamageEventType;
 
 			if (const SeDamageEventType* SeDamageEvent = SeEventLibrary::GetSafeInterfaceChecked<SeDamageEventType>(Context, Event))
 			{
 				// Get the DamageEvent
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 				typedef NCsDamage::NEvent::IEvent DamageEventType;
 
 				const DamageEventType* DamageEvent = SeDamageEvent->GetDamageEvent();
 
-				checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: NCsStatusEffect::NEvent::NDamage::IDamage."), *Context);
+				checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)."), *Context);
 
-				UCsManager_Damage::Get(MyRoot)->ProcessDamageEvent(DamageEvent);
+				DamageManagerLibrary::ProcessEventChecked(Context, MyRoot, DamageEvent);
 			}
 			else
 			{
@@ -688,6 +747,23 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 	}
 	else
 	{
+		// SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
+		typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
+		typedef NCsStatusEffect::NEvent::NDamage::IDamage SeDamageEventType;
+
+		if (const SeDamageEventType* SeDamageEvent = SeEventLibrary::GetSafeInterfaceChecked<SeDamageEventType>(Context, Event))
+		{
+			// Get the DamageEvent
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NEvent::IEvent DamageEventType;
+
+			const DamageEventType* DamageEvent = SeDamageEvent->GetDamageEvent();
+
+			checkf(DamageEvent, TEXT("%s: DamageEvent is NULL. No Damage Event found for Event implementing interface: SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)."), *Context);
+
+			DamageManagerLibrary::ProcessEventChecked(Context, MyRoot, DamageEvent);
+		}
+
 		// ShapeDataType
 		typedef NCsStatusEffect::NData::NShape::IShape ShapeDataType;
 
@@ -793,20 +869,6 @@ DataType* UCsCoordinator_StatusEffect::GetDataChecked(const FString& Context, co
 DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FECsStatusEffect& Type)
 {
 	return DataHandler->GetSafeData<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
-}
-
-void UCsCoordinator_StatusEffect::ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, DataType* Data, UObject* Instigator, UObject* Causer, UObject* Receiver)
-{
-	typedef NCsStatusEffect::NEvent::FResource EventResourceType;
-
-	EventResourceType* Container = CreateEvent(Context, Type, Data, Instigator, Causer, Receiver);
-
-	ProcessStatusEffectEventContainer(Container);
-}
-
-void UCsCoordinator_StatusEffect::ProcessDataChecked(const FString& Context, const FECsStatusEffect& Type, UObject* Instigator, UObject* Causer, UObject* Receiver)
-{
-	ProcessDataChecked(Context, Type, GetDataChecked(Context, Type), Instigator, Causer, Receiver);
 }
 
 #undef DataType

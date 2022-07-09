@@ -462,15 +462,11 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
+	CS_IS_PTR_NULL_CHECKED(Data)
+
 	if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 		return CreateEvent(Context, Data->GetValue(), ShapeData->GetRange(), Data, Instigator, Causer, HitResult, Modifiers);
 	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
-}
-
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	static TArray<ModifierResourceType*> Modifiers;
-	return CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
 }
 
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
@@ -519,12 +515,6 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	return Container;
 }
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	static TArray<ModifierResourceType*> Modifiers;
-	return CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
-}
-
 EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
 {
 	typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
@@ -541,12 +531,6 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	ProcessPayload.Modifiers.Append(Modifiers);
 
 	return CreateEvent(Context, ProcessPayload);
-}
-
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	static TArray<ModifierResourceType*> Modifiers;
-	return CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 }
 
 #define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
@@ -871,73 +855,6 @@ DataType* UCsManager_Damage::GetSafeData(const FString& Context, const FName& Na
 {
 	return DataHandler->GetSafeData(Context, Name, Log);
 }
-
-#define ModifierResourceType NCsDamage::NModifier::FResource
-#define ValueType NCsDamage::NValue::IValue
-#define RangeType NCsDamage::NRange::IRange
-
-void UCsManager_Damage::ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
-{
-	typedef NCsDamage::NEvent::FResource EventResourceType;
-
-	const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
-
-	ProcessDamageEventContainer(Container);
-}
-
-void UCsManager_Damage::ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	typedef NCsDamage::NEvent::FResource EventResourceType;
-
-	const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult);
-
-	ProcessDamageEventContainer(Container);
-}
-
-void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
-{
-	typedef NCsDamage::NEvent::FResource EventResourceType;
-
-	const EventResourceType* Container = CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
-
-	ProcessDamageEventContainer(Container);
-}
-
-void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	static TArray<ModifierResourceType*> Modifiers;
-	ProcessData(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
-}
-
-void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
-{
-	typedef NCsDamage::NEvent::FResource EventResourceType;
-
-	const EventResourceType* Container = CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
-
-	ProcessDamageEventContainer(Container);
-}
-
-void UCsManager_Damage::ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
-{
-	static TArray<ModifierResourceType*> Modifiers;
-	ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
-}
-
-#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
-void UCsManager_Damage::ProcessData(const FString& Context, const ProcessPayloadType& ProcessPayload)
-{
-	typedef NCsDamage::NEvent::FResource EventResourceType;
-
-	const EventResourceType* Container = CreateEvent(Context, ProcessPayload);
-
-	ProcessDamageEventContainer(Container);
-}
-#undef ProcessPayloadType
-
-#undef ModifierResourceType
-#undef ValueType
-#undef RangeType
 
 #undef DataType
 

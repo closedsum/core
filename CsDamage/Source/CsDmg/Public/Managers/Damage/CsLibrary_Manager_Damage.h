@@ -169,6 +169,38 @@ namespace NCsDamage
 			*/
 			static void CreateCopyOfEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event, EventResourceType*& OutEventContainer, EventType*& OutEvent);
 
+		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
+		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
+
+			/**
+			*
+			*
+			* @param Context			The calling context.
+			* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Data
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static EventResourceType* CreateEventChecked(const FString& Context, const UObject* WorldContext, const ProcessPayloadType& ProcessPayload);
+
+			/**
+			*
+			*
+			* @param Context			The calling context.
+			* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Data
+			* @param Instigator
+			* @param Causer
+			* @param HitResult
+			*/
+			static EventResourceType* CreateEventChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, const ProcessPayloadType& ProcessPayload);
+
+		#undef GetDamageDataTypeDataType
+		#undef ProcessPayloadType
+
+			static void ProcessEventChecked(const FString& Context, const UObject* WorldContext, const EventType* Event);
+
 		#undef EventResourceType
 		#undef EventType
 

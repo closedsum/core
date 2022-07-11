@@ -285,10 +285,7 @@ namespace NCsSpawner
 					const float& MinRadius = CircleParams->GetMinRadius();
 					const float& MaxRadius = CircleParams->GetMaxRadius();
 
-					const float MaxRadiusSq = MaxRadius * MaxRadius;
-					const float MinRadiusSq = MinRadius * MinRadius;
-
-					const float Radius = FMath::Sqrt((FMath::RandRange(0.0f, 1.0f) * (MaxRadiusSq - MinRadiusSq)) + MinRadiusSq);
+					const float Radius = (FMath::RandRange(0.0f, 1.0f) * (MaxRadius - MinRadius)) + MinRadius;
 					const float Theta  = FMath::RandRange(0.0f, 1.0f) * 2.0f * PI;
 					const float X	   = Radius * FMath::Cos(Theta);
 					const float Y	   = Radius * FMath::Sin(Theta);

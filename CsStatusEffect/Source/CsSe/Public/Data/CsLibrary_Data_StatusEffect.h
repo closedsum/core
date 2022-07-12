@@ -22,9 +22,9 @@ namespace NCsStatusEffect
 		
 			static FString PrintDataAndClass(DataType* Data);
 
-			static bool IsValidChecked(const FString& Context, DataType* Data) { return true; }
+			static bool IsValidChecked(const FString& Context, const DataType* Data);
 
-			static bool IsValid(const FString& Context, DataType* Data, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning) { return true; }
+			static bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
 		};
 
 	#undef DataType

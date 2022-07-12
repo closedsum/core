@@ -44,27 +44,27 @@ namespace NCsStatusEffect
 
 				TriggerData = StatusEffectDataLibrary::GetInterfaceChecked<TriggerDataType>(Context, Data);
 
-				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
+				typedef NCsStatusEffect::NTrigger::NFrequency::FParams TriggerFrequencyParamsType;
 
 				const TriggerFrequencyParamsType& Params = TriggerData->GetTriggerFrequencyParams();
 
 				typedef NCsStatusEffect::NTrigger::EFrequency FrequencyType;
 
-				const FrequencyType& Type = Params.Type;
+				const FrequencyType& Type = Params.GetType();
 
-				bDelayComplete = Params.Delay > 0.0f;
+				bDelayComplete = Params.GetDelay() > 0.0f;
 
 				// Once
 				if (Type == FrequencyType::Once)
 				{
-					TotalTime = Params.Delay;
+					TotalTime = Params.GetDelay();
 				}
 				// Count
 				else
 				if (Type == FrequencyType::Count)
 				{
-					TotalTime += Params.Delay;
-					TotalTime += Params.Delay * Params.Interval;
+					TotalTime += Params.GetDelay();
+					TotalTime += Params.GetDelay() * Params.GetInterval();
 				}
 				// Time
 				else
@@ -75,20 +75,20 @@ namespace NCsStatusEffect
 
 			bool FInfo::CanApply() const
 			{
-				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
+				typedef NCsStatusEffect::NTrigger::NFrequency::FParams TriggerFrequencyParamsType;
 
 				const TriggerFrequencyParamsType& Params = TriggerData->GetTriggerFrequencyParams();
 
 				typedef NCsStatusEffect::NTrigger::EFrequency FrequencyType;
 
-				const FrequencyType& Type = Params.Type;
+				const FrequencyType& Type = Params.GetType();
 
 				// Once
 				if (Type == FrequencyType::Once)
 				{
 					// Check Delay
 					if (!bDelayComplete)
-						return ElapsedDelayTime.Time >= Params.Delay;
+						return ElapsedDelayTime.Time >= Params.GetDelay();
 					return ElapsedTotalTime.Time >= TotalTime;
 				}
 				// Count
@@ -97,10 +97,10 @@ namespace NCsStatusEffect
 				{
 					// Check Delay
 					if (!bDelayComplete)
-						return ElapsedDelayTime.Time >= Params.Delay;
+						return ElapsedDelayTime.Time >= Params.GetDelay();
 					// Check Interval
-					if (Params.Interval > 0.0f)
-						return ElapsedIntervalTime.Time > Params.Interval;
+					if (Params.GetInterval() > 0.0f)
+						return ElapsedIntervalTime.Time > Params.GetInterval();
 					return true;
 				}
 				// Time
@@ -109,8 +109,8 @@ namespace NCsStatusEffect
 				{
 					// Check Delay
 					if (!bDelayComplete)
-						return ElapsedDelayTime.Time >= Params.Delay;
-					return ElapsedIntervalTime.Time > Params.Interval;
+						return ElapsedDelayTime.Time >= Params.GetDelay();
+					return ElapsedIntervalTime.Time > Params.GetInterval();
 				}
 				// Infinite
 				else
@@ -118,8 +118,8 @@ namespace NCsStatusEffect
 				{
 					// Check Delay
 					if (!bDelayComplete)
-						return ElapsedDelayTime.Time >= Params.Delay;
-					return ElapsedIntervalTime.Time > Params.Interval;
+						return ElapsedDelayTime.Time >= Params.GetDelay();
+					return ElapsedIntervalTime.Time > Params.GetInterval();
 				}
 				return false;
 			}
@@ -133,13 +133,13 @@ namespace NCsStatusEffect
 
 			bool FInfo::IsComplete() const
 			{
-				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
+				typedef NCsStatusEffect::NTrigger::NFrequency::FParams TriggerFrequencyParamsType;
 
 				const TriggerFrequencyParamsType& Params = TriggerData->GetTriggerFrequencyParams();
 
 				typedef NCsStatusEffect::NTrigger::EFrequency FrequencyType;
 
-				const FrequencyType& Type = Params.Type;
+				const FrequencyType& Type = Params.GetType();
 
 				// Once
 				if (Type == FrequencyType::Once)
@@ -150,7 +150,7 @@ namespace NCsStatusEffect
 				else
 				if (Type == FrequencyType::Count)
 				{
-					return Count >= Params.Count;
+					return Count >= Params.GetCount();
 				}
 				// Time
 				else

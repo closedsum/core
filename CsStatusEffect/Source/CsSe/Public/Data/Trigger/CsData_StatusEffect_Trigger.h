@@ -22,8 +22,8 @@ namespace NCsStatusEffect
 
 			private:
 
-				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
-				typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
+				typedef NCsStatusEffect::NTrigger::NFrequency::FParams TriggerFrequencyParamsType;
+				typedef NCsStatusEffect::NTransfer::NFrequency::FParams TransferFrequencyParamsType;
 
 			public:
 
@@ -86,12 +86,12 @@ public:
 	*
 	* return Trigger Frequency Params
 	*/
-	virtual const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const = 0;
+	virtual const FCsStatusEffect_TriggerFrequencyParams& GetTriggerFrequencyParams() const = 0;
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const = 0;
+	virtual const FCsStatusEffect_TransferFrequencyParams& GetTransferFrequencyParams() const = 0;
 };

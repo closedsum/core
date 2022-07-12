@@ -708,8 +708,8 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 	// Trigger
 	if (TriggerDataType* TriggerData = SeDataLibrary::GetSafeInterfaceChecked<TriggerDataType>(Context, Data))
 	{
-		typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
-		typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
+		typedef NCsStatusEffect::NTrigger::NFrequency::FParams TriggerFrequencyParamsType;
+		typedef NCsStatusEffect::NTransfer::NFrequency::FParams TransferFrequencyParamsType;
 
 		const TriggerFrequencyParamsType& TriggerParams   = TriggerData->GetTriggerFrequencyParams();
 		const TransferFrequencyParamsType& TransferParams = TriggerData->GetTransferFrequencyParams();
@@ -720,8 +720,8 @@ void UCsCoordinator_StatusEffect::ProcessStatusEffectEventContainer(const EventR
 		typedef NCsStatusEffect::NTrigger::EFrequency TriggerFrequencyType;
 		typedef NCsStatusEffect::NTransfer::EFrequency TransferFrequencyType;
 
-		if (TriggerParams.Type == TriggerFrequencyType::Once &&
-			TransferParams.Type == TransferFrequencyType::None)
+		if (TriggerParams.GetType() == TriggerFrequencyType::Once &&
+			TransferParams.GetType() == TransferFrequencyType::None)
 		{
 			// SeDamageEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
 			typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
@@ -844,12 +844,27 @@ DataType* UCsCoordinator_StatusEffect::GetData(const FName& Name)
 
 DataType* UCsCoordinator_StatusEffect::GetDataChecked(const FString& Context, const FName& Name)
 {
+#if UE_BUILD_SHIPPING
 	return DataHandler->GetDataChecked(Context, Name);
+#else
+	DataType* Data = DataHandler->GetDataChecked(Context, Name);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
 }
 
-DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FName& Name)
+DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) /*=&NCsStatusEffect::FLog::Warning*/)
 {
-	return DataHandler->GetSafeData(Context, Name);
+#if UE_BUILD_SHIPPING
+	return DataHandler->GetSafeData(Context, Name, Log);
+#else
+	DataType* Data = DataHandler->GetSafeData(Context, Name, Log);
+
+	if (!IsValid(Context, Data, Log))
+		return nullptr;
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
 }
 
 DataType* UCsCoordinator_StatusEffect::GetData(const FECsStatusEffect& Type)
@@ -863,17 +878,58 @@ DataType* UCsCoordinator_StatusEffect::GetData(const FECsStatusEffect& Type)
 
 DataType* UCsCoordinator_StatusEffect::GetDataChecked(const FString& Context, const FECsStatusEffect& Type)
 {
+#if UE_BUILD_SHIPPING
 	return DataHandler->GetDataChecked<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+#else
+	DataType* Data = DataHandler->GetDataChecked<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
 }
 
-DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FECsStatusEffect& Type)
+DataType* UCsCoordinator_StatusEffect::GetSafeData(const FString& Context, const FECsStatusEffect& Type, void(*Log)(const FString&) /*=&NCsStatusEffect::FLog::Warning*/)
 {
-	return DataHandler->GetSafeData<EMCsStatusEffect, FECsStatusEffect>(Context, Type);
+#if UE_BUILD_SHIPPING
+	return DataHandler->GetSafeData<EMCsStatusEffect, FECsStatusEffect>(Context, Type, Log);
+#else
+	DataType* Data = DataHandler->GetSafeData<EMCsStatusEffect, FECsStatusEffect>(Context, Type, Log);
+
+	if (!IsValid(Context, Data, Log))
+		return nullptr;
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
 }
 
 #undef DataType
 
 #pragma endregion Data
+
+// Valid
+#pragma region
+
+#define DataType NCsStatusEffect::NData::IData
+
+bool UCsCoordinator_StatusEffect::IsValidChecked(const FString& Context, const DataType* Data) const
+{
+	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+	check(SeDataLibrary::IsValidChecked(Context, Data));
+	return true;
+}
+
+bool UCsCoordinator_StatusEffect::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsStatusEffect::FLog::Warning*/) const
+{
+	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+	if (!SeDataLibrary::IsValid(Context, Data, Log))
+		return false;
+	return true;
+}
+
+#undef DataType
+
+#pragma endregion Valid
 
 // Log
 #pragma region

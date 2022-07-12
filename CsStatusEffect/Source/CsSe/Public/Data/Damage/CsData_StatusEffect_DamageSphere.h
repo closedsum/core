@@ -43,8 +43,8 @@ namespace NCsStatusEffect
 
 			private:
 
-				typedef NCsStatusEffect::NTrigger::FFrequencyParams TriggerFrequencyParamsType;
-				typedef NCsStatusEffect::NTransfer::FFrequencyParams TransferFrequencyParamsType;
+				typedef NCsStatusEffect::NTrigger::NFrequency::FParams TriggerFrequencyParamsType;
+				typedef NCsStatusEffect::NTransfer::NFrequency::FParams TransferFrequencyParamsType;
 				typedef NCsDamage::NData::IData DamageDataType;
 
 				UObject* Outer;
@@ -231,11 +231,11 @@ public:
 	/** Parameters that describes the frequency the status effect is
 		triggered. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsStatusEffectTriggerFrequencyParams TriggerFrequencyParams;
+	FCsStatusEffect_TriggerFrequencyParams TriggerFrequencyParams;
 
 	/**  */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FCsStatusEffectTransferFrequencyParams TransferFrequencyParams;
+	FCsStatusEffect_TransferFrequencyParams TransferFrequencyParams;
 
 // ICsData_StatusEffect
 #pragma region
@@ -246,8 +246,8 @@ public:
 	FORCEINLINE const TArray<FECsStatusEffect>& GetStatusEffectsToRemove() const { return StatusEffectsToRemove; }
 
 	FORCEINLINE const FECsStatusEffectTriggerCondition& GetTriggerCondition() const { return TriggerCondition; }
-	FORCEINLINE const FCsStatusEffectTriggerFrequencyParams& GetTriggerFrequencyParams() const { return TriggerFrequencyParams; }
-	FORCEINLINE const FCsStatusEffectTransferFrequencyParams& GetTransferFrequencyParams() const { return TransferFrequencyParams; }
+	FORCEINLINE const FCsStatusEffect_TriggerFrequencyParams& GetTriggerFrequencyParams() const { return TriggerFrequencyParams; }
+	FORCEINLINE const FCsStatusEffect_TransferFrequencyParams& GetTransferFrequencyParams() const { return TransferFrequencyParams; }
 
 #pragma endregion ICsData_StatusEffect
 

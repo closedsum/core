@@ -848,17 +848,58 @@ void UCsManager_Damage::ConstructDataHandler()
 
 DataType* UCsManager_Damage::GetDataChecked(const FString& Context, const FName& Name)
 {
+#if UE_BUILD_SHIPPING
 	return DataHandler->GetDataChecked(Context, Name);
+#else
+	DataType* Data = DataHandler->GetDataChecked(Context, Name);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
 }
 
 DataType* UCsManager_Damage::GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) /*=nullptr*/)
 {
+#if UE_BUILD_SHIPPING
 	return DataHandler->GetSafeData(Context, Name, Log);
+#else
+	DataType* Data = DataHandler->GetSafeData(Context, Name, Log);
+
+	if (!IsValid(Context, Data, Log))
+		return nullptr;
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
 }
 
 #undef DataType
 
 #pragma endregion Data
+
+// Valid
+#pragma region
+
+#define DataType NCsDamage::NData::IData
+
+bool UCsManager_Damage::IsValidChecked(const FString& Context, const DataType* Data) const
+{
+	typedef NCsDamage::NData::FLibrary DataLibrary;
+
+	check(DataLibrary::IsValidChecked(Context, Data))
+;	return true;
+}
+
+bool UCsManager_Damage::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+{
+	typedef NCsDamage::NData::FLibrary DataLibrary;
+
+	if (!DataLibrary::IsValid(Context, Data, Log))
+		return false;
+	return true;
+}
+
+#undef DataType
+
+#pragma endregion Valid
 
 // Log
 #pragma region

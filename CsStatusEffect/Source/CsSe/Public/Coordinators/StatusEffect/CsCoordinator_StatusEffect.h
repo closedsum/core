@@ -332,7 +332,7 @@ public:
 	* @param Name		Name of the Status Effect.
 	* return			Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 	*/
-	DataType* GetSafeData(const FString& Context, const FName& Name);
+	DataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) =&NCsStatusEffect::FLog::Warning);
 
 	/**
 	* Get the Data (implements interface: DataType (NCsStatusEffect::NData::IData)) associated with Type.
@@ -359,7 +359,7 @@ public:
 	* @param Type		Status Effect type.
 	* return			Data that implements the interface: DataType (NCsStatusEffect::NData::IData).
 	*/
-	DataType* GetSafeData(const FString& Context, const FECsStatusEffect& Type);
+	DataType* GetSafeData(const FString& Context, const FECsStatusEffect& Type, void(*Log)(const FString&) =&NCsStatusEffect::FLog::Warning);
 
 	FORCEINLINE void ProcessDataChecked(const FString& Context, const ProcessPayloadType& ProcessPayload)
 	{
@@ -386,6 +386,15 @@ public:
 	}
 
 #pragma endregion Data
+
+// Valid
+#pragma region
+protected:
+
+	virtual bool IsValidChecked(const FString& Context, const DataType* Data) const;
+	virtual bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning) const;
+
+#pragma endregion Valid
 
 // Log
 #pragma region

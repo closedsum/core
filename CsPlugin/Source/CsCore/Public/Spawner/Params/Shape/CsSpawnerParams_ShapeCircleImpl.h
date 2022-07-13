@@ -24,11 +24,11 @@ public:
 
 	/** Parameters describing number (count) of objects "created" when Spawn is called. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
-	FCsSpawnerCountParams CountParams;
+	FCsSpawner_CountParams CountParams;
 
 	/** Parameters describing the frequency at which Spawn is called after calling Start. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")
-	FCsSpawnerFrequencyParams FrequencyParams;
+	FCsSpawner_FrequencyParams FrequencyParams;
 
 	/** The total time the objects are being spawned for. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params|Shape")

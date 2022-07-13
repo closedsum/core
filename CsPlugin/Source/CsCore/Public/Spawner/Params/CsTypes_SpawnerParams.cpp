@@ -6,18 +6,18 @@
 #include "Library/CsLibrary_Array.h"
 #include "Library/CsLibrary_Valid.h"
 
-// FCsSpawnerCountParams
+// FCsSpawner_CountParams
 #pragma region
 
 #define ParamsType NCsSpawner::NParams::FCount
 
-void FCsSpawnerCountParams::CopyToParams(ParamsType* Params)
+void FCsSpawner_CountParams::CopyToParams(ParamsType* Params)
 {
 	Params->SetCountPerSpawn(&CountPerSpawn);
 	Params->SetTimeBetweenCountPerSpawn(&TimeBetweenCountPerSpawn);
 }
 
-void FCsSpawnerCountParams::CopyToParamsAsValue(ParamsType* Params) const
+void FCsSpawner_CountParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetCountPerSpawn(CountPerSpawn);
 	Params->SetTimeBetweenCountPerSpawn(TimeBetweenCountPerSpawn);
@@ -25,7 +25,7 @@ void FCsSpawnerCountParams::CopyToParamsAsValue(ParamsType* Params) const
 
 #undef ParamsType
 
-bool FCsSpawnerCountParams::IsValidChecked(const FString& Context) const
+bool FCsSpawner_CountParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CountPerSpawn, 1)
 
@@ -33,7 +33,7 @@ bool FCsSpawnerCountParams::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsSpawnerCountParams::IsValid(const FString& Context, void(*Log)(const FString&) /*-FCsLog::Warning*/) const
+bool FCsSpawner_CountParams::IsValid(const FString& Context, void(*Log)(const FString&) /*-FCsLog::Warning*/) const
 {
 	CS_IS_INT_GREATER_THAN_OR_EQUAL(CountPerSpawn, 1)
 
@@ -63,7 +63,7 @@ namespace NCsSpawner
 	}
 }
 
-#pragma endregion FCsSpawnerCountParams
+#pragma endregion FCsSpawner_CountParams
 
 // SpawnerFrequency
 #pragma region
@@ -109,12 +109,12 @@ namespace NCsSpawner
 
 #pragma endregion SpawnerFrequency
 
-// FCsSpawnerFrequencyParams
+// FCsSpawner_FrequencyParams
 #pragma region
 
 #define ParamsType NCsSpawner::NParams::FFrequency
 
-void FCsSpawnerFrequencyParams::CopyToParams(ParamsType* Params)
+void FCsSpawner_FrequencyParams::CopyToParams(ParamsType* Params)
 {
 	typedef NCsSpawner::EFrequency FrequencyType;
 
@@ -125,7 +125,7 @@ void FCsSpawnerFrequencyParams::CopyToParams(ParamsType* Params)
 	Params->SetTime(&Time);
 }
 
-void FCsSpawnerFrequencyParams::CopyToParamsAsValue(ParamsType* Params) const
+void FCsSpawner_FrequencyParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	typedef NCsSpawner::EFrequency FrequencyType;
 
@@ -138,7 +138,7 @@ void FCsSpawnerFrequencyParams::CopyToParamsAsValue(ParamsType* Params) const
 
 #undef ParamsType
 
-bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
+bool FCsSpawner_FrequencyParams::IsValidChecked(const FString& Context) const
 {
 	// Once
 	if (Type == ECsSpawnerFrequency::Once)
@@ -182,7 +182,7 @@ bool FCsSpawnerFrequencyParams::IsValidChecked(const FString& Context) const
 	return true;
 }
 
-bool FCsSpawnerFrequencyParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsSpawner_FrequencyParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	// Once
 	if (Type == ECsSpawnerFrequency::Once)
@@ -254,7 +254,7 @@ bool FCsSpawnerFrequencyParams::IsValid(const FString& Context, void(*Log)(const
 	return true;
 }
 
-float FCsSpawnerFrequencyParams::CalculateTotalTime() const
+float FCsSpawner_FrequencyParams::CalculateTotalTime() const
 {
 	float TotalTime = 0.0f;
 
@@ -292,7 +292,7 @@ float FCsSpawnerFrequencyParams::CalculateTotalTime() const
 	return TotalTime;
 }
 
-void FCsSpawnerFrequencyParams::Reset()
+void FCsSpawner_FrequencyParams::Reset()
 {
 	Type = ECsSpawnerFrequency::Once;
 	Delay = 0.0f;
@@ -301,7 +301,7 @@ void FCsSpawnerFrequencyParams::Reset()
 	Time = 0.0f;
 }
 
-void FCsSpawnerFrequencyParams::Update()
+void FCsSpawner_FrequencyParams::Update()
 {
 	if (Time > 0.0f)
 	{
@@ -325,7 +325,7 @@ void FCsSpawnerFrequencyParams::Update()
 	}
 }
 
-void FCsSpawnerFrequencyParams::OnPostEditChange()
+void FCsSpawner_FrequencyParams::OnPostEditChange()
 {
 	Update();
 }
@@ -507,7 +507,7 @@ namespace NCsSpawner
 	}
 }
 
-#pragma endregion FCsSpawnerFrequencyParams
+#pragma endregion FCsSpawner_FrequencyParams
 
 // SpawnerPoint
 #pragma region

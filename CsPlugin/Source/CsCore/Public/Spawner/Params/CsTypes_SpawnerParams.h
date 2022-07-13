@@ -6,7 +6,7 @@
 
 #include "CsTypes_SpawnerParams.generated.h"
 
-// FCsSpawnerCountParams
+// FCsSpawner_CountParams
 #pragma region
 
 // NCsSpawner::NParams::FCount
@@ -16,7 +16,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FCount)
 * Parameters describing number (count) of objects "created" when Spawn is called.
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSpawnerCountParams
+struct CSCORE_API FCsSpawner_CountParams
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float TimeBetweenCountPerSpawn;
 
-	FCsSpawnerCountParams() :
+	FCsSpawner_CountParams() :
 		CountPerSpawn(1),
 		TimeBetweenCountPerSpawn(0.0f)
 	{
@@ -80,7 +80,7 @@ namespace NCsSpawner
 	}
 }
 
-#pragma endregion FCsSpawnerCountParams
+#pragma endregion FCsSpawner_CountParams
 
 // SpawnerFrequency
 #pragma region
@@ -185,7 +185,7 @@ namespace NCsSpawner
 
 #pragma endregion SpawnerFrequency
 
-// FCsSpawnerFrequencyParams
+// FCsSpawner_FrequencyParams
 #pragma region
 
 // NCsSpawner::NParams::FFrequency
@@ -195,7 +195,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FFrequency)
 * Parameters describing the frequency at which Spawn is called after calling Start.
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsSpawnerFrequencyParams
+struct CSCORE_API FCsSpawner_FrequencyParams
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -244,7 +244,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Spawner|Params", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float Time;
 
-	FCsSpawnerFrequencyParams() :
+	FCsSpawner_FrequencyParams() :
 		Type(ECsSpawnerFrequency::Once),
 		Delay(0.0f),
 		Count(0),
@@ -346,7 +346,7 @@ namespace NCsSpawner
 	}
 }
 
-#pragma endregion FCsSpawnerFrequencyParams
+#pragma endregion FCsSpawner_FrequencyParams
 
 // SpawnerPoint
 #pragma region

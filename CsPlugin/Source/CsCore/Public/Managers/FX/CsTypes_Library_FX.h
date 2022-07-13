@@ -29,7 +29,7 @@ namespace NCsFX
 				TWeakObjectPtr<AActor> Actor;
 
 				/** Parameters describing how often to spawn the FX. */
-				FCsSpawnerFrequencyParams FrequencyParams;
+				FCsSpawner_FrequencyParams FrequencyParams;
 
 				/** The time group for which any coroutine spawning the FX is associated with. */
 				FECsUpdateGroup Group;
@@ -84,7 +84,7 @@ public:
 	AActor* Actor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
-	FCsSpawnerFrequencyParams FrequencyParams;
+	FCsSpawner_FrequencyParams FrequencyParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FECsUpdateGroup Group;

@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Spawner
 #include "Spawner/Params/CsSpawnerParams.h"
 
 #include "CsSpawnerParamsImpl.generated.h"
-#pragma once
 
 // NCsSpawner::NParams::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSpawner, NParams, FImpl)
@@ -17,11 +17,11 @@ public:
 
 	/** Describes the number of objects "created" when Spawn is called. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params")
-	FCsSpawnerCountParams CountParams;
+	FCsSpawner_CountParams CountParams;
 
 	/** Describes how often objects are "created" whens Spawn is called. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params")
-	FCsSpawnerFrequencyParams FrequencyParams;
+	FCsSpawner_FrequencyParams FrequencyParams;
 
 	/** The total time the objects are being spawned for */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Spawner|Params")

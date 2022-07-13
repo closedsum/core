@@ -115,7 +115,7 @@ namespace NCsSound
 		ParamsType* P = Params->Get();
 		P->Update();
 	
-		const FCsSpawnerFrequencyParams& FrequencyParams = Params->Get()->FrequencyParams;
+		const FCsSpawner_FrequencyParams& FrequencyParams = Params->Get()->FrequencyParams;
 		const float TotalTime = FrequencyParams.CalculateTotalTime();
 
 		static const int32 TOTAL_TIME = 0;
@@ -185,8 +185,8 @@ namespace NCsSound
 		const ParamsResourceType* ParamsContainer = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 		const ParamsType* Params				  = ParamsContainer->Get();
 
-		const FCsSpawnerFrequencyParams& FrequencyParams = Params->FrequencyParams;
-		const ECsSpawnerFrequency& FrequencyType		 = FrequencyParams.Type;
+		const FCsSpawner_FrequencyParams& FrequencyParams = Params->FrequencyParams;
+		const ECsSpawnerFrequency& FrequencyType		  = FrequencyParams.Type;
 
 		static const int32 CAN_SPAWN = 0;
 		bool& CanSpawn				 = R->GetValue_Flag(CAN_SPAWN);

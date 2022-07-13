@@ -29,7 +29,7 @@ namespace NCsSound
 				TWeakObjectPtr<UObject> Object;
 
 				/** Parameters describing how often to spawn the Sound. */
-				FCsSpawnerFrequencyParams FrequencyParams;
+				FCsSpawner_FrequencyParams FrequencyParams;
 
 				/** The time group for which any coroutine spawning the Sound is associated with. */
 				FECsUpdateGroup Group;
@@ -84,7 +84,7 @@ public:
 	UObject* Object;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
-	FCsSpawnerFrequencyParams FrequencyParams;
+	FCsSpawner_FrequencyParams FrequencyParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	FECsUpdateGroup Group;

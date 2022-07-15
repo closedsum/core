@@ -22,6 +22,8 @@ namespace NCsSound
 			{
 			public:
 		
+			#define FrequencyParamsType NCsSpawner::NParams::FFrequency
+
 				/** Sound information */
 				FCsSound Sound;
 
@@ -29,7 +31,7 @@ namespace NCsSound
 				TWeakObjectPtr<UObject> Object;
 
 				/** Parameters describing how often to spawn the Sound. */
-				FCsSpawner_FrequencyParams FrequencyParams;
+				FrequencyParamsType FrequencyParams;
 
 				/** The time group for which any coroutine spawning the Sound is associated with. */
 				FECsUpdateGroup Group;
@@ -42,6 +44,8 @@ namespace NCsSound
 				{
 				}
 
+				FORCEINLINE FrequencyParamsType* GetFrequencyParamsPtr() { return &FrequencyParams; }
+
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
@@ -50,6 +54,8 @@ namespace NCsSound
 				void Update();
 
 				void Reset();
+
+			#undef FrequencyParamsType
 			};
 
 			struct CSCORE_API FResource : public TCsResourceContainer<FParams>

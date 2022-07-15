@@ -133,28 +133,30 @@ namespace NCsSpawner
 					/** Parameters describing the frequency at which Spawn is called after calling Start. */
 					FrequencyParamsType FrequencyParams;
 
+				private:
+
 					/** The total time the objects are being spawned for. */
-					float TotalTime;
+					CS_DECLARE_MEMBER_WITH_PROXY(TotalTime, float)
 
 				// ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
 
 					/** The shape / area of the spawner from which objects are spawned. 
 						This defaults to Circle (NCsSpawner::EShape::Circle). */
-					ShapeType Shape;
+					CS_DECLARE_MEMBER_WITH_PROXY(Shape, ShapeType)
 
 					/** Describe what is designed as the "center" of the spawner's shape. */
-					CenterType Center;
+					CS_DECLARE_MEMBER_WITH_PROXY(Center, CenterType)
 
 					/** How the spawning is distributed over a shape / area. */
-					DistributionType Distribution;
+					CS_DECLARE_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
 				// CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
 
 					/** Minimum radius of the circle. */
-					float MinRadius;
+					CS_DECLARE_MEMBER_WITH_PROXY(MinRadius, float)
 
 					/** Maximum radius of the circle. */
-					float MaxRadius;
+					CS_DECLARE_MEMBER_WITH_PROXY(MaxRadius, float)
 
 				public:
 
@@ -173,7 +175,6 @@ namespace NCsSpawner
 
 					FORCEINLINE CountParamsType* GetCountParamsPtr() { return &CountParams; }
 					FORCEINLINE FrequencyParamsType* GetFrequencyParamsPtr() { return &FrequencyParams; }
-					FORCEINLINE float* GetTotalTimePtr() { return &TotalTime; }
 
 				// ParamsType (NCsSpawner::NParams::IParams)
 				#pragma region
@@ -181,37 +182,32 @@ namespace NCsSpawner
 
 					FORCEINLINE const CountParamsType& GetCountParams() const { return CountParams; }
 					FORCEINLINE const FrequencyParamsType& GetFrequencyParams() const { return FrequencyParams; }
-					FORCEINLINE const float& GetTotalTime() const { return TotalTime; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TotalTime, float)
 
 				#pragma endregion ParamsType (NCsSpawner::NParams::IParams)
 
 				public:
 
-					FORCEINLINE ShapeType* GetShapeTypePtr() { return &Shape; }
-					FORCEINLINE CenterType* GetCenterTypePtr() { return &Center; }
-					FORCEINLINE DistributionType* GetDistributionTypePtr() { return &Distribution; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Shape, ShapeType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Center, CenterType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
 				// ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
 				#pragma region
 				public:
 
-					FORCEINLINE const ShapeType& GetShapeType() const { return Shape; }
-					FORCEINLINE const CenterType& GetCenterType() const { return Center; }
-					FORCEINLINE const DistributionType& GetDistributionType() const { return Distribution; }
+					FORCEINLINE const ShapeType& GetShapeType() const { return GetShape(); }
+					FORCEINLINE const CenterType& GetCenterType() const { return GetCenter(); }
+					FORCEINLINE const DistributionType& GetDistributionType() const { return GetDistribution(); }
 
 				#pragma endregion ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
-
-				public:
-
-					FORCEINLINE float* GetMinRadiusPtr() { return &MinRadius; }
-					FORCEINLINE float* GetMaxRadiusPtr() { return &MaxRadius; }
 
 				// CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
 				#pragma region
 				public:
 
-					FORCEINLINE const float& GetMinRadius() const { return MinRadius; }
-					FORCEINLINE const float& GetMaxRadius() const { return MaxRadius; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRadius, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxRadius, float)
 
 				#pragma endregion CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
 				public:

@@ -22,6 +22,8 @@ namespace NCsFX
 			{
 			public:
 		
+			#define FrequencyParamsType NCsSpawner::NParams::FFrequency
+
 				/** FX information */
 				FCsFX FX;
 
@@ -29,7 +31,7 @@ namespace NCsFX
 				TWeakObjectPtr<AActor> Actor;
 
 				/** Parameters describing how often to spawn the FX. */
-				FCsSpawner_FrequencyParams FrequencyParams;
+				FrequencyParamsType FrequencyParams;
 
 				/** The time group for which any coroutine spawning the FX is associated with. */
 				FECsUpdateGroup Group;
@@ -42,6 +44,8 @@ namespace NCsFX
 				{
 				}
 
+				FORCEINLINE FrequencyParamsType* GetFrequencyParamsPtr() { return &FrequencyParams; }
+
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
@@ -50,6 +54,8 @@ namespace NCsFX
 				void Update();
 
 				void Reset();
+
+			#undef FrequencyParamsType
 			};
 
 			struct CSCORE_API FResource : public TCsResourceContainer<FParams>
@@ -98,7 +104,7 @@ public:
 	}
 
 #define ParamsType NCsFX::NSpawn::NParams::FParams
-	void CopyToParams(ParamsType* Params) const;
+	void CopyToParamsAsValue(ParamsType* Params) const;
 #undef ParamsType
 
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;

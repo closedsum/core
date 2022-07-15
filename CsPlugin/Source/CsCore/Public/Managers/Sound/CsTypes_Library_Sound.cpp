@@ -63,7 +63,7 @@ void FCsSound_Spawn_Params::CopyToParams(ParamsType* Params) const
 	Params->Sound = Sound;
 	Params->Sound.UpdateInternalPtrs();
 	Params->Object = Object;
-	Params->FrequencyParams = FrequencyParams;
+	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
 	Params->Group = Group;
 }
 

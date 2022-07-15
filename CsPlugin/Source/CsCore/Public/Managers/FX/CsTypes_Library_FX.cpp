@@ -56,14 +56,14 @@ namespace NCsFX
 }
 
 #define ParamsType NCsFX::NSpawn::NParams::FParams
-void FCsFX_Spawn_Params::CopyToParams(ParamsType* Params) const
+void FCsFX_Spawn_Params::CopyToParamsAsValue(ParamsType* Params) const
 {
 #undef ParamsType
 
 	Params->FX = FX;
 	Params->FX.UpdateInternalPtrs();
 	Params->Actor = Actor;
-	Params->FrequencyParams = FrequencyParams;
+	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
 	Params->Group = Group;
 }
 

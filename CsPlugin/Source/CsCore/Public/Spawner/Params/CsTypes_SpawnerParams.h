@@ -341,6 +341,8 @@ namespace NCsSpawner
 
 			void Reset();
 
+			void Update();
+
 		#undef FrequencyType
 		};
 	}

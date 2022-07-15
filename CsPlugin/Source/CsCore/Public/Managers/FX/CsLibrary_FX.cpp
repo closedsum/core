@@ -727,7 +727,9 @@ namespace NCsFX
 		ParamsType* P = Params->Get();
 		P->Update();
 	
-		const FCsSpawner_FrequencyParams& FrequencyParams = Params->Get()->FrequencyParams;
+		typedef NCsSpawner::NParams::FFrequency FrequencyParamsType;
+
+		const FrequencyParamsType& FrequencyParams = Params->Get()->FrequencyParams;
 		const float TotalTime = FrequencyParams.CalculateTotalTime();
 
 		static const int32 TOTAL_TIME = 0;
@@ -797,8 +799,11 @@ namespace NCsFX
 		const ParamsResourceType* ParamsContainer = R->GetValue_Void<ParamsResourceType>(RESOURCE);
 		const ParamsType* Params				  = ParamsContainer->Get();
 
-		const FCsSpawner_FrequencyParams& FrequencyParams = Params->FrequencyParams;
-		const ECsSpawnerFrequency& FrequencyType		  = FrequencyParams.Type;
+		typedef NCsSpawner::NParams::FFrequency FrequencyParamsType;
+		typedef NCsSpawner::EFrequency FrequencyType;
+
+		const FrequencyParamsType& FrequencyParams = Params->FrequencyParams;
+		const NCsSpawner::EFrequency& FreqType = FrequencyParams.GetType();
 
 		static const int32 CAN_SPAWN = 0;
 		bool& CanSpawn				 = R->GetValue_Flag(CAN_SPAWN);
@@ -839,22 +844,22 @@ namespace NCsFX
 				++SpawnCount;
 
 				// Once
-				if (FrequencyType == ECsSpawnerFrequency::Once)
+				if (FreqType == FrequencyType::Once)
 				{
 					 // Do Nothing 
 				}
 				// Count | TimeCount | TimeInterval
 				else
-				if (FrequencyType == ECsSpawnerFrequency::Count ||
-					FrequencyType == ECsSpawnerFrequency::TimeCount ||
-					FrequencyType == ECsSpawnerFrequency::TimeInterval)
+				if (FreqType == FrequencyType::Count ||
+					FreqType == FrequencyType::TimeCount ||
+					FreqType == FrequencyType::TimeInterval)
 				{
-					CanSpawn		 = SpawnCount < FrequencyParams.Count;
-					HasSpawnInterval = CanSpawn && FrequencyParams.Interval > 0.0f;
+					CanSpawn		 = SpawnCount < FrequencyParams.GetCount();
+					HasSpawnInterval = CanSpawn && FrequencyParams.GetInterval() > 0.0f;
 				}
 				// Infinite
 				else
-				if (FrequencyType == ECsSpawnerFrequency::Infinite)
+				if (FreqType == FrequencyType::Infinite)
 				{
 					CanSpawn		 = true;
 					HasSpawnInterval = true;
@@ -862,7 +867,7 @@ namespace NCsFX
 
 				if (HasSpawnInterval)
 				{
-					CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams.Interval);
+					CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= FrequencyParams.GetInterval());
 				}
 			}
 		} while (CanSpawn);

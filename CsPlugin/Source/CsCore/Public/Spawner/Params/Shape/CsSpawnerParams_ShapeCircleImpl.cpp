@@ -20,12 +20,12 @@ void FCsSpawnerParams_ShapeCircleImpl::CopyToParamsAsValue(ParamsType* Params) c
 {
 	CountParams.CopyToParamsAsValue(Params->GetCountParamsPtr());
 	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
-	Params->TotalTime = TotalTime;
-	Params->Shape = (NCsSpawner::EShape)Shape;
-	Params->Center = (NCsSpawner::NShape::ECenter)Center;
-	Params->Distribution = (NCsSpawner::EDistribution)Distribution;
-	Params->MinRadius = MinRadius;
-	Params->MaxRadius = MaxRadius;
+	Params->SetTotalTime(TotalTime);
+	Params->SetShape((NCsSpawner::EShape)Shape);
+	Params->SetCenter((NCsSpawner::NShape::ECenter)Center);
+	Params->SetDistribution((NCsSpawner::EDistribution)Distribution);
+	Params->SetMinRadius(MinRadius);
+	Params->SetMaxRadius(MaxRadius);
 }
 
 #undef ParamsType
@@ -92,14 +92,14 @@ namespace NCsSpawner
 					// ParamsType (NCsSpawner::NParams::IParams)
 					CountParams(),
 					FrequencyParams(),
-					TotalTime(0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(TotalTime, 0.0f),
 					// ShapeParamsType (NCsSpawner::NParams::NShape::IShape)
-					Shape(ShapeType::Circle),
-					Center(CenterType::Self),
-					Distribution(DistributionType::Uniform),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Shape, ShapeType::Circle),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Center, CenterType::Self),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Distribution, DistributionType::Uniform),
 					// CircleParamsType (NCsSpawner::NParams::NShape::ICircle)
-					MinRadius(0.0f),
-					MaxRadius(0.0f)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinRadius, 0.0f),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxRadius, 0.0f)
 				{
 					InterfaceMap = new FCsInterfaceMap();
 
@@ -112,6 +112,13 @@ namespace NCsSpawner
 					InterfaceMap->Add<ParamsType>(static_cast<ParamsType*>(this));
 					InterfaceMap->Add<ShapeParamsType>(static_cast<ShapeParamsType*>(this));
 					InterfaceMap->Add<CircleParamsType>(static_cast<CircleParamsType*>(this));
+
+					CS_CTOR_SET_MEMBER_PROXY(TotalTime);
+					CS_CTOR_SET_MEMBER_PROXY(Shape);
+					CS_CTOR_SET_MEMBER_PROXY(Center);
+					CS_CTOR_SET_MEMBER_PROXY(Distribution);
+					CS_CTOR_SET_MEMBER_PROXY(MinRadius);
+					CS_CTOR_SET_MEMBER_PROXY(MaxRadius);
 				}
 
 				FImpl::~FImpl()
@@ -127,18 +134,18 @@ namespace NCsSpawner
 
 					typedef NCsSpawner::EMShape ShapeMapType;
 
-					checkf(Shape == ShapeType::Circle, TEXT("%s: Shape: %s is NOT Circle (ShapeType::Circle)."), *Context, ShapeMapType::Get().ToChar(Shape));
+					checkf(GetShape() == ShapeType::Circle, TEXT("%s: GetShape(): %s is NOT Circle (ShapeType::Circle)."), *Context, ShapeMapType::Get().ToChar(GetShape()));
 
 					typedef NCsSpawner::NShape::EMCenter CenterMapType;
 					typedef NCsSpawner::EMDistribution DistributionMapType;
 
-					CS_IS_ENUM_STRUCT_VALID_CHECKED(CenterMapType, Center)
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(CenterMapType, GetCenter())
 
-					CS_IS_ENUM_STRUCT_VALID_CHECKED(DistributionMapType, Distribution)
+					CS_IS_ENUM_STRUCT_VALID_CHECKED(DistributionMapType, GetDistribution())
 
-					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinRadius, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMinRadius(), 0.0f)
 
-					CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxRadius, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(GetMaxRadius(), 0.0f)
 					return true;
 				}
 
@@ -158,24 +165,24 @@ namespace NCsSpawner
 
 					CS_IS_VALID(FrequencyParams)
 
-					if (Shape != ShapeType::Circle)
+					if (GetShape() != ShapeType::Circle)
 					{
 						typedef NCsSpawner::EMShape ShapeMapType;
 
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Shape: %s is NOT Circle (ShapeType::Circle)."), *Context, ShapeMapType::Get().ToChar(Shape)));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetShape(): %s is NOT Circle (ShapeType::Circle)."), *Context, ShapeMapType::Get().ToChar(GetShape())));
 						return false;
 					}
 
 					typedef NCsSpawner::NShape::EMCenter CenterMapType;
 					typedef NCsSpawner::EMDistribution DistributionMapType;
 
-					CS_IS_ENUM_VALID(CenterMapType, CenterType, Center)
+					CS_IS_ENUM_VALID(CenterMapType, CenterType, GetCenter())
 
-					CS_IS_ENUM_VALID(DistributionMapType, DistributionType, Distribution)
+					CS_IS_ENUM_VALID(DistributionMapType, DistributionType, GetDistribution())
 
-					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MinRadius, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMinRadius(), 0.0f)
 
-					CS_IS_FLOAT_GREATER_THAN(MaxRadius, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN(GetMaxRadius(), 0.0f)
 					return true;
 				}
 

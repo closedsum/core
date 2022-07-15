@@ -504,6 +504,32 @@ namespace NCsSpawner
 			CS_RESET_MEMBER_WITH_PROXY(Interval, 0.0f)
 			CS_RESET_MEMBER_WITH_PROXY(Time, 0.0f)
 		}
+
+		void FFrequency::Update()
+		{
+			typedef NCsSpawner::EFrequency FrequencyType;
+
+			if (GetTime() > 0.0f)
+			{
+				// TimeCount
+				if (GetType() == FrequencyType::TimeCount)
+				{
+					if (GetCount() >= 1)
+					{
+						SetInterval(GetTime() / (float)GetCount());
+					}
+				}
+				// TimeInterval
+				else
+				if (GetType() == FrequencyType::TimeInterval)
+				{
+					if (GetInterval() > 0.0f)
+					{
+						SetCount(FMath::FloorToInt(GetTime() / GetInterval()));
+					}
+				}
+			}
+		}
 	}
 }
 

@@ -171,6 +171,17 @@ namespace NCsCoroutine
 			return SafeEnd(Context, ContextObject, Group, Handle, nullptr);
 		}
 
+		bool FLibrary::EndAndInvalidateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+
+			const bool Result = GetChecked(Context, ContextObject)->End(Group, Handle);
+
+			Handle.Invalidate();
+
+			return Result;
+		}
+
 		#pragma endregion End
 
 		// Handle

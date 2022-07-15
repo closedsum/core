@@ -39,6 +39,7 @@
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
+#include "Event/CsProjectile_Event.h"
 // Modifier
 #include "Modifier/CsProjectileModifierImpl.h"
 
@@ -62,6 +63,7 @@ namespace NCsManagerProjectile
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, InitInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, AddPoolParams);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetProjectile);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Projectile, GetData);
@@ -399,6 +401,20 @@ void UCsManager_Projectile::AddPoolParams(const FECsProjectile& Type, const FCsS
 	PoolParams.DestroyScopedTimerCVar = NCsCVarLog::LogManagerProjectileScopedTimerDestroy;
 
 	Internal.Init(Type, PoolParams);
+
+	// Bind to delegates
+	//  This is mostly done to have a single place to bind to delegates for a Projectile related events (i.e. OnAllocate ... etc).
+	const TArray<FCsProjectilePooled*>& PoolOfType = Internal.GetPool(Type);
+
+	for (FCsProjectilePooled* ProjectilePooled : PoolOfType)
+	{
+		UObject* O				   = ProjectilePooled->GetObject();
+		ICsProjectile_Event* Event = CS_INTERFACE_CAST_CHECKED(O, UObject, ICsProjectile_Event);
+
+		Event->GetOnAllocate_Event().AddUObject(this, &UCsManager_Projectile::Projectile_OnAllocate);
+		Event->GetOnDeallocate_Start_Event().AddUObject(this, &UCsManager_Projectile::Projectile_OnDeallocate_Start);
+		Event->GetOnHit_Event().AddUObject(this, &UCsManager_Projectile::Projectile_OnHit);
+	}
 }
 
 #pragma endregion Settings
@@ -605,6 +621,10 @@ void UCsManager_Projectile::InitInternalFromSettings()
 #define ManagerParamsType NCsProjectile::FManager::FParams
 void UCsManager_Projectile::InitInternal(const ManagerParamsType& Params)
 {
+	using namespace NCsManagerProjectile::NCached;
+
+	const FString& Context = Str::InitInternal;
+
 	// Add CVars
 	{
 		ManagerParamsType& P = const_cast<ManagerParamsType&>(Params);
@@ -630,6 +650,26 @@ void UCsManager_Projectile::InitInternal(const ManagerParamsType& Params)
 		}
 	}
 	Internal.Init(Params);
+
+	// Bind to delegates
+	//  This is mostly done to have a single place to bind to delegates for a Projectile related events (i.e. OnAllocate ... etc).
+	TArray<FECsProjectile> Types;
+	Internal.GetPoolTypes(Types);
+
+	for (const FECsProjectile& Type : Types)
+	{
+		const TArray<FCsProjectilePooled*>& PoolOfType = Internal.GetPool(Type);
+
+		for (FCsProjectilePooled* ProjectilePooled : PoolOfType)
+		{
+			UObject* O				   = ProjectilePooled->GetObject();
+			ICsProjectile_Event* Event = CS_INTERFACE_CAST_CHECKED(O, UObject, ICsProjectile_Event);
+
+			Event->GetOnAllocate_Event().AddUObject(this, &UCsManager_Projectile::Projectile_OnAllocate);
+			Event->GetOnDeallocate_Start_Event().AddUObject(this, &UCsManager_Projectile::Projectile_OnDeallocate_Start);
+			Event->GetOnHit_Event().AddUObject(this, &UCsManager_Projectile::Projectile_OnHit);
+		}
+	}
 }
 #undef ManagerParamsType
 
@@ -1206,6 +1246,28 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 #undef ModifierType
 
 #pragma endregion Modifier
+
+// Events
+#pragma region
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+void UCsManager_Projectile::Projectile_OnAllocate(const ICsProjectile* Projectile, PooledPayloadType* Payload)
+{
+#undef PooledPayloadType
+	Projectile_OnAllocate_Event.Broadcast(Projectile, Payload);
+}
+
+void UCsManager_Projectile::Projectile_OnDeallocate_Start(const ICsProjectile* Projectile)
+{
+	Projectile_OnDeallocate_Start_Event.Broadcast(Projectile);
+}
+
+void UCsManager_Projectile::Projectile_OnHit(const ICsProjectile* Projectile, const FHitResult& Hit)
+{
+	Projectile_OnHit_Event.Broadcast(Projectile, Hit);
+}
+
+#pragma endregion Events
 
 // OnHit
 #pragma region

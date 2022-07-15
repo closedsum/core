@@ -6,6 +6,7 @@
 #include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsProjectile.h"
+#include "Event/CsProjectile_Event.h"
 #include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
@@ -66,6 +67,7 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsPause,
 										  public ICsPooledObject,
 										  public ICsProjectile,
+										  public ICsProjectile_Event,
 										  public ICsGetCollisionHitCount
 {
 	GENERATED_UCLASS_BODY()
@@ -117,6 +119,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	FECsProjectile Type;
+
+	FORCEINLINE const FECsProjectile& GetType() const { return Type; }
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
 	int32 Generation;
@@ -187,16 +191,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetCache_Index();
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnAllocate, ACsProjectilePooledImpl*, PooledPayloadType*);
-
-	FOnAllocate OnAllocate_Event;
-
 	UPROPERTY(BlueprintAssignable)
 	FCsProjectilePooledImpl_OnAllocate OnAllocate_ScriptEvent;
-
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeallocate_Start, ACsProjectilePooledImpl*);
-
-	FOnDeallocate_Start OnDeallocate_Start_Event;
 
 	UPROPERTY(BlueprintAssignable)
 	FCsProjectilePooledImpl_OnDeallocate_Start OnDeallocate_Start_ScriptEvent;
@@ -243,6 +239,28 @@ public:
 	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
 
 #pragma endregion Launch
+
+// ICsProjectile_Event
+#pragma region
+public:
+
+	FORCEINLINE ICsProjectile_Event::FOnAllocate& GetOnAllocate_Event() { return OnAllocate_Event; }
+	FORCEINLINE ICsProjectile_Event::FOnDeallocate_Start& GetOnDeallocate_Start_Event() { return OnDeallocate_Start_Event; }
+	FORCEINLINE ICsProjectile_Event::FOnHit& GetOnHit_Event() { return OnHit_Event; }
+
+#pragma endregion ICsProjectile_Event
+
+// Events
+#pragma region
+private:
+
+	ICsProjectile_Event::FOnAllocate OnAllocate_Event;
+
+	ICsProjectile_Event::FOnDeallocate_Start OnDeallocate_Start_Event;
+
+	ICsProjectile_Event::FOnHit OnHit_Event;
+
+#pragma endregion Events
 
 // ICsGetCollisionHitCount
 #pragma region
@@ -309,12 +327,6 @@ protected:
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {}
-
-public:
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHit, ACsProjectilePooledImpl* /*Projectile*/, const FHitResult& /*Hit*/);
-
-	FOnHit OnHit_Event;
 
 #pragma endregion Collision
 

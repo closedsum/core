@@ -112,13 +112,16 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	// ICsPooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
-	OnAllocate_Event(),
 	OnAllocate_ScriptEvent(),
 	OnDeallocate_Start_ScriptEvent(),
 	// ICsProjectile
 	Data(nullptr),
 	// Launch
 	bLaunchOnAllocate(true),
+	// Events
+	OnAllocate_Event(),
+	OnDeallocate_Start_Event(),
+	OnHit_Event(),
 	// Collision
 	IgnoreActors(),
 	IgnoreComponents(),
@@ -126,7 +129,6 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	IgnoredHitComponents(),
 	bDeallocateOnHit(true),
 	HitCount(0),
-	OnHit_Event(),
 	// FX
 	TrailFXPooled(nullptr),
 	bOverride_TrailFX(false),

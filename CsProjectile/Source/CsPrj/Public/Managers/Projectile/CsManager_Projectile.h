@@ -1005,6 +1005,44 @@ public:
 
 #pragma endregion Modifier
 
+// Events
+#pragma region
+private:
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+	void Projectile_OnAllocate(const ICsProjectile* Projectile, PooledPayloadType* Payload);
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FProjectile_OnAllocate, const ICsProjectile* /*Projectile*/, PooledPayloadType* /*Payload*/);
+
+	FProjectile_OnAllocate Projectile_OnAllocate_Event;
+
+#undef PooledPayloadType
+
+private:
+
+	void Projectile_OnDeallocate_Start(const ICsProjectile* Projectile);
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FProjectile_OnDeallocate_Start, const ICsProjectile* /*Projectile*/);
+
+	FProjectile_OnDeallocate_Start Projectile_OnDeallocate_Start_Event;
+
+private:
+
+	void Projectile_OnHit(const ICsProjectile* Projectile, const FHitResult& Hit);
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FProjectile_OnHit, const ICsProjectile* /*Projectile*/, const FHitResult& /*Hit*/);
+
+	FProjectile_OnHit Projectile_OnHit_Event;
+
+#pragma endregion Events
+
 // OnHit
 #pragma region
 public:

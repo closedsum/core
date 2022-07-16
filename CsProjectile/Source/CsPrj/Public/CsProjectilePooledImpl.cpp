@@ -4,7 +4,11 @@
 
 // CVar
 #include "CsCVars_Projectile.h"
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Library
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
@@ -27,6 +31,7 @@
 #include "Settings/CsTypes_ProjectileSettings.h"
 // Data
 #include "Data/CsData_Projectile.h"
+#include "Data/Launch/CsData_Projectile_Launch.h"
 #include "Data/Collision/CsData_Projectile_Collision.h"
 #include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMesh.h"
 #include "Data/Visual/CsData_Projectile_VisualTrail.h"
@@ -77,10 +82,18 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate_Internal);
+			// Launch
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed_Internal);
 			// Modifier
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, ApplyMovementModifiers);
+		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsProjectilePooledImpl, Launch_Delayed_Internal);
 		}
 
 		namespace ScopedTimer
@@ -118,6 +131,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	Data(nullptr),
 	// Launch
 	bLaunchOnAllocate(true),
+	Launch_Delayed_Handle(),
 	// Events
 	OnAllocate_Event(),
 	OnDeallocate_Start_Event(),
@@ -468,6 +482,10 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	OnDeallocate_Start_Event.Broadcast(this);
 	OnDeallocate_Start_ScriptEvent.Broadcast(this);
 
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, this, NCsUpdateGroup::GameState, Launch_Delayed_Handle);
+
 	// FX
 	if (TrailFXPooled)
 	{
@@ -623,6 +641,15 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		TeleportTo(Payload->GetLocation(), Rotation, false, true);
 	}
 
+	// Launch Params
+	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
+	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
+
+	LaunchDataType* LaunchData			 = PrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
+	const LaunchParamsType* LaunchParams = LaunchData ? &(LaunchData->GetLaunchParams()) : nullptr;
+
+	const bool ShouldDelayLaunch = LaunchParams ? LaunchParams->GetDelay() > 0.0f : false;
+
 	// Trail FX
 	{
 		const FString& ScopeName		   = ScopedTimer::SetTrailVisual;
@@ -725,17 +752,22 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 					CollisionComponent->MoveIgnoreComponents.Add(Component);
 				}
 
-				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
-				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
-				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
+				const bool ShouldDelayCollision = ShouldDelayLaunch && LaunchParams->GetDelayParams().GetbCollision();
 
-				CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
-				CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
+				if (!ShouldDelayCollision)
+				{
+					CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
+					CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
+					CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
 
-				CollisionComponent->Activate();
-				CollisionComponent->SetComponentTickEnabled(true);
+					CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
+					CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
 
-				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
+					CollisionComponent->Activate();
+					CollisionComponent->SetComponentTickEnabled(true);
+
+					CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
+				}
 			}
 
 			ApplyHitCountModifiers(Context, CollisionData);
@@ -746,10 +778,22 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	
 	SetActorTickEnabled(true);
 
-	// Simulated
-	if (MovementType == ECsProjectileMovement::Simulated)
+	if (ShouldDelayLaunch)
 	{
-		StartMovementFromModifiers(Context, Payload->GetDirection());
+		FLaunch_Delayed_Payload DelayedPayload;
+		DelayedPayload.Direction = Payload->GetDirection();
+
+		Launch_Delayed(DelayedPayload);
+	}
+	else
+	{
+		// Movement
+		
+		// Simulated
+		if (MovementType == ECsProjectileMovement::Simulated)
+		{
+			StartMovementFromModifiers(Context, Payload->GetDirection());
+		}
 	}
 }
 
@@ -804,6 +848,119 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 			ModifierLibrary::GetDamageModifiersChecked(Context, Modifiers, DamageImpl.Modifiers);
 		}
 	}
+}
+
+void ACsProjectilePooledImpl::Launch_Delayed(const FLaunch_Delayed_Payload& Payload)
+{
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Launch_Delayed;
+
+	// TODO: NOTE: Need a way UpdateGroup is passed via Payload
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	PayloadType* CoroutinePayload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE Launch_Delayed_Internal
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	CoroutinePayload->CoroutineImpl.BindUObject(this, &ACsProjectilePooledImpl::COROUTINE);
+	CoroutinePayload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	CoroutinePayload->Owner.SetObject(this);
+	CoroutinePayload->SetName(Str::COROUTINE);
+	CoroutinePayload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
+	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
+
+	LaunchDataType* LaunchData			 = PrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
+	const LaunchParamsType& LaunchParams = LaunchData->GetLaunchParams();
+
+	// Delay
+	static const int32 DELAY = 0;
+	CoroutinePayload->SetValue_Float(DELAY, LaunchParams.GetDelay());
+
+	// Direction
+	static const int32 DIRECTION = 0;
+	CoroutinePayload->SetValue_Vector(DIRECTION, Payload.Direction);
+
+	// Should Update Collision
+	static const int32 SHOULD_UPDATE_COLLISION = 0;
+	CoroutinePayload->SetValue_Flag(SHOULD_UPDATE_COLLISION, LaunchParams.GetDelayParams().GetbCollision());
+
+	Launch_Delayed_Handle = Scheduler->Start(CoroutinePayload);
+}
+
+char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
+{
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Launch_Delayed_Internal;
+
+	// Delay
+	static const int32 DELAY = 0;
+	const float& Delay = R->GetValue_Float(DELAY);
+
+	// Direction
+	static const int32 DIRECTION = 0;
+	const FVector& Direction = R->GetValue_Vector(DIRECTION);
+	
+	// Should Update Collision
+	static const int32 SHOULD_UPDATE_COLLISION = 0;
+	const bool& ShouldUpdateCollision = R->GetValue_Flag(SHOULD_UPDATE_COLLISION);
+
+	CS_COROUTINE_BEGIN(R);
+
+	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time >= Delay);
+
+	// Movement
+	{
+		StartMovementFromModifiers(Context, Direction);
+	}
+	// Collision
+	if (ShouldUpdateCollision)
+	{
+		const FString& ScopeName		   = ScopedTimer::SetCollision;
+		const FECsScopedGroup& ScopedGroup = NCsScopedGroup::Projectile;
+		const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogProjectileScopedTimerLaunchSetCollision;
+
+		CS_SCOPED_TIMER_ONE_SHOT(&ScopeName, ScopedGroup, ScopeLog);
+
+		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		{
+			const FCsCollisionPreset& CollisionPreset = CollisionData->GetCollisionPreset();
+
+			if (CollisionPreset.CollisionEnabled != ECollisionEnabled::NoCollision)
+			{
+				CollisionComponent->SetCollisionObjectType(CollisionPreset.ObjectType);
+				CollisionComponent->SetSphereRadius(CollisionData->GetCollisionRadius());
+				CollisionComponent->SetCollisionResponseToChannels(CollisionPreset.CollisionResponses);
+
+				CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
+				CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
+
+				CollisionComponent->Activate();
+				CollisionComponent->SetComponentTickEnabled(true);
+
+				CollisionComponent->SetCollisionEnabled(CollisionPreset.CollisionEnabled);
+			}
+		}
+	}
+
+	CS_COROUTINE_END(R);
 }
 
 #pragma endregion Launch

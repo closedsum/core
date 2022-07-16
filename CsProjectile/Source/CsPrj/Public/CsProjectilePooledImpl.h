@@ -13,6 +13,8 @@
 #include "Types/CsTypes_Damage.h"
 #include "Value/Types/CsTypes_DamageValue.h"
 #include "Managers/FX/CsTypes_FX.h"
+// Coroutine
+#include "Coroutine/CsRoutineHandle.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 
@@ -27,6 +29,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnDeallocate
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_TrailFX, ACsProjectilePooledImpl*, Projectile);
 
 #pragma endregion Delegates
+
+struct FCsRoutine;
 
 class USphereComponent;
 class UCsProjectileMovementComponent;
@@ -237,6 +241,18 @@ protected:
 public:
 
 	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
+
+private:
+
+	struct FLaunch_Delayed_Payload
+	{
+		FVector Direction;
+	};
+
+	void Launch_Delayed(const FLaunch_Delayed_Payload& Payload);
+	char Launch_Delayed_Internal(FCsRoutine* R);
+
+	FCsRoutineHandle Launch_Delayed_Handle;
 
 #pragma endregion Launch
 

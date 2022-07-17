@@ -18,6 +18,24 @@ namespace NCsProjectile
 			/**
 			*
 			*
+			* @param Data	Object that implements the interface: DataType (NCsProjectile::NData::IData).
+			* return
+			*/
+			static FString PrintObjectAndClass(const DataType* Data);
+
+			/**
+			*
+			*
+			* @param Data	Object that implements the interface: DataType (NCsProjectile::NData::IData).
+			* return
+			*/
+			static FString PrintDataAndClass(const DataType* Data);
+
+			static FString Print(const DataType* Data);
+
+			/**
+			*
+			*
 			* @param Context	The calling context.
 			* @param Data
 			* return

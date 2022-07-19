@@ -33,6 +33,7 @@ namespace NCsProjectilePayload
 	extern CSPRJ_API const Type Projectile;
 	extern CSPRJ_API const Type ProjectileCollision;
 	extern CSPRJ_API const Type ProjectileModifier;
+	extern CSPRJ_API const Type ProjectileTarget;
 }
 
 #pragma endregion ProjectilePayload

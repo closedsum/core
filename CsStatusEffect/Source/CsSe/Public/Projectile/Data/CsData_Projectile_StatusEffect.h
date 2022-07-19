@@ -4,12 +4,9 @@
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Types/CsTypes_StatusEffect.h"
 
 #include "CsData_Projectile_StatusEffect.generated.h"
-
-// NCsStatusEffect::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
 namespace NCsProjectile
 {
@@ -17,8 +14,6 @@ namespace NCsProjectile
 	{
 		namespace NStatusEffect
 		{
-		#define StatusEffectDataType NCsStatusEffect::NData::IData
-
 			/**
 			*
 			*/
@@ -32,10 +27,8 @@ namespace NCsProjectile
 
 				virtual ~IStatusEffect() {}
 
-				virtual const TArray<StatusEffectDataType*>& GetStatusEffects() const = 0;
+				virtual const TArray<FECsStatusEffect>& GetStatusEffects() const = 0;
 			};
-
-		#undef StatusEffectDataType
 		}
 	}
 }
@@ -45,9 +38,6 @@ class CSSE_API UCsData_Projectile_StatusEffect : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
-
-// NCsStatusEffect::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
 /**
 *
@@ -60,11 +50,7 @@ public:
 
 	static const FName Name;
 
-#define StatusEffectDataType NCsStatusEffect::NData::IData
-
 public:
 
-	virtual const TArray<StatusEffectDataType*>& GetStatusEffects() const = 0;
-
-#undef StatusEffectDataType
+	virtual const TArray<FECsStatusEffect>& GetStatusEffects() const = 0;
 };

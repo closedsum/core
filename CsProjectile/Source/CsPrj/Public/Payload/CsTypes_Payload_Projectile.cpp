@@ -10,6 +10,7 @@ namespace NCsProjectilePayload
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(Projectile, "NCsProjectile::NPayload::IPayload");
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileCollision, "NCsProjectile::NPayload::NCollision::ICollision");
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileModifier, "NCsProjectile::NPayload::NModifier::IModifier");
+	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(ProjectileTarget, "NCsProjectile::NPayload::NTarget::ITarget");
 }
 
 #pragma endregion NCsProjectilePayload

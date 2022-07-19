@@ -53,6 +53,11 @@ struct FCsFXActorPooled;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsProjectile, NData, IData)
 // NCsProjectile::NData::NCollision::ICollision
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NData, NCollision, ICollision)
+// NCsProjectile::NData::NTracking::ITracking
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NData, NTracking, ITracking)
+
+class USceneComponent;
+class USkeletalMeshComponent;
 
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
@@ -291,6 +296,102 @@ public:
 protected:
 
 	void StartMovementFromData(const FVector& Direction);
+
+	// Tracking
+#pragma region
+protected:
+
+	struct FTrackingImpl
+	{
+		friend class ACsProjectilePooledImpl;
+
+	private:
+
+		ACsProjectilePooledImpl* Outer;
+
+	public:
+
+	#define TrackingDataType NCsProjectile::NData::NTracking::ITracking
+
+		TrackingDataType* TrackingData;
+
+		enum class EState : uint8
+		{
+			Inactive,
+			Delay,
+			Active
+		};
+
+		EState CurrentState;
+
+		enum class EObject : uint8
+		{
+			Component,
+			Bone,
+			Location,
+			ID
+		};
+
+		EObject ObjectType;
+
+		USceneComponent* Component;
+
+		USkeletalMeshComponent* MeshComponent;
+
+		FName Bone;
+
+		FVector Location;
+
+		int32 ID;
+
+		float ElapsedTime;
+
+	public:
+
+		FTrackingImpl() :
+			TrackingData(nullptr),
+			CurrentState(EState::Inactive),
+			ObjectType(EObject::Component),
+			Component(nullptr),
+			MeshComponent(nullptr),
+			Bone(NAME_None),
+			Location(0.0f),
+			ID(INDEX_NONE),
+			ElapsedTime(0.0f)
+		{
+		}
+
+		void Init(PayloadType* Payload);
+
+		void Update(const FCsDeltaTime& DeltaTime);
+
+		FVector GetDestination() const;
+
+		FORCEINLINE void Reset()
+		{
+			TrackingData = nullptr;
+			CurrentState = EState::Inactive;
+			ObjectType = EObject::Component;
+			Component = nullptr;
+			MeshComponent = nullptr;
+			Bone = NAME_None;
+			Location = FVector::ZeroVector;
+			ID = INDEX_NONE;
+			ElapsedTime  = 0.0f;
+		}
+
+	#undef TrackingDataType
+	};
+
+	FTrackingImpl TrackingImpl;
+
+public:
+
+	virtual bool TrackingImpl_IsValid() const { return true; }
+
+	virtual FVector TrackingImpl_GetDestinationByID() const;
+
+#pragma endregion Tracking
 
 #pragma endregion Movement
 

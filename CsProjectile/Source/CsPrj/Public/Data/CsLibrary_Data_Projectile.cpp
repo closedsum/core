@@ -103,6 +103,67 @@ namespace NCsProjectile
 
 		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
+			// Launch
+			typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
+
+			if (const LaunchDataType* LaunchData = GetSafeInterfaceChecked<LaunchDataType>(Context, Data))
+			{
+				CS_IS_VALID(LaunchData->GetLaunchParams())
+			}
+			// Tracking
+			typedef NCsProjectile::NData::NTracking::ITracking TrackingDataType;
+
+			if (const TrackingDataType* TrackingData = GetSafeInterfaceChecked<TrackingDataType>(Context, Data))
+			{
+				if (TrackingData->ShouldUseTracking())
+				{
+					CS_IS_VALID(TrackingData->GetTrackingParams())
+				}
+			}
+			// Collision
+			typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+			if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+			{
+				CS_IS_VALID(CollisionData->GetCollisionPreset())
+				CS_IS_FLOAT_GREATER_THAN(CollisionData->GetCollisionRadius(), 0.0f)
+
+				const TArray<TSubclassOf<UObject>>& Classes =  CollisionData->GetIgnoreHitObjectClasses();
+
+				const int32 Count = Classes.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const TSubclassOf<UObject>& C = Classes[I];
+
+					if (!C.Get())
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s->GetIgnoreHitObjectClasses()[I] is NULL."), *Context, *Print(Data), I));
+						return false;
+					}
+				}
+			}
+			// VisualStaticMesh
+			typedef NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh StaticMeshVisualDataType;
+
+			if (const StaticMeshVisualDataType* StaticMeshVisualData = GetSafeInterfaceChecked<StaticMeshVisualDataType>(Context, Data))
+			{
+				CS_IS_VALID(StaticMeshVisualData->GetStaticMesh())
+			}
+			// VisualTrail
+			typedef NCsProjectile::NData::NVisual::NTrail::ITrail TrailVisualDataType;
+
+			if (const TrailVisualDataType* TrailVisualData = GetSafeInterfaceChecked<TrailVisualDataType>(Context, Data))
+			{
+				CS_IS_VALID(TrailVisualData->GetTrailFX())
+			}
+			// Damage
+			typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
+
+			if (const GetDamageDataTypeDataType* GetDamageDataType = GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsDamageData, FECsDamageData, GetDamageDataType->GetDamageDataType())
+			}
 			return true;
 		}
 

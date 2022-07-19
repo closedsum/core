@@ -23,6 +23,7 @@ enum class ECsProjectileTrackingDestination : uint8
 	Bone									UMETA(DisplayName = "Bone"),
 	/** World Space position */
 	Location								UMETA(DisplayName = "Location"),
+	Custom									UMETA(DisplayName = "Custom"),
 	ECsProjectileTrackingDestination_MAX	UMETA(Hidden),
 };
 
@@ -40,6 +41,7 @@ namespace NCsProjectileTrackingDestination
 		extern CSPRJ_API const Type Object;
 		extern CSPRJ_API const Type Bone;
 		extern CSPRJ_API const Type Location;
+		extern CSPRJ_API const Type Custom;
 		extern CSPRJ_API const Type ECsProjectileTrackingDestination_MAX;
 	}
 }
@@ -60,6 +62,7 @@ namespace NCsProjectile
 			Bone,
 			/** World Space position */
 			Location,
+			Custom,
 			EDestination_MAX
 		};
 
@@ -77,6 +80,7 @@ namespace NCsProjectile
 				extern CSPRJ_API const Type Object;
 				extern CSPRJ_API const Type Bone;
 				extern CSPRJ_API const Type Location;
+				extern CSPRJ_API const Type Custom;
 				extern CSPRJ_API const Type EDestination_MAX;
 			}
 		}

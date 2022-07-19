@@ -60,6 +60,7 @@
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
+#include "Payload/Target/CsPayload_Projectile_TargetImplSlice.h"
 #include "CsProjectilePooledImpl.h"
 // Modifier
 #include "Modifier/CsModifier_Int.h"
@@ -503,6 +504,8 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 	Fire_StartTime = 0.0f;
 	FireCount = 0;
 	
+	ProjectileImpl->Reset();
+
 	// bOverride_ProjectileImpl_GetLaunchDirection = false;
 
 	Cache->Deallocate();
@@ -1216,6 +1219,20 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 
 			Outer->GetProjectileModifiers(Modifiers);
 			Slice->CopyFromModifiers(Outer, Modifiers);
+		}
+	}
+	// Projectile Target
+	{
+		typedef NCsProjectile::NPayload::NTarget::FImplSlice SliceType;
+		typedef NCsProjectile::NPayload::NTarget::ITarget SliceInterfaceType;
+
+		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
+		{
+			Slice->bTarget = bTarget;
+			Slice->Component = TargetComponent;
+			Slice->Location = TargetLocation;
+			Slice->Bone = TargetBone;
+			Slice->ID = TargetID;
 		}
 	}
 	return Result;

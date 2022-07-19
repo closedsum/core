@@ -402,6 +402,9 @@ public:
 
 		ACsProjectileWeaponActorPooled* Outer;
 
+	// Launch
+	protected:
+
 		USceneComponent* LaunchComponentLocation;
 
 		USceneComponent* LaunchComponentDirection;
@@ -414,15 +417,35 @@ public:
 
 		FVector CustomLaunchDirection;
 
+	// Target
+	public:
+
+		bool bTarget;
+
+		USceneComponent* TargetComponent;
+
+		FVector TargetLocation;
+
+		FName TargetBone;
+
+		int32 TargetID;
+
 	public:
 
 		FProjectileImpl() :
 			Outer(nullptr),
+			// Launch
 			LaunchComponentLocation(nullptr),
 			LaunchComponentDirection(nullptr),
 			LaunchScopedHandle(),
 			CustomLaunchLocation(FVector::ZeroVector),
-			CustomLaunchDirection(FVector::ZeroVector)
+			CustomLaunchDirection(FVector::ZeroVector),
+			// Target
+			bTarget(false),
+			TargetComponent(nullptr),
+			TargetLocation(0.0f),
+			TargetBone(NAME_None),
+			TargetID(INDEX_NONE)
 		{
 		}
 		virtual ~FProjectileImpl(){}
@@ -585,8 +608,26 @@ public:
 		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);
 	#undef LaunchParamsType
 
-	
 		void Launch(const LaunchPayloadType& LaunchPayload);
+
+		FORCEINLINE void Reset()
+		{
+			LaunchComponentLocation = nullptr;
+			LaunchComponentDirection = nullptr;
+			CustomLaunchLocation = FVector::ZeroVector;
+			CustomLaunchDirection = FVector::ZeroVector;
+
+			ResetTarget();
+		}
+
+		FORCEINLINE void ResetTarget()
+		{
+			bTarget = false;
+			TargetComponent = nullptr;
+			TargetLocation = FVector::ZeroVector;
+			TargetBone = NAME_None;
+			TargetID = INDEX_NONE;
+		}
 
 	#undef LaunchPayloadType
 	};

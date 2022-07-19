@@ -23,7 +23,9 @@
 #include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
+	// Common
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
@@ -32,6 +34,7 @@
 // Data
 #include "Data/CsData_Projectile.h"
 #include "Data/Launch/CsData_Projectile_Launch.h"
+#include "Data/Tracking/CsData_Projectile_Tracking.h"
 #include "Data/Collision/CsData_Projectile_Collision.h"
 #include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMesh.h"
 #include "Data/Visual/CsData_Projectile_VisualTrail.h"
@@ -46,12 +49,14 @@
 #include "Components/SphereComponent.h"
 #include "CsProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
 #include "Payload/Collision/CsPayload_Projectile_Collision.h"
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
+#include "Payload/Target/CsPayload_Projectile_Target.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/CsModifier_Int.h"
@@ -100,6 +105,17 @@ namespace NCsProjectilePooledImpl
 		{
 			CS_DEFINE_CACHED_STRING(SetCollision, "ACsProjectilePooledImpl::Launch_SetCollision");
 			CS_DEFINE_CACHED_STRING(SetTrailVisual, "ACsProjectilePooledImpl::Launch_SetTrailVisual");
+		}
+	}
+
+	namespace NTrackingImpl
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl::FTrackingImpl, Init);
+			}
 		}
 	}
 
@@ -245,6 +261,7 @@ void ACsProjectilePooledImpl::BeginPlay()
 
 	ConstructCache();
 
+	TrackingImpl.Outer = this;
 	DamageImpl.Outer = this;
 }
 
@@ -387,6 +404,7 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 
 void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
+	TrackingImpl.Update(DeltaTime);
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -795,6 +813,8 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 			StartMovementFromModifiers(Context, Payload->GetDirection());
 		}
 	}
+
+	TrackingImpl.Init(Payload);
 }
 
 UObject* ACsProjectilePooledImpl::GetOwner() const
@@ -979,6 +999,170 @@ void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
 	MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Direction;
 	MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
 }
+
+	// Tracking
+#pragma region
+
+#define PayloadType NCsProjectile::NPayload::IPayload
+void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
+{
+#undef PayloadType
+	
+	using namespace NCsProjectilePooledImpl::NTrackingImpl::NCached;
+
+	const FString& Context = Str::Init;
+
+	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
+	typedef NCsProjectile::NPayload::NTarget::ITarget TargetPayloadType;
+
+	TargetPayloadType* TargetPayload = PayloadLibrary::GetInterfaceChecked<TargetPayloadType>(Context, Payload);
+
+	if (!TargetPayload->HasTarget())
+		return;
+
+	typedef NCsProjectile::NData::FLibrary DataLibrary;
+	typedef NCsProjectile::NData::NTracking::ITracking TrackingDataType;
+
+	TrackingData = DataLibrary::GetSafeInterfaceChecked<TrackingDataType>(Context, Outer->GetData());
+
+	if (TrackingData &&
+		TrackingData->ShouldUseTracking())
+	{
+		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
+		typedef NCsProjectile::NTracking::EDestination DestinationType;
+
+		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
+		const DestinationType& Destination	   = TargetParams.GetDestination();
+
+		// Object
+		if (Destination == DestinationType::Object)
+		{
+			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Object but TargetPayload->GetTargetComponent() is NULL."), *Context);
+
+			ObjectType = EObject::Component;
+			Component  = TargetPayload->GetTargetComponent();
+		}
+		// Bone
+		else
+		if (Destination == DestinationType::Bone)
+		{
+			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetComponent() is NULL."), *Context);
+
+			ObjectType    = EObject::Bone;
+			Component     = TargetPayload->GetTargetComponent();
+			MeshComponent = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
+			
+			checkf(TargetPayload->GetTargetBone() != NAME_None, TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetBone() is NAME_None."), *Context);
+
+			Bone = TargetPayload->GetTargetBone();
+		}
+		// Location
+		else
+		if (Destination == DestinationType::Location)
+		{
+			ObjectType = EObject::Location;
+			Location   = TargetPayload->GetTargetLocation();
+		}
+		// Custom | TODO: NOTE: This could be a better descriptor
+		else
+		if (Destination == DestinationType::Custom)
+		{
+			checkf(TargetPayload->GetTargetID() != INDEX_NONE, TEXT("%s: TrackingData->GetDestination() == DestinationType::Custom but TargetPayload->GetTargetID() is -1 (INDEX_NONE or INVALID)."), *Context);
+
+			ObjectType = EObject::ID;
+			ID = TargetPayload->GetTargetID();
+		}
+
+		CurrentState = TargetParams.GetDelay() > 0.0f ? EState::Delay : EState::Active;
+	}
+}
+
+void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTime)
+{
+	if (CurrentState == EState::Inactive)
+		return;
+
+	if (!Outer->TrackingImpl_IsValid())
+	{
+		CurrentState = EState::Inactive;
+		return;
+	}
+
+	// Delay
+	if (CurrentState == EState::Delay)
+	{
+		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
+
+		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
+
+		if (ElapsedTime >= TargetParams.GetDelay())
+		{
+			CurrentState = EState::Active;
+		}
+	}
+	// Active
+	if (CurrentState == EState::Active)
+	{
+		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
+
+		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
+
+		const float& Duration = TargetParams.GetDuration();
+
+		if (Duration > 0.0f &&
+			ElapsedTime >= Duration)
+		{
+			CurrentState = EState::Inactive;
+		}
+		else
+		{
+			typedef NCsMath::FLibrary MathLibrary;
+
+			float Speed;
+			float SpeedSq;
+			
+			FVector VelocityDir = MathLibrary::GetSafeNormal(Outer->MovementComponent->Velocity, SpeedSq, Speed);
+
+			const FVector Destination = GetDestination() + TargetParams.GetOffset();
+			const FVector Direction   = (Destination - Outer->GetActorLocation()).GetSafeNormal();
+
+			// TODO: check Dot Threshold
+
+			VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, TargetParams.GetRotationRate());
+
+			Outer->MovementComponent->Velocity = Speed * VelocityDir;
+
+			// TODO: Handle Launch Delay by updating Rotation
+		}
+	}
+	ElapsedTime += DeltaTime.Time;
+}
+
+
+FVector ACsProjectilePooledImpl::FTrackingImpl::GetDestination() const
+{
+	// Component
+	if (ObjectType == EObject::Component)
+		return Component->GetComponentLocation();
+	// Bone
+	if (ObjectType == EObject::Bone)
+		return MeshComponent->GetSocketLocation(Bone);
+	// Location
+	if (ObjectType == EObject::Location)
+		return Location;
+	// ID
+	if (ObjectType == EObject::ID)
+		return Outer->TrackingImpl_GetDestinationByID();
+	check(0);
+	return FVector::ZeroVector;
+}
+
+FVector ACsProjectilePooledImpl::TrackingImpl_GetDestinationByID() const
+{
+	return FVector::ZeroVector;
+}
+
+#pragma endregion Tracking
 
 #pragma endregion Movement
 

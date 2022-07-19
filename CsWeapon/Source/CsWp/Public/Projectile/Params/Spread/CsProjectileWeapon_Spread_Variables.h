@@ -29,13 +29,15 @@ namespace NCsWeapon
 					void SetSizeAndAddDefaulted(const int32& Size)
 					{
 						Offsets.Reset(FMath::Max(Offsets.Max(), Size));
-						Offsets.AddDefaulted(Size);
-
 						Yaws.Reset(FMath::Max(Yaws.Max(), Size));
-						Yaws.AddDefaulted(Size);
-
 						Pitches.Reset(FMath::Max(Pitches.Max(), Size));
-						Pitches.AddDefaulted(Size);
+
+						for (int32 I = 0; I < Size; ++I)
+						{
+							Offsets.Add(FVector::ZeroVector);
+							Yaws.Add(0.0f);
+							Pitches.Add(0.0f);
+						}
 					}
 				};
 

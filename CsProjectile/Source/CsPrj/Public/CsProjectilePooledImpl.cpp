@@ -616,15 +616,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 	SetActorHiddenInGame(false);
 
-	// Real Visible
-	//if (Relevance == ECsProjectileRelevance::RealVisible)
-	{
-		RootComponent = CollisionComponent;
-
-		MovementComponent->UpdatedComponent = CollisionComponent;
-		MovementComponent->Activate();
-		MovementComponent->SetComponentTickEnabled(true);
-	}
+	RootComponent = CollisionComponent;
 	
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 
@@ -659,6 +651,14 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		FRotator Rotation		 = Direction.Rotation();
 
 		TeleportTo(Payload->GetLocation(), Rotation, false, true);
+	}
+
+	// Real Visible
+	//if (Relevance == ECsProjectileRelevance::RealVisible)
+	{
+		MovementComponent->UpdatedComponent = CollisionComponent;
+		MovementComponent->Activate();
+		MovementComponent->SetComponentTickEnabled(true);
 	}
 
 	// Launch Params
@@ -783,6 +783,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 					CollisionComponent->SetNotifyRigidBodyCollision(CollisionPreset.bSimulationGeneratesHitEvents);
 					CollisionComponent->SetGenerateOverlapEvents(CollisionPreset.bGenerateOverlapEvents);
 
+					CollisionComponent->UpdateBounds();
 					CollisionComponent->Activate();
 					CollisionComponent->SetComponentTickEnabled(true);
 
@@ -1161,7 +1162,6 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 	}
 	ElapsedTime += DeltaTime.Time;
 }
-
 
 FVector ACsProjectilePooledImpl::FTrackingImpl::GetDestination() const
 {

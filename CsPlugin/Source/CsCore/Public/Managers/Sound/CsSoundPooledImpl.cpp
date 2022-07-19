@@ -110,8 +110,8 @@ void ACsSoundPooledImpl::PostInitializeComponents()
 		ConstructCache();
 	}
 #endif // #if WITH_EDITOR
-
 }
+
 void ACsSoundPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Cache->QueueDeallocate();

@@ -418,22 +418,27 @@ namespace NCsWeapon
 		#undef ModifierType
 
 		#pragma endregion Modifier
-
-		// Spread
-		#pragma region
-		public:
-
-		#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
-
-			static SpreadVariablesResourceType* AllocateSpreadVariables(const FString& Context, const UObject* WorldContext);
-
-			static void DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource);
-
-			static void DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, const int32& Index);
-
-		#undef SpreadVariablesResourceType
-
-		#pragma endregion Spread
 		};
+
+		namespace NSpread
+		{
+			namespace NVariables
+			{
+				struct CSWP_API FLibrary final
+				{
+				public:
+
+				#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+
+					static SpreadVariablesResourceType* Allocate(const FString& Context, const UObject* WorldContext);
+
+					static void Deallocate(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource);
+
+					static void Deallocate(const FString& Context, const UObject* WorldContext, const int32& Index);
+
+				#undef SpreadVariablesResourceType
+				};
+			}
+		}
 	}
 }

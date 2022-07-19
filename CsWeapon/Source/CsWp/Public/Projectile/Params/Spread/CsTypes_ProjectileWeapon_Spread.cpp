@@ -312,7 +312,7 @@ namespace NCsWeapon
 				{
 					for (int32 I = 0; I < Count; ++I)
 					{
-						OutAngles[I] = I * (360.0f - AngleBetween);
+						OutAngles[I] = 360.0f - (I * AngleBetween);
 					}
 				}
 				// Ordered Counter-Clockwise
@@ -346,7 +346,7 @@ namespace NCsWeapon
 					for (int32 I = StartIndex; I < Count; ++I)
 					{
 						if (Direction == CLOCKWISE)
-							OutAngles[I] = I * (360.0f - AngleBetween);
+							OutAngles[I] = 360.0f - (I * AngleBetween);
 						else
 							OutAngles[I] = I * AngleBetween;
 
@@ -375,7 +375,7 @@ namespace NCsWeapon
 					for (int32 I = StartIndex; I < Count; ++I)
 					{
 						if (Direction == CLOCKWISE)
-							OutAngles[I] = I * (360.0f - AngleBetween);
+							OutAngles[I] = 360.0f - (I * AngleBetween);
 						else
 							OutAngles[I] = I * AngleBetween;
 

@@ -809,9 +809,9 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 			if (YawParams.ShouldPrecalculate())
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+				typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
 				
-				Resource					   = WeaponManagerLibrary::AllocateSpreadVariables(Context, this);
+				Resource					   = VariablesLibrary::Allocate(Context, this);
 				SpreadVariablesType* Variables = Resource->Get();
 
 				Variables->SetSizeAndAddDefaulted(ProjectilesPerShot);
@@ -989,9 +989,9 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 
 		if (SpreadVariablesResource)
 		{
-			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+			typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
 
-			WeaponManagerLibrary::DeallocateSpreadVariables(Context, this, SpreadVariablesResource);
+			VariablesLibrary::Deallocate(Context, this, SpreadVariablesResource);
 		}
 		FireHandles.Remove(R->GetHandle());
 	}
@@ -1408,7 +1408,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 
 				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
-				Dir *= DirectionScalar;
+				Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
@@ -1422,7 +1422,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 
 				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
 				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
-				Dir *= DirectionScalar;
+				Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
@@ -1444,7 +1444,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 
 		Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
 		Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
-		Dir *= DirectionScalar;
+		Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 		return Dir;
 	}
@@ -1462,7 +1462,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 
 			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
 			Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
-			Dir *= DirectionScalar;
+			Dir = DirectionScalar * GetLaunchSpreadDirection(Dir, LaunchPayload);
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 			return Dir;
 		}

@@ -354,28 +354,35 @@ namespace NCsWeapon
 
 		#pragma endregion Modifier
 
-		// Spread
-		#pragma region
-
-		#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
-
-		SpreadVariablesResourceType* FLibrary::AllocateSpreadVariables(const FString& Context, const UObject* WorldContext)
+		namespace NSpread
 		{
-			return GetChecked(Context, WorldContext)->AllocateSpreadVariables();
+			namespace NVariables
+			{
+				#define SpreadVariablesResourceType NCsWeapon::NProjectile::NSpread::NVariables::FResource
+
+				SpreadVariablesResourceType* FLibrary::Allocate(const FString& Context, const UObject* WorldContext)
+				{
+					typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+					return WeaponManagerLibrary::GetChecked(Context, WorldContext)->AllocateSpreadVariables();
+				}
+
+				void FLibrary::Deallocate(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource)
+				{
+					typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+					WeaponManagerLibrary::GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Resource);
+				}
+
+				void FLibrary::Deallocate(const FString& Context, const UObject* WorldContext, const int32& Index)
+				{
+					typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+					WeaponManagerLibrary::GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Index);
+				}
+
+				#undef SpreadVariablesResourceType
+			}
 		}
-
-		void FLibrary::DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, SpreadVariablesResourceType* Resource)
-		{
-			GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Resource);
-		}
-
-		void FLibrary::DeallocateSpreadVariables(const FString& Context, const UObject* WorldContext, const int32& Index)
-		{
-			GetChecked(Context, WorldContext)->DeallocateSpreadVariables(Index);
-		}
-
-		#undef SpreadVariablesResourceType
-
-		#pragma endregion Spread
 	}
 }

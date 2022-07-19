@@ -534,6 +534,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	CollisionComponent->SetGenerateOverlapEvents(false);
 	CollisionComponent->SetNotifyRigidBodyCollision(false);
 	// Movement
+	TrackingImpl.Reset();
+
 	MovementComponent->StopMovementImmediately();
 	MovementComponent->SetComponentTickEnabled(false);
 	MovementComponent->Deactivate();

@@ -130,12 +130,26 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float RotationRate;
 
+	/** Minimum Dot product between the current direction of the Projectile (velocity) and the direction to the destination (target)
+		for Tracking to happen. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking", meta = (UIMin = "-1.0", ClampMin = "-1.0", UIMax = "1.0", ClampMax = "1.0"))
+	float MinDotThreshold;
+
+	/** Maximum Dot product between the current direction of the Projectile (velocity) and the direction to the destination (target)
+		before using the Pitch when rotating toward the destination.
+		This is useful to prevent a Projectile from adjusting along the Z when Tracking toward the destination.
+		NOTE: For now, this is done by ignoring the Z value in the direction to the destination. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking", meta = (UIMin = "-1.0", ClampMin = "-1.0", UIMax = "1.0", ClampMax = "1.0"))
+	float MaxDotBeforeUsingPitch;
+
 	FCsProjectile_TrackingParams() :
 		Destination(ECsProjectileTrackingDestination::Object),
 		Offset(0.0f),
 		Delay(0.0f),
 		Duration(0.0f),
-		RotationRate(0.0f)
+		RotationRate(0.0f),
+		MinDotThreshold(-1.0f),
+		MaxDotBeforeUsingPitch(-1.0f)
 	{
 	}
 
@@ -181,6 +195,16 @@ namespace NCsProjectile
 			/** The speed in degrees per second at which the Projectile will rotate toward what is being tracked. */
 			CS_DECLARE_MEMBER_WITH_PROXY(RotationRate, float)
 
+			/** Minimum Dot product between the current direction of the Projectile (velocity) and the direction to the destination (target)
+				for Tracking to happen. */
+			CS_DECLARE_MEMBER_WITH_PROXY(MinDotThreshold, float)
+
+			/** Maximum Dot product between the current direction of the Projectile (velocity) and the direction to the destination (target)
+				before using the Pitch when rotating toward the destination.
+				This is useful to prevent a Projectile from adjusting along the Z when Tracking toward the destination.
+				NOTE: For now, this is done by ignoring the Z value in the direction to the destination. */
+			CS_DECLARE_MEMBER_WITH_PROXY(MaxDotBeforeUsingPitch, float)
+
 		public:
 
 			FParams() :
@@ -188,13 +212,17 @@ namespace NCsProjectile
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Delay, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Duration, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(RotationRate, 0.0f)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(RotationRate, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDotThreshold, -1.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDotBeforeUsingPitch, -1.0f)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Destination);
 				CS_CTOR_SET_MEMBER_PROXY(Offset);
 				CS_CTOR_SET_MEMBER_PROXY(Delay);
 				CS_CTOR_SET_MEMBER_PROXY(Duration);
 				CS_CTOR_SET_MEMBER_PROXY(RotationRate);
+				CS_CTOR_SET_MEMBER_PROXY(MinDotThreshold);
+				CS_CTOR_SET_MEMBER_PROXY(MaxDotBeforeUsingPitch);
 			}
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Destination, DestinationType)
@@ -202,6 +230,8 @@ namespace NCsProjectile
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Delay, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Duration, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RotationRate, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDotThreshold, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDotBeforeUsingPitch, float)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;

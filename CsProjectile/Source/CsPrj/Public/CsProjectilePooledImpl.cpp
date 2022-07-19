@@ -1107,9 +1107,9 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 	{
 		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
 
-		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
+		const TrackingParamsType& TrackingParams = TrackingData->GetTrackingParams();
 
-		const float& Duration = TargetParams.GetDuration();
+		const float& Duration = TrackingParams.GetDuration();
 
 		if (Duration > 0.0f &&
 			ElapsedTime >= Duration)
@@ -1123,18 +1123,40 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 			float Speed;
 			float SpeedSq;
 			
-			FVector VelocityDir = MathLibrary::GetSafeNormal(Outer->MovementComponent->Velocity, SpeedSq, Speed);
+			FVector VelocityDir				 = MathLibrary::GetSafeNormal(Outer->MovementComponent->Velocity, SpeedSq, Speed);
+			const FVector CurrentDestination = GetDestination();
 
-			const FVector Destination = GetDestination() + TargetParams.GetOffset();
-			const FVector Direction   = (Destination - Outer->GetActorLocation()).GetSafeNormal();
+			FVector Direction = (CurrentDestination - Outer->GetActorLocation()).GetSafeNormal();
 
-			// TODO: check Dot Threshold
+			const float& MinDotThreshold		= TrackingParams.GetMinDotThreshold();
+			const float& MaxDotBeforeUsingPitch = TrackingParams.GetMaxDotBeforeUsingPitch();
 
-			VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, TargetParams.GetRotationRate());
+			const float Dot = FVector::DotProduct(VelocityDir, Direction);
 
-			Outer->MovementComponent->Velocity = Speed * VelocityDir;
+			if (Dot >= MinDotThreshold)
+			{
+				FVector Destination = CurrentDestination;
 
-			// TODO: Handle Launch Delay by updating Rotation
+				// "Normal" Tracking
+				if (Dot > MaxDotBeforeUsingPitch)
+				{
+					Destination = CurrentDestination + TrackingParams.GetOffset();
+				}
+				// Ignore Pitch / Z
+				else
+				{
+					Destination.Z = Outer->GetActorLocation().Z;
+				}
+
+				Destination	+= TrackingParams.GetOffset();
+				Direction    = (Destination - Outer->GetActorLocation()).GetSafeNormal();
+
+				VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, TrackingParams.GetRotationRate());
+
+				Outer->MovementComponent->Velocity = Speed * VelocityDir;
+
+				// TODO: Handle Launch Delay by updating Rotation
+			}
 		}
 	}
 	ElapsedTime += DeltaTime.Time;

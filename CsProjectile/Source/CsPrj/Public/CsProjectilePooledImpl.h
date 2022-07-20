@@ -259,6 +259,12 @@ private:
 
 	FCsRoutineHandle Launch_Delayed_Handle;
 
+	bool bLaunchComplete;
+
+public:
+
+	FORCEINLINE const bool& IsLaunchComplete() const { return bLaunchComplete; }
+
 #pragma endregion Launch
 
 // ICsProjectile_Event

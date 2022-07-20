@@ -148,6 +148,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	// Launch
 	bLaunchOnAllocate(true),
 	Launch_Delayed_Handle(),
+	bLaunchComplete(false),
 	// Events
 	OnAllocate_Event(),
 	OnDeallocate_Start_Event(),
@@ -540,6 +541,8 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	MovementComponent->SetComponentTickEnabled(false);
 	MovementComponent->Deactivate();
 
+	bLaunchComplete = false;
+
 	// Deallocate attachments
 
 	// Mesh
@@ -585,9 +588,20 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Set / Cache any Modifiers from the Payload
 	OnLaunch_SetModifiers(Payload);
 
+	// Launch Params
+	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
+	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
+
+	LaunchDataType* LaunchData			 = PrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
+	const LaunchParamsType* LaunchParams = LaunchData ? &(LaunchData->GetLaunchParams()) : nullptr;
+
+	const bool ShouldDelayLaunch = LaunchParams ? LaunchParams->GetDelay() > 0.0f : false;
+
 	// LifeTime
 	{
 		float LifeTime = Cache->GetLifeTime();
+		float Delay	   = ShouldDelayLaunch ? LaunchParams->GetDelay() : 0.0f;
 
 		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
@@ -605,11 +619,12 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
 				LifeTime						 = FloatModifier->Modify(LifeTime);
 			}
+			// TODO: Add Modifier for Delay
 		}
 
 		typedef NCsProjectile::NCache::FLibrary CacheLibrary;
 
-		CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime);
+		CacheLibrary::SetLifeTimeChecked(Context, Cache, LifeTime + Delay);
 	}
 
 	//const ECsProjectileRelevance& Relevance = Cache.Relevance;
@@ -617,8 +632,6 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	SetActorHiddenInGame(false);
 
 	RootComponent = CollisionComponent;
-	
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 
 	// VisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 	{
@@ -660,15 +673,6 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		MovementComponent->Activate();
 		MovementComponent->SetComponentTickEnabled(true);
 	}
-
-	// Launch Params
-	typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
-	typedef NCsProjectile::NLaunch::FParams LaunchParamsType;
-
-	LaunchDataType* LaunchData			 = PrjDataLibrary::GetSafeInterfaceChecked<LaunchDataType>(Context, Data);
-	const LaunchParamsType* LaunchParams = LaunchData ? &(LaunchData->GetLaunchParams()) : nullptr;
-
-	const bool ShouldDelayLaunch = LaunchParams ? LaunchParams->GetDelay() > 0.0f : false;
 
 	// Trail FX
 	{
@@ -815,6 +819,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		{
 			StartMovementFromModifiers(Context, Payload->GetDirection());
 		}
+		bLaunchComplete = true;
 	}
 
 	TrackingImpl.Init(Payload);
@@ -983,6 +988,8 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 		}
 	}
 
+	bLaunchComplete = true;
+
 	CS_COROUTINE_END(R);
 }
 
@@ -1121,10 +1128,10 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 		{
 			typedef NCsMath::FLibrary MathLibrary;
 
-			float Speed;
-			float SpeedSq;
+			float Speed = 0.0f;
+			float SpeedSq = 0.0f;
 			
-			FVector VelocityDir				 = MathLibrary::GetSafeNormal(Outer->MovementComponent->Velocity, SpeedSq, Speed);
+			FVector VelocityDir				 = Outer->IsLaunchComplete() ? MathLibrary::GetSafeNormal(Outer->MovementComponent->Velocity, SpeedSq, Speed) : Outer->GetActorRotation().Vector();
 			const FVector CurrentDestination = GetDestination();
 
 			FVector Direction = (CurrentDestination - Outer->GetActorLocation()).GetSafeNormal();
@@ -1154,9 +1161,10 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 
 				VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, TrackingParams.GetRotationRate());
 
-				Outer->MovementComponent->Velocity = Speed * VelocityDir;
-
-				// TODO: Handle Launch Delay by updating Rotation
+				if (Outer->IsLaunchComplete())
+					Outer->MovementComponent->Velocity = Speed * VelocityDir;
+				else
+					Outer->SetActorRotation(VelocityDir.Rotation());
 			}
 		}
 	}

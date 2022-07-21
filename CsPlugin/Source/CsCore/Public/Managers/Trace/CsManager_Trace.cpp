@@ -455,15 +455,6 @@ void UCsManager_Trace::IncrementTraceCount(RequestType* Request)
 
 #define RequestType NCsTrace::NRequest::FRequest
 
-RequestType* UCsManager_Trace::AllocateRequest()
-{
-	typedef NCsTrace::NRequest::FResource RequestResourceType;
-
-	RequestResourceType* Container = Manager_Request.Allocate();
-
-	return Container->Get();
-}
-
 void UCsManager_Trace::DeallocateRequest(RequestType* Request)
 {
 	typedef NCsTrace::NResponse::FResponse ResponseType;

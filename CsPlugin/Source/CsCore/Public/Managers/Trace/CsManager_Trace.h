@@ -187,7 +187,14 @@ private:
 
 public:
 	
-	RequestType* AllocateRequest();
+	FORCEINLINE RequestType* AllocateRequest()
+	{
+		typedef NCsTrace::NRequest::FResource RequestResourceType;
+
+		RequestResourceType* Container = Manager_Request.Allocate();
+
+		return Container->Get();
+	}
 
 private:
 

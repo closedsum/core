@@ -912,7 +912,7 @@ public:
 	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod; }
 
 	#define DeallocateMethodType NCsFX::EDeallocateMethod
-	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsFX::EDeallocateMethod*)(&DeallocateMethod)); }
 	#undef DeallocateMethodType
 
 	/**

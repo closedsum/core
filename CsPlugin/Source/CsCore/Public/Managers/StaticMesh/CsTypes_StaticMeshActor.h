@@ -268,7 +268,7 @@ public:
 #define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
 
 	FORCEINLINE FECsStaticMeshActor* GetTypePtr() { return &Type; }
-	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsStaticMeshActor::EDeallocateMethod*)(&DeallocateMethod)); }
 	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
 	FORCEINLINE float* GetLifeTimePtr() { return &LifeTime; }
 	FORCEINLINE ECsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }

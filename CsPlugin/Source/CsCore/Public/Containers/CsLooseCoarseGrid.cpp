@@ -48,10 +48,8 @@ namespace NCsLooseCoarseGrid
 		LooseCellType& Cell = Loose.Cells[Index];
 
 		// Insert the element to the appropriate loose cell and row.
-		typedef NCsLooseCoarseGrid::FElement ElementType;
-
 		const ElementType NewElement = {Cell.Head, ID, CenterX - Left, CenterY - Top, HalfWidth, HalfHeight};
-		Cell.Head = Elements.insert(NewElement);
+		Cell.Head					 = Elements.insert(NewElement);
 		++NumElements;
 
 		// Expand the loose cell's bounding box to fit the new element.
@@ -159,11 +157,11 @@ namespace NCsLooseCoarseGrid
 					typedef NCsLooseCoarseGrid::NLoose::FCell LooseCellType;
 
 					const TightCellType& TightCell = Tight.Cells[tcell_idx];
-					const LooseCellType& LooseCell = Loose.Cells[TightCell.lcell];
+					const LooseCellType& LooseCell = Loose.Cells[TightCell.Index];
 
-					if (LooseCellIndices.find_index(TightCell.lcell) == INDEX_NONE && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, LooseCell.RectToVector4()))
-						LooseCellIndices.push_back(TightCell.lcell);
-					tcell_idx = TightCell.next;
+					if (LooseCellIndices.find_index(TightCell.Index) == INDEX_NONE && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, LooseCell.RectToVector4()))
+						LooseCellIndices.push_back(TightCell.Index);
+					tcell_idx = TightCell.Next;
 				}
 			}
 		}
@@ -182,8 +180,6 @@ namespace NCsLooseCoarseGrid
 			{
 				// If the element intersects the search rectangle, add it to the
 				// resulting elements unless it has an ID that should be omitted.
-				typedef NCsLooseCoarseGrid::FElement ElementType;
-
 				const ElementType& Element = Elements[elt_idx];
 
 				if (Element.GetID() != OmitID && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, Element.ToRectAsVector4()))
@@ -224,14 +220,14 @@ namespace NCsLooseCoarseGrid
 					typedef NCsLooseCoarseGrid::NLoose::FCell LooseCellType;
 
 					const TightCellType& TightCell = Tight.Cells[tcell_idx];
-					const LooseCellType& LooseCell = Loose.Cells[TightCell.lcell];
+					const LooseCellType& LooseCell = Loose.Cells[TightCell.Index];
 
-					if (LooseCellIndices.Find(TightCell.lcell) == INDEX_NONE && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, LooseCell.RectToVector4()))
+					if (LooseCellIndices.Find(TightCell.Index) == INDEX_NONE && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, LooseCell.RectToVector4()))
 					{
-						LooseCellIndices.Add(TightCell.lcell);
+						LooseCellIndices.Add(TightCell.Index);
 						++Count;
 					}
-					tcell_idx = TightCell.next;
+					tcell_idx = TightCell.Next;
 				}
 			}
 		}
@@ -251,8 +247,6 @@ namespace NCsLooseCoarseGrid
 			{
 				// If the element intersects the search rectangle, add it to the
 				// resulting elements unless it has an ID that should be omitted.
-				typedef NCsLooseCoarseGrid::FElement ElementType;
-
 				const ElementType& Element = Elements[elt_idx];
 
 				if (Element.GetID() != OmitID && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, Element.ToRectAsVector4()))
@@ -293,8 +287,6 @@ namespace NCsLooseCoarseGrid
 
 			while (elt_idx != INDEX_NONE)
 			{
-				typedef NCsLooseCoarseGrid::FElement ElementType;
-
 				const ElementType& Element = Elements[elt_idx];
 
 				LooseCell.Rect[0] = FMath::Min(LooseCell.Rect[0], Element.CenterX - Element.HalfWidth);
@@ -333,8 +325,6 @@ namespace NCsLooseCoarseGrid
 	void FGrid::OptimizeMemoryLayout()
 	{
 		// TODO: Possibly have static array
-		typedef NCsLooseCoarseGrid::FElement ElementType;
-
 		TempElements.clear();
 		TempElements.reserve(NumElements);
 
@@ -344,23 +334,27 @@ namespace NCsLooseCoarseGrid
 			// cache-friendly element list.
 			typedef NCsLooseCoarseGrid::NLoose::FCell LooseCellType;
 
-			TSmallList<int32> new_elt_idxs;
+			static TArray<int32> new_elt_idxs;
 			LooseCellType& LooseCell = Loose.Cells[c];
 
 			while (LooseCell.HasHead())
 			{
 				const ElementType& Element = Elements[LooseCell.Head];
 
-				new_elt_idxs.push_back(TempElements.insert(Element));
+				new_elt_idxs.Add(TempElements.insert(Element));
 
 				LooseCell.Head = Element.GetNext();
 			}
 
-			for (int32 j = 0; j < new_elt_idxs.size(); ++j)
+			const int32 Count = new_elt_idxs.Num();
+
+			for (int32 J = Count - 1; J >= 0; --J)
 			{
-				const int32 new_elt_idx		   = new_elt_idxs[j];
-				TempElements[new_elt_idx].next = LooseCell.Head;
+				const int32 new_elt_idx		   = new_elt_idxs[J];
+				TempElements[new_elt_idx].Next = LooseCell.Head;
 				LooseCell.Head				   = new_elt_idx;
+
+				new_elt_idxs.RemoveAt(J, 1, false);
 			}
 		}
 		// Swap the new element list with the old one.

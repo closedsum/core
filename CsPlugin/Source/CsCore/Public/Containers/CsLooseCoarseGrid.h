@@ -304,7 +304,7 @@ namespace NCsLooseCoarseGrid
 	public:
 
 		// Stores the index to the next element in the loose cell using an indexed SLL.
-		int32 next;
+		int32 Next;
 
 		// Stores the ID of the element. This can be used to associate external
 		// data to the element.
@@ -344,8 +344,8 @@ namespace NCsLooseCoarseGrid
 
 		FORCEINLINE const int32& GetID() const { return ID; }
 
-		FORCEINLINE const int32& GetNext() const { return next; }
-		FORCEINLINE int32* GetNextPtr() { return &next; }
+		FORCEINLINE const int32& GetNext() const { return Next; }
+		FORCEINLINE int32* GetNextPtr() { return &Next; }
 
 		FORCEINLINE FVector4 ToRectAsVector4() const
 		{
@@ -459,22 +459,22 @@ namespace NCsLooseCoarseGrid
 		public:
 
 			// Stores the index to the next loose cell in the grid cell.
-			int32 next;
+			int32 Next;
 
 			// Stores the position of the loose cell in the grid.
-			int32 lcell;
+			int32 Index;
 
 			/*
 			FCell() : 
-				next(INDEX_NONE),
-				lcell(INDEX_NONE)
+				Next(INDEX_NONE),
+				Index(INDEX_NONE)
 			{
 			}
 			*/
 			/*
 			FCell(const int32& InNext, const int32& InIndex) :
-				next(InNext),
-				lcell(InIndex)
+				Index(InNext),
+				Index(InIndex)
 			{
 			}
 			*/
@@ -577,6 +577,9 @@ namespace NCsLooseCoarseGrid
 	public:
 
 		FGrid();
+
+		FORCEINLINE float GetWidthBy2() const { return 0.5f * Width; }
+		FORCEINLINE float GetHeightBy2() const { return 0.5 * Height; }
 
 		/**
 		* Creates a loose grid encompassing the specified extents using the specified cell 

@@ -23,7 +23,7 @@ struct CSCORE_API FCsTexture : public FTableRowBase
 	UPROPERTY()
 	int32 Texture_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadWrite, Category = DataTable)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
 	UTexture* Texture_Internal;
 
 	FCsTexture() :

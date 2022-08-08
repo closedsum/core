@@ -296,6 +296,14 @@ namespace NCsActor
 
 	#pragma endregion RootComponent
 
+	// Visibility
+	#pragma region
+	public:
+
+		static void SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Visibility
+
 	// Move
 	#pragma region
 
@@ -468,6 +476,18 @@ namespace NCsActor
 		* return			Distance squared 2D between A and B.
 		*/
 		static float GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
+		*
+		* @param Context	The calling context.
+		* @param A
+		* @param B
+		* @param R
+		* @param Log		(optional)
+		* return
+		*/
+		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Distance
 

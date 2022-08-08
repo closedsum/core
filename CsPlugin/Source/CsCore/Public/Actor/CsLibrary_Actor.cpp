@@ -84,7 +84,7 @@ namespace NCsActor
 		}
 #else
 		AActor* Actor = nullptr;
-
+		
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
 			AActor* A = *Itr;
@@ -470,6 +470,28 @@ namespace NCsActor
 
 	#pragma endregion RootComponent
 
+	// Visibility
+	#pragma region
+
+	void FLibrary::SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_EXIT(A)
+
+		A->SetActorHiddenInGame(NewHidden);
+
+		if (USceneComponent* RootComponent = A->GetRootComponent())
+		{
+			const TArray<USceneComponent*>& Children = RootComponent->GetAttachChildren();
+
+			for (USceneComponent* Child : Children)
+			{
+				Child->SetHiddenInGame(NewHidden, true);
+			}
+		}
+	}
+
+	#pragma endregion Visibility
+
 	// Move
 	#pragma region 
 
@@ -822,6 +844,20 @@ namespace NCsActor
 		const FVector VB = B->GetActorLocation();
 
 		return FVector::DistSquared2D(VA, VB);
+	}
+
+	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(A)
+
+		CS_IS_PTR_NULL(B)
+
+		CS_IS_FLOAT_GREATER_THAN(R, 0.0f)
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		return FVector::DistSquared2D(VA, VB) <= (R * R);
 	}
 
 	#pragma endregion Distance

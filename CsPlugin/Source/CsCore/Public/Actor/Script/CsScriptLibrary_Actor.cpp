@@ -20,6 +20,7 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetAnyByTags);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetHiddenInGame);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterial);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterials);
@@ -27,6 +28,7 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SpawnByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetDistanceSq);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetDistanceSq2D);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, IsDistanceSq2D_LessThanOrEqual);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetNormalAtoB);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetNormal2DAtoB);
 		}
@@ -122,6 +124,22 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* Worl
 }
 
 #pragma endregion Get
+
+// Visibility
+#pragma region
+
+void UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetHiddenInGame : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	ActorLibrary::SetSafeHiddenInGame(Context, Actor, NewHidden, ApplyToAttachChildren);
+}
+
+#pragma endregion Visibility
 
 // Move
 #pragma region
@@ -232,6 +250,17 @@ float UCsScriptLibrary_Actor::GetDistanceSq2D(const FString& Context, AActor* A,
 	typedef NCsActor::FLibrary ActorLibrary;
 
 	return ActorLibrary::GetSafeDistanceSq2D(Ctxt, A, B);
+}
+
+bool UCsScriptLibrary_Actor::IsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::IsDistanceSq2D_LessThanOrEqual : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::SafeIsDistanceSq2D_LessThanOrEqual(Ctxt, A, B, R);
 }
 
 #pragma endregion Distance

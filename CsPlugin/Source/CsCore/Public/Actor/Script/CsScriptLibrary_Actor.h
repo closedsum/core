@@ -93,6 +93,15 @@ public:
 
 #pragma endregion Get
 
+// Visibility
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,NewHidden,ApplyToAttachChildren"))
+	static void SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren);
+
+#pragma endregion Visibility
+
 // Move
 #pragma region
 public:
@@ -174,6 +183,18 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
 	static float GetDistanceSq2D(const FString& Context, AActor* A, AActor* B);
+
+	/**
+	* Check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
+	*
+	* @param Context	The calling context.
+	* @param A
+	* @param B
+	* @param R
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,R"))
+	static bool IsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R);
 
 #pragma endregion Distance
 

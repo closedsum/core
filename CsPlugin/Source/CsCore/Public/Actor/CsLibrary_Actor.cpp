@@ -473,9 +473,9 @@ namespace NCsActor
 	// Visibility
 	#pragma region
 
-	void FLibrary::SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL_EXIT(A)
+		CS_IS_PTR_NULL(A)
 
 		A->SetActorHiddenInGame(NewHidden);
 
@@ -488,6 +488,7 @@ namespace NCsActor
 				Child->SetHiddenInGame(NewHidden, true);
 			}
 		}
+		return true;
 	}
 
 	#pragma endregion Visibility

@@ -128,7 +128,7 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* Worl
 // Visibility
 #pragma region
 
-void UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren)
+bool UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -136,7 +136,7 @@ void UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Act
 
 	typedef NCsActor::FLibrary ActorLibrary;
 
-	ActorLibrary::SetSafeHiddenInGame(Context, Actor, NewHidden, ApplyToAttachChildren);
+	return ActorLibrary::SetSafeHiddenInGame(Context, Actor, NewHidden, ApplyToAttachChildren);
 }
 
 #pragma endregion Visibility

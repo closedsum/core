@@ -300,7 +300,17 @@ namespace NCsActor
 	#pragma region
 	public:
 
-		static void SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) = &FCsLog::Warning);
+		/**
+		* Safely set an Actor to be hidden or visible with option to set the visibility of any attached children.
+		*
+		* @param Context				The calling context.
+		* @param Actor
+		* @param NewHidden				True = Hide. False = Visible.
+		* @param ApplyToAttachChildren
+		* @param Log					(optional)
+		* return						Whether the visibility change was successfully set.
+		*/
+		static bool SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Visibility
 

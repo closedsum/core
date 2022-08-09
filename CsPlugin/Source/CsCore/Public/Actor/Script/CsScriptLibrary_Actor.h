@@ -97,8 +97,17 @@ public:
 #pragma region
 public:
 
+	/**
+	* Set an Actor to be hidden or visible with option to set the visibility of any attached children.
+	* 
+	* @param Context				The calling context.
+	* @param Actor
+	* @param NewHidden				True = Hide. False = Visible.
+	* @param ApplyToAttachChildren
+	* return						Whether the visibility change was successfully set.
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,NewHidden,ApplyToAttachChildren"))
-	static void SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren);
+	static bool SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren);
 
 #pragma endregion Visibility
 

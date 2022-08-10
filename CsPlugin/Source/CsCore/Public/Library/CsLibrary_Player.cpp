@@ -333,13 +333,40 @@ namespace NCsPlayer
 			}
 		}
 
+		bool FLibrary::GetSafeAllLocal(const FString& Context, UWorld* World, TArray<APlayerController*>& OutControllers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(World)
+
+			for (FConstPlayerControllerIterator Iterator = World->GetPlayerControllerIterator(); Iterator; ++Iterator)
+			{
+				APlayerController* PC = Iterator->Get();
+
+				if (PC && PC->GetLocalPlayer())
+				{
+					OutControllers.Add(PC);
+				}
+			}
+			return true;
+		}
+
 		void FLibrary::GetAllLocalChecked(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
 			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-			GetAllLocalChecked(Context, WorldContext->GetWorld(), OutControllers);
+			GetAllLocalChecked(Context, World, OutControllers);
+		}
+
+		bool FLibrary::GetSafeAllLocal(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log))
+			{
+				return GetSafeAllLocal(Context, World, OutControllers, Log);
+			}
+			return false;
 		}
 
 		int32 FLibrary::GetSafeId(const FString& Context, const UObject* PlayerContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)

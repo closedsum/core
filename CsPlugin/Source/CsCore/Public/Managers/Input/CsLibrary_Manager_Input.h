@@ -139,16 +139,18 @@ namespace NCsInput
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* @param Map			A EnumStructFlag (contains a bit flag).
 				* @param Log
+				* return
 				*/
-				static void SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
 				*
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				* @param Map			A EnumStructFlag (contains a bit flag).
+				* return
 				*/
-				static void SetSafeFirst(const UObject* WorldContext, const FECsInputActionMap& Map);
+				static bool SetSafeFirst(const UObject* WorldContext, const FECsInputActionMap& Map);
 
 				/**
 				* Sets the bit (Map) in CurrentInputActionMap for the first local player controller.
@@ -479,6 +481,16 @@ namespace NCsInput
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 				*/
 				static void ResetChecked(const FString& Context, const UObject* WorldContext);
+
+				/**
+				* Safely resets the CurrentInputActionMap to 0 for all local player controllers.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Log			(optional)
+				* return				Whether the reset was executed successfully or not.
+				*/
+				static bool SafeReset(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Resets the CurrentInputActionMap to 0 for the player controller with ControllerId.

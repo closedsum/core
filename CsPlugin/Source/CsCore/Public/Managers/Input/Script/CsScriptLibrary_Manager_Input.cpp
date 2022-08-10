@@ -20,6 +20,7 @@ namespace NCsScriptLibraryManagerInput
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, ClearInputActionMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, ResetFirstInputActionMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, ResetInputActionMap);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, ResetAllInputActionMap);
 		}
 	}
 }
@@ -147,6 +148,17 @@ void UCsScriptLibrary_Manager_Input::ResetInputActionMap(const FString& Context,
 	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
 
 	InputActionMapLibrary::SafeReset(Ctxt, WorldContextObject, ControllerId);
+}
+
+bool UCsScriptLibrary_Manager_Input::ResetAllInputActionMap(const FString& Context, const UObject* WorldContextObject)
+{
+	using namespace NCsScriptLibraryManagerInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::ResetAllInputActionMap : Context;
+
+	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
+
+	return InputActionMapLibrary::SafeReset(Ctxt, WorldContextObject);
 }
 
 #pragma endregion Reset

@@ -320,23 +320,25 @@ namespace NCsInput
 				Manager_Input->SetCurrentInputActionMap(Context, Map);
 			}	
 
-			void FLibrary::SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsInputActionMap, FECsInputActionMap, Map)
+				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
 				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, WorldContext, Log))
 				{
 					Manager_Input->SetCurrentInputActionMap(Map);
+					return true;
 				}
+				return false;
 			}
 
-			void FLibrary::SetSafeFirst(const UObject* WorldContext, const FECsInputActionMap& Map)
+			bool FLibrary::SetSafeFirst(const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
 				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
 
 				const FString& Context = Str::SetSafeFirst;
 
-				SetSafeFirst(Context, WorldContext, Map, nullptr);
+				return SetSafeFirst(Context, WorldContext, Map, nullptr);
 			}
 
 			void FLibrary::SetFirstChecked(const FString& Context, UWorld* World, const int32& Map)
@@ -692,6 +694,28 @@ namespace NCsInput
 
 					Manager_Input->ResetCurrentInputActionMap();
 				}
+			}
+
+			bool FLibrary::SafeReset(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+
+				TArray<APlayerController*> PlayerControllers;
+
+				if (PlayerControllerLibrary::GetSafeAllLocal(Context, WorldContext, PlayerControllers, Log))
+				{
+					for (APlayerController* PC : PlayerControllers)
+					{
+						UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafe(Context, PC, Log);
+
+						if (!Manager_Input)
+							return false;
+
+						Manager_Input->ResetCurrentInputActionMap();
+					}
+					return true;
+				}
+				return false;
 			}
 
 			void FLibrary::ResetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)

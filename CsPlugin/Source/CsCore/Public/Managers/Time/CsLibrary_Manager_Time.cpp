@@ -140,14 +140,16 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->Pause(Group);
 		}
 
-		void FLibrary::SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsUpdateGroup, FECsUpdateGroup, Group)
+			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
 				Manager_Time->Pause(Group);
+				return true;
 			}
+			return false;
 		}
 
 		void FLibrary::UnpauseChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
@@ -157,14 +159,16 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->Unpause(Group);
 		}
 
-		void FLibrary::SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_ENUM_STRUCT_VALID_EXIT(EMCsUpdateGroup, FECsUpdateGroup, Group)
+			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
 				Manager_Time->Unpause(Group);
+				return true;
 			}
+			return false;
 		}
 
 		#pragma endregion Pause

@@ -207,6 +207,20 @@ namespace NCsInput
 			SV->SetMouse(Size.X / 2, Size.Y / 2);
 		}
 
+		bool FLibrary::SetSafeCenterOfViewport(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+			if (FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext, Log))
+			{
+				const FIntPoint Size = SV->GetSizeXY();
+
+				SV->SetMouse(Size.X / 2, Size.Y / 2);
+				return true;
+			}
+			return false;
+		}
+
 		bool FLibrary::GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector& OutWorldPosition, FVector& OutWorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			FIntPoint Position;

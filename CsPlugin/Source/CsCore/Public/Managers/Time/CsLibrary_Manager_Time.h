@@ -129,8 +129,9 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* @param Group
 			* @param Log			(optional)
+			* return				Whether the pause was successfully executed or not.
 			*/
-			static void SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Unpause the update of Group.
@@ -152,8 +153,9 @@ namespace NCsTime
 			*						A reference to the GameInstance.
 			* @param Group
 			* @param Log			(optional)
+			* return				Whether the unpause was successfully executed or not.
 			*/
-			static void SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Pause
 

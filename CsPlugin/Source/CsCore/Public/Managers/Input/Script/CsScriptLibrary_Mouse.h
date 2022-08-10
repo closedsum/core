@@ -13,6 +13,8 @@ class CSCORE_API UCsScriptLibrary_Mouse : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Show / Hide
+#pragma region
 public:
 
 	/**
@@ -46,6 +48,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static void HideCursor(const FString& Context, const UObject* WorldContextObject);
 
+#pragma endregion Show / Hide
+
+// Get / Set
+#pragma region
+public:
+
 	/**
 	* Get the current mouse position in viewport space.
 	*
@@ -68,6 +76,21 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,X,Y"))
 	static bool SetPosition(const FString& Context, const UObject* WorldContextObject, const int32& X, const int32& Y);
+
+	/**
+	* Set the mouse position to the center of the viewport.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool SetCenterOfViewport(const FString& Context, const UObject* WorldContextObject);
+
+#pragma endregion Get / Set
+
+// Trace
+#pragma region
+public:
 
 	/**
 	* Get the intersection between the de-projection of the current mouse position (viewport space) to a world ray (location and direction)
@@ -96,4 +119,6 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Request,Distance"))
 	static bool Trace(const FString& Context, const UObject* WorldContextObject, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse);
+
+#pragma endregion Trace
 };

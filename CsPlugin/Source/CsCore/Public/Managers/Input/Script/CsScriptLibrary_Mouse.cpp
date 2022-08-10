@@ -19,6 +19,7 @@ namespace NCsScriptLibraryMouse
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, HideCursor);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, GetPosition);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, SetPosition);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, SetCenterOfViewport);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, GetWorldIntersection);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, Trace);
 		}
@@ -30,6 +31,9 @@ UCsScriptLibrary_Mouse::UCsScriptLibrary_Mouse(const FObjectInitializer& ObjectI
 {
 }
 
+// Show / Hide
+#pragma region
+
 bool UCsScriptLibrary_Mouse::IsShowingCursor(const FString& Context, const UObject* WorldContextObject)
 {
 	using namespace NCsScriptLibraryMouse::NCached;
@@ -39,7 +43,6 @@ bool UCsScriptLibrary_Mouse::IsShowingCursor(const FString& Context, const UObje
 	typedef NCsInput::NMouse::FLibrary MouseLibrary;
 
 	return MouseLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject);
-
 }
 
 void UCsScriptLibrary_Mouse::ShowCursor(const FString& Context, const UObject* WorldContextObject)
@@ -64,6 +67,11 @@ void UCsScriptLibrary_Mouse::HideCursor(const FString& Context, const UObject* W
 	MouseLibrary::SafeHideCursor(Context, WorldContextObject);
 }
 
+#pragma endregion Show / Hide
+
+// Get / Set
+#pragma region
+
 bool UCsScriptLibrary_Mouse::GetPosition(const FString& Context, const UObject* WorldContextObject, FIntPoint& OutPosition)
 {
 	using namespace NCsScriptLibraryMouse::NCached;
@@ -85,6 +93,22 @@ bool UCsScriptLibrary_Mouse::SetPosition(const FString& Context, const UObject* 
 
 	return MouseLibrary::SetSafePosition(Context, WorldContextObject, X, Y);
 }
+
+bool UCsScriptLibrary_Mouse::SetCenterOfViewport(const FString& Context, const UObject* WorldContextObject)
+{
+	using namespace NCsScriptLibraryMouse::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetCenterOfViewport : Context;
+
+	typedef NCsInput::NMouse::FLibrary MouseLibrary;
+
+	return MouseLibrary::SetSafeCenterOfViewport(Context, WorldContextObject);
+}
+
+#pragma endregion Get / Set
+
+// Trace
+#pragma region
 
 bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FPlane& Plane, FVector& OutIntersection)
 {
@@ -138,3 +162,5 @@ bool UCsScriptLibrary_Mouse::Trace(const FString& Context, const UObject* WorldC
 	TraceManagerLibrary::SafeDeallocateRequest(Ctxt, WorldContextObject, RequestPtr);
 	return false;
 }
+
+#pragma endregion Trace

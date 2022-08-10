@@ -117,21 +117,31 @@ public:
 	/**
 	* Resets the CurrentInputActionMap to 0 for the first local player controller.
 	*
-	* @param Context		The calling context.
-	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static void ResetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject);
 
 	/**
-	* Resets the CurrentInputActionMap to 0 for all local player controllers.
+	* Resets the CurrentInputActionMap to 0 for local player controller with ControllerId.
 	*
-	* @param Context		The calling context.
-	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param ControllerId
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId"))
 	static void ResetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+
+	/**
+	* Resets the CurrentInputActionMap to 0 for all local player controllers.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool ResetAllInputActionMap(const FString& Context, const UObject* WorldContextObject);
 
 #pragma endregion Reset
 

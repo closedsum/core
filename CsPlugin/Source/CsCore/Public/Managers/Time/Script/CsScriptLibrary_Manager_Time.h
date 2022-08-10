@@ -13,6 +13,36 @@ class CSCORE_API UCsScriptLibrary_Manager_Time : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+// Pause
+#pragma region
+public:
+
+	/**
+	* Pause the update of Group.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* return					Whether the pause was successfully executed or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	static bool Pause(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
+
+	/**
+	* Unpause the update of Group.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* return					Whether the unpause was successfully executed or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	static bool Unpause(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
+
+#pragma endregion Pause
+
+public:
+
 	/**
 	*
 	*

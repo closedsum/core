@@ -38,6 +38,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))
 	static UAnimBlueprint* LoadByStringPath(const FString& Context, const FString& Path);
 
+	/**
+	* Load a AnimBlueprint at the given Path and get the UClass (Generated Class) associated with the AnimBlueprint.
+	* 
+	* @param Context	The calling context.
+	* @param Path		FString path to the AnimBlueprint to load.
+	* return			AnimBlueprint
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UAnimBlueprintGeneratedClass* LoadAndGetGeneratedClassByStringPath(const FString& Context, const FString& Path);
+
 #pragma endregion Load
 
 // Get

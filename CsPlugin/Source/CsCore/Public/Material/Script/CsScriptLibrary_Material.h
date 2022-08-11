@@ -2,8 +2,6 @@
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Coroutine/CsRoutineHandle.h"
-#include "Material/CsTypes_Material_Anim.h"
 #include "Material/CsTypes_Material.h"
 
 #include "CsScriptLibrary_Material.generated.h"
@@ -114,21 +112,4 @@ public:
 	static bool SetFromObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component);
 
 #pragma endregion Set
-
-// Anim
-#pragma region
-public:
-
-	/**
-	* Animate any number of parameters on a MaterialInstanceDynamic with the given Params.
-	*
-	* @param Context			The calling context.
-	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
-	* @param Params				Information describing how to animate any number of parameters on a MaterialInstanceDynamic.
-	* return					Handle to the movement coroutine.
-	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
-	static FCsRoutineHandle PlayAnim(const FString& Context, const UObject* WorldContextObject, const FCsMaterialAnim_Params& Params);
-
-#pragma endregion Anim
 };

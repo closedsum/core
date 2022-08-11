@@ -18,6 +18,7 @@ namespace NCsScriptLibraryAnimInstance
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimInstance, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimInstance, LoadByStringPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimInstance, LoadAndGetGeneratedClassByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimInstance, GetGeneratedClass);
 		}
 	}
@@ -53,6 +54,21 @@ UAnimBlueprint* UCsScriptLibrary_AnimInstance::LoadByStringPath(const FString& C
 	typedef NCsAnimInstance::FLibrary AnimInstanceLibrary;
 
 	return AnimInstanceLibrary::SafeLoad(Ctxt, Path);
+}
+
+UAnimBlueprintGeneratedClass* UCsScriptLibrary_AnimInstance::LoadAndGetGeneratedClassByStringPath(const FString& Context, const FString& Path)
+{
+	using namespace NCsScriptLibraryAnimInstance::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadAndGetGeneratedClassByStringPath : Context;
+
+	typedef NCsAnimInstance::FLibrary AnimInstanceLibrary;
+
+	if (UAnimBlueprint* AnimBlueprint = AnimInstanceLibrary::SafeLoad(Ctxt, Path))
+	{
+		return AnimInstanceLibrary::GetSafeClass(Ctxt, AnimBlueprint);
+	}
+	return nullptr;
 }
 
 #pragma endregion Load

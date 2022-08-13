@@ -119,9 +119,9 @@ namespace NCsAnim
 			FORCEINLINE bool Trigger() { return bTriggered = true; }
 
 			// NOTE: With how this is used, assume ElapsedTime is always <= Anim's Length
-			FORCEINLINE bool CanTrigger(const float& ElapsedTime) const
+			FORCEINLINE bool CanTrigger(const float& ElapsedTime, const float& AnimLength) const
 			{
-				return !bTriggered && (ElapsedTime >= GetTime());
+				return !bTriggered && ((ElapsedTime / AnimLength) >= (GetTime() / AnimLength));
 			}
 
 			FORCEINLINE void ResetTrigger() { bTriggered = false; }

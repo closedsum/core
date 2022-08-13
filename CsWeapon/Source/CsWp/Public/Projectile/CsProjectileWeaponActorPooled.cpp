@@ -453,10 +453,18 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 
 	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(this))
 	{
+		static TSet<FCsRoutineHandle> TempHandles;
+
 		for (const FCsRoutineHandle& Handle : FireHandles)
+		{
+			TempHandles.Add(Handle);
+		}
+
+		for (const FCsRoutineHandle& Handle : TempHandles)
 		{
 			Scheduler->End(UpdateGroup, Handle);
 		}
+		TempHandles.Reset();
 	}
 	FireHandles.Reset();
 

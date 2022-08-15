@@ -7,13 +7,32 @@
 // NumericValueModifierApplication
 #pragma region
 
+/**
+* Describes how a Numeric type Modifier is applied to a value.
+*  Modifier is an object that implements the interface: NCsModifier::IModifier.
+*/
 UENUM(BlueprintType)
 enum class ECsNumericValueModifierApplication : uint8
 {
+	/** Multiply the modifier by the current value being modified. */
 	Multiply								UMETA(DisplayName = "Multiply"),
+	/** Add to the modifier to the current value being modified. */
 	Add										UMETA(DisplayName = "Add"),
+	/** Replace the current value being modified with the modifier. */
 	Replace									UMETA(DisplayName = "Replace"),
+	/** Replace the current value being modified ONLY IF the modifier 
+	    is GREATER THAN the current value. */
 	ReplaceOnlyIfGreater					UMETA(DisplayName = "Replace Only If Greater"),
+	/** All Percent Add First values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+		then the result is added to 1.0f and multiplied by the current value being modified. 
+		NOTE: Currently Percent Add First values are applied BEFORE any other modifiers have
+			  been applied. */
+	PercentAddFirst							UMETA(DisplayName = "Percent Add First"),
+	/** All Percent Add Last values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+		then the result is added to 1.0f and multiplied by the current value being modified.
+		NOTE: Currently Percent Add Last values are applied LAST, AFTER all other modifiers have
+			  been applied. */
+	PercentAddLast							UMETA(DisplayName = "Percent Add First"),
 	ECsNumericValueModifierApplication_MAX	UMETA(Hidden),
 };
 
@@ -32,6 +51,8 @@ namespace NCsNumericValueModifierApplication
 		extern CSCORE_API const Type Add;
 		extern CSCORE_API const Type Replace;
 		extern CSCORE_API const Type ReplaceOnlyIfGreater;
+		extern CSCORE_API const Type PercentAddFirst;
+		extern CSCORE_API const Type PercentAddLast;
 		extern CSCORE_API const Type ECsNumericValueModifierApplication_MAX;
 	}
 }
@@ -42,12 +63,31 @@ namespace NCsModifier
 	{
 		namespace NNumeric
 		{
+			/**
+			* Describes how a Numeric type Modifier is applied to a value.
+			*  Modifier is an object that implements the interface: NCsModifier::IModifier.
+			*/
 			enum class EApplication : uint8
 			{
+				/** Multiply the modifier by the current value being modified. */
 				Multiply,
+				/** Add to the modifier to the current value being modified. */
 				Add,
+				/** Replace the current value being modified with the modifier. */
 				Replace,
+				/** Replace the current value being modified ONLY IF the modifier
+					is GREATER THAN the current value. */
 				ReplaceOnlyIfGreater,
+				/** All Percent Add First values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+					then the result is added to 1.0f and multiplied by the current value being modified.
+					NOTE: Currently Percent Add First values are applied BEFORE any other modifiers have
+						  been applied. */
+				PercentAddFirst,
+				/** All Percent Add Last values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+					then the result is added to 1.0f and multiplied by the current value being modified.
+					NOTE: Currently Percent Add Last values are applied LAST, AFTER all other modifiers have
+						  been applied. */
+				PercentAddLast,
 				EApplication_MAX
 			};
 
@@ -66,6 +106,8 @@ namespace NCsModifier
 					extern CSCORE_API const Type Add;
 					extern CSCORE_API const Type Replace;
 					extern CSCORE_API const Type ReplaceOnlyIfGreater;
+					extern CSCORE_API const Type PercentAddFirst;
+					extern CSCORE_API const Type PercentAddLast;
 					extern CSCORE_API const Type EApplication_MAX;
 				}
 
@@ -90,6 +132,16 @@ namespace NCsModifier
 					{
 						if (Modifier > InValue)
 							return Modifier;
+					}
+					else
+					if (Type == EApplication::PercentAddFirst)
+					{
+						return InValue + Modifier;
+					}
+					else
+					if (Type == EApplication::PercentAddLast)
+					{
+						return InValue + Modifier;
 					}
 					return InValue;
 				}

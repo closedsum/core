@@ -14,6 +14,8 @@ namespace NCsNumericValueModifierApplication
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Add);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Replace);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(ReplaceOnlyIfGreater);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(PercentAddFirst);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(PercentAddLast);
 		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsNumericValueModifierApplication_MAX, "MAX");
 	}
 }
@@ -34,6 +36,8 @@ namespace NCsModifier
 					CSCORE_API CS_ADD_TO_ENUM_MAP(Add);
 					CSCORE_API CS_ADD_TO_ENUM_MAP(Replace);
 					CSCORE_API CS_ADD_TO_ENUM_MAP(ReplaceOnlyIfGreater);
+					CSCORE_API CS_ADD_TO_ENUM_MAP(PercentAddFirst);
+					CSCORE_API CS_ADD_TO_ENUM_MAP(PercentAddLast);
 					CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EApplication_MAX, "MAX");
 				}
 			}

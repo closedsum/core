@@ -39,6 +39,16 @@ namespace NCsProjectile
 		*/
 		static const FECsProjectileModifier& GetTypeChecked(const FString& Context, const ModifierType* Modifier);
 
+	#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+
+		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
+
+		static int32 ModifyIntChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsProjectileModifier& Type, const int32& Value);
+
+		static float ModifyFloatChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsProjectileModifier& Type, const float& Value);
+
+	#undef AllocatedModifierType
+
 	// Damage
 	#pragma region
 	public:

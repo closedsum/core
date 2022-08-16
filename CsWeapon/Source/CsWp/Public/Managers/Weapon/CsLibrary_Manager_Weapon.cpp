@@ -318,41 +318,49 @@ namespace NCsWeapon
 
 		#pragma endregion Data
 
-		// Modifier
-		#pragma region
-
-		#define ModifierResourceType NCsWeapon::NModifier::FResource
-		#define ModifierType NCsWeapon::NModifier::IModifier
+		namespace NModifier
+		{
+			#define ModifierResourceType NCsWeapon::NModifier::FResource
+			#define ModifierType NCsWeapon::NModifier::IModifier
 		
-		ModifierResourceType* FLibrary::AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type)
-		{
-			return GetChecked(Context, WorldContext)->AllocateModifier(Type);
+			ModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type)
+			{
+				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->AllocateModifier(Type);
+			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier)
+			{
+				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+				WeaponManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
+			}
+
+			const FECsWeaponModifier& FLibrary::GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+			{
+				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+			}
+
+			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+			{
+				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
+			}
+
+			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
+			{
+				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+
+				return WeaponManagerLibrary::GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
+			}
+
+			#undef ModifierResourceType
+			#undef ModifierType
 		}
-
-		void FLibrary::DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier)
-		{
-			GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
-		}
-
-		const FECsWeaponModifier& FLibrary::GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
-		{
-			return GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
-		}
-
-		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
-		{
-			return GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
-		}
-
-		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
-		{
-			return GetChecked(Context, WorldContext)->CreateCopyOfModifier(Context, Modifier);
-		}
-
-#		undef ModifierResourceType
-		#undef ModifierType
-
-		#pragma endregion Modifier
 
 		namespace NSpread
 		{

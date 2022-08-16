@@ -1095,21 +1095,8 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 	// TODO: Priority
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-	typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-	for (ModifierType* Modifier : Modifiers)
-	{
-		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
-		const FECsWeaponModifier& WeaponModifierType	= GetWeaponModifierType->GetWeaponModifierType();
-
-		if (WeaponModifierType == NCsWeaponModifier::PrjWp_TimeBetweenShots)
-		{
-			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-
-			Value = FloatModifier->Modify(Value);
-		}
-	}
-	return Value;
+	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_TimeBetweenShots, Value);
 }
 
 	// Projectile
@@ -1133,21 +1120,8 @@ int32 ACsProjectileWeaponActorPooled::GetProjectilesPerShot() const
 	// TODO: Priority
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-	typedef NCsModifier::NInt::IInt IntModifierType;
 
-	for (ModifierType* Modifier : Modifiers)
-	{
-		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
-		const FECsWeaponModifier& WeaponModifierType	= GetWeaponModifierType->GetWeaponModifierType();
-
-		if (WeaponModifierType == NCsWeaponModifier::PrjWp_ProjectilesPerShot)
-		{
-			IntModifierType* IntModifier = ModifierLibrary::GetInterfaceChecked<IntModifierType>(Context, Modifier);
-
-			Value = IntModifier->Modify(Value);
-		}
-	}
-	return Value;
+	return ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_ProjectilesPerShot, Value);
 }
 
 float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
@@ -1168,21 +1142,8 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
 	// TODO: Priority
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-	typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-	for (ModifierType* Modifier : Modifiers)
-	{
-		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
-		const FECsWeaponModifier& WeaponModifierType	= GetWeaponModifierType->GetWeaponModifierType();
-
-		if (WeaponModifierType == NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot)
-		{
-			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-
-			Value = FloatModifier->Modify(Value);
-		}
-	}
-	return Value;
+	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot, Value);
 }
 
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
@@ -1762,22 +1723,8 @@ bool ACsProjectileWeaponActorPooled::UseSpreadParams() const
 	GetWeaponModifiers(Modifiers);
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
-	typedef NCsModifier::NToggle::IToggle ToggleModifierType;
 
-	for (ModifierType* Modifier : Modifiers)
-	{
-		ICsGetWeaponModifierType* GetWeaponModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetWeaponModifierType>(Context, Modifier);
-		const FECsWeaponModifier& WeaponModifierType    = GetWeaponModifierType->GetWeaponModifierType();
-
-		if (WeaponModifierType == NCsWeaponModifier::PrjWp_UseSpreadParams)
-		{
-			ToggleModifierType* ToggleModifier = ModifierLibrary::GetInterfaceChecked<ToggleModifierType>(Context, Modifier);
-
-			if (ToggleModifier->IsEnabled())
-				return true;
-		}
-	}
-	return false;
+	return ModifierLibrary::ToggleChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_UseSpreadParams);
 }
 
 #pragma endregion Projectile

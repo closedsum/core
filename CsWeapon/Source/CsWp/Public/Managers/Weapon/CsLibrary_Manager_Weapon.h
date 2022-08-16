@@ -396,29 +396,31 @@ namespace NCsWeapon
 		#undef DataType
 
 		#pragma endregion Data
-
-		// Modifier
-		#pragma region
-		public:
-		
-		#define ModifierResourceType NCsWeapon::NModifier::FResource
-		#define ModifierType NCsWeapon::NModifier::IModifier
-		
-			static ModifierResourceType* AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type);
-
-			static void DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier);
-
-			static const FECsWeaponModifier& GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
-
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
-
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
-
-		#undef ModifierResourceType
-		#undef ModifierType
-
-		#pragma endregion Modifier
 		};
+
+		namespace NModifier
+		{
+			struct CSWP_API FLibrary final
+			{
+			public:
+
+			#define ModifierResourceType NCsWeapon::NModifier::FResource
+			#define ModifierType NCsWeapon::NModifier::IModifier
+		
+				static ModifierResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type);
+
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsWeaponModifier& Type, ModifierResourceType* Modifier);
+
+				static const FECsWeaponModifier& GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
+
+			#undef ModifierResourceType
+			#undef ModifierType
+			};
+		}
 
 		namespace NSpread
 		{

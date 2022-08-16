@@ -19,6 +19,7 @@ namespace NCsWeapon
 				namespace Str
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FAllocated, Copy);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FAllocated, Transfer);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsWeapon::NModifier::FAllocated, Reset);
 				}
 			}
@@ -41,12 +42,12 @@ namespace NCsWeapon
 
 			CS_IS_PTR_NULL_CHECKED(From)
 
-			typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+			typedef NCsWeapon::NManager::NModifier::FLibrary ModifierLibrary;
 
 			Root	  = InRoot;
-			//Container = WeaponManagerLibrary::CreateCopyOfModifierChecked(Context, InRoot, From);
+			Container = ModifierLibrary::CreateCopyOfChecked(Context, InRoot, From);
 			Modifier  = Container->Get();
-			//Type	  = WeaponManagerLibrary::GetModifierTypeChecked(Context, InRoot, Modifier);
+			Type	  = ModifierLibrary::GetTypeChecked(Context, InRoot, Modifier);
 		}
 
 		void FAllocated::Copy(const FAllocated& From)
@@ -61,10 +62,10 @@ namespace NCsWeapon
 
 			if (From.Container)
 			{
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+				typedef NCsWeapon::NManager::NModifier::FLibrary ModifierLibrary;
 
 				Root	  = From.GetRoot();
-				Container = WeaponManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From.Container);
+				Container = ModifierLibrary::CreateCopyOfChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
 				Type	  = From.Type;
 			}
@@ -72,6 +73,30 @@ namespace NCsWeapon
 			{
 				Modifier = From.Modifier;
 			}
+		}
+
+		void FAllocated::Transfer(FAllocated& To)
+		{
+			using namespace NCsWeapon::NModifier::NAllocated::NCached;
+
+			const FString& Context = Str::Transfer;
+
+			checkf(!To.Container, TEXT("%s: Container is already SET."), *Context);
+
+			if (Container)
+			{
+				CS_IS_PTR_NULL_CHECKED(GetRoot())
+
+				To.Root		  = GetRoot();
+				To.Container  = Container;
+				To.Modifier   = Modifier;
+				To.Type		  = Type;
+			}
+			else
+			{
+				To.Modifier = Modifier;
+			}
+			Clear();
 		}
 
 		void FAllocated::Reset()
@@ -84,9 +109,9 @@ namespace NCsWeapon
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
+				typedef NCsWeapon::NManager::NModifier::FLibrary ModifierLibrary;
 
-				WeaponManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
+				ModifierLibrary::DeallocateChecked(Context, GetRoot(), Type, Container);
 			}
 			Clear();
 		}

@@ -294,6 +294,8 @@ namespace NCsProjectile
 				return NCsModifier::NValue::NNumeric::NApplication::Modify(InValue, GetValue(), GetApplication());
 			}
 
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+
 		#pragma endregion FloatModifierType (NCsModifier::NFloat::IFloat)
 
 		// ICsGetProjectileModifierType
@@ -338,7 +340,6 @@ namespace NCsProjectile
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsProjectileModifier)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
 
 		#undef ApplicationType
 		};

@@ -604,23 +604,10 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 		float Delay	   = ShouldDelayLaunch ? LaunchParams->GetDelay() : 0.0f;
 
 		typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-		typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
-		typedef NCsProjectile::NModifier::IModifier ModifierType;
-		typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-		for (AllocatedModifierType& AllocatedModifier : Modifiers)
-		{
-			ModifierType* Modifier							 = AllocatedModifier.Get();
-			ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
-			const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
+		LifeTime = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::LifeTime, LifeTime);
 
-			if (PrjModifierType == NCsProjectileModifier::LifeTime)
-			{
-				FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-				LifeTime						 = FloatModifier->Modify(LifeTime);
-			}
-			// TODO: Add Modifier for Delay
-		}
+		// TODO: Add Modifier for Delay
 
 		typedef NCsProjectile::NCache::FLibrary CacheLibrary;
 
@@ -1582,22 +1569,8 @@ void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, con
 	HitCount = CollisionData->GetHitCount();
 
 	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-	typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
-	typedef NCsProjectile::NModifier::IModifier ModifierType;
-	typedef NCsModifier::NInt::IInt IntModifierType;
 
-	for (AllocatedModifierType& AllocatedModifier : Modifiers)
-	{
-		ModifierType* Modifier							 = AllocatedModifier.Get();
-		ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
-		const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
-		// HitCount
-		if (PrjModifierType == NCsProjectileModifier::HitCount)
-		{
-			IntModifierType* IntModifier = ModifierLibrary::GetInterfaceChecked<IntModifierType>(Context, Modifier);
-			HitCount					 = IntModifier->Modify(HitCount);
-		}
-	}
+	HitCount = ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsProjectileModifier::HitCount, HitCount);
 }
 
 void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
@@ -1607,28 +1580,9 @@ void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context,
 
 	// Check to apply any Movement Modifiers
 	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-	typedef NCsProjectile::NModifier::FAllocated AllocatedModifierType;
-	typedef NCsProjectile::NModifier::IModifier ModifierType;
-	typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-	for (AllocatedModifierType& AllocatedModifier : Modifiers)
-	{
-		ModifierType* Modifier							 = AllocatedModifier.Get();
-		ICsGetProjectileModifierType* GetPrjModifierType = ModifierLibrary::GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
-		const FECsProjectileModifier& PrjModifierType	 = GetPrjModifierType->GetProjectileModifierType();
-		// InitialSpeed
-		if (PrjModifierType == NCsProjectileModifier::InitialSpeed)
-		{
-			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-			InitialSpeed					 = FloatModifier->Modify(InitialSpeed);
-		}
-		// MaxSpeed
-		if (PrjModifierType == NCsProjectileModifier::MaxSpeed)
-		{
-			FloatModifierType* FloatModifier = ModifierLibrary::GetInterfaceChecked<FloatModifierType>(Context, Modifier);
-			MaxSpeed						 = FloatModifier->Modify(MaxSpeed);
-		}
-	}
+	MaxSpeed	 = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::InitialSpeed, InitialSpeed);
+	InitialSpeed = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::MaxSpeed, MaxSpeed);
 
 	MovementComponent->InitialSpeed = InitialSpeed;
 	MovementComponent->MaxSpeed		= MaxSpeed;

@@ -54,6 +54,8 @@ namespace NCsWeapon
 
 			void Copy(const FAllocated&From);
 
+			void Transfer(FAllocated& To);
+
 			FORCEINLINE void Clear()
 			{
 				Root	  = nullptr;

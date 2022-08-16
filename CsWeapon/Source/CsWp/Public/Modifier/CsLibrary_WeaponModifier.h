@@ -4,6 +4,7 @@
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Weapon
 #include "Modifier/CsWeaponModifier.h"
+#include "Modifier/CsAllocated_WeaponModifier.h"
 // Log
 #include "Utility/CsWpLog.h"
 
@@ -23,6 +24,24 @@ namespace NCsWeapon
 		static bool IsValidChecked(const FString& Context, const ModifierType* Modifier);
 
 		static bool IsValid(const FString& Context, const ModifierType* Modifier, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+	#define AllocatedModifierType NCsWeapon::NModifier::FAllocated
+
+		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
+
+		static int32 ModifyIntChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsWeaponModifier& Type, const int32& Value);
+
+		static int32 ModifyIntChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const FECsWeaponModifier& Type, const int32& Value);
+
+		static float ModifyFloatChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsWeaponModifier& Type, const float& Value);
+
+		static float ModifyFloatChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const FECsWeaponModifier& Type, const float& Value);
+
+		static bool ToggleChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsWeaponModifier& Type);
+
+		static bool ToggleChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const FECsWeaponModifier& Type);
+
+	#undef AllocatedModifierType
 	};
 
 	#undef ModifierType

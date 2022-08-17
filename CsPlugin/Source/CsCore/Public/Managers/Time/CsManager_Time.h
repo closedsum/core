@@ -145,6 +145,8 @@ public:
 	*/
 	FORCEINLINE void Pause(const FECsUpdateGroup& Group)
 	{
+		checkf(!IsPaused(Group), TEXT("UCsManager_Time::Pause: UpdateGroup: %s is ALREADY Paused."), Group.ToChar());
+
 		UpdateGroups[Group.GetValue()].Pause();
 		OnPause_Events[Group.GetValue()].Broadcast(Group, true);
 	}
@@ -156,6 +158,8 @@ public:
 	*/
 	FORCEINLINE void Unpause(const FECsUpdateGroup& Group)
 	{
+		checkf(IsPaused(Group), TEXT("UCsManager_Time::Pause: UpdateGroup: %s is ALREADY Unpaused."), Group.ToChar());
+
 		UpdateGroups[Group.GetValue()].Unpause();
 		OnPause_Events[Group.GetValue()].Broadcast(Group, false);
 	}

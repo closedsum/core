@@ -2,6 +2,9 @@
 #include "Managers/FX/CsTypes_Library_FX.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 namespace NCsFX
 {
 	namespace NSpawn
@@ -11,28 +14,22 @@ namespace NCsFX
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
 				// Check FX is Valid.
-				check(FX.IsValidChecked(Context));
+				CS_IS_VALID_CHECKED(FX);
 				// Check Frequency Params are Valid.
-				check(FrequencyParams.IsValidChecked(Context));
+				CS_IS_VALID_CHECKED(FrequencyParams);
 				// Check Group is Valid.
-				check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
 				return true;
 			}
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				// Check FX is Valid.
-				if (!FX.IsValid(Context, Log))
-					return false;
+				CS_IS_VALID(FX)
 				// Check Frequency Params are Valid.
-				if (!FrequencyParams.IsValid(Context))
-					return false;
+				CS_IS_VALID(FrequencyParams)
 				// Check Group is Valid.
-				if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar()));
-					return false;
-				}
+				CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 				return true;
 			}
 
@@ -69,15 +66,12 @@ void FCsFX_Spawn_Params::CopyToParamsAsValue(ParamsType* Params) const
 
 bool FCsFX_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	// Check FX is Valid
-	if (!FX.IsValid(Context, Log))
-		return false;
-	// Check FrequencyParams is Valid
-	if (!FrequencyParams.IsValid(Context))
-		return false;
-	// Check Group is Valid
-	if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
-		return false;
+	// Check FX is Valid.
+	CS_IS_VALID(FX)
+	// Check Frequency Params are Valid.
+	CS_IS_VALID(FrequencyParams)
+	// Check Group is Valid.
+	CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 	return true;
 }
 

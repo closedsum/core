@@ -50,6 +50,7 @@ struct CSCORE_API FCsMaterialAnimParameterVector
 	void CopyToValueAsValue(ValueType* Value) const;
 #undef ValueType
 
+	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
@@ -91,6 +92,7 @@ struct CSCORE_API FCsMaterialAnimParameterScalar
 	void CopyToValueAsValue(ValueType* Value) const;
 #undef ValueType
 
+	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
@@ -253,6 +255,7 @@ struct CSCORE_API FCsMaterialAnimFrame
 	void CopyToFrameAsValue(FrameType* Frame) const;
 #undef FrameType
 
+	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 	bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 	bool IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;
@@ -425,6 +428,9 @@ struct CSCORE_API FCsMaterialAnim
 
 	void UpdateFromPlaybackAndPlayRate();
 
+	FORCEINLINE void OnPostEditChange() { UpdateFromPlaybackAndPlayRate(); }
+
+	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 	bool IsValid(const FString& Context, UMaterialInstanceDynamic* MID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 	bool IsValid(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, void(*Log)(const FString&) = &FCsLog::Warning) const;

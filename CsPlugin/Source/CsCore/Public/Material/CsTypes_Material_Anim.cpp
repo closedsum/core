@@ -31,6 +31,12 @@ void FCsMaterialAnimParameterVector::CopyToValueAsValue(ValueType* Value) const
 
 #undef ValueType
 
+bool FCsMaterialAnimParameterVector::IsValidChecked(const FString& Context) const
+{
+	CS_IS_NAME_NONE_CHECKED(Name)
+	return true;
+}
+
 bool FCsMaterialAnimParameterVector::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
@@ -61,6 +67,12 @@ void FCsMaterialAnimParameterScalar::CopyToValueAsValue(ValueType* Value) const
 }
 
 #undef ValueType
+
+bool FCsMaterialAnimParameterScalar::IsValidChecked(const FString& Context) const
+{
+	CS_IS_NAME_NONE_CHECKED(Name)
+	return true;
+}
 
 bool FCsMaterialAnimParameterScalar::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
@@ -132,6 +144,23 @@ void FCsMaterialAnimFrame::CopyToFrameAsValue(FrameType* Frame) const
 }
 
 #undef FrameType
+
+bool FCsMaterialAnimFrame::IsValidChecked(const FString& Context) const
+{
+	// Check Duration is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Duration, 0.0f)
+	// Check VectorParameters is Valid
+	for (const FCsMaterialAnimParameterVector& Param : VectorParameters)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	// Check ScalarParameters is Valid
+	for (const FCsMaterialAnimParameterScalar& Param : ScalarParameters)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	return true;
+}
 
 bool FCsMaterialAnimFrame::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
@@ -613,6 +642,57 @@ void FCsMaterialAnim::CopyToAnimAsValue(AnimType* Anim) const
 }
 
 #undef AnimType
+
+bool FCsMaterialAnim::IsValidChecked(const FString& Context) const
+{
+	// Check Playback is Valid.
+	CS_IS_ENUM_VALID_CHECKED(EMCsAnimPlayback, Playback)
+	// Check PlayRate is Valid.
+	CS_IS_ENUM_VALID_CHECKED(EMCsAnimPlayRate, PlayRate)
+
+	// Check DeltaTime or TotalTime
+
+	using namespace NCsAnim;
+
+	if (PlayRate != ECsAnimPlayRate::PR_CustomDeltaTime &&
+		PlayRate != ECsAnimPlayRate::PR_CustomTotalTime &&
+		PlayRate != ECsAnimPlayRate::PR_CustomDeltaTimeAndTotalTime &&
+		PlayRate != ECsAnimPlayRate::PR_Custom)
+	{
+		const float DT = NPlayRate::GetDeltaTime((EPlayRate)PlayRate);
+
+		checkf(FMath::Abs(DeltaTime - DT) <= KINDA_SMALL_NUMBER, TEXT("%s: DeltaTime: %f is NOT correct (%f != %f) for PlayRate: %s."), *Context, DeltaTime, DeltaTime, DT, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+
+		checkf(DeltaTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+
+		if (!IsLoopingForever())
+		{
+			checkf(TotalCount > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+		}
+	}
+	if (PlayRate == ECsAnimPlayRate::PR_CustomDeltaTime ||
+		PlayRate == ECsAnimPlayRate::PR_CustomTotalTime ||
+		PlayRate == ECsAnimPlayRate::PR_CustomDeltaTimeAndTotalTime)
+	{
+		checkf(DeltaTime > 0.0f, TEXT("%s: DeltaTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, DeltaTime, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+
+		checkf(TotalTime > 0.0f, TEXT("%s: TotalTime: %f is NOT > 0.0f for PlayRate: %s."), *Context, TotalTime, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+				
+		if (!IsLoopingForever())
+		{
+			checkf(TotalCount > 0, TEXT("%s: TotalCount: %d is NOT > 0.0f for PlayRate: %s."), *Context, TotalCount, EMCsAnimPlayRate::Get().ToDisplayNameChar(PlayRate));
+		}
+	}
+
+	// Check Frames
+	CS_IS_ARRAY_EMPTY_CHECKED(Frames, FCsMaterialAnimFrame)
+
+	for (const FCsMaterialAnimFrame& Frame : Frames)
+	{
+		CS_IS_VALID_CHECKED(Frame);
+	}
+	return true;
+}
 
 bool FCsMaterialAnim::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {

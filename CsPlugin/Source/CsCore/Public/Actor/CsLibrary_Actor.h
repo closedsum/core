@@ -301,6 +301,16 @@ namespace NCsActor
 	public:
 
 		/**
+		* Set an Actor to be hidden or visible with option to set the visibility of any attached children.
+		*
+		* @param Context				The calling context.
+		* @param Actor
+		* @param NewHidden				True = Hide. False = Visible.
+		* @param ApplyToAttachChildren
+		*/
+		static void SetHiddenInGameChecked(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren);
+
+		/**
 		* Safely set an Actor to be hidden or visible with option to set the visibility of any attached children.
 		*
 		* @param Context				The calling context.

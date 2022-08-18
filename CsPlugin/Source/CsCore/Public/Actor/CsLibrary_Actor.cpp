@@ -473,6 +473,23 @@ namespace NCsActor
 	// Visibility
 	#pragma region
 
+	void FLibrary::SetHiddenInGameChecked(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+
+		A->SetActorHiddenInGame(NewHidden);
+
+		if (USceneComponent* RootComponent = A->GetRootComponent())
+		{
+			const TArray<USceneComponent*>& Children = RootComponent->GetAttachChildren();
+
+			for (USceneComponent* Child : Children)
+			{
+				Child->SetHiddenInGame(NewHidden, true);
+			}
+		}
+	}
+
 	bool FLibrary::SetSafeHiddenInGame(const FString& Context, AActor* A, const bool& NewHidden, const bool& ApplyToAttachChildren, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL(A)

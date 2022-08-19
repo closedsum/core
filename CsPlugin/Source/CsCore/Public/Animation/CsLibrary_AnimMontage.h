@@ -61,12 +61,14 @@ namespace NCsAnimMontage
 		*  Component MUST be of type: USkeletalMeshComponent.
 		*  Anim must NOT already be playing.
 		* 
-		* @param Context	The calling context.
+		* @param Context				The calling context.
 		* @param Component
 		* @param Anim
-		* @param PlayRate	(optional)
+		* @param PlayRate				(optional)
+		* @param InTimeToStartMontageAt (optional)
+		* @param bStopAllMontages		(optional)
 		*/
-		static void PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate = 1.0f);
+		static void PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate = 1.0f, const float& InTimeToStartMontageAt = 0.0f, const bool& bStopAllMontages = true);
 
 	#pragma endregion Play
 	};

@@ -864,13 +864,27 @@ namespace NCsActor
 		return FVector::DistSquared2D(VA, VB);
 	}
 
-	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const AActor* B, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL(A)
 
 		CS_IS_PTR_NULL(B)
 
 		CS_IS_FLOAT_GREATER_THAN(R, 0.0f)
+
+		const FVector VA = A->GetActorLocation();
+		const FVector VB = B->GetActorLocation();
+
+		return FVector::DistSquared2D(VA, VB) <= (R * R);
+	}
+
+	bool FLibrary::IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const AActor* B, const float& R)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+
+		CS_IS_PTR_NULL_CHECKED(B)
+
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
 		const FVector VB = B->GetActorLocation();

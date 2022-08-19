@@ -498,7 +498,7 @@ namespace NCsActor
 		static float GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
+		* Safely check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
 		*
 		* @param Context	The calling context.
 		* @param A
@@ -507,7 +507,18 @@ namespace NCsActor
 		* @param Log		(optional)
 		* return
 		*/
-		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const AActor* B, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
+		*
+		* @param Context	The calling context.
+		* @param A
+		* @param B
+		* @param R
+		* return
+		*/
+		static bool IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const AActor* B, const float& R);
 
 	#pragma endregion Distance
 

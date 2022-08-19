@@ -47,7 +47,7 @@ namespace NCsAnimMontage
 		return false;
 	}
 
-	void FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate /*=1.0f*/)
+	void FLibrary::PlayChecked(const FString& Context, UPrimitiveComponent* Component, UAnimMontage* Anim, const float& PlayRate /*=1.0f*/, const float& InTimeToStartMontageAt /*=0.0f*/, const bool& bStopAllMontages /*=true*/)
 	{
 		checkf(!IsPlayingChecked(Context, Component, Anim), TEXT("%s: Anim: %s is ALREADY playing."), *Context, *(Anim->GetName()));
 
@@ -55,7 +55,7 @@ namespace NCsAnimMontage
 
 		UAnimInstance* AnimInstance = AnimInstanceLibrary::GetChecked(Context, Component);
 
-		AnimInstance->Montage_Play(Anim, PlayRate);
+		AnimInstance->Montage_Play(Anim, PlayRate, EMontagePlayReturnType::MontageLength, InTimeToStartMontageAt, bStopAllMontages);
 	}
 
 	#pragma endregion Play

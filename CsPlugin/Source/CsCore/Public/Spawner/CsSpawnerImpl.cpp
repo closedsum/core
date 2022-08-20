@@ -101,6 +101,12 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 void ACsSpawnerImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
+	
+	if (PointImpl)
+	{
+		DeconstructPointImplImpl(PointImpl);
+		PointImpl = nullptr;
+	}
 
 	if (Params)
 	{

@@ -19,7 +19,18 @@ class CSCORE_API UCsScriptLibrary_MID : public UObject
 public:
 
 	/**
-	* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.
+	* Set the Scalar Parameter Value with name: ParamName with value Value on MID.
+	*
+	* @param MID		Material Instance Dynamic.
+	* @param ParamName	Name of the Scalar Parameter Value to set.
+	* @param Value		The value to set.
+	* return			Whether the parameter was successful set or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,ParamName,Value"))
+	static bool SetScalarParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value);
+
+	/**
+	* Set the Scalar Parameter Value with name: ParamName with value: Value on all MIDs.
 	*
 	* @param MIDs		Array of Material Instance Dynamic.
 	* @param ParamName	Name of the Scalar Parameter Value to set.
@@ -27,7 +38,7 @@ public:
 	* return			Whether the parameter was successful set or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,ParamName,Value"))
-	static bool SetScalarParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value);
+	static bool SetArrayScalarParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
 
 #pragma endregion Scalar
 

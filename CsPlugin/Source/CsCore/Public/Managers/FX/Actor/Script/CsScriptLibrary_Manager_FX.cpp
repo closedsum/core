@@ -4,6 +4,7 @@
 
 // Library
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // FX
@@ -74,7 +75,7 @@ UObject* UCsScriptLibrary_Manager_FX::FindObject(const FString& Context, UObject
 
 #pragma endregion Pool
 
-int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload)
+int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload, const FTransform& Transform)
 {
 	using namespace NCsScriptLibraryManagerFX::NCached;
 
@@ -102,6 +103,12 @@ int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldC
 	PayloadImplType* PayloadImpl = Manager_FX->AllocatePayload<PayloadImplType>(Type);
 	// Copy script payload to native payload
 	Payload.CopyToPayloadAsValueChecked(Ctxt, WorldContextObject, PayloadImpl);
+
+	const FTransform& T = PayloadImpl->Transform;
+
+	PayloadImpl->Transform.SetTranslation(Transform.GetTranslation() + T.GetTranslation());
+	PayloadImpl->Transform.SetRotation(Transform.GetRotation() + T.GetRotation());
+	PayloadImpl->Transform.SetScale3D(Transform.GetScale3D() * T.GetScale3D());
 
 	const FCsFXActorPooled* FXPooled = Manager_FX->Spawn(Type, PayloadImpl);
 

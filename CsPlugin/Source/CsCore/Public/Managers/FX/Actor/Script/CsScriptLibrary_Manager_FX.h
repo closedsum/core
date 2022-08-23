@@ -38,8 +38,9 @@ public:
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Payload
+	* @param Transform
 	* return					Index to spawned FX in pool.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Payload"))
-	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Payload,Transform"))
+	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload, const FTransform& Transform);
 };

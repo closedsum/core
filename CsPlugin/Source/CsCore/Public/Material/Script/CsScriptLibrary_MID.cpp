@@ -17,6 +17,7 @@ namespace NCsScriptLibraryMID
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, SetScalarParameterValue);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, SetArrayScalarParameterValue);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, PlayAnim);
 		}
 	}
@@ -41,6 +42,17 @@ bool UCsScriptLibrary_MID::SetScalarParameterValue(const FString& Context, UMate
 	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	return MIDLibrary::SetSafeScalarParameterValue(Ctxt, MID, ParamName, Value);
+}
+
+bool UCsScriptLibrary_MID::SetArrayScalarParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
+{
+	using namespace NCsScriptLibraryMID::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetArrayScalarParameterValue : Context;
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	return MIDLibrary::SetSafeScalarParameterValue(Ctxt, MIDs, ParamName, Value);
 }
 
 #pragma endregion Scalar

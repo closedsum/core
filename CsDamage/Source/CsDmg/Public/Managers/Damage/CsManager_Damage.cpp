@@ -632,8 +632,10 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 		if (CollisionDataType* CollisionData = DamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
+			const CollisionMethodType& CollisionMethod = CollisionData->GetCollisionMethod();
+
 			// PhysicsSweep
-			if (CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsSweep)
+			if (CollisionMethod == CollisionMethodType::PhysicsSweep)
 			{
 				static TArray<FHitResult> Hits;
 
@@ -651,6 +653,12 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 					}
 				}
 			}
+			// Custom
+			else
+			if (CollisionMethod == CollisionMethodType::Custom)
+			{
+				ProcessDamageEvent_CustomCollision(Event, CollisionData);
+			}
 		}
 	}
 	// Point
@@ -665,18 +673,20 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 		}
 	}
 
+	// NOTE: FUTURE: May need to copy Event and pass the copy with changes
+	//				 (in the case of wanting HitResult updated for Damage with a Shape, i.e Circle, Sphere, ... etc).
+
 	const int32 Count = Local_Receivers.Num();
 
-	for (int32 I = 0; I < Count; ++I)
+	for (int32 I = Count - 1; I >= 0; --I)
 	{
 		FCsReceiveDamage& Receiver = Local_Receivers[I];
 
 		Receiver.Damage(Event);
+		Local_Receivers.RemoveAt(I, 1, false);
 	}
 
 	OnProcessDamageEvent_Event.Broadcast(Event);
-
-	Local_Receivers.Reset(Local_Receivers.Max());
 
 	DeallocateEvent(Context, const_cast<EventResourceType*>(EventContainer));
 }

@@ -64,43 +64,6 @@ namespace NCsTraceTypeQuery
 
 #pragma endregion TraceTypeQuery
 
-/**
-* 	TraceTypeQuery1 UMETA(Hidden),
-	TraceTypeQuery2 UMETA(Hidden),
-	TraceTypeQuery3 UMETA(Hidden),
-	TraceTypeQuery4 UMETA(Hidden),
-	TraceTypeQuery5 UMETA(Hidden),
-	TraceTypeQuery6 UMETA(Hidden),
-	TraceTypeQuery7 UMETA(Hidden),
-	TraceTypeQuery8 UMETA(Hidden),
-	TraceTypeQuery9 UMETA(Hidden),
-	TraceTypeQuery10 UMETA(Hidden),
-	TraceTypeQuery11 UMETA(Hidden),
-	TraceTypeQuery12 UMETA(Hidden),
-	TraceTypeQuery13 UMETA(Hidden),
-	TraceTypeQuery14 UMETA(Hidden),
-	TraceTypeQuery15 UMETA(Hidden),
-	TraceTypeQuery16 UMETA(Hidden),
-	TraceTypeQuery17 UMETA(Hidden),
-	TraceTypeQuery18 UMETA(Hidden),
-	TraceTypeQuery19 UMETA(Hidden),
-	TraceTypeQuery20 UMETA(Hidden),
-	TraceTypeQuery21 UMETA(Hidden),
-	TraceTypeQuery22 UMETA(Hidden),
-	TraceTypeQuery23 UMETA(Hidden),
-	TraceTypeQuery24 UMETA(Hidden),
-	TraceTypeQuery25 UMETA(Hidden),
-	TraceTypeQuery26 UMETA(Hidden),
-	TraceTypeQuery27 UMETA(Hidden),
-	TraceTypeQuery28 UMETA(Hidden),
-	TraceTypeQuery29 UMETA(Hidden),
-	TraceTypeQuery30 UMETA(Hidden),
-	TraceTypeQuery31 UMETA(Hidden),
-	TraceTypeQuery32 UMETA(Hidden),
-
-	TraceTypeQuery_MAX	UMETA(Hidden)
-*/
-
 // CollisionEnabled
 #pragma region
 
@@ -298,7 +261,6 @@ struct CSCORE_API FCsCollisionShape
 
 namespace NCsCollisionResponseContainer
 {
-	
 	static bool IsValid(const FString& Context, const FCollisionResponseContainer& CollisionResponses, void(*Log)(const FString&) = &FCsLog::Warning)
 	{
 		bool bAllIgnore = true;
@@ -321,6 +283,22 @@ namespace NCsCollisionResponseContainer
 				Log(FString::Printf(TEXT("%s: ALL channels in CollisionResponses are either ECollisionResponse::ECR_Ignore or ECollisionResponse::ECR_MAX. At least ONE channel must be ECollisionResponse::ECR_Overlap or ECollisionResponse::ECR_Block."), *Context));
 		}
 		return !bAllIgnore;
+	}
+
+	static uint32 GetBlockMask(const FCollisionResponseContainer& CollisionResponses)
+	{
+		uint32 Mask = 0;
+
+		for (const ECollisionChannel& Channel : EMCsCollisionChannel::Get())
+		{
+			const ECollisionResponse Response = CollisionResponses.GetResponse(Channel);
+
+			if (Response == ECR_Block)
+			{
+				Mask |= ((uint8)Channel << 0);
+			}
+		}
+		return Mask;
 	}
 }
 
@@ -383,6 +361,8 @@ struct CSCORE_API FCsCollisionPreset
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	uint32 GetBlockMask() const { return NCsCollisionResponseContainer::GetBlockMask(CollisionResponses); }
 };
 
 #pragma endregion FCsCollisionPreset

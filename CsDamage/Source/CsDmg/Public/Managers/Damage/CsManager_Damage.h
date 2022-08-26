@@ -79,6 +79,9 @@ namespace NCsData {
 // NCsDamage::NData::FInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, FInterfaceMap)
 
+// NCsDamage::NData::NCollision::ICollision
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NData, NCollision, ICollision)
+
 UCLASS()
 class CSDMG_API UCsManager_Damage : public UObject
 {
@@ -257,7 +260,7 @@ public:
 
 	EventResourceType* CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload);
 
-private:
+protected:
 
 	TArray<FCsReceiveDamage> Local_Receivers;
 
@@ -286,6 +289,15 @@ public:
 
 	/** */
 	FOnProcessDamageEvent OnProcessDamageEvent_Event;
+
+protected:
+
+#define CollisionDataType NCsDamage::NData::NCollision::ICollision
+	virtual void ProcessDamageEvent_CustomCollision(const EventType* Event, const CollisionDataType* CollisionData)
+	{
+		checkf(0, TEXT("UCsManager_Damage::ProcessDamageEvent_CustomCollision: NOT IMPLEMENTED."));
+	}
+#undef CollisionDataType
 
 #pragma endregion Event
 

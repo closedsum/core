@@ -1093,31 +1093,30 @@ void UCsManager_Input::OnPostProcessInput_LogInputAction()
 
 	const FString& Context = Str::PostProcessInput;
 
-	if (CS_CVAR_LOG_IS_SHOWING(LogInput) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputEventChange) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputAction) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputActionEventChange) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputAxis) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputAxisEventChange) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputLocation) ||
-		CS_CVAR_LOG_IS_SHOWING(LogInputLocationEventChange))
+	const bool LogAll = CS_CVAR_LOG_IS_SHOWING(LogInput);
+	const bool LogAllEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputEventChange);
+	// Action
+	const bool LogAction = CS_CVAR_LOG_IS_SHOWING(LogInputAction);
+	const bool LogActionEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputActionEventChange);
+	// Axis
+	const bool LogAxis = CS_CVAR_LOG_IS_SHOWING(LogInputAxis);
+	const bool LogAxisEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputAxisEventChange);
+	// Location
+	const bool LogLocation = CS_CVAR_LOG_IS_SHOWING(LogInputLocation);
+	const bool LogLocationEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputLocationEventChange);
+
+	if (LogAll ||
+		LogAllEventChange ||
+		LogAction ||
+		LogActionEventChange ||
+		LogAxis ||
+		LogAxisEventChange ||
+		LogLocation ||
+		LogLocationEventChange)
 	{
 		TArray<FECsInputAction> ActionsToPrint;
 
 		ActionsToPrint.Reset(EMCsInputAction::Get().Num());
-		
-		const bool LogAll			 = CS_CVAR_LOG_IS_SHOWING(LogInput);
-		const bool LogAllEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputEventChange);
-		// Action
-		const bool LogAction			= CS_CVAR_LOG_IS_SHOWING(LogInputAction);
-		const bool LogActionEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputActionEventChange);
-		// Axis
-		const bool LogAxis			  = CS_CVAR_LOG_IS_SHOWING(LogInputAxis);
-		const bool LogAxisEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputAxisEventChange);
-		// Location
-		const bool LogLocation			  = CS_CVAR_LOG_IS_SHOWING(LogInputLocation);
-		const bool LogLocationEventChange = CS_CVAR_LOG_IS_SHOWING(LogInputLocationEventChange);
-
 		
 		for (const FECsInputAction& Action : EMCsInputAction::Get())
 		{

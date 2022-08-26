@@ -17,6 +17,7 @@ enum class ECsDamageCollisionMethod : uint8
 {
 	PhysicsSweep					UMETA(DisplayName = "Physics Sweep"),
 	PhysicsOverlap					UMETA(DisplayName = "Physics Overlap"),
+	Custom							UMETA(DisplayName = "Custom"),
 	ECsDamageCollisionMethod_MAX	UMETA(Hidden),
 };
 
@@ -33,6 +34,7 @@ namespace NCsDamageCollisionMethod
 	{
 		extern CSDMG_API const Type PhysicsSweep;
 		extern CSDMG_API const Type PhysicsOverlap;
+		extern CSDMG_API const Type Custom;
 		extern CSDMG_API const Type ECsDamageCollisionMethod_MAX;
 	}
 }
@@ -50,6 +52,7 @@ namespace NCsDamage
 		{
 			PhysicsSweep,
 			PhysicsOverlap,
+			Custom,
 			EMethod_MAX
 		};
 
@@ -66,6 +69,7 @@ namespace NCsDamage
 			{
 				extern CSDMG_API const Type PhysicsSweep;
 				extern CSDMG_API const Type PhysicsOverlap;
+				extern CSDMG_API const Type Custom;
 				extern CSDMG_API const Type EMethod_MAX;
 			}
 		}

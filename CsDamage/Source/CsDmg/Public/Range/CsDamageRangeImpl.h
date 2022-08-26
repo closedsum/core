@@ -31,7 +31,7 @@ namespace NCsDamage
 
 			FCsInterfaceMap InterfaceMap;
 
-			// RangeType (NCsDamage::NRange::IRange)
+		// RangeType (NCsDamage::NRange::IRange)
 
 			CS_DECLARE_MEMBER_WITH_PROXY(MinRange, float)
 			CS_DECLARE_MEMBER_WITH_PROXY(MaxRange, float)

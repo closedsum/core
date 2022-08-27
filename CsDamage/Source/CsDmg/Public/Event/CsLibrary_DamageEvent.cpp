@@ -40,6 +40,11 @@ namespace NCsDamage
 	{
 	#define EventType NCsDamage::NEvent::IEvent
 
+		FString FLibrary::PrintEvent(const EventType* Event)
+		{
+			return FString::Printf(TEXT("Event: %s"), *(Event->GetInterfaceMap()->GetRootName().ToString()));
+		}
+
 		void FLibrary::LogEvent(const FString& Context, const EventType* Event)
 		{
 			UE_LOG(LogCsDmg, Warning, TEXT("%s:"), *Context);
@@ -166,6 +171,22 @@ namespace NCsDamage
 				}
 			}
 			return false;
+		}
+
+		void FLibrary::SetDamageDirectionChecked(const FString& Context, EventType* Event, const FVector& Direction)
+		{
+			CS_IS_PTR_NULL_CHECKED(Event)
+
+			typedef NCsDamage::NEvent::FImpl ImplType;
+
+			if (ImplType* Impl = SafePureStaticCastChecked<ImplType>(Context, Event))
+			{
+				Impl->DamageDirection = Direction;
+			}
+			else
+			{
+				checkf(0, TEXT("%s: %s is NOT Supported for setting Damage Direction."), *Context, *PrintEvent(Event));
+			}
 		}
 
 		const EventType* FLibrary::GetSafeCurrentDamageEvent(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)

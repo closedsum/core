@@ -21,6 +21,8 @@ namespace NCsDamage
 		{
 		public:
 
+			static FString PrintEvent(const EventType* Event);
+
 			static void LogEvent(const FString& Context, const EventType* Event);
 
 			static void Draw(const FString& Context, const EventType* Event);
@@ -45,6 +47,15 @@ namespace NCsDamage
 			* return			Whether the damage was set successfully.
 			*/
 			static bool SetDamageChecked(const FString& Context, EventType* Event);
+
+			/**
+			* Set the damage direction on Event
+			* 
+			* @param Context	The calling context.
+			* @param Event
+			* @param Direction
+			*/
+			static void SetDamageDirectionChecked(const FString& Context, EventType* Event, const FVector& Direction);
 
 			/**
 			* Safely try to get the Current Damage Event (EventType: NCsDamage::NEvent::IEvent) from Object.

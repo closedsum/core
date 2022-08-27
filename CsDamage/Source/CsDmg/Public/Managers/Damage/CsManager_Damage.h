@@ -264,6 +264,8 @@ protected:
 
 	TArray<FCsReceiveDamage> Local_Receivers;
 
+	TArray<EventResourceType*> Local_Events;
+
 public:
 
 	/**

@@ -649,6 +649,13 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 						{
 							Local_Receivers.AddDefaulted();
 							Local_Receivers.Last().SetObject(O);
+
+							// TODO: Update Damage Direction
+							//		 Update HitResult
+
+							EventResourceType* EvtContainer = CreateCopyOfEvent(Context, EventContainer);
+
+							Local_Events.Add(EvtContainer);
 						}
 					}
 				}
@@ -670,6 +677,10 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 		{
 			Local_Receivers.AddDefaulted();
 			Local_Receivers.Last().SetObject(O);
+
+			EventResourceType* EvtContainer = CreateCopyOfEvent(Context, EventContainer);
+
+			Local_Events.Add(EvtContainer);
 		}
 	}
 
@@ -680,10 +691,15 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 	for (int32 I = Count - 1; I >= 0; --I)
 	{
-		FCsReceiveDamage& Receiver = Local_Receivers[I];
+		FCsReceiveDamage& Receiver		= Local_Receivers[I];
+		EventResourceType* EvtContainer = Local_Events[I];
+		EventType* Evt					= EvtContainer->Get();
 
-		Receiver.Damage(Event);
+		Receiver.Damage(Evt);
 		Local_Receivers.RemoveAt(I, 1, false);
+
+		DeallocateEvent(Context, EvtContainer);
+		Local_Events.RemoveAt(I, 1, false);
 	}
 
 	OnProcessDamageEvent_Event.Broadcast(Event);

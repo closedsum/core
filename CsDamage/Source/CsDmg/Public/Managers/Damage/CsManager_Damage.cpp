@@ -643,8 +643,12 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 				if (Hits.Num() > CS_EMPTY)
 				{
-					for (const FHitResult& Hit : Hits)
+					const int32 Count = Hits.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
 					{
+						const FHitResult& Hit = Hits[I]; 
+
 						if (UObject* O = EventLibrary::Implements_ICsReceiveDamage(Context, Hit, nullptr))
 						{
 							Local_Receivers.AddDefaulted();
@@ -657,6 +661,7 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 
 							Local_Events.Add(EvtContainer);
 						}
+						Hits.RemoveAt(I, 1, false);
 					}
 				}
 			}

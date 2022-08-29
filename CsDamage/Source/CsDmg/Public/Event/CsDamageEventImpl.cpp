@@ -39,6 +39,7 @@ namespace NCsDamage
 			Causer(nullptr),
 			DamageDirection(0.0f),
 			HitType(),
+			Origin(),
 			HitResult(),
 			IgnoreObjects()
 		{
@@ -132,6 +133,7 @@ namespace NCsDamage
 			Causer = nullptr;
 			DamageDirection = FVector::ZeroVector;
 			HitType = EMCsHitType::Get().GetMAX();
+			Origin.Reset(0.0f, false);
 			HitResult.Reset(0.0f, false);
 			IgnoreObjects.Reset(IgnoreObjects.Max());
 		}

@@ -55,6 +55,15 @@ namespace NCsSkeletalMeshActor
 
 		//FromDataTable(Context, ContextRoot);
 	}
+
+	const FECsSkeletalMeshActor& GetDefault()
+	{
+		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+		checkf(Settings, TEXT("NCsSkeletalMeshActor::GetDefault: Failed to file settings of type: UCsDeveloperSettings."));
+
+		return Settings->Default_ECsSkeletalMeshActor;
+	}
 }
 
 #pragma endregion SkeletalMeshActor

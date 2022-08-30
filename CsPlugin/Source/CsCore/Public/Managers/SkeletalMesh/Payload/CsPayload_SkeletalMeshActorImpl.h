@@ -56,6 +56,8 @@ namespace NCsSkeletalMeshActor
 
 			TArray<UMaterialInterface*> Materials;
 
+			bool bGenerateMIDs;
+
 			DeallocateMethodType DeallocateMethod;
 
 			float LifeTime;
@@ -77,6 +79,10 @@ namespace NCsSkeletalMeshActor
 			bool bRenderCustomDepth;
 
 			int32 CustomDepthStencilValue;
+
+			bool bSlavePoseComponent;
+
+			TArray<FName> Tags;
 
 			ParamsType* Params;
 
@@ -140,6 +146,7 @@ namespace NCsSkeletalMeshActor
 
 			FORCEINLINE USkeletalMesh* GetSkeletalMesh() const { return Mesh; }
 			FORCEINLINE const TArray<UMaterialInterface*>& GetMaterials() const { return Materials; }
+			FORCEINLINE const bool& ShouldGenerateMIDs() const { return bGenerateMIDs; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
@@ -151,6 +158,8 @@ namespace NCsSkeletalMeshActor
 			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }
 			FORCEINLINE const bool& UseRenderCustomDepth() const { return bRenderCustomDepth; }
 			FORCEINLINE const int32& GetCustomDepthStencilValue() const { return CustomDepthStencilValue; }
+			FORCEINLINE const bool& IsSlavePoseComponent() const { return bSlavePoseComponent; }
+			FORCEINLINE const TArray<FName>& GetTags() const { return Tags; }
 			FORCEINLINE ParamsType* GetParams() const { return Params; }
 
 		#pragma endregion SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)

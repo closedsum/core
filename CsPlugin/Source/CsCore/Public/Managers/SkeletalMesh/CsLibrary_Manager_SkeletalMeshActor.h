@@ -1,10 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 // Log
 #include "Utility/CsLog.h"
-
-#pragma once
 
 class UObject;
 class UCsManager_SkeletalMeshActor;
@@ -12,6 +11,8 @@ struct FCsSkeletalMeshActorPooled;
 
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
+// NCsSkeletalMeshActor::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSkeletalMeshActor, NPayload, IPayload)
 // NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsSkeletalMeshActor, NAnim, NSequence, FOneShot)
 // NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
@@ -103,9 +104,42 @@ namespace NCsSkeletalMeshActor
 
 		#pragma endregion Get
 
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsSkeletalMeshActor::NPayload::IPayload
+
+			/*
+			* Allocate a Payload (used to Spawn a SkeletalMeshActor from Manager_SkeletalMeshActor).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsSkeletalMeshActor& Type);
+
+		#undef PayloadType 
+
+		#pragma endregion Payload
+
 		// Spawn
 		#pragma region
 		public:
+
+		#define PayloadType NCsSkeletalMeshActor::NPayload::IPayload
+
+			/**
+			* Spawn an SkeletalMeshActor with the given Payload.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Payload
+			* return				Spawned SkeletalMeshActor
+			*/
+			static const FCsSkeletalMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsSkeletalMeshActor& Type, PayloadType* Payload);
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
@@ -188,6 +222,8 @@ namespace NCsSkeletalMeshActor
 		#undef ShotType
 
 		#undef PooledPayloadType
+
+		#undef PayloadType
 
 		#pragma endregion Spawn
 		};

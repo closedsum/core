@@ -11,6 +11,7 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
 #include "Material/CsLibrary_Material.h"
+#include "Material/CsLibrary_Material.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
@@ -45,6 +46,9 @@ ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInit
 	PreserveChangesToDefaultMask(0),
 	ChangesToDefaultMask(0),
 	ChangesFromLastMask(0),
+	// Materials
+	MIDs(),
+	// Set / Clear Changes
 	AttachToBone(NAME_None)
 {
 	PrimaryActorTick.bCanEverTick		   = true;
@@ -77,6 +81,10 @@ void ACsSkeletalMeshActorPooledImpl::BeginDestroy()
 		Cache = nullptr;
 		CacheImpl = nullptr;
 	}
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	MIDLibrary::Destroy(MIDs);
 }
 
 #pragma endregion UObject Interface
@@ -242,6 +250,8 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 
 	Handle_ClearSkeletalMesh();
 
+	Tags.Reset(Tags.Max());
+
 	Component->SetHiddenInGame(true);
 	Component->SetComponentTickEnabled(false);
 	Component->ComponentTags.Reset(Component->ComponentTags.Max());
@@ -253,6 +263,9 @@ void ACsSkeletalMeshActorPooledImpl::Deallocate_Internal()
 
 	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }
+
+// Set / Clear Changes
+#pragma region
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 #define SkeletalMeshPayloadType NCsSkeletalMeshActor::NPayload::IPayload
@@ -340,6 +353,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
 	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
 	typedef NCsMaterial::FLibrary MaterialLibrary;
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	USkeletalMeshComponent* Component			 = GetMeshComponent();
 	const TArray<UMaterialInterface*>& Materials = Payload->GetMaterials();
@@ -364,7 +378,10 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 
 		if (Different)
 		{
-			MaterialLibrary::SetChecked(Context, Component, Materials);
+			if (Payload->ShouldGenerateMIDs())
+				MIDLibrary::SetChecked(Context, Component, Materials, MIDs);
+			else
+				MaterialLibrary::SetChecked(Context, Component, Materials);
 			ChangeCounter::Get().AddChanged();
 		}
 		else
@@ -376,7 +393,10 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetMaterials(SkeletalMeshPayloadType
 	{
 		if (Materials.Num() > CS_EMPTY)
 		{
-			MaterialLibrary::SetChecked(Context, GetMeshComponent(), Materials);
+			if (Payload->ShouldGenerateMIDs())
+				MIDLibrary::SetChecked(Context, Component, Materials, MIDs);
+			else
+				MaterialLibrary::SetChecked(Context, Component, Materials);
 			ChangeCounter::Get().AddChanged();
 		}
 	}
@@ -692,6 +712,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearSkeletalMesh()
 {
 	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
 	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	// If SkeletalMesh is SET and meant to be PRESERVED, Do Nothing
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::SkeletalMesh) &&
@@ -705,6 +726,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearSkeletalMesh()
 	else
 	{
 		GetMeshComponent()->SetSkeletalMesh(nullptr);
+		MIDLibrary::Destroy(MIDs);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Materials);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::AnimInstance);
@@ -777,3 +799,5 @@ void ACsSkeletalMeshActorPooledImpl::LogChangeCounter()
 		UE_LOG(LogCs, Warning, TEXT("ACsSkeletalMeshActorPooledImpl::LogChangeCounter: %s."), *(ChangeCounter::Get().ToString()));
 	}
 }
+
+#pragma endregion Set / Clear Changes

@@ -35,6 +35,8 @@ namespace NCsSkeletalMeshActor
 	CSCORE_API void FromEnumSettings(const FString& Context);
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
+	CSCORE_API const FECsSkeletalMeshActor& GetDefault();
 }
 
 #pragma endregion SkeletalMeshActor

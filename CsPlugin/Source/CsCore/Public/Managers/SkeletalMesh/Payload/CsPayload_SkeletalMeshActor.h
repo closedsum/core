@@ -43,6 +43,14 @@ namespace NCsSkeletalMeshActor
 			virtual const TArray<UMaterialInterface*>& GetMaterials() const = 0;
 
 			/**
+			* Whether to generate Material Instance Dynamic(s) or MIDs for
+			* the materials on the SkeletalMesh.
+			*
+			* return Whether MIDs should be generated or not.
+			*/
+			virtual const bool& ShouldGenerateMIDs() const = 0;
+
+			/**
 			* Get the Deallocate Method. Used to determine the conditions
 			* to deallocate a SkeletalMeshActor (Lifetime, Complete, ... etc).
 			* 
@@ -136,6 +144,21 @@ namespace NCsSkeletalMeshActor
 			*/
 			virtual const int32& GetCustomDepthStencilValue() const = 0;
 
+			/**
+			* Get whether the SkeletalMeshComponent has another component as a MasterPoseComponent.
+			* 
+			* return
+			*/
+			virtual const bool& IsSlavePoseComponent() const = 0;
+
+			/**
+			* Get the Tags to append to the SkeletalMeshActor's Tags list.
+			* If the SkeletalMeshActor is being attached to a Parent object, instead
+			* append to the SkeletalMeshActor's RootComponent (SkeletalMeshComponent's ComponentTags list).
+			*
+			* return
+			*/
+			virtual const TArray<FName>& GetTags() const = 0;
 
 			/**
 			*/

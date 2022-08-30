@@ -105,8 +105,28 @@ namespace NCsSkeletalMeshActor
 
 		#pragma endregion Get
 
+		// Payload
+		#pragma region
+
+		#define PayloadType NCsSkeletalMeshActor::NPayload::IPayload
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsSkeletalMeshActor& Type)
+		{
+		#undef PayloadType
+
+			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
+		}
+
+		#pragma endregion Payload
+
 		// Spawn
 		#pragma region
+
+		#define PayloadType NCsSkeletalMeshActor::NPayload::IPayload
+
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsSkeletalMeshActor& Type, PayloadType* Payload)
+		{
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
@@ -217,6 +237,8 @@ namespace NCsSkeletalMeshActor
 		#undef ShotType
 
 		#undef PooledPayloadType
+
+		#undef PayloadType
 
 		#pragma endregion Spawn
 	}

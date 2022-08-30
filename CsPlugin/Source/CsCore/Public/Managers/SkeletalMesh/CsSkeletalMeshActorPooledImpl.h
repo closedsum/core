@@ -108,12 +108,18 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE USkeletalMeshComponent* GetMeshComponent() const
-	{
-		return GetSkeletalMeshComponent();
-	}
+	FORCEINLINE USkeletalMeshComponent* GetMeshComponent() const { return GetSkeletalMeshComponent(); }
 
 #pragma endregion ICsSkeletalMeshActor
+
+// Materials
+#pragma region
+protected:
+
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> MIDs;
+
+#pragma endregion Materials
 
 protected:
 

@@ -278,6 +278,9 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsSkeletalMeshActor>() const { return NCsDeveloperSettings::Str::SkeletalMeshActor; }
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Default Value: ECsSkeletalMeshActor"))
+	FECsSkeletalMeshActor Default_ECsSkeletalMeshActor;
+
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Manager SkeletalMeshActor"))
 	FCsSettings_Manager_SkeletalMeshActor Manager_SkeletalMeshActor;
 

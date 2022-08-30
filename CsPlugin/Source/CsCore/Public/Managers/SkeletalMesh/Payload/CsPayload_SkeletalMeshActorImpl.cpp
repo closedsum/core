@@ -23,6 +23,7 @@ namespace NCsSkeletalMeshActor
 			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 			Mesh(nullptr),
 			Materials(),
+			bGenerateMIDs(false),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
@@ -34,6 +35,8 @@ namespace NCsSkeletalMeshActor
 			bUseAsOccluder(false),
 			bRenderCustomDepth(false),
 			CustomDepthStencilValue(0),
+			bSlavePoseComponent(false),
+			Tags(),
 			Params(nullptr)
 		{
 			InterfaceMap = new FCsInterfaceMap();
@@ -69,6 +72,7 @@ namespace NCsSkeletalMeshActor
 			// SkeletalMeshPayloadType (NCsSkeletalMeshActor::NPayload::IPayload)
 			Mesh = nullptr;
 			Materials.Reset(Materials.Max());
+			bGenerateMIDs = false;
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
@@ -80,6 +84,8 @@ namespace NCsSkeletalMeshActor
 			bUseAsOccluder = false;
 			bRenderCustomDepth = false;
 			CustomDepthStencilValue = 0;
+			bSlavePoseComponent = false;
+			Tags.Reset(Tags.Max());
 			Params = nullptr;
 		}
 

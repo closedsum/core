@@ -326,7 +326,28 @@ public:
 
 protected:
 
-	TMap<int32, UObject*> SpawnedFillToCountObjectsByIndex;
+	// <Index indentifing Object, Object>
+	TMap<int32, UObject*> SpawnedObjectByIndexMap;
+
+public:
+
+	FORCEINLINE const TMap<int32, UObject*>& GetSpawnedObjectByIndexMap() const { return SpawnedObjectByIndexMap; };
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|ICsSpawner")
+	void GetSpawnedObjects(TArray<UObject*>& OutObjects) const
+	{
+		OutObjects.Reset(FMath::Max(OutObjects.Max(), SpawnedObjectByIndexMap.Num()));
+
+		for (const TPair<int32, UObject*>& Pair : SpawnedObjectByIndexMap)
+		{
+			OutObjects.Add(Pair.Value);
+		}
+	}
+
+protected:
+
+	// <Index indentifing Object, Object>
+	TMap<int32, UObject*> InfiniteFillToCount_SpawnedObjectByIndexMap;
 
 	void OnObjectDestroyed(const int32& Index, const UObject* Object);
 

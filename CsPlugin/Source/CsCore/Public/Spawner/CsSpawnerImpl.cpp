@@ -85,7 +85,8 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	OnPreSpawnObject_Event(),
 	OnSpawnObject_ScriptEvent(),
 	bOverride_SpawnObject(false),
-	SpawnedFillToCountObjectsByIndex()
+	SpawnedObjectByIndexMap(),
+	InfiniteFillToCount_SpawnedObjectByIndexMap()
 {
 	PrimaryActorTick.bCanEverTick = true;
 #if WITH_EDITOR
@@ -371,7 +372,27 @@ void ACsSpawnerImpl::Start()
 
 	CurrentSpawnCount = 0;
 
+	// Deallocate All SpawnedObjects references
+	{
+		typedef NCsSpawner::NSpawnedObjects::FResource ResourceType;
+		typedef NCsSpawner::FSpawnedObjects SpawnedObjectsType;
+
+		TCsDoubleLinkedList<ResourceType*>* Current = Manager_SpawnedObjects.GetAllocatedHead();
+		TCsDoubleLinkedList<ResourceType*>* Next	= Current;
+
+		while (Next)
+		{
+			Current			= Next;
+			ResourceType* C = **Current;
+			Next			= Current->GetNextLink();
+
+			C->Get()->Reset();
+		}
+		Manager_SpawnedObjects.DeallocateAll();
+	}
 	SpawnedObjects.Reset();
+	SpawnedObjectByIndexMap.Reset();
+	InfiniteFillToCount_SpawnedObjectByIndexMap.Reset();
 
 	PointImpl->Prepare();
 
@@ -528,7 +549,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
 
-				CS_COROUTINE_WAIT_UNTIL(R, SpawnedFillToCountObjectsByIndex.Num() < FrequencyParams->GetCount());
+				CS_COROUTINE_WAIT_UNTIL(R, InfiniteFillToCount_SpawnedObjectByIndexMap.Num() < FrequencyParams->GetCount());
 			}
 
 			if (HasSpawnInterval)
@@ -755,11 +776,19 @@ UObject* ACsSpawnerImpl::SpawnObject(const int32& Count, const int32& Group, con
 void ACsSpawnerImpl::OnObjectDestroyed(const int32& Index, const UObject* Object)
 {
 	// Check if Object was spawned by Spawner
-	if (UObject** ObjectPtr = SpawnedFillToCountObjectsByIndex.Find(Index))
+	if (UObject** ObjectPtr = SpawnedObjectByIndexMap.Find(Index))
 	{
 		if (*ObjectPtr == Object)
 		{
-			SpawnedFillToCountObjectsByIndex.Remove(Index);
+			SpawnedObjectByIndexMap.Remove(Index);
+		}
+	}
+
+	if (UObject** ObjectPtr = InfiniteFillToCount_SpawnedObjectByIndexMap.Find(Index))
+	{
+		if (*ObjectPtr == Object)
+		{
+			InfiniteFillToCount_SpawnedObjectByIndexMap.Remove(Index);
 		}
 	}
 }

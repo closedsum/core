@@ -62,10 +62,19 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
+
 /*static*/ UCsManager_Fade* UCsManager_Fade::Get(const UObject* InRoot /*= nullptr*/)
 {
 	return Get_GetManagerFade(InRoot)->GetManager_Fade();
 }
+
+/*static*/ UCsManager_Fade* UCsManager_Fade::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerFade* GetManagerFade = GetSafe_GetManagerFade(Context, InRoot, Log))
+		return GetManagerFade->GetManager_Fade();
+	return nullptr;
+}
+
 #endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Fade::Init(UObject* InRoot, TSubclassOf<UCsManager_Fade> ManagerFadeClass, UObject* InOuter /*= nullptr*/)
@@ -159,13 +168,6 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 		return nullptr;
 	}
 	return Cast<ICsGetManagerFade>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Fade* UCsManager_Fade::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
-{
-	if (ICsGetManagerFade* GetManagerFade = GetSafe_GetManagerFade(Context, InRoot, Log))
-		return GetManagerFade->GetManager_Fade();
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

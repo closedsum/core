@@ -3,14 +3,12 @@
 
 // Managers
 #include "Managers/Fade/CsManager_Fade.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 
 #if WITH_EDITOR
 // Library
 #include "Game/CsLibrary_GameInstance.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsFade
@@ -24,27 +22,31 @@ namespace NCsFade
 				namespace Str
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFade::NManager::FLibrary, GetSafeContextRoot);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsFade::NManager::FLibrary, GetSafe);
 				}
 			}
 		}
 
-	#if WITH_EDITOR
+		// ContextRoot
+		#pragma region
 
-		UObject* FLibrary::GetContextRootChecked(const FString& Context, UObject* ContextObject)
+		#if WITH_EDITOR
+
+		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			return GameInstanceLibrary::GetChecked(Context, ContextObject);
+			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, UObject* ContextObject, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);
+			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(UObject* ContextObject)
+		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
 		{
 			using namespace NCsFade::NManager::NLibrary::NCached;
 
@@ -53,52 +55,125 @@ namespace NCsFade
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
 
-	#endif // #if WITH_EDITOR
+		#endif // #if WITH_EDITOR
 
-		void FLibrary::CreateFadeWidget(const FString& Context, UObject* ContextObject)
+		#pragma endregion ContextRoot
+
+		// Get
+		#pragma region
+
+		UCsManager_Fade* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
+			UObject* ContextRoot		  = GetContextRootChecked(Context, ContextObject);
+			UCsManager_Fade* Manager_Fade = UCsManager_Fade::Get(ContextRoot);
 
-			UCsManager_Fade::Get(ContextRoot)->CreateFadeWidget();
+			CS_IS_PTR_NULL_CHECKED(Manager_Fade)
+			return Manager_Fade;
 		}
 
-		#define ParamsType NCsFade::FParams
-		void FLibrary::FadeChecked(const FString& Context, UObject* ContextObject, const ParamsType& Params)
+		UCsManager_Fade* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &NCsPlayback::FLog::Warning*/)
 		{
-		#undef ParamsType
-
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
-
-			UCsManager_Fade::Get(ContextRoot)->Fade(Params);
-		}
-
-		#define ParamsType NCsFade::FParams
-		void FLibrary::SafeFade(UObject* ContextObject, const ParamsType& Params)
-		{
-		#undef ParamsType
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
 		#if WITH_EDITOR
-			if (UObject* ContextRoot = GetSafeContextRoot(ContextObject))
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Fade* Manager_Fade = UCsManager_Fade::GetSafe(Context, ContextRoot, Log);
+
+			if (!Manager_Fade)
 			{
-				UCsManager_Fade::Get(ContextRoot)->SafeFade(Params);
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Fade."), *Context));
 			}
+			return Manager_Fade;
+		}
+
+		UCsManager_Fade* FLibrary::GetSafe(const UObject* ContextObject)
+		{
+			using namespace NCsFade::NManager::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafe;
+
+			return GetSafe(Context, ContextObject, nullptr);
+		}
+
+		#pragma endregion Get
+
+		void FLibrary::CreateFadeWidget(const FString& Context, const UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->CreateFadeWidget();
+		}
+
+		#define ParamsType NCsFade::FParams
+
+		void FLibrary::FadeChecked(const FString& Context, const UObject* ContextObject, const ParamsType& Params)
+		{
+			GetChecked(Context, ContextObject)->Fade(Params);
+		}
+
+		bool FLibrary::SafeFade(const UObject* ContextObject, const ParamsType& Params)
+		{
+
+		#if WITH_EDITOR
+			if (UCsManager_Fade* Manager_Fade = GetSafe(ContextObject))
+			{
+				Manager_Fade->SafeFade(Params);
+				return true;
+			}
+			return false;
 		#else
 			UCsManager_Fade::Get()->SafeFade(Params);
+			return true;
 		#endif // #if WITH_EDITOR
 		}
 
-		void FLibrary::StopFadeChecked(const FString& Context, UObject* ContextObject)
-		{
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
+		#undef ParamsType
 
-			UCsManager_Fade::Get(ContextRoot)->StopFade();
+		void FLibrary::StopFadeChecked(const FString& Context, const UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->StopFade();
 		}
 
-		void FLibrary::ClearFadeChecked(const FString& Context, UObject* ContextObject)
+		void FLibrary::ClearFadeChecked(const FString& Context, const UObject* ContextObject)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
+			GetChecked(Context, ContextObject)->ClearFade();
+		}
 
-			UCsManager_Fade::Get(ContextRoot)->ClearFade();
+		bool FLibrary::SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
+		{
+			typedef NCsFade::FParams ParamsType;
+
+			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Time, 0.0f)
+
+				ParamsType Params;
+				Params.From = FLinearColor::Transparent;
+				Params.To   = FLinearColor::Black;
+				Params.Time = Time;
+
+				Manager_Fade->SafeFade(Params);
+			}
+			return false;
+		}
+
+		bool FLibrary::SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
+		{
+			typedef NCsFade::FParams ParamsType;
+
+			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Time, 0.0f)
+
+				ParamsType Params;
+				Params.From = FLinearColor::Black;
+				Params.To	= FLinearColor::Transparent;
+				Params.Time = Time;
+
+				Manager_Fade->SafeFade(Params);
+			}
+			return false;
 		}
 	}
 }

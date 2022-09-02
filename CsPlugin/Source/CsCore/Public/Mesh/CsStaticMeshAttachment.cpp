@@ -274,11 +274,14 @@ namespace NCsStaticMesh
 			return true;
 		}
 
-		void FAttachment::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const
+		void FAttachment::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, const TArray<UMaterialInterface*>& OtherMaterials) const
 		{
 			CS_IS_PTR_NULL_CHECKED(Parent)
 
 			CS_IS_PTR_NULL_CHECKED(Child);
+
+			CS_IS_ARRAY_EMPTY_CHECKED(OtherMaterials, UMaterialInterface*)
+			CS_IS_ARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)
 
 			check(IsValidChecked(Context));
 
@@ -297,7 +300,12 @@ namespace NCsStaticMesh
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
-			MaterialLibrary::SetChecked(Context, Child, GetMaterials());
+			MaterialLibrary::SetChecked(Context, Child, OtherMaterials);
+		}
+
+		void FAttachment::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const
+		{
+			AttachChecked(Context, Parent, Child, GetMaterials());
 		}
 
 		bool FAttachment::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -329,11 +337,14 @@ namespace NCsStaticMesh
 			return true;
 		}
 
-		void FAttachment::AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, TArray<UMaterialInstanceDynamic*>& OutMIDs) const
+		void FAttachment::AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, const TArray<UMaterialInterface*>& OtherMaterials, TArray<UMaterialInstanceDynamic*>& OutMIDs) const
 		{
 			CS_IS_PTR_NULL_CHECKED(Parent)
 
 			CS_IS_PTR_NULL_CHECKED(Child);
+
+			CS_IS_ARRAY_EMPTY_CHECKED(OtherMaterials, UMaterialInterface*)
+			CS_IS_ARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)
 
 			check(IsValidChecked(Context));
 
@@ -352,15 +363,23 @@ namespace NCsStaticMesh
 
 			typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
-			MIDLibrary::SetChecked(Context, Child, GetMaterials(), OutMIDs);
+			MIDLibrary::SetChecked(Context, Child, OtherMaterials, OutMIDs);
 
 			Child->SetComponentTickEnabled(true);
 			Child->SetHiddenInGame(false);
 		}
 
-		FCsStaticMeshActorPooled* FAttachment::AttachChecked(const FString& Context, const UObject* WorldContext, USceneComponent* Parent) const
+		void FAttachment::AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, TArray<UMaterialInstanceDynamic*>& OutMIDs) const
+		{
+			AttachAndActivateChecked(Context, Parent, Child, GetMaterials(), OutMIDs);
+		}
+
+		FCsStaticMeshActorPooled* FAttachment::AttachChecked(const FString& Context, const UObject* WorldContext, USceneComponent* Parent, const TArray<UMaterialInterface*>& OtherMaterials) const
 		{
 			CS_IS_PTR_NULL_CHECKED(Parent)
+
+			CS_IS_ARRAY_EMPTY_CHECKED(OtherMaterials, UMaterialInterface*)
+			CS_IS_ARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)
 
 			check(IsValidChecked(Context));
 
@@ -376,7 +395,7 @@ namespace NCsStaticMesh
 
 			PayloadImpl->Parent = Parent;
 			PayloadImpl->Mesh   = GetMesh();
-			PayloadImpl->SetMaterials(GetMaterials());
+			PayloadImpl->SetMaterials(OtherMaterials);
 			PayloadImpl->bGenerateMIDs  = GetbGenerateMIDs();
 			PayloadImpl->Bone			= GetBone();
 			PayloadImpl->TransformRules = GetTransformRules();
@@ -392,6 +411,11 @@ namespace NCsStaticMesh
 			const FCsStaticMeshActorPooled* Object = StaticMeshManagerLibrary::SpawnChecked(Context, WorldContext, DefaultType, Payload);
 
 			return const_cast<FCsStaticMeshActorPooled*>(Object);
+		}
+
+		FCsStaticMeshActorPooled* FAttachment::AttachChecked(const FString& Context, const UObject* WorldContext, USceneComponent* Parent) const
+		{
+			return AttachChecked(Context, WorldContext, Parent, GetMaterials());
 		}
 	}
 }

@@ -209,10 +209,21 @@ namespace NCsSkin
 			public:
 
 				/**
+				* Get the number of Static Mesh attachments for the given Skin.
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Skin
+				* return				Number of attachments
+				*/
+				static int32 GetNumAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin);
+
+				/**
 				* Set Static Mesh attachments on Component from the given Skin.
 				* 
 				* @param Context		The calling context.
 				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Skin
 				* @param Component		SceneComponent to attach Static Mesh attachments to.
 				* @param OutAttachments (out)
 				*/

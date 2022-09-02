@@ -459,8 +459,19 @@ namespace NCsSkin
 				return false;
 			}
 
-			// Attachment
+		// Attachment
 		#pragma region
+
+			int32 FLibrary::GetNumAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin)
+			{
+				typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment AttachmentSkinType;
+				typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+				const AttachmentSkinType* AttachmentSkin  = GetInterfaceChecked<AttachmentSkinType>(Context, Skin);
+				const TArray<AttachmentType>& Attachments = AttachmentSkin->GetStaticMeshAttachments();
+
+				return Attachments.Num();
+			}
 
 			void FLibrary::SetAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments)
 			{

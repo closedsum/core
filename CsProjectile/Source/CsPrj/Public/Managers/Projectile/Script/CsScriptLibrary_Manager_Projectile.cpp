@@ -22,13 +22,18 @@ namespace NCsScriptLibraryManagerProjectile
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, Get);
+			// Settings
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, GetTypeToSetAsArray);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, SetTypeMapKeyValue);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, AddPoolParams);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, Spawn);
+			// Allocate / Deallocate
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, QueueDeallocateAll);
+			// Pool
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, FindObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, HasPool);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, GetPool);
+			// Spawn
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Projectile, Spawn);
 		}
 	}
 }
@@ -106,6 +111,22 @@ bool UCsScriptLibrary_Manager_Projectile::AddPoolParams(const FString& Context, 
 }
 
 #pragma endregion Settings
+
+// Allocate / Deallocate
+#pragma region
+
+bool UCsScriptLibrary_Manager_Projectile::QueueDeallocateAll(const FString& Context, const UObject* WorldContextObject)
+{
+	using namespace NCsScriptLibraryManagerProjectile::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::QueueDeallocateAll : Context;
+
+	typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+	return ProjectileManagerLibrary::SafeQueueDeallocateAll(Ctxt, WorldContextObject);
+}
+
+#pragma endregion Allocate / Deallocate
 
 // Pool
 #pragma region

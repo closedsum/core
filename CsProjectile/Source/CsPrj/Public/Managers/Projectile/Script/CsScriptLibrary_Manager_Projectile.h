@@ -78,6 +78,24 @@ public:
 
 #pragma endregion Settings
 
+// Allocate / Deallocate
+#pragma region
+public:
+
+	/**
+	* Queue deallocating all Projectiles.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Type
+	* @param Pickup
+	* return					Whether was successful performed or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Library|Manager|Projectile", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool QueueDeallocateAll(const FString& Context, const UObject* WorldContextObject);
+
+#pragma endregion Allocate / Deallocate
+
 // Pool
 #pragma region
 public:

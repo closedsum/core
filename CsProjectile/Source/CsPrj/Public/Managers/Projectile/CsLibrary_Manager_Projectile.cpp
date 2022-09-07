@@ -227,6 +227,26 @@ namespace NCsProjectile
 
 		#pragma endregion Pool
 
+		// Allocate / Deallocate
+		#pragma region
+		
+		void FLibrary::QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext)
+		{
+			GetChecked(Context, WorldContext)->QueueDeallocateAll();
+		}
+
+		bool FLibrary::SafeQueueDeallocateAll(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext))
+			{
+				Manager_Projectile->QueueDeallocateAll();
+				return true;
+			}
+			return false;
+		}
+
+		#pragma endregion Allocate / Deallocate
+
 		// Payload
 		#pragma region
 

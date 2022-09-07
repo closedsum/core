@@ -648,6 +648,14 @@ public:
 
 #pragma endregion Pause
 
+	// Allocate / Deallocate
+#pragma region
+public:
+
+	void QueueDeallocateAll();
+
+#pragma endregion Allocate / Deallocate
+
 	// Payload
 #pragma region
 protected:

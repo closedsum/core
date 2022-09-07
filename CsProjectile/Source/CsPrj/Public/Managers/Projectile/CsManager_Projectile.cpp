@@ -908,6 +908,16 @@ void UCsManager_Projectile::BindToOnPause(const FECsUpdateGroup& Group)
 
 #pragma endregion Pause
 
+// Allocate / Deallocate
+#pragma region
+
+void UCsManager_Projectile::QueueDeallocateAll()
+{
+	Internal.QueueDeallocateAll();
+}
+
+#pragma endregion Allocate / Deallocate
+
 	// Payload
 #pragma region
 

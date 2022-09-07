@@ -210,6 +210,16 @@ namespace NCsProjectile
 
 		#pragma endregion Pool
 
+		// Allocate / Deallocate
+		#pragma region
+		public:
+
+			static void QueueDeallocateAllChecked(const FString& Context, const UObject* WorldContext);
+
+			static bool SafeQueueDeallocateAll(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+		#pragma endregion Allocate / Deallocate
+
 		// Payload
 		#pragma region
 		public:

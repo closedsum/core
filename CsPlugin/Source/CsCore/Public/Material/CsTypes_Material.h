@@ -1135,6 +1135,9 @@ namespace NCsMaterial
 			void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
 			bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+			void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index) const;
+			bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 		#undef FloatParameterType
 		#undef ColorParameterType
 		};
@@ -1265,6 +1268,9 @@ namespace NCsMaterial
 
 			void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID) const;
 			bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, UMaterialInstanceDynamic*& OutMID, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			void SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index) const;
+			bool SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 		#undef FloatParameterType
 		#undef ColorParameterType

@@ -235,6 +235,7 @@ namespace NCsSkin
 
 			// Skeletal Mesh
 			#pragma region
+			public:
 
 				/**
 				* Check whether Skin implements the interface:
@@ -269,8 +270,9 @@ namespace NCsSkin
 				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
 				* @param Component	SkeletalMeshComponent
 				* @param Log		(optional)
+				* return
 				*/
-				static void SetSafeSkeletalMeshAndMaterials(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool SetSafeSkeletalMeshAndMaterials(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Set the Skeletal Mesh and Materials on a SkeletalMeshComponent (Component)

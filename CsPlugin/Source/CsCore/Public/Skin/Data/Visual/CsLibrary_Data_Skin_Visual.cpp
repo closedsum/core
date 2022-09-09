@@ -509,16 +509,39 @@ namespace NCsSkin
 			{	
 				SetSkeletalMeshChecked(Context, Skin, Component);
 
-				// Materials
-				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
 				typedef NCsMaterial::FLibrary MaterialLibrary;
 
-				const MaterialSkinType* MaterialSkin = GetInterfaceChecked<MaterialSkinType>(Context, Skin);
+				// Material
+				typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
 
-				MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
+				if (const MaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinDataType>(Context, Skin))
+				{
+					MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
+					return;
+				}
+				// MaterialWithParameters
+				typedef NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters MaterialWithParamsSkinDataType;
+
+				if (const MaterialWithParamsSkinDataType* MaterialWithParamsSkin = GetSafeInterfaceChecked<MaterialWithParamsSkinDataType>(Context, Skin))
+				{
+					typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
+
+					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+
+					const int32 Count = Materials.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						const MaterialType& Material = Materials[I];
+
+						Material.SetChecked(Context, Component, I);
+					}
+					return;
+				}
+				checkf(0, TEXT("%s: %s does NOT implement any material interface."), *Context, *PrintSkinAndClass(Skin));
 			}
 
-			void FLibrary::SetSafeSkeletalMeshAndMaterials(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::SetSafeSkeletalMeshAndMaterials(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				typedef NCsSkin::NData::NVisual::NSkeletalMesh::ISkeletalMesh SkeletalMeshSkinType;
 
@@ -526,23 +549,40 @@ namespace NCsSkin
 				{
 					SetSkeletalMeshChecked(Context, SkeletalMeshSkin, Component);
 
-					// Materials
-					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinType;
 					typedef NCsMaterial::FLibrary MaterialLibrary;
 
-					if (const MaterialSkinType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinType>(Context, Skin))
+					// Material
+					typedef NCsSkin::NData::NVisual::NMaterial::IMaterial MaterialSkinDataType;
+
+					if (const MaterialSkinDataType* MaterialSkin = GetSafeInterfaceChecked<MaterialSkinDataType>(Context, Skin))
 					{
-						MaterialLibrary::SetChecked(Context, Component, MaterialSkin->GetMaterials());
+						return MaterialLibrary::SetSafe(Context, Component, MaterialSkin->GetMaterials());
 					}
-					else
+					// MaterialWithParameters
+					typedef NCsSkin::NData::NVisual::NMaterial::NWithParameters::IWithParameters MaterialWithParamsSkinDataType;
+
+					if (const MaterialWithParamsSkinDataType* MaterialWithParamsSkin = GetSafeInterfaceChecked<MaterialWithParamsSkinDataType>(Context, Skin))
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface: %s"), *Context, *PrintNameAndClass(Skin), *(MaterialSkinType::Name.ToString())));
+						typedef NCsMaterial::NInterface::FWithRangeParameters MaterialType;
+
+						const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
+
+						const int32 Count = Materials.Num();
+
+						for (int32 I = 0; I < Count; ++I)
+						{
+							const MaterialType& Material = Materials[I];
+
+							if (!Material.SetSafe(Context, Component, I))
+								return false;
+						}
+						return true;
 					}
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement any material interface."), *Context, *PrintSkinAndClass(Skin)));
+					return false;
 				}
-				else
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface: %s"), *Context, *PrintNameAndClass(Skin), *(SkeletalMeshSkinType::Name.ToString())));
-				}
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface: %s"), *Context, *PrintNameAndClass(Skin), *(SkeletalMeshSkinType::Name.ToString())));
+				return false;
 			}
 
 			void FLibrary::SetSkeletalMeshAndMIDsChecked(const FString& Context, const SkinType* Skin, USkeletalMeshComponent* Component, TArray<UMaterialInstanceDynamic*>& OutMIDs)
@@ -778,7 +818,7 @@ namespace NCsSkin
 					Result.MaterialWithParamsSkinData = const_cast<MaterialWithParamsSkinDataType*>(MaterialWithParamsSkin);
 					return Result;
 				}
-				checkf(0, TEXT("%s: %s does NOT implement any material interface."), *Context, *PrintSkinAndClass(Skin));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement any material interface."), *Context, *PrintSkinAndClass(Skin)));
 				return Result;
 			}
 

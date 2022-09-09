@@ -818,6 +818,25 @@ namespace NCsMaterial
 			}
 			return true;
 		}
+
+		void FWithParameters::SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index) const
+		{
+			check(IsValidChecked(Context));
+
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::SetChecked(Context, Component, GetMaterial(), Index);
+		}
+
+		bool FWithParameters::SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			if (!IsValid(Context, Log))
+				return false;
+
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			return MaterialLibrary::SetSafe(Context, Component, GetMaterial(), Index, Log);
+		}
 	}
 }
 
@@ -1078,6 +1097,25 @@ namespace NCsMaterial
 					return false;
 			}
 			return true;
+		}
+
+		void FWithRangeParameters::SetChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index) const
+		{
+			check(IsValidChecked(Context));
+
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			MaterialLibrary::SetChecked(Context, Component, GetMaterial(), Index);
+		}
+
+		bool FWithRangeParameters::SetSafe(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			if (!IsValid(Context, Log))
+				return false;
+
+			typedef NCsMaterial::FLibrary MaterialLibrary;
+
+			return MaterialLibrary::SetSafe(Context, Component, GetMaterial(), Index, Log);
 		}
 	}
 }

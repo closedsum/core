@@ -16,7 +16,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsSpawnerImpl_OnSpawnObject, ACsSpawnerImpl*, Spawner, UObject*, SpawnedObject);
 
-
 #pragma endregion Delegates
 
 // Structs

@@ -451,6 +451,11 @@ namespace NCsMath
 		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
 
 		FORCEINLINE static FVector RotateNormalAngleUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetUpFromNormal(N)); }
+		
+		FORCEINLINE static FVector Fractional(const FVector& V)
+		{
+			return FVector(FMath::Fractional(V.X), FMath::Fractional(V.Y), FMath::Fractional(V.Z));
+		}
 
 	#pragma endregion Vector
 

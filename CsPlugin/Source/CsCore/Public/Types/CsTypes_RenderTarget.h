@@ -7,6 +7,127 @@
 
 #include "CsTypes_RenderTarget.generated.h"
 
+// FCsTexture
+#pragma region
+
+class UTextureRenderTarget2D;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTextureRenderTarget2D
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Render")
+	TSoftObjectPtr<UTextureRenderTarget2D> Texture;
+
+	UPROPERTY()
+	int32 Texture_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Render")
+	UTextureRenderTarget2D* Texture_Internal;
+
+	FCsTextureRenderTarget2D() :
+		Texture(nullptr),
+		Texture_LoadFlags(0),
+		Texture_Internal(nullptr)
+	{
+	}
+
+	/**
+	* Get the Hard reference to the UTextureRenderTarget2D asset.
+	*
+	* return Texture
+	*/
+	FORCEINLINE UTextureRenderTarget2D* Get() const { return Texture_Internal; }
+
+	/**
+	* Get the pointer to the Hard reference to the UTextureRenderTarget2D asset.
+	*
+	* return Texture
+	*/
+	FORCEINLINE UTextureRenderTarget2D** GetPtr() { return &Texture_Internal; }
+
+	/**
+	* Get the Hard reference to the UTextureRenderTarget2D asset.
+	*
+	* @param Context	The calling context.
+	* return			Texture
+	*/
+	FORCEINLINE UTextureRenderTarget2D* GetChecked(const FString& Context) const
+	{
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("%s: Texture is NULL."), *Context);
+
+		checkf(Texture_Internal, TEXT("%s: Texture has NOT been loaded from Path @ %s."), *Context, *(Texture.ToSoftObjectPath().ToString()));
+
+		return Texture_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UTextureRenderTarget2D asset.
+	*
+	* return Static Mesh
+	*/
+	FORCEINLINE UTextureRenderTarget2D* GetChecked() const
+	{
+		checkf(Texture.ToSoftObjectPath().IsValid(), TEXT("FCsTextureRenderTarget2D::GetChecked: Mesh is NULL."));
+
+		checkf(Texture_Internal, TEXT("FCsTextureRenderTarget2D::GetChecked: Texture has NOT been loaded from Path @ %s."), *(Texture.ToSoftObjectPath().ToString()));
+
+		return Texture_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UTextureRenderTarget2D asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Static Mesh
+	*/
+	UTextureRenderTarget2D* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Texture.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Texture is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Texture_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Texture has NOT been loaded from Path @ %s."), *Context, *(Texture.ToSoftObjectPath().ToString())));
+		}
+		return Texture_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UTextureRenderTarget2D asset.
+	*
+	* return Static Mesh
+	*/
+	UTextureRenderTarget2D* GetSafe()
+	{
+		if (!Texture.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Texture_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+};
+
+#pragma endregion FCsTexture
+
 // FCsTextureRenderTarget2D_Array
 #pragma region
 

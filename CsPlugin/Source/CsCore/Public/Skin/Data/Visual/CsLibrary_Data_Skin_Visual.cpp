@@ -18,6 +18,8 @@
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+// Engine
+#include "GameFramework/Actor.h"
 
 namespace NCsSkin
 {
@@ -899,6 +901,45 @@ namespace NCsSkin
 						Component->SetRelativeScale3D(Min * FVector::OneVector);
 					else
 						Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+					return true;
+				}
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin)));
+				return false;
+			}
+
+			bool FLibrary::SetSafeScale(const FString& Context, const SkinType* Skin, AActor* Actor, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				// Uniform
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
+
+				if (const UniformScaleSkinType* UniformScaleSkin = GetSafeInterfaceChecked<UniformScaleSkinType>(Context, Skin))
+				{
+					CS_IS_PTR_NULL(Actor);
+
+					const float& UniformScale = UniformScaleSkin->GetUniformScale();
+
+					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
+
+					Actor->SetActorScale3D(UniformScale * FVector::OneVector);
+					return true;
+				}
+				// UniformRange
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange UniformRangeScaleSkinType;
+
+				if (const UniformRangeScaleSkinType* UniformRangeScaleSkin = GetSafeInterfaceChecked<UniformRangeScaleSkinType>(Context, Skin))
+				{
+					CS_IS_PTR_NULL(Actor);
+
+					const float& Min = UniformRangeScaleSkin->GetMinUniformScale();
+					const float& Max = UniformRangeScaleSkin->GetMaxUniformScale();
+
+					CS_IS_FLOAT_GREATER_THAN(Min, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN(Max, 0.0f)
+
+					if (Min == Max)
+						Actor->SetActorScale3D(Min * FVector::OneVector);
+					else
+						Actor->SetActorScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
 					return true;
 				}
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin)));

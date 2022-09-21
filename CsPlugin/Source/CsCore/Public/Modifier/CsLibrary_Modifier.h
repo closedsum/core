@@ -31,7 +31,7 @@ namespace NCsModifier
 
 		static int32 ModifyIntChecked(const FString& Context, const IntModifierType* Modifier, const int32& Value);
 
-		static int32 ModifyIntChecked(const FString& Context, const TArray<IntModifierType*> Modifiers, const int32& Value);
+		static int32 ModifyIntChecked(const FString& Context, const TArray<IntModifierType*>& Modifiers, const int32& Value);
 
 	#undef IntModifierType
 
@@ -39,11 +39,11 @@ namespace NCsModifier
 
 		static int32 ModifyIntMinChecked(const FString& Context, const IntRangeModifierType* Modifier, const int32& Value);
 
-		static int32 ModifyIntMinChecked(const FString& Context, const TArray<IntRangeModifierType*> Modifiers, const int32& Value);
+		static int32 ModifyIntMinChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value);
 
 		static int32 ModifyIntMaxChecked(const FString& Context, const IntRangeModifierType* Modifier, const int32& Value);
 
-		static int32 ModifyIntMaxChecked(const FString& Context, const TArray<IntRangeModifierType*> Modifiers, const int32& Value);
+		static int32 ModifyIntMaxChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value);
 
 	#undef IntRangeModifierType
 
@@ -51,7 +51,11 @@ namespace NCsModifier
 
 		static float ModifyFloatChecked(const FString& Context, const FloatModifierType* Modifier, const float& Value);
 
-		static float ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*> Modifiers, const float& Value);
+		static float ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value);
 
 	#undef FloatModifierType
 
@@ -59,11 +63,11 @@ namespace NCsModifier
 
 		static float ModifyFloatMinChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value);
 
-		static float ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*> Modifiers, const float& Value);
+		static float ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
 
 		static float ModifyFloatMaxChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value);
 
-		static float ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*> Modifiers, const float& Value);
+		static float ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
 
 	#undef FloatRangeModifierType
 	};

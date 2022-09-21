@@ -3,6 +3,7 @@
 #include "CsPrj.h"
 
 // Library
+#include "Modifier/CsLibrary_Modifier.h"
 #include "Library/CsLibrary_Valid.h"
 // Interface
 #include "Valid/CsIsValid.h"
@@ -106,7 +107,6 @@ namespace NCsProjectile
 
 			float Result = Value;
 
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
 			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
 			// TODO: FUTURE: Use a tiny / small array on the stack
@@ -128,14 +128,16 @@ namespace NCsProjectile
 
 					const ApplicationType& Application = FloatModifier->GetApplication();
 
-					// PercentAddFirst
-					if (Application == ApplicationType::PercentAddFirst)
+					// PercentAddFirst || PercentSubtractFirst
+					if (Application == ApplicationType::PercentAddFirst ||
+						Application == ApplicationType::PercentSubtractFirst)
 					{
 						FirstModifiers.Add(FloatModifier);
 					}
-					// PercentAddLast
+					// PercentAddLast || PercentSubtractLast
 					else
-					if (Application == ApplicationType::PercentAddLast)
+					if (Application == ApplicationType::PercentAddLast ||
+						Application == ApplicationType::PercentSubtractLast)
 					{
 						LastModifiers.Add(FloatModifier);
 					}
@@ -149,51 +151,15 @@ namespace NCsProjectile
 
 			// NOTE: For now ignore order
 
-			// PercentAddFirst
-			{
-				float Percent = 1.0f;
+			typedef NCsModifier::FLibrary ModifierLibrary;
 
-				const int32 Count = FirstModifiers.Num();
-
-				for (int32 I = Count - 1; I >= 0; --I)
-				{
-					const FloatModifierType* FloatModifier = FirstModifiers[I];
-					
-					Percent = FloatModifier->Modify(Percent);
-					
-					FirstModifiers.RemoveAt(I, 1, false);
-				}
-				Result *= Percent;
-			}
+			// PercentAddFirst || PercentSubtractFirst
+			Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			{
-				const int32 Count = Modifiers.Num();
+			Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
+			// PercentAddLast || PercentSubtractLast
+			Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
 
-				for (int32 I = Count - 1; I >= 0; --I)
-				{
-					const FloatModifierType* FloatModifier = Modifiers[I];
-
-					Result = FloatModifier->Modify(Result);
-
-					Modifiers.RemoveAt(I, 1, false);
-				}
-			}
-			// PercentAddLast
-			{
-				float Percent = 1.0f;
-
-				const int32 Count = LastModifiers.Num();
-
-				for (int32 I = Count - 1; I >= 0; --I)
-				{
-					const FloatModifierType* FloatModifier = LastModifiers[I];
-
-					Percent = FloatModifier->Modify(Percent);
-
-					LastModifiers.RemoveAt(I, 1, false);
-				}
-				Result *= Percent;
-			}
 			return Result;
 		}
 

@@ -26,7 +26,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	int32 FLibrary::ModifyIntChecked(const FString& Context, const TArray<IntModifierType*> Modifiers, const int32& Value)
+	int32 FLibrary::ModifyIntChecked(const FString& Context, const TArray<IntModifierType*>& Modifiers, const int32& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, IntModifierType)
 
@@ -54,7 +54,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	int32 FLibrary::ModifyIntMinChecked(const FString& Context, const TArray<IntRangeModifierType*> Modifiers, const int32& Value)
+	int32 FLibrary::ModifyIntMinChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, IntRangeModifierType)
 
@@ -78,7 +78,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	int32 FLibrary::ModifyIntMaxChecked(const FString& Context, const TArray<IntRangeModifierType*> Modifiers, const int32& Value)
+	int32 FLibrary::ModifyIntMaxChecked(const FString& Context, const TArray<IntRangeModifierType*>& Modifiers, const int32& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, IntRangeModifierType)
 
@@ -107,19 +107,23 @@ namespace NCsModifier
 
 		float Result = Value;
 
-		// PercentAddFirst
-		if (Application == ApplicationType::PercentAddFirst)
+		// PercentAddFirst || PercentSubtractFirst
+		if (Application == ApplicationType::PercentAddFirst ||
+			Application == ApplicationType::PercentSubtractFirst)
 		{
 			float Percent = 1.0f;
 			Percent		  = Modifier->Modify(Percent);
+			Percent		  = FMath::Max(0.0f, Percent);
 			Result		 *= Percent;
 		}
-		// PercentAddLast
+		// PercentAddLast || PercentSubtractLast
 		else
-		if (Application == ApplicationType::PercentAddLast)
+		if (Application == ApplicationType::PercentAddLast ||
+			Application == ApplicationType::PercentSubtractLast)
 		{
 			float Percent = 1.0f;
 			Percent		  = Modifier->Modify(Percent);
+			Percent		  = FMath::Max(0.0f, Percent);
 			Result		 *= Percent;
 		}
 		// "The Rest"
@@ -130,7 +134,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*> Modifiers, const float& Value)
+	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*>& Modifiers, const float& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
 
@@ -147,14 +151,16 @@ namespace NCsModifier
 
 			const ApplicationType& Application = Modifier->GetApplication();
 
-			// PercentAddFirst
-			if (Application == ApplicationType::PercentAddFirst)
+			// PercentAddFirst || PercentSubtractFirst
+			if (Application == ApplicationType::PercentAddFirst ||
+				Application == ApplicationType::PercentSubtractFirst)
 			{
 				FirstModifiers.Add(Modifier);
 			}
-			// PercentAddLast
+			// PercentAddLast || PercentSubtractLast
 			else
-			if (Application == ApplicationType::PercentAddLast)
+			if (Application == ApplicationType::PercentAddLast ||
+				Application == ApplicationType::PercentSubtractLast)
 			{
 				LastModifiers.Add(Modifier);
 			}
@@ -167,51 +173,54 @@ namespace NCsModifier
 
 		// NOTE: For now ignore order
 
-		// PercentAddFirst
-		{
-			float Percent = 1.0f;
-
-			const int32 Count = FirstModifiers.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const FloatModifierType* FloatModifier = FirstModifiers[I];
-					
-				Percent = FloatModifier->Modify(Percent);
-					
-				FirstModifiers.RemoveAt(I, 1, false);
-			}
-			Result *= Percent;
-		}
+		// PercentAddFirst || PercentSubtractFirst
+		Result = ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
 		// "The Rest"
+		Result = ModifyFloatAndEmptyChecked(Context, OtherModifiers, Result);
+		// PercentAddLast || PercentSubtractLast
+		Result = ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
+
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value)
+	{
+		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+
+		float Result = Value;
+
+		const int32 Count = Modifiers.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			const int32 Count = OtherModifiers.Num();
+			const FloatModifierType* FloatModifier = Modifiers[I];
 
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const FloatModifierType* FloatModifier = OtherModifiers[I];
+			Result = FloatModifier->Modify(Value);
 
-				Result = FloatModifier->Modify(Result);
-
-				OtherModifiers.RemoveAt(I, 1, false);
-			}
+			Modifiers.RemoveAt(I, 1, false);
 		}
-		// PercentAddLast
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value)
+	{
+		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+
+		float Result  = Value;
+		float Percent = 1.0f;
+
+		const int32 Count = Modifiers.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
 		{
-			float Percent = 1.0f;
+			const FloatModifierType* Modifier = Modifiers[I];
 
-			const int32 Count = LastModifiers.Num();
+			Percent = Modifier->Modify(Percent);
 
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const FloatModifierType* FloatModifier = LastModifiers[I];
-
-				Percent = FloatModifier->Modify(Percent);
-
-				LastModifiers.RemoveAt(I, 1, false);
-			}
-			Result *= Percent;
+			Modifiers.RemoveAt(I, 1, false);
 		}
+		Percent = FMath::Max(0.0f, Percent);
+		Result *= Percent;
 		return Result;
 	}
 
@@ -229,19 +238,23 @@ namespace NCsModifier
 
 		float Result = Value;
 
-		// PercentAddFirst
-		if (Application == ApplicationType::PercentAddFirst)
+		// PercentAddFirst || PercentSubtractFirst
+		if (Application == ApplicationType::PercentAddFirst ||
+			Application == ApplicationType::PercentSubtractFirst)
 		{
 			float Percent = 1.0f;
 			Percent		  = Modifier->ModifyMin(Percent);
+			Percent		  = FMath::Max(0.0f, Percent);
 			Result		 *= Percent;
 		}
-		// PercentAddLast
+		// PercentAddLast || PercentSubtractLast
 		else
-		if (Application == ApplicationType::PercentAddLast)
+		if (Application == ApplicationType::PercentAddLast ||
+			Application == ApplicationType::PercentSubtractLast)
 		{
 			float Percent = 1.0f;
 			Percent		  = Modifier->ModifyMin(Percent);
+			Percent		  = FMath::Max(0.0f, Percent);
 			Result		 *= Percent;
 		}
 		// "The Rest"
@@ -252,7 +265,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*> Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
 
@@ -269,14 +282,16 @@ namespace NCsModifier
 
 			const ApplicationType& Application = Modifier->GetMinApplication();
 
-			// PercentAddFirst
-			if (Application == ApplicationType::PercentAddFirst)
+			// PercentAddFirst || PercentSubtractFirst
+			if (Application == ApplicationType::PercentAddFirst ||
+				Application == ApplicationType::PercentSubtractFirst)
 			{
 				FirstModifiers.Add(Modifier);
 			}
-			// PercentAddLast
+			// PercentAddLast || PercentSubtractLast
 			else
-			if (Application == ApplicationType::PercentAddLast)
+			if (Application == ApplicationType::PercentAddLast ||
+				Application == ApplicationType::PercentSubtractLast)
 			{
 				LastModifiers.Add(Modifier);
 			}
@@ -289,7 +304,7 @@ namespace NCsModifier
 
 		// NOTE: For now ignore order
 
-		// PercentAddFirst
+		// PercentAddFirst || PercentSubtractFirst
 		{
 			float Percent = 1.0f;
 
@@ -303,6 +318,7 @@ namespace NCsModifier
 					
 				FirstModifiers.RemoveAt(I, 1, false);
 			}
+			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
 		}
 		// "The Rest"
@@ -318,7 +334,7 @@ namespace NCsModifier
 				OtherModifiers.RemoveAt(I, 1, false);
 			}
 		}
-		// PercentAddLast
+		// PercentAddLast || PercentSubtractLast
 		{
 			float Percent = 1.0f;
 
@@ -332,6 +348,7 @@ namespace NCsModifier
 
 				LastModifiers.RemoveAt(I, 1, false);
 			}
+			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
 		}
 		return Result;
@@ -347,19 +364,23 @@ namespace NCsModifier
 
 		float Result = Value;
 
-		// PercentAddFirst
-		if (Application == ApplicationType::PercentAddFirst)
+		// PercentAddFirst || PercentSubtractFirst
+		if (Application == ApplicationType::PercentAddFirst ||
+			Application == ApplicationType::PercentSubtractFirst)
 		{
 			float Percent = 1.0f;
 			Percent		  = Modifier->ModifyMax(Percent);
+			Percent		  = FMath::Max(0.0f, Percent);
 			Result		 *= Percent;
 		}
-		// PercentAddLast
+		// PercentAddLast || PercentSubtractLast
 		else
-		if (Application == ApplicationType::PercentAddLast)
+		if (Application == ApplicationType::PercentAddLast ||
+			Application == ApplicationType::PercentSubtractLast)
 		{
 			float Percent = 1.0f;
 			Percent		  = Modifier->ModifyMax(Percent);
+			Percent		  = FMath::Max(0.0f, Percent);
 			Result		 *= Percent;
 		}
 		// "The Rest"
@@ -370,7 +391,7 @@ namespace NCsModifier
 		return Result;
 	}
 
-	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*> Modifiers, const float& Value)
+	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
 
@@ -387,14 +408,16 @@ namespace NCsModifier
 
 			const ApplicationType& Application = Modifier->GetMaxApplication();
 
-			// PercentAddFirst
-			if (Application == ApplicationType::PercentAddFirst)
+			// PercentAddFirst || PercentSubtractFirst
+			if (Application == ApplicationType::PercentAddFirst ||
+				Application == ApplicationType::PercentSubtractFirst)
 			{
 				FirstModifiers.Add(Modifier);
 			}
-			// PercentAddLast
+			// PercentAddLast || PercentSubtractLast
 			else
-			if (Application == ApplicationType::PercentAddLast)
+			if (Application == ApplicationType::PercentAddLast ||
+				Application == ApplicationType::PercentSubtractLast)
 			{
 				LastModifiers.Add(Modifier);
 			}
@@ -407,7 +430,7 @@ namespace NCsModifier
 
 		// NOTE: For now ignore order
 
-		// PercentAddFirst
+		// PercentAddFirst || PercentSubtractFirst
 		{
 			float Percent = 1.0f;
 
@@ -421,6 +444,7 @@ namespace NCsModifier
 					
 				FirstModifiers.RemoveAt(I, 1, false);
 			}
+			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
 		}
 		// "The Rest"
@@ -436,7 +460,7 @@ namespace NCsModifier
 				OtherModifiers.RemoveAt(I, 1, false);
 			}
 		}
-		// PercentAddLast
+		// PercentAddLast || PercentSubtractLast
 		{
 			float Percent = 1.0f;
 
@@ -450,6 +474,7 @@ namespace NCsModifier
 
 				LastModifiers.RemoveAt(I, 1, false);
 			}
+			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
 		}
 		return Result;

@@ -33,6 +33,16 @@ enum class ECsNumericValueModifierApplication : uint8
 		NOTE: Currently Percent Add Last values are applied LAST, AFTER all other modifiers have
 			  been applied. */
 	PercentAddLast							UMETA(DisplayName = "Percent Add Last"),
+	/** All Percent Subtract First values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+		then the result is subtracted from 1.0f (clamped to 0.0f) and multiplied by the current value being modified. 
+		NOTE: Currently Percent Subtract First values are applied BEFORE any other modifiers have
+			  been applied. */
+	PercentSubtractFirst					UMETA(DisplayName = "Percent Subtract First"),
+	/** All Percent Subtract Last values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+		then the result is subtracted from 1.0f (clamped to 0.0f) and multiplied by the current value being modified.
+		NOTE: Currently Percent Subtract Last values are applied LAST, AFTER all other modifiers have
+			  been applied. */
+	PercentSubtractLast						UMETA(DisplayName = "Percent Subtract Last"),
 	ECsNumericValueModifierApplication_MAX	UMETA(Hidden),
 };
 
@@ -53,6 +63,8 @@ namespace NCsNumericValueModifierApplication
 		extern CSCORE_API const Type ReplaceOnlyIfGreater;
 		extern CSCORE_API const Type PercentAddFirst;
 		extern CSCORE_API const Type PercentAddLast;
+		extern CSCORE_API const Type PercentSubtractFirst;
+		extern CSCORE_API const Type PercentSubtractLast;
 		extern CSCORE_API const Type ECsNumericValueModifierApplication_MAX;
 	}
 }
@@ -88,6 +100,16 @@ namespace NCsModifier
 					NOTE: Currently Percent Add Last values are applied LAST, AFTER all other modifiers have
 						  been applied. */
 				PercentAddLast,
+				/** All Percent Subtract First values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+					then the result is subtracted from 1.0f (clamped to 0.0f) and multiplied by the current value being modified. 
+					NOTE: Currently Percent Subtract First values are applied BEFORE any other modifiers have
+						  been applied. */
+				PercentSubtractFirst,
+				/** All Percent Subtract Last values are added first (i.e. 0.1 + 0.05 + 0.05 + ... etc = 0.2),
+					then the result is subtracted from 1.0f (clamped to 0.0f) and multiplied by the current value being modified.
+					NOTE: Currently Percent Subtract Last values are applied LAST, AFTER all other modifiers have
+						  been applied. */
+				PercentSubtractLast,
 				EApplication_MAX
 			};
 
@@ -108,6 +130,8 @@ namespace NCsModifier
 					extern CSCORE_API const Type ReplaceOnlyIfGreater;
 					extern CSCORE_API const Type PercentAddFirst;
 					extern CSCORE_API const Type PercentAddLast;
+					extern CSCORE_API const Type PercentSubtractFirst;
+					extern CSCORE_API const Type PercentSubtractLast;
 					extern CSCORE_API const Type EApplication_MAX;
 				}
 

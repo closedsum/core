@@ -10,6 +10,7 @@
 #include "DetailCustomizations/EnumStruct/ECsDamageTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsDamageDataCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsHitTypeCustomization.h"
+#include "DetailCustomizations/EnumStruct/ECsDamageModifierCustomization.h"
 	// Data
 #include "DetailCustomizations/Data/CsData_DamagePtrCustomization.h"
 #include "DetailCustomizations/Data/CsData_ECsDamageDataCustomization.h"
@@ -25,6 +26,7 @@ void FCsDamageRegisterDetailCustomization::Register()
 		CS_TEMP_REGISTER(ECsDamageType);
 		CS_TEMP_REGISTER(ECsDamageData);
 		CS_TEMP_REGISTER(ECsHitType);
+		CS_TEMP_REGISTER(ECsDamageModifier);
 	}
 	// Data
 	{

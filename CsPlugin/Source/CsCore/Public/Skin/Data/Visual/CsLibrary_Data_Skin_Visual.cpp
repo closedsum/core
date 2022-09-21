@@ -907,15 +907,53 @@ namespace NCsSkin
 				return false;
 			}
 
-			bool FLibrary::SetSafeScale(const FString& Context, const SkinType* Skin, AActor* Actor, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			void FLibrary::SetScaleChecked(const FString& Context, const SkinType* Skin, AActor* Actor)
 			{
+				CS_IS_PTR_NULL_CHECKED(Skin)
+				CS_IS_PTR_NULL_CHECKED(Actor)
+
 				// Uniform
 				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
 
 				if (const UniformScaleSkinType* UniformScaleSkin = GetSafeInterfaceChecked<UniformScaleSkinType>(Context, Skin))
 				{
-					CS_IS_PTR_NULL(Actor);
+					const float& UniformScale = UniformScaleSkin->GetUniformScale();
 
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScale, 0.0f)
+
+					Actor->SetActorScale3D(UniformScale * FVector::OneVector);
+					return;
+				}
+				// UniformRange
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange UniformRangeScaleSkinType;
+
+				if (const UniformRangeScaleSkinType* UniformRangeScaleSkin = GetSafeInterfaceChecked<UniformRangeScaleSkinType>(Context, Skin))
+				{
+					const float& Min = UniformRangeScaleSkin->GetMinUniformScale();
+					const float& Max = UniformRangeScaleSkin->GetMaxUniformScale();
+
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(Min, 0.0f)
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(Max, 0.0f)
+
+					if (Min == Max)
+						Actor->SetActorScale3D(Min * FVector::OneVector);
+					else
+						Actor->SetActorScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+					return;
+				}
+				checkf(0, TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin));
+			}
+
+			bool FLibrary::SetSafeScale(const FString& Context, const SkinType* Skin, AActor* Actor, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Skin)
+				CS_IS_PTR_NULL(Actor)
+
+				// Uniform
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
+
+				if (const UniformScaleSkinType* UniformScaleSkin = GetSafeInterfaceChecked<UniformScaleSkinType>(Context, Skin))
+				{
 					const float& UniformScale = UniformScaleSkin->GetUniformScale();
 
 					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
@@ -928,8 +966,6 @@ namespace NCsSkin
 
 				if (const UniformRangeScaleSkinType* UniformRangeScaleSkin = GetSafeInterfaceChecked<UniformRangeScaleSkinType>(Context, Skin))
 				{
-					CS_IS_PTR_NULL(Actor);
-
 					const float& Min = UniformRangeScaleSkin->GetMinUniformScale();
 					const float& Max = UniformRangeScaleSkin->GetMaxUniformScale();
 

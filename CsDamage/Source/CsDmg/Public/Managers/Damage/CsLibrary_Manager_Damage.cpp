@@ -12,6 +12,8 @@
 #include "Managers/Damage/CsManager_Damage.h"
 // Data
 #include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
+// Damage
+#include "Modifier/Copy/CsDamageModifier_Copy.h"
 
 #if WITH_EDITOR
 // Library
@@ -282,10 +284,11 @@ namespace NCsDamage
 			ModifierType* Copy				= Container->Get();
 
 			typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
+			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
 
-			bool Success = ModifierLibrary::CopyChecked(Context, Modifier, Copy);
+			CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
 
-			checkf(Success, TEXT("%s: Failed to create copy of Event."), *Context);
+			ICopy->Copy(Modifier);
 
 			return Container;
 		}
@@ -299,6 +302,8 @@ namespace NCsDamage
 
 		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
 		{
+			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
 			for (const ModifierType* Modifier : From)
@@ -311,13 +316,33 @@ namespace NCsDamage
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
+			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
 			for (const ModifierType* Modifier : From)
 			{
 				AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
-				Allocated.CopyFrom(ContextRoot, Modifier);
+				Allocated.Copy(ContextRoot, Modifier);
 			}
+		}
+
+		void FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsDamageModifier& OutType)
+		{
+			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
+
+			typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
+
+			OutType				= DmgModifierLibrary::GetTypeChecked(Context, Modifier);
+			OutContainer		= Manager_Damage->AllocateModifier(OutType);
+			ModifierType* Copy	= OutContainer->Get();
+
+			typedef NCsDamage::NModifier::FLibrary ModifierLibrary;
+			typedef NCsDamage::NModifier::NCopy::ICopy CopyType;
+
+			CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+
+			ICopy->Copy(Modifier);
 		}
 
 #		undef ModifierResourceType

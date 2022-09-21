@@ -33,13 +33,17 @@
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_ClassHandler.h"
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
+	// Payload
 #include "Payload/CsPayload_ProjectileInterfaceMap.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
 #include "Payload/Collision/CsPayload_Projectile_CollisionImplSlice.h"
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
+#include "Payload/Modifier/Damage/CsPayload_Projectile_ModifierDamageImplSlice.h"
 #include "Payload/Target/CsPayload_Projectile_TargetImplSlice.h"
+	// Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/Copy/CsProjectileModifier_Copy.h"
+	// Event
 #include "Event/CsProjectile_Event.h"
 // Modifier
 #include "Modifier/CsProjectileModifierImpl.h"
@@ -908,7 +912,7 @@ void UCsManager_Projectile::BindToOnPause(const FECsUpdateGroup& Group)
 
 #pragma endregion Pause
 
-// Allocate / Deallocate
+	// Allocate / Deallocate
 #pragma region
 
 void UCsManager_Projectile::QueueDeallocateAll()
@@ -982,6 +986,19 @@ PayloadType* UCsManager_Projectile::ConstructPayload(const FECsProjectile& Type)
 	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileModifier))
 	{
 		typedef NCsProjectile::NPayload::NModifier::FImplSlice SliceType;
+
+		SliceType* Slice = new SliceType();
+
+		Slice->SetInterfaceMap(InterfaceMap);
+		// Add slice as ICsReset to BaseSlice so this slice gets reset call.
+		BaseSlice->AddReset(static_cast<ICsReset*>(Slice));
+		// Add to map
+		PayloadInterfaceMap->AddDeconstruct(SliceType::Name, &SliceType::Deconstruct);
+	}
+	// Damage Modifier (NCsProjectile::NPayload::NModifier::NDamage::FImplSlice)
+	if (PayloadTypes.Contains(NCsProjectilePayload::ProjectileModifierDamage))
+	{
+		typedef NCsProjectile::NPayload::NModifier::NDamage::FImplSlice SliceType;
 
 		SliceType* Slice = new SliceType();
 
@@ -1219,8 +1236,6 @@ ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModif
 	if (Type == NCsProjectileModifier::LifeTime ||
 		Type == NCsProjectileModifier::InitialSpeed ||
 		Type == NCsProjectileModifier::MaxSpeed ||
-		// Damage
-		Type == NCsProjectileModifier::DamageValuePoint ||
 		// Collision
 		Type == NCsProjectileModifier::CollisionRadius)
 	{

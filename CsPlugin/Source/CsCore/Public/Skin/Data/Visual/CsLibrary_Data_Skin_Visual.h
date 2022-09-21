@@ -513,6 +513,20 @@ namespace NCsSkin
 				static bool SetSafeScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
+				* Set the scale of Actor from the given Skin.
+				* NOTE: Try default scale skin types
+				*		- UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)
+				*		- UniformRangeScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::NRange::IRange)
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
+				* @param Actor		Actor to scale.
+				* @param Log		(optional)
+				* return			Whether the scale was set
+				*/
+				static void SetScaleChecked(const FString& Context, const SkinType* Skin, AActor* Actor);
+
+				/**
 				* Safely set the scale of Actor from the given Skin.
 				* NOTE: Try default scale skin types
 				*		- UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)

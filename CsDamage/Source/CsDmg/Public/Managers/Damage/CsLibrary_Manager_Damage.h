@@ -278,6 +278,8 @@ namespace NCsDamage
 
 			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext,  const ModifierResourceType* Modifier);
 
+			static void CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsDamageModifier& OutType);
+
 			/**
 			* 
 			* 
@@ -444,6 +446,7 @@ namespace NCsDamage
 			* @param Instigator
 			* @param Causer
 			* @param HitResult
+			* @param Modifiers
 			*/
 			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
 

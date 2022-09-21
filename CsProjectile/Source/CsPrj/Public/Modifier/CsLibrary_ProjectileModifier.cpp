@@ -173,7 +173,7 @@ namespace NCsProjectile
 				{
 					const FloatModifierType* FloatModifier = Modifiers[I];
 
-					Result = FloatModifier->Modify(Value);
+					Result = FloatModifier->Modify(Result);
 
 					Modifiers.RemoveAt(I, 1, false);
 				}

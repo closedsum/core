@@ -17,6 +17,8 @@
 #include "Coroutine/CsRoutineHandle.h"
 // Projectile
 #include "Modifier/CsAllocated_ProjectileModifier.h"
+// Damage
+#include "Modifier/CsAllocated_DamageModifier.h"
 
 #include "CsProjectilePooledImpl.generated.h"
 
@@ -245,7 +247,7 @@ protected:
 
 public:
 
-	virtual void OnLaunch_SetModifiers(PayloadType* Payload);
+	virtual void OnLaunch_SetModifiers(const PayloadType* Payload);
 
 private:
 
@@ -504,16 +506,16 @@ public:
 
 	#define PointType NCsDamage::NValue::NPoint::FImpl
 	#define RangeType NCsDamage::NValue::NRange::FImpl
-	#define ModifierType NCsDamage::NModifier::IModifier
+	#define AllocatedModifierType NCsDamage::NModifier::FAllocated
 
 		PointType* ValuePoint;
 		RangeType* ValueRange;
 
-		TArray<ModifierType*> Modifiers;
+		TArray<AllocatedModifierType> Modifiers;
 		
 	#undef PointType
 	#undef RangeType
-	#undef ModifierType
+	#undef AllocatedModifierType
 
 	public:
 

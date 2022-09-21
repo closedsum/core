@@ -4,12 +4,14 @@
 
 // Types
 #include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
+#include "Modifier/Types/CsTypes_DamageModifier.h"
 
 // EnumStructs
 	// Damage
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsDamageType.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsDamageData.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsHitType.h"
+#include "GraphEditor/EnumStruct/SCsGraphPin_ECsDamageModifier.h"
 
 TSharedPtr<SGraphPin> FCsDamagePanelGraphPinFactory::CreatePin(UEdGraphPin* InPin) const
 {
@@ -28,6 +30,8 @@ TSharedPtr<SGraphPin> FCsDamagePanelGraphPinFactory::CreatePin(UEdGraphPin* InPi
 		CS_TEMP_CREATE(ECsDamageData)
 		// FECsHitType
 		CS_TEMP_CREATE(ECsHitType)
+		// FECsDamageModifier
+		CS_TEMP_CREATE(ECsDamageModifier)
 	}
 
 #undef CS_TEMP_CREATE

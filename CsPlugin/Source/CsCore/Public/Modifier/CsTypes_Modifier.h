@@ -32,7 +32,7 @@ enum class ECsNumericValueModifierApplication : uint8
 		then the result is added to 1.0f and multiplied by the current value being modified.
 		NOTE: Currently Percent Add Last values are applied LAST, AFTER all other modifiers have
 			  been applied. */
-	PercentAddLast							UMETA(DisplayName = "Percent Add First"),
+	PercentAddLast							UMETA(DisplayName = "Percent Add Last"),
 	ECsNumericValueModifierApplication_MAX	UMETA(Hidden),
 };
 

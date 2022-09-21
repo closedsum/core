@@ -48,11 +48,33 @@ namespace NCsDamage
 
 			UObject* GetRoot() const;
 
-			FORCEINLINE const IModifier* GetModifier() const { return Modifier; }
+			FORCEINLINE FResource* GetContainerChecked(const FString& Context) const
+			{
+				checkf(Container, TEXT("%s: Container is NULL."), *Context);
+				return Container;
+			}
 
-			void CopyFrom(UObject* InRoot, const IModifier* From);
+			FORCEINLINE IModifier* GetChecked(const FString& Context) const
+			{
+				checkf(Modifier, TEXT("%s: Modifier is NULL."), *Context);
+				return Modifier;
+			}
 
-			void CopyFrom(const FAllocated* From);
+			FORCEINLINE IModifier* Get() const { return Modifier; }
+
+			void Copy(const UObject* WorldContext, const IModifier* From);
+
+			void Copy(const FAllocated& From);
+
+			void Transfer(FAllocated& To);
+
+			FORCEINLINE void Clear()
+			{
+				Root = nullptr;
+				Container = nullptr;
+				Modifier = nullptr;
+				Type = EMCsDamageModifier::Get().GetMAX();
+			}
 
 			/**
 			* Clear / null out all members and deallocate the Container.

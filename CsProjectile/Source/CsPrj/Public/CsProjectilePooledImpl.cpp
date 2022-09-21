@@ -54,8 +54,10 @@
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Projectile
 #include "Cache/CsCache_ProjectileImpl.h"
+	// Payload
 #include "Payload/Collision/CsPayload_Projectile_Collision.h"
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
+#include "Payload/Modifier/Damage/CsPayload_Projectile_ModifierDamage.h"
 #include "Payload/Target/CsPayload_Projectile_Target.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
@@ -838,7 +840,7 @@ UObject* ACsProjectilePooledImpl::GetDataAsObject()
 #pragma region
 
 #define PayloadType NCsProjectile::NPayload::IPayload
-void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
+void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 {
 #undef PayloadType
 
@@ -846,21 +848,28 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(PayloadType* Payload)
 
 	const FString& Context = Str::OnLaunch_SetModifiers;
 
+	typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
+
 	// ModifierPayloadType (NCsProjectile::NPayload::NModifier::IModifier)
 	{
-		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
 		typedef NCsProjectile::NPayload::NModifier::IModifier ModifierPayloadType;
 
-		if (ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
+		if (const ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
 		{
 			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-			typedef NCsProjectile::NModifier::IModifier ModifierType;
 
 			PrjManagerLibrary::CreateCopyOfModifiersChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
+		}
+	}
+	// DmgModifierPayloadType (NCsProjectile::NPayload::NModifier::NDamage::IDamage)
+	{
+		typedef NCsProjectile::NPayload::NModifier::NDamage::IDamage DmgModifierPayloadType;
 
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+		if (const DmgModifierPayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<DmgModifierPayloadType>(Context, Payload))
+		{
+			typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
 
-			ModifierLibrary::GetDamageModifiersChecked(Context, Modifiers, DamageImpl.Modifiers);
+			DmgManagerLibrary::CreateCopyOfModifiersChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
 		}
 	}
 }
@@ -1459,13 +1468,24 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			// Apply Modifiers
 			DamageImpl.SetValue(DamageData->GetDamageData());
 
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-
-			DamageModifierLibrary::ConditionalModifyChecked(Context, DamageImpl.Modifiers, DamageImpl.GetValue());
-
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+			typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
-			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
+			static ProcessPayloadType ProcessPayload;
+
+			ProcessPayload.Value	  = DamageImpl.GetValue();
+			ProcessPayload.Data		  = DamageData->GetDamageData();
+			ProcessPayload.Instigator = GetCache()->GetInstigator();
+			ProcessPayload.Causer	  = this;
+			// TODO: Maybe store this value each tick / update
+			ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+			ProcessPayload.HitResult  = Hit;
+
+			DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+			DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+
+			ProcessPayload.Reset();
 		}
 	}
 	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
@@ -1475,6 +1495,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		if (GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 			typedef NCsDamage::NData::IData DamageDataType;
 
 			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, this, GetDamageDataType);
@@ -1485,15 +1506,10 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			// Apply Modifiers
 			DamageImpl.SetValue(DamageData);
 
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-
-			DamageModifierLibrary::ConditionalModifyChecked(Context, DamageImpl.Modifiers, DamageImpl.GetValue());
-
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 			typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
 			static ProcessPayloadType ProcessPayload;
-			ProcessPayload.Reset();
 
 			ProcessPayload.Value	  = DamageImpl.GetValue();
 			ProcessPayload.Data		  = DamageData;
@@ -1503,7 +1519,10 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
 			ProcessPayload.HitResult  = Hit;
 
+			DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
 			DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+
+			ProcessPayload.Reset();
 		}
 	}
 
@@ -1621,6 +1640,12 @@ ACsProjectilePooledImpl::FDamageImpl::~FDamageImpl()
 	delete ValueRange;
 	ValueRange = nullptr;
 
+	typedef NCsDamage::NModifier::FAllocated AllocateModifierType;
+
+	for (AllocateModifierType& Modifier : Modifiers)
+	{
+		Modifier.Clear();
+	}
 	Modifiers.Reset();
 }
 

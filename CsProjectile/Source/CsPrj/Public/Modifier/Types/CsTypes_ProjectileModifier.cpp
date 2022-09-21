@@ -9,8 +9,6 @@ namespace NCsProjectileModifier
 	CSPRJ_API CS_CREATE_ENUM_STRUCT(LifeTime);
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(InitialSpeed, "Initial Speed");
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(MaxSpeed, "Max Speed");
-	// Damage
-	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(DamageValuePoint, "Damage: Value Point");
 	// Collision
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(CollisionRadius, "Collision Radius");
 	CSPRJ_API CS_CREATE_ENUM_STRUCT_CUSTOM(HitCount, "Hit Count");

@@ -6,9 +6,9 @@
 
 namespace NCsDamageModifier
 {
-	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValuePoint, "NCsDamage::NModifier::NValue::NPoint::IPoint");
-	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValueRange, "NCsDamage::NModifier::NValue::NRange::IRange");
-	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(Range, "NCsDamage::NModifier::NRange::IRange");
+	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValuePoint, "Value Point");
+	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValueRange, "Value Range");
+	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(Range, "Range");
 }
 
 #pragma endregion DamageModifier

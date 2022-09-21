@@ -29,6 +29,7 @@
 #include "Modifier/Types/CsGetDamageModifierType.h"
 #include "Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"
 #include "Modifier/Value/Range/CsDamageModifier_ValueRangeImpl.h"
+#include "Modifier/CsDamageModifierImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
 
@@ -811,9 +812,11 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 
 ModifierType* UCsManager_Damage::ConstructModifier(const FECsDamageModifier& Type)
 {
-	// ValuePoint | NCsDamage::NModifier::NValue::NPoint::IPoint (NCsDamage::NModifier::NValue::NPoint::FImpl)
+	// ValuePoint
 	if (Type == NCsDamageModifier::ValuePoint)
-		return new NCsDamage::NModifier::NValue::NPoint::FImpl();
+	{
+		return new NCsDamage::NModifier::FFloat();
+	}
 	// ValueRange | NCsDamage::NModifier::NValue::NRange::IRange (NCsDamage::NModifier::NValue::NRange::FImpl)
 	if (Type == NCsDamageModifier::ValueRange)
 		return new NCsDamage::NModifier::NValue::NRange::FImpl();

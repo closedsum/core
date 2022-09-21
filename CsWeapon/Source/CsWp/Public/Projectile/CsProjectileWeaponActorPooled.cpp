@@ -57,9 +57,12 @@
 #include "Modifier/Types/CsGetWeaponModifierType.h"
 #include "Projectile/Params/Spread/CsProjectileWeapon_Spread_Variables.h"
 // Projectile
+	// Payload
 #include "Payload/CsPayload_ProjectileImpl.h"
 #include "Payload/CsPayload_ProjectileImplSlice.h"
+		// Modifier
 #include "Payload/Modifier/CsPayload_Projectile_ModifierImplSlice.h"
+		// Target
 #include "Payload/Target/CsPayload_Projectile_TargetImplSlice.h"
 #include "CsProjectilePooledImpl.h"
 // Modifier
@@ -1184,10 +1187,11 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 			typedef NCsProjectile::NModifier::IModifier PrjModifierType;
 
 			static TArray<PrjModifierType*> Modifiers;
-			Modifiers.Reset(Modifiers.Max());
-
+			
 			Outer->GetProjectileModifiers(Modifiers);
 			Slice->CopyFromModifiers(Outer, Modifiers);
+
+			Modifiers.Reset(Modifiers.Max());
 		}
 	}
 	// Projectile Target
@@ -1204,7 +1208,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 			Slice->ID = TargetID;
 		}
 	}
-	return Result;
+	return Outer->Projectile_SetPayload(Context, Payload, LaunchPayload);
 }
 
 #undef ProjectilePayloadType

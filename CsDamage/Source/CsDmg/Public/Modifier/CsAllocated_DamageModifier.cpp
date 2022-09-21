@@ -18,7 +18,8 @@ namespace NCsDamage
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, CopyFrom);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, Copy);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, Transfer);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsDamage::NModifier::FAllocated, Reset);
 				}
 			}
@@ -31,43 +32,69 @@ namespace NCsDamage
 
 		UObject* FAllocated::GetRoot() const { return Root.IsValid() ? Root.Get() : nullptr; }
 
-		void FAllocated::CopyFrom(UObject* InRoot, const IModifier* From)
+		void FAllocated::Copy(const UObject* WorldContext, const IModifier* From)
 		{
 			using namespace NCsDamage::NModifier::NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
-
-			CS_IS_PTR_NULL_CHECKED(InRoot)
+			const FString& Context = Str::Copy;
 
 			CS_IS_PTR_NULL_CHECKED(From)
 
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
 
-			Root	  = InRoot;
-			Container = DamageManagerLibrary::CreateCopyOfModifierChecked(Context, InRoot, From);
+			Root	  = DmgManagerLibrary::GetContextRootChecked(Context, WorldContext);
+			Container = DmgManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, From);
 			Modifier  = Container->Get();
-			Type	  = DamageManagerLibrary::GetModifierTypeChecked(Context, InRoot, Modifier);
+			Type	  = DmgManagerLibrary::GetModifierTypeChecked(Context, WorldContext, Modifier);
 		}
 
-		void FAllocated::CopyFrom(const FAllocated* From)
+		void FAllocated::Copy(const FAllocated& From)
 		{
 			using namespace NCsDamage::NModifier::NAllocated::NCached;
 
-			const FString& Context = Str::CopyFrom;
+			const FString& Context = Str::Copy;
 
-			CS_IS_PTR_NULL_CHECKED(From->GetRoot())
+			CS_IS_PTR_NULL_CHECKED(From.GetRoot())
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
-			if (From->Container)
+			if (From.Container)
 			{
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+				typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
 
-				Root	  = From->GetRoot();
-				Container = DamageManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From->Container);
+				Root	  = From.GetRoot();
+				Container = DmgManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
-				Type	  = DamageManagerLibrary::GetModifierTypeChecked(Context, GetRoot(), Modifier);
+				Type	  = From.Type;
 			}
+			else
+			{
+				Modifier = From.Modifier;
+			}
+		}
+
+		void FAllocated::Transfer(FAllocated& To)
+		{
+			using namespace NCsDamage::NModifier::NAllocated::NCached;
+
+			const FString& Context = Str::Transfer;
+
+			checkf(!To.Container, TEXT("%s: Container is already SET."), *Context);
+
+			if (Container)
+			{
+				CS_IS_PTR_NULL_CHECKED(GetRoot())
+
+				To.Root		  = GetRoot();
+				To.Container  = Container;
+				To.Modifier   = Modifier;
+				To.Type		  = Type;
+			}
+			else
+			{
+				To.Modifier = Modifier;
+			}
+			Clear();
 		}
 
 		void FAllocated::Reset()
@@ -80,15 +107,11 @@ namespace NCsDamage
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+				typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
 
-				DamageManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
+				DmgManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
 			}
-
-			Root	  = nullptr;
-			Container = nullptr;
-			Modifier  = nullptr;
-			Type	  = EMCsDamageModifier::Get().GetMAX();
+			Clear();
 		}
 	}
 }

@@ -1,7 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Payload/Damage/CsPayload_ProjectileModifierDamage.h"
+#include "Payload/Modifier/Damage/CsPayload_Projectile_ModifierDamage.h"
 #include "Reset/CsReset.h"
+// Damage
+#include "Modifier/CsAllocated_DamageModifier.h"
 
 class UObject;
 struct FCsInterfaceMap;
@@ -27,6 +29,9 @@ namespace NCsProjectile
 
 					static const FName Name;
 
+				#define DmgModifierType NCsDamage::NModifier::IModifier
+				#define AllocatedDmgModifierType NCsDamage::NModifier::FAllocated
+
 				private:
 
 					// ICsGetInterfaceMap
@@ -37,11 +42,17 @@ namespace NCsProjectile
 
 					// IDamage
 
-					TArray<NCsDamage::NModifier::IModifier*> Modifiers;
+					TArray<DmgModifierType*> Modifiers;
+
+					TArray<AllocatedDmgModifierType> Modifiers_Internal;
 
 				public:
 
 					FImplSlice();
+
+				public:
+
+					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
 
 				// ICsGetInterfaceMap
 				#pragma region
@@ -53,13 +64,26 @@ namespace NCsProjectile
 
 				public:
 
-					void SetInterfaceMap(FCsInterfaceMap* InInterfaceMap);
+					void CopyFromModifiers(const UObject* WorldContext, const TArray<DmgModifierType*>& FromModifiers);
+					void CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedDmgModifierType>& FromModifiers);
+
+					FORCEINLINE void SetModifiers(const TArray<DmgModifierType*>& InModifiers)
+					{
+						Modifiers.Reset(FMath::Max(Modifiers.Max(), InModifiers.Num()));
+
+						for (DmgModifierType* Modifier : InModifiers)
+						{
+							Modifiers.Add(Modifier);
+						}
+					}
+
+					void TransferFromModifiers(TArray<AllocatedDmgModifierType>& FromModifiers);
 
 				// IDamage
 				#pragma region
 				public:
 
-					FORCEINLINE const TArray<NCsDamage::NModifier::IModifier*>& GetDamageModifiers() const { return Modifiers; }
+					FORCEINLINE const TArray<DmgModifierType*>& GetDamageModifiers() const { return Modifiers; }
 
 				#pragma endregion IDamage
 
@@ -79,6 +103,9 @@ namespace NCsProjectile
 					{
 						delete static_cast<NCsProjectile::NPayload::NModifier::NDamage::FImplSlice*>(Ptr);
 					}
+
+				#undef DmgModifierType
+				#undef AllocatedDmgModifierType
 				};
 			}
 		}

@@ -23,11 +23,15 @@ namespace NCsProjectile
 
 					static const FName Name;
 
+				#define DmgModifierType NCsDamage::NModifier::IModifier
+
 				public:
 
 					virtual ~IDamage(){}
 
-					virtual const TArray<NCsDamage::NModifier::IModifier*>& GetDamageModifiers() const = 0;
+					virtual const TArray<DmgModifierType*>& GetDamageModifiers() const = 0;
+
+				#undef DmgModifierType
 				};
 			}
 		}

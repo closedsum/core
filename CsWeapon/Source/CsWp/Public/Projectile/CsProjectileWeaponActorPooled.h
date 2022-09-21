@@ -679,6 +679,12 @@ public:
 	virtual void GetProjectileModifiers(TArray<PrjModifierType*>& OutModifiers) const {}
 #undef PrjModifierType
 
+public:
+
+#define LaunchPayloadType ACsProjectileWeaponActorPooled::FProjectileImpl::FLaunchPayload
+	virtual bool Projectile_SetPayload(const FString& Context, ProjectilePayloadType* Payload, const LaunchPayloadType& LaunchPayload) { return true; }
+#undef LaunchPayloadType
+
 #pragma endregion Projectile
 	
 	// Sound

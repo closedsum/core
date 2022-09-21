@@ -167,6 +167,16 @@ namespace NCsModifier
 					{
 						return InValue + Modifier;
 					}
+					else
+					if (Type == EApplication::PercentSubtractFirst)
+					{
+						return InValue - Modifier;
+					}
+					else
+					if (Type == EApplication::PercentSubtractLast)
+					{
+						return InValue - Modifier;
+					}
 					return InValue;
 				}
 

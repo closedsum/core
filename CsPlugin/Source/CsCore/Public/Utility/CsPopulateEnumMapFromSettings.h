@@ -203,6 +203,8 @@ public:
 					CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: No entries found for %s."), *Context, *(DataTable->GetName()))));
 				}
 
+				const FName Name_NewRow = FName("NewRow");
+
 				for (const TPair<FName, uint8*>& Pair : RowMap)
 				{
 					const FName& RowName = Pair.Key;
@@ -210,6 +212,14 @@ public:
 
 					const FString& Name		   = NameProperty->GetPropertyValue_InContainer(RowPtr);
 					const FString& DisplayName = DisplayNameProperty->GetPropertyValue_InContainer(RowPtr);
+
+					// If Making a New Row, skip
+					if (RowName == Name_NewRow &&
+						Name.IsEmpty() &&
+						DisplayName.IsEmpty())
+					{
+						continue;
+					}
 
 					checkf(Name.Compare(RowName.ToString(), ESearchCase::IgnoreCase) == 0, TEXT("%s: Row Name != %s Name (%s != %s)."), *Context, *EnumName, *(RowName.ToString()), *Name);
 

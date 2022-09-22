@@ -237,24 +237,24 @@ public:
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
-	EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+	EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
-		static TArray<ModifierResourceType*> Modifiers;
+		static TArray<ModifierType*> Modifiers;
 		return CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
 	}
 
-	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
-		static TArray<ModifierResourceType*> Modifiers;
+		static TArray<ModifierType*> Modifiers;
 		return CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
 	}
 
-	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+	EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
-		static TArray<ModifierResourceType*> Modifiers;
+		static TArray<ModifierType*> Modifiers;
 		return CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 	}
 
@@ -429,7 +429,7 @@ public:
 	*/
 	DataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) = nullptr);
 
-	FORCEINLINE void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+	FORCEINLINE void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 	{
 		const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
 
@@ -442,7 +442,7 @@ public:
 		ProcessDamageEventContainer(Container);
 	}
 
-	FORCEINLINE void ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+	FORCEINLINE void ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 	{
 		const EventResourceType* Container = CreateEvent(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
 
@@ -450,11 +450,11 @@ public:
 	}
 	FORCEINLINE void ProcessData(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
-		static TArray<ModifierResourceType*> Modifiers;
+		static TArray<ModifierType*> Modifiers;
 		ProcessData(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
 	}
 
-	FORCEINLINE void ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+	FORCEINLINE void ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 	{
 		const EventResourceType* Container = CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 
@@ -462,7 +462,7 @@ public:
 	}
 	FORCEINLINE void ProcessData(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
-		static TArray<ModifierResourceType*> Modifiers;
+		static TArray<ModifierType*> Modifiers;
 		ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 	}
 

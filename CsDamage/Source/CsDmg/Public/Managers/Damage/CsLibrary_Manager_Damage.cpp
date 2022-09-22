@@ -384,11 +384,11 @@ namespace NCsDamage
 			return nullptr;
 		}
 	
-		#define ModifierResourceType NCsDamage::NModifier::FResource
+		#define ModifierType NCsDamage::NModifier::IModifier
 		#define ValueType NCsDamage::NValue::IValue
 		#define RangeType NCsDamage::NRange::IRange
 
-		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 		{
 			GetChecked(Context, WorldContext)->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 		}
@@ -400,7 +400,7 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, DataPtr, Instigator, Causer, HitResult);
 		}
 
-		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
 			{
@@ -409,7 +409,7 @@ namespace NCsDamage
 				if (!DamageDataLibrary::IsValid(Context, Data))
 					return false;
 
-				CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierResourceType)
+				CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierType)
 
 				Manager_Damage->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 				return true;
@@ -428,14 +428,14 @@ namespace NCsDamage
 				if (!DamageDataLibrary::IsValid(Context, Data))
 					return false;
 
-				TArray<ModifierResourceType*> Modifiers;
+				TArray<ModifierType*> Modifiers;
 				Manager_Damage->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 				return true;
 			}
 			return false;
 		}
 
-		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 		{
 			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Data, Instigator, Causer, HitResult, Modifiers);
 		}
@@ -445,7 +445,7 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Data, Instigator, Causer, HitResult);
 		}
 
-		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+		void FLibrary::ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 		{
 			GetChecked(Context, WorldContext)->ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 		}
@@ -464,7 +464,7 @@ namespace NCsDamage
 
 		#undef ProcessPayloadType
 
-		#undef ModifierResourceType
+		#undef ModifierType
 		#undef ValueType
 		#undef RangeType
 

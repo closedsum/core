@@ -342,7 +342,7 @@ namespace NCsDamage
 		#undef DataHandlerType
 		#undef DataInterfaceMapType
 
-		#define ModifierResourceType NCsDamage::NModifier::FResource
+		#define ModifierType NCsDamage::NModifier::IModifier
 		#define ValueType NCsDamage::NValue::IValue
 		#define RangeType NCsDamage::NRange::IRange
 
@@ -358,7 +358,7 @@ namespace NCsDamage
 			* @param HitResult
 			* @param Modifiers
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 
 			/**
 			* Process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
@@ -389,7 +389,7 @@ namespace NCsDamage
 			* @param Log			(optional)
 			* return				Whether the Damage Event was created or not.
 			*/
-			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
@@ -419,7 +419,7 @@ namespace NCsDamage
 			* @param Causer
 			* @param HitResult
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
@@ -448,7 +448,7 @@ namespace NCsDamage
 			* @param HitResult
 			* @param Modifiers
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
@@ -477,7 +477,7 @@ namespace NCsDamage
 
 		#undef ProcessPayloadType
 
-		#undef ModifierResourceType
+		#undef ModifierType
 		#undef ValueType
 		#undef RangeType
 

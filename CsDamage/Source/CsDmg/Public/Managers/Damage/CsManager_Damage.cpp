@@ -454,11 +454,11 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 }
 
 #define DataType NCsDamage::NData::IData
-#define ModifierResourceType NCsDamage::NModifier::FResource
+#define ModifierType NCsDamage::NModifier::IModifier
 #define ValueType NCsDamage::NValue::IValue
 #define RangeType NCsDamage::NRange::IRange
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierResourceType*>& Modifiers)
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierType*>& Modifiers)
 {
 	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
@@ -470,7 +470,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataTy
 	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
 }
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 {
 	CS_IS_PTR_NULL_CHECKED(Data)
 	
@@ -516,7 +516,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	return Container;
 }
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierResourceType*>& Modifiers)
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 {
 	typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
@@ -585,7 +585,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 #undef ProcessPayloadType
 
 #undef DataType
-#undef ModifierResourceType
+#undef ModifierType
 #undef ValueType
 #undef RangeType
 

@@ -8,6 +8,9 @@ class UObject;
 // NCsStatusEffect::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NData, IData)
 
+// NCsModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsModifier, IModifier)
+
 namespace NCsStatusEffect
 {
 	namespace NData
@@ -19,6 +22,7 @@ namespace NCsStatusEffect
 			public:
 
 			#define DataType NCsStatusEffect::NData::IData
+			#define ModifierType NCsModifier::IModifier
 
 			public:
 
@@ -36,13 +40,16 @@ namespace NCsStatusEffect
 
 				FHitResult HitResult;
 
+				TArray<ModifierType*> Modifiers;
+
 				FPayload() :
 					Type(),
 					Data(nullptr),
 					Instigator(nullptr),
 					Causer(nullptr),
 					Direction(0.0f),
-					HitResult()
+					HitResult(),
+					Modifiers()
 				{
 				}
 
@@ -54,9 +61,11 @@ namespace NCsStatusEffect
 					Causer = nullptr;
 					Direction = FVector::ZeroVector;
 					HitResult.Init();
+					Modifiers.Reset(Modifiers.Max());
 				}
 
 			#undef DataType
+			#undef ModifierType
 			};
 		}
 	}

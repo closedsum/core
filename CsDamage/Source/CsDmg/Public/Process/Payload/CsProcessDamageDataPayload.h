@@ -12,6 +12,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NData::IData
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
+// NCsDamage::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
+
 namespace NCsDamage
 {
 	namespace NData
@@ -24,7 +27,7 @@ namespace NCsDamage
 
 			#define ValueType NCsDamage::NValue::IValue
 			#define RangeType NCsDamage::NRange::IRange
-			#define ModifierResourceType NCsDamage::NModifier::FResource
+			#define ModifierType NCsDamage::NModifier::IModifier
 			#define DataType NCsDamage::NData::IData
 
 				ValueType* Value;
@@ -47,7 +50,7 @@ namespace NCsDamage
 
 				FHitResult HitResult;
 				
-				TArray<ModifierResourceType*> Modifiers;
+				TArray<ModifierType*> Modifiers;
 
 				FPayload() :
 					Value(nullptr),
@@ -84,7 +87,7 @@ namespace NCsDamage
 
 			#undef ValueType
 			#undef RangeType
-			#undef ModifierResourceType
+			#undef ModifierType
 			#undef DataType
 			};
 		}

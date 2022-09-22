@@ -11,6 +11,8 @@
 	// Event
 #include "Event/CsLibrary_StatusEffectEvent.h"
 #include "CsLibrary_StatusEffect.h"
+	// Damage
+#include "Modifier/CsLibrary_DamageModifier.h"
 	// Common
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Valid.h"
@@ -628,6 +630,10 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 		EventImpl->Instigator				 = ProcessPayload.Instigator;
 		EventImpl->Causer					 = ProcessPayload.Causer;
 		EventImpl->Receiver					 = ProcessPayload.Receiver;
+
+		// TODO: Pass along Modifiers
+
+		// TODO: For Status Effects, determine which Modifiers to resolve
 	}
 	// Damage
 	else
@@ -664,6 +670,10 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 		DmgProcessPayload.Causer	 = ProcessPayload.Causer;
 		DmgProcessPayload.Direction  = ProcessPayload.Direction;
 		DmgProcessPayload.HitResult  = ProcessPayload.HitResult;
+
+		typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
+
+		DmgModifierLibrary::CopyChecked(Context, ProcessPayload.Modifiers, DmgProcessPayload.Modifiers);
 
 		DmgEventResourceType* DmgEventResource = DamageManagerLibrary::CreateEventChecked(Context, MyRoot, GetDamageDataTypeData, DmgProcessPayload);
 

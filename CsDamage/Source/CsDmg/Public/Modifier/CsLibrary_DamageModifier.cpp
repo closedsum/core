@@ -32,6 +32,7 @@ namespace NCsDamage
 		#define RangeType NCsDamage::NRange::IRange
 		#define ModifierResourceType NCsDamage::NModifier::FResource
 		#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+		#define BaseModifierType NCsModifier::IModifier
 
 		const FECsDamageModifier& FLibrary::GetTypeChecked(const FString& Context, const ModifierType* Modifier)
 		{
@@ -73,6 +74,21 @@ namespace NCsDamage
 			}
 		}
 
+		void FLibrary::CopyChecked(const FString& Context, const TArray<BaseModifierType*>& From, TArray<ModifierType*>& To)
+		{
+			typedef NCsModifier::FLibrary ModifierLibrary;
+
+			To.Reset(FMath::Max(To.Max(), From.Num()));
+
+			for (BaseModifierType* B : From)
+			{
+				if (ModifierType* Modifier = ModifierLibrary::GetSafeInterfaceChecked<ModifierType>(Context, B))
+				{
+					To.Add(Modifier);
+				}
+			}
+		}
+
 		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
 		{
 			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
@@ -105,9 +121,7 @@ namespace NCsDamage
 				AllocatedModifierType& AllocatedModifier = AllocatedModifiers.AddDefaulted_GetRef();
 				AllocatedModifier.Copy(WorldContext, Modifier);
 			}
-		}
-
-		#define BaseModifierType NCsModifier::IModifier
+		}	
 
 		void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To)
 		{
@@ -126,8 +140,6 @@ namespace NCsDamage
 				To[ToSize + I] = T;
 			}
 		}
-
-		#undef BaseModifierType
 
 		void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
 		{
@@ -376,5 +388,6 @@ namespace NCsDamage
 		#undef RangeType
 		#undef ModifierResourceType
 		#undef AllocatedModifierType
+		#undef BaseModifierType
 	}
 }

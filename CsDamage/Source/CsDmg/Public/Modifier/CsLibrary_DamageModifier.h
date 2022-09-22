@@ -34,6 +34,7 @@ namespace NCsDamage
 	#define RangeType NCsDamage::NRange::IRange
 	#define ModifierResourceType NCsDamage::NModifier::FResource
 	#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+	#define BaseModifierType NCsModifier::IModifier
 
 	public:
 
@@ -67,11 +68,18 @@ namespace NCsDamage
 		*/
 		static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierType*>& To);
 
+		/**
+		* Copy the values from From to To with checks.
+		*
+		* @param Context	The calling context.
+		* @param From		What to copy.
+		* @param To			What to copy to.
+		*/
+		static void CopyChecked(const FString& Context, const TArray<BaseModifierType*>& From, TArray<ModifierType*>& To);
+
 		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
 
-	#define BaseModifierType NCsModifier::IModifier
 		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To);
-	#undef BaseModifierType
 
 		/**
 		*
@@ -111,6 +119,7 @@ namespace NCsDamage
 	#undef RangeType
 	#undef ModifierResourceType
 	#undef AllocatedModifierType
+	#undef BaseModifierType
 	};
 
 	#undef ModifierType

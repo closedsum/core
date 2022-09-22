@@ -27,6 +27,8 @@ namespace NCsModifier
 	{
 	public:
 
+		static void CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To);
+
 	#define IntModifierType NCsModifier::NInt::IInt
 
 		static int32 ModifyIntChecked(const FString& Context, const IntModifierType* Modifier, const int32& Value);

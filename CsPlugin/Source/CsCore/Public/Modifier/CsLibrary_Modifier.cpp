@@ -15,6 +15,18 @@ namespace NCsModifier
 {
 	#define ModifierType NCsModifier::IModifier
 
+	void FLibrary::CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To)
+	{
+		CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+		To.Reset(FMath::Max(To.Max(), From.Num()));
+
+		for (ModifierType* Modifier : From)
+		{
+			To.Add(Modifier);
+		}
+	}
+
 	#define IntModifierType NCsModifier::NInt::IInt
 
 	int32 FLibrary::ModifyIntChecked(const FString& Context, const IntModifierType* Modifier, const int32& Value)

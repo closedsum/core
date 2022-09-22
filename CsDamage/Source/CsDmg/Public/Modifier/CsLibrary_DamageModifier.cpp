@@ -107,6 +107,28 @@ namespace NCsDamage
 			}
 		}
 
+		#define BaseModifierType NCsModifier::IModifier
+
+		void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To)
+		{
+			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+			const int32 ToSize = To.Num();
+			const int32 FromSize = From.Num();
+
+			To.AddDefaulted(From.Num());
+
+			for (int32 I = 0; I < FromSize; ++I)
+			{
+				ModifierType* F		= From[I];				
+				BaseModifierType* T = GetInterfaceChecked<BaseModifierType>(Context, F);
+
+				To[ToSize + I] = T;
+			}
+		}
+
+		#undef BaseModifierType
+
 		void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
 		{
 			CS_IS_PTR_NULL_CHECKED(Modifier)

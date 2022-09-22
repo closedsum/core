@@ -15,6 +15,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsDamage::NModifier::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, FResource)
 
+// NCsModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsModifier, IModifier)
+
 namespace NCsDamage
 {
 	namespace NModifier
@@ -65,6 +68,10 @@ namespace NCsDamage
 		static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierType*>& To);
 
 		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
+
+	#define BaseModifierType NCsModifier::IModifier
+		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To);
+	#undef BaseModifierType
 
 		/**
 		*

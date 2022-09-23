@@ -985,12 +985,27 @@ public:
 #define ModifierResourceType NCsProjectile::NModifier::FResource
 #define ModifierManagerType NCsProjectile::NModifier::FManager
 #define ModifierType NCsProjectile::NModifier::IModifier
+#define ModifierImplType NCsProjectile::NModifier::EImpl
 
 protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
 
-	virtual ModifierType* ConstructModifier(const FECsProjectileModifier& Type);
+	TArray<ModifierImplType> ImplTypeByModifier;
+
+	FORCEINLINE const ModifierImplType& GetModifierImplType(const FECsProjectileModifier& Type) const
+	{
+		return ImplTypeByModifier[Type.GetValue()];
+	}
+
+	FORCEINLINE ModifierManagerType& GetManagerModifier(const FECsProjectileModifier& Type)
+	{
+		return Manager_Modifiers[(uint8)GetModifierImplType(Type)];
+	}
+
+	void SetupModifiers();
+
+	virtual ModifierType* ConstructModifier(const ModifierImplType& ImplType);
 
 public:
 
@@ -1010,6 +1025,7 @@ public:
 #undef ModifierResourceType
 #undef ModifierManagerType
 #undef ModifierType
+#undef ModifierImplType
 
 #pragma endregion Modifier
 

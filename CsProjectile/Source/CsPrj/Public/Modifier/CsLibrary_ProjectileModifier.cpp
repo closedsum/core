@@ -163,6 +163,17 @@ namespace NCsProjectile
 			return Result;
 		}
 
+
+		float FLibrary::ModifyFloatChecked(const FString& Context, const ModifierType* Modifier, const float& Value)
+		{
+			typedef NCsModifier::FLibrary ModifierLibrary;
+			typedef NCsModifier::NFloat::IFloat FloatModifierType;
+
+			const FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+			return ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Value);
+		}
+
 		#undef AllocatedModifierType
 
 		// Damage

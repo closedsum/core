@@ -33,6 +33,16 @@ bool FCsSettings_Manager_Projectile_PoolParams::IsValid(const FString& Context, 
 
 #pragma endregion FCsSettings_Manager_Projectile_PoolParams
 
+// FCsSettings_Manager_Projectile_Modifiers
+#pragma region
+
+const FCsSettings_Manager_Projectile_Modifiers& FCsSettings_Manager_Projectile_Modifiers::Get()
+{
+	return GetMutableDefault<UCsProjectileSettings>()->Manager_Projectile.Modifiers;
+}
+
+#pragma endregion FCsSettings_Manager_Projectile_Modifiers
+
 // FCsSettings_Manager_Projectile
 #pragma region
 

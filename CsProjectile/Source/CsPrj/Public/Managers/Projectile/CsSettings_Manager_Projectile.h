@@ -88,6 +88,8 @@ public:
 		PoolSize(256)
 	{
 	}
+
+	static const FCsSettings_Manager_Projectile_Modifiers& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Projectile_Modifiers

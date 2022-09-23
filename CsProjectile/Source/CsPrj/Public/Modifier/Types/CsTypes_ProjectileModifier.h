@@ -38,3 +38,22 @@ namespace NCsProjectileModifier
 }
 
 #pragma endregion ProjectileModifier
+
+// ProjectileModifierImpl
+#pragma region
+
+namespace NCsProjectile
+{
+	namespace NModifier
+	{
+		enum class EImpl : uint8
+		{
+			Int,
+			Float,
+			Toggle,
+			EImpl_MAX
+		};
+	}
+}
+
+#pragma endregion ProjectileModifierImpl

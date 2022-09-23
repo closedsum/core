@@ -47,6 +47,8 @@ namespace NCsProjectile
 
 		static float ModifyFloatChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsProjectileModifier& Type, const float& Value);
 
+		static float ModifyFloatChecked(const FString& Context, const ModifierType* Modifier, const float& Value);
+
 	#undef AllocatedModifierType
 
 	// Damage

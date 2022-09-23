@@ -276,6 +276,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 void UCsManager_Projectile::Initialize()
 {
 	SetupInternal();
+	SetupModifiers();
 	SetupOnHit();
 
 	bInitialized = true;
@@ -300,17 +301,22 @@ void UCsManager_Projectile::CleanUp()
 
 	Pool.Reset();
 
-	// Modifier
+	typedef NCsProjectile::NModifier::FManager ModifierManagerType;
+	typedef NCsProjectile::NModifier::FResource ModifierResourceType;
+	typedef NCsProjectile::NModifier::IModifier ModifierType;
+
+	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
-		for (const FECsProjectileModifier& Modifier : EMCsProjectileModifier::Get())
+		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
+
+		for (ModifierResourceType* Container : Containers)
 		{
-			typedef NCsProjectile::NModifier::FManager ModifierManagerType;
-
-			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
-
-			Manager.Shutdown();
+			ModifierType* M = Container->Get();
+			delete M;
+			Container->Set(nullptr);
 		}
 	}
+	Manager_Modifiers.Reset();
 
 	delete ClassHandler;
 	ClassHandler = nullptr;
@@ -440,34 +446,6 @@ void UCsManager_Projectile::SetupInternal()
 
 	NCsProjectile::PopulateEnumMapFromSettings(Context, ContextRoot);
 	NCsProjectileClass::PopulateEnumMapFromSettings(Context, ContextRoot);
-
-	// Modifier
-	{
-		const int32& Count = EMCsProjectileModifier::Get().Num();
-
-		Manager_Modifiers.Reset(Count);
-		Manager_Modifiers.AddDefaulted(Count);
-
-		// Create Pool
-		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
-
-		const int32& PoolSize = ModuleSettings->Manager_Projectile.Modifiers.PoolSize;
-
-		for (const FECsProjectileModifier& Modifier : EMCsProjectileModifier::Get())
-		{
-			typedef NCsProjectile::NModifier::FManager ModifierManagerType;
-
-			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
-
-			Manager.SetDeconstructResourcesOnShutdown();
-			Manager.CreatePool(PoolSize);
-
-			for (int32 I = 0; I < PoolSize; ++I)
-			{
-				Manager.Add(ConstructModifier(Modifier));
-			}
-		}
-	}
 
 	// Class Handler
 	ConstructClassHandler();
@@ -1221,34 +1199,86 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 #define ModifierResourceType NCsProjectile::NModifier::FResource
 #define ModifierType NCsProjectile::NModifier::IModifier
 
-ModifierType* UCsManager_Projectile::ConstructModifier(const FECsProjectileModifier& Type)
+void UCsManager_Projectile::SetupModifiers()
 {
-	// HitCount
-	if (// Collision
-		Type == NCsProjectileModifier::HitCount)
+	typedef NCsProjectile::NModifier::EImpl ModifierImplType;
+
+	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
+	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
+
+	typedef NCsProjectile::NModifier::FManager ModifierManagerType;
+
+	const FCsSettings_Manager_Projectile_Modifiers& ModifierSettings = FCsSettings_Manager_Projectile_Modifiers::Get();
+
+	const int32& PoolSize = ModifierSettings.PoolSize;
+
+	// Int
 	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Int];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Int));
+		}
+	}
+	// Float
+	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Float];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Float));
+		}
+	}
+	// Toggle
+	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Toggle];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Toggle));
+		}
+	}
+
+	ImplTypeByModifier.Reset(EMCsProjectileModifier::Get().Num());
+	ImplTypeByModifier.AddDefaulted(EMCsProjectileModifier::Get().Num());
+
+	ImplTypeByModifier[NCsProjectileModifier::LifeTime.GetValue()]		= ModifierImplType::Float;
+	ImplTypeByModifier[NCsProjectileModifier::InitialSpeed.GetValue()]	= ModifierImplType::Float;
+	ImplTypeByModifier[NCsProjectileModifier::MaxSpeed.GetValue()]		= ModifierImplType::Float;
+	// Collision
+	ImplTypeByModifier[NCsProjectileModifier::CollisionRadius.GetValue()]	= ModifierImplType::Float;
+	ImplTypeByModifier[NCsProjectileModifier::HitCount.GetValue()]			= ModifierImplType::Int;
+}
+
+#define ModifierImplType NCsProjectile::NModifier::EImpl
+ModifierType* UCsManager_Projectile::ConstructModifier(const ModifierImplType& ImplType)
+{
+	// Int
+	if (ImplType == ModifierImplType::Int)
 		return new NCsProjectile::NModifier::FInt();
-	}
-	// LifeTime | IntialSpeed | MaxSpeed | 
-	// DamageValuePoint
-	// CollisionRadius
-	// NCsProjectile::NModifier::IModifier
-	if (Type == NCsProjectileModifier::LifeTime ||
-		Type == NCsProjectileModifier::InitialSpeed ||
-		Type == NCsProjectileModifier::MaxSpeed ||
-		// Collision
-		Type == NCsProjectileModifier::CollisionRadius)
-	{
+	// Float
+	if (ImplType == ModifierImplType::Float)
 		return new NCsProjectile::NModifier::FFloat();
-	}
+	// Toggle
+	if (ImplType == ModifierImplType::Toggle)
+		return new NCsProjectile::NModifier::FToggle();
+	check(0);
 	return nullptr;
 }
+#undef ModifierImplType
 
 ModifierResourceType* UCsManager_Projectile::AllocateModifier(const FECsProjectileModifier& Type)
 {
 	checkf(EMCsProjectileModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Projectile::AllocateModifier: Type: %s is NOT Valid."), Type.ToChar());
 
-	return Manager_Modifiers[Type.GetValue()].Allocate();
+	return GetManagerModifier(Type).Allocate();
 }
 
 void UCsManager_Projectile::DeallocateModifier(const FString& Context, const FECsProjectileModifier& Type, ModifierResourceType* Modifier)
@@ -1264,7 +1294,7 @@ void UCsManager_Projectile::DeallocateModifier(const FString& Context, const FEC
 	
 	IReset->Reset();
 
-	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
+	GetManagerModifier(Type).Deallocate(Modifier);
 }
 
 const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FString& Context, const ModifierType* Modifier)

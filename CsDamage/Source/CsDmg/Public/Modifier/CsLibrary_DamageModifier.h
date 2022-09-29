@@ -114,6 +114,8 @@ namespace NCsDamage
 
 		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value);
 
+		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value);
+
 	#undef DataType
 	#undef ValueType
 	#undef RangeType

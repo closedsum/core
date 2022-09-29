@@ -55,7 +55,11 @@ namespace NCsModifier
 
 		static float ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*>& Modifiers, const float& Value);
 
+		static float ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+
 		static float ModifyFloatAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatPercentChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
 		static float ModifyFloatPercentAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value);
 
@@ -67,9 +71,17 @@ namespace NCsModifier
 
 		static float ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
 
+		static float ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+
+		static float ModifyFloatMinPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+
 		static float ModifyFloatMaxChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value);
 
 		static float ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
+
+		static float ModifyFloatMaxPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value);
 
 	#undef FloatRangeModifierType
 	};

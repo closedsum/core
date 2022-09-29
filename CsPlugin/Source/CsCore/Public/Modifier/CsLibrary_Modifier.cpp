@@ -195,6 +195,57 @@ namespace NCsModifier
 		return Result;
 	}
 
+	float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	{
+		// TODO:
+		//CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+
+		float Result = Value;
+
+		TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+		TArray<FloatModifierType*, TFixedAllocator<64>> OtherModifiers;
+		TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
+
+		for (FloatModifierType* Modifier : Modifiers)
+		{
+			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+
+			const ApplicationType& Application = Modifier->GetApplication();
+
+			// PercentAddFirst || PercentSubtractFirst
+			if (Application == ApplicationType::PercentAddFirst ||
+				Application == ApplicationType::PercentSubtractFirst)
+			{
+				FirstModifiers.Add(Modifier);
+			}
+			// PercentAddLast || PercentSubtractLast
+			else
+			if (Application == ApplicationType::PercentAddLast ||
+				Application == ApplicationType::PercentSubtractLast)
+			{
+				LastModifiers.Add(Modifier);
+			}
+			// "The Rest"
+			else
+			{
+				OtherModifiers.Add(Modifier);
+			}
+		}
+
+		// NOTE: For now ignore order
+
+		// PercentAddFirst || PercentSubtractFirst
+		Result = ModifyFloatPercentChecked(Context, FirstModifiers, Result);
+		// "The Rest"
+		for (const FloatModifierType* FloatModifier : OtherModifiers)
+		{
+			Result = FloatModifier->Modify(Value);
+		}
+		// PercentAddLast || PercentSubtractLast
+		Result = ModifyFloatPercentChecked(Context, LastModifiers, Result);
+		return Result;
+	}
+
 	float FLibrary::ModifyFloatAndEmptyChecked(const FString& Context, TArray<FloatModifierType*>& Modifiers, const float& Value)
 	{
 		CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
@@ -211,6 +262,25 @@ namespace NCsModifier
 
 			Modifiers.RemoveAt(I, 1, false);
 		}
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatPercentChecked(const FString& Context, const TArray<FloatModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	{
+		// TODO:
+		// CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+
+		float Result = Value;
+		float Percent = 1.0f;
+
+		const int32 Count = Modifiers.Num();
+
+		for (const FloatModifierType* Modifier : Modifiers)
+		{
+			Percent = Modifier->Modify(Percent);
+		}
+		Percent = FMath::Max(0.0f, Percent);
+		Result *= Percent;
 		return Result;
 	}
 
@@ -366,6 +436,76 @@ namespace NCsModifier
 		return Result;
 	}
 
+	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	{
+		// TODO:
+		//CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+
+		float Result = Value;
+
+		TArray<FloatRangeModifierType*, TFixedAllocator<64>> FirstModifiers;
+		TArray<FloatRangeModifierType*, TFixedAllocator<64>> OtherModifiers;
+		TArray<FloatRangeModifierType*, TFixedAllocator<64>> LastModifiers;
+
+		for (FloatRangeModifierType* Modifier : Modifiers)
+		{
+			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+
+			const ApplicationType& Application = Modifier->GetMinApplication();
+
+			// PercentAddFirst || PercentSubtractFirst
+			if (Application == ApplicationType::PercentAddFirst ||
+				Application == ApplicationType::PercentSubtractFirst)
+			{
+				FirstModifiers.Add(Modifier);
+			}
+			// PercentAddLast || PercentSubtractLast
+			else
+			if (Application == ApplicationType::PercentAddLast ||
+				Application == ApplicationType::PercentSubtractLast)
+			{
+				LastModifiers.Add(Modifier);
+			}
+			// "The Rest"
+			else
+			{
+				OtherModifiers.Add(Modifier);
+			}
+		}
+
+		// NOTE: For now ignore order
+
+		// PercentAddFirst || PercentSubtractFirst
+		Result = ModifyFloatMinPercentChecked(Context, FirstModifiers, Result);
+		// "The Rest"
+		for (const FloatRangeModifierType* FloatModifier : OtherModifiers)
+		{
+			Result = FloatModifier->ModifyMin(Result);
+		}
+		// PercentAddLast || PercentSubtractLast
+		Result = ModifyFloatMinPercentChecked(Context, LastModifiers, Result);
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatMinPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	{
+		// TODO:
+		// CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+
+		float Result = Value;
+		float Percent = 1.0f;
+
+		const int32 Count = Modifiers.Num();
+
+		for (const FloatRangeModifierType* Modifier : Modifiers)
+		{
+			Percent = Modifier->ModifyMin(Percent);
+		}
+		Percent = FMath::Max(0.0f, Percent);
+		Result *= Percent;
+		return Result;
+	}
+
 	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const FloatRangeModifierType* Modifier, const float& Value)
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
@@ -489,6 +629,76 @@ namespace NCsModifier
 			Percent = FMath::Max(0.0f, Percent);
 			Result *= Percent;
 		}
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	{
+		// TODO:
+		//CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+
+		float Result = Value;
+
+		TArray<FloatRangeModifierType*, TFixedAllocator<64>> FirstModifiers;
+		TArray<FloatRangeModifierType*, TFixedAllocator<64>> OtherModifiers;
+		TArray<FloatRangeModifierType*, TFixedAllocator<64>> LastModifiers;
+
+		for (FloatRangeModifierType* Modifier : Modifiers)
+		{
+			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+
+			const ApplicationType& Application = Modifier->GetMaxApplication();
+
+			// PercentAddFirst || PercentSubtractFirst
+			if (Application == ApplicationType::PercentAddFirst ||
+				Application == ApplicationType::PercentSubtractFirst)
+			{
+				FirstModifiers.Add(Modifier);
+			}
+			// PercentAddLast || PercentSubtractLast
+			else
+			if (Application == ApplicationType::PercentAddLast ||
+				Application == ApplicationType::PercentSubtractLast)
+			{
+				LastModifiers.Add(Modifier);
+			}
+			// "The Rest"
+			else
+			{
+				OtherModifiers.Add(Modifier);
+			}
+		}
+
+		// NOTE: For now ignore order
+
+		// PercentAddFirst || PercentSubtractFirst
+		Result = ModifyFloatMaxPercentChecked(Context, FirstModifiers, Result);
+		// "The Rest"
+		for (const FloatRangeModifierType* FloatModifier : OtherModifiers)
+		{
+			Result = FloatModifier->ModifyMax(Result);
+		}
+		// PercentAddLast || PercentSubtractLast
+		Result = ModifyFloatMaxPercentChecked(Context, LastModifiers, Result);
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatMaxPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
+	{
+		// TODO:
+		// CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+
+		float Result = Value;
+		float Percent = 1.0f;
+
+		const int32 Count = Modifiers.Num();
+
+		for (const FloatRangeModifierType* Modifier : Modifiers)
+		{
+			Percent = Modifier->ModifyMax(Percent);
+		}
+		Percent = FMath::Max(0.0f, Percent);
+		Result *= Percent;
 		return Result;
 	}
 

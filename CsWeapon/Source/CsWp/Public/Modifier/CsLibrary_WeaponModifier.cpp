@@ -35,7 +35,7 @@ namespace NCsWeapon
 
 		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 
 			const int32 CountToAdd = Modifiers.Num();
 

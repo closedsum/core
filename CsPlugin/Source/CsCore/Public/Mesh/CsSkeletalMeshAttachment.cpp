@@ -85,7 +85,7 @@ bool FCsSkeletalMeshAttachment::IsValidChecked(const FString& Context) const
 	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 0)
 	CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(CustomDepthStencilValue, 255)
 	// Check Tags is Valid
-	CS_IS_ARRAY_ANY_NONE_CHECKED(Tags)
+	CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
 	return true;
 }
 
@@ -117,7 +117,7 @@ bool FCsSkeletalMeshAttachment::IsValid(const FString& Context, void(*Log)(const
 	CS_IS_INT_GREATER_THAN_OR_EQUAL(CustomDepthStencilValue, 0)
 	CS_IS_INT_LESS_THAN_OR_EQUAL(CustomDepthStencilValue, 255)
 	// Check Tags is Valid
-	CS_IS_ARRAY_ANY_NONE(Tags)
+	CS_IS_TARRAY_ANY_NONE(Tags)
 	return true;
 }
 
@@ -253,8 +253,8 @@ namespace NCsSkeletalMesh
 			// Check GetMesh() is Valid
 			CS_IS_PTR_NULL_CHECKED(GetMesh())
 			// Check GetMaterials() is Valid
-			CS_IS_ARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
-			CS_IS_ARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
+			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
 			// Check GetAttachmentTransformRules() is Valid
 			CS_IS_ENUM_VALID_CHECKED(EMCsAttachmentTransformRules, GetAttachmentTransformRules());
 			// Check GetTransform() is Valid
@@ -271,7 +271,7 @@ namespace NCsSkeletalMesh
 			CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCustomDepthStencilValue(), 0)
 			CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(GetCustomDepthStencilValue(), 255)
 			// Check GetTags() is Valid
-			CS_IS_ARRAY_ANY_NONE_CHECKED(GetTags())
+			CS_IS_TARRAY_ANY_NONE_CHECKED(GetTags())
 			return true;
 		}
 
@@ -280,8 +280,8 @@ namespace NCsSkeletalMesh
 			// Check Mesh is Valid
 			CS_IS_PTR_NULL(GetMesh())
 			// Check Materials is Valid
-			CS_IS_ARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
-			CS_IS_ARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
+			CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
+			CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
 			// Check GetAttachmentTransformRules is Valid
 			CS_IS_ENUM_VALID(EMCsAttachmentTransformRules, ECsAttachmentTransformRules, GetAttachmentTransformRules())
 			// Check GetTransform() is Valid
@@ -304,7 +304,7 @@ namespace NCsSkeletalMesh
 			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCustomDepthStencilValue(), 0)
 			CS_IS_INT_LESS_THAN_OR_EQUAL(GetCustomDepthStencilValue(), 255)
 			// Check GetTags() is Valid
-			CS_IS_ARRAY_ANY_NONE(GetTags())
+			CS_IS_TARRAY_ANY_NONE(GetTags())
 			return true;
 		}
 

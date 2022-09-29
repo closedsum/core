@@ -174,9 +174,9 @@ namespace NCsActor
 
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-		CS_IS_ARRAY_EMPTY_CHECKED(Tags, FName)
+		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
 
-		CS_IS_ARRAY_ANY_NONE_CHECKED(Tags)
+		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
 
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{
@@ -215,9 +215,9 @@ namespace NCsActor
 
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
-		CS_IS_ARRAY_EMPTY(Tags, FName)
+		CS_IS_TARRAY_EMPTY(Tags, FName)
 
-		CS_IS_ARRAY_ANY_NONE(Tags)
+		CS_IS_TARRAY_ANY_NONE(Tags)
 
 		for (TActorIterator<AActor> Itr(World); Itr; ++Itr)
 		{

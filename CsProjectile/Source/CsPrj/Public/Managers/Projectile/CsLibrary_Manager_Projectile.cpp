@@ -429,7 +429,7 @@ namespace NCsProjectile
 
 		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
@@ -443,7 +443,7 @@ namespace NCsProjectile
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
-			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
@@ -458,7 +458,7 @@ namespace NCsProjectile
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
-			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			const int32 FromCount = From.Num();
 			const int32 ToCount	  = To.Num();

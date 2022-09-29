@@ -758,7 +758,7 @@ namespace NCsInput
 				UCsManager_Input* Manager_Input			   = NCsInput::NManager::FLibrary::GetChecked(Context, WorldContext, ControllerId);
 				const FCsInputProfile& DefaultInputProfile = Manager_Input->GetDefaultInputProfile();
 
-				CS_IS_ARRAY_EMPTY_CHECKED(Mappings, FCsInputActionMappings)
+				CS_IS_TARRAY_EMPTY_CHECKED(Mappings, FCsInputActionMappings)
 
 				const int32 Count = Mappings.Num();
 

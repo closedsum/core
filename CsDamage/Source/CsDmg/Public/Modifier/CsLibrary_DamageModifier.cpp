@@ -91,7 +91,7 @@ namespace NCsDamage
 
 		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 
 			const int32 CountToAdd = Modifiers.Num();
 
@@ -125,7 +125,7 @@ namespace NCsDamage
 
 		void FLibrary::AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			const int32 ToSize = To.Num();
 			const int32 FromSize = From.Num();
@@ -226,7 +226,7 @@ namespace NCsDamage
 			}
 			else
 			{
-				CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+				CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 				CS_IS_PTR_NULL_CHECKED(Data)
 				CS_IS_PTR_NULL_CHECKED(Value)
 
@@ -287,7 +287,7 @@ namespace NCsDamage
 
 		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 			CS_IS_PTR_NULL_CHECKED(Data)
 			CS_IS_PTR_NULL_CHECKED(Value)
 			CS_IS_PTR_NULL_CHECKED(Range)
@@ -306,7 +306,7 @@ namespace NCsDamage
 
 		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierResourceType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierResourceType)
 			CS_IS_PTR_NULL_CHECKED(Data)
 			CS_IS_PTR_NULL_CHECKED(Value)
 
@@ -391,8 +391,8 @@ namespace NCsDamage
 
 		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
-			CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(Modifiers, ModifierType*, 64)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(Modifiers, ModifierType*, 64)
 			CS_IS_PTR_NULL_CHECKED(Data)
 			CS_IS_PTR_NULL_CHECKED(Value)
 

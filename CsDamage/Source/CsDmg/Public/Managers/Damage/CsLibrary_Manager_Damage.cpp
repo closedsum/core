@@ -302,7 +302,7 @@ namespace NCsDamage
 
 		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
 		{
-			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
@@ -316,7 +316,7 @@ namespace NCsDamage
 		{
 			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
 
-			CS_IS_ARRAY_ANY_NULL_CHECKED(From, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
 			To.Reset(FMath::Max(To.Max(), From.Num()));
 
@@ -409,7 +409,7 @@ namespace NCsDamage
 				if (!DamageDataLibrary::IsValid(Context, Data))
 					return false;
 
-				CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierType)
+				CS_IS_TARRAY_ANY_NULL(Modifiers, ModifierType)
 
 				Manager_Damage->ProcessData(Context, Data, Instigator, Causer, HitResult, Modifiers);
 				return true;

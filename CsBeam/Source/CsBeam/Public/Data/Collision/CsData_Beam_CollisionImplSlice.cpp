@@ -222,7 +222,7 @@ namespace NCsBeam
 
 				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetCollisionCount(), 0)
 
-				CS_IS_ARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
+				CS_IS_TARRAY_ANY_NULL_CHECKED(GetIgnoreCollidingObjectClasses(), UObject)
 
 				return true;
 			}
@@ -238,7 +238,7 @@ namespace NCsBeam
 
 				CS_IS_INT_GREATER_THAN_OR_EQUAL(GetCollisionCount(), 0)
 
-				CS_IS_ARRAY_ANY_NULL(GetIgnoreCollidingObjectClasses(), UObject)
+				CS_IS_TARRAY_ANY_NULL(GetIgnoreCollidingObjectClasses(), UObject)
 
 				return true;
 			}

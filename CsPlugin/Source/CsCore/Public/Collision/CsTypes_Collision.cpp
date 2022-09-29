@@ -530,13 +530,13 @@ namespace NCsCollisionQueryParams
 
 bool FCsCollisionQueryParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(IgnoreComponents, UPrimitiveComponent*, 8)
+	CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE(IgnoreComponents, UPrimitiveComponent*, 8)
 
-	CS_IS_ARRAY_ANY_NULL(IgnoreComponents, UPrimitiveComponent)
+	CS_IS_TARRAY_ANY_NULL(IgnoreComponents, UPrimitiveComponent)
 
-	CS_IS_ARRAY_LESS_THAN_OR_EQUAL_SIZE(IgnoreActors, AActor*, 4)
+	CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE(IgnoreActors, AActor*, 4)
 
-	CS_IS_ARRAY_ANY_NULL(IgnoreActors, AActor)
+	CS_IS_TARRAY_ANY_NULL(IgnoreActors, AActor)
 
 	return true;
 }
@@ -548,7 +548,7 @@ bool FCsCollisionQueryParams::IsValid(const FString& Context, void(*Log)(const F
 
 bool FCsCollisionObjectQueryParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	CS_IS_ARRAY_EMPTY(ObjectTypesToQuery, TEnumAsByte<EObjectTypeQuery>)
+	CS_IS_TARRAY_EMPTY(ObjectTypesToQuery, TEnumAsByte<EObjectTypeQuery>)
 	return true;
 }
 

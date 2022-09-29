@@ -441,7 +441,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, int32)
 
 		UNiagaraDataInterfaceArrayInt32* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayInt32>(System, OverrideName);
 
@@ -456,8 +456,8 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, int32)
-		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
 		UNiagaraDataInterfaceArrayInt32* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayInt32>(System, OverrideName);
 
@@ -489,7 +489,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, float)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
 
 		UNiagaraDataInterfaceArrayFloat* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat>(System, OverrideName);
 
@@ -504,8 +504,8 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, float)
-		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
+		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
 		UNiagaraDataInterfaceArrayFloat* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat>(System, OverrideName);
 
@@ -537,7 +537,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector)
 
 		UNiagaraDataInterfaceArrayFloat3* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat3>(System, OverrideName);
 	
@@ -552,8 +552,8 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector)
-		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector)
+		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
 		UNiagaraDataInterfaceArrayFloat3* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat3>(System, OverrideName);
 	
@@ -585,7 +585,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector4)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4)
 
 		UNiagaraDataInterfaceArrayFloat4* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat4>(System, OverrideName);
 	
@@ -600,8 +600,8 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FVector4)
-		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4)
+		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
 		UNiagaraDataInterfaceArrayFloat4* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayFloat4>(System, OverrideName);
 	
@@ -633,7 +633,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FQuat)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat)
 
 		UNiagaraDataInterfaceArrayQuat* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayQuat>(System, OverrideName);
 
@@ -648,8 +648,8 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_ARRAY_EMPTY_CHECKED(ArrayData, FQuat)
-		CS_IS_ARRAY_EMPTY_CHECKED(Indices, int32)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat)
+		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
 		UNiagaraDataInterfaceArrayQuat* ArrayDI = UNiagaraFunctionLibrary::GetDataInterface<UNiagaraDataInterfaceArrayQuat>(System, OverrideName);
 

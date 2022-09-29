@@ -72,7 +72,7 @@ namespace NCsProjectile
 
 					const FString& Context = Str::CopyFromModifiers;
 
-					CS_IS_ARRAY_ANY_NULL_CHECKED(FromModifiers, DmgModifierType)
+					CS_IS_TARRAY_ANY_NULL_CHECKED(FromModifiers, DmgModifierType)
 
 					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 

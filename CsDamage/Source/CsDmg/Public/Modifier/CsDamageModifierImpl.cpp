@@ -793,8 +793,8 @@ namespace NCsDamage
 
 			const int32 Total = Ints.Num() + Floats.Num() + FloatRanges.Num() + Toggles.Num();
 
-			CS_IS_ARRAY_SIZE_CHECKED(Modifiers, ModifierType*, Total)
-			CS_IS_ARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_SIZE_CHECKED(Modifiers, ModifierType*, Total)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 			return true;
 		}
 
@@ -832,8 +832,8 @@ namespace NCsDamage
 
 			const int32 Total = Ints.Num() + Floats.Num() + FloatRanges.Num() + Toggles.Num();
 
-			CS_IS_ARRAY_SIZE(Modifiers, ModifierType*, Total)
-			CS_IS_ARRAY_ANY_NULL(Modifiers, ModifierType)
+			CS_IS_TARRAY_SIZE(Modifiers, ModifierType*, Total)
+			CS_IS_TARRAY_ANY_NULL(Modifiers, ModifierType)
 			return true;
 		}
 	}

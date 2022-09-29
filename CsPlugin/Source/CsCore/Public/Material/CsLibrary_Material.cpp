@@ -79,7 +79,7 @@ namespace NCsMaterial
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{
 		// Check Materials is Valid
-		CS_IS_ARRAY_EMPTY_CHECKED(Materials, UMaterialInterface*)
+		CS_IS_TARRAY_EMPTY_CHECKED(Materials, UMaterialInterface*)
 
 		const int32 Count = Materials.Num();
 
@@ -93,7 +93,7 @@ namespace NCsMaterial
 	bool FLibrary::IsValid(const FString& Context, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Materials is Valid
-		CS_IS_ARRAY_EMPTY(Materials, UMaterialInterface*)
+		CS_IS_TARRAY_EMPTY(Materials, UMaterialInterface*)
 
 		const int32 Count = Materials.Num();
 
@@ -1623,7 +1623,7 @@ namespace NCsMaterial
 		void FLibrary::SetScalarParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -1653,7 +1653,7 @@ namespace NCsMaterial
 		bool FLibrary::SetSafeScalarParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -1842,7 +1842,7 @@ namespace NCsMaterial
 		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -1872,7 +1872,7 @@ namespace NCsMaterial
 		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -1919,7 +1919,7 @@ namespace NCsMaterial
 		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
 				for (UMaterialInstanceDynamic* MID : MIDs)
 				{
@@ -1930,7 +1930,7 @@ namespace NCsMaterial
 		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -2119,7 +2119,7 @@ namespace NCsMaterial
 		void FLibrary::SetTextureParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
@@ -2149,7 +2149,7 @@ namespace NCsMaterial
 		bool FLibrary::SetSafeTextureParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
-			CS_IS_ARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
 
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{

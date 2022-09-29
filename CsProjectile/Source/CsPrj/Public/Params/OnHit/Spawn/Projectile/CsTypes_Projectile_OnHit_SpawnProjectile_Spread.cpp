@@ -278,7 +278,7 @@ namespace NCsProjectile
 
 						checkf(Distribution != DistributionType::Random, TEXT("%s: Distribution == DistributionType::Random is NOT supported."), *Context);
 
-						CS_IS_ARRAY_SIZE_CHECKED(OutAngles, float, Count)
+						CS_IS_TARRAY_SIZE_CHECKED(OutAngles, float, Count)
 
 						float AngleBetween = Angle;
 

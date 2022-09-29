@@ -183,17 +183,17 @@ namespace NCsSkin
 
 				bool FImplSlice::IsValidChecked(const FString& Context) const
 				{
-					CS_IS_ARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
+					CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 
-					CS_IS_ARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
+					CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
 					return true;
 				}
 
 				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 				{
-					CS_IS_ARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
+					CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 
-					CS_IS_ARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
+					CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
 					return true;
 				}
 

@@ -579,27 +579,27 @@ namespace NCsDamage
 				}
 			}
 
+			// Get Critical Chance
+			//  Assume Default Chance starts at 0.0f
+			//  Assume Chance is in the range [0.0f, 1.0f]
+			float CriticalChance = 0.0f;
+			CriticalChance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalChance);
+
+			// TODO: Need somewhere to take Random Seem
+	
+			// Check to Apply Critical Strike
+			//	 Assume Default Strike multiplier is 1.0f
+			float CriticalStrike = 1.0f;
+
+			if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
+			{
+				CriticalStrike = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
+			}
+
 			if (ValuePoint)
 			{
-				*ValuePoint_Value = ModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
-
-				// Get Critical Chance
-				//  Assume Default Chance starts at 0.0f
-				//  Assume Chance is in the range [0.0f, 1.0f]
-				float Chance = 0.0f;
-				Chance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Chance);
-
-				// TODO: Need somewhere to take Random Seem
-	
-				// Check to Apply Critical Strike
-				//	 Assume Default Strike multiplier is 1.0f
-				if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
-				{
-					float Strike = 1.0f;
-					Strike		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Strike);
-
-					*ValuePoint_Value *= Strike;
-				}
+				*ValuePoint_Value  = ModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+				*ValuePoint_Value *= CriticalStrike;
 			}
 
 			if (ValueRange)
@@ -615,23 +615,8 @@ namespace NCsDamage
 				*ValueRange_ValueMin = ModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
 				*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMaxChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
 
-				// Get Critical Chance
-				//  Assume Default Chance starts at 0.0f
-				//  Assume Chance is in the range [0.0f, 1.0f]
-				float Chance = 0.0f;
-				Chance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Chance);
-
-				// TODO: Need somewhere to take Random Seem
-	
-				// Check to Apply Critical Strike
-				//	 Assume Default Strike multiplier is 1.0f
-				if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
-				{
-					float Strike = 1.0f;
-					Strike		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Strike);
-
-					*ValuePoint_Value *= Strike;
-				}
+				*ValueRange_ValueMin *= CriticalStrike;
+				*ValueRange_ValueMax *= CriticalStrike;
 			}
 		}
 

@@ -229,57 +229,146 @@ namespace NCsDamage
 				CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 				CS_IS_PTR_NULL_CHECKED(Data)
 				CS_IS_PTR_NULL_CHECKED(Value)
-
+				
 				typedef NCsModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
 				typedef NCsModifier::NFloat::IFloat FloatModifierType;
 				typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
 
-				for (const ModifierType* Modifier : Modifiers)
-				{
+				// Value
+			
 					// Point
-					typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
+				typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
 
-					if (ValuePointType* Point = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value))
+				ValuePointType* ValuePoint = ValueLibrary::GetSafeInterfaceChecked<ValuePointType>(Context, Value);
+				static TArray<FloatModifierType*> ValuePoint_FloatModifiers;
+				float* ValuePoint_Value = nullptr;
+
+				if (ValuePoint)
+				{
+					ValuePoint_Value = const_cast<float*>(&(ValuePoint->GetValue()));
+				}
+
+					// Range
+				typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
+
+				ValueRangeType* ValueRange = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value);
+				static TArray<FloatModifierType*> ValueRange_FloatModifiers;
+				static TArray<FloatRangeModifierType*> ValueRange_FloatRangeModifiers;
+				float* ValueRange_ValueMin = nullptr;
+				float* ValueRange_ValueMax = nullptr;
+
+				if (ValueRange)
+				{
+					ValueRange_ValueMin = const_cast<float*>(&(ValueRange->GetMinValue()));
+					ValueRange_ValueMax = const_cast<float*>(&(ValueRange->GetMaxValue()));
+				}
+
+
+				// Critical Chance
+				static TArray<FloatModifierType*> CriticalChance_FloatModifiers;
+				// Critical Strike
+				static TArray<FloatModifierType*> CriticalStrike_FloatModifiers;
+
+				for (ModifierType* Modifier : Modifiers)
+				{
+					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+					// Value
+				
+						// Point
+					if (ValuePoint)
 					{
-						const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
 						if (DmgModifierType == NCsDamageModifier::ValuePoint)
 						{
-							const FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+							FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
 
-							float& V = *(const_cast<float*>(&(Point->GetValue())));
-
-							V = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, V);
+							ValuePoint_FloatModifiers.Add(FloatModifier);
 						}
 					}
 
 					// Range
-					typedef NCsDamage::NValue::NRange::IRange ValueRangeType;
-
-					if (ValueRangeType* Range = ValueLibrary::GetSafeInterfaceChecked<ValueRangeType>(Context, Value))
+					if (ValueRange)
 					{
-						const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
 						if (DmgModifierType == NCsDamageModifier::ValueRange)
 						{
-							float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
-							float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
-
 							// Float
-							if (const FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
+							if (FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
 							{
-								Min = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
-								Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
+								ValueRange_FloatModifiers.Add(FloatModifier);
 							}
 
 							// Float Range
-							if (const FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
+							if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
 							{
-								Min = ModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
-								Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
+								ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
 							}	
 						}
+					}
+
+					// TODO: Range
+				}
+
+				if (ValuePoint)
+				{
+					*ValuePoint_Value = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+
+					// Get Critical Chance
+					//  Assume Default Chance starts at 0.0f
+					//  Assume Chance is in the range [0.0f, 1.0f]
+					float Chance = 0.0f;
+					Chance		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Chance);
+
+					// TODO: Need somewhere to take Random Seem
+	
+					// Check to Apply Critical Strike
+					//	 Assume Default Strike multiplier is 1.0f
+					if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
+					{
+						float Strike = 1.0f;
+						Strike		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Strike);
+
+						*ValuePoint_Value *= Strike;
+					}
+					else
+					{
+						CriticalStrike_FloatModifiers.Reset(CriticalStrike_FloatModifiers.Max());
+					}
+				}
+
+				if (ValueRange)
+				{
+					const float A = ValueRange_FloatModifiers.Num();
+					const float B = ValueRange_FloatRangeModifiers.Num();
+
+					checkf((A == 0 && B == 0) || (A > 0 && B == 0) || (A == 0 && B > 0), TEXT("%s: Value currently can NOT be modified with a mix of Float and Float Range Modifiers."), *Context);
+
+					*ValueRange_ValueMin = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMin);
+					*ValueRange_ValueMax = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
+
+					*ValueRange_ValueMin = ModifierLibrary::ModifyFloatMinAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
+					*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
+
+					// Get Critical Chance
+					//  Assume Default Chance starts at 0.0f
+					//  Assume Chance is in the range [0.0f, 1.0f]
+					float Chance = 0.0f;
+					Chance		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Chance);
+
+					// TODO: Need somewhere to take Random Seem
+	
+					// Check to Apply Critical Strike
+					//	 Assume Default Strike multiplier is 1.0f
+					if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
+					{
+						float Strike = 1.0f;
+						Strike		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Strike);
+
+						*ValuePoint_Value *= Strike;
+					}
+					else
+					{
+						CriticalStrike_FloatModifiers.Reset(CriticalStrike_FloatModifiers.Max());
 					}
 				}
 			}
@@ -430,14 +519,20 @@ namespace NCsDamage
 				ValueRange_ValueMax = const_cast<float*>(&(ValueRange->GetMaxValue()));
 			}
 
+			// Critical Chance
+			TArray<FloatModifierType*, TFixedAllocator<64>> CriticalChance_FloatModifiers;
+			// Critical Strike
+			TArray<FloatModifierType*, TFixedAllocator<64>> CriticalStrike_FloatModifiers;
+
 			for (ModifierType* Modifier : Modifiers)
 			{
+				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
 				// Value
 				
 					// Point
 				if (ValuePoint)
 				{
-					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
 
 					if (DmgModifierType == NCsDamageModifier::ValuePoint)
 					{
@@ -450,8 +545,6 @@ namespace NCsDamage
 				// Range
 				if (ValueRange)
 				{
-					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
-
 					if (DmgModifierType == NCsDamageModifier::ValueRange)
 					{
 						// Float
@@ -467,11 +560,46 @@ namespace NCsDamage
 						}	
 					}
 				}
+
+				// TODO: Range
+
+				// Critical Chance
+				if (DmgModifierType == NCsDamageModifier::CriticalChance)
+				{
+					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+					CriticalChance_FloatModifiers.Add(FloatModifier);
+				}
+				// Critical Strike
+				if (DmgModifierType == NCsDamageModifier::CriticalStrike)
+				{
+					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+					CriticalStrike_FloatModifiers.Add(FloatModifier);
+				}
 			}
 
 			if (ValuePoint)
 			{
 				*ValuePoint_Value = ModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+
+				// Get Critical Chance
+				//  Assume Default Chance starts at 0.0f
+				//  Assume Chance is in the range [0.0f, 1.0f]
+				float Chance = 0.0f;
+				Chance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Chance);
+
+				// TODO: Need somewhere to take Random Seem
+	
+				// Check to Apply Critical Strike
+				//	 Assume Default Strike multiplier is 1.0f
+				if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
+				{
+					float Strike = 1.0f;
+					Strike		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Strike);
+
+					*ValuePoint_Value *= Strike;
+				}
 			}
 
 			if (ValueRange)
@@ -485,8 +613,25 @@ namespace NCsDamage
 				*ValueRange_ValueMax = ModifierLibrary::ModifyFloatChecked(Context, ValueRange_FloatModifiers, *ValueRange_ValueMax);
 
 				*ValueRange_ValueMin = ModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
-				*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMinChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
+				*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMaxChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
 
+				// Get Critical Chance
+				//  Assume Default Chance starts at 0.0f
+				//  Assume Chance is in the range [0.0f, 1.0f]
+				float Chance = 0.0f;
+				Chance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Chance);
+
+				// TODO: Need somewhere to take Random Seem
+	
+				// Check to Apply Critical Strike
+				//	 Assume Default Strike multiplier is 1.0f
+				if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
+				{
+					float Strike = 1.0f;
+					Strike		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, Strike);
+
+					*ValuePoint_Value *= Strike;
+				}
 			}
 		}
 

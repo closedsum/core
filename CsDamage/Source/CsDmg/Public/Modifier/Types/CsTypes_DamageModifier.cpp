@@ -9,6 +9,9 @@ namespace NCsDamageModifier
 	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValuePoint, "Value Point");
 	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(ValueRange, "Value Range");
 	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(Range, "Range");
+	// Critical
+	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(CriticalChance, "Critical Chance");
+	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(CriticalStrike, "Critical Strike");
 }
 
 #pragma endregion DamageModifier

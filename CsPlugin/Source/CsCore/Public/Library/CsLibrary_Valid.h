@@ -1798,37 +1798,37 @@ namespace NCsValid
 #define CS_IS_TARRAY_FIXED_EMPTY_CHECKED(__Array, __ValueType, __AllocatedSize) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
-		check(NCsValid::NArray::FLibrary::EmptyChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__)); \
+		check((NCsValid::NArray::FLibrary::EmptyChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__))); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_TARRAY_FIXED_SIZE_CHECKED(__Array, __ValueType, __AllocatedSize, __Size) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
-		check(NCsValid::NArray::FLibrary::SizeChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__, __Size)); \
+		check((NCsValid::NArray::FLibrary::SizeChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__, __Size))); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_TARRAY_FIXED_GREATER_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __AllocatedSize, __Size) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
-		check(NCsValid::NArray::FLibrary::GreaterThanOrEqualSizeChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__, __Size)); \
+		check((NCsValid::NArray::FLibrary::GreaterThanOrEqualSizeChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__, __Size))); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_TARRAY_FIXED_LESS_THAN_OR_EQUAL_SIZE_CHECKED(__Array, __ValueType, __AllocatedSize, __Size) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
-		check(NCsValid::NArray::FLibrary::LessThanOrEqualSizeChecked<__ValueType>(Context, __Array, __temp__str__, __Size)); \
+		check((NCsValid::NArray::FLibrary::LessThanOrEqualSizeChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__, __Size))); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(__Array, __ValueType, __AllocatedSize) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
-		check(NCsValid::NArray::FLibrary::IsAnyNullChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__)); \
+		check((NCsValid::NArray::FLibrary::IsAnyNullChecked<__ValueType, __AllocatedSize>(Context, __Array, __temp__str__))); \
 	}
 // Assume const FString& Context has been defined
 #define CS_IS_TARRAY_FIXED_ANY_NONE_CHECKED(__Array, __AllocatedSize) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
-		check(NCsValid::NArray::FLibrary::IsAnyNoneChecked<__AllocatedSize>(Context, __Array, __temp__str__)); \
+		check((NCsValid::NArray::FLibrary::IsAnyNoneChecked<__AllocatedSize>(Context, __Array, __temp__str__))); \
 	}
 
 #pragma endregion Fixed

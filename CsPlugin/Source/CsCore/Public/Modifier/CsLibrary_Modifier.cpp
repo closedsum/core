@@ -438,8 +438,7 @@ namespace NCsModifier
 
 	float FLibrary::ModifyFloatMinChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		// TODO:
-		//CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
 
 		float Result = Value;
 
@@ -487,10 +486,28 @@ namespace NCsModifier
 		return Result;
 	}
 
+	float FLibrary::ModifyFloatMinAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	{
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+
+		float Result = Value;
+
+		const int32 Count = Modifiers.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+
+			Result = FloatModifier->ModifyMin(Value);
+
+			Modifiers.RemoveAt(I, 1, false);
+		}
+		return Result;
+	}
+
 	float FLibrary::ModifyFloatMinPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		// TODO:
-		// CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
 
 		float Result = Value;
 		float Percent = 1.0f;
@@ -500,6 +517,28 @@ namespace NCsModifier
 		for (const FloatRangeModifierType* Modifier : Modifiers)
 		{
 			Percent = Modifier->ModifyMin(Percent);
+		}
+		Percent = FMath::Max(0.0f, Percent);
+		Result *= Percent;
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatMinPercentAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	{
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+
+		float Result = Value;
+		float Percent = 1.0f;
+
+		const int32 Count = Modifiers.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+
+			Percent = FloatModifier->ModifyMin(Percent);
+
+			Modifiers.RemoveAt(I, 1, false);
 		}
 		Percent = FMath::Max(0.0f, Percent);
 		Result *= Percent;
@@ -634,8 +673,7 @@ namespace NCsModifier
 
 	float FLibrary::ModifyFloatMaxChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		// TODO:
-		//CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
 
 		float Result = Value;
 
@@ -683,10 +721,28 @@ namespace NCsModifier
 		return Result;
 	}
 
+	float FLibrary::ModifyFloatMaxAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	{
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+
+		float Result = Value;
+
+		const int32 Count = Modifiers.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+
+			Result = FloatModifier->ModifyMax(Value);
+
+			Modifiers.RemoveAt(I, 1, false);
+		}
+		return Result;
+	}
+
 	float FLibrary::ModifyFloatMaxPercentChecked(const FString& Context, const TArray<FloatRangeModifierType*, TFixedAllocator<64>>& Modifiers, const float& Value)
 	{
-		// TODO:
-		// CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatModifierType)
+		CS_IS_TARRAY_FIXED_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType, 64)
 
 		float Result = Value;
 		float Percent = 1.0f;
@@ -696,6 +752,28 @@ namespace NCsModifier
 		for (const FloatRangeModifierType* Modifier : Modifiers)
 		{
 			Percent = Modifier->ModifyMax(Percent);
+		}
+		Percent = FMath::Max(0.0f, Percent);
+		Result *= Percent;
+		return Result;
+	}
+
+	float FLibrary::ModifyFloatMaxPercentAndEmptyChecked(const FString& Context, TArray<FloatRangeModifierType*>& Modifiers, const float& Value)
+	{
+		CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, FloatRangeModifierType)
+
+		float Result = Value;
+		float Percent = 1.0f;
+
+		const int32 Count = Modifiers.Num();
+
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			const FloatRangeModifierType* FloatModifier = Modifiers[I];
+
+			Percent = FloatModifier->ModifyMax(Percent);
+
+			Modifiers.RemoveAt(I, 1, false);
 		}
 		Percent = FMath::Max(0.0f, Percent);
 		Result *= Percent;

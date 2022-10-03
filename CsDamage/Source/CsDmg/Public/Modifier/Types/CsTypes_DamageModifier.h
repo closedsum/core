@@ -32,9 +32,31 @@ namespace NCsDamageModifier
 	extern CSDMG_API const Type ValuePoint;
 	extern CSDMG_API const Type ValueRange;
 	extern CSDMG_API const Type Range;
+	// Critical
+	extern CSDMG_API const Type CriticalChance;
+	extern CSDMG_API const Type CriticalStrike;
 }
 
 #pragma endregion DamageModifier
+
+// DamageModifierImpl
+#pragma region
+
+namespace NCsDamage
+{
+	namespace NModifier
+	{
+		enum class EImpl : uint8
+		{
+			Int,
+			Float,
+			Toggle,
+			EImpl_MAX
+		};
+	}
+}
+
+#pragma endregion DamageModifierImpl
 
 // TODO: DamageModifierOrder
 

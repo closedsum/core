@@ -812,8 +812,10 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 
 ModifierType* UCsManager_Damage::ConstructModifier(const FECsDamageModifier& Type)
 {
-	// ValuePoint
-	if (Type == NCsDamageModifier::ValuePoint)
+	// ValuePoint | CriticalChance | CriticalStrike
+	if (Type == NCsDamageModifier::ValuePoint ||
+		Type == NCsDamageModifier::CriticalChance ||
+		Type == NCsDamageModifier::CriticalStrike)
 	{
 		return new NCsDamage::NModifier::FFloat();
 	}

@@ -67,6 +67,8 @@ namespace NCsProjectile
 					void CopyFromModifiers(const UObject* WorldContext, const TArray<DmgModifierType*>& FromModifiers);
 					void CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedDmgModifierType>& FromModifiers);
 
+					void AddAndEmptyFromModifiers(TArray<DmgModifierType*>& FromModifiers);
+
 					FORCEINLINE void SetModifiers(const TArray<DmgModifierType*>& InModifiers)
 					{
 						Modifiers.Reset(FMath::Max(Modifiers.Max(), InModifiers.Num()));

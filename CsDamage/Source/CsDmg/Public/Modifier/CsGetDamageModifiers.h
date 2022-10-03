@@ -24,7 +24,7 @@ class CSDMG_API ICsGetDamageModifiers
 
 public:
 
-	virtual const TArray<DmgModifierType*>& GetDamageModifiers() const = 0;
+	virtual void GetDamageModifiers(TArray<DmgModifierType*>& OutModifiers) const = 0;
 
 #undef DmgModifierType
 };

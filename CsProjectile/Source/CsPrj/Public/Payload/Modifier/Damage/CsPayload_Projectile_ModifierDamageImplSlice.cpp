@@ -119,6 +119,19 @@ namespace NCsProjectile
 					}
 				}
 
+				void FImplSlice::AddAndEmptyFromModifiers(TArray<DmgModifierType*>& FromModifiers)
+				{
+					const int32 Count = FromModifiers.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						DmgModifierType* Modifier = FromModifiers[I];
+
+						Modifiers.Add(Modifier);
+						FromModifiers.RemoveAt(I, 1, false);
+					}
+				}
+
 				void FImplSlice::TransferFromModifiers(TArray<AllocatedDmgModifierType>& FromModifiers)
 				{
 					using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;

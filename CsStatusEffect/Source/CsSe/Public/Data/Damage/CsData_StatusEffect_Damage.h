@@ -7,8 +7,8 @@
 
 #include "CsData_StatusEffect_Damage.generated.h"
 
-// NCsDamage::NData::IData
-CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
+// NCsDamage::NModifier::IModifier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
 namespace NCsStatusEffect
 {
@@ -17,6 +17,9 @@ namespace NCsStatusEffect
 		namespace NDamage
 		{
 			/**
+			* Interface for describing a Status Effect for Damage Value or Damage Range.
+			*  Damage Value is an object that implements the interface: NCsDamage::NValue::IValue.
+			*  Damage Range is an object that implements the interface: NCsDamage::NRange::IRange.
 			*/
 			struct CSSE_API IDamage : public ICsGetInterfaceMap
 			{
@@ -24,17 +27,15 @@ namespace NCsStatusEffect
 
 				static const FName Name;
 
-			#define DamageDataType NCsDamage::NData::IData
+			#define DmgModifierType NCsDamage::NModifier::IModifier
 
 			public:
 
 				virtual ~IDamage(){}
 
-				/**
-				*/
-				virtual DamageDataType* GetDamageData() const = 0;
+				virtual const TArray<DmgModifierType*>& GetDamageModifiers() const  = 0;
 
-			#undef DamageDataType
+			#undef DmgModifierType
 			};
 		}
 	}
@@ -50,6 +51,9 @@ class CSSE_API UCsData_StatusEffect_Damage : public UCsGetInterfaceMap
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 
 /**
+* Interface for describing a Status Effect for Damage Value or Damage Range.
+*  Damage Value is an object that implements the interface: NCsDamage::NValue::IValue.
+*  Damage Range is an object that implements the interface: NCsDamage::NRange::IRange.
 */
 class CSSE_API ICsData_StatusEffect_Damage : public ICsGetInterfaceMap
 {
@@ -59,13 +63,11 @@ public:
 
 	static const FName Name;
 
-#define DamageDataType NCsDamage::NData::IData
+#define DmgModifierType NCsDamage::NModifier::IModifier
 
 public:
 
-	/**
-	*/
-	virtual DamageDataType* GetDamageData() const = 0;
+	virtual const TArray<DmgModifierType*>& GetDamageModifiers() const = 0;
 
-#undef DamageDataType
+#undef DmgModifierType
 };

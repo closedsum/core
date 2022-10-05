@@ -41,7 +41,8 @@ namespace NCsDamage
 			HitType(),
 			Origin(),
 			HitResult(),
-			IgnoreObjects()
+			IgnoreObjects(),
+			ModifierMask(0)
 		{
 			InterfaceMap.SetRoot<FImpl>(this);
 
@@ -81,6 +82,7 @@ namespace NCsDamage
 			HitType		= FromImpl->HitType;
 			Origin		= FromImpl->Origin;
 			HitResult	= FromImpl->HitResult;
+			ModifierMask = FromImpl->ModifierMask;
 
 			IgnoreObjects.Reset(FMath::Max(IgnoreObjects.Max(), FromImpl->IgnoreObjects.Max()));
 
@@ -136,6 +138,7 @@ namespace NCsDamage
 			Origin.Reset(0.0f, false);
 			HitResult.Reset(0.0f, false);
 			IgnoreObjects.Reset(IgnoreObjects.Max());
+			ModifierMask = 0;
 		}
 
 		#pragma endregion ICsReset

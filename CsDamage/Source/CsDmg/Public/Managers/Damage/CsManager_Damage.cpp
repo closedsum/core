@@ -567,7 +567,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	else
 	{
 		EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, ProcessPayload.Data, nullptr);
-		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, DamageValue);
+		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, DamageValue, EventImpl->ModifierMask);
 	}
 
 	EventImpl->Data	= ProcessPayload.Data;

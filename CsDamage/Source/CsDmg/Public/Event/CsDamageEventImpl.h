@@ -73,6 +73,8 @@ namespace NCsDamage
 
 			TArray<UObject*> IgnoreObjects;
 
+			uint32 ModifierMask;
+
 		public:
 
 			FImpl();
@@ -102,6 +104,7 @@ namespace NCsDamage
 			FORCEINLINE const FHitResult& GetOrigin() const { return Origin; }
 			FORCEINLINE const FHitResult& GetHitResult() const { return HitResult; }
 			FORCEINLINE const TArray<UObject*>& GetIgnoreObjects() const { return IgnoreObjects; }
+			FORCEINLINE const uint32& GetModifierMask() const { return ModifierMask; }
 
 		#pragma endregion IEvent
 

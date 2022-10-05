@@ -220,9 +220,15 @@ namespace NCsDamage
 
 		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value)
 		{
+			uint32 Mask = 0;
+			ModifyChecked(Context, Modifiers, Data, Value, Mask);
+		}
+
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask)
+		{
 			if (Modifiers.Num() <= 64)
 			{
-				ModifyChecked_Size64(Context, Modifiers, Data, Value);
+				ModifyChecked_Size64(Context, Modifiers, Data, Value, OutMask);
 			}
 			else
 			{
@@ -330,6 +336,21 @@ namespace NCsDamage
 				{
 					*ValuePoint_Value  = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 					*ValuePoint_Value *= CriticalStrike;
+
+					if (ValuePoint_FloatModifiers.Num() > CS_EMPTY)
+					{
+						OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
+					}
+
+					if (CriticalChance > 0.0f)
+					{
+						OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
+					}
+
+					if (CriticalStrike > 0.0f)
+					{
+						OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
+					}
 				}
 
 				if (ValueRange)
@@ -347,6 +368,21 @@ namespace NCsDamage
 
 					*ValueRange_ValueMin *= CriticalStrike;
 					*ValueRange_ValueMax *= CriticalStrike;
+
+					if (ValuePoint_FloatModifiers.Num() > CS_EMPTY)
+					{
+						OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
+					}
+
+					if (CriticalChance > 0.0f)
+					{
+						OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
+					}
+
+					if (CriticalStrike > 0.0f)
+					{
+						OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
+					}
 				}
 			}
 		}
@@ -457,6 +493,12 @@ namespace NCsDamage
 
 		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value)
 		{
+			uint32 Mask = 0;
+			ModifyChecked_Size64(Context, Modifiers, Data, Value, Mask);
+		}
+
+		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask)
+		{
 			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 			CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(Modifiers, ModifierType*, 64)
 			CS_IS_PTR_NULL_CHECKED(Data)
@@ -519,7 +561,7 @@ namespace NCsDamage
 					}
 				}
 
-				// Range
+					// Range
 				if (ValueRange)
 				{
 					if (DmgModifierType == NCsDamageModifier::ValueRange)
@@ -577,6 +619,21 @@ namespace NCsDamage
 			{
 				*ValuePoint_Value  = ModifierLibrary::ModifyFloatChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
 				*ValuePoint_Value *= CriticalStrike;
+
+				if (ValuePoint_FloatModifiers.Num() > CS_EMPTY)
+				{
+					OutMask |= (1 << NCsDamageModifier::ValuePoint.GetValue());
+				}
+
+				if (CriticalChance > 0.0f)
+				{
+					OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
+				}
+
+				if (CriticalStrike > 0.0f)
+				{
+					OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
+				}
 			}
 
 			if (ValueRange)
@@ -594,6 +651,22 @@ namespace NCsDamage
 
 				*ValueRange_ValueMin *= CriticalStrike;
 				*ValueRange_ValueMax *= CriticalStrike;
+
+				if (ValueRange_FloatModifiers.Num() > CS_EMPTY ||
+					ValueRange_FloatRangeModifiers.Num() > CS_EMPTY)
+				{
+					OutMask |= (1 << NCsDamageModifier::ValueRange.GetValue());
+				}
+
+				if (CriticalChance > 0.0f)
+				{
+					OutMask |= (1 << NCsDamageModifier::CriticalChance.GetValue());
+				}
+
+				if (CriticalStrike > 0.0f)
+				{
+					OutMask |= (1 << NCsDamageModifier::CriticalStrike.GetValue());
+				}
 			}
 		}
 

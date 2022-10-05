@@ -107,11 +107,19 @@ namespace NCsDamage
 			virtual const FHitResult& GetHitResult() const = 0;
 
 			/**
+			* Get the list of Objects that should be ignored when broadcasting the Event.
 			*
-			*
-			* return
+			* return	Objects to ignore.
 			*/
 			virtual const TArray<UObject*>& GetIgnoreObjects() const = 0;
+
+			/**
+			* Get a Bit Mask of Modifiers that have been applied to the Value or Range.
+			*  Modifier is an object that implements the interface: DmgModifierType (NCsDamage::NModifier::IModifier).
+			* 
+			* return	Bit mask of Modifiers that have been applied.
+			*/
+			virtual const uint32& GetModifierMask() const = 0;
 		};
 	}
 }

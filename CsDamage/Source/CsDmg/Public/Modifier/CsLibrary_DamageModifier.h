@@ -77,7 +77,7 @@ namespace NCsDamage
 		*/
 		static void CopyChecked(const FString& Context, const TArray<BaseModifierType*>& From, TArray<ModifierType*>& To);
 
-		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers);
+		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
 
 		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To);
 

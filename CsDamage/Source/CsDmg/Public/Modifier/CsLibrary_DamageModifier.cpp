@@ -89,36 +89,36 @@ namespace NCsDamage
 			}
 		}
 
-		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
+		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
-			const int32 CountToAdd = Modifiers.Num();
+			const int32 CountToAdd = From.Num();
 
-			if (AllocatedModifiers.Num() + CountToAdd > AllocatedModifiers.Max())
+			if (To.Num() + CountToAdd > To.Max())
 			{
-				const int32 Count = AllocatedModifiers.Num();
+				const int32 Count = To.Num();
 
 				static TArray<AllocatedModifierType> TempModifiers;
-				TempModifiers.Reset(FMath::Max(TempModifiers.Max(), Count + CountToAdd));
 				TempModifiers.AddDefaulted(Count + CountToAdd);
 
 				for (int32 I = 0; I < Count; ++I)
 				{
-					AllocatedModifiers[I].Transfer(TempModifiers[I]);
+					To[I].Transfer(TempModifiers[I]);
 				}
-				AllocatedModifiers.Reset(Count + CountToAdd);
-				AllocatedModifiers.AddDefaulted(Count);
+				To.Reset(Count + CountToAdd);
+				To.AddDefaulted(Count);
 
-				for (int32 I = 0; I < Count; ++I)
+				for (int32 I = Count - 1; I >= 0; --I)
 				{
-					TempModifiers[I].Transfer(AllocatedModifiers[I]);
+					TempModifiers[I].Transfer(To[I]);
+					TempModifiers.RemoveAt(I, 1, false);
 				}
 			}
 
-			for (ModifierType* Modifier : Modifiers)
+			for (ModifierType* Modifier : From)
 			{
-				AllocatedModifierType& AllocatedModifier = AllocatedModifiers.AddDefaulted_GetRef();
+				AllocatedModifierType& AllocatedModifier = To.AddDefaulted_GetRef();
 				AllocatedModifier.Copy(WorldContext, Modifier);
 			}
 		}	
@@ -309,31 +309,27 @@ namespace NCsDamage
 					// TODO: Range
 				}
 
+				// Get Critical Chance
+				//  Assume Default Chance starts at 0.0f
+				//  Assume Chance is in the range [0.0f, 1.0f]
+				float CriticalChance = 0.0f;
+				CriticalChance		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
+
+				// TODO: Need somewhere to take Random Seem
+	
+				// Check to Apply Critical Strike
+				//	 Assume Default Strike multiplier is 1.0f
+				float CriticalStrike = 1.0f;
+
+				if (CriticalChance >= FMath::FRandRange(0.0f, 1.0f))
+				{
+					CriticalStrike = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, CriticalStrike);
+				}
+
 				if (ValuePoint)
 				{
-					*ValuePoint_Value = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
-
-					// Get Critical Chance
-					//  Assume Default Chance starts at 0.0f
-					//  Assume Chance is in the range [0.0f, 1.0f]
-					float Chance = 0.0f;
-					Chance		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Chance);
-
-					// TODO: Need somewhere to take Random Seem
-	
-					// Check to Apply Critical Strike
-					//	 Assume Default Strike multiplier is 1.0f
-					if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
-					{
-						float Strike = 1.0f;
-						Strike		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Strike);
-
-						*ValuePoint_Value *= Strike;
-					}
-					else
-					{
-						CriticalStrike_FloatModifiers.Reset(CriticalStrike_FloatModifiers.Max());
-					}
+					*ValuePoint_Value  = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, ValuePoint_FloatModifiers, *ValuePoint_Value);
+					*ValuePoint_Value *= CriticalStrike;
 				}
 
 				if (ValueRange)
@@ -349,27 +345,8 @@ namespace NCsDamage
 					*ValueRange_ValueMin = ModifierLibrary::ModifyFloatMinAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMin);
 					*ValueRange_ValueMax = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, ValueRange_FloatRangeModifiers, *ValueRange_ValueMax);
 
-					// Get Critical Chance
-					//  Assume Default Chance starts at 0.0f
-					//  Assume Chance is in the range [0.0f, 1.0f]
-					float Chance = 0.0f;
-					Chance		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Chance);
-
-					// TODO: Need somewhere to take Random Seem
-	
-					// Check to Apply Critical Strike
-					//	 Assume Default Strike multiplier is 1.0f
-					if (FMath::FRandRange(0.0f, 1.0f) >= Chance)
-					{
-						float Strike = 1.0f;
-						Strike		 = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, CriticalStrike_FloatModifiers, Strike);
-
-						*ValuePoint_Value *= Strike;
-					}
-					else
-					{
-						CriticalStrike_FloatModifiers.Reset(CriticalStrike_FloatModifiers.Max());
-					}
+					*ValueRange_ValueMin *= CriticalStrike;
+					*ValueRange_ValueMax *= CriticalStrike;
 				}
 			}
 		}
@@ -583,7 +560,7 @@ namespace NCsDamage
 			//  Assume Default Chance starts at 0.0f
 			//  Assume Chance is in the range [0.0f, 1.0f]
 			float CriticalChance = 0.0f;
-			CriticalChance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalStrike_FloatModifiers, CriticalChance);
+			CriticalChance		 = ModifierLibrary::ModifyFloatChecked(Context, CriticalChance_FloatModifiers, CriticalChance);
 
 			// TODO: Need somewhere to take Random Seem
 	

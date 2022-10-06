@@ -12,6 +12,7 @@
 #include "Managers/Damage/CsManager_Damage.h"
 // Data
 #include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
+#include "Managers/Damage/Data/Types/CsData_GetDamageDataTypes.h"
 // Damage
 #include "Modifier/Copy/CsDamageModifier_Copy.h"
 
@@ -368,6 +369,27 @@ namespace NCsDamage
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, DamageDataType)
 
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, DamageDataType.GetFName());
+		}
+
+		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
+		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas)
+		{
+		#undef GetDamageDataTypeDataTypes
+			
+			CS_IS_PTR_NULL_CHECKED(GetDamageDataTypes)
+
+			const TArray<FECsDamageData>& DamageDataTypes = GetDamageDataTypes->GetDamageDataTypes();
+
+			CS_IS_ENUM_STRUCT_ARRAY_VALID_CHECKED(EMCsDamageData, FECsDamageData, DamageDataTypes)
+
+			UCsManager_Damage* Manager_Damage = GetChecked(Context, WorldContext);
+
+			for (const FECsDamageData& Type : DamageDataTypes)
+			{
+				DataType* Data = Manager_Damage->GetDataChecked(Context, Type.GetFName());
+
+				OutDatas.Add(Data);
+			}
 		}
 
 		#define DataHandlerType NCsData::NManager::NHandler::TData

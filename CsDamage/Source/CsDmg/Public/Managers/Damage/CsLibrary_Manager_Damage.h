@@ -21,6 +21,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NEvent, IEvent)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NData, IData)
 // NCsData::IGetDamageDataType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataType)
+// NCsData::IGetDamageDataTypes
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsData, IGetDamageDataTypes)
 
 // NCsDamage::NValue::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, FResource)
@@ -326,6 +328,21 @@ namespace NCsDamage
 			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType);
 
 		#undef GetDamageDataTypeDataType
+
+		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
+
+			/**
+			* Get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData), 
+			* associated with the result of GetDamageDataTypes->GetDamageDataTypes (TArray<FECsDamageData>).
+			* 
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param GetDamageDataTypes
+			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
+			*/
+			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas);
+
+		#undef GetDamageDataTypeDataTypes
 
 		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap

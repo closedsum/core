@@ -43,6 +43,7 @@
 #include "Data/Damage/CsData_Projectile_Damage.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
+#include "Managers/Damage/Data/Types/CsData_GetDamageDataTypes.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Components
@@ -1523,6 +1524,49 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
 
 			ProcessPayload.Reset();
+		}
+	}
+	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
+	{
+		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
+
+		if (GetDamageDataTypeDataTypes* GetDamageDataTypes = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+			typedef NCsDamage::NData::IData DamageDataType;
+
+			static TArray<DamageDataType*> DamageDatas;
+
+			DamageManagerLibrary::GetDatasChecked(Context, this, GetDamageDataTypes, DamageDatas);
+
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+
+			for (DamageDataType* DamageData : DamageDatas)
+			{
+				// Apply Modifiers
+				DamageImpl.SetValue(DamageData);
+
+				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+
+				static ProcessPayloadType ProcessPayload;
+
+				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Data		  = DamageData;
+				ProcessPayload.Instigator = GetCache()->GetInstigator();
+				ProcessPayload.Causer	  = this;
+				// TODO: Maybe store this value each tick / update
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.HitResult  = Hit;
+
+				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+
+				ProcessPayload.Reset();
+			}
+			DamageDatas.Reset(DamageDatas.Max());
 		}
 	}
 

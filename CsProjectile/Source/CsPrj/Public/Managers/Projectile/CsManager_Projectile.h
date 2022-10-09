@@ -979,6 +979,15 @@ public:
 
 #pragma endregion Data
 
+// Valid
+#pragma region
+protected:
+
+	virtual bool IsValidChecked(const FString& Context, const DataType* Data) const;
+	virtual bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+#pragma endregion Valid
+
 // Modifier
 #pragma region
 

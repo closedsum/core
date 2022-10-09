@@ -1193,6 +1193,32 @@ void UCsManager_Projectile::OnPayloadUnloaded(const FName& Payload)
 
 #pragma endregion Data
 
+// Valid
+#pragma region
+
+#define DataType NCsProjectile::NData::IData
+
+bool UCsManager_Projectile::IsValidChecked(const FString& Context, const DataType* Data) const
+{
+	typedef NCsProjectile::NData::FLibrary DataLibrary;
+
+	check(DataLibrary::IsValidChecked(Context, Data));	
+	return true;
+}
+
+bool UCsManager_Projectile::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+{
+	typedef NCsProjectile::NData::FLibrary DataLibrary;
+
+	if (!DataLibrary::IsValid(Context, Data, Log))
+		return false;
+	return true;
+}
+
+#undef DataType
+
+#pragma endregion Valid
+
 // Modifier
 #pragma region
 

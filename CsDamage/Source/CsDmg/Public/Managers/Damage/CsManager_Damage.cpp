@@ -920,8 +920,8 @@ bool UCsManager_Damage::IsValidChecked(const FString& Context, const DataType* D
 {
 	typedef NCsDamage::NData::FLibrary DataLibrary;
 
-	check(DataLibrary::IsValidChecked(Context, Data))
-;	return true;
+	check(DataLibrary::IsValidChecked(Context, Data));
+	return true;
 }
 
 bool UCsManager_Damage::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)

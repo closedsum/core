@@ -13,7 +13,6 @@
 #include "Modifier/Types/CsGetDamageModifierType.h"
 #include "Modifier/Value/CsDamageModifier_Value.h" // TODO: Remove
 #include "Modifier/Value/Point/CsDamageModifier_ValuePoint.h" // TODO: Remove
-#include "Modifier/Value/Range/CsDamageModifier_ValueRange.h" // TODO: Remove
 #include "Modifier/CsDamageModifierRange.h"
 #include "Modifier/CsResource_DamageModifier.h"
 // Modifier
@@ -177,7 +176,8 @@ namespace NCsDamage
 			{
 				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
 
-				if (DmgModifierType == NCsDamageModifier::ValueRange)
+				// Uniform
+				if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
 				{
 					float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
 					float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
@@ -191,6 +191,13 @@ namespace NCsDamage
 						Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
 						return;
 					}
+				}
+				// Range
+				else
+				if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+				{
+					float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
+					float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
 
 					// Float Range
 					typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
@@ -296,19 +303,24 @@ namespace NCsDamage
 					// Range
 					if (ValueRange)
 					{
-						if (DmgModifierType == NCsDamageModifier::ValueRange)
+						// Uniform
+						if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
 						{
 							// Float
 							if (FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
 							{
 								ValueRange_FloatModifiers.Add(FloatModifier);
 							}
-
+						}
+						// Range
+						else
+						if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+						{
 							// Float Range
 							if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
 							{
 								ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
-							}	
+							}
 						}
 					}
 
@@ -445,7 +457,8 @@ namespace NCsDamage
 				{
 					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
 
-					if (DmgModifierType == NCsDamageModifier::ValueRange)
+					// Uniform
+					if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
 					{
 						float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
 						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
@@ -456,14 +469,22 @@ namespace NCsDamage
 							Min = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Min);
 							Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifier, Max);
 						}
+					}
+					// Range
+					else
+					if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+					{
+						float& Min = *(const_cast<float*>(&(Range->GetMinValue())));
+						float& Max = *(const_cast<float*>(&(Range->GetMaxValue())));
 
 						// Float Range
 						if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
 						{
 							Min = ModifierLibrary::ModifyFloatMinChecked(Context, FloatRangeModifier, Min);
 							Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifier, Max);
-						}	
+						}
 					}
+
 				}
 			}
 		}
@@ -564,19 +585,24 @@ namespace NCsDamage
 					// Range
 				if (ValueRange)
 				{
-					if (DmgModifierType == NCsDamageModifier::ValueRange)
+					// Uniform
+					if (DmgModifierType == NCsDamageModifier::ValueRange_Uniform)
 					{
 						// Float
 						if (FloatModifierType* FloatModifier = GetSafeInterfaceChecked<FloatModifierType>(Context, Modifier))
 						{
 							ValueRange_FloatModifiers.Add(FloatModifier);
 						}
-
+					}
+					// Range
+					else
+					if (DmgModifierType == NCsDamageModifier::ValueRange_Range)
+					{
 						// Float Range
 						if (FloatRangeModifierType* FloatRangeModifier = GetSafeInterfaceChecked<FloatRangeModifierType>(Context, Modifier))
 						{
 							ValueRange_FloatRangeModifiers.Add(FloatRangeModifier);
-						}	
+						}
 					}
 				}
 
@@ -652,10 +678,14 @@ namespace NCsDamage
 				*ValueRange_ValueMin *= CriticalStrike;
 				*ValueRange_ValueMax *= CriticalStrike;
 
-				if (ValueRange_FloatModifiers.Num() > CS_EMPTY ||
-					ValueRange_FloatRangeModifiers.Num() > CS_EMPTY)
+				if (ValueRange_FloatModifiers.Num() > CS_EMPTY)
 				{
-					OutMask |= (1 << NCsDamageModifier::ValueRange.GetValue());
+					OutMask |= (1 << NCsDamageModifier::ValueRange_Uniform.GetValue());
+				}
+
+				if (ValueRange_FloatRangeModifiers.Num() > CS_EMPTY)
+				{
+					OutMask |= (1 << NCsDamageModifier::ValueRange_Range.GetValue());
 				}
 
 				if (CriticalChance > 0.0f)

@@ -1177,12 +1177,23 @@ DataType* UCsManager_Projectile::GetData(const FECsProjectile& Type)
 
 DataType* UCsManager_Projectile::GetDataChecked(const FString& Context, const FECsProjectile& Type)
 {
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetDataChecked<EMCsProjectile, FECsProjectile>(Context, Type);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#else
 	return DataHandler->GetDataChecked<EMCsProjectile, FECsProjectile>(Context, Type);
+#endif // WITH_EDITOR
 }
 
 DataType* UCsManager_Projectile::GetSafeData(const FString& Context, const FECsProjectile& Type)
 {
-	return DataHandler->GetSafeData<EMCsProjectile, FECsProjectile>(Context, Type);
+	DataType* Data = DataHandler->GetSafeData<EMCsProjectile, FECsProjectile>(Context, Type);
+
+	if (!IsValid(Context, Data, nullptr))
+		return nullptr;
+	return Data;
 }
 
 #undef DataType

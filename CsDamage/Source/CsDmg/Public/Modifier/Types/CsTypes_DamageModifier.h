@@ -30,8 +30,10 @@ namespace NCsDamageModifier
 	typedef EMCsDamageModifier EnumMapType;
 
 	extern CSDMG_API const Type ValuePoint;
-	extern CSDMG_API const Type ValueRange;
-	extern CSDMG_API const Type Range;
+	extern CSDMG_API const Type ValueRange_Uniform;
+	extern CSDMG_API const Type ValueRange_Range;
+	extern CSDMG_API const Type Range_Uniform;
+	extern CSDMG_API const Type Range_Range;
 	// Critical
 	extern CSDMG_API const Type CriticalChance;
 	extern CSDMG_API const Type CriticalStrike;

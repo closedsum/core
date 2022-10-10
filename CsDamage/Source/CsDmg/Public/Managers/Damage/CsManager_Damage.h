@@ -4,6 +4,11 @@
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Abstract_Fixed.h"
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
+// Types
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
+#include "Value/Types/CsTypes_DamageValue.h"
+#include "Modifier/Types/CsTypes_DamageModifier.h"
+#include "UniqueObject/CsTypes_UniqueObject.h"
 // Damage
 #include "Event/CsDamageEvent.h"
 #include "Value/CsResource_DamageValue.h"
@@ -11,11 +16,6 @@
 #include "Modifier/CsResource_DamageModifier.h"
 #include "Managers/Damage/CsReceiveDamage.h"
 #include "Process/Payload/CsProcessDamageDataPayload.h"
-// Types
-#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
-#include "Value/Types/CsTypes_DamageValue.h"
-#include "Modifier/Types/CsTypes_DamageModifier.h"
-#include "UniqueObject/CsTypes_UniqueObject.h"
 
 #include "CsManager_Damage.generated.h"
 
@@ -98,10 +98,6 @@ class CSDMG_API UCsManager_Damage : public UObject
 #define RangeResourceType NCsDamage::NRange::FResource
 #define RangeManagerType NCsDamage::NRange::FManager
 #define RangeType NCsDamage::NRange::IRange
-
-#define ModifierResourceType NCsDamage::NModifier::FResource
-#define ModifierManagerType NCsDamage::NModifier::FManager
-#define ModifierType NCsDamage::NModifier::IModifier
 
 #define DataType NCsDamage::NData::IData
 
@@ -237,6 +233,8 @@ public:
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
+#define ModifierType NCsDamage::NModifier::IModifier
+
 	EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 	FORCEINLINE EventResourceType* CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)
 	{
@@ -257,6 +255,8 @@ public:
 		static TArray<ModifierType*> Modifiers;
 		return CreateEvent(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 	}
+
+#undef ModifierType
 
 	EventResourceType* CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload);
 
@@ -366,11 +366,31 @@ public:
 
 // Modifier
 #pragma region
+
+#define ModifierResourceType NCsDamage::NModifier::FResource
+#define ModifierManagerType NCsDamage::NModifier::FManager
+#define ModifierType NCsDamage::NModifier::IModifier
+#define ModifierImplType NCsDamage::NModifier::EImpl
+
 protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
 
-	virtual ModifierType* ConstructModifier(const FECsDamageModifier& Type);
+	TArray<ModifierImplType> ImplTypeByModifier;
+
+	FORCEINLINE const ModifierImplType& GetModifierImplType(const FECsDamageModifier& Type) const
+	{
+		return ImplTypeByModifier[Type.GetValue()];
+	}
+
+	FORCEINLINE ModifierManagerType& GetManagerModifier(const FECsDamageModifier& Type)
+	{
+		return Manager_Modifiers[(uint8)GetModifierImplType(Type)];
+	}
+
+	void SetupModifiers();
+
+	virtual ModifierType* ConstructModifier(const ModifierImplType& ImplType);
 
 public:
 
@@ -386,6 +406,11 @@ public:
 	* return
 	*/
 	virtual const FECsDamageModifier& GetModifierType(const FString& Context, const ModifierType* Modifier);
+
+#undef ModifierResourceType
+#undef ModifierManagerType
+#undef ModifierType
+#undef ModifierImplType
 
 #pragma endregion Modifier
 
@@ -429,6 +454,8 @@ public:
 	*/
 	DataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) = nullptr);
 
+#define ModifierType NCsDamage::NModifier::IModifier
+
 	FORCEINLINE void ProcessData(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 	{
 		const EventResourceType* Container = CreateEvent(Context, Data, Instigator, Causer, HitResult, Modifiers);
@@ -465,6 +492,8 @@ public:
 		static TArray<ModifierType*> Modifiers;
 		ProcessData(Context, Value, Range, Data, Instigator, Causer, HitResult, Modifiers);
 	}
+
+#undef ModifierType
 
 	FORCEINLINE void ProcessData(const FString& Context, const ProcessPayloadType& ProcessPayload)
 	{
@@ -503,10 +532,6 @@ public:
 #undef RangeResourceType
 #undef RangeManagerType
 #undef RangeType
-
-#undef ModifierResourceType
-#undef ModifierManagerType
-#undef ModifierType
 
 #undef DataType
 

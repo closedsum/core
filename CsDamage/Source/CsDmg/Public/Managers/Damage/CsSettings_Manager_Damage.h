@@ -85,6 +85,8 @@ public:
 		PoolSize(256)
 	{
 	}
+
+	static const FCsSettings_Manager_Damage_Modifier& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Damage_Modifier
@@ -118,6 +120,8 @@ public:
 		Modifier()
 	{
 	}
+
+	static const FCsSettings_Manager_Damage& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Damage

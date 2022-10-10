@@ -28,7 +28,6 @@
 #include "Range/CsDamageRangeImpl.h"
 #include "Modifier/Types/CsGetDamageModifierType.h"
 #include "Modifier/Value/Point/CsDamageModifier_ValuePointImpl.h"
-#include "Modifier/Value/Range/CsDamageModifier_ValueRangeImpl.h"
 #include "Modifier/CsDamageModifierImpl.h"
 // Unique
 #include "UniqueObject/CsUniqueObject.h"
@@ -64,7 +63,10 @@ UCsManager_Damage* UCsManager_Damage::s_Instance;
 bool UCsManager_Damage::s_bShutdown = false;
 
 UCsManager_Damage::UCsManager_Damage(const FObjectInitializer& ObjectInitializer) : 
-	Super(ObjectInitializer)
+	Super(ObjectInitializer),
+	// Modifiers
+	Manager_Modifiers(),
+	ImplTypeByModifier()
 {
 }
 
@@ -265,31 +267,7 @@ void UCsManager_Damage::Initialize()
 
 		Manager_Range.CreatePool(PoolSize);
 	}
-	// Modifier
-	{
-		const int32& Count = EMCsDamageModifier::Get().Num();
-
-		Manager_Modifiers.Reset(Count);
-		Manager_Modifiers.AddDefaulted(Count);
-
-		// Create Pool
-		const int32& PoolSize = Settings->Manager_Damage.Modifier.PoolSize;
-
-		for (const FECsDamageModifier& Modifier : EMCsDamageModifier::Get())
-		{
-			typedef NCsDamage::NModifier::FManager ModifierManagerType;
-
-			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
-
-			Manager.SetDeconstructResourcesOnShutdown();
-			Manager.CreatePool(PoolSize);
-
-			for (int32 I = 0; I < PoolSize; ++I)
-			{
-				Manager.Add(ConstructModifier(Modifier));
-			}
-		}
-	}
+	SetupModifiers();
 
 	// Data Handler
 	ConstructDataHandler();
@@ -326,16 +304,22 @@ void UCsManager_Damage::CleanUp()
 	// Range
 	Manager_Range.Shutdown();
 	// Modifier
+	typedef NCsDamage::NModifier::FManager ModifierManagerType;
+	typedef NCsDamage::NModifier::FResource ModifierResourceType;
+	typedef NCsDamage::NModifier::IModifier ModifierType;
+
+	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
-		for (const FECsDamageModifier& Modifier : EMCsDamageModifier::Get())
+		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
+
+		for (ModifierResourceType* Container : Containers)
 		{
-			typedef NCsDamage::NModifier::FManager ModifierManagerType;
-
-			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
-
-			Manager.Shutdown();
+			ModifierType* M = Container->Get();
+			delete M;
+			Container->Set(nullptr);
 		}
 	}
+	Manager_Modifiers.Reset();
 
 	delete DataHandler;
 	DataHandler = nullptr;
@@ -810,30 +794,89 @@ void UCsManager_Damage::DeallocateRange(const FString& Context, RangeResourceTyp
 #define ModifierResourceType NCsDamage::NModifier::FResource
 #define ModifierType NCsDamage::NModifier::IModifier
 
-ModifierType* UCsManager_Damage::ConstructModifier(const FECsDamageModifier& Type)
+void UCsManager_Damage::SetupModifiers()
 {
-	// ValuePoint | CriticalChance | CriticalStrike
-	if (Type == NCsDamageModifier::ValuePoint ||
-		Type == NCsDamageModifier::CriticalChance ||
-		Type == NCsDamageModifier::CriticalStrike)
+	typedef NCsDamage::NModifier::EImpl ModifierImplType;
+
+	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
+	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
+
+	typedef NCsDamage::NModifier::FManager ModifierManagerType;
+
+	const FCsSettings_Manager_Damage_Modifier& ModifierSettings = FCsSettings_Manager_Damage_Modifier::Get();
+
+	const int32& PoolSize = ModifierSettings.PoolSize;
+
+	// Int
 	{
-		return new NCsDamage::NModifier::FFloat();
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Int];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Int));
+		}
 	}
-	// ValueRange | NCsDamage::NModifier::NValue::NRange::IRange (NCsDamage::NModifier::NValue::NRange::FImpl)
-	if (Type == NCsDamageModifier::ValueRange)
-		return new NCsDamage::NModifier::NValue::NRange::FImpl();
-	// TODO: Fix
-	// Range | NCsDamage::NModifier::NRange::IRange (NCsDamage::NModifier::NRange::FImpl)
-	if (Type == NCsDamageModifier::Range)
-		return new NCsDamage::NModifier::NValue::NPoint::FImpl();
+	// Float
+	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Float];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Float));
+		}
+	}
+	// Toggle
+	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Toggle];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Toggle));
+		}
+	}
+
+	ImplTypeByModifier.Reset(EMCsDamageModifier::Get().Num());
+	ImplTypeByModifier.AddDefaulted(EMCsDamageModifier::Get().Num());
+
+	ImplTypeByModifier[NCsDamageModifier::ValuePoint.GetValue()]			= ModifierImplType::Float;
+	ImplTypeByModifier[NCsDamageModifier::ValueRange_Uniform.GetValue()]	= ModifierImplType::Float;
+	//ImplTypeByModifier[NCsDamageModifier::ValueRange_Range.GetValue()]	= ModifierImplType::Float;
+	ImplTypeByModifier[NCsDamageModifier::Range_Uniform.GetValue()]			= ModifierImplType::Float;
+	//ImplTypeByModifier[NCsDamageModifier::Range_Range.GetValue()]			= ModifierImplType::Float;
+	// Critical
+	ImplTypeByModifier[NCsDamageModifier::CriticalChance.GetValue()] = ModifierImplType::Float;
+	ImplTypeByModifier[NCsDamageModifier::CriticalStrike.GetValue()] = ModifierImplType::Float;
+}
+
+#define ModifierImplType NCsDamage::NModifier::EImpl
+ModifierType* UCsManager_Damage::ConstructModifier(const ModifierImplType& ImplType)
+{
+	// Int
+	if (ImplType == ModifierImplType::Int)
+		return new NCsDamage::NModifier::FInt();
+	// Float
+	if (ImplType == ModifierImplType::Float)
+		return new NCsDamage::NModifier::FFloat();
+	// Toggle
+	if (ImplType == ModifierImplType::Toggle)
+		return new NCsDamage::NModifier::FToggle();
+	// TODO: Float Range
+	check(0);
 	return nullptr;
 }
+#undef ModifierImplType
 
 ModifierResourceType* UCsManager_Damage::AllocateModifier(const FECsDamageModifier& Type)
 {
 	checkf(EMCsDamageModifier::Get().IsValidEnum(Type), TEXT("UCsManager_Damage::AllocateModifier: Type: %s is NOT Valid."), Type.ToChar());
 
-	return Manager_Modifiers[Type.GetValue()].Allocate();
+	return GetManagerModifier(Type).Allocate();
 }
 
 void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDamageModifier& Type, ModifierResourceType* Modifier)
@@ -848,7 +891,7 @@ void UCsManager_Damage::DeallocateModifier(const FString& Context, const FECsDam
 	ICsReset* IReset = ModifierLibrary::GetInterfaceChecked<ICsReset>(Context, Modifier->Get());
 	IReset->Reset();
 
-	Manager_Modifiers[Type.GetValue()].Deallocate(Modifier);
+	GetManagerModifier(Type).Deallocate(Modifier);
 }
 
 const FECsDamageModifier& UCsManager_Damage::GetModifierType(const FString& Context, const ModifierType* Modifier)

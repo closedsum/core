@@ -11,8 +11,6 @@
 #include "Value/Range/CsDamageValueRange.h"
 	// Modifier
 #include "Modifier/Types/CsGetDamageModifierType.h"
-#include "Modifier/Value/CsDamageModifier_Value.h" // TODO: Remove
-#include "Modifier/Value/Point/CsDamageModifier_ValuePoint.h" // TODO: Remove
 #include "Modifier/CsDamageModifierRange.h"
 #include "Modifier/CsResource_DamageModifier.h"
 // Modifier

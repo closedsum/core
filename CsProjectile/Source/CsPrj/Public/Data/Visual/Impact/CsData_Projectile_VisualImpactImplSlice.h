@@ -28,10 +28,10 @@ public:
 // ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCsDataTable ImpactFXs;
+	FCsDataTable ImpactVisuals;
 
 	FCsData_Projectile_VisualImpactImplSlice() :
-		ImpactFXs()
+		ImpactVisuals()
 	{
 	}
 
@@ -83,6 +83,8 @@ namespace NCsProjectile
 
 					static const FName Name;
 
+				#define ImpactVisualInfoType NCsProjectile::NImpact::NVisual::FInfo
+
 				private:
 			
 					// ICsGetInterfaceMap
@@ -93,17 +95,17 @@ namespace NCsProjectile
 
 					// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
 
-					CS_DECLARE_MEMBER_WITH_PROXY(ImpactFXs, UDataTable*)
+					CS_DECLARE_MEMBER_WITH_PROXY(ImpactVisuals, UDataTable*)
 
-					TArray<FCsFXImpact*> ImpactFXRows;
+					TArray<ImpactVisualInfoType> ImpactVisualInfosProxy;
 
 				public:
 
 					FImplSlice() :
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(ImpactFXs, nullptr),
-						ImpactFXRows()
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ImpactVisuals, nullptr),
+						ImpactVisualInfosProxy()
 					{
-						CS_CTOR_SET_MEMBER_PROXY(ImpactFXs);
+						CS_CTOR_SET_MEMBER_PROXY(ImpactVisuals);
 					}
 
 					~FImplSlice(){}
@@ -124,13 +126,13 @@ namespace NCsProjectile
 
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(ImpactFXs, UDataTable)
+					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(ImpactVisuals, UDataTable)
 
 				// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 				#pragma region
 				public:
 
-					const FCsFX& GetImpactFX(const EPhysicalSurface& SurfaceType) const;
+					const ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const;
 
 				#pragma endregion CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 
@@ -147,6 +149,8 @@ namespace NCsProjectile
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+
+				#undef ImpactVisualInfoType
 				};
 
 			#undef VisualImpactDataType

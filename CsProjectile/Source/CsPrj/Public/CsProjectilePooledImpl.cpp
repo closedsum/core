@@ -1422,18 +1422,21 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		if (ImpactVisualDataType* ImpactVisualData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 		{
 			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
 			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 			PayloadImplType Payload;
 			Payload.Instigator = Cache->GetInstigator();
 
-			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
+			const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
+
+			// TODO: Adjust Scale
 
 			FTransform Transform = FTransform::Identity;
 			Transform.SetLocation(Hit.Location);
 			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
-			FXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
+			FXManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetFXInfo().GetFX(), Transform);
 		}
 	}
 	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
@@ -1548,7 +1551,6 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				// Apply Modifiers
 				DamageImpl.SetValue(DamageData);
 
-				typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
 				static ProcessPayloadType ProcessPayload;

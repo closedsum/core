@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Managers/FX/CsTypes_FX.h"
+#include "Types/CsTypes_Projectile_Visual_Impact.h"
 
 #include "CsData_Projectile_VisualImpact.generated.h"
 
@@ -25,13 +25,17 @@ namespace NCsProjectile
 
 				public:
 
+				#define ImpactVisualInfoType NCsProjectile::NImpact::NVisual::FInfo
+
 					/**
-					* Get the FX information associated with the given SurfaceType.
+					* Get the Visual Impact information associated with the given SurfaceType.
 					* 
 					* @param SurfaceType	Physics Surface type.
-					* return				FX associated with the given SurfaceType
+					* return				Visual Impact information associated with the given SurfaceType
 					*/
-					virtual const FCsFX& GetImpactFX(const EPhysicalSurface& SurfaceType) const = 0;
+					virtual const ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const = 0;
+
+				#undef ImpactVisualInfoType
 				};
 			}
 		}
@@ -56,11 +60,15 @@ public:
 
 public:
 	
+#define ImpactVisualInfoType NCsProjectile::NImpact::NVisual::FInfo
+
 	/**
-	* Get the FX information associated with the given SurfaceType.
-	* 
+	* Get the Visual Impact information associated with the given SurfaceType.
+	*
 	* @param SurfaceType	Physics Surface type.
-	* return				FX associated with the given SurfaceType
+	* return				Visual Impact information associated with the given SurfaceType
 	*/
-	virtual const FCsFX& GetImpactFX(const EPhysicalSurface& SurfaceType) const = 0;
+	virtual const ImpactVisualInfoType& GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const = 0;
+
+#undef ImpactVisualInfoType
 };

@@ -61,19 +61,19 @@ SliceType* FCsData_Projectile_VisualImpactImplSlice::AddSafeSlice_Internal(const
 
 void FCsData_Projectile_VisualImpactImplSlice::CopyToSlice(SliceType* Slice)
 {
-	Slice->SetImpactFXs(ImpactFXs.GetPtr());
+	Slice->SetImpactVisuals(ImpactVisuals.GetPtr());
 }
 
 void FCsData_Projectile_VisualImpactImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
-	Slice->SetImpactFXs(ImpactFXs.Get());
+	Slice->SetImpactVisuals(ImpactVisuals.Get());
 }
 
 #undef SliceType
 
 bool FCsData_Projectile_VisualImpactImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 {
-	if (!ImpactFXs.IsValid(Context, Log))
+	if (!ImpactVisuals.IsValid(Context, Log))
 		return false;
 	return true;
 }
@@ -92,49 +92,79 @@ namespace NCsProjectile
 				{
 					namespace NCached
 					{
+						namespace Str
+						{
+							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCProjectile::NData::NVisual::NImpact::FImplSlice, GetImpactVisualInfo);
+						}
+
 						namespace Name
 						{
 							const FName VisualImpactSlice = FName("VisualImpactSlice");
 
-							const FName ImpactFXs = FName("ImpactFXs");
+							const FName ImpactVisuals = FName("ImpactVisuals");
 						}
 					}
 				}
 
-				const FCsFX& FImplSlice::GetImpactFX(const EPhysicalSurface& SurfaceType) const
+				#define ImpactVisualInfoType NCsProjectile::NImpact::NVisual::FInfo
+				const ImpactVisualInfoType& FImplSlice::GetImpactVisualInfo(const EPhysicalSurface& SurfaceType) const
 				{
+					using namespace NCsProjectile::NData::NVisual::NImpact::NImplSlice::NCached;
+
+					const FString& Context = Str::GetImpactVisualInfo;
+
 					// If SurfaceType does NOT exist, use Default
-					EPhysicalSurface Surface = (uint8)SurfaceType >= ImpactFXRows.Num() ? EPhysicalSurface::SurfaceType_Default : SurfaceType;
-					FCsFXImpact* ImpactFX	 = ImpactFXRows[(uint8)Surface];
+					EPhysicalSurface Surface		 = (uint8)SurfaceType >= ImpactVisualInfosProxy.Num() ? EPhysicalSurface::SurfaceType_Default : SurfaceType;
+					const ImpactVisualInfoType& Info = ImpactVisualInfosProxy[(uint8)Surface];
 
-					checkf(ImpactFX->Surface == Surface, TEXT("NCsProjectile::NData::NVisual::NImpact::FImplSlice::GetImpactFX: No Impact FX was set for Physics Surface: %d."), (uint8)Surface);
+					checkf(Info.GetSurface() == Surface, TEXT("%s: No Impact FX was set for Physics Surface: %d."), *Context, (uint8)Surface);
 
-					return ImpactFX->FX;
+					CS_IS_VALID_CHECKED(Info);
+					return Info;
 				}
+				#undef ImpactVisualInfoType
 
 				void FImplSlice::GenerateCached()
 				{
-					// Populate ImpactFXRows for quick look up
-					const TMap<FName, uint8*>& RowMap = ImpactFXs->GetRowMap();
+					// Populate ImpactVisualInfosProxy for quick look up
+					const TMap<FName, uint8*>& RowMap = ImpactVisuals->GetRowMap();
 
-					ImpactFXRows.Reset((int32)EPhysicalSurface::SurfaceType_Max);
+					const int32 Count = (int32)EPhysicalSurface::SurfaceType_Max;
+
+					ImpactVisualInfosProxy.Reset(Count);
+					ImpactVisualInfosProxy.AddDefaulted(Count);
+
+					TArray<int32> DefaultIndices;
+
+					DefaultIndices.Reset(Count);
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						DefaultIndices.Add(1);
+					}
 
 					for (const TPair<FName, uint8*>& Pair : RowMap)
 					{
-						uint8* Ptr			= const_cast<uint8*>(Pair.Value);
-						FCsFXImpact* RowPtr = reinterpret_cast<FCsFXImpact*>(Ptr);
+						uint8* Ptr								= const_cast<uint8*>(Pair.Value);
+						FCsProjectile_Visual_ImpactInfo* RowPtr = reinterpret_cast<FCsProjectile_Visual_ImpactInfo*>(Ptr);
 
-						const int32 Num	  = ImpactFXRows.Num();
 						const int32 Index = (int32)RowPtr->Surface;
 
-						for (int32 I = Num - 1; I < Index; ++I)
+						DefaultIndices[Index] = 0;
+
+						RowPtr->CopyToInfo(&(ImpactVisualInfosProxy[Index]));
+					}
+
+					typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
+
+					const ImpactVisualInfoType& DefaultInfo = ImpactVisualInfosProxy[(uint8)EPhysicalSurface::SurfaceType_Default];
+
+					for (int32& Index : DefaultIndices)
+					{
+						if (Index == 1)
 						{
-							ImpactFXRows.AddDefaulted();
+							ImpactVisualInfosProxy[Index].Copy(DefaultInfo);
 						}
-
-						checkf(ImpactFXRows[Index] == nullptr, TEXT("NCsProjectile::NData::NVisual::NImpact::FImplSlice::GenerateCached: Impact FX already exists for Physics Surface: %d."), Index);
-
-						ImpactFXRows[Index] = RowPtr;
 					}
 				}
 
@@ -179,11 +209,11 @@ namespace NCsProjectile
 					// Try individual properties
 					else
 					{
-						UDataTable** ImpactFXsPtr = PropertyLibrary::GetObjectPropertyValuePtr<UDataTable>(Context, Object, Object->GetClass(), Name::ImpactFXs, nullptr);
+						UDataTable** ImpactVisualsPtr = PropertyLibrary::GetObjectPropertyValuePtr<UDataTable>(Context, Object, Object->GetClass(), Name::ImpactVisuals, nullptr);
 
-						if (ImpactFXsPtr)
+						if (ImpactVisualsPtr)
 						{
-							Slice->SetImpactFXs(ImpactFXsPtr);
+							Slice->SetImpactVisuals(ImpactVisualsPtr);
 							Success = true;
 						}
 					}
@@ -195,7 +225,7 @@ namespace NCsProjectile
 							Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact).")));
 							Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Projectile_VisualImpactImplSlice with name: VisualImpactSlice.")));
 							Log(FString::Printf(TEXT("%s: - OR")));
-							Log(FString::Printf(TEXT("%s: - Failed to get object property of type: UDataTable with name: ImpactFXs.")));
+							Log(FString::Printf(TEXT("%s: - Failed to get object property of type: UDataTable with name: ImpactVisuals.")));
 						}
 					}
 					Slice->GenerateCached();
@@ -204,13 +234,13 @@ namespace NCsProjectile
 
 				bool FImplSlice::IsValidChecked(const FString& Context) const
 				{
-					CS_IS_PTR_NULL_CHECKED(ImpactFXs)
+					CS_IS_PTR_NULL_CHECKED(ImpactVisuals)
 					return true;
 				}
 
 				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&)/*=&NCsProjectile::FLog::Warning*/) const
 				{
-					CS_IS_PTR_NULL(ImpactFXs)
+					CS_IS_PTR_NULL(ImpactVisuals)
 					return true;
 				}
 			}

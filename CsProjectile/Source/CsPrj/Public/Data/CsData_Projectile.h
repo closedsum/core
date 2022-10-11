@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
+
 #include "CsData_Projectile.generated.h"
 
 namespace NCsProjectile

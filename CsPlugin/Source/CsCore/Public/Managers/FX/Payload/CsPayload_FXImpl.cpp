@@ -47,6 +47,7 @@ namespace NCsFX
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
+			bApplyTransformScale(true),
 			Parameters(),
 			ScaledParameters()
 		{
@@ -100,6 +101,7 @@ namespace NCsFX
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
+			bApplyTransformScale = true;
 
 			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 			typedef NCsFX::NParameter::IParameter ParameterType;

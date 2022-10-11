@@ -280,7 +280,7 @@ namespace NCsFX
 			Component->SetVariableVec3(Parameter->GetName(), ParameterLibrary::GetVectorChecked(Context, Parameter));
 	}
 
-	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter)
+	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter, const float& Scale)
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
 
@@ -310,9 +310,9 @@ namespace NCsFX
 				Value = GetDefaultVariableIntChecked(Context, System, Parameter);
 			}
 
-			const float Max	  = Component->GetComponentScale().GetMax();
-			const float Scale = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
-			Value			  = ScaledParameter->GetScale() * Scale * Value;
+			const float Max	   = Component->GetComponentScale().GetMax() * Scale;
+			const float Result = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
+			Value			   = ScaledParameter->GetScale() * Result * Value;
 
 			Component->SetVariableInt(Parameter->GetName(), Value);
 		}
@@ -331,9 +331,9 @@ namespace NCsFX
 				Value = GetDefaultVariableFloatChecked(Context, System, Parameter);
 			}
 
-			const float Max	  = Component->GetComponentScale().GetMax();
-			const float Scale = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
-			Value			  = ScaledParameter->GetScale() * Scale * Value;
+			const float Max	   = Component->GetComponentScale().GetMax() * Scale;
+			const float Result = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
+			Value			   = ScaledParameter->GetScale() * Result * Value;
 
 			Component->SetVariableFloat(Parameter->GetName(), Value);
 		}
@@ -352,9 +352,9 @@ namespace NCsFX
 				Value = GetDefaultVariableVectorChecked(Context, System, Parameter);
 			}
 
-			const float Max	  = Component->GetComponentScale().GetMax();
-			const float Scale = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
-			Value			  = ScaledParameter->GetScale() * Scale * Value;
+			const float Max	   = Component->GetComponentScale().GetMax() * Scale;
+			const float Result = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
+			Value			   = ScaledParameter->GetScale() * Scale * Value;
 
 			Component->SetVariableVec3(Parameter->GetName(), Value);
 		}

@@ -128,6 +128,8 @@ namespace NCsFX
 			Payload->Transform.SetTranslation(Transform.GetTranslation() + FX.Transform.GetTranslation());
 			Payload->Transform.SetRotation(Transform.GetRotation() + FX.Transform.GetRotation());
 			Payload->Transform.SetScale3D(Transform.GetScale3D() * FX.Transform.GetScale3D());
+
+			Payload->bApplyTransformScale = FX.bApplyTransformScale;
 		}
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)

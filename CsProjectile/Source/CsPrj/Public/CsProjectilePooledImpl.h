@@ -69,6 +69,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NPoint, FImpl)
 // NCsDamage::NValue::NRange::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
+// NCsDamage::NRange::IRange
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NRange, IRange)
 // NCsDamage::NModifier::IModifier
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NModifier, IModifier)
 
@@ -535,6 +537,14 @@ public:
 	};
 
 	FDamageImpl DamageImpl;
+
+private:
+
+#define RangeType NCsDamage::NRange::IRange
+	const RangeType* GetDamageRangeChecked(const FString& Context);
+#undef RangeType
+
+	float GetMaxDamageRangeChecked(const FString& Context);
 
 #pragma endregion Damage
 

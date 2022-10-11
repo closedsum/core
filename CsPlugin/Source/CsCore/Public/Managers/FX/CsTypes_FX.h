@@ -824,6 +824,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FTransform Transform;
 
+	/** Whether the Transform's Scale should be applied to the FX.
+		If NOT, the object defaults to FVector::OneVector or just the scale of the object the FX
+		is attached to.
+		NOTE: Usually when scaling parameters, this should be FALSE. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	bool bApplyTransformScale;
+
 // TODO: Eventually deprecate and combine into 1 struct
 
 	/** List of all Niagara Int Parameters to change on the FX System. */
@@ -858,6 +865,7 @@ public:
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity),
+		bApplyTransformScale(true),
 		IntParameters(),
 		FloatParameters(),
 		VectorParameters(),
@@ -880,6 +888,7 @@ public:
 		Bone = B.Bone;
 		TransformRules = B.TransformRules;
 		Transform = B.Transform;
+		bApplyTransformScale = B.bApplyTransformScale;
 
 		IntParameters.Reset(FMath::Max(IntParameters.Max(), B.IntParameters.Num()));
 

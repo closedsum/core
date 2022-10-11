@@ -9,6 +9,7 @@
 // Damage
 #include "Value/Point/CsDamageValuePoint.h"
 #include "Value/Range/CsDamageValueRange.h"
+#include "Range/CsDamageRange.h"
 	// Modifier
 #include "Modifier/Types/CsGetDamageModifierType.h"
 #include "Modifier/CsDamageModifierRange.h"
@@ -37,6 +38,9 @@ namespace NCsDamage
 			
 			return GetDamageModifierType->GetDamageModifierType();
 		}
+
+		// Copy
+		#pragma region
 
 		bool FLibrary::CopyChecked(const FString& Context, const ModifierType* From, ModifierType* To)
 		{
@@ -85,6 +89,11 @@ namespace NCsDamage
 				}
 			}
 		}
+
+		#pragma endregion Copy
+
+		// Add
+		#pragma region
 
 		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 		{
@@ -137,6 +146,11 @@ namespace NCsDamage
 				To[ToSize + I] = T;
 			}
 		}
+
+		#pragma endregion Add
+
+		// Modify
+		#pragma region
 
 		void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
 		{
@@ -697,6 +711,106 @@ namespace NCsDamage
 				}
 			}
 		}
+
+		#pragma endregion Modify
+
+		// Range
+		#pragma region
+
+		float FLibrary::GetMaxRangeChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range)
+		{
+			if (Modifiers.Num() <= 64)
+			{
+				return GetMaxRangeChecked_Size64(Context, Modifiers, Range);
+			}
+			else
+			{
+				CS_IS_PTR_NULL_CHECKED(Range)
+
+				typedef NCsModifier::FLibrary ModifierLibrary;
+				typedef NCsDamage::NValue::FLibrary ValueLibrary;
+				typedef NCsModifier::NFloat::IFloat FloatModifierType;
+				typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
+
+				// Range
+				TArray<FloatModifierType*> FloatModifiers;
+				TArray<FloatRangeModifierType*> FloatRangeModifiers;
+				float* Max = nullptr;
+
+				Max = const_cast<float*>(&(Range->GetMaxRange()));
+
+				for (const AllocatedModifierType& M : Modifiers)
+				{
+					ModifierType* Modifier = M.GetChecked(Context);
+
+					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+					// Range: Uniform
+					if (DmgModifierType == NCsDamageModifier::Range_Uniform)
+					{
+						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+						FloatModifiers.Add(FloatModifier);
+					}
+					// Range: Range
+					if (DmgModifierType == NCsDamageModifier::Range_Range)
+					{
+						FloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<FloatRangeModifierType>(Context, Modifier);
+
+						FloatRangeModifiers.Add(FloatRangeModifier);
+					}
+				}
+
+				*Max = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, *Max);
+				*Max = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, *Max);
+				return *Max;
+			}
+		}
+
+		float FLibrary::GetMaxRangeChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range)
+		{
+			CS_IS_PTR_NULL_CHECKED(Range)
+
+			typedef NCsModifier::FLibrary ModifierLibrary;
+			typedef NCsDamage::NValue::FLibrary ValueLibrary;
+			typedef NCsModifier::NFloat::IFloat FloatModifierType;
+			typedef NCsModifier::NFloat::NRange::IRange FloatRangeModifierType;
+
+			// Range
+			TArray<FloatModifierType*, TFixedAllocator<64>> FloatModifiers;
+			TArray<FloatRangeModifierType*, TFixedAllocator<64>> FloatRangeModifiers;
+			float* Max = nullptr;
+
+			Max = const_cast<float*>(&(Range->GetMaxRange()));
+
+			for (const AllocatedModifierType& M : Modifiers)
+			{
+				ModifierType* Modifier = M.GetChecked(Context);
+
+				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
+
+				// Range: Uniform
+				if (DmgModifierType == NCsDamageModifier::Range_Uniform)
+				{
+					FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+					FloatModifiers.Add(FloatModifier);
+				}
+				// Range: Range
+				if (DmgModifierType == NCsDamageModifier::Range_Range)
+				{
+					FloatRangeModifierType* FloatRangeModifier = GetInterfaceChecked<FloatRangeModifierType>(Context, Modifier);
+
+					FloatRangeModifiers.Add(FloatRangeModifier);
+				}
+			}
+
+			*Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, *Max);
+			*Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, *Max);
+			return *Max;
+		}
+
+		#pragma endregion Range
 
 		#undef ModifierType
 		#undef DataType

@@ -164,9 +164,10 @@ namespace NCsFX
 		* @param Context	The calling context.
 		* @param Component
 		* @param Parameter
+		* @param Scale
 		* return
 		*/
-		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter);
+		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter, const float& Scale);
 
 		static FNiagaraVariable* GetDefaultVariableChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
 

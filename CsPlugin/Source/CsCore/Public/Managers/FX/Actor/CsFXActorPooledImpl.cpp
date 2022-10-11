@@ -216,9 +216,11 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	const TArray<ScaledParameterType*>& ScaledParameters = FXPayload->GetScaledParameters();
 
+	float Scale = FXPayload->ShouldApplyTransformScale() ? 1.0f : FXPayload->GetTransform().GetScale3D().GetMax();
+
 	for (const ScaledParameterType* Param : ScaledParameters)
 	{
-		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
+		FXLibrary::SetParameterChecked(Context, FXComponent, Param, Scale);
 	}
 
 	FX->SetActorTickEnabled(true);
@@ -434,7 +436,13 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();
 
-	const FTransform& Transform = FXPayload->GetTransform();
+	FTransform Transform = FXPayload->GetTransform();
+
+	if (!FXPayload->ShouldApplyTransformScale())
+	{
+		Transform.SetScale3D(FVector::OneVector);	
+	}
+
 	const int32& TransformRules = FXPayload->GetTransformRules();
 	
 	typedef NCsFX::NPayload::EChange ChangeType;

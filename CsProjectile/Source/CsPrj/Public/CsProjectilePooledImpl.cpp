@@ -15,6 +15,7 @@
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
 	// Data
 #include "Data/CsLibrary_Data_Projectile.h"
+#include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
 	// Payload
 #include "Payload/CsLibrary_Payload_Projectile.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
@@ -23,6 +24,8 @@
 #include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
 #include "Modifier/CsLibrary_ProjectileModifier.h"
+	// Modifier
+#include "Modifier/CsLibrary_DamageModifier.h"
 	// Common
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Math.h"
@@ -41,9 +44,11 @@
 #include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
 #include "Data/Sound/CsData_Projectile_SoundImpact.h"
 #include "Data/Damage/CsData_Projectile_Damage.h"
+	// Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Types/CsData_GetDamageDataType.h"
 #include "Managers/Damage/Data/Types/CsData_GetDamageDataTypes.h"
+#include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Components
@@ -1430,11 +1435,16 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 			const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
 
-			// TODO: Adjust Scale
-
 			FTransform Transform = FTransform::Identity;
 			Transform.SetLocation(Hit.Location);
 			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+			if (Info.GetFXInfo().GetbScaleByDamageRange())
+			{
+				float MaxRange = GetMaxDamageRangeChecked(Context);
+
+				Transform.SetScale3D(MaxRange * FVector::OneVector);
+			}
 
 			FXManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetFXInfo().GetFX(), Transform);
 		}
@@ -1741,6 +1751,85 @@ void ACsProjectilePooledImpl::FDamageImpl::Reset()
 	ResetValue();
 
 	Modifiers.Reset(Modifiers.Max());
+}
+
+#define RangeType NCsDamage::NRange::IRange
+const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& Context)
+{
+	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsDamage::NData::FLibrary DmgDataLibrary;
+	typedef NCsDamage::NData::IData DmgDataType;
+	typedef NCsDamage::NData::NShape::IShape DmgShapeDataType;
+
+	// NOTE: For now assume the ONLY way to get RangeType is from a Damage Shape.
+	//		  Damage Shape is an object that implements the interface: DmgShapeDataType (NCsDamage::NData::NShape::IShape)
+	
+	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
+	{
+		typedef NCsProjectile::NData::NDamage::IDamage PrjDmgDataType;
+
+		if (const PrjDmgDataType* PrjDmgData = PrjDataLibrary::GetSafeInterfaceChecked<PrjDmgDataType>(Context, Data))
+		{
+			const DmgDataType* DmgData = PrjDmgData->GetDamageData();
+
+			if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
+			{
+				return DmgShapeData->GetRange();
+			}
+		}
+	}
+	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
+	{
+		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
+
+		if (const GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+			const DmgDataType* DmgData = DamageManagerLibrary::GetDataChecked(Context, this, GetDamageDataType);
+
+			if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
+			{
+				return DmgShapeData->GetRange();
+			}
+		}
+	}
+	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
+	{
+		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
+
+		if (const GetDamageDataTypeDataTypes* GetDamageDataTypes = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+			static TArray<DmgDataType*> DamageDatas;
+
+			DamageManagerLibrary::GetDatasChecked(Context, this, GetDamageDataTypes, DamageDatas);
+
+			for (const DmgDataType* DmgData : DamageDatas)
+			{
+				if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
+				{
+					DamageDatas.Reset(DamageDatas.Max());
+					return DmgShapeData->GetRange();
+				}
+			}
+			DamageDatas.Reset(DamageDatas.Max());
+		}
+	}
+	checkf(0, TEXT("%s: Failed to get Damage Data from %s"), *Context, *PrjDataLibrary::PrintDataAndClass(Data));
+	return nullptr;
+}
+#undef RangeType
+
+float ACsProjectilePooledImpl::GetMaxDamageRangeChecked(const FString& Context)
+{
+	typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
+	typedef NCsDamage::NRange::IRange RangeType;
+
+	const RangeType* Range = GetDamageRangeChecked(Context);
+
+	return DmgModifierLibrary::GetMaxRangeChecked(Context, DamageImpl.Modifiers, Range);
 }
 
 #pragma endregion Damage

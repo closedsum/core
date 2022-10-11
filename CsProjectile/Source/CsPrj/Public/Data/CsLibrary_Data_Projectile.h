@@ -2,6 +2,8 @@
 #pragma once
 #include "Data/CsData_Projectile.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsPrjLog.h"
 

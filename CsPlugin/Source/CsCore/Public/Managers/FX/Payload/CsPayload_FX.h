@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Managers/FX/CsTypes_FX.h"
 #include "Types/CsTypes_AttachDetach.h"
-#pragma once
 
 class UNiagaraSystem;
 
@@ -115,6 +115,16 @@ namespace NCsFX
 			* return Transform
 			*/
 			virtual const FTransform& GetTransform() const = 0;
+
+			/**
+			* Get whether the Transform's Scale should be applied to the FX.
+			* If NOT, the object defaults to FVector::OneVector or just the scale of the object the FX
+			* is attached to.
+			* NOTE: Usually when scaling parameters, this should be FALSE.
+			* 
+			* return Whether the Transform's Scale should be applied to the FX or not.
+			*/
+			virtual const bool& ShouldApplyTransformScale() const = 0;
 
 			/**
 			*/

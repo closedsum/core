@@ -79,6 +79,8 @@ namespace NCsFX
 
 			FTransform Transform;
 
+			bool bApplyTransformScale;
+
 			TArray<ParameterType*> Parameters;
 
 			TArray<ScaledParameterType*> ScaledParameters;
@@ -143,6 +145,7 @@ namespace NCsFX
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const bool& ShouldApplyTransformScale() const { return bApplyTransformScale; }
 			FORCEINLINE const TArray<ParameterType*>& GetParameters() const { return Parameters; }
 			FORCEINLINE const TArray<ScaledParameterType*>& GetScaledParameters() const { return ScaledParameters; }
 

@@ -40,6 +40,10 @@ namespace NCsDamage
 
 		static const FECsDamageModifier& GetTypeChecked(const FString& Context, const ModifierType* Modifier);
 
+	// Copy
+	#pragma region
+	public:
+
 		/**
 		* Copy the values from From to To with checks.
 		*
@@ -77,9 +81,21 @@ namespace NCsDamage
 		*/
 		static void CopyChecked(const FString& Context, const TArray<BaseModifierType*>& From, TArray<ModifierType*>& To);
 
+	#pragma endregion Copy
+
+	// Add
+	#pragma region
+	public:
+
 		static void AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
 
 		static void AddChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<BaseModifierType*>& To);
+
+	#pragma endregion Add
+
+	// Modify
+	#pragma region
+	public:
 
 		/**
 		*
@@ -119,6 +135,18 @@ namespace NCsDamage
 		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value);
 
 		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask);
+
+	#pragma endregion Modify
+
+	// Range
+	#pragma region
+	public:
+
+		static float GetMaxRangeChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range);
+
+		static float GetMaxRangeChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const RangeType* Range);
+
+	#pragma endregion Range
 
 	#undef DataType
 	#undef ValueType

@@ -295,7 +295,7 @@ namespace NCsCollisionResponseContainer
 
 			if (Response == ECR_Block)
 			{
-				Mask |= ((uint8)Channel << 0);
+				Mask |= (1 << (uint8)Channel);
 			}
 		}
 		return Mask;

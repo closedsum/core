@@ -25,6 +25,7 @@ namespace NCsWeapon
 						#pragma region
 
 						/**
+						* Describes where the Fire Sound should be played from on the weapon.
 						*/
 						enum class EAttach
 						{
@@ -73,7 +74,9 @@ namespace NCsWeapon
 
 							// IParams
 
+							/** Which Sound to play when the Fire action is executed. */
 							CS_DECLARE_MEMBER_WITH_PROXY(Sound, FCsSound)
+							/** How the Sound should be attached. */
 							CS_DECLARE_MEMBER_WITH_PROXY(AttachType, EAttach)
 
 						public:

@@ -217,6 +217,12 @@ namespace NCsWeapon
 // NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FImpl)
 
+/**
+* Describes any information related to Launching a Projectile using a Trace from a Projectile Weapon.
+* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*  Projectile is an object that implements the interface: ICsProjectile.
+*/
 USTRUCT(BlueprintType)
 struct CSWP_API FCsProjectileWeapon_LaunchTraceParams
 {

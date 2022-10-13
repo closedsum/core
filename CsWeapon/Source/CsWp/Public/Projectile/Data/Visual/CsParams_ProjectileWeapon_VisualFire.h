@@ -93,6 +93,10 @@ namespace NCsWeapon
 // NCsWeapon::NProjectile::NData::NVisual::NFire::FParams
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NVisual, NFire, FParams)
 
+/**
+* Describes any Visual information related to the Fire action for a Projectile Weapon.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*/
 USTRUCT(BlueprintType)
 struct CSWP_API FCsProjectileWeapon_VisualFire_Params
 {
@@ -100,10 +104,12 @@ struct CSWP_API FCsProjectileWeapon_VisualFire_Params
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	/** Which FX to spawn when the Fire action is executed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	FCsFX FX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	/** How the FX should be attached. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	ECsProjectileWeaponVisualFireAttach Attach;
 
 	FCsProjectileWeapon_VisualFire_Params() :
@@ -144,7 +150,9 @@ namespace NCsWeapon
 
 					private:
 
+						/** Which FX to spawn when the Fire action is executed. */
 						CS_DECLARE_MEMBER_WITH_PROXY(FX, FCsFX)
+						/** How the FX should be attached. */
 						CS_DECLARE_MEMBER_WITH_PROXY(Attach, AttachType)
 
 					public:

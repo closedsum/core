@@ -51,6 +51,10 @@ namespace NCsProjectileWeaponSoundFireAttach
 // NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsWeapon, NProjectile, NData, NSound, NFire, NParams, FImpl)
 
+/**
+* Describes any Sound information related to the Fire action for a Projectile Weapon.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*/
 USTRUCT(BlueprintType)
 struct CSWP_API FCsProjectileWeapon_SoundFire_Params
 {
@@ -58,10 +62,12 @@ struct CSWP_API FCsProjectileWeapon_SoundFire_Params
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	/** Which Sound to play when the Fire action is executed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	FCsSound Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	/** How the Sound should be attached. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	ECsProjectileWeaponSoundFireAttach Attach;
 
 	FCsProjectileWeapon_SoundFire_Params() :

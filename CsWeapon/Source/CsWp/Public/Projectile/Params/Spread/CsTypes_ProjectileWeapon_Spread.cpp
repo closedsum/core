@@ -136,7 +136,7 @@ namespace NCsProjectileWeaponSpreadAngle
 
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(DivideByCount, "Divide by Count");
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AngleBetween, "Angel Between");
-		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(MinMax, "Min / Max");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(UniformMinMax, "Uniform: Min / Max");
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsProjectileWeaponSpreadAngle_MAX, "MAX");
 	}
 }
@@ -155,7 +155,7 @@ namespace NCsWeapon
 
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(DivideByCount, "Divide by Count");
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AngleBetween, "Angel Between");
-					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(MinMax, "Min / Max");
+					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(UniformMinMax, "Uniform: Min / Max");
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EAngle_MAX, "MAX");
 				}
 			}
@@ -300,9 +300,9 @@ namespace NCsWeapon
 				{
 					AngleBetween = Angle / Count;
 				}
-				// MinMax
+				// UniformMinMax
 				else 
-				if (AngleType == SpreadAngleType::MinMax)
+				if (AngleType == SpreadAngleType::UniformMinMax)
 				{
 					AngleBetween = Count > 1 ? (2.0f * Angle) / Count : 0.0f;
 				}
@@ -403,7 +403,7 @@ namespace NCsWeapon
 
 				CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, AngleType)
 
-				checkf(AngleType == SpreadAngleType::MinMax, TEXT("%s: AngleType (%s) != SpreadAngleType::MinMax."), *Context, SpreadAngleMapType::Get().ToChar(AngleType));
+				checkf(AngleType == SpreadAngleType::UniformMinMax, TEXT("%s: AngleType (%s) != SpreadAngleType::UniformMinMax."), *Context, SpreadAngleMapType::Get().ToChar(AngleType));
 
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Angle, 0.0f)
 				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Angle, 360.0f)

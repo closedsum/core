@@ -179,18 +179,34 @@ struct CSWP_API FCsProjectileWeapon_Spread_AngleParams
 
 public:
 
+	/** Describes how the Spread Angle should be interpreted. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	ECsProjectileWeaponSpreadAngle AngleType;
 
+	/** The angle in degrees to use for spread. 
+		NOTE: NOT used if AngleType == ECsProjectileWeaponSpreadAngle::RangeMinMax. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "180.0", ClampMax = "180.0"))
 	float Angle;
 
+	/** The minimum angle in degrees to use for spread.
+		NOTE: ONLY used if AngleType == ECsProjectileWeaponSpreadAngle::RangeMinMax. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "-180.0", ClampMin = "-180.0", UIMax = "0.0", ClampMax = "0.0"))
+	float Min;
+
+	/** The maximum angle in degrees to use for spread.
+		NOTE: ONLY used if AngleType == ECsProjectileWeaponSpreadAngle::RangeMinMax. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "180.0", ClampMax = "180.0"))
+	float Max;
+
+	/** How to populate the list of angles for the spread. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile")
 	ECsProjectileWeaponSpreadAngleDistribution Distribution;
 
 	FCsProjectileWeapon_Spread_AngleParams() :
 		AngleType(ECsProjectileWeaponSpreadAngle::DivideByCount),
 		Angle(0.0f),
+		Min(0.0f),
+		Max(0.0f),
 		Distribution(ECsProjectileWeaponSpreadAngleDistribution::Shuffle)
 	{
 	}
@@ -223,8 +239,18 @@ namespace NCsWeapon
 
 				private:
 
+					/** Describes how the Spread Angle should be interpreted. */
 					CS_DECLARE_MEMBER_WITH_PROXY(AngleType, SpreadAngleType)
+					/** The angle in degrees to use for spread. 
+						NOTE: NOT used if AngleType == SpreadAngleType::RangeMinMax. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Angle, float)
+					/** The minimum angle in degrees to use for spread.
+						NOTE: ONLY used if AngleType == SpreadAngleType::RangeMinMax. */
+					CS_DECLARE_MEMBER_WITH_PROXY(Min, float)
+					/** The maximum angle in degrees to use for spread.
+						NOTE: ONLY used if AngleType == SpreadAngleType::RangeMinMax. */
+					CS_DECLARE_MEMBER_WITH_PROXY(Max, float)
+					/** How to populate the list of angles for the spread. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
 				public:
@@ -232,15 +258,21 @@ namespace NCsWeapon
 					FParams() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(AngleType, SpreadAngleType::DivideByCount),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Angle, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Min, 0.0f),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Max, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Distribution, DistributionType::Shuffle)
 					{
 						CS_CTOR_SET_MEMBER_PROXY(AngleType);
 						CS_CTOR_SET_MEMBER_PROXY(Angle);
+						CS_CTOR_SET_MEMBER_PROXY(Min);
+						CS_CTOR_SET_MEMBER_PROXY(Max);
 						CS_CTOR_SET_MEMBER_PROXY(Distribution);
 					}
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AngleType, SpreadAngleType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Angle, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Min, float)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Max, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
 					bool IsValidChecked(const FString& Context) const;

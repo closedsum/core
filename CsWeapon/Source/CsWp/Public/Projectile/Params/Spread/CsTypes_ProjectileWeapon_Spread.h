@@ -259,9 +259,9 @@ enum class ECsProjectileWeaponSpreadAngle : uint8
 			  each Projectile is 60.) */
 	AngleBetween						UMETA(DisplayName = "Angle Between"),
 	/** The Spread Angle represents the absolute angle delta (+/-) from the Launch Direction.
-		(i.e. If the Spread Angel is 60, then the Projectiles are fired at angles between
+		(i.e. If the Spread Angle is 60, then the Projectiles are fired at angles between
 		      60 and -60 degrees from the Launch Direction, usually the Weapon Forward.) */
-	MinMax								UMETA(DisplayName = "Min / Max"),
+	UniformMinMax						UMETA(DisplayName = "Uniform: Min / Max"),
 	ECsProjectileWeaponSpreadAngle_MAX	UMETA(Hidden),
 };
 
@@ -278,7 +278,7 @@ namespace NCsProjectileWeaponSpreadAngle
 	{
 		extern CSWP_API const Type DivideByCount;
 		extern CSWP_API const Type AngleBetween;
-		extern CSWP_API const Type MinMax;
+		extern CSWP_API const Type UniformMinMax;
 		extern CSWP_API const Type ECsProjectileWeaponSpreadAngle_MAX;
 	}
 }
@@ -305,7 +305,7 @@ namespace NCsWeapon
 				/** The Spread Angle represents the absolute angle delta (+/-) from the Launch Direction.
 					(i.e. If the Spread Angel is 60, then the Projectiles are fired at angles between
 						  60 and -60 degrees from the Launch Direction, usually the Weapon Forward.) */
-				MinMax,
+				UniformMinMax,
 				EAngle_MAX
 			};
 
@@ -322,7 +322,7 @@ namespace NCsWeapon
 
 					extern CSWP_API const Type DivideByCount;
 					extern CSWP_API const Type AngleBetween;
-					extern CSWP_API const Type MinMax;
+					extern CSWP_API const Type UniformMinMax;
 					extern CSWP_API const Type EAngle_MAX;
 				}
 			}
@@ -364,9 +364,9 @@ enum class ECsProjectileWeaponSpreadAngleDistribution : uint8
 	Shuffle											UMETA(DisplayName = "Shuffle"),
 	/** Projectiles are spawned at random angles from the default Launch Direction, 
 		usually the Weapon Forward. 
-		NOTE: Spread Angle Type MUST = ECsProjectileWeaponSpreadAngle::MinMax. */
+		NOTE: Spread Angle Type MUST = ECsProjectileWeaponSpreadAngle::UniformMinMax. */
 	Random											UMETA(DisplayName = "Random"),
-	ECsProjectileWeaponSpreadAngleDistribution_MAX		UMETA(Hidden),
+	ECsProjectileWeaponSpreadAngleDistribution_MAX	UMETA(Hidden),
 };
 
 struct CSWP_API EMCsProjectileWeaponSpreadAngleDistribution : public TCsEnumMap<ECsProjectileWeaponSpreadAngleDistribution>

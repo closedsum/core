@@ -262,6 +262,10 @@ enum class ECsProjectileWeaponSpreadAngle : uint8
 		(i.e. If the Spread Angle is 60, then the Projectiles are fired at angles between
 		      60 and -60 degrees from the Launch Direction, usually the Weapon Forward.) */
 	UniformMinMax						UMETA(DisplayName = "Uniform: Min / Max"),
+	/** The Spread Angle is represented by a Min and a Max angle from the Launch Direction.
+		(i.e. If the Min Angle is -20 and the Max Angle is 60, then the Projectiles are fired at
+				angles between -20 and 60 degrees from the Launch Direction, usually the Weapon Forward). */
+	RangeMinMax							UMETA(DisplayName = "Range: Min / Max"),
 	ECsProjectileWeaponSpreadAngle_MAX	UMETA(Hidden),
 };
 
@@ -279,6 +283,7 @@ namespace NCsProjectileWeaponSpreadAngle
 		extern CSWP_API const Type DivideByCount;
 		extern CSWP_API const Type AngleBetween;
 		extern CSWP_API const Type UniformMinMax;
+		extern CSWP_API const Type RangeMinMax;
 		extern CSWP_API const Type ECsProjectileWeaponSpreadAngle_MAX;
 	}
 }
@@ -303,9 +308,13 @@ namespace NCsWeapon
 						  each Projectile is 60.) */
 				AngleBetween,
 				/** The Spread Angle represents the absolute angle delta (+/-) from the Launch Direction.
-					(i.e. If the Spread Angel is 60, then the Projectiles are fired at angles between
+					(i.e. If the Spread Angle is 60, then the Projectiles are fired at angles between
 						  60 and -60 degrees from the Launch Direction, usually the Weapon Forward.) */
 				UniformMinMax,
+				/** The Spread Angle is represented by a Min and a Max angle from the Launch Direction. 
+					(i.e. If the Min Angle is -20 and the Max Angle is 60, then the Projectiles are fired at
+						  angles between -20 and 60 degrees from the Launch Direction, usually the Weapon Forward). */
+				RangeMinMax,
 				EAngle_MAX
 			};
 
@@ -323,6 +332,7 @@ namespace NCsWeapon
 					extern CSWP_API const Type DivideByCount;
 					extern CSWP_API const Type AngleBetween;
 					extern CSWP_API const Type UniformMinMax;
+					extern CSWP_API const Type RangeMinMax;
 					extern CSWP_API const Type EAngle_MAX;
 				}
 			}
@@ -486,6 +496,8 @@ namespace NCsWeapon
 				static void SetAnglesChecked(const FString& Context, const int32& Count, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution, TArray<float>& OutAngles);
 
 				static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Angle, const DistributionType& Distribution);
+
+				static float GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Min, const float& Max, const DistributionType& Distribution);
 
 			#undef SpreadAngleType
 			#undef DistributionType

@@ -187,6 +187,8 @@ void FCsProjectileWeapon_Spread_AngleParams::CopyToParams(ParamsType* Params)
 
 	Params->SetAngleType((SpreadAngleType*)(&AngleType));
 	Params->SetAngle(&Angle);
+	Params->SetMin(&Min);
+	Params->SetMax(&Max);
 
 	typedef NCsWeapon::NProjectile::NSpread::NAngle::EDistribution DistributionType;
 
@@ -199,6 +201,8 @@ void FCsProjectileWeapon_Spread_AngleParams::CopyToParamsAsValue(ParamsType* Par
 
 	Params->SetAngleType((SpreadAngleType)AngleType);
 	Params->SetAngle(Angle);
+	Params->SetMin(Min);
+	Params->SetMax(Max);
 
 	typedef NCsWeapon::NProjectile::NSpread::NAngle::EDistribution DistributionType;
 
@@ -212,6 +216,9 @@ bool FCsProjectileWeapon_Spread_AngleParams::IsValidChecked(const FString& Conte
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponSpreadAngle, AngleType)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Angle, 0.0f)
 	CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Angle, 180.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Max, Min)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Min, -180.0f)
+	CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Max, 180.0f)
 	CS_IS_ENUM_VALID_CHECKED(EMCsProjectileWeaponSpreadAngleDistribution, Distribution)
 	return true;
 }
@@ -221,6 +228,9 @@ bool FCsProjectileWeapon_Spread_AngleParams::IsValid(const FString& Context, voi
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponSpreadAngle, ECsProjectileWeaponSpreadAngle, AngleType)
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Angle, 0.0f)
 	CS_IS_FLOAT_LESS_THAN_OR_EQUAL(Angle, 180.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Max, Min)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Min, -180.0f)
+	CS_IS_FLOAT_LESS_THAN_OR_EQUAL(Max, 180.0f)
 	CS_IS_ENUM_VALID(EMCsProjectileWeaponSpreadAngleDistribution, ECsProjectileWeaponSpreadAngleDistribution, Distribution)
 	return true;
 }
@@ -240,6 +250,9 @@ namespace NCsWeapon
 					CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, GetAngleType())
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetAngle(), 0.0f)
 					CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(GetAngle(), 180.0f)
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMax(), GetMin())
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMin(), -180.0f)
+					CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(GetMax(), 180.0f)
 
 					typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
 
@@ -255,6 +268,9 @@ namespace NCsWeapon
 					CS_IS_ENUM_VALID(SpreadAngleMapType, SpreadAngleType, GetAngleType())
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetAngle(), 0.0f)
 					CS_IS_FLOAT_LESS_THAN_OR_EQUAL(GetAngle(), 180.0f)
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMax(), GetMin())
+					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMin(), -180.0f)
+					CS_IS_FLOAT_LESS_THAN_OR_EQUAL(GetMax(), 180.0f)
 
 					typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
 					typedef NCsWeapon::NProjectile::NSpread::NAngle::EDistribution DistributionType;

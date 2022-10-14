@@ -137,6 +137,7 @@ namespace NCsProjectileWeaponSpreadAngle
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(DivideByCount, "Divide by Count");
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AngleBetween, "Angel Between");
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(UniformMinMax, "Uniform: Min / Max");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(RangeMinMax, "Range: Min / Max");
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsProjectileWeaponSpreadAngle_MAX, "MAX");
 	}
 }
@@ -156,6 +157,7 @@ namespace NCsWeapon
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(DivideByCount, "Divide by Count");
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(AngleBetween, "Angel Between");
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(UniformMinMax, "Uniform: Min / Max");
+					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(RangeMinMax, "Range: Min / Max");
 					CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EAngle_MAX, "MAX");
 				}
 			}
@@ -406,7 +408,7 @@ namespace NCsWeapon
 				checkf(AngleType == SpreadAngleType::UniformMinMax, TEXT("%s: AngleType (%s) != SpreadAngleType::UniformMinMax."), *Context, SpreadAngleMapType::Get().ToChar(AngleType));
 
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Angle, 0.0f)
-				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Angle, 360.0f)
+				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Angle, 180.0f)
 
 				typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
 
@@ -414,7 +416,28 @@ namespace NCsWeapon
 
 				checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
 
-				return FMath::FRandRange(Angle, 360.0f - Angle);
+				return FMath::FRandRange(-Angle, Angle);
+			}
+
+			float FLibrary::GetRandomAngleChecked(const FString& Context, const SpreadAngleType& AngleType, const float& Min, const float& Max, const DistributionType& Distribution)
+			{
+				typedef NCsWeapon::NProjectile::NSpread::EMAngle SpreadAngleMapType;
+
+				CS_IS_ENUM_VALID_CHECKED(SpreadAngleMapType, AngleType)
+
+				checkf(AngleType == SpreadAngleType::RangeMinMax, TEXT("%s: AngleType (%s) != SpreadAngleType::RangeMinMax."), *Context, SpreadAngleMapType::Get().ToChar(AngleType));
+
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Max, Min)
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Min, -180.0f)
+				CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(Max, 180.0f)
+
+				typedef NCsWeapon::NProjectile::NSpread::NAngle::EMDistribution DistributionMapType;
+
+				CS_IS_ENUM_VALID_CHECKED(DistributionMapType, Distribution)
+
+				checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
+
+				return FMath::FRandRange(Min, Max);
 			}
 
 			#undef SpreadAngleType

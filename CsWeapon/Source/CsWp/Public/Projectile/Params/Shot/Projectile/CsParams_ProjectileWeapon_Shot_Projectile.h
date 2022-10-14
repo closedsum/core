@@ -103,7 +103,7 @@ namespace NCsWeapon
 
 					FORCEINLINE bool CanCacheLocationOrDirection() const 
 					{
-						return Count > 1 && Interval > 0.0f && (bCurrentLaunchLocation || bCurrentLaunchDirection);
+						return GetCount() > 1 && GetInterval() > 0.0f && (GetbCurrentLaunchLocation() || GetbCurrentLaunchDirection());
 					}
 
 					bool IsValidChecked(const FString& Context) const;

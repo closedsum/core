@@ -190,12 +190,12 @@ public:
 
 	/** The minimum angle in degrees to use for spread.
 		NOTE: ONLY used if AngleType == ECsProjectileWeaponSpreadAngle::RangeMinMax. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "-180.0", ClampMin = "-180.0", UIMax = "0.0", ClampMax = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "-180.0", ClampMin = "-180.0", UIMax = "180.0", ClampMax = "180.0"))
 	float Min;
 
 	/** The maximum angle in degrees to use for spread.
 		NOTE: ONLY used if AngleType == ECsProjectileWeaponSpreadAngle::RangeMinMax. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "0.0", ClampMin = "0.0", UIMax = "180.0", ClampMax = "180.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (UIMin = "-180.0", ClampMin = "-180.0", UIMax = "180.0", ClampMax = "180.0"))
 	float Max;
 
 	/** How to populate the list of angles for the spread. */
@@ -287,7 +287,11 @@ namespace NCsWeapon
 
 					FORCEINLINE float GetRandomAngleChecked(const FString& Context) const
 					{
-						return NCsWeapon::NProjectile::NSpread::FLibrary::GetRandomAngleChecked(Context, GetAngleType(), GetAngle(), GetDistribution());
+						// UniformMinMax
+						if (GetAngleType() == SpreadAngleType::UniformMinMax)
+							return NCsWeapon::NProjectile::NSpread::FLibrary::GetRandomAngleChecked(Context, GetAngleType(), GetAngle(), GetDistribution());
+						// RangeMinMax
+						return NCsWeapon::NProjectile::NSpread::FLibrary::GetRandomAngleChecked(Context, GetAngleType(), GetMin(), GetMax(), GetDistribution());
 					}
 
 				#undef SpreadAngleType
@@ -317,21 +321,27 @@ struct CSWP_API FCsProjectileWeapon_SpreadParams
 
 public:
 
+	/** Whether to use Shape Params or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (InlineEditConditionToggle))
 	bool bShape;
 
+	/** Describes any information related to Spread Shape. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (editcondition = "bShape"))
 	FCsProjectileWeapon_Spread_ShapeParams ShapeParams;
 
+	/** Whether to use Yaw Params or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (InlineEditConditionToggle))
 	bool bYaw;
 
+	/** Describes any information related to spread along the Yaw. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (editcondition = "bYaw"))
 	FCsProjectileWeapon_Spread_AngleParams YawParams;
 
+	/** Whether to use Pitch Params or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (InlineEditConditionToggle))
 	bool bPitch;
 
+	/** Describes any information related to spread along the Pitch */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Projectile", meta = (editcondition = "bPitch"))
 	FCsProjectileWeapon_Spread_AngleParams PitchParams;
 
@@ -371,34 +381,41 @@ namespace NCsWeapon
 
 			private:
 
+				/** Whether to use Shape Params or not. */
 				CS_DECLARE_MEMBER_WITH_PROXY(bShape, bool)
+				/** Describes any information related to Spread Shape. */
+				ShapeParamsType ShapeParams;
+				/** Whether to use Yaw Params or not. */
 				CS_DECLARE_MEMBER_WITH_PROXY(bYaw, bool)
+				/** Describes any information related to spread along the Yaw. */
+				AngleParamsType YawParams;
+				/** Whether to use Pitch Params or not. */
 				CS_DECLARE_MEMBER_WITH_PROXY(bPitch, bool)
+				/** Describes any information related to spread along the Pitch */
+				AngleParamsType PitchParams;
 
 			public:
 
-				ShapeParamsType ShapeParams;
-
-				AngleParamsType YawParams;
-				AngleParamsType PitchParams;
-
 				FParams() :
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bShape, false),
+					ShapeParams(),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bYaw, true),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bPitch, false),
 					YawParams(),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bPitch, false),
 					PitchParams()
 				{
+					CS_CTOR_SET_MEMBER_PROXY(bShape);
 					CS_CTOR_SET_MEMBER_PROXY(bYaw);
 					CS_CTOR_SET_MEMBER_PROXY(bPitch);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bShape, bool)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bYaw, bool)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bPitch, bool)
 				FORCEINLINE const ShapeParamsType& GetShapeParams() const { return ShapeParams; }
 				FORCEINLINE ShapeParamsType* GetShapeParamsPtr() { return &ShapeParams; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bYaw, bool)
 				FORCEINLINE const AngleParamsType& GetYawParams() const { return YawParams; }
 				FORCEINLINE AngleParamsType* GetYawParamsPtr() { return &YawParams; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bPitch, bool)
 				FORCEINLINE const AngleParamsType& GetPitchParams() const { return PitchParams; }
 				FORCEINLINE AngleParamsType* GetPitchParamsPtr() { return &PitchParams; }
 

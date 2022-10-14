@@ -53,6 +53,7 @@ void FCsProjectile_TrackingParams::CopyToParams(ParamsType* Params)
 	typedef NCsProjectile::NTracking::EDestination DestinationType;
 
 	Params->SetDestination((DestinationType*)(&Destination));
+	Params->SetbReacquireDestination(&bReacquireDestination);
 	Params->SetOffset(&Offset);
 	Params->SetDelay(&Delay);
 	Params->SetDuration(&Duration);
@@ -66,6 +67,7 @@ void FCsProjectile_TrackingParams::CopyToParamsAsValue(ParamsType* Params) const
 	typedef NCsProjectile::NTracking::EDestination DestinationType;
 
 	Params->SetDestination((DestinationType)Destination);
+	Params->SetbReacquireDestination(bReacquireDestination);
 	Params->SetOffset(Offset);
 	Params->SetDelay(Delay);
 	Params->SetDuration(Duration);

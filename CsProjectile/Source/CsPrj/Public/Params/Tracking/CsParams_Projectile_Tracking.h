@@ -110,6 +110,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking")
 	ECsProjectileTrackingDestination Destination;
 
+	/** Whether to reacquire the Destination if the Destination is "Lost". 
+		A Destination is typically "Lost" if it refers to an Object or Bone and it
+		is no longer valid. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking")
+	bool bReacquireDestination;
+
 	/** Offset applied to location of what is being Tracked. 
 		If Destination == ECsProjectileTrackingDestination::Bone,
 			the offset is applied in the direction of the Bone's world space orientation. 
@@ -144,6 +150,7 @@ public:
 
 	FCsProjectile_TrackingParams() :
 		Destination(ECsProjectileTrackingDestination::Object),
+		bReacquireDestination(false),
 		Offset(0.0f),
 		Delay(0.0f),
 		Duration(0.0f),
@@ -179,6 +186,11 @@ namespace NCsProjectile
 			/** Describes what is being Tracked. */
 			CS_DECLARE_MEMBER_WITH_PROXY(Destination, DestinationType)
 
+			/** Whether to reacquire the Destination if the Destination is "Lost". 
+				A Destination is typically "Lost" if it refers to an Object or Bone and it
+				is no longer valid. */
+			CS_DECLARE_MEMBER_WITH_PROXY(bReacquireDestination, bool)
+
 			/** Offset applied to location of what is being Tracked. 
 				If Destination == ECsProjectileTrackingDestination::Bone,
 					the offset is applied in the direction of the Bone's world space orientation. 
@@ -209,6 +221,7 @@ namespace NCsProjectile
 
 			FParams() :
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Destination, DestinationType::Object),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(bReacquireDestination, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Delay, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Duration, 0.0f),
@@ -217,6 +230,7 @@ namespace NCsProjectile
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDotBeforeUsingPitch, -1.0f)
 			{
 				CS_CTOR_SET_MEMBER_PROXY(Destination);
+				CS_CTOR_SET_MEMBER_PROXY(bReacquireDestination);
 				CS_CTOR_SET_MEMBER_PROXY(Offset);
 				CS_CTOR_SET_MEMBER_PROXY(Delay);
 				CS_CTOR_SET_MEMBER_PROXY(Duration);
@@ -226,6 +240,7 @@ namespace NCsProjectile
 			}
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Destination, DestinationType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bReacquireDestination, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Delay, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Duration, float)

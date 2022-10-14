@@ -87,7 +87,10 @@ UCsManager_Weapon* UCsManager_Weapon::s_Instance;
 bool UCsManager_Weapon::s_bShutdown = false;
 
 UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Modifier
+	Manager_Modifiers(),
+	ImplTypeByModifier()
 {
 }
 
@@ -231,6 +234,7 @@ UCsManager_Weapon::UCsManager_Weapon(const FObjectInitializer& ObjectInitializer
 void UCsManager_Weapon::Initialize()
 {
 	SetupInternal();
+	SetupModifiers();
 	SetupSpreadVariables();
 	
 	bInitialized = true;
@@ -248,17 +252,22 @@ void UCsManager_Weapon::CleanUp()
 	Internal.Shutdown();
 	Pool.Reset();
 
-	// Modifier
+	typedef NCsWeapon::NModifier::FManager ModifierManagerType;
+	typedef NCsWeapon::NModifier::FResource ModifierResourceType;
+	typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+	for (ModifierManagerType& ModifierManager : Manager_Modifiers)
 	{
-		for (const FECsWeaponModifier& Modifier : EMCsWeaponModifier::Get())
+		const TArray<ModifierResourceType*>& Containers = ModifierManager.GetPool();
+
+		for (ModifierResourceType* Container : Containers)
 		{
-			typedef NCsWeapon::NModifier::FManager ModifierManagerType;
-
-			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
-
-			Manager.Shutdown();
+			ModifierType* M = Container->Get();
+			delete M;
+			Container->Set(nullptr);
 		}
 	}
+	Manager_Modifiers.Reset();
 
 	delete ClassHandler;
 	ClassHandler = nullptr;
@@ -375,36 +384,6 @@ void UCsManager_Weapon::SetupInternal()
 	NCsWeapon::PopulateEnumMapFromSettings(Context, ContextRoot);
 	NCsWeaponClass::PopulateEnumMapFromSettings(Context, ContextRoot);
 	NCsWeaponState::PopulateEnumMapFromSettings(Context, ContextRoot);
-
-	// Modifier
-	{
-		const int32& Count = EMCsWeaponModifier::Get().Num();
-
-		Manager_Modifiers.Reset(Count);
-		Manager_Modifiers.AddDefaulted(Count);
-
-		// Create Pool
-		const FCsSettings_Manager_Weapon_Modifiers& ModifierSettings = FCsSettings_Manager_Weapon_Modifiers::Get();
-
-		CS_IS_VALID_CHECKED(ModifierSettings);
-
-		const int32& PoolSize = ModifierSettings.PoolSize;
-
-		for (const FECsWeaponModifier& Modifier : EMCsWeaponModifier::Get())
-		{
-			typedef NCsWeapon::NModifier::FManager ModifierManagerType;
-
-			ModifierManagerType& Manager = Manager_Modifiers[Modifier.GetValue()];
-
-			Manager.SetDeconstructResourcesOnShutdown();
-			Manager.CreatePool(PoolSize);
-
-			for (int32 I = 0; I < PoolSize; ++I)
-			{
-				Manager.Add(ConstructModifier(Modifier));
-			}
-		}
-	}
 
 	// Class Handler
 	ConstructClassHandler();
@@ -932,22 +911,81 @@ void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
 #define ModifierResourceType NCsWeapon::NModifier::FResource
 #define ModifierType NCsWeapon::NModifier::IModifier
 
-ModifierType* UCsManager_Weapon::ConstructModifier(const FECsWeaponModifier& Type)
+void UCsManager_Weapon::SetupModifiers()
 {
-	// PrjWp_TimeBetweenShots | PrjWp_TimeBetweenShots | PrjWp_TimeBetweenProjectilesPerShot
-	// ModifierType (NCsModifier::IModifier)
-	if (Type == NCsWeaponModifier::PrjWp_ProjectilesPerShot ||
-		Type == NCsWeaponModifier::PrjWp_TimeBetweenShots ||
-		Type == NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot)
+	typedef NCsWeapon::NModifier::EImpl ModifierImplType;
+
+	Manager_Modifiers.Reset((uint8)ModifierImplType::EImpl_MAX);
+	Manager_Modifiers.AddDefaulted((uint8)ModifierImplType::EImpl_MAX);
+
+	typedef NCsWeapon::NModifier::FManager ModifierManagerType;
+
+	const FCsSettings_Manager_Weapon_Modifiers& ModifierSettings = FCsSettings_Manager_Weapon_Modifiers::Get();
+
+	const int32& PoolSize = ModifierSettings.PoolSize;
+
+	// Int
 	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Int];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Int));
+		}
+	}
+	// Float
+	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Float];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Float));
+		}
+	}
+	// Toggle
+	{
+		ModifierManagerType& ModifierManager = Manager_Modifiers[(uint8)ModifierImplType::Toggle];
+
+		ModifierManager.CreatePool(PoolSize);
+
+		for (int32 I = 0; I < PoolSize; ++I)
+		{
+			ModifierManager.Add(ConstructModifier(ModifierImplType::Toggle));
+		}
+	}
+
+	ImplTypeByModifier.Reset(EMCsWeaponModifier::Get().Num());
+	ImplTypeByModifier.AddDefaulted(EMCsWeaponModifier::Get().Num());
+
+	ImplTypeByModifier[NCsWeaponModifier::PrjWp_TimeBetweenShots.GetValue()]			  = ModifierImplType::Float;
+	ImplTypeByModifier[NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot.GetValue()] = ModifierImplType::Float;
+	// ProjectilesPerShot
+	ImplTypeByModifier[NCsWeaponModifier::PrjWp_ProjectilesPerShot_Count.GetValue()]	= ModifierImplType::Int;
+	ImplTypeByModifier[NCsWeaponModifier::PrjWp_ProjectilesPerShot_Interval.GetValue()]	= ModifierImplType::Float;
+	// Spread
+	ImplTypeByModifier[NCsWeaponModifier::PrjWp_UseSpreadParams.GetValue()]	= ModifierImplType::Toggle;
+}
+
+#define ModifierImplType NCsWeapon::NModifier::EImpl
+ModifierType* UCsManager_Weapon::ConstructModifier(const ModifierImplType& ImplType)
+{
+	// Int
+	if (ImplType == ModifierImplType::Int)
+		return new NCsWeapon::NModifier::FInt();
+	// Float
+	if (ImplType == ModifierImplType::Float)
 		return new NCsWeapon::NModifier::FFloat();
-	}
-	if (Type == NCsWeaponModifier::PrjWp_UseSpreadParams)
-	{
+	// Toggle
+	if (ImplType == ModifierImplType::Toggle)
 		return new NCsWeapon::NModifier::FToggle();
-	}
+	check(0);
 	return nullptr;
 }
+#undef ModifierImplType
 
 ModifierResourceType* UCsManager_Weapon::AllocateModifier(const FECsWeaponModifier& Type)
 {

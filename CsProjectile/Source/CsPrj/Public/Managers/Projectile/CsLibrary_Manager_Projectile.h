@@ -340,63 +340,65 @@ namespace NCsProjectile
 		#undef DataType
 
 		#pragma endregion Data
-
-		// Modifier
-		#pragma region
-		public:
-		
-		#define ModifierResourceType NCsProjectile::NModifier::FResource
-		#define ModifierType NCsProjectile::NModifier::IModifier
-		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
-		
-			static ModifierResourceType* AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type);
-
-			static void DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier);
-
-			static const FECsProjectileModifier& GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
-
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
-
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
-
-			static void CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsProjectileModifier& OutType);
-
-			/**
-			* 
-			* 
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param From
-			* @param To
-			*/
-			static void CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
-
-			/**
-			*
-			*
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param From
-			* @param To
-			*/
-			static void CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
-
-			/**
-			*
-			*
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param From
-			* @param To
-			*/
-			static void CreateCopyOfAndAddModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
-
-		#undef ModifierResourceType
-		#undef ModifierType
-		#undef AllocatedModifierType
-
-		#pragma endregion Modifier
 		};
+
+		namespace NModifier
+		{
+			struct CSPRJ_API FLibrary final
+			{
+			public:
+
+			#define ModifierResourceType NCsProjectile::NModifier::FResource
+			#define ModifierType NCsProjectile::NModifier::IModifier
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+		
+				static ModifierResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type);
+
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier);
+
+				static const FECsProjectileModifier& GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+				static ModifierResourceType* CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier);
+
+				static void CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsProjectileModifier& OutType);
+
+				/**
+				* 
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param From
+				* @param To
+				*/
+				static void CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
+
+				/**
+				*
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param From
+				* @param To
+				*/
+				static void CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+
+				/**
+				*
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param From
+				* @param To
+				*/
+				static void CreateCopyOfAndAddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+
+			#undef ModifierResourceType
+			#undef ModifierType
+			#undef AllocatedModifierType
+			};
+		}
 
 		namespace NOnHit
 		{

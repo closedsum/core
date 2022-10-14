@@ -28,10 +28,32 @@ namespace NCsWeaponModifier
 	typedef FECsWeaponModifier Type;
 	typedef EMCsWeaponModifier EnumMapType;
 
-	extern CSWP_API const Type PrjWp_ProjectilesPerShot;
 	extern CSWP_API const Type PrjWp_TimeBetweenShots;
 	extern CSWP_API const Type PrjWp_TimeBetweenProjectilesPerShot;
+	// ProjectilePerShot
+	extern CSWP_API const Type PrjWp_ProjectilesPerShot_Count;
+	extern CSWP_API const Type PrjWp_ProjectilesPerShot_Interval;
+	// Spread
 	extern CSWP_API const Type PrjWp_UseSpreadParams;
 }
 
 #pragma endregion WeaponModifier
+
+// WeaponModifierImpl
+#pragma region
+
+namespace NCsWeapon
+{
+	namespace NModifier
+	{
+		enum class EImpl : uint8
+		{
+			Int,
+			Float,
+			Toggle,
+			EImpl_MAX
+		};
+	}
+}
+
+#pragma endregion WeaponModifierImpl

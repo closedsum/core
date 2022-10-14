@@ -360,153 +360,165 @@ namespace NCsProjectile
 
 		#pragma endregion Data
 
-		// Modifier
-		#pragma region
-
-		#define ModifierResourceType NCsProjectile::NModifier::FResource
-		#define ModifierType NCsProjectile::NModifier::IModifier
-		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+		namespace NModifier
+		{
+			#define ModifierResourceType NCsProjectile::NModifier::FResource
+			#define ModifierType NCsProjectile::NModifier::IModifier
+			#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
 		
-		ModifierResourceType* FLibrary::AllocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type)
-		{
-			return GetChecked(Context, WorldContext)->AllocateModifier(Type);
-		}
-
-		void FLibrary::DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier)
-		{
-			GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
-		}
-
-		const FECsProjectileModifier& FLibrary::GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
-		{
-			return GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
-		}
-
-		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
-		{
-			UCsManager_Projectile* Manager_Projectile = GetChecked(Context, WorldContext);
-
-			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-			const FECsProjectileModifier& Type  = PrjModifierLibrary::GetTypeChecked(Context, Modifier);
-			ModifierResourceType* Container		= Manager_Projectile->AllocateModifier(Type);
-			ModifierType* Copy					= Container->Get();
-
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
-
-			CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
-
-			ICopy->Copy(Modifier);
-
-			return Container;
-		}
-
-		ModifierResourceType* FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
-		{
-			CS_IS_PTR_NULL_CHECKED(Modifier)
-
-			return CreateCopyOfModifierChecked(Context, WorldContext, Modifier->Get());
-		}
-
-		void FLibrary::CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsProjectileModifier& OutType)
-		{
-			UCsManager_Projectile* Manager_Projectile = GetChecked(Context, WorldContext);
-
-			typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
-
-			OutType				= PrjModifierLibrary::GetTypeChecked(Context, Modifier);
-			OutContainer		= Manager_Projectile->AllocateModifier(OutType);
-			ModifierType* Copy	= OutContainer->Get();
-
-			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-			typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
-
-			CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
-
-			ICopy->Copy(Modifier);
-		}
-
-		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
-		{
-			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
-
-			To.Reset(FMath::Max(To.Max(), From.Num()));
-
-			for (const ModifierType* Modifier : From)
+			ModifierResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type)
 			{
-				To.Add(CreateCopyOfModifierChecked(Context, WorldContext, Modifier));
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				return ProjectileManagerLibrary::GetChecked(Context, WorldContext)->AllocateModifier(Type);
 			}
-		}
 
-		void FLibrary::CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
-		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
-
-			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
-
-			To.Reset(FMath::Max(To.Max(), From.Num()));
-
-			for (const ModifierType* Modifier : From)
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsProjectileModifier& Type, ModifierResourceType* Modifier)
 			{
-				AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
-				Allocated.Copy(ContextRoot, Modifier);
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				ProjectileManagerLibrary::GetChecked(Context, WorldContext)->DeallocateModifier(Context, Type, Modifier);
 			}
-		}
 
-		void FLibrary::CreateCopyOfAndAddModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
-		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
-
-			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
-
-			const int32 FromCount = From.Num();
-			const int32 ToCount	  = To.Num();
-			const int32 Total	  = FromCount + ToCount;
-
-			if (To.Max() >= Total)
+			const FECsProjectileModifier& FLibrary::GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
 			{
-				for (int32 I = ToCount; I < Total; ++I)
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				return ProjectileManagerLibrary::GetChecked(Context, WorldContext)->GetModifierType(Context, Modifier);
+			}
+
+			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier)
+			{
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				UCsManager_Projectile* Manager_Projectile = ProjectileManagerLibrary::GetChecked(Context, WorldContext);
+
+				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+				const FECsProjectileModifier& Type  = PrjModifierLibrary::GetTypeChecked(Context, Modifier);
+				ModifierResourceType* Container		= Manager_Projectile->AllocateModifier(Type);
+				ModifierType* Copy					= Container->Get();
+
+				typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+				typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
+
+				CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+
+				ICopy->Copy(Modifier);
+
+				return Container;
+			}
+
+			ModifierResourceType* FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierResourceType* Modifier)
+			{
+				CS_IS_PTR_NULL_CHECKED(Modifier)
+
+				return CreateCopyOfChecked(Context, WorldContext, Modifier->Get());
+			}
+
+			void FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsProjectileModifier& OutType)
+			{
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				UCsManager_Projectile* Manager_Projectile = ProjectileManagerLibrary::GetChecked(Context, WorldContext);
+
+				typedef NCsProjectile::NModifier::FLibrary PrjModifierLibrary;
+
+				OutType				= PrjModifierLibrary::GetTypeChecked(Context, Modifier);
+				OutContainer		= Manager_Projectile->AllocateModifier(OutType);
+				ModifierType* Copy	= OutContainer->Get();
+
+				typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+				typedef NCsProjectile::NModifier::NCopy::ICopy CopyType;
+
+				CopyType* ICopy = ModifierLibrary::GetInterfaceChecked<CopyType>(Context, Copy);
+
+				ICopy->Copy(Modifier);
+			}
+
+			void FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+				To.Reset(FMath::Max(To.Max(), From.Num()));
+
+				for (const ModifierType* Modifier : From)
+				{
+					To.Add(CreateCopyOfChecked(Context, WorldContext, Modifier));
+				}
+			}
+
+			void FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+			{
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				UObject* ContextRoot = ProjectileManagerLibrary::GetContextRootChecked(Context, WorldContext);
+
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+				To.Reset(FMath::Max(To.Max(), From.Num()));
+
+				for (const ModifierType* Modifier : From)
 				{
 					AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
-					Allocated.Copy(ContextRoot, From[I - ToCount]);
+					Allocated.Copy(ContextRoot, Modifier);
 				}
 			}
-			else
+
+			void FLibrary::CreateCopyOfAndAddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 			{
-				static TArray<AllocatedModifierType> Temp;
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
 
-				Temp.Reset(FMath::Max(Temp.Max(), ToCount));
-				Temp.AddDefaulted(ToCount);
+				UObject* ContextRoot = ProjectileManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
-				for (int32 I = 0; I < ToCount; ++I)
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+				const int32 FromCount = From.Num();
+				const int32 ToCount	  = To.Num();
+				const int32 Total	  = FromCount + ToCount;
+
+				if (To.Max() >= Total)
 				{
-					Temp[I].Copy(To[I]);
-				}
-
-				To.Reset(Total);
-				To.AddDefaulted(Total);
-
-				for (int32 I = 0; I < Total; ++I)
-				{
-					if (I < ToCount)
+					for (int32 I = ToCount; I < Total; ++I)
 					{
-						Temp[I].Transfer(To[I]);
-					}
-					else
-					{
-						To[I].Copy(ContextRoot, From[I - ToCount]);
+						AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
+						Allocated.Copy(ContextRoot, From[I - ToCount]);
 					}
 				}
-				Temp.Reset(Temp.Max());
+				else
+				{
+					static TArray<AllocatedModifierType> Temp;
+
+					Temp.Reset(FMath::Max(Temp.Max(), ToCount));
+					Temp.AddDefaulted(ToCount);
+
+					for (int32 I = 0; I < ToCount; ++I)
+					{
+						Temp[I].Copy(To[I]);
+					}
+
+					To.Reset(Total);
+					To.AddDefaulted(Total);
+
+					for (int32 I = 0; I < Total; ++I)
+					{
+						if (I < ToCount)
+						{
+							Temp[I].Transfer(To[I]);
+						}
+						else
+						{
+							To[I].Copy(ContextRoot, From[I - ToCount]);
+						}
+					}
+					Temp.Reset(Temp.Max());
+				}
 			}
+
+			#undef ModifierResourceType
+			#undef ModifierType
+			#undef AllocatedModifierType
 		}
-
-#		undef ModifierResourceType
-		#undef ModifierType
-		#undef AllocatedModifierType
-
-		#pragma endregion Modifier
 
 		namespace NOnHit
 		{

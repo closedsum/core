@@ -913,12 +913,27 @@ protected:
 #define ModifierResourceType NCsWeapon::NModifier::FResource
 #define ModifierManagerType NCsWeapon::NModifier::FManager
 #define ModifierType NCsWeapon::NModifier::IModifier
+#define ModifierImplType NCsWeapon::NModifier::EImpl
 
 protected:
 
 	TArray<ModifierManagerType> Manager_Modifiers;
 
-	virtual ModifierType* ConstructModifier(const FECsWeaponModifier& Type);
+	TArray<ModifierImplType> ImplTypeByModifier;
+
+	FORCEINLINE const ModifierImplType& GetModifierImplType(const FECsWeaponModifier& Type) const
+	{
+		return ImplTypeByModifier[Type.GetValue()];
+	}
+
+	FORCEINLINE ModifierManagerType& GetManagerModifier(const FECsWeaponModifier& Type)
+	{
+		return Manager_Modifiers[(uint8)GetModifierImplType(Type)];
+	}
+
+	void SetupModifiers();
+
+	virtual ModifierType* ConstructModifier(const ModifierImplType& Type);
 
 public:
 
@@ -942,6 +957,7 @@ public:
 #undef ModifierResourceType
 #undef ModifierManagerType
 #undef ModifierType
+#undef ModifierImplType
 
 #pragma endregion Modifier
 

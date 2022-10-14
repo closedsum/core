@@ -82,12 +82,13 @@ namespace NCsProjectile
 				for (ModifierType* Modifier : FromModifiers)
 				{
 					typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+					typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
 					AllocatedModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
 					Allocated.Root = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
-					PrjManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
+					PrjModifierLibrary::CreateCopyOfChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
 					
 					Allocated.Modifier = Allocated.Container->Get();
 

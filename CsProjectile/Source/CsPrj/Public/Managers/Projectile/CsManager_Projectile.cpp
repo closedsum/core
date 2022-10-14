@@ -132,7 +132,8 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 	// Data
 	DataHandler(nullptr),
 	// Modifier
-	Manager_Modifiers()
+	Manager_Modifiers(),
+	ImplTypeByModifier()
 {
 }
 

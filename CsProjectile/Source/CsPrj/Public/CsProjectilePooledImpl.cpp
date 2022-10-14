@@ -862,9 +862,9 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 
 		if (const ModifierPayloadType* ModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModifierPayloadType>(Context, Payload))
 		{
-			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
-			PrjManagerLibrary::CreateCopyOfModifiersChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
+			PrjModifierLibrary::CreateCopyOfChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
 		}
 	}
 	// DmgModifierPayloadType (NCsProjectile::NPayload::NModifier::NDamage::IDamage)

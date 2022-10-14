@@ -41,11 +41,12 @@ namespace NCsProjectile
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
 			Root	  = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
-			Container = PrjManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, From);
+			Container = PrjModifierLibrary::CreateCopyOfChecked(Context, WorldContext, From);
 			Modifier  = Container->Get();
-			Type	  = PrjManagerLibrary::GetModifierTypeChecked(Context, WorldContext, Modifier);
+			Type	  = PrjModifierLibrary::GetTypeChecked(Context, WorldContext, Modifier);
 		}
 
 		void FAllocated::Copy(const FAllocated& From)
@@ -60,10 +61,10 @@ namespace NCsProjectile
 
 			if (From.Container)
 			{
-				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
 				Root	  = From.GetRoot();
-				Container = PrjManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From.Container);
+				Container = PrjModifierLibrary::CreateCopyOfChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
 				Type	  = From.Type;
 			}
@@ -107,9 +108,9 @@ namespace NCsProjectile
 			{
 				CS_IS_PTR_NULL_CHECKED(GetRoot())
 
-				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
-				PrjManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
+				PrjModifierLibrary::DeallocateChecked(Context, GetRoot(), Type, Container);
 			}
 			Clear();
 		}

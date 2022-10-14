@@ -1157,7 +1157,7 @@ int32 ACsProjectileWeaponActorPooled::GetProjectilesPerShot() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_ProjectilesPerShot, Value);
+	return ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_ProjectilesPerShot_Count, Value);
 }
 
 float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const

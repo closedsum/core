@@ -450,8 +450,24 @@ namespace NCsMath
 		FORCEINLINE static FVector GetRightFromNormal(const FVector& N) { return GetRight(N.Rotation()); }
 		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
 
+		/**
+		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Up' vector relative to N.
+		* 
+		* @param N		Normalized Vector
+		* @param Angle	Angle in Degrees
+		* return		N rotated Angle Degrees about 'Up' vector relative to N.
+		*/
 		FORCEINLINE static FVector RotateNormalAngleUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetUpFromNormal(N)); }
 		
+		/**
+		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Right' vector relative to N.
+		*
+		* @param N		Normalized Vector
+		* @param Angle	Angle in Degrees
+		* return		N rotated Angle Degrees about 'Right' vector relative to N.
+		*/
+		FORCEINLINE static FVector RotateNormalAngleRight(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetRightFromNormal(N));  }
+
 		FORCEINLINE static FVector Fractional(const FVector& V)
 		{
 			return FVector(FMath::Fractional(V.X), FMath::Fractional(V.Y), FMath::Fractional(V.Z));

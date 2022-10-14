@@ -401,7 +401,14 @@ namespace NCsRotationRules
 	*
 	* return			Rotation filtered by the bit mask, Rules.
 	*/
-	CSCORE_API FRotator GetRotation(FRotator Rotation, const int32& Rules);
+	FORCEINLINE FRotator GetRotation(FRotator Rotation, const int32& Rules)
+	{
+		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0f;
+		Rotation.Yaw   = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0f;
+		Rotation.Roll  = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0f;
+
+		return Rotation;
+	}
 
 	/**
 	* Get the Rotation filtered by the bit mask, Rules.
@@ -412,7 +419,16 @@ namespace NCsRotationRules
 	*
 	* return			Rotation filtered by the bit mask, Rules.
 	*/
-	CSCORE_API FRotator GetRotationChecked(const FString& Context, FRotator Rotation, const int32& Rules);
+	FORCEINLINE FRotator GetRotationChecked(const FString& Context, FRotator Rotation, const int32& Rules)
+	{
+		checkf(Rules != None, TEXT("%s: Rules == 0. No bit flags set."), *Context);
+
+		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0f;
+		Rotation.Yaw   = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0f;
+		Rotation.Roll  = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0f;
+
+		return Rotation;
+	}
 
 	/**
 	* Get the rotation of Actor filtered by the bit mask, Rules. 
@@ -433,6 +449,15 @@ namespace NCsRotationRules
 	* return			Component's rotation filtered by the bit mask, Rules.
 	*/
 	CSCORE_API FRotator GetRotation(USceneComponent* Component, const int32& Rules);
+
+	FORCEINLINE FVector GetDirection(FVector Direction, const int32& Rules)
+	{
+		Direction.X = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Direction.X : 0.0f;
+		Direction.Y = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Direction.Y : 0.0f;
+		Direction.Z = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Direction.Z : 0.0f;
+
+		return Direction;
+	}
 }
 
 #define CS_ROTATION_FLAGS_NONE 0

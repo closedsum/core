@@ -362,7 +362,7 @@ namespace NCsCoroutine
 
 		#pragma endregion FInfo
 
-#define CS_ROUTINE_FLAG_SIZE 4
+#define CS_ROUTINE_FLAG_SIZE 8
 #define CS_ROUTINE_TIMER_SIZE 4
 #define CS_ROUTINE_DELTA_TIME_SIZE 4
 #define CS_ROUTINE_INT_SIZE 16

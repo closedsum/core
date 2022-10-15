@@ -85,7 +85,7 @@ namespace NCsWeapon
 				if (WeaponModifierType == Type)
 				{
 					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Value);
+					Result						 = IntModifier->Modify(Result);
 				}
 			}
 			return Result;
@@ -108,7 +108,7 @@ namespace NCsWeapon
 				if (WeaponModifierType == Type)
 				{
 					IntModifierType* IntModifier = GetInterfaceChecked<IntModifierType>(Context, Modifier);
-					Result						 = IntModifier->Modify(Value);
+					Result						 = IntModifier->Modify(Result);
 				}
 			}
 			return Result;

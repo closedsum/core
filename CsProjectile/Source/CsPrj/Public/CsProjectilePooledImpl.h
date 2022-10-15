@@ -354,6 +354,8 @@ protected:
 
 		int32 ID;
 
+		bool bReacquire;
+
 		float ElapsedTime;
 
 	public:
@@ -367,6 +369,7 @@ protected:
 			Bone(NAME_None),
 			Location(0.0f),
 			ID(INDEX_NONE),
+			bReacquire(false),
 			ElapsedTime(0.0f)
 		{
 		}
@@ -387,6 +390,7 @@ protected:
 			Bone = NAME_None;
 			Location = FVector::ZeroVector;
 			ID = INDEX_NONE;
+			bReacquire = false;
 			ElapsedTime  = 0.0f;
 		}
 
@@ -398,6 +402,8 @@ protected:
 public:
 
 	virtual bool TrackingImpl_IsValid() const { return true; }
+
+	virtual bool TrackingImpl_ReacquireDestination() { return false; }
 
 	virtual FVector TrackingImpl_GetDestinationByID() const;
 

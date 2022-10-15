@@ -1045,6 +1045,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 
 		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
 		const DestinationType& Destination	   = TargetParams.GetDestination();
+		bReacquire							   = TargetParams.GetbReacquireDestination();
 
 		// Object
 		if (Destination == DestinationType::Object)
@@ -1096,7 +1097,10 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 
 	if (!Outer->TrackingImpl_IsValid())
 	{
-		CurrentState = EState::Inactive;
+		if (!Outer->TrackingImpl_ReacquireDestination())
+		{
+			CurrentState = EState::Inactive;
+		}
 		return;
 	}
 

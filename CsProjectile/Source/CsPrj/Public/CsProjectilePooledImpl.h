@@ -10,6 +10,7 @@
 #include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile_Tracking.h"
 #include "Types/CsTypes_Damage.h"
 #include "Value/Types/CsTypes_DamageValue.h"
 #include "Managers/FX/CsTypes_FX.h"
@@ -325,24 +326,9 @@ protected:
 
 		TrackingDataType* TrackingData;
 
-		enum class EState : uint8
-		{
-			Inactive,
-			Delay,
-			Active
-		};
+		NCsProjectile::NTracking::EState CurrentState;
 
-		EState CurrentState;
-
-		enum class EObject : uint8
-		{
-			Component,
-			Bone,
-			Location,
-			ID
-		};
-
-		EObject ObjectType;
+		NCsProjectile::NTracking::EObject ObjectType;
 
 		USceneComponent* Component;
 
@@ -362,8 +348,8 @@ protected:
 
 		FTrackingImpl() :
 			TrackingData(nullptr),
-			CurrentState(EState::Inactive),
-			ObjectType(EObject::Component),
+			CurrentState(NCsProjectile::NTracking::EState::Inactive),
+			ObjectType(NCsProjectile::NTracking::EObject::Component),
 			Component(nullptr),
 			MeshComponent(nullptr),
 			Bone(NAME_None),
@@ -383,8 +369,8 @@ protected:
 		FORCEINLINE void Reset()
 		{
 			TrackingData = nullptr;
-			CurrentState = EState::Inactive;
-			ObjectType = EObject::Component;
+			CurrentState = NCsProjectile::NTracking::EState::Inactive;
+			ObjectType = NCsProjectile::NTracking::EObject::Component;
 			Component = nullptr;
 			MeshComponent = nullptr;
 			Bone = NAME_None;

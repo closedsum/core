@@ -1052,7 +1052,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 		{
 			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Object but TargetPayload->GetTargetComponent() is NULL."), *Context);
 
-			ObjectType = EObject::Component;
+			ObjectType = NCsProjectile::NTracking::EObject::Component;
 			Component  = TargetPayload->GetTargetComponent();
 		}
 		// Bone
@@ -1061,7 +1061,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 		{
 			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetComponent() is NULL."), *Context);
 
-			ObjectType    = EObject::Bone;
+			ObjectType    = NCsProjectile::NTracking::EObject::Bone;
 			Component     = TargetPayload->GetTargetComponent();
 			MeshComponent = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
 			
@@ -1073,7 +1073,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 		else
 		if (Destination == DestinationType::Location)
 		{
-			ObjectType = EObject::Location;
+			ObjectType = NCsProjectile::NTracking::EObject::Location;
 			Location   = TargetPayload->GetTargetLocation();
 		}
 		// Custom | TODO: NOTE: This could be a better descriptor
@@ -1082,30 +1082,30 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 		{
 			checkf(TargetPayload->GetTargetID() != INDEX_NONE, TEXT("%s: TrackingData->GetDestination() == DestinationType::Custom but TargetPayload->GetTargetID() is -1 (INDEX_NONE or INVALID)."), *Context);
 
-			ObjectType = EObject::ID;
+			ObjectType = NCsProjectile::NTracking::EObject::ID;
 			ID = TargetPayload->GetTargetID();
 		}
 
-		CurrentState = TargetParams.GetDelay() > 0.0f ? EState::Delay : EState::Active;
+		CurrentState = TargetParams.GetDelay() > 0.0f ? NCsProjectile::NTracking::EState::Delay : NCsProjectile::NTracking::EState::Active;
 	}
 }
 
 void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	if (CurrentState == EState::Inactive)
+	if (CurrentState == NCsProjectile::NTracking::EState::Inactive)
 		return;
 
 	if (!Outer->TrackingImpl_IsValid())
 	{
 		if (!Outer->TrackingImpl_ReacquireDestination())
 		{
-			CurrentState = EState::Inactive;
+			CurrentState = NCsProjectile::NTracking::EState::Inactive;
 		}
 		return;
 	}
 
 	// Delay
-	if (CurrentState == EState::Delay)
+	if (CurrentState == NCsProjectile::NTracking::EState::Delay)
 	{
 		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
 
@@ -1113,11 +1113,11 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 
 		if (ElapsedTime >= TargetParams.GetDelay())
 		{
-			CurrentState = EState::Active;
+			CurrentState = NCsProjectile::NTracking::EState::Active;
 		}
 	}
 	// Active
-	if (CurrentState == EState::Active)
+	if (CurrentState == NCsProjectile::NTracking::EState::Active)
 	{
 		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
 
@@ -1128,7 +1128,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 		if (Duration > 0.0f &&
 			ElapsedTime >= Duration)
 		{
-			CurrentState = EState::Inactive;
+			CurrentState = NCsProjectile::NTracking::EState::Inactive;
 		}
 		else
 		{
@@ -1180,16 +1180,16 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 FVector ACsProjectilePooledImpl::FTrackingImpl::GetDestination() const
 {
 	// Component
-	if (ObjectType == EObject::Component)
+	if (ObjectType == NCsProjectile::NTracking::EObject::Component)
 		return Component->GetComponentLocation();
 	// Bone
-	if (ObjectType == EObject::Bone)
+	if (ObjectType == NCsProjectile::NTracking::EObject::Bone)
 		return MeshComponent->GetSocketLocation(Bone);
 	// Location
-	if (ObjectType == EObject::Location)
+	if (ObjectType == NCsProjectile::NTracking::EObject::Location)
 		return Location;
 	// ID
-	if (ObjectType == EObject::ID)
+	if (ObjectType == NCsProjectile::NTracking::EObject::ID)
 		return Outer->TrackingImpl_GetDestinationByID();
 	check(0);
 	return FVector::ZeroVector;

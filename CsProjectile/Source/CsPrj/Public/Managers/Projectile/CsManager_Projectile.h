@@ -14,6 +14,7 @@
 #include "CsProjectile.h"
 #include "CsProjectilePooled.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
+#include "Variables/CsProjectile_Variables.h"
 #include "Modifier/CsResource_ProjectileModifier.h"
 #include "Params/OnHit/Spawn/Projectile/CsProjectile_OnHit_SpawnProjectile_Variables.h"
 #include "Params/OnHit/Spawn/Projectile/CsProjectile_OnHit_SpawnProjectile_Spread_Variables.h"
@@ -1075,6 +1076,34 @@ public:
 	FProjectile_OnHit Projectile_OnHit_Event;
 
 #pragma endregion Events
+
+// Variables
+#pragma region
+private:
+
+/*
+#define VariablesManagerType NCsProjectile::NVariables::FManager
+#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+#define VariablesType NCsProjectile::NVariables::FVariables
+
+	VariablesManagerType Manager_Variables;
+
+	void SetupVariablesManager();
+
+	void UpdateVariablesManager(const FCsDeltaTime& DeltaTime);
+
+public:
+
+	VariablesType* AllocateVariablesChecked(const FString& Context, const VariablesPayloadType& Payload);
+
+	void DeallocateVariablesChecked(const FString& Context, VariablesType* Variables);
+
+#undef VariablesManagerType
+#undef VariablesPayloadType
+#undef VariablesType
+*/
+
+#pragma endregion Variables
 
 // OnHit
 #pragma region

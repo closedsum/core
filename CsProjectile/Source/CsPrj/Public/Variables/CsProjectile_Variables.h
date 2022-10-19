@@ -2,6 +2,7 @@
 #pragma once
 // Types
 #include "Types/CsTypes_Projectile.h"
+#include "Types/CsTypes_Projectile_Tracking.h"
 #include "Managers/Time/CsTypes_Time.h"
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed_Int32.h"
@@ -10,6 +11,7 @@
 
 class ICsProjectile;
 class USceneComponent;
+class USkeletalMeshComponent;
 
 // NCCharacter::NVariables::NAllocate::FPayload
 #pragma region
@@ -78,6 +80,8 @@ namespace NCsProjectile
 
 			public:
 
+			#define StateType NCsProjectile::NTracking::EState
+
 				FTrackingInfo() :
 					Outer(nullptr)
 				{
@@ -93,6 +97,8 @@ namespace NCsProjectile
 				void Reset()
 				{
 				}
+
+			#undef StateType
 			};
 
 			FTrackingInfo TrackingInfo;
@@ -160,6 +166,7 @@ namespace NCsProjectile
 
 		#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
 		#define VariablesType NCsProjectile::NVariables::FVariables
+		#define StateType NCsProjectile::EState
 
 		private:
 
@@ -187,11 +194,58 @@ namespace NCsProjectile
 
 			TArray<FECsProjectile> Types;
 
+			TArray<StateType> States;
+
+		// Movement
+
 			TArray<FVector> Last_Locations;
 			TArray<FVector> Locations;
 
 			TArray<FRotator> Rotations;
 			TArray<FQuat> Orientations;
+
+			struct FMovementInfos
+			{
+				friend struct NCsProjectile::NVariables::FManager;
+
+			private:
+
+				NCsProjectile::NVariables::FManager* Outer;
+
+			public:
+
+				TArray<FVector> Directions;
+
+				TArray<FVector> Velocities;
+
+				TArray<float> Speeds;
+
+				FMovementInfos() :
+					Outer(nullptr),
+					Directions(),
+					Velocities(),
+					Speeds()
+				{
+				}
+
+				void SetSize(const int32& InSize)
+				{
+					Directions.Reset(InSize);
+					Velocities.Reset(InSize);
+					Speeds.Reset(InSize);
+					
+					for (int32 I = 0; I < InSize; ++I)
+					{
+						Directions.Add(FVector::ZeroVector);
+						Velocities.Add(FVector::ZeroVector);
+						Speeds.Add(0.0f);
+					}
+				}
+
+				void Update(const FCsDeltaTime& DeltaTime);
+			};
+
+			FMovementInfos MovementInfos;
 
 			struct FTrackingInfos
 			{
@@ -203,23 +257,126 @@ namespace NCsProjectile
 
 			public:
 
+			#define TrackingStateType NCsProjectile::NTracking::EState
+			#define ObjectType NCsProjectile::NTracking::EObject
+
+				int32 DelayCount;
+
+				TArray<int32> DelayIDs;
+
+				TArray<float> Delays;
+
+				int32 ActiveCount;
+
+				TArray<int32> ActiveIDs;
+
+				TArray<TrackingStateType> States;
+
+				TArray<ObjectType> ObjectTypes;
+
+				TArray<USceneComponent*> Components;
+
+				TArray<USkeletalMeshComponent*> MeshComponents;
+
+				TArray<FName> Bones;
+
+				TArray<float> Durations;
+
+				TArray<float> ElapsedTimes;
+
+				TArray<FVector> Destinations;
+
+				TArray<FVector> Offsets;
+
+				TArray<float> MinDotThresholds;
+
+				TArray<float> MaxDotBeforeUsingPitches;
+
+				TArray<float> RotationRates;
+
 				FTrackingInfos() :
-					Outer(nullptr)
+					Outer(nullptr),
+					DelayCount(0),
+					DelayIDs(),
+					Delays(),
+					ActiveCount(0),
+					ActiveIDs(),
+					States(),
+					ObjectTypes(),
+					Components(),
+					MeshComponents(),
+					Bones(),
+					Durations(),
+					ElapsedTimes(),
+					Destinations(),
+					Offsets(),
+					MinDotThresholds(),
+					MaxDotBeforeUsingPitches(),
+					RotationRates()
 				{
 				}
 
 				void SetSize(const int32& InSize)
 				{
+					DelayIDs.Reset(InSize);
+					Delays.Reset(InSize);
+					ActiveIDs.Reset(InSize);
+					States.Reset(InSize);
+					ObjectTypes.Reset(InSize);
+					Components.Reset(InSize);
+					MeshComponents.Reset(InSize);
+					Bones.Reset(InSize);
+					Durations.Reset(InSize);
+					ElapsedTimes.Reset(InSize);
+					Destinations.Reset(InSize);
+					Offsets.Reset(InSize);
+					MinDotThresholds.Reset(InSize);
+					MaxDotBeforeUsingPitches.Reset(InSize);
+					RotationRates.Reset(InSize);
+
 					for (int32 I = 0; I < InSize; ++I)
 					{
+						DelayIDs.Add(INDEX_NONE);
+						Delays.Add(0.0f);
+						ActiveIDs.Add(INDEX_NONE);
+						States.Add(TrackingStateType::Inactive);
+						ObjectTypes.Add(ObjectType::ID);
+						Components.Add(nullptr);
+						MeshComponents.Add(nullptr);
+						Bones.Add(NAME_None);
+						Durations.Add(0.0f);
+						ElapsedTimes.Add(0.0f);
+						Destinations.Add(FVector::ZeroVector);
+						Offsets.Add(FVector::ZeroVector);
+						MinDotThresholds.Add(0.0f);
+						MaxDotBeforeUsingPitches.Add(0.0f);
+						RotationRates.Add(0.0f);
 					}
 				}
+
+				void SetupIDs(const int32& ID);
 
 				void Update(const FCsDeltaTime& DeltaTime);
 
 				FORCEINLINE void Reset(const int32& Index)
 				{
+					/*
+					DelayIDs[Index]	   = INDEX_NONE;
+					Delays[Index]	   = 0.0f;
+					ActiveIDs[Index]   = INDEX_NONE;
+					States[Index]	   = TrackingStateType::Inactive;
+					ObjectTypes[Index] = ObjectType::ID;
+					Durations[Index]   = 0.0f;
+					ElapsedTimes[Index] = 0.0f;
+					Destinations[Index] = FVector::ZeroVector;
+					Offsets[Index]		= FVector::ZeroVector;
+					MinDotThresholds[Index] = 0.0f;
+					MaxDotBeforeUsingPitches[Index] = 0.0f;
+					*/
 				}
+
+			#undef TrackingStateType
+			#undef ObjectType
 			};
 
 			FTrackingInfos TrackingInfos;
@@ -238,13 +395,16 @@ namespace NCsProjectile
 				AliveIDs(),
 				// State
 				Types(),
+				States(),
 				// Movement
 				Last_Locations(),
 				Locations(),
 				Rotations(),
 				Orientations(),
+				MovementInfos(),
 				TrackingInfos()
 			{
+				MovementInfos.Outer = this;
 				TrackingInfos.Outer = this;
 			}
 
@@ -275,6 +435,7 @@ namespace NCsProjectile
 				Last_DeallocatedIDs.Reset(InSize);
 				AliveIDs.Reset(InSize);
 				Types.Reset(InSize);
+				States.Reset(InSize);
 				Last_Locations.Reset(InSize);
 				Locations.Reset(InSize);
 				Rotations.Reset(InSize);
@@ -296,6 +457,7 @@ namespace NCsProjectile
 					Variables.AddDefaulted();
 					AliveIDs.Add(INDEX_NONE);
 					Types.Add(EMCsProjectile::Get().GetMAX());
+					States.Add(StateType::Inactive);
 					Last_Locations.Add(FVector::ZeroVector);
 					Locations.Add(FVector::ZeroVector);
 					Rotations.Add(FRotator::ZeroRotator);
@@ -307,6 +469,7 @@ namespace NCsProjectile
 					Variables[I].SetOuter(this);
 				}
 
+				MovementInfos.SetSize(InSize);
 				TrackingInfos.SetSize(InSize);
 			}
 
@@ -329,6 +492,7 @@ namespace NCsProjectile
 
 		#undef IDManagerType
 		#undef VariablesType
+		#undef StateType
 		};
 	}
 }

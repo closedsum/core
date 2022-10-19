@@ -131,18 +131,25 @@ public:
 
 	virtual FVector EvaluateMovementFunction(const float& Time);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsPrj|Projectile")
 	FECsProjectile Type;
 
 	FORCEINLINE const FECsProjectile& GetType() const { return Type; }
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsPrj|Projectile")
 	int32 Generation;
 
 	void SetType(const FECsProjectile& InType);
 
-	UPROPERTY(BlueprintReadOnly, Category = "Projectile")
-	ECsProjectileState State;
+#define StateType NCsProjectile::EState
+	
+	StateType State;
+
+	FORCEINLINE const StateType& GetState() const { return State; }
+private:
+	FORCEINLINE StateType& GetState() { return State; }
+
+#undef StateType
 
 // ICsUpdate
 #pragma region
@@ -360,6 +367,24 @@ protected:
 		{
 		}
 
+	public:
+		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return CurrentState; }
+	private:
+		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return CurrentState; }
+
+	public:
+		FORCEINLINE const NCsProjectile::NTracking::EObject& GetObjectType() const { return ObjectType; }
+	private:
+		FORCEINLINE NCsProjectile::NTracking::EObject& GetObjectType() { return ObjectType; }
+
+		FORCEINLINE const USceneComponent* GetComponent() const { return Component; }
+		FORCEINLINE USceneComponent*& GetComponent() { return Component; }
+		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return MeshComponent; }
+		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return MeshComponent; }
+		FORCEINLINE const FName& GetBone() const { return Bone; }
+
+	public:
+
 		void Init(PayloadType* Payload);
 
 		void Update(const FCsDeltaTime& DeltaTime);
@@ -369,7 +394,7 @@ protected:
 		FORCEINLINE void Reset()
 		{
 			TrackingData = nullptr;
-			CurrentState = NCsProjectile::NTracking::EState::Inactive;
+			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
 			ObjectType = NCsProjectile::NTracking::EObject::Component;
 			Component = nullptr;
 			MeshComponent = nullptr;
@@ -383,9 +408,9 @@ protected:
 	#undef TrackingDataType
 	};
 
-	FTrackingImpl TrackingImpl;
-
 public:
+
+	FTrackingImpl TrackingImpl;
 
 	virtual bool TrackingImpl_IsValid() const { return true; }
 

@@ -12,6 +12,8 @@
 #include "Managers/Projectile/CsManager_Projectile.h"
 // Projectile
 #include "CsProjectilePooledImpl.h"
+// Components
+#include "CsProjectileMovementComponent.h" // TEMP
 
 // NCsProjectile::NVariables::NAllocate::FPayload
 #pragma region
@@ -80,6 +82,17 @@ namespace NCsProjectile
 				}
 			}
 
+			namespace NMovementInfos
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NVariables::FManager::FMovementInfos, Update);
+					}
+				}
+			}
+
 			namespace NTrackingInfos
 			{
 				namespace NCached
@@ -92,15 +105,162 @@ namespace NCsProjectile
 			}
 		}
 
+		void FManager::FMovementInfos::Update(const FCsDeltaTime& DeltaTime)
+		{
+			using namespace NCsProjectile::NVariables::NManager::NMovementInfos::NCached;
+
+			const FString& Context = Str::Update;
+
+			typedef NCsProjectile::EState StateType;
+
+			// FManager = Outer
+			TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
+			const int32& _AliveCount	     = Outer->AliveCount;
+			const TArray<int32>& _AliveIDs   = Outer->AliveIDs;
+			TArray<FRotator>& _Rotations	 = Outer->Rotations;
+			TArray<FQuat>& _Orientations	 = Outer->Orientations;
+
+			// Resolve Rotation and Orientation
+			for (int32 I = 0; I < _AliveCount; ++I)
+			{
+				const int32& ID = _AliveIDs[I];
+
+				_Rotations[ID]	  = Directions[ID].Rotation();
+				_Orientations[ID] = _Rotations[ID].Quaternion();
+			}
+
+			const TArray<StateType>& _States = Outer->States;
+
+			// TEMP
+			for (int32 I = 0; I < _AliveCount; ++I)
+			{
+				const int32& ID = _AliveIDs[I];
+
+				ICsProjectile* Projectile				= _Projectiles[ID];
+				ACsProjectilePooledImpl* ProjectileImpl = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Projectile, ICsProjectile, ACsProjectilePooledImpl);
+
+				// LaunchDelay
+				if (_States[ID] == StateType::LaunchDelay)
+				{
+					ProjectileImpl->SetActorRotation(_Rotations[ID]);
+				}
+				else
+				{
+					Velocities[ID] = Speeds[ID] * Directions[ID];
+					ProjectileImpl->MovementComponent->Velocity = Speeds[ID] * Directions[ID];
+				}
+			}
+		}
+
+		void FManager::FTrackingInfos::SetupIDs(const int32& ID)
+		{
+			typedef NCsProjectile::NTracking::EState StateType;
+
+			ActiveCount = 0;
+			DelayCount = 0;
+
+			// Delay
+			if (States[ID] == StateType::Delay)
+			{
+				DelayIDs[ActiveCount] = ID;
+				++DelayCount;
+			}
+			// Active
+			else
+			if (States[ID] == StateType::Active)
+			{
+				ActiveIDs[ActiveCount] = ID;
+				++ActiveCount;
+			}
+		}
+
 		void FManager::FTrackingInfos::Update(const FCsDeltaTime& DeltaTime)
 		{
 			using namespace NCsProjectile::NVariables::NManager::NTrackingInfos::NCached;
 
 			const FString& Context = Str::Update;
 
+			typedef NCsProjectile::NTracking::EState TrackingStateType;
+
+			// Delay -> Active
+			for (int32 I = 0; I < DelayCount; ++I)
+			{
+				const int32& ID = DelayIDs[I];
+
+				if (ElapsedTimes[ID] >= Delays[ID])
+				{
+					States[ID]			   = TrackingStateType::Active;
+					ActiveIDs[ActiveCount] = ID;
+					++ActiveCount;
+				}
+			}
+			
 			typedef NCsMath::FLibrary MathLibrary;
 
 			// FManager = Outer
+			TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
+			TArray<FVector>& _Directions		 = Outer->MovementInfos.Directions;
+
+			// Get Destinations
+			for (int32 I = 0; I < ActiveCount; ++I)
+			{
+				const int32& ID = ActiveIDs[I];
+
+				ICsProjectile* Projectile				= _Projectiles[ID];
+				ACsProjectilePooledImpl* ProjectileImpl = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Projectile, ICsProjectile, ACsProjectilePooledImpl);
+
+				Destinations[ID] = ProjectileImpl->TrackingImpl.GetDestination();
+			}
+
+			// FManager = Outer
+			typedef NCsProjectile::EState StateType;
+
+			const TArray<StateType>& _States  = Outer->States;
+			const TArray<FVector>& _Locations = Outer->Locations;
+
+			// Get Directions
+			{
+				FVector NewDirection;
+				float Dot;
+
+				for (int32 I = 0; I < ActiveCount; ++I)
+				{
+					const int32& ID = ActiveIDs[I];
+
+					NewDirection = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
+
+					const float& MinDotThreshold = MinDotThresholds[ID];
+			
+					Dot = FVector::DotProduct(_Directions[ID], NewDirection);
+
+					if (Dot >= MinDotThreshold)
+					{
+						const float& MaxDotBeforeUsingPitch = MaxDotBeforeUsingPitches[ID];
+
+						// Ignore Pitch / Z
+						if (Dot <= MaxDotBeforeUsingPitch)
+						{
+							Destinations[ID].Z = _Locations[ID].Z;
+						}
+
+						Destinations[ID] += Offsets[ID];
+						NewDirection      = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
+
+						_Directions[ID] = FMath::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
+					}
+				}
+			}
+
+			// Active -> Inactive
+			for (int32 I = 0; I < ActiveCount; ++I)
+			{
+				const int32& ID = ActiveIDs[I];
+
+				// Result is either:
+				//  True: StateType::Active (2)
+				//	False: StateType::Inactive (0)
+				States[ID] = (TrackingStateType)(((Durations[ID] == 0.0f) | (ElapsedTimes[ID] < Durations[ID])) * 2);
+			}
 		}
 
 		void FManager::Update(const FCsDeltaTime& DeltaTime)
@@ -123,6 +283,9 @@ namespace NCsProjectile
 				int32& ID = C->GetRef();
 
 				AllocatedIDs[AllocatedCount] = ID;
+
+				// Tracking
+				TrackingInfos.SetupIDs(ID);
 
 				++AllocatedCount;
 			}
@@ -147,6 +310,7 @@ namespace NCsProjectile
 			}
 
 			TrackingInfos.Update(DeltaTime);
+			MovementInfos.Update(DeltaTime);
 		}
 	}
 }

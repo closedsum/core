@@ -160,33 +160,14 @@ namespace NCsProjectileClass
 // ProjectileState
 #pragma region
 
-UENUM(BlueprintType)
-enum class ECsProjectileState : uint8
+namespace NCsProjectile
 {
-	Active				   UMETA(DisplayName = "Active"),
-	DeActivating		   UMETA(DisplayName = "DeActivating"),
-	InActive			   UMETA(DisplayName = "InActive"),
-	ECsProjectileState_MAX UMETA(Hidden),
-};
-
-struct CSPRJ_API EMCsProjectileState : public TCsEnumMap<ECsProjectileState>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileState, ECsProjectileState)
-};
-
-namespace NCsProjectileState
-{
-	typedef ECsProjectileState Type;
-
-	namespace Ref
+	enum class EState : uint8 
 	{
-		extern CSPRJ_API const Type Active;
-		extern CSPRJ_API const Type DeActivating;
-		extern CSPRJ_API const Type InActive;
-		extern CSPRJ_API const Type ECsProjectileState_MAX;
-	}
-
-	extern CSPRJ_API const uint8 MAX;
+		LaunchDelay,
+		Active,
+		Inactive
+	};
 }
 
 #pragma endregion ProjectileState

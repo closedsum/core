@@ -8,10 +8,13 @@
 // Types
 #include "Collision/CsTypes_Collision.h"
 // Library
+	// Data
 #include "Data/CsLibrary_Data_Projectile.h"
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsPrjLibrary_DataRootSet.h"
+	// Modifier
 #include "Modifier/CsLibrary_ProjectileModifier.h"
+	// Common
 #include "Game/CsLibrary_GameInstance.h"
 #include "Library/CsLibrary_Property.h"
 #include "Level/CsLibrary_Level.h"
@@ -277,6 +280,7 @@ UCsManager_Projectile::UCsManager_Projectile(const FObjectInitializer& ObjectIni
 void UCsManager_Projectile::Initialize()
 {
 	SetupInternal();
+	SetupVariablesManager();
 	SetupModifiers();
 	SetupOnHit();
 
@@ -1373,6 +1377,83 @@ void UCsManager_Projectile::Projectile_OnHit(const ICsProjectile* Projectile, co
 }
 
 #pragma endregion Events
+
+// Variables
+#pragma region
+
+void UCsManager_Projectile::SetupVariablesManager()
+{
+	Manager_Variables.SetOuter(this);
+	Manager_Variables.SetSize(Settings.Variables.PoolSize);
+	Manager_Variables.LooseCoarseGrid.Create(5000.0f, 5000.0f, 1000.0f, 1000.0f, 0.0f, 0.0f, 100000.0f, 100000.0f);
+}
+
+void UCsManager_Projectile::UpdateVariablesManager(const FCsDeltaTime& DeltaTime)
+{
+	Manager_Variables.Update(DeltaTime);
+}
+
+#define VariablesType NCsProjectile::NVariables::FVariables
+#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+VariablesType* UCsManager_Projectile::AllocateVariablesChecked(const FString& Context, const VariablesPayloadType& Payload)
+{
+#undef VariablesPayloadType
+
+	const int32& ID = Manager_Variables.Manager_ID.Allocate()->GetRef();
+
+	Manager_Variables.Variables[ID].ID = ID;
+
+	Manager_Variables.Projectiles[ID] = Payload.Projectile;
+	Manager_Variables.Types[ID]		  = Payload.Type;
+
+	/*
+	typedef NCCharacter::NAnim::EMethod AnimMethodType;
+
+	if (Payload.IsVertexAnimMethod())
+	{
+		const int32 SkinID			  = AllocateNiagaraSkinIDChecked(Context, Payload.Type, Payload.SkinType);
+		Manager_Variables.SkinIDs[ID] = SkinID;
+	}
+	else
+	{
+		Manager_Variables.SkinIDs[ID] = INDEX_NONE;
+	}
+	*/
+
+	const FVector& Location = Payload.Location;
+	const float& Radius		= Payload.CollisionRadius;
+
+	const float GridWidthBy2  = Manager_Variables.LooseCoarseGrid.GetWidthBy2();
+	const float GridHeightBy2 = Manager_Variables.LooseCoarseGrid.GetHeightBy2();
+
+	Manager_Variables.LooseCoarseGrid.Insert(ID, Location.X + GridWidthBy2, Location.Y + GridHeightBy2, Radius, Radius);
+
+	return Manager_Variables.GetVariablesPtr(ID);
+}
+
+void UCsManager_Projectile::DeallocateVariablesChecked(const FString& Context, VariablesType* Variables)
+{
+	CS_IS_PTR_NULL_CHECKED(Variables);
+
+	check(Variables->IsValidChecked(Context));
+
+	const int32 ID = Variables->GetID();
+
+	check(Manager_Variables.Manager_ID.IsAllocatedChecked(Context, ID));
+	checkf(Variables == Manager_Variables.GetVariablesPtr(ID), TEXT("%s: ID: %s is NOT correct for Variables."), *Context, ID);
+	/*
+	if (Manager_Variables.SkinIDs[ID] != INDEX_NONE)
+	{
+		DeallocateNiagaraSkinIDChecked(Context, Manager_Variables.Types[ID], Manager_Variables.SkinTypes[ID], Manager_Variables.SkinIDs[ID]);
+	}
+	*/
+	Manager_Variables.Last_DeallocatedIDs.Add(ID);
+	Manager_Variables.Reset(ID);
+}
+
+#undef VariablesType
+
+#pragma endregion Variables
 
 // OnHit
 #pragma region

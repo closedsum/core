@@ -33,6 +33,26 @@ bool FCsSettings_Manager_Projectile_PoolParams::IsValid(const FString& Context, 
 
 #pragma endregion FCsSettings_Manager_Projectile_PoolParams
 
+// FCsSettings_Manager_Projectile_Variables
+#pragma region
+
+bool FCsSettings_Manager_Projectile_Variables::IsValidChecked(const FString& Context) const
+{
+	// Check PoolSize is >= 256
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(PoolSize, 256)
+	return true;
+}
+
+bool FCsSettings_Manager_Projectile_Variables::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	// Check PoolSize is >= 256
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(PoolSize, 256)
+	return true;
+}
+
+#pragma endregion FCsSettings_Manager_Projectile_Variables
+
+
 // FCsSettings_Manager_Projectile_Modifiers
 #pragma region
 
@@ -49,6 +69,18 @@ const FCsSettings_Manager_Projectile_Modifiers& FCsSettings_Manager_Projectile_M
 const FCsSettings_Manager_Projectile& FCsSettings_Manager_Projectile::Get()
 {
 	return GetMutableDefault<UCsProjectileSettings>()->Manager_Projectile;
+}
+
+bool FCsSettings_Manager_Projectile::IsValidChecked(const FString& Context) const
+{
+	CS_IS_VALID_CHECKED(Variables);
+	return true;
+}
+
+bool FCsSettings_Manager_Projectile::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
+{
+	CS_IS_VALID(Variables)
+	return true;
 }
 
 #pragma endregion FCsSettings_Manager_Projectile

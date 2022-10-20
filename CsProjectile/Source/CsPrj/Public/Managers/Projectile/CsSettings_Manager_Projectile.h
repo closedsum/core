@@ -17,7 +17,7 @@ struct CSPRJ_API FCsSettings_Manager_Projectile_TypeArray
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TArray<FECsProjectile> Types;
 
 	FCsSettings_Manager_Projectile_TypeArray() :
@@ -43,15 +43,15 @@ struct CSPRJ_API FCsSettings_Manager_Projectile_PoolParams
 public:
 
 	/** The class of the pooled Projectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	FECsProjectileClass Class;
 
 	/** The maximum size of the pool. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 
 	/** The maximum payload size. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_Projectile_PoolParams() :
@@ -67,6 +67,30 @@ public:
 
 #pragma endregion FCsSettings_Manager_Projectile_PoolParams
 
+// FCsSettings_Manager_Projectile_Variables
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSPRJ_API FCsSettings_Manager_Projectile_Variables
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (ClampMin = "256", UIMin = "256"))
+	int32 PoolSize;
+
+	FCsSettings_Manager_Projectile_Variables() :
+		PoolSize(1024)
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+};
+
+#pragma endregion FCsSettings_Manager_Projectile_Variables
+
 // FCsSettings_Manager_Projectile_Modifiers
 #pragma region
 
@@ -81,7 +105,7 @@ struct CSPRJ_API FCsSettings_Manager_Projectile_Modifiers
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
 	FCsSettings_Manager_Projectile_Modifiers() :
@@ -119,25 +143,29 @@ public:
 		not have underlying code differences and just be differences in the data
 		each respective projectile type uses. This provides the ability to save on both
 		the number of pools created and the number of objects created for a pool. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TMap<FECsProjectile, FECsProjectile> TypeMap;
 
 	/** Which payload to support. The payload is "dynamically" built to some extent.
 		The approach assume a UOWYN (Use Only What you Need). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TSet<FECsProjectilePayload> PayloadTypes;
 
 	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
 		is important to indicate when a particular Projectile type WILL or will NOT get "ticked" or updated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TMap<FECsUpdateGroup, FCsSettings_Manager_Projectile_TypeArray> TypesByUpdateGroupMap;
 
 	/** Describes any pool parameters (i.e. class, pool size, payload size, ... etc) for each Projectile type. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	TMap<FECsProjectile, FCsSettings_Manager_Projectile_PoolParams> PoolParams;
 
+	/**  Describes any settings related to Projectile Variables */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
+	FCsSettings_Manager_Projectile_Variables Variables;
+
 	/**  Describes any settings related to Projectile Modifiers */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
 	FCsSettings_Manager_Projectile_Modifiers Modifiers;
 
 	FCsSettings_Manager_Projectile() :
@@ -145,11 +173,15 @@ public:
 		PayloadTypes(),
 		TypesByUpdateGroupMap(),
 		PoolParams(),
+		Variables(),
 		Modifiers()
 	{
 	}
 
 	static const FCsSettings_Manager_Projectile& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
 };
 
 #pragma endregion FCsSettings_Manager_Projectile
@@ -168,17 +200,17 @@ struct CSPRJ_API FCsSettings_Manager_Projectile_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (AllowedClasses = "World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsProjectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "CsProjectile"))
 	TSoftClassPtr<AActor> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "CsProjectile"))
 	TSoftClassPtr<AActor> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "CsProjectile"))
 	TSoftClassPtr<AActor> ClassC;
 
 	FCsSettings_Manager_Projectile_UnitTest() :

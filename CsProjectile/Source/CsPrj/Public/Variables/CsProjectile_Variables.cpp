@@ -44,6 +44,11 @@ namespace NCsProjectile
 	{
 		// FVariables::FTrackingInfo
 
+		#define TrackingStateType NCsProjectile::NTracking::EState
+		const TrackingStateType& FVariables::FTrackingInfo::GetState() const { return GetOuterMost()->TrackingInfos.States[GetID()]; }
+		TrackingStateType& FVariables::FTrackingInfo::GetState() { return GetOuterMost()->TrackingInfos.States[GetID()]; }
+		#undef TrackingStateType
+
 		// FVariables
 
 		const FVector& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }

@@ -520,6 +520,39 @@ namespace NCsProjectile
 			#undef AllocatedModifierType
 		}
 
+		namespace NVariables
+		{
+			#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+			#define VariablesType NCsProjectile::NVariables::FVariables
+
+			VariablesType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const VariablesPayloadType& Payload)
+			{
+				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+				return PrjManagerLibrary::GetChecked(Context, WorldContext)->AllocateVariablesChecked(Context, Payload);
+			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesType* Variables)
+			{
+				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+				PrjManagerLibrary::GetChecked(Context, WorldContext)->DeallocateVariablesChecked(Context, Variables);
+			}
+				
+			#undef VariablesPayloadType
+			#undef VariablesType
+		}
+
+		namespace NSearch
+		{
+			NCsLooseCoarseGrid::FGrid* FLibrary::GetLooseCoarseGridChecked(const FString& Context, const UObject* WorldContext)
+			{
+				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+				return PrjManagerLibrary::GetChecked(Context, WorldContext)->GetLooseCoarseGrid();
+			}
+		}
+
 		namespace NOnHit
 		{
 			namespace NSpawn

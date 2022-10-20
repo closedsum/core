@@ -161,6 +161,8 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	OnAllocate_Event(),
 	OnDeallocate_Start_Event(),
 	OnHit_Event(),
+	// Variables,
+	Variables(),
 	// Collision
 	IgnoreActors(),
 	IgnoreComponents(),
@@ -482,6 +484,27 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	CacheImpl->Allocate(Payload);
 	CacheImpl->SetData(Data);
 	
+	// Variables
+	{
+		typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
+		typedef NCsProjectile::NVariables::NAllocate::FPayload VariablesPayloadType;
+
+		VariablesPayloadType VariablesPayload;
+		VariablesPayload.Projectile	= this;
+		VariablesPayload.Type		= Type;
+		VariablesPayload.Location	= ProjectilePayload->GetLocation();
+
+		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+		{
+			VariablesPayload.CollisionRadius = CollisionData->GetCollisionRadius();
+		}
+
+		Variables = VariablesLibrary::AllocateChecked(Context, this, VariablesPayload);
+	}
+
 	if (bLaunchOnAllocate)
 		Launch(ProjectilePayload);
 
@@ -568,6 +591,14 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 	
+	typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
+
+	if (Variables)
+	{
+		VariablesLibrary::DeallocateChecked(Context, this, Variables);
+		Variables = nullptr;
+	}
+
 	// Modifiers
 	Modifiers.Reset(Modifiers.Max());
 	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
@@ -1073,7 +1104,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 			
 			checkf(TargetPayload->GetTargetBone() != NAME_None, TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetBone() is NAME_None."), *Context);
 
-			Bone = TargetPayload->GetTargetBone();
+			GetBone() = TargetPayload->GetTargetBone();
 
 			// TODO: Check MeshComponent has Bone
 		}

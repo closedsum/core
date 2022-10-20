@@ -6,6 +6,7 @@
 // Coroutine
 #include "Coroutine/CsRoutineHandle.h"
 // Projectile
+#include "Variables/CsProjectile_Variables.h"
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 // Log
 #include "Utility/CsPrjLog.h"
@@ -36,6 +37,9 @@ struct FCsProjectilePooled;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NVariables, FResource)
 // NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NVariables, FResource)
+
+// NCsLooseCoarseGrid::FGrid
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsLooseCoarseGrid, FGrid)
 
 namespace NCsProjectile
 {
@@ -397,6 +401,34 @@ namespace NCsProjectile
 			#undef ModifierResourceType
 			#undef ModifierType
 			#undef AllocatedModifierType
+			};
+		}
+
+		namespace NVariables
+		{
+			struct CSPRJ_API FLibrary final
+			{
+			public:
+
+			#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+			#define VariablesType NCsProjectile::NVariables::FVariables
+
+				static VariablesType* AllocateChecked(const FString& Context, const UObject* WorldContext, const VariablesPayloadType& Payload);
+
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesType* Variables);
+
+			#undef VariablesPayloadType
+			#undef VariablesType
+			};
+		}
+
+		namespace NSearch
+		{
+			struct CSPRJ_API FLibrary final
+			{
+			public:
+
+				static NCsLooseCoarseGrid::FGrid* GetLooseCoarseGridChecked(const FString& Context, const UObject* WorldContext);
 			};
 		}
 

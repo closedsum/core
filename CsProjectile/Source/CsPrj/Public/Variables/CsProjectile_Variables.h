@@ -80,7 +80,7 @@ namespace NCsProjectile
 
 			public:
 
-			#define StateType NCsProjectile::NTracking::EState
+			#define TrackingStateType NCsProjectile::NTracking::EState
 
 				FTrackingInfo() :
 					Outer(nullptr)
@@ -94,11 +94,43 @@ namespace NCsProjectile
 
 				FORCEINLINE const int32& GetID() const { return Outer->GetID(); }
 
+				const TrackingStateType& GetState() const;
+				TrackingStateType& GetState();
+
+				/*
+				const TrackingStateType&
+
+				TArray<TrackingStateType> States;
+
+				TArray<ObjectType> ObjectTypes;
+
+				TArray<USceneComponent*> Components;
+
+				TArray<USkeletalMeshComponent*> MeshComponents;
+
+				TArray<FName> Bones;
+
+				TArray<int32> TargetIDs;
+
+				TArray<float> Durations;
+
+				TArray<float> ElapsedTimes;
+
+				TArray<FVector> Destinations;
+
+				TArray<FVector> Offsets;
+
+				TArray<float> MinDotThresholds;
+
+				TArray<float> MaxDotBeforeUsingPitches;
+
+				TArray<float> RotationRates;
+				*/
 				void Reset()
 				{
 				}
 
-			#undef StateType
+			#undef TrackingStateType
 			};
 
 			FTrackingInfo TrackingInfo;
@@ -280,6 +312,8 @@ namespace NCsProjectile
 
 				TArray<FName> Bones;
 
+				TArray<int32> TargetIDs;
+
 				TArray<float> Durations;
 
 				TArray<float> ElapsedTimes;
@@ -306,6 +340,7 @@ namespace NCsProjectile
 					Components(),
 					MeshComponents(),
 					Bones(),
+					TargetIDs(),
 					Durations(),
 					ElapsedTimes(),
 					Destinations(),
@@ -326,6 +361,7 @@ namespace NCsProjectile
 					Components.Reset(InSize);
 					MeshComponents.Reset(InSize);
 					Bones.Reset(InSize);
+					TargetIDs.Reset(InSize);
 					Durations.Reset(InSize);
 					ElapsedTimes.Reset(InSize);
 					Destinations.Reset(InSize);
@@ -344,6 +380,7 @@ namespace NCsProjectile
 						Components.Add(nullptr);
 						MeshComponents.Add(nullptr);
 						Bones.Add(NAME_None);
+						TargetIDs.Add(INDEX_NONE);
 						Durations.Add(0.0f);
 						ElapsedTimes.Add(0.0f);
 						Destinations.Add(FVector::ZeroVector);

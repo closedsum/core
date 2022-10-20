@@ -1081,7 +1081,6 @@ public:
 #pragma region
 private:
 
-/*
 #define VariablesManagerType NCsProjectile::NVariables::FManager
 #define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
 #define VariablesType NCsProjectile::NVariables::FVariables
@@ -1101,9 +1100,16 @@ public:
 #undef VariablesManagerType
 #undef VariablesPayloadType
 #undef VariablesType
-*/
 
 #pragma endregion Variables
+
+// Search
+#pragma region
+public:
+
+	FORCEINLINE NCsLooseCoarseGrid::FGrid* GetLooseCoarseGrid() { return &(Manager_Variables.LooseCoarseGrid); }
+
+#pragma endregion Search
 
 // OnHit
 #pragma region

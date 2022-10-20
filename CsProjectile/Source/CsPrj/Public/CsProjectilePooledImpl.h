@@ -17,6 +17,7 @@
 // Coroutine
 #include "Coroutine/CsRoutineHandle.h"
 // Projectile
+#include "Variables/CsProjectile_Variables.h"
 #include "Modifier/CsAllocated_ProjectileModifier.h"
 // Damage
 #include "Modifier/CsAllocated_DamageModifier.h"
@@ -309,6 +310,23 @@ public:
 
 #pragma endregion ICsGetCollisionHitCount
 
+// Variables
+#pragma region
+private:
+
+#define VariablesType NCsProjectile::NVariables::FVariables
+
+	VariablesType* Variables;
+
+public:
+
+	FORCEINLINE const VariablesType* GetVariables() const { return Variables; }
+	FORCEINLINE VariablesType* GetVariables() { return Variables; }
+
+#undef VariablesType
+
+#pragma endregion Variables
+
 // Movement
 #pragma region
 protected:
@@ -367,6 +385,18 @@ protected:
 		{
 		}
 
+	private:
+
+	#define VariablesType NCsProjectile::NVariables::FVariables
+		FORCEINLINE const VariablesType* GetVariables() const { return Outer->GetVariables(); }
+		FORCEINLINE VariablesType* GetVariables() { return Outer->GetVariables(); }
+	#undef VariablesType
+
+	#define TrackingVariablesType NCsProjectile::NVariables::FVariables::FTrackingInfo
+		FORCEINLINE const TrackingVariablesType& GetTrackingVariables() const { return GetVariables()->TrackingInfo; }
+		FORCEINLINE TrackingVariablesType& GetTrackingVariables() { return GetVariables()->TrackingInfo; }
+	#undef TrackingVariablesType
+
 	public:
 		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return CurrentState; }
 	private:
@@ -382,6 +412,9 @@ protected:
 		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return MeshComponent; }
 		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return MeshComponent; }
 		FORCEINLINE const FName& GetBone() const { return Bone; }
+		FORCEINLINE FName& GetBone() { return Bone; }
+		FORCEINLINE const int32& GetID() const { return ID; }
+		FORCEINLINE int32& GetID() { return ID; }
 
 	public:
 

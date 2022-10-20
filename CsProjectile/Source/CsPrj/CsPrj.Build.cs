@@ -17,6 +17,7 @@ public class CsPrj : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "DeveloperSettings",
+                    "PhysicsCore",
                     "CsCore",
                     "CsDmg",
                 }

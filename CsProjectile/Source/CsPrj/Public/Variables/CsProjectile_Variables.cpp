@@ -44,10 +44,38 @@ namespace NCsProjectile
 	{
 		// FVariables::FTrackingInfo
 
+		const float& FVariables::FTrackingInfo::GetDelay() const { return GetOuterMost()->TrackingInfos.Delays[GetID()]; }
+		float& FVariables::FTrackingInfo::GetDelay() { return GetOuterMost()->TrackingInfos.Delays[GetID()]; }
 		#define TrackingStateType NCsProjectile::NTracking::EState
 		const TrackingStateType& FVariables::FTrackingInfo::GetState() const { return GetOuterMost()->TrackingInfos.States[GetID()]; }
 		TrackingStateType& FVariables::FTrackingInfo::GetState() { return GetOuterMost()->TrackingInfos.States[GetID()]; }
 		#undef TrackingStateType
+		#define DestinationType NCsProjectile::NTracking::EDestination
+		const DestinationType& FVariables::FTrackingInfo::GetDestinationType() const { return GetOuterMost()->TrackingInfos.DestinationTypes[GetID()]; }
+		DestinationType& FVariables::FTrackingInfo::GetDestinationType() { return GetOuterMost()->TrackingInfos.DestinationTypes[GetID()]; }
+		#undef DestinationType
+		const USceneComponent* FVariables::FTrackingInfo::GetComponent() const { return GetOuterMost()->TrackingInfos.Components[GetID()]; }
+		USceneComponent*& FVariables::FTrackingInfo::GetComponent() { return GetOuterMost()->TrackingInfos.Components[GetID()]; }
+		const USkeletalMeshComponent* FVariables::FTrackingInfo::GetMeshComponent() const { return GetOuterMost()->TrackingInfos.MeshComponents[GetID()]; }
+		USkeletalMeshComponent*& FVariables::FTrackingInfo::GetMeshComponent() { return GetOuterMost()->TrackingInfos.MeshComponents[GetID()]; }
+		const FName& FVariables::FTrackingInfo::GetBone() const { return GetOuterMost()->TrackingInfos.Bones[GetID()]; }
+		FName& FVariables::FTrackingInfo::GetBone() { return GetOuterMost()->TrackingInfos.Bones[GetID()]; }
+		const int32& FVariables::FTrackingInfo::GetTargetID() const { return GetOuterMost()->TrackingInfos.TargetIDs[GetID()]; }
+		int32& FVariables::FTrackingInfo::GetTargetID() { return GetOuterMost()->TrackingInfos.TargetIDs[GetID()]; }
+		const float& FVariables::FTrackingInfo::GetDuration() const { return GetOuterMost()->TrackingInfos.Durations[GetID()]; }
+		float& FVariables::FTrackingInfo::GetDuration() { return GetOuterMost()->TrackingInfos.Durations[GetID()]; }
+		const float& FVariables::FTrackingInfo::GetElapsedTime() const { return GetOuterMost()->TrackingInfos.ElapsedTimes[GetID()]; }
+		float& FVariables::FTrackingInfo::GetElapsedTime() { return GetOuterMost()->TrackingInfos.ElapsedTimes[GetID()]; }
+		const FVector& FVariables::FTrackingInfo::GetDestination() const { return GetOuterMost()->TrackingInfos.Destinations[GetID()]; }
+		FVector& FVariables::FTrackingInfo::GetDestination() { return GetOuterMost()->TrackingInfos.Destinations[GetID()]; }
+		const FVector& FVariables::FTrackingInfo::GetOffset() const { return GetOuterMost()->TrackingInfos.Offsets[GetID()]; }
+		FVector& FVariables::FTrackingInfo::GetOffset() { return GetOuterMost()->TrackingInfos.Offsets[GetID()]; }
+		const float& FVariables::FTrackingInfo::GetMinDotThreshold() const { return GetOuterMost()->TrackingInfos.MinDotThresholds[GetID()]; }
+		float& FVariables::FTrackingInfo::GetMinDotThreshold() { return GetOuterMost()->TrackingInfos.MinDotThresholds[GetID()]; }
+		const float& FVariables::FTrackingInfo::GetMaxDotBeforeUsingPitch() const { return GetOuterMost()->TrackingInfos.MaxDotBeforeUsingPitches[GetID()]; }
+		float& FVariables::FTrackingInfo::GetMaxDotBeforeUsingPitch() { return GetOuterMost()->TrackingInfos.MaxDotBeforeUsingPitches[GetID()]; }
+		const float& FVariables::FTrackingInfo::GetRotationRate() const { return GetOuterMost()->TrackingInfos.RotationRates[GetID()]; }
+		float& FVariables::FTrackingInfo::GetRotationRate() { return GetOuterMost()->TrackingInfos.RotationRates[GetID()]; }
 
 		// FVariables
 

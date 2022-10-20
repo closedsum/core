@@ -568,7 +568,10 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	CollisionComponent->SetGenerateOverlapEvents(false);
 	CollisionComponent->SetNotifyRigidBodyCollision(false);
 	// Movement
-	TrackingImpl.Reset();
+	if (Variables)
+	{
+		TrackingImpl.Reset();
+	}
 
 	MovementComponent->StopMovementImmediately();
 	MovementComponent->SetComponentTickEnabled(false);
@@ -1077,30 +1080,37 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 	if (TrackingData &&
 		TrackingData->ShouldUseTracking())
 	{
-		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
-		typedef NCsProjectile::NTracking::EDestination DestinationType;
+		Clear();
 
-		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
-		const DestinationType& Destination	   = TargetParams.GetDestination();
-		bReacquire							   = TargetParams.GetbReacquireDestination();
+		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
+		typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
+
+		const TrackingParamsType& TrackingParams = TrackingData->GetTrackingParams();
+		GetDelay()								 = TrackingParams.GetDelay();
+		GetDestinationType()					 = TrackingParams.GetDestination();
+		GetOffset()								 = TrackingParams.GetOffset();
+		bReacquire								 = TrackingParams.GetbReacquireDestination();
+		GetDuration()							 = TrackingParams.GetDuration();
+		GetMinDotThreshold()					 = TrackingParams.GetMinDotThreshold();
+		GetMaxDotBeforeUsingPitch()				 = TrackingParams.GetMaxDotBeforeUsingPitch();
+		GetRotationRate()						 = TrackingParams.GetRotationRate();
 
 		// Object
-		if (Destination == DestinationType::Object)
+		if (GetDestinationType() == TrackingDestinationType::Object)
 		{
 			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Object but TargetPayload->GetTargetComponent() is NULL."), *Context);
 
-			GetObjectType() = NCsProjectile::NTracking::EObject::Component;
-			GetComponent()	= TargetPayload->GetTargetComponent();
+			GetComponent() = TargetPayload->GetTargetComponent();
 		}
 		// Bone
 		else
-		if (Destination == DestinationType::Bone)
+		if (GetDestinationType() == TrackingDestinationType::Bone)
 		{
 			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetComponent() is NULL."), *Context);
 
-			GetObjectType()	   = NCsProjectile::NTracking::EObject::Bone;
-			GetComponent()     = TargetPayload->GetTargetComponent();
-			GetMeshComponent() = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
+			GetComponent()			   = TargetPayload->GetTargetComponent();
+			USceneComponent* Component = GetComponent();
+			GetMeshComponent()		   = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
 			
 			checkf(TargetPayload->GetTargetBone() != NAME_None, TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetBone() is NAME_None."), *Context);
 
@@ -1110,22 +1120,20 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 		}
 		// Location
 		else
-		if (Destination == DestinationType::Location)
+		if (GetDestinationType() == TrackingDestinationType::Location)
 		{
-			GetObjectType() = NCsProjectile::NTracking::EObject::Location;
-			Location		= TargetPayload->GetTargetLocation();
+			GetLocation() = TargetPayload->GetTargetLocation();
 		}
 		// Custom | TODO: NOTE: This could be a better descriptor
 		else
-		if (Destination == DestinationType::Custom)
+		if (GetDestinationType() == TrackingDestinationType::Custom)
 		{
 			checkf(TargetPayload->GetTargetID() != INDEX_NONE, TEXT("%s: TrackingData->GetDestination() == DestinationType::Custom but TargetPayload->GetTargetID() is -1 (INDEX_NONE or INVALID)."), *Context);
 
-			GetObjectType() = NCsProjectile::NTracking::EObject::ID;
-			ID				= TargetPayload->GetTargetID();
+			GetID() = TargetPayload->GetTargetID();
 		}
 
-		GetCurrentState() = TargetParams.GetDelay() > 0.0f ? NCsProjectile::NTracking::EState::Delay : NCsProjectile::NTracking::EState::Active;
+		GetCurrentState() = GetDelay() > 0.0f ? NCsProjectile::NTracking::EState::Delay : NCsProjectile::NTracking::EState::Active;
 	}
 }
 
@@ -1146,11 +1154,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 	// Delay
 	if (GetCurrentState() == NCsProjectile::NTracking::EState::Delay)
 	{
-		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
-
-		const TrackingParamsType& TargetParams = TrackingData->GetTrackingParams();
-
-		if (ElapsedTime >= TargetParams.GetDelay())
+		if (GetElapsedTime() >= GetDelay())
 		{
 			GetCurrentState() = NCsProjectile::NTracking::EState::Active;
 		}
@@ -1158,14 +1162,8 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 	// Active
 	if (GetCurrentState() == NCsProjectile::NTracking::EState::Active)
 	{
-		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
-
-		const TrackingParamsType& TrackingParams = TrackingData->GetTrackingParams();
-
-		const float& Duration = TrackingParams.GetDuration();
-
-		if (Duration > 0.0f &&
-			ElapsedTime >= Duration)
+		if (GetDuration() > 0.0f &&
+			GetElapsedTime() >= GetDuration())
 		{
 			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
 		}
@@ -1181,8 +1179,8 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 
 			FVector Direction = (CurrentDestination - Outer->GetActorLocation()).GetSafeNormal();
 
-			const float& MinDotThreshold		= TrackingParams.GetMinDotThreshold();
-			const float& MaxDotBeforeUsingPitch = TrackingParams.GetMaxDotBeforeUsingPitch();
+			const float& MinDotThreshold		= GetMinDotThreshold();
+			const float& MaxDotBeforeUsingPitch = GetMaxDotBeforeUsingPitch();
 
 			const float Dot = FVector::DotProduct(VelocityDir, Direction);
 
@@ -1201,10 +1199,10 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 					Destination.Z = Outer->GetActorLocation().Z;
 				}
 
-				Destination	+= TrackingParams.GetOffset();
+				Destination	+= GetOffset();
 				Direction    = (Destination - Outer->GetActorLocation()).GetSafeNormal();
 
-				VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, TrackingParams.GetRotationRate());
+				VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, GetRotationRate());
 
 				if (Outer->IsLaunchComplete())
 					Outer->MovementComponent->Velocity = Speed * VelocityDir;
@@ -1213,28 +1211,30 @@ void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTim
 			}
 		}
 	}
-	ElapsedTime += DeltaTime.Time;
+	GetElapsedTime() += DeltaTime.Time;
 }
 
 FVector ACsProjectilePooledImpl::FTrackingImpl::GetDestination() const
 {
+	typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
+
 	// Component
-	if (GetObjectType() == NCsProjectile::NTracking::EObject::Component)
+	if (GetDestinationType() == TrackingDestinationType::Object)
 		return GetComponent()->GetComponentLocation();
 	// Bone
-	if (GetObjectType() == NCsProjectile::NTracking::EObject::Bone)
+	if (GetDestinationType() == TrackingDestinationType::Bone)
 		return GetMeshComponent()->GetSocketLocation(GetBone());
 	// Location
-	if (GetObjectType() == NCsProjectile::NTracking::EObject::Location)
-		return Location;
-	// ID
-	if (GetObjectType() == NCsProjectile::NTracking::EObject::ID)
-		return Outer->TrackingImpl_GetDestinationByID();
+	if (GetDestinationType() == TrackingDestinationType::Location)
+		return GetLocation();
+	// Custom / ID
+	if (GetDestinationType() == TrackingDestinationType::Custom)
+		return Outer->TrackingImpl_GetDestinationByCustom();
 	check(0);
 	return FVector::ZeroVector;
 }
 
-FVector ACsProjectilePooledImpl::TrackingImpl_GetDestinationByID() const
+FVector ACsProjectilePooledImpl::TrackingImpl_GetDestinationByCustom() const
 {
 	return FVector::ZeroVector;
 }

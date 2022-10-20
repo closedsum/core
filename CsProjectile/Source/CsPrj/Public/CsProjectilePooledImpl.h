@@ -335,7 +335,7 @@ protected:
 
 	// Tracking
 #pragma region
-protected:
+public:
 
 	struct FTrackingImpl
 	{
@@ -351,37 +351,13 @@ protected:
 
 		TrackingDataType* TrackingData;
 
-		NCsProjectile::NTracking::EState CurrentState;
-
-		NCsProjectile::NTracking::EObject ObjectType;
-
-		USceneComponent* Component;
-
-		USkeletalMeshComponent* MeshComponent;
-
-		FName Bone;
-
-		FVector Location;
-
-		int32 ID;
-
 		bool bReacquire;
-
-		float ElapsedTime;
 
 	public:
 
 		FTrackingImpl() :
 			TrackingData(nullptr),
-			CurrentState(NCsProjectile::NTracking::EState::Inactive),
-			ObjectType(NCsProjectile::NTracking::EObject::Component),
-			Component(nullptr),
-			MeshComponent(nullptr),
-			Bone(NAME_None),
-			Location(0.0f),
-			ID(INDEX_NONE),
-			bReacquire(false),
-			ElapsedTime(0.0f)
+			bReacquire(false)
 		{
 		}
 
@@ -397,24 +373,47 @@ protected:
 		FORCEINLINE TrackingVariablesType& GetTrackingVariables() { return GetVariables()->TrackingInfo; }
 	#undef TrackingVariablesType
 
-	public:
-		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return CurrentState; }
-	private:
-		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return CurrentState; }
+		FORCEINLINE const float& GetDelay() const { return GetTrackingVariables().GetDelay(); }
+		FORCEINLINE float& GetDelay() { return GetTrackingVariables().GetDelay(); }
 
 	public:
-		FORCEINLINE const NCsProjectile::NTracking::EObject& GetObjectType() const { return ObjectType; }
+		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return GetTrackingVariables().GetState(); }
 	private:
-		FORCEINLINE NCsProjectile::NTracking::EObject& GetObjectType() { return ObjectType; }
+		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return GetTrackingVariables().GetState(); }
 
-		FORCEINLINE const USceneComponent* GetComponent() const { return Component; }
-		FORCEINLINE USceneComponent*& GetComponent() { return Component; }
-		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return MeshComponent; }
-		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return MeshComponent; }
-		FORCEINLINE const FName& GetBone() const { return Bone; }
-		FORCEINLINE FName& GetBone() { return Bone; }
-		FORCEINLINE const int32& GetID() const { return ID; }
-		FORCEINLINE int32& GetID() { return ID; }
+	public:
+
+	#define DestinationType NCsProjectile::NTracking::EDestination
+		FORCEINLINE const DestinationType& GetDestinationType() const { return GetTrackingVariables().GetDestinationType(); }
+		FORCEINLINE DestinationType& GetDestinationType() { return GetTrackingVariables().GetDestinationType(); }
+	#undef DestinationType 
+	
+	private:
+	
+		FORCEINLINE const USceneComponent* GetComponent() const { return GetTrackingVariables().GetComponent(); }
+		FORCEINLINE USceneComponent*& GetComponent() { return GetTrackingVariables().GetComponent(); }
+		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return GetTrackingVariables().GetMeshComponent(); }
+		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return GetTrackingVariables().GetMeshComponent(); }
+		FORCEINLINE const FName& GetBone() const { return GetTrackingVariables().GetBone(); }
+		FORCEINLINE FName& GetBone() { return GetTrackingVariables().GetBone(); }
+		FORCEINLINE const FVector& GetLocation() const { return GetTrackingVariables().GetDestination(); }
+		FORCEINLINE FVector& GetLocation() { return GetTrackingVariables().GetDestination(); }
+	public:
+		FORCEINLINE const int32& GetID() const { return GetTrackingVariables().GetTargetID(); }
+		FORCEINLINE int32& GetID() { return GetTrackingVariables().GetTargetID(); }
+	private:
+		FORCEINLINE const float& GetDuration() const { return GetTrackingVariables().GetDuration(); }
+		FORCEINLINE float& GetDuration() { return GetTrackingVariables().GetDuration(); }
+		FORCEINLINE const float& GetElapsedTime() const { return GetTrackingVariables().GetElapsedTime(); }
+		FORCEINLINE float& GetElapsedTime() { return GetTrackingVariables().GetElapsedTime(); }
+		FORCEINLINE const FVector& GetOffset() const { return GetTrackingVariables().GetOffset(); }
+		FORCEINLINE FVector& GetOffset() { return GetTrackingVariables().GetOffset(); }
+		FORCEINLINE const float& GetMinDotThreshold() const { return GetTrackingVariables().GetMinDotThreshold(); }
+		FORCEINLINE float& GetMinDotThreshold() { return GetTrackingVariables().GetMinDotThreshold(); }
+		FORCEINLINE const float& GetMaxDotBeforeUsingPitch() const { return GetTrackingVariables().GetMaxDotBeforeUsingPitch(); }
+		FORCEINLINE float& GetMaxDotBeforeUsingPitch() { return GetTrackingVariables().GetMaxDotBeforeUsingPitch(); }
+		FORCEINLINE const float& GetRotationRate() const { return GetTrackingVariables().GetRotationRate(); }
+		FORCEINLINE float& GetRotationRate() { return GetTrackingVariables().GetRotationRate(); }
 
 	public:
 
@@ -424,24 +423,27 @@ protected:
 
 		FVector GetDestination() const;
 
+		FORCEINLINE void Clear()
+		{
+			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
+			GetDestinationType() = NCsProjectile::NTracking::EDestination::Object;
+			GetComponent() = nullptr;
+			GetMeshComponent() = nullptr;
+			GetBone() = NAME_None;
+			GetLocation() = FVector::ZeroVector;
+			GetID() = INDEX_NONE;
+			bReacquire = false;
+			GetElapsedTime()  = 0.0f;
+		}
+
 		FORCEINLINE void Reset()
 		{
 			TrackingData = nullptr;
-			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
-			ObjectType = NCsProjectile::NTracking::EObject::Component;
-			Component = nullptr;
-			MeshComponent = nullptr;
-			Bone = NAME_None;
-			Location = FVector::ZeroVector;
-			ID = INDEX_NONE;
-			bReacquire = false;
-			ElapsedTime  = 0.0f;
+			Clear();
 		}
 
 	#undef TrackingDataType
 	};
-
-public:
 
 	FTrackingImpl TrackingImpl;
 
@@ -449,7 +451,7 @@ public:
 
 	virtual bool TrackingImpl_ReacquireDestination() { return false; }
 
-	virtual FVector TrackingImpl_GetDestinationByID() const;
+	virtual FVector TrackingImpl_GetDestinationByCustom() const;
 
 #pragma endregion Tracking
 

@@ -70,7 +70,7 @@ namespace NCsProjectile
 
 			int32 ID;
 
-			struct FTrackingInfo
+			struct CSPRJ_API FTrackingInfo
 			{
 				friend struct NCsProjectile::NVariables::FVariables;
 
@@ -81,6 +81,7 @@ namespace NCsProjectile
 			public:
 
 			#define TrackingStateType NCsProjectile::NTracking::EState
+			#define DestinationType NCsProjectile::NTracking::EDestination
 
 				FTrackingInfo() :
 					Outer(nullptr)
@@ -89,48 +90,46 @@ namespace NCsProjectile
 
 				FORCEINLINE void SetOuter(NCsProjectile::NVariables::FVariables* InOuter) { Outer = InOuter; }
 				FORCEINLINE NCsProjectile::NVariables::FVariables* GetOuter() { return Outer; }
-				FORCEINLINE NCsProjectile::NVariables::FManager* GetOuterMost() { return Outer->GetOuter(); }
 				FORCEINLINE const NCsProjectile::NVariables::FManager* GetOuterMost() const { return Outer->GetOuter(); }
+				FORCEINLINE NCsProjectile::NVariables::FManager* GetOuterMost() { return Outer->GetOuter(); }
 
 				FORCEINLINE const int32& GetID() const { return Outer->GetID(); }
 
+				const float& GetDelay() const;
+				float& GetDelay();
 				const TrackingStateType& GetState() const;
 				TrackingStateType& GetState();
+				const DestinationType& GetDestinationType() const;
+				DestinationType& GetDestinationType();
+				const USceneComponent* GetComponent() const;
+				USceneComponent*& GetComponent();
+				const USkeletalMeshComponent* GetMeshComponent() const;
+				USkeletalMeshComponent*& GetMeshComponent();
+				const FName& GetBone() const;
+				FName& GetBone();
+				const int32& GetTargetID() const;
+				int32& GetTargetID();
+				const float& GetDuration() const;
+				float& GetDuration();
+				const float& GetElapsedTime() const;
+				float& GetElapsedTime();
+				const FVector& GetDestination() const;
+				FVector& GetDestination();
+				const FVector& GetOffset() const;
+				FVector& GetOffset();
+				const float& GetMinDotThreshold() const;
+				float& GetMinDotThreshold();
+				const float& GetMaxDotBeforeUsingPitch() const;
+				float& GetMaxDotBeforeUsingPitch();
+				const float& GetRotationRate() const;
+				float& GetRotationRate();
 
-				/*
-				const TrackingStateType&
-
-				TArray<TrackingStateType> States;
-
-				TArray<ObjectType> ObjectTypes;
-
-				TArray<USceneComponent*> Components;
-
-				TArray<USkeletalMeshComponent*> MeshComponents;
-
-				TArray<FName> Bones;
-
-				TArray<int32> TargetIDs;
-
-				TArray<float> Durations;
-
-				TArray<float> ElapsedTimes;
-
-				TArray<FVector> Destinations;
-
-				TArray<FVector> Offsets;
-
-				TArray<float> MinDotThresholds;
-
-				TArray<float> MaxDotBeforeUsingPitches;
-
-				TArray<float> RotationRates;
-				*/
 				void Reset()
 				{
 				}
 
 			#undef TrackingStateType
+			#undef DestinationType
 			};
 
 			FTrackingInfo TrackingInfo;
@@ -290,7 +289,7 @@ namespace NCsProjectile
 			public:
 
 			#define TrackingStateType NCsProjectile::NTracking::EState
-			#define ObjectType NCsProjectile::NTracking::EObject
+			#define DestinationType NCsProjectile::NTracking::EDestination
 
 				int32 DelayCount;
 
@@ -304,7 +303,7 @@ namespace NCsProjectile
 
 				TArray<TrackingStateType> States;
 
-				TArray<ObjectType> ObjectTypes;
+				TArray<DestinationType> DestinationTypes;
 
 				TArray<USceneComponent*> Components;
 
@@ -336,7 +335,7 @@ namespace NCsProjectile
 					ActiveCount(0),
 					ActiveIDs(),
 					States(),
-					ObjectTypes(),
+					DestinationTypes(),
 					Components(),
 					MeshComponents(),
 					Bones(),
@@ -357,7 +356,7 @@ namespace NCsProjectile
 					Delays.Reset(InSize);
 					ActiveIDs.Reset(InSize);
 					States.Reset(InSize);
-					ObjectTypes.Reset(InSize);
+					DestinationTypes.Reset(InSize);
 					Components.Reset(InSize);
 					MeshComponents.Reset(InSize);
 					Bones.Reset(InSize);
@@ -376,7 +375,7 @@ namespace NCsProjectile
 						Delays.Add(0.0f);
 						ActiveIDs.Add(INDEX_NONE);
 						States.Add(TrackingStateType::Inactive);
-						ObjectTypes.Add(ObjectType::ID);
+						DestinationTypes.Add(DestinationType::Custom);
 						Components.Add(nullptr);
 						MeshComponents.Add(nullptr);
 						Bones.Add(NAME_None);
@@ -413,7 +412,7 @@ namespace NCsProjectile
 				}
 
 			#undef TrackingStateType
-			#undef ObjectType
+			#undef DestinationType
 			};
 
 			FTrackingInfos TrackingInfos;

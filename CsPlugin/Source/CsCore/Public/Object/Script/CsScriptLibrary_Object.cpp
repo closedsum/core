@@ -5,6 +5,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Log
 #include "Utility/CsLog.h"
@@ -18,6 +19,8 @@ namespace NCsScriptLibraryObject
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, LoadBySoftObjectPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, ConstructObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_MarkPendingKill);
 		}
@@ -30,6 +33,33 @@ UCsScriptLibrary_Object::UCsScriptLibrary_Object(const FObjectInitializer& Objec
 	: Super(ObjectInitializer)
 {
 }
+
+// Load
+#pragma region
+
+UObject* UCsScriptLibrary_Object::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
+{
+	using namespace NCsScriptLibraryObject::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
+
+	typedef NCsObject::FLibrary ObjectLibrary;
+
+	return ObjectLibrary::SafeLoad(Ctxt, Path);
+}
+
+UObject* UCsScriptLibrary_Object::LoadByStringPath(const FString& Context, const FString& Path)
+{
+	using namespace NCsScriptLibraryObject::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+
+	typedef NCsObject::FLibrary ObjectLibrary;
+
+	return ObjectLibrary::SafeLoad(Ctxt, Path);
+}
+
+#pragma endregion Load
 
 UObject* UCsScriptLibrary_Object::ConstructObject(const FString& Context, UObject* Outer, UClass* Class)
 {

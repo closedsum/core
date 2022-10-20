@@ -42,7 +42,7 @@ UAnimBlueprint* UCsScriptLibrary_AnimInstance::LoadBySoftObjectPath(const FStrin
 
 	typedef NCsAnimInstance::FLibrary AnimInstanceLibrary;
 
-	return AnimInstanceLibrary::SafeLoad(Context, Path);
+	return AnimInstanceLibrary::SafeLoad(Ctxt, Path);
 }
 
 UAnimBlueprint* UCsScriptLibrary_AnimInstance::LoadByStringPath(const FString& Context, const FString& Path)

@@ -1,78 +1,53 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Kismet/BlueprintFunctionLibrary.h"
-// Types
-#include "Types/CsTypes_Load.h"
-#include "Types/CsTypes_Texture.h"
-#include "Managers/FX/CsTypes_FX.h"
-#include "Managers/Sound/CsTypes_Sound.h"
-#include "Types/CsTypes_SkeletalMesh.h"
-
-#include "CsLibrary_Blueprint.generated.h"
 #pragma once
+// Log
+#include "Utility/CsLog.h"
 
-class USoundCue;
-class UParticleSystem;
-class UDataTable;
-class USkeletalMesh;
-class UTexture;
+class UObject;
+class UBlueprint;
+class UBlueprintGeneratedClass;
 
-UCLASS()
-class CSCORE_API UCsLibrary_Blueprint : public UBlueprintFunctionLibrary
+namespace NCsBlueprint
 {
-	GENERATED_UCLASS_BODY()
+	/**
+	* Library of function related to UBlueprint
+	*/
+	class CSCORE_API FLibrary final
+	{
+	// Load
+	#pragma region
+	public:
 
-// TSoftObjectPtr
-#pragma region
-public:
+		/**
+		* Load the Blueprint at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		SoftObjectPath to the Blueprint to load.
+		* @param Log
+		* return			Blueprint.
+		*/
+		static UBlueprint* SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Name", BlueprintThreadSafe), Category = "Utilities")
-	static FString GetName_SoftObjectPtr(const TSoftObjectPtr<UObject>& SoftObject);
+		/**
+		* Load a Blueprint at the given Path.
+		*
+		* @param Context	The calling context.
+		* @param Path		FString path to the Blueprint to load.
+		* @param Log
+		* return			Blueprint.
+		*/
+		static UBlueprint* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get FName", BlueprintThreadSafe), Category = "Utilities")
-	static FName GetFName_SoftObjectPtr(const TSoftObjectPtr<UObject>& SoftObject);
+	#pragma endregion Load
 
-	// Container
-#pragma region
-public:
+	// Get
+	#pragma region
+	public:
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (SoundCue)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static USoundCue* Conv_CsSoundCueToInternal(const FCsSoundCue& Container);
+		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (ParticleSystem)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static UParticleSystem* Conv_CsParticleSystemToInternal(const FCsParticleSystem& Container);
+		static UObject* GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (DataTable)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static UDataTable* Conv_CsDataTableToInternal(const FCsDataTable& Container);
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (Actor)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static AActor* Conv_CsActorToInternal(const FCsActor& Container);
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (Class)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static UClass* Conv_CsActorToClass(const FCsActor& Container);
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (SubclassOf)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static TSubclassOf<AActor> Conv_CsActorToSubclassOf(const FCsActor& Container);
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (SkeletalMesh)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static USkeletalMesh* Conv_CsSkeletalMeshToInternal(const FCsSkeletalMesh& Container);
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get (Texture)", CompactNodeTitle = "->", BlueprintThreadSafe), Category = "Utilities")
-	static UTexture* Conv_CsTextureToInternal(const FCsTexture& Container);
-
-#pragma endregion Container
-
-#pragma endregion TSoftObjectPtr
-
-	
-// TSoftClassPtr
-#pragma region
-public:
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Name", BlueprintThreadSafe), Category = "Utilities")
-	static FString GetName_SoftClassPtr(const TSoftClassPtr<UObject>& SoftClass);
-
-	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get FName", BlueprintThreadSafe), Category = "Utilities")
-	static FName GetFName_SoftClassPtr(const TSoftClassPtr<UObject>& SoftClass);
-
-#pragma endregion TSoftClassPtr
-};
+	#pragma endregion Get
+	};
+}

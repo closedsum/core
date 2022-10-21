@@ -139,7 +139,6 @@ namespace NCsProjectile
 			*/
 			static const TArray<TArray<FECsProjectile>>& GetTypeMapToArrayChecked(const FString& Context, const UObject* WorldContext);
 
-
 			/**
 			* 
 			* 

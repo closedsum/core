@@ -31,6 +31,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnAllocate, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnDeallocate_Start, ACsProjectilePooledImpl*, Projectile);
 // FX
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_TrailFX, ACsProjectilePooledImpl*, Projectile);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FCsProjectilePooledImpl_OnOverride_ImpactFX, ACsProjectilePooledImpl*, Projectile, UPrimitiveComponent*, HitComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, FVector, NormalImpulse, const FHitResult&, Hit);
 
 #pragma endregion Delegates
 
@@ -210,8 +211,11 @@ protected:
 
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Projectile|Pooled Object")
 	int32 GetCache_Index();
+
+	UFUNCTION(BlueprintCallable, Category = "CsPrj|Projectile|Pooled Object")
+	UObject* GetCache_Instigator();
 
 	UPROPERTY(BlueprintAssignable)
 	FCsProjectilePooledImpl_OnAllocate OnAllocate_ScriptEvent;
@@ -507,6 +511,8 @@ protected:
 
 	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {}
 
+	void OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 #pragma endregion Collision
 
 // FX
@@ -515,16 +521,26 @@ protected:
 
 	FCsFXActorPooled* TrailFXPooled;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Projectile|FX", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|FX", meta = (AllowPrivateAccess = "true"))
 	bool bOverride_TrailFX;
 
 public:
 
-	UPROPERTY(BlueprintAssignable, Category = "Projectile|FX")
+	UPROPERTY(BlueprintAssignable, Category = "CsPrj|Projectile|FX")
 	FCsProjectilePooledImpl_OnOverride_TrailFX OnOverride_TrailFX_ScriptEvent;
 
 	UFUNCTION(BlueprintCallable)
 	void SetTrailFXPooled(const FString& Context, const FECsFX& FX, const int32& Index);
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|FX", meta = (AllowPrivateAccess = "true"))
+	bool bOverride_ImpactFX;
+
+public:
+
+	UPROPERTY(BlueprintAssignable, Category = "CsPrj|Projectile|FX")
+	FCsProjectilePooledImpl_OnOverride_ImpactFX OnOverride_ImpactFX_ScriptEvent;
 
 #pragma endregion FX
 

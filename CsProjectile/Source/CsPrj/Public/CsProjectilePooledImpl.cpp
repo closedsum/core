@@ -614,6 +614,11 @@ int32 ACsProjectilePooledImpl::GetCache_Index()
 	return Cache->GetIndex();
 }
 
+UObject* ACsProjectilePooledImpl::GetCache_Instigator()
+{
+	return Cache->GetInstigator();
+}
+
 #pragma endregion PooledObject
 
 // ICsProjectile
@@ -1464,34 +1469,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 
 	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
-	{
-		typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
-
-		if (ImpactVisualDataType* ImpactVisualData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
-		{
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-			typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-			PayloadImplType Payload;
-			Payload.Instigator = Cache->GetInstigator();
-
-			const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
-
-			FTransform Transform = FTransform::Identity;
-			Transform.SetLocation(Hit.Location);
-			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
-
-			if (Info.GetFXInfo().GetbScaleByDamageRange())
-			{
-				float MaxRange = GetMaxDamageRangeChecked(Context);
-
-				Transform.SetScale3D(MaxRange * FVector::OneVector);
-			}
-
-			FXManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetFXInfo().GetFX(), Transform);
-		}
-	}
+	OnHit_TryImpactVisual(Context, HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
 	{
 		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
@@ -1657,6 +1635,59 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		Cache->QueueDeallocate();
 
 	OnHit_Event.Broadcast(this, Hit);
+}
+
+void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+#if WITH_EDITOR
+	if (bOverride_ImpactFX)
+	{
+		if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: Trail FX is OVERRIDDEN for %s."), *Context, *(GetName()));
+		}
+
+		OnOverride_ImpactFX_ScriptEvent.Broadcast(this, HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		// Get Physics Surface
+		UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
+		EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+
+		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+
+		// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
+		{
+			typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
+
+			if (ImpactVisualDataType* ImpactVisualData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
+			{
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+				typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
+				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+				PayloadImplType Payload;
+				Payload.Instigator = Cache->GetInstigator();
+
+				const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
+
+				FTransform Transform = FTransform::Identity;
+				Transform.SetLocation(Hit.Location);
+				Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+				if (Info.GetFXInfo().GetbScaleByDamageRange())
+				{
+					float MaxRange = GetMaxDamageRangeChecked(Context);
+
+					Transform.SetScale3D(MaxRange * FVector::OneVector);
+				}
+
+				FXManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetFXInfo().GetFX(), Transform);
+			}
+		}
+	}
 }
 
 #pragma endregion Collision

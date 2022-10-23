@@ -170,6 +170,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NSpread, NAngle, FPara
 
 /**
 * Describes any information related to spread along an angle axis for a Projectile Weapon.
+*  Weapon is an object that implements the interface: ICsWeapon.
 *  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 */
 USTRUCT(BlueprintType)
@@ -230,6 +231,7 @@ namespace NCsWeapon
 			{
 				/**
 				* Describes any information related to spread along an angle axis for a Projectile Weapon.
+				*  Weapon is an object that implements the interface: ICsWeapon.
 				*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 				*/
 				struct CSWP_API FParams
@@ -312,6 +314,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsWeapon, NProjectile, NSpread, FParams)
 
 /**
 * Describes any information related to spread for a Projectile Weapon.
+*  Weapon is an object that implements the interface: ICsWeapon.
 *  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 */
 USTRUCT(BlueprintType)
@@ -372,6 +375,7 @@ namespace NCsWeapon
 		{
 			/**
 			* Describes any information related to spread for a Projectile Weapon.
+			*  Weapon is an object that implements the interface: ICsWeapon.
 			*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 			*/
 			struct CSWP_API FParams

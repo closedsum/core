@@ -203,7 +203,10 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	bFire_Last(false),
 	Fire_StartTime(0.0f),
 	FireCount(0),
+	OnFire_PreStart_Event(),
+	OnFire_PreShot_Event(),
 	FireHandles(),
+	FireScopedHandle(),
 	// Projectile
 	ProjectileImpl(nullptr),
 	bOverride_ProjectileImpl_GetLaunchDirection(false),
@@ -746,6 +749,9 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	#undef COROUTINE
 
+	Fire_PreStart();
+	OnFire_PreStart_Event.Broadcast(this);
+
 	Payload->SetValue_Flag(CS_FIRST, PrjWeaponData->HasInfiniteAmmo());
 
 	// ProjectilePerShot
@@ -870,6 +876,10 @@ void ACsProjectileWeaponActorPooled::Fire()
 		FireHandles.Add(Handle);
 }
 
+void ACsProjectileWeaponActorPooled::Fire_PreStart()
+{
+}
+
 char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached;
@@ -903,7 +913,7 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 
 	static const int32 SPREAD_VARIABLES_RESOURCE = 0;
 	SpreadVariablesResourceType* SpreadVariablesResource = R->GetValue_Void<SpreadVariablesResourceType>(SPREAD_VARIABLES_RESOURCE);
-	SpreadVariablesType* SpreadVariables = SpreadVariablesResource ? SpreadVariablesResource->Get() : nullptr;
+	SpreadVariablesType* SpreadVariables				 = SpreadVariablesResource ? SpreadVariablesResource->Get() : nullptr;
 
 	static const int32 SPREAD_INDEX = 2;
 	int32& SpreadIndex = R->GetValue_Int(SPREAD_INDEX);
@@ -931,6 +941,9 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 			CS_SET_SCOPED_TIMER_HANDLE(FireScopedHandle);
 
 			ElapsedTime.Reset();
+
+			Fire_PreShot();
+			OnFire_PreShot_Event.Broadcast(this, CurrentProjectilePerShotIndex);
 
 			if (!bInfiniteAmmo)
 				ConsumeAmmo();
@@ -1016,6 +1029,10 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	} while (CurrentProjectilePerShotIndex < ProjectilesPerShot);
 
 	CS_COROUTINE_END(R);
+}
+
+void ACsProjectileWeaponActorPooled::Fire_PreShot()
+{
 }
 
 void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
@@ -1234,11 +1251,11 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 
 		if (SliceType* Slice = PrjPayloadLibrary::SafeStaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload))
 		{
-			Slice->bTarget = bTarget;
+			Slice->bTarget	= bTarget;
 			Slice->Component = TargetComponent;
 			Slice->Location = TargetLocation;
-			Slice->Bone = TargetBone;
-			Slice->ID = TargetID;
+			Slice->Bone		= TargetBone;
+			Slice->ID		= TargetID;
 		}
 	}
 	return Outer->Projectile_SetPayload(Context, Payload, LaunchPayload);

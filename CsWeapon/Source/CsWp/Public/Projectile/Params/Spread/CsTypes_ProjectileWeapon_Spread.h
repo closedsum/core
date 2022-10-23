@@ -91,7 +91,7 @@ namespace NCsWeapon
 	}
 }
 
-#pragma endregion ProjectileWeaponSpreadAngle
+#pragma endregion ProjectileWeaponSpreadShape
 
 // ProjectileWeaponSpreadShapeDistribution
 #pragma region
@@ -177,7 +177,7 @@ enum class ECsProjectileWeaponSpreadShapeAxis: uint8
 {
 	/** Up Vector */
 	Up										UMETA(DisplayName = "Up"),
-	/* In the direction of the Projectile is fired. */
+	/** In the direction of the Projectile is fired. */
 	LaunchDirection							UMETA(DisplayName = "Launch Direction"),
 	ECsProjectileWeaponSpreadShapeAxis_MAX	UMETA(Hidden),
 };
@@ -213,7 +213,9 @@ namespace NCsWeapon
 				*/
 				enum class EAxis : uint8
 				{
+					/** Up Vector */
 					Up,
+					/** In the direction of the Projectile is fired. */
 					LaunchDirection,
 					EAxis_MAX
 				};

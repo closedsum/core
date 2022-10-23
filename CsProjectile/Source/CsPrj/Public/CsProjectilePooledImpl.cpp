@@ -27,6 +27,7 @@
 	// Modifier
 #include "Modifier/CsLibrary_DamageModifier.h"
 	// Common
+#include "Library/CsLibrary_SkeletalMesh.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
@@ -1092,7 +1093,7 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 
 		const TrackingParamsType& TrackingParams = TrackingData->GetTrackingParams();
 		GetDelay()								 = TrackingParams.GetDelay();
-		GetDestinationType()					 = TrackingParams.GetDestination();
+		//GetDestinationType()					 = TrackingParams.GetDestination();
 		GetOffset()								 = TrackingParams.GetOffset();
 		bReacquire								 = TrackingParams.GetbReacquireDestination();
 		GetDuration()							 = TrackingParams.GetDuration();
@@ -1100,44 +1101,47 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 		GetMaxDotBeforeUsingPitch()				 = TrackingParams.GetMaxDotBeforeUsingPitch();
 		GetRotationRate()						 = TrackingParams.GetRotationRate();
 
-		// Object
-		if (GetDestinationType() == TrackingDestinationType::Object)
+		// Object | Bone
+		if (USceneComponent* Component = TargetPayload->GetTargetComponent())
 		{
-			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Object but TargetPayload->GetTargetComponent() is NULL."), *Context);
+			const FName& Bone = TargetPayload->GetTargetBone();
 
-			GetComponent() = TargetPayload->GetTargetComponent();
+			// Bone
+			if (Bone != NAME_None)
+			{
+				GetMeshComponent() = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
+
+				typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
+
+				check(SkeletalMeshLibrary::IsBoneValidChecked(Context, GetMeshComponent(), Bone));
+
+				GetBone()			 = Bone;
+				GetDestinationType() = TrackingDestinationType::Bone;
+			}
+			// Object
+			else
+			{
+				GetDestinationType() = TrackingDestinationType::Object;
+			}
 		}
-		// Bone
+		// Custom | Location
 		else
-		if (GetDestinationType() == TrackingDestinationType::Bone)
 		{
-			checkf(TargetPayload->GetTargetComponent(), TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetComponent() is NULL."), *Context);
+			const int32& ID = TargetPayload->GetTargetID();
 
-			GetComponent()			   = TargetPayload->GetTargetComponent();
-			USceneComponent* Component = GetComponent();
-			GetMeshComponent()		   = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
-			
-			checkf(TargetPayload->GetTargetBone() != NAME_None, TEXT("%s: TrackingData->GetDestination() == DestinationType::Bone but TargetPayload->GetTargetBone() is NAME_None."), *Context);
-
-			GetBone() = TargetPayload->GetTargetBone();
-
-			// TODO: Check MeshComponent has Bone
+			// Custom
+			if (ID != INDEX_NONE)
+			{
+				GetID()				 = TargetPayload->GetTargetID();
+				GetDestinationType() = TrackingDestinationType::Custom;
+			}
+			// Location
+			else
+			{
+				GetLocation()		 = TargetPayload->GetTargetLocation();
+				GetDestinationType() = TrackingDestinationType::Location;
+			}
 		}
-		// Location
-		else
-		if (GetDestinationType() == TrackingDestinationType::Location)
-		{
-			GetLocation() = TargetPayload->GetTargetLocation();
-		}
-		// Custom | TODO: NOTE: This could be a better descriptor
-		else
-		if (GetDestinationType() == TrackingDestinationType::Custom)
-		{
-			checkf(TargetPayload->GetTargetID() != INDEX_NONE, TEXT("%s: TrackingData->GetDestination() == DestinationType::Custom but TargetPayload->GetTargetID() is -1 (INDEX_NONE or INVALID)."), *Context);
-
-			GetID() = TargetPayload->GetTargetID();
-		}
-
 		GetCurrentState() = GetDelay() > 0.0f ? NCsProjectile::NTracking::EState::Delay : NCsProjectile::NTracking::EState::Active;
 	}
 }

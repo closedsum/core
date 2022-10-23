@@ -282,21 +282,30 @@ protected:
 
 	int32 FireCount;
 
-	/**
-	*
-	*/
 	void Fire();
 
-	/**
-	*
-	*
-	* @param R
-	* return
-	*/
+	void Fire_PreStart();
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFire_PreStart, ACsProjectileWeaponActorPooled* /*Weapon*/);
+	
+	FOnFire_PreStart OnFire_PreStart_Event;
+
+protected:
+
 	char Fire_Internal(FCsRoutine* R);
 
-	/**
-	*/
+	void Fire_PreShot();
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFire_PreShot, ACsProjectileWeaponActorPooled* /*Weapon*/, const int32& /*CurrentProjectilePerShotIndex*/);
+
+	FOnFire_PreShot OnFire_PreShot_Event;
+
+protected:
+
 	void Fire_Internal_OnEnd(FCsRoutine* R);
 
 	TSet<FCsRoutineHandle> FireHandles;

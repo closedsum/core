@@ -2880,3 +2880,29 @@ namespace NCsValid
 	}
 
 #pragma endregion Delegate
+
+// Editor
+#pragma region
+
+#if WITH_EDITOR
+
+	// Ptr
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_EDITOR_IS_PTR_NULL_CHECKED(__Ptr) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		check(NCsValid::NPtr::FLibrary::NullChecked(Context, __Ptr, __temp__str__)); \
+	}
+
+#pragma endregion Ptr
+
+#else
+
+	// Ptr
+#define CS_EDITOR_IS_PTR_NULL_CHECKED(__Ptr)
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Editor

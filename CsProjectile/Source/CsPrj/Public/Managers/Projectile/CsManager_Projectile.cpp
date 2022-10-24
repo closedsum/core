@@ -1158,17 +1158,35 @@ DataType* UCsManager_Projectile::GetData(const FName& Name)
 
 	const FString& Context = Str::GetData;
 
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetData(Context, Name);
+
+	IsValid(Context, Data);
+	return Data;
+#else
 	return DataHandler->GetData(Context, Name);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Projectile::GetDataChecked(const FString& Context, const FName& Name)
 {
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetDataChecked(Context, Name);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#else
 	return DataHandler->GetDataChecked(Context, Name);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Projectile::GetSafeData(const FString& Context, const FName& Name)
 {
-	return DataHandler->GetSafeData(Context, Name);
+	DataType* Data = DataHandler->GetSafeData(Context, Name);
+
+	if (!IsValid(Context, Data, nullptr))
+		return nullptr;
+	return Data;
 }
 
 DataType* UCsManager_Projectile::GetData(const FECsProjectile& Type)
@@ -1177,7 +1195,14 @@ DataType* UCsManager_Projectile::GetData(const FECsProjectile& Type)
 
 	const FString& Context = Str::GetData;
 
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetData<EMCsProjectile, FECsProjectile>(Context, Type);
+
+	IsValid(Context, Data);
+	return Data;
+#else
 	return DataHandler->GetData<EMCsProjectile, FECsProjectile>(Context, Type);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Projectile::GetDataChecked(const FString& Context, const FECsProjectile& Type)

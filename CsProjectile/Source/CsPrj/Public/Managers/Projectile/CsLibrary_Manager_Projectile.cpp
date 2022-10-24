@@ -306,52 +306,28 @@ namespace NCsProjectile
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 		{
-			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
-
-			typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-			check(PrjDataLibrary::IsValidChecked(Context, Data));
-
-			return Data;
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
 		}
 
 		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
 			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
 			{
-				DataType* Data = Manager_Projectile->GetSafeData(Context, Name);
-
-				typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-				if (!PrjDataLibrary::IsValid(Context, Data, Log))
-					return nullptr;
-				return Data;
+				return Manager_Projectile->GetSafeData(Context, Name);
 			}
 			return nullptr;
 		}
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type)
 		{
-			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
-
-			typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-			check(PrjDataLibrary::IsValidChecked(Context, Data));
-
-			return Data;
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
 		}
 
 		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
 			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
 			{
-				DataType* Data = Manager_Projectile->GetSafeData(Context, Type);
-
-				typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-				if (!PrjDataLibrary::IsValid(Context, Data, Log))
-					return nullptr;
-				return Data;
+				return Manager_Projectile->GetSafeData(Context, Type);
 			}
 			return nullptr;
 		}

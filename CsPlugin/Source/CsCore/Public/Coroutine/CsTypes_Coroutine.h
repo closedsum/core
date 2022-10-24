@@ -282,6 +282,7 @@ namespace NCsCoroutine
 			Timer,
 			DeltaTime,
 			Int,
+			UnsignedInt,
 			Float,
 			Double,
 			Vector,
@@ -310,6 +311,7 @@ namespace NCsCoroutine
 				extern CSCORE_API const Type Timer;
 				extern CSCORE_API const Type DeltaTime;
 				extern CSCORE_API const Type Int;
+				extern CSCORE_API const Type UnsignedInt;
 				extern CSCORE_API const Type Float;
 				extern CSCORE_API const Type Double;
 				extern CSCORE_API const Type Vector;
@@ -395,6 +397,7 @@ namespace NCsCoroutine
 			TArray<FCsTime, TFixedAllocator<CS_ROUTINE_TIMER_SIZE>> Timers;
 			TArray<FCsDeltaTime, TFixedAllocator<CS_ROUTINE_DELTA_TIME_SIZE>> DeltaTimes;
 			TArray<int32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> Ints;
+			TArray<uint32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> UnsignedInts;
 			TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
 			TArray<double, TFixedAllocator<CS_ROUTINE_DOUBLE_SIZE>> Doubles;
 			TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
@@ -449,6 +452,12 @@ namespace NCsCoroutine
 			{
 				SetUsedValue(EValueType::Int, InIndex);
 				Ints[InIndex] = Value;
+			}
+
+			FORCEINLINE void SetValue_UnsignedInt(const int32& InIndex, const uint32& Value)
+			{
+				SetUsedValue(EValueType::UnsignedInt, InIndex);
+				UnsignedInts[InIndex] = Value;
 			}
 
 			FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value)
@@ -538,6 +547,12 @@ namespace NCsCoroutine
 				{
 					SetUsedValue(EValueType::Int, InIndex);
 					return Ints[InIndex];
+				}
+
+				FORCEINLINE uint32& GetValue_UnsignedInt(const int32& InIndex)
+				{
+					SetUsedValue(EValueType::UnsignedInt, InIndex);
+					return UnsignedInts[InIndex];
 				}
 
 				FORCEINLINE float& GetValue_Float(const int32& InIndex)
@@ -692,6 +707,7 @@ namespace NCsCoroutine
 			FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
 			FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }
 			FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value){				RegisterMap.SetValue_Int(InIndex, Value); }
+			FORCEINLINE void SetValue_UnsignedInt(const int32& InIndex, const uint32& Value){		RegisterMap.SetValue_UnsignedInt(InIndex, Value); }
 			FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
 			FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
 			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }

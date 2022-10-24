@@ -264,52 +264,28 @@ namespace NCsWeapon
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 		{
-			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
-
-			typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-			check(WeaponDataLibrary::IsValidChecked(Context, Data));
-
-			return Data;
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Name);
 		}
 
 		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
-				DataType* Data = Manager_Weapon->GetSafeData(Context, Name);
-
-				typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-				if (!WeaponDataLibrary::IsValid(Context, Data, Log))
-					return nullptr;
-				return Data;
+				return Manager_Weapon->GetSafeData(Context, Name);
 			}
 			return nullptr;
 		}
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type)
 		{
-			DataType* Data = GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
-
-			typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-			check(WeaponDataLibrary::IsValidChecked(Context, Data));
-
-			return Data;
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type);
 		}
 
 		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const FECsWeapon& Type, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
 		{
 			if (UCsManager_Weapon* Manager_Weapon = GetSafe(Context, WorldContext, Log))
 			{
-				DataType* Data = Manager_Weapon->GetSafeData(Context, Type);
-
-				typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-				if (!WeaponDataLibrary::IsValid(Context, Data, Log))
-					return nullptr;
-				return Data;
+				return Manager_Weapon->GetSafeData(Context, Type);
 			}
 			return nullptr;
 		}

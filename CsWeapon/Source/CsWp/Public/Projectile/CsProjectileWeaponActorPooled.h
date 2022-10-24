@@ -284,11 +284,11 @@ protected:
 
 	void Fire();
 
-	void Fire_PreStart();
+	void Fire_PreStart(const uint32& FireID);
 
 public:
 
-	DECLARE_MULTICAST_DELEGATE_OneParam(FOnFire_PreStart, ACsProjectileWeaponActorPooled* /*Weapon*/);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFire_PreStart, ACsProjectileWeaponActorPooled* /*Weapon*/, const uint32& /*FireID*/);
 	
 	FOnFire_PreStart OnFire_PreStart_Event;
 
@@ -296,17 +296,19 @@ protected:
 
 	char Fire_Internal(FCsRoutine* R);
 
-	void Fire_PreShot();
+	void Fire_PreShot(const uint32& FireID);
 
 public:
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFire_PreShot, ACsProjectileWeaponActorPooled* /*Weapon*/, const int32& /*CurrentProjectilePerShotIndex*/);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnFire_PreShot, ACsProjectileWeaponActorPooled* /*Weapon*/, const uint32& /*FireID*/, const int32& /*CurrentProjectilePerShotIndex*/);
 
 	FOnFire_PreShot OnFire_PreShot_Event;
 
 protected:
 
 	void Fire_Internal_OnEnd(FCsRoutine* R);
+
+	TSet<uint32> FireIDs;
 
 	TSet<FCsRoutineHandle> FireHandles;
 

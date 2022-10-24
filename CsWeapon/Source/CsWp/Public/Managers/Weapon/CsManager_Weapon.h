@@ -208,6 +208,12 @@ protected:
 
 	FCsSettings_Manager_Weapon Settings;
 
+public:
+
+	FORCEINLINE const FCsSettings_Manager_Weapon& GetSettings() const { return Settings; }
+
+protected:
+
 	/** General Idea: Pool Sharing via Mapping of Types.
 		Describes the mapping of a Weapon type to underlying Weapon type
 		in terms the pool of Weapons.
@@ -906,6 +912,15 @@ protected:
 	void OnPayloadUnloaded(const FName& Payload);
 
 #pragma endregion Data
+
+// Valid
+#pragma region
+protected:
+
+	virtual bool IsValidChecked(const FString& Context, const DataType* Data) const;
+	virtual bool IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+#pragma endregion Valid
 
 // Modifier
 #pragma region

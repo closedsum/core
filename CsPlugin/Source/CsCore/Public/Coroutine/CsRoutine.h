@@ -225,6 +225,7 @@ public:
 	FORCEINLINE void SetValue_Timer(const int32& InIndex, const FCsTime& Value){			RegisterMap.SetValue_Timer(InIndex, Value); }
 	FORCEINLINE void SetValue_DeltaTime(const int32& InIndex, const FCsDeltaTime& Value){	RegisterMap.SetValue_DeltaTime(InIndex, Value); }
 	FORCEINLINE void SetValue_Int(const int32& InIndex, const int32& Value){				RegisterMap.SetValue_Int(InIndex, Value); }
+	FORCEINLINE void SetValue_UnsignedInt(const int32& InIndex, const uint32& Value){		RegisterMap.SetValue_UnsignedInt(InIndex, Value); }
 	FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
 	FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
 	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
@@ -246,6 +247,7 @@ public:
 	FORCEINLINE FCsTime& GetValue_Timer(const int32& InIndex){						return RegisterMap.GetValue_Timer(InIndex); }
 	FORCEINLINE FCsDeltaTime& GetValue_DeltaTime(const int32& InIndex){				return RegisterMap.GetValue_DeltaTime(InIndex); }
 	FORCEINLINE int32& GetValue_Int(const int32& InIndex){							return RegisterMap.GetValue_Int(InIndex); }
+	FORCEINLINE uint32& GetValue_UnsignedInt(const int32& InIndex){					return RegisterMap.GetValue_UnsignedInt(InIndex); }
 	FORCEINLINE float& GetValue_Float(const int32& InIndex){						return RegisterMap.GetValue_Float(InIndex); }
 	FORCEINLINE double& GetValue_Double(const int32& InIndex){						return RegisterMap.GetValue_Double(InIndex); }
 	FORCEINLINE FVector& GetValue_Vector(const int32& InIndex){						return RegisterMap.GetValue_Vector(InIndex); }

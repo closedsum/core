@@ -131,6 +131,7 @@ namespace NCsCoroutine
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Timer);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(DeltaTime);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Int);
+				extern CSCORE_API CS_ADD_TO_ENUM_MAP(UnsignedInt);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Float);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Double);
 				extern CSCORE_API CS_ADD_TO_ENUM_MAP(Vector);
@@ -173,7 +174,14 @@ namespace NCsCoroutine
 				if (ValueType == Type::Int)
 				{
 					int32* V = (int32*)Ptr;
-					*V		 = 0.0f;
+					*V		 = 0;
+				}
+				// UnsignedInt
+				else
+				if (ValueType == Type::UnsignedInt)
+				{
+					uint32* V = (uint32*)Ptr;
+					*V		  = 0;
 				}
 				// Float
 				else
@@ -264,6 +272,12 @@ namespace NCsCoroutine
 				if (ValueType == Type::Int)
 				{
 					SetValue_Internal<int32>(From, To);
+				}
+				// UnsignedInt
+				else
+				if (ValueType == Type::UnsignedInt)
+				{
+					SetValue_Internal<uint32>(From, To);
 				}
 				// Float
 				else
@@ -386,6 +400,18 @@ namespace NCsCoroutine
 			{
 				I = 0;
 				Values[(uint8)EValueType::Int].Add(&I);
+			}
+
+				// UnsignedInts
+			Values.AddDefaulted();
+			UsedValues.AddDefaulted();
+			UnsignedInts.AddDefaulted(CS_ROUTINE_INT_SIZE);
+			UsedValues[(uint8)EValueType::UnsignedInt].AddDefaulted(Ints.Max());
+
+			for (uint32& I : UnsignedInts)
+			{
+				I = 0;
+				Values[(uint8)EValueType::UnsignedInt].Add(&I);
 			}
 
 				// Float

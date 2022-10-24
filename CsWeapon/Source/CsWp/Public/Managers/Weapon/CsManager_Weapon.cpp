@@ -7,7 +7,9 @@
 #include "Managers/Weapon/CsCVars_Manager_Weapon.h"
 // Library
 #include "Modifier/CsLibrary_WeaponModifier.h"
-#include "Data/CsLibrary_Data.h"
+	// Data
+#include "Data/CsLibrary_Data_Weapon.h"
+	// Common
 #include "Game/CsLibrary_GameInstance.h"
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Valid.h"
@@ -865,17 +867,39 @@ DataType* UCsManager_Weapon::GetData(const FName& Name)
 
 	const FString& Context = Str::GetData;
 
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetData(Context, Name);
+
+	IsValid(Context, Data);
+	return Data;
+#else
 	return DataHandler->GetData(Context, Name);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FName& Name)
 {
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetDataChecked(Context, Name);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#else
 	return DataHandler->GetDataChecked(Context, Name);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Weapon::GetSafeData(const FString& Context, const FName& Name)
 {
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetSafeData(Context, Name);
+
+	if (IsValid(Context, Data, nullptr))
+		return Data;
+	return nullptr;
+#else
 	return DataHandler->GetSafeData(Context, Name);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
@@ -884,17 +908,39 @@ DataType* UCsManager_Weapon::GetData(const FECsWeapon& Type)
 
 	const FString& Context = Str::GetData;
 
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetData<EMCsWeapon, FECsWeapon>(Context, Type);
+
+	IsValid(Context, Data);
+	return Data;
+#else
 	return DataHandler->GetData<EMCsWeapon, FECsWeapon>(Context, Type);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Weapon::GetDataChecked(const FString& Context, const FECsWeapon& Type)
 {
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetDataChecked<EMCsWeapon, FECsWeapon>(Context, Type);
+
+	check(IsValidChecked(Context, Data));
+	return Data;
+#else
 	return DataHandler->GetDataChecked<EMCsWeapon, FECsWeapon>(Context, Type);
+#endif // #if WITH_EDITOR
 }
 
 DataType* UCsManager_Weapon::GetSafeData(const FString& Context, const FECsWeapon& Type)
 {
+#if WITH_EDITOR
+	DataType* Data = DataHandler->GetSafeData<EMCsWeapon, FECsWeapon>(Context, Type);
+
+	if (IsValid(Context, Data, nullptr))
+		return Data;
+	return nullptr;
+#else
 	return DataHandler->GetSafeData<EMCsWeapon, FECsWeapon>(Context, Type);
+#endif // #if WITH_EDITOR
 }
 
 #undef DataType
@@ -904,6 +950,32 @@ void UCsManager_Weapon::OnPayloadUnloaded(const FName& Payload)
 }
 
 #pragma endregion Data
+
+// Valid
+#pragma region
+
+#define DataType NCsWeapon::NData::IData
+
+bool UCsManager_Weapon::IsValidChecked(const FString& Context, const DataType* Data) const
+{
+	typedef NCsWeapon::NData::FLibrary DataLibrary;
+
+	check(DataLibrary::IsValidChecked(Context, Data));	
+	return true;
+}
+
+bool UCsManager_Weapon::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/)
+{
+	typedef NCsWeapon::NData::FLibrary DataLibrary;
+
+	if (!DataLibrary::IsValid(Context, Data, Log))
+		return false;
+	return true;
+}
+
+#undef DataType
+
+#pragma endregion Valid
 
 // Modifier
 #pragma region

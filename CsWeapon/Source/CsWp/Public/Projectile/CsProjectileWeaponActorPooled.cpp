@@ -205,6 +205,7 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 	FireCount(0),
 	OnFire_PreStart_Event(),
 	OnFire_PreShot_Event(),
+	FireIDs(),
 	FireHandles(),
 	FireScopedHandle(),
 	// Projectile
@@ -749,8 +750,16 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	#undef COROUTINE
 
-	Fire_PreStart();
-	OnFire_PreStart_Event.Broadcast(this);
+	const FGuid FireGuid = FGuid::NewGuid();
+	uint32 FireID		 = GetTypeHash(FireGuid);
+
+	FireIDs.Add(FireID);
+
+	static const int32 FIRE_ID = 0;
+	Payload->SetValue_UnsignedInt(FIRE_ID, FireID);
+
+	Fire_PreStart(FireID);
+	OnFire_PreStart_Event.Broadcast(this, FireID);
 
 	Payload->SetValue_Flag(CS_FIRST, PrjWeaponData->HasInfiniteAmmo());
 
@@ -876,7 +885,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 		FireHandles.Add(Handle);
 }
 
-void ACsProjectileWeaponActorPooled::Fire_PreStart()
+void ACsProjectileWeaponActorPooled::Fire_PreStart(const uint32& FireID)
 {
 }
 
@@ -885,6 +894,9 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	using namespace NCsProjectileWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Fire_Internal;
+
+	static const int32 FIRE_ID = 0;
+	const uint32& FireID = R->GetValue_UnsignedInt(FIRE_ID);
 
 	// bInfiniteAmmo
 	const bool& bInfiniteAmmo = R->GetValue_Flag(CS_FIRST);
@@ -942,8 +954,8 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 
 			ElapsedTime.Reset();
 
-			Fire_PreShot();
-			OnFire_PreShot_Event.Broadcast(this, CurrentProjectilePerShotIndex);
+			Fire_PreShot(FireID);
+			OnFire_PreShot_Event.Broadcast(this, FireID, CurrentProjectilePerShotIndex);
 
 			if (!bInfiniteAmmo)
 				ConsumeAmmo();
@@ -1031,7 +1043,7 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-void ACsProjectileWeaponActorPooled::Fire_PreShot()
+void ACsProjectileWeaponActorPooled::Fire_PreShot(const uint32& FireID)
 {
 }
 
@@ -1055,6 +1067,11 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 			VariablesLibrary::Deallocate(Context, this, SpreadVariablesResource);
 		}
 		FireHandles.Remove(R->GetHandle());
+
+		static const int32 FIRE_ID = 0;
+		const uint32& FireID = R->GetValue_UnsignedInt(FIRE_ID);
+
+		FireIDs.Remove(FireID);
 	}
 	--FireCount;
 }

@@ -375,7 +375,7 @@ namespace NCsProjectile
 				* @param From
 				* @param To
 				*/
-				static void CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
+				static void CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
 
 				/**
 				*
@@ -385,7 +385,7 @@ namespace NCsProjectile
 				* @param From
 				* @param To
 				*/
-				static void CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+				static void CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
 
 				/**
 				*
@@ -395,7 +395,17 @@ namespace NCsProjectile
 				* @param From
 				* @param To
 				*/
-				static void CreateCopyOfAndAddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+				static void CopyAndEmptyChecked(const FString& Context, const UObject* WorldContext, TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+
+				/**
+				*
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param From
+				* @param To
+				*/
+				static void AddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
 
 			#undef ModifierResourceType
 			#undef ModifierType

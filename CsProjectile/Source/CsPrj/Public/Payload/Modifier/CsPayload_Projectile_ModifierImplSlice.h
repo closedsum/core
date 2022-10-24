@@ -62,6 +62,7 @@ namespace NCsProjectile
 			#pragma endregion ICsGetInterfaceMap
 
 				void CopyFromModifiers(const UObject* WorldContext, const TArray<ModifierType*>& FromModifiers);
+				void CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<ModifierType*>& FromModifiers);
 				void CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedModifierType>& FromModifiers);
 
 				FORCEINLINE void SetModifiers(const TArray<ModifierType*>& InModifiers)

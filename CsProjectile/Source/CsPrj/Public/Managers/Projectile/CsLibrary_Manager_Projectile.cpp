@@ -412,7 +412,7 @@ namespace NCsProjectile
 				ICopy->Copy(Modifier);
 			}
 
-			void FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
+			void FLibrary::CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To)
 			{
 				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
 
@@ -424,7 +424,7 @@ namespace NCsProjectile
 				}
 			}
 
-			void FLibrary::CreateCopyOfChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+			void FLibrary::CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 			{
 				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
 
@@ -441,7 +441,30 @@ namespace NCsProjectile
 				}
 			}
 
-			void FLibrary::CreateCopyOfAndAddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+			void FLibrary::CopyAndEmptyChecked(const FString& Context, const UObject* WorldContext, TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
+			{
+				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
+
+				UObject* ContextRoot = ProjectileManagerLibrary::GetContextRootChecked(Context, WorldContext);
+
+				CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+				To.Reset(FMath::Max(To.Max(), From.Num()));
+
+				const int32 Count = From.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
+				{
+					const ModifierType* Modifier = From[I];
+
+					AllocatedModifierType& Allocated = To.AddDefaulted_GetRef();
+					Allocated.Copy(ContextRoot, Modifier);
+
+					From.RemoveAt(I, 1, false);
+				}
+			}
+
+			void FLibrary::AddChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To)
 			{
 				typedef NCsProjectile::NManager::FLibrary ProjectileManagerLibrary;
 

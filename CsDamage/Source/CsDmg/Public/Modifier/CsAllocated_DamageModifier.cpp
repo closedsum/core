@@ -54,7 +54,7 @@ namespace NCsDamage
 
 			const FString& Context = Str::Copy;
 
-			CS_IS_PTR_NULL_CHECKED(From.GetRoot())
+			CS_EDITOR_IS_PTR_NULL_CHECKED(From.GetRoot())
 
 			checkf(!Container, TEXT("%s: Container is already SET."), *Context);
 
@@ -83,7 +83,7 @@ namespace NCsDamage
 
 			if (Container)
 			{
-				CS_IS_PTR_NULL_CHECKED(GetRoot())
+				CS_EDITOR_IS_PTR_NULL_CHECKED(GetRoot())
 
 				To.Root		  = GetRoot();
 				To.Container  = Container;
@@ -105,7 +105,7 @@ namespace NCsDamage
 
 			if (Container)
 			{
-				CS_IS_PTR_NULL_CHECKED(GetRoot())
+				CS_EDITOR_IS_PTR_NULL_CHECKED(GetRoot())
 
 				typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
 

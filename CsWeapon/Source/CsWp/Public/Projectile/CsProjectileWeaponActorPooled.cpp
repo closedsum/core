@@ -1256,9 +1256,7 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 			static TArray<PrjModifierType*> Modifiers;
 			
 			Outer->GetProjectileModifiers(Modifiers);
-			Slice->CopyFromModifiers(Outer, Modifiers);
-
-			Modifiers.Reset(Modifiers.Max());
+			Slice->CopyAndEmptyFromModifiers(Outer, Modifiers);
 		}
 	}
 	// Projectile Target

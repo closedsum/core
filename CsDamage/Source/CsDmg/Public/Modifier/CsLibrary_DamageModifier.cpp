@@ -106,7 +106,7 @@ namespace NCsDamage
 				const int32 Count = To.Num();
 
 				static TArray<AllocatedModifierType> TempModifiers;
-				TempModifiers.AddDefaulted(Count + CountToAdd);
+				TempModifiers.AddDefaulted(Count);
 
 				for (int32 I = 0; I < Count; ++I)
 				{
@@ -737,7 +737,8 @@ namespace NCsDamage
 				TArray<FloatRangeModifierType*> FloatRangeModifiers;
 				float* Max = nullptr;
 
-				Max = const_cast<float*>(&(Range->GetMaxRange()));
+				Max			= const_cast<float*>(&(Range->GetMaxRange()));
+				float Value = *Max;
 
 				for (const AllocatedModifierType& M : Modifiers)
 				{
@@ -761,9 +762,9 @@ namespace NCsDamage
 					}
 				}
 
-				*Max = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, *Max);
-				*Max = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, *Max);
-				return *Max;
+				Value = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, FloatModifiers, Value);
+				Value = ModifierLibrary::ModifyFloatMaxAndEmptyChecked(Context, FloatRangeModifiers, Value);
+				return Value;
 			}
 		}
 
@@ -781,7 +782,8 @@ namespace NCsDamage
 			TArray<FloatRangeModifierType*, TFixedAllocator<64>> FloatRangeModifiers;
 			float* Max = nullptr;
 
-			Max = const_cast<float*>(&(Range->GetMaxRange()));
+			Max			= const_cast<float*>(&(Range->GetMaxRange()));
+			float Value = *Max;
 
 			for (const AllocatedModifierType& M : Modifiers)
 			{
@@ -805,9 +807,9 @@ namespace NCsDamage
 				}
 			}
 
-			*Max = ModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, *Max);
-			*Max = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, *Max);
-			return *Max;
+			Value = ModifierLibrary::ModifyFloatChecked(Context, FloatModifiers, Value);
+			Value = ModifierLibrary::ModifyFloatMaxChecked(Context, FloatRangeModifiers, Value);
+			return Value;
 		}
 
 		#pragma endregion Range

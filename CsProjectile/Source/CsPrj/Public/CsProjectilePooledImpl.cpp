@@ -909,7 +909,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 		{
 			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
-			PrjModifierLibrary::CreateCopyOfChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
+			PrjModifierLibrary::CopyChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
 		}
 	}
 	// DmgModifierPayloadType (NCsProjectile::NPayload::NModifier::NDamage::IDamage)

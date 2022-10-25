@@ -858,7 +858,10 @@ void ACsProjectileWeaponActorPooled::Fire()
 			{
 				typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
 				
-				Resource					   = VariablesLibrary::Allocate(Context, this);
+				if (!Resource)
+				{
+					Resource = VariablesLibrary::Allocate(Context, this);
+				}
 				SpreadVariablesType* Variables = Resource->Get();
 
 				Variables->SetSizeAndAddDefaulted(ProjectilesPerShot);

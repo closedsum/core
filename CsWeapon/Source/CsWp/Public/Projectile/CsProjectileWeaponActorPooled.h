@@ -161,6 +161,8 @@ public:
 
 	FORCEINLINE DataType* GetData() const { return Data; }
 
+	FORCEINLINE PrjWeaponDataType* GetPrjWeaponData() const { return PrjWeaponData; }
+
 	FORCEINLINE const FECsWeaponState& GetCurrentState() const { return CurrentState; }
 
 #pragma endregion ICsWeapon

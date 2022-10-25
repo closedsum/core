@@ -108,6 +108,23 @@ namespace NCsWeapon
 			static UCsManager_Weapon* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
+			* Get the reference to UCsManager_Weapon from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_Weapon.
+			*/
+			template<typename T>
+			static T* GetChecked(const FString& Context, const UObject* ContextObject)
+			{
+				UCsManager_Weapon* O = GetChecked(Context, ContextObject);
+				T* Other		 = Cast<T>(O);
+
+				checkf(Other, TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+				return Other;
+			}
+
+			/**
 			* Safely get the reference to UCsManager_Weapon from a WorldContext.
 			*
 			* @param Context		The calling context.
@@ -116,6 +133,32 @@ namespace NCsWeapon
 			* return				UCsManager_Weapon.
 			*/
 			static UCsManager_Weapon* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Weapon from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return				UCsManager_Weapon.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning)
+			{
+				UCsManager_Weapon* O = GetSafe(Context, ContextObject, Log);
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
 
 			/**
 			* Safely get the reference to UCsManager_Weapon from a WorldContext.

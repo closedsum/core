@@ -1055,6 +1055,8 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 
 	if (R->GetSafeOwnerAsObject())
 	{
+		OnFire_End_Event.Broadcast(this, R);
+
 		typedef NCsWeapon::NProjectile::NSpread::NVariables::FResource SpreadVariablesResourceType;
 
 		static const int32 SPREAD_VARIABLES_RESOURCE = 0;
@@ -1072,8 +1074,8 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 		const uint32& FireID = R->GetValue_UnsignedInt(FIRE_ID);
 
 		FireIDs.Remove(FireID);
+		--FireCount;
 	}
-	--FireCount;
 }
 
 void ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()

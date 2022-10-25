@@ -308,6 +308,14 @@ protected:
 
 	void Fire_Internal_OnEnd(FCsRoutine* R);
 
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFire_End, ACsProjectileWeaponActorPooled* /*Weapon*/, FCsRoutine* /*R*/);
+
+	FOnFire_End OnFire_End_Event;
+
+protected:
+
 	TSet<uint32> FireIDs;
 
 	TSet<FCsRoutineHandle> FireHandles;

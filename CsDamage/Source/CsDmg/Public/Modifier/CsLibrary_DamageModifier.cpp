@@ -50,6 +50,18 @@ namespace NCsDamage
 			return false;
 		}
 
+		void FLibrary::CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To)
+		{
+			CS_IS_TARRAY_ANY_NULL_CHECKED(From, ModifierType)
+
+			To.Reset(FMath::Max(To.Max(), From.Num()));
+
+			for (ModifierType* Modifier : To)
+			{
+				To.Add(Modifier);
+			}
+		}
+
 		void FLibrary::CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierResourceType*>& To)
 		{
 			To.Reset(FMath::Max(To.Max(), From.Num()));

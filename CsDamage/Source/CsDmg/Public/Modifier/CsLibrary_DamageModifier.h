@@ -61,6 +61,15 @@ namespace NCsDamage
 		* @param From		What to copy.
 		* @param To			What to copy to.
 		*/
+		static void CopyChecked(const FString& Context, const TArray<ModifierType*>& From, TArray<ModifierType*>& To);
+
+		/**
+		* Copy the values from From to To with checks.
+		*
+		* @param Context	The calling context.
+		* @param From		What to copy.
+		* @param To			What to copy to.
+		*/
 		static void CopyChecked(const FString& Context, const TArray<AllocatedModifierType>& From, TArray<ModifierResourceType*>& To);
 
 		/**

@@ -234,6 +234,8 @@ void ACsPointWeaponActorPooled::BeginPlay()
 
 	ConstructCache();
 
+	PointImpl.Outer = this;
+
 	TimeBetweenShotsImpl.Outer = this;
 
 	SoundImpl = ConstructSoundImpl();
@@ -734,6 +736,7 @@ char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 
 			{
 				//ProjectileImpl->Launch(LaunchPayload);
+				Point_Execute(CurrentPointPerShotIndex);
 				SoundImpl->Play();
 				FXImpl->Play();
 			}
@@ -910,6 +913,11 @@ float ACsPointWeaponActorPooled::GetTimeBetweenPointsPerShot() const
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
 	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenPointsPerShot, Value);
+}
+
+void ACsPointWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)
+{
+	checkf(0, TEXT("ACsPointWeaponActorPooled::Point_Execute:: NOT IMPLEMENTED."));
 }
 
 #pragma endregion Point

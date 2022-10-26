@@ -379,7 +379,37 @@ protected:
 
 	float GetTimeBetweenPointsPerShot() const;
 
-#pragma endregion Points
+public:
+
+	struct CSWP_API FPointImpl
+	{
+		friend class ACsPointWeaponActorPooled;
+
+	private:
+
+		ACsPointWeaponActorPooled* Outer;
+
+	public:
+
+		FVector Start;
+
+		FVector Destination;
+
+		FPointImpl() :
+			Outer(nullptr),
+			Start(FVector::ZeroVector),
+			Destination(FVector::ZeroVector)
+		{
+		}
+	};
+
+	FPointImpl PointImpl;
+
+protected:
+
+	virtual void Point_Execute(const int32& CurrentPointPerShotIndex);
+
+#pragma endregion Point
 	
 	// Sound
 #pragma region

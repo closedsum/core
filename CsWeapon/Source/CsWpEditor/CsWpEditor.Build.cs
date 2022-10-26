@@ -8,7 +8,7 @@ public class CsWpEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
-        bUseUnity = System.Environment.ProcessorCount < 64;
+        bUseUnity = false;// System.Environment.ProcessorCount < 64;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {

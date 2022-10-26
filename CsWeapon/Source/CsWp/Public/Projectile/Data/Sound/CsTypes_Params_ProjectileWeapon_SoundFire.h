@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Sound/CsTypes_Sound.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 #include "CsTypes_Params_ProjectileWeapon_SoundFire.generated.h"
-#pragma once
 
 // ProjectileWeaponSoundFireAttach
 #pragma region

@@ -2,12 +2,11 @@
 #pragma once
 
 #include "UObject/Interface.h"
-// Interfaces
 #include "Containers/CsGetInterfaceMap.h"
-// Types
-#include "Point/Data/Visual/CsParams_PointWeapon_VisualFire.h"
+// Params
+#include "Point/Data/Sound/CsParams_PointWeapon_SoundFire.h"
 
-#include "CsData_PointWeapon_VisualFire.generated.h"
+#include "CsData_PointWeapon_SoundFire.generated.h"
 
 namespace NCsWeapon
 {
@@ -15,12 +14,12 @@ namespace NCsWeapon
 	{
 		namespace NData
 		{
-			namespace NVisual
+			namespace NSound
 			{
 				namespace NFire
 				{
 					/**
-					* Interface that describes any visual information associated to the Fire() call 
+					* Interface that describes any sound information associated to the Fire() call
 					* from a Point Weapon.
 					*  Weapon is an object that implements the interface: ICsWeapon.
 					*  Point Weapon is an object that implements the interface: ICsPointWeapon.
@@ -31,20 +30,20 @@ namespace NCsWeapon
 
 						static const FName Name;
 
+					#define FireSoundParamsType NCsWeapon::NPoint::NFire::NSound::FParams
+
 					public:
 
 						virtual ~IFire(){}
-
-					#define FireVisualParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
 
 						/**
 						*
 						*
 						* return
 						*/
-						virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
+						virtual const FireSoundParamsType& GetFireSoundParams() const = 0;
 
-					#undef FireVisualParamsType
+					#undef FireSoundParamsType
 					};
 				}
 			}
@@ -53,18 +52,18 @@ namespace NCsWeapon
 }
 
 UINTERFACE(BlueprintType)
-class CSWP_API UCsData_PointWeapon_VisualFire : public UCsGetInterfaceMap
+class CSWP_API UCsData_PointWeapon_SoundFire : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
 /**
-* Interface that describes any visual information associated to the Fire() call
+* Interface that describes any sound information associated to the Fire() call
 * from a Point Weapon.
 *  Weapon is an object that implements the interface: ICsWeapon.
 *  Point Weapon is an object that implements the interface: ICsPointWeapon.
 */
-class CSWP_API ICsData_PointWeapon_VisualFire : public ICsGetInterfaceMap
+class CSWP_API ICsData_PointWeapon_SoundFire : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 
@@ -72,16 +71,16 @@ public:
 
 	static const FName Name;
 
-public:
+#define FireSoundParamsType NCsWeapon::NPoint::NFire::NSound::FParams
 
-#define FireVisualParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
+public:
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
+	virtual const FireSoundParamsType& GetFireSoundParams() const = 0;
 
-#undef FireVisualParamsType
+#undef FireSoundParamsType
 };

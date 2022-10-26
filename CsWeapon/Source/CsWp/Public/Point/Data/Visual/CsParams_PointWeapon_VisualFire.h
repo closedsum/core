@@ -48,40 +48,37 @@ namespace NCsWeapon
 {
 	namespace NPoint
 	{
-		namespace NData
+		namespace NFire
 		{
 			namespace NVisual
 			{
-				namespace NFire
+				/**
+				* Describes how the Visual Fire FX should be attached to the weapon.
+				*/
+				enum class EAttach : uint8
 				{
-					/**
-					* Describes how the Visual Fire FX should be attached to the weapon.
-					*/
-					enum class EAttach : uint8
-					{
-						None,
-						Owner,
-						Component,
-						Custom,
-						EAttach_MAX
-					};
+					None,
+					Owner,
+					Component,
+					Custom,
+					EAttach_MAX
+				};
 
-					struct CSWP_API EMAttach : public TCsEnumMap<EAttach>
-					{
-						CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMAttach, EAttach)
-					};
+				struct CSWP_API EMAttach : public TCsEnumMap<EAttach>
+				{
+					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMAttach, EAttach)
+				};
 
-					namespace NAttach
+				namespace NAttach
+				{
+					namespace Ref
 					{
-						namespace Ref
-						{
-							typedef EAttach Type;
+						typedef EAttach Type;
 
-							extern CSWP_API const Type None;
-							extern CSWP_API const Type Owner;
-							extern CSWP_API const Type Component;
-							extern CSWP_API const Type EAttach_MAX;
-						}
+						extern CSWP_API const Type None;
+						extern CSWP_API const Type Owner;
+						extern CSWP_API const Type Component;
+						extern CSWP_API const Type EAttach_MAX;
 					}
 				}
 			}
@@ -91,8 +88,8 @@ namespace NCsWeapon
 
 #pragma endregion PointWeaponVisualFireAttach
 
-// NCsWeapon::NPoint::NData::NVisual::NFire::FParams
-CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NPoint, NData, NVisual, NFire, FParams)
+// NCsWeapon::NPoint::NFire::NVisual::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NPoint, NFire, NVisual, FParams)
 
 /**
 * Describes any Visual information related to the Fire action for a Point Weapon.
@@ -124,7 +121,7 @@ public:
 		FX.UpdateInternalPtrs();
 	}
 
-#define ParamsType NCsWeapon::NPoint::NData::NVisual::NFire::FParams
+#define ParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
 	void CopyToParams(ParamsType* Params);
 	void CopyToParamsAsValue(ParamsType* Params) const;
 #undef ParamsType
@@ -137,53 +134,52 @@ namespace NCsWeapon
 {
 	namespace NPoint
 	{
-		namespace NData
+		namespace NFire
 		{
 			namespace NVisual
 			{
-				namespace NFire
+				/**
+				* Describes any Visual information related to the Fire action for a Point Weapon.
+				*  Point Weapon is an object that implements the interface: ICsPointWeapon.
+				*/
+				struct CSWP_API FParams
 				{
-					/**
-					*/
-					struct CSWP_API FParams
+				#define AttachType NCsWeapon::NPoint::NFire::NVisual::EAttach
+
+				private:
+
+					/** Which FX to spawn when the Fire action is executed. */
+					CS_DECLARE_MEMBER_WITH_PROXY(FX, FCsFX)
+					/** How the FX should be attached. */
+					CS_DECLARE_MEMBER_WITH_PROXY(Attach, AttachType)
+
+				public:
+
+					FParams() :
+						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(FX),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Attach, AttachType::None)
 					{
-					#define AttachType NCsWeapon::NPoint::NData::NVisual::NFire::EAttach
+						CS_CTOR_SET_MEMBER_PROXY(FX);
+						CS_CTOR_SET_MEMBER_PROXY(Attach);
+					}
 
-					private:
-
-						/** Which FX to spawn when the Fire action is executed. */
-						CS_DECLARE_MEMBER_WITH_PROXY(FX, FCsFX)
-						/** How the FX should be attached. */
-						CS_DECLARE_MEMBER_WITH_PROXY(Attach, AttachType)
-
-					public:
-
-						FParams() :
-							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(FX),
-							CS_CTOR_INIT_MEMBER_WITH_PROXY(Attach, AttachType::None)
-						{
-							CS_CTOR_SET_MEMBER_PROXY(FX);
-							CS_CTOR_SET_MEMBER_PROXY(Attach);
-						}
-
-					public:
+				public:
 						
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FX, FCsFX)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Attach, AttachType)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FX, FCsFX)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Attach, AttachType)
 
-						FORCEINLINE void SetAttach(const ECsPointWeaponVisualFireAttach& Value) 
-						{
-							Attach	     = (AttachType)Value;
-							Attach_Proxy = &Attach;
-						}
-						FORCEINLINE void SetAttach(ECsPointWeaponVisualFireAttach* Value) { Attach_Proxy = (AttachType*)Value; }
+					FORCEINLINE void SetAttach(const ECsPointWeaponVisualFireAttach& Value) 
+					{
+						Attach	     = (AttachType)Value;
+						Attach_Proxy = &Attach;
+					}
+					FORCEINLINE void SetAttach(ECsPointWeaponVisualFireAttach* Value) { Attach_Proxy = (AttachType*)Value; }
 						
-						bool IsValidChecked(const FString& Context) const;
-						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 
-					#undef AttachType
-					};
-				}
+				#undef AttachType
+				};
 			}
 		}
 	}

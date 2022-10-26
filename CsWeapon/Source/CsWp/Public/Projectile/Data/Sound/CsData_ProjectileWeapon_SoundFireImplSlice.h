@@ -9,9 +9,7 @@
 // Log
 #include "Utility/CsWpLog.h"
 
-
 #include "CsData_ProjectileWeapon_SoundFireImplSlice.generated.h"
-#pragma once
 
 // NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NData, NSound, NFire, FImplSlice)

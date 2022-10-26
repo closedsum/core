@@ -123,5 +123,8 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Implementation")
 	FCsWeaponSettings_TraceWeaponImpl TraceWeaponImpl;
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Implementation")
+	FCsWeaponSettings_PointWeaponImpl PointWeaponImpl;
+
 #pragma endregion Implementation
 };

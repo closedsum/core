@@ -24,3 +24,22 @@ const FCsWeaponSettings_ProjectileWeaponImpl& FCsWeaponSettings_ProjectileWeapon
 }
 
 #pragma endregion FCsWeaponSettings_ProjectileWeaponImpl
+
+// FCsWeaponSettings_PointWeaponImpl
+#pragma region
+
+bool FCsWeaponSettings_PointWeaponImpl::IsValidChecked(const FString& Context) const
+{
+	// Check IdleState is Valid.
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, IdleState);
+	// Check FireState is Valid.
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, FireState);
+	return true;
+}
+
+const FCsWeaponSettings_PointWeaponImpl& FCsWeaponSettings_PointWeaponImpl::Get()
+{
+	return GetMutableDefault<UCsWeaponSettings>()->PointWeaponImpl;
+}
+
+#pragma endregion FCsWeaponSettings_PointWeaponImpl

@@ -7,7 +7,7 @@
 // PointWeaponVisualFireAttach
 #pragma region
 
-namespace NCsProjectileWeaponVisualFireAttach
+namespace NCsPointWeaponVisualFireAttach
 {
 	namespace Ref
 	{
@@ -27,24 +27,21 @@ namespace NCsWeapon
 {
 	namespace NPoint
 	{
-		namespace NData
+		namespace NFire
 		{
 			namespace NVisual
 			{
-				namespace NFire
+				namespace NAttach
 				{
-					namespace NAttach
+					namespace Ref
 					{
-						namespace Ref
-						{
-							typedef EMAttach EnumMapType;
+						typedef EMAttach EnumMapType;
 
-							CSWP_API CS_ADD_TO_ENUM_MAP(None);
-							CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
-							CSWP_API CS_ADD_TO_ENUM_MAP(Component);
-							CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
-							CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EAttach_MAX, "MAX");
-						}
+						CSWP_API CS_ADD_TO_ENUM_MAP(None);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EAttach_MAX, "MAX");
 					}
 				}
 			}
@@ -55,7 +52,7 @@ namespace NCsWeapon
 #pragma endregion PointWeaponVisualFireAttach
 
 
-#define ParamsType NCsWeapon::NPoint::NData::NVisual::NFire::FParams
+#define ParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
 
 void FCsPointWeapon_VisualFire_Params::CopyToParams(ParamsType* Params)
 {
@@ -92,33 +89,30 @@ namespace NCsWeapon
 {
 	namespace NPoint
 	{
-		namespace NData
+		namespace NFire
 		{
 			namespace NVisual
 			{
-				namespace NFire
+				bool FParams::IsValidChecked(const FString& Context) const
 				{
-					bool FParams::IsValidChecked(const FString& Context) const
-					{
-						check(GetFX().IsValidChecked(Context))
+					check(GetFX().IsValidChecked(Context))
 
-						typedef NCsWeapon::NPoint::NData::NVisual::NFire::EMAttach AttachMapType;
+					typedef NCsWeapon::NPoint::NFire::NVisual::EMAttach AttachMapType;
 
-						AttachMapType::Get().IsValidEnumChecked(Context, GetAttach());
-						return true;
-					}
+					AttachMapType::Get().IsValidEnumChecked(Context, GetAttach());
+					return true;
+				}
 
-					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
-					{
-						if (!GetFX().IsValid(Context, Log))
-							return false;
+				bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+				{
+					if (!GetFX().IsValid(Context, Log))
+						return false;
 
-						typedef NCsWeapon::NPoint::NData::NVisual::NFire::EMAttach AttachMapType;
-						typedef NCsWeapon::NPoint::NData::NVisual::NFire::EAttach AttachType;
+					typedef NCsWeapon::NPoint::NFire::NVisual::EMAttach AttachMapType;
+					typedef NCsWeapon::NPoint::NFire::NVisual::EAttach AttachType;
 
-						CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
-						return true;
-					}
+					CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
+					return true;
 				}
 			}
 		}

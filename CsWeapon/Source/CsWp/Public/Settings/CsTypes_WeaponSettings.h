@@ -15,7 +15,7 @@ struct CSWP_API FCsWeaponSettings_WeaponsRowName
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FName Name;
 
 	FCsWeaponSettings_WeaponsRowName() :
@@ -36,10 +36,10 @@ struct CSWP_API FCsWeaponSettings_ProjectileWeaponImpl
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FECsWeaponState IdleState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FECsWeaponState FireState;
 
 	FCsWeaponSettings_ProjectileWeaponImpl() :
@@ -65,10 +65,10 @@ struct CSWP_API FCsWeaponSettings_TraceWeaponImpl_Debug
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FCsDebugDrawTraceShape DrawTrace;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FCsDebugDrawTraceLine DrawLineTrace;
 
 	FCsWeaponSettings_TraceWeaponImpl_Debug() :
@@ -90,13 +90,13 @@ struct CSWP_API FCsWeaponSettings_TraceWeaponImpl
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FECsWeaponState IdleState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FECsWeaponState FireState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
 	FCsWeaponSettings_TraceWeaponImpl_Debug Debug;
 
 	FCsWeaponSettings_TraceWeaponImpl() :
@@ -109,3 +109,32 @@ struct CSWP_API FCsWeaponSettings_TraceWeaponImpl
 };
 
 #pragma endregion FCsWeaponSettings_TraceWeaponImpl
+
+// FCsWeaponSettings_PointWeaponImpl
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponSettings_PointWeaponImpl
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
+	FECsWeaponState IdleState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
+	FECsWeaponState FireState;
+
+	FCsWeaponSettings_PointWeaponImpl() :
+		IdleState(),
+		FireState()
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+
+	static const FCsWeaponSettings_PointWeaponImpl& Get();
+};
+
+#pragma endregion FCsWeaponSettings_PointWeaponImpl

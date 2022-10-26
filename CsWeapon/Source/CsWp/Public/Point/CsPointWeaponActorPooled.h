@@ -401,6 +401,8 @@ public:
 			Destination(FVector::ZeroVector)
 		{
 		}
+
+		FORCEINLINE FVector CalculateDirection() const { return (Destination - Start).GetSafeNormal(); }
 	};
 
 	FPointImpl PointImpl;

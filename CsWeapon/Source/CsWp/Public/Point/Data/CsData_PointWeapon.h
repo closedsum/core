@@ -3,17 +3,14 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Projectile/Params/Shot/Projectile/CsParams_ProjectileWeapon_Shot_Projectile.h"
-#include "Projectile/Params/Spread/CsParams_ProjectileWeapon_Spread.h"
+#include "Point/Params/Shot/Point/CsParams_PointWeapon_Shot_Point.h"
+#include "Point/Params/Spread/CsParams_PointWeapon_Spread.h"
 
-#include "CsData_ProjectileWeapon.generated.h"
-
-// NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
+#include "CsData_PointWeapon.generated.h"
 
 namespace NCsWeapon
 {
-	namespace NProjectile
+	namespace NPoint
 	{
 		namespace NData
 		{
@@ -30,9 +27,8 @@ namespace NCsWeapon
 
 				virtual ~IData(){}
 
-			#define ProjectilesPerShotParamsType NCsWeapon::NProjectile::NShot::NProjectile::FParams
-			#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-			#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
+			#define PointsPerShotParamsType NCsWeapon::NPoint::NShot::NPoint::FParams
+			#define SpreadParamsType NCsWeapon::NPoint::NSpread::FParams
 
 				/**
 				* Get whether to perform a Fire action on input pressed or released.
@@ -81,19 +77,11 @@ namespace NCsWeapon
 				virtual const float& GetTimeBetweenAutoShots() const = 0;
 
 				/**
-				* Get any information related to Projectiles per Shot.
+				* Get any information related to Points per Shot.
 				*
 				* return
 				*/
-				virtual const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
-
-				/**
-				* Get any information related to Launching a Projectile using a Trace.
-				* The trace may determine the Location and/or Direction with which to Launch the Projectile.
-				*
-				* return
-				*/
-				virtual const LaunchParamsType* GetLaunchParams() const = 0;
+				virtual const PointsPerShotParamsType& GetPointsPerShotParams() const = 0;
 
 				/**
 				* Get whether to use Spread Params or not.
@@ -110,8 +98,7 @@ namespace NCsWeapon
 				*/
 				virtual const SpreadParamsType& GetSpreadParams() const = 0;
 
-			#undef ProjectilesPerShotParamsType
-			#undef LaunchParamsType
+			#undef PointsPerShotParamsType
 			#undef SpreadParamsType
 			};
 		}
@@ -119,18 +106,15 @@ namespace NCsWeapon
 }
 
 UINTERFACE(BlueprintType)
-class CSWP_API UCsData_ProjectileWeapon : public UCsGetInterfaceMap
+class CSWP_API UCsData_PointWeapon : public UCsGetInterfaceMap
 {
 	GENERATED_UINTERFACE_BODY()
 };
 
-// NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILaunch)
-
 /**
 *
 */
-class CSWP_API ICsData_ProjectileWeapon : public ICsGetInterfaceMap
+class CSWP_API ICsData_PointWeapon : public ICsGetInterfaceMap
 {
 	GENERATED_IINTERFACE_BODY()
 
@@ -140,9 +124,8 @@ public:
 
 public:
 
-#define ProjectilesPerShotParamsType NCsWeapon::NProjectile::NShot::NProjectile::FParams
-#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-#define SpreadParamsType NCsWeapon::NProjectile::NSpread::FParams
+#define PointsPerShotParamsType NCsWeapon::NPoint::NShot::NPoint::FParams
+#define SpreadParamsType NCsWeapon::NPoint::NSpread::FParams
 
 	/**
 	* Get whether to perform a Fire action on input pressed or released.
@@ -191,19 +174,11 @@ public:
 	virtual const float& GetTimeBetweenAutoShots() const = 0;
 
 	/** 
-	* Get any information related to Projectiles per Shot.
+	* Get any information related to Points per Shot.
 	* 
 	* return
 	*/
-	virtual const ProjectilesPerShotParamsType& GetProjectilesPerShotParams() const = 0;
-
-	/**
-	* Get any information related to Launching a Projectile using a Trace.
-	* The trace may determine the Location and/or Direction with which to Launch the Projectile.
-	*
-	* return
-	*/
-	virtual const LaunchParamsType* GetLaunchParams() const = 0;
+	virtual const PointsPerShotParamsType& GetPointsPerShotParams() const = 0;
 
 	/**
 	* Get whether to use Spread Params or not.
@@ -220,7 +195,6 @@ public:
 	*/
 	virtual const SpreadParamsType& GetSpreadParams() const = 0;
 
-#undef ProjectilesPerShotParamsType
-#undef LaunchParamsType
+#undef PointsPerShotParamsType
 #undef SpreadParamsType
 };

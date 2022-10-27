@@ -17,6 +17,7 @@ public class CsWp : ModuleRules
                     "Engine",
                     "AssetRegistry",
                     "DeveloperSettings",
+                    "PhysicsCore",
                     "CsCore",
                     "CsPrj",
                     "CsBeam"

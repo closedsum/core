@@ -23,18 +23,24 @@ struct CSWP_API FCsPointWeapon_FX_ImpactInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
+	/** Whether to spawn FX or not for the Surface Type associated with Impact Object. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (ScriptName = "m_bFX", InlineEditConditionToggle))
+	bool bFX;
+
+	/** FX to spawn on Impact. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (ScriptName = "m_FX", EditCondition = "bFX"))
 	FCsFX FX;
 
 	/** Whether to Scale the FX by a Damage Range associated with the Point Weapon.
 		 Damage Range is an object that implements the interface: NCsDamage::NRange::IRange.
 		NOTE: Damage Range MUST exist. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (EditCondition = "bFX"))
 	bool bScaleByDamageRange;
 
 public:
 
 	FCsPointWeapon_FX_ImpactInfo() :
+		bFX(true),
 		FX(),
 		bScaleByDamageRange(false)
 	{
@@ -63,24 +69,29 @@ namespace NCsWeapon
 					{
 					private:
 
+						CS_DECLARE_MEMBER_WITH_PROXY(bFX, bool)
 						CS_DECLARE_MEMBER_WITH_PROXY(FX, FCsFX)
 						CS_DECLARE_MEMBER_WITH_PROXY(bScaleByDamageRange, bool)
 
 					public:
 
 						FInfo() :
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(bFX, true),
 							CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(FX),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(bScaleByDamageRange, false)
 						{
+							CS_CTOR_SET_MEMBER_PROXY(bFX);
 							CS_CTOR_SET_MEMBER_PROXY(FX);
 							CS_CTOR_SET_MEMBER_PROXY(bScaleByDamageRange);
 						}
 
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bFX, bool)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FX, FCsFX)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bScaleByDamageRange, bool)
 
 						void Copy(const FInfo& From)
 						{
+							SetbFX(From.GetbFX());
 							SetFX(From.GetFX());
 							SetbScaleByDamageRange(From.GetbScaleByDamageRange());
 						}

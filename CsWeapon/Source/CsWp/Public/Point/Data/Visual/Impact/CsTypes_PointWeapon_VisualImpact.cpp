@@ -11,12 +11,14 @@
 
 void FCsPointWeapon_FX_ImpactInfo::CopyToInfo(InfoType* Info)
 {
+	Info->SetbFX(&bFX);
 	Info->SetFX(&FX);
 	Info->SetbScaleByDamageRange(&bScaleByDamageRange);
 }
 
 void FCsPointWeapon_FX_ImpactInfo::CopyToInfoAsValue(InfoType* Info) const
 {
+	Info->SetbFX(bFX);
 	Info->SetFX(FX);
 	Info->SetbScaleByDamageRange(bScaleByDamageRange);
 }
@@ -25,13 +27,19 @@ void FCsPointWeapon_FX_ImpactInfo::CopyToInfoAsValue(InfoType* Info) const
 
 bool FCsPointWeapon_FX_ImpactInfo::IsValidChecked(const FString& Context) const
 {
-	CS_IS_VALID_CHECKED(FX);
+	if (bFX)
+	{
+		CS_IS_VALID_CHECKED(FX);
+	}
 	return true;
 }
 
 bool FCsPointWeapon_FX_ImpactInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	CS_IS_VALID(FX)
+	if (bFX)
+	{
+		CS_IS_VALID(FX)
+	}
 	return true;
 }
 
@@ -47,13 +55,19 @@ namespace NCsWeapon
 				{
 					bool FInfo::IsValidChecked(const FString& Context) const
 					{
-						CS_IS_VALID_CHECKED(GetFX());
+						if (GetbFX())
+						{
+							CS_IS_VALID_CHECKED(GetFX());
+						}
 						return true;
 					}
 
 					bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						CS_IS_VALID(GetFX())
+						if (GetbFX())
+						{
+							CS_IS_VALID(GetFX())
+						}
 						return true;
 					}
 				}

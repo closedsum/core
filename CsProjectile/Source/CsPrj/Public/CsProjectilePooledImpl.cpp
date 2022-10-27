@@ -1610,7 +1610,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
 	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
-	if (CollisionDataType* CollisionData = PrjDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data))
+	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
 		if (CollisionData->IgnoreHitObjectAfterHit())
 		{

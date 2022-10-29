@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Point/Data/Visual/CsParams_PointWeapon_VisualFire.h"
+#include "Point/Data/Visual/Fire/CsParams_PointWeapon_VisualFire.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"

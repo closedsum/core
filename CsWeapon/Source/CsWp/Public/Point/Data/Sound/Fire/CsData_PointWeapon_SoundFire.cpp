@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Point/Data/Sound/CsData_PointWeapon_SoundFire.h"
+#include "Point/Data/Sound/Fire/CsData_PointWeapon_SoundFire.h"
 #include "CsWp.h"
 
 const FName ICsData_PointWeapon_SoundFire::Name = FName("ICsData_PointWeapon_SoundFire");

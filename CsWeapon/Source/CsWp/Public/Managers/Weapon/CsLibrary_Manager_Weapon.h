@@ -120,7 +120,8 @@ namespace NCsWeapon
 				UCsManager_Weapon* O = GetChecked(Context, ContextObject);
 				T* Other		 = Cast<T>(O);
 
-				checkf(Other, TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+				check(Other);
+				//checkf(Other, TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName()));
 				return Other;
 			}
 
@@ -154,8 +155,10 @@ namespace NCsWeapon
 
 				if (!Other)
 				{
+					/*
 					if (Log)
 						Log(FString::Printf(TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+					*/
 				}
 				return Other;
 			}

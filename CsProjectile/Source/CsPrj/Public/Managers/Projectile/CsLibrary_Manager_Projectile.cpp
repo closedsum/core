@@ -332,6 +332,31 @@ namespace NCsProjectile
 			return nullptr;
 		}
 
+		UObject* FLibrary::GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+		{
+			if (UCsManager_Projectile* Manager_Projectile = GetSafe(Context, WorldContext, Log))
+			{
+				if (DataType* Data = Manager_Projectile->GetSafeData(Context, Type))
+				{
+					if (UObject* O = Data->_getUObject())
+					{
+						return O;
+					}
+					else
+					{
+						typedef NCsProjectile::NData::FLibrary DataLibrary;
+
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Type: %s"), *Context, *DataLibrary::PrintDataAndClass(Data), Type.ToChar()));
+					}
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Data associated with Type: %s"), *Context, Type.ToChar()));
+				}
+			}
+			return nullptr;
+		}
+
 		#undef DataType
 
 		#pragma endregion Data

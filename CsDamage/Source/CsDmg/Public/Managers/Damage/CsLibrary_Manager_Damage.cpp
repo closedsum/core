@@ -358,10 +358,9 @@ namespace NCsDamage
 		#define DataType NCsDamage::NData::IData
 
 		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
+
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType)
 		{
-		#undef GetDamageDataTypeDataType
-
 			CS_IS_PTR_NULL_CHECKED(GetDamageDataType)
 
 			const FECsDamageData& DamageDataType = GetDamageDataType->GetDamageDataType();
@@ -371,11 +370,27 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, DamageDataType.GetFName());
 		}
 
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL_RET_NULL(GetDamageDataType)
+
+			const FECsDamageData& DamageDataType = GetDamageDataType->GetDamageDataType();
+
+			CS_IS_ENUM_STRUCT_VALID_RET_NULL(EMCsDamageData, FECsDamageData, DamageDataType)
+
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				return Manager_Damage->GetSafeData(Context, DamageDataType.GetFName(), Log);
+			}
+			return nullptr;
+		}
+
+		#undef GetDamageDataTypeDataType
+
 		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
+
 		void FLibrary::GetDatasChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas)
 		{
-		#undef GetDamageDataTypeDataTypes
-			
 			CS_IS_PTR_NULL_CHECKED(GetDamageDataTypes)
 
 			const TArray<FECsDamageData>& DamageDataTypes = GetDamageDataTypes->GetDamageDataTypes();
@@ -391,6 +406,30 @@ namespace NCsDamage
 				OutDatas.Add(Data);
 			}
 		}
+
+		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(GetDamageDataTypes)
+
+			const TArray<FECsDamageData>& DamageDataTypes = GetDamageDataTypes->GetDamageDataTypes();
+
+			CS_IS_ENUM_STRUCT_ARRAY_VALID(EMCsDamageData, FECsDamageData, DamageDataTypes)
+
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				for (const FECsDamageData& Type : DamageDataTypes)
+				{
+					if (DataType* Data = Manager_Damage->GetSafeData(Context, Type.GetFName(), Log))
+					{
+						OutDatas.Add(Data);
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		#undef GetDamageDataTypeDataTypes
 
 		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap

@@ -5,7 +5,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Point/Data/Visual/CsParams_PointWeapon_VisualFire.h"
+#include "Point/Data/Visual/Fire/CsParams_PointWeapon_VisualFire.h"
 
 #include "CsData_PointWeapon_VisualFire.generated.h"
 
@@ -38,9 +38,16 @@ namespace NCsWeapon
 					#define FireVisualParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
 
 						/**
-						*
-						*
+						* Get whether to use the Fire Visual Params or not.
+						* 
 						* return
+						*/
+						virtual const bool& UseFireVisualParams() const = 0;
+
+						/**
+						* Get any Visual information related to the Fire action.
+						*
+						* return Fire Visual Params
 						*/
 						virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
 
@@ -77,9 +84,16 @@ public:
 #define FireVisualParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
 
 	/**
-	*
-	*
+	* Get whether to use the Fire Visual Params or not.
+	* 
 	* return
+	*/
+	virtual const bool& UseFireVisualParams() const = 0;
+
+	/**
+	* Get any Visual information related to the Fire action.
+	*
+	* return Fire Visual Params
 	*/
 	virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
 

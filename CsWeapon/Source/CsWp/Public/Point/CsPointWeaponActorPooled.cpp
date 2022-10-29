@@ -36,8 +36,8 @@
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Point/Data/CsData_PointWeapon.h"
-#include "Point/Data/Sound/CsData_PointWeapon_SoundFire.h"
-#include "Point/Data/Visual/CsData_PointWeapon_VisualFire.h"
+#include "Point/Data/Sound/Fire/CsData_PointWeapon_SoundFire.h"
+#include "Point/Data/Visual/Fire/CsData_PointWeapon_VisualFire.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Pooled
@@ -55,8 +55,6 @@
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
-// Params
-#include "Point/Data/Sound/CsParams_PointWeapon_SoundFire.h"
 // Component
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"

@@ -327,6 +327,18 @@ namespace NCsDamage
 			*/
 			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType);
 
+			/**
+			* Safely get the Data, Object that implements the interface: DataType (NCsDamage::NData::IData),
+			* associated with the result of GetDamageDataType->GetDamageDataType (FECsDamageData).
+			*
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param GetDamageDataType
+			* @param Log				(optional)
+			* return					Object which implements the interface: DataType (NCsDamage::NData::IData).
+			*/
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		#undef GetDamageDataTypeDataType
 
 		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
@@ -341,6 +353,19 @@ namespace NCsDamage
 			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
 			*/
 			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas);
+
+			/**
+			* Safely, get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
+			* associated with the result of GetDamageDataTypes->GetDamageDataTypes (TArray<FECsDamageData>).
+			*
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param GetDamageDataTypes
+			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
+			* @param Log				(optional)
+			* return
+			*/
+			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef GetDamageDataTypeDataTypes
 

@@ -340,6 +340,17 @@ namespace NCsProjectile
 			*/
 			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
 
+			/**
+			* Get the Data as a UObject (implements interface: DataType (ICsData_Projectile)) associated with Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type			Weapon type.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (ICsData_Projectile).
+			*/
+			static UObject* GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FECsProjectile& Type, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
 		#undef DataType
 
 		#pragma endregion Data

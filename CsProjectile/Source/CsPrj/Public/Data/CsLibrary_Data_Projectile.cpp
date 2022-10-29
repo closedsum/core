@@ -41,6 +41,8 @@ namespace NCsProjectile
 
 		bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
 		{
+			CS_IS_PTR_NULL_CHECKED(Data)
+
 			// Launch
 			typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
 
@@ -103,6 +105,8 @@ namespace NCsProjectile
 
 		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
 		{
+			CS_IS_PTR_NULL(Data)
+
 			// Launch
 			typedef NCsProjectile::NData::NLaunch::ILaunch LaunchDataType;
 

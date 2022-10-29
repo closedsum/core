@@ -1,7 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Point/Data/Sound/CsTypes_Params_PointWeapon_SoundFire.h"
-
-#include "Point/Data/Sound/CsParams_PointWeapon_SoundFire.h"
+#include "Point/Data/Sound/Fire/CsTypes_PointWeapon_SoundFire.h"
 
 // PointWeaponSoundFireAttach
 #pragma region

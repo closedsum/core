@@ -2,7 +2,7 @@
 #pragma once
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
-#include "Point/Data/Sound/CsTypes_Params_PointWeapon_SoundFire.h"
+#include "Point/Data/Sound/Fire/CsTypes_PointWeapon_SoundFire.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
 // Log

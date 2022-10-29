@@ -4,7 +4,7 @@
 // Log
 #include "Utility/CsWpLog.h"
 
-#include "CsTypes_Params_PointWeapon_SoundFire.generated.h"
+#include "CsTypes_PointWeapon_SoundFire.generated.h"
 
 // PointWeaponSoundFireAttach
 #pragma region

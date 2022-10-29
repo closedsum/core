@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Point/Data/Visual/CsData_PointWeapon_VisualFire.h"
+#include "Point/Data/Visual/Fire/CsData_PointWeapon_VisualFire.h"
 #include "CsWp.h"
 
 const FName NCsWeapon::NPoint::NData::NVisual::NFire::IFire::Name = FName("NCsWeapon::NPoint::NData::NVisual::NFire::IFire");

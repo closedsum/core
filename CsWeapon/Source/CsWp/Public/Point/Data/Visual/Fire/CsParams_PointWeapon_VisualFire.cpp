@@ -58,30 +58,57 @@ void FCsPointWeapon_VisualFire_Params::CopyToParams(ParamsType* Params)
 {
 	Params->SetFX(&FX);
 	Params->SetAttach(&Attach);
+	Params->SetbDestinationAsStart(&bDestinationAsStart);
+	Params->SetbDistanceParameter(&bDistanceParameter);
+	Params->SetDistanceParameter(&DistanceParameter);
+	Params->SetbOrientationParameter(&bOrientationParameter);
+	Params->SetOrientationParameter(&OrientationParameter);
 }
 
 void FCsPointWeapon_VisualFire_Params::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetFX(FX);
 	Params->SetAttach(Attach);
+	Params->SetbDestinationAsStart(bDestinationAsStart);
+	Params->SetbDistanceParameter(bDistanceParameter);
+	Params->SetDistanceParameter(DistanceParameter);
+	Params->SetbOrientationParameter(bOrientationParameter);
+	Params->SetOrientationParameter(OrientationParameter);
 }
 
 #undef ParamsType
 
 bool FCsPointWeapon_VisualFire_Params::IsValidChecked(const FString& Context) const
 {
-	check(FX.IsValidChecked(Context))
+	CS_IS_VALID_CHECKED(FX);
+	CS_IS_ENUM_VALID_CHECKED(EMCsPointWeaponVisualFireAttach, Attach)
 
-	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsPointWeaponVisualFireAttach, Attach)
+	if (bDistanceParameter)
+	{
+		CS_IS_NAME_NONE_CHECKED(DistanceParameter)
+	}
+
+	if (bOrientationParameter)
+	{
+		CS_IS_NAME_NONE_CHECKED(OrientationParameter)
+	}
 	return true;
 }
 
 bool FCsPointWeapon_VisualFire_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	if (!FX.IsValid(Context, Log))
-		return false;
-
+	CS_IS_VALID(FX)
 	CS_IS_ENUM_VALID(EMCsPointWeaponVisualFireAttach, ECsPointWeaponVisualFireAttach, Attach)
+
+	if (bDistanceParameter)
+	{
+		CS_IS_NAME_NONE(DistanceParameter)
+	}
+
+	if (bOrientationParameter)
+	{
+		CS_IS_NAME_NONE(OrientationParameter)
+	}
 	return true;
 }
 
@@ -95,23 +122,42 @@ namespace NCsWeapon
 			{
 				bool FParams::IsValidChecked(const FString& Context) const
 				{
-					check(GetFX().IsValidChecked(Context))
+					CS_IS_VALID_CHECKED(GetFX());
 
 					typedef NCsWeapon::NPoint::NFire::NVisual::EMAttach AttachMapType;
 
-					AttachMapType::Get().IsValidEnumChecked(Context, GetAttach());
+					CS_IS_ENUM_VALID_CHECKED(AttachMapType, GetAttach())
+
+					if (GetbDistanceParameter())
+					{
+						CS_IS_NAME_NONE_CHECKED(GetDistanceParameter())
+					}
+
+					if (GetbOrientationParameter())
+					{
+						CS_IS_NAME_NONE_CHECKED(GetOrientationParameter())
+					}
 					return true;
 				}
 
 				bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 				{
-					if (!GetFX().IsValid(Context, Log))
-						return false;
+					CS_IS_VALID(GetFX())
 
 					typedef NCsWeapon::NPoint::NFire::NVisual::EMAttach AttachMapType;
 					typedef NCsWeapon::NPoint::NFire::NVisual::EAttach AttachType;
 
 					CS_IS_ENUM_VALID(AttachMapType, AttachType, GetAttach())
+
+					if (GetbDistanceParameter())
+					{
+						CS_IS_NAME_NONE(GetDistanceParameter())
+					}
+
+					if (GetbOrientationParameter())
+					{
+						CS_IS_NAME_NONE(GetOrientationParameter())
+					}
 					return true;
 				}
 			}

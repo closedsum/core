@@ -363,6 +363,13 @@ public:
 		void OnElapsedTime();
 
 		char OnElapsedTime_Internal(FCsRoutine* R);
+
+		FORCEINLINE void Clear()
+		{
+			OnElapsedTime_Event.Clear();
+			OnElapsedTimeAsPercent_Event.Clear();
+			OnComplete_Event.Clear();
+		}
 	};
 
 	FTimeBetweenShotsImpl TimeBetweenShotsImpl;
@@ -393,14 +400,21 @@ public:
 
 		FVector Start;
 
+		bool bDestination;
+
 		FVector Destination;
 
 		FPointImpl() :
 			Outer(nullptr),
 			Start(FVector::ZeroVector),
+			bDestination(false),
 			Destination(FVector::ZeroVector)
 		{
 		}
+
+		FORCEINLINE bool HasValidDestination() const { return bDestination; }
+
+		FORCEINLINE float CalculateDistance() const { return (Destination - Start).Size(); }
 
 		FORCEINLINE FVector CalculateDirection() const { return (Destination - Start).GetSafeNormal(); }
 	};
@@ -495,8 +509,6 @@ public:
 		void Play();
 	
 	public:
-
-		void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
 
 	#define FXDataType NCsWeapon::NPoint::NData::NVisual::NFire::IFire
 		void SetPayload(FXPayloadType* Payload, FXDataType* FXData);

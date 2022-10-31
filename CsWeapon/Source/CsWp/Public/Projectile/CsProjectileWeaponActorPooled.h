@@ -395,6 +395,13 @@ public:
 		void OnElapsedTime();
 
 		char OnElapsedTime_Internal(FCsRoutine* R);
+
+		FORCEINLINE void Clear()
+		{
+			OnElapsedTime_Event.Clear();
+			OnElapsedTimeAsPercent_Event.Clear();
+			OnComplete_Event.Clear();
+		}
 	};
 
 	FTimeBetweenShotsImpl TimeBetweenShotsImpl;

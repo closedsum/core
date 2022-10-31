@@ -523,6 +523,13 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 
 	// bOverride_ProjectileImpl_GetLaunchDirection = false;
 
+	OnConsumeAmmo_Event.Clear();
+	OnFire_PreStart_Event.Clear();
+	OnFire_PreShot_Event.Clear();
+	OnFire_End_Event.Clear();
+
+	TimeBetweenShotsImpl.Clear();
+
 	Cache->Deallocate();
 }
 

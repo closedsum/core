@@ -55,6 +55,7 @@
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
+#include "Managers/FX/Params/CsParams_FX.h"
 // Component
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -442,6 +443,13 @@ void ACsPointWeaponActorPooled::Deallocate()
 
 	// bOverride_ProjectileImpl_GetLaunchDirection = false;
 
+	OnConsumeAmmo_Event.Clear();
+	OnFire_PreStart_Event.Clear();
+	OnFire_PreShot_Event.Clear();
+	OnFire_End_Event.Clear();
+
+	TimeBetweenShotsImpl.Clear();
+
 	Cache->Deallocate();
 }
 
@@ -600,6 +608,8 @@ bool ACsPointWeaponActorPooled::CanFire() const
 	const bool Pass_FireOnRelease = !bFire && PointWeaponData->DoFireOnRelease() && bFire_Last;
 	// Check if has ammo to fire.
 	const bool Pass_Ammo = PointWeaponData->HasInfiniteAmmo() || CurrentAmmo > 0;
+	// Check if Destination is Valid.
+	const bool Pass_Destination = PointImpl.HasValidDestination();
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointCanFire))
@@ -615,13 +625,15 @@ bool ACsPointWeaponActorPooled::CanFire() const
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PointWeaponData->DoFireOnRelease()), ToChar(bFire_Last));
 		// Pass_Ammo
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PointWeaponData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
+		// Pass_Destination
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Destination (%s)"));
 
 		// Result
-		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Ammo));
+		UE_LOG(LogCsWp, Warning, TEXT(" Result (%s): %s && (%s || %s) && %s %% %s"), ToChar(Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo), ToChar(Pass_Time), ToChar(Pass_Fire), ToChar(Pass_FireOnRelease), ToChar(Pass_Ammo), ToChar(Pass_Destination));
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	return Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo;
+	return Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo && Pass_Destination;
 }
 
 void ACsPointWeaponActorPooled::Fire()
@@ -935,20 +947,23 @@ void ACsPointWeaponActorPooled::FSoundImpl::Play()
 
 	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
-		typedef NCsWeapon::NPoint::NFire::NSound::FParams ParamsType;
+		if (SoundData->UseFireSoundParams())
+		{
+			typedef NCsWeapon::NPoint::NFire::NSound::FParams ParamsType;
 
-		const ParamsType& Params = SoundData->GetFireSoundParams();
-		const FCsSound& Sound	 = Params.GetSound();
+			const ParamsType& Params = SoundData->GetFireSoundParams();
+			const FCsSound& Sound	 = Params.GetSound();
 
-		typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
-		PayloadImplType Payload;
-		Payload.Instigator = Weapon;
-		Payload.Owner = Weapon->GetMyOwner();
+			PayloadImplType Payload;
+			Payload.Instigator = Weapon;
+			Payload.Owner	   = Weapon->GetMyOwner();
 
-		typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-		// TODO: Make sure Outer is defined
-		SoundManagerLibrary::SpawnChecked(Context, Weapon, &Payload, Sound);
+			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+			// TODO: Make sure Outer is defined
+			SoundManagerLibrary::SpawnChecked(Context, Weapon, &Payload, Sound);
+		}
 	}
 }
 
@@ -974,84 +989,28 @@ void ACsPointWeaponActorPooled::FFXImpl::Play()
 
 	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
-		typedef NCsWeapon::NPoint::NFire::NVisual::FParams ParamsType;
+		if (FXData->UseFireVisualParams())
+		{
+			typedef NCsWeapon::NPoint::NFire::NVisual::FParams ParamsType;
 
-		const ParamsType& Params = FXData->GetFireVisualParams();
-		const FCsFX& FX			 = Params.GetFX();
+			const ParamsType& Params = FXData->GetFireVisualParams();
+			const FCsFX& FX			 = Params.GetFX();
 
-		UNiagaraSystem* FXAsset = FX.GetChecked(Context);
+			UNiagaraSystem* FXAsset = FX.GetChecked(Context);
 
-		// Get Manager
-		typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			// Get Manager
+			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-		UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
-		// Allocate payload
-		typedef NCsFX::NPayload::IPayload PayloadType;
+			UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+			// Allocate payload
+			typedef NCsFX::NPayload::IPayload PayloadType;
 
-		PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
-		// Set appropriate values on payload
-		SetPayload(Payload, FX);
-		SetPayload(Payload, FXData);
+			PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+			// Set appropriate values on payload
+			SetPayload(Payload, FXData);
 
-		Manager_FX->Spawn(FX.Type, Payload);
-	}
-}
-
-#define FXPayloadType NCsFX::NPayload::IPayload
-void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX)
-{
-#undef FXPayloadType
-
-	using namespace NCsPointWeaponActorPooled::NCached::NFXImpl;
-
-	const FString& Context = Str::SetPayload;
-
-	typedef NCsFX::NPayload::FImpl PayloadImplType;
-	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
-
-	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
-
-	PayloadImpl->Instigator					= Outer;
-	PayloadImpl->Owner						= Outer->GetMyOwner();
-	PayloadImpl->FXSystem					= FX.GetChecked(Context);
-	PayloadImpl->DeallocateMethod			= FX.GetDeallocateMethod();
-	PayloadImpl->LifeTime					= FX.LifeTime;
-	PayloadImpl->AttachmentTransformRules	= FX.AttachmentTransformRules;
-	PayloadImpl->Bone						= FX.Bone;
-	PayloadImpl->TransformRules				= FX.TransformRules;
-	PayloadImpl->Transform					= FX.Transform;
-
-	typedef NCsWeapon::NPoint::NData::NVisual::NFire::IFire FXDataType;
-	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-
-	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Outer->GetData());
-
-	typedef NCsWeapon::NPoint::NFire::NVisual::FParams ParamsType;
-	typedef NCsWeapon::NPoint::NFire::NVisual::EAttach AttachType;
-
-	const ParamsType& Params = FXData->GetFireVisualParams();
-	const AttachType& Type   = Params.GetAttach();
-
-	// None
-	if (Type == AttachType::None)
-	{
-	}
-	// Owner
-	else
-	if (Type == AttachType::Owner)
-	{
-		PayloadImpl->Parent = Outer->GetMyOwner();
-	}
-	// Component
-	else
-	if (Type == AttachType::Component)
-	{
-		PayloadImpl->Parent = Component;
-	}
-	// Custom
-	else
-	{
-		checkf(0, TEXT("%s: AttachType::Custom is NOT implemented."));
+			Manager_FX->Spawn(FX.Type, Payload);
+		}
 	}
 }
 
@@ -1070,29 +1029,87 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 	typedef NCsWeapon::NPoint::NFire::NVisual::EAttach AttachType;
 
 	const ParamsType& Params = FXData->GetFireVisualParams();
-	const AttachType& Type   = Params.GetAttach();
+	const FCsFX& FX			 = Params.GetFX();
+	const AttachType& Type	 = Params.GetAttach();
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 	typedef NCsFX::NPayload::FLibrary PayloadLibrary;
 
 	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
+	PayloadImpl->Instigator					= Outer;
+	PayloadImpl->Owner						= Outer->GetMyOwner();
+	PayloadImpl->FXSystem					= FX.GetChecked(Context);
+	PayloadImpl->DeallocateMethod			= FX.GetDeallocateMethod();
+	PayloadImpl->LifeTime					= FX.LifeTime;
+	PayloadImpl->AttachmentTransformRules	= FX.AttachmentTransformRules;
+	PayloadImpl->Bone						= FX.Bone;
+	PayloadImpl->TransformRules				= FX.TransformRules;
+	PayloadImpl->Transform					= FX.Transform;
+
 	// None
 	if (Type == AttachType::None)
 	{
-		// Do Nothing
+		// Spawn Location
+		FVector Location = Params.GetbDestinationAsStart() ? Outer->PointImpl.Destination : Outer->PointImpl.Start;
+
+		FTransform Transform  = PayloadImpl->Transform;
+		FVector Translation   = Transform.GetTranslation();
+		Translation			 += Location;
+
+		Transform.SetTranslation(Translation);
+
+		PayloadImpl->Transform = Transform;
+
+		// Distance
+		if (Params.GetbDistanceParameter())
+		{
+			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
+			typedef NCsFX::NParameter::NFloat::FFloatType FloatParameterType;
+
+			FloatParameterType* FloatParameter = ParameterLibrary::AllocateFloatChecked(Context, Outer);
+
+			FloatParameter->SetName(Params.GetDistanceParameter());
+			FloatParameter->SetValue(Outer->PointImpl.CalculateDistance());
+
+			PayloadImpl->Parameters.Add(FloatParameter);
+		}
+		// Orientation
+		if (Params.GetbOrientationParameter())
+		{
+			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
+			typedef NCsFX::NParameter::NVector::FVectorType VectorParameterType;
+
+			VectorParameterType* VectorParameter = ParameterLibrary::AllocateVectorChecked(Context, Outer);
+
+			VectorParameter->SetName(Params.GetOrientationParameter());
+
+			float DirectionScalar = Params.GetbDestinationAsStart() ? -1.0f : 1.0f;
+
+			VectorParameter->SetValue(DirectionScalar * Outer->PointImpl.CalculateDirection());
+
+			PayloadImpl->Parameters.Add(VectorParameter);
+		}
 	}
 	// Owner
 	else
 	if (Type == AttachType::Owner)
 	{
 		PayloadImpl->Parent = Outer->GetMyOwner();
+
+		// TODO: Distance Parameter
+
+		// TODO: Orientation Parameter
 	}
 	// Component
 	else
 	if (Type == AttachType::Component)
 	{
 		PayloadImpl->Parent = Component;
+
+		// TODO: Distance Parameter
+
+		// TODO: Orientation Parameter
 	}
 	// Custom
 	else

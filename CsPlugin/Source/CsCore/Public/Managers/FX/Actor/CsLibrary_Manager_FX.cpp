@@ -438,29 +438,49 @@ namespace NCsFX
 
 		#pragma endregion Spawn
 
-		// Params
-		#pragma region
-
-		#define ParameterType NCsFX::NParameter::IParameter
-		void FLibrary::DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value)
+		namespace NParameter
 		{
-		#undef ParameterType
+			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
+			FloatParameterType* FLibrary::AllocateFloatChecked(const FString& Context, const UObject* WorldContext)
+			{
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-			CS_IS_PTR_NULL_CHECKED(Value);
+				return FXManagerLibrary::GetChecked(Context, WorldContext)->AllocateValue<FloatParameterType>();
+			}
+			#undef FloatParameterType
+
+			#define VectorParameterType NCsFX::NParameter::NVector::FVectorType
+			VectorParameterType* FLibrary::AllocateVectorChecked(const FString& Context, const UObject* WorldContext)
+			{
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+				return FXManagerLibrary::GetChecked(Context, WorldContext)->AllocateValue<VectorParameterType>();
+			}
+			#undef VectorParameterType
+
+			#define ParameterType NCsFX::NParameter::IParameter
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value)
+			{
+			#undef ParameterType
+
+				CS_IS_PTR_NULL_CHECKED(Value);
 			
-			GetChecked(Context, WorldContext)->DeallocateValue(Value);
-		}
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+				FXManagerLibrary::GetChecked(Context, WorldContext)->DeallocateValue(Value);
+			}
 		
-		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
-		void FLibrary::DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value)
-		{
-		#undef ScaledParameterType
+			#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value)
+			{
+			#undef ScaledParameterType
 
-			CS_IS_PTR_NULL_CHECKED(Value);
+				CS_IS_PTR_NULL_CHECKED(Value);
 			
-			GetChecked(Context, WorldContext)->DeallocateValue(Value);
-		}
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-		#pragma endregion Params
+				FXManagerLibrary::GetChecked(Context, WorldContext)->DeallocateValue(Value);
+			}
+		}
 	}
 }

@@ -20,6 +20,10 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
 // NCsFX::NParameter::NScaled::IScaled
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
+// NCsFX::NParameter::NFloat::FFloatType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NFloat, FFloatType)
+// NCsFX::NParameter::NVector::FVectorType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NVector, FVectorType)
 
 namespace NCsFX
 {
@@ -348,38 +352,66 @@ namespace NCsFX
 			static const FCsFXActorPooled* SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
 
 		#pragma endregion Spawn
-
-		// Params
-		#pragma region
-		public:
-
-		#define ParameterType NCsFX::NParameter::IParameter
-
-			/**
-			* Deallocate parameter Value, ParameterType (NCsFX::NParameter::IParameter).
-			*
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Value
-			*/
-			static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value);
-
-		#undef ParameterType
-
-		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
-
-			/**
-			* Deallocate parameter Value, ScaledParameterType (NCsFX::NParameter::NScaled::IScaled).
-			*
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Value
-			*/
-			static void DeallocateValueChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value);
-
-		#undef ScaledParameterType
-
-		#pragma endregion Params
 		};
+
+		namespace NParameter
+		{
+			struct CSCORE_API FLibrary final
+			{
+			public:
+
+			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
+
+				/**
+				* Allocate a Float parameter
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* return				Float parameter
+				*/
+				static FloatParameterType* AllocateFloatChecked(const FString& Context, const UObject* WorldContext);
+
+			#undef FloatParameterType
+
+			#define VectorParameterType NCsFX::NParameter::NVector::FVectorType
+
+				/**
+				* Allocate a Vector parameter
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* return				Vector parameter
+				*/
+				static VectorParameterType* AllocateVectorChecked(const FString& Context, const UObject* WorldContext);
+
+			#undef VectorParameterType
+
+			#define ParameterType NCsFX::NParameter::IParameter
+
+				/**
+				* Deallocate parameter Value, ParameterType (NCsFX::NParameter::IParameter).
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Value
+				*/
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value);
+
+			#undef ParameterType
+
+			#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+
+				/**
+				* Deallocate parameter Value, ScaledParameterType (NCsFX::NParameter::NScaled::IScaled).
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Value
+				*/
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value);
+
+			#undef ScaledParameterType
+			};
+		}
 	}
 }

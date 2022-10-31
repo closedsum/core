@@ -244,6 +244,14 @@ bool FCsFXParameterInt::IsValid(const FString& Context, void(*Log)(const FString
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
 		return false;
 	}
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Int Parameter Name."), *Context, *NameAsString));
+		return false;
+	}
 	return true;
 }
 
@@ -275,6 +283,14 @@ bool FCsFXParameterFloat::IsValid(const FString& Context, void(*Log)(const FStri
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
 		return false;
 	}
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Float Parameter Name."), *Context, *NameAsString));
+		return false;
+	}
 	return true;
 }
 
@@ -304,6 +320,14 @@ bool FCsFXParameterVector::IsValid(const FString& Context, void(*Log)(const FStr
 	if (Name == NAME_None)
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+		return false;
+	}
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Vector Parameter Name."), *Context, *NameAsString));
 		return false;
 	}
 	return true;
@@ -339,12 +363,24 @@ void FCsFX_Parameter_Scaled_Int::CopyToParamsAsValue(ParameterType* Params) cons
 bool FCsFX_Parameter_Scaled_Int::IsValidChecked(const FString& Context) const
 {
 	CS_IS_NAME_NONE_CHECKED(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Int Parameter Name."), *Context, *NameAsString);
 	return true;
 }
 
 bool FCsFX_Parameter_Scaled_Int::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Int Parameter Name."), *Context, *NameAsString));
+		return false;
+	}
 	return true;
 }
 
@@ -378,12 +414,24 @@ void FCsFX_Parameter_Scaled_Float::CopyToParamsAsValue(ParameterType* Params) co
 bool FCsFX_Parameter_Scaled_Float::IsValidChecked(const FString& Context) const
 {
 	CS_IS_NAME_NONE_CHECKED(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Float Parameter Name."), *Context, *NameAsString);
 	return true;
 }
 
 bool FCsFX_Parameter_Scaled_Float::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Float Parameter Name."), *Context, *NameAsString));
+		return false;
+	}
 	return true;
 }
 
@@ -417,12 +465,24 @@ void FCsFX_Parameter_Scaled_Vector::CopyToParamsAsValue(ParameterType* Params) c
 bool FCsFX_Parameter_Scaled_Vector::IsValidChecked(const FString& Context) const
 {
 	CS_IS_NAME_NONE_CHECKED(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Vector Parameter Name."), *Context, *NameAsString);
 	return true;
 }
 
 bool FCsFX_Parameter_Scaled_Vector::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Vector Parameter Name."), *Context, *NameAsString));
+		return false;
+	}
 	return true;
 }
 

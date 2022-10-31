@@ -127,6 +127,10 @@ namespace NCsFX
 				{
 					// Check Name is Valid
 					checkf(GetName() != NAME_None, TEXT("%s: GetName(): None is NOT Valid."), *Context);
+
+					const FString NameAsString = GetName().ToString();
+
+					checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Parameter Name."), *Context, *NameAsString);
 					// Check ValueType is Valid
 					checkf(ValueType == EValue::Int, TEXT("%s: ValueType: %s is NOT Int."), *Context, EMValue::Get().ToChar(ValueType));
 					return true;

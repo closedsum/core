@@ -103,19 +103,19 @@ namespace NCsFX
 			Transform = FTransform::Identity;
 			bApplyTransformScale = true;
 
-			typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
 			typedef NCsFX::NParameter::IParameter ParameterType;
 			typedef NCsFX::NParameter::NScaled::IScaled ScaledParameterType;
 
 			for (ParameterType* Param : Parameters)
 			{
-				FXManagerLibrary::DeallocateValueChecked(Context, Root, Param);
+				ParameterLibrary::DeallocateChecked(Context, Root, Param);
 			}
 			Parameters.Reset(Parameters.Max());
 
 			for (ScaledParameterType* Param : ScaledParameters)
 			{
-				FXManagerLibrary::DeallocateValueChecked(Context, Root, Param);
+				ParameterLibrary::DeallocateChecked(Context, Root, Param);
 			}
 			ScaledParameters.Reset(ScaledParameters.Max());
 		}

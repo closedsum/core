@@ -292,60 +292,38 @@ namespace NCsWeapon
 
 void FCsPointWeapon_SpreadParams::CopyToParams(ParamsType* Params)
 {
-	Params->SetbShape(&bShape);
 	ShapeParams.CopyToParams(Params->GetShapeParamsPtr());
-	Params->SetbYaw(&bYaw);
-	YawParams.CopyToParams(Params->GetYawParamsPtr());
-	Params->SetbPitch(&bPitch);
-	PitchParams.CopyToParams(Params->GetPitchParamsPtr());
+	Params->SetbAngle(&bAngle);
+	AngleParams.CopyToParams(Params->GetAngleParamsPtr());
 }
 
 void FCsPointWeapon_SpreadParams::CopyToParamsAsValue(ParamsType* Params) const
 {
-	Params->SetbShape(bShape);
 	ShapeParams.CopyToParamsAsValue(Params->GetShapeParamsPtr());
-	Params->SetbYaw(bYaw);
-	YawParams.CopyToParamsAsValue(Params->GetYawParamsPtr());
-	Params->SetbPitch(bPitch);
-	PitchParams.CopyToParamsAsValue(Params->GetPitchParamsPtr());
+	Params->SetbAngle(bAngle);
+	AngleParams.CopyToParamsAsValue(Params->GetAngleParamsPtr());
 }
 
 #undef ParamsType
 
 bool FCsPointWeapon_SpreadParams::IsValidChecked(const FString& Context) const
 {
-	if (bShape)
-	{
-		CS_IS_VALID_CHECKED(ShapeParams);
-	}
+	CS_IS_VALID_CHECKED(ShapeParams);
 
-	if (bYaw)
+	if (bAngle)
 	{
-		CS_IS_VALID_CHECKED(YawParams);
-	}
-
-	if (bPitch)
-	{
-		CS_IS_VALID_CHECKED(PitchParams);
+		CS_IS_VALID_CHECKED(AngleParams);
 	}
 	return true;
 }
 
 bool FCsPointWeapon_SpreadParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	if (bShape)
-	{
-		CS_IS_VALID(ShapeParams);
-	}
+	CS_IS_VALID(ShapeParams);
 
-	if (bYaw)
+	if (bAngle)
 	{
-		CS_IS_VALID(YawParams)
-	}
-
-	if (bPitch)
-	{
-		CS_IS_VALID(PitchParams)
+		CS_IS_VALID(AngleParams)
 	}
 	return true;
 }
@@ -358,47 +336,22 @@ namespace NCsWeapon
 		{
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
-				if (GetbShape())
+				CS_IS_VALID_CHECKED(GetShapeParams());
+
+				if (GetbAngle())
 				{
-					CS_IS_VALID_CHECKED(ShapeParams);
+					CS_IS_VALID_CHECKED(GetAngleParams());
 				}
-
-				if (GetbYaw())
-				{
-					CS_IS_VALID_CHECKED(YawParams);
-				}
-
-				if (GetbPitch())
-				{
-					CS_IS_VALID_CHECKED(PitchParams);
-				}
-
-				checkf(GetbShape() || GetbYaw() || GetbPitch(), TEXT("%s: GetbShape() or GetbYaw() or GetbPitch() must be true."), *Context);
-
 				return true;
 			}
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 			{
-				if (GetbShape())
-				{
-					CS_IS_VALID(ShapeParams)
-				}
+				CS_IS_VALID(GetShapeParams())
 
-				if (GetbYaw())
+				if (GetbAngle())
 				{
-					CS_IS_VALID(YawParams)
-				}
-
-				if (GetbPitch())
-				{
-					CS_IS_VALID(PitchParams)
-				}
-
-				if (GetbShape() || (!GetbYaw() && !GetbPitch()))
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetbShape() or GetbYaw() or GetbPitch() must be true."), *Context));
-					return false;
+					CS_IS_VALID(GetAngleParams())
 				}
 				return true;
 			}

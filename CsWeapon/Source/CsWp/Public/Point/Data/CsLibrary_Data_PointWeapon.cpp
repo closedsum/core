@@ -28,11 +28,8 @@ namespace NCsWeapon
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Data->GetTimeBetweenShots(), 0.0f)
 				// Check ProjectilePerShot
 				CS_IS_VALID_CHECKED(Data->GetPointsPerShotParams());
-				// Check Spread
-				if (Data->UseSpreadParams())
-				{
-					CS_IS_VALID_CHECKED(Data->GetSpreadParams());
-				}
+				// Check Start
+				CS_IS_VALID_CHECKED(Data->GetStartParams());
 				return true;
 			}
 
@@ -49,11 +46,8 @@ namespace NCsWeapon
 				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Data->GetTimeBetweenShots(), 0.0f)
 				// Check ProjectilePerShot
 				CS_IS_VALID(Data->GetPointsPerShotParams())
-				// Check Spread
-				if (Data->UseSpreadParams())
-				{
-					CS_IS_VALID(Data->GetSpreadParams())
-				}
+				// Check Start
+				CS_IS_VALID(Data->GetStartParams())
 				return true;
 			}
 

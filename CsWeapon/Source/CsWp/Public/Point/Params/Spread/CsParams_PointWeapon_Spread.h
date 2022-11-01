@@ -324,37 +324,22 @@ struct CSWP_API FCsPointWeapon_SpreadParams
 
 public:
 
-	/** Whether to use Shape Params or not. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (InlineEditConditionToggle))
-	bool bShape;
-
 	/** Describes any information related to Spread Shape. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (editcondition = "bShape"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point")
 	FCsPointWeapon_Spread_ShapeParams ShapeParams;
 
-	/** Whether to use Yaw Params or not. */
+	/** Whether to use Angle Params or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (InlineEditConditionToggle))
-	bool bYaw;
+	bool bAngle;
 
-	/** Describes any information related to spread along the Yaw. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (editcondition = "bYaw"))
-	FCsPointWeapon_Spread_AngleParams YawParams;
-
-	/** Whether to use Pitch Params or not. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (InlineEditConditionToggle))
-	bool bPitch;
-
-	/** Describes any information related to spread along the Pitch */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (editcondition = "bPitch"))
-	FCsPointWeapon_Spread_AngleParams PitchParams;
+	/** Describes any Angle information related to spread */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (editcondition = "bAngle"))
+	FCsPointWeapon_Spread_AngleParams AngleParams;
 
 	FCsPointWeapon_SpreadParams() :
-		bShape(false),
 		ShapeParams(),
-		bYaw(true),
-		YawParams(),
-		bPitch(false),
-		PitchParams()
+		bAngle(false),
+		AngleParams()
 	{
 	}
 
@@ -385,43 +370,28 @@ namespace NCsWeapon
 
 			private:
 
-				/** Whether to use Shape Params or not. */
-				CS_DECLARE_MEMBER_WITH_PROXY(bShape, bool)
 				/** Describes any information related to Spread Shape. */
 				ShapeParamsType ShapeParams;
-				/** Whether to use Yaw Params or not. */
-				CS_DECLARE_MEMBER_WITH_PROXY(bYaw, bool)
-				/** Describes any information related to spread along the Yaw. */
-				AngleParamsType YawParams;
-				/** Whether to use Pitch Params or not. */
-				CS_DECLARE_MEMBER_WITH_PROXY(bPitch, bool)
-				/** Describes any information related to spread along the Pitch */
-				AngleParamsType PitchParams;
+				/** Whether to use Angle Params or not. */
+				CS_DECLARE_MEMBER_WITH_PROXY(bAngle, bool)
+				/** Describes any Angle information related to spread */
+				AngleParamsType AngleParams;
 
 			public:
 
 				FParams() :
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bShape, false),
 					ShapeParams(),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bYaw, true),
-					YawParams(),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bPitch, false),
-					PitchParams()
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bAngle, false),
+					AngleParams()
 				{
-					CS_CTOR_SET_MEMBER_PROXY(bShape);
-					CS_CTOR_SET_MEMBER_PROXY(bYaw);
-					CS_CTOR_SET_MEMBER_PROXY(bPitch);
+					CS_CTOR_SET_MEMBER_PROXY(bAngle);
 				}
 
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bShape, bool)
 				FORCEINLINE const ShapeParamsType& GetShapeParams() const { return ShapeParams; }
 				FORCEINLINE ShapeParamsType* GetShapeParamsPtr() { return &ShapeParams; }
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bYaw, bool)
-				FORCEINLINE const AngleParamsType& GetYawParams() const { return YawParams; }
-				FORCEINLINE AngleParamsType* GetYawParamsPtr() { return &YawParams; }
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bPitch, bool)
-				FORCEINLINE const AngleParamsType& GetPitchParams() const { return PitchParams; }
-				FORCEINLINE AngleParamsType* GetPitchParamsPtr() { return &PitchParams; }
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bAngle, bool)
+				FORCEINLINE const AngleParamsType& GetAngleParams() const { return AngleParams; }
+				FORCEINLINE AngleParamsType* GetAngleParamsPtr() { return &AngleParams; }
 
 				bool IsValidChecked(const FString& Context) const;
 				bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

@@ -4,6 +4,7 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Point/Params/Shot/Point/CsParams_PointWeapon_Shot_Point.h"
+#include "Point/Params/Start/CsParams_PointWeapon_Start.h"
 #include "Point/Params/Spread/CsParams_PointWeapon_Spread.h"
 
 #include "CsData_PointWeapon.generated.h"
@@ -28,7 +29,7 @@ namespace NCsWeapon
 				virtual ~IData(){}
 
 			#define PointsPerShotParamsType NCsWeapon::NPoint::NShot::NPoint::FParams
-			#define SpreadParamsType NCsWeapon::NPoint::NSpread::FParams
+			#define StartParamsType NCsWeapon::NPoint::NStart::FParams
 
 				/**
 				* Get whether to perform a Fire action on input pressed or released.
@@ -82,24 +83,16 @@ namespace NCsWeapon
 				* return
 				*/
 				virtual const PointsPerShotParamsType& GetPointsPerShotParams() const = 0;
-
+				
 				/**
-				* Get whether to use Spread Params or not.
-				*
+				* Get any information related to the Start location.
+				* 
 				* return
 				*/
-				virtual const bool& UseSpreadParams() const = 0;
-
-				/**
-				* Get any information related to Spread Shape.
-				*  NOTE: UseSpreadParams() must be TRUE for this to be used.
-				*
-				* return
-				*/
-				virtual const SpreadParamsType& GetSpreadParams() const = 0;
+				virtual const StartParamsType& GetStartParams() const = 0;
 
 			#undef PointsPerShotParamsType
-			#undef SpreadParamsType
+			#undef StartParamsType
 			};
 		}
 	}
@@ -125,7 +118,7 @@ public:
 public:
 
 #define PointsPerShotParamsType NCsWeapon::NPoint::NShot::NPoint::FParams
-#define SpreadParamsType NCsWeapon::NPoint::NSpread::FParams
+#define StartParamsType NCsWeapon::NPoint::NStart::FParams
 
 	/**
 	* Get whether to perform a Fire action on input pressed or released.
@@ -181,20 +174,12 @@ public:
 	virtual const PointsPerShotParamsType& GetPointsPerShotParams() const = 0;
 
 	/**
-	* Get whether to use Spread Params or not.
-	* 
+	* Get any information related to the Start location.
+	*
 	* return
 	*/
-	virtual const bool& UseSpreadParams() const = 0;
-
-	/**
-	* Get any information related to Spread Shape.
-	*  NOTE: UseSpreadParams() must be TRUE for this to be used.
-	* 
-	* return
-	*/
-	virtual const SpreadParamsType& GetSpreadParams() const = 0;
+	virtual const StartParamsType& GetStartParams() const = 0;
 
 #undef PointsPerShotParamsType
-#undef SpreadParamsType
+#undef StartParamsType
 };

@@ -2,6 +2,9 @@
 #include "Managers/Sound/CsTypes_Library_Sound.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 namespace NCsSound
 {
 	namespace NSpawn
@@ -11,28 +14,22 @@ namespace NCsSound
 			bool FParams::IsValidChecked(const FString& Context) const
 			{
 				// Check Sound is Valid.
-				check(Sound.IsValidChecked(Context));
+				CS_IS_VALID_CHECKED(Sound);
 				// Check Frequency Params are Valid.
-				check(FrequencyParams.IsValidChecked(Context));
+				CS_IS_VALID_CHECKED(FrequencyParams);
 				// Check Group is Valid.
-				check(EMCsUpdateGroup::Get().IsValidEnumChecked(Context, Group));
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
 				return true;
 			}
 
 			bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 			{
 				// Check Sound is Valid.
-				if (!Sound.IsValid(Context, Log))
-					return false;
+				CS_IS_VALID(Sound)
 				// Check Frequency Params are Valid.
-				if (!FrequencyParams.IsValid(Context))
-					return false;
+				CS_IS_VALID(FrequencyParams)
 				// Check Group is Valid.
-				if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar()));
-					return false;
-				}
+				CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 				return true;
 			}
 
@@ -40,7 +37,6 @@ namespace NCsSound
 
 			void FParams::Update()
 			{
-				Sound.UpdateInternalPtrs();
 				FrequencyParams.Update();
 			}
 
@@ -61,7 +57,6 @@ void FCsSound_Spawn_Params::CopyToParams(ParamsType* Params) const
 #undef ParamsType
 
 	Params->Sound = Sound;
-	Params->Sound.UpdateInternalPtrs();
 	Params->Object = Object;
 	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
 	Params->Group = Group;
@@ -70,14 +65,11 @@ void FCsSound_Spawn_Params::CopyToParams(ParamsType* Params) const
 bool FCsSound_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	// Check Sound is Valid
-	if (!Sound.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(Sound)
 	// Check FrequencyParams is Valid
-	if (!FrequencyParams.IsValid(Context))
-		return false;
+	CS_IS_VALID(FrequencyParams)
 	// Check Group is Valid
-	if (!EMCsUpdateGroup::Get().IsValidEnum(Group))
-		return false;
+	CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
 	return true;
 }
 

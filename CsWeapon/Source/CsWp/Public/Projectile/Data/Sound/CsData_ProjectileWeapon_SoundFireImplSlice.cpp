@@ -36,8 +36,6 @@ SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSliceAsValue(cons
 
 SliceType* FCsData_ProjectileWeapon_SoundFireImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	const_cast<FCsData_ProjectileWeapon_SoundFireImplSlice*>(this)->UpdateInternalPtrs();
-
 	if (!IsValid(Context, Log))
 		return nullptr;
 
@@ -137,7 +135,6 @@ namespace NCsWeapon
 
 						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::SoundFireSlice, nullptr))
 						{
-							SliceAsStruct->UpdateInternalPtrs();
 							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
 						}
@@ -150,7 +147,6 @@ namespace NCsWeapon
 
 							if (VisualSoundParamsPtr)
 							{
-								VisualSoundParamsPtr->UpdateInternalPtrs();
 								VisualSoundParamsPtr->CopyToParams(Slice->GetFireSoundParamsPtr());
 								Success = true;
 							}

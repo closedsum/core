@@ -423,12 +423,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	ECsSoundDeallocateMethod DeallocateMethod;
 
-private:
-
-	DeallocateMethodType* DeallocateMethod_Internal;
-
-public:
-
 	/** Valid if the DeallocateMethod == ECsSoundDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
 		   LifeTime == 0.0f means the Sound object will be deallocated immediately
@@ -441,6 +435,11 @@ public:
 	        the Sound object has been allocated. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
+
+	/** The amount to scale the Sound's duration. 
+		Only Valid if DeallocateMethod == ECsSoundDeallocateMethod::Complete. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (ClampMin = "1.0", UIMin = "1.0"))
+	float DurationMultiplier;
 
 	/** Valid if the Sound is attached to a Parent object or when an Sound object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
@@ -475,24 +474,16 @@ public:
 		Attenuation_LoadFlags(0),
 		Attenuation_Internal(nullptr),
 		DeallocateMethod(ECsSoundDeallocateMethod::Complete),
-		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
+		DurationMultiplier(1.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity)
 	{
-		DeallocateMethod_Internal = (DeallocateMethodType*)(&DeallocateMethod);
 	}
 	
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		UpdateDeallocateMethodPtr();
-	}
-
-	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (DeallocateMethodType*)&DeallocateMethod; }
-
-	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *DeallocateMethod_Internal; }
+	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((DeallocateMethodType*)(&DeallocateMethod)); }
 
 	/**
 	* Get the Hard reference to the Sound Asset.

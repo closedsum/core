@@ -92,7 +92,7 @@ namespace NCsSound
 			{
 				if (DeallocateMethod == EDeallocateMethod::Complete)
 				{
-					LifeTime = Sound->GetDuration();
+					LifeTime = SoundPayload->GetDurationMultiplier() * Sound->GetDuration();
 				}
 			}
 		}

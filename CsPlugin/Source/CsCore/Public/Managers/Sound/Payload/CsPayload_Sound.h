@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Types/CsTypes_AttachDetach.h"
-#pragma once
 
 class USoundBase;
 class USoundAttenuation;
@@ -105,6 +105,14 @@ namespace NCsSound
 			* return Life Time
 			*/
 			virtual const float& GetLifeTime() const = 0;
+
+			/**
+			* The amount to scale the Sound's duration. 
+			* Only Valid if DeallocateMethod == EDeallocateMethod::Complete.
+			* 
+			* return Multiplier
+			*/
+			virtual const float& GetDurationMultiplier() const = 0;
 
 			/**
 			* Relevant if the Sound is attached to a Parent object or when a Sound object is

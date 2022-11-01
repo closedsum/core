@@ -362,7 +362,8 @@ struct CSCORE_API FCsCollisionPreset
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-	uint32 GetBlockMask() const { return NCsCollisionResponseContainer::GetBlockMask(CollisionResponses); }
+	FORCEINLINE uint32 GetObjectMask() const { return (1 << (uint8)ObjectType); }
+	FORCEINLINE uint32 GetBlockMask() const { return NCsCollisionResponseContainer::GetBlockMask(CollisionResponses); }
 };
 
 #pragma endregion FCsCollisionPreset

@@ -56,6 +56,8 @@ namespace NCsSound
 
 			float LifeTime;
 	
+			float DurationMultiplier;
+
 			ECsAttachmentTransformRules AttachmentTransformRules;
 
 			FName Bone;
@@ -114,6 +116,7 @@ namespace NCsSound
 			FORCEINLINE USoundAttenuation* GetSoundAttenuation() const { return SoundAttenuation; }
 			FORCEINLINE const EDeallocateMethod& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
+			FORCEINLINE const float& GetDurationMultiplier() const { return DurationMultiplier; }
 			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }

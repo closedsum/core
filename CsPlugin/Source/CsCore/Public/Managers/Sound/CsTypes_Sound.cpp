@@ -2,6 +2,8 @@
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 
@@ -186,8 +188,10 @@ bool FCsSound::IsValidChecked(const FString& Context) const
 	// Check Sound is Valid.
 	check(GetChecked(Context));
 	// Check Type is Valid
-	check(EMCsSound::Get().IsValidEnumChecked(Context, Type));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSound, Type)
 	
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(DurationMultiplier, 1.0f)
+
 	if (!Transform.Equals(FTransform::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
@@ -235,8 +239,8 @@ void FCsSound::Reset()
 	Attenuation_LoadFlags = 0;
 	Attenuation_Internal = nullptr;
 	DeallocateMethod = ECsSoundDeallocateMethod::Complete;
-	DeallocateMethod_Internal = (NCsSound::EDeallocateMethod*)&DeallocateMethod;
 	LifeTime = 0.0f;
+	DurationMultiplier = 1.0f;
 	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;
 	TransformRules = 7; // NCsTransformRules::All

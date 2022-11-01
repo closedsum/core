@@ -417,6 +417,7 @@ public:
 		FORCEINLINE float CalculateDistance() const { return (Destination - Start).Size(); }
 
 		FORCEINLINE FVector CalculateDirection() const { return (Destination - Start).GetSafeNormal(); }
+		FORCEINLINE FVector CalculateInverseDirection() const { return -1.0f * CalculateDirection(); }
 	};
 
 	FPointImpl PointImpl;

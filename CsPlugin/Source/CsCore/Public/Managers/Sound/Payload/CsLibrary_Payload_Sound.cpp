@@ -130,7 +130,7 @@ namespace NCsSound
 
 			CS_IS_PTR_NULL_CHECKED(PooledPayload)
 
-			check(Sound.IsValidChecked(Context));
+			CS_IS_VALID_CHECKED(Sound);
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
 			Payload->Instigator						= PooledPayload->GetInstigator();
@@ -144,6 +144,7 @@ namespace NCsSound
 			Payload->SoundAttenuation		  = Sound.GetAttenuation();
 			Payload->DeallocateMethod		  = Sound.GetDeallocateMethod();
 			Payload->LifeTime				  = Sound.LifeTime;
+			Payload->DurationMultiplier		  = Sound.DurationMultiplier;
 			Payload->AttachmentTransformRules = Sound.AttachmentTransformRules;
 			Payload->Bone					  = Sound.Bone;
 			Payload->TransformRules			  = Sound.TransformRules;
@@ -159,8 +160,7 @@ namespace NCsSound
 
 			CS_IS_PTR_NULL_EXIT(PooledPayload)
 
-			if (!Sound.IsValid(Context, Log))
-				return;
+			CS_IS_VALID_EXIT(Sound)
 
 			SetChecked(Context, Payload, PooledPayload, Sound, Transform);
 		}
@@ -178,12 +178,13 @@ namespace NCsSound
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
-			check(Sound.IsValidChecked(Context));
+			CS_IS_VALID_CHECKED(Sound);
 
 			Payload->Sound					  = Sound.GetChecked(Context);
 			Payload->SoundAttenuation		  = Sound.GetAttenuation();
 			Payload->DeallocateMethod		  = Sound.GetDeallocateMethod();
 			Payload->LifeTime				  = Sound.LifeTime;
+			Payload->DurationMultiplier		  = Sound.DurationMultiplier;
 			Payload->AttachmentTransformRules = Sound.AttachmentTransformRules;
 			Payload->Bone					  = Sound.Bone;
 			Payload->TransformRules			  = Sound.TransformRules;
@@ -194,8 +195,7 @@ namespace NCsSound
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
 
-			if (!Sound.IsValid(Context, Log))
-				return;
+			CS_IS_VALID_EXIT(Sound)
 
 			SetChecked(Context, Payload, Sound);
 		}

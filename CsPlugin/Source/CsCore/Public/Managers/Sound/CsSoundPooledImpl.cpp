@@ -8,6 +8,7 @@
 #include "Types/CsTypes_Math.h"
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+#include "Library/CsLibrary_Valid.h"
 // Sound
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
@@ -29,6 +30,7 @@ namespace NCsSoundPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Stop);
 		}
 	}
 }
@@ -202,13 +204,15 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 
 	using namespace NCsSoundPooledImpl::NCached;
 
-	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Play: AudioComponent is NULL."));
+	const FString& Context = Str::Play;
+
+	CS_IS_PTR_NULL_CHECKED(AudioComponent)
 	
 	// TODO: Add IsValidChecked in PayloadLibrary
 
 	USoundBase* Sound = Payload->GetSound();
 
-	checkf(Sound, TEXT("ACsSoundPooledImpl::Play: Sound is NULL."));
+	CS_IS_PTR_NULL_CHECKED(Sound)
 
 	SetActorTickEnabled(true);
 
@@ -247,7 +251,11 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 
 void ACsSoundPooledImpl::Stop()
 {
-	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Stop: AudioComponent is NULL."));
+	using namespace NCsSoundPooledImpl::NCached;
+
+	const FString& Context = Str::Stop;
+
+	CS_IS_PTR_NULL_CHECKED(AudioComponent)
 
 	if (AudioComponent->bAllowSpatialization)
 		Handle_ClearAttachAndTransform();

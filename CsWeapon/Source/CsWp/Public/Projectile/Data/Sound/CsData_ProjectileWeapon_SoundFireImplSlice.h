@@ -34,11 +34,6 @@ public:
 	{
 	}
 
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		Params.UpdateInternalPtrs();
-	}
-
 #define SliceType NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice
 
 	SliceType* AddSafeSlice(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning);

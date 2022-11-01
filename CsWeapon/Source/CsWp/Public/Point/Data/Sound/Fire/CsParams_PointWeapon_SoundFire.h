@@ -42,11 +42,6 @@ public:
 	{
 	}
 
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		Sound.UpdateInternalPtrs();
-	}
-
 #define ParamsType NCsWeapon::NPoint::NFire::NSound::FParams
 	void CopyToParams(ParamsType* Params);
 	void CopyToParamsAsValue(ParamsType* Params) const;

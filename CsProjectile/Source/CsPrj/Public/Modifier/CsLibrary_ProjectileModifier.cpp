@@ -42,7 +42,6 @@ namespace NCsProjectile
 		}
 
 		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
-
 		void FLibrary::AddChecked(const FString& Context, UObject* WorldContext, const TArray<ModifierType*>& Modifiers, TArray<AllocatedModifierType>& AllocatedModifiers)
 		{
 			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
@@ -76,6 +75,12 @@ namespace NCsProjectile
 				AllocatedModifier.Copy(WorldContext, Modifier);
 			}
 		}
+		#undef AllocatedModifierType
+
+		// Int
+		#pragma region
+
+		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
 
 		int32 FLibrary::ModifyIntChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsProjectileModifier& Type, const int32& Value)
 		{
@@ -101,18 +106,96 @@ namespace NCsProjectile
 			return Result;
 		}
 
+		#undef AllocatedModifierType
+
+		#pragma endregion Int
+
+		// Float
+		#pragma region 
+
+		#define AllocatedModifierType NCsProjectile::NModifier::FAllocated
+
 		float FLibrary::ModifyFloatChecked(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsProjectileModifier& Type, const float& Value)
 		{
+			if (AllocatedModifiers.Num() <= 64)
+			{
+				return ModifyFloatChecked_Size64(Context, AllocatedModifiers, Type, Value);
+			}
+			else
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, Type)
+
+				float Result = Value;
+
+				typedef NCsModifier::NFloat::IFloat FloatModifierType;
+
+				// TODO: FUTURE: Use a tiny / small array on the stack
+				static TArray<FloatModifierType*> FirstModifiers;
+				static TArray<FloatModifierType*> Modifiers;
+				static TArray<FloatModifierType*> LastModifiers;
+
+				for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
+				{
+					ModifierType* Modifier										  = AllocatedModifier.Get();
+					const ICsGetProjectileModifierType* GetProjectileModifierType = GetInterfaceChecked<ICsGetProjectileModifierType>(Context, Modifier);
+					const FECsProjectileModifier& PrjModifierType				  = GetProjectileModifierType->GetProjectileModifierType();
+
+					if (PrjModifierType == Type)
+					{
+						FloatModifierType* FloatModifier = GetInterfaceChecked<FloatModifierType>(Context, Modifier);
+
+						typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
+
+						const ApplicationType& Application = FloatModifier->GetApplication();
+
+						// PercentAddFirst || PercentSubtractFirst
+						if (Application == ApplicationType::PercentAddFirst ||
+							Application == ApplicationType::PercentSubtractFirst)
+						{
+							FirstModifiers.Add(FloatModifier);
+						}
+						// PercentAddLast || PercentSubtractLast
+						else
+						if (Application == ApplicationType::PercentAddLast ||
+							Application == ApplicationType::PercentSubtractLast)
+						{
+							LastModifiers.Add(FloatModifier);
+						}
+						// "The Rest"
+						else
+						{
+							Modifiers.Add(FloatModifier);
+						}
+					}
+				}
+
+				// NOTE: For now ignore order
+
+				typedef NCsModifier::FLibrary ModifierLibrary;
+
+				// PercentAddFirst || PercentSubtractFirst
+				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+				// "The Rest"
+				Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
+				// PercentAddLast || PercentSubtractLast
+				Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
+
+				return Result;
+			}
+		}
+		
+		float FLibrary::ModifyFloatChecked_Size64(const FString& Context, const TArray<AllocatedModifierType>& AllocatedModifiers, const FECsProjectileModifier& Type, const float& Value)
+		{
+			CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(AllocatedModifiers, AllocatedModifierType, 64)
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectileModifier, Type)
 
 			float Result = Value;
 
 			typedef NCsModifier::NFloat::IFloat FloatModifierType;
 
-			// TODO: FUTURE: Use a tiny / small array on the stack
-			static TArray<FloatModifierType*> FirstModifiers;
-			static TArray<FloatModifierType*> Modifiers;
-			static TArray<FloatModifierType*> LastModifiers;
+			TArray<FloatModifierType*, TFixedAllocator<64>> FirstModifiers;
+			TArray<FloatModifierType*, TFixedAllocator<64>> Modifiers;
+			TArray<FloatModifierType*, TFixedAllocator<64>> LastModifiers;
 
 			for (const AllocatedModifierType& AllocatedModifier : AllocatedModifiers)
 			{
@@ -136,16 +219,16 @@ namespace NCsProjectile
 					}
 					// PercentAddLast || PercentSubtractLast
 					else
-					if (Application == ApplicationType::PercentAddLast ||
-						Application == ApplicationType::PercentSubtractLast)
-					{
-						LastModifiers.Add(FloatModifier);
-					}
+						if (Application == ApplicationType::PercentAddLast ||
+							Application == ApplicationType::PercentSubtractLast)
+						{
+							LastModifiers.Add(FloatModifier);
+						}
 					// "The Rest"
-					else
-					{
-						Modifiers.Add(FloatModifier);
-					}
+						else
+						{
+							Modifiers.Add(FloatModifier);
+						}
 				}
 			}
 
@@ -154,15 +237,14 @@ namespace NCsProjectile
 			typedef NCsModifier::FLibrary ModifierLibrary;
 
 			// PercentAddFirst || PercentSubtractFirst
-			Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, FirstModifiers, Result);
+			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, FirstModifiers, Result);
 			// "The Rest"
-			Result = ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, Result);
+			Result = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, Result);
 			// PercentAddLast || PercentSubtractLast
-			Result = ModifierLibrary::ModifyFloatPercentAndEmptyChecked(Context, LastModifiers, Result);
+			Result = ModifierLibrary::ModifyFloatPercentChecked(Context, LastModifiers, Result);
 
 			return Result;
 		}
-
 
 		float FLibrary::ModifyFloatChecked(const FString& Context, const ModifierType* Modifier, const float& Value)
 		{
@@ -175,6 +257,8 @@ namespace NCsProjectile
 		}
 
 		#undef AllocatedModifierType
+
+		#pragma endregion Float
 
 		// Damage
 		#pragma region

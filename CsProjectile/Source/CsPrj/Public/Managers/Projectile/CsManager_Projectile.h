@@ -1045,19 +1045,20 @@ private:
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-	void Projectile_OnAllocate(const ICsProjectile* Projectile, PooledPayloadType* Payload);
-
 public:
 
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FProjectile_OnAllocate, const ICsProjectile* /*Projectile*/, PooledPayloadType* /*Payload*/);
 
 	FProjectile_OnAllocate Projectile_OnAllocate_Event;
 
-#undef PooledPayloadType
-
 private:
 
-	void Projectile_OnDeallocate_Start(const ICsProjectile* Projectile);
+	FORCEINLINE void Projectile_OnAllocate(const ICsProjectile* Projectile, PooledPayloadType* Payload)
+	{
+		Projectile_OnAllocate_Event.Broadcast(Projectile, Payload);
+	}
+
+#undef PooledPayloadType
 
 public:
 
@@ -1067,13 +1068,23 @@ public:
 
 private:
 
-	void Projectile_OnHit(const ICsProjectile* Projectile, const FHitResult& Hit);
+	FORCEINLINE void Projectile_OnDeallocate_Start(const ICsProjectile* Projectile)
+	{
+		Projectile_OnDeallocate_Start_Event.Broadcast(Projectile);
+	}
 
 public:
 
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FProjectile_OnHit, const ICsProjectile* /*Projectile*/, const FHitResult& /*Hit*/);
 
 	FProjectile_OnHit Projectile_OnHit_Event;
+
+private:
+
+	FORCEINLINE void Projectile_OnHit(const ICsProjectile* Projectile, const FHitResult& Hit)
+	{
+		Projectile_OnHit_Event.Broadcast(Projectile, Hit);
+	}
 
 #pragma endregion Events
 

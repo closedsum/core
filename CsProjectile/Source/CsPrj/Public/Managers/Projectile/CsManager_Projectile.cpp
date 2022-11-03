@@ -1381,28 +1381,6 @@ const FECsProjectileModifier& UCsManager_Projectile::GetModifierType(const FStri
 
 #pragma endregion Modifier
 
-// Events
-#pragma region
-
-#define PooledPayloadType NCsPooledObject::NPayload::IPayload
-void UCsManager_Projectile::Projectile_OnAllocate(const ICsProjectile* Projectile, PooledPayloadType* Payload)
-{
-#undef PooledPayloadType
-	Projectile_OnAllocate_Event.Broadcast(Projectile, Payload);
-}
-
-void UCsManager_Projectile::Projectile_OnDeallocate_Start(const ICsProjectile* Projectile)
-{
-	Projectile_OnDeallocate_Start_Event.Broadcast(Projectile);
-}
-
-void UCsManager_Projectile::Projectile_OnHit(const ICsProjectile* Projectile, const FHitResult& Hit)
-{
-	Projectile_OnHit_Event.Broadcast(Projectile, Hit);
-}
-
-#pragma endregion Events
-
 // Variables
 #pragma region
 

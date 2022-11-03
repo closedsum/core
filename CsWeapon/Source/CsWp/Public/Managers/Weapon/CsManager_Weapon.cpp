@@ -29,9 +29,14 @@
 // Weapon
 #include "Managers/Weapon/Handler/CsManager_Weapon_ClassHandler.h"
 #include "Managers/Weapon/Handler/CsManager_Weapon_DataHandler.h"
+	// Payload
 #include "Payload/CsPayload_WeaponImpl.h"
+	// Modifier
 #include "Modifier/Types/CsGetWeaponModifierType.h"
 #include "Modifier/Copy/CsWeaponModifier_Copy.h"
+	// Event
+#include "Event/CsWeapon_Event.h"
+#include "Point/Event/CsPointWeapon_Event.h"
 // Modifier
 #include "Modifier/CsWeaponModifierImpl.h"
 
@@ -365,6 +370,26 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 	PoolParams.DestroyScopedTimerCVar = NCsCVarLog::LogManagerWeaponScopedTimerDestroy;
 
 	Internal.Init(Type, PoolParams);
+
+	// Bind to delegates
+	//  This is mostly done to have a single place to bind to delegates for a Weapon related events (i.e. OnAllocate ... etc).
+	const TArray<FCsWeaponPooled*>& PoolOfType = Internal.GetPool(Type);
+
+	for (FCsWeaponPooled* WeaponPooled : PoolOfType)
+	{
+		UObject* O = WeaponPooled->GetObject();
+
+		if (ICsWeapon_Event* Event = Cast<ICsWeapon_Event>(O))
+		{
+			Event->GetOnAllocate_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnAllocate);
+			Event->GetOnDeallocate_Start_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnDeallocate_Start);
+		}
+
+		if (ICsPointWeapon_Event* Event = Cast<ICsPointWeapon_Event>(O))
+		{
+			Event->GetOnHit_Event().AddUObject(this, &UCsManager_Weapon::PointWeapon_OnHit);
+		}
+	}
 }
 
 #pragma endregion Settings
@@ -542,6 +567,32 @@ void UCsManager_Weapon::InitInternal(const ManagerParamsType& Params)
 		}
 	}
 	Internal.Init(Params);
+
+	// Bind to delegates
+	//  This is mostly done to have a single place to bind to delegates for a Weapon related events (i.e. OnAllocate ... etc).
+	TArray<FECsWeapon> Types;
+	Internal.GetPoolTypes(Types);
+
+	for (const FECsWeapon& Type : Types)
+	{
+		const TArray<FCsWeaponPooled*>& PoolOfType = Internal.GetPool(Type);
+
+		for (FCsWeaponPooled* WeaponPooled : PoolOfType)
+		{
+			UObject* O = WeaponPooled->GetObject();
+			
+			if (ICsWeapon_Event* Event = Cast<ICsWeapon_Event>(O))
+			{
+				Event->GetOnAllocate_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnAllocate);
+				Event->GetOnDeallocate_Start_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnDeallocate_Start);
+			}
+
+			if (ICsPointWeapon_Event* Event = Cast<ICsPointWeapon_Event>(O))
+			{
+				Event->GetOnHit_Event().AddUObject(this, &UCsManager_Weapon::PointWeapon_OnHit);
+			}
+		}
+	}
 }
 #undef ManagerParamsType
 

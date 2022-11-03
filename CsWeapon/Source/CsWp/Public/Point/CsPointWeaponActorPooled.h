@@ -5,6 +5,8 @@
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsWeapon.h"
 #include "Point/CsPointWeapon.h"
+#include "Event/CsWeapon_Event.h"
+#include "Point/Event/CsPointWeapon_Event.h"
 // Types
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Types/CsTypes_Projectile.h"
@@ -55,7 +57,9 @@ class CSWP_API ACsPointWeaponActorPooled : public AActor,
 										   public ICsUpdate,
 										   public ICsPooledObject,
 										   public ICsWeapon,
-										   public ICsPointWeapon
+										   public ICsPointWeapon,
+										   public ICsWeapon_Event,
+										   public ICsPointWeapon_Event
 {
 	GENERATED_UCLASS_BODY()
 
@@ -168,6 +172,35 @@ public:
 	void StopFire();
 
 #pragma endregion ICsPointWeapon
+
+// ICsWeapon_Event
+#pragma region
+public:
+
+	FORCEINLINE ICsWeapon_Event::FOnAllocate& GetOnAllocate_Event() { return OnAllocate_Event; }
+	FORCEINLINE ICsWeapon_Event::FOnDeallocate_Start& GetOnDeallocate_Start_Event() { return OnDeallocate_Start_Event; }
+
+#pragma endregion ICsWeapon_Event
+
+// ICsPointWeapon_Event
+#pragma region
+public:
+
+	FORCEINLINE ICsPointWeapon_Event::FOnHit& GetOnHit_Event() { return OnHit_Event; }
+
+#pragma endregion ICsPointWeapon_Event
+
+// Events
+#pragma region
+protected:
+
+	ICsWeapon_Event::FOnAllocate OnAllocate_Event;
+
+	ICsWeapon_Event::FOnDeallocate_Start OnDeallocate_Start_Event;
+
+	ICsPointWeapon_Event::FOnHit OnHit_Event;
+
+#pragma endregion Events
 
 // Owner
 #pragma region

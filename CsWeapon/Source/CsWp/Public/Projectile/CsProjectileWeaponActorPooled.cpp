@@ -2029,6 +2029,39 @@ void ACsProjectileWeaponActorPooled::FXImpl_SetComponent(USceneComponent* Compon
 
 #pragma endregion Fire
 
+// Modifier
+#pragma region
+
+bool ACsProjectileWeaponActorPooled::GetModifiedIntProperty(const FECsWeaponModifier& ModifierType, int32& OutValue) const
+{
+	// ProjectilesPerShot.Count
+	if (ModifierType == NCsWeaponModifier::PrjWp_ProjectilesPerShot_Count)
+	{
+		OutValue = GetProjectilesPerShot();
+		return true;
+	}
+	return false;
+}
+
+bool ACsProjectileWeaponActorPooled::GetModifiedFloatProperty(const FECsWeaponModifier& ModifierType, float& OutValue) const
+{
+	// TimeBetweenShots
+	if (ModifierType == NCsWeaponModifier::PrjWp_TimeBetweenShots)
+	{
+		OutValue = GetTimeBetweenShots();
+		return true;
+	}
+	// TimeBetweenProjectilesPerShot
+	if (ModifierType == NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot)
+	{
+		OutValue = GetTimeBetweenProjectilesPerShot();
+		return true;
+	}
+	return false;
+}
+
+#pragma endregion Modifier
+
 // Print
 #pragma region
 

@@ -96,8 +96,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWeapon, NData, FInterfaceMap)
 
 class UDataTable;
 struct FCsWeaponPtr;
-struct FCsProjectileWeaponPtr;
 
+class ICsWeapon;
+class ICsPointWeapon;
 
 UCLASS()
 class CSWP_API UCsManager_Weapon : public UObject
@@ -975,6 +976,57 @@ public:
 #undef ModifierImplType
 
 #pragma endregion Modifier
+
+// Events
+#pragma region
+public:
+
+#define PooledPayloadType NCsPooledObject::NPayload::IPayload
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FWeapon_OnAllocate, const ICsWeapon* /*Weapon*/, PooledPayloadType* /*Payload*/);
+
+	FWeapon_OnAllocate Weapon_OnAllocate_Event;
+
+private:
+
+	FORCEINLINE void Weapon_OnAllocate(const ICsWeapon* Weapon, PooledPayloadType* Payload)
+	{
+		Weapon_OnAllocate_Event.Broadcast(Weapon, Payload);
+	}
+
+#undef PooledPayloadType
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FWeapon_OnDeallocate_Start, const ICsWeapon* /*Weapon*/);
+
+	FWeapon_OnDeallocate_Start Weapon_OnDeallocate_Start_Event;
+
+private:
+
+	FORCEINLINE void Weapon_OnDeallocate_Start(const ICsWeapon* Weapon)
+	{
+		Weapon_OnDeallocate_Start_Event.Broadcast(Weapon);
+	}
+
+	// Point
+#pragma region
+public:
+
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FPointWeapon_OnHit, const ICsPointWeapon* /*Weapon*/, const FHitResult& /*Hit*/);
+
+	FPointWeapon_OnHit PointWeapon_OnHit_Event;
+
+private:
+
+	FORCEINLINE void PointWeapon_OnHit(const ICsPointWeapon* Weapon, const FHitResult& Hit)
+	{
+		PointWeapon_OnHit_Event.Broadcast(Weapon, Hit);
+	}
+
+#pragma endregion Point
+
+#pragma endregion Events
 
 // Spread
 #pragma region

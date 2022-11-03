@@ -144,6 +144,10 @@ ACsPointWeaponActorPooled::ACsPointWeaponActorPooled(const FObjectInitializer& O
 	WeaponType(),
 	Data(nullptr),
 	PointWeaponData(nullptr),
+	// Events
+	OnAllocate_Event(),
+	OnDeallocate_Start_Event(),
+	OnHit_Event(),
 	// Owner
 	MyOwner(nullptr),
 	MyOwnerAsActor(nullptr),
@@ -373,10 +377,14 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	CurrentState = IdleState;
 
 	CurrentAmmo = PointWeaponData->GetMaxAmmo();
+
+	OnAllocate_Event.Broadcast(this, Payload);
 }
 
 void ACsPointWeaponActorPooled::Deallocate()
 {
+	OnDeallocate_Start_Event.Broadcast(this);
+
 	// End Routines
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
@@ -865,7 +873,6 @@ float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
 	static TArray<ModifierType*> Modifiers;
-	Modifiers.Reset(Modifiers.Max());
 
 	GetWeaponModifiers(Modifiers);
 
@@ -875,7 +882,7 @@ float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenShots, Value);
+	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenShots, Value);
 }
 
 	// Point
@@ -890,7 +897,6 @@ int32 ACsPointWeaponActorPooled::GetPointsPerShot() const
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
 	static TArray<ModifierType*> Modifiers;
-	Modifiers.Reset(Modifiers.Max());
 
 	GetWeaponModifiers(Modifiers);
 
@@ -900,7 +906,7 @@ int32 ACsPointWeaponActorPooled::GetPointsPerShot() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
+	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
 }
 
 float ACsPointWeaponActorPooled::GetTimeBetweenPointsPerShot() const
@@ -912,7 +918,6 @@ float ACsPointWeaponActorPooled::GetTimeBetweenPointsPerShot() const
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
 	static TArray<ModifierType*> Modifiers;
-	Modifiers.Reset(Modifiers.Max());
 
 	GetWeaponModifiers(Modifiers);
 
@@ -922,7 +927,7 @@ float ACsPointWeaponActorPooled::GetTimeBetweenPointsPerShot() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenPointsPerShot, Value);
+	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenPointsPerShot, Value);
 }
 
 void ACsPointWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)

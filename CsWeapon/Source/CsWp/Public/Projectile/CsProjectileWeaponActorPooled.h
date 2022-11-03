@@ -10,6 +10,7 @@
 #include "Types/CsTypes_Projectile.h"
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/FX/CsTypes_FX.h"
+#include "Modifier/Types/CsTypes_WeaponModifier.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
 #include "CsProjectileWeaponActorPooled.generated.h"
@@ -844,6 +845,15 @@ public:
 #pragma endregion FX
 
 #pragma endregion Fire
+
+// Modifier
+#pragma region
+public:
+
+	virtual bool GetModifiedIntProperty(const FECsWeaponModifier& ModifierType, int32& OutValue) const;
+	virtual bool GetModifiedFloatProperty(const FECsWeaponModifier& ModifierType, float& OutValue) const;
+
+#pragma endregion Modifier
 
 // Print
 #pragma region

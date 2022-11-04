@@ -66,6 +66,7 @@
 #include "Payload/Modifier/CsPayload_Projectile_Modifier.h"
 #include "Payload/Modifier/Damage/CsPayload_Projectile_ModifierDamage.h"
 #include "Payload/Target/CsPayload_Projectile_Target.h"
+#include "Payload/Damage/CsPayload_Projectile_Damage.h"
 // Modifier
 #include "Modifier/Types/CsGetProjectileModifierType.h"
 #include "Modifier/CsModifier_Int.h"
@@ -595,6 +596,12 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 	
+	// Modifiers
+	Modifiers.Reset(Modifiers.Max());
+
+	DamageImpl.Reset();
+
+	// Variables
 	typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
 
 	if (Variables)
@@ -602,11 +609,6 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 		VariablesLibrary::DeallocateChecked(Context, this, Variables);
 		Variables = nullptr;
 	}
-
-	// Modifiers
-	Modifiers.Reset(Modifiers.Max());
-	DamageImpl.Modifiers.Reset(DamageImpl.Modifiers.Max());
-
 	Cache->Reset();
 }
 
@@ -637,6 +639,18 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 	// Set / Cache any Modifiers from the Payload
 	OnLaunch_SetModifiers(Payload);
+
+	// Set Additional Datas
+	{
+		// Damage
+		typedef NCsProjectile::NPayload::FLibrary PayloadLibrary;
+		typedef NCsProjectile::NPayload::NDamage::IDamage DmgPayloadType;
+
+		if (const DmgPayloadType* DmgPayload = PayloadLibrary::GetSafeInterfaceChecked<DmgPayloadType>(Context, Payload))
+		{
+			DamageImpl.DataTypes.Append(DmgPayload->GetDamageDataTypes());
+		}
+	}
 
 	// Launch Params
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
@@ -1496,36 +1510,60 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 		}
 	}
 	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
-	{
-		typedef NCsProjectile::NData::NDamage::IDamage DamageDataType;
 
-		if (DamageDataType* DamageData = PrjDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
+		// TODO: Deprecate
+	{
+		typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
+
+		if (PrjDamageDataType* PrjDamageData = PrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
 		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+			typedef NCsDamage::NData::IData DamageDataType;
+
+			DamageDataType* DamageData = PrjDamageData->GetDamageData();
+
+			static TArray<DamageDataType*> DamageDatas;
+			DamageDatas.Add(DamageData);
+			DamageManagerLibrary::AddDatasChecked(Context, this, DamageImpl.DataTypes, DamageDatas);
+
+			static TArray<FECsDamageData> DamageDataTypes;
+			DamageDataTypes.Add(DamageManagerLibrary::GetDataTypeChecked(Context, this, DamageData));
+			DamageDataTypes.Append(DamageImpl.DataTypes);
+
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 			
-			// Apply Modifiers
-			DamageImpl.SetValue(DamageData->GetDamageData());
+			const int32 Count = DamageDataTypes.Num();
 
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-			typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				DamageData = DamageDatas[I];
 
-			static ProcessPayloadType ProcessPayload;
+				// Apply Modifiers
+				DamageImpl.SetValue(DamageData);
 
-			ProcessPayload.Value	  = DamageImpl.GetValue();
-			ProcessPayload.Type		  = DamageManagerLibrary::GetDataTypeChecked(Context, this, DamageData->GetDamageData());
-			ProcessPayload.Data		  = DamageData->GetDamageData();
-			ProcessPayload.Instigator = GetCache()->GetInstigator();
-			ProcessPayload.Causer	  = this;
-			// TODO: Maybe store this value each tick / update
-			ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
-			ProcessPayload.HitResult  = Hit;
+				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
-			DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-			DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+				static ProcessPayloadType ProcessPayload;
 
-			ProcessPayload.Reset();
+				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Type		  = DamageDataTypes[I];
+				ProcessPayload.Data		  = DamageData;
+				ProcessPayload.Instigator = GetCache()->GetInstigator();
+				ProcessPayload.Causer	  = this;
+				// TODO: Maybe store this value each tick / update
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.HitResult  = Hit;
+
+				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+
+				ProcessPayload.Reset();
+
+				DamageDatas.RemoveAt(I, 1, false);
+				DamageDataTypes.RemoveAt(I, 1, false);
+			}
 		}
 	}
 	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
@@ -1540,30 +1578,47 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, this, GetDamageDataType);
 
+			static TArray<DamageDataType*> DamageDatas;
+			DamageDatas.Add(DamageData);
+			DamageManagerLibrary::AddDatasChecked(Context, this, DamageImpl.DataTypes, DamageDatas);
+
+			static TArray<FECsDamageData> DamageDataTypes;
+			DamageDataTypes.Add(GetDamageDataType->GetDamageDataType());
+			DamageDataTypes.Append(DamageImpl.DataTypes);
+
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 
-			// Apply Modifiers
-			DamageImpl.SetValue(DamageData);
+			const int32 Count = DamageDataTypes.Num();
 
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				DamageData = DamageDatas[I];
 
-			static ProcessPayloadType ProcessPayload;
+				// Apply Modifiers
+				DamageImpl.SetValue(DamageData);
 
-			ProcessPayload.Value	  = DamageImpl.GetValue();
-			ProcessPayload.Type		  = GetDamageDataType->GetDamageDataType();
-			ProcessPayload.Data		  = DamageData;
-			ProcessPayload.Instigator = GetCache()->GetInstigator();
-			ProcessPayload.Causer	  = this;
-			// TODO: Maybe store this value each tick / update
-			ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
-			ProcessPayload.HitResult  = Hit;
+				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
-			DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-			DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+				static ProcessPayloadType ProcessPayload;
 
-			ProcessPayload.Reset();
+				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Type		  = DamageDataTypes[I];
+				ProcessPayload.Data		  = DamageData;
+				ProcessPayload.Instigator = GetCache()->GetInstigator();
+				ProcessPayload.Causer	  = this;
+				// TODO: Maybe store this value each tick / update
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.HitResult  = Hit;
+
+				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+
+				ProcessPayload.Reset();
+
+				DamageDatas.RemoveAt(I, 1, false);
+				DamageDataTypes.RemoveAt(I, 1, false);
+			}
 		}
 	}
 	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)

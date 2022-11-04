@@ -112,9 +112,10 @@ namespace NCsDamage
 		* @param Context	The calling context.
 		* @param Modifier
 		* @param Data
+		* @param Type
 		* @param Value
 		*/
-		static void ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value);
+		static void ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
 		/**
 		*
@@ -122,28 +123,29 @@ namespace NCsDamage
 		* @param Context	The calling context.
 		* @param Modifier
 		* @param Data
+		* @param Type
 		* @param Range
 		* return			Whether the Modify was "attempted" (a Modify method was called) successfully.
 		*/
-		static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range);
+		static bool ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value);
+		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask);
+		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range);
+		static void ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range);
+		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value);
+		static void ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range);
+		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range);
 
-		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value);
+		static void ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value);
+		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value);
 
-		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask);
+		static void ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask);
 
 	#pragma endregion Modify
 

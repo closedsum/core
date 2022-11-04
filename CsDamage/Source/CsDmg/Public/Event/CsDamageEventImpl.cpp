@@ -34,6 +34,7 @@ namespace NCsDamage
 			Damage(0.0f),
 			DamageValue(),
 			DamageRange(),
+			Type(),
 			Data(nullptr),
 			Instigator(nullptr),
 			Causer(nullptr),
@@ -75,6 +76,7 @@ namespace NCsDamage
 			if (FromImpl->DamageRange.GetRange())
 				DamageRange.CopyFrom(&(FromImpl->DamageRange));
 
+			Type		= FromImpl->Type;
 			Data		= FromImpl->Data;
 			Instigator  = FromImpl->Instigator;
 			Causer		= FromImpl->Causer;
@@ -130,6 +132,7 @@ namespace NCsDamage
 			Damage = 0.0f;
 			DamageValue.Reset();
 			DamageRange.Reset();
+			Type = EMCsDamageData::Get().GetMAX();
 			Data = nullptr;
 			Instigator = nullptr;
 			Causer = nullptr;

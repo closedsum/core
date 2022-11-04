@@ -57,6 +57,8 @@ namespace NCsDamage
 
 			AllocatedRangeType DamageRange;
 
+			FECsDamageData Type;
+
 			DataType* Data;
 
 			UObject* Instigator;
@@ -96,6 +98,7 @@ namespace NCsDamage
 			FORCEINLINE const float& GetDamage() const { return Damage; }
 			FORCEINLINE const ValueType* GetDamageValue() const { return DamageValue.GetValue(); }
 			FORCEINLINE const RangeType* GetDamageRange() const { return DamageRange.GetRange(); }
+			FORCEINLINE const FECsDamageData& GetDataType() const { return Type; }
 			FORCEINLINE DataType* GetData() const { return Data; }
 			FORCEINLINE UObject* GetInstigator() const { return Instigator; }
 			FORCEINLINE UObject* GetCauser() const { return Causer; }

@@ -27,6 +27,7 @@ namespace NCsProjectile
 						namespace Str
 						{
 							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, CopyFromModifiers);
+							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, CopyAndEmptyFromModifiers);
 							CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProjectile::NPayload::NModifier::NDamage::FImplSlice, TransferFromModifiers);
 						}
 					}
@@ -76,24 +77,58 @@ namespace NCsProjectile
 
 					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
-					typedef NCsArray::FLibrary ArrayLibrary;
+					typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
+					typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
 
 					Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 					Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
 				
 					for (DmgModifierType* Modifier : FromModifiers)
 					{
-						typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
-
 						AllocatedDmgModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
 						Allocated.Root = DmgManagerLibrary::GetContextRootChecked(Context, WorldContext);
 
-						DmgManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
+						DmgModifierLibrary::CopyChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
 					
 						Allocated.Modifier = Allocated.Container->Get();
 
 						Modifiers.Add(Allocated.Modifier);
+					}
+				}
+
+				void FImplSlice::CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<DmgModifierType*>& FromModifiers)
+				{
+					using namespace NCsProjectile::NPayload::NModifier::NDamage::NImplSlice::NCached;
+
+					const FString& Context = Str::CopyAndEmptyFromModifiers;
+
+					CS_IS_TARRAY_ANY_NULL_CHECKED(FromModifiers, DmgModifierType)
+
+					checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
+
+					typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
+					typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
+
+					const int32 Count = FromModifiers.Num();
+
+					Modifiers.Reset(FMath::Max(Modifiers.Max(), Count));
+					Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), Count));
+				
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						DmgModifierType* Modifier			= FromModifiers[I];
+						AllocatedDmgModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
+
+						Allocated.Root = DmgManagerLibrary::GetContextRootChecked(Context, WorldContext);
+
+						DmgModifierLibrary::CopyChecked(Context, WorldContext, Modifier, Allocated.Container, Allocated.Type);
+					
+						Allocated.Modifier = Allocated.Container->Get();
+
+						Modifiers.Add(Allocated.Modifier);
+
+						FromModifiers.RemoveAt(I, 1, false);
 					}
 				}
 
@@ -145,14 +180,18 @@ namespace NCsProjectile
 					Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 					Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
 
-					for (AllocatedDmgModifierType& From : FromModifiers)
+					const int32 Count = FromModifiers.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
 					{
-						AllocatedDmgModifierType& To = Modifiers_Internal.AddDefaulted_GetRef();
+						AllocatedDmgModifierType& From = FromModifiers[I];
+						AllocatedDmgModifierType& To   = Modifiers_Internal.AddDefaulted_GetRef();
 
 						From.Transfer(To);
 						Modifiers.Add(To.Modifier);
+
+						FromModifiers.RemoveAt(I, 1, false);
 					}
-					FromModifiers.Reset(FromModifiers.Max());
 				}
 
 				#undef DmgModifierType

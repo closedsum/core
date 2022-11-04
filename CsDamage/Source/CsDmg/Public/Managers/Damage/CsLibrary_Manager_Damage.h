@@ -264,55 +264,13 @@ namespace NCsDamage
 
 		#pragma endregion Range
 
-		// Modifier
-		#pragma region
-		public:
-
-		#define ModifierResourceType NCsDamage::NModifier::FResource
-		#define ModifierType NCsDamage::NModifier::IModifier
-		#define AllocatedModifierType NCsDamage::NModifier::FAllocated
-		
-			static void DeallocateModifierChecked(const FString& Context, const UObject* WorldContext, const FECsDamageModifier& Type, ModifierResourceType* Modifier);
-
-			static const FECsDamageModifier& GetModifierTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
-
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
-
-			static ModifierResourceType* CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext,  const ModifierResourceType* Modifier);
-
-			static void CreateCopyOfModifierChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsDamageModifier& OutType);
-
-			/**
-			* 
-			* 
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param From
-			* @param To
-			*/
-			static void CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
-
-			/**
-			*
-			*
-			* @param Context		The calling context.
-			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param From
-			* @param To
-			*/
-			static void CreateCopyOfModifiersChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
-
-		#undef ModifierResourceType
-		#undef ModifierType
-		#undef AllocatedModifierType
-
-		#pragma endregion Modifier
-
 		// Data
 		#pragma region
 		public:
 
 		#define DataType NCsDamage::NData::IData
+
+			static const FECsDamageData& GetDataTypeChecked(const FString& Context, const UObject* WorldContext, const DataType* Data);
 
 		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
 
@@ -344,6 +302,17 @@ namespace NCsDamage
 		#define GetDamageDataTypeDataTypes NCsData::IGetDamageDataTypes
 
 			/**
+			* Get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
+			* associated with the associated Types.
+			*
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param DamageDataTypes
+			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
+			*/
+			static void GetDatasChecked(const FString& Context, const UObject* WorldContext, const TArray<FECsDamageData>& DamageDataTypes, TArray<DataType*>& OutDatas);
+
+			/**
 			* Get the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData), 
 			* associated with the result of GetDamageDataTypes->GetDamageDataTypes (TArray<FECsDamageData>).
 			* 
@@ -368,6 +337,17 @@ namespace NCsDamage
 			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef GetDamageDataTypeDataTypes
+			
+			/**
+			* Add the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
+			* associated with the result of GetDamageDataTypes->GetDamageDataTypes (TArray<FECsDamageData>).
+			*
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param GetDamageDataTypes
+			* @param OutDatas			(out) Objects which implements the interface: DataType (NCsDamage::NData::IData).
+			*/
+			static void AddDatasChecked(const FString& Context, const UObject* WorldContext, const TArray<FECsDamageData>& DamageDataTypes, TArray<DataType*>& OutDatas);
 
 		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
@@ -400,7 +380,7 @@ namespace NCsDamage
 			* @param HitResult
 			* @param Modifiers
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 
 			/**
 			* Process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
@@ -431,7 +411,7 @@ namespace NCsDamage
 			* @param Log			(optional)
 			* return				Whether the Damage Event was created or not.
 			*/
-			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
@@ -461,7 +441,7 @@ namespace NCsDamage
 			* @param Causer
 			* @param HitResult
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
@@ -474,7 +454,7 @@ namespace NCsDamage
 			* @param Causer
 			* @param HitResult
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Value, Range, Instigator, Causer, HitResult, and Modifiers
@@ -490,7 +470,7 @@ namespace NCsDamage
 			* @param HitResult
 			* @param Modifiers
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers);
 
 			/**
 			* Process, create a Damage Event, and broadcast the Event with Data, Value, Instigator, Causer, and HitResult
@@ -504,7 +484,7 @@ namespace NCsDamage
 			* @param Causer
 			* @param HitResult
 			*/
-			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
+			static void ProcessDataChecked(const FString& Context, const UObject* WorldContext, const ValueType* Value, const RangeType* Range, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult);
 
 		#define ProcessPayloadType NCsDamage::NData::NProcess::FPayload
 
@@ -527,5 +507,51 @@ namespace NCsDamage
 
 		#pragma endregion Data
 		};
+
+		namespace NModifier
+		{
+			struct CSDMG_API FLibrary final
+			{
+			public:
+
+			#define ModifierResourceType NCsDamage::NModifier::FResource
+			#define ModifierType NCsDamage::NModifier::IModifier
+			#define AllocatedModifierType NCsDamage::NModifier::FAllocated
+		
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const FECsDamageModifier& Type, ModifierResourceType* Modifier);
+
+				static const FECsDamageModifier& GetTypeChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+				static ModifierResourceType* CopyChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier);
+
+				static ModifierResourceType* CopyChecked(const FString& Context, const UObject* WorldContext,  const ModifierResourceType* Modifier);
+
+				static void CopyChecked(const FString& Context, const UObject* WorldContext, const ModifierType* Modifier, ModifierResourceType*& OutContainer, FECsDamageModifier& OutType);
+
+				/**
+				* 
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param From
+				* @param To
+				*/
+				static void CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<ModifierResourceType*>& To);
+
+				/**
+				*
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param From
+				* @param To
+				*/
+				static void CopyChecked(const FString& Context, const UObject* WorldContext, const TArray<ModifierType*>& From, TArray<AllocatedModifierType>& To);
+
+			#undef ModifierResourceType
+			#undef ModifierType
+			#undef AllocatedModifierType
+			};
+		}
 	}
 }

@@ -41,11 +41,12 @@ namespace NCsDamage
 			CS_IS_PTR_NULL_CHECKED(From)
 
 			typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
+			typedef NCsDamage::NManager::NModifier::FLibrary ModifierLibrary;
 
 			Root	  = DmgManagerLibrary::GetContextRootChecked(Context, WorldContext);
-			Container = DmgManagerLibrary::CreateCopyOfModifierChecked(Context, WorldContext, From);
+			Container = ModifierLibrary::CopyChecked(Context, WorldContext, From);
 			Modifier  = Container->Get();
-			Type	  = DmgManagerLibrary::GetModifierTypeChecked(Context, WorldContext, Modifier);
+			Type	  = ModifierLibrary::GetTypeChecked(Context, WorldContext, Modifier);
 		}
 
 		void FAllocated::Copy(const FAllocated& From)
@@ -60,10 +61,10 @@ namespace NCsDamage
 
 			if (From.Container)
 			{
-				typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
+				typedef NCsDamage::NManager::NModifier::FLibrary ModifierLibrary;
 
 				Root	  = From.GetRoot();
-				Container = DmgManagerLibrary::CreateCopyOfModifierChecked(Context, GetRoot(), From.Container);
+				Container = ModifierLibrary::CopyChecked(Context, GetRoot(), From.Container);
 				Modifier  = Container->Get();
 				Type	  = From.Type;
 			}
@@ -107,9 +108,9 @@ namespace NCsDamage
 			{
 				CS_EDITOR_IS_PTR_NULL_CHECKED(GetRoot())
 
-				typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
+				typedef NCsDamage::NManager::NModifier::FLibrary ModifierLibrary;
 
-				DmgManagerLibrary::DeallocateModifierChecked(Context, GetRoot(), Type, Container);
+				ModifierLibrary::DeallocateChecked(Context, GetRoot(), Type, Container);
 			}
 			Clear();
 		}

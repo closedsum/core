@@ -538,9 +538,9 @@ void ACsBeamActorPooledImpl::OnPrepareOn_SetModifiers(PayloadType* Payload)
 
 		if (ModDamagePayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<ModDamagePayloadType>(Context, Payload))
 		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NManager::NModifier::FLibrary DamageModifierLibrary;
 
-			DamageManagerLibrary::CreateCopyOfModifiersChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
+			DamageModifierLibrary::CopyChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
 		}
 	}
 }
@@ -857,6 +857,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	}
 	// DamageDataType (NCsBeam::NData::NDamage::IDamage)
 	{
+		/*
 		typedef NCsBeam::NData::NDamage::IDamage DamageDataType;
 
 		if (DamageDataType* DamageData = BeamDataLibrary::GetSafeInterfaceChecked<DamageDataType>(Context, Data))
@@ -875,6 +876,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 			DamageManagerLibrary::ProcessDataChecked(Context, this, DamageImpl.GetValue(), DamageData->GetDamageData(), GetCache()->GetInstigator(), this, Hit);
 		}
+		*/
 	}
 
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)

@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 
 #include "CsData_StatusEffect_Damage.generated.h"
 
@@ -32,6 +32,8 @@ namespace NCsStatusEffect
 			public:
 
 				virtual ~IDamage(){}
+
+				virtual const TArray<FECsDamageData>& GetDamageDataTypes() const = 0;
 
 				virtual const TArray<DmgModifierType*>& GetDamageModifiers() const  = 0;
 
@@ -66,6 +68,8 @@ public:
 #define DmgModifierType NCsDamage::NModifier::IModifier
 
 public:
+
+	virtual const TArray<FECsDamageData>& GetDamageDataTypes() const = 0;
 
 	virtual const TArray<DmgModifierType*>& GetDamageModifiers() const = 0;
 

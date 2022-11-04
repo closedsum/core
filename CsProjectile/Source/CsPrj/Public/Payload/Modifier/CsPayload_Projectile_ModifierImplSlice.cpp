@@ -74,14 +74,14 @@ namespace NCsProjectile
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
+				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
+
 				Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 				Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
 				
 				for (ModifierType* Modifier : FromModifiers)
 				{
-					typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-					typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
-
 					AllocatedModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
 					Allocated.Root = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
@@ -104,6 +104,9 @@ namespace NCsProjectile
 
 				checkf(Modifiers_Internal.Num() == CS_EMPTY, TEXT("%s: Modifiers_Internal is already populated."), *Context);
 
+				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+				typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
+
 				const int32 Count = FromModifiers.Num();
 
 				Modifiers.Reset(FMath::Max(Modifiers.Max(), Count));
@@ -111,11 +114,7 @@ namespace NCsProjectile
 				
 				for (int32 I = Count - 1; I >= 0; --I)
 				{
-					ModifierType* Modifier = FromModifiers[I];
-
-					typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-					typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
-
+					ModifierType* Modifier			 = FromModifiers[I];
 					AllocatedModifierType& Allocated = Modifiers_Internal.AddDefaulted_GetRef();
 
 					Allocated.Root = PrjManagerLibrary::GetContextRootChecked(Context, WorldContext);
@@ -125,6 +124,8 @@ namespace NCsProjectile
 					Allocated.Modifier = Allocated.Container->Get();
 
 					Modifiers.Add(Allocated.Modifier);
+
+					FromModifiers.RemoveAt(I, 1, false);
 				}
 			}
 
@@ -159,14 +160,18 @@ namespace NCsProjectile
 				Modifiers.Reset(FMath::Max(Modifiers.Max(), FromModifiers.Num()));
 				Modifiers_Internal.Reset(FMath::Max(Modifiers_Internal.Max(), FromModifiers.Num()));
 
-				for (AllocatedModifierType& From : FromModifiers)
+				const int32 Count = FromModifiers.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
 				{
-					AllocatedModifierType& To = Modifiers_Internal.AddDefaulted_GetRef();
+					AllocatedModifierType& From = FromModifiers[I];
+					AllocatedModifierType& To	= Modifiers_Internal.AddDefaulted_GetRef();
 
 					From.Transfer(To);
 					Modifiers.Add(To.Modifier);
+
+					FromModifiers.RemoveAt(I, 1, false);
 				}
-				FromModifiers.Reset(FromModifiers.Max());
 			}
 
 			#undef ModifierType

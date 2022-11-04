@@ -3,6 +3,7 @@
 // Types
 #include "Modifier/CsTypes_Modifier.h"
 #include "Modifier/Types/CsTypes_DamageModifier.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 // Interface
 #include "Modifier/CsModifier.h"
 #include "Modifier/CsModifier_Int.h"
@@ -49,10 +50,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
 	ECsNumericValueModifierApplication Application;
 
+	/** The set of Damage Datas (by Type) the Modifier applies to.
+		If the set is EMPTY, the Modifier applies to all Damage Datas. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
+	TSet<FECsDamageData> WhitelistByDataTypeSet;
+
 	FCsDamageModifier_Int() :
 		Type(),
 		Value(0),
-		Application(ECsNumericValueModifierApplication::Multiply)
+		Application(ECsNumericValueModifierApplication::Multiply),
+		WhitelistByDataTypeSet()
 	{
 	}
 
@@ -104,6 +111,7 @@ namespace NCsDamage
 			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 			CS_DECLARE_MEMBER_WITH_PROXY(Value, int32)
 			CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+			CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 		public:
 
@@ -165,6 +173,7 @@ namespace NCsDamage
 				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
 				CS_RESET_MEMBER_WITH_PROXY(Value, 0)
 				CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
+				CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
 			}
 
 		#pragma endregion ICsReset
@@ -174,6 +183,7 @@ namespace NCsDamage
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Application, ApplicationType)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 		#undef ApplicationType
 		};
@@ -215,10 +225,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
 	ECsNumericValueModifierApplication Application;
 
+	/** The set of Damage Datas (by Type) the Modifier applies to.
+		If the set is EMPTY, the Modifier applies to all Damage Datas. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
+	TSet<FECsDamageData> WhitelistByDataTypeSet;
+
 	FCsDamageModifier_Float() :
 		Type(),
 		Value(0.0f),
-		Application(ECsNumericValueModifierApplication::Multiply)
+		Application(ECsNumericValueModifierApplication::Multiply),
+		WhitelistByDataTypeSet()
 	{
 	}
 
@@ -270,6 +286,7 @@ namespace NCsDamage
 			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 			CS_DECLARE_MEMBER_WITH_PROXY(Value, float)
 			CS_DECLARE_MEMBER_WITH_PROXY(Application, ApplicationType)
+			CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 		public:
 
@@ -333,6 +350,7 @@ namespace NCsDamage
 				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
 				CS_RESET_MEMBER_WITH_PROXY(Value, 0.0)
 				CS_RESET_MEMBER_WITH_PROXY(Application, ApplicationType::EApplication_MAX)
+				CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
 			}
 
 		#pragma endregion ICsREset
@@ -341,6 +359,7 @@ namespace NCsDamage
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Value, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 		#undef ApplicationType
 		};
@@ -390,12 +409,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
 	ECsNumericValueModifierApplication MaxApplication;
 
+	/** The set of Damage Datas (by Type) the Modifier applies to.
+		If the set is EMPTY, the Modifier applies to all Damage Datas. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
+	TSet<FECsDamageData> WhitelistByDataTypeSet;
+
 	FCsDamageModifier_Float_Range() :
 		Type(),
 		Min(0.0f),
 		MinApplication(ECsNumericValueModifierApplication::Multiply),
 		Max(0.0f),
-		MaxApplication(ECsNumericValueModifierApplication::Multiply)
+		MaxApplication(ECsNumericValueModifierApplication::Multiply),
+		WhitelistByDataTypeSet()
 	{
 	}
 
@@ -451,6 +476,7 @@ namespace NCsDamage
 				CS_DECLARE_MEMBER_WITH_PROXY(MinApplication, ApplicationType)
 				CS_DECLARE_MEMBER_WITH_PROXY(Max, float)
 				CS_DECLARE_MEMBER_WITH_PROXY(MaxApplication, ApplicationType)
+				CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 			public:
 
@@ -523,6 +549,7 @@ namespace NCsDamage
 					CS_RESET_MEMBER_WITH_PROXY(MinApplication, ApplicationType::EApplication_MAX)
 					CS_RESET_MEMBER_WITH_PROXY(Max, 0.0)
 					CS_RESET_MEMBER_WITH_PROXY(MaxApplication, ApplicationType::EApplication_MAX)
+					CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
 				}
 
 			#pragma endregion ICsREset
@@ -532,6 +559,7 @@ namespace NCsDamage
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Min, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Max, float)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 			#undef ApplicationType
 			};
@@ -570,9 +598,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	bool bEnable;
 
+	/** The set of Damage Datas (by Type) the Modifier applies to.
+		If the set is EMPTY, the Modifier applies to all Damage Datas. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Modifier")
+	TSet<FECsDamageData> WhitelistByDataTypeSet;
+
 	FCsDamageModifier_Toggle() :
 		Type(),
-		bEnable(false)
+		bEnable(false),
+		WhitelistByDataTypeSet()
 	{
 	}
 
@@ -623,6 +657,7 @@ namespace NCsDamage
 
 			CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 			CS_DECLARE_MEMBER_WITH_PROXY(bEnable, bool)
+			CS_DECLARE_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 		public:
 
@@ -680,6 +715,7 @@ namespace NCsDamage
 			{
 				CS_RESET_MEMBER_WITH_PROXY(Type, EMCsDamageModifier::Get().GetMAX())
 				CS_RESET_MEMBER_WITH_PROXY(bEnable, false)
+				CS_RESET_MEMBER_SET_WITH_PROXY(WhitelistByDataTypeSet)
 			}
 
 		#pragma endregion ICsREset
@@ -688,6 +724,7 @@ namespace NCsDamage
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageModifier)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bEnable, bool)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(WhitelistByDataTypeSet, TSet<FECsDamageData>)
 
 		#undef ApplicationType
 		};

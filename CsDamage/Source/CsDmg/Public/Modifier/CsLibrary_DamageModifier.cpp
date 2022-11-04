@@ -6,6 +6,8 @@
 #include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_Modifier.h"
 #include "Library/CsLibrary_Valid.h"
+// Data
+#include "Managers/Damage/Data/CsData_Damage.h"
 // Damage
 #include "Value/Point/CsDamageValuePoint.h"
 #include "Value/Range/CsDamageValueRange.h"
@@ -164,11 +166,24 @@ namespace NCsDamage
 		// Modify
 		#pragma region
 
-		void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, ValueType* Value)
+		void FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
 		{
 			CS_IS_PTR_NULL_CHECKED(Modifier)
 			CS_IS_PTR_NULL_CHECKED(Data)
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 			CS_IS_PTR_NULL_CHECKED(Value)
+
+			const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+			bool CanModify = true;
+
+			if (WhitelistByDataTypeMap.Num() > CS_EMPTY)
+			{
+				CanModify = WhitelistByDataTypeMap.Contains(Type);
+			}
+
+			if (!CanModify)
+				return;
 
 			typedef NCsModifier::FLibrary ModifierLibrary;
 			typedef NCsDamage::NValue::FLibrary ValueLibrary;
@@ -239,7 +254,7 @@ namespace NCsDamage
 			checkf(0, TEXT("%s: Failed to Apply Modifiers to Value. No supported interfaces found for Value."), *Context);
 		}
 
-		bool FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, RangeType* Range)
+		bool FLibrary::ModifyChecked(const FString& Context, const ModifierType* Modifier, const DataType* Data, const FECsDamageData& Type, RangeType* Range)
 		{
 			CS_IS_PTR_NULL_CHECKED(Modifier)
 
@@ -249,24 +264,25 @@ namespace NCsDamage
 			return false;	 
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
 		{
 			uint32 Mask = 0;
-			ModifyChecked(Context, Modifiers, Data, Value, Mask);
+			ModifyChecked(Context, Modifiers, Data, Type, Value, Mask);
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask)
 		{
 			if (Modifiers.Num() <= 64)
 			{
-				ModifyChecked_Size64(Context, Modifiers, Data, Value, OutMask);
+				ModifyChecked_Size64(Context, Modifiers, Data, Type, Value, OutMask);
 			}
 			else
 			{
 				CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 				CS_IS_PTR_NULL_CHECKED(Data)
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 				CS_IS_PTR_NULL_CHECKED(Value)
-				
+
 				typedef NCsModifier::FLibrary ModifierLibrary;
 				typedef NCsDamage::NValue::FLibrary ValueLibrary;
 				typedef NCsModifier::NFloat::IFloat FloatModifierType;
@@ -309,6 +325,14 @@ namespace NCsDamage
 
 				for (ModifierType* Modifier : Modifiers)
 				{
+					const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+					if (WhitelistByDataTypeMap.Num() > CS_EMPTY &&
+						!WhitelistByDataTypeMap.Contains(Type))
+					{
+						continue;
+					}
+
 					const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
 
 					// Value
@@ -423,29 +447,31 @@ namespace NCsDamage
 			}
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
 		{
 			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 			CS_IS_PTR_NULL_CHECKED(Data)
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 			CS_IS_PTR_NULL_CHECKED(Value)
 			CS_IS_PTR_NULL_CHECKED(Range)
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
 		{
 			for (const ModifierResourceType* Resource : Modifiers)
 			{
 				const ModifierType* Modifier = Resource->Get();
 
-				ModifyChecked(Context, Modifier, Data, Value);
-				ModifyChecked(Context, Modifier, Data, Range);
+				ModifyChecked(Context, Modifier, Data, Type, Value);
+				ModifyChecked(Context, Modifier, Data, Type, Range);
 			}
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, ValueType* Value)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<ModifierResourceType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
 		{
 			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierResourceType)
 			CS_IS_PTR_NULL_CHECKED(Data)
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 			CS_IS_PTR_NULL_CHECKED(Value)
 
 			typedef NCsModifier::FLibrary ModifierLibrary;
@@ -456,6 +482,14 @@ namespace NCsDamage
 			for (ModifierResourceType* M : Modifiers)
 			{
 				ModifierType* Modifier = M->Get();
+
+				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+				if (WhitelistByDataTypeMap.Num() > CS_EMPTY &&
+					!WhitelistByDataTypeMap.Contains(Type))
+				{
+					continue;
+				}
 
 				// Point
 				typedef NCsDamage::NValue::NPoint::IPoint ValuePointType;
@@ -513,7 +547,7 @@ namespace NCsDamage
 			}
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value, RangeType* Range)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, RangeType* Range)
 		{
 			// TODO: FUTURE: Use a tiny / small array on the stack
 
@@ -521,32 +555,33 @@ namespace NCsDamage
 			{
 				const ModifierType* Modifier = AllocatedModifier.Get();
 
-				ModifyChecked(Context, Modifier, Data, Value);
-				ModifyChecked(Context, Modifier, Data, Range);
+				ModifyChecked(Context, Modifier, Data, Type, Value);
+				ModifyChecked(Context, Modifier, Data, Type, Range);
 			}
 		}
 
-		void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, ValueType* Value)
+		void FLibrary::ModifyChecked(const FString& Context, const TArray<AllocatedModifierType>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
 		{
 			for (const AllocatedModifierType& AllocatedModifier : Modifiers)
 			{
 				const ModifierType* Modifier = AllocatedModifier.Get();
 
-				ModifyChecked(Context, Modifier, Data, Value);
+				ModifyChecked(Context, Modifier, Data, Type, Value);
 			}
 		}
 
-		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value)
+		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value)
 		{
 			uint32 Mask = 0;
-			ModifyChecked_Size64(Context, Modifiers, Data, Value, Mask);
+			ModifyChecked_Size64(Context, Modifiers, Data, Type, Value, Mask);
 		}
 
-		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, ValueType* Value, uint32& OutMask)
+		void FLibrary::ModifyChecked_Size64(const FString& Context, const TArray<ModifierType*>& Modifiers, const DataType* Data, const FECsDamageData& Type, ValueType* Value, uint32& OutMask)
 		{
 			CS_IS_TARRAY_ANY_NULL_CHECKED(Modifiers, ModifierType)
 			CS_IS_TARRAY_LESS_THAN_OR_EQUAL_SIZE_CHECKED(Modifiers, ModifierType*, 64)
 			CS_IS_PTR_NULL_CHECKED(Data)
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 			CS_IS_PTR_NULL_CHECKED(Value)
 
 			typedef NCsModifier::FLibrary ModifierLibrary;
@@ -590,6 +625,14 @@ namespace NCsDamage
 
 			for (ModifierType* Modifier : Modifiers)
 			{
+				const TSet<FECsDamageData>& WhitelistByDataTypeMap = Modifier->GetWhitelistByDataTypeSet();
+
+				if (WhitelistByDataTypeMap.Num() > CS_EMPTY &&
+					!WhitelistByDataTypeMap.Contains(Type))
+				{
+					continue;
+				}
+
 				const FECsDamageModifier& DmgModifierType = GetTypeChecked(Context, Modifier);
 
 				// Value

@@ -20,6 +20,7 @@ void FCsDamageModifier_Int::CopyToModifier(ModifierType* Modifier)
 	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Modifier->SetApplication((ApplicationType*)(&Application));
+	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
 }
 
 void FCsDamageModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
@@ -30,6 +31,7 @@ void FCsDamageModifier_Int::CopyToModifierAsValue(ModifierType* Modifier) const
 	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Modifier->SetApplication((ApplicationType)Application);
+	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
 }
 
 #undef ModifierType
@@ -41,6 +43,7 @@ bool FCsDamageModifier_Int::IsValidChecked(const FString& Context) const
 	// TODO: FUTURE: Check Modifier Type and do appropriate checks
 
 	CS_IS_ENUM_VALID_CHECKED(EMCsNumericValueModifierApplication, Application)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -51,6 +54,7 @@ bool FCsDamageModifier_Int::IsValid(const FString& Context, void(*Log)(const FSt
 	// TODO: FUTURE: Check Modifier Type and do appropriate checks
 
 	CS_IS_ENUM_VALID(EMCsNumericValueModifierApplication, ECsNumericValueModifierApplication, Application)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -76,7 +80,8 @@ namespace NCsDamage
 			InterfaceMap(nullptr),
 			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
+			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply),
+			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 			
@@ -118,6 +123,7 @@ namespace NCsDamage
 			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
 
 			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+			CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 			return true;
 		}
 
@@ -131,6 +137,7 @@ namespace NCsDamage
 			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+			CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 			return true;
 		}
 
@@ -155,6 +162,7 @@ namespace NCsDamage
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
 			SetApplication(FromImpl->GetApplication());
+			SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
 		}
 
 		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
@@ -176,6 +184,7 @@ void FCsDamageModifier_Float::CopyToModifier(ModifierType* Modifier)
 	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Modifier->SetApplication((ApplicationType*)(&Application));
+	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
 }
 
 void FCsDamageModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) const
@@ -186,6 +195,7 @@ void FCsDamageModifier_Float::CopyToModifierAsValue(ModifierType* Modifier) cons
 	typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 	Modifier->SetApplication((ApplicationType)Application);
+	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
 }
 
 #undef ModifierType
@@ -197,6 +207,7 @@ bool FCsDamageModifier_Float::IsValidChecked(const FString& Context) const
 	// TODO: FUTURE: Check Modifier Type and do appropriate checks
 
 	CS_IS_ENUM_VALID_CHECKED(EMCsNumericValueModifierApplication, Application)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -207,6 +218,7 @@ bool FCsDamageModifier_Float::IsValid(const FString& Context, void(*Log)(const F
 	// TODO: FUTURE: Check Modifier Type and do appropriate checks
 
 	CS_IS_ENUM_VALID(EMCsNumericValueModifierApplication, ECsNumericValueModifierApplication, Application)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -232,7 +244,8 @@ namespace NCsDamage
 			InterfaceMap(nullptr),
 			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0.0f),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply)
+			CS_CTOR_INIT_MEMBER_WITH_PROXY(Application, NCsModifier::NValue::NNumeric::EApplication::Multiply),
+			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -254,6 +267,7 @@ namespace NCsDamage
 			CS_CTOR_SET_MEMBER_PROXY(Type);
 			CS_CTOR_SET_MEMBER_PROXY(Value);
 			CS_CTOR_SET_MEMBER_PROXY(Application);
+			CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
 		}
 
 		FFloat::~FFloat()
@@ -274,6 +288,7 @@ namespace NCsDamage
 			typedef NCsModifier::NValue::NNumeric::EMApplication ApplicationMapType;
 
 			CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetApplication())
+			CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 			return true;
 		}
 
@@ -287,6 +302,7 @@ namespace NCsDamage
 			typedef NCsModifier::NValue::NNumeric::EApplication ApplicationType;
 
 			CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetApplication())
+			CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 			return true;
 		}
 
@@ -311,6 +327,7 @@ namespace NCsDamage
 			SetType(FromImpl->GetType());
 			SetValue(FromImpl->GetValue());
 			SetApplication(FromImpl->GetApplication());
+			SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
 		}
 
 		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
@@ -334,6 +351,7 @@ void FCsDamageModifier_Float_Range::CopyToModifier(ModifierType* Modifier)
 
 	Modifier->SetMinApplication((ApplicationType*)(&MinApplication));
 	Modifier->SetMaxApplication((ApplicationType*)(&MaxApplication));
+	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
 }
 
 void FCsDamageModifier_Float_Range::CopyToModifierAsValue(ModifierType* Modifier) const
@@ -346,6 +364,7 @@ void FCsDamageModifier_Float_Range::CopyToModifierAsValue(ModifierType* Modifier
 
 	Modifier->SetMinApplication((ApplicationType)MinApplication);
 	Modifier->SetMaxApplication((ApplicationType)MaxApplication);
+	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
 }
 
 #undef ModifierType
@@ -358,6 +377,7 @@ bool FCsDamageModifier_Float_Range::IsValidChecked(const FString& Context) const
 
 	CS_IS_ENUM_VALID_CHECKED(EMCsNumericValueModifierApplication, MinApplication)
 	CS_IS_ENUM_VALID_CHECKED(EMCsNumericValueModifierApplication, MaxApplication)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -369,6 +389,7 @@ bool FCsDamageModifier_Float_Range::IsValid(const FString& Context, void(*Log)(c
 
 	CS_IS_ENUM_VALID(EMCsNumericValueModifierApplication, ECsNumericValueModifierApplication, MinApplication)
 	CS_IS_ENUM_VALID(EMCsNumericValueModifierApplication, ECsNumericValueModifierApplication, MaxApplication)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -398,7 +419,8 @@ namespace NCsDamage
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Min, 0.0f),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(MinApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Max, 0.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxApplication, NCsModifier::NValue::NNumeric::EApplication::Multiply),
+				CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 			{
 				InterfaceMap = new FCsInterfaceMap();
 
@@ -422,6 +444,7 @@ namespace NCsDamage
 				CS_CTOR_SET_MEMBER_PROXY(MinApplication);
 				CS_CTOR_SET_MEMBER_PROXY(Max);
 				CS_CTOR_SET_MEMBER_PROXY(MaxApplication);
+				CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
 			}
 
 			FRange::~FRange()
@@ -443,6 +466,7 @@ namespace NCsDamage
 
 				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetMinApplication())
 				CS_IS_ENUM_VALID_CHECKED(ApplicationMapType, GetMaxApplication())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 				return true;
 			}
 
@@ -457,6 +481,7 @@ namespace NCsDamage
 
 				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetMinApplication())
 				CS_IS_ENUM_VALID(ApplicationMapType, ApplicationType, GetMaxApplication())
+				CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 				return true;
 			}
 
@@ -483,6 +508,7 @@ namespace NCsDamage
 				SetMinApplication(FromImpl->GetMinApplication());
 				SetMax(FromImpl->GetMax());
 				SetMaxApplication(FromImpl->GetMaxApplication());
+				SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
 			}
 
 			#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)
@@ -501,12 +527,14 @@ void FCsDamageModifier_Toggle::CopyToModifier(ModifierType* Modifier)
 {
 	Modifier->SetType(&Type);
 	Modifier->SetbEnable(&bEnable);
+	Modifier->SetWhitelistByDataTypeSet(&WhitelistByDataTypeSet);
 }
 
 void FCsDamageModifier_Toggle::CopyToModifierAsValue(ModifierType* Modifier) const
 {
 	Modifier->SetType(Type);
 	Modifier->SetbEnable(bEnable);
+	Modifier->SetWhitelistByDataTypeSet(WhitelistByDataTypeSet);
 }
 
 #undef ModifierType
@@ -514,12 +542,14 @@ void FCsDamageModifier_Toggle::CopyToModifierAsValue(ModifierType* Modifier) con
 bool FCsDamageModifier_Toggle::IsValidChecked(const FString& Context) const
 {
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, Type)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
 bool FCsDamageModifier_Toggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 {
 	CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, Type)
+	CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, WhitelistByDataTypeSet)
 	return true;
 }
 
@@ -544,7 +574,8 @@ namespace NCsDamage
 			// ICsGetInterfaceMap
 			InterfaceMap(nullptr),
 			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
-			CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false)
+			CS_CTOR_INIT_MEMBER_WITH_PROXY(bEnable, false),
+			CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(WhitelistByDataTypeSet)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -565,6 +596,7 @@ namespace NCsDamage
 
 			CS_CTOR_SET_MEMBER_PROXY(Type);
 			CS_CTOR_SET_MEMBER_PROXY(bEnable);
+			CS_CTOR_SET_MEMBER_PROXY(WhitelistByDataTypeSet);
 		}
 
 		FToggle::~FToggle()
@@ -579,12 +611,14 @@ namespace NCsDamage
 		bool FToggle::IsValidChecked(const FString& Context) const
 		{
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageModifier, GetType())
+			CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 			return true;
 		}
 
 		bool FToggle::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 		{
 			CS_IS_ENUM_STRUCT_VALID(EMCsDamageModifier, FECsDamageModifier, GetType())
+			CS_IS_ENUM_STRUCT_SET_UNIQUE(EMCsDamageData, FECsDamageData, GetWhitelistByDataTypeSet())
 			return true;
 		}
 
@@ -608,6 +642,7 @@ namespace NCsDamage
 
 			SetType(FromImpl->GetType());
 			SetbEnable(FromImpl->GetbEnable());
+			SetWhitelistByDataTypeSet(FromImpl->GetWhitelistByDataTypeSet());
 		}
 
 		#pragma endregion CopyType (NCsDamage::NModifier::NCopy::ICopy)

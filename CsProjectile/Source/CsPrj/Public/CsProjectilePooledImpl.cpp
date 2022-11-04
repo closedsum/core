@@ -918,9 +918,9 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 
 		if (const DmgModifierPayloadType* DmgModifierPayload = PayloadLibrary::GetSafeInterfaceChecked<DmgModifierPayloadType>(Context, Payload))
 		{
-			typedef NCsDamage::NManager::FLibrary DmgManagerLibrary;
+			typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
 
-			DmgManagerLibrary::CreateCopyOfModifiersChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
+			DmgModifierLibrary::CopyChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
 		}
 	}
 }
@@ -1514,6 +1514,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			static ProcessPayloadType ProcessPayload;
 
 			ProcessPayload.Value	  = DamageImpl.GetValue();
+			ProcessPayload.Type		  = DamageManagerLibrary::GetDataTypeChecked(Context, this, DamageData->GetDamageData());
 			ProcessPayload.Data		  = DamageData->GetDamageData();
 			ProcessPayload.Instigator = GetCache()->GetInstigator();
 			ProcessPayload.Causer	  = this;
@@ -1551,6 +1552,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			static ProcessPayloadType ProcessPayload;
 
 			ProcessPayload.Value	  = DamageImpl.GetValue();
+			ProcessPayload.Type		  = GetDamageDataType->GetDamageDataType();
 			ProcessPayload.Data		  = DamageData;
 			ProcessPayload.Instigator = GetCache()->GetInstigator();
 			ProcessPayload.Causer	  = this;
@@ -1575,14 +1577,22 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			typedef NCsDamage::NData::IData DamageDataType;
 
 			static TArray<DamageDataType*> DamageDatas;
-
 			DamageManagerLibrary::GetDatasChecked(Context, this, GetDamageDataTypes, DamageDatas);
+			DamageManagerLibrary::AddDatasChecked(Context, this, DamageImpl.DataTypes, DamageDatas);
+
+			static TArray<FECsDamageData> DamageDataTypes;
+			DamageDataTypes.Append(GetDamageDataTypes->GetDamageDataTypes());
+			DamageDataTypes.Append(DamageImpl.DataTypes);
 
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 
-			for (DamageDataType* DamageData : DamageDatas)
+			const int32 Count = DamageDataTypes.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
 			{
+				DamageDataType* DamageData = DamageDatas[I];
+
 				// Apply Modifiers
 				DamageImpl.SetValue(DamageData);
 
@@ -1591,6 +1601,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				static ProcessPayloadType ProcessPayload;
 
 				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Type		  = DamageDataTypes[I];
 				ProcessPayload.Data		  = DamageData;
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
@@ -1602,8 +1613,10 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
 
 				ProcessPayload.Reset();
+
+				DamageDatas.RemoveAt(I, 1, false);
+				DamageDataTypes.RemoveAt(I, 1, false);
 			}
-			DamageDatas.Reset(DamageDatas.Max());
 		}
 	}
 
@@ -1757,6 +1770,7 @@ ACsProjectilePooledImpl::FDamageImpl::FDamageImpl() :
 	Type(),
 	ValuePoint(nullptr),
 	ValueRange(nullptr),
+	DataTypes(),
 	Modifiers()
 {
 	typedef NCsDamage::NValue::NPoint::FImpl PointType;
@@ -1828,6 +1842,7 @@ void ACsProjectilePooledImpl::FDamageImpl::Reset()
 {
 	ResetValue();
 
+	DataTypes.Reset(DataTypes.Max());
 	Modifiers.Reset(Modifiers.Max());
 }
 

@@ -441,21 +441,23 @@ EventResourceType* UCsManager_Damage::CreateCopyOfEvent(const FString& Context, 
 #define ValueType NCsDamage::NValue::IValue
 #define RangeType NCsDamage::NRange::IRange
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierType*>& Modifiers)
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult,  const TArray<ModifierType*>& Modifiers)
 {
 	typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 	typedef NCsDamage::NData::NShape::IShape ShapeDataType;
 
 	CS_IS_PTR_NULL_CHECKED(Data)
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 
 	if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
-		return CreateEvent(Context, Data->GetValue(), ShapeData->GetRange(), Data, Instigator, Causer, HitResult, Modifiers);
-	return CreateEvent(Context, Data->GetValue(), Data, Instigator, Causer, HitResult, Modifiers);
+		return CreateEvent(Context, Data->GetValue(), ShapeData->GetRange(), Data, Type, Instigator, Causer, HitResult, Modifiers);
+	return CreateEvent(Context, Data->GetValue(), Data, Type, Instigator, Causer, HitResult, Modifiers);
 }
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 {
 	CS_IS_PTR_NULL_CHECKED(Data)
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
 	
 	// Get Container from Manager_Damage
 	EventResourceType* Container = AllocateEvent();
@@ -480,13 +482,14 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 	if (Range)
 	{
-		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, DamageValue, Range);
+		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Type, DamageValue, Range);
 	}
 	else
 	{
-		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, DamageValue);
+		DamageModifierLibrary::ModifyChecked(Context, Modifiers, Data, Type, DamageValue);
 	}
 
+	EventImpl->Type = Type;
 	EventImpl->Data	= Data;
 
 	EventImpl->SetDamageChecked(Context);
@@ -499,7 +502,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 	return Container;
 }
 
-EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
+EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const ValueType* Value, const RangeType* Range, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers)
 {
 	typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
 
@@ -508,6 +511,7 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 	ProcessPayload.Value = const_cast<ValueType*>(Value);
 	ProcessPayload.SetRange(const_cast<RangeType*>(Range));
+	ProcessPayload.Type		  = Type;
 	ProcessPayload.Data		  = Data;
 	ProcessPayload.Instigator = Instigator;
 	ProcessPayload.Causer	  = Causer;
@@ -545,14 +549,15 @@ EventResourceType* UCsManager_Damage::CreateEvent(const FString& Context, const 
 
 		RangeType* DamageRange = EventImpl->DamageRange.GetRange();
 
-		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, DamageValue, DamageRange);
+		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, ProcessPayload.Type, DamageValue, DamageRange);
 	}
 	else
 	{
 		EventImpl->DamageRange.SafeCopyFrom(Context, MyRoot, ProcessPayload.Data, nullptr);
-		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, DamageValue, EventImpl->ModifierMask);
+		DamageModifierLibrary::ModifyChecked(Context, ProcessPayload.Modifiers, ProcessPayload.Data, ProcessPayload.Type, DamageValue, EventImpl->ModifierMask);
 	}
 
+	EventImpl->Type = ProcessPayload.Type;
 	EventImpl->Data	= ProcessPayload.Data;
 
 	EventImpl->SetDamageChecked(Context);
@@ -923,6 +928,13 @@ void UCsManager_Damage::ConstructDataHandler()
 }
 
 #define DataType NCsDamage::NData::IData
+
+const FECsDamageData& UCsManager_Damage::GetDataTypeChecked(const FString& Context, const DataType* Data) const
+{
+	CS_IS_PTR_NULL_CHECKED(Data)
+
+	return DataHandler->GetTypeChecked<EMCsDamageData, FECsDamageData>(Context, Data);
+}
 
 DataType* UCsManager_Damage::GetDataChecked(const FString& Context, const FName& Name)
 {

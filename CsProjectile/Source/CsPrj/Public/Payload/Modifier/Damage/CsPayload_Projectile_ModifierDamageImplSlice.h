@@ -65,6 +65,7 @@ namespace NCsProjectile
 				public:
 
 					void CopyFromModifiers(const UObject* WorldContext, const TArray<DmgModifierType*>& FromModifiers);
+					void CopyAndEmptyFromModifiers(const UObject* WorldContext, TArray<DmgModifierType*>& FromModifiers);
 					void CopyFromModifiers(const UObject* WorldContext, const TArray<AllocatedDmgModifierType>& FromModifiers);
 
 					void AddAndEmptyFromModifiers(TArray<DmgModifierType*>& FromModifiers);

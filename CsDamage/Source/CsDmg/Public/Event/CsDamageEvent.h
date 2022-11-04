@@ -5,6 +5,7 @@
 // Types
 #include "Engine/EngineTypes.h"
 #include "Types/CsTypes_Damage.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 
 // NCsDamage::NValue::IValue
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsDamage, NValue, IValue)
@@ -56,6 +57,11 @@ namespace NCsDamage
 			* return 
 			*/
 			virtual const RangeType* GetDamageRange() const = 0;
+
+			/**
+			*
+			*/
+			virtual const FECsDamageData& GetDataType() const = 0;
 
 			/**
 			*

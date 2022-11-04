@@ -13,6 +13,7 @@
 #include "Types/CsTypes_Projectile_Tracking.h"
 #include "Types/CsTypes_Damage.h"
 #include "Value/Types/CsTypes_DamageValue.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 #include "Managers/FX/CsTypes_FX.h"
 // Coroutine
 #include "Coroutine/CsRoutineHandle.h"
@@ -580,6 +581,8 @@ public:
 
 		PointType* ValuePoint;
 		RangeType* ValueRange;
+
+		TArray<FECsDamageData> DataTypes;
 
 		TArray<AllocatedModifierType> Modifiers;
 		

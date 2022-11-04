@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Managers/Damage/Data/Types/CsTypes_Data_Damage.h"
 
 class UObject;
 
@@ -40,6 +40,8 @@ namespace NCsDamage
 			
 			public:
 
+				FECsDamageData Type;
+
 				DataType* Data;
 
 				UObject* Instigator;
@@ -55,6 +57,7 @@ namespace NCsDamage
 				FPayload() :
 					Value(nullptr),
 					Range(nullptr),
+					Type(),
 					Data(nullptr),
 					Instigator(nullptr),
 					Causer(nullptr),
@@ -77,6 +80,7 @@ namespace NCsDamage
 					Value = nullptr;
 					bRange = false;
 					Range = nullptr;
+					Type = EMCsDamageData::Get().GetMAX();
 					Data = nullptr;
 					Instigator = nullptr;
 					Causer = nullptr;

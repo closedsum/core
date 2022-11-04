@@ -21,11 +21,16 @@ struct CSPRJ_API FCsProjectile_FX_ImpactInfo : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
+	/** Whether to spawn FX or not for the Surface Type associated with Impact Object. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (ScriptName = "m_bFX", InlineEditConditionToggle))
+	bool bFX;
+
+	/** FX to spawn on Impact. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (ScriptName = "m_FX", EditCondition = "bFX"))
 	FCsFX FX;
 
 	/** Whether to Scale the FX by a Damage Range associated with the Projectile.
-		 Damage Range is an object that implements the interface: NCsDamage::NRange::IRange.
+		 Damage Range is an object that implements the interface: RangeType (NCsDamage::NRange::IRange).
 		NOTE: Damage Range MUST exist. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)
 	bool bScaleByDamageRange;
@@ -33,6 +38,7 @@ struct CSPRJ_API FCsProjectile_FX_ImpactInfo : public FTableRowBase
 public:
 
 	FCsProjectile_FX_ImpactInfo() :
+		bFX(true),
 		FX(),
 		bScaleByDamageRange(false)
 	{
@@ -59,24 +65,34 @@ namespace NCsProjectile
 				{
 				private:
 
+					/** Whether to spawn FX or not for the Surface Type associated with Impact Object. */
+					CS_DECLARE_MEMBER_WITH_PROXY(bFX, bool)
+					/** FX to spawn on Impact. */
 					CS_DECLARE_MEMBER_WITH_PROXY(FX, FCsFX)
+					/** Whether to Scale the FX by a Damage Range associated with the Projectile.
+						 Damage Range is an object that implements the interface: RangeType (NCsDamage::NRange::IRange).
+						NOTE: Damage Range MUST exist. */
 					CS_DECLARE_MEMBER_WITH_PROXY(bScaleByDamageRange, bool)
 
 				public:
 
 					FInfo() :
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(bFX, true),
 						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(FX),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(bScaleByDamageRange, false)
 					{
+						CS_CTOR_SET_MEMBER_PROXY(bFX);
 						CS_CTOR_SET_MEMBER_PROXY(FX);
 						CS_CTOR_SET_MEMBER_PROXY(bScaleByDamageRange);
 					}
 
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bFX, bool)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FX, FCsFX)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bScaleByDamageRange, bool)
 
 					void Copy(const FInfo& From)
 					{
+						SetbFX(From.GetbFX());
 						SetFX(From.GetFX());
 						SetbScaleByDamageRange(From.GetbScaleByDamageRange());
 					}

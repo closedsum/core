@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_Projectile_Visual_Impact.h"
+#include "Types/Visual/Impact/CsTypes_Projectile_Visual_Impact.h"
 
 #include "CsData_Projectile_VisualImpact.generated.h"
 

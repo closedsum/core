@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/CsTypes_Projectile_Visual_Impact.h"
+#include "Types/Visual/Impact/CsTypes_Projectile_Visual_Impact.h"
 
 // Library
 #include "Library/CsLibrary_Valid.h"
@@ -11,12 +11,14 @@
 
 void FCsProjectile_FX_ImpactInfo::CopyToInfo(InfoType* Info)
 {
+	Info->SetbFX(&bFX);
 	Info->SetFX(&FX);
 	Info->SetbScaleByDamageRange(&bScaleByDamageRange);
 }
 
 void FCsProjectile_FX_ImpactInfo::CopyToInfoAsValue(InfoType* Info) const
 {
+	Info->SetbFX(bFX);
 	Info->SetFX(FX);
 	Info->SetbScaleByDamageRange(bScaleByDamageRange);
 }
@@ -25,13 +27,19 @@ void FCsProjectile_FX_ImpactInfo::CopyToInfoAsValue(InfoType* Info) const
 
 bool FCsProjectile_FX_ImpactInfo::IsValidChecked(const FString& Context) const
 {
-	CS_IS_VALID_CHECKED(FX);
+	if (bFX)
+	{
+		CS_IS_VALID_CHECKED(FX);
+	}
 	return true;
 }
 
 bool FCsProjectile_FX_ImpactInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 {
-	CS_IS_VALID(FX)
+	if (bFX)
+	{
+		CS_IS_VALID(FX)
+	}
 	return true;
 }
 
@@ -45,13 +53,19 @@ namespace NCsProjectile
 			{
 				bool FInfo::IsValidChecked(const FString& Context) const
 				{
-					CS_IS_VALID_CHECKED(GetFX());
+					if (GetbFX())
+					{
+						CS_IS_VALID_CHECKED(GetFX());
+					}
 					return true;
 				}
 
 				bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 				{
-					CS_IS_VALID(GetFX())
+					if (GetbFX())
+					{
+						CS_IS_VALID(GetFX())
+					}
 					return true;
 				}
 			}

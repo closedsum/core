@@ -1738,25 +1738,30 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 			{
 				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 				typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
+				typedef NCsProjectile::NImpact::NVisual::NFX::FInfo ImpactFXInfoType;
 				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
 				PayloadImplType Payload;
 				Payload.Instigator = Cache->GetInstigator();
 
 				const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
+				const ImpactFXInfoType& FXInfo   = Info.GetFXInfo();
 
-				FTransform Transform = FTransform::Identity;
-				Transform.SetLocation(Hit.Location);
-				Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
-
-				if (Info.GetFXInfo().GetbScaleByDamageRange())
+				if (FXInfo.GetbFX())
 				{
-					float MaxRange = GetMaxDamageRangeChecked(Context);
+					FTransform Transform = FTransform::Identity;
+					Transform.SetLocation(Hit.Location);
+					Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
-					Transform.SetScale3D(MaxRange * FVector::OneVector);
+					if (Info.GetFXInfo().GetbScaleByDamageRange())
+					{
+						float MaxRange = GetMaxDamageRangeChecked(Context);
+
+						Transform.SetScale3D(MaxRange * FVector::OneVector);
+					}
+
+					FXManagerLibrary::SpawnChecked(Context, this, &Payload, FXInfo.GetFX(), Transform);
 				}
-
-				FXManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetFXInfo().GetFX(), Transform);
 			}
 		}
 	}

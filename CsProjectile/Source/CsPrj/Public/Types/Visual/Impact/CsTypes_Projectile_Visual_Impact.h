@@ -10,6 +10,7 @@
 // FCsProjectile_FX_ImpactInfo
 #pragma region
 
+// NCsProjectile::NImpact::NVisual::NFX::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsProjectile, NImpact, NVisual, NFX, FInfo)
 
 /**
@@ -110,6 +111,7 @@ namespace NCsProjectile
 // FCsProjectile_Visual_ImpactInfo
 #pragma region
 
+// NCsProjectile::NImpact::NVisual::FInfo
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsProjectile, NImpact, NVisual, FInfo)
 
 /**

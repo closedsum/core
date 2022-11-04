@@ -233,6 +233,10 @@
 	__Member.Reset(__Member.Max()); \
 	__Member##_Proxy = &__Member;
 
+#define CS_RESET_MEMBER_SET_WITH_PROXY(__Member) \
+	__Member.Reset(); \
+	__Member##_Proxy = &__Member;
+
 #define CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(__Member, __ValueType) \
 	FORCEINLINE void Set##__Member(const __ValueType& __value) \
 	{ \

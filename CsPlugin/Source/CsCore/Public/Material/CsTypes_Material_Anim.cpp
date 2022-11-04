@@ -1234,8 +1234,14 @@ namespace NCsMaterial
 			{
 				MIDs.Reset(FMath::Max(MIDs.Max(), Value.Num()));
 
-				for (UMaterialInstanceDynamic* MID : Value)
+				const int32 Count = Value.Num();
+
+				for (int32 I = 0; I < Count; ++I)
 				{
+					UMaterialInstanceDynamic* MID = Value[I];
+
+					checkf(MID, TEXT("NCsMaterial::NAnim::NParams::FParams: Value[%d] is NULL."), I);
+
 					MIDs.Add(MID);
 				}
 			}

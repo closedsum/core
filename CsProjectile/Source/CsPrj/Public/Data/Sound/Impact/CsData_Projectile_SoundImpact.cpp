@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Data/Sound/CsData_Projectile_SoundImpact.h"
+#include "Data/Sound/Impact/CsData_Projectile_SoundImpact.h"
 #include "CsPrj.h"
 
 const FName NCsProjectile::NData::NSound::NImpact::IImpact::Name = FName("NCsProjectile::NData::NSound::NImpact::IImpact");

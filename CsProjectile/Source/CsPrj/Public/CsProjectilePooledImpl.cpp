@@ -43,7 +43,7 @@
 #include "Data/Visual/StaticMesh/CsData_Projectile_VisualStaticMesh.h"
 #include "Data/Visual/CsData_Projectile_VisualTrail.h"
 #include "Data/Visual/Impact/CsData_Projectile_VisualImpact.h"
-#include "Data/Sound/CsData_Projectile_SoundImpact.h"
+#include "Data/Sound/Impact/CsData_Projectile_SoundImpact.h"
 #include "Data/Damage/CsData_Projectile_Damage.h"
 	// Damage
 #include "Managers/Damage/Data/CsData_Damage.h"

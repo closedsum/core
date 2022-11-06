@@ -252,7 +252,7 @@ ACsProjectileWeaponActorPooled::ACsProjectileWeaponActorPooled(const FObjectInit
 void ACsProjectileWeaponActorPooled::BeginDestroy()
 {
 	Super::BeginDestroy();
-	
+
 	CS_SAFE_DELETE_PTR(Cache)
 	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
 
@@ -440,6 +440,15 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 
 void ACsProjectileWeaponActorPooled::Deallocate()
 {
+	ProjectileImpl->Reset();
+
+	OnConsumeAmmo_Event.Clear();
+	OnFire_PreStart_Event.Clear();
+	OnFire_PreShot_Event.Clear();
+	OnFire_End_Event.Clear();
+
+	TimeBetweenShotsImpl.Clear();
+
 	// End Routines
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
@@ -504,16 +513,7 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 	Fire_StartTime = 0.0f;
 	FireCount = 0;
 	
-	ProjectileImpl->Reset();
-
 	// bOverride_ProjectileImpl_GetLaunchDirection = false;
-
-	OnConsumeAmmo_Event.Clear();
-	OnFire_PreStart_Event.Clear();
-	OnFire_PreShot_Event.Clear();
-	OnFire_End_Event.Clear();
-
-	TimeBetweenShotsImpl.Clear();
 
 	Cache->Deallocate();
 }

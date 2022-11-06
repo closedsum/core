@@ -1255,10 +1255,13 @@ namespace NCsMaterial
 				{
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsScalarParameterValid);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeScalarParameterValue);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeScalarParameterValue_MinChecks);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsVectorParameterValid);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeVectorParameterValue);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeVectorParameterValue_MinChecks);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, IsTextureParameterValid);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeTextureParameterValue);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, SetSafeTextureParameterValue_MinChecks);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NMID::FLibrary, PlayAnim_Internal);
 				}
 
@@ -1655,11 +1658,13 @@ namespace NCsMaterial
 			// Check MIDs is Valid
 			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
 
+			bool Result = true;
+
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
-				SetSafeScalarParameterValue(Context, MID, ParamName, Value, Log);
+				Result &= SetSafeScalarParameterValue(Context, MID, ParamName, Value, Log);
 			}
-			return true;
+			return Result;
 		}
 
 		bool FLibrary::SetSafeScalarParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
@@ -1669,6 +1674,51 @@ namespace NCsMaterial
 			const FString& Context = Str::SetSafeScalarParameterValue;
 
 			return SetSafeScalarParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		bool FLibrary::SetSafeScalarParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			CS_IS_PTR_NULL(MID)
+			CS_IS_NAME_NONE(ParamName)
+
+			MID->SetScalarParameterValue(ParamName, Value);
+			return true;
+		}
+
+		bool FLibrary::SetSafeScalarParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeScalarParameterValue_MinChecks;
+
+			return SetSafeScalarParameterValue_MinChecks(Context, MID, ParamName, Value);
+		}
+
+		bool FLibrary::SetSafeScalarParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			// Check MIDs is Valid
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+
+			bool Result = true;
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				Result &= SetSafeScalarParameterValue_MinChecks(Context, MID, ParamName, Value);
+			}
+			return Result;
+		}
+
+		bool FLibrary::SetSafeScalarParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeScalarParameterValue_MinChecks;
+
+			return SetSafeScalarParameterValue_MinChecks(Context, MIDs, ParamName, Value);
 		}
 
 		float FLibrary::GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
@@ -1874,11 +1924,13 @@ namespace NCsMaterial
 			// Check MIDs is Valid
 			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
 
+			bool Result = true;
+
 			for (UMaterialInstanceDynamic* MID : MIDs)
 			{
-				SetSafeVectorParameterValue(Context, MID, ParamName, Value, Log);
+				Result &= SetSafeVectorParameterValue(Context, MID, ParamName, Value, Log);
 			}
-			return true;
+			return Result;
 		}
 
 		bool FLibrary::SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
@@ -1888,6 +1940,51 @@ namespace NCsMaterial
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			return SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			CS_IS_PTR_NULL(MID)
+			CS_IS_NAME_NONE(ParamName)
+
+			MID->SetVectorParameterValue(ParamName, Value);
+			return true;
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue_MinChecks;
+
+			return SetSafeVectorParameterValue_MinChecks(Context, MID, ParamName, Value);
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			// Check MIDs is Valid
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+
+			bool Result = true;
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				Result &= SetSafeVectorParameterValue_MinChecks(Context, MID, ParamName, Value);
+			}
+			return Result;
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue_MinChecks;
+
+			return SetSafeVectorParameterValue_MinChecks(Context, MIDs, ParamName, Value);
 		}
 
 		void FLibrary::SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
@@ -1914,6 +2011,26 @@ namespace NCsMaterial
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			return SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			CS_IS_PTR_NULL(MID)
+			CS_IS_NAME_NONE(ParamName)
+
+			MID->SetVectorParameterValue(ParamName, Value);
+			return true;
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue_MinChecks;
+
+			return SetSafeVectorParameterValue_MinChecks(Context, MID, ParamName, Value);
 		}
 
 		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
@@ -1946,6 +2063,31 @@ namespace NCsMaterial
 			const FString& Context = Str::SetSafeVectorParameterValue;
 
 			return SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			// Check MIDs is Valid
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+
+			bool Result = true;
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				Result &= SetSafeVectorParameterValue_MinChecks(Context, MID, ParamName, Value);
+			}
+			return Result;
+		}
+
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeVectorParameterValue_MinChecks;
+
+			return SetSafeVectorParameterValue_MinChecks(Context, MIDs, ParamName, Value);
 		}
 
 		FLinearColor FLibrary::GetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
@@ -2165,6 +2307,51 @@ namespace NCsMaterial
 			const FString& Context = Str::SetSafeTextureParameterValue;
 
 			return SetSafeTextureParameterValue(Context, MIDs, ParamName, Value, nullptr);
+		}
+
+		bool FLibrary::SetSafeTextureParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			CS_IS_PTR_NULL(MID)
+			CS_IS_NAME_NONE(ParamName)
+
+			MID->SetTextureParameterValue(ParamName, Value);
+			return true;
+		}
+
+		bool FLibrary::SetSafeTextureParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeTextureParameterValue_MinChecks;
+
+			return SetSafeTextureParameterValue_MinChecks(Context, MID, ParamName, Value);
+		}
+
+		bool FLibrary::SetSafeTextureParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
+		{
+			void(*Log)(const FString&) = nullptr;
+
+			// Check MIDs is Valid
+			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
+
+			bool Result = true;
+
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				Result &= SetSafeTextureParameterValue_MinChecks(Context, MID, ParamName, Value);
+			}
+			return Result;
+		}
+
+		bool FLibrary::SetSafeTextureParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value)
+		{
+			using namespace NCsMaterial::NMID::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeTextureParameterValue_MinChecks;
+
+			return SetSafeTextureParameterValue_MinChecks(Context, MIDs, ParamName, Value);
 		}
 
 		UTexture* FLibrary::GetTextureParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)

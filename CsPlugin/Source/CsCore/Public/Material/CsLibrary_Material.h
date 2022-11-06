@@ -691,6 +691,56 @@ namespace NCsMaterial
 			static bool SetSafeScalarParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
 
 			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			*
+			* @param Context	The calling context.
+			* @param MIDs		Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeScalarParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value);
+
+			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			*
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeScalarParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value);
+
+			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeScalarParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+
+			/**
+			* Safely set the Scalar Parameter Value with name: ParamName with value Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Scalar Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeScalarParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const float& Value);
+
+			/**
 			* Get the value of the Scalar Parameter Value with name: ParamName on MID.
 			*
 			* @param Context	The calling context.
@@ -801,6 +851,56 @@ namespace NCsMaterial
 			static bool SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
 
 			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+
+			/**
 			* Set the Vector Parameter Value with name: ParamName with value: Value on MID.
 			*
 			* @param Context	The calling context.
@@ -833,6 +933,31 @@ namespace NCsMaterial
 			static bool SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
 
 			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MID		Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
+
+			/**
 			* Set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
 			*
 			* @param Context	The calling context.
@@ -863,6 +988,31 @@ namespace NCsMaterial
 			* return
 			*/
 			static bool SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
+
+			/**
+			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Vector Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value);
 
 			/**
 			* Get the value of the Vector Parameter Value with name: ParamName on MID.
@@ -973,6 +1123,56 @@ namespace NCsMaterial
 			* return
 			*/
 			static bool SetSafeTextureParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MIDs		Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeTextureParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MID.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeTextureParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param Context	The calling context.
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeTextureParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
+
+			/**
+			* Safely set the Texture Parameter Value with name: ParamName with value Value on MIDs.
+			*  No Log
+			*  Minimum Checks in terms of exiting early due Param Name not existing for the MID.
+			* 
+			* @param MIDs		Array of Material Instance Dynamic.
+			* @param ParamName	Name of the Texture Parameter Value to set.
+			* @param Value		The value to set.
+			* return
+			*/
+			static bool SetSafeTextureParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, UTexture* Value);
 
 			/**
 			* Get the value of the Texture Parameter Value with name: ParamName on MID.

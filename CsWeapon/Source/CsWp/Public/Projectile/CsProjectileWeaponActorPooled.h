@@ -726,14 +726,14 @@ public:
 
 	protected:
 
-		ACsProjectileWeaponActorPooled* Weapon;
+		ACsProjectileWeaponActorPooled* Outer;
 
 		USceneComponent* Component;
 
 	public:
 
 		FSoundImpl() :
-			Weapon(nullptr),
+			Outer(nullptr),
 			Component(nullptr)
 		{
 		}
@@ -749,7 +749,7 @@ public:
 
 		/**
 		*/
-		void Play();
+		void Play(const int32 CurrentProjectilePerShotIndex);
 	};
 
 	FSoundImpl* SoundImpl;

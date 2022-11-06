@@ -3,7 +3,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Managers/Sound/CsTypes_Sound.h"
+#include "Types/Sound/Impact/CsTypes_Projectile_Sound_Impact.h"
 
 #include "CsData_Projectile_SoundImpact.generated.h"
 
@@ -25,7 +25,17 @@ namespace NCsProjectile
 
 				public:
 
-					virtual const FCsSound& GetImpactSound(const EPhysicalSurface& SurfaceType) const = 0;
+				#define ImpactSoundInfoType NCsProjectile::NImpact::NSound::FInfo
+				
+					/**
+					* Get the Visual Impact information associated with the given SurfaceType.
+					*
+					* @param SurfaceType	Physics Surface type.
+					* return				Visual Impact information associated with the given SurfaceType
+					*/
+					virtual const ImpactSoundInfoType& GetImpactSoundInfo(const EPhysicalSurface& SurfaceType) const = 0;
+
+				#undef ImpactSoundInfoType
 				};
 			}
 		}
@@ -50,5 +60,15 @@ public:
 
 public:
 	
-	virtual const FCsSound& GetImpactSound(const EPhysicalSurface& SurfaceType) const = 0;
+#define ImpactSoundInfoType NCsProjectile::NImpact::NSound::FInfo
+
+	/**
+	* Get the Visual Impact information associated with the given SurfaceType.
+	*
+	* @param SurfaceType	Physics Surface type.
+	* return				Visual Impact information associated with the given SurfaceType
+	*/
+	virtual const ImpactSoundInfoType& GetImpactSoundInfo(const EPhysicalSurface& SurfaceType) const = 0;
+
+#undef ImpactSoundInfoType
 };

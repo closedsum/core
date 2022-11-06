@@ -264,7 +264,7 @@ bool UCsScriptLibrary_Data_Weapon::AddSlice_ProjectileWeapon_SoundFire(const FSt
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSlice_ProjectileWeapon_SoundFire : Context;
 
-	typedef NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice DataSliceType;
+	typedef NCsWeapon::NProjectile::NFire::NSound::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = Slice.AddSafeSliceAsValue(Ctxt, WorldContextObject, FName(*Name));
 
@@ -277,7 +277,7 @@ bool UCsScriptLibrary_Data_Weapon::AddSliceFromObject_ProjectileWeapon_SoundFire
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::AddSliceFromObject_ProjectileWeapon_SoundFire : Context;
 
-	typedef NCsWeapon::NProjectile::NData::NSound::NFire::FImplSlice DataSliceType;
+	typedef NCsWeapon::NProjectile::NFire::NSound::FImplSlice DataSliceType;
 
 	DataSliceType* DataSlice = DataSliceType::AddSafeSlice(Ctxt, WorldContextObject, FName(*Name), Object);
 

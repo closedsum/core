@@ -1494,19 +1494,24 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 		if (ImpactSoundDataType* ImpactSoundData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 		{
-			typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-			typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+			typedef NCsProjectile::NImpact::NSound::FInfo ImpactSoundInfoType;
 
-			PayloadImplType Payload;
-			Payload.Instigator = Cache->GetInstigator();
+			const ImpactSoundInfoType& Info = ImpactSoundData->GetImpactSoundInfo(SurfaceType);
 
-			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
+			if (Info.GetbSound())
+			{
+				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
 
-			FTransform Transform = FTransform::Identity;
-			Transform.SetLocation(Hit.Location);
-			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+				PayloadImplType Payload;
+				Payload.Instigator = Cache->GetInstigator();
 
-			SoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
+				FTransform Transform = FTransform::Identity;
+				Transform.SetLocation(Hit.Location);
+				Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+
+				SoundManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetSound(), Transform);
+			}
 		}
 	}
 	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
@@ -1735,20 +1740,21 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 			typedef NCsProjectile::NData::NVisual::NImpact::IImpact ImpactVisualDataType;
 
 			if (ImpactVisualDataType* ImpactVisualData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
-			{
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+			{	
 				typedef NCsProjectile::NImpact::NVisual::FInfo ImpactVisualInfoType;
 				typedef NCsProjectile::NImpact::NVisual::NFX::FInfo ImpactFXInfoType;
-				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-				PayloadImplType Payload;
-				Payload.Instigator = Cache->GetInstigator();
-
+				
 				const ImpactVisualInfoType& Info = ImpactVisualData->GetImpactVisualInfo(SurfaceType);
 				const ImpactFXInfoType& FXInfo   = Info.GetFXInfo();
 
 				if (FXInfo.GetbFX())
 				{
+					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+					PayloadImplType Payload;
+					Payload.Instigator = Cache->GetInstigator();
+
 					FTransform Transform = FTransform::Identity;
 					Transform.SetLocation(Hit.Location);
 					Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());

@@ -37,7 +37,7 @@ public:
 
 	FCsProjectile_Sound_ImpactInfo() :
 		Surface(EPhysicalSurface::SurfaceType_Default),
-		bSound(true),
+		bSound(false),
 		Sound()
 	{
 	}
@@ -71,7 +71,7 @@ namespace NCsProjectile
 
 				FInfo() :
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Surface, EPhysicalSurface::SurfaceType_Default),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(bSound, true),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(bSound, false),
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Sound)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Surface);

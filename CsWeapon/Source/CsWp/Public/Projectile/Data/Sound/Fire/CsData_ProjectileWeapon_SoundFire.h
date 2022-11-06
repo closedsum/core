@@ -4,7 +4,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsGetInterfaceMap.h"
 // Params
-#include "Projectile/Data/Sound/CsParams_ProjectileWeapon_SoundFire.h"
+#include "Projectile/Data/Sound/Fire/CsParams_ProjectileWeapon_SoundFire.h"
 
 #include "CsData_ProjectileWeapon_SoundFire.generated.h"
 
@@ -25,20 +25,20 @@ namespace NCsWeapon
 
 						static const FName Name;
 
-					#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
+					#define FireSoundParamsType NCsWeapon::NProjectile::NFire::NSound::FParams
 
 					public:
 
 						virtual ~IFire(){}
 
 						/**
+						* Get any Sound information related to the Fire action.
 						*
-						*
-						* return
+						* return Fire Sound Params
 						*/
-						virtual const ParamsType& GetFireSoundParams() const = 0;
+						virtual const FireSoundParamsType& GetFireSoundParams() const = 0;
 
-					#undef ParamsType
+					#undef FireSoundParamsType
 					};
 				}
 			}
@@ -63,16 +63,16 @@ public:
 
 	static const FName Name;
 
-#define ParamsType NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl
+#define FireSoundParamsType NCsWeapon::NProjectile::NFire::NSound::FParams
 
 public:
 
 	/**
+	* Get any Sound information related to the Fire action.
 	*
-	*
-	* return
+	* return Fire Sound Params
 	*/
-	virtual const ParamsType& GetFireSoundParams() const = 0;
+	virtual const FireSoundParamsType& GetFireSoundParams() const = 0;
 
-#undef ParamsType
+#undef FireSoundParamsType
 };

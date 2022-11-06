@@ -42,7 +42,7 @@
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
-#include "Projectile/Data/Sound/CsData_ProjectileWeapon_SoundFire.h"
+#include "Projectile/Data/Sound/Fire/CsData_ProjectileWeapon_SoundFire.h"
 #include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
 #include "Data/CsData_Projectile.h"
 #include "Data/Types/CsData_GetProjectileType.h"
@@ -75,7 +75,7 @@
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 // Params
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTrace.h"
-#include "Projectile/Data/Sound/CsParams_ProjectileWeapon_SoundFire.h"
+#include "Projectile/Data/Sound/Fire/CsParams_ProjectileWeapon_SoundFire.h"
 // Component
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -268,18 +268,8 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 		delete ProjectileImpl;
 		ProjectileImpl = nullptr;
 	}
-
-	if (SoundImpl)
-	{
-		delete SoundImpl;
-		SoundImpl = nullptr;
-	}
-
-	if (FXImpl)
-	{
-		delete FXImpl;
-		FXImpl = nullptr;
-	}
+	CS_SAFE_DELETE_PTR(SoundImpl)
+	CS_SAFE_DELETE_PTR(FXImpl)
 }
 
 #pragma endregion UObject Interface
@@ -301,7 +291,7 @@ void ACsProjectileWeaponActorPooled::BeginPlay()
 	ProjectileImpl->Outer = this;
 
 	SoundImpl = ConstructSoundImpl();
-	SoundImpl->Weapon = this;
+	SoundImpl->Outer = this;
 
 	FXImpl = ConstructFXImpl();
 	FXImpl->Outer = this;
@@ -889,6 +879,10 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	bHasFired = true;
 
+	static const int32 START = -1;
+
+	SoundImpl->Play(START);
+
 	FCsRoutineHandle Handle = Scheduler->Start(Payload);
 
 	if (Handle.IsValid())
@@ -1031,7 +1025,7 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 				}
 
 				ProjectileImpl->Launch(LaunchPayload);
-				SoundImpl->Play();
+				SoundImpl->Play(CurrentProjectilePerShotIndex);
 				FXImpl->Play(LaunchPayload);
 			}
 
@@ -1823,7 +1817,7 @@ bool ACsProjectileWeaponActorPooled::UseSpreadParams() const
 	// Sound
 #pragma region
 
-void ACsProjectileWeaponActorPooled::FSoundImpl::Play()
+void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProjectilePerShotIndex)
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached::NSoundImpl;
 
@@ -1833,22 +1827,63 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play()
 	typedef NCsWeapon::NProjectile::NData::NSound::NFire::IFire SoundDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
-	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
+	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Outer->GetData()))
 	{
-		typedef NCsWeapon::NProjectile::NData::NSound::NFire::NParams::FImpl ParamsType;
+		typedef NCsWeapon::NProjectile::NFire::NSound::FParams ParamsType;
 
 		const ParamsType& Params = SoundData->GetFireSoundParams();
-		const FCsSound& Sound	 = Params.GetSound();
 
-		typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+		static const int32 START = -1;
 
-		PayloadImplType Payload;
-		Payload.Instigator = Weapon;
-		Payload.Owner = Weapon->GetMyOwner();
+		// Start
+		if (CurrentProjectilePerShotIndex == START)
+		{
+			if (Params.GetbStartParams())
+			{
+				typedef NCsWeapon::NProjectile::NFire::NSound::NStart::FParams StartParamsType;
 
-		typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-		// TODO: Make sure Outer is defined
-		SoundManagerLibrary::SpawnChecked(Context, Weapon, &Payload, Sound);
+				const StartParamsType& StartParams = Params.GetStartParams();
+
+				const FCsSound& Sound = StartParams.GetSound();
+
+				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+				PayloadImplType Payload;
+				Payload.Instigator = Outer;
+				Payload.Owner	   = Outer->GetMyOwner();
+
+				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+				// TODO: Make sure Outer is defined
+				SoundManagerLibrary::SpawnChecked(Context, Outer, &Payload, Sound);
+			}
+		}
+		// Shot
+		else
+		{
+			if (Params.GetbShotParams())
+			{
+				typedef NCsWeapon::NProjectile::NFire::NSound::NShot::FParams ShotParamsType;
+
+				const ShotParamsType& ShotParams = Params.GetShotParams();
+
+				// Either Skip First or Always
+				if (!ShotParams.GetbSkipFirst() ||
+					CurrentProjectilePerShotIndex > 0)
+				{
+					const FCsSound& Sound = ShotParams.GetSound();
+
+					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+					PayloadImplType Payload;
+					Payload.Instigator = Outer;
+					Payload.Owner	   = Outer->GetMyOwner();
+
+					typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+					// TODO: Make sure Outer is defined
+					SoundManagerLibrary::SpawnChecked(Context, Outer, &Payload, Sound);
+				}
+			}
+		}
 	}
 }
 

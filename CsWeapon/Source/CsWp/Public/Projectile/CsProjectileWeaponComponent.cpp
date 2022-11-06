@@ -39,7 +39,7 @@
 #include "Data/CsData_Weapon.h"
 #include "Projectile/Data/CsData_ProjectileWeapon.h"
 #include "Projectile/Data/Sound/Fire/CsData_ProjectileWeapon_SoundFire.h"
-#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
+#include "Projectile/Data/Visual/Fire/CsData_ProjectileWeapon_VisualFire.h"
 #include "Data/CsData_Projectile.h"
 #include "Data/Collision/CsData_Projectile_Collision.h"
 // Containers
@@ -530,6 +530,7 @@ void UCsProjectileWeaponComponent::Fire()
 	static const int32 START = -1;
 
 	SoundImpl->Play(START);
+	FXImpl->Play(START);
 
 	FireRoutineHandle = Scheduler->Start(Payload);
 }
@@ -562,7 +563,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 
 			ProjectileImpl->Launch();
 			SoundImpl->Play(CurrentProjectilePerShotIndex);
-			FXImpl->Play();
+			FXImpl->Play(CurrentProjectilePerShotIndex);
 
 			// Increment the shot index
 			CurrentProjectilePerShotIndex = FMath::Min(CurrentProjectilePerShotIndex + 1, ProjectilesPerShot);
@@ -1204,7 +1205,7 @@ UCsProjectileWeaponComponent::FSoundImpl* UCsProjectileWeaponComponent::Construc
 	// FX
 #pragma region
 
-void UCsProjectileWeaponComponent::FFXImpl::Play()
+void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePerShotIndex)
 {
 	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
@@ -1216,31 +1217,78 @@ void UCsProjectileWeaponComponent::FFXImpl::Play()
 
 	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
-		typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
+		typedef NCsWeapon::NProjectile::NFire::NVisual::FParams ParamsType;
 
-		const ParamsType& Params = FXData->GetFireFXParams();
-		const FCsFX& FX			 = Params.GetFX();
+		const ParamsType& Params = FXData->GetFireVisualParams();
 
-		UNiagaraSystem* FXAsset = FX.GetChecked(Context);
+		static const int32 START = -1;
 
-		// Get Manager
-		typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+		// Start
+		if (CurrentProjectilePerShotIndex == START)
+		{
+			if (Params.GetbStartParams())
+			{
+				typedef NCsWeapon::NProjectile::NFire::NVisual::NStart::FParams StartParamsType;
 
-		UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
-		// Allocate payload
-		typedef NCsFX::NPayload::IPayload PayloadType;
+				const StartParamsType& StartParams = Params.GetStartParams();
 
-		PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
-		// Set appropriate values on payload
-		SetPayload(Payload, FX);
-		SetPayload(Payload, FXData);
+				const FCsFX& FX	= StartParams.GetFX();
 
-		Manager_FX->Spawn(FX.Type, Payload);
+				UNiagaraSystem* FXAsset = FX.GetChecked(Context);
+
+				// Get Manager
+				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+				UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+				// Allocate payload
+				typedef NCsFX::NPayload::IPayload PayloadType;
+
+				PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+				// Set appropriate values on payload
+				SetPayload(CurrentProjectilePerShotIndex, Payload, FX);
+				SetPayload(CurrentProjectilePerShotIndex, Payload, FXData);
+
+				Manager_FX->Spawn(FX.Type, Payload);
+			}
+		}
+		// Shot
+		else
+		{
+			if (Params.GetbShotParams())
+			{
+				typedef NCsWeapon::NProjectile::NFire::NVisual::NShot::FParams ShotParamsType;
+
+				const ShotParamsType& ShotParams = Params.GetShotParams();
+
+				// Either Skip First or Always
+				if (!ShotParams.GetbSkipFirst() ||
+					CurrentProjectilePerShotIndex > 0)
+				{
+					const FCsFX& FX	= ShotParams.GetFX();
+
+					UNiagaraSystem* FXAsset = FX.GetChecked(Context);
+
+					// Get Manager
+					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+					UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+					// Allocate payload
+					typedef NCsFX::NPayload::IPayload PayloadType;
+
+					PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
+					// Set appropriate values on payload
+					SetPayload(CurrentProjectilePerShotIndex, Payload, FX);
+					SetPayload(CurrentProjectilePerShotIndex, Payload, FXData);
+
+					Manager_FX->Spawn(FX.Type, Payload);
+				}
+			}
+		}
 	}
 }
 
 #define FXPayloadType NCsFX::NPayload::IPayload
-void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, const FCsFX& FX)
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX)
 {
 #undef FXPayloadType
 
@@ -1268,13 +1316,23 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 
 	FXDataType* FXData = WeaponDataLibrary::GetInterfaceChecked<FXDataType>(Context, Outer->GetData());
 
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
+	typedef NCsWeapon::NProjectile::NFire::NVisual::FParams ParamsType;
+	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
 
-	const ParamsType& Params = FXData->GetFireFXParams();
+	const ParamsType& Params = FXData->GetFireVisualParams();
 
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
+	AttachType Type = AttachType::None;
+	
+	static const int32 START = -1;
 
-	const AttachType& Type = Params.GetAttach();
+	if (CurrentProjectilePerShotIndex == START)
+	{
+		Type = Params.GetStartParams().GetAttach();
+	}
+	else
+	{
+		Type = Params.GetShotParams().GetAttach();
+	}
 
 	// None
 	if (Type == AttachType::None)
@@ -1307,7 +1365,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, c
 
 #define FXPayloadType NCsFX::NPayload::IPayload
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
-void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, FXDataType* FXData)
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData)
 {
 #undef FXPayloadType
 #undef FXDataType
@@ -1316,13 +1374,23 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(FXPayloadType* Payload, F
 
 	const FString& Context = Str::SetPayload;
 
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
+	typedef NCsWeapon::NProjectile::NFire::NVisual::FParams ParamsType;
+	typedef NCsWeapon::NProjectile::NFire::NVisual::EAttach AttachType;
 
-	const ParamsType& Params = FXData->GetFireFXParams();
+	const ParamsType& Params = FXData->GetFireVisualParams();
 
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::EAttach AttachType;
+	AttachType Type = AttachType::None;
 
-	const AttachType& Type = Params.GetAttach();
+	static const int32 START = -1;
+
+	if (CurrentProjectilePerShotIndex == START)
+	{
+		Type = Params.GetStartParams().GetAttach();
+	}
+	else
+	{
+		Type = Params.GetShotParams().GetAttach();
+	}
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 	typedef NCsFX::NPayload::FLibrary PayloadLibrary;

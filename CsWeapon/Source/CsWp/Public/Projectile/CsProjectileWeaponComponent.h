@@ -524,7 +524,7 @@ public:
 
 		/**
 		*/
-		void Play();
+		void Play(const int32 CurrentProjectilePerShotIndex);
 	
 	public:
 
@@ -534,7 +534,7 @@ public:
 		* @param Payload
 		* @param FX
 		*/
-		void SetPayload(FXPayloadType* Payload, const FCsFX& FX);
+		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX);
 
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 		/**
@@ -543,7 +543,7 @@ public:
 		* @param Payload
 		* @param FXData
 		*/
-		void SetPayload(FXPayloadType* Payload, FXDataType* FXData);
+		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData);
 
 #undef FXDataType
 	};

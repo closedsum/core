@@ -1,6 +1,6 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 // Data
-#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFire.h"
+#include "Projectile/Data/Visual/Fire/CsData_ProjectileWeapon_VisualFire.h"
 // Log
 #include "Utility/CsWpLog.h"
 
@@ -21,18 +21,13 @@ struct CSWP_API FCsData_ProjectileWeapon_VisualFireImplSlice
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCsProjectileWeapon_VisualFire_Params Params;
+	FCsProjectileWeapon_Fire_VisualParams Params;
 
 public:
 
 	FCsData_ProjectileWeapon_VisualFireImplSlice() :
 		Params()
 	{
-	}
-
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		Params.UpdateInternalPtrs();
 	}
 
 #define SliceType NCsWeapon::NProjectile::NData::NVisual::NFire::FImplSlice
@@ -82,7 +77,7 @@ namespace NCsWeapon
 
 						static const FName Name;
 
-					#define ParamsType NCsWeapon::NProjectile::NData::NVisual::NFire::FParams
+					#define ParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
 
 					private:
 
@@ -124,13 +119,13 @@ namespace NCsWeapon
 
 					public:
 
-						FORCEINLINE ParamsType* GetFireFXParamsPtr() { return &Params; }
+						FORCEINLINE ParamsType* GetFireVisualParamsPtr() { return &Params; }
 
 					// VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
 					#pragma region
 					public:
 
-						FORCEINLINE const ParamsType& GetFireFXParams() const { return Params; }
+						FORCEINLINE const ParamsType& GetFireVisualParams() const { return Params; }
 
 					#pragma endregion VisualFireDataType (NCsWeapon::NProjectile::NData::NVisual::NFire::IFire)
 

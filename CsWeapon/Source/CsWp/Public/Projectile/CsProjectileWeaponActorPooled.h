@@ -799,7 +799,7 @@ public:
 
 		/**
 		*/
-		void Play(const LaunchPayloadType& LaunchPayload);
+		void Play(const int32 CurrentProjectilePerShotIndex, const LaunchPayloadType& LaunchPayload);
 	
 	public:
 
@@ -809,7 +809,7 @@ public:
 		* @param Payload
 		* @param FX
 		*/
-		void SetPayload(FXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload);
+		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX, const LaunchPayloadType& LaunchPayload);
 
 #undef LaunchPayloadType
 
@@ -820,7 +820,7 @@ public:
 		* @param Payload
 		* @param FXData
 		*/
-		void SetPayload(FXPayloadType* Payload, FXDataType* FXData);
+		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData);
 
 #undef FXDataType
 	};

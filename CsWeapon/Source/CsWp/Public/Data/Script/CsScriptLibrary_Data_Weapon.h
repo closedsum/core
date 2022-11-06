@@ -5,7 +5,7 @@
 #include "Data/CsData_WeaponImplSlice.h"
 #include "Projectile/Data/CsData_ProjectileWeaponImplSlice.h"
 #include "Data/Types/CsData_GetProjectileTypeImplSlice.h"
-#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFireImplSlice.h"
+#include "Projectile/Data/Visual/Fire/CsData_ProjectileWeapon_VisualFireImplSlice.h"
 #include "Projectile/Data/Sound/Fire/CsData_ProjectileWeapon_SoundFireImplSlice.h"
 // Params
 #include "Projectile/Params/Launch/Trace/CsTypes_Params_ProjectileWeapon_LaunchTrace.h"

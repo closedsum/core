@@ -271,8 +271,7 @@ namespace NCsWeapon
 				#define ShotParamsType NCsWeapon::NProjectile::NFire::NSound::NShot::FParams
 
 				private:
-
-					
+	
 					/** Whether to use StartParams or not. */
 					CS_DECLARE_MEMBER_WITH_PROXY(bStartParams, bool)
 					/** Describes any Sound information related to the Start of the Fire action */

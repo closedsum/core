@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Projectile/Data/Visual/CsData_ProjectileWeapon_VisualFireImplSlice.h"
+#include "Projectile/Data/Visual/Fire/CsData_ProjectileWeapon_VisualFireImplSlice.h"
 
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
@@ -36,8 +36,6 @@ SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSliceAsValue(con
 
 SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSlice_Internal(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	const_cast<FCsData_ProjectileWeapon_VisualFireImplSlice*>(this)->UpdateInternalPtrs();
-
 	if (!IsValid(Context, Log))
 		return nullptr;
 
@@ -60,20 +58,19 @@ SliceType* FCsData_ProjectileWeapon_VisualFireImplSlice::AddSafeSlice_Internal(c
 
 void FCsData_ProjectileWeapon_VisualFireImplSlice::CopyToSlice(SliceType* Slice)
 {
-	Params.CopyToParams(Slice->GetFireFXParamsPtr());
+	Params.CopyToParams(Slice->GetFireVisualParamsPtr());
 }
 
 void FCsData_ProjectileWeapon_VisualFireImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
-	Params.CopyToParamsAsValue(Slice->GetFireFXParamsPtr());
+	Params.CopyToParamsAsValue(Slice->GetFireVisualParamsPtr());
 }
 
 #undef SliceType
 
 bool FCsData_ProjectileWeapon_VisualFireImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	if (!Params.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(Params)
 	return true;
 }
 
@@ -95,9 +92,9 @@ namespace NCsWeapon
 						{
 							namespace Name
 							{
-								const FName VisualFireSlice = FName("VisualFireSlice");
+								const FName FireVisualSlice = FName("FireVisualSlice");
 
-								const FName VisualFireParams = FName("VisualFireParams");
+								const FName FireVisualParams = FName("FireVisualParams");
 							}
 						}
 					}
@@ -135,23 +132,21 @@ namespace NCsWeapon
 						// Try FCsData_ProjectileWeapon_VisualFireImplSlice
 						typedef FCsData_ProjectileWeapon_VisualFireImplSlice StructSliceType;
 
-						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualFireSlice, nullptr))
+						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::FireVisualSlice, nullptr))
 						{
-							SliceAsStruct->UpdateInternalPtrs();
 							SliceAsStruct->CopyToSlice(Slice);
 							Success = true;
 						}
 						// Try individual properties
 						else
 						{
-							typedef FCsProjectileWeapon_VisualFire_Params StructType;
+							typedef FCsProjectileWeapon_Fire_VisualParams StructType;
 
-							StructType* VisualFireParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Context, Object, Object->GetClass(), Name::VisualFireParams, nullptr);
+							StructType* FireVisualParamsPtr = PropertyLibrary::GetStructPropertyValuePtr<StructType>(Context, Object, Object->GetClass(), Name::FireVisualParams, nullptr);
 
-							if (VisualFireParamsPtr)
+							if (FireVisualParamsPtr)
 							{
-								VisualFireParamsPtr->UpdateInternalPtrs();
-								VisualFireParamsPtr->CopyToParams(Slice->GetFireFXParamsPtr());
+								FireVisualParamsPtr->CopyToParams(Slice->GetFireVisualParamsPtr());
 								Success = true;
 							}
 						}
@@ -161,9 +156,9 @@ namespace NCsWeapon
 							if (Log)
 							{
 								Log(FString::Printf(TEXT("%s: Failed to find any properties from Object: %s with Class: %s for interface: NCsWeapon::NProjectile::NData::NVisual::NFire::IFire.")));
-								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_ProjectileWeapon_VisualFireImplSlice with name: VisualFireSlice.")));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_ProjectileWeapon_VisualFireImplSlice with name: FireVisualSlice.")));
 								Log(FString::Printf(TEXT("%s: - OR")));
-								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_VisualFire_Params with name: VisualFireParams.")));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_Fire_VisualParams with name: FireVisualParams.")));
 							}
 						}
 						return Slice;
@@ -171,14 +166,13 @@ namespace NCsWeapon
 
 					bool FImplSlice::IsValidChecked(const FString& Context) const
 					{
-						check(Params.IsValidChecked(Context));
+						CS_IS_VALID_CHECKED(Params);
 						return true;
 					}
 
 					bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						if (!Params.IsValid(Context, Log))
-							return false;
+						CS_IS_VALID(Params)
 						return true;
 					}
 				}

@@ -5,7 +5,7 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Projectile/Data/Visual/CsParams_ProjectileWeapon_VisualFire.h"
+#include "Projectile/Data/Visual/Fire/CsParams_ProjectileWeapon_VisualFire.h"
 
 #include "CsData_ProjectileWeapon_VisualFire.generated.h"
 
@@ -32,12 +32,16 @@ namespace NCsWeapon
 
 						virtual ~IFire(){}
 
+					#define FireVisualParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
+
 						/**
 						*
 						*
 						* return
 						*/
-						virtual const FParams& GetFireFXParams() const = 0;
+						virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
+
+					#undef FireVisualParamsType
 					};
 				}
 			}
@@ -62,16 +66,16 @@ public:
 
 	static const FName Name;
 
-private:
-
-	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::FParams ParamsType;
-
 public:
+
+#define FireVisualParamsType NCsWeapon::NProjectile::NFire::NVisual::FParams
 
 	/**
 	*
 	*
 	* return
 	*/
-	virtual const ParamsType& GetFireFXParams() const = 0;
+	virtual const FireVisualParamsType& GetFireVisualParams() const = 0;
+
+#undef FireVisualParamsType
 };

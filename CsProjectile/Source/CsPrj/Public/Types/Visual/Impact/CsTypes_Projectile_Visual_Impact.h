@@ -208,6 +208,7 @@ namespace NCsProjectile
 					{
 						SetbFX(From.GetbFX());
 						SetFX(From.GetFX());
+						SetDirection(From.GetDirection());
 						SetbScaleByDamageRange(From.GetbScaleByDamageRange());
 					}
 

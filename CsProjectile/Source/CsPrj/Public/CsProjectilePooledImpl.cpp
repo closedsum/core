@@ -1887,7 +1887,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					}
 					// Inverse Velocity
 					else
-					if (Direction == DirectionType::Velocity)
+					if (Direction == DirectionType::InverseVelocity)
 					{
 						const FVector Normal = -1.0f * MovementComponent->Velocity.GetSafeNormal();
 

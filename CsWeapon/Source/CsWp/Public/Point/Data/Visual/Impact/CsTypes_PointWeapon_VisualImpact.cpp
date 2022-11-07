@@ -16,8 +16,8 @@ namespace NCsPointWeaponVisualImpactDirection
 		CSWP_API CS_ADD_TO_ENUM_MAP(None);
 		CSWP_API CS_ADD_TO_ENUM_MAP(Normal);
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
-		CSWP_API CS_ADD_TO_ENUM_MAP(Velocity);
-		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
+		CSWP_API CS_ADD_TO_ENUM_MAP(Direction);
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseDirection, "Inverse Direction");
 		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPointWeaponVisualImpactDirection_MAX, "MAX");
 	}
 
@@ -41,8 +41,8 @@ namespace NCsWeapon
 						CSWP_API CS_ADD_TO_ENUM_MAP(None);
 						CSWP_API CS_ADD_TO_ENUM_MAP(Normal);
 						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
-						CSWP_API CS_ADD_TO_ENUM_MAP(Velocity);
-						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
+						CSWP_API CS_ADD_TO_ENUM_MAP(Direction);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseDirection, "Inverse Direction");
 						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDirection_MAX, "MAX");
 					}
 				}
@@ -62,6 +62,10 @@ void FCsPointWeapon_FX_ImpactInfo::CopyToInfo(InfoType* Info)
 {
 	Info->SetbFX(&bFX);
 	Info->SetFX(&FX);
+
+	typedef NCsWeapon::NPoint::NImpact::NVisual::EDirection DirectionType;
+
+	Info->SetDirection((DirectionType*)(&Direction));
 	Info->SetbScaleByDamageRange(&bScaleByDamageRange);
 }
 
@@ -69,6 +73,10 @@ void FCsPointWeapon_FX_ImpactInfo::CopyToInfoAsValue(InfoType* Info) const
 {
 	Info->SetbFX(bFX);
 	Info->SetFX(FX);
+
+	typedef NCsWeapon::NPoint::NImpact::NVisual::EDirection DirectionType;
+
+	Info->SetDirection((DirectionType*)(&Direction));
 	Info->SetbScaleByDamageRange(bScaleByDamageRange);
 }
 
@@ -79,6 +87,7 @@ bool FCsPointWeapon_FX_ImpactInfo::IsValidChecked(const FString& Context) const
 	if (bFX)
 	{
 		CS_IS_VALID_CHECKED(FX);
+		CS_IS_ENUM_VALID_CHECKED(EMCsPointWeaponVisualImpactDirection, Direction)
 	}
 	return true;
 }
@@ -88,6 +97,7 @@ bool FCsPointWeapon_FX_ImpactInfo::IsValid(const FString& Context, void(*Log)(co
 	if (bFX)
 	{
 		CS_IS_VALID(FX)
+		CS_IS_ENUM_VALID(EMCsPointWeaponVisualImpactDirection, ECsPointWeaponVisualImpactDirection, Direction)
 	}
 	return true;
 }
@@ -107,6 +117,10 @@ namespace NCsWeapon
 						if (GetbFX())
 						{
 							CS_IS_VALID_CHECKED(GetFX());
+
+							typedef NCsWeapon::NPoint::NImpact::NVisual::EMDirection DirectionMapType;
+
+							CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Direction)
 						}
 						return true;
 					}
@@ -116,6 +130,11 @@ namespace NCsWeapon
 						if (GetbFX())
 						{
 							CS_IS_VALID(GetFX())
+
+							typedef NCsWeapon::NPoint::NImpact::NVisual::EMDirection DirectionMapType;
+							typedef NCsWeapon::NPoint::NImpact::NVisual::EDirection DirectionType;
+
+							CS_IS_ENUM_VALID(DirectionMapType, DirectionType, Direction)
 						}
 						return true;
 					}

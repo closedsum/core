@@ -7,6 +7,112 @@
 
 #include "CsTypes_PointWeapon_VisualImpact.generated.h"
 
+// PointWeaponVisualImpactDirection
+#pragma region
+
+/**
+* Describes the Direction of the Impact Visual for a Point Weapon.
+*  Weapon is an object that implements the interface: ICsWeapon.
+*  Point Weapon is an object that implements the interface: ICsPointWeapon
+*/
+UENUM(BlueprintType)
+enum class ECsPointWeaponVisualImpactDirection : uint8
+{
+	None									UMETA(DisplayName = "None"),
+	/** Use the Impact Normal to set the Direction / Rotation 
+		of the Visual. */
+	Normal									UMETA(DisplayName = "Normal"),
+	/** Use the Inverse of the Impact Normal to set the Direction / Rotation
+		of the Visual. */
+	InverseNormal							UMETA(DisplayName = "Inverse Normal"),
+	/** Use the Point's Direction (Destination - Start) to set the 
+		Direction / Rotation of the Visual . */
+	Velocity								UMETA(DisplayName = "Velocity"),
+	/** Use the Inverse of the Point's Direction (Destination - Start) to set the
+		Direction / Rotation of the Visual . */
+	InverseVelocity							UMETA(DisplayName = "Inverse Velocity"),
+	ECsPointWeaponVisualImpactDirection_MAX	UMETA(Hidden),
+};
+
+struct CSWP_API EMCsPointWeaponVisualImpactDirection final : public TCsEnumMap<ECsPointWeaponVisualImpactDirection>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsPointWeaponVisualImpactDirection, ECsPointWeaponVisualImpactDirection)
+};
+
+namespace NCsPointWeaponVisualImpactDirection
+{
+	typedef ECsPointWeaponVisualImpactDirection Type;
+
+	namespace Ref
+	{
+		extern CSPRJ_API const Type None;
+		extern CSPRJ_API const Type Normal;
+		extern CSPRJ_API const Type InverseNormal;
+		extern CSPRJ_API const Type Velocity;
+		extern CSPRJ_API const Type InverseVelocity;
+		extern CSPRJ_API const Type ECsPointWeaponVisualImpactDirection_MAX;
+	}
+
+	extern CSPRJ_API const uint8 MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NPoint
+	{
+		namespace NImpact
+		{
+			namespace NVisual
+			{
+				/**
+				* Describes the Direction of the Impact Visual for a Point Weapon.
+				*  Weapon is an object that implements the interface: ICsWeapon.
+				*  Point Weapon is an object that implements the interface: ICsPointWeapon
+				*/
+				enum class EDirection : uint8
+				{
+					None,
+					/** Use the Impact Normal to set the Direction / Rotation 
+						of the Visual. */
+					Normal,
+					/** Use the Inverse of the Impact Normal to set the Direction / Rotation
+						of the Visual. */
+					InverseNormal,
+					/** Use the Point's Direction (Destination - Start) to set the 
+						Direction / Rotation of the Visual . */
+					Velocity,
+					/** Use the Inverse of the Point's Direction (Destination - Start) to set the
+						Direction / Rotation of the Visual . */
+					InverseVelocity,
+					EDirection_MAX
+				};
+
+				struct CSPRJ_API EMDirection final : public TCsEnumMap<EDirection>
+				{
+					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDirection, EDirection)
+				};
+
+				namespace NDirection
+				{
+					typedef EDirection Type;
+
+					namespace Ref
+					{
+						extern CSPRJ_API const Type None;
+						extern CSPRJ_API const Type Normal;
+						extern CSPRJ_API const Type InverseNormal;
+						extern CSPRJ_API const Type Velocity;
+						extern CSPRJ_API const Type InverseVelocity;
+						extern CSPRJ_API const Type EDirection_MAX;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion ProjectileVisualImpactDirection
+
 // FCsPointWeapon_FX_ImpactInfo
 #pragma region
 

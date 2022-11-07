@@ -59,6 +59,10 @@ void FCsProjectile_FX_ImpactInfo::CopyToInfo(InfoType* Info)
 {
 	Info->SetbFX(&bFX);
 	Info->SetFX(&FX);
+
+	typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
+
+	Info->SetDirection((DirectionType*)(&Direction));
 	Info->SetbScaleByDamageRange(&bScaleByDamageRange);
 }
 
@@ -66,6 +70,10 @@ void FCsProjectile_FX_ImpactInfo::CopyToInfoAsValue(InfoType* Info) const
 {
 	Info->SetbFX(bFX);
 	Info->SetFX(FX);
+
+	typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
+
+	Info->SetDirection((DirectionType*)(&Direction));
 	Info->SetbScaleByDamageRange(bScaleByDamageRange);
 }
 
@@ -76,6 +84,7 @@ bool FCsProjectile_FX_ImpactInfo::IsValidChecked(const FString& Context) const
 	if (bFX)
 	{
 		CS_IS_VALID_CHECKED(FX);
+		CS_IS_ENUM_VALID_CHECKED(EMCsProjectileVisualImpactDirection, Direction)
 	}
 	return true;
 }
@@ -85,6 +94,7 @@ bool FCsProjectile_FX_ImpactInfo::IsValid(const FString& Context, void(*Log)(con
 	if (bFX)
 	{
 		CS_IS_VALID(FX)
+		CS_IS_ENUM_VALID(EMCsProjectileVisualImpactDirection, ECsProjectileVisualImpactDirection, Direction)
 	}
 	return true;
 }
@@ -102,6 +112,10 @@ namespace NCsProjectile
 					if (GetbFX())
 					{
 						CS_IS_VALID_CHECKED(GetFX());
+
+						typedef NCsProjectile::NImpact::NVisual::EMDirection DirectionMapType;
+
+						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetDirection())
 					}
 					return true;
 				}
@@ -111,6 +125,11 @@ namespace NCsProjectile
 					if (GetbFX())
 					{
 						CS_IS_VALID(GetFX())
+
+						typedef NCsProjectile::NImpact::NVisual::EMDirection DirectionMapType;
+						typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
+
+						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetDirection())
 					}
 					return true;
 				}

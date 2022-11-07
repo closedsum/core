@@ -4,6 +4,55 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+// PointWeaponVisualImpactDirection
+#pragma region
+
+namespace NCsPointWeaponVisualImpactDirection
+{
+	namespace Ref
+	{
+		typedef EMCsPointWeaponVisualImpactDirection EnumMapType;
+
+		CSPRJ_API CS_ADD_TO_ENUM_MAP(None);
+		CSPRJ_API CS_ADD_TO_ENUM_MAP(Normal);
+		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
+		CSPRJ_API CS_ADD_TO_ENUM_MAP(Velocity);
+		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
+		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPointWeaponVisualImpactDirection_MAX, "MAX");
+	}
+
+	CSPRJ_API const uint8 MAX = (uint8)Type::ECsPointWeaponVisualImpactDirection_MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NPoint
+	{
+		namespace NImpact
+		{
+			namespace NVisual
+			{
+				namespace NDirection
+				{
+					namespace Ref
+					{
+						typedef EMDirection EnumMapType;
+
+						CSPRJ_API CS_ADD_TO_ENUM_MAP(None);
+						CSPRJ_API CS_ADD_TO_ENUM_MAP(Normal);
+						CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
+						CSPRJ_API CS_ADD_TO_ENUM_MAP(Velocity);
+						CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
+						CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDirection_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion PointWeaponVisualImpactDirection
+
 // FCsPointWeapon_FX_ImpactInfo
 #pragma region
 

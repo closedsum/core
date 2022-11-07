@@ -476,7 +476,7 @@ public:
 
 		/**
 		*/
-		void Play(const int32 CurrentProjectilePerShotIndex);
+		void Play(const int32 InCurrentProjectilePerShotIndex);
 	};
 
 	FSoundImpl* SoundImpl;
@@ -524,7 +524,7 @@ public:
 
 		/**
 		*/
-		void Play(const int32 CurrentProjectilePerShotIndex);
+		void Play(const int32 InCurrentProjectilePerShotIndex);
 	
 	public:
 
@@ -534,7 +534,7 @@ public:
 		* @param Payload
 		* @param FX
 		*/
-		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX);
+		void SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX);
 
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
 		/**
@@ -543,7 +543,7 @@ public:
 		* @param Payload
 		* @param FXData
 		*/
-		void SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData);
+		void SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData);
 
 #undef FXDataType
 	};

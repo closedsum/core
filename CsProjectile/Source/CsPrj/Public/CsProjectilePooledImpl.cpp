@@ -118,6 +118,18 @@ namespace NCsProjectilePooledImpl
 		}
 	}
 
+	namespace NMovementImpl
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl::FMovementImpl, GetInitialSpeed);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl::FMovementImpl, GetMaxSpeed);
+			}
+		}
+	}
+
 	namespace NTrackingImpl
 	{
 		namespace NCached
@@ -165,6 +177,14 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	OnHit_Event(),
 	// Variables,
 	Variables(),
+	// Movement
+	MovementImpl(),
+	bOverride_InitialSpeed(false),
+	Override_InitialSpeed(false),
+	bOverride_MaxSpeed(false),
+	Override_MaxSpeed(false),
+		// Tracking
+	TrackingImpl(),
 	// Collision
 	IgnoreActors(),
 	IgnoreComponents(),
@@ -274,6 +294,7 @@ void ACsProjectilePooledImpl::BeginPlay()
 
 	ConstructCache();
 
+	MovementImpl.Outer = this;
 	TrackingImpl.Outer = this;
 	DamageImpl.Outer = this;
 }
@@ -1060,10 +1081,90 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 // Movement
 #pragma region
 
+float ACsProjectilePooledImpl::FMovementImpl::GetInitialSpeed(const EStart& Start) const
+{
+	using namespace NCsProjectilePooledImpl::NMovementImpl::NCached;
+
+	const FString& Context = Str::GetInitialSpeed;
+
+#if WITH_EDITOR
+	if (Outer->GetbOverride_InitialSpeed())
+	{
+		if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: Initial Speed is OVERRIDDEN for %s."), *Context, *(Outer->GetName()));
+		}
+		return Outer->GetOverride_InitialSpeed();
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		// From Data
+		if (Start == EStart::FromData)
+		{
+			return Outer->GetData()->GetInitialSpeed();
+		}
+		// From Modifiers
+		if (Start == EStart::FromModifiers)
+		{
+			float InitialSpeed = Outer->GetData()->GetInitialSpeed();
+
+			// Check to apply any Movement Modifiers
+			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+			InitialSpeed = ModifierLibrary::ModifyFloatChecked(Context, Outer->GetModifiers(), NCsProjectileModifier::InitialSpeed, InitialSpeed);
+			return InitialSpeed;
+		}
+	}
+	checkf(0, TEXT("%s: Failed to Get Initial Speed."), *Context);
+	return 0.0f;
+}
+
+float ACsProjectilePooledImpl::FMovementImpl::GetMaxSpeed(const EStart& Start) const
+{
+	using namespace NCsProjectilePooledImpl::NMovementImpl::NCached;
+
+	const FString& Context = Str::GetMaxSpeed;
+
+#if WITH_EDITOR
+	if (Outer->GetbOverride_MaxSpeed())
+	{
+		if (CS_CVAR_LOG_IS_SHOWING(LogOverrideFunctions))
+		{
+			UE_LOG(LogCsPrj, Warning, TEXT("%s: Max Speed is OVERRIDDEN for %s."), *Context, *(Outer->GetName()));
+		}
+		return Outer->GetOverride_MaxSpeed();
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		// From Data
+		if (Start == EStart::FromData)
+		{
+			return Outer->GetData()->GetMaxSpeed();
+		}
+		// From Modifiers
+		if (Start == EStart::FromModifiers)
+		{
+			float MaxSpeed = Outer->GetData()->GetMaxSpeed();
+
+			// Check to apply any Movement Modifiers
+			typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
+
+			MaxSpeed = ModifierLibrary::ModifyFloatChecked(Context, Outer->GetModifiers(), NCsProjectileModifier::MaxSpeed, MaxSpeed);
+			return MaxSpeed;
+		}
+	}
+	checkf(0, TEXT("%s: Failed to Get Max Speed."), *Context);
+	return 0.0f;
+}
+
 void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
 {
-	MovementComponent->InitialSpeed = Data->GetInitialSpeed();
-	MovementComponent->MaxSpeed		= Data->GetMaxSpeed();
+	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
+
+	MovementComponent->InitialSpeed = MovementImpl.GetInitialSpeed(StartType::FromData);
+	MovementComponent->MaxSpeed		= MovementImpl.GetMaxSpeed(StartType::FromData);
 
 	if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
 		MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
@@ -1807,17 +1908,10 @@ void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, con
 
 void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
 {
-	float InitialSpeed = Data->GetInitialSpeed();
-	float MaxSpeed	   = Data->GetMaxSpeed();
+	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
 
-	// Check to apply any Movement Modifiers
-	typedef NCsProjectile::NModifier::FLibrary ModifierLibrary;
-
-	MaxSpeed	 = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::InitialSpeed, InitialSpeed);
-	InitialSpeed = ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsProjectileModifier::MaxSpeed, MaxSpeed);
-
-	MovementComponent->InitialSpeed = InitialSpeed;
-	MovementComponent->MaxSpeed		= MaxSpeed;
+	MovementComponent->InitialSpeed = MovementImpl.GetInitialSpeed(StartType::FromModifiers);
+	MovementComponent->MaxSpeed		= MovementImpl.GetMaxSpeed(StartType::FromModifiers);
 
 	if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
 		MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;

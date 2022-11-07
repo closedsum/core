@@ -1125,7 +1125,7 @@ void UCsProjectileWeaponComponent::GetProjectileModifiers(TArray<PrjModifierType
 	// Sound
 #pragma region
 
-void UCsProjectileWeaponComponent::FSoundImpl::Play(const int32 CurrentProjectilePerShotIndex)
+void UCsProjectileWeaponComponent::FSoundImpl::Play(const int32 InCurrentProjectilePerShotIndex)
 {
 	using namespace NCsProjectileWeaponComponent::NCached::NSoundImpl;
 
@@ -1144,7 +1144,7 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play(const int32 CurrentProjectil
 		static const int32 START = -1;
 
 		// Start
-		if (CurrentProjectilePerShotIndex == START)
+		if (InCurrentProjectilePerShotIndex == START)
 		{
 			if (Params.GetbStartParams())
 			{
@@ -1176,7 +1176,7 @@ void UCsProjectileWeaponComponent::FSoundImpl::Play(const int32 CurrentProjectil
 
 				// Either Skip First or Always
 				if (!ShotParams.GetbSkipFirst() ||
-					CurrentProjectilePerShotIndex > 0)
+					InCurrentProjectilePerShotIndex > 0)
 				{
 					const FCsSound& Sound = ShotParams.GetSound();
 
@@ -1205,7 +1205,7 @@ UCsProjectileWeaponComponent::FSoundImpl* UCsProjectileWeaponComponent::Construc
 	// FX
 #pragma region
 
-void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePerShotIndex)
+void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 InCurrentProjectilePerShotIndex)
 {
 	using namespace NCsProjectileWeaponComponent::NCached::NFXImpl;
 
@@ -1224,7 +1224,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePe
 		static const int32 START = -1;
 
 		// Start
-		if (CurrentProjectilePerShotIndex == START)
+		if (InCurrentProjectilePerShotIndex == START)
 		{
 			if (Params.GetbStartParams())
 			{
@@ -1245,8 +1245,8 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePe
 
 				PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 				// Set appropriate values on payload
-				SetPayload(CurrentProjectilePerShotIndex, Payload, FX);
-				SetPayload(CurrentProjectilePerShotIndex, Payload, FXData);
+				SetPayload(InCurrentProjectilePerShotIndex, Payload, FX);
+				SetPayload(InCurrentProjectilePerShotIndex, Payload, FXData);
 
 				Manager_FX->Spawn(FX.Type, Payload);
 			}
@@ -1262,7 +1262,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePe
 
 				// Either Skip First or Always
 				if (!ShotParams.GetbSkipFirst() ||
-					CurrentProjectilePerShotIndex > 0)
+					InCurrentProjectilePerShotIndex > 0)
 				{
 					const FCsFX& FX	= ShotParams.GetFX();
 
@@ -1277,8 +1277,8 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePe
 
 					PayloadType* Payload = Manager_FX->AllocatePayload(FX.Type);
 					// Set appropriate values on payload
-					SetPayload(CurrentProjectilePerShotIndex, Payload, FX);
-					SetPayload(CurrentProjectilePerShotIndex, Payload, FXData);
+					SetPayload(InCurrentProjectilePerShotIndex, Payload, FX);
+					SetPayload(InCurrentProjectilePerShotIndex, Payload, FXData);
 
 					Manager_FX->Spawn(FX.Type, Payload);
 				}
@@ -1288,7 +1288,7 @@ void UCsProjectileWeaponComponent::FFXImpl::Play(const int32 CurrentProjectilePe
 }
 
 #define FXPayloadType NCsFX::NPayload::IPayload
-void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX)
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, const FCsFX& FX)
 {
 #undef FXPayloadType
 
@@ -1301,15 +1301,15 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjec
 
 	PayloadImplType* PayloadImpl = PayloadLibrary::PureStaticCastChecked<PayloadImplType>(Context, Payload);
 
-	PayloadImpl->Instigator					= Outer;
-	PayloadImpl->Owner						= Outer->GetMyOwner();
-	PayloadImpl->FXSystem					= FX.GetChecked(Context);
-	PayloadImpl->DeallocateMethod			= FX.GetDeallocateMethod();
-	PayloadImpl->LifeTime					= FX.LifeTime;
-	PayloadImpl->AttachmentTransformRules	= FX.AttachmentTransformRules;
-	PayloadImpl->Bone						= FX.Bone;
-	PayloadImpl->TransformRules				= FX.TransformRules;
-	PayloadImpl->Transform					= FX.Transform;
+	PayloadImpl->Instigator = Outer;
+	PayloadImpl->Owner = Outer->GetMyOwner();
+	PayloadImpl->FXSystem = FX.GetChecked(Context);
+	PayloadImpl->DeallocateMethod = FX.GetDeallocateMethod();
+	PayloadImpl->LifeTime = FX.LifeTime;
+	PayloadImpl->AttachmentTransformRules = FX.AttachmentTransformRules;
+	PayloadImpl->Bone = FX.Bone;
+	PayloadImpl->TransformRules = FX.TransformRules;
+	PayloadImpl->Transform = FX.Transform;
 
 	typedef NCsWeapon::NProjectile::NData::NVisual::NFire::IFire FXDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
@@ -1322,10 +1322,10 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjec
 	const ParamsType& Params = FXData->GetFireVisualParams();
 
 	AttachType Type = AttachType::None;
-	
+
 	static const int32 START = -1;
 
-	if (CurrentProjectilePerShotIndex == START)
+	if (InCurrentProjectilePerShotIndex == START)
 	{
 		Type = Params.GetStartParams().GetAttach();
 	}
@@ -1365,7 +1365,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjec
 
 #define FXPayloadType NCsFX::NPayload::IPayload
 #define FXDataType NCsWeapon::NProjectile::NData::NVisual::NFire::IFire
-void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData)
+void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProjectilePerShotIndex, FXPayloadType* Payload, FXDataType* FXData)
 {
 #undef FXPayloadType
 #undef FXDataType
@@ -1383,7 +1383,7 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 CurrentProjec
 
 	static const int32 START = -1;
 
-	if (CurrentProjectilePerShotIndex == START)
+	if (InCurrentProjectilePerShotIndex == START)
 	{
 		Type = Params.GetStartParams().GetAttach();
 	}

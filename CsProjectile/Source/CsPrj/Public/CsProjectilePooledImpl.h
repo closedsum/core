@@ -334,6 +334,71 @@ public:
 
 // Movement
 #pragma region
+public:
+
+	struct FMovementImpl
+	{
+		friend class ACsProjectilePooledImpl;
+
+	private:
+
+		ACsProjectilePooledImpl* Outer;
+
+	public:
+
+		enum class EStart : uint8 
+		{
+			FromData,
+			FromModifiers
+		};
+
+		FMovementImpl() :
+			Outer(nullptr)
+		{
+		}
+
+		float GetInitialSpeed(const EStart& Start) const;
+		float GetMaxSpeed(const EStart& Start) const;
+	};
+
+	FMovementImpl MovementImpl;
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|Movement", meta = (ScriptName = "m_bOverride_InitialSpeed", AllowPrivateAccess = "true"))
+	bool bOverride_InitialSpeed;
+
+public:
+
+	FORCEINLINE bool GetbOverride_InitialSpeed() const { return bOverride_InitialSpeed; }
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|Movement", meta = (ScriptName = "m_Override_InitialSpeed", AllowPrivateAccess = "true"))
+	float Override_InitialSpeed;
+
+public:
+
+	FORCEINLINE const float& GetOverride_InitialSpeed() const { return Override_InitialSpeed; }
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|Movement", meta = (ScriptName = "m_bOverride_MaxSpeed", AllowPrivateAccess = "true"))
+	bool bOverride_MaxSpeed;
+
+public:
+
+	FORCEINLINE bool GetbOverride_MaxSpeed() const { return bOverride_MaxSpeed; }
+
+protected:
+
+	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|Movement", meta = (ScriptName = "m_Override_MaxSpeed", AllowPrivateAccess = "true"))
+	float Override_MaxSpeed;
+
+public:
+
+	FORCEINLINE const float& GetOverride_MaxSpeed() const { return Override_MaxSpeed; }
+
 protected:
 
 	void StartMovementFromData(const FVector& Direction);
@@ -550,8 +615,16 @@ public:
 protected:
 
 #define AllocateModifierType NCsProjectile::NModifier::FAllocated
+
 	TArray<AllocateModifierType> Modifiers;
+
+public:
+
+	FORCEINLINE const TArray<AllocateModifierType>& GetModifiers() const { return Modifiers; }
+
 #undef AllocateModifierType
+
+protected:
 
 #define CollisionDataType NCsProjectile::NData::NCollision::ICollision
 	void ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData);

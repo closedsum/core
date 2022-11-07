@@ -30,7 +30,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnAllocate, ACsProjectilePooledImpl*, Projectile);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnDeallocate_Start, ACsProjectilePooledImpl*, Projectile);
-// FX
+	// Movement
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_InitialSpeed, ACsProjectilePooledImpl*, Projectile);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_MaxSpeed, ACsProjectilePooledImpl*, Projectile);
+	// FX
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_TrailFX, ACsProjectilePooledImpl*, Projectile);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FCsProjectilePooledImpl_OnOverride_ImpactFX, ACsProjectilePooledImpl*, Projectile, UPrimitiveComponent*, HitComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, FVector, NormalImpulse, const FHitResult&, Hit);
 
@@ -381,6 +384,10 @@ public:
 
 	FORCEINLINE const float& GetOverride_InitialSpeed() const { return Override_InitialSpeed; }
 
+
+	UPROPERTY(BlueprintAssignable, Category = "CsPrj|Projectile|Movement")
+	FCsProjectilePooledImpl_OnOverride_InitialSpeed OnOverride_InitialSpeed_ScriptEvent;
+
 protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "CsPrj|Projectile|Movement", meta = (ScriptName = "m_bOverride_MaxSpeed", AllowPrivateAccess = "true"))
@@ -398,6 +405,9 @@ protected:
 public:
 
 	FORCEINLINE const float& GetOverride_MaxSpeed() const { return Override_MaxSpeed; }
+
+	UPROPERTY(BlueprintAssignable, Category = "CsPrj|Projectile|Movement")
+	FCsProjectilePooledImpl_OnOverride_MaxSpeed OnOverride_MaxSpeed_ScriptEvent;
 
 protected:
 

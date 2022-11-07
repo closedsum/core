@@ -181,8 +181,10 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	MovementImpl(),
 	bOverride_InitialSpeed(false),
 	Override_InitialSpeed(false),
+	OnOverride_InitialSpeed_ScriptEvent(),
 	bOverride_MaxSpeed(false),
 	Override_MaxSpeed(false),
+	OnOverride_MaxSpeed_ScriptEvent(),
 		// Tracking
 	TrackingImpl(),
 	// Collision
@@ -1094,6 +1096,7 @@ float ACsProjectilePooledImpl::FMovementImpl::GetInitialSpeed(const EStart& Star
 		{
 			UE_LOG(LogCsPrj, Warning, TEXT("%s: Initial Speed is OVERRIDDEN for %s."), *Context, *(Outer->GetName()));
 		}
+		Outer->OnOverride_InitialSpeed_ScriptEvent.Broadcast(Outer);
 		return Outer->GetOverride_InitialSpeed();
 	}
 	else
@@ -1133,6 +1136,7 @@ float ACsProjectilePooledImpl::FMovementImpl::GetMaxSpeed(const EStart& Start) c
 		{
 			UE_LOG(LogCsPrj, Warning, TEXT("%s: Max Speed is OVERRIDDEN for %s."), *Context, *(Outer->GetName()));
 		}
+		Outer->OnOverride_MaxSpeed_ScriptEvent.Broadcast(Outer);
 		return Outer->GetOverride_MaxSpeed();
 	}
 	else

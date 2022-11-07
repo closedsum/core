@@ -1862,8 +1862,38 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 
 					FTransform Transform = FTransform::Identity;
 					Transform.SetLocation(Hit.Location);
-					Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
+					typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
+
+					const DirectionType& Direction = FXInfo.GetDirection();
+					// Normal
+					if (Direction == DirectionType::Normal)
+					{
+						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+					}
+					// Inverse Normal
+					else
+					if (Direction == DirectionType::Normal)
+					{
+						Transform.SetRotation((-Hit.ImpactNormal).Rotation().Quaternion());
+					}
+					// Velocity
+					else
+					if (Direction == DirectionType::Velocity)
+					{
+						const FVector Normal = MovementComponent->Velocity.GetSafeNormal();
+
+						Transform.SetRotation(Normal.Rotation().Quaternion());
+					}
+					// Inverse Velocity
+					else
+					if (Direction == DirectionType::Velocity)
+					{
+						const FVector Normal = -1.0f * MovementComponent->Velocity.GetSafeNormal();
+
+						Transform.SetRotation(Normal.Rotation().Quaternion());
+					}
+	
 					if (Info.GetFXInfo().GetbScaleByDamageRange())
 					{
 						float MaxRange = GetMaxDamageRangeChecked(Context);

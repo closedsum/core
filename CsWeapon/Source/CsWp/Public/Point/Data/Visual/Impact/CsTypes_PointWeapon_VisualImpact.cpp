@@ -13,15 +13,15 @@ namespace NCsPointWeaponVisualImpactDirection
 	{
 		typedef EMCsPointWeaponVisualImpactDirection EnumMapType;
 
-		CSPRJ_API CS_ADD_TO_ENUM_MAP(None);
-		CSPRJ_API CS_ADD_TO_ENUM_MAP(Normal);
-		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
-		CSPRJ_API CS_ADD_TO_ENUM_MAP(Velocity);
-		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
-		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPointWeaponVisualImpactDirection_MAX, "MAX");
+		CSWP_API CS_ADD_TO_ENUM_MAP(None);
+		CSWP_API CS_ADD_TO_ENUM_MAP(Normal);
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
+		CSWP_API CS_ADD_TO_ENUM_MAP(Velocity);
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPointWeaponVisualImpactDirection_MAX, "MAX");
 	}
 
-	CSPRJ_API const uint8 MAX = (uint8)Type::ECsPointWeaponVisualImpactDirection_MAX;
+	CSWP_API const uint8 MAX = (uint8)Type::ECsPointWeaponVisualImpactDirection_MAX;
 }
 
 namespace NCsWeapon
@@ -38,12 +38,12 @@ namespace NCsWeapon
 					{
 						typedef EMDirection EnumMapType;
 
-						CSPRJ_API CS_ADD_TO_ENUM_MAP(None);
-						CSPRJ_API CS_ADD_TO_ENUM_MAP(Normal);
-						CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
-						CSPRJ_API CS_ADD_TO_ENUM_MAP(Velocity);
-						CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
-						CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDirection_MAX, "MAX");
+						CSWP_API CS_ADD_TO_ENUM_MAP(None);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Normal);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseNormal, "Inverse Normal");
+						CSWP_API CS_ADD_TO_ENUM_MAP(Velocity);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(InverseVelocity, "Inverse Velocity");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDirection_MAX, "MAX");
 					}
 				}
 			}

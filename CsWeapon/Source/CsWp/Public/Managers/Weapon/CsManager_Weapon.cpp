@@ -1084,13 +1084,18 @@ void UCsManager_Weapon::SetupModifiers()
 	ImplTypeByModifier.Reset(EMCsWeaponModifier::Get().Num());
 	ImplTypeByModifier.AddDefaulted(EMCsWeaponModifier::Get().Num());
 
+	// Projectile Weapon
 	ImplTypeByModifier[NCsWeaponModifier::PrjWp_TimeBetweenShots.GetValue()]			  = ModifierImplType::Float;
-	ImplTypeByModifier[NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot.GetValue()] = ModifierImplType::Float;
-	// ProjectilesPerShot
+		// ProjectilesPerShot
 	ImplTypeByModifier[NCsWeaponModifier::PrjWp_ProjectilesPerShot_Count.GetValue()]	= ModifierImplType::Int;
 	ImplTypeByModifier[NCsWeaponModifier::PrjWp_ProjectilesPerShot_Interval.GetValue()]	= ModifierImplType::Float;
-	// Spread
+		// Spread
 	ImplTypeByModifier[NCsWeaponModifier::PrjWp_UseSpreadParams.GetValue()]	= ModifierImplType::Toggle;
+	// Point Weapon
+	ImplTypeByModifier[NCsWeaponModifier::PointWp_TimeBetweenShots.GetValue()] = ModifierImplType::Float;
+		// PointsPerShot
+	ImplTypeByModifier[NCsWeaponModifier::PointWp_PointsPerShot_Count.GetValue()] = ModifierImplType::Int;
+	ImplTypeByModifier[NCsWeaponModifier::PointWp_PointsPerShot_Interval.GetValue()] = ModifierImplType::Float;
 }
 
 #define ModifierImplType NCsWeapon::NModifier::EImpl

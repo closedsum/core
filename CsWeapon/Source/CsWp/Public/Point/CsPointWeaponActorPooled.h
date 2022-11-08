@@ -415,9 +415,9 @@ protected:
 #pragma region
 protected:
 
-	int32 GetPointsPerShot() const;
+	int32 PointsPerShot_GetCount() const;
 
-	float GetTimeBetweenPointsPerShot() const;
+	float PointsPerShot_GetInterval() const;
 
 public:
 

@@ -521,9 +521,16 @@ void UCsProjectileWeaponComponent::Fire()
 
 	ProjectileDataType* PrjData = WeaponDataLibrary::GetInterfaceChecked<ProjectileDataType>(Context, Data);
 
-	Payload->SetValue_Flag(CS_FIRST, PrjData->HasInfiniteAmmo());
-	Payload->SetValue_Int(CS_FIRST, PrjData->GetProjectilesPerShotParams().GetCount());
-	Payload->SetValue_Float(CS_FIRST, PrjData->GetProjectilesPerShotParams().GetInterval());
+	// Ammo
+	static const int32 HAS_INFINITE_AMMO = 0;
+	Payload->SetValue_Flag(HAS_INFINITE_AMMO, PrjData->HasInfiniteAmmo());
+	// ProjectilesPerShot
+		// Count
+	static const int32 PROJECTILES_PER_SHOT = 0;
+	Payload->SetValue_Int(PROJECTILES_PER_SHOT, PrjData->GetProjectilesPerShotParams().GetCount());
+		// Interval
+	static const int32 PROJECTILES_PER_SHOT_INTERVAL = 0;
+	Payload->SetValue_Float(PROJECTILES_PER_SHOT_INTERVAL, PrjData->GetProjectilesPerShotParams().GetInterval());
 
 	bHasFired = true;
 
@@ -539,9 +546,16 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 {
 	using namespace NCsProjectileWeaponComponent::NCached;
 
-	const bool& bInfiniteAmmo				   = R->GetValue_Flag(CS_FIRST);
-	const int32& ProjectilesPerShot			   = R->GetValue_Int(CS_FIRST);
-	const float& TimeBetweenProjectilesPerShot = R->GetValue_Float(CS_FIRST);
+	// Ammo
+	static const int32 HAS_INFINITE_AMMO = 0;
+	const bool& bInfiniteAmmo = R->GetValue_Flag(HAS_INFINITE_AMMO);
+	// ProjectilesPerShot
+		// Count
+	static const int32 PROJECTILES_PER_SHOT = 0;
+	const int32& ProjectilesPerShot	= R->GetValue_Int(PROJECTILES_PER_SHOT);
+		// Interval
+	static const int32 PROJECTILES_PER_SHOT_INTERVAL = 0;
+	const float& ProjectilesPerShot_Interval = R->GetValue_Float(PROJECTILES_PER_SHOT_INTERVAL);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -571,7 +585,7 @@ char UCsProjectileWeaponComponent::Fire_Internal(FCsRoutine* R)
 			// Check if more projectiles should be fired, if so wait
 			if (CurrentProjectilePerShotIndex < ProjectilesPerShot)
 			{
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenProjectilesPerShot);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= ProjectilesPerShot_Interval);
 			}
 
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);

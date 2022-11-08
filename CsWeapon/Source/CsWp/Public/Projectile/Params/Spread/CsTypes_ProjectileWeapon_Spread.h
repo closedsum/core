@@ -351,7 +351,7 @@ namespace NCsWeapon
 * Describes the direction of projectiles fired from a Projectile Weapon using
 *  the Spread Angle and Spread Angle Type (ECsProjectileWeaponSpreadAngle or NCsWeapon::NProjectile::NSpread::EAngle).
 *  The distribution is for a "shot" of projectiles and reset / determined again for each shot.
-*  If TimeBetweenProjectilesPerShot is 0.0f, then ORDERED distributions are the SAME.
+*  If ProjectilesPerShot.Interval is 0.0f, then ORDERED distributions are the SAME.
 *  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 */
 UENUM(BlueprintType)
@@ -416,7 +416,7 @@ namespace NCsWeapon
 				* Describes the direction of projectiles fired from a Projectile Weapon using
 				*  the Spread Angle and Spread Angle Type (NCsWeapon::NProjectile::NSpread::EAngle).
 				*  The distribution is for a "shot" of projectiles and reset / determined again for each shot.
-				*  If TimeBetweenProjectilesPerShot is 0.0f, then ORDERED distributions are the SAME.
+				*  If ProjectilesPerShot.Interval is 0.0f, then ORDERED distributions are the SAME.
 				*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 				*/
 				enum class EDistribution : uint8

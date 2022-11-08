@@ -113,8 +113,8 @@ namespace NCsProjectileWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire_Internal_OnEnd);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenShots);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetProjectilesPerShot);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, GetTimeBetweenProjectilesPerShot);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, ProjectilesPerShot_GetCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, ProjectilesPerShot_GetInterval);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, FireProjectile);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, SetProjectilePayload);
@@ -757,10 +757,11 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	// ProjectilePerShot
 	static const int32 PROJECTILES_PER_SHOT = 0;
-	int32 ProjectilesPerShot = GetProjectilesPerShot();
+	int32 ProjectilesPerShot = ProjectilesPerShot_GetCount();
 	Payload->SetValue_Int(PROJECTILES_PER_SHOT, ProjectilesPerShot);
 
-	Payload->SetValue_Float(CS_FIRST, GetTimeBetweenProjectilesPerShot());
+	static const int32 PROJECTILES_PER_SHOT_INTERVAL = 0;
+	Payload->SetValue_Float(PROJECTILES_PER_SHOT_INTERVAL, ProjectilesPerShot_GetInterval());
 
 		// Cache Launch Location
 	const bool UseCachedLaunchLocation = !PrjWeaponData->GetProjectilesPerShotParams().GetbCurrentLaunchLocation();
@@ -908,8 +909,9 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	// ProjectilesPerShot
 	static const int32 PROJECTILES_PER_SHOT = 0;
 	const int32& ProjectilesPerShot			= R->GetValue_Int(PROJECTILES_PER_SHOT);
-		// TimeBetweenProjectilesPerShot
-	const float& TimeBetweenProjectilesPerShot = R->GetValue_Float(CS_FIRST);
+		// ProjectilesPerShot.Interval
+	static const int32 PROJECTILES_PER_SHOT_INTERVAL = 0;
+	const float& ProjectilesPerShot_Interval = R->GetValue_Float(PROJECTILES_PER_SHOT_INTERVAL);
 
 	static const int32 CURRENT_PROJECTIVE_PER_SHOT_INDEX = 1;
 	int32& CurrentProjectilePerShotIndex = R->GetValue_Int(CURRENT_PROJECTIVE_PER_SHOT_INDEX);
@@ -1038,7 +1040,7 @@ char ACsProjectileWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 			// Check if more projectiles should be fired, if so wait
 			if (CurrentProjectilePerShotIndex < ProjectilesPerShot)
 			{
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenProjectilesPerShot);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= ProjectilesPerShot_Interval);
 			}
 
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
@@ -1179,11 +1181,11 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenShots() const
 	// Projectile
 #pragma region
 
-int32 ACsProjectileWeaponActorPooled::GetProjectilesPerShot() const
+int32 ACsProjectileWeaponActorPooled::ProjectilesPerShot_GetCount() const
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached;
 
-	const FString& Context = Str::GetProjectilesPerShot;
+	const FString& Context = Str::ProjectilesPerShot_GetCount;
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -1201,11 +1203,11 @@ int32 ACsProjectileWeaponActorPooled::GetProjectilesPerShot() const
 	return ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_ProjectilesPerShot_Count, Value);
 }
 
-float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
+float ACsProjectileWeaponActorPooled::ProjectilesPerShot_GetInterval() const
 {
 	using namespace NCsProjectileWeaponActorPooled::NCached;
 
-	const FString& Context = Str::GetTimeBetweenProjectilesPerShot;
+	const FString& Context = Str::ProjectilesPerShot_GetInterval;
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -1220,7 +1222,7 @@ float ACsProjectileWeaponActorPooled::GetTimeBetweenProjectilesPerShot() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot, Value);
+	return ModifierLibrary::ModifyFloatChecked(Context, Modifiers, NCsWeaponModifier::PrjWp_ProjectilesPerShot_Interval, Value);
 }
 
 #define ProjectilePayloadType NCsProjectile::NPayload::IPayload
@@ -2140,7 +2142,7 @@ bool ACsProjectileWeaponActorPooled::GetModifiedIntProperty(const FECsWeaponModi
 	// ProjectilesPerShot.Count
 	if (ModifierType == NCsWeaponModifier::PrjWp_ProjectilesPerShot_Count)
 	{
-		OutValue = GetProjectilesPerShot();
+		OutValue = ProjectilesPerShot_GetCount();
 		return true;
 	}
 	return false;
@@ -2154,10 +2156,10 @@ bool ACsProjectileWeaponActorPooled::GetModifiedFloatProperty(const FECsWeaponMo
 		OutValue = GetTimeBetweenShots();
 		return true;
 	}
-	// TimeBetweenProjectilesPerShot
-	if (ModifierType == NCsWeaponModifier::PrjWp_TimeBetweenProjectilesPerShot)
+	// ProjectilePerShot: Interval
+	if (ModifierType == NCsWeaponModifier::PrjWp_ProjectilesPerShot_Interval)
 	{
-		OutValue = GetTimeBetweenProjectilesPerShot();
+		OutValue = ProjectilesPerShot_GetInterval();
 		return true;
 	}
 	return false;

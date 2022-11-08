@@ -415,9 +415,9 @@ protected:
 #pragma region
 protected:
 
-	int32 GetProjectilesPerShot() const;
+	int32 ProjectilesPerShot_GetCount() const;
 
-	float GetTimeBetweenProjectilesPerShot() const;
+	float ProjectilesPerShot_GetInterval() const;
 
 public:
 

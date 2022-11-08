@@ -344,14 +344,14 @@ namespace NCsWeapon
 
 #pragma endregion PointWeaponSpreadAngle
 
-// ProjectileWeaponSpreadAngleDistribution
+// PointWeaponSpreadAngleDistribution
 #pragma region
 
 /**
 * Describes the direction of points fired from a Point Weapon using
 *  the Spread Angle and Spread Angle Type (ECsPointWeaponSpreadAngle or NCsWeapon::NPoint::NSpread::EAngle).
 *  The distribution is for a "shot" of points and reset / determined again for each shot.
-*  If TimeBetweenPointsPerShot is 0.0f, then ORDERED distributions are the SAME.
+*  If PointsPerShot.Interval is 0.0f, then ORDERED distributions are the SAME.
 *  Point Weapon is an object that implements the interface: ICsPointWeapon.
 */
 UENUM(BlueprintType)
@@ -416,7 +416,7 @@ namespace NCsWeapon
 				* Describes the direction of points fired from a Point Weapon using
 				*  the Spread Angle and Spread Angle Type (NCsWeapon::NPoint::NSpread::EAngle).
 				*  The distribution is for a "shot" of points and reset / determined again for each shot.
-				*  If TimeBetweenPointsPerShot is 0.0f, then ORDERED distributions are the SAME.
+				*  If PointsPerShot.Interval is 0.0f, then ORDERED distributions are the SAME.
 				*  Point Weapon is an object that implements the interface: ICsPointWeapon.
 				*/
 				enum class EDistribution : uint8

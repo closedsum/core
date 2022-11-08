@@ -30,7 +30,6 @@ namespace NCsWeaponModifier
 
 	// Projectile Weapon
 	extern CSWP_API const Type PrjWp_TimeBetweenShots;
-	extern CSWP_API const Type PrjWp_TimeBetweenProjectilesPerShot;
 		// ProjectilesPerShot
 	extern CSWP_API const Type PrjWp_ProjectilesPerShot_Count;
 	extern CSWP_API const Type PrjWp_ProjectilesPerShot_Interval;
@@ -38,7 +37,6 @@ namespace NCsWeaponModifier
 	extern CSWP_API const Type PrjWp_UseSpreadParams;
 	// Point Weapon
 	extern CSWP_API const Type PointWp_TimeBetweenShots;
-	extern CSWP_API const Type PointWp_TimeBetweenPointsPerShot;
 		// PointsPerShot
 	extern CSWP_API const Type PointWp_PointsPerShot_Count;
 	extern CSWP_API const Type PointWp_PointsPerShot_Interval;

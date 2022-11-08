@@ -89,8 +89,8 @@ namespace NCsPointWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Fire_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Fire_Internal_OnEnd);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, GetTimeBetweenShots);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, GetPointsPerShot);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, GetTimeBetweenPointsPerShot);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, PointsPerShot_GetCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, PointsPerShot_GetInterval);
 		}
 
 		namespace Name
@@ -693,10 +693,11 @@ void ACsPointWeaponActorPooled::Fire()
 
 	// PointsPerShot
 	static const int32 POINTS_PER_SHOT = 0;
-	int32 PointsPerShot = GetPointsPerShot();
+	int32 PointsPerShot = PointsPerShot_GetCount();
 	Payload->SetValue_Int(POINTS_PER_SHOT, PointsPerShot);
 
-	Payload->SetValue_Float(CS_FIRST, GetTimeBetweenPointsPerShot());
+	static const int32 POINTS_PER_SHOT_INTERVAL = 0;
+	Payload->SetValue_Float(POINTS_PER_SHOT_INTERVAL, PointsPerShot_GetInterval());
 
 	bHasFired = true;
 
@@ -724,9 +725,9 @@ char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	// PointsPerShot
 	static const int32 POINTS_PER_SHOT = 0;
 	const int32& PointsPerShot			= R->GetValue_Int(POINTS_PER_SHOT);
-		// TimeBetweenPointsPerShot
-	static const int32 TIME_BETWEEN_POINTS_PER_SHOT = 0;
-	const float& TimeBetweenPointsPerShot = R->GetValue_Float(TIME_BETWEEN_POINTS_PER_SHOT);
+		// PointsPerShot.Interval
+	static const int32 POINTS_PER_SHOT_INTERVAL = 0;
+	const float& PointsPerShot_Interval = R->GetValue_Float(POINTS_PER_SHOT_INTERVAL);
 
 	static const int32 CURRENT_POINT_PER_SHOT_INDEX = 1;
 	int32& CurrentPointPerShotIndex = R->GetValue_Int(CURRENT_POINT_PER_SHOT_INDEX);
@@ -765,7 +766,7 @@ char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 			// Check if more points should be fired, if so wait
 			if (CurrentPointPerShotIndex < PointsPerShot)
 			{
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= TimeBetweenPointsPerShot);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= PointsPerShot_Interval);
 			}
 
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
@@ -888,11 +889,11 @@ float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
 	// Point
 #pragma region
 
-int32 ACsPointWeaponActorPooled::GetPointsPerShot() const
+int32 ACsPointWeaponActorPooled::PointsPerShot_GetCount() const
 {
 	using namespace NCsPointWeaponActorPooled::NCached;
 
-	const FString& Context = Str::GetPointsPerShot;
+	const FString& Context = Str::PointsPerShot_GetCount;
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -909,11 +910,11 @@ int32 ACsPointWeaponActorPooled::GetPointsPerShot() const
 	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
 }
 
-float ACsPointWeaponActorPooled::GetTimeBetweenPointsPerShot() const
+float ACsPointWeaponActorPooled::PointsPerShot_GetInterval() const
 {
 	using namespace NCsPointWeaponActorPooled::NCached;
 
-	const FString& Context = Str::GetTimeBetweenPointsPerShot;
+	const FString& Context = Str::PointsPerShot_GetInterval;
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -927,7 +928,7 @@ float ACsPointWeaponActorPooled::GetTimeBetweenPointsPerShot() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenPointsPerShot, Value);
+	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Interval, Value);
 }
 
 void ACsPointWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)

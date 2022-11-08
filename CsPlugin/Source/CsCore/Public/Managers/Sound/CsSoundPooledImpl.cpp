@@ -269,6 +269,7 @@ void ACsSoundPooledImpl::Stop()
 	AudioComponent->AttenuationSettings = nullptr;
 
 	AudioComponent->SetSound(nullptr);
+	AudioComponent->SetPaused(false);
 	SetActorTickEnabled(false);
 
 	AudioComponent->bAllowSpatialization = false;

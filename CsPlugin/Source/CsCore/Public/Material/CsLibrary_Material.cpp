@@ -21,6 +21,7 @@
 // Material
 #include "Materials/MaterialInstanceConstant.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Runtime/Engine/Private/Materials/MaterialInstanceSupport.h" // TODO: NOTE: Test Batch Updating Material's Params
 
 namespace NCsMaterial
 {

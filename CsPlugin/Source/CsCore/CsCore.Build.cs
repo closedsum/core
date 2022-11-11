@@ -31,6 +31,7 @@ public class CsCore : ModuleRules
 
         PrivateDependencyModuleNames.AddRange(
             new string[] {
+                "Engine",
                 "InputCore",
             }
         );

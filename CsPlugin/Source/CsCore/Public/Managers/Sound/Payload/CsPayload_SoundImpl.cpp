@@ -27,7 +27,9 @@ namespace NCsSound
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity)
+			Transform(FTransform::Identity),
+			VolumeMultiplier(1.0f),
+			PitchMultiplier(1.0f)
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -69,6 +71,8 @@ namespace NCsSound
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
+			VolumeMultiplier = 1.0f;
+			PitchMultiplier = 1.0f;
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

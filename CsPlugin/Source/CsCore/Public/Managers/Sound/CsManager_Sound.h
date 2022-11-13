@@ -92,7 +92,23 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
-	static bool IsValid(UObject* InRoot = nullptr);
+#if WITH_EDITOR
+	static UCsManager_Sound* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_Sound* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+#if WITH_EDITOR
+	static bool IsValid(const UObject* InRoot = nullptr);
+#else
+	FORCEINLINE static bool IsValid(const UObject* InRoot = nullptr)
+	{
+		return s_bShutdown ? false : s_Instance != nullptr;
+	}
+#endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Sound> ManagerSoundClass, UObject* InOuter = nullptr);
 	
@@ -102,14 +118,8 @@ public:
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerSound* Get_GetManagerSound(UObject* InRoot);
-	static ICsGetManagerSound* GetSafe_GetManagerSound(UObject* Object);
-
-	static UCsManager_Sound* GetSafe(UObject* Object);
-
-public:
-
-	static UCsManager_Sound* GetFromWorldContextObject(const UObject* WorldContextObject);
+	static ICsGetManagerSound* Get_GetManagerSound(const UObject* InRoot);
+	static ICsGetManagerSound* GetSafe_GetManagerSound(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

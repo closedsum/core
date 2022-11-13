@@ -66,6 +66,10 @@ namespace NCsSound
 
 			FTransform Transform;
 
+			float VolumeMultiplier;
+
+			float PitchMultiplier;
+
 		public:
 
 			FImpl();
@@ -121,6 +125,8 @@ namespace NCsSound
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const float& GetVolumeMultiplier() const { return VolumeMultiplier; }
+			FORCEINLINE const float& GetPitchMultiplier() const { return PitchMultiplier; }
 
 		#pragma endregion SoundPayloadType (NCsSound::NPayload::IPayload)
 		};

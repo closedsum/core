@@ -124,7 +124,7 @@ namespace NCsSound
 			virtual const ECsAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
 
 			/** 
-			* Relevant if the Sound is attached to a Parent object.
+			* Relevant if the Sound is attached to a Parent object. 
 			* Bone or Socket to attach to.
 			*
 			* return Bone
@@ -147,6 +147,20 @@ namespace NCsSound
 			* return Transform
 			*/
 			virtual const FTransform& GetTransform() const = 0;
+
+			/**
+			* Get the amount to multiply / scale the volume of the Sound.
+			*
+			* return Multiplier
+			*/
+			virtual const float& GetVolumeMultiplier() const = 0;
+
+			/**
+			* Get the amount to multiply / scale the pitch of the Sound.
+			* 
+			* return Multiplier
+			*/
+			virtual const float& GetPitchMultiplier() const = 0;
 		};
 	}
 }

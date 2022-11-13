@@ -8,6 +8,8 @@
 // Library
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
+	// Common
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
 // Managers
@@ -38,7 +40,6 @@ namespace NCsManagerSound
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Spawn);
 		}
@@ -112,16 +113,19 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 {
 	return Get_GetManagerSound(InRoot)->GetManager_Sound();
 }
-#endif // #if WITH_EDITOR
 
-/*static*/ bool UCsManager_Sound::IsValid(UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_Sound* UCsManager_Sound::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-#if WITH_EDITOR
-	return Get_GetManagerSound(InRoot)->GetManager_Sound() != nullptr;
-#else
-	return s_Instance != nullptr;
-#endif // #if WITH_EDITOR
+	if (ICsGetManagerSound* GetManagerSound = GetSafe_GetManagerSound(Context, InRoot, Log))
+		return GetManagerSound->GetManager_Sound();
+	return nullptr;
 }
+
+/*static*/ bool UCsManager_Sound::IsValid(const UObject* InRoot /*=nullptr*/)
+{
+	return Get_GetManagerSound(InRoot)->GetManager_Sound() != nullptr;
+}
+#endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Sound::Init(UObject* InRoot, TSubclassOf<UCsManager_Sound> ManagerSoundClass, UObject* InOuter /*=nullptr*/)
 {
@@ -193,11 +197,11 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerSound* UCsManager_Sound::Get_GetManagerSound(UObject* InRoot)
+/*static*/ ICsGetManagerSound* UCsManager_Sound::Get_GetManagerSound(const UObject* InRoot)
 {
 	checkf(InRoot, TEXT("UCsManager_Sound::Get_GetManagerSound: InRoot is NULL."));
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	checkf(GetManagerSingleton, TEXT("UCsManager_Sound::Get_GetManagerSound: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
@@ -212,19 +216,15 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 	return GetManagerSound;
 }
 
-/*static*/ ICsGetManagerSound* UCsManager_Sound::GetSafe_GetManagerSound(UObject* Object)
+/*static*/ ICsGetManagerSound* UCsManager_Sound::GetSafe_GetManagerSound(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (!Object)
-	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::GetSafe_GetManagerSound: Object is NULL."));
-		return nullptr;
-	}
+	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
-	ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(Object);
+	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
 	if (!GetManagerSingleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::GetSafe_GetManagerSound: Object: %s does NOT implement the interface: ICsGetManagerSingleton."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
 
@@ -232,36 +232,10 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 
 	if (!Manager_Singleton)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::GetSafe_GetManagerSound: Failed to get object of type: UCsManager_Singleton from Object: %s."), *(Object->GetName()));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-
 	return Cast<ICsGetManagerSound>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Sound* UCsManager_Sound::GetSafe(UObject* Object)
-{
-	if (ICsGetManagerSound* GetManagerSound = GetSafe_GetManagerSound(Object))
-		return GetManagerSound->GetManager_Sound();
-	return nullptr;
-}
-
-/*static*/ UCsManager_Sound* UCsManager_Sound::GetFromWorldContextObject(const UObject* WorldContextObject)
-{
-	using namespace NCsManagerSound::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
-
-	typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-
-	if (UObject* ContextRoot = SoundManagerLibrary::GetSafeContextRoot(Context, WorldContextObject))
-	{
-		if (UCsManager_Sound* Manager = GetSafe(ContextRoot))
-			return Manager;
-
-		UE_LOG(LogCs, Warning, TEXT("%s: Failed to Manager Actor of type UCsManager_Sound from ContextRoot: %s."), *Context, *(ContextRoot->GetName()));
-	}
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

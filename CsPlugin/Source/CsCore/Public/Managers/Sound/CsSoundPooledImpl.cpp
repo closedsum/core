@@ -220,6 +220,7 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 
 	PooledPayloadType* PooledPayload = NCsInterfaceMap::GetInterfaceChecked<PooledPayloadType>(Str::Play, Payload);
 
+	AudioComponent->SetPitchMultiplier(Payload->GetPitchMultiplier());
 	AudioComponent->SetSound(Sound);
 	AudioComponent->AttenuationSettings = Payload->GetSoundAttenuation();
 

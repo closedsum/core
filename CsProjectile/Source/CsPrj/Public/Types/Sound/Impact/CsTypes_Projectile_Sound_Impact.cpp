@@ -11,7 +11,7 @@
 
 void FCsProjectile_Sound_ImpactInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetSurface((EPhysicalSurface*)(&Surface));
+	Info->SetSurface((EPhysicalSurface)Surface);
 	Info->SetbSound(&bSound);
 	Info->SetSound(&Sound);
 }

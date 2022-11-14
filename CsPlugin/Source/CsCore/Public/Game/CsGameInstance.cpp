@@ -204,6 +204,8 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 	UCsCoroutineScheduler::Get(this)->Update(UpdateGroup, DeltaTime);
 	UCsManager_Load::Get(this)->Update(DeltaTime);
 	UCsManager_Runnable::Get(this)->Update(DeltaTime);
+
+	OnUpdate_Event.Broadcast(DeltaTime);
 	return true;
 }
 

@@ -49,6 +49,14 @@ namespace NCsWeapon
 	{
 		struct CSWP_API FLibrary final
 		{
+		// Print
+		#pragma region
+		public:
+
+			static FString PrintObjectWithClass(const UCsManager_Weapon* Manager);
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -120,8 +128,7 @@ namespace NCsWeapon
 				UCsManager_Weapon* O = GetChecked(Context, ContextObject);
 				T* Other		 = Cast<T>(O);
 
-				check(Other);
-				//checkf(Other, TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName()));
+				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
 				return Other;
 			}
 
@@ -155,10 +162,8 @@ namespace NCsWeapon
 
 				if (!Other)
 				{
-					/*
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s: with Class: %s is NOT of type: %s."), *Context, *(O->GetName()), *(O->GetClass()->GetName()), *(T::StaticClass()->GetName())));
-					*/
+						Log(FString::Printf(TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName())));
 				}
 				return Other;
 			}

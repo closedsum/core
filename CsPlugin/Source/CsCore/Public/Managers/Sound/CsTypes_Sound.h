@@ -30,6 +30,7 @@ struct CSCORE_API EMCsSound : public TCsEnumStructMap<FECsSound, uint8>
 namespace NCsSound
 {
 	typedef FECsSound Type;
+	typedef EMCsSound EnumMapType;
 
 	namespace Ref
 	{

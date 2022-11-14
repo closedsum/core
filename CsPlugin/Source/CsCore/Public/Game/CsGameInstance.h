@@ -1,5 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Engine/GameInstance.h"
+// Types
+#include "Managers/Time/CsTypes_Time.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 // Containers
@@ -8,7 +11,6 @@
 #include "Play/Mode/CsPlayMode.h"
 
 #include "CsGameInstance.generated.h"
-#pragma once
 
 class UCsManager_Singleton;
 struct FCsRoutine;
@@ -59,6 +61,12 @@ protected:
 	FDelegateHandle	TickDelegateHandle;
 
 	virtual bool Tick(float DeltaSeconds);
+
+public:
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUpdate, const FCsDeltaTime& DeltaTime);
+
+	FOnUpdate OnUpdate_Event;
 
 #pragma endregion Tick
 

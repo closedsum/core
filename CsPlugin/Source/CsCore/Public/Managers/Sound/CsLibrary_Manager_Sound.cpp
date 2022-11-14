@@ -29,6 +29,16 @@ namespace NCsSound
 			}
 		}
 
+		// Print
+		#pragma region
+
+		FString FLibrary::PrintObjectWithClass(const UCsManager_Sound* Manager)
+		{
+			return FString::Printf(TEXT("%s: with Class: %s"), *(Manager->GetName()), *(Manager->GetClass()->GetName()));
+		}
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 

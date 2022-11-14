@@ -153,7 +153,7 @@ namespace NCsWeapon
 
 void FCsPointWeapon_Visual_ImpactInfo::CopyToInfo(InfoType* Info)
 {
-	Info->SetSurface((EPhysicalSurface*)(&Surface));
+	Info->SetSurface((EPhysicalSurface)Surface);
 	FXInfo.CopyToInfo(Info->GetFXInfoPtr());
 }
 

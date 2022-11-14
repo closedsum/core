@@ -247,10 +247,12 @@ bool FCsCoroutineSchedule::End()
 
 		FCsRoutine* R = RoutineContainer->Get();
 
-		typedef NCsCoroutine::EEndReason EndReasonType;
+		if (!R->HasEnded())
+		{
+			typedef NCsCoroutine::EEndReason EndReasonType;
 
-		R->End(EndReasonType::Shutdown);
-
+			R->End(EndReasonType::Shutdown);
+		}
 		//LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), TransactionType::End, R);
 
 		R->Reset();

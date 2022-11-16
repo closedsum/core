@@ -37,6 +37,15 @@ public:
 		return Cast<T>(Get(InRoot));
 	}
 
+#if WITH_EDITOR
+	static UCsManager_Level* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_Level* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Level> ManagerMenuClass, UObject* InOuter = nullptr);
 	static void Shutdown(const UObject* InRoot = nullptr);
 
@@ -45,8 +54,6 @@ protected:
 
 	static ICsGetManagerLevel* Get_GetManagerLevel(const UObject* InRoot);
 	static ICsGetManagerLevel* GetSafe_GetManagerLevel(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
-
-	static UCsManager_Level* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 

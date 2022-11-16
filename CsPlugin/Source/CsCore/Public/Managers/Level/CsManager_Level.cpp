@@ -60,10 +60,19 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 #pragma region
 
 #if WITH_EDITOR
+
 /*static*/ UCsManager_Level* UCsManager_Level::Get(const UObject* InRoot /*= nullptr*/)
 {
 	return Get_GetManagerLevel(InRoot)->GetManager_Level();
 }
+
+/*static*/ UCsManager_Level* UCsManager_Level::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerLevel* GetManagerLevel = GetSafe_GetManagerLevel(Context, InRoot, Log))
+		return GetManagerLevel->GetManager_Level();
+	return nullptr;
+}
+
 #endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_Level::Init(UObject* InRoot, TSubclassOf<UCsManager_Level> ManageLevelClass, UObject* InOuter /*= nullptr*/)
@@ -157,13 +166,6 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 		return nullptr;
 	}
 	return Cast<ICsGetManagerLevel>(Manager_Singleton);
-}
-
-/*static*/ UCsManager_Level* UCsManager_Level::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
-{
-	if (ICsGetManagerLevel* GetManagerLevel = GetSafe_GetManagerLevel(Context, InRoot, Log))
-		return GetManagerLevel->GetManager_Level();
-	return nullptr;
 }
 
 #endif // #if WITH_EDITOR

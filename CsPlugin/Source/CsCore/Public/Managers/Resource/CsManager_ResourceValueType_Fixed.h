@@ -642,9 +642,20 @@ namespace NCsResource
 				*
 				* return ResourceType	Allocated ResourceType
 				*/
-				ResourceType* AllocateResource()
+				FORCEINLINE ResourceType* AllocateResource()
 				{
 					return Allocate()->Get();
+				}
+
+				/**
+				* Allocate a ResourceType and add the corresponding linked list element to the
+				*  end of the list
+				*
+				* return ResourceType	Allocated ResourceType
+				*/
+				FORCEINLINE ResourceType& AllocateResourceRef()
+				{
+					return Allocate()->GetRef();
 				}
 
 				/**
@@ -697,7 +708,7 @@ namespace NCsResource
 				*
 				* return ResourceContainerType	Allocated ResourceType wrapped in a container.
 				*/
-				ResourceContainerType* AllocateAfterHead()
+				FORCEINLINE ResourceContainerType* AllocateAfterHead()
 				{
 					if (AllocatedHead)
 						return AllocateAfter(**AllocatedHead);
@@ -754,14 +765,14 @@ namespace NCsResource
 				*
 				* return ResourceContainerType	Allocated ResourceType wrapped in a container.
 				*/
-				ResourceContainerType* AllocateBeforeHead()
+				FORCEINLINE ResourceContainerType* AllocateBeforeHead()
 				{
 					if (AllocatedHead)
 						return AllocateBefore(**AllocatedHead);
 					return Allocate();
 				}
 
-				bool IsAllocatedChecked(const FString& Context, const int32& Index) const
+				FORCEINLINE bool IsAllocatedChecked(const FString& Context, const int32& Index) const
 				{
 					ResourceContainerType* Container = GetAtChecked(Context, Index);
 					return Container->IsAllocated();
@@ -811,7 +822,7 @@ namespace NCsResource
 				* @param Resource	ResourceType to deallocate.
 				* return Success	Whether the Deallocate performed successfully or not.
 				*/
-				bool Deallocate(ResourceType* Resource)
+				FORCEINLINE bool Deallocate(ResourceType* Resource)
 				{
 					checkf(Resource, TEXT("%s::Deallocate: Resource is NULL."), *Name);
 
@@ -880,7 +891,7 @@ namespace NCsResource
 				*
 				* return
 				*/
-				bool DeallocateHead()
+				FORCEINLINE bool DeallocateHead()
 				{
 					if (!AllocatedHead)
 						return false;
@@ -922,7 +933,7 @@ namespace NCsResource
 				*
 				* return ResourceContainerType
 				*/
-				ResourceContainerType* Enqueue()
+				FORCEINLINE ResourceContainerType* Enqueue()
 				{
 					return Allocate();
 				}
@@ -933,7 +944,7 @@ namespace NCsResource
 				*
 				* return ResourceContainerType
 				*/
-				ResourceContainerType* Dequeue()
+				FORCEINLINE ResourceContainerType* Dequeue()
 				{
 					if (AllocatedHead)
 					{
@@ -955,7 +966,7 @@ namespace NCsResource
 				*
 				* return ResourceContainerType
 				*/
-				ResourceContainerType* Push()
+				FORCEINLINE ResourceContainerType* Push()
 				{
 					return AllocateAfterHead();
 				}
@@ -966,7 +977,7 @@ namespace NCsResource
 				*
 				* return ResourceContainerType
 				*/
-				ResourceContainerType* Pop()
+				FORCEINLINE ResourceContainerType* Pop()
 				{
 					if (AllocatedHead)
 					{

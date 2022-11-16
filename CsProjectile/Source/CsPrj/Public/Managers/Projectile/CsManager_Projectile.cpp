@@ -1428,7 +1428,7 @@ VariablesType* UCsManager_Projectile::AllocateVariablesChecked(const FString& Co
 
 	if (Payload.IsVertexAnimMethod())
 	{
-		const int32 SkinID			  = AllocateNiagaraSkinIDChecked(Context, Payload.Type, Payload.SkinType);
+		const int32 SkinID			  = Niagara_SkinID_AllocateChecked(Context, Payload.Type, Payload.SkinType);
 		Manager_Variables.SkinIDs[ID] = SkinID;
 	}
 	else
@@ -1461,7 +1461,7 @@ void UCsManager_Projectile::DeallocateVariablesChecked(const FString& Context, V
 	/*
 	if (Manager_Variables.SkinIDs[ID] != INDEX_NONE)
 	{
-		DeallocateNiagaraSkinIDChecked(Context, Manager_Variables.Types[ID], Manager_Variables.SkinTypes[ID], Manager_Variables.SkinIDs[ID]);
+		Niagara_SkinID_DeallocateChecked(Context, Manager_Variables.Types[ID], Manager_Variables.SkinTypes[ID], Manager_Variables.SkinIDs[ID]);
 	}
 	*/
 	Manager_Variables.Last_DeallocatedIDs.Add(ID);

@@ -46,7 +46,7 @@ namespace NCsGameInstance
 		
 		UGameInstance* GameInstance = const_cast<UGameInstance*>(Cast<UGameInstance>(ContextObject));
 
-		checkf(GameInstance, TEXT("%s: ContextObject: %s does NOT contain to a World or is a reference to GameInstance."), *Context, *(ContextObject->GetName()));
+		checkf(GameInstance, TEXT("%s: ContextObject: %s does NOT contain a reference to a World or is a reference to GameInstance."), *Context, *(ContextObject->GetName()));
 		return nullptr;
 	}
 

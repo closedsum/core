@@ -208,6 +208,11 @@ namespace NCsMath
 			return C < 0 ? C + B : C;
 		}
 
+		FORCEINLINE static int32 Sign(const float& F)
+		{
+			{return 1 + (((*(int32*)&F) >> 31) << 1); }
+		}
+
 	// Angle
 	#pragma region
 	public:
@@ -425,6 +430,72 @@ namespace NCsMath
 			return R;
 		}
 
+		/**
+		* Call V.Rotation() and return the Yaw.
+		*
+		* @param V
+		* return	V.Rotation().Yaw.
+		*/
+		FORCEINLINE static float GetYaw(const FVector& V)
+		{
+			const float Yaw = FMath::Atan2(V.Y, V.X) * (180.f / PI);
+
+#if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
+			if (!FMath::IsFinite(Yaw))
+			{
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetYaw(): Yaw result %f contains NaN! Input FVector = %s"), Yaw, *(V.ToString()));
+				return 0.0f;
+			}
+#endif
+			return Yaw;
+		}
+
+		/**
+		* Call V.Rotation() and return the rotation with ONLY the Pitch value as
+		* Pitch + Offset.
+		*
+		* @param V
+		* @param Offset		Value to be added to V.Rotation().Pitch.
+		* return			FRotator(0.0f, V.Rotation().Pitch + Offset, 0.0f).
+		*/
+		FORCEINLINE static FRotator ToRotatorOnlyPitch(const FVector& V, const float& Offset = 0.0f)
+		{
+			FRotator R = FRotator::ZeroRotator;
+
+			R.Pitch = FMath::Atan2(V.Z, FMath::Sqrt((V.X * V.X) + (V.Y * V.Y))) * (180.f / PI);
+
+#if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
+			if (R.ContainsNaN())
+			{
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::ToRotatorOnlyYaw(): Rotator result %s contains NaN! Input FVector = %s"), *(R.ToString()), *(V.ToString()));
+				R = FRotator::ZeroRotator;
+			}
+#endif
+			R.Yaw += Offset;
+
+			return R;
+		}
+
+		/**
+		* Call V.Rotation() and return the Pitch.
+		*
+		* @param V
+		* return	V.Rotation().Pitch.
+		*/
+		FORCEINLINE static float GetPitch(const FVector& V)
+		{
+			const float Pitch = FMath::Atan2(V.Z, FMath::Sqrt((V.X * V.X) + (V.Y * V.Y))) * (180.f / PI);
+
+#if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
+			if (!FMath::IsFinite(Pitch))
+			{
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetPitch(): Pitch result %f contains NaN! Input FVector = %s"), Pitch, *(V.ToString()));
+				return 0.0f;
+			}
+#endif
+			return Pitch;
+		}
+
 		FORCEINLINE static bool IsAnyComponentZero(const FVector& V)
 		{
 			return V.X == 0.0f || V.Y == 0.0f || V.Z == 0.0f;
@@ -449,6 +520,7 @@ namespace NCsMath
 
 		FORCEINLINE static FVector GetRightFromNormal(const FVector& N) { return GetRight(N.Rotation()); }
 		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
+		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N) { return GetRightOnlyYaw(GetYaw(N)); }
 
 		/**
 		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Up' vector relative to N.
@@ -473,6 +545,11 @@ namespace NCsMath
 			return FVector(FMath::Fractional(V.X), FMath::Fractional(V.Y), FMath::Fractional(V.Z));
 		}
 
+		FORCEINLINE static float DotProduct2D(const FVector& A, const FVector& B)
+		{
+			return A.X * B.X + A.Y * B.Y;
+		}
+
 	#pragma endregion Vector
 
 	// Rotator
@@ -480,6 +557,18 @@ namespace NCsMath
 	public:
 
 		FORCEINLINE static FVector GetRight(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Y); }
+		FORCEINLINE static FVector GetRightOnlyYaw(const float& Yaw)
+		{
+			float SY, CY;
+			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Yaw));
+
+			return FVector(-SY, CY, 0.0f);
+		}
+		FORCEINLINE static FVector GetRightOnlyYaw(const FRotator& R)
+		{
+			return GetRightOnlyYaw(R.Yaw);
+		}
+
 		FORCEINLINE static FVector GetUp(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Z); }
 
 		FORCEINLINE static void GetForwardRightAndUp(const FRotator& R, FVector& OutForward, FVector& OutRight, FVector& OutUp)

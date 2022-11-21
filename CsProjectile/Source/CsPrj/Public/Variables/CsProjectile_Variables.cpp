@@ -194,13 +194,10 @@ namespace NCsProjectile
 		{
 			typedef NCsProjectile::NTracking::EState StateType;
 
-			ActiveCount = 0;
-			DelayCount = 0;
-
 			// Delay
 			if (States[ID] == StateType::Delay)
 			{
-				DelayIDs[ActiveCount] = ID;
+				DelayIDs[DelayCount] = ID;
 				++DelayCount;
 			}
 			// Active
@@ -316,6 +313,9 @@ namespace NCsProjectile
 			// State
 			AllocatedCount = 0;
 			AliveCount = 0;
+
+			TrackingInfos.ActiveCount = 0;
+			TrackingInfos.DelayCount = 0;
 
 			while (Next)
 			{

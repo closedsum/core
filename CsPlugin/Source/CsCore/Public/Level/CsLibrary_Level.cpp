@@ -4,8 +4,11 @@
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
+// Data
+#include "Level/Data/Setup/CsData_Level_Setup.h"
 // Level
 #include "Engine/LevelScriptActor.h"
+#include "Level/Data/Setup/CsGetLevelSetupData.h"
 // World
 #include "Engine/World.h"
 
@@ -23,7 +26,10 @@ namespace NCsLevel
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsLevel::NPersistent::FLibrary, GetSafeName);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsLevel::NPersistent::FLibrary, GetSafeFName);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsLevel::NPersistent::FLibrary, SafeIsName);
+					// LevelScriptActor
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsLevel::NPersistent::FLibrary, GetSafeScriptActor);
+					// SetupData
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsLevel::NPersistent::FLibrary, GetSafeSetupDataAsObject);
 				}
 			}
 		}
@@ -382,5 +388,44 @@ namespace NCsLevel
 		}
 
 		#pragma endregion LevelScriptActor
+
+		// SetupData
+		#pragma region
+
+		UObject* FLibrary::GetSetupDataAsObjectChecked(const FString& Context, const UObject* WorldContext)
+		{
+			ICsGetLevelSetupData* GetLevelSetupData = GetScriptActorChecked<ICsGetLevelSetupData>(Context, WorldContext);
+			ICsData_Level_Setup* SetupData			= GetLevelSetupData->GetLevelSetupData();
+
+			CS_IS_PTR_NULL_CHECKED(SetupData)
+
+			UObject* O = CS_INTERFACE_GET_UOBJECT_CHECKED(SetupData, ICsData_Level_Setup);
+			return O;
+		}
+
+		UObject* FLibrary::GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
+		{
+			if (ICsGetLevelSetupData* GetLevelSetupData = GetSafeScriptActor<ICsGetLevelSetupData>(Context, WorldContext, Log))
+			{
+				ICsData_Level_Setup* SetupData = GetLevelSetupData->GetLevelSetupData();
+
+				CS_IS_PTR_NULL_RET_NULL(SetupData)
+
+				UObject* O = CS_INTERFACE_GET_UOBJECT(SetupData, ICsData_Level_Setup);
+				return O;
+			}
+			return nullptr;
+		}
+
+		UObject* FLibrary::GetSafeSetupDataAsObject(const UObject* WorldContext)
+		{
+			using namespace NCsLevel::NPersistent::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeSetupDataAsObject;
+
+			return GetSafeSetupDataAsObject(Context, WorldContext, nullptr);
+		}
+
+		#pragma endregion SetupData
 	}
 }

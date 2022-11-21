@@ -382,6 +382,98 @@ namespace NCsLevel
 			}
 
 		#pragma endregion LevelScriptActor
+
+		// SetupData
+		#pragma region
+		public:
+
+			/**
+			* Get the Level Setup Data as a UObject from the current Persistent Level.
+			*  Level Setup Data is an object that implements the interface: ICsData_Level_Setup.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext
+			* return				UObject.
+			*/
+			static UObject* GetSetupDataAsObjectChecked(const FString& Context, const UObject* WorldContext);
+
+			/**
+			* Safely get the Level Setup Data as a UObject from the current Persistent Level.
+			*  Level Setup Data is an object that implements the interface: ICsData_Level_Setup.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext
+			* @param Log			(optional)
+			* return				UObject.
+			*/
+			static UObject* GetSafeSetupDataAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning);
+
+			/**
+			* Safely get the Level Setup Data as a UObject from the current Persistent Level.
+			*  Level Setup Data is an object that implements the interface: ICsData_Level_Setup.
+			*
+			* @param WorldContext
+			* return				UObject.
+			*/
+			static UObject* GetSafeSetupDataAsObject(const UObject* WorldContext);
+
+			/**
+			* Get the Level Setup Data of type: T from current Persistent Level.
+			*  Level Setup Data is an object that implements the interface: ICsData_Level_Setup.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext
+			* return				Level Setup Data of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSetupDataChecked(const FString& Context, const UObject* WorldContext)
+			{
+				T* Slice = Cast<T>(GetSetupDataAsObjectChecked(Context, WorldContext));
+
+				checkf(Slice, TEXT("%s: Failed to cast Level Setup Data to type: T."), *Context);
+
+				return Slice;
+			}
+
+			/**
+			* Safely get the Level Setup Data of type: T from current Persistent Level.
+			*  Level Setup Data is an object that implements the interface: ICsData_Level_Setup.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext
+			* @param Log			(optional)
+			* return				Level Setup Data of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafeSetupData(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) = &FCsLog::Warning)
+			{
+				T* Slice = Cast<T>(GetSafeSetupDataAsObject(Context, WorldContext, Log));
+
+				if (!Slice)
+				{
+					if (Log)
+					{
+						Log(FString::Printf(TEXT("%s: Failed to cast Level Setup Data to type: T."), *Context));
+					}
+					return nullptr;
+				}
+				return Slice;
+			}
+
+			/**
+			* Safely get the Level Setup Data of type: T from current Persistent Level.
+			*  Level Setup Data is an object that implements the interface: ICsData_Level_Setup.
+			*
+			* @param WorldContext
+			* return				Level Setup Data of type: T.
+			*/
+			template<typename T>
+			FORCEINLINE static T* GetSafeSetupData(const UObject* WorldContext)
+			{
+				return Cast<T>(GetSafeSetupDataAsObject(WorldContext));
+			}
+
+		#pragma endregion SetupData
 		};
 	}
 }

@@ -32,7 +32,7 @@
 #include "Data/CsData_Projectile.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
-#include "Settings/CsGetSettingsManagerProjectilePoolParams.h"
+#include "Settings/CsGetSettingsManagerProjectile.h"
 // Projectile
 #include "Managers/Projectile/Handler/CsManager_Projectile_ClassHandler.h"
 #include "Managers/Projectile/Handler/CsManager_Projectile_DataHandler.h"
@@ -494,11 +494,14 @@ void UCsManager_Projectile::SetupInternal()
 #endif // #if !UE_BUILD_SHIPPING
 		// If any settings have been set for Manager_Projectile, apply them
 	{
-		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
 
-		checkf(ModuleSettings, TEXT("UCsManager_Projectile::SetupInternal: Failed to get settings of type: UCsProjectileSettings."));
+		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-		Settings = ModuleSettings->Manager_Projectile;
+		ICsGetSettingsManagerProjectile* GetPoolParams = LevelLibrary::GetSetupDataChecked<ICsGetSettingsManagerProjectile>(Context, MyRoot);
+
+		Settings = GetPoolParams->GetSettingsManagerProjectile();
+
+		CS_IS_VALID_CHECKED(Settings);
 
 		// Populate TypeMapArray
 		{
@@ -542,15 +545,6 @@ void UCsManager_Projectile::SetupInternal()
 				bTypesByUpdateGroup = true;
 			}
 		}
-
-		// Check if there any pool params from the LevelScriptActor
-		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
-
-		if (ICsGetSettingsManagerProjectilePoolParams* GetPoolParams = LevelLibrary::GetSafeScriptActor<ICsGetSettingsManagerProjectilePoolParams>(MyRoot))
-		{
-			Settings.PoolParams = GetPoolParams->GetSettingsManagerProjectilePoolParams();
-		}
-
 		InitInternalFromSettings();
 	}
 }

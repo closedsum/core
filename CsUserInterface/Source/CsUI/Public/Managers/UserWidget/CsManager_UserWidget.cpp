@@ -377,7 +377,7 @@ void UCsManager_UserWidget::SetupInternal()
 		{
 			typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-			ICsGetSettingsManagerUserWidget* GetSettingsManagerUserWidget = LevelLibrary::GetScriptActorChecked<ICsGetSettingsManagerUserWidget>(Context, MyRoot);
+			ICsGetSettingsManagerUserWidget* GetSettingsManagerUserWidget = LevelLibrary::GetSetupDataChecked<ICsGetSettingsManagerUserWidget>(Context, MyRoot);
 
 			Settings = GetSettingsManagerUserWidget->GetSettingsManagerUserWidget();
 		}

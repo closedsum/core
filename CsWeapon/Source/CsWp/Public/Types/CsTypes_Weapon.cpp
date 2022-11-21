@@ -68,7 +68,7 @@ namespace NCsWeapon
 	{
 		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-		ICsGetWeaponTypes* GetWeaponTypes = LevelLibrary::GetSafeScriptActor<ICsGetWeaponTypes>(Context, WorldContext, Log);
+		ICsGetWeaponTypes* GetWeaponTypes = LevelLibrary::GetSafeSetupData<ICsGetWeaponTypes>(Context, WorldContext, Log);
 
 		if (!GetWeaponTypes)
 			return;

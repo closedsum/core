@@ -453,7 +453,7 @@ void UCsManager_Weapon::SetupInternal()
 	{
 		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
-		ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = LevelLibrary::GetScriptActorChecked<ICsGetSettingsManagerWeapon>(Context, MyRoot);
+		ICsGetSettingsManagerWeapon* GetSettingsManagerWeapon = LevelLibrary::GetSetupDataChecked<ICsGetSettingsManagerWeapon>(Context, MyRoot);
 
 		Settings = GetSettingsManagerWeapon->GetSettingsManagerWeapon();
 

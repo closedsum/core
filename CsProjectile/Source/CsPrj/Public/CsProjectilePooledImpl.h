@@ -161,7 +161,7 @@ private:
 #pragma region
 public:
 
-	void Update(const FCsDeltaTime& DeltaTime);
+	virtual void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
 
@@ -203,7 +203,7 @@ public:
 
 	void Allocate(PooledPayloadType* Payload);
 
-	void Deallocate();
+	virtual void Deallocate();
 
 #pragma endregion ICsPooledObject
 
@@ -320,7 +320,7 @@ public:
 
 // Variables
 #pragma region
-private:
+protected:
 
 #define VariablesType NCsProjectile::NVariables::FVariables
 
@@ -332,6 +332,10 @@ public:
 	FORCEINLINE VariablesType* GetVariables() { return Variables; }
 
 #undef VariablesType
+
+protected:
+
+	virtual void AllocateVariables(const PayloadType* Payload);
 
 #pragma endregion Variables
 

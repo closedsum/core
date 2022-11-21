@@ -90,6 +90,7 @@ namespace NCsProjectile
 
 				FORCEINLINE void SetOuter(NCsProjectile::NVariables::FVariables* InOuter) { Outer = InOuter; }
 				FORCEINLINE NCsProjectile::NVariables::FVariables* GetOuter() { return Outer; }
+
 				FORCEINLINE const NCsProjectile::NVariables::FManager* GetOuterMost() const { return Outer->GetOuter(); }
 				FORCEINLINE NCsProjectile::NVariables::FManager* GetOuterMost() { return Outer->GetOuter(); }
 
@@ -134,18 +135,50 @@ namespace NCsProjectile
 
 			FTrackingInfo TrackingInfo;
 
+			struct CSPRJ_API FCollisionInfo
+			{
+				friend struct NCsProjectile::NVariables::FVariables;
+
+			private:
+
+				NCsProjectile::NVariables::FVariables* Outer;
+
+			public:
+
+				FCollisionInfo() :
+					Outer(nullptr)
+				{
+				}
+
+				FORCEINLINE void SetOuter(NCsProjectile::NVariables::FVariables* InOuter) { Outer = InOuter; }
+				FORCEINLINE NCsProjectile::NVariables::FVariables* GetOuter() { return Outer; }
+
+				FORCEINLINE const NCsProjectile::NVariables::FManager* GetOuterMost() const { return Outer->GetOuter(); }
+				FORCEINLINE NCsProjectile::NVariables::FManager* GetOuterMost() { return Outer->GetOuter(); }
+
+				FORCEINLINE const int32& GetID() const { return Outer->GetID(); }
+
+				const float& GetRadius() const;
+				float& GetRadius();
+			};
+
+			FCollisionInfo CollisionInfo;
+
 			FVariables() :
 				Outer(nullptr),
 				ID(INDEX_NONE),
-				TrackingInfo()
+				TrackingInfo(),
+				CollisionInfo()
 			{
 				TrackingInfo.Outer = this;
+				CollisionInfo.Outer = this;
 			}
 
 			FORCEINLINE void SetOuter(NCsProjectile::NVariables::FManager* InOuter) 
 			{
 				Outer = InOuter;
 				TrackingInfo.SetOuter(this);
+				CollisionInfo.SetOuter(this);
 			}
 			FORCEINLINE NCsProjectile::NVariables::FManager* GetOuter() { return Outer; }
 
@@ -180,7 +213,7 @@ namespace NCsProjectile
 
 #pragma endregion NCsProjectile::NVariables::FVariables
 
-// NCCharacter::NVariables::FManager
+// NCsProjectile::NVariables::FManager
 #pragma region
 
 class UCsManager_Projectile;
@@ -210,6 +243,8 @@ namespace NCsProjectile
 		// IDs
 
 			IDManagerType Manager_ID;
+
+			int32 AllocatedCount;
 
 			TArray<int32> AllocatedIDs;
 
@@ -417,6 +452,50 @@ namespace NCsProjectile
 
 			FTrackingInfos TrackingInfos;
 
+		// Collision
+
+			struct FCollisionInfos
+			{
+				friend struct NCsProjectile::NVariables::FManager;
+
+			private:
+
+				NCsProjectile::NVariables::FManager* Outer;
+
+			public:
+
+				TArray<float> Radii;
+
+				DECLARE_DELEGATE_OneParam(FUpdateImpl, const FCsDeltaTime& DeltaTime);
+
+				FUpdateImpl UpdateImpl;
+
+				FCollisionInfos() :
+					Outer(nullptr),
+					Radii(),
+					UpdateImpl()
+				{
+				}
+
+				void SetSize(const int32& InSize)
+				{
+					Radii.Reset(InSize);
+
+					for (int32 I = 0; I < InSize; ++I)
+					{
+						Radii.Add(0.0f);
+					}
+				}
+
+				void Update(const FCsDeltaTime& DeltaTime);
+
+				FORCEINLINE void Reset(const int32& Index)
+				{
+				}
+			};
+
+			FCollisionInfos CollisionInfos;
+
 			NCsLooseCoarseGrid::FGrid LooseCoarseGrid;
 
 			FManager() :
@@ -424,6 +503,7 @@ namespace NCsProjectile
 				Projectiles(),
 				// IDs
 				Manager_ID(),
+				AllocatedCount(0),
 				AllocatedIDs(),
 				Last_DeallocatedIDs(),
 				Variables(),
@@ -438,10 +518,13 @@ namespace NCsProjectile
 				Rotations(),
 				Orientations(),
 				MovementInfos(),
-				TrackingInfos()
+				TrackingInfos(),
+				CollisionInfos(),
+				LooseCoarseGrid()
 			{
 				MovementInfos.Outer = this;
 				TrackingInfos.Outer = this;
+				CollisionInfos.Outer = this;
 			}
 
 			FORCEINLINE void SetOuter(UCsManager_Projectile* InOuter) { Outer = InOuter; }
@@ -469,6 +552,7 @@ namespace NCsProjectile
 				Projectiles.Reset(InSize);
 				AllocatedIDs.Reset(InSize);
 				Last_DeallocatedIDs.Reset(InSize);
+				Variables.Reset(InSize);
 				AliveIDs.Reset(InSize);
 				Types.Reset(InSize);
 				States.Reset(InSize);
@@ -491,6 +575,7 @@ namespace NCsProjectile
 					Projectiles.Add(nullptr);
 					AllocatedIDs.Add(INDEX_NONE);
 					Variables.AddDefaulted();
+					Variables[I].SetOuter(this);
 					AliveIDs.Add(INDEX_NONE);
 					Types.Add(EMCsProjectile::Get().GetMAX());
 					States.Add(StateType::Inactive);
@@ -498,11 +583,6 @@ namespace NCsProjectile
 					Locations.Add(FVector::ZeroVector);
 					Rotations.Add(FRotator::ZeroRotator);
 					Orientations.Add(FQuat::Identity);
-				}
-
-				for (int32 I = 0; I < InSize; ++I)
-				{
-					Variables[I].SetOuter(this);
 				}
 
 				MovementInfos.SetSize(InSize);
@@ -514,6 +594,12 @@ namespace NCsProjectile
 			FORCEINLINE bool IsValid(const int32& Index) const { return Variables[Index].IsValid(); }
 			//FORCEINLINE bool IsAlive(const int32& Index) const { return States[Index] == StateType::Active || States[Index] == StateType::Transforming; }
 
+		#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+			VariablesType* AllocateChecked(const FString& Context, const VariablesPayloadType& Payload);
+		#undef VariablesPayloadType
+
+			void DeallocateChecked(const FString& Context, VariablesType* Vars);
+
 			FORCEINLINE void Reset(const int32& Index)
 			{
 				Variables[Index].Reset();
@@ -523,6 +609,7 @@ namespace NCsProjectile
 				Rotations[Index]	= FRotator::ZeroRotator;
 				Orientations[Index] = FQuat::Identity;
 				TrackingInfos.Reset(Index);
+				CollisionInfos.Reset(Index);
 				Manager_ID.DeallocateAt(Index);
 			}
 

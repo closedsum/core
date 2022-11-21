@@ -47,6 +47,14 @@ namespace NCsProjectile
 	{
 		struct CSPRJ_API FLibrary final
 		{
+		// Print
+		#pragma region
+		public:
+
+			static FString PrintObjectWithClass(const UCsManager_Projectile* Manager);
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -106,6 +114,23 @@ namespace NCsProjectile
 			static UCsManager_Projectile* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
+			* Get the reference to UCsManager_Projectile from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_Projectile.
+			*/
+			template<typename T>
+			static T* GetChecked(const FString& Context, const UObject* ContextObject)
+			{
+				UCsManager_Projectile* O = GetChecked(Context, ContextObject);
+				T* Other				 = Cast<T>(O);
+
+				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
+				return Other;
+			}
+
+			/**
 			* Safely get the reference to UCsManager_Projectile from a WorldContext.
 			*
 			* @param Context		The calling context.
@@ -114,6 +139,32 @@ namespace NCsProjectile
 			* return				UCsManager_Projectile.
 			*/
 			static UCsManager_Projectile* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Projectile from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return				UCsManager_Projectile.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning)
+			{
+				UCsManager_Projectile* O = GetSafe(Context, ContextObject, Log);
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
 
 			/**
 			* Safely get the reference to UCsManager_Projectile from a WorldContext.
@@ -464,10 +515,10 @@ namespace NCsProjectile
 
 					#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NVariables::FResource
 
-						static VariablesResourceType* AllocateVariablesChecked(const FString& Context, const UObject* WorldContext);
+						static VariablesResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext);
 
-						static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
-						static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
+						static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
+						static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
 
 					#undef VariablesResourceType
 
@@ -484,10 +535,10 @@ namespace NCsProjectile
 
 						#define VariablesResourceType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
 
-							static VariablesResourceType* AllocateVariablesChecked(const FString& Context, const UObject* WorldContext);
+							static VariablesResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext);
 
-							static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
-							static void DeallocateVariablesChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
+							static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesResourceType* Resource);
+							static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& Index);
 
 						#undef VariablesResourceType
 						};

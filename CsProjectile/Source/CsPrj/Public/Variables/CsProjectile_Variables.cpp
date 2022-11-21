@@ -77,6 +77,11 @@ namespace NCsProjectile
 		const float& FVariables::FTrackingInfo::GetRotationRate() const { return GetOuterMost()->TrackingInfos.RotationRates[GetID()]; }
 		float& FVariables::FTrackingInfo::GetRotationRate() { return GetOuterMost()->TrackingInfos.RotationRates[GetID()]; }
 
+		// FVariables::FCollisionInfo
+		
+		const float& FVariables::FCollisionInfo::GetRadius() const { return GetOuterMost()->CollisionInfos.Radii[GetID()]; }
+		float& FVariables::FCollisionInfo::GetRadius() { return GetOuterMost()->CollisionInfos.Radii[GetID()]; }
+
 		// FVariables
 
 		const FVector& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
@@ -296,6 +301,11 @@ namespace NCsProjectile
 			}
 		}
 
+		void FManager::FCollisionInfos::Update(const FCsDeltaTime& DeltaTime)
+		{
+			UpdateImpl.ExecuteIfBound(DeltaTime);
+		}
+
 		void FManager::Update(const FCsDeltaTime& DeltaTime)
 		{
 			typedef NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
@@ -304,7 +314,7 @@ namespace NCsProjectile
 			TCsDoubleLinkedList<ResourceType*>* Next	= Current;
 
 			// State
-			int32 AllocatedCount = 0;
+			AllocatedCount = 0;
 			AliveCount = 0;
 
 			while (Next)
@@ -344,7 +354,67 @@ namespace NCsProjectile
 
 			TrackingInfos.Update(DeltaTime);
 			MovementInfos.Update(DeltaTime);
+			CollisionInfos.Update(DeltaTime);
 		}
+
+		#define VariablesType NCsProjectile::NVariables::FVariables
+
+		#define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
+		VariablesType* FManager::AllocateChecked(const FString& Context, const VariablesPayloadType& Payload)
+		{
+			const int32& ID = Manager_ID.AllocateResourceRef();
+
+			Variables[ID].ID = ID;
+
+			Projectiles[ID] = Payload.Projectile;
+			Types[ID]		= Payload.Type;
+
+			/*
+			typedef NCCharacter::NAnim::EMethod AnimMethodType;
+
+			if (Payload.IsVertexAnimMethod())
+			{
+				const int32 SkinID			  = Niagara_SkinID_AllocateChecked(Context, Payload.Type, Payload.SkinType);
+				Manager_Variables.SkinIDs[ID] = SkinID;
+			}
+			else
+			{
+				Manager_Variables.SkinIDs[ID] = INDEX_NONE;
+			}
+			*/
+
+			const FVector& Location = Payload.Location;
+			const float& Radius		= Payload.CollisionRadius;
+
+			const float GridWidthBy2  = LooseCoarseGrid.GetWidthBy2();
+			const float GridHeightBy2 = LooseCoarseGrid.GetHeightBy2();
+
+			LooseCoarseGrid.Insert(ID, Location.X + GridWidthBy2, Location.Y + GridHeightBy2, Radius, Radius);
+
+			return GetVariablesPtr(ID);
+		}
+
+		void FManager::DeallocateChecked(const FString& Context, VariablesType* Vars)
+		{
+			CS_IS_PTR_NULL_CHECKED(Vars);
+
+			check(Vars->IsValidChecked(Context));
+
+			const int32 ID = Vars->GetID();
+
+			check(Manager_ID.IsAllocatedChecked(Context, ID));
+			checkf(Vars == GetVariablesPtr(ID), TEXT("%s: ID: %s is NOT correct for Vars."), *Context, ID);
+			/*
+			if (Manager_Variables.SkinIDs[ID] != INDEX_NONE)
+			{
+				Niagara_SkinID_DeallocateChecked(Context, Manager_Variables.Types[ID], Manager_Variables.SkinTypes[ID], Manager_Variables.SkinIDs[ID]);
+			}
+			*/
+			Last_DeallocatedIDs.Add(ID);
+			Reset(ID);
+		}
+
+		#undef VariablesPayloadType
 	}
 }
 

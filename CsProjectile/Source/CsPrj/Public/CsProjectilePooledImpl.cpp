@@ -102,6 +102,8 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed_Internal);
+			// Variables
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, AllocateVariables);
 			// Modifier
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, ApplyMovementModifiers);
 		}
@@ -176,7 +178,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	OnDeallocate_Start_Event(),
 	OnHit_Event(),
 	// Variables,
-	Variables(),
+	Variables(nullptr),
 	// Movement
 	MovementImpl(),
 	bOverride_InitialSpeed(false),
@@ -440,6 +442,8 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 
 void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
+	Variables->GetLocation() = GetActorLocation();
+
 	TrackingImpl.Update(DeltaTime);
 	CacheImpl->Update(DeltaTime);
 }
@@ -510,25 +514,7 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 	CacheImpl->SetData(Data);
 	
 	// Variables
-	{
-		typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
-		typedef NCsProjectile::NVariables::NAllocate::FPayload VariablesPayloadType;
-
-		VariablesPayloadType VariablesPayload;
-		VariablesPayload.Projectile	= this;
-		VariablesPayload.Type		= Type;
-		VariablesPayload.Location	= ProjectilePayload->GetLocation();
-
-		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-		typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
-
-		if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
-		{
-			VariablesPayload.CollisionRadius = CollisionData->GetCollisionRadius();
-		}
-
-		Variables = VariablesLibrary::AllocateChecked(Context, this, VariablesPayload);
-	}
+	AllocateVariables(ProjectilePayload);
 
 	if (bLaunchOnAllocate)
 		Launch(ProjectilePayload);
@@ -850,6 +836,8 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 					CollisionComponent->MoveIgnoreComponents.Add(Component);
 				}
 
+				Variables->CollisionInfo.GetRadius() = CollisionData->GetCollisionRadius();
+
 				const bool ShouldDelayCollision = ShouldDelayLaunch && LaunchParams->GetDelayParams().GetbCollision();
 
 				if (!ShouldDelayCollision)
@@ -1079,6 +1067,39 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 }
 
 #pragma endregion Launch
+
+// Variables
+#pragma region
+
+#define PayloadType NCsProjectile::NPayload::IPayload
+void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
+{
+#undef PayloadType
+
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::AllocateVariables;
+
+	typedef NCsProjectile::NManager::NVariables::FLibrary VariablesLibrary;
+	typedef NCsProjectile::NVariables::NAllocate::FPayload VariablesPayloadType;
+
+	VariablesPayloadType VariablesPayload;
+	VariablesPayload.Projectile	= this;
+	VariablesPayload.Type		= Type;
+	VariablesPayload.Location	= Payload->GetLocation();
+
+	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+	{
+		VariablesPayload.CollisionRadius = CollisionData->GetCollisionRadius();
+	}
+
+	Variables = VariablesLibrary::AllocateChecked(Context, this, VariablesPayload);
+}
+
+#pragma endregion Variables
 
 // Movement
 #pragma region

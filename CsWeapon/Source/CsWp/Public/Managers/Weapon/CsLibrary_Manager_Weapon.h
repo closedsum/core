@@ -126,7 +126,7 @@ namespace NCsWeapon
 			static T* GetChecked(const FString& Context, const UObject* ContextObject)
 			{
 				UCsManager_Weapon* O = GetChecked(Context, ContextObject);
-				T* Other		 = Cast<T>(O);
+				T* Other			 = Cast<T>(O);
 
 				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
 				return Other;

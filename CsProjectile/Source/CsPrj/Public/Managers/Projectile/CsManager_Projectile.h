@@ -1090,7 +1090,7 @@ private:
 
 // Variables
 #pragma region
-private:
+protected:
 
 #define VariablesManagerType NCsProjectile::NVariables::FManager
 #define VariablesPayloadType NCsProjectile::NVariables::NAllocate::FPayload
@@ -1098,15 +1098,22 @@ private:
 
 	VariablesManagerType Manager_Variables;
 
-	void SetupVariablesManager();
+public:
+
+	FORCEINLINE const VariablesManagerType& GetManager_Variables() const { return Manager_Variables; }
+	FORCEINLINE VariablesManagerType& GetManager_Variables() { return Manager_Variables; }
+
+protected:
+
+	virtual void SetupVariablesManager();
 
 	void UpdateVariablesManager(const FCsDeltaTime& DeltaTime);
 
 public:
 
-	VariablesType* AllocateVariablesChecked(const FString& Context, const VariablesPayloadType& Payload);
+	virtual VariablesType* AllocateVariablesChecked(const FString& Context, const VariablesPayloadType& Payload);
 
-	void DeallocateVariablesChecked(const FString& Context, VariablesType* Variables);
+	virtual void DeallocateVariablesChecked(const FString& Context, VariablesType* Variables);
 
 #undef VariablesManagerType
 #undef VariablesPayloadType

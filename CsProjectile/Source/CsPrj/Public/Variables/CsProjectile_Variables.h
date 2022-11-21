@@ -431,6 +431,7 @@ namespace NCsProjectile
 
 				FORCEINLINE void Reset(const int32& Index)
 				{
+					States[Index] = TrackingStateType::Inactive;
 					/*
 					DelayIDs[Index]	   = INDEX_NONE;
 					Delays[Index]	   = 0.0f;
@@ -587,6 +588,7 @@ namespace NCsProjectile
 
 				MovementInfos.SetSize(InSize);
 				TrackingInfos.SetSize(InSize);
+				CollisionInfos.SetSize(InSize);
 			}
 
 			void Update(const FCsDeltaTime& DeltaTime);

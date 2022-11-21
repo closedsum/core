@@ -1107,7 +1107,7 @@ protected:
 
 	virtual void SetupVariablesManager();
 
-	void UpdateVariablesManager(const FCsDeltaTime& DeltaTime);
+	virtual void UpdateVariablesManager(const FCsDeltaTime& DeltaTime);
 
 public:
 

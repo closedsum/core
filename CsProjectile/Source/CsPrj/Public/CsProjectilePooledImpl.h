@@ -6,7 +6,10 @@
 #include "Managers/Time/CsPause.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsProjectile.h"
+	// Event
 #include "Event/CsProjectile_Event.h"
+	// Collision
+#include "Collision/CsProjectile_Collision.h"
 #include "Collision/CsGetCollisionHitCount.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
@@ -87,7 +90,10 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsPause,
 										  public ICsPooledObject,
 										  public ICsProjectile,
+										  // Event
 										  public ICsProjectile_Event,
+										  public ICsProjectile_Collision,
+										  // Collision
 										  public ICsGetCollisionHitCount
 {
 	GENERATED_UCLASS_BODY()
@@ -309,6 +315,17 @@ private:
 	ICsProjectile_Event::FOnHit OnHit_Event;
 
 #pragma endregion Events
+
+// ICsProjectile_Collision
+#pragma region
+public:
+
+	FORCEINLINE void Hit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+	{
+		OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+	}
+
+#pragma endregion ICsProjectile_Collision
 
 // ICsGetCollisionHitCount
 #pragma region

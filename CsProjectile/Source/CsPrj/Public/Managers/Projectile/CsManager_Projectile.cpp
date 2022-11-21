@@ -822,6 +822,8 @@ const FCsProjectilePooled* UCsManager_Projectile::FindSafeObject(const FECsProje
 void UCsManager_Projectile::Update(const FCsDeltaTime& DeltaTime)
 {
 	Internal.Update(DeltaTime);
+
+	UpdateVariablesManager(DeltaTime);
 }
 
 void UCsManager_Projectile::Update(const FECsUpdateGroup& Group, const FCsDeltaTime& DeltaTime)

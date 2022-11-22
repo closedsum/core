@@ -33,6 +33,13 @@ public:
 	* return
 	*/
 	virtual UAudioComponent* GetAudioComponent() const = 0;
+
+	/**
+	* Stop the sound with optional Fade Out Time
+	* 
+	* @param FadeOutTime	(optional) Time to Fade Out Sound.
+	*/
+	virtual void Stop(const float& FadeOutTime = 0.0f) = 0;
 };
 
 // FCsSoundPooled
@@ -79,6 +86,19 @@ public:
 		 The Object implements a script interface of type: ICsSoundPooled. */
 	FScript_GetAudioComponent Script_GetAudioComponent_Impl;
 
+	/**
+	* Delegate type for Stopping the Sound.
+	*  The Object implements a script interface of type: ICsSoundPooled.
+	*
+	* @param Object			An object of type: ICsSoundPooled.
+	* @param FadeOutTime	
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_Stop, UObject* /*Object*/, const float& /*FadeOutTime*/);
+
+	/** Delegate for getting the pooled AudioComponent.
+		 The Object implements a script interface of type: ICsSoundPooled. */
+	FScript_Stop Script_Stop_Impl;
+
 #pragma endregion ICsSoundPooled
 
 #pragma endregion Script
@@ -105,7 +125,19 @@ public:
 #pragma region
 public:
 
-	UAudioComponent* GetAudioComponent() const;
+	FORCEINLINE UAudioComponent* GetAudioComponent() const
+	{
+		if (bScriptSound)
+			return Script_GetAudioComponent_Impl.Execute(Object);
+		return Sound->GetAudioComponent();
+	}
+
+	FORCEINLINE void Stop(const float& FadeOutTime = 0.0f)
+	{
+		if (bScriptSound)
+			return Script_Stop_Impl.Execute(Object, FadeOutTime);
+		Sound->Stop(FadeOutTime);
+	}
 
 #pragma endregion ICsSoundPooled
 

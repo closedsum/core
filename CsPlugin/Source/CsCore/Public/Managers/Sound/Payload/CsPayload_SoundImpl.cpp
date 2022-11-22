@@ -24,6 +24,7 @@ namespace NCsSound
 			DeallocateMethod(EDeallocateMethod::Complete),
 			LifeTime(0.0f),
 			DurationMultiplier(1.0f),
+			FadeInTime(0.0f),
 			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
@@ -67,6 +68,7 @@ namespace NCsSound
 			DeallocateMethod = EDeallocateMethod::Complete;
 			LifeTime = 0.0f;
 			DurationMultiplier = 1.0f;
+			FadeInTime = 0.0f;
 			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;

@@ -172,7 +172,6 @@ namespace NCsSound
 			StartTime.Reset();
 			ElapsedTime.Reset();
 			// SoundCacheType (NCsSound::NCache::ICache)
-			AudioComponent = nullptr;
 			DeallocateMethod = EDeallocateMethod::Complete;
 			QueuedLifeTime = 0.0f;
 		}

@@ -3,57 +3,13 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Types/CsTypes_AttachDetach.h"
+#include "Managers/Sound/CsTypes_Sound.h"
 
 class USoundBase;
 class USoundAttenuation;
 
 namespace NCsSound
 {
-	// DeallocateMethod
-	#pragma region
-
-	/**
-	* Type for different ways to deallocate a Sound.
-	*/
-	enum class EDeallocateMethod : uint8
-	{
-		/** If a Sound is attached to a parent object,
-		  LifeTime == 0.of means the Sound object will be deallocated immediately
-		   when the parent has been destroyed / deallocated.
-		  LifeTime > 0.0f will be the time after the parent object has been
-		   destroyed / deallocated to deallocate the Sound object.
-		If a Sound is NOT attached to a parent object,
-		  LifeTime == 0.0f means the Sound object will stay active forever.
-		  LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
-		   the Sound object has been allocated. */
-		LifeTime,
-		/** */
-		Complete,
-		EDeallocateMethod_MAX
-	};
-
-	struct CSCORE_API EMDeallocateMethod final : public TCsEnumMap<EDeallocateMethod>
-	{
-		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDeallocateMethod, EDeallocateMethod)
-	};
-
-	namespace NDeallocateMethod
-	{
-		typedef EDeallocateMethod Type;
-
-		namespace Ref
-		{
-			extern CSCORE_API const Type LifeTime;
-			extern CSCORE_API const Type Complete;
-			extern CSCORE_API const Type EDeallocateMethod_MAX;
-		}
-
-		extern CSCORE_API const uint8 MAX;
-	}
-
-	#pragma endregion DeallocateMethod
-
 	namespace NPayload
 	{
 		/**
@@ -113,6 +69,13 @@ namespace NCsSound
 			* return Multiplier
 			*/
 			virtual const float& GetDurationMultiplier() const = 0;
+
+			/**
+			* Get the amount of time it takes to Fade In the Sound to the default Volume Multiplier.
+			*
+			* return Fade In Time
+			*/
+			virtual const float& GetFadeInTime() const = 0;
 
 			/**
 			* Relevant if the Sound is attached to a Parent object or when a Sound object is

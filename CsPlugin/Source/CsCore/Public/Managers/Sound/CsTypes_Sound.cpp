@@ -159,6 +159,23 @@ namespace NCsSoundDeallocateMethod
 	CSCORE_API const uint8 MAX = (uint8)Type::ECsSoundDeallocateMethod_MAX;
 }
 
+namespace NCsSound
+{
+	namespace NDeallocateMethod
+	{
+		namespace Ref
+		{
+			typedef EMDeallocateMethod EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(LifeTime);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Complete);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDeallocateMethod_MAX, "MAX");
+		}
+
+		CSCORE_API const uint8 MAX = (uint8)Type::EDeallocateMethod_MAX;
+	}
+}
+
 #pragma endregion SoundDeallocateMethod
 
 // FCsSound
@@ -191,6 +208,12 @@ bool FCsSound::IsValidChecked(const FString& Context) const
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSound, Type)
 	
 	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(DurationMultiplier, 1.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(FadeInTime, 0.0f)
+
+	if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
+	{
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(LifeTime, FadeInTime)
+	}
 
 	if (!Transform.Equals(FTransform::Identity))
 	{
@@ -218,6 +241,14 @@ bool FCsSound::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FC
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar()));
 		return false;
+	}
+
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(DurationMultiplier, 1.0f)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(FadeInTime, 0.0f)
+
+	if (DeallocateMethod == ECsSoundDeallocateMethod::LifeTime)
+	{
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(LifeTime, FadeInTime)
 	}
 
 	if (!Transform.Equals(FTransform::Identity) &&

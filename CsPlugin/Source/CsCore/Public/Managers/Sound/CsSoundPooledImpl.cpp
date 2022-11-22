@@ -4,10 +4,16 @@
 
 // CVars
 #include "Managers/Sound/CsCVars_Sound.h"
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsTypes_Math.h"
 // Library
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+	// Payload
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
 // Sound
 #include "Managers/Sound/Cache/CsCache_SoundImpl.h"
@@ -30,7 +36,15 @@ namespace NCsSoundPooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Update);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);
+			// ICsSoundPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Stop);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Stop_Internal);
+		}
+
+		namespace Name
+		{
+			// ICsSoundPooled
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSoundPooledImpl, Stop_Internal);
 		}
 	}
 }
@@ -44,6 +58,8 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
 	ChangesToDefaultMask(0),
+	// Sound Pooled
+	StopHandle(),
 	Type(),
 	AttachToBone(NAME_None)
 {
@@ -157,6 +173,8 @@ void ACsSoundPooledImpl::ConstructCache()
 
 	Cache	  = new CacheImplType();
 	CacheImpl = (CacheImplType*)Cache;
+
+	CacheImpl->SetAudioComponent(AudioComponent);
 }
 
 // ICsPooledObject
@@ -196,6 +214,95 @@ void ACsSoundPooledImpl::Deallocate()
 }
 
 #pragma endregion ICsPooledObject
+
+// ICsSoundPooled
+#pragma region
+
+void ACsSoundPooledImpl::Stop(const float& FadeOutTime /*=0.0f*/)
+{
+	using namespace NCsSoundPooledImpl::NCached;
+
+	const FString& Context = Str::Stop;
+
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(FadeOutTime, 0.0f)
+
+	CS_IS_PTR_NULL_CHECKED(AudioComponent)
+
+	if (FadeOutTime > 0.0f)
+	{
+		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+		const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
+
+		CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, this, UpdateGroup, StopHandle);
+
+		// TODO: Have a way of passing the UpdateGroup
+
+		UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
+
+		typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+		PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+		#define COROUTINE Stop_Internal
+
+		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+		Payload->CoroutineImpl.BindUObject(this, &ACsSoundPooledImpl::COROUTINE);
+		Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+		Payload->Owner.SetObject(this);
+		Payload->SetName(Str::COROUTINE);
+		Payload->SetFName(Name::COROUTINE);
+
+		#undef COROUTINE
+
+		static const int32 FADE_OUT_TIME = 0;
+		Payload->SetValue_Float(FADE_OUT_TIME, FadeOutTime);
+
+		StopHandle = Scheduler->Start(Payload);
+	}
+	else
+	{
+		if (AudioComponent->bAllowSpatialization)
+			Handle_ClearAttachAndTransform();
+
+		AudioComponent->Deactivate();
+		AudioComponent->Stop();
+
+		AudioComponent->SetVolumeMultiplier(1.f);
+		AudioComponent->SetPitchMultiplier(1.f);
+
+		AudioComponent->AttenuationSettings = nullptr;
+
+		AudioComponent->SetSound(nullptr);
+		AudioComponent->SetPaused(false);
+		SetActorTickEnabled(false);
+
+		AudioComponent->bAllowSpatialization = false;
+
+		Cache->QueueDeallocate();
+
+		CS_NON_SHIPPING_EXPR(LogChangeCounter());
+	}
+}
+
+char ACsSoundPooledImpl::Stop_Internal(FCsRoutine* R)
+{
+	static const int32 FADE_OUT_TIME = 0;
+	const float& FadeOutTime = R->GetValue_Float(FADE_OUT_TIME);
+
+	CS_COROUTINE_BEGIN(R);
+
+	AudioComponent->FadeOut(FadeOutTime, 0.0f);
+
+	CS_COROUTINE_WAIT_UNTIL(R, R->ElapsedTime.Time > FadeOutTime);
+
+	Stop(0.0f);
+
+	CS_COROUTINE_END(R);
+}
+
+#pragma endregion ICsSoundPooled
 
 #define SoundPayloadType NCsSound::NPayload::IPayload
 void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
@@ -245,35 +352,17 @@ void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)
 		Handle_AttachAndSetTransform(PooledPayload, Payload);
 
 	AudioComponent->Activate(true);
-	AudioComponent->Play();
 
-	CS_NON_SHIPPING_EXPR(LogChangeCounter());
-}
+	const float& FadeInTime = Payload->GetFadeInTime();
 
-void ACsSoundPooledImpl::Stop()
-{
-	using namespace NCsSoundPooledImpl::NCached;
-
-	const FString& Context = Str::Stop;
-
-	CS_IS_PTR_NULL_CHECKED(AudioComponent)
-
-	if (AudioComponent->bAllowSpatialization)
-		Handle_ClearAttachAndTransform();
-
-	AudioComponent->Deactivate();
-	AudioComponent->Stop();
-
-	AudioComponent->SetVolumeMultiplier(1.f);
-	AudioComponent->SetPitchMultiplier(1.f);
-
-	AudioComponent->AttenuationSettings = nullptr;
-
-	AudioComponent->SetSound(nullptr);
-	AudioComponent->SetPaused(false);
-	SetActorTickEnabled(false);
-
-	AudioComponent->bAllowSpatialization = false;
+	if (FadeInTime > 0)
+	{
+		AudioComponent->FadeIn(FadeInTime, Sound->GetVolumeMultiplier());
+	}
+	else
+	{
+		AudioComponent->Play();
+	}
 
 	CS_NON_SHIPPING_EXPR(LogChangeCounter());
 }

@@ -8,6 +8,8 @@
 // Types
 #include "Managers/Sound/CsSoundPooled.h"
 #include "Managers/Sound/CsTypes_Sound.h"
+// Coroutine
+#include "Coroutine/CsRoutineHandle.h"
 
 #include "CsSoundPooledImpl.generated.h"
 
@@ -22,6 +24,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
 // NCsSound::NCache::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NCache, FImpl)
+
+struct FCsRoutine;
 
 /**
 * 
@@ -108,7 +112,19 @@ public:
 
 	FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
 
+	void Stop(const float& FadeOutTime = 0.0f);
+
 #pragma endregion ICsSoundPooled
+
+// Sound Pooled
+#pragma region
+private:
+
+	char Stop_Internal(FCsRoutine* R);
+
+	FCsRoutineHandle StopHandle;
+
+#pragma endregion SoundPooled
 
 public:
 
@@ -116,7 +132,8 @@ public:
 	FECsSound Type;
 
 	void Play(SoundPayloadType* Payload);
-	void Stop();
+
+public:
 
 	FName AttachToBone;
 

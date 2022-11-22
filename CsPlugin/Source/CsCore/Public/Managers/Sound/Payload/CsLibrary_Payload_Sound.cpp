@@ -145,6 +145,7 @@ namespace NCsSound
 			Payload->DeallocateMethod		  = Sound.GetDeallocateMethod();
 			Payload->LifeTime				  = Sound.LifeTime;
 			Payload->DurationMultiplier		  = Sound.DurationMultiplier;
+			Payload->FadeInTime				  = Sound.FadeInTime;
 			Payload->AttachmentTransformRules = Sound.AttachmentTransformRules;
 			Payload->Bone					  = Sound.Bone;
 			Payload->TransformRules			  = Sound.TransformRules;
@@ -185,6 +186,7 @@ namespace NCsSound
 			Payload->DeallocateMethod		  = Sound.GetDeallocateMethod();
 			Payload->LifeTime				  = Sound.LifeTime;
 			Payload->DurationMultiplier		  = Sound.DurationMultiplier;
+			Payload->FadeInTime				  = Sound.FadeInTime;
 			Payload->AttachmentTransformRules = Sound.AttachmentTransformRules;
 			Payload->Bone					  = Sound.Bone;
 			Payload->TransformRules			  = Sound.TransformRules;

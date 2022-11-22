@@ -196,10 +196,6 @@ namespace NCsLevel
 			*/
 			static FName GetSafeFName(const UObject* WorldContext);
 
-		#pragma endregion FName
-
-		public:
-
 			/**
 			*/
 			static bool IsNameChecked(const FString& Context, const UWorld* World, const FString& MapPackageName);
@@ -223,6 +219,16 @@ namespace NCsLevel
 			/**
 			*/
 			static bool SafeIsName(const UObject* WorldContext, const FString& MapPackageName);
+
+		#pragma endregion FName
+
+		// Path
+		#pragma region
+		public:
+
+			static bool IsPathChecked(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path);
+
+		#pragma endregion Path
 
 		// LevelScriptActor
 		#pragma region

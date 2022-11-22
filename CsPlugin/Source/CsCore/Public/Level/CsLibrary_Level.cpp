@@ -315,6 +315,22 @@ namespace NCsLevel
 
 		#pragma endregion FName
 
+		// Path
+		#pragma region
+
+		bool FLibrary::IsPathChecked(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path)
+		{
+			const FString MapPackageName = GetLongPackageNameChecked(Context, WorldContext);
+
+			checkf(Path.IsValid(), TEXT("%s: Path is NOT a valid path."), *Context);
+
+			const FString URL = Path.GetLongPackageName();
+
+			return MapPackageName == URL;
+		}
+
+		#pragma endregion Path
+
 		// LevelScriptActor
 		#pragma region
 

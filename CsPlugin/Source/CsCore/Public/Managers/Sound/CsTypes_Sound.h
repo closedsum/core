@@ -179,7 +179,7 @@ struct CSCORE_API FCsSoundBase
 	}
 };
 
-#pragma endregion FCsSoundCue
+#pragma endregion FCsSoundBase
 
 // FCsTArraySoundBase
 #pragma region
@@ -337,6 +337,48 @@ namespace NCsSoundDeallocateMethod
 	extern CSCORE_API const uint8 MAX;
 }
 
+namespace NCsSound
+{
+	/**
+	* Type for different ways to deallocate a Sound.
+	*/
+	enum class EDeallocateMethod : uint8
+	{
+		/** If a Sound is attached to a parent object,
+			LifeTime == 0.of means the Sound object will be deallocated immediately
+			when the parent has been destroyed / deallocated.
+			LifeTime > 0.0f will be the time after the parent object has been
+			destroyed / deallocated to deallocate the Sound object.
+		If a Sound is NOT attached to a parent object,
+			LifeTime == 0.0f means the Sound object will stay active forever.
+			LifeTime > 0.0f means the Sound will be deallocated after LifeTime amount of time after
+			the Sound object has been allocated. */
+		LifeTime,
+		/** */
+		Complete,
+		EDeallocateMethod_MAX
+	};
+
+	struct CSCORE_API EMDeallocateMethod final : public TCsEnumMap<EDeallocateMethod>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDeallocateMethod, EDeallocateMethod)
+	};
+
+	namespace NDeallocateMethod
+	{
+		typedef EDeallocateMethod Type;
+
+		namespace Ref
+		{
+			extern CSCORE_API const Type LifeTime;
+			extern CSCORE_API const Type Complete;
+			extern CSCORE_API const Type EDeallocateMethod_MAX;
+		}
+
+		extern CSCORE_API const uint8 MAX;
+	}
+}
+
 #pragma endregion SoundDeallocateMethod
 
 // NoiseEvent
@@ -442,6 +484,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (ClampMin = "1.0", UIMin = "1.0"))
 	float DurationMultiplier;
 
+	/** The amount of time it takes to Fade In the Sound to the default Volume Multiplier. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float FadeInTime;
+
 	/** Valid if the Sound is attached to a Parent object or when an Sound object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the Sound will NOT be attached. */
@@ -477,6 +523,7 @@ public:
 		DeallocateMethod(ECsSoundDeallocateMethod::Complete),
 		LifeTime(0.0f),
 		DurationMultiplier(1.0f),
+		FadeInTime(0.0f),
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All

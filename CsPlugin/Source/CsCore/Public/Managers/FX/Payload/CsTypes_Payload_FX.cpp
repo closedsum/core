@@ -4,6 +4,7 @@
 
 // Library
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX_Actor.h"
 // FX
@@ -15,20 +16,20 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 #undef PayloadType
 	
 	Payload->Instigator = Instigator;
-	Payload->Owner = Owner;
-	Payload->Parent = Parent;
-	Payload->Time = Time;
+	Payload->Owner		= Owner;
+	Payload->Parent		= Parent;
+	Payload->Time		= Time;
 	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
 
 	typedef NCsFX::EDeallocateMethod DeallocateMethodType;
 
-	Payload->FXSystem = FX.GetChecked(Context);
-	Payload->DeallocateMethod = (DeallocateMethodType)FX.DeallocateMethod;
-	Payload->LifeTime = FX.LifeTime;
-	Payload->AttachmentTransformRules = FX.AttachmentTransformRules;
-	Payload->Bone = FX.Bone;
-	Payload->TransformRules = FX.TransformRules;
-	Payload->Transform = FX.Transform;
+	Payload->FXSystem					= FX.GetChecked(Context);
+	Payload->DeallocateMethod			= (DeallocateMethodType)FX.DeallocateMethod;
+	Payload->LifeTime					= FX.LifeTime;
+	Payload->AttachmentTransformRules	= FX.AttachmentTransformRules;
+	Payload->Bone						= FX.Bone;
+	Payload->TransformRules				= FX.TransformRules;
+	Payload->Transform					= FX.Transform;
 
 	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
@@ -66,13 +67,12 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 
 bool FCsPayload_FX::IsValidChecked(const FString& Context) const
 {
-	check(FX.IsValidChecked(Context));
+	CS_IS_VALID_CHECKED(FX);
 	return true;
 }
 
 bool FCsPayload_FX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
-	if (!FX.IsValid(Context, Log))
-		return false;
+	CS_IS_VALID(FX)
 	return true;
 }

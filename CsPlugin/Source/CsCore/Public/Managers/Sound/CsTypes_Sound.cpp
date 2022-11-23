@@ -279,3 +279,25 @@ void FCsSound::Reset()
 }
 
 #pragma endregion FCsSound
+
+// SoundPayloadChange
+#pragma region
+
+namespace NCsSoundPayloadChange
+{
+	namespace Ref
+	{
+		typedef EMCsSoundPayloadChange EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetNotIncludingScale, "Snap to Target not Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP_CUSTOM(SnapToTargetIncludingScale, "Snap to Target Including Scale");
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Transform);
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 31; // 1 + 2 + 4 + 8 + 16
+}
+
+#pragma endregion SoundPayloadChange

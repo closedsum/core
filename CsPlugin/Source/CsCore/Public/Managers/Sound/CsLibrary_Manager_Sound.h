@@ -156,6 +156,20 @@ namespace NCsSound
 
 		#pragma endregion Get
 
+		// Pool
+		#pragma region
+		public:
+
+			// Find
+		#pragma region
+		public:
+
+			static const FCsSoundPooled* FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsSound& Type, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion Find
+
+		#pragma endregion Pool
+
 		// Spawn
 		#pragma region
 		public:
@@ -185,6 +199,17 @@ namespace NCsSound
 			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
 
 		#undef PooledPayloadType
+
+			/**
+			* Safely spawn a sound for UCsManager_Sound from Sound.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Sound
+			* @param Log			(optional)
+			* return				Spawned Sound in a pooled container.
+			*/
+			static const FCsSoundPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Spawn
 		};

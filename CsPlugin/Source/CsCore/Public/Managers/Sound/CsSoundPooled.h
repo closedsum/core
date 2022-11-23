@@ -40,6 +40,22 @@ public:
 	* @param FadeOutTime	(optional) Time to Fade Out Sound.
 	*/
 	virtual void Stop(const float& FadeOutTime = 0.0f) = 0;
+
+	/**
+	* Fade In the sound from 0 Volume to the Default Volume over a Duration of 
+	* time in seconds.
+	* 
+	* @param Duration	Time in seconds.
+	*/
+	virtual void FadeIn(const float& Duration) = 0;
+
+	/**
+	* Fade Out the sound from the Default Volume to 0 Volume over a Duration of
+	* time in seconds.
+	*
+	* @param Duration	Time in seconds.
+	*/
+	virtual void FadeOut(const float& Duration) = 0;
 };
 
 // FCsSoundPooled
@@ -95,9 +111,35 @@ public:
 	*/
 	DECLARE_DELEGATE_TwoParams(FScript_Stop, UObject* /*Object*/, const float& /*FadeOutTime*/);
 
-	/** Delegate for getting the pooled AudioComponent.
+	/** Delegate for Stopping the Sound.
 		 The Object implements a script interface of type: ICsSoundPooled. */
 	FScript_Stop Script_Stop_Impl;
+
+	/**
+	* Delegate type for Fading In the Sound.
+	*  The Object implements a script interface of type: ICsSoundPooled.
+	*
+	* @param Object			An object of type: ICsSoundPooled.
+	* @param Duration
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_FadeIn, UObject* /*Object*/, const float& /*Duration*/);
+
+	/** Delegate for Fading In the Sound.
+		 The Object implements a script interface of type: ICsSoundPooled. */
+	FScript_FadeIn Script_FadeIn_Impl;
+
+	/**
+	* Delegate type for Fading Out the Sound.
+	*  The Object implements a script interface of type: ICsSoundPooled.
+	*
+	* @param Object			An object of type: ICsSoundPooled.
+	* @param Duration
+	*/
+	DECLARE_DELEGATE_TwoParams(FScript_FadeOut, UObject* /*Object*/, const float& /*Duration*/);
+
+	/** Delegate for Fading Out the Sound.
+		 The Object implements a script interface of type: ICsSoundPooled. */
+	FScript_FadeOut Script_FadeOut_Impl;
 
 #pragma endregion ICsSoundPooled
 
@@ -137,6 +179,20 @@ public:
 		if (bScriptSound)
 			return Script_Stop_Impl.Execute(Object, FadeOutTime);
 		Sound->Stop(FadeOutTime);
+	}
+
+	FORCEINLINE void FadeIn(const float& Duration)
+	{
+		if (bScriptSound)
+			return Script_FadeIn_Impl.Execute(Object, Duration);
+		Sound->FadeIn(Duration);
+	}
+
+	FORCEINLINE void FadeOut(const float& Duration)
+	{
+		if (bScriptSound)
+			return Script_FadeOut_Impl.Execute(Object, Duration);
+		Sound->FadeOut(Duration);
 	}
 
 #pragma endregion ICsSoundPooled

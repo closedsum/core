@@ -1,7 +1,47 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+// Container
 #include "Containers/CsInterfaceMap.h"
+
+#define PayloadType NCsSound::NPayload::FImpl
+void FCsPayload_Sound::CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const
+{
+#undef PayloadType
+	
+	Payload->Instigator = Instigator;
+	Payload->Owner		= Owner;
+	Payload->Parent		= Parent;
+	Payload->Time		= Time;
+	Payload->PreserveChangesFromDefaultMask = PreserveChangesFromDefaultMask;
+
+	typedef NCsSound::EDeallocateMethod DeallocateMethodType;
+
+	Payload->Sound						= Sound.GetChecked(Context);
+	Payload->SoundAttenuation			= Sound.GetAttenuation();
+	Payload->DeallocateMethod			= (DeallocateMethodType)Sound.DeallocateMethod;
+	Payload->LifeTime					= Sound.LifeTime;
+	Payload->DurationMultiplier			= Sound.DurationMultiplier;
+	Payload->FadeInTime					= Sound.FadeInTime;
+	Payload->AttachmentTransformRules	= Sound.AttachmentTransformRules;
+	Payload->Bone						= Sound.Bone;
+	Payload->TransformRules				= Sound.TransformRules;
+	Payload->Transform					= Sound.Transform;
+}
+
+bool FCsPayload_Sound::IsValidChecked(const FString& Context) const
+{
+	CS_IS_VALID_CHECKED(Sound);
+	return true;
+}
+
+bool FCsPayload_Sound::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_VALID(Sound)
+	return true;
+}
 
 const FName NCsSound::NPayload::FImpl::Name = FName("NCsSound::NPayload::FImpl");;
 

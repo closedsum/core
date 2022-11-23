@@ -112,7 +112,14 @@ public:
 
 	FORCEINLINE UAudioComponent* GetAudioComponent() const { return AudioComponent; }
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Sound", meta = (AutoCreateRefTerm = "FadeOutTime"))
 	void Stop(const float& FadeOutTime = 0.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Sound", meta = (AutoCreateRefTerm = "Duration"))
+	void FadeIn(const float& Duration);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Sound", meta = (AutoCreateRefTerm = "Duration"))
+	void FadeOut(const float& Duration);
 
 #pragma endregion ICsSoundPooled
 
@@ -134,6 +141,8 @@ public:
 	void Play(SoundPayloadType* Payload);
 
 public:
+
+	float InitialVolume;
 
 	FName AttachToBone;
 

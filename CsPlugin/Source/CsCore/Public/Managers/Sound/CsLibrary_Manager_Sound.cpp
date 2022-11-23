@@ -126,17 +126,45 @@ namespace NCsSound
 		}
 
 		#pragma endregion Get
+		
+		// Pool
+		#pragma region
+
+			// Find
+		#pragma region
+
+		const FCsSoundPooled* FLibrary::FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsSound& Type, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Sound* Manager_Sound = GetSafe(Context, WorldContext, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID_RET_NULL(EMCsSound, FECsSound, Type)
+
+				if (Index < 0 || Index >= Manager_Sound->GetPoolSize(Type))
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Index: %d is NOT [0, %d] Inclusive."), *Context, Index, Manager_Sound->GetPoolSize(Type)));
+					return nullptr;
+				}
+				return Manager_Sound->FindSafeObject(Type, Index);
+			}
+			return nullptr;
+		}
+
+		#pragma endregion Find
+
+		#pragma endregion Pool
+
+		// Spawn
+		#pragma region
 
 		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsSound& Sound)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			CS_IS_VALID_CHECKED(Sound);
 
-			check(Sound.IsValidChecked(Context));
+			UCsManager_Sound* Manager_Sound = GetChecked(Context, WorldContext);
 
 			typedef NCsSound::NPayload::FLibrary PayloadLibrary;
 			typedef NCsSound::NPayload::IPayload PayloadType;
 
-			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(ContextRoot);
 			// Allocate Payload
 			PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
 			// Set Payload
@@ -149,14 +177,13 @@ namespace NCsSound
 
 		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
 		{
-			UObject* ContextRoot = GetContextRootChecked(Context, WorldContext);
+			CS_IS_VALID_CHECKED(Sound);
 
-			check(Sound.IsValidChecked(Context));
+			UCsManager_Sound* Manager_Sound = GetChecked(Context, WorldContext);
 
 			typedef NCsSound::NPayload::FLibrary PayloadLibrary;
 			typedef NCsSound::NPayload::IPayload PayloadType;
 
-			UCsManager_Sound* Manager_Sound = UCsManager_Sound::Get(ContextRoot);
 			// Allocate Payload
 			PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
 			// Set Payload
@@ -165,6 +192,28 @@ namespace NCsSound
 			return Manager_Sound->Spawn(Sound.Type, Payload);
 		}
 
+		const FCsSoundPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_VALID_RET_NULL(Sound)
+
+			if (UCsManager_Sound* Manager_Sound = GetSafe(Context, WorldContext, Log))
+			{
+				typedef NCsSound::NPayload::FLibrary PayloadLibrary;
+				typedef NCsSound::NPayload::IPayload PayloadType;
+
+				// Allocate Payload
+				PayloadType* Payload = Manager_Sound->AllocatePayload(Sound.Type);
+				// Set Payload
+				if (!PayloadLibrary::SetSafe(Context, Payload, Sound))
+					return nullptr;
+				// Spawn
+				return Manager_Sound->Spawn(Sound.Type, Payload);
+			}
+			return nullptr;
+		}
+
 		#undef PooledPayloadType
+
+		#pragma endregion Spawn
 	}
 }

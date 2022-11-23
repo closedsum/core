@@ -1,8 +1,63 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 #include "Managers/Sound/Payload/CsPayload_Sound.h"
 
-#pragma once
+#include "CsPayload_SoundImpl.generated.h"
+
+// NCsSound::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, FImpl)
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_Sound
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
+
+	/** The object "instigating" or starting the spawn. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
+	UObject* Instigator;
+
+	/** The owner of the FX. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
+	UObject* Owner;
+
+	/** The parent of the FX. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
+	UObject* Parent;
+
+	/** The current time. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
+	FCsTime Time;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload", meta = (Bitmask, BitmaskEnum = "ECsSoundPayloadChange"))
+	int32 PreserveChangesFromDefaultMask;
+
+// SoundPayloadType (NCsSound::Payload::IPayload)
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
+	FCsSound Sound;
+
+	FCsPayload_Sound() :
+		Instigator(nullptr),
+		Owner(nullptr),
+		Parent(nullptr),
+		Time(),
+		PreserveChangesFromDefaultMask(0),
+		Sound()
+	{
+	}
+
+#define PayloadType NCsSound::NPayload::FImpl
+	void CopyToPayloadAsValueChecked(const FString& Context, UObject* WorldContext, PayloadType* Payload) const;
+#undef PayloadType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
 
 class UObject;
 struct FCsInterfaceMap;

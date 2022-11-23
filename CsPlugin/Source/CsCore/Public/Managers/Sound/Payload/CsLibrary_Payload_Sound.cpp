@@ -27,13 +27,10 @@ namespace NCsSound
 
 		bool FLibrary::IsValidChecked(const FString& Context, PayloadType* Payload)
 		{
-		
-			
 			// Check Payload is Valid
 			CS_IS_PTR_NULL_CHECKED(Payload)
 			// Check Sound is Valid
 			checkf(Payload->GetSound(), TEXT("%s: Sound is NULL."), *Context);
-
 			return true;
 		}
 		
@@ -58,23 +55,25 @@ namespace NCsSound
 			}
 		}
 		
-		void FLibrary::SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_EXIT(Payload)
+			CS_IS_PTR_NULL(Payload)
 
 			typedef NCsSound::NPayload::FImpl PayloadImplType;
 
 			if (PayloadImplType* PayloadImpl = SafeStaticCastChecked<PayloadImplType>(Context, Payload))
 			{
 				SetChecked(Context, PayloadImpl, PooledPayload, Sound, Transform);
+				return true;
 			}
 			else
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Unsupported Payload Type."), *Context));
 			}
+			return false;
 		}
 
-		void FLibrary::SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		bool FLibrary::SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 
@@ -97,23 +96,25 @@ namespace NCsSound
 			}
 		}
 		
-		void FLibrary::SetSafe(const FString& Context, PayloadType* Payload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadType* Payload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_EXIT(Payload)
+			CS_IS_PTR_NULL(Payload)
 
 			typedef NCsSound::NPayload::FImpl PayloadImplType;
 
 			if (PayloadImplType* PayloadImpl = SafeStaticCastChecked<PayloadImplType>(Context, Payload))
 			{
 				SetChecked(Context, PayloadImpl, Sound);
+				return true;
 			}
 			else
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Unsupported Payload Type."), *Context));
 			}
+			return false;
 		}
 
-		void FLibrary::SetSafe(PayloadType* Payload, const FCsSound& Sound)
+		bool FLibrary::SetSafe(PayloadType* Payload, const FCsSound& Sound)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 
@@ -155,18 +156,17 @@ namespace NCsSound
 			Payload->Transform.SetScale3D(Transform.GetScale3D() * Sound.Transform.GetScale3D());
 		}
 		
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_EXIT(Payload)
-
-			CS_IS_PTR_NULL_EXIT(PooledPayload)
-
-			CS_IS_VALID_EXIT(Sound)
+			CS_IS_PTR_NULL(Payload)
+			CS_IS_PTR_NULL(PooledPayload)
+			CS_IS_VALID(Sound)
 
 			SetChecked(Context, Payload, PooledPayload, Sound, Transform);
+			return true;
 		}
 
-		void FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		bool FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 
@@ -193,16 +193,16 @@ namespace NCsSound
 			Payload->Transform				  = Sound.Transform;
 		}
 
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_EXIT(Payload)
-
-			CS_IS_VALID_EXIT(Sound)
+			CS_IS_PTR_NULL(Payload)
+			CS_IS_VALID(Sound)
 
 			SetChecked(Context, Payload, Sound);
+			return true;
 		}
 
-		void FLibrary::SetSafe(PayloadImplType* Payload, const FCsSound& Sound)
+		bool FLibrary::SetSafe(PayloadImplType* Payload, const FCsSound& Sound)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 
@@ -224,20 +224,20 @@ namespace NCsSound
 			Payload->DeallocateMethod = DeallocateMethodType::Complete;
 		}
 
-		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, USoundBase* Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, USoundBase* Sound, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_EXIT(Payload)
-
-			CS_IS_PTR_NULL_EXIT(Sound)
+			CS_IS_PTR_NULL(Payload)
+			CS_IS_PTR_NULL(Sound)
 
 			Payload->Sound = Sound;
 
 			typedef NCsSound::EDeallocateMethod DeallocateMethodType;
 
 			Payload->DeallocateMethod = DeallocateMethodType::Complete;
+			return true;
 		}
 
-		void FLibrary::SetSafe(PayloadImplType* Payload, USoundBase* Sound)
+		bool FLibrary::SetSafe(PayloadImplType* Payload, USoundBase* Sound)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 

@@ -598,7 +598,7 @@ bool UCsManager_Sound::IsExhausted(const FECsSound& Type)
 	return Internal.IsExhausted(Type);
 }
 
-	// Find
+		// Find
 #pragma region
 
 const FCsSoundPooled* UCsManager_Sound::FindObject(const FECsSound& Type, const int32& Index)

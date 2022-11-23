@@ -15,7 +15,9 @@ FCsSoundPooled::FCsSoundPooled() :
 	Sound(nullptr),
 	bScriptSound(false),
 	Script_GetAudioComponent_Impl(),
-	Script_Stop_Impl()
+	Script_Stop_Impl(),
+	Script_FadeIn_Impl(),
+	Script_FadeOut_Impl()
 {
 }
 
@@ -72,6 +74,8 @@ void FCsSoundPooled::Reset()
 
 	Script_GetAudioComponent_Impl.Unbind();
 	Script_Stop_Impl.Unbind();
+	Script_FadeIn_Impl.Unbind();
+	Script_FadeOut_Impl.Unbind();
 }
 
 #pragma endregion TCsInterfaceObject

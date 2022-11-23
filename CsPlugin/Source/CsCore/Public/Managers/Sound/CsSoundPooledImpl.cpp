@@ -34,11 +34,14 @@ namespace NCsSoundPooledImpl
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Update);
+			// ICsPooledObject
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Allocate);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);
 			// ICsSoundPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Stop);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Stop_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, FadeIn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, FadeOut);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSoundPooledImpl, Play);	
 		}
 
 		namespace Name
@@ -61,6 +64,7 @@ ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializ
 	// Sound Pooled
 	StopHandle(),
 	Type(),
+	InitialVolume(0.0f),
 	AttachToBone(NAME_None)
 {
 	AudioComponent = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("AudioComponent"));
@@ -203,6 +207,8 @@ void ACsSoundPooledImpl::Allocate(PooledPayloadType* Payload)
 
 	SoundPayloadType* SoundPayload = PooledPayloadLibrary::GetInterfaceChecked<SoundPayloadType>(Str::Allocate, Payload);
 
+	InitialVolume = SoundPayload->GetSound()->GetDuration();
+
 	Play(SoundPayload);
 }
 
@@ -286,6 +292,38 @@ void ACsSoundPooledImpl::Stop(const float& FadeOutTime /*=0.0f*/)
 	}
 }
 
+void ACsSoundPooledImpl::FadeIn(const float& Duration)
+{
+	using namespace NCsSoundPooledImpl::NCached;
+
+	const FString& Context = Str::FadeIn;
+
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Duration, 0.0f)
+
+	CS_IS_PTR_NULL_CHECKED(AudioComponent)
+
+	AudioComponent->AdjustVolume(0.0f, 0.0f);
+	AudioComponent->AdjustVolume(Duration, InitialVolume);
+}
+
+void ACsSoundPooledImpl::FadeOut(const float& Duration) 
+{
+	using namespace NCsSoundPooledImpl::NCached;
+
+	const FString& Context = Str::FadeOut;
+
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Duration, 0.0f)
+
+	CS_IS_PTR_NULL_CHECKED(AudioComponent)
+
+	AudioComponent->AdjustVolume(Duration, 0.0f);
+}
+
+#pragma endregion ICsSoundPooled
+
+// SoundPooled
+#pragma region
+
 char ACsSoundPooledImpl::Stop_Internal(FCsRoutine* R)
 {
 	static const int32 FADE_OUT_TIME = 0;
@@ -302,7 +340,7 @@ char ACsSoundPooledImpl::Stop_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-#pragma endregion ICsSoundPooled
+#pragma endregion SoundPooled
 
 #define SoundPayloadType NCsSound::NPayload::IPayload
 void ACsSoundPooledImpl::Play(SoundPayloadType* Payload)

@@ -55,8 +55,9 @@ namespace NCsSound
 			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
 			*						Sound.Transform is applied as an "offset".
 			* @param Log			(optional)
+			* return
 			*/
-			static void SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with PoolePayload and Sound
@@ -66,8 +67,9 @@ namespace NCsSound
 			* @param Sound
 			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
 			*						Sound.Transform is applied as an "offset".
+			* return
 			*/
-			static void SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static bool SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Set the contents of Payload with Sound
@@ -84,9 +86,10 @@ namespace NCsSound
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
-			* @param Log
+			* @param Log		(optional)
+			* return
 			*/
-			static void SetSafe(const FString& Context, PayloadType* Payload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadType* Payload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with Sound
@@ -94,9 +97,8 @@ namespace NCsSound
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
-			* @param Log
 			*/
-			static void SetSafe(PayloadType* Payload, const FCsSound& Sound);
+			static bool SetSafe(PayloadType* Payload, const FCsSound& Sound);
 
 			/**
 			* Set the contents of Payload with PoolePayload and Sound
@@ -120,8 +122,9 @@ namespace NCsSound
 			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
 			*						Sound.Transform is applied as an "offset".
 			* @param Log			(optional)
+			* return
 			*/
-			static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with PoolePayload and Sound
@@ -129,8 +132,10 @@ namespace NCsSound
 			* @param Payload
 			* @param PooledPayload
 			* @param Sound
+			* @param Transform		(optional)
+			* return
 			*/
-			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static bool SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
 
 			/**
 			* Set the contents of Payload with Sound
@@ -147,16 +152,19 @@ namespace NCsSound
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
+			* @param Log		(optional)
+			* return
 			*/
-			static void SetSafe(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadImplType* Payload, const FCsSound& Sound, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Set the contents of Payload with Sound
 			*
 			* @param Payload
 			* @param Sound
+			* return
 			*/
-			static void SetSafe(PayloadImplType* Payload, const FCsSound&);
+			static bool SetSafe(PayloadImplType* Payload, const FCsSound&);
 
 			/**
 			* Set the contents of Payload with Sound
@@ -173,16 +181,18 @@ namespace NCsSound
 			* @param Context	The calling context.
 			* @param Payload
 			* @param Sound
+			* @param Log		(optional)
 			*/
-			static void SetSafe(const FString& Context, PayloadImplType* Payload, USoundBase* Sound, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadImplType* Payload, USoundBase* Sound, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Set the contents of Payload with Sound
 			*
 			* @param Payload
 			* @param Sound
+			* return
 			*/
-			static void SetSafe(PayloadImplType* Payload, USoundBase* Sound);
+			static bool SetSafe(PayloadImplType* Payload, USoundBase* Sound);
 
 		#undef PooledPayloadType
 		#undef PayloadImplType

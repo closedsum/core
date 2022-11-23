@@ -2,6 +2,7 @@
 #pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
+#include "Types/Enum/CsEnumFlagMap.h"
 #include "Types/CsTypes_View.h"
 #include "Types/CsTypes_AttachDetach.h"
 // Log
@@ -591,6 +592,40 @@ public:
 
 // NCsSound::NPayload::EChange
 #pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsSoundPayloadChange : uint8
+{
+	KeepRelativeTransform			UMETA(DisplayName = "Keep Relative Transform"),				// 0
+	KeepWorldTransform				UMETA(DisplayName = "Keep World Transform"),				// 1
+	SnapToTargetNotIncludingScale	UMETA(DisplayName = "Snap to Target not Including Scale"),	// 2
+	SnapToTargetIncludingScale		UMETA(DisplayName = "Snap to Target Including Scale"),		// 3
+	Transform						UMETA(DisplayName = "Transform"),							// 4
+};
+
+struct CSCORE_API EMCsSoundPayloadChange : public TCsEnumFlagMap<ECsSoundPayloadChange>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsSoundPayloadChange, ECsSoundPayloadChange)
+};
+
+namespace NCsSoundPayloadChange
+{
+	typedef ECsSoundPayloadChange Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type KeepRelativeTransform;
+		extern CSCORE_API const Type KeepWorldTransform;
+		extern CSCORE_API const Type SnapToTargetNotIncludingScale;
+		extern CSCORE_API const Type SnapToTargetIncludingScale;
+		extern CSCORE_API const Type Transform;
+	}
+
+	extern CSCORE_API const int32 None;
+	extern CSCORE_API const int32 All;
+}
+
+#define CS_SOUND_PAYLOAD_CHANGE_NONE 0
 
 namespace NCsSound
 {

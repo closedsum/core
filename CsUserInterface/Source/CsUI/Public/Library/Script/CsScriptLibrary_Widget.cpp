@@ -2,8 +2,6 @@
 #include "Library/Script/CsScriptLibrary_Widget.h"
 #include "CsUI.h"
 
-// Types
-#include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Widget.h"
 
@@ -17,18 +15,30 @@ namespace NCsScriptLibraryWidget
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, Create);
+			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, LoadByStringPath);
+			// Render
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, Render_Opacity_Ease);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, Render_Scale_Ease);
+			// Position
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetScreenPositionBySlot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAbsoluteScreenPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetPixelAndViewportPositionByCachedGeometry);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionBySlot);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetWorldPositionByCachedGeometry);
+			// Animation
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetAnimation);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, PlayAnimation);
+			// TextBlock
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetTextBlock);
+			// Button
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetButton);
+			// Image
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetImage);
+			// ProgressBar
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetProgressBar);
+			// Border
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetBorder);
 		}
 	}
@@ -78,6 +88,33 @@ UClass* UCsScriptLibrary_Widget::LoadByStringPath(const FString& Context, const 
 }
 
 #pragma endregion Load
+
+// Render
+#pragma region
+
+bool UCsScriptLibrary_Widget::Render_Opacity_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Render_Opacity_Ease : Context;
+
+	typedef NCsWidget::NRender::FLibrary WidgetRenderLibrary;
+
+	return WidgetRenderLibrary::Opacity_SafeEase(Context, Widget, Easing, Start, End, Alpha);
+}
+
+bool UCsScriptLibrary_Widget::Render_Scale_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Render_Scale_Ease : Context;
+
+	typedef NCsWidget::NRender::FLibrary WidgetRenderLibrary;
+
+	return WidgetRenderLibrary::Scale_SafeEase(Context, Widget, Easing, Start, End, Alpha);
+}
+
+#pragma endregion Render
 
 // Position
 #pragma region
@@ -166,6 +203,17 @@ UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimation(const FString& Context, 
 	typedef NCsWidget::NAnimation::FLibrary WidgetAnimationLibrary;
 
 	return WidgetAnimationLibrary::GetSafe(Ctxt, Widget, AnimName);
+}
+
+bool UCsScriptLibrary_Widget::PlayAnimation(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::PlayAnimation : Context;
+
+	typedef NCsWidget::NAnimation::FLibrary WidgetAnimationLibrary;
+
+	return WidgetAnimationLibrary::SafePlay(Ctxt, Widget, Params);
 }
 
 #pragma endregion Animation

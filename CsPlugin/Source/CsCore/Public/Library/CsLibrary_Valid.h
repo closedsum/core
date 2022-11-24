@@ -2363,6 +2363,12 @@ namespace NCsValid
 		if (!NCsValid::NFloat::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_EXIT(__A, __B) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NFloat::FLibrary::GreaterThanOrEqual(Context, __A, __temp__str__, __B, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_NULL(__A, __B) \
 	{ \
 		static const FString __temp__str__ = #__A; \

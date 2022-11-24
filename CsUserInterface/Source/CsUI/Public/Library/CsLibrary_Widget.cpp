@@ -2,14 +2,20 @@
 #include "Library/CsLibrary_Widget.h"
 #include "CsUI.h"
 
+// Coroutine
+#include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Types/CsTypes_Load.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+	// Common
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Player.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Player
 #include "GameFramework/PlayerController.h"
@@ -246,6 +252,95 @@ namespace NCsWidget
 	}
 
 	#pragma endregion Load
+
+	namespace NRender
+	{
+		bool FLibrary::CanEaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+			CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, Easing)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Start, 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(End, 0.0f)
+			return true;
+		}
+
+		bool FLibrary::CanEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(Widget)
+			CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, Easing)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Start, 0.0f)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(End, 0.0f)
+			return true;
+		}
+
+		float FLibrary::GetPercentChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
+		{
+			check(CanEaseChecked(Context, Widget, Easing, Start, End, Alpha));
+
+			typedef NCsMath::FLibrary MathLibrary;
+
+			return MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
+		}
+
+		void FLibrary::Opacity_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
+		{
+			const float Percent = GetPercentChecked(Context, Widget, Easing, Start, End, Alpha);
+
+			Widget->SetRenderOpacity(Percent);
+		}
+
+		bool FLibrary::Opacity_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
+				return false;
+
+			typedef NCsMath::FLibrary MathLibrary;
+
+			const float Percent = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
+
+			Widget->SetRenderOpacity(Percent);
+			return true;
+		}
+
+		void FLibrary::Scale_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
+		{
+			const float Percent   = GetPercentChecked(Context, Widget, Easing, Start, End, Alpha);
+			const FVector2D Scale = FMath::Lerp(Start, End, Alpha) * FVector2D(1.0f);
+
+			Widget->SetRenderScale(Scale);
+		}
+
+		bool FLibrary::Scale_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			if (!CanEase(Context, Widget, Easing, Start, End, Alpha, Log))
+				return false;
+
+			typedef NCsMath::FLibrary MathLibrary;
+
+			const float Percent   = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
+			const FVector2D Scale = FMath::Lerp(Start, End, Alpha) * FVector2D(1.0f);
+
+			Widget->SetRenderScale(Scale);
+			return true;
+		}
+
+	// Anim
+	#pragma region
+
+	/*
+		FCsRoutineHandle FLibrary::Scale_AnimChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Duration)
+		{
+
+		}
+
+		char FLibrary::Scale_Anim_Internal(FCsRoutine* R)
+		{
+
+		}
+		*/
+
+	#pragma endregion Anim
+	}
 
 	namespace NPosition
 	{
@@ -626,18 +721,44 @@ namespace NCsWidget
 				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
 		}
 
-		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 		{
-			CS_IS_PTR_NULL_EXIT(Widget)
+			CS_IS_PTR_NULL(Widget)
 
-			CS_IS_VALID_EXIT(Params)
+			CS_IS_VALID(Params)
 
 			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
 
 			if (!Animation)
-				return;
+				return false;
+
+			if (Params.EndAtTime > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			else
+				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			return true;
+		}
+
+		bool FLibrary::SafePlay(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
+		{
+			using namespace NCsWidget::NAnimation::NLibrary::NCached;
+
+			const FString& Context = Str::SafePlay;
+
+			return SafePlay(Context, Widget, Params, nullptr);
+		}
+
+		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params)
+		{
+			CS_IS_PTR_NULL_CHECKED(Widget)
+
+			CS_IS_VALID_CHECKED(Params);
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
 
 			if (Params.EndAtTime > 0.0f)
 				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
@@ -645,7 +766,27 @@ namespace NCsWidget
 				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
 		}
 
-		void FLibrary::SafePlay(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
+		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			CS_IS_PTR_NULL(Widget)
+
+			CS_IS_VALID(Params)
+
+			typedef NCsProperty::FLibrary PropertyLibrary;
+
+			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
+
+			if (!Animation)
+				return false;
+
+			if (Params.EndAtTime > 0.0f)
+				Widget->PlayAnimationTimeRange(Animation, Params.StartAtTime, Params.EndAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			else
+				Widget->PlayAnimation(Animation, Params.StartAtTime, Params.NumLoopsToPlay, (EUMGSequencePlayMode::Type)Params.PlayMode, Params.PlaybackSpeed);
+			return true;
+		}
+
+		bool FLibrary::SafePlay(UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params)
 		{
 			using namespace NCsWidget::NAnimation::NLibrary::NCached;
 

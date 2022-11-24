@@ -47,7 +47,7 @@ namespace NCsUserWidget
 
 #pragma endregion FXDeallocateMethod
 
-// FCsUserWidgetAnimPlayParams
+// FCsUserWidgetAnimPlayParams (TODO: Deprecate Name)
 #pragma region
 
 #define ParamsType NCsUserWidget::NAnim::NPlay::FParams
@@ -98,6 +98,79 @@ bool FCsUserWidgetAnimPlayParams::IsValidChecked(const FString& Context) const
 }
 
 bool FCsUserWidgetAnimPlayParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+{
+	// Check Name is Valid
+	CS_IS_NAME_NONE(Name)
+	// Check StartAtTime is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(StartAtTime, 0.0f)
+	// Check EndAtTime is Valid
+	if (EndAtTime < 0.0f || EndAtTime > StartAtTime)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: EndAtTime: %f is NOT >= 0.0f and <= %f (StartAtTime)."), *Context, EndAtTime, StartAtTime));
+		return false;
+	}
+	// Check NumLoopsToPlay is Valid
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(NumLoopsToPlay, 0)
+	// Check PlayMode is Valid
+	CS_IS_ENUM_VALID(EMCsUserWidgetAnimPlayMode, ECsUserWidgetAnimPlayMode, PlayMode)
+	// Check PlaybackSpeed is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(PlaybackSpeed, 0.0f)
+	return true;
+}
+
+#pragma endregion FCsUserWidgetAnimPlayParams
+
+// FCsUserWidget_Anim_PlayParams
+#pragma region
+
+#define ParamsType NCsUserWidget::NAnim::NPlay::FParams
+
+void FCsUserWidget_Anim_PlayParams::CopyToParams(ParamsType* Params)
+{
+	Params->SetName(&Name);
+	Params->SetStartAtTime(&StartAtTime);
+	Params->SetEndAtTime(&EndAtTime);
+	Params->SetNumLoopsToPlay(&NumLoopsToPlay);
+
+	typedef NCsUserWidget::NAnim::NPlay::EMode PlayModeType;
+
+	Params->SetPlayMode((PlayModeType*)(&PlayMode));
+	Params->SetPlaybackSpeed(&PlaybackSpeed);
+}
+
+void FCsUserWidget_Anim_PlayParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetName(Name);
+	Params->SetStartAtTime(StartAtTime);
+	Params->SetEndAtTime(EndAtTime);
+	Params->SetNumLoopsToPlay(NumLoopsToPlay);
+
+	typedef NCsUserWidget::NAnim::NPlay::EMode PlayModeType;
+
+	Params->SetPlayMode((PlayModeType)PlayMode);
+	Params->SetPlaybackSpeed(PlaybackSpeed);
+}
+
+#undef ParamsType
+
+bool FCsUserWidget_Anim_PlayParams::IsValidChecked(const FString& Context) const
+{
+	// Check Name is Valid
+	CS_IS_NAME_NONE_CHECKED(Name)
+	// Check StartAtTime is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(StartAtTime, 0.0f)
+	// Check EndAtTime is Valid
+	checkf(EndAtTime >= 0.0f && EndAtTime <= StartAtTime, TEXT("%s: EndAtTime: %f is NOT >= 0.0f and <= %f (StartAtTime)."), *Context, EndAtTime, StartAtTime);
+	// Check NumLoopsToPlay is Valid
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(NumLoopsToPlay, 0)
+	// Check PlayMode is Valid
+	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetAnimPlayMode, PlayMode)
+	// Check PlaybackSpeed is Valid
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(PlaybackSpeed, 0.0f)
+	return true;
+}
+
+bool FCsUserWidget_Anim_PlayParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
 {
 	// Check Name is Valid
 	CS_IS_NAME_NONE(Name)
@@ -170,4 +243,78 @@ namespace NCsUserWidget
 	}
 }
 
-#pragma endregion FCsUserWidgetAnimPlayParams
+#pragma endregion FCsUserWidget_Anim_PlayParams
+
+// FCsUserWidget_Render_Scale_Anim_OneShot_ByScalarParams
+#pragma region
+
+#define ParamsType NCsUserWidget::NRender::NScale::NAnim::NOneShot::FByScalarParams
+
+void FCsUserWidget_Render_Scale_Anim_OneShot_ByScalarParams::CopyToParams(ParamsType* Params)
+{
+	Params->SetWidget(&Widget);
+	Params->SetEasing(&Easing);
+	Params->SetDuration(&Duration);
+	Params->SetStart(&Start);
+	Params->SetEnd(&End);
+}
+
+void FCsUserWidget_Render_Scale_Anim_OneShot_ByScalarParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	Params->SetWidget(Widget);
+	Params->SetEasing(Easing);
+	Params->SetDuration(Duration);
+	Params->SetStart(Start);
+	Params->SetEnd(End);
+}
+
+#undef ParamsType
+
+bool FCsUserWidget_Render_Scale_Anim_OneShot_ByScalarParams::IsValidChecked(const FString& Context) const
+{
+	CS_IS_PTR_NULL_CHECKED(Widget)
+	CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, Easing)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Duration, 0.0f)
+	return true;
+}
+
+bool FCsUserWidget_Render_Scale_Anim_OneShot_ByScalarParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+{
+	CS_IS_PTR_NULL(Widget)
+	CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, Easing)
+	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Duration, 0.0f)
+	return true;
+}
+
+namespace NCsUserWidget
+{
+	namespace NRender
+	{
+		namespace NScale
+		{
+			namespace NAnim
+			{
+				namespace NOneShot
+				{
+					bool FByScalarParams::IsValidChecked(const FString& Context) const
+					{
+						CS_IS_PTR_NULL_CHECKED(GetWidget())
+						CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, GetEasing())
+						CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetDuration(), 0.0f)
+						return true;
+					}
+
+					bool FByScalarParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+					{
+						CS_IS_PTR_NULL(GetWidget())
+						CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, GetEasing())
+						CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetDuration(), 0.0f)
+						return true;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsUserWidget_Render_Scale_Anim_OneShot_ByScalarParams

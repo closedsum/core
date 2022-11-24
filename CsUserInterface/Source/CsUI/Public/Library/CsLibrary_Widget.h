@@ -2,6 +2,11 @@
 #pragma once
 // Types
 #include "Types/CsTypes_UserWidget_Anim.h"
+#include "Types/CsTypes_Interpolation.h"
+// Coroutine
+#include "Coroutine/CsRoutineHandle.h"
+// Log
+#include "Utility/CsUILog.h"
 
 class UObject;
 class UWidget;
@@ -14,6 +19,8 @@ class UButton;
 class UImage;
 class UProgressBar;
 class UBorder;
+
+struct FCsRoutine;
 
 namespace NCsWidget
 {
@@ -95,6 +102,40 @@ namespace NCsWidget
 
 	#pragma endregion Load
 	};
+
+	namespace NRender
+	{
+		struct CSUI_API FLibrary final
+		{
+		public:
+
+			static bool CanEaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
+
+			static bool CanEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			static float GetPercentChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
+
+			static void Opacity_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
+
+			static bool Opacity_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			static void Scale_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
+
+			static bool Scale_SafeEase(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+		// Anim
+		#pragma region
+		public:
+
+		/*
+			static FCsRoutineHandle Scale_AnimChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Duration);
+		private:
+			static char Scale_AnimByScalar_Internal(FCsRoutine* R);
+		*/
+
+		#pragma endregion Anim
+		};
+	}
 
 	namespace NPosition
 	{
@@ -386,7 +427,7 @@ namespace NCsWidget
 			* @param Params
 			* @param Log
 			*/
-			static void SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+			static bool SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 			/**
 			* Safely play the Widget Animation with the given Params.
@@ -394,7 +435,34 @@ namespace NCsWidget
 			* @param Widget
 			* @param Params
 			*/
-			static void SafePlay(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params);
+			static bool SafePlay(UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params);
+
+			/**
+			*
+			*
+			* @param Context
+			* @param Widget
+			* @param Params
+			*/
+			static void PlayChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params);
+
+			/**
+			* Safely play the Widget Animation with the given Params.
+			*
+			* @param Context
+			* @param Widget
+			* @param Params
+			* @param Log
+			*/
+			static bool SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely play the Widget Animation with the given Params.
+			*
+			* @param Widget
+			* @param Params
+			*/
+			static bool SafePlay(UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params);
 		};
 	}
 

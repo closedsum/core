@@ -1,5 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "UObject/Object.h"
+// Types
+#include "Types/CsTypes_UserWidget_Anim.h"
+
+
+#include "CsScriptLibrary_Widget.generated.h"
 
 class UUserWidget;
 class UClass;
@@ -9,8 +15,6 @@ class UTextBlock;
 class UButton;
 class UImage;
 class UProgressBar;
-
-#include "CsScriptLibrary_Widget.generated.h"
 
 UCLASS()
 class CSUI_API UCsScriptLibrary_Widget : public UObject
@@ -31,7 +35,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,WidgetName"))
 	static UUserWidget* Create(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName);
 
-	// Load
+// Load
 #pragma region
 public:
 
@@ -56,6 +60,18 @@ public:
 	static UClass* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Render
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,Easing,Start,End,Alpha"))
+	static bool Render_Opacity_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
+
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,Easing,Start,End,Alpha"))
+	static bool Render_Scale_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha);
+
+#pragma endregion Render
 
 // Position
 #pragma region
@@ -102,6 +118,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context,AnimName"))
 	static UWidgetAnimation* GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName);
+
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context,Params"))
+	static bool PlayAnimation(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params);
 
 #pragma endregion Animation
 

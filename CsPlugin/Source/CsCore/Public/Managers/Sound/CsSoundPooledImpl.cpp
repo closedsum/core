@@ -302,7 +302,7 @@ void ACsSoundPooledImpl::FadeIn(const float& Duration)
 
 	CS_IS_PTR_NULL_CHECKED(AudioComponent)
 
-	AudioComponent->AdjustVolume(0.0f, 0.0f);
+	//AudioComponent->AdjustVolume(0.0f, 0.0f);
 	AudioComponent->AdjustVolume(Duration, InitialVolume);
 }
 

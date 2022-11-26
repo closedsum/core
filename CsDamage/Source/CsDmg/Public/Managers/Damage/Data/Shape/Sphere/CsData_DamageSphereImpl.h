@@ -220,6 +220,8 @@ namespace NCsDamage
 
 					bool IsInBounds(const FVector& Origin, const FVector& Point) const;
 
+					FORCEINLINE bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const { return true; }
+
 				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
 				// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
@@ -251,6 +253,100 @@ namespace NCsDamage
 }
 
 #pragma endregion FCsData_DamageSphere
+
+// Inner
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSDMG_API FCsData_DamageSphereImpl_Inner
+{
+	GENERATED_USTRUCT_BODY()
+
+// ICsData_Damage
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Damage|Data")
+	FECsDamageType Type;
+
+//  ICsData_DamageSphere
+
+	/** The minimum damage */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Damage|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MinDamage;
+
+	/** The maximum damage */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Damage|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MaxDamage;
+
+	/** The minimum range at which the damage is applied. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MinRadius;
+
+	/** The maximum range at which the damage is applied. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float MaxRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data", meta = (InlineEditConditionToggle))
+	bool bInterpolate;
+
+	/** Describes with method to use for interpolating a set of values. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data", meta = (editcondition = "bInterpolate"))
+	ECsInterpolatingMethod InterpolationMethod;
+
+	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
+	    Easing method for interpolating values between Min Damage and Max Damage. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data", meta = (editcondition = "bInterpolate"))
+	ECsEasingType EasingType;
+
+	/** Curve [0,1] for interpolating values between Min Damage and Max Damage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data", meta = (editcondition = "bInterpolate"))
+	FCsCurveFloat Curve;
+
+// ICsData_DamageCollision
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data")
+	ECsDamageCollisionMethod CollisionMethod;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data")
+	TEnumAsByte<ECollisionChannel> CollisionChannel;
+
+public:
+
+	FCsData_DamageSphereImpl_Inner() :
+		// ICsData_Damage
+		Type(),
+		// ICsData_DamageSphere
+		MinDamage(0.0f),
+		MaxDamage(0.0f),
+		MinRadius(0.0f),
+		MaxRadius(0.0f),
+		bInterpolate(false),
+		InterpolationMethod(ECsInterpolatingMethod::Easing),
+		EasingType(ECsEasingType::Linear),
+		Curve(),
+		// ICsData_DamageCollision
+		CollisionMethod(ECsDamageCollisionMethod::PhysicsSweep),
+		CollisionChannel(ECollisionChannel::ECC_WorldDynamic)
+	{
+	}
+
+// ICsData_Damage
+	FORCEINLINE FECsDamageType* GetTypePtr() { return &Type; }
+// ICsData_DamageSphere
+	FORCEINLINE float* GetMinDamagePtr() { return &MinDamage; }
+	FORCEINLINE float* GetMaxDamagePtr() { return &MaxDamage; }
+	FORCEINLINE float* GetMinRadiusPtr() { return &MinRadius; }
+	FORCEINLINE float* GetMaxRadiusPtr() { return &MaxRadius; }
+	FORCEINLINE bool* GetbInterpolatePtr() { return &bInterpolate; }
+	FORCEINLINE ECsInterpolatingMethod* GetInterpolationMethodPtr() { return &InterpolationMethod; }
+	FORCEINLINE ECsEasingType* GetEasingTypePtr() { return &EasingType; }
+// ICsData_DamageCollision
+#define CollisionMethodType NCsDamage::NCollision::EMethod
+	FORCEINLINE CollisionMethodType* GetCollisionMethodPtr() { return (CollisionMethodType*)(&CollisionMethod); }
+#undef CollisionMethodType
+	FORCEINLINE ECollisionChannel* GetCollisionChannelPtr() { return (ECollisionChannel*)(&CollisionChannel); }
+};
+
+#pragma endregion Inner
 
 struct FCsInterfaceMap;
 
@@ -394,6 +490,8 @@ public:
 	float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const;
 
 	bool IsInBounds(const FVector& Origin, const FVector& Point) const;
+
+	FORCEINLINE bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const { return true; }
 
 #pragma endregion ICsData_DamageSphere
 

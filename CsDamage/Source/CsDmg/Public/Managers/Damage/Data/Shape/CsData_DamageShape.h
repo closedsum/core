@@ -64,6 +64,16 @@ namespace NCsDamage
 				* return			Whether the point is in bounds of the origin.
 				*/
 				virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+
+				/**
+				* Check if the Direction from Origin is "Facing" the Point
+				* 
+				* @param Direction	The orientation.
+				* @param Origin		The center.
+				* @param Point		The location to evaluate.
+				* return			Whether Direction from Origin is "Facing" the Point or not.
+				*/
+				virtual bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const = 0;
 			};
 		}
 	}
@@ -126,4 +136,14 @@ public:
 	* return			Whether the point is in bounds of the origin.
 	*/
 	virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+
+	/**
+	* Check if the Direction from Origin is "Facing" the Point
+	* 
+	* @param Direction	The orientation.
+	* @param Origin		The center.
+	* @param Point		The location to evaluate.
+	* return			Whether Direction from Origin is "Facing" the Point or not.
+	*/
+	virtual bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const = 0;
 };

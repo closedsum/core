@@ -67,6 +67,8 @@ namespace NCsDamage
 				{
 				}
 
+				void SetTypeChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& InType);
+
 				FORCEINLINE void SetRange(RangeType* InRange)
 				{
 					bRange = true;

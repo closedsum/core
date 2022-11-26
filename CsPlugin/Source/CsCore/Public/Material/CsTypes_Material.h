@@ -1279,3 +1279,126 @@ namespace NCsMaterial
 }
 
 #pragma endregion FCsMaterialInterface_WithRangeParameters
+
+// FCsMaterialParameterCollection
+#pragma region
+
+class UMaterialParameterCollection;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsMaterialParameterCollection
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
+	TSoftObjectPtr<UMaterialParameterCollection> Collection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Collection_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
+	UMaterialParameterCollection* Collection_Internal;
+
+public:
+
+	FCsMaterialParameterCollection() :
+		Collection(nullptr),
+		Collection_LoadFlags(0),
+		Collection_Internal(nullptr)
+	{
+	}
+
+	/**
+	* Get the Hard reference to the UMaterialParameterCollection asset.
+	*
+	* return Material Parameter Collection
+	*/
+	FORCEINLINE UMaterialParameterCollection* Get() const { return Collection_Internal; }
+
+	/**
+	* Get the pointer to the Hard reference to the UMaterialParameterCollection asset.
+	*
+	* return Material Parameter Collection
+	*/
+	FORCEINLINE UMaterialParameterCollection** GetPtr() { return &Collection_Internal; }
+
+	/**
+	* Get the Hard reference to the UMaterialParameterCollection asset.
+	*
+	* @param Context	The calling context.
+	* return			Material Parameter Collection
+	*/
+	FORCEINLINE UMaterialParameterCollection* GetChecked(const FString& Context) const
+	{
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("%s: Collection is NULL."), *Context);
+
+		checkf(Collection_Internal, TEXT("%s: Collection has NOT been loaded from Path @ %s."), *Context, *(Collection.ToSoftObjectPath().ToString()));
+
+		return Collection_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UMaterialParameterCollection asset.
+	*
+	* return Material Parameter Collection
+	*/
+	FORCEINLINE UMaterialParameterCollection* GetChecked() const
+	{
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("FCsMaterialParameterCollection::GetChecked: Mesh is NULL."));
+
+		checkf(Collection_Internal, TEXT("FCsMaterialParameterCollection::GetChecked: Collection has NOT been loaded from Path @ %s."), *(Collection.ToSoftObjectPath().ToString()));
+
+		return Collection_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialParameterCollection asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Material Parameter Collection
+	*/
+	UMaterialParameterCollection* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Collection.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Collection is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Collection_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Collection has NOT been loaded from Path @ %s."), *Context, *(Collection.ToSoftObjectPath().ToString())));
+		}
+		return Collection_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UMaterialParameterCollection asset.
+	*
+	* return Material Parameter Collection
+	*/
+	UMaterialParameterCollection* GetSafe()
+	{
+		if (!Collection.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Collection_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+};
+
+#pragma endregion FCsMaterialParameterCollection

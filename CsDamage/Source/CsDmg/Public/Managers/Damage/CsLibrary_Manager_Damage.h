@@ -272,6 +272,17 @@ namespace NCsDamage
 
 			static const FECsDamageData& GetDataTypeChecked(const FString& Context, const UObject* WorldContext, const DataType* Data);
 
+			/**
+			* Get the Data, Object that implements the interface: DataType (NCsDamage::NData::IData),
+			* associated with the Type.
+			*
+			* @param Context			The calling context.
+			* @oaram WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return					Object which implements the interface: DataType (NCsDamage::NData::IData).
+			*/
+			static DataType* GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& Type);
+
 		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
 
 			/**

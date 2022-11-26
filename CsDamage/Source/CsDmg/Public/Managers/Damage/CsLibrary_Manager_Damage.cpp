@@ -273,6 +273,13 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->GetDataTypeChecked(Context, Data);
 		}
 
+		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const FECsDamageData& Type)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageData, Type)
+
+			return GetChecked(Context, WorldContext)->GetDataChecked(Context, Type.GetFName());
+		}
+
 		#define GetDamageDataTypeDataType NCsData::IGetDamageDataType
 
 		DataType* FLibrary::GetDataChecked(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType)

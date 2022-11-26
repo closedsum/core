@@ -203,6 +203,20 @@ namespace NCsSkeletalMesh
 		return true;
 	}
 
+	FVector FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
+	{
+		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
+
+		return Component->GetBoneQuaternion(BoneOrSocket).Vector();
+	}
+
+	FVector FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket)
+	{
+		USkeletalMeshComponent* C = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
+
+		return GetBoneOrSocketDirectionChecked(Context, C, BoneOrSocket);
+	}
+
 	FVector FLibrary::GetBoneOrSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));

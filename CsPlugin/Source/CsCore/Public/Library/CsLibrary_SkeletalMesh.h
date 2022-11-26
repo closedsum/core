@@ -237,6 +237,29 @@ namespace NCsSkeletalMesh
 		static bool ConditionalSafeIsBoneOrSocketValid(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
+		* Get the Bone or Socket direction (rotation as vector) for the given Component.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return				BoneOrSocket direction.
+		*/
+		static FVector GetBoneOrSocketDirectionChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket);
+
+		/**
+		* Get the Bone or Socket direction (rotation as vector) for the given Component.
+		* NOTE: Check Component is of type: USkeletalMeshComponent.
+		*
+		* @param Context		The calling Context.
+		* @param Component		SkeletalMeshComponent.
+		* @param BoneOrSocket	Bone or Socket to check exists for SkeletalMesh on SkeletalMeshComponent.
+		*
+		* return				BoneOrSocket direction.
+		*/
+		static FVector GetBoneOrSocketDirectionChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket);
+
+		/**
 		* Get the Bone or Socket location for the given Component.
 		*
 		* @param Context		The calling Context.

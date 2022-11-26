@@ -361,6 +361,8 @@ namespace NCsDamage
 			checkf(Range, TEXT("%s: Range is NULL. No DamageRange set for Event."), *Context);
 			check(RangeLibrary::IsValidChecked(Context, Range));
 
+			const FHitResult& Hit = Event->GetHitResult();
+
 			// NOTE: FUTURE: May need flag to exclude Instigator, Causer, ... etc
 			//				 For now, exclude Instigator and Causer
 
@@ -378,8 +380,6 @@ namespace NCsDamage
 				Request->Type   = ECsTraceType::Sweep;
 				Request->Method = ECsTraceMethod::Multi;
 				Request->Query  = ECsTraceQuery::ObjectType;
-
-				const FHitResult& Hit = Event->GetHitResult();
 
 				Request->Start = Hit.ImpactPoint;
 				Request->End   = Hit.ImpactPoint;
@@ -425,8 +425,6 @@ namespace NCsDamage
 				Request->Method = ECsTraceMethod::Multi;
 				Request->Query  = ECsTraceQuery::ObjectType;
 
-				const FHitResult& Hit = Event->GetHitResult();
-
 				Request->Start = Hit.ImpactPoint;
 				Request->End   = Hit.ImpactPoint;
 				Request->Channel = CollisionData->GetCollisionChannel();
@@ -458,6 +456,7 @@ namespace NCsDamage
 				MinRangeHits.Reset(MinRangeHits.Max());
 			}
 
+			// Keep matching
 			for (const FHitResult& HitA : MinRangeHits)
 			{
 				const int32 Count = MaxRangeHits.Num();
@@ -466,11 +465,26 @@ namespace NCsDamage
 				{
 					FHitResult& HitB = MaxRangeHits[I];
 
-					if ((HitA.GetActor() && HitA.GetActor() == HitB.GetActor()) ||
-						(HitA.GetComponent() && HitB.GetComponent() == HitB.GetComponent()))
+					if ((HitA.GetActor() && HitB.GetActor() && HitA.GetActor() != HitB.GetActor()) ||
+						(HitA.GetComponent() && HitB.GetComponent() && HitB.GetComponent() != HitB.GetComponent()))
 					{
 						MaxRangeHits.RemoveAt(I, 1, false);
 					}
+				}
+			}
+
+			// Keep facing
+			const FVector& Direction = Event->GetDamageDirection();
+
+			const int32 Count = MaxRangeHits.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				FHitResult& HitA = MaxRangeHits[I];
+
+				if (!ShapeData->IsFacing(Direction, Hit.Location, HitA.ImpactPoint))
+				{
+					MaxRangeHits.RemoveAt(I, 1, false);
 				}
 			}
 

@@ -106,6 +106,7 @@ namespace NCsDamage
 			virtual const FHitResult& GetOrigin() const = 0;
 
 			/**
+			* TraceStart = The origin of the event.
 			* Location | ImpactPoint = Where the event is broadcasted from.
 			* Normal | ImpactNormal = Direction the event is "pointing" toward.
 			*

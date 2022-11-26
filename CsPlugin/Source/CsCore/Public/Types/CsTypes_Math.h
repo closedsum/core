@@ -917,3 +917,70 @@ public:
 };
 
 #pragma endregion FCsRay
+
+// DotDimension
+#pragma region
+
+/**
+* Describes dimensions for a dot check.
+*/
+UENUM(BlueprintType)
+enum class ECsDotDimension : uint8
+{
+	/** 2D: X,Y */
+	XY					UMETA(DisplayName = "2D: X,Y"),
+	/** 3D: X,Y,Z */
+	XYZ					UMETA(DisplayName = "3D: X,Y,Z"),
+	ECsDotDimension_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsDotDimension : public TCsEnumMap<ECsDotDimension>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsDotDimension, ECsDotDimension)
+};
+
+namespace NCsDotDimension
+{
+	typedef ECsDotDimension Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type XY;
+		extern CSCORE_API const Type XYZ;
+		extern CSCORE_API const Type ECsDotDimension_MAX;
+	}
+}
+
+namespace NCsDot
+{
+	/**
+	* Describes dimensions for a dot check.
+	*/
+	enum class EDimension : uint8 
+	{
+		/** 2D: X,Y */
+		XY,
+		/** 3D: X,Y,Z */
+		XYZ,
+		EDimension_MAX
+	};
+
+	struct CSCORE_API EMDimension : public TCsEnumMap<EDimension>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDimension, EDimension)
+	};
+
+	namespace NDimension
+	{
+		typedef EDimension Type;
+
+		namespace Ref
+		{
+			extern CSCORE_API const Type XY;
+			extern CSCORE_API const Type XYZ;
+			extern CSCORE_API const Type EDimension_MAX;
+		}
+	}
+}
+
+#pragma endregion DotDimension

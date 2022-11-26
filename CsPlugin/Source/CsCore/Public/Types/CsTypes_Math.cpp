@@ -271,3 +271,35 @@ bool FCsRay::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsL
 }
 
 #pragma endregion FCsRay
+
+// DotDimension
+#pragma region
+
+namespace NCsDotDimension
+{
+	namespace Ref
+	{
+		typedef EMCsDotDimension EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(XY, "2D: X,Y");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(XYZ, "3D: X,Y,Z");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsDotDimension_MAX, "MAX");
+	}
+}
+
+namespace NCsDot
+{
+	namespace NDimension
+	{
+		namespace Ref
+		{
+			typedef EMDimension EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(XY, "2D: X,Y");
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(XYZ, "3D: X,Y,Z");
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDimension_MAX, "MAX");
+		}
+	}
+}
+
+#pragma endregion DotDimension

@@ -20,7 +20,7 @@ struct CSCORE_API FCsMaterialInterface
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialInterface> Material;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
@@ -231,7 +231,7 @@ struct CSCORE_API FCsTArrayMaterialInterface
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	TArray<TSoftObjectPtr<UMaterialInterface>> Materials;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Materials_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Material")
@@ -1293,7 +1293,7 @@ struct CSCORE_API FCsMaterialParameterCollection
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialParameterCollection> Collection;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Collection_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")

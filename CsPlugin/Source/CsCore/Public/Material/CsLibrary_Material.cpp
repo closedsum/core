@@ -1618,6 +1618,102 @@ namespace NCsMaterial
 			return IsScalarParameterValid(Context, MID, ParamName, nullptr);
 		}
 
+		bool FLibrary::AreScalarParametersValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& ParamNames)
+		{
+			// Check MID is Valid
+			CS_IS_PTR_NULL_CHECKED(MID)
+			// Are all Names in ParamNames Valid
+			CS_IS_TARRAY_ANY_NONE_CHECKED(ParamNames)
+
+			typedef NCsArray::FLibrary ArrayLibrary;
+
+			static TArray<FName> Names;
+
+			ArrayLibrary::Copy<FName>(Names, ParamNames);
+
+			// MaterialInstance
+			for (const FScalarParameterValue& Value : MID->ScalarParameterValues)
+			{
+				const int32 Count = Names.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
+				{
+					if (Value.ParameterInfo.Name == Names[I])
+					{
+						Names.RemoveAt(I, 1, false);
+					}
+				}
+			}
+
+			// Check Parent
+			typedef NCsMaterial::NParameter::FLibrary ParameterLibrary;
+
+			// Material instance
+			UMaterialInstance* MI = Cast<UMaterialInstance>(MID->Parent);
+
+			while (MI)
+			{
+				for (const FScalarParameterValue& Value : MI->ScalarParameterValues)
+				{
+					const int32 Count = Names.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						if (Value.ParameterInfo.Name == Names[I])
+						{
+							Names.RemoveAt(I, 1, false);
+						}
+					}
+				}
+
+				if (UMaterial* M = Cast<UMaterial>(MI->Parent))
+				{
+					static TArray<FMaterialParameterInfo> Infos;
+					static TArray<FGuid> Ids;
+
+					ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+					for (const FMaterialParameterInfo& Info : Infos)
+					{
+						const int32 Count = Names.Num();
+
+						for (int32 I = Count - 1; I >= 0; --I)
+						{
+							if (Info.Name == Names[I])
+							{
+								Names.RemoveAt(I, 1, false);
+							}
+						}
+					}
+					break;
+				}
+				MI = Cast<UMaterialInstance>(MI->Parent);
+			}
+			// Material
+			if (UMaterial* M = Cast<UMaterial>(MID->Parent))
+			{
+				static TArray<FMaterialParameterInfo> Infos;
+				static TArray<FGuid> Ids;
+
+				ParameterLibrary::GetAllScalarParameterInfoChecked(Context, M, Infos, Ids);
+
+				for (const FMaterialParameterInfo& Info : Infos)
+				{
+					const int32 Count = Names.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						if (Info.Name == Names[I])
+						{
+							Names.RemoveAt(I, 1, false);
+						}
+					}
+				}
+			}
+			checkf(Names.Num() == CS_EMPTY, TEXT("%s: Failed to find ALL ParamNames in MID: %s with Parent: %s."), *Context, *(MID->GetName()), *(MID->Parent->GetName()));
+			return true;
+		}
+
 		void FLibrary::SetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const float& Value)
 		{
 			check(IsScalarParameterValidChecked(Context, MID, ParamName));
@@ -1729,6 +1825,81 @@ namespace NCsMaterial
 
 			return MID->K2_GetScalarParameterValue(ParamName);
 		}
+
+			// Batch
+		#pragma region
+
+		void FLibrary::PopulateScalarParameterValuesChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& Names, TArray<FScalarParameterValue*>& Values)
+		{
+			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_TARRAY_ANY_NONE_CHECKED(Names)
+
+			checkf(Names.Num() == Values.Num(), TEXT("%s: The sizes Names: %d != Values: %d."), *Context, Names.Num(), Values.Num());
+
+			// Find or Add
+			typedef NCsArray::FLibrary ArrayLibrary;
+
+			static TArray<int32> Indices;
+
+			// Determine what needs to be Added
+			ArrayLibrary::PopulateRange(Indices, 0, Names.Num() - 1);
+
+			int32 Count = MID->ScalarParameterValues.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FScalarParameterValue* Parameter = &(MID->ScalarParameterValues[I]);
+
+				const int32 IndexCount = Indices.Num();
+
+				for (int32 J = IndexCount - 1; J >= 0; --J)
+				{
+					const int32& Index = Indices[J];
+
+					if (Parameter->ParameterInfo.Name == Names[Index])
+					{
+						Indices.RemoveAt(J, 1, false);
+					}
+				}
+			}
+
+			const int32 IndexCount = Indices.Num();
+			const int32 PrevCount  = MID->ScalarParameterValues.Num();
+
+			MID->ScalarParameterValues.AddDefaulted(IndexCount);
+
+			Count = MID->ScalarParameterValues.Num();
+
+			for (int32 I = PrevCount; I < Count; ++I)
+			{
+				const int32 Index = Indices[I - PrevCount];
+
+				FScalarParameterValue* ParameterValue = &(MID->ScalarParameterValues[I]);
+				ParameterValue->ParameterInfo = FMaterialParameterInfo(Names[Index]);
+				ParameterValue->ExpressionGUID.Invalidate();
+			}
+
+			// Cache references
+			int32 ValueCount	  = 0;
+			const int32 NameCount = Names.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FScalarParameterValue* Parameter = &(MID->ScalarParameterValues[I]);
+
+				for (int32 J = 0; J < NameCount; ++J)
+				{
+					if (Parameter->ParameterInfo.Name == Names[J])
+					{
+						Values[J] = Parameter;
+						++ValueCount;
+					}
+				}
+			}
+			checkf(ValueCount == NameCount, TEXT("%s: Failed to set Values for ALL Names."), *Context);
+		}
+
+		#pragma endregion Batch
 
 		#pragma endregion Scalar
 
@@ -2098,6 +2269,81 @@ namespace NCsMaterial
 
 			return MID->K2_GetVectorParameterValue(ParamName);
 		}
+
+			// Batch
+		#pragma region
+
+		void FLibrary::PopulateVectorParameterValuesChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& Names, TArray<FVectorParameterValue*>& Values)
+		{
+			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_TARRAY_ANY_NONE_CHECKED(Names)
+
+			checkf(Names.Num() == Values.Num(), TEXT("%s: The sizes Names: %d != Values: %d."), *Context, Names.Num(), Values.Num());
+
+			// Find or Add
+			typedef NCsArray::FLibrary ArrayLibrary;
+
+			static TArray<int32> Indices;
+
+			// Determine what needs to be Added
+			ArrayLibrary::PopulateRange(Indices, 0, Names.Num() - 1);
+
+			int32 Count = MID->VectorParameterValues.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FVectorParameterValue* Parameter = &(MID->VectorParameterValues[I]);
+
+				const int32 IndexCount = Indices.Num();
+
+				for (int32 J = IndexCount - 1; J >= 0; --J)
+				{
+					const int32& Index = Indices[J];
+
+					if (Parameter->ParameterInfo.Name == Names[Index])
+					{
+						Indices.RemoveAt(J, 1, false);
+					}
+				}
+			}
+
+			const int32 IndexCount = Indices.Num();
+			const int32 PrevCount  = MID->VectorParameterValues.Num();
+
+			MID->VectorParameterValues.AddDefaulted(IndexCount);
+
+			Count = MID->VectorParameterValues.Num();
+
+			for (int32 I = PrevCount; I < Count; ++I)
+			{
+				const int32 Index = Indices[I - PrevCount];
+
+				FVectorParameterValue* ParameterValue = &(MID->VectorParameterValues[I]);
+				ParameterValue->ParameterInfo = FMaterialParameterInfo(Names[Index]);
+				ParameterValue->ExpressionGUID.Invalidate();
+			}
+
+			// Cache references
+			int32 ValueCount	  = 0;
+			const int32 NameCount = Names.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				FVectorParameterValue* Parameter = &(MID->VectorParameterValues[I]);
+
+				for (int32 J = 0; J < NameCount; ++J)
+				{
+					if (Parameter->ParameterInfo.Name == Names[J])
+					{
+						Values[J] = Parameter;
+						++ValueCount;
+					}
+				}
+			}
+			checkf(ValueCount == NameCount, TEXT("%s: Failed to set Values for ALL Names."), *Context);
+		}
+
+		#pragma endregion Batch
 
 		#pragma endregion Vector
 

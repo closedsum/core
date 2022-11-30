@@ -11,7 +11,7 @@
 
 #if WITH_EDITOR
 // Library
-#include "Game/CsLibrary_GameInstance.h"
+#include "Game/CsLibrary_GameState.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsMaterial
@@ -38,16 +38,16 @@ namespace NCsMaterial
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+			typedef NCsGameState::FLibrary GameStateLibrary;
 
-			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
+			return GameStateLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+			typedef NCsGameState::FLibrary GameStateLibrary;
 
-			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
+			return GameStateLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const UObject* ContextObject)
@@ -68,7 +68,7 @@ namespace NCsMaterial
 
 		UCsManager_Material* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
-			UObject* ContextRoot		    = GetContextRootChecked(Context, ContextObject);
+			UObject* ContextRoot				  = GetContextRootChecked(Context, ContextObject);
 			UCsManager_Material* Manager_Material = UCsManager_Material::Get(ContextRoot);
 
 			CS_IS_PTR_NULL_CHECKED(Manager_Material)

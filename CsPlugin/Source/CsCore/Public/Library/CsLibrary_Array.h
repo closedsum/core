@@ -266,6 +266,27 @@ namespace NCsArray
 		}
 
 		/**
+		* Populate Arr with values from [Min, Max].
+		*
+		* @param Arr
+		* @param Min
+		* @param Max
+		*/
+		static void PopulateRange(TArray<int32>& Arr, const int32& Min, const int32& Max)
+		{
+			checkf(Max > Min, TEXT("%d is NOT > %d, (Max is NOT > Min)"), Max, Min);
+
+			const int32 UpperBound = Max + 1;
+
+			Arr.Reset(FMath::Max(Arr.Max(), UpperBound - Min));
+
+			for (int32 I = Min; I < UpperBound; ++I)
+			{
+				Arr.Add(I);
+			}
+		}
+
+		/**
 		* Populate Arr with values from [Min, Max] and then perform a random shuffle.
 		* 
 		* @param Arr
@@ -274,17 +295,7 @@ namespace NCsArray
 		*/
 		static void PopulateRangeAndShuffle(TArray<int32>& Arr, const int32& Min, const int32& Max)
 		{
-			checkf(Max > Min, TEXT("%d is NOT > %d, (Max is NOT > Min)"), Max, Min);
-
-			const int32 UpperBound = Max + 1;
-
-			Arr.Reset(UpperBound - Min);
-
-			for (int32 I = Min; I < UpperBound; ++I)
-			{
-				Arr.Add(I);
-			}
-
+			PopulateRange(Arr, Min, Max);
 			Shuffle<int32>(Arr);
 		}
 

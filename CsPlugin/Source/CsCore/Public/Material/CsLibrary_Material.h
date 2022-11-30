@@ -21,6 +21,13 @@ class UTexture;
 struct FCsRoutine;
 class UObject;
 
+struct FScalarParameterValue;
+struct FVectorParameterValue;
+
+// TEMP
+class FMaterialInstanceResource;
+struct FMaterialParameterInfo;
+
 namespace NCsMaterial
 {
 	/**
@@ -627,6 +634,16 @@ namespace NCsMaterial
 			static bool IsScalarParameterValid(UMaterialInstanceDynamic* MID, const FName& ParamName);
 
 			/**
+			* Check whether there are Scalar Parameter Values with names: ParamNames for MID.
+			*
+			* @param Context	The calling context.
+			* @param MID		Material Instance Dynamic.
+			* @param ParamNames	Name of the Scalar Parameter Value.
+			* return			Whether there ARE Scalar Parameter Values with names: ParamNames or NOT.
+			*/
+			static bool AreScalarParametersValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& ParamNames);
+
+			/**
 			* Set the Scalar Parameter Value with name: ParamName with value: Value on MID.
 			*
 			* @param Context	The calling context.
@@ -749,6 +766,14 @@ namespace NCsMaterial
 			* return			The value of the Scalar Parameter Value with name: ParamName.
 			*/
 			static float GetScalarParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+			// Batch
+		#pragma region
+		public:
+
+			static void PopulateScalarParameterValuesChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& Names, TArray<FScalarParameterValue*>& Values);
+
+		#pragma endregion Batch
 
 		#pragma endregion Scalar
 
@@ -1023,6 +1048,13 @@ namespace NCsMaterial
 			* return			The value of the Vector Parameter Value with name: ParamName.
 			*/
 			static FLinearColor GetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName);
+
+			// Batch
+		#pragma region
+
+			static void PopulateVectorParameterValuesChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& Names, TArray<FVectorParameterValue*>& Values);
+
+		#pragma endregion Batch
 
 		#pragma endregion Vector
 

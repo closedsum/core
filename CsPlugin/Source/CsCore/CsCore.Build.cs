@@ -40,6 +40,7 @@ public class CsCore : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "RenderCore"
                 }
             );
 

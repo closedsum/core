@@ -1,6 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
+// Types
+#include "Types/CsTypes_Macro.h"
 
 #include "CsManager_Material.generated.h"
 
@@ -9,6 +11,11 @@ class FMaterialInstanceResource;
 struct FMaterialParameterInfo;
 struct FScalarParameterValue;
 struct FVectorParameterValue;
+
+// NCsMaterial::NParameter::NSet::FBatch
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsMaterial, NParameter, NSet, FBatch)
+// NCsMaterial::NParameter::NSet::FPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsMaterial, NParameter, NSet, FPayload)
 
 namespace NCsMaterial
 {

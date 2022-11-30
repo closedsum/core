@@ -55,7 +55,7 @@ namespace NCsMaterial
 					Dirties.Reset(Dirties.Max());
 				}
 
-				void Set(const FName& Name, const float& Value);
+				void Set(const FName& Name, const float& Value, const bool& ForceDirty = false);
 
 				FORCEINLINE void Prepare()
 				{
@@ -105,7 +105,7 @@ namespace NCsMaterial
 					Dirties.Reset(Dirties.Max());
 				}
 
-				void Set(const FName& Name, const FLinearColor& Value);
+				void Set(const FName& Name, const FLinearColor& Value, const bool& ForceDirty = false);
 
 				FORCEINLINE void Prepare()
 				{

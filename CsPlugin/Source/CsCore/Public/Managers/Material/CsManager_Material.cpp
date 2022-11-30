@@ -66,7 +66,7 @@ namespace NCsMaterial
 				}
 			}
 
-			void FScalars::Set(const FName& Name, const float& Value)
+			void FScalars::Set(const FName& Name, const float& Value, const bool& ForceDirty /*=false*/)
 			{
 				using namespace NCsMaterial::NParameter::NSet::NScalars::NCached;
 
@@ -78,7 +78,8 @@ namespace NCsMaterial
 
 				checkf(Name == Values[Index]->ParameterInfo.Name, TEXT("%s: Mismatch between Name: %s and Values[%d].ParameterInfo.Name: %s."), *Context, *(Name.ToString()), Index, *(Values[Index]->ParameterInfo.Name.ToString()));
 
-				if (Values[Index]->ParameterValue != Value)
+				if (ForceDirty || 
+					Values[Index]->ParameterValue != Value)
 				{
 					Values[Index]->ParameterValue = Value;
 					DirtySet.Add(Index);
@@ -127,7 +128,7 @@ namespace NCsMaterial
 				}
 			}
 
-			void FVectors::Set(const FName& Name, const FLinearColor& Value)
+			void FVectors::Set(const FName& Name, const FLinearColor& Value, const bool& ForceDirty /*=false*/)
 			{
 				using namespace NCsMaterial::NParameter::NSet::NVectors::NCached;
 
@@ -139,7 +140,8 @@ namespace NCsMaterial
 
 				checkf(Name == Values[Index]->ParameterInfo.Name, TEXT("%s: Mismatch between Name: %s and Values[%d].ParameterInfo.Name: %s."), *Context, *(Name.ToString()), Index, *(Values[Index]->ParameterInfo.Name.ToString()));
 
-				if (Values[Index]->ParameterValue != Value)
+				if (ForceDirty || 
+					Values[Index]->ParameterValue != Value)
 				{
 					Values[Index]->ParameterValue = Value;
 					DirtySet.Add(Index);
@@ -184,6 +186,7 @@ namespace NCsMaterial
 				{
 					FBatch* Batch = this;
 
+					Batch->bProcessing = false;
 					Batch->Prepare();
 					Batch->bProcessing = false;
 
@@ -202,13 +205,16 @@ namespace NCsMaterial
 							const FMaterialParameterInfo& ParameterInfo = Values[Index]->ParameterInfo;
 							float Value									= FScalarParameterValue::GetValue(*(Values[Index]));
 
-							ENQUEUE_RENDER_COMMAND(SetBatchParameterValues)(
+							ENQUEUE_RENDER_COMMAND(CsSetBatchMaterialParameterValue)(
 								[R, ParameterInfo, Value](FRHICommandListImmediate& RHICmdList)
 							{
 								R->RenderThread_UpdateParameter(ParameterInfo, Value);
-								R->CacheUniformExpressions(false);
+								//R->CacheUniformExpressions(false);
 							});
+
+							Dirties.RemoveAt(J, 1, false);
 						}
+						Scalars.DirtySet.Reset();
 					}
 					// Vectors
 					{
@@ -225,16 +231,18 @@ namespace NCsMaterial
 							const FMaterialParameterInfo& ParameterInfo = Values[Index]->ParameterInfo;
 							FLinearColor Value						    = FVectorParameterValue::GetValue(*(Values[Index]));
 
-							ENQUEUE_RENDER_COMMAND(SetBatchParameterValues)(
+							ENQUEUE_RENDER_COMMAND(CsSetBatchMaterialParameterValue)(
 								[R, ParameterInfo, Value](FRHICommandListImmediate& RHICmdList)
 							{
 								R->RenderThread_UpdateParameter(ParameterInfo, Value);
-								R->CacheUniformExpressions(false);
+								//R->CacheUniformExpressions(false);
 							});
+
+							Dirties.RemoveAt(J, 1, false);
 						}
+						Vectors.DirtySet.Reset();
 					}
 
-					/*
 					FMaterialInstanceResource* R = Resource;
 
 					ENQUEUE_RENDER_COMMAND(SetBatchParameterValues)(
@@ -242,7 +250,6 @@ namespace NCsMaterial
 					{
 						R->CacheUniformExpressions(false);
 					});
-					*/
 				}
 			}
 
@@ -297,6 +304,7 @@ namespace NCsMaterial
 				{
 					FPayload* Payload = this;
 
+					Payload->bProcessing = false;
 					Payload->Prepare();
 					Payload->bProcessing = false;
 
@@ -311,6 +319,7 @@ namespace NCsMaterial
 
 						Dirties.RemoveAt(I, 1, false);
 					}
+					DirtySet.Reset();
 					/*
 					ENQUEUE_RENDER_COMMAND(SetBatchParameterValues)(
 						[Payload](FRHICommandListImmediate& RHICmdList)

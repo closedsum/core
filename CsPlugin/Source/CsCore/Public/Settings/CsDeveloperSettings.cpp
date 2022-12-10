@@ -36,6 +36,9 @@ UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectIniti
 {
 }
 
+// Data
+#pragma region
+
 UObject* UCsDeveloperSettings::SafeLoadDataRootSet(const FString& Context)
 {
 	const FSoftObjectPath& SoftPath = DataRootSet.ToSoftObjectPath();
@@ -63,6 +66,58 @@ UObject* UCsDeveloperSettings::SafeLoadDataRootSet(const FString& Context)
 	}
 	return DOb;
 }
+
+#if WITH_EDITOR
+void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
+{
+	FCsSettings_DataRootSet& Set = DataRootSets[(int32)Platform];
+
+	TSoftClassPtr<UObject> SoftClass  = Set.DataRootSet;
+	UClass* Class					  = SoftClass.LoadSynchronous();
+	UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+	ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+
+	if (GetDataRootSet)
+	{
+		const FCsDataRootSet& CsDataRootSet = GetDataRootSet->GetCsDataRootSet();
+
+		TArray<UObject*> ObjectsToSave;
+
+		// Datas
+		if (UDataTable* Datas = CsDataRootSet.Datas)
+		{
+			const TMap<FName, uint8*>& RowMap = Datas->GetRowMap();
+
+			for (const TPair<FName, uint8*>& Pair : RowMap)
+			{
+				const FName& RowName	  = Pair.Key;
+				FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
+
+				RowPtr->Name = RowName;
+
+				RowPtr->Populate();
+			}
+		}
+		// DataTables
+		if (UDataTable* DataTables = CsDataRootSet.DataTables)
+		{
+			const TMap<FName, uint8*>& RowMap = DataTables->GetRowMap();
+
+			for (const TPair<FName, uint8*>& Pair : RowMap)
+			{
+				const FName& RowName		   = Pair.Key;
+				FCsDataEntry_DataTable* RowPtr = reinterpret_cast<FCsDataEntry_DataTable*>(Pair.Value);
+
+				RowPtr->Name = RowName;
+
+				RowPtr->Populate();
+			}
+		}
+	}
+}
+#endif // #if WITH_EDITOR
+
+#pragma endregion Data
 
 #if WITH_EDITOR
 

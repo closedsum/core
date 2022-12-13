@@ -74,6 +74,12 @@ namespace NCsSpawner
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CountPerSpawn, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TimeBetweenCountPerSpawn, float)
 
+			void Copy(const FCount& From)
+			{
+				SetCountPerSpawn(From.GetCountPerSpawn());
+				SetTimeBetweenCountPerSpawn(From.GetTimeBetweenCountPerSpawn());
+			}
+
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 		};
@@ -334,6 +340,15 @@ namespace NCsSpawner
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Interval, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Time, float)
 
+			void Copy(const FFrequency& From)
+			{
+				SetType(From.GetType());
+				SetDelay(From.GetDelay());
+				SetCount(From.GetCount());
+				SetInterval(From.GetInterval());
+				SetTime(From.GetTime());
+			}
+
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
@@ -393,7 +408,7 @@ namespace NCsSpawnerPoint
 
 namespace NCsSpawner
 {
-	enum class EPoint
+	enum class EPoint : uint8
 	{
 		/** Spawn using the Spawner's Transform */
 		Self,
@@ -653,7 +668,7 @@ namespace NCsSpawnerShape
 
 namespace NCsSpawner
 {
-	enum class EShape
+	enum class EShape : uint8
 	{
 		Circle,
 		Rectangle,
@@ -731,14 +746,14 @@ namespace NCsSpawner
 {
 	namespace NShape
 	{
-		enum class ECenter
+		enum class ECenter : uint8
 		{
 			/** Center of shape using the Spawner's Transform */
 			Self,
 			/** Center of shape using a predefined Transform */
 			Transform,
 			/** Center of shape using an Actor's Transform */
-			Actor	,
+			Actor,
 			/** Center of shape using a custom method */
 			Custom,
 			ECenter_MAX
@@ -800,7 +815,7 @@ namespace NCsSpawnerDistribution
 
 namespace NCsSpawner
 {
-	enum class EDistribution
+	enum class EDistribution : uint8
 	{
 		Uniform,
 		EDistribution_MAX

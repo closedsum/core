@@ -322,6 +322,12 @@ namespace NCsSpawner
 					{
 						return CenterAsActor->GetActorLocation();
 					}
+					// Custom - NOTE: Assume Custom serves as an additional filter versus using Transform
+					else
+					if (Center == CenterType::Custom)
+					{
+						return CenterAsTransform.GetTranslation();
+					}
 
 					typedef NCsSpawner::NShape::EMCenter CenterMapType;
 

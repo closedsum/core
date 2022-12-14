@@ -98,6 +98,9 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "Manager Data"))
 	FCsSettings_Manager_Data Manager_Data;
 
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "On Editor Startup: Load DataRootSets[Windows]"))
+	bool bOnEditorStartup_LoadDataRootSet;
+
 #if WITH_EDITOR
 	void PopulateAll(const ECsPlatform& Platform);
 #endif // #if WITH_EDITOR

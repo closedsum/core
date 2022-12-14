@@ -32,7 +32,12 @@ namespace NCsDeveloperSettings
 
 #pragma endregion Cached
 
-UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// Data
+	DataRootSet(),
+	Manager_Data(),
+	bOnEditorStartup_LoadDataRootSet(false)
 {
 }
 

@@ -155,11 +155,15 @@ namespace NCsSpawner
 				{ 
 					typedef NCsSpawner::NShape::ECenter CenterType;
 
-					// TODO: FIX
+					// Change CenterType to Transform if its NOT Transform or Custom
 					const CenterType* TypePtr = &(ShapeParams->GetCenterType());
 					CenterType* Type		  = const_cast<CenterType*>(TypePtr);
-					*Type					  = CenterType::Transform;
 
+					if (*Type != CenterType::Transform &&
+						*Type != CenterType::Custom)
+					{
+						*Type = CenterType::Transform;
+					}
 					CenterAsTransform = Center; 
 				}
 

@@ -43,6 +43,19 @@ namespace NCsDamage
 			static const RangeType* GetSafeRange(const FString& Context, const DataType* Data, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef RangeType
+
+			/**
+			* Safely apply any Orientation related information from Data to Origin and Direction.
+			*  Orientation Data requires Data implement the interface: NCsDamage::NData::NOrientation::IOrientation.
+			* 
+			* @param Context	The calling context.
+			* @param Data
+			* @param Vector		(out)
+			* @param Direction	(out)
+			* @param Log		(optional)
+			* return
+			*/
+			static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector& Origin, FVector& Direction, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
 	#undef DataType

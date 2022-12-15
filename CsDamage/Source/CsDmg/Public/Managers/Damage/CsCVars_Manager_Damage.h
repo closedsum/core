@@ -28,6 +28,23 @@ namespace NCsCVarLog
 
 #pragma endregion CVarLog
 
+extern CSDMG_API TAutoConsoleVariable<int32> CsCVarDrawManagerDamageEvents;
+
+// CVarDraw
+#pragma region
+
+namespace NCsCVarDraw
+{
+	extern CSDMG_API const Type DrawManagerDamageEvents;
+
+	namespace Map
+	{
+		extern CSDMG_API CS_DECLARE_ADD_TO_CVAR_MAP(DrawManagerDamageEvents);
+	}
+}
+
+#pragma endregion CVarDraw
+
 // ScopedGroup
 #pragma region
 

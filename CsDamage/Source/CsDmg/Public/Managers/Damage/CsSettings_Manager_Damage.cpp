@@ -4,6 +4,16 @@
 // Settings
 #include "Settings/CsDamageSettings.h"
 
+// FCsSettings_Manager_Damage_Event
+#pragma region
+
+const FCsSettings_Manager_Damage_Event& FCsSettings_Manager_Damage_Event::Get()
+{
+	return FCsSettings_Manager_Damage::Get().Event;
+}
+
+#pragma endregion FCsSettings_Manager_Damage_Event
+
 // FCsSettings_Manager_Damage_Modifier
 #pragma region
 

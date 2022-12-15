@@ -1,7 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+// Types
 #include "Types/CsTypes_Damage.h"
 #include "Value/Types/CsTypes_DamageValue.h"
+	// Debug
+#include "Debug/CsTypes_Debug.h"
 
 #include "CsSettings_Manager_Damage.generated.h"
 
@@ -15,13 +18,19 @@ struct CSDMG_API FCsSettings_Manager_Damage_Event
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage")
+	FCsDebugDrawPie DrawPie;
+
 	FCsSettings_Manager_Damage_Event() :
-		PoolSize(256)
+		PoolSize(256),
+		DrawPie()
 	{
 	}
+
+	static const FCsSettings_Manager_Damage_Event& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Damage_Event
@@ -36,7 +45,7 @@ struct CSDMG_API FCsSettings_Manager_Damage_Value
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
 	FCsSettings_Manager_Damage_Value() :
@@ -57,7 +66,7 @@ struct CSDMG_API FCsSettings_Manager_Damage_Range
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
 	FCsSettings_Manager_Damage_Range() :
@@ -78,7 +87,7 @@ struct CSDMG_API FCsSettings_Manager_Damage_Modifier
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "64", UIMin = "64"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage", meta = (ClampMin = "64", UIMin = "64"))
 	int32 PoolSize;
 
 	FCsSettings_Manager_Damage_Modifier() :
@@ -101,16 +110,16 @@ struct CSDMG_API FCsSettings_Manager_Damage
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage")
 	FCsSettings_Manager_Damage_Event Event;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage")
 	FCsSettings_Manager_Damage_Value Value;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage")
 	FCsSettings_Manager_Damage_Range Range;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg|Settings|Manager|Damage")
 	FCsSettings_Manager_Damage_Modifier Modifier;
 
 	FCsSettings_Manager_Damage() :

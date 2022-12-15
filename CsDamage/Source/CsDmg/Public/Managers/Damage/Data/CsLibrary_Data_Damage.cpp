@@ -5,6 +5,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Data
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
+#include "Managers/Damage/Data/Orientation/CsData_DamageOrientation.h"
 
 namespace NCsDamage
 {
@@ -74,6 +75,11 @@ namespace NCsDamage
 		}
 
 		#undef RangeType
+
+		bool FLibrary::SafeApplyOrientation(const FString& Context, const DataType* Data, FVector& Origin, FVector& Direction, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			return false;
+		}
 
 		#undef DataType
 	}

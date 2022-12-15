@@ -417,6 +417,163 @@ void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTrans
 
 #pragma endregion FCsDebugDrawSphere
 
+// FCsDebugDrawPie
+#pragma region
+
+bool FCsDebugDrawPie::CanDraw(const UObject* WorldContext) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+bool FCsDebugDrawPie::CanDraw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar) const
+{
+	if (CanDraw(WorldContext))
+		return true;
+
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		return FCsCVarDrawMap::Get().IsDrawing(OtherCVar);
+	}
+	return false;
+}
+
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FTransform& Transform) const
+{
+	if (CanDraw(WorldContext))
+	{
+		Draw_Internal(WorldContext, Angle, Transform);
+	}
+}
+
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const
+{
+	if (CanDraw(WorldContext))
+	{
+		Draw_Internal(WorldContext, InAngle, Transform, InRadius);
+	}
+}
+
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const float& InAngle, const FVector& InLocation, const float& InRadius) const
+{
+	if (CanDraw(WorldContext, OtherCVar))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(InLocation);
+
+		Draw_Internal(WorldContext, InAngle, InTransform, InRadius);
+	}
+}
+
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FVector& InLocation, const float& InRadius) const
+{
+	if (CanDraw(WorldContext))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(InLocation);
+
+		Draw_Internal(WorldContext, Angle, InTransform, InRadius);
+	}
+}
+
+void FCsDebugDrawPie::DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InRadius) const
+{
+	if (CanDraw(Actor, OtherCVar))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(Actor->GetActorLocation());
+
+		Draw_Internal(Actor, Angle, InTransform, InRadius);
+	}
+}
+
+void FCsDebugDrawPie::DrawAtLocation(AActor* Actor, const float& InRadius) const
+{
+	if (CanDraw(Actor))
+	{
+		FTransform InTransform = FTransform::Identity;
+		InTransform.SetLocation(Actor->GetActorLocation());
+
+		Draw_Internal(Actor, Angle, InTransform, InRadius);
+	}
+}
+
+void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform) const
+{
+	Draw_Internal(WorldContext, InAngle, Transform, Radius);
+}
+
+void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	if (InAngle == 0.0f)
+		return;
+
+	if (InRadius == 0.0f)
+		return;
+
+	FTransform AdjustedTransfrom = Transform;
+	AdjustedTransfrom.AddToTranslation(Location);
+
+	// Absolute
+	if (RotationType == ECsDebugDrawRotation::Absolute)
+	{
+		AdjustedTransfrom.SetRotation(Rotation.Quaternion());
+	}
+	// Offset
+	else
+	if (RotationType == ECsDebugDrawRotation::Offset)
+	{
+		FQuat Quat   = AdjustedTransfrom.GetRotation();
+		FRotator Rot = Quat.Rotator();
+		Rot			+= Rotation;
+				
+		AdjustedTransfrom.SetRotation(Rot.Quaternion());
+	}
+
+	const FVector Origin	= AdjustedTransfrom.GetTranslation();
+	const FVector Direction = AdjustedTransfrom.GetRotation().Vector();
+	
+	DrawDebugCone(World, Origin, Direction, InRadius, FMath::DegreesToRadians(InAngle), FMath::DegreesToRadians(1.0f), Segments, Color, false, LifeTime, 0, Thickness);
+}
+
+#pragma endregion FCsDebugDrawCircle
+
 // FCsDebugDrawPoint
 #pragma region
 

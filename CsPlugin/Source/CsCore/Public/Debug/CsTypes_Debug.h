@@ -358,6 +358,97 @@ private:
 
 #pragma endregion FCsDebugDrawSphere
 
+// FCsDebugDrawPie
+#pragma region
+
+class UObject;
+class AActor;
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawPie
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FECsCVarDraw CVar;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bEnableInPreview;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	ECsDebugDrawPriority PriorityInPlay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to center and / or transform matrix. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FVector Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	ECsDebugDrawRotation RotationType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FRotator Rotation;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
+	float Angle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "1.0", ClampMin = "1.0"))
+	float Radius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	int32 Segments;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Thickness;
+
+	FCsDebugDrawPie() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		Location(FVector::ZeroVector),
+		RotationType(ECsDebugDrawRotation::Absolute),
+		Rotation(FRotator::ZeroRotator),
+		Angle(45.0f),
+		Radius(32.0f),
+		Segments(16),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		Thickness(1.0f)
+	{
+	}
+
+	bool CanDraw(const UObject* WorldContext) const;
+	bool CanDraw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar) const;
+
+	void Draw(const UObject* WorldContext, const FTransform& Transform) const;
+	void Draw(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const;
+	void Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const float& InAngle, const FVector& InLocation, const float& InRadius) const;
+	void Draw(const UObject* WorldContext, const FVector& InLocation, const float& InRadius) const;
+
+	void DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVar, const float& InRadius) const;
+	void DrawAtLocation(AActor* Actor, const float& InRadius) const;
+
+private:
+
+	void Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform) const;
+	void Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const;
+};
+
+#pragma endregion FCsDebugDrawPie
+
 // FCsDebugDrawPoint
 #pragma region
 

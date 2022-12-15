@@ -4,28 +4,44 @@
 TAutoConsoleVariable<int32> CsCVarLogManagerDamageEvents(
 	TEXT("log.manager.damage.events"),
 	0,
-	TEXT("Log Manager Damage Events."),
+	TEXT("Log Manager Damage Events.\n")
+	TEXT("\n")
+	TEXT("[Non-Shipping]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerDamageTransactionEvent(
 	TEXT("log.manager.damage.transaction.event"),
 	0,
-	TEXT("Log Manager Damage Transaction Event."),
+	TEXT("Log Manager Damage Transaction Event.\n")
+	TEXT("\n")
+	TEXT("[Non-Shipping]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerDamageTransactionValue(
 	TEXT("log.manager.damage.transaction.value"),
 	0,
-	TEXT("Log Manager Damage Transaction Value."),
+	TEXT("Log Manager Damage Transaction Value.\n")
+	TEXT("\n")
+	TEXT("[Non-Shipping]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
 TAutoConsoleVariable<int32> CsCVarLogManagerDamageTransactionRange(
 	TEXT("log.manager.damage.transaction.range"),
 	0,
-	TEXT("Log Manager Damage Transaction Range."),
+	TEXT("Log Manager Damage Transaction Range.\n")
+	TEXT("\n")
+	TEXT("[Non-Shipping]\n")
+	TEXT("0 - (default) DON'T	show log.\n")
+	TEXT("1 -			SHOW	log."),
 	ECVF_SetByConsole
 );
 
@@ -49,6 +65,32 @@ namespace NCsCVarLog
 }
 
 #pragma endregion CVarLog
+
+TAutoConsoleVariable<int32> CsCVarDrawManagerDamageEvents(
+	TEXT("draw.manager.damage.events"),
+	0,
+	TEXT("Draw Manager Damage Events\n")
+	TEXT("\n")
+	TEXT("[Editor]\n")
+	TEXT("0 - (default) DON'T DRAW.\n")
+	TEXT("1 -			DRAW."),
+	ECVF_SetByConsole
+);
+
+// CVarDraw
+#pragma region
+
+namespace NCsCVarDraw
+{
+	CSDMG_API CS_CREATE_ENUM_STRUCT_CUSTOM(DrawManagerDamageEvents, "Draw Manager Damage Events");
+
+	namespace Map
+	{
+		CSDMG_API CS_ADD_TO_CVAR_MAP(DrawManagerDamageEvents, CsCVarDrawManagerDamageEvents);
+	}
+}
+
+#pragma endregion CVarDraw
 
 // ScopedGroup
 #pragma region

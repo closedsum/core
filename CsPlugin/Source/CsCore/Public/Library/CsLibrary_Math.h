@@ -532,6 +532,15 @@ namespace NCsMath
 		FORCEINLINE static FVector RotateNormalAngleUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetUpFromNormal(N)); }
 		
 		/**
+		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of World Up (FVector::UpVector).
+		*
+		* @param N		Normalized Vector
+		* @param Angle	Angle in Degrees
+		* return		N rotated Angle Degrees about 'Up' vector relative to N.
+		*/
+		FORCEINLINE static FVector RotateNormalWorldUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, FVector::UpVector); }
+
+		/**
 		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Right' vector relative to N.
 		*
 		* @param N		Normalized Vector

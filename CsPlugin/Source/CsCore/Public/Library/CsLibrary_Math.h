@@ -522,6 +522,8 @@ namespace NCsMath
 		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
 		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N) { return GetRightOnlyYaw(GetYaw(N)); }
 
+		FORCEINLINE static void GetRightAndUpFromNormal(const FVector& N, FVector& OutRight, FVector& OutUp) { GetRightAndUp(N.Rotation(), OutRight, OutUp); }
+
 		/**
 		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Up' vector relative to N.
 		* 
@@ -584,6 +586,13 @@ namespace NCsMath
 		{
 			FRotationMatrix M(R);
 			OutForward = M.GetScaledAxis(EAxis::X);
+			OutRight = M.GetScaledAxis(EAxis::Y);
+			OutUp = M.GetScaledAxis(EAxis::Z);
+		}
+
+		FORCEINLINE static void GetRightAndUp(const FRotator& R, FVector& OutRight, FVector& OutUp)
+		{
+			FRotationMatrix M(R);
 			OutRight = M.GetScaledAxis(EAxis::Y);
 			OutUp = M.GetScaledAxis(EAxis::Z);
 		}

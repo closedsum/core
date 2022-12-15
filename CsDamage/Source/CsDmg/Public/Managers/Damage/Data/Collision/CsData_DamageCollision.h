@@ -14,8 +14,8 @@ namespace NCsDamage
 		namespace NCollision
 		{
 			/**
-			* Interface to describe the collision of Damage. This should be used with
-			* the interface "base" NCsDamage::NData::IData.
+			* Interface to describe the collision of Damage. 
+			*  This should be used with the interface "base" NCsDamage::NData::IData.
 			*/
 			struct CSDMG_API ICollision : public ICsGetInterfaceMap
 			{
@@ -46,8 +46,8 @@ class CSDMG_API UCsData_DamageCollision : public UCsGetInterfaceMap
 };
 
 /**
-* Interface to describe the collision of Damage. This should be used with 
-* the interface "base" ICsData_Damage.
+* Interface to describe the collision of Damage. 
+*  This should be used with the interface "base" ICsData_Damage.
 */
 class CSDMG_API ICsData_DamageCollision : public ICsGetInterfaceMap
 {

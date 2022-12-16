@@ -12,94 +12,11 @@
 #include "Containers/CsInterfaceMap.h"
 // Damage
 #include "Value/Point/CsDamageValuePoint.h"
-#include "Value/Range/CsDamageValueRangeImpl.h"
-#include "Range/CsDamageRangeImpl.h"
 
-// FCsData_DamageSphere
+// FProxy
 #pragma region
 
-#define SphereType NCsDamage::NData::NShape::NSphere::FImpl
-
-void FCsData_DamageSphere::CopyToSphere(SphereType* Sphere)
-{
-	Sphere->SetType(&Type);
-	Sphere->SetMinDamage(&MinDamage);
-	Sphere->SetMaxDamage(&MaxDamage);
-	Sphere->SetMinRadius(&MinRadius);
-	Sphere->SetMaxRadius(&MaxRadius);
-	Sphere->SetbInterpolate(&bInterpolate);
-	Sphere->SetInterpolationMethod(&InterpolationMethod);
-	Sphere->SetEasingType(&EasingType);
-	Sphere->SetCurve(Curve.GetPtr());
-
-	typedef NCsDamage::NCollision::EMethod CollisionMethodType;
-
-	Sphere->SetCollisionMethod((CollisionMethodType*)(&CollisionMethod));
-	Sphere->SetCollisionChannel((ECollisionChannel*)(&CollisionChannel));
-}
-
-void FCsData_DamageSphere::CopyToSphereAsValue(SphereType* Sphere)
-{
-	Sphere->SetType(Type);
-	Sphere->SetMinDamage(MinDamage);
-	Sphere->SetMaxDamage(MaxDamage);
-	Sphere->SetMinRadius(MinRadius);
-	Sphere->SetMaxRadius(MaxRadius);
-	Sphere->SetbInterpolate(bInterpolate);
-	Sphere->SetInterpolationMethod(InterpolationMethod);
-	Sphere->SetEasingType(EasingType);
-	Sphere->SetCurve(Curve.Get());
-
-	typedef NCsDamage::NCollision::EMethod CollisionMethodType;
-
-	Sphere->SetCollisionMethod((CollisionMethodType)(CollisionMethod));
-	Sphere->SetCollisionChannel((ECollisionChannel)(CollisionChannel));
-}
-
-#undef SphereType
-
-bool FCsData_DamageSphere::IsValidChecked(const FString& Context) const
-{
-	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsDamageType, Type);
-	CS_IS_FLOAT_GREATER_THAN_CHECKED(MinDamage, 0.0f)
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxDamage, MinDamage)
-	CS_IS_FLOAT_GREATER_THAN_CHECKED(MinRadius, 0.0f)
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MaxRadius, MinRadius)
-	CS_IS_ENUM_VALID_CHECKED(EMCsInterpolatingMethod, InterpolationMethod);
-	CS_IS_ENUM_VALID_CHECKED(EMCsEasingType, EasingType);
-
-	if (bInterpolate &&
-		InterpolationMethod == ECsInterpolatingMethod::Curve)
-	{
-		Curve.IsValidChecked(Context);
-	}
-	CS_IS_ENUM_VALID_CHECKED(EMCsDamageCollisionMethod, CollisionMethod);
-	CS_IS_ENUM_VALID_CHECKED(EMCsCollisionChannel, CollisionChannel);
-	return true;
-}
-
-bool FCsData_DamageSphere::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
-{
-	CS_IS_ENUM_STRUCT_VALID(EMCsDamageType, FECsDamageType, Type);
-	CS_IS_FLOAT_GREATER_THAN(MinDamage, 0.0f)
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MaxDamage, MinDamage)
-	CS_IS_FLOAT_GREATER_THAN(MinRadius, 0.0f)
-	CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MaxRadius, MinRadius)
-	CS_IS_ENUM_VALID(EMCsInterpolatingMethod, ECsInterpolatingMethod, InterpolationMethod);
-	CS_IS_ENUM_VALID(EMCsEasingType, ECsEasingType, EasingType);
-
-	if (bInterpolate &&
-		InterpolationMethod == ECsInterpolatingMethod::Curve)
-	{
-		if (!Curve.IsValid(Context))
-			return false;
-	}
-	CS_IS_ENUM_VALID(EMCsDamageCollisionMethod, ECsDamageCollisionMethod, CollisionMethod);
-	CS_IS_ENUM_VALID(EMCsCollisionChannel, ECollisionChannel, CollisionChannel);
-	return true;
-}
-
-const FName NCsDamage::NData::NShape::NSphere::FImpl::Name = FName("NCsDamage::NData::NShape::NSphere::FImpl");
+const FName NCsDamage::NData::NShape::NSphere::FProxy::Name = FName("NCsDamage::NData::NShape::NSphere::FProxy");
 
 namespace NCsDamage
 {
@@ -109,7 +26,7 @@ namespace NCsDamage
 		{
 			namespace NSphere
 			{
-				namespace NImpl
+				namespace NProxy
 				{
 					namespace NCached
 					{
@@ -120,15 +37,16 @@ namespace NCsDamage
 					}
 				}
 
-				FImpl::FImpl() :
+				FProxy::FProxy() :
 					Outer(nullptr),
 					// ICsGetInterfaceMap
 					InterfaceMap(),
 					// DataType (NCsDamage::NData::IData)
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, nullptr),
+					Value(nullptr),
 					CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(Type),
+				// Shape
 					// ShapeDataType (NCsDamage::NData::NShape::IShape)
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(Range, nullptr),
+					Range(nullptr),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDamage, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDamage, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(MinRadius, 0.0f),
@@ -137,23 +55,27 @@ namespace NCsDamage
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(InterpolationMethod, ECsInterpolatingMethod::Easing),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(EasingType, ECsEasingType::Linear),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Curve, nullptr),
+				// Collision
 					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionMethod, NCsDamage::NCollision::EMethod::PhysicsSweep),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(CollisionChannel, ECollisionChannel::ECC_WorldDynamic)
+					CollisionInfo(nullptr)
 				{
 					// ICsGetInterfaceMap
 					InterfaceMap = new FCsInterfaceMap();
 
-					InterfaceMap->SetRoot<FImpl>(this);
+					InterfaceMap->SetRoot<FProxy>(this);
 
 					typedef NCsData::IData DataType;
 					typedef NCsDamage::NData::IData DamageDataType;
+					// Shape
 					typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+					// Collision
 					typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
 
 					InterfaceMap->Add<DataType>(static_cast<DataType*>(this));
 					InterfaceMap->Add<DamageDataType>(static_cast<DamageDataType*>(this));
+					// Shape
 					InterfaceMap->Add<ShapeDataType>(static_cast<ShapeDataType*>(this));
+					// Collision
 					InterfaceMap->Add<CollisionDataType>(static_cast<CollisionDataType*>(this));
 
 					CS_CTOR_SET_MEMBER_PROXY(Type);
@@ -165,39 +87,11 @@ namespace NCsDamage
 					CS_CTOR_SET_MEMBER_PROXY(InterpolationMethod);
 					CS_CTOR_SET_MEMBER_PROXY(EasingType);
 					CS_CTOR_SET_MEMBER_PROXY(Curve);
-					CS_CTOR_SET_MEMBER_PROXY(CollisionMethod);
-					CS_CTOR_SET_MEMBER_PROXY(CollisionChannel);
-
-					// NCsDamage::NValue::NRange::IRange
-					{
-						typedef NCsDamage::NValue::NRange::FImpl ValueImplType;
-						ValueImplType* Impl = new ValueImplType();
-
-						Impl->SetMinValue(GetMinDamagePtr());
-						Impl->SetMaxValue(GetMaxDamagePtr());
-
-						Value = Impl;
-					}
-					CS_CTOR_SET_MEMBER_PROXY(Value);
-
-					// NCsDamage::NRange::IRange
-					{
-						typedef NCsDamage::NRange::FImpl RangeImplType;
-						RangeImplType* Impl = new RangeImplType();
-
-						Impl->SetMinRange(GetMinRadiusPtr());
-						Impl->SetMaxRange(GetMaxRadiusPtr());
-
-						Range = Impl;
-					}
-					CS_CTOR_SET_MEMBER_PROXY(Range);
 				}
 
-				FImpl::~FImpl()
+				FProxy::~FProxy()
 				{
 					delete InterfaceMap;
-					delete Value;
-					delete Range;
 				}
 
 				// ShapeDataType (NCsDamage::NData::NShape::IShape)
@@ -205,12 +99,12 @@ namespace NCsDamage
 
 				#define ValueType NCsDamage::NValue::IValue
 				#define RangeType NCsDamage::NRange::IRange
-				float FImpl::CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const
+				float FProxy::CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const
 				{
 				#undef ValueType
 				#undef RangeType
 
-					using namespace NCsDamage::NData::NShape::NSphere::NImpl::NCached;
+					using namespace NCsDamage::NData::NShape::NSphere::NProxy::NCached;
 
 					const FString& Context = Str::CalculateDamage;
 
@@ -264,20 +158,22 @@ namespace NCsDamage
 					return MaxValue;
 				}
 
-				bool FImpl::IsInBounds(const FVector& Origin, const FVector& Point) const
+				bool FProxy::IsInBounds(const FVector& Origin, const FVector& Point) const
 				{
 					return false;
 				}
 
 				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
-				bool FImpl::IsValidChecked(const FString& Context) const
+				bool FProxy::IsValidChecked(const FString& Context) const
 				{
+					CS_IS_VALID_CHECKED(GetCollisionInfo());
 					return true;
 				}
 				
-				bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
+				bool FProxy::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/) const
 				{
+					CS_IS_VALID(GetCollisionInfo())
 					return true;
 				}
 			}
@@ -285,7 +181,7 @@ namespace NCsDamage
 	}
 }
 
-#pragma endregion FCsData_DamageSphere
+#pragma endregion Proxy
 
 const FName UCsData_DamageSphereImpl::Name = FName("UCsData_DamageSphereImpl");
 
@@ -294,22 +190,14 @@ UCsData_DamageSphereImpl::UCsData_DamageSphereImpl(const FObjectInitializer& Obj
 	DataProxy(nullptr),
 	bLoaded(false),
 	InterfaceMap(nullptr),
+	Inner(),
 	// ICsData_Damage
-	DamageValue(nullptr),
-	Type(),
+	DamageValueProxy(),
 	// ICsData_DamageSphere
-	MinDamage(0.0f),
-	MaxDamage(0.0f),
-	MinRadius(0.0f),
-	MaxRadius(0.0f),
-	bInterpolate(false),
-	InterpolationMethod(ECsInterpolatingMethod::Easing),
-	EasingType(ECsEasingType::Linear),
-	Curve(),
-	DamageRange(nullptr),
+	DamageRangeProxy(),
+// Collision
 	// ICsData_DamageCollision
-	CollisionMethod(ECsDamageCollisionMethod::PhysicsSweep),
-	CollisionChannel(ECollisionChannel::ECC_WorldDynamic)
+	CollisionInfoProxy()
 {
 }
 
@@ -322,7 +210,6 @@ void UCsData_DamageSphereImpl::PostLoad()
 
 	if (this == GetClass()->GetDefaultObject<UCsData_DamageSphereImpl>())
 	{
-		//Init();
 		bLoaded = false;
 	}
 }
@@ -350,17 +237,21 @@ void UCsData_DamageSphereImpl::Init()
 
 		typedef ICsData DataType;
 		typedef ICsData_Damage DamageDataType;
-		typedef ICsData_DamageShape DamageShapeDataType;
-		typedef ICsData_DamageCollision DamageCollisionDataType;
+		// Shape
+		typedef ICsData_DamageShape ShapeDataType;
+		// Collision
+		typedef ICsData_DamageCollision CollisionDataType;
 
 		InterfaceMap->Add<DataType>(Cast<DataType>(this));
 		InterfaceMap->Add<DamageDataType>(Cast<DamageDataType>(this));
-		InterfaceMap->Add<DamageShapeDataType>(Cast<DamageShapeDataType>(this));
-		InterfaceMap->Add<DamageCollisionDataType>(Cast<DamageCollisionDataType>(this));
+		// Shape
+		InterfaceMap->Add<ShapeDataType>(Cast<ShapeDataType>(this));
+		// Collision
+		InterfaceMap->Add<CollisionDataType>(Cast<CollisionDataType>(this));
 	}
 	if (!DataProxy)
 	{
-		typedef NCsDamage::NData::NShape::NSphere::FImpl DataProxyType;
+		typedef NCsDamage::NData::NShape::NSphere::FProxy DataProxyType;
 
 		DataProxy = new DataProxyType();
 
@@ -369,42 +260,31 @@ void UCsData_DamageSphereImpl::Init()
 		// DataType (NCsDamage::NData::IData)
 		
 		// ValueRangeType (NCsDamage::NValue::NRange::IRange)
-		{
-			typedef NCsDamage::NValue::NRange::FImpl ValueImplType;
-			ValueImplType* Impl = new ValueImplType();
+		DamageValueProxy.SetMinValue(Inner.GetMinDamagePtr());
+		DamageValueProxy.SetMaxValue(Inner.GetMaxDamagePtr());
+		Proxy->SetValue(&DamageValueProxy);
+		Proxy->SetType(Inner.GetTypePtr());
 
-			Impl->SetMinValue(&MinDamage);
-			Impl->SetMaxValue(&MaxDamage);
-
-			DamageValue = Impl;
-		}
-		Proxy->SetValue(&DamageValue);
-		Proxy->SetType(&Type);
-
+	// Shape
 		// RangeType (NCsDamage::NRange::IRange)
-		{
-			typedef NCsDamage::NRange::FImpl RangeImplType;
-			RangeImplType* Impl = new RangeImplType();
+		DamageRangeProxy.SetMinRange(Inner.GetMinRadiusPtr());
+		DamageRangeProxy.SetMaxRange(Inner.GetMaxRadiusPtr());
+		Proxy->SetRange(&DamageRangeProxy);
+		Proxy->SetMinDamage(Inner.GetMinDamagePtr());
+		Proxy->SetMaxDamage(Inner.GetMaxDamagePtr());
+		Proxy->SetMinRadius(Inner.GetMinRadiusPtr());
+		Proxy->SetMaxRadius(Inner.GetMaxRadiusPtr());
+		Proxy->SetbInterpolate(Inner.GetbInterpolatePtr());
+		Proxy->SetInterpolationMethod(Inner.GetInterpolationMethodPtr());
+		Proxy->SetEasingType(Inner.GetEasingTypePtr());
+		Proxy->SetCurve(Inner.Curve.GetPtr());
 
-			Impl->SetMinRange(&MinRadius);
-			Impl->SetMaxRange(&MaxRadius);
-
-			DamageRange = Impl;
-		}
-		Proxy->SetRange(&DamageRange);
-		Proxy->SetMinDamage(&MinDamage);
-		Proxy->SetMaxDamage(&MaxDamage);
-		Proxy->SetMinRadius(&MinRadius);
-		Proxy->SetMaxRadius(&MaxRadius);
-		Proxy->SetbInterpolate(&bInterpolate);
-		Proxy->SetInterpolationMethod(&InterpolationMethod);
-		Proxy->SetEasingType(&EasingType);
-		Proxy->SetCurve(Curve.GetPtr());
-
+	// Collision
+		// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 		typedef NCsDamage::NCollision::EMethod CollisionMethodType;
 
-		Proxy->SetCollisionMethod((CollisionMethodType*)(&CollisionMethod));
-		Proxy->SetCollisionChannel((ECollisionChannel*)(&CollisionChannel));
+		Inner.CollisionInfo.CopyToInfo(&CollisionInfoProxy);
+		Proxy->SetCollisionInfo(&CollisionInfoProxy);
 	}
 }
 
@@ -412,8 +292,6 @@ void UCsData_DamageSphereImpl::Reset()
 {
 	CS_SAFE_DELETE_PTR(DataProxy)
 	CS_SAFE_DELETE_PTR(InterfaceMap)
-	CS_SAFE_DELETE_PTR(DamageValue)
-	CS_SAFE_DELETE_PTR(DamageRange)
 }
 
 // ICsData
@@ -469,3 +347,19 @@ bool UCsData_DamageSphereImpl::IsInBounds(const FVector& Origin, const FVector& 
 }
 
 #pragma endregion ICsData_DamageSphere
+
+// ICsData_DamageCollision
+#pragma region
+
+#define CollisionInfoType NCsDamage::NCollision::FInfo
+const CollisionInfoType& UCsData_DamageSphereImpl::GetCollisionInfo() const
+{
+#undef CollisionInfoType
+	typedef NCsDamage::NData::NShape::NSphere::FProxy DataProxyType;
+
+	const DataProxyType* Proxy = (DataProxyType*)DataProxy;
+
+	return Proxy->GetCollisionInfo();
+}
+
+#pragma endregion ICsData_DamageCollision

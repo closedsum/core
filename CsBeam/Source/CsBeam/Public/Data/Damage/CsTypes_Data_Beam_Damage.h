@@ -1,10 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/CsTypes_Damage.h"
 #include "Types/CsTypes_Interpolation.h"
 #include "Types/CsTypes_Curve.h"
 
 #include "CsTypes_Data_Beam_Damage.generated.h"
-#pragma once
 
 // FCsBeamData_DamagePoint
 #pragma region
@@ -45,8 +45,8 @@ public:
 // FCsBeamData_DamageSphere
 #pragma region
 
-// NCsDamage::NData::NShape::NSphere::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FImpl)
+// NCsDamage::NData::NShape::NSphere::FProxy
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FProxy)
 
 USTRUCT(BlueprintType)
 struct CSBEAM_API FCsBeamData_DamageSphere
@@ -102,7 +102,7 @@ public:
 
 private:
 
-	typedef NCsDamage::NData::NShape::NSphere::FImpl SphereDataProxyType;
+	typedef NCsDamage::NData::NShape::NSphere::FProxy SphereDataProxyType;
 
 public:
 

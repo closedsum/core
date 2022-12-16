@@ -349,9 +349,12 @@ namespace NCsDamage
 			ShapeDataType* ShapeData		 = DamageDataLibrary::GetInterfaceChecked<ShapeDataType>(Context, Data);
 			CollisionDataType* CollisionData = DamageDataLibrary::GetInterfaceChecked<CollisionDataType>(Context, Data);
 
+			typedef NCsDamage::NCollision::FInfo CollisionInfoType;
 			typedef NCsDamage::NCollision::EMethod CollisionMethodType;
 
-			checkf(CollisionData->GetCollisionMethod() == CollisionMethodType::PhysicsSweep, TEXT("%s: GetCollisionMethod() is NOT CollisionMethodType::PhysicsSweep."), *Context);
+			const CollisionInfoType& CollisionInfo = CollisionData->GetCollisionInfo();
+
+			checkf(CollisionInfo.GetMethod() == CollisionMethodType::PhysicsSweep, TEXT("%s: GetMethod() is NOT CollisionMethodType::PhysicsSweep."), *Context);
 
 			typedef NCsDamage::NRange::FLibrary RangeLibrary;
 			typedef NCsDamage::NRange::IRange RangeType;
@@ -383,7 +386,7 @@ namespace NCsDamage
 
 				Request->Start = Hit.ImpactPoint;
 				Request->End   = Hit.ImpactPoint;
-				Request->Channel = CollisionData->GetCollisionChannel();
+				Request->Channel = CollisionInfo.GetChannel();
 
 				Request->Shape.SetSphere(MaxRange);
 
@@ -393,7 +396,7 @@ namespace NCsDamage
 				if (AActor* Causer = Cast<AActor>(Event->GetCauser()))
 					Request->Params.AddIgnoredActor(Causer);
 
-				Request->ObjectParams.AddObjectTypesToQuery(CollisionData->GetCollisionChannel());
+				Request->ObjectParams.AddObjectTypesToQuery(CollisionInfo.GetChannel());
 			
 				typedef NCsTrace::NResponse::FResponse ResponseType;
 
@@ -427,7 +430,7 @@ namespace NCsDamage
 
 				Request->Start = Hit.ImpactPoint;
 				Request->End   = Hit.ImpactPoint;
-				Request->Channel = CollisionData->GetCollisionChannel();
+				Request->Channel = CollisionInfo.GetChannel();
 
 				Request->Shape.SetSphere(MinRange);
 
@@ -437,7 +440,7 @@ namespace NCsDamage
 				if (AActor* Causer = Cast<AActor>(Event->GetCauser()))
 					Request->Params.AddIgnoredActor(Causer);
 
-				Request->ObjectParams.AddObjectTypesToQuery(CollisionData->GetCollisionChannel());
+				Request->ObjectParams.AddObjectTypesToQuery(CollisionInfo.GetChannel());
 			
 				typedef NCsTrace::NResponse::FResponse ResponseType;
 

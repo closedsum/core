@@ -617,11 +617,13 @@ void UCsManager_Damage::ProcessDamageEventContainer(const EventResourceType* Eve
 	{
 		// Collision
 		typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
+		typedef NCsDamage::NCollision::FInfo CollisionInfoType;
 		typedef NCsDamage::NCollision::EMethod CollisionMethodType;
 
 		if (CollisionDataType* CollisionData = DamageDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 		{
-			const CollisionMethodType& CollisionMethod = CollisionData->GetCollisionMethod();
+			const CollisionInfoType& CollisionInfo	   = CollisionData->GetCollisionInfo();
+			const CollisionMethodType& CollisionMethod = CollisionInfo.GetMethod();
 
 			// PhysicsSweep
 			if (CollisionMethod == CollisionMethodType::PhysicsSweep)

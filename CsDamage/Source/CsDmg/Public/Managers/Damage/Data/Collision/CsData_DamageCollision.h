@@ -3,7 +3,6 @@
 #include "Containers/CsGetInterfaceMap.h"
 // Types
 #include "Types/CsTypes_Damage_Collision.h"
-#include "Engine/EngineTypes.h"
 
 #include "CsData_DamageCollision.generated.h"
 
@@ -27,13 +26,16 @@ namespace NCsDamage
 
 				virtual ~ICollision(){}
 
-			#define CollisionMethodType NCsDamage::NCollision::EMethod
+			#define CollisionInfoType NCsDamage::NCollision::FInfo
 
-				virtual const CollisionMethodType& GetCollisionMethod() const = 0;
+				/**
+				* Get any information related to Collision for Damage.
+				* 
+				* return Collision Info.
+				*/
+				virtual const CollisionInfoType& GetCollisionInfo() const = 0;
 
-				virtual const ECollisionChannel& GetCollisionChannel() const = 0;
-
-			#undef CollisionMethodType
+			#undef CollisionInfoType
 			};
 		}
 	}
@@ -59,11 +61,14 @@ public:
 
 public:
 
-#define CollisionMethodType NCsDamage::NCollision::EMethod
+#define CollisionInfoType NCsDamage::NCollision::FInfo
 
-	virtual const CollisionMethodType& GetCollisionMethod() const = 0;
+	/**
+	* Get any information related to Collision for Damage.
+	*
+	* return Collision Info.
+	*/
+	virtual const CollisionInfoType& GetCollisionInfo() const = 0;
 
-	virtual const ECollisionChannel& GetCollisionChannel() const = 0;
-
-#undef CollisionMethodType
+#undef CollisionInfoType
 };

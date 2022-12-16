@@ -7,103 +7,14 @@
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Damage
 #include "Value/Range/CsDamageValueRangeImpl.h"
+#include "Range/CsDamageRangeImpl.h"
 // Log
 #include "Utility/CsDmgLog.h"
 
 #include "CsData_DamageSphereImpl.generated.h"
 
-// FCsData_DamageSphere
+// Proxy
 #pragma region
-
-// NCsDamage::NData::NShape::NSphere::FImpl
-CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsDamage, NData, NShape, NSphere, FImpl)
-
-/**
-* Data for a Damage Sphere
-* 
-* Implements the interfaces:
-*  ICsData
-*  ICsData_Damage
-*  ICsData_DamageSphere
-*  ICsData_DamageCollision
-*/
-USTRUCT(BlueprintType)
-struct CSDMG_API FCsData_DamageSphere
-{
-	GENERATED_USTRUCT_BODY()
-
-// ICsData_Damage
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg")
-	FECsDamageType Type;
-
-//  ICsData_DamageSphere
-
-	/** The minimum damage */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MinDamage;
-
-	/** The maximum damage */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MaxDamage;
-
-	/** The minimum range at which the damage is applied. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MinRadius;
-
-	/** The maximum range at which the damage is applied. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MaxRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (InlineEditConditionToggle))
-	bool bInterpolate;
-
-	/** Describes with method to use for interpolating a set of values. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (editcondition = "bInterpolate"))
-	ECsInterpolatingMethod InterpolationMethod;
-
-	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
-	    Easing method for interpolating values between Min Damage and Max Damage. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (editcondition = "bInterpolate"))
-	ECsEasingType EasingType;
-
-	/** Curve [0,1] for interpolating values between Min Damage and Max Damage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg", meta = (editcondition = "bInterpolate"))
-	FCsCurveFloat Curve;
-
-// ICsData_DamageCollision
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg")
-	ECsDamageCollisionMethod CollisionMethod;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg")
-	TEnumAsByte<ECollisionChannel> CollisionChannel;
-
-public:
-
-	FCsData_DamageSphere() :
-		Type(),
-		MinDamage(0.0f),
-		MaxDamage(0.0f),
-		MinRadius(0.0f),
-		MaxRadius(0.0f),
-		bInterpolate(false),
-		InterpolationMethod(ECsInterpolatingMethod::Easing),
-		EasingType(ECsEasingType::Linear),
-		Curve(),
-		CollisionMethod(ECsDamageCollisionMethod::PhysicsSweep),
-		CollisionChannel(ECollisionChannel::ECC_WorldDynamic)
-	{
-	}
-
-#define SphereType NCsDamage::NData::NShape::NSphere::FImpl
-	void CopyToSphere(SphereType* Sphere);
-	void CopyToSphereAsValue(SphereType* Sphere);
-#undef SphereType
-
-	bool IsValidChecked(const FString& Context) const;
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) const;
-};
 
 struct FCsInterfaceMap;
 
@@ -124,15 +35,19 @@ namespace NCsDamage
 			{
 			#define DataType NCsData::IData
 			#define DamageDataType NCsDamage::NData::IData
+			// Shape
 			#define ShapeDataType NCsDamage::NData::NShape::IShape
+			// Collision
 			#define CollisionDataType NCsDamage::NData::NCollision::ICollision
 
 				/**
 				*
 				*/
-				struct CSDMG_API FImpl : public DataType,
+				struct CSDMG_API FProxy : public DataType,
 										 public DamageDataType,
+										 // Shape
 										 public ShapeDataType,
+										 // Collision
 										 public CollisionDataType
 				{
 				public:
@@ -143,7 +58,8 @@ namespace NCsDamage
 
 				#define ValueType NCsDamage::NValue::IValue 
 				#define RangeType NCsDamage::NRange::IRange
-				#define CollisionMethodType NCsDamage::NCollision::EMethod
+				// Collision
+				#define CollisionInfoType NCsDamage::NCollision::FInfo
 
 					UObject* Outer;
 
@@ -153,12 +69,15 @@ namespace NCsDamage
 
 				// DamageDataType (NCsDamage::NData::IData)
 
-					CS_DECLARE_MEMBER_WITH_PROXY(Value, ValueType*)
+					ValueType* Value;
+
 					CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
+			// Shape
+			
 				// ShapeDataType (NCsDamage::NData::NShape::IShape)
 
-					CS_DECLARE_MEMBER_WITH_PROXY(Range, RangeType*)
+					RangeType* Range;
 					CS_DECLARE_MEMBER_WITH_PROXY(MinDamage, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(MaxDamage, float)
 					CS_DECLARE_MEMBER_WITH_PROXY(MinRadius, float)
@@ -168,15 +87,16 @@ namespace NCsDamage
 					CS_DECLARE_MEMBER_WITH_PROXY(EasingType, ECsEasingType)
 					CS_DECLARE_MEMBER_WITH_PROXY(Curve, UCurveFloat*)
 
-					// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+			// Collision
+			
+				// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 
-					CS_DECLARE_MEMBER_WITH_PROXY(CollisionMethod, CollisionMethodType)
-					CS_DECLARE_MEMBER_WITH_PROXY(CollisionChannel, ECollisionChannel)
+					CollisionInfoType* CollisionInfo;
 
 				public:
 
-					FImpl();
-					~FImpl();
+					FProxy();
+					~FProxy();
 
 					FORCEINLINE void SetOuter(UObject* InOuter) { Outer = InOuter; }
 
@@ -190,17 +110,24 @@ namespace NCsDamage
 
 				#pragma endregion ICsGetInterfaceMap
 
+				public:
+
+					FORCEINLINE void SetValue(ValueType* InValue) { Value = InValue; }
+
 				// DamageDataType (NCsDamage::NData::IData)
 				#pragma region
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Value, ValueType)
+					FORCEINLINE const ValueType* GetValue() const { return Value; }
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsDamageType)
 
 				#pragma endregion DamageDataType (NCsDamage::NData::IData)
 
+			// Shape
+
 				public:
 
+					FORCEINLINE void SetRange(RangeType* InValue) { Range = InValue; }
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDamage, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDamage, float)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinRadius, float)
@@ -214,7 +141,7 @@ namespace NCsDamage
 				#pragma region
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Range, RangeType)
+					FORCEINLINE const RangeType* GetRange() const { return Range; }
 
 					float CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const;
 
@@ -224,12 +151,15 @@ namespace NCsDamage
 
 				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
+			// Collision
+			
 				// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 				#pragma region
 				public:			
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionMethod, CollisionMethodType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(CollisionChannel, ECollisionChannel)
+					FORCEINLINE const CollisionInfoType& GetCollisionInfo() const { return *CollisionInfo; }
+					FORCEINLINE CollisionInfoType* GetCollisionInfoPtr() { return CollisionInfo; }
+					FORCEINLINE void SetCollisionInfo(CollisionInfoType* InValue) { CollisionInfo = InValue; }
 
 				#pragma endregion CollisionDataType (NCsDamage::NData::NCollision::ICollision)
 
@@ -240,7 +170,8 @@ namespace NCsDamage
 
 				#undef ValueType
 				#undef RangeType
-				#undef CollisionMethodType
+				// Collision
+				#undef CollisionInfoType
 				};
 
 			#undef DataType
@@ -303,11 +234,9 @@ struct CSDMG_API FCsData_DamageSphereImpl_Inner
 
 // ICsData_DamageCollision
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data")
-	ECsDamageCollisionMethod CollisionMethod;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg|Damage|Data")
-	TEnumAsByte<ECollisionChannel> CollisionChannel;
+	/** Describes any information related to Collision for Damage. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsDmg")
+	FCsDamage_CollisionInfo CollisionInfo;
 
 public:
 
@@ -324,8 +253,7 @@ public:
 		EasingType(ECsEasingType::Linear),
 		Curve(),
 		// ICsData_DamageCollision
-		CollisionMethod(ECsDamageCollisionMethod::PhysicsSweep),
-		CollisionChannel(ECollisionChannel::ECC_WorldDynamic)
+		CollisionInfo()
 	{
 	}
 
@@ -339,11 +267,6 @@ public:
 	FORCEINLINE bool* GetbInterpolatePtr() { return &bInterpolate; }
 	FORCEINLINE ECsInterpolatingMethod* GetInterpolationMethodPtr() { return &InterpolationMethod; }
 	FORCEINLINE ECsEasingType* GetEasingTypePtr() { return &EasingType; }
-// ICsData_DamageCollision
-#define CollisionMethodType NCsDamage::NCollision::EMethod
-	FORCEINLINE CollisionMethodType* GetCollisionMethodPtr() { return (CollisionMethodType*)(&CollisionMethod); }
-#undef CollisionMethodType
-	FORCEINLINE ECollisionChannel* GetCollisionChannelPtr() { return (ECollisionChannel*)(&CollisionChannel); }
 };
 
 #pragma endregion Inner
@@ -356,14 +279,18 @@ struct FCsInterfaceMap;
 * Implements the interfaces:
 *  ICsData
 *  ICsData_Damage
-*  ICsData_DamageSphere
+* Shape
+*  ICsData_DamageShape
+* Collision
 *  ICsData_DamageCollision
 */
 UCLASS(BlueprintType, Blueprintable)
 class CSDMG_API UCsData_DamageSphereImpl : public UObject,
 										   public ICsData,
 										   public ICsData_Damage,
+										   // Shape
 										   public ICsData_DamageShape,
+										   // Collision
 										   public ICsData_DamageCollision
 {
 	GENERATED_UCLASS_BODY()
@@ -375,6 +302,8 @@ public:
 #define DataType NCsData::IData
 #define ValueType NCsDamage::NValue::IValue
 #define RangeType NCsDamage::NRange::IRange
+// Collision
+#define CollisionInfoType NCsDamage::NCollision::FInfo
 
 private:
 
@@ -425,67 +354,35 @@ public:
 
 #pragma endregion ICsData
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCsData_DamageSphereImpl_Inner Inner;
+
 private:
 
-	ValueType* DamageValue;
-
-public:
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FECsDamageType Type;
+#define ValueRangeImplType NCsDamage::NValue::NRange::FImpl
+	ValueRangeImplType DamageValueProxy;
+#undef ValueRangeImplType
 
 // ICsData_Damage
 #pragma region
 public:
 
-	FORCEINLINE const FECsDamageType& GetType() const { return Type; }
-	FORCEINLINE const ValueType* GetValue() const { return DamageValue; }
+	FORCEINLINE const FECsDamageType& GetType() const { return Inner.Type; }
+	FORCEINLINE const ValueType* GetValue() const { return &DamageValueProxy; }
 
 #pragma endregion ICsData_Damage
 
-public:
-
-	/** The minimum damage */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MinDamage;
-
-	/** The maximum damage */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MaxDamage;
-
-	/** The minimum range at which the damage is applied. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MinRadius;
-
-	/** The maximum range at which the damage is applied. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float MaxRadius;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (InlineEditConditionToggle))
-	bool bInterpolate;
-
-	/** Describes with method to use for interpolating a set of values. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterpolate"))
-	ECsInterpolatingMethod InterpolationMethod;
-
-	/** Valid if InterpolationMethod == ECsInterpolationMethod::Easing. 
-	    Easing method for interpolating values between Min Damage and Max Damage. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterpolate"))
-	ECsEasingType EasingType;
-
-	/** Curve [0,1] for interpolating values between Min Damage and Max Damage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (editcondition = "bInterpolate"))
-	FCsCurveFloat Curve;
-
 private:
 
-	RangeType* DamageRange;
+#define RangeImplType NCsDamage::NRange::FImpl
+	RangeImplType DamageRangeProxy;
+#undef RangeImplType
 
 // ICsData_DamageSphere
 #pragma region
 public:
 
-	FORCEINLINE const RangeType* GetRange() const { return DamageRange; }
+	FORCEINLINE const RangeType* GetRange() const { return &DamageRangeProxy; }
 
 	float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const;
 
@@ -495,27 +392,21 @@ public:
 
 #pragma endregion ICsData_DamageSphere
 
-public:
+private:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsDamageCollisionMethod CollisionMethod;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TEnumAsByte<ECollisionChannel> CollisionChannel;
+	CollisionInfoType CollisionInfoProxy;
 
 // ICsData_DamageCollision
 #pragma region
 public:
 
-#define CollisionMethodType NCsDamage::NCollision::EMethod
-	FORCEINLINE const CollisionMethodType& GetCollisionMethod() const { return *((CollisionMethodType*)(&CollisionMethod)); }
-#undef CollisionMethodType
-
-	FORCEINLINE const ECollisionChannel& GetCollisionChannel() const { return *((ECollisionChannel*)(&CollisionChannel)); }
+	const CollisionInfoType& GetCollisionInfo() const;
 
 #pragma endregion ICsData_DamageCollision
 
 #undef DataType
 #undef ValueType
 #undef RangeType
+// Collision
+#undef CollisionInfoType
 };

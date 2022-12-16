@@ -7,6 +7,7 @@
 // Data
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
 #include "Managers/Damage/Data/Orientation/CsData_DamageOrientation.h"
+#include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 
 namespace NCsDamage
 {
@@ -24,18 +25,34 @@ namespace NCsDamage
 		bool FLibrary::IsValidChecked(const FString& Context, const DataType* Data)
 		{
 			CS_IS_PTR_NULL_CHECKED(Data)
-
 			CS_IS_PTR_NULL_CHECKED(Data->GetValue())
 
+			// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+			{
+				typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
+
+				if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+				{
+					CS_IS_VALID_CHECKED(CollisionData->GetCollisionInfo());
+				}
+			}
 			return true;
 		}
 
 		bool FLibrary::IsValid(const FString& Context, const DataType* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Data)
-
 			CS_IS_PTR_NULL(Data->GetValue())
 
+			// CollisionDataType (NCsDamage::NData::NCollision::ICollision)
+			{
+				typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
+
+				if (const CollisionDataType* CollisionData = GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+				{
+					CS_IS_VALID(CollisionData->GetCollisionInfo())
+				}
+			}
 			return true;
 		}
 

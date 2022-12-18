@@ -24,23 +24,23 @@ namespace NCsMath
 		if (EasingType == ECsEasingType::Linear)
 			return &Linear;
 		if (EasingType == ECsEasingType::BounceIn)
-			return &BounceEaseIn;
+			return &Ease_BounceIn;
 		if (EasingType == ECsEasingType::BounceOut)
-			return &BounceEaseOut;
+			return &Ease_BounceOut;
 		if (EasingType == ECsEasingType::BounceInOut)
-			return &BounceEaseInOut;
+			return &Ease_BounceInOut;
 		if (EasingType == ECsEasingType::CubicIn)
-			return &CubicEaseIn;
+			return &Ease_CubicIn;
 		if (EasingType == ECsEasingType::CubicOut)
-			return &CubicEaseOut;
+			return &Ease_CubicOut;
 		if (EasingType == ECsEasingType::CubicInOut)
-			return &CubicEaseInOut;
+			return &Ease_CubicInOut;
 		if (EasingType == ECsEasingType::ExpoIn)
-			return &ExpoEaseIn;
+			return &Ease_ExpoIn;
 		if (EasingType == ECsEasingType::ExpoOut)
-			return &ExpoEaseOut;
+			return &Ease_ExpoOut;
 		if (EasingType == ECsEasingType::ExpoInOut)
-			return &ExpoEaseInOut;
+			return &Ease_ExpoInOut;
 		return &Linear;
 	}
 

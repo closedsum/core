@@ -50,7 +50,7 @@ namespace NCsMath
 
 		// Bounce
 
-		FORCEINLINE static float BounceEaseOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_BounceOut(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			float T = Time;
 
@@ -77,17 +77,17 @@ namespace NCsMath
 			}
 		}
 
-		FORCEINLINE static float BounceEaseIn(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_BounceIn(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
-			return Final - BounceEaseOut(Duration - Time, 0, Final, Duration) + Start;
+			return Final - Ease_BounceOut(Duration - Time, 0, Final, Duration) + Start;
 		}
 
-		FORCEINLINE static float BounceEaseInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_BounceInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			if (Time < (Duration / 2.0f))
-				return (BounceEaseIn(Time * 2, 0, Final, Duration) * 0.5f) + Start;
+				return (Ease_BounceIn(Time * 2, 0, Final, Duration) * 0.5f) + Start;
 			else
-				return (BounceEaseOut(Time * 2 - Duration, 0, Final, Duration) * 0.5f) + Final * 0.5f + Start;
+				return (Ease_BounceOut(Time * 2 - Duration, 0, Final, Duration) * 0.5f) + Final * 0.5f + Start;
 		}
 
 		// Sinusoidal
@@ -110,21 +110,21 @@ namespace NCsMath
 
 		// Cubic
 
-		FORCEINLINE static float CubicEaseIn(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_CubicIn(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			float T = Time;
 			T /= Duration;
 			return Final * T * T * T + Start;
 		}
 
-		FORCEINLINE static float CubicEaseOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_CubicOut(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			float T = Time;
 			T = (T / Duration) - 1.0f;
 			return Final * ((T *  T * T) + 1) + Start;
 		}
 
-		FORCEINLINE static float CubicEaseInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_CubicInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			float T = Time;
 
@@ -139,17 +139,17 @@ namespace NCsMath
 
 		// Expo
 
-		FORCEINLINE static float ExpoEaseIn(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_ExpoIn(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			return (Time == 0.0f) ? Start : Final * FMath::Pow(2.0f, 10.0f * (Time / Duration - 1.0f)) + Start;
 		}
 
-		FORCEINLINE static float ExpoEaseOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_ExpoOut(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			return (Time == Duration) ? Start + Final : Final * (-1.0f * FMath::Pow(2.0f, -10.0f * Time / Duration) + 1.0f) + Start;
 		}
 
-		FORCEINLINE static float ExpoEaseInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_ExpoInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			float T = Time;
 
@@ -187,7 +187,7 @@ namespace NCsMath
 		// TODO: Need LoopUp Table
 
 		/*
-		FORCEINLINE static float BounceEaseOut_GetAlpha(const float& Value, const float& Start, const float& Final, const float& Duration)
+		FORCEINLINE static float Ease_BounceOut_GetAlpha(const float& Value, const float& Start, const float& Final, const float& Duration)
 		{
 		}
 		*/

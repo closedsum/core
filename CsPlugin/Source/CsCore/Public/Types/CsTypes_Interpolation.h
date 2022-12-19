@@ -55,9 +55,15 @@ enum class ECsEasingType : uint8
 	CubicIn				UMETA(DisplayName = "Cubic In"),
 	CubicOut			UMETA(DisplayName = "Cubic Out"),
 	CubicInOut			UMETA(DisplayName = "Cubic In Out"),
-	ExpoIn				UMETA(DisplayName = "Cubic In"),
+	ExpoIn				UMETA(DisplayName = "Expo In"),
 	ExpoOut				UMETA(DisplayName = "Expo Out"),
 	ExpoInOut			UMETA(DisplayName = "Expo In Out"),
+	BackIn				UMETA(DisplayName = "Back In"),
+	BackOut				UMETA(DisplayName = "Back Out"),
+	BackInOut			UMETA(DisplayName = "Back In Out"),
+	ElasticIn			UMETA(DisplayName = "Elastic In"),
+	ElasticOut			UMETA(DisplayName = "Elastic Out"),
+	ElasticInOut		UMETA(DisplayName = "Elastic In Out"),
 	ECsEasingType_MAX	UMETA(Hidden),
 };
 
@@ -82,6 +88,12 @@ namespace NCsEasingType
 		extern CSCORE_API const Type ExpoIn;
 		extern CSCORE_API const Type ExpoOut;
 		extern CSCORE_API const Type ExpoInOut;
+		extern CSCORE_API const Type BackIn;
+		extern CSCORE_API const Type BackOut;
+		extern CSCORE_API const Type BackInOut;
+		extern CSCORE_API const Type ElasticIn;
+		extern CSCORE_API const Type ElasticOut;
+		extern CSCORE_API const Type ElasticInOut;
 		extern CSCORE_API const Type ECsEasingType_MAX;
 	}
 }

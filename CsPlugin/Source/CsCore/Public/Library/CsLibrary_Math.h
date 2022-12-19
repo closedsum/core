@@ -175,6 +175,94 @@ namespace NCsMath
 		/** Easing is based on two half circles. */
 		//CircularInOut,
 
+		// Back
+
+		FORCEINLINE static float Ease_BackIn(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time / Duration;
+
+			const float C1 = 1.70158f;
+			const float C3 = C1 + 1.0f;
+
+			return Final * ((C3 * T * T * T) - (C1 * T * T)) + Start;
+		}
+
+		FORCEINLINE static float Ease_BackOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = (Time / Duration) - 1.0f;
+
+			const float C1 = 1.70158f;
+			const float C3 = C1 + 1.0f;
+
+			return Final * (1.0f + (C3 * T * T * T) + (C1 * T * T)) + Start;
+		}
+
+		FORCEINLINE static float Ease_BackInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time / Duration;
+
+			const float C1 = 1.70158f;
+			const float C2 = C1 * 1.525f;
+
+			if (T < 0.5f)
+			{
+				T *= 2.0f;
+				return 0.5f * (Final * (T * T + (((C2 + 1.0f) * T) - C2)) + Start);
+			}
+			T *= 2.0f;
+			T -= 2.0f;
+			return 0.5f * (Final * (T * T + (((C2 + 1.0f) * T) + C2 + 2.0f)) + Start);
+		}
+
+		// Elastic
+
+		FORCEINLINE static float Ease_ElasticIn(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time / Duration;
+
+			const float C4 = (2.0f * PI) / 3;
+
+			if (T == 0.0f)
+				return Start;
+			if (T == 1.0f)
+				return Final + Start;
+			T *= 10.0f;
+			return Final * (-FMath::Pow(2.0f, T - 10.0f) * FMath::Sin((T - 10.75f) * C4)) + Start;
+		}
+
+		FORCEINLINE static float Ease_ElasticOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time / Duration;
+
+			const float C4 = (2.0f * PI) / 3;
+
+			if (T == 0.0f)
+				return Start;
+			if (T == 1.0f)
+				return Final + Start;
+			T *= 10.0f;
+			return Final * (FMath::Pow(2.0f, -T) * FMath::Sin((T - 0.75f) * C4) + 1.0f) + Start;
+		}
+
+		FORCEINLINE static float Ease_ElasticInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time / Duration;
+
+			const float C5 = (2.0f * PI) / 4.5;
+
+			if (T == 0.0f)
+				return Start;
+			if (T == 1.0f)
+				return Final + Start;
+			if (T < 0.5f)
+			{
+				T *= 2.0f;
+				return Final * (-0.5f * (FMath::Pow(2.0f, T - 10.0f) * FMath::Sin((T - 11.125f) * C5))) + Start;
+			}
+			T *= 2.0f;
+			return Final * (0.5f * (FMath::Pow(2.0f, -T + 10.0f) * FMath::Sin((T - 11.125) * C5)) + 1.0f) + Start;
+		}
+
 		static TCsEasingFunction GetEasingFunction(const ECsEasingType& EasingType);
 
 		// Get Alpha

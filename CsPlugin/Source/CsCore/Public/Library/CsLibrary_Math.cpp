@@ -23,24 +23,41 @@ namespace NCsMath
 	{
 		if (EasingType == ECsEasingType::Linear)
 			return &Linear;
+	// Bounce
 		if (EasingType == ECsEasingType::BounceIn)
 			return &Ease_BounceIn;
 		if (EasingType == ECsEasingType::BounceOut)
 			return &Ease_BounceOut;
 		if (EasingType == ECsEasingType::BounceInOut)
 			return &Ease_BounceInOut;
+	// Cubic
 		if (EasingType == ECsEasingType::CubicIn)
 			return &Ease_CubicIn;
 		if (EasingType == ECsEasingType::CubicOut)
 			return &Ease_CubicOut;
 		if (EasingType == ECsEasingType::CubicInOut)
 			return &Ease_CubicInOut;
+	// Expo
 		if (EasingType == ECsEasingType::ExpoIn)
 			return &Ease_ExpoIn;
 		if (EasingType == ECsEasingType::ExpoOut)
 			return &Ease_ExpoOut;
 		if (EasingType == ECsEasingType::ExpoInOut)
 			return &Ease_ExpoInOut;
+	// Back
+		if (EasingType == ECsEasingType::BackIn)
+			return &Ease_BackIn;
+		if (EasingType == ECsEasingType::BackOut)
+			return &Ease_BackOut;
+		if (EasingType == ECsEasingType::BackInOut)
+			return &Ease_BackInOut;
+	// Elastic
+		if (EasingType == ECsEasingType::ElasticIn)
+			return &Ease_ElasticIn;
+		if (EasingType == ECsEasingType::ElasticOut)
+			return &Ease_ElasticOut;
+		if (EasingType == ECsEasingType::ElasticInOut)
+			return &Ease_ElasticInOut;
 		return &Linear;
 	}
 

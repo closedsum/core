@@ -3,11 +3,11 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Data
-#include "Skin/Data/Visual/Scale/CsData_Skin_VisualUniformScale.h"
+#include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_Uniform.h"
 // Log
 #include "Utility/CsLog.h"
 
-#include "CsData_Skin_VisualUniformScaleImplSlice.generated.h"
+#include "CsData_Skin_VisualScale_UniformImplSlice.generated.h"
 
 // NCsSkin::NData::NVisual::NScale::NUniform::NImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsSkin, NData, NVisual, NScale, NUniform, FImplSlice)
@@ -22,7 +22,7 @@ class ICsDeconstructInterfaceSliceMap;
 * a specific interface. The whole data will be constructed elsewhere in native (usually a manager).
 */
 USTRUCT(BlueprintType)
-struct CSCORE_API FCsData_Skin_VisualUniformScaleImplSlice
+struct CSCORE_API FCsData_Skin_VisualScale_UniformImplSlice
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skin|Data|Visual|Scale", meta = (UIMin = "0.001", ClampMin = "0.001"))
 	float Scale;
 
-	FCsData_Skin_VisualUniformScaleImplSlice() :
+	FCsData_Skin_VisualScale_UniformImplSlice() :
 		Scale(1.0f)
 	{
 	}

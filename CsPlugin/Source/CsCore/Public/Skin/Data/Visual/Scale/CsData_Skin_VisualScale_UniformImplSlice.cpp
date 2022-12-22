@@ -1,5 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Skin/Data/Visual/Scale/CsData_Skin_VisualUniformScaleImplSlice.h"
+#include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_UniformImplSlice.h"
 
 // Library
 #include "Library/CsLibrary_Property.h"
@@ -13,17 +13,17 @@
 
 #define SliceType NCsSkin::NData::NVisual::NScale::NUniform::FImplSlice
 
-void FCsData_Skin_VisualUniformScaleImplSlice::CopyToSlice(SliceType* Slice)
+void FCsData_Skin_VisualScale_UniformImplSlice::CopyToSlice(SliceType* Slice)
 {
 	Slice->SetUniformScale(&Scale);
 }
 
-void FCsData_Skin_VisualUniformScaleImplSlice::CopyToSliceAsValue(SliceType* Slice) const
+void FCsData_Skin_VisualScale_UniformImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
 	Slice->SetUniformScale(Scale);
 }
 
-SliceType* FCsData_Skin_VisualUniformScaleImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+SliceType* FCsData_Skin_VisualScale_UniformImplSlice::AddSafeSliceAsValue(const FString& Context, FCsInterfaceMap* InterfaceMap, ICsDeconstructInterfaceSliceMap* DeconstructInterfaceSliceMap, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_PTR_NULL_RET_NULL(InterfaceMap)
 
@@ -54,19 +54,19 @@ SliceType* FCsData_Skin_VisualUniformScaleImplSlice::AddSafeSliceAsValue(const F
 
 #undef SliceType
 
-bool FCsData_Skin_VisualUniformScaleImplSlice::IsValidChecked(const FString& Context) const
+bool FCsData_Skin_VisualScale_UniformImplSlice::IsValidChecked(const FString& Context) const
 {
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale, 0.0f)
 	return true;
 }
 
-bool FCsData_Skin_VisualUniformScaleImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualScale_UniformImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_FLOAT_GREATER_THAN(Scale, 0.0f)
 	return true;
 }
 
-void FCsData_Skin_VisualUniformScaleImplSlice::SetChecked(const FString& Context, USceneComponent* Component) const
+void FCsData_Skin_VisualScale_UniformImplSlice::SetChecked(const FString& Context, USceneComponent* Component) const
 {
 	check(IsValidChecked(Context));
 
@@ -75,7 +75,7 @@ void FCsData_Skin_VisualUniformScaleImplSlice::SetChecked(const FString& Context
 	Component->SetRelativeScale3D(Scale * FVector::OneVector);
 }
 
-bool FCsData_Skin_VisualUniformScaleImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+bool FCsData_Skin_VisualScale_UniformImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	if (!IsValid(Context, Log))
 		return false;
@@ -135,8 +135,8 @@ namespace NCsSkin
 						FImplSlice* Slice = nullptr;
 						bool Success	  = false;
 
-						// Try FCsData_Skin_VisualUniformScaleImplSlice
-						typedef FCsData_Skin_VisualUniformScaleImplSlice StructSliceType;
+						// Try FCsData_Skin_VisualScale_UniformImplSlice
+						typedef FCsData_Skin_VisualScale_UniformImplSlice StructSliceType;
 
 						if (StructSliceType* SliceAsStruct = PropertyLibrary::GetStructPropertyValuePtr<StructSliceType>(Context, Object, Object->GetClass(), Name::VisualUniformScaleSlice, nullptr))
 						{
@@ -182,7 +182,7 @@ namespace NCsSkin
 								typedef NCsObject::FLibrary ObjectLibrary;
 
 								Log(FString::Printf(TEXT("%s: Failed to find any properties from %s for interface: UniformScaleVisualDataType (NCsSkin::NData::NVisual::NScale::NUniform::IUniform)."), *Context, *(ObjectLibrary::PrintObjectAndClass(Object))));
-								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualUniformScaleImplSlice with name: VisualUniformScaleSlice."), *Context));
+								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsData_Skin_VisualScale_UniformImplSlice with name: VisualUniformScaleSlice."), *Context));
 								Log(FString::Printf(TEXT("%s: - OR"), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get float property with name: UniformScale."), *Context));
 							}

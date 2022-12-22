@@ -13,7 +13,7 @@
 #include "Skin/Data/Visual/SkeletalMesh/CsData_Skin_VisualSkeletalMesh.h"
 #include "Skin/Data/Visual/Material/CsData_Skin_VisualMaterial.h"
 #include "Skin/Data/Visual/Material/Parameter/CsData_Skin_VisualMaterial_WithParameters.h"
-#include "Skin/Data/Visual/Scale/CsData_Skin_VisualUniformScale.h"
+#include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_Uniform.h"
 #include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_UniformRange.h"
 // Components
 #include "Components/StaticMeshComponent.h"
@@ -830,6 +830,21 @@ namespace NCsSkin
 
 		// Scale
 		#pragma region
+
+			void FLibrary::SetUniformScaleChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component)
+			{
+				typedef NCsSkin::NData::NVisual::NScale::NUniform::IUniform UniformScaleSkinType;
+
+				const UniformScaleSkinType* UniformScaleSkin = GetInterfaceChecked<UniformScaleSkinType>(Context, Skin);
+
+				CS_IS_PTR_NULL_CHECKED(Component)
+
+				const float& UniformScale = UniformScaleSkin->GetUniformScale();
+
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScale, 0.0f)
+
+				Component->SetWorldScale3D(UniformScale * FVector::OneVector);
+			}
 
 			void FLibrary::SetUniformScaleRelativeChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component)
 			{

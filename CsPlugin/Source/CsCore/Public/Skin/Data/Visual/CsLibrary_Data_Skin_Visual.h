@@ -479,6 +479,15 @@ namespace NCsSkin
 			public:
 
 				/**
+				* Set the World scale of Component from the given Skin.
+				*
+				* @param Context	The calling context.
+				* @param Skin		Implements the interface: SkinType (NCsSkin::NData::NVisual::IVisual).
+				* @param Component	Scene Component to scale.
+				*/
+				static void SetUniformScaleChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component);
+
+				/**
 				* Set the relative scale of Component from the given Skin.
 				* 
 				* @param Context	The calling context.

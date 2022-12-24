@@ -831,7 +831,6 @@ namespace NCsActor
 	float FLibrary::GetSafeDistanceSq(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
-
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
@@ -843,7 +842,6 @@ namespace NCsActor
 	float FLibrary::GetDistanceSq2DChecked(const FString& Context, const AActor* A, const AActor* B)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
-
 		CS_IS_PTR_NULL_CHECKED(B)
 
 		const FVector VA = A->GetActorLocation();
@@ -855,7 +853,6 @@ namespace NCsActor
 	float FLibrary::GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
-
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
@@ -867,9 +864,7 @@ namespace NCsActor
 	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const AActor* B, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL(A)
-
 		CS_IS_PTR_NULL(B)
-
 		CS_IS_FLOAT_GREATER_THAN(R, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
@@ -881,15 +876,23 @@ namespace NCsActor
 	bool FLibrary::IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const AActor* B, const float& R)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
-
 		CS_IS_PTR_NULL_CHECKED(B)
-
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
 		const FVector VB = B->GetActorLocation();
 
 		return FVector::DistSquared2D(VA, VB) <= (R * R);
+	}
+
+	bool FLibrary::IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
+
+		const FVector VA = A->GetActorLocation();
+
+		return FVector::DistSquared2D(VA, Location) <= (R * R);
 	}
 
 	#pragma endregion Distance
@@ -900,7 +903,6 @@ namespace NCsActor
 	bool FLibrary::GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
-
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();
@@ -918,7 +920,6 @@ namespace NCsActor
 	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
-
 		CS_IS_PTR_NULL_CHECKED(B)
 
 		const FVector VA = A->GetActorLocation();
@@ -934,7 +935,6 @@ namespace NCsActor
 	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
-
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
 		const FVector VA = A->GetActorLocation();

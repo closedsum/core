@@ -895,6 +895,16 @@ namespace NCsActor
 		return FVector::DistSquared2D(VA, Location) <= (R * R);
 	}
 
+	bool FLibrary::IsDistanceSq2D_GreaterThanChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
+
+		const FVector VA = A->GetActorLocation();
+
+		return FVector::DistSquared2D(VA, Location) > (R * R);
+	}
+
 	#pragma endregion Distance
 
 	// Normal

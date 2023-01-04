@@ -220,7 +220,7 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 		return true;
 	if (Check_LoadObject(Stream))
 		return true;
-	return true;
+	return false;
 }
 
 #pragma endregion FExec Interface

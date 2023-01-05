@@ -745,6 +745,30 @@ public:
 	}
 
 	/**
+	* Safely get the Hard reference to the Anim at Index of type: UAnimMontage.
+	*
+	* @param Context	The calling context.
+	* @param Index
+	* @param Log		(optional)
+	* return			Anim
+	*/
+	FORCEINLINE UAnimMontage* GetSafe(const FString& Context, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		const TArray<UAnimMontage*>* Mons = GetSafe(Context, Log);
+
+		if (!Mons)
+			return nullptr;
+
+		if (Index < 0 || Index > Mons->Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Index: %d is NOT in the range [0, %d)."), *Context, Index, Mons->Num()));
+			return nullptr;
+		}
+		return (*(Mons))[Index];
+	}
+
+	/**
 	* Get the Hard reference to a random Anim of type: UAnimMontage in Anims.
 	*
 	* @param Context	The calling context.

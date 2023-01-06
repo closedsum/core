@@ -223,9 +223,8 @@ void FCsCollisionPreset::SetChecked(const FString& Context, UPrimitiveComponent*
 
 		Component->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
 		Component->SetGenerateOverlapEvents(bGenerateOverlapEvents);
-
-		Component->SetCollisionEnabled(CollisionEnabled);
 	}
+	Component->SetCollisionEnabled(CollisionEnabled);
 }
 
 bool FCsCollisionPreset::SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -242,9 +241,8 @@ bool FCsCollisionPreset::SetSafe(const FString& Context, UPrimitiveComponent* Co
 
 		Component->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
 		Component->SetGenerateOverlapEvents(bGenerateOverlapEvents);
-
-		Component->SetCollisionEnabled(CollisionEnabled);
 	}
+	Component->SetCollisionEnabled(CollisionEnabled);
 	return true;
 }
 

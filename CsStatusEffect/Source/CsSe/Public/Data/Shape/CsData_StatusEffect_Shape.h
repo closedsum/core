@@ -1,8 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Containers/CsGetInterfaceMap.h"
-#include "Engine/EngineTypes.h"
-#include "CsData_StatusEffect_Shape.generated.h"
 #pragma once
+#include "Containers/CsGetInterfaceMap.h"
+
+#include "CsData_StatusEffect_Shape.generated.h"
 
 namespace NCsStatusEffect
 {

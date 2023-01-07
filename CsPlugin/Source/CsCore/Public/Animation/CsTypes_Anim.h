@@ -87,7 +87,7 @@ struct CSCORE_API FCsAnimSequence
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
@@ -342,7 +342,7 @@ struct CSCORE_API FCsAnimMontage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
@@ -936,7 +936,7 @@ struct CSCORE_API FCsAnimBlueprint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> Blueprint;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
@@ -1148,7 +1148,7 @@ struct CSCORE_API FCsBlendSpace1D
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blend_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1286,7 +1286,7 @@ struct CSCORE_API FCsBlendSpace
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 Blend_LoadFlags;
 
 	UPROPERTY(Transient)

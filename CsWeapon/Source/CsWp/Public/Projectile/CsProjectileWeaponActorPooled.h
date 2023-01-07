@@ -268,9 +268,11 @@ public:
 
 // Fire
 #pragma region
-protected:
+public:
 
 	bool CanFire() const;
+
+protected:
 
 	/** Whether Fire has been called at least once. */
 	bool bHasFired;

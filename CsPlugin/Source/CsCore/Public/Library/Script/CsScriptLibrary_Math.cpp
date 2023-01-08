@@ -4,6 +4,9 @@
 
 // Library
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_Valid.h"
+// Log
+#include "Utility/CsLog.h"
 
 // Cached
 #pragma region
@@ -14,6 +17,9 @@ namespace NCsScriptLibraryMath
 	{
 		namespace Str
 		{
+			// Easing
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, Ease);
+			// Intersection
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RayPlaneIntersection);
 		}
 	}
@@ -25,6 +31,33 @@ UCsScriptLibrary_Math::UCsScriptLibrary_Math(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 {
 }
+
+FString UCsScriptLibrary_Math::GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetFloatAsStringWithPrecision(TheFloat, Precision);
+}
+
+// Easing
+#pragma region
+
+float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& EasingType, const float& Time, const float& Start, const float& Final, const float& Duration)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Ease : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_ENUM_VALID_RET_VALUE(EMCsEasingType, ECsEasingType, EasingType, 0.0f)
+
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::Ease(EasingType, Time, Start, Final, Duration);
+}
+
+#pragma endregion Easing
 
 // Ray
 #pragma region

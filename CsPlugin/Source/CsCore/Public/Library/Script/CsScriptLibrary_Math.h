@@ -3,6 +3,7 @@
 #include "UObject/Object.h"
 // Types
 #include "Types/CsTypes_Math.h"
+#include "Types/CsTypes_Interpolation.h"
 
 #include "CsScriptLibrary_Math.generated.h"
 
@@ -10,6 +11,20 @@ UCLASS()
 class CSCORE_API UCsScriptLibrary_Math : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
+
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Math", meta = (AutoCreateRefTerm = "TheFloat,Precision"))
+	static FString GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision);
+
+// Easing
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Math", meta = (AutoCreateRefTerm = "Context,EasingType,Time,Start,Final,Duration"))
+	static float Ease(const FString& Context, const ECsEasingType& EasingType, const float& Time, const float& Start, const float& Final, const float& Duration);
+
+#pragma endregion Easing
 
 // Ray
 #pragma region

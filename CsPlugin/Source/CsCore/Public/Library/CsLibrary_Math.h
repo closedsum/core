@@ -9,6 +9,57 @@ namespace NCsMath
 {
 	struct CSCORE_API FLibrary final
 	{
+	public:
+
+		static FORCEINLINE FString GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
+		{
+			const TCHAR* TheDot = TEXT(".");
+
+			FString FloatString = FString::SanitizeFloat(TheFloat);
+
+			//No . ?
+			if (!FloatString.Contains(TheDot))
+			{
+				return FloatString;
+			}
+
+			//Split
+			FString LeftS;
+			FString RightS;
+
+			FloatString.Split(TheDot, &LeftS, &RightS);
+
+			if (Precision == 0)
+				return LeftS;
+
+			//Add dot back to LeftS
+			LeftS += TheDot;
+
+			//Get the Single Number after the precision amount
+			// so in .1273, get the 7
+			FString RightSFirstTruncated = "";
+			if (RightS.Len() - 1 >= Precision)
+			{
+				RightSFirstTruncated = RightS.Mid(Precision, 1);
+			}
+
+			//Truncate the RightS
+			// 	.1273 becomes .12 with precision 2
+			RightS = RightS.Left(Precision);
+
+			//Round Up if There was any truncated portion
+			if (RightSFirstTruncated != "")
+			{
+				if (FCString::Atod(*RightSFirstTruncated) >= 5)
+				{
+					//.1273 becomes .13
+					RightS = FString::FromInt(FCString::Atod(*RightS) + 1);
+				}
+			}
+
+			return LeftS + RightS;
+		}
+
 	// Abs
 	#pragma region
 	public:

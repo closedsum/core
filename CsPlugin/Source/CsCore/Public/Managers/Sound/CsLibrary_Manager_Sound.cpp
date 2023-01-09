@@ -6,6 +6,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Sound/CsManager_Sound.h"
+// Sound
+#include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 
 #if WITH_EDITOR
 // Library
@@ -153,6 +155,38 @@ namespace NCsSound
 
 		#pragma endregion Pool
 
+		// Payload
+		#pragma region
+
+		#define PayloadType NCsSound::NPayload::IPayload
+		#define PayloadImplType NCsSound::NPayload::FImpl
+
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
+		}
+
+		PayloadType* FLibrary::SafeAllocatePayload(const FString& Context, const UObject* WorldContext, const FECsSound& Type, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Sound* Manager_Sound = GetSafe(Context, WorldContext, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID_RET_NULL(EMCsSound, FECsSound, Type)
+
+				return Manager_Sound->AllocatePayload(Type);
+			}
+			return nullptr;
+		}
+
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocatePayload<PayloadImplType>(Type);
+		}
+
+		#undef PayloadType
+		#undef PayloadImplType
+
+		#pragma endregion Payload
+
 		// Spawn
 		#pragma region
 
@@ -173,6 +207,15 @@ namespace NCsSound
 			return Manager_Sound->Spawn(Sound.Type, Payload);
 		}
 		
+		#define PayloadType NCsSound::NPayload::IPayload
+		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type, PayloadType* Payload)
+		{
+		#undef PayloadType
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsSound, Type)
+
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
+
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)

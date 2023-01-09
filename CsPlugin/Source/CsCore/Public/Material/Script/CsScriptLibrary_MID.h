@@ -42,6 +42,23 @@ public:
 
 #pragma endregion Scalar
 
+// Vector
+#pragma region
+public:
+
+	/**
+	* Set the Vector Parameter Value with name: ParamName with value Value on MID.
+	*
+	* @param MID		Material Instance Dynamic.
+	* @param ParamName	Name of the Scalar Parameter Value to set.
+	* @param Value		The value to set.
+	* return			Whether the parameter was successful set or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,ParamName,Value"))
+	static bool SetVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value);
+
+#pragma endregion Vector
+
 // Anim
 #pragma region
 public:

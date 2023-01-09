@@ -27,6 +27,10 @@ namespace NCsSound
 				/** Sound information */
 				FCsSound Sound;
 
+				float VolumeMultiplier;
+
+				float PitchMultiplier;
+
 				/** Object for the Sound to spawn at or be attached to. */
 				TWeakObjectPtr<UObject> Object;
 
@@ -38,6 +42,8 @@ namespace NCsSound
 
 				FParams() :
 					Sound(),
+					VolumeMultiplier(1.0f),
+					PitchMultiplier(1.0f),
 					Object(nullptr),
 					FrequencyParams(),
 					Group()
@@ -86,6 +92,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	FCsSound Sound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound", meta = (UIMin = "0.001", ClampMin = "0.001"))
+	float VolumeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound", meta = (UIMin = "0.001", ClampMin = "0.001"))
+	float PitchMultiplier;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound")
 	UObject* Object;
 
@@ -97,6 +109,8 @@ public:
 
 	FCsSound_Spawn_Params() :
 		Sound(),
+		VolumeMultiplier(1.0f),
+		PitchMultiplier(1.0f),
 		Object(nullptr),
 		FrequencyParams(),
 		Group()

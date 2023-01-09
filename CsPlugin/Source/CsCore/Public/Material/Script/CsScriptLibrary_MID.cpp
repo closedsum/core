@@ -16,9 +16,13 @@ namespace NCsScriptLibraryMID
 	{
 		namespace Str
 		{
+			// Scalar
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, SetScalarParameterValue);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, SetArrayScalarParameterValue);
+			// Anim
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, PlayAnim);
+			// Vector
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_MID, SetVectorParameterValue);
 		}
 	}
 }
@@ -56,6 +60,22 @@ bool UCsScriptLibrary_MID::SetArrayScalarParameterValue(const FString& Context, 
 }
 
 #pragma endregion Scalar
+
+// Vector
+#pragma region
+
+bool UCsScriptLibrary_MID::SetVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FLinearColor& Value)
+{
+	using namespace NCsScriptLibraryMID::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetVectorParameterValue : Context;
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	return MIDLibrary::SetSafeVectorParameterValue(Ctxt, MID, ParamName, Value);
+}
+
+#pragma endregion Vector
 
 // Anim
 #pragma region

@@ -41,13 +41,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
 	FCsSound Sound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound|Payload", meta = (UIMin = "0.001", ClampMin = "0.001"))
+	float VolumeMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Sound|Payload", meta = (UIMin = "0.001", ClampMin = "0.001"))
+	float PitchMultiplier;
+
 	FCsPayload_Sound() :
 		Instigator(nullptr),
 		Owner(nullptr),
 		Parent(nullptr),
 		Time(),
 		PreserveChangesFromDefaultMask(0),
-		Sound()
+		Sound(),
+		VolumeMultiplier(1.0f),
+		PitchMultiplier(1.0f)
 	{
 	}
 

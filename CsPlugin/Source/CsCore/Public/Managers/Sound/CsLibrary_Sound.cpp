@@ -12,8 +12,8 @@
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/Sound/CsManager_Sound.h"
-// Pool
-#include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
+// Sound
+#include "Managers/Sound/Payload/CsPayload_SoundImpl.h"
 // Audio
 #include "AudioDeviceManager.h"
 #include "AudioDevice.h"
@@ -218,15 +218,18 @@ namespace NCsSound
 				// Spawn FX
 				{
 					typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-					typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+					typedef NCsSound::NPayload::FImpl PayloadImplType;
 
 					UObject* Owner = R->GetOwnerAsObject();
 
 					PayloadImplType Payload;
-					Payload.Instigator = Owner;
-					Payload.Parent	   = Params->GetObject();
+					Payload.Instigator		 = Owner;
+					Payload.Parent			 = Params->GetObject();
+					Payload.Sound			 = Params->Sound.GetChecked(Context);
+					Payload.VolumeMultiplier = Params->VolumeMultiplier;
+					Payload.PitchMultiplier  = Params->PitchMultiplier;
 
-					SoundManagerLibrary::SpawnChecked(Context, R->GetOwnerAsObject(), &Payload, Params->Sound);
+					SoundManagerLibrary::SpawnChecked(Context, R->GetOwnerAsObject(), Params->Sound.Type, &Payload);
 				}
 
 				++SpawnCount;

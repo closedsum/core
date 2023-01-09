@@ -15,6 +15,8 @@ namespace NCsSound
 			{
 				// Check Sound is Valid.
 				CS_IS_VALID_CHECKED(Sound);
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(VolumeMultiplier, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(PitchMultiplier, 0.0f)
 				// Check Frequency Params are Valid.
 				CS_IS_VALID_CHECKED(FrequencyParams);
 				// Check Group is Valid.
@@ -26,6 +28,8 @@ namespace NCsSound
 			{
 				// Check Sound is Valid.
 				CS_IS_VALID(Sound)
+				CS_IS_FLOAT_GREATER_THAN(VolumeMultiplier, 0.0f)
+				CS_IS_FLOAT_GREATER_THAN(PitchMultiplier, 0.0f)
 				// Check Frequency Params are Valid.
 				CS_IS_VALID(FrequencyParams)
 				// Check Group is Valid.
@@ -57,6 +61,8 @@ void FCsSound_Spawn_Params::CopyToParams(ParamsType* Params) const
 #undef ParamsType
 
 	Params->Sound = Sound;
+	Params->VolumeMultiplier = VolumeMultiplier;
+	Params->PitchMultiplier = PitchMultiplier;
 	Params->Object = Object;
 	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
 	Params->Group = Group;
@@ -66,6 +72,8 @@ bool FCsSound_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FSt
 {
 	// Check Sound is Valid
 	CS_IS_VALID(Sound)
+	CS_IS_FLOAT_GREATER_THAN(VolumeMultiplier, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN(PitchMultiplier, 0.0f)
 	// Check FrequencyParams is Valid
 	CS_IS_VALID(FrequencyParams)
 	// Check Group is Valid

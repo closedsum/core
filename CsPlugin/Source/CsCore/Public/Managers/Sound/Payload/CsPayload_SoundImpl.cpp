@@ -29,6 +29,8 @@ void FCsPayload_Sound::CopyToPayloadAsValueChecked(const FString& Context, UObje
 	Payload->Bone						= Sound.Bone;
 	Payload->TransformRules				= Sound.TransformRules;
 	Payload->Transform					= Sound.Transform;
+	Payload->VolumeMultiplier			= VolumeMultiplier;
+	Payload->PitchMultiplier		    = PitchMultiplier;
 }
 
 bool FCsPayload_Sound::IsValidChecked(const FString& Context) const

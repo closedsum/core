@@ -12,6 +12,11 @@ struct FCsSoundPooled;
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
+// NCsSound::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, IPayload)
+// NCsSound::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsSound, NPayload, FImpl)
+
 namespace NCsSound
 {
 	namespace NManager
@@ -170,6 +175,49 @@ namespace NCsSound
 
 		#pragma endregion Pool
 
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsSound::NPayload::IPayload
+		#define PayloadImplType NCsSound::NPayload::FImpl
+
+			/*
+			* Allocate a Payload (used to Spawn a Sound from Manager_Sound).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type);
+
+			/*
+			* Safely allocate a Payload (used to Spawn a Sound from Manager_Sound).
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Log			(optional)
+			* return				Payload
+			*/
+			static PayloadType* SafeAllocatePayload(const FString& Context, const UObject* WorldContext, const FECsSound& Type, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/*
+			* Allocate a Payload (used to Spawn a Sound from Manager_Sound).
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type);
+
+		#undef PayloadType
+		#undef PayloadImplType
+
+		#pragma endregion Payload
+
 		// Spawn
 		#pragma region
 		public:
@@ -184,6 +232,20 @@ namespace NCsSound
 			*/
 			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsSound& Sound);
 		
+		#define PayloadType NCsSound::NPayload::IPayload
+
+			/**
+			* Spawn a sound for UCsManager_Sound from Sound.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Payload
+			* return				Spawned Sound in a pooled container.
+			*/
+			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsSound& Type, PayloadType* Payload);
+
+		#undef PayloadType
+
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
 			/**

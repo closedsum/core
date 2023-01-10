@@ -618,8 +618,12 @@ void FCsDebugDrawPoint::Draw(UWorld* World, const FVector& Location) const
 // FCsDebugDrawLine
 #pragma region
 
-bool FCsDebugDrawLine::CanDraw(UWorld* World) const
+bool FCsDebugDrawLine::CanDraw(const UObject* WorldContext) const
 {
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 	if (!World)
 		return false;
 
@@ -646,10 +650,14 @@ bool FCsDebugDrawLine::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawLine::Draw(UWorld* World, const FVector& Start, const FVector& End) const
+void FCsDebugDrawLine::Draw(const UObject* WorldContext, const FVector& Start, const FVector& End) const
 {
-	if (CanDraw(World))
+	if (CanDraw(WorldContext))
 	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
 		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
 	}
 }
@@ -719,6 +727,65 @@ void FCsDebugDrawLineAndPoint::DrawOnlyPoint(UWorld* World, const FVector& Locat
 }
 
 #pragma endregion FCsDebugDrawLineAndPoint
+
+// FCsDebugDrawDirectionArrow
+#pragma region
+
+bool FCsDebugDrawDirectionArrow::CanDraw(const UObject* WorldContext) const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+	if (!World)
+		return false;
+
+	// Preview
+	if (World->WorldType == EWorldType::Editor ||
+		World->WorldType == EWorldType::EditorPreview)
+	{
+		return bEnableInPreview;
+	}
+	// Play
+	if (World->WorldType == EWorldType::Game ||
+		World->WorldType == EWorldType::PIE)
+	{
+		// Any
+		if (PriorityInPlay == ECsDebugDrawPriority::Any)
+			return bEnableInPlay || FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// CVar
+		if (PriorityInPlay == ECsDebugDrawPriority::CVar)
+			return FCsCVarDrawMap::Get().IsDrawing(CVar);
+		// Flag
+		if (PriorityInPlay == ECsDebugDrawPriority::Flag)
+			return bEnableInPlay;
+	}
+	return false;
+}
+
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation) const
+{
+	Draw(WorldContext, Start, InRotation, Length);
+}
+
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation, const float& InLength) const
+{
+	if (CanDraw(WorldContext))
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(WorldContext);
+
+		const FVector NewStart		= Start + StartOffset;
+		const FRotator NewRotation  = RotationType == ECsDebugDrawRotation::Absolute ? InRotation : Rotation + InRotation;
+		const FVector Direction		= NewRotation.Vector();
+		const FVector End			= NewStart + (InLength * Direction) + EndOffset;
+
+		DrawDebugDirectionalArrow(World, NewStart, End, Size, Color, false, LifeTime, 0, Thickness);
+	}
+}
+
+#pragma endregion FCsDebugDrawDirectionArrow
 
 // FCsDebugDrawString
 #pragma region

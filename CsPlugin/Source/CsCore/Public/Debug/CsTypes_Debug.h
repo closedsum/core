@@ -201,12 +201,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
+	/** Whether to enable drawing in Editor Preview or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
+	/** The priority for which flag / method to enable drawing in Editor,
+		CVar, bEnableInPreview or bEnableinPlay. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
+	/** Whether to enable drawing during Play in Editor (PIE) or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
@@ -516,7 +520,7 @@ public:
 // FCsDebugDrawLine
 #pragma region
 
-class UWorld;
+class UObject;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDebugDrawLine
@@ -528,12 +532,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	FECsCVarDraw CVar;
 
+	/** Whether to enable drawing in Editor Preview or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPreview;
 
+	/** The priority for which flag / method to enable drawing in Editor,
+		CVar, bEnableInPreview or bEnableinPlay. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	ECsDebugDrawPriority PriorityInPlay;
 
+	/** Whether to enable drawing during Play in Editor (PIE) or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
 	bool bEnableInPlay;
 
@@ -567,9 +575,9 @@ public:
 	{
 	}
 
-	bool CanDraw(UWorld* World) const;
+	bool CanDraw(const UObject* WorldContext) const;
 
-	void Draw(UWorld* World, const FVector& Start, const FVector& End) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& End) const;
 };
 
 #pragma endregion FCsDebugDrawPoint
@@ -648,6 +656,89 @@ public:
 };
 
 #pragma endregion FCsDebugDrawLineAndPoint
+
+// FCsDebugDrawDirectionArrow
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDebugDrawDirectionArrow
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FECsCVarDraw CVar;
+
+	/** Whether to enable drawing in Editor Preview or not. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bEnableInPreview;
+
+	/** The priority for which flag / method to enable drawing in Editor,
+		CVar, bEnableInPreview or bEnableinPlay. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	ECsDebugDrawPriority PriorityInPlay;
+
+	/** Whether to enable drawing during Play in Editor (PIE) or not. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	bool bEnableInPlay;
+
+	/** Applied as a translation offset to Start. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FVector StartOffset;
+
+	/** Applied as a translation offset to End. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FVector EndOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	ECsDebugDrawRotation RotationType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FRotator Rotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug")
+	FColor Color;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float LifeTime; 
+	
+	/** Size of the Arrow. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Size;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Thickness;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Debug", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float Length;
+
+	FCsDebugDrawDirectionArrow() :
+		CVar(),
+		bEnableInPreview(false),
+		PriorityInPlay(ECsDebugDrawPriority::Any),
+		bEnableInPlay(false),
+		StartOffset(FVector::ZeroVector),
+		EndOffset(FVector::ZeroVector),
+		RotationType(ECsDebugDrawRotation::Offset),
+		Rotation(FRotator::ZeroRotator),
+		Color(FColor::Red),
+		LifeTime(0.1f),
+		Size(1.0f),
+		Thickness(1.0f),
+		Length(100.0f)
+	{
+	}
+
+	bool CanDraw(const UObject* WorldContext) const;
+
+	void Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation, const float& InLength) const;
+};
+
+#pragma endregion FCsDebugDrawDirectionArrow
 
 // FCsDebugDrawString
 #pragma region

@@ -2,36 +2,45 @@
 #include "GraphEditor/EnumStruct/Menu/SCsGraphPin_ECsMenu.h"
 #include "CsUIEditor.h"
 
+// Types
 #include "Managers/Menu/CsTypes_Menu.h"
 
-void SCsGraphPin_ECsMenu::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
+#define CLASS_TYPE SCsGraphPin_ECsMenu
+#define EnumMapType EMCsMenu
+#define EnumType FECsMenu
+
+void CLASS_TYPE::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsMenu, FECsMenu>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
-void SCsGraphPin_ECsMenu::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
+void CLASS_TYPE::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsMenu>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
-FString SCsGraphPin_ECsMenu::OnGetText() const
+FString CLASS_TYPE::OnGetText() const
 {
-	return OnGetText_Internal<EMCsMenu, FECsMenu>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
-void SCsGraphPin_ECsMenu::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
+void CLASS_TYPE::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsMenu, FECsMenu>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
-FText SCsGraphPin_ECsMenu::OnGetFriendlyName(int32 EnumIndex)
+FText CLASS_TYPE::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsMenu>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
-FText SCsGraphPin_ECsMenu::OnGetTooltip(int32 EnumIndex)
+FText CLASS_TYPE::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsMenu>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef CLASS_TYPE
+#undef EnumMapType
+#undef EnumType

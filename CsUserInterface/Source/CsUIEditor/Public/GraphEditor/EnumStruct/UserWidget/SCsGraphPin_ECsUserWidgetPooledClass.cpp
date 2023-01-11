@@ -20,47 +20,49 @@ namespace NCsGraphPinUserWidgetPooledClass
 
 #pragma endregion Cached
 
+#define CLASS_TYPE SCsGraphPin_ECsUserWidgetPooledClass
 #define EnumMapType EMCsUserWidgetPooledClass
 #define EnumType FECsUserWidgetPooledClass
 
-void SCsGraphPin_ECsUserWidgetPooledClass::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
+void CLASS_TYPE::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
 	Construct_Internal<EnumMapType, EnumType>();
 }
 
-void SCsGraphPin_ECsUserWidgetPooledClass::CustomPopulateEnumMap()
+void CLASS_TYPE::CustomPopulateEnumMap()
 {
 	using namespace NCsGraphPinUserWidgetPooledClass::NCached;
 
 	NCsUserWidgetPooledClass::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
-void SCsGraphPin_ECsUserWidgetPooledClass::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
+void CLASS_TYPE::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
 	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
-FString SCsGraphPin_ECsUserWidgetPooledClass::OnGetText() const
+FString CLASS_TYPE::OnGetText() const
 {
 	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
-void SCsGraphPin_ECsUserWidgetPooledClass::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
+void CLASS_TYPE::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
 	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
-FText SCsGraphPin_ECsUserWidgetPooledClass::OnGetFriendlyName(int32 EnumIndex)
+FText CLASS_TYPE::OnGetFriendlyName(int32 EnumIndex)
 {
 	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
-FText SCsGraphPin_ECsUserWidgetPooledClass::OnGetTooltip(int32 EnumIndex)
+FText CLASS_TYPE::OnGetTooltip(int32 EnumIndex)
 {
 	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
 
+#undef CLASS_TYPE
 #undef EnumMapType
 #undef EnumType

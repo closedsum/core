@@ -1,4 +1,5 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
@@ -6,7 +7,6 @@
 #include "Engine/DataTable.h"
 
 #include "CsTypes_WidgetActor.generated.h"
-#pragma once
 
 // WidgetActor
 #pragma region
@@ -137,19 +137,19 @@ struct CSUI_API FCsWidgetActorPtr : public FTableRowBase
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsWidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "CsWidgetActor"))
 	TSoftClassPtr<UObject> Widget;
 
 	UPROPERTY()
 	int32 Widget_LoadFlags;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	UObject* Widget_Internal;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	UClass* Widget_Class;
 
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	TSubclassOf<UObject> Widget_SubclassOf;
 
 	FCsWidgetActorPtr() :
@@ -187,15 +187,15 @@ struct CSUI_API FCsWidgetActorClassEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsWidgetActorClass) name for the widget actor class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FString Name;
 
 	/** The enum (FECsWidgetActorClass) display name for the widget actor class. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FString DisplayName;
 
 	/** Soft Reference to a widget actor class of type: ICsWidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FCsWidgetActorPtr Class;
 
 	FCsWidgetActorClassEntry() :
@@ -223,23 +223,23 @@ struct CSUI_API FCsData_WidgetActorPtr
 public:
 
 	/** Soft Reference to an object that implements the interface: ICsData_WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_WidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "CsData_WidgetActor"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 Load_Flags;
+	UPROPERTY(BlueprintReadOnly, Category = "CsUI|Widget Actor")
+	int32 Data_LoadFlags;
 
 	/** Hard Reference to an object that implements the interface: ICsData_WidgetActor. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	UObject* Data_Internal;
 
 	/** Hard Reference to a class that implements the interface: ICsData_WidgetActor. */
-	UPROPERTY(Transient, BlueprintReadOnly)
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	UClass* Data_Class;
 
 	FCsData_WidgetActorPtr() :
 		Data(nullptr),
-		Load_Flags(0),
+		Data_LoadFlags(0),
 		Data_Internal(nullptr),
 		Data_Class(nullptr)
 	{
@@ -266,16 +266,16 @@ struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	/** The enum (FECsWidgetActor) name for the widget actor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FString Name;
 
 	/** The enum (FECsWidgetActor) display name for the widget actor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FString DisplayName;
 
 	/** The type of WidgetActor. A reference to the WidgetActor is obtained 
 		from Manager_WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FECsWidgetActorClass Class;
 
 	/** Soft Reference to a data of type: ICsData_Projectile. */
@@ -307,11 +307,11 @@ struct CSUI_API FCsWidgetActorPooledInfo
 	/** Type of WidgetActor. The reference for the WidgetActor is obtained from
 	    Manager_WidgetActor. Generally, this should be set to the DefaultType set 
 		in UCsUserInterfaceSettings->Manager_WidgetActor.DefaultType. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FECsWidgetActor WidgetActor;
 
 	/** Condition to determine when to deallocate the WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	ECsWidgetActorDeallocateMethod DeallocateMethod;
 
 	/** Valid if the DeallocateMethod == ECsWidgetActorDeallocateMethod::LifeTime.
@@ -324,29 +324,29 @@ struct CSUI_API FCsWidgetActorPooledInfo
 		   LifeTime == 0.0f means the WidgetActor will stay active forever.
 		   LifeTime > 0.0f means the WidgetActor will be deallocated after LifeTime amount of time after
 	        the WidgetActor has been allocated. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (ClampMin = "0.0", UIMin = "0.0"))
 	float LifeTime;
 
 	/** Valid if the WidgetActor is attached to a Parent object or when a WidgetActor is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the WidgetActor will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	ECsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the WidgetActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the WidgetActor.
 		If the WidgetActor is attached to a parent object, the Transform is applied as a Relative Transform
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FTransform Transform;
 
 public:

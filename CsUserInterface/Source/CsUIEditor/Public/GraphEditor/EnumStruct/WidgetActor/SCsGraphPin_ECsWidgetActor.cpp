@@ -2,56 +2,68 @@
 #include "GraphEditor/EnumStruct/WidgetActor/SCsGraphPin_ECsWidgetActor.h"
 #include "CsUIEditor.h"
 
+// Types
 #include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 
 // Cached
 #pragma region
 
-namespace NCsGraphPinWidgetActorCached
+namespace NCsGraphPinWidgetActor
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsWidgetActor::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("SCsGraphPin_ECsWidgetActor::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
-void SCsGraphPin_ECsWidgetActor::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
+#define CLASS_TYPE SCsGraphPin_ECsWidgetActor
+#define EnumMapType EMCsWidgetActor
+#define EnumType FECsWidgetActor
+
+void CLASS_TYPE::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 
-	Construct_Internal<EMCsWidgetActor, FECsWidgetActor>();
+	Construct_Internal<EnumMapType, EnumType>();
 }
 
-void SCsGraphPin_ECsWidgetActor::CustomPopulateEnumMap()
+void CLASS_TYPE::CustomPopulateEnumMap()
 {
-	using namespace NCsGraphPinWidgetActorCached;
+	using namespace NCsGraphPinWidgetActor::NCached;
 
 	NCsWidgetActor::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
-void SCsGraphPin_ECsWidgetActor::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
+void CLASS_TYPE::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
-	GenenerateComboBoxIndexes_Internal<EMCsWidgetActor>(OutComboBoxIndexes);
+	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);
 }
 
-FString SCsGraphPin_ECsWidgetActor::OnGetText() const
+FString CLASS_TYPE::OnGetText() const
 {
-	return OnGetText_Internal<EMCsWidgetActor, FECsWidgetActor>();
+	return OnGetText_Internal<EnumMapType, EnumType>();
 }
 
-void SCsGraphPin_ECsWidgetActor::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
+void CLASS_TYPE::ComboBoxSelectionChanged(TSharedPtr<int32> NewSelection, ESelectInfo::Type SelectInfo)
 {
-	ComboBoxSelectionChanged_Internal<EMCsWidgetActor, FECsWidgetActor>(NewSelection, SelectInfo);
+	ComboBoxSelectionChanged_Internal<EnumMapType, EnumType>(NewSelection, SelectInfo);
 }
 
-FText SCsGraphPin_ECsWidgetActor::OnGetFriendlyName(int32 EnumIndex)
+FText CLASS_TYPE::OnGetFriendlyName(int32 EnumIndex)
 {
-	return OnGetFriendlyName_Internal<EMCsWidgetActor>(EnumIndex);
+	return OnGetFriendlyName_Internal<EnumMapType>(EnumIndex);
 }
 
-FText SCsGraphPin_ECsWidgetActor::OnGetTooltip(int32 EnumIndex)
+FText CLASS_TYPE::OnGetTooltip(int32 EnumIndex)
 {
-	return OnGetTooltip_Internal<EMCsWidgetActor>(EnumIndex);
+	return OnGetTooltip_Internal<EnumMapType>(EnumIndex);
 }
+
+#undef CLASS_TYPE
+#undef EnumMapType
+#undef EnumType

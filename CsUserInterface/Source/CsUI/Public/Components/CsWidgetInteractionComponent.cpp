@@ -1,5 +1,4 @@
 // Copyright 2017-2022 Closed Sum Games, Inc. All rights reserved.
-
 #include "Components/CsWidgetInteractionComponent.h"
 #include "CsUI.h"
 

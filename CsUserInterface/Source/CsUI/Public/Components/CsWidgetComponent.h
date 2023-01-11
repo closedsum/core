@@ -1,8 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, Inc. All rights reserved.
-
 #pragma once
-
 #include "Components/WidgetComponent.h"
+
 #include "CsWidgetComponent.generated.h"
 
 UCLASS(Blueprintable, ClassGroup = "UserInterface", hidecategories = (Object, Activation, "Components|Activation", Sockets, Base, Lighting, LOD, Mesh), editinlinenew, meta = (BlueprintSpawnableComponent))

@@ -2,7 +2,7 @@
 #include "DetailCustomizations/EnumStruct/WidgetActor/ECsWidgetActorCustomization.h"
 
 // Managers
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 
 #define LOCTEXT_NAMESPACE "ECsWidgetActorCustomization"
 

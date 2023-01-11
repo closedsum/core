@@ -1,8 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Containers/CsGetInterfaceMap.h"
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
-#include "Managers/UserWidget/CsTypes_UserWidget.h"
 #pragma once
+#include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
+#include "Managers/UserWidget/CsTypes_UserWidget.h"
 
 class UUserWidget;
 

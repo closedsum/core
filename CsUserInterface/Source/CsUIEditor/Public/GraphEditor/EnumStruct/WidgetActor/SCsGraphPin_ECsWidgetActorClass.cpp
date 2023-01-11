@@ -3,7 +3,7 @@
 #include "CsUIEditor.h"
 
 // Types
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 
 // Cached
 #pragma region

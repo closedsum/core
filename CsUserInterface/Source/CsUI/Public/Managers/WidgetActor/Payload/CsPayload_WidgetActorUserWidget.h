@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Containers/CsGetInterfaceMap.h"
-#include "Managers/UserWidget/CsTypes_UserWidget.h"
 #pragma once
+#include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Managers/UserWidget/CsTypes_UserWidget.h"
 
-namespace NCsUserWidget {
-	namespace NPayload {
-		struct IPayload; } }
+// NCsUserWidget::NPayload::IPayload
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NPayload, IPayload)
 
 namespace NCsWidgetActor
 {
@@ -23,6 +23,8 @@ namespace NCsWidgetActor
 
 			virtual ~IUserWidget(){}
 
+		#define UserWidgetPayloadType NCsUserWidget::NPayload::IPayload
+
 			/**
 			* Get the UserWidgetPooled Type.
 			*  "Spawn" (allocate) an object that implements the interface: ICsUserWidgetPooled 
@@ -37,7 +39,9 @@ namespace NCsWidgetActor
 			*
 			* return
 			*/
-			virtual NCsUserWidget::NPayload::IPayload* GetUserWidgetPayload() const = 0;
+			virtual UserWidgetPayloadType* GetUserWidgetPayload() const = 0;
+
+		#undef UserWidgetPayloadType
 		};
 	}
 }

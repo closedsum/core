@@ -1,7 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
-#include "CsSettings_Manager_WidgetActor.generated.h"
 #pragma once
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
+
+#include "CsSettings_Manager_WidgetActor.generated.h"
 
 // FCsSettings_Manager_WidgetActor_PoolParams
 #pragma region
@@ -13,13 +14,13 @@ struct CSUI_API FCsSettings_Manager_WidgetActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement ="CsWidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings", meta = (MustImplement = "CsWidgetActor"))
 	FECsWidgetActorClass Class; 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PoolSize;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "4", UIMin = "4"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings", meta = (ClampMin = "4", UIMin = "4"))
 	int32 PayloadSize;
 
 	FCsSettings_Manager_WidgetActor_PoolParams() :
@@ -46,14 +47,14 @@ struct CSUI_API FCsSettings_Manager_WidgetActor
 public:
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings")
 	TMap<FECsWidgetActor, FECsWidgetActor> TypeMap;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings")
 	FECsWidgetActor DefaultType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings")
 	TMap<FECsWidgetActor, FCsSettings_Manager_WidgetActor_PoolParams> PoolParams;
 
 	FCsSettings_Manager_WidgetActor() :

@@ -5,8 +5,6 @@
 
 // CVars
 #include "Managers/WidgetActor/CsCVars_Manager_WidgetActor.h"
-// Types
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Data/CsUILibrary_DataRootSet.h"
@@ -77,17 +75,24 @@ UCsManager_WidgetActor::UCsManager_WidgetActor(const FObjectInitializer& ObjectI
 #pragma region
 
 #if WITH_EDITOR
+
 /*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::Get(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor();
 }
-#endif // #if WITH_EDITOR
 
-#if WITH_EDITOR
+/*static*/ UCsManager_WidgetActor* UCsManager_WidgetActor::GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+{
+	if (ICsGetManagerWidgetActor* GetManagerWidgetActor = GetSafe_GetManagerWidgetActor(Context, InRoot, Log))
+		return GetManagerWidgetActor->GetManager_WidgetActor();
+	return nullptr;
+}
+
 /*static*/ bool UCsManager_WidgetActor::IsValid(const UObject* InRoot /*=nullptr*/)
 {
 	return Get_GetManagerWidgetActor(InRoot)->GetManager_WidgetActor() != nullptr;
 }
+
 #endif // #if WITH_EDITOR
 
 /*static*/ void UCsManager_WidgetActor::Init(UObject* InRoot, TSubclassOf<UCsManager_WidgetActor> ManagerWidgetActorClass, UObject* InOuter /*=nullptr*/)

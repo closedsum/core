@@ -1,12 +1,15 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "UObject/Object.h"
+// Types
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
+// Pool
 #include "Managers/Pool/CsManager_PooledObject_Map.h"
+// WidgetActor
 #include "Managers/WidgetActor/CsWidgetActor.h"
 #include "Managers/WidgetActor/CsWidgetActorPooled.h"
 #include "Managers/WidgetActor/Payload/CsPayload_WidgetActor.h"
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+// Settings
 #include "Managers/WidgetActor/CsSettings_Manager_WidgetActor.h"
 
 #include "CsManager_WidgetActor.generated.h"
@@ -109,6 +112,21 @@ public:
 	FORCEINLINE static T* Get(const UObject* InRoot = nullptr)
 	{
 		return Cast<T>(Get(InRoot));
+	}
+
+#if WITH_EDITOR
+	static UCsManager_WidgetActor* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr);
+#else
+	FORCEINLINE static UCsManager_WidgetActor* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return s_bShutdown ? nullptr : s_Instance;
+	}
+#endif // #if WITH_EDITOR
+
+	template<typename T>
+	FORCEINLINE static T* GetSafe(const FString& Context, UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	{
+		return Cast<T>(GetSafe(Context, InRoot, Log));
 	}
 
 #if WITH_EDITOR

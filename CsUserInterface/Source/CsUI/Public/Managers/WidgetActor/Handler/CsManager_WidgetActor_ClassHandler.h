@@ -1,8 +1,10 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
-#include "Managers/WidgetActor/CsWidgetActorPooled.h"
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
 #pragma once
+#include "Managers/Data/Handler/CsManager_Data_ClassHandler.h"
+// WidgetActor
+#include "Managers/WidgetActor/CsWidgetActorPooled.h"
+// Types
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 
 namespace NCsWidgetActor
 {
@@ -10,7 +12,7 @@ namespace NCsWidgetActor
 	{
 		namespace NHandler
 		{
-#define ClassHandlerType NCsData::NManager::NHandler::TClass
+		#define ClassHandlerType NCsData::NManager::NHandler::TClass
 
 			class CSUI_API FClass : public ClassHandlerType<FCsWidgetActorPooled, FCsWidgetActorPtr, FECsWidgetActorClass>
 			{
@@ -33,7 +35,7 @@ namespace NCsWidgetActor
 			#pragma endregion ClassHandlerType
 			};
 
-#undef ClassHandlerType
+		#undef ClassHandlerType
 		}
 	}
 }

@@ -5,6 +5,8 @@
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/CsTypes_AttachDetach.h"
 #include "Engine/DataTable.h"
+// Log
+#include "Utility/CsUILog.h"
 
 #include "CsTypes_WidgetActor.generated.h"
 
@@ -292,11 +294,106 @@ struct CSUI_API FCsWidgetActorEntry : public FTableRowBase
 
 #pragma endregion FCsProjectileEntry
 
+// FCsWidgetActorPooled_CameraInfo
+#pragma region
+
+// NCsWidgetActor::NCamera::FInfo
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NCamera, FInfo)
+
+/**
+* Describes any information related to the Camera for a pooled WidgetActor.
+*  WidgetActor is an object that implements the interface: ICsWidgetActor
+*  This is mostly used by object pooled by a Manager
+*/
+USTRUCT(BlueprintType)
+struct CSUI_API FCsWidgetActorPooled_CameraInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** How fast to interpolate the the rotation of the Widget Actor to face
+		the Player Camera. 
+		LerpRate == 0.0f -> Instance / Snap to face Camera. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (UIMIn = "0.0", ClampMin = "0.0"))
+	float LerpRate;
+
+	/** Which Axes to Lock, which should NOT Snap to the Player Camera. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	int32 LockAxes;
+
+	/** Any rotation offset to apply after the Widget Actor has been oriented to face
+		the Player Camera. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
+	FRotator Rotation;
+
+	FCsWidgetActorPooled_CameraInfo() : 
+		LerpRate(0.0f),
+		LockAxes(4), // Roll (1 << 2)
+		Rotation(0.0f)
+	{
+	}
+
+#define InfoType NCsWidgetActor::NCamera::FInfo
+	void CopyToInfo(InfoType* Info);
+	void CopyToInfoAsValue(InfoType* Info) const;
+#undef InfoType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
+};
+
+namespace NCsWidgetActor
+{
+	namespace NCamera
+	{
+		/**
+		* Describes any information related to the Camera for a pooled WidgetActor.
+		*  WidgetActor is an object that implements the interface: ICsWidgetActor
+		*  This is mostly used by object pooled by a Manager
+		*/
+		struct CSUI_API FInfo
+		{
+		private:
+
+			/** How fast to interpolate the the rotation of the Widget Actor to face
+				the Player Camera.
+				LerpRate == 0.0f -> Instance / Snap to face Camera. */
+			CS_DECLARE_MEMBER_WITH_PROXY(LerpRate, float)
+			/** Which Axes to Lock, which should NOT Snap to the Player Camera. */
+			CS_DECLARE_MEMBER_WITH_PROXY(LockAxes, int32)
+			/** Any rotation offset to apply after the Widget Actor has been oriented to face
+				the Player Camera. */
+			CS_DECLARE_MEMBER_WITH_PROXY(Rotation, FRotator)
+
+		public:
+
+			FInfo() :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(LerpRate, 0.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(LockAxes, 4), // Roll (1 << 2)
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Rotation, 0.0f)
+			{
+				CS_CTOR_SET_MEMBER_PROXY(LerpRate);
+				CS_CTOR_SET_MEMBER_PROXY(LockAxes);
+				CS_CTOR_SET_MEMBER_PROXY(Rotation);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LerpRate, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LockAxes, int32)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rotation, FRotator)
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
+		};
+	}
+}
+
+#pragma endregion FCsWidgetActorPooled_CameraInfo
+
 // FCsWidgetActorPooledInfo
 #pragma region
 
 /**
 * Container holding general information for a pooled WidgetActor.
+*  WidgetActor is an object that implements the interface: ICsWidgetActor
 *  This is mostly used by object pooled by a Manager
 */
 USTRUCT(BlueprintType)
@@ -349,6 +446,14 @@ struct CSUI_API FCsWidgetActorPooledInfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
 	FTransform Transform;
 
+	/** Whether to use CameraInfo or not. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (ScriptName = "m_bCameraInfo", InlineEditConditionToggle))
+	bool bCameraInfo;
+
+	/** Describes any information related to the Camera. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (ScriptName = "m_CameraInfo", editcondition = "bCameraInfo"))
+	FCsWidgetActorPooled_CameraInfo CameraInfo;
+
 public:
 
 	FCsWidgetActorPooledInfo() :
@@ -358,9 +463,14 @@ public:
 		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity)
+		Transform(FTransform::Identity),
+		bCameraInfo(true),
+		CameraInfo()
 	{
 	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
 };
 
 #pragma endregion FCsWidgetActorPooledInfo

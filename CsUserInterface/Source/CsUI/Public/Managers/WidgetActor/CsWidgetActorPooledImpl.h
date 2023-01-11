@@ -6,10 +6,13 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/WidgetActor/CsWidgetActor.h"
+
 #include "CsWidgetActorPooledImpl.generated.h"
 
 // NCsPooledObject::NCache::ICache
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NCache, ICache)
+// NCsWidgetActor::NCache::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsWidgetActor, NCache, FImpl)
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 
@@ -23,6 +26,10 @@ class CSUI_API ACsWidgetActorPooledImpl : public AActor,
 										  public ICsWidgetActor
 {
 	GENERATED_UCLASS_BODY()
+
+#define CacheType NCsPooledObject::NCache::ICache
+#define CacheImplType NCsWidgetActor::NCache::FImpl
+#define PayloadType NCsPooledObject::NPayload::IPayload
 
 // UObject Interface
 #pragma region
@@ -62,33 +69,32 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE NCsPooledObject::NCache::ICache* GetCache() const
-	{
-		return Cache;
-	}
+	FORCEINLINE CacheType* GetCache() const { return Cache; }
 	
-	void Allocate(NCsPooledObject::NPayload::IPayload* Payload);
+	void Allocate(PayloadType* Payload);
 
 	void Deallocate();
 
 #pragma endregion ICsPooledObject
 
+// PooledObject
+#pragma region
 protected:
 
 	void Deallocate_Internal();
 
-	NCsPooledObject::NCache::ICache* Cache;
+	CacheType* Cache;
+	CacheImplType* CacheImpl;
 
 	void ConstructCache();
+
+#pragma endregion PooledObject
 
 // ICsWidgetActor
 #pragma region
 public:
 
-	FORCEINLINE UCsWidgetComponent* GetWidgetComponent() const
-	{
-		return WidgetComponent;
-	}
+	FORCEINLINE UCsWidgetComponent* GetWidgetComponent() const { return WidgetComponent; }
 
 #pragma endregion ICsWidgetActor
 
@@ -98,4 +104,8 @@ protected:
 	UCsWidgetComponent* WidgetComponent;
 
 	FCsUserWidgetPooled* UserWidgetPooled;
+
+#undef CacheType
+#undef CacheImplType
+#undef PayloadType
 };

@@ -2,7 +2,7 @@
 #pragma once
 #include "Containers/CsInterfaceMap.h"
 // Types
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 // Data
 #include "Managers/WidgetActor/Data/CsData_WidgetActor.h"
 // Log

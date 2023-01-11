@@ -1,11 +1,11 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 // Data
 #include "Managers/WidgetActor/Data/CsData_WidgetActor.h"
 #include "Managers/WidgetActor/Data/CsData_WidgetActorInterfaceMap.h"
-#pragma once
 
 namespace NCsWidgetActor
 {
@@ -13,9 +13,9 @@ namespace NCsWidgetActor
 	{
 		namespace NHandler
 		{
-#define DataHandlerType NCsData::NManager::NHandler::TData
-#define DataType NCsWidgetActor::NData::IData
-#define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
+		#define DataHandlerType NCsData::NManager::NHandler::TData
+		#define DataType NCsWidgetActor::NData::IData
+		#define DataInterfaceMapType NCsWidgetActor::NData::FInterfaceMap
 
 			/**
 			*/
@@ -38,9 +38,9 @@ namespace NCsWidgetActor
 			#pragma endregion DataHandlerType (NCsData::NManager::NHandler::TData)
 			};
 
-#undef DataHandlerType
-#undef DataType
-#undef DataInterfaceMapType
+		#undef DataHandlerType
+		#undef DataType
+		#undef DataInterfaceMapType
 		}
 	}
 }

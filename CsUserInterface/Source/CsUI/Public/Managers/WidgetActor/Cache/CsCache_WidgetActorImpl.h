@@ -1,10 +1,13 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Cache/CsCache_PooledObject.h"
-#include "Managers/WidgetActor/Cache/CsCache_WidgetActor.h"
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
-#include "Containers/CsWeakObjectPtr.h"
-
 #pragma once
+// Types
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
+// Pool
+#include "Managers/Pool/Cache/CsCache_PooledObject.h"
+// WidgetActor
+#include "Managers/WidgetActor/Cache/CsCache_WidgetActor.h"
+// Container
+#include "Containers/CsWeakObjectPtr.h"
 
 class UObject;
 struct FCsInterfaceMap;

@@ -4,7 +4,7 @@
 
 // Types
 #include "Managers/Menu/CsTypes_Menu.h"
-#include "Managers/WidgetActor/CsTypes_WidgetActor.h"
+#include "Managers/WidgetActor/Types/CsTypes_WidgetActor.h"
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/Payload/CsTypes_Payload_UserWidget.h"
 

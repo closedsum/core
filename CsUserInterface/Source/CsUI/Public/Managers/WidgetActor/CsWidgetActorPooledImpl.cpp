@@ -7,8 +7,12 @@
 #include "Types/CsTypes_AttachDetach.h"
 #include "Types/CsTypes_Math.h"
 // Library
-#include "Managers/Pool/Cache/CsLibrary_Cache_PooledObject.h"
+	// Manager
+#include "Managers/UserWidget/CsLibrary_Manager_UserWidget.h"
+	// Pool
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+	// Common
+#include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
 // Pooled Object
@@ -26,20 +30,29 @@
 // Cached
 #pragma region
 
-namespace NCsWidgetActorPooledImplCached
+namespace NCsWidgetActorPooledImpl
 {
-	namespace Str
+	namespace NCached
 	{
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, BeginPlay);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Update);
-		CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Allocate);
-		CS_DEFINE_CACHED_STRING(UserWidgetPooledType, "UserWidgetPooledType");
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, BeginPlay);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Update);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsWidgetActorPooledImpl, Allocate);
+			CS_DEFINE_CACHED_STRING(UserWidgetPooledType, "UserWidgetPooledType");
+		}
 	}
 }
 
 #pragma endregion Cached
 
-ACsWidgetActorPooledImpl::ACsWidgetActorPooledImpl(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ACsWidgetActorPooledImpl::ACsWidgetActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	// PooledObject
+	Cache(nullptr),
+	CacheImpl(nullptr),
+	WidgetComponent(nullptr),
+	UserWidgetPooled(nullptr)
 {
 	// Widget Component
 	WidgetComponent = ObjectInitializer.CreateDefaultSubobject<UCsWidgetComponent>(this, TEXT("WidgetComponent"));
@@ -67,6 +80,7 @@ void ACsWidgetActorPooledImpl::BeginDestroy()
 	{
 		delete Cache;
 		Cache = nullptr;
+		CacheImpl = nullptr;
 	}
 }
 
@@ -77,7 +91,7 @@ void ACsWidgetActorPooledImpl::BeginDestroy()
 
 void ACsWidgetActorPooledImpl::BeginPlay()
 {
-	using namespace NCsWidgetActorPooledImplCached;
+	using namespace NCsWidgetActorPooledImpl::NCached;
 
 	const FString& Context = Str::BeginPlay;
 
@@ -116,14 +130,9 @@ void ACsWidgetActorPooledImpl::OutsideWorldBounds()
 
 void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsWidgetActorPooledImplCached;
+	using namespace NCsWidgetActorPooledImpl::NCached;
 
 	const FString& Context = Str::Update;
-
-	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Update(DeltaTime);
 }
@@ -133,9 +142,12 @@ void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 // ICsPooledObject
 #pragma region
 
-void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Payload)
+#define PayloadType NCsPooledObject::NPayload::IPayload
+void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 {
-	using namespace NCsWidgetActorPooledImplCached;
+#undef PayloadType
+
+	using namespace NCsWidgetActorPooledImpl::NCached;
 
 	const FString& Context = Str::Allocate;
 
@@ -154,18 +166,21 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 		else
 		{
 			// Get "slice" NCsWidgetActor::NPayload::IUserWidget
-			typedef NCsWidgetActor::NPayload::IUserWidget UserWidgetPayloadType;
+			typedef NCsWidgetActor::NPayload::IUserWidget WidgetActorUserWidgetPayloadType;
+			typedef NCsUserWidget::NPayload::IPayload UserWidgetPayloadType;
 
-			UserWidgetPayloadType* WidgetActorUserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<UserWidgetPayloadType>(Context, Payload);
+			WidgetActorUserWidgetPayloadType* WidgetActorUserWidgetPayload = PooledPayloadLibrary::GetInterfaceChecked<WidgetActorUserWidgetPayloadType>(Context, Payload);
 
 				// Get type
 			const FECsUserWidgetPooled& UserWidgetPooledType = WidgetActorUserWidgetPayload->GetUserWidgetPooledType();
 
-			checkf(EMCsUserWidgetPooled::Get().IsValidEnum(UserWidgetPooledType), TEXT("%s: UserWidgetPooledType: %s is NOT Valid from Payload(NCsWidgetActor::NPayload::IPayload)->GetUserWidgetPooledType()."), *Context, UserWidgetPooledType.ToChar());
-				// Get payload (NCsUserWidget::NPayload::IPayload)
-			NCsUserWidget::NPayload::IPayload* UserWidgetPayload = WidgetActorUserWidgetPayload->GetUserWidgetPayload();
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooled, UserWidgetPooledType)
 
-			checkf(UserWidgetPayload, TEXT("%s: UserWidgetPayload is NULL from Payload(NCsWidgetActor::NPayload::IUserWidget)->GetUserWidgetPayload()."), *Context)
+				// Get Payload (NCsUserWidget::NPayload::IPayload)
+			UserWidgetPayloadType* UserWidgetPayload = WidgetActorUserWidgetPayload->GetUserWidgetPayload();
+
+			CS_IS_PTR_NULL_CHECKED(UserWidgetPayload)
+
 				// "Spawn" / allocate UserWidget
 			UCsManager_UserWidget* UManager_UserWidget = UCsManager_UserWidget::Get(GetWorld()->GetGameState());
 
@@ -174,11 +189,6 @@ void ACsWidgetActorPooledImpl::Allocate(NCsPooledObject::NPayload::IPayload* Pay
 			WidgetComponent->SetWidget(UserWidgetPooled->GetUserWidget());
 		}	
 	}
-
-	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
-	typedef NCsPooledObject::NCache::FLibrary PooledCacheLibrary;
-
-	CacheImplType* CacheImpl = PooledCacheLibrary::PureStaticCastChecked<CacheImplType>(Context, Cache);
 
 	CacheImpl->Allocate(Payload);
 
@@ -280,5 +290,6 @@ void ACsWidgetActorPooledImpl::ConstructCache()
 {
 	typedef NCsWidgetActor::NCache::FImpl CacheImplType;
 
-	Cache = new CacheImplType();
+	CacheImpl = new CacheImplType();
+	Cache	  = CacheImpl;
 }

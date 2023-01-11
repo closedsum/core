@@ -22,42 +22,44 @@ namespace NCsUserWidgetPooledCustomization
 
 #pragma endregion Cached
 
+#define CLASS_TYPE FECsUserWidgetPooledCustomization
 #define EnumMapType EMCsUserWidgetPooled
 #define EnumType FECsUserWidgetPooled
 
-FECsUserWidgetPooledCustomization::FECsUserWidgetPooledCustomization() :
+CLASS_TYPE::CLASS_TYPE() :
 	Super()
 {
 	Init<EnumMapType, EnumType>();
 }
 
-void FECsUserWidgetPooledCustomization::CustomPopulateEnumMap()
+void CLASS_TYPE::CustomPopulateEnumMap()
 {
 	using namespace NCsUserWidgetPooledCustomization::NCached;
 
 	NCsUserWidgetPooled::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
-TSharedRef<IPropertyTypeCustomization> FECsUserWidgetPooledCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FECsUserWidgetPooledCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FECsUserWidgetPooledCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void CLASS_TYPE::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
 	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
-void FECsUserWidgetPooledCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+void CLASS_TYPE::SetEnumWithDisplayName(const FString& DisplayName)
 {
 	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
-void FECsUserWidgetPooledCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void CLASS_TYPE::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
 	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
 
+#undef CLASS_TYPE
 #undef EnumMapType
 #undef EnumType
 

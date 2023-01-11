@@ -6,30 +6,38 @@
 
 #define LOCTEXT_NAMESPACE "ECsMenuCustomization"
 
-FECsMenuCustomization::FECsMenuCustomization() :
+#define CLASS_TYPE FECsMenuCustomization
+#define EnumMapType EMCsMenu
+#define EnumType FECsMenu
+
+CLASS_TYPE::CLASS_TYPE() :
 	Super()
 {
-	Init<EMCsMenu, FECsMenu>();
+	Init<EnumMapType, EnumType>();
 }
 
-TSharedRef<IPropertyTypeCustomization> FECsMenuCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FECsMenuCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FECsMenuCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void CLASS_TYPE::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsMenu>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
-void FECsMenuCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+void CLASS_TYPE::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsMenu, FECsMenu>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
-void FECsMenuCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void CLASS_TYPE::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsMenu, FECsMenu>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef CLASS_TYPE
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

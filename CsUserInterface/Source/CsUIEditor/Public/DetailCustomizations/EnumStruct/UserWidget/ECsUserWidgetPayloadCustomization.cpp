@@ -6,35 +6,37 @@
 
 #define LOCTEXT_NAMESPACE "ECsUserWidgetPayloadCustomization"
 
+#define CLASS_TYPE FECsUserWidgetPayloadCustomization
 #define EnumMapType EMCsUserWidgetPayload
 #define EnumType FECsUserWidgetPayload
 
-FECsUserWidgetPayloadCustomization::FECsUserWidgetPayloadCustomization() :
+CLASS_TYPE::CLASS_TYPE() :
 	Super()
 {
 	Init<EnumMapType, EnumType>();
 }
 
-TSharedRef<IPropertyTypeCustomization> FECsUserWidgetPayloadCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FECsUserWidgetPayloadCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FECsUserWidgetPayloadCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void CLASS_TYPE::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
 	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
-void FECsUserWidgetPayloadCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+void CLASS_TYPE::SetEnumWithDisplayName(const FString& DisplayName)
 {
 	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
-void FECsUserWidgetPayloadCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void CLASS_TYPE::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
 	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
 
+#undef CLASS_TYPE
 #undef EnumMapType
 #undef EnumType
 

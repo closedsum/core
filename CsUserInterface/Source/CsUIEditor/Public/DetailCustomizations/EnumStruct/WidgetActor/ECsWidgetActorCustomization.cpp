@@ -9,47 +9,58 @@
 // Cached
 #pragma region
 
-namespace NCsWidgetActorCustomizationCached
+namespace NCsWidgetActorCustomization
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString CustomPopulateEnumMap = TEXT("FECsWidgetActorCustomization::CustomPopulateEnumMap");
+		namespace Str
+		{
+			const FString CustomPopulateEnumMap = TEXT("FECsWidgetActorCustomization::CustomPopulateEnumMap");
+		}
 	}
 }
 
 #pragma endregion Cached
 
-FECsWidgetActorCustomization::FECsWidgetActorCustomization() :
+#define CLASS_TYPE FECsWidgetActorCustomization
+#define EnumMapType EMCsWidgetActor
+#define EnumType FECsWidgetActor
+
+CLASS_TYPE::CLASS_TYPE() :
 	Super()
 {
-	Init<EMCsWidgetActor, FECsWidgetActor>();
+	Init<EnumMapType, EnumType>();
 }
 
-void FECsWidgetActorCustomization::CustomPopulateEnumMap()
+void CLASS_TYPE::CustomPopulateEnumMap()
 {
-	using namespace NCsWidgetActorCustomizationCached;
+	using namespace NCsWidgetActorCustomization::NCached;
 
 	NCsWidgetActor::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
-TSharedRef<IPropertyTypeCustomization> FECsWidgetActorCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FECsWidgetActorCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FECsWidgetActorCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void CLASS_TYPE::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
-	SetPropertyHandles_Internal<FECsWidgetActor>(StructPropertyHandle);
+	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
-void FECsWidgetActorCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+void CLASS_TYPE::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EMCsWidgetActor, FECsWidgetActor>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
 }
 
-void FECsWidgetActorCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void CLASS_TYPE::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
-	GetDisplayNamePropertyValue_Internal<EMCsWidgetActor, FECsWidgetActor>(OutDisplayName);
+	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
+
+#undef CLASS_TYPE
+#undef EnumMapType
+#undef EnumType
 
 #undef LOCTEXT_NAMESPACE

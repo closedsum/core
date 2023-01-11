@@ -607,5 +607,21 @@ namespace NCsPlayer
 		{
 			return GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation();
 		}
+
+		void FLibrary::GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FRotator& OutRotation)
+		{
+			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
+
+			OutLocation = PCM->GetCameraLocation();
+			OutRotation = PCM->GetCameraRotation();
+		}
+
+		void FLibrary::GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FVector& OutDirection)
+		{
+			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
+
+			OutLocation = PCM->GetCameraLocation();
+			OutDirection = PCM->GetCameraRotation().Vector();
+		}
 	}
 }

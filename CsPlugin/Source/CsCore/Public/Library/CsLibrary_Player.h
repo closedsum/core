@@ -356,6 +356,30 @@ namespace NCsPlayer
 			* return				Location for Camera.
 			*/
 			static FVector GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+
+			/**
+			* Get the Camera location and rotation which is associated with PlayerController with
+			* ControllerId.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param OutLocation	(out) Camera's current location.
+			* @param OutRotation	(out) Camera's current rotation.
+			*/
+			static void GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FRotator& OutRotation);
+
+			/**
+			* Get the Camera location and rotation which is associated with PlayerController with
+			* ControllerId.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param OutLocation	(out) Camera's current location.
+			* @param OutDirection	(out) Camera's current direction.
+			*/
+			static void GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FVector& OutDirection);
 		};
 	}
 }

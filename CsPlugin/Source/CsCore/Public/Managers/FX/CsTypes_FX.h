@@ -215,7 +215,7 @@ public:
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */

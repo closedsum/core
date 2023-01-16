@@ -12,7 +12,7 @@
 #include "Managers/UserWidget/Payload/CsPayload_UserWidgetImplSlice.h"
 #include "Managers/UserWidget/Payload/Text/CsPayload_UserWidget_TextImplSlice.h"
 
-#define InfoType NCsUserWidget::NText::FInfo
+#define InfoType NCsUserWidget::NPooled::NText::FInfo
 
 void FCsUserWidget_TextPooledInfo::CopyToInfo(InfoType* Info)
 {
@@ -216,157 +216,160 @@ bool FCsUserWidget_TextPooledInfo::IsValid(const FString& Context, void(*Log)(co
 
 namespace NCsUserWidget
 {
-	namespace NText
+	namespace NPooled
 	{
-		bool FInfo::IsValidChecked(const FString& Context) const
+		namespace NText
 		{
-			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooled, GetType());
-
-			typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
-
-			CS_IS_ENUM_VALID_CHECKED(DeallocateMethodMapType, GetDeallocateMethod());
-			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRenderScale(), 0.0f)
-
-			typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
-
-			if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+			bool FInfo::IsValidChecked(const FString& Context) const
 			{
-				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLifeTime(), 0.0f)
-			}
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUserWidgetPooled, GetType());
 
-			CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetPositionType())
-			CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetOffsetType())
-			CS_IS_VALID_CHECKED(GetOutlineSettings());
-			CS_IS_VALID_CHECKED(GetShadowSettings());
+				typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
 
-			if (GetbAnimParams())
-			{
-				CS_IS_VALID_CHECKED(GetAnimParams());
-			}
-			return true;
-		}
+				CS_IS_ENUM_VALID_CHECKED(DeallocateMethodMapType, GetDeallocateMethod());
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRenderScale(), 0.0f)
 
-		bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
-		{
-			CS_IS_ENUM_STRUCT_VALID(EMCsUserWidgetPooled, FECsUserWidgetPooled, GetType())
+				typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
 
-			typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
-			typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
-
-			CS_IS_ENUM_VALID(DeallocateMethodMapType, DeallocateMethodType, GetDeallocateMethod())
-			CS_IS_FLOAT_GREATER_THAN(GetRenderScale(), 0.0f)
-
-			if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
-			{
-				CS_IS_FLOAT_GREATER_THAN(GetLifeTime(), 0.0f)
-			}
-
-			CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetPositionType())
-			CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetOffsetType())
-			CS_IS_VALID(GetOutlineSettings())
-			CS_IS_VALID(GetShadowSettings())
-
-			if (GetbAnimParams())
-			{
-				CS_IS_VALID(GetAnimParams())
-			}
-			return true;
-		}
-
-		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const
-		{
-			check(IsValidChecked(Context));
-
-			typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
-			typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
-			typedef NCsUserWidget::NPayload::IPayload PayloadType;
-
-			PayloadType* Payload = UserWidgetManagerLibrary::AllocatePayloadChecked(Context, WorldContext, GetType());
-
-			// Pooled
-			typedef NCsPooledObject::NPayload::IPayload PoolePayloadType;
-			typedef NCsPooledObject::NPayload::FImplSlice PooledSliceType;
-
-			PooledSliceType* PooledSlice = PayloadLibrary::StaticCastChecked<PooledSliceType, PoolePayloadType>(Context, Payload);
-
-			PooledSlice->Instigator = Instigator;
-			PooledSlice->Owner		= Owner;
-			PooledSlice->PreserveChangesFromDefaultMask |= (uint32)NCsUserWidget::NPayload::EChange::AddedToViewport;
-
-			// UserWidget
-			typedef NCsUserWidget::NPayload::FImplSlice SliceType;
-
-			SliceType* Slice = PayloadLibrary::StaticCastChecked<SliceType>(Context, Payload);
-
-			Slice->bAddToViewport = true;
-			Slice->Visibility	  = ESlateVisibility::HitTestInvisible;
-			Slice->RenderScale	  = GetRenderScale();
-			Slice->LifeTime		  = GetLifeTime();
-
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
-			Slice->PositionType = GetPositionType();
-			Slice->Position		= Location;
-			Slice->OffsetType   = GetOffsetType();
-			Slice->Offset		= GetOffset();
-
-			if (GetPositionType() == NCsUserWidget::EPosition::Screen)
-			{
-				FVector WorldLocation = Location;
-
-				if (GetOffsetType() == NCsUserWidget::EPosition::World)
+				if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
 				{
-					WorldLocation += GetOffset();
+					CS_IS_FLOAT_GREATER_THAN_CHECKED(GetLifeTime(), 0.0f)
 				}
 
-				FVector2D Pos;
-				const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, WorldContext, Location, Pos);
+				CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetPositionType())
+				CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetOffsetType())
+				CS_IS_VALID_CHECKED(GetOutlineSettings());
+				CS_IS_VALID_CHECKED(GetShadowSettings());
 
-				Slice->Position.X = Pos.X;
-				Slice->Position.Y = Pos.Y;
-
-				if (GetOffsetType() == NCsUserWidget::EPosition::Screen)
+				if (GetbAnimParams())
 				{
-					Slice->Position += GetOffset();
+					CS_IS_VALID_CHECKED(GetAnimParams());
 				}
+				return true;
 			}
-			Slice->ZOrder = GetZOrder();
 
-			Slice->bAnimParams = GetbAnimParams();
-			Slice->AnimParams.Copy(GetAnimParams());
+			bool FInfo::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/) const
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsUserWidgetPooled, FECsUserWidgetPooled, GetType())
 
-			// NOTE: Not sure if the spawning should be skipped if the Position is off screen.
-			// FUTURE: Add an option on whether the spawning should be "forced"
+				typedef NCsUserWidget::EMDeallocateMethod DeallocateMethodMapType;
+				typedef NCsUserWidget::EDeallocateMethod DeallocateMethodType;
+
+				CS_IS_ENUM_VALID(DeallocateMethodMapType, DeallocateMethodType, GetDeallocateMethod())
+				CS_IS_FLOAT_GREATER_THAN(GetRenderScale(), 0.0f)
+
+				if (GetDeallocateMethod() == DeallocateMethodType::LifeTime)
+				{
+					CS_IS_FLOAT_GREATER_THAN(GetLifeTime(), 0.0f)
+				}
+
+				CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetPositionType())
+				CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetOffsetType())
+				CS_IS_VALID(GetOutlineSettings())
+				CS_IS_VALID(GetShadowSettings())
+
+				if (GetbAnimParams())
+				{
+					CS_IS_VALID(GetAnimParams())
+				}
+				return true;
+			}
+
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const
+			{
+				check(IsValidChecked(Context));
+
+				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
+				typedef NCsUserWidget::NPayload::FLibrary PayloadLibrary;
+				typedef NCsUserWidget::NPayload::IPayload PayloadType;
+
+				PayloadType* Payload = UserWidgetManagerLibrary::AllocatePayloadChecked(Context, WorldContext, GetType());
+
+				// Pooled
+				typedef NCsPooledObject::NPayload::IPayload PoolePayloadType;
+				typedef NCsPooledObject::NPayload::FImplSlice PooledSliceType;
+
+				PooledSliceType* PooledSlice = PayloadLibrary::StaticCastChecked<PooledSliceType, PoolePayloadType>(Context, Payload);
+
+				PooledSlice->Instigator = Instigator;
+				PooledSlice->Owner		= Owner;
+				PooledSlice->PreserveChangesFromDefaultMask |= (uint32)NCsUserWidget::NPayload::EChange::AddedToViewport;
+
+				// UserWidget
+				typedef NCsUserWidget::NPayload::FImplSlice SliceType;
+
+				SliceType* Slice = PayloadLibrary::StaticCastChecked<SliceType>(Context, Payload);
+
+				Slice->bAddToViewport = true;
+				Slice->Visibility	  = ESlateVisibility::HitTestInvisible;
+				Slice->RenderScale	  = GetRenderScale();
+				Slice->LifeTime		  = GetLifeTime();
+
+				typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
+
+				Slice->PositionType = GetPositionType();
+				Slice->Position		= Location;
+				Slice->OffsetType   = GetOffsetType();
+				Slice->Offset		= GetOffset();
+
+				if (GetPositionType() == NCsUserWidget::EPosition::Screen)
+				{
+					FVector WorldLocation = Location;
+
+					if (GetOffsetType() == NCsUserWidget::EPosition::World)
+					{
+						WorldLocation += GetOffset();
+					}
+
+					FVector2D Pos;
+					const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, WorldContext, Location, Pos);
+
+					Slice->Position.X = Pos.X;
+					Slice->Position.Y = Pos.Y;
+
+					if (GetOffsetType() == NCsUserWidget::EPosition::Screen)
+					{
+						Slice->Position += GetOffset();
+					}
+				}
+				Slice->ZOrder = GetZOrder();
+
+				Slice->bAnimParams = GetbAnimParams();
+				Slice->AnimParams.Copy(GetAnimParams());
+
+				// NOTE: Not sure if the spawning should be skipped if the Position is off screen.
+				// FUTURE: Add an option on whether the spawning should be "forced"
 			
-			//check(Result);
+				//check(Result);
 
-			// UserWidget Text
-			typedef NCsUserWidget::NPayload::NText::IText TextPayloadType;
-			typedef NCsUserWidget::NPayload::NText::FImplSlice TextSliceType;
+				// UserWidget Text
+				typedef NCsUserWidget::NPayload::NText::IText TextPayloadType;
+				typedef NCsUserWidget::NPayload::NText::FImplSlice TextSliceType;
 
-			TextSliceType* TextSlice = PayloadLibrary::StaticCastChecked<TextSliceType, TextPayloadType>(Context, Payload);
+				TextSliceType* TextSlice = PayloadLibrary::StaticCastChecked<TextSliceType, TextPayloadType>(Context, Payload);
 
-			TextSlice->Text = Value;
-			TextSlice->Color = GetColor();
-			TextSlice->OutlineSettings.Copy(GetOutlineSettings());
-			TextSlice->ShadowSettings.Copy(GetShadowSettings());
+				TextSlice->Text = Value;
+				TextSlice->Color = GetColor();
+				TextSlice->OutlineSettings.Copy(GetOutlineSettings());
+				TextSlice->ShadowSettings.Copy(GetShadowSettings());
 
-			return UserWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
-		}
+				return UserWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
+			}
 
-		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector& Location) const
-		{
-			return SpawnChecked(Context, WorldContext, Instigator, Owner, FText::FromString(Value), Location);
-		}
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector& Location) const
+			{
+				return SpawnChecked(Context, WorldContext, Instigator, Owner, FText::FromString(Value), Location);
+			}
 
-		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const
-		{
-			return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%f"), Value), Location);
-		}
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const
+			{
+				return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%f"), Value), Location);
+			}
 
-		const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector& Location) const
-		{
-			return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%d"), Value), Location);
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector& Location) const
+			{
+				return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%d"), Value), Location);
+			}
 		}
 	}
 }

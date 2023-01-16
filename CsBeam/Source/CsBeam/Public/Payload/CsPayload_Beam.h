@@ -24,7 +24,7 @@ namespace NCsBeam
 
 			virtual const FECsBeam& GetType() const = 0;
 
-			virtual const ECsAttachmentTransformRules& GetAttachRules() const = 0;
+			virtual const FAttachmentTransformRules& GetAttachRules() const = 0;
 
 			virtual const FVector& GetLocation() const = 0;
 

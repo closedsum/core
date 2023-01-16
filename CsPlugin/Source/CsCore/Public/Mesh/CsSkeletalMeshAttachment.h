@@ -34,7 +34,7 @@ struct CSCORE_API FCsSkeletalMeshAttachment
 		allocated, the Parent field of the payload is set. If the Parent object is NULL,
 		the Sound will NOT be attached. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skeletal Mesh")
-	ECsAttachmentTransformRules AttachmentTransformRules;
+	FCsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the SkeletalMeshComponent is attached to a Parent object.
 		Bone or Socket to attach to. */
@@ -87,7 +87,7 @@ public:
 		Mesh(),
 		Materials(),
 		bGenerateMIDs(false),
-		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity),
@@ -138,7 +138,7 @@ namespace NCsSkeletalMesh
 			/** Valid if the SkeletalMeshComponent is attached to a Parent object or when an SkeletalMeshActor object is
 				allocated, the Parent field of the payload is set. If the Parent object is NULL,
 				the Sound will NOT be attached. */
-			CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+			CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 
 			/** Valid only when the SkeletalMeshComponent is attached to a Parent object.
 				Bone or Socket to attach to. */
@@ -181,7 +181,7 @@ namespace NCsSkeletalMesh
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Mesh, nullptr),
 				CS_CTOR_INIT_MEMBER_ARRAY_WITH_PROXY(Materials),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bGenerateMIDs, false),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 7), // NCsTransformRules::All
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
@@ -212,7 +212,7 @@ namespace NCsSkeletalMesh
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, USkeletalMesh)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Materials, TArray<UMaterialInterface*>)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bGenerateMIDs, bool)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)

@@ -12,10 +12,9 @@ void FCsUserWidget_TextInfo::CopyToInfo(InfoType* Info)
 	Info->SetFont(Font.GetPtr());
 	Info->SetbMaterial(&bMaterial);
 	Info->SetMaterial(Material.GetPtr());
+	Info->SetSize(&Size);
 	Info->SetRenderScale(&RenderScale);
-	Info->SetPositionType((NCsUserWidget::EPosition*)(&PositionType));
-	Info->SetOffsetType((NCsUserWidget::EPosition*)(&OffsetType));
-	Info->SetOffset(&Offset);
+	Info->SetJustification(Justification);
 	Info->SetZOrder(&ZOrder);
 	Info->SetColor(&Color);
 	OutlineSettings.CopyToSettings(Info->GetOutlineSettingsPtr());
@@ -30,10 +29,9 @@ void FCsUserWidget_TextInfo::CopyToInfoAsValue(InfoType* Info) const
 	Info->SetFont(Font.Get());
 	Info->SetbMaterial(bMaterial);
 	Info->SetMaterial(Material.Get());
+	Info->SetSize(Size);
 	Info->SetRenderScale(RenderScale);
-	Info->SetPositionType((NCsUserWidget::EPosition)PositionType);
-	Info->SetOffsetType((NCsUserWidget::EPosition)OffsetType);
-	Info->SetOffset(Offset);
+	Info->SetJustification(Justification);
 	Info->SetZOrder(ZOrder);
 	Info->SetColor(Color);
 	OutlineSettings.CopyToSettingsAsValue(Info->GetOutlineSettingsPtr());
@@ -54,9 +52,9 @@ bool FCsUserWidget_TextInfo::IsValidChecked(const FString& Context) const
 		CS_IS_VALID_CHECKED(Material);
 	}
 
+	CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Size, 1)
+	CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(Size, 1000)
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(RenderScale, 0.0f)
-	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetPosition, PositionType)
-	CS_IS_ENUM_VALID_CHECKED(EMCsUserWidgetPosition, OffsetType)
 	CS_IS_VALID_CHECKED(OutlineSettings);
 	CS_IS_VALID_CHECKED(ShadowSettings);
 	
@@ -77,9 +75,9 @@ bool FCsUserWidget_TextInfo::IsValid(const FString& Context, void(*Log)(const FS
 		CS_IS_VALID(Material);
 	}
 
+	CS_IS_INT_GREATER_THAN_OR_EQUAL(Size, 1)
+	CS_IS_INT_LESS_THAN_OR_EQUAL(Size, 1000)
 	CS_IS_FLOAT_GREATER_THAN(RenderScale, 0.0f)
-	CS_IS_ENUM_VALID(EMCsUserWidgetPosition, ECsUserWidgetPosition, PositionType)
-	CS_IS_ENUM_VALID(EMCsUserWidgetPosition, ECsUserWidgetPosition, OffsetType)
 	CS_IS_VALID(OutlineSettings)
 	CS_IS_VALID(ShadowSettings)
 
@@ -104,9 +102,9 @@ namespace NCsUserWidget
 				CS_IS_PTR_NULL_CHECKED(GetMaterial())
 			}
 
+			CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(GetSize(), 1)
+			CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(GetSize(), 1000)
 			CS_IS_FLOAT_GREATER_THAN_CHECKED(GetRenderScale(), 0.0f)
-			CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetPositionType())
-			CS_IS_ENUM_VALID_CHECKED(NCsUserWidget::EMPosition, GetOffsetType())
 			CS_IS_VALID_CHECKED(GetOutlineSettings());
 			CS_IS_VALID_CHECKED(GetShadowSettings());
 
@@ -127,9 +125,9 @@ namespace NCsUserWidget
 				CS_IS_PTR_NULL(GetMaterial())
 			}
 
+			CS_IS_INT_GREATER_THAN_OR_EQUAL(GetSize(), 1)
+			CS_IS_INT_LESS_THAN_OR_EQUAL(GetSize(), 1000)
 			CS_IS_FLOAT_GREATER_THAN(GetRenderScale(), 0.0f)
-			CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetPositionType())
-			CS_IS_ENUM_VALID(NCsUserWidget::EMPosition, NCsUserWidget::EPosition, GetOffsetType())
 			CS_IS_VALID(GetOutlineSettings())
 			CS_IS_VALID(GetShadowSettings())
 

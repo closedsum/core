@@ -428,7 +428,7 @@ struct CSUI_API FCsWidgetActorPooledInfo
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the WidgetActor will NOT be attached. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
-	ECsAttachmentTransformRules AttachmentTransformRules;
+	FCsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the WidgetActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
@@ -460,7 +460,7 @@ public:
 		WidgetActor(),
 		DeallocateMethod(ECsWidgetActorDeallocateMethod::Complete),
 		LifeTime(0.0f),
-		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity),

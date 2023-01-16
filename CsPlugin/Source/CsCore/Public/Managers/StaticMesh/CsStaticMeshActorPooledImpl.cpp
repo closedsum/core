@@ -468,8 +468,8 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 
 	if (Parent)
 	{
-		const ECsAttachmentTransformRules& Rule = StaticMeshPayload->GetAttachmentTransformRule();
-		const FName& Bone						= StaticMeshPayload->GetBone();
+		const FAttachmentTransformRules& Rule = StaticMeshPayload->GetAttachmentTransformRule();
+		const FName& Bone					  = StaticMeshPayload->GetBone();
 
 		bool PerformAttach = true;
 		bool IsPreserved = false;
@@ -495,7 +495,7 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 
 			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
-			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			GetMeshComponent()->AttachToComponent(Parent, Rule, Bone);
 			ChangeCounter::Get().AddChanged();	
 		}
 

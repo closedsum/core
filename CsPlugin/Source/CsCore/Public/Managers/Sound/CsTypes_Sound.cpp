@@ -272,7 +272,7 @@ void FCsSound::Reset()
 	DeallocateMethod = ECsSoundDeallocateMethod::Complete;
 	LifeTime = 0.0f;
 	DurationMultiplier = 1.0f;
-	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	AttachmentTransformRules = FCsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;
 	TransformRules = 7; // NCsTransformRules::All
 	Transform = FTransform::Identity;

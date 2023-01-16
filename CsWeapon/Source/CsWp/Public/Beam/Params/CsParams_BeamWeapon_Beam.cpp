@@ -352,7 +352,7 @@ void FCsBeamWeaponBeamParams::CopyToParams(ParamsType* Params)
 	typedef NCsWeapon::NBeam::NParams::NBeam::ELifeCycle LifeCycleType;
 
 	Params->SetIsAttached(&bAttached);
-	Params->SetAttachRules(&AttachRules);
+	Params->SetAttachRules(AttachRules.ToRule());
 	Params->SetLifeCycle((LifeCycleType*)&LifeCycle);
 	LocationInfo.CopyToInfo(Params->GetLocationInfoPtr());
 	DirectionInfo.CopyToInfo(Params->GetDirectionInfoPtr());
@@ -366,14 +366,6 @@ bool FCsBeamWeaponBeamParams::IsValidChecked(const FString& Context) const
 
 	// Check LifeCycle is Valid
 	check(LifeCycleMapType::Get().IsValidEnumChecked(Context, LifeCycle));
-	
-	if (bAttached)
-	{
-		typedef EMCsAttachmentTransformRules AttachRulesMapType;
-
-		check(AttachRulesMapType::Get().IsValidEnumChecked(Context, AttachRules));
-	}
-
 	// Check LocationInfo is Valid
 	CS_IS_VALID_CHECKED(LocationInfo);
 	// Check DirectionInfo is Valid
@@ -388,15 +380,6 @@ bool FCsBeamWeaponBeamParams::IsValid(const FString& Context, void(*Log)(const F
 
 	// Check LifeCycle is Valid
 	CS_IS_ENUM_VALID(LifeCycleMapType, LifeCycleType, LifeCycle)
-
-	if (bAttached)
-	{
-		typedef EMCsAttachmentTransformRules AttachRulesMapType;
-		typedef ECsAttachmentTransformRules AttachRulesType;
-
-		CS_IS_ENUM_VALID(AttachRulesMapType, AttachRulesType, AttachRules)
-	}
-
 	// Check LocationInfo is Valid
 	CS_IS_VALID(LocationInfo)
 	// Check DirectionInfo is Valid
@@ -419,7 +402,7 @@ namespace NCsWeapon
 					InterfaceMap(nullptr),
 					// BeamParamsType (NCsWeapon::NBeam::NParams::NBeam::IBeam)
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bAttached, true),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeCycle, NCsWeapon::NBeam::NParams::NBeam::ELifeCycle::AfterStopFire),
 					LocationInfo(),
 					DirectionInfo()
@@ -449,14 +432,6 @@ namespace NCsWeapon
 
 					// Check LifeCycle is Valid
 					check(LifeCycleMapType::Get().IsValidEnumChecked(Context, GetLifeCycle()));
-
-					if (IsAttached())
-					{
-						typedef EMCsAttachmentTransformRules AttachRulesMapType;
-
-						check(AttachRulesMapType::Get().IsValidEnumChecked(Context, GetAttachRules()));
-					}
-
 					// Check LocationInfo is Valid
 					CS_IS_VALID_CHECKED(LocationInfo);
 					// Check DirectionInfo is Valid
@@ -471,15 +446,6 @@ namespace NCsWeapon
 
 					// Check LifeCycle is Valid
 					CS_IS_ENUM_VALID(LifeCycleMapType, LifeCycleType, GetLifeCycle())
-
-					if (IsAttached())
-					{
-						typedef EMCsAttachmentTransformRules AttachRulesMapType;
-						typedef ECsAttachmentTransformRules AttachRulesType;
-
-						CS_IS_ENUM_VALID(AttachRulesMapType, AttachRulesType, GetAttachRules())
-					}
-
 					// Check LocationInfo is Valid
 					CS_IS_VALID(LocationInfo)
 					// Check DirectionInfo is Valid

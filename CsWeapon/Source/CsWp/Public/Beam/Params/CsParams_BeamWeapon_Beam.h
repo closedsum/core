@@ -604,7 +604,7 @@ namespace NCsWeapon
 
 					/**
 					*/
-					virtual const ECsAttachmentTransformRules& GetAttachRules() const = 0;
+					virtual const FAttachmentTransformRules& GetAttachRules() const = 0;
 
 					/**
 					* Get the lifecycle of a Beam (implements the interface: ICsBeam)
@@ -658,7 +658,7 @@ public:
 	bool bAttached;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	ECsAttachmentTransformRules AttachRules;
+	FCsAttachmentTransformRules AttachRules;
 
 	/** Describes the different lifecycle of a Beam (implements the interface: ICsBeam)
 		emitted from a Beam Weapon (weapon of type: ICsBeamWeapon). */
@@ -677,7 +677,7 @@ public:
 
 	FCsBeamWeaponBeamParams() :
 		bAttached(true),
-		AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		AttachRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		LifeCycle(ECsBeamWeaponBeamLifeCycle::AfterStopFire),
 		LocationInfo(),
 		DirectionInfo()
@@ -723,7 +723,7 @@ namespace NCsWeapon
 					// BeamParamsType (NCsWeapon::NBeam::NParams::NBeam::IBeam)
 
 					CS_DECLARE_MEMBER_WITH_PROXY(bAttached, bool)
-					CS_DECLARE_MEMBER_WITH_PROXY(AttachRules, ECsAttachmentTransformRules)
+					CS_DECLARE_MEMBER_WITH_PROXY(AttachRules, FAttachmentTransformRules)
 					CS_DECLARE_MEMBER_WITH_PROXY(LifeCycle, LifeCycleType)
 
 					LocationInfoType LocationInfo;
@@ -762,7 +762,7 @@ namespace NCsWeapon
 
 					FORCEINLINE const bool& IsAttached() const { return *bAttached_Proxy; }
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachRules, ECsAttachmentTransformRules)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachRules, FAttachmentTransformRules)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeCycle, LifeCycleType)
 
 					FORCEINLINE const LocationInfoType& GetLocationInfo() const { return LocationInfo; }

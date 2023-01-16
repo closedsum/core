@@ -468,6 +468,74 @@ namespace NCsRotationRules
 
 #pragma endregion RotationRules
 
+// Transform
+#pragma region
+
+/**
+* Describes the members of FTransform.
+*/
+UENUM(BlueprintType)
+enum class ECsTransform : uint8
+{
+	Translation			UMETA(DisplayName = "Translation"),
+	Rotation			UMETA(DisplayName = "Rotation"),
+	Scale				UMETA(DisplayName = "Scale"),
+	ECsTransform_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsTransform : public TCsEnumMap<ECsTransform>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTransform, ECsTransform)
+};
+
+namespace NCsTransform
+{
+	namespace Ref
+	{
+		typedef ECsTransform Type;
+
+		extern CSCORE_API const Type Translation;
+		extern CSCORE_API const Type Rotation;
+		extern CSCORE_API const Type Scale;
+		extern CSCORE_API const Type ECsTransform_MAX;
+	}
+}
+
+#pragma endregion Transform
+
+// TransformSpace
+#pragma region
+
+/**
+* Describes how the member of FTransform is modified (Relative, World, ... etc)
+*/
+UENUM(BlueprintType)
+enum class ECsTransformSpace : uint8
+{
+	Relative				UMETA(DisplayName = "Relative"),
+	World					UMETA(DisplayName = "World"),
+	ECsTransformSpace_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsTransformSpace : public TCsEnumMap<ECsTransformSpace>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsTransformSpace, ECsTransformSpace)
+};
+
+namespace NCsTransformSpace
+{
+	namespace Ref
+	{
+		typedef ECsTransformSpace Type;
+
+		extern CSCORE_API const Type Relative;
+		extern CSCORE_API const Type World;
+		extern CSCORE_API const Type ECsTransformSpace_MAX;
+	}
+}
+
+#pragma endregion TransformSpace
+
 // TransformRules
 #pragma region
 
@@ -544,6 +612,18 @@ namespace NCsTransformRules
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
 	CSCORE_API void SetTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
+
+	/**
+	* Set the transform of a SceneComponent to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Component
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	* @param Spaces
+	*/
+	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules, const ECsTransformSpace(&Spaces)[(uint8)ECsTransform::ECsTransform_MAX]);
 
 	/**
 	* Compare transforms A and B with Rules to determine which components are equal.

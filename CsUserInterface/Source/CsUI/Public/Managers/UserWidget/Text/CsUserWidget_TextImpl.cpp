@@ -1,0 +1,54 @@
+// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#include "Managers/UserWidget/Text/CsUserWidget_TextImpl.h"
+#include "CsUI.h"
+
+// UI
+#include "Engine/Font.h"
+// Component
+#include "Components/TextBlock.h"
+
+UCsUserWidget_TextImpl::UCsUserWidget_TextImpl(const FObjectInitializer& ObjectInitializer) :
+	Super(ObjectInitializer),
+	MyText(nullptr)
+{
+}
+
+#define InfoType NCsUserWidget::NText::FInfo
+void UCsUserWidget_TextImpl::SetInfo(const InfoType& Info)
+{
+#undef InfoType
+
+	MyText->SetText(FText::FromString(Info.GetText()));
+	
+	FSlateFontInfo FontInfo;
+	FontInfo.FontObject = Info.GetFont();
+	FontInfo.Size		= Info.GetSize();
+
+	if (Info.GetbMaterial())
+	{
+		FontInfo.FontMaterial = Info.GetMaterial();
+	}
+
+	SetRenderScale(Info.GetRenderScale() * FVector2D(1.0f));
+	MyText->SetColorAndOpacity(FSlateColor(Info.GetColor()));
+
+	// Outline
+	typedef NCsUserWidget::NText::FOutline OutlineSettingsType;
+
+	const OutlineSettingsType& OutlineSettings = Info.GetOutlineSettings();
+
+	FontInfo.OutlineSettings.OutlineSize				= OutlineSettings.GetSize();
+	FontInfo.OutlineSettings.bApplyOutlineToDropShadows = OutlineSettings.GetbApplyOutlineToDropShadow();
+	FontInfo.OutlineSettings.OutlineColor				= OutlineSettings.GetColor();
+
+	MyText->SetFont(FontInfo);
+
+	// Shadow
+	typedef NCsUserWidget::NText::FShadow ShadowSettingsType;
+
+	const ShadowSettingsType& ShadowSettings = Info.GetShadowSettings();
+
+	MyText->SetShadowOffset(ShadowSettings.GetOffset());
+	MyText->SetShadowColorAndOpacity(ShadowSettings.GetColor());
+	MyText->SetJustification(Info.GetJustification());
+}

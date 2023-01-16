@@ -436,8 +436,8 @@ void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload
 
 	if (Parent)
 	{
-		const ECsAttachmentTransformRules& Rule = SoundPayload->GetAttachmentTransformRule();
-		const FName& Bone						= SoundPayload->GetBone();
+		const FAttachmentTransformRules& Rule = SoundPayload->GetAttachmentTransformRule();
+		const FName& Bone					  = SoundPayload->GetBone();
 
 		bool PerformAttach = true;
 		bool IsPreserved = false;
@@ -459,7 +459,7 @@ void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload
 		{
 			AttachToBone = Bone;
 
-			GetRootComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			GetRootComponent()->AttachToComponent(Parent, Rule, Bone);
 			ChangeCounter::Get().AddChanged();
 		}
 

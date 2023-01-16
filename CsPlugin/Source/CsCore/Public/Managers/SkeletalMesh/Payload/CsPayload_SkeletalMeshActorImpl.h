@@ -62,7 +62,7 @@ namespace NCsSkeletalMeshActor
 
 			float LifeTime;
 	
-			ECsAttachmentTransformRules AttachmentTransformRules;
+			FAttachmentTransformRules AttachmentTransformRules;
 
 			FName Bone;
 
@@ -149,7 +149,7 @@ namespace NCsSkeletalMeshActor
 			FORCEINLINE const bool& ShouldGenerateMIDs() const { return bGenerateMIDs; }
 			FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
+			FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }

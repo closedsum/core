@@ -218,7 +218,7 @@ void FCsSkeletalMeshAnimSequenceOneShot::CopyToShot(ShotType* Shot)
 	Shot->SetType(Mesh.GetTypePtr());
 	Shot->SetDeallocateMethod(Mesh.GetDeallocateMethodPtr());
 	Shot->SetLifeTime(Mesh.GetLifeTimePtr());
-	Shot->SetAttachmentTransformRules(Mesh.GetAttachmentTransformRulesPtr());
+	Shot->SetAttachmentTransformRules(Mesh.AttachmentTransformRules.ToRule());
 	Shot->SetBone(Mesh.GetBonePtr());
 	Shot->SetTransformRules(Mesh.GetTransformRulesPtr());
 	Shot->SetTransform(Mesh.GetTransformPtr());
@@ -232,7 +232,7 @@ void FCsSkeletalMeshAnimSequenceOneShot::CopyToShotAsValue(ShotType* Shot) const
 	Shot->SetType(Mesh.Type);
 	Shot->SetDeallocateMethod(Mesh.GetDeallocateMethod());
 	Shot->SetLifeTime(Mesh.LifeTime);
-	Shot->SetAttachmentTransformRules(Mesh.AttachmentTransformRules);
+	Shot->SetAttachmentTransformRules(Mesh.AttachmentTransformRules.ToRule());
 	Shot->SetBone(Mesh.Bone);
 	Shot->SetTransformRules(Mesh.TransformRules);
 	Shot->SetTransform(Mesh.Transform);
@@ -367,7 +367,7 @@ void FCsSkeletalMeshAnimMontageOneShot::CopyToShot(ShotType* Shot)
 	Shot->SetType(Mesh.GetTypePtr());
 	Shot->SetDeallocateMethod(Mesh.GetDeallocateMethodPtr());
 	Shot->SetLifeTime(Mesh.GetLifeTimePtr());
-	Shot->SetAttachmentTransformRules(Mesh.GetAttachmentTransformRulesPtr());
+	Shot->SetAttachmentTransformRules(Mesh.AttachmentTransformRules.ToRule());
 	Shot->SetBone(Mesh.GetBonePtr());
 	Shot->SetTransformRules(Mesh.GetTransformRulesPtr());
 	Shot->SetTransform(Mesh.GetTransformPtr());
@@ -383,7 +383,7 @@ void FCsSkeletalMeshAnimMontageOneShot::CopyToShotAsValue(ShotType* Shot) const
 	Shot->SetType(Mesh.Type);
 	Shot->SetDeallocateMethod(Mesh.GetDeallocateMethod());
 	Shot->SetLifeTime(Mesh.LifeTime);
-	Shot->SetAttachmentTransformRules(Mesh.AttachmentTransformRules);
+	Shot->SetAttachmentTransformRules(Mesh.AttachmentTransformRules.ToRule());
 	Shot->SetBone(Mesh.Bone);
 	Shot->SetTransformRules(Mesh.TransformRules);
 	Shot->SetTransform(Mesh.Transform);

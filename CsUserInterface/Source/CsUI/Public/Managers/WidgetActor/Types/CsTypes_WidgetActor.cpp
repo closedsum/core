@@ -191,9 +191,6 @@ bool FCsWidgetActorPooledInfo::IsValidChecked(const FString& Context) const
 	{
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(LifeTime, 0.0f)
 	}
-
-	CS_IS_ENUM_VALID_CHECKED(EMCsAttachmentTransformRules, AttachmentTransformRules)
-
 	if (bCameraInfo)
 	{
 		CS_IS_VALID_CHECKED(CameraInfo);
@@ -214,8 +211,6 @@ bool FCsWidgetActorPooledInfo::IsValid(const FString& Context, void(*Log)(const 
 	{
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(LifeTime, 0.0f)
 	}
-
-	CS_IS_ENUM_VALID(EMCsAttachmentTransformRules, ECsAttachmentTransformRules, AttachmentTransformRules)
 
 	if (bCameraInfo)
 	{

@@ -19,7 +19,8 @@ public class CsUI : ModuleRules
                     "DeveloperSettings",
                     "CsCore",
                     "UMG",
-                    "SlateCore"
+                    "SlateCore",
+                    "Slate"
 ,                }
             );
 

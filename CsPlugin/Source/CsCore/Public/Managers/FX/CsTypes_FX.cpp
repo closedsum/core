@@ -690,7 +690,7 @@ void FCsFX::Reset()
 	LifeTime = 0.0f;
 	DeathTime = 0.0f;
 	bHideOnQueueDeallocate = false;
-	AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+	AttachmentTransformRules = FCsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 	Bone = NAME_None;
 	TransformRules =7; // NCsTransformRules::All
 	Transform = FTransform::Identity;

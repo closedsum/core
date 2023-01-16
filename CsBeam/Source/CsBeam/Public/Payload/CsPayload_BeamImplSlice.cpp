@@ -14,7 +14,7 @@ namespace NCsBeam
 			InterfaceMap(nullptr),
 			// IPayload
 			Type(),
-			AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+			AttachRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Location(0.0f),
 			Direction(0.0f),
 			Scale(0.0f)
@@ -40,7 +40,7 @@ namespace NCsBeam
 		{
 			// BeamPayloadType (NCsBeam::Payload::IPayload)
 			Type = EMCsBeam::Get().GetMAX();
-			AttachRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			AttachRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Location = FVector::ZeroVector;
 			Direction = FVector::ZeroVector;
 			Scale = FVector::OneVector;

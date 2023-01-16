@@ -64,7 +64,7 @@ namespace NCsWidgetActor
 
 			float LifeTime;
 	
-			ECsAttachmentTransformRules AttachmentTransformRules;
+			FAttachmentTransformRules AttachmentTransformRules;
 
 			FName Bone;
 
@@ -127,7 +127,7 @@ namespace NCsWidgetActor
 			FORCEINLINE UUserWidget* GetUserWidget() const { return UserWidget; }
 			FORCEINLINE const ECsWidgetActorDeallocateMethod& GetDeallocateMethod() const { return DeallocateMethod; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
+			FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }

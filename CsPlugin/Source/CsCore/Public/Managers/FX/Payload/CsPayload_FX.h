@@ -89,7 +89,7 @@ namespace NCsFX
 			*
 			* return Attachment Rule
 			*/
-			virtual const ECsAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
+			virtual const FAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
 
 			/** 
 			* Relevant if the FX is attached to a Parent object.

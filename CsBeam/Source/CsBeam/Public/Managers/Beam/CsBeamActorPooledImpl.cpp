@@ -441,12 +441,12 @@ using namespace NCsBeamActorPooledImpl::NCached;
 		// Attach to Parent
 		if (Parent)
 		{
-			const ECsAttachmentTransformRules Rule = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			const FCsAttachmentTransformRules Rule = FCsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			const FName Bone					   = NAME_None;
 
 			const FVector Scale = GetActorScale3D();
 
-			MeshComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			MeshComponent->AttachToComponent(Parent, Rule.ToRule(), Bone);
 			MeshComponent->SetWorldScale3D(Scale * Payload->GetScale());
 		}
 		// Teleport / Set Orientation

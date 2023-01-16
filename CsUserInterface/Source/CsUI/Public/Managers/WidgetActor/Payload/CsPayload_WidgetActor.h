@@ -62,7 +62,7 @@ namespace NCsWidgetActor
 			*
 			* return Attachment Rule
 			*/
-			virtual const ECsAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
+			virtual const FAttachmentTransformRules& GetAttachmentTransformRule() const = 0;
 
 			/** 
 			* Relevant if the WidgetActor is attached to a Parent object.

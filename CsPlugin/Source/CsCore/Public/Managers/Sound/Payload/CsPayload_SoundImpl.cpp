@@ -67,7 +67,7 @@ namespace NCsSound
 			LifeTime(0.0f),
 			DurationMultiplier(1.0f),
 			FadeInTime(0.0f),
-			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
@@ -111,7 +111,7 @@ namespace NCsSound
 			LifeTime = 0.0f;
 			DurationMultiplier = 1.0f;
 			FadeInTime = 0.0f;
-			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;

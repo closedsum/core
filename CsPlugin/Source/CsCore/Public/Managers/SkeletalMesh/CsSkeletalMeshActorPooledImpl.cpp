@@ -511,8 +511,8 @@ void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadT
 
 	if (Parent)
 	{
-		const ECsAttachmentTransformRules& Rule = SkeletalMeshPayload->GetAttachmentTransformRule();
-		const FName& Bone						= SkeletalMeshPayload->GetBone();
+		const FAttachmentTransformRules& Rule = SkeletalMeshPayload->GetAttachmentTransformRule();
+		const FName& Bone					  = SkeletalMeshPayload->GetBone();
 
 		bool PerformAttach = true;
 		bool IsPreserved = false;
@@ -534,7 +534,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadT
 		{
 			AttachToBone = Bone;
 
-			GetMeshComponent()->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			GetMeshComponent()->AttachToComponent(Parent, Rule, Bone);
 			ChangeCounter::Get().AddChanged();
 		}
 

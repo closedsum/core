@@ -451,8 +451,8 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 
 	if (Parent)
 	{
-		const ECsAttachmentTransformRules& Rule = FXPayload->GetAttachmentTransformRule();
-		const FName& Bone						= FXPayload->GetBone();
+		const FAttachmentTransformRules& Rule = FXPayload->GetAttachmentTransformRule();
+		const FName& Bone					  = FXPayload->GetBone();
 
 		bool PerformAttach = true;
 		bool IsPreserved = false;
@@ -474,7 +474,7 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 		{
 			AttachToBone = Bone;
 
-			FXComponent->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(Rule), Bone);
+			FXComponent->AttachToComponent(Parent, Rule, Bone);
 			ChangeCounter::Get().AddChanged();
 		}
 

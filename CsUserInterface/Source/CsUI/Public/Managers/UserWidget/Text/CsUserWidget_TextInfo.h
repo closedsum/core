@@ -6,6 +6,8 @@
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Managers/UserWidget/Text/CsTypes_UserWidget_Text.h"
 #include "Types/CsTypes_UserWidget_Anim.h"
+// Text
+#include "Framework/Text/TextLayout.h"
 // Log
 #include "Utility/CsUILog.h"
 
@@ -15,7 +17,7 @@
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsUserWidget, NText, FInfo)
 
 /**
-* Container holding general information for a UserWidget Text object.
+* Describes any information for a UserWidget Text object.
 */
 USTRUCT(BlueprintType)
 struct CSUI_API FCsUserWidget_TextInfo
@@ -40,21 +42,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|User Widget|Text", meta = (ScriptName = "m_Material", EditCondition = "bMaterial"))
 	FCsMaterialInterface Material;
 
+	/** The font size is a measure in point values.  The conversion of points to Slate Units is done at 96 dpi.  So if
+		you're using a tool like Photoshop to prototype layouts and UI mock ups, be sure to change the default dpi
+		measurements from 72 dpi to 96 dpi. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ClampMin = "1", UIMin = "1", ClampMax = "1000", UIMax = "1000"))
+	int32 Size;
+
 	/** The scale to apply to Render Transform (set via SetRenderScale(GetScale() * FVector2D::UnitVector)). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	float RenderScale;
 
-	/** Way to interpret Position information for being converted to screen space. */
+	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
-	ECsUserWidgetPosition PositionType;
-
-	/** Way to interpret Offset information for being converted to screen space. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
-	ECsUserWidgetPosition OffsetType;
-
-	/** The offset to apply to the position of the UserWidget. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
-	FVector Offset;
+	TEnumAsByte<ETextJustify::Type> Justification;
 
 	/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
@@ -86,10 +86,9 @@ public:
 		Font(),
 		bMaterial(false),
 		Material(),
+		Size(1),
 		RenderScale(1.0f),
-		PositionType(ECsUserWidgetPosition::Screen),
-		OffsetType(ECsUserWidgetPosition::Screen),
-		Offset(FVector::ZeroVector),
+		Justification(ETextJustify::Type::Center),
 		ZOrder(0),
 		Color(FLinearColor::White),
 		OutlineSettings(),
@@ -115,7 +114,7 @@ namespace NCsUserWidget
 	namespace NText
 	{
 		/**
-		* Container holding general information for a UserWidget Text pooled object.
+		* Describes any information for a UserWidget Text object.
 		*/
 		struct CSUI_API FInfo final
 		{
@@ -133,15 +132,14 @@ namespace NCsUserWidget
 			/** Whether to use specific material for rendering Font or not. */
 			CS_DECLARE_MEMBER_WITH_PROXY(bMaterial, bool)
 			/** The material use when rendering Font. */
-			CS_DECLARE_MEMBER_WITH_PROXY(Material, UMaterialInterface*)	
+			CS_DECLARE_MEMBER_WITH_PROXY(Material, UMaterialInterface*)
+			/** The font size is a measure in point values.  The conversion of points to Slate Units is done at 96 dpi.  So if
+				you're using a tool like Photoshop to prototype layouts and UI mock ups, be sure to change the default dpi
+				measurements from 72 dpi to 96 dpi. */
+			CS_DECLARE_MEMBER_WITH_PROXY(Size, int32)
 			/** The scale to apply to Render Transform (set via SetRenderScale(GetScale() * FVector2D::UnitVector)). */
 			CS_DECLARE_MEMBER_WITH_PROXY(RenderScale, float)
-			/** Way to interpret Position information for beionverted to screen space. */
-			CS_DECLARE_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition)
-			/** Way to interpret Offset information for being converted to screen space. */
-			CS_DECLARE_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition)
-			/** The offset to apply to the position of the UserWidget. */
-			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+			CS_DECLARE_MEMBER_WITH_PROXY(Justification, ETextJustify::Type)
 			/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
 			CS_DECLARE_MEMBER_WITH_PROXY(ZOrder, int32)
 			/** Get the color of the text. */
@@ -161,10 +159,9 @@ namespace NCsUserWidget
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Font, nullptr),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bMaterial, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Material, nullptr),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Size, 1),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(RenderScale, 1.0f),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition::Screen),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition::Screen),
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, FVector::ZeroVector),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Justification, ETextJustify::Type::Center),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(ZOrder, 0),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Color, FLinearColor::White),
 				OutlineSettings(),
@@ -176,10 +173,8 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(Font);
 				CS_CTOR_SET_MEMBER_PROXY(bMaterial);
 				CS_CTOR_SET_MEMBER_PROXY(Material);
+				CS_CTOR_SET_MEMBER_PROXY(Size);
 				CS_CTOR_SET_MEMBER_PROXY(RenderScale);
-				CS_CTOR_SET_MEMBER_PROXY(PositionType);
-				CS_CTOR_SET_MEMBER_PROXY(OffsetType);
-				CS_CTOR_SET_MEMBER_PROXY(Offset);
 				CS_CTOR_SET_MEMBER_PROXY(ZOrder);
 				CS_CTOR_SET_MEMBER_PROXY(Color);
 				CS_CTOR_SET_MEMBER_PROXY(bAnimParams);
@@ -190,10 +185,9 @@ namespace NCsUserWidget
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Font, UFont)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bMaterial, bool)
 			CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Material, UMaterialInterface)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Size, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RenderScale, float)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Justification, ETextJustify::Type)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ZOrder, int32)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
 			FORCEINLINE const OutlineSettingsType& GetOutlineSettings() const { return OutlineSettings; }

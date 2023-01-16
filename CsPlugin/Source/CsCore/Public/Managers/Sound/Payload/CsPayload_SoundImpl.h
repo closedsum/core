@@ -123,7 +123,7 @@ namespace NCsSound
 
 			float FadeInTime;
 
-			ECsAttachmentTransformRules AttachmentTransformRules;
+			FAttachmentTransformRules AttachmentTransformRules;
 
 			FName Bone;
 
@@ -187,7 +187,7 @@ namespace NCsSound
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const float& GetDurationMultiplier() const { return DurationMultiplier; }
 			FORCEINLINE const float& GetFadeInTime() const { return FadeInTime; }
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
+			FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }

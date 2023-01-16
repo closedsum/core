@@ -43,7 +43,7 @@ namespace NCsFX
 			LifeTime(0.0f),
 			DeathTime(0.0f),
 			bHideOnQueueDeallocate(false),
-			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
@@ -97,7 +97,7 @@ namespace NCsFX
 			LifeTime = 0.0f;
 			DeathTime = 0.0f;
 			bHideOnQueueDeallocate = false;
-			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;

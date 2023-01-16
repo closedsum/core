@@ -33,7 +33,7 @@ namespace NCsBeam
 
 			FECsBeam Type;
 
-			ECsAttachmentTransformRules AttachRules;
+			FAttachmentTransformRules AttachRules;
 
 			FVector Location;
 
@@ -63,7 +63,7 @@ namespace NCsBeam
 		public:
 
 			FORCEINLINE const FECsBeam& GetType() const { return Type; }
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
+			FORCEINLINE const FAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetScale() const { return Scale; }

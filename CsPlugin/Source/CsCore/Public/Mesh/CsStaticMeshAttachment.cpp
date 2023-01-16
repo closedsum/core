@@ -21,7 +21,7 @@ void FCsStaticMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 	Attachment->SetMesh(Mesh.GetPtr());
 	Attachment->SetMaterials(Materials.GetPtr());
 	Attachment->SetbGenerateMIDs(&bGenerateMIDs);
-	Attachment->SetAttachmentTransformRules(&AttachmentTransformRules);
+	Attachment->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
 	Attachment->SetBone(&Bone);
 	Attachment->SetTransformRules(&TransformRules);
 	Attachment->SetTransform(&Transform);
@@ -47,7 +47,7 @@ void FCsStaticMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachment
 	MatsPtr->Append(Mats);
 
 	Attachment->SetbGenerateMIDs(bGenerateMIDs);
-	Attachment->SetAttachmentTransformRules(AttachmentTransformRules);
+	Attachment->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
 	Attachment->SetBone(Bone);
 	Attachment->SetTransformRules(TransformRules);
 	Attachment->SetTransform(Transform);
@@ -67,8 +67,6 @@ bool FCsStaticMeshAttachment::IsValidChecked(const FString& Context) const
 	CS_IS_VALID_CHECKED(Mesh);
 	// Check Materials is Valid
 	CS_IS_VALID_CHECKED(Materials);
-	// Check AttachmentTransformRules is Valid
-	CS_IS_ENUM_VALID_CHECKED(EMCsAttachmentTransformRules, AttachmentTransformRules);
 	// Check Transform is Valid
 	if (!Transform.Equals(FTransform::Identity))
 	{
@@ -93,8 +91,6 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 	CS_IS_VALID(Mesh)
 	// Check Materials is Valid
 	CS_IS_VALID(Materials)
-	// Check AttachmentTransformRules is Valid
-	CS_IS_ENUM_VALID(EMCsAttachmentTransformRules, ECsAttachmentTransformRules, AttachmentTransformRules)
 	// Check Transform is Valid
 	if (!Transform.Equals(FTransform::Identity))
 	{
@@ -131,7 +127,7 @@ void FCsStaticMeshAttachment::AttachChecked(const FString& Context, USceneCompon
 
 	check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
-	Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentTransformRules), Bone);
+	Child->AttachToComponent(Parent, AttachmentTransformRules.ToRule(), Bone);
 	NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
 	Child->SetStaticMesh(Mesh.GetChecked(Context));
 	Child->SetCastShadow(bCastShadow);
@@ -159,7 +155,7 @@ bool FCsStaticMeshAttachment::AttachSafe(const FString& Context, USceneComponent
 	if (!SkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, Bone, Log))
 		return false;
 
-	Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentTransformRules), Bone);
+	Child->AttachToComponent(Parent, AttachmentTransformRules.ToRule(), Bone);
 	NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
 	Child->SetStaticMesh(Mesh.GetChecked(Context));
 	Child->SetCastShadow(bCastShadow);
@@ -194,6 +190,7 @@ FCsStaticMeshActorPooled* FCsStaticMeshAttachment::AttachChecked(const FString& 
 	PayloadImpl->Mesh   = Mesh.GetChecked(Context);
 	PayloadImpl->SetMaterials(Materials.GetChecked(Context));
 	PayloadImpl->bGenerateMIDs  = bGenerateMIDs;
+	PayloadImpl->AttachmentTransformRules = AttachmentTransformRules.ToRule();
 	PayloadImpl->Bone			= Bone;
 	PayloadImpl->TransformRules = TransformRules;
 	PayloadImpl->Transform		= Transform;
@@ -221,8 +218,6 @@ namespace NCsStaticMesh
 			// Check GetMaterials() is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
-			// Check GetAttachmentTransformRules() is Valid
-			CS_IS_ENUM_VALID_CHECKED(EMCsAttachmentTransformRules, GetAttachmentTransformRules());
 			// Check GetTransform() is Valid
 			if (!GetTransform().Equals(FTransform::Identity))
 			{
@@ -248,8 +243,6 @@ namespace NCsStaticMesh
 			// Check Materials is Valid
 			CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
-			// Check GetAttachmentTransformRules is Valid
-			CS_IS_ENUM_VALID(EMCsAttachmentTransformRules, ECsAttachmentTransformRules, GetAttachmentTransformRules())
 			// Check GetTransform() is Valid
 			if (!GetTransform().Equals(FTransform::Identity))
 			{
@@ -289,7 +282,7 @@ namespace NCsStaticMesh
 
 			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
 
-			Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 			Child->SetStaticMesh(GetMesh());
 			Child->SetCastShadow(GetbCastShadow());
@@ -322,7 +315,7 @@ namespace NCsStaticMesh
 			if (!SkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, GetBone(), Log))
 				return false;
 
-			Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 			Child->SetStaticMesh(GetMesh());
 			Child->SetCastShadow(GetbCastShadow());
@@ -352,7 +345,7 @@ namespace NCsStaticMesh
 
 			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
 
-			Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 			Child->SetStaticMesh(GetMesh());
 			Child->SetCastShadow(GetbCastShadow());
@@ -397,6 +390,7 @@ namespace NCsStaticMesh
 			PayloadImpl->Mesh   = GetMesh();
 			PayloadImpl->SetMaterials(OtherMaterials);
 			PayloadImpl->bGenerateMIDs  = GetbGenerateMIDs();
+			PayloadImpl->AttachmentTransformRules = GetAttachmentTransformRules();
 			PayloadImpl->Bone			= GetBone();
 			PayloadImpl->TransformRules = GetTransformRules();
 			PayloadImpl->Transform		= GetTransform();

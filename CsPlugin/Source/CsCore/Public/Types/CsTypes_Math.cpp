@@ -29,6 +29,91 @@ namespace NCsParametricFunctionType
 
 #pragma endregion ParametricFunctionType
 
+// RotationRules
+#pragma region
+
+namespace NCsRotationRules
+{
+	namespace Ref
+	{
+		typedef EMCsRotationRules EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Pitch);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Yaw);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Roll);
+	}
+
+	CSCORE_API const int32 None = 0;
+	CSCORE_API const int32 All = 7; // 1 + 2 + 4
+
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsRotationRules, GetRotation);
+		}
+	}
+
+	FRotator GetRotation(AActor* Actor, const int32& Rules)
+	{
+		using namespace NCached;
+
+		const FString& Context = Str::GetRotation;
+
+		CS_IS_PTR_NULL_CHECKED(Actor)
+
+		return GetRotation(Actor->GetActorRotation(), Rules);
+	}
+
+	FRotator GetRotation(USceneComponent* Component, const int32& Rules)
+	{
+		using namespace NCached;
+
+		const FString& Context = Str::GetRotation;
+
+		CS_IS_PTR_NULL_CHECKED(Component)
+
+		return GetRotation(Component->GetComponentRotation(), Rules);
+	}
+}
+
+#pragma endregion RotationRules
+
+// Transform
+#pragma region
+
+namespace NCsTransform
+{
+	namespace Ref
+	{
+		typedef EMCsTransform EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Translation);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Rotation);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Scale);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTransform_MAX, "MAX");
+	}
+}
+
+#pragma endregion Transform
+
+// TransformSpace
+#pragma region
+
+namespace NCsTransformSpace
+{
+	namespace Ref
+	{
+		typedef EMCsTransformSpace EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Relative);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(World);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsTransformSpace_MAX, "MAX");
+	}
+}
+
+#pragma endregion TransformSpace
+
 // TransformRules
 #pragma region
 
@@ -154,6 +239,34 @@ namespace NCsTransformRules
 		}
 	}
 
+	void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules, const ECsTransformSpace(&Spaces)[(uint8)ECsTransform::ECsTransform_MAX])
+	{
+		// Location
+		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+		{
+			if (Spaces[(uint8)ECsTransform::Translation] == ECsTransformSpace::Relative)
+				Component->SetRelativeLocation(Transform.GetLocation());
+			else
+				Component->SetWorldLocation(Transform.GetLocation());
+		}
+		// Rotation
+		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+		{
+			if (Spaces[(uint8)ECsTransform::Rotation] == ECsTransformSpace::Relative)
+				Component->SetRelativeRotation(Transform.GetRotation().Rotator());
+			else
+				Component->SetWorldRotation(Transform.GetRotation().Rotator());
+		}
+		// Scale
+		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
+		{
+			if (Spaces[(uint8)ECsTransform::Scale] == ECsTransformSpace::Relative)
+				Component->SetRelativeScale3D(Transform.GetScale3D());
+			else
+				Component->SetWorldScale3D(Transform.GetScale3D());
+		}
+	}
+
 	bool AreTransformsEqual(const FTransform& A, const FTransform& B, const int32& Rules)
 	{
 		bool Equal = true;
@@ -178,56 +291,6 @@ namespace NCsTransformRules
 }
 
 #pragma endregion TransformRules
-
-// RotationRules
-#pragma region
-
-namespace NCsRotationRules
-{
-	namespace Ref
-	{
-		typedef EMCsRotationRules EnumMapType;
-
-		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Pitch);
-		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Yaw);
-		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Roll);
-	}
-
-	CSCORE_API const int32 None = 0;
-	CSCORE_API const int32 All = 7; // 1 + 2 + 4
-
-	namespace NCached
-	{
-		namespace Str
-		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsRotationRules, GetRotation);
-		}
-	}
-
-	FRotator GetRotation(AActor* Actor, const int32& Rules)
-	{
-		using namespace NCached;
-
-		const FString& Context = Str::GetRotation;
-
-		CS_IS_PTR_NULL_CHECKED(Actor)
-
-		return GetRotation(Actor->GetActorRotation(), Rules);
-	}
-
-	FRotator GetRotation(USceneComponent* Component, const int32& Rules)
-	{
-		using namespace NCached;
-
-		const FString& Context = Str::GetRotation;
-
-		CS_IS_PTR_NULL_CHECKED(Component)
-
-		return GetRotation(Component->GetComponentRotation(), Rules);
-	}
-}
-
-#pragma endregion RotationRules
 
 // FCsRay
 #pragma region

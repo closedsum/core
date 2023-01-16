@@ -1,24 +1,30 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_AttachDetach.h"
 
-// AttachmentTransformRules
+// AttachmentRule
 #pragma region
 
-namespace NCsAttachmentTransformRules
+namespace NCsAttachmentRule
 {
 	namespace Ref
 	{
-		typedef EMCsAttachmentTransformRules EnumMapType;
+		typedef EMCsAttachmentRule EnumMapType;
 
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepRelativeTransform, "Keep Relative Transform");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepWorldTransform, "Keep World Transform");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(SnapToTargetNotIncludingScale, "Snap to Target Not Including Scale");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(SnapToTargetIncludingScale, "Snap to Target Including Scale");
-		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsAttachmentTransformRules_MAX, "MAX");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepRelative, "Keep Relative");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(KeepWorld, "Keep World");
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(SnapToTarget, "Snap to Target");
 	}
-
-	CSCORE_API const uint8 MAX = (uint8)Type::ECsAttachmentTransformRules_MAX;
 }
+
+#pragma endregion AttachmentRule
+
+// AttachmentTransformRules
+#pragma region
+
+FCsAttachmentTransformRules FCsAttachmentTransformRules::KeepRelativeTransform(ECsAttachmentRule::KeepRelative, false);
+FCsAttachmentTransformRules FCsAttachmentTransformRules::KeepWorldTransform(ECsAttachmentRule::KeepWorld, false);
+FCsAttachmentTransformRules FCsAttachmentTransformRules::SnapToTargetNotIncludingScale(ECsAttachmentRule::SnapToTarget, ECsAttachmentRule::SnapToTarget, ECsAttachmentRule::KeepWorld, false);
+FCsAttachmentTransformRules FCsAttachmentTransformRules::SnapToTargetIncludingScale(ECsAttachmentRule::SnapToTarget, false);
 
 #pragma endregion AttachmentTransformRules
 

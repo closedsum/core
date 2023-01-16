@@ -54,7 +54,7 @@ public:
 	FECsBeam Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ECsAttachmentTransformRules AttachRules;
+	FCsAttachmentTransformRules AttachRules;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector Location;
@@ -72,7 +72,7 @@ public:
 		Parent(nullptr),
 		PreserveChangesFromDefaultMask(0),
 		Type(),
-		AttachRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		AttachRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Location(0.0f),
 		Direction(0.0f),
 		Scale(0.0f)
@@ -139,7 +139,7 @@ namespace NCsBeam
 
 			FECsBeam Type;
 
-			ECsAttachmentTransformRules AttachRules;
+			FAttachmentTransformRules AttachRules;
 
 			FVector Location;
 
@@ -194,7 +194,7 @@ namespace NCsBeam
 		public:
 
 			FORCEINLINE const FECsBeam& GetType() const { return Type; }
-			FORCEINLINE const ECsAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
+			FORCEINLINE const FAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
 			FORCEINLINE const FVector& GetLocation() const { return Location; }
 			FORCEINLINE const FVector& GetDirection() const { return Direction; }
 			FORCEINLINE const FVector& GetScale() const { return Scale; }

@@ -150,7 +150,7 @@ namespace NCsSkeletalMeshActor
 				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
 				CS_DECLARE_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
 				CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
 				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
@@ -167,7 +167,7 @@ namespace NCsSkeletalMeshActor
 					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_PROXY(Type),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 0),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
@@ -202,7 +202,7 @@ namespace NCsSkeletalMeshActor
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
@@ -216,7 +216,7 @@ namespace NCsSkeletalMeshActor
 					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsSkeletalMeshActor::Get().GetMAX())
 					CS_RESET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime)
 					CS_RESET_MEMBER_WITH_PROXY(LifeTime, 0.0f)
-					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale)
 					CS_RESET_MEMBER_WITH_PROXY(Bone, NAME_None)
 					CS_RESET_MEMBER_WITH_PROXY(TransformRules, 0)
 					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform::Identity)
@@ -300,7 +300,7 @@ namespace NCsSkeletalMeshActor
 				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
 				CS_DECLARE_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
 				CS_DECLARE_MEMBER_WITH_PROXY(LifeTime, float)
-				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
 				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
@@ -317,7 +317,7 @@ namespace NCsSkeletalMeshActor
 					CS_CTOR_INIT_MEMBER_ENUM_STRUCT_WITH_PROXY(Type),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 0),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
@@ -352,7 +352,7 @@ namespace NCsSkeletalMeshActor
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, FECsSkeletalMeshActor)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
@@ -366,7 +366,7 @@ namespace NCsSkeletalMeshActor
 					CS_RESET_MEMBER_WITH_PROXY(Type, EMCsSkeletalMeshActor::Get().GetMAX())
 					CS_RESET_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType::LifeTime)
 					CS_RESET_MEMBER_WITH_PROXY(LifeTime, 0.0f)
-					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale)
 					CS_RESET_MEMBER_WITH_PROXY(Bone, NAME_None)
 					CS_RESET_MEMBER_WITH_PROXY(TransformRules, 0)
 					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform::Identity)

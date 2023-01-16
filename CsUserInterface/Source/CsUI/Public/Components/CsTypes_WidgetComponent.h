@@ -2,7 +2,7 @@
 #pragma once
 #include "Managers/UserWidget/CsTypes_UserWidget.h"
 #include "Types/CsTypes_AttachDetach.h"
-#include "Types/CsTypes_Transform.h"
+#include "Types/CsTypes_Math.h"
 // Log
 #include "Utility/CsUILog.h"
 
@@ -135,6 +135,10 @@ struct CSUI_API FCsWidgetComponentInfo
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component", meta = (ScriptName = "m_DrawSize", editcondition = "bDrawSize"))
 	FVector2D DrawSize;
 
+	/** Rules for how to attach Component to parent for each member of Transform. */
+	UPROPERTY(EditAnywhere, Category = "CsUI|Widget Actor")
+	ECsAttachmentRule AttachmentTransformRules[(uint8)ECsTransform::ECsTransform_MAX];
+
 	/** Valid only when the WidgetComponent is attached to an Object with
 	    Bone or Socket. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component")
@@ -167,7 +171,7 @@ public:
 
 	FCsWidgetComponentInfo() :
 		Widget(),
-		bDrawSize(true),
+		bDrawSize(false),
 		DrawSize(0.0f),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
@@ -175,6 +179,10 @@ public:
 		bCameraInfo(true),
 		CameraInfo()
 	{
+		AttachmentTransformRules[(uint8)ECsTransform::Translation] = ECsAttachmentRule::KeepRelative;
+		AttachmentTransformRules[(uint8)ECsTransform::Rotation]	   = ECsAttachmentRule::KeepRelative;
+		AttachmentTransformRules[(uint8)ECsTransform::Scale]	   = ECsAttachmentRule::KeepRelative;
+
 		TransformSpaces[(uint8)ECsTransform::Translation] = ECsTransformSpace::Relative;
 		TransformSpaces[(uint8)ECsTransform::Rotation]	  = ECsTransformSpace::Relative;
 		TransformSpaces[(uint8)ECsTransform::Scale]		  = ECsTransformSpace::Relative;
@@ -283,6 +291,8 @@ namespace NCsWidgetComponent
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bCameraInfo, bool)
 		FORCEINLINE const CameraInfoType& GetCameraInfo() const { return CameraInfo; }
 		FORCEINLINE CameraInfoType* GetCameraInfoPtr() { return &CameraInfo; }
+
+		FORCEINLINE void SetTransform(USceneComponent* Component) const { NCsTransformRules::SetTransform(Component, GetTransform(), GetTransformRules(), GetTransformSpaces()); }
 
 		bool IsValidChecked(const FString& Context) const;
 		bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

@@ -11,6 +11,7 @@ UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializ
 void UCsWidgetComponent::Show()
 {
 	Activate();
+	SetComponentTickEnabled(true);
 	SetHiddenInGame(false);
 	SetVisibility(true);
 
@@ -30,6 +31,7 @@ void UCsWidgetComponent::Hide()
 	}
 	SetVisibility(false);
 	SetHiddenInGame(true);
+	SetComponentTickEnabled(false);
 	Deactivate();
 }
 

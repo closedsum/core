@@ -198,7 +198,7 @@ public:
 		allocated, the Parent field of the payload is set. If the Parent object is NULL,
 		the Sound will NOT be attached. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
-	ECsAttachmentTransformRules AttachmentTransformRules;
+	FCsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the StaticMeshActor is attached to a Parent object. 
 	    Bone or Socket to attach to. */
@@ -246,7 +246,7 @@ public:
 		DeallocateMethod(ECsStaticMeshActorDeallocateMethod::Complete),
 		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
-		AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity),
@@ -271,7 +271,7 @@ public:
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsStaticMeshActor::EDeallocateMethod*)(&DeallocateMethod)); }
 	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
 	FORCEINLINE float* GetLifeTimePtr() { return &LifeTime; }
-	FORCEINLINE ECsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
+	FORCEINLINE FCsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
 	FORCEINLINE FName* GetBonePtr() { return &Bone; }
 	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
 	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
@@ -360,19 +360,36 @@ namespace NCsStaticMeshActor
 				return false;
 			}
 
-			FORCEINLINE bool HasAttach(const uint32& Mask, const ECsAttachmentTransformRules& Rules)
+			FORCEINLINE bool HasAttach(const uint32& Mask, const FCsAttachmentTransformRules& Rules)
 			{
 				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform) &&
-					Rules == ECsAttachmentTransformRules::KeepRelativeTransform)
+					Rules == FCsAttachmentTransformRules::KeepRelativeTransform)
 					return true;
 				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform) &&
-					Rules == ECsAttachmentTransformRules::KeepWorldTransform)
+					Rules == FCsAttachmentTransformRules::KeepWorldTransform)
 					return true;
 				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale) &&
-					Rules == ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+					Rules == FCsAttachmentTransformRules::SnapToTargetNotIncludingScale)
 					return true;
 				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale) &&
-					Rules == ECsAttachmentTransformRules::SnapToTargetIncludingScale)
+					Rules == FCsAttachmentTransformRules::SnapToTargetIncludingScale)
+					return true;
+				return false;
+			}
+
+			FORCEINLINE bool HasAttach(const uint32& Mask, const FAttachmentTransformRules& Rules)
+			{
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepRelativeTransform) &&
+					FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::KeepRelativeTransform))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::KeepWorldTransform) &&
+					FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::KeepWorldTransform))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetNotIncludingScale) &&
+					FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::SnapToTargetNotIncludingScale))
+					return true;
+				if (CS_TEST_BITFLAG(Mask, EChange::SnapToTargetIncludingScale) &&
+					FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::SnapToTargetIncludingScale))
 					return true;
 				return false;
 			}
@@ -390,15 +407,28 @@ namespace NCsStaticMeshActor
 				return 0;
 			}
 
-			FORCEINLINE EChange FromTransformAttachmentRule(const ECsAttachmentTransformRules& Rules)
+			FORCEINLINE EChange FromTransformAttachmentRule(const FCsAttachmentTransformRules& Rules)
 			{
-				if (Rules == ECsAttachmentTransformRules::KeepRelativeTransform)
+				if (Rules == FCsAttachmentTransformRules::KeepRelativeTransform)
 					return EChange::KeepRelativeTransform;
-				if (Rules == ECsAttachmentTransformRules::KeepWorldTransform)
+				if (Rules == FCsAttachmentTransformRules::KeepWorldTransform)
 					return EChange::KeepWorldTransform;
-				if (Rules == ECsAttachmentTransformRules::SnapToTargetNotIncludingScale)
+				if (Rules == FCsAttachmentTransformRules::SnapToTargetNotIncludingScale)
 					return EChange::SnapToTargetNotIncludingScale;
-				if (Rules == ECsAttachmentTransformRules::SnapToTargetIncludingScale)
+				if (Rules == FCsAttachmentTransformRules::SnapToTargetIncludingScale)
+					return EChange::SnapToTargetIncludingScale;
+				return EChange::KeepRelativeTransform;
+			}
+
+			FORCEINLINE EChange FromTransformAttachmentRule(const FAttachmentTransformRules& Rules)
+			{
+				if (FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::KeepRelativeTransform))
+					return EChange::KeepRelativeTransform;
+				if (FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::KeepWorldTransform))
+					return EChange::KeepWorldTransform;
+				if (FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::SnapToTargetNotIncludingScale))
+					return EChange::SnapToTargetNotIncludingScale;
+				if (FCsAttachmentTransformRules::IsEqual(Rules, FAttachmentTransformRules::SnapToTargetIncludingScale))
 					return EChange::SnapToTargetIncludingScale;
 				return EChange::KeepRelativeTransform;
 			}

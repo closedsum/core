@@ -46,7 +46,7 @@ void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, 
 
 	Payload->DeallocateMethod			= Mesh.GetDeallocateMethod();
 	Payload->LifeTime					= Mesh.LifeTime;
-	Payload->AttachmentTransformRules	= Mesh.AttachmentTransformRules;
+	Payload->AttachmentTransformRules	= Mesh.AttachmentTransformRules.ToRule();
 	Payload->Bone						= Mesh.Bone;
 	Payload->TransformRules				= Mesh.TransformRules;
 	Payload->Transform					= Mesh.Transform;

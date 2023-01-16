@@ -217,7 +217,7 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 
 		if (ComponentToAttachTo)
 		{
-			AttachToComponent(ComponentToAttachTo, NCsAttachmentTransformRules::ToRule(WidgetActorPayload->GetAttachmentTransformRule()), WidgetActorPayload->GetBone());
+			AttachToComponent(ComponentToAttachTo, WidgetActorPayload->GetAttachmentTransformRule(), WidgetActorPayload->GetBone());
 
 			const FTransform& Transform = WidgetActorPayload->GetTransform();
 			const int32& TransformRules = WidgetActorPayload->GetTransformRules();

@@ -21,7 +21,7 @@ void FCsSkeletalMeshAttachment::CopyToAttachment(AttachmentType* Attachment)
 	Attachment->SetMesh(Mesh.GetPtr());
 	Attachment->SetMaterials(Materials.GetPtr());
 	Attachment->SetbGenerateMIDs(&bGenerateMIDs);
-	Attachment->SetAttachmentTransformRules(&AttachmentTransformRules);
+	Attachment->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
 	Attachment->SetBone(&Bone);
 	Attachment->SetTransformRules(&TransformRules);
 	Attachment->SetTransform(&Transform);
@@ -48,7 +48,7 @@ void FCsSkeletalMeshAttachment::CopyToAttachmentAsValue(AttachmentType* Attachme
 	MatsPtr->Append(Mats);
 
 	Attachment->SetbGenerateMIDs(bGenerateMIDs);
-	Attachment->SetAttachmentTransformRules(AttachmentTransformRules);
+	Attachment->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
 	Attachment->SetBone(Bone);
 	Attachment->SetTransformRules(TransformRules);
 	Attachment->SetTransform(Transform);
@@ -69,8 +69,6 @@ bool FCsSkeletalMeshAttachment::IsValidChecked(const FString& Context) const
 	CS_IS_VALID_CHECKED(Mesh);
 	// Check Materials is Valid
 	CS_IS_VALID_CHECKED(Materials);
-	// Check AttachmentTransformRules is Valid
-	CS_IS_ENUM_VALID_CHECKED(EMCsAttachmentTransformRules, AttachmentTransformRules);
 	// Check Transform is Valid
 	if (!Transform.Equals(FTransform::Identity))
 	{
@@ -95,8 +93,6 @@ bool FCsSkeletalMeshAttachment::IsValid(const FString& Context, void(*Log)(const
 	CS_IS_VALID(Mesh)
 	// Check Materials is Valid
 	CS_IS_VALID(Materials)
-	// Check AttachmentTransformRules is Valid
-	CS_IS_ENUM_VALID(EMCsAttachmentTransformRules, ECsAttachmentTransformRules, AttachmentTransformRules)
 	// Check Transform is Valid
 	if (!Transform.Equals(FTransform::Identity))
 	{
@@ -145,7 +141,7 @@ void FCsSkeletalMeshAttachment::AttachChecked(const FString& Context, USceneComp
 
 		check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
-		Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentTransformRules), Bone);
+		Child->AttachToComponent(Parent, AttachmentTransformRules.ToRule(), Bone);
 		NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
 		Child->SetSkeletalMesh(Mesh.GetChecked(Context));
 	}
@@ -190,7 +186,7 @@ bool FCsSkeletalMeshAttachment::AttachSafe(const FString& Context, USceneCompone
 		if (!SkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, Bone, Log))
 			return false;
 
-		Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(AttachmentTransformRules), Bone);
+		Child->AttachToComponent(Parent, AttachmentTransformRules.ToRule(), Bone);
 		NCsTransformRules::SetRelativeTransform(Child, Transform, TransformRules);
 		Child->SetSkeletalMesh(Mesh.GetChecked(Context));
 	}
@@ -227,6 +223,7 @@ FCsSkeletalMeshActorPooled* FCsSkeletalMeshAttachment::AttachChecked(const FStri
 	PayloadImpl->Mesh   = Mesh.GetChecked(Context);
 	PayloadImpl->SetMaterials(Materials.GetChecked(Context));
 	PayloadImpl->bGenerateMIDs  = bGenerateMIDs;
+	PayloadImpl->AttachmentTransformRules = AttachmentTransformRules.ToRule();
 	PayloadImpl->Bone			= Bone;
 	PayloadImpl->TransformRules = TransformRules;
 	PayloadImpl->Transform		= Transform;
@@ -255,8 +252,6 @@ namespace NCsSkeletalMesh
 			// Check GetMaterials() is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
-			// Check GetAttachmentTransformRules() is Valid
-			CS_IS_ENUM_VALID_CHECKED(EMCsAttachmentTransformRules, GetAttachmentTransformRules());
 			// Check GetTransform() is Valid
 			if (!GetTransform().Equals(FTransform::Identity))
 			{
@@ -282,8 +277,6 @@ namespace NCsSkeletalMesh
 			// Check Materials is Valid
 			CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
-			// Check GetAttachmentTransformRules is Valid
-			CS_IS_ENUM_VALID(EMCsAttachmentTransformRules, ECsAttachmentTransformRules, GetAttachmentTransformRules())
 			// Check GetTransform() is Valid
 			if (!GetTransform().Equals(FTransform::Identity))
 			{
@@ -332,7 +325,7 @@ namespace NCsSkeletalMesh
 
 				check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
-				Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+				Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 				NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 				Child->SetSkeletalMesh(GetMesh());
 			}
@@ -377,7 +370,7 @@ namespace NCsSkeletalMesh
 				if (!SkeletalMeshLibrary::ConditionalSafeIsBoneOrSocketValid(Context, Parent, GetBone(), Log))
 					return false;
 
-				Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+				Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 				NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 				Child->SetSkeletalMesh(GetMesh());
 			}
@@ -418,7 +411,7 @@ namespace NCsSkeletalMesh
 
 				check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, Bone));
 
-				Child->AttachToComponent(Parent, NCsAttachmentTransformRules::ToRule(GetAttachmentTransformRules()), GetBone());
+				Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
 				NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
 				Child->SetSkeletalMesh(GetMesh());
 			}
@@ -457,6 +450,7 @@ namespace NCsSkeletalMesh
 			PayloadImpl->Mesh   = GetMesh();
 			PayloadImpl->SetMaterials(GetMaterials());
 			PayloadImpl->bGenerateMIDs  = GetbGenerateMIDs();
+			PayloadImpl->AttachmentTransformRules = GetAttachmentTransformRules();
 			PayloadImpl->Bone			= GetBone();
 			PayloadImpl->TransformRules = GetTransformRules();
 			PayloadImpl->Transform		= GetTransform();

@@ -26,7 +26,7 @@ namespace NCsSkeletalMeshActor
 			bGenerateMIDs(false),
 			DeallocateMethod(DeallocateMethodType::Complete),
 			LifeTime(0.0f),
-			AttachmentTransformRules(ECsAttachmentTransformRules::SnapToTargetNotIncludingScale),
+			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
@@ -75,7 +75,7 @@ namespace NCsSkeletalMeshActor
 			bGenerateMIDs = false;
 			DeallocateMethod = DeallocateMethodType::Complete;
 			LifeTime = 0.0f;
-			AttachmentTransformRules = ECsAttachmentTransformRules::SnapToTargetNotIncludingScale;
+			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;

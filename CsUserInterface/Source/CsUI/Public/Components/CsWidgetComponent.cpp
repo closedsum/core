@@ -2,8 +2,10 @@
 #include "Components/CsWidgetComponent.h"
 #include "CsUI.h"
 
-UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer)
 {
+	bWindowFocusable = false;
 }
 
 void UCsWidgetComponent::Show()

@@ -4,6 +4,8 @@
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
 #include "Engine/DataTable.h"
+// Log
+#include "Utility/CsUILog.h"
 
 #include "CsTypes_UserWidget.generated.h"
 
@@ -235,10 +237,23 @@ public:
 
 	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
 
-	bool IsValidChecked(const FString& Context) const
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("%s: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString()));
 
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const
+	{
+		if (!Widget.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+			{
+				Log(FString::Printf(TEXT("%s: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+			}
+			return false;
+		}
 		return true;
 	}
 

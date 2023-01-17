@@ -2,6 +2,9 @@
 #include "Components/CsWidgetComponent.h"
 #include "CsUI.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 UCsWidgetComponent::UCsWidgetComponent(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer)
 {
@@ -46,4 +49,29 @@ void UCsWidgetComponent::Disable()
 {
 	if (GetWidget())
 		GetWidget()->SetIsEnabled(false);
+}
+
+void UCsWidgetComponent::ConditionalSetWidgetChecked(const FString& Context, UClass* InWidgetClass)
+{
+	CS_IS_PTR_NULL_CHECKED(InWidgetClass)
+
+	UUserWidget* W = GetWidget();
+
+	// Setting a Widget with the SAME, Exit
+	if (W &&
+		W->GetClass() == InWidgetClass)
+	{
+		return;
+	}
+
+	UUserWidget* NewWidget = CreateWidget<UUserWidget>(GetWorld(), InWidgetClass);
+
+	CS_IS_PTR_NULL_CHECKED(NewWidget)
+
+	SetWidget(NewWidget);
+
+	if (W)
+	{
+		W->MarkPendingKill();
+	}
 }

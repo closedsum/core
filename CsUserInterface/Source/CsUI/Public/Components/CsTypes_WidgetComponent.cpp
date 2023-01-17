@@ -4,6 +4,10 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Component
+#include "Components/SceneComponent.h"
+// Engine
+#include "GameFramework/Actor.h"
 
 // FCsWidgetComponent_CameraInfo
 #pragma region
@@ -77,6 +81,7 @@ void FCsWidgetComponentInfo::CopyToInfo(InfoType* Info)
 	Info->SetWidget(Widget.GetClassPtr());
 	Info->SetbDrawSize(&bDrawSize);
 	Info->SetDrawSize(&DrawSize);
+	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
 	Info->SetBone(&Bone);
 	Info->SetTransformRules(&TransformRules);
 	Info->SetTransformSpaces(&TransformSpaces);
@@ -90,6 +95,7 @@ void FCsWidgetComponentInfo::CopyToInfoAsValue(InfoType* Info) const
 	Info->SetWidget(Widget.GetClass());
 	Info->SetbDrawSize(bDrawSize);
 	Info->SetDrawSize(DrawSize);
+	Info->SetAttachmentTransformRules(AttachmentTransformRules.ToRule());
 	Info->SetBone(Bone);
 	Info->SetTransformRules(TransformRules);
 	Info->SetTransformSpaces(TransformSpaces);
@@ -186,6 +192,21 @@ namespace NCsWidgetComponent
 			CS_IS_VALID(GetCameraInfo())
 		}
 		return true;
+	}
+
+	void FInfo::AttachChecked(const FString& Context, USceneComponent* Parent, USceneComponent* Child, const FName& BoneOrSocket /*=NAME_None*/) const
+	{
+		CS_IS_PTR_NULL_CHECKED(Parent);
+
+		Child->AttachToComponent(Parent, GetAttachmentTransformRules(), BoneOrSocket);
+		SetTransform(Child);
+	}
+
+	void FInfo::AttachChecked(const FString& Context, AActor* Parent, USceneComponent* Child, const FName& BoneOrSocket /*=NAME_None*/) const
+	{
+		CS_IS_PTR_NULL_CHECKED(Parent)
+
+		AttachChecked(Context, Parent->GetRootComponent(), Child, BoneOrSocket);
 	}
 }
 

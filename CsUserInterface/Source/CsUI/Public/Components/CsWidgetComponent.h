@@ -16,4 +16,6 @@ public:
 
 	void Enable();
 	void Disable();
+
+	void ConditionalSetWidgetChecked(const FString& Context, UClass* InWidgetClass);
 };

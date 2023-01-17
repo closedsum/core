@@ -133,6 +133,8 @@ namespace NCsTransformRules
 
 	void SetRelativeTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules)
 	{
+		check(Component);
+
 		// Location | Rotation | Scale
 		if (Rules == All)
 		{
@@ -160,6 +162,8 @@ namespace NCsTransformRules
 
 	void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules)
 	{
+		check(Actor);
+
 		// Location | Rotation | Scale
 		if (Rules == All)
 		{
@@ -187,6 +191,8 @@ namespace NCsTransformRules
 
 	void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules)
 	{
+		check(Component);
+
 		// Location | Rotation | Scale
 		if (Rules == All)
 		{
@@ -214,6 +220,8 @@ namespace NCsTransformRules
 
 	void SetTransform(AActor* Actor, const FTransform& Transform, const int32& Rules)
 	{
+		check(Actor);
+
 		// Location | Rotation | Scale
 		if (Rules == All)
 		{
@@ -241,6 +249,8 @@ namespace NCsTransformRules
 
 	void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules, const ECsTransformSpace(&Spaces)[(uint8)ECsTransform::ECsTransform_MAX])
 	{
+		check(Component);
+
 		// Location
 		if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
 		{

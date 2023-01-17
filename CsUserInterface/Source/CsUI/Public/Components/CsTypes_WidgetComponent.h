@@ -136,8 +136,8 @@ struct CSUI_API FCsWidgetComponentInfo
 	FVector2D DrawSize;
 
 	/** Rules for how to attach Component to parent for each member of Transform. */
-	UPROPERTY(EditAnywhere, Category = "CsUI|Widget Actor")
-	ECsAttachmentRule AttachmentTransformRules[(uint8)ECsTransform::ECsTransform_MAX];
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
+	FCsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the WidgetComponent is attached to an Object with
 	    Bone or Socket. */
@@ -173,16 +173,13 @@ public:
 		Widget(),
 		bDrawSize(false),
 		DrawSize(0.0f),
+		AttachmentTransformRules(FCsAttachmentTransformRules::KeepRelativeTransform),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity),
 		bCameraInfo(true),
 		CameraInfo()
 	{
-		AttachmentTransformRules[(uint8)ECsTransform::Translation] = ECsAttachmentRule::KeepRelative;
-		AttachmentTransformRules[(uint8)ECsTransform::Rotation]	   = ECsAttachmentRule::KeepRelative;
-		AttachmentTransformRules[(uint8)ECsTransform::Scale]	   = ECsAttachmentRule::KeepRelative;
-
 		TransformSpaces[(uint8)ECsTransform::Translation] = ECsTransformSpace::Relative;
 		TransformSpaces[(uint8)ECsTransform::Rotation]	  = ECsTransformSpace::Relative;
 		TransformSpaces[(uint8)ECsTransform::Scale]		  = ECsTransformSpace::Relative;
@@ -225,6 +222,7 @@ namespace NCsWidgetComponent
 		/** The size of the displayed Widget. 
 			This is NOT the Desired Size of the Widget (as displayed in Editor). */
 		CS_DECLARE_MEMBER_WITH_PROXY(DrawSize, FVector2D)
+		CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 		/** Valid only when the WidgetComponent is attached to an Object with
 			Bone or Socket. */
 		CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
@@ -249,6 +247,7 @@ namespace NCsWidgetComponent
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(Widget, nullptr),
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(bDrawSize, false),
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(DrawSize, 0.0f),
+			CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::KeepRelativeTransform),
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 			CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 7), // NCsTransformRules::All
 			TransformSpaces_Proxy(nullptr),
@@ -259,6 +258,7 @@ namespace NCsWidgetComponent
 			CS_CTOR_SET_MEMBER_PROXY(Widget);
 			CS_CTOR_SET_MEMBER_PROXY(bDrawSize);
 			CS_CTOR_SET_MEMBER_PROXY(DrawSize);
+			CS_CTOR_SET_MEMBER_PROXY(AttachmentTransformRules);
 			CS_CTOR_SET_MEMBER_PROXY(Bone);
 			CS_CTOR_SET_MEMBER_PROXY(TransformRules);
 			TransformSpaces_Proxy = &TransformSpaces;
@@ -269,6 +269,7 @@ namespace NCsWidgetComponent
 		CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Widget, UClass)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bDrawSize, bool)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DrawSize, FVector2D)
+		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
 		FORCEINLINE void SetTransformSpaces(const ECsTransformSpace (&__value)[(uint8)ECsTransform::ECsTransform_MAX])
@@ -293,6 +294,9 @@ namespace NCsWidgetComponent
 		FORCEINLINE CameraInfoType* GetCameraInfoPtr() { return &CameraInfo; }
 
 		FORCEINLINE void SetTransform(USceneComponent* Component) const { NCsTransformRules::SetTransform(Component, GetTransform(), GetTransformRules(), GetTransformSpaces()); }
+
+		void AttachChecked(const FString& Context, USceneComponent* Parent, USceneComponent* Child, const FName& BoneOrSocket = NAME_None) const;
+		void AttachChecked(const FString& Context, AActor* Parent, USceneComponent* Child, const FName& BoneOrSocket = NAME_None) const;
 
 		bool IsValidChecked(const FString& Context) const;
 		bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

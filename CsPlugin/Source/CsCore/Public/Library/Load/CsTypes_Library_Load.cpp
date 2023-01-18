@@ -167,6 +167,9 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 		Class->IsChildOf<UMaterialInstance>() ||
 		Class->IsChildOf<UMaterialFunction>())
 	{
+		if (Class->IsChildOf<UMaterialFunction>())
+			return;
+
 		PathSets[(uint8)ECsObjectPathDependencyGroup::Material].Add(SoftPath);
 	}
 	// Texture

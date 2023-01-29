@@ -83,7 +83,7 @@ declare namespace NJsFunction {
         * @param {object}      caller
         * @returns {boolean} 
         */
-        IsArgCountAndReturn_Bool_Checked(context: string, fn: (...args: any) => boolean, argCount: number, caller: object): boolean;
+        IsArgCountAndReturn_Bool_Checked(context: string, fn: (...args: any) => boolean, argCount: number, caller: object, args: any[]): boolean;
 
         IsArgCountAndReturn_Bool(fn: (...args: any) => boolean | any, argCount: number, caller: object): boolean;
  

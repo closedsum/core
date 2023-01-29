@@ -67,7 +67,7 @@ module.exports = class NJsYield
                 }
 
                 // Check yieldCommand.WaitForFunction is of type: function
-                check(FunctionLibrary.IsArgCountAndReturn_Bool_Checked(context, yieldCommand.WaitForFunction, argCount, this.Caller))
+                check(FunctionLibrary.IsArgCountAndReturn_Bool_Checked(context, yieldCommand.WaitForFunction, argCount, this.Caller, this.Args))
 
                 this.Fn = yieldCommand.WaitForFunction;
                 return true;

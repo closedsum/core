@@ -87,33 +87,51 @@ module.exports = class NJsFunction
         /**
          * @param {string}      context 
          * @param {function}    fn 
-         * @param {object}      caller 
+         * @param {object}      caller
+         * @param {any[]}       args
          * @returns {boolean}
          */
-        static /*bool*/ IsReturn_Bool_Checked(context /*string*/, fn /*function*/, caller /*objects*/) 
+        static /*bool*/ IsReturn_Bool_Checked(context /*string*/, fn /*function*/, caller /*object*/, args /*any[]*/) 
         {
             // Check fn is a function
             CommonLibrary.IsFunctionChecked(context, fn);
 
-            // If caller is valid, user caller to call fn
+            // If caller is valid, use caller to call fn
             if (CommonLibrary.IsValidObject(caller))
+            {
+                // if args is valid, use caller + args to apply fn
+                if (Array.isArray(args))
+                    return CommonLibrary.IsBoolChecked(context, fn.apply(caller, args));
                 return CommonLibrary.IsBoolChecked(context, fn.call(caller));
+            }
+            // if args is valid, use args to apply fn
+            if (Array.isArray(args))
+               return CommonLibrary.IsBoolChecked(context, fn.apply(null, args));
             return CommonLibrary.IsBoolChecked(context, fn());
         }
 
         /**
          * @param {function}    fn 
-         * @param {object}      caller 
+         * @param {object}      caller
+         * @param {any[]}       args
          * @returns {boolean}
          */
-        static /*bool*/ IsReturn_Bool(fn /*function*/, caller /*object*/) 
+        static /*bool*/ IsReturn_Bool(fn /*function*/, caller /*object*/, args /*any[]*/) 
         {
             // Check fn is a function
             if (!CommonLibrary.IsFunction(fn))
                 return false;
-            // If caller is valid, user caller to call fn
+            // If caller is valid, use caller to call fn
             if (CommonLibrary.IsValidObject(caller))
+            {
+                // if args is valid, use caller + args to apply fn
+                if (Array.isArray(args))
+                    return CommonLibrary.IsBool(fn.apply(caller, args));
                 return CommonLibrary.IsBool(fn.call(caller));
+            }
+            // if args is valid, use args to apply fn
+            if (Array.isArray(args))
+                return CommonLibrary.IsBool(fn.apply(null, args));
             return CommonLibrary.IsBool(fn());
         }
 
@@ -332,11 +350,11 @@ module.exports = class NJsFunction
          * @param {object}      caller
          * @returns {boolean} 
          */
-        static /*bool*/ IsArgCountAndReturn_Bool_Checked(context /*string*/, fn /*function*/, argCount /*int*/, caller /*object*/) 
+        static /*bool*/ IsArgCountAndReturn_Bool_Checked(context /*string*/, fn /*function*/, argCount /*int*/, caller /*object*/, args /*any[]*/) 
         {
             let self = NJsFunction.FLibrary;
 
-            check(self.IsReturn_Bool_Checked(context, fn, caller));
+            check(self.IsReturn_Bool_Checked(context, fn, caller, args));
 
             // Check argCount is an int
             check(CommonLibrary.IsIntChecked(context, argCount));

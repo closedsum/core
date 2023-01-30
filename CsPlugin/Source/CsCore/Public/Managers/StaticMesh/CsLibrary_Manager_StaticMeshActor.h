@@ -13,6 +13,8 @@ struct FCsStaticMeshActorPooled;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)
 // NCsStaticMeshActor::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, IPayload)
+// NCsStaticMeshActor::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStaticMeshActor, NPayload, FImpl)
 
 namespace NCsStaticMeshActor
 {
@@ -114,6 +116,32 @@ namespace NCsStaticMeshActor
 			*/
 			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type);
 
+		#define PayloadImplType NCsStaticMeshActor::NPayload::FImpl
+
+			/**
+			* Allocate a Payload associated with Type
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* return				Payload
+			*/
+			static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type);
+
+			/**
+			* Allocate a Payload associated with Default Type
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				Payload
+			*/
+			FORCEINLINE static PayloadImplType* AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext)
+			{
+				return AllocatePayloadImplChecked(Context, WorldContext, NCsStaticMeshActor::GetDefault());
+			}
+
+		#undef PayloadImplType
+
 		#undef PayloadType 
 
 		#pragma endregion Payload
@@ -163,6 +191,20 @@ namespace NCsStaticMeshActor
 			static const FCsStaticMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef PooledPayloadType
+
+			/**
+			* Spawn an StaticMeshActor of Default Type with the given Payload.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Type
+			* @param Payload
+			* return				Spawned StaticMeshActor
+			*/
+			FORCEINLINE static const FCsStaticMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PayloadType* Payload)
+			{
+				return SpawnChecked(Context, WorldContext, NCsStaticMeshActor::GetDefault(), Payload);
+			}
 
 		#undef PayloadType
 

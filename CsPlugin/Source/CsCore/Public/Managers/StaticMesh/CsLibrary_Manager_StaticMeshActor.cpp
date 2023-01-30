@@ -110,10 +110,16 @@ namespace NCsStaticMeshActor
 		#define PayloadType NCsStaticMeshActor::NPayload::IPayload
 		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type)
 		{
-		#undef PayloadType
-
 			return GetChecked(Context, WorldContext)->AllocatePayload(Type);
 		}
+		#undef PayloadType
+
+		#define PayloadImplType NCsStaticMeshActor::NPayload::FImpl
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FECsStaticMeshActor& Type)
+		{
+			return GetChecked(Context, WorldContext)->AllocatePayload<PayloadImplType>(Type);
+		}
+		#undef PayloadImplType
 
 		#pragma endregion 
 

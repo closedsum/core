@@ -43,6 +43,13 @@ namespace NCsGameEventCoordinatorGroup
 	{
 		return Group == ManagerInput0 || ManagerInput1;
 	}
+
+	FORCEINLINE static int32 GetManagerInputIndex(const Type& Group)
+	{
+		check(IsManagerInput(Group));
+
+		return Group == ManagerInput0 ? 0 : 1;
+	}
 }
 
 #pragma endregion GameEventCoordinatorGroup

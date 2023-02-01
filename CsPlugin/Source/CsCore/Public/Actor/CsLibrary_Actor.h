@@ -498,6 +498,17 @@ namespace NCsActor
 		static float GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
+		* Check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
+		*
+		* @param Context	The calling context.
+		* @param A
+		* @param B
+		* @param R
+		* return
+		*/
+		static bool IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const AActor* B, const float& R);
+
+		/**
 		* Safely check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
 		*
 		* @param Context	The calling context.
@@ -508,17 +519,6 @@ namespace NCsActor
 		* return
 		*/
 		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const AActor* B, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
-
-		/**
-		* Check if the distance squared 2D between A and B is Less Than or Equal to R^2 (R squared).
-		*
-		* @param Context	The calling context.
-		* @param A
-		* @param B
-		* @param R
-		* return
-		*/
-		static bool IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const AActor* B, const float& R);
 
 		/**
 		* Check if the distance squared 2D between A and Location is Less Than or Equal to R^2 (R squared).
@@ -532,6 +532,18 @@ namespace NCsActor
 		static bool IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R);
 
 		/**
+		* Safely check if the distance squared 2D between A and Location is Less Than or Equal to R^2 (R squared).
+		*
+		* @param Context	The calling context.
+		* @param A
+		* @param Location
+		* @param R
+		* @param Log		(optional)
+		* return
+		*/
+		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const FVector& Location, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Check if the distance squared 2D between A and Location is Greater Than R^2 (R squared).
 		*
 		* @param Context	The calling context.
@@ -541,6 +553,17 @@ namespace NCsActor
 		* return
 		*/
 		static bool IsDistanceSq2D_GreaterThanChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R);
+
+		/**
+		* Safely check if the distance squared 2D between A and Location is Greater Than R^2 (R squared).
+		*
+		* @param Context	The calling context.
+		* @param A
+		* @param Location
+		* @param R
+		* return
+		*/
+		static bool SafeIsDistanceSq2D_GreaterThan(const FString& Context, const AActor* A, const FVector& Location, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Distance
 

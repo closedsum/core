@@ -15,8 +15,11 @@
 
 #if WITH_EDITOR
 // Library
+	// Common
 #include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
+// Managers
+#include "Managers/Singleton/CsGetManagerSingleton.h"
 // Engine
 #include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
@@ -46,12 +49,11 @@ namespace NCsTime
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, ContextObject, nullptr);
-
-			if (WorldLibrary::IsPlayInEditor(World) ||
-				WorldLibrary::IsPlayInEditorPreview(World))
+			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
-				return GEngine;
+				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
+
+				return GetManagerSingleton->_getUObject();
 			}
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
@@ -63,12 +65,11 @@ namespace NCsTime
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
-			UWorld* World = WorldLibrary::GetSafe(Context, ContextObject, Log);
-
-			if (WorldLibrary::IsPlayInEditor(World) ||
-				WorldLibrary::IsPlayInEditorPreview(World))
+			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
-				return GEngine;
+				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
+
+				return GetManagerSingleton->_getUObject();
 			}
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;

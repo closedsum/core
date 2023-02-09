@@ -1,11 +1,20 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
+#pragma once
 // Library
-#include "Library/CsLibrary_Property.h"
+	// Manager
 #include "Managers/Data/CsLibrary_Manager_Data.h"
+	// Common
+#include "Library/CsLibrary_Property.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
-#pragma once
+
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+// Containers
+#include "Containers/CsGetPersistentObjects.h"
+#endif // #if WITH_EDITOR
 
 // Cached
 #pragma region
@@ -97,23 +106,50 @@ namespace NCsData
 
 						if (!ClassProperty)
 						{
-		#if !UE_BUILD_SHIPPING
+						#if !UE_BUILD_SHIPPING
 							FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
-		#endif // #if !UE_BUILD_SHIPPING
+						#endif // #if !UE_BUILD_SHIPPING
 							return;
 						}
 
 						// Cache any class related information that is loaded.
 						typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-						UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
+						UCsManager_Data* Manager_Data = nullptr;
+						
+					#if WITH_EDITOR
+						typedef NCsWorld::FLibrary WorldLibrary;
+
+						if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+						{
+							if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
+							{
+								GetPersistentObjects->GetPersistentObjects().Add(DataTable);
+							}
+						}
+						else
+					#endif // #if WITH_EDITOR
+						{
+							Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
+						}
 
 						const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 						for (const TPair<FName, uint8*>& Pair : RowMap)
 						{
 							const FName& RowName = Pair.Key;
-							uint8* RowPtr	     = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+							uint8* RowPtr		 = nullptr;
+
+						#if WITH_EDITOR
+							if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+							{
+								RowPtr = Pair.Value;
+							}
+							else
+						#endif // #if WITH_EDITOR
+							{
+								RowPtr = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+							}
 
 							if (!RowPtr)
 								continue;
@@ -128,6 +164,16 @@ namespace NCsData
 								UObject* O = StructPtr->Get();
 
 								checkf(O, TEXT("%s: Failed to get character from DataTable: %s: Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+
+							#if WITH_EDITOR
+								if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+								{
+									if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
+									{
+										GetPersistentObjects->GetPersistentObjects().Add(O);
+									}
+								}
+							#endif // #if WITH_EDITOR
 
 								InterfaceContainerType& Container = ClassByClassTypeMap.Add(RowName);
 
@@ -158,23 +204,50 @@ namespace NCsData
 
 							if (!ClassProperty)
 							{
-		#if !UE_BUILD_SHIPPING
+							#if !UE_BUILD_SHIPPING
 								FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Class in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
-		#endif // #if !UE_BUILD_SHIPPING
+							#endif // #if !UE_BUILD_SHIPPING
 								return;
 							}
 
 							// Cache any class related information that is loaded.
 							typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-							UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
+							UCsManager_Data* Manager_Data = nullptr;
+						
+						#if WITH_EDITOR
+							typedef NCsWorld::FLibrary WorldLibrary;
+
+							if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+							{
+								if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
+								{
+									GetPersistentObjects->GetPersistentObjects().Add(DataTable);
+								}
+							}
+							else
+						#endif // #if WITH_EDITOR
+							{
+								Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
+							}
 
 							const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 							for (const TPair<FName, uint8*>& Pair : RowMap)
 							{
 								const FName& RowName = Pair.Key;
-								uint8* RowPtr		 = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+								uint8* RowPtr = nullptr;
+
+							#if WITH_EDITOR
+								if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+								{
+									RowPtr = Pair.Value;
+								}
+								else
+							#endif // #if WITH_EDITOR
+								{
+									RowPtr = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+								}
 
 								if (!RowPtr)
 									continue;
@@ -191,6 +264,16 @@ namespace NCsData
 									checkf(ContainerPtr, TEXT("%s: ContainerPtr is NULL. Failed to find class of class type: %s"), *Context, StructPtr->ToChar());
 
 									InterfaceContainerType& Container = ClassByTypeMap.Add(RowName);
+
+								#if WITH_EDITOR
+									if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+									{
+										if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
+										{
+											GetPersistentObjects->GetPersistentObjects().Add(ContainerPtr->GetObject());
+										}
+									}
+								#endif // #if WITH_EDITOR
 
 									Container.SetObject(ContainerPtr->GetObject());
 								}

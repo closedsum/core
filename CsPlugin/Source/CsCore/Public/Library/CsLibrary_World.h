@@ -60,6 +60,10 @@ namespace NCsWorld
 
 		static bool IsPlayInGameOrPIE(const UObject* WorldContext);
 
+		static bool IsPlayInEditorOrEditorPreview(UWorld* World);
+
+		static bool IsPlayInEditorOrEditorPreview(const UObject* WorldContext);
+
 		static bool IsAnyWorldContextEditorOrEditorPreview();
 
 		static bool IsEditorPreviewOrphaned(UObject* WorldContext);

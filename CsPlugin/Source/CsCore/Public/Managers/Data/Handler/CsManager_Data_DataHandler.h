@@ -1,11 +1,22 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Library
-#include "Library/CsLibrary_Property.h"
-#include "Data/CsLibrary_Data.h"
+	// Manager
 #include "Managers/Data/CsLibrary_Manager_Data.h"
+	// Data
+#include "Data/CsLibrary_Data.h"
+	// Common
+#include "Library/CsLibrary_Property.h"
 // Managers
 #include "Managers/Data/CsManager_Data.h"
+
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+// Containers
+#include "Containers/CsGetPersistentObjects.h"
+#endif // #if WITH_EDITOR
 
 class UObject;
 class UDataTable;
@@ -80,6 +91,8 @@ namespace NCsData
 				FORCEINLINE const TMap<FName, InterfaceDataType*>& GetDataMap() const { return DataMap; }
 
 			protected:
+
+				TMap<FName, UObject*> DataAsUObjectMap;
 
 				// <Path, <RowName, RowPtr>>
 				TMap<FSoftObjectPath, TMap<FName, uint8*>> DataTableRowByPathMap;
@@ -196,15 +209,41 @@ namespace NCsData
 					// Check which rows from the DataTable have been loaded
 					typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-					UObject* ContextRoot		  = DataManagerLibrary::GetContextRootChecked(Context, MyRoot);
-					UCsManager_Data* Manager_Data = UCsManager_Data::Get(ContextRoot);
+					UCsManager_Data* Manager_Data = nullptr;
+						
+				#if WITH_EDITOR
+					typedef NCsWorld::FLibrary WorldLibrary;
+
+					if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+					{
+						if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
+						{
+							GetPersistentObjects->GetPersistentObjects().Add(DataTable);
+						}
+					}
+					else
+				#endif // #if WITH_EDITOR
+					{
+						Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
+					}
 
 					const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 					for (const TPair<FName, uint8*>& Pair : RowMap)
 					{
 						const FName& RowName = Pair.Key;
-						uint8* RowPtr		 = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+						uint8* RowPtr		 = nullptr;
+
+					#if WITH_EDITOR
+						if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+						{
+							RowPtr = Pair.Value;
+						}
+						else
+					#endif // #if WITH_EDITOR
+						{
+							RowPtr = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+						}
 
 						if (!RowPtr)
 							continue;
@@ -220,6 +259,16 @@ namespace NCsData
 							UObject* O = DataPtr->Get();
 
 							checkf(O, TEXT("%s: Failed to get data from DataTable: %s Row: %s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+
+						#if WITH_EDITOR
+							if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+							{
+								if (ICsGetPersistentObjects* GetPersistentObjects = Cast<ICsGetPersistentObjects>(MyRoot))
+								{
+									GetPersistentObjects->GetPersistentObjects().Add(O);
+								}
+							}
+						#endif // #if WITH_EDITOR
 
 							typedef NCsData::FLibrary DataLibrary;
 
@@ -458,6 +507,21 @@ namespace NCsData
 					}
 					checkf(0, TEXT("%s: Failed to get Type associated with Data."), *Context);
 					return EnumMap::Get().GetMAX();
+				}
+
+				void RemapDataMap(const FString& Context)
+				{
+					typedef NCsData::FLibrary DataLibrary;
+
+					for (const TPair<FName, UObject*>& Pair : DataAsUObjectMap)
+					{
+						const FName& EntryName = Pair.Key;
+						UObject* O			   = Pair.Value;
+
+						InterfaceDataType* IData = DataLibrary::GetChecked<InterfaceDataType>(Context, O);
+
+						DataMap[EntryName] = IData;
+					}
 				}
 
 			protected:

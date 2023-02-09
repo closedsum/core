@@ -11,6 +11,11 @@
 
 #if WITH_EDITOR
 // Library
+	// Common
+#include "Library/CsLibrary_World.h"
+// Managers
+#include "Managers/Singleton/CsGetManagerSingleton.h"
+// Library
 #include "Game/CsLibrary_GameInstance.h"
 #endif // #if WITH_EDITOR
 
@@ -38,6 +43,15 @@ namespace NCsLevel
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
+			{
+				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
+
+				return GetManagerSingleton->_getUObject();
+			}
+
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
@@ -45,6 +59,17 @@ namespace NCsLevel
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
+			{
+				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(ContextObject, UObject, ICsGetManagerSingleton))
+				{
+					return GetManagerSingleton->_getUObject();
+				}
+				return nullptr;
+			}
+
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);

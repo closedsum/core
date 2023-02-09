@@ -87,6 +87,20 @@ namespace NCsDataRootSet
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, const UObject* WorldContext)
 	{
+	#if WITH_EDITOR
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+		{
+			UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+			UObject* DataRootSetImpl	   = Settings->SafeLoadDataRootSet(Context);
+
+			checkf(DataRootSetImpl, TEXT("%s: DataRootSetImpl is NULL. Failed to find DataRootSet."), *Context);
+
+			return DataRootSetImpl;
+		}
+	#endif // #if WITH_EDITOR
+
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
 		UCsManager_Data* Manager_Data = DataManagerLibrary::GetChecked(Context, WorldContext);

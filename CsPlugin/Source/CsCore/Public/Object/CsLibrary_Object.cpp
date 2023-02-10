@@ -23,7 +23,7 @@ namespace NCsObject
 		return FString::Printf(TEXT("%s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
 	}
 
-	FString FLibrary::GetFlagsAsString(UObject* Object)
+	FString FLibrary::GetFlagsAsString(const UObject* Object)
 	{
 		FString Str = TEXT("(");
 		int32 Count = 0;
@@ -109,6 +109,11 @@ namespace NCsObject
 		Str += TEXT(")");
 
 		return Str;
+	}
+
+	bool FLibrary::IsDefaultObject(const UObject* Object)
+	{
+		return Object ? Object->GetName().StartsWith(TEXT("Default__")) : false;
 	}
 
 	// Load

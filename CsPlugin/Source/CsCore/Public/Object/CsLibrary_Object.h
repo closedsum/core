@@ -1,9 +1,9 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 class UObject;
 
@@ -25,7 +25,9 @@ namespace NCsObject
 		* @param Object
 		* return
 		*/
-		static FString GetFlagsAsString(UObject* Object);
+		static FString GetFlagsAsString(const UObject* Object);
+
+		static bool IsDefaultObject(const UObject* Object);
 
 	// Load
 	#pragma region

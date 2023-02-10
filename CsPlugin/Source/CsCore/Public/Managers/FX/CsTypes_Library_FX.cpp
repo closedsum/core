@@ -37,7 +37,6 @@ namespace NCsFX
 
 			void FParams::Update()
 			{
-				FX.UpdateInternalPtrs();
 				FrequencyParams.Update();
 			}
 
@@ -58,7 +57,6 @@ void FCsFX_Spawn_Params::CopyToParamsAsValue(ParamsType* Params) const
 #undef ParamsType
 
 	Params->FX = FX;
-	Params->FX.UpdateInternalPtrs();
 	Params->Actor = Actor;
 	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
 	Params->Group = Group;

@@ -148,11 +148,6 @@ public:
 	{
 	}
 
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		FX.UpdateInternalPtrs();
-	}
-
 #define ParamsType NCsWeapon::NPoint::NFire::NVisual::FParams
 	void CopyToParams(ParamsType* Params);
 	void CopyToParamsAsValue(ParamsType* Params) const;

@@ -686,7 +686,6 @@ void FCsFX::Reset()
 	FX_Internal= nullptr;
 	Type = EMCsFX::Get().GetMAX();
 	DeallocateMethod = ECsFXDeallocateMethod::Complete;
-	DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	LifeTime = 0.0f;
 	DeathTime = 0.0f;
 	bHideOnQueueDeallocate = false;

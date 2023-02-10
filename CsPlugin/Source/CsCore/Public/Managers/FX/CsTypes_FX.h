@@ -771,12 +771,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	ECsFXDeallocateMethod DeallocateMethod;
 
-private:
-
-	NCsFX::EDeallocateMethod* DeallocateMethod_Internal;
-
-public:
-
 	/** Valid if the DeallocateMethod == ECsFXDeallocateMethod::LifeTime.
 		- If an FX IS attached to a Parent object, 
 		   LifeTime == 0.of means the FX object will be deallocated immediately
@@ -857,7 +851,6 @@ public:
 		FX_Internal(nullptr),
 		Type(),
 		DeallocateMethod(ECsFXDeallocateMethod::Complete),
-		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
 		DeathTime(0.0f),
 		bHideOnQueueDeallocate(false),
@@ -871,7 +864,6 @@ public:
 		VectorParameters(),
 		ScaledParameters()
 	{
-		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 	}
 	
 	FORCEINLINE FCsFX& operator=(const FCsFX& B)
@@ -881,7 +873,6 @@ public:
 		FX_Internal = B.FX_Internal;
 		Type = B.Type;
 		DeallocateMethod = B.DeallocateMethod;
-		DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod;
 		LifeTime = B.LifeTime;
 		bHideOnQueueDeallocate = B.bHideOnQueueDeallocate;
 		AttachmentTransformRules = B.AttachmentTransformRules;
@@ -912,13 +903,6 @@ public:
 		}
 		return *this;
 	}
-
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		UpdateDeallocateMethodPtr();
-	}
-
-	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsFX::EDeallocateMethod*)&DeallocateMethod; }
 
 	#define DeallocateMethodType NCsFX::EDeallocateMethod
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsFX::EDeallocateMethod*)(&DeallocateMethod)); }

@@ -146,7 +146,6 @@ public:
 
 	FORCEINLINE void UpdateInternalPtrs()
 	{
-		FX.UpdateInternalPtrs();
 		UpdateAttachTypePtr();
 		UpdateTransformTypePtr();
 	}

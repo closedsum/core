@@ -25,6 +25,12 @@
 #include "NiagaraDataInterfaceArrayFloat.h"
 #include "NiagaraFunctionLibrary.h"
 
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+#endif // #if WITH_EDITOR
+
 namespace NCsFX
 {
 	namespace NLibrary
@@ -910,14 +916,23 @@ namespace NCsFX
 
 		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
 
-		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
 	#if WITH_EDITOR
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+		typedef NCsWorld::FLibrary WorldLibrary;
 
-		if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+		if (WorldLibrary::IsPlayInEditorOrEditorPreview(Component))
 		{
-			if (!SystemInstance)
-				return true;
+			// Do Nothing
+		}
+		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
+		else
+		{
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+			{
+				if (!SystemInstance)
+					return true;
+			}
 		}
 	#endif // #if WITH_EDITOR
 
@@ -935,14 +950,23 @@ namespace NCsFX
 	
 		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
 
-		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
 	#if WITH_EDITOR
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+		typedef NCsWorld::FLibrary WorldLibrary;
+		
+		if (WorldLibrary::IsPlayInEditorOrEditorPreview(Component))
 		{
-			if (!SystemInstance)
-				return true;
+			// Do Nothing
+		}
+		// NOTE: FUTURE: HACK: check to deal with Mobile PIE crashes
+		else
+		{
+			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+			if (GameInstanceLibrary::IsStandaloneMobileFromEditorChecked(Context, Component))
+			{
+				if (!SystemInstance)
+					return true;
+			}
 		}
 	#endif // #if WITH_EDITOR
 

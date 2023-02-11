@@ -265,7 +265,7 @@ void UCsManager_FX_Actor::CleanUp()
 	{
 		typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-		if (UCsManager_Time* Manager_Time = TimeManagerLibrary::GetSafe(this))
+		if (UCsManager_Time* Manager_Time = TimeManagerLibrary::GetSafe(MyRoot))
 		{
 			for (const TPair<FECsUpdateGroup, FDelegateHandle>& Pair : OnPauseHandleByGroupMap)
 			{

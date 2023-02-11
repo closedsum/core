@@ -16,6 +16,8 @@
 #include "Settings/CsSettings_Damage.h"
 // Data
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
+#include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphere.h"
+#include "Managers/Damage/Data/Shape/Cone/CsData_DamageCone.h"
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Damage
 #include "Managers/Damage/CsReceiveDamage.h"
@@ -128,8 +130,9 @@ namespace NCsDamage
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
-			// Shape - for now just assume sphere
-			if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
+
+			// Shape
+			if (const ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
 				typedef NCsDamage::NRange::IRange RangeType;
 
@@ -137,10 +140,25 @@ namespace NCsDamage
 
 				checkf(Range, TEXT("%s: Failed to get Range from %s."), *Context, *DamageDataLibrary::PrintDataAndClass(Data));
 
-				if (Debug.bSphereAsCircle)
-					Debug.Circle.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+				// Cone
+				typedef NCsDamage::NData::NShape::NCone::ICone ConeDataType;
+
+				if (const ConeDataType* ConeData = DamageDataLibrary::GetSafeInterfaceChecked<ConeDataType>(Context, Data))
+				{
+					FTransform Transform = FTransform::Identity;
+					Transform.SetTranslation(Event->GetHitResult().ImpactPoint);
+					Transform.SetRotation(Event->GetDamageDirection().ToOrientationQuat());
+
+					Debug.Pie.Draw(Event->GetInstigator(), FMath::RadiansToDegrees(FMath::Acos(ConeData->GetMinDot())), Transform, Range->GetMaxRange());
+				}
+				// Sphere
 				else
-					Debug.Sphere.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+				{
+					if (Debug.bSphereAsCircle)
+						Debug.Circle.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+					else
+						Debug.Sphere.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+				}
 			}
 			// Point
 			else

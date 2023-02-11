@@ -24,10 +24,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg")
 	FCsDebugDrawCircle Circle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsDmg")
+	FCsDebugDrawPie Pie;
+
 	FCsSettings_Damage_Debug() :
 		Sphere(),
 		bSphereAsCircle(false),
-		Circle()
+		Circle(),
+		Pie()
 	{
 	}
 

@@ -2,6 +2,8 @@
 #pragma once
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
+// Types
+#include "Types/CsTypes_Math.h"
 
 #include "CsData_DamageCone.generated.h"
 
@@ -26,6 +28,14 @@ namespace NCsDamage
 				public:
 
 					virtual ~ICone(){}
+
+				#define DotDimensionType NCsDot::EDimension
+
+					virtual const DotDimensionType& GetDotDimension() const = 0;
+					
+					virtual const float& GetMinDot() const = 0;
+
+				#undef DotDimensionType
 				};
 			}
 		}
@@ -51,4 +61,12 @@ public:
 	static const FName Name;
 
 public:
+
+#define DotDimensionType NCsDot::EDimension
+
+	virtual const DotDimensionType& GetDotDimension() const = 0;
+
+	virtual const float& GetMinDot() const = 0;
+
+#undef DotDimensionType
 };

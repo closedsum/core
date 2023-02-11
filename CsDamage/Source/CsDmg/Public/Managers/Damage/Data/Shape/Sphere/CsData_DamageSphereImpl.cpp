@@ -68,6 +68,7 @@ namespace NCsDamage
 					typedef NCsDamage::NData::IData DamageDataType;
 					// Shape
 					typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+					typedef NCsDamage::NData::NShape::NSphere::ISphere SphereDataType;
 					// Collision
 					typedef NCsDamage::NData::NCollision::ICollision CollisionDataType;
 
@@ -75,6 +76,7 @@ namespace NCsDamage
 					InterfaceMap->Add<DamageDataType>(static_cast<DamageDataType*>(this));
 					// Shape
 					InterfaceMap->Add<ShapeDataType>(static_cast<ShapeDataType*>(this));
+					InterfaceMap->Add<SphereDataType>(static_cast<SphereDataType*>(this));
 					// Collision
 					InterfaceMap->Add<CollisionDataType>(static_cast<CollisionDataType*>(this));
 
@@ -239,6 +241,7 @@ void UCsData_DamageSphereImpl::Init()
 		typedef ICsData_Damage DamageDataType;
 		// Shape
 		typedef ICsData_DamageShape ShapeDataType;
+		typedef ICsData_DamageSphere SphereDataType;
 		// Collision
 		typedef ICsData_DamageCollision CollisionDataType;
 
@@ -246,6 +249,7 @@ void UCsData_DamageSphereImpl::Init()
 		InterfaceMap->Add<DamageDataType>(Cast<DamageDataType>(this));
 		// Shape
 		InterfaceMap->Add<ShapeDataType>(Cast<ShapeDataType>(this));
+		InterfaceMap->Add<SphereDataType>(Cast<SphereDataType>(this));
 		// Collision
 		InterfaceMap->Add<CollisionDataType>(Cast<CollisionDataType>(this));
 	}

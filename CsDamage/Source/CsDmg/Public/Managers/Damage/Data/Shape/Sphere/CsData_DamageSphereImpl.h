@@ -4,6 +4,7 @@
 #include "Data/CsData.h"
 #include "Managers/Damage/Data/CsData_Damage.h"
 #include "Managers/Damage/Data/Shape/CsData_DamageShape.h"
+#include "Managers/Damage/Data/Shape/Sphere/CsData_DamageSphere.h"
 #include "Managers/Damage/Data/Collision/CsData_DamageCollision.h"
 // Damage
 #include "Value/Range/CsDamageValueRangeImpl.h"
@@ -37,6 +38,7 @@ namespace NCsDamage
 			#define DamageDataType NCsDamage::NData::IData
 			// Shape
 			#define ShapeDataType NCsDamage::NData::NShape::IShape
+			#define SphereDataType NCsDamage::NData::NShape::NSphere::ISphere
 			// Collision
 			#define CollisionDataType NCsDamage::NData::NCollision::ICollision
 
@@ -44,11 +46,12 @@ namespace NCsDamage
 				*
 				*/
 				struct CSDMG_API FProxy : public DataType,
-										 public DamageDataType,
-										 // Shape
-										 public ShapeDataType,
-										 // Collision
-										 public CollisionDataType
+										  public DamageDataType,
+										  // Shape
+										  public ShapeDataType,
+										  public SphereDataType,
+										  // Collision
+										  public CollisionDataType
 				{
 				public:
 
@@ -176,7 +179,10 @@ namespace NCsDamage
 
 			#undef DataType
 			#undef DamageDataType
+			// Shape
 			#undef ShapeDataType
+			#undef SphereDataType
+			// Collision
 			#undef CollisionDataType
 			}
 		}
@@ -281,6 +287,7 @@ struct FCsInterfaceMap;
 *  ICsData_Damage
 * Shape
 *  ICsData_DamageShape
+*  ICsData_DamageSphere
 * Collision
 *  ICsData_DamageCollision
 */
@@ -290,6 +297,7 @@ class CSDMG_API UCsData_DamageSphereImpl : public UObject,
 										   public ICsData_Damage,
 										   // Shape
 										   public ICsData_DamageShape,
+										   public ICsData_DamageSphere,
 										   // Collision
 										   public ICsData_DamageCollision
 {

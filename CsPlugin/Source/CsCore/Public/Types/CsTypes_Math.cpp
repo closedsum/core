@@ -193,22 +193,33 @@ namespace NCsTransformRules
 	{
 		check(Component);
 
+		// TODO: FIX: NOTE: SetActorTransform is producing some weird results
+		
 		// Location | Rotation | Scale
-		if (Rules == All)
+		//if (Rules == All)
+		//{
+		//	Component->SetWorldTransform(Transform);
+		//}
+		//else
 		{
-			Component->SetWorldTransform(Transform);
-		}
-		else
-		{
-			// Location
-			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+			// Location and Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location) &&
+				CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
 			{
-				Component->SetWorldLocation(Transform.GetLocation());
+				Component->SetWorldLocationAndRotation(Transform.GetLocation(), Transform.GetRotation().Rotator());
 			}
-			// Rotation
-			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+			else
 			{
-				Component->SetWorldRotation(Transform.GetRotation().Rotator());
+				// Location
+				if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+				{
+					Component->SetWorldLocation(Transform.GetLocation());
+				}
+				// Rotation
+				if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+				{
+					Component->SetWorldRotation(Transform.GetRotation().Rotator());
+				}
 			}
 			// Scale
 			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))
@@ -222,22 +233,33 @@ namespace NCsTransformRules
 	{
 		check(Actor);
 
+		// TODO: FIX: NOTE: SetActorTransform is producing some weird results
+		
 		// Location | Rotation | Scale
-		if (Rules == All)
+		//if (Rules == All)
+		//{
+		//	Actor->SetActorTransform(Transform);
+		//}
+		//else
 		{
-			Actor->SetActorTransform(Transform);
-		}
-		else
-		{
-			// Location
-			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+			// Location and Rotation
+			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location) &&
+				CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
 			{
-				Actor->SetActorLocation(Transform.GetLocation());
+				Actor->SetActorLocationAndRotation(Transform.GetLocation(), Transform.GetRotation().Rotator());
 			}
-			// Rotation
-			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+			else
 			{
-				Actor->SetActorRotation(Transform.GetRotation().Rotator());
+				// Location
+				if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Location))
+				{
+					Actor->SetActorLocation(Transform.GetLocation());
+				}
+				// Rotation
+				if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Rotation))
+				{
+					Actor->SetActorRotation(Transform.GetRotation().Rotator());
+				}
 			}
 			// Scale
 			if (CS_TEST_BLUEPRINT_BITFLAG(Rules, ECsTransformRules::Scale))

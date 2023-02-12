@@ -1428,7 +1428,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
 	TSoftObjectPtr<UDataTable> Data;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Load")
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load")
 	int32 Data_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")

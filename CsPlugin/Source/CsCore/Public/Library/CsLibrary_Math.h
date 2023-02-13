@@ -740,11 +740,23 @@ namespace NCsMath
 	#pragma region
 	public:
 
+		FORCEINLINE static FVector GetForwardOnlyYaw(const float& Yaw)
+		{
+			const float Y = FMath::Fmod(Yaw, 360.0f);
+
+			float SY, CY;
+			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
+
+			return FVector(CY, SY, 0.0f);
+		}
+
 		FORCEINLINE static FVector GetRight(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Y); }
 		FORCEINLINE static FVector GetRightOnlyYaw(const float& Yaw)
 		{
+			const float Y = FMath::Fmod(Yaw, 360.0f);
+
 			float SY, CY;
-			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Yaw));
+			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
 
 			return FVector(-SY, CY, 0.0f);
 		}

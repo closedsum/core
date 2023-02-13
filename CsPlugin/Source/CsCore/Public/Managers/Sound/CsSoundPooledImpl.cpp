@@ -164,9 +164,14 @@ void ACsSoundPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 void ACsSoundPooledImpl::Pause(bool bPaused)
 {
-	checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Pause: AudioComponent is NULL."));
+	static const float MIN_TIME_FOR_PAUSE = 2.0f;
 
-	AudioComponent->SetPaused(bPaused);
+	if (Cache->GetLifeTime() - Cache->GetElapsedTime().Time >= MIN_TIME_FOR_PAUSE)
+	{
+		checkf(AudioComponent, TEXT("ACsSoundPooledImpl::Pause: AudioComponent is NULL."));
+
+		AudioComponent->SetPaused(bPaused);
+	}
 }
 
 #pragma endregion ICsPause

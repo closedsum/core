@@ -425,6 +425,15 @@ namespace NCsFX
 
 		#undef PooledPayloadType
 
+		#define PayloadType NCsFX::NPayload::IPayload
+
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FECsFX& Type, PayloadType* Payload)
+		{
+			return GetChecked(Context, WorldContext)->Spawn(Type, Payload);
+		}
+
+		#undef PayloadType
+
 		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
 			// Allocate Payload

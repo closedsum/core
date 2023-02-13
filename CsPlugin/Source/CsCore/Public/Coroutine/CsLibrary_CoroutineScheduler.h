@@ -170,6 +170,17 @@ namespace NCsCoroutine
 			static bool SafeEnd(const UObject* ContextObject, const FECsUpdateGroup& Group, const FCsRoutineHandle& Handle);
 
 			/**
+			* Safely end all Handles with update group: Group.
+			*
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* return
+			*/
+			static bool SafeEnd(const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
 			* End the Handle running on update group: Group
 			* and Invalidate the Handle.
 			*

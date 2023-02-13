@@ -172,6 +172,19 @@ namespace NCsCoroutine
 			return SafeEnd(Context, ContextObject, Group, Handle, nullptr);
 		}
 
+		bool FLibrary::SafeEnd(const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			using namespace NCsCoroutine::NScheduler::NLibrary::NCached;
+
+			const FString& Context = Str::SafeEnd;
+
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject, nullptr))
+			{
+				return Scheduler->End(Group);
+			}
+			return false;
+		}
+
 		bool FLibrary::EndAndInvalidateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle)
 		{
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)

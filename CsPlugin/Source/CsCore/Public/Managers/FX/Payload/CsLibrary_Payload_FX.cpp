@@ -126,7 +126,10 @@ namespace NCsFX
 			Payload->TransformRules			  = FX.TransformRules;
 
 			Payload->Transform.SetTranslation(Transform.GetTranslation() + FX.Transform.GetTranslation());
-			Payload->Transform.SetRotation(Transform.GetRotation() + FX.Transform.GetRotation());
+
+			FRotator Rotation = Transform.GetRotation().Rotator() + FX.Transform.GetRotation().Rotator();
+
+			Payload->Transform.SetRotation(Rotation.Quaternion());
 			Payload->Transform.SetScale3D(Transform.GetScale3D() * FX.Transform.GetScale3D());
 
 			Payload->bApplyTransformScale = FX.bApplyTransformScale;
@@ -219,6 +222,11 @@ namespace NCsFX
 			PayloadImplType* PayloadImpl = StaticCastChecked<PayloadImplType>(Context, Payload);
 
 			PayloadImpl->Transform.SetTranslation(Transform.GetTranslation() + PayloadImpl->Transform.GetTranslation());
+
+			FRotator Rotation = Transform.GetRotation().Rotator() + PayloadImpl->Transform.GetRotation().Rotator();
+
+			PayloadImpl->Transform.SetRotation(Rotation.Quaternion());
+
 			PayloadImpl->Transform.SetRotation(Transform.GetRotation() + PayloadImpl->Transform.GetRotation());
 			PayloadImpl->Transform.SetScale3D(Transform.GetScale3D() * PayloadImpl->Transform.GetScale3D());
 		}

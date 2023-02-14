@@ -37,12 +37,15 @@ namespace NCsSpawnerImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, Spawn);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects_InfiniteFillToCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsSpawnerImpl, SpawnObjects_InfiniteFillToCount_Internal);
 		}
 
 		namespace Name
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, Start_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, SpawnObjects_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsSpawnerImpl, SpawnObjects_InfiniteFillToCount_Internal);
 		}
 	}
 }
@@ -82,6 +85,7 @@ ACsSpawnerImpl::ACsSpawnerImpl(const FObjectInitializer& ObjectInitializer)
 	SpawnedObjects(),
 	Start_Internal_Handle(),
 	SpawnObjects_Internal_Handles(),
+	SpawnObjects_InfiniteFillToCount_Handle(),
 	OnPreSpawnObject_Event(),
 	OnSpawnObject_ScriptEvent(),
 	bOverride_SpawnObject(false),
@@ -444,6 +448,10 @@ void ACsSpawnerImpl::ACsSpawnerImpl::Stop()
 		Handle.Reset();
 	}
 	SpawnObjects_Internal_Handles.Reset(SpawnObjects_Internal_Handles.Max());
+
+	Scheduler->End(UpdateGroup, SpawnObjects_InfiniteFillToCount_Handle);
+
+	SpawnObjects_InfiniteFillToCount_Handle.Reset();
 }
 
 void ACsSpawnerImpl::Spawn()
@@ -519,7 +527,21 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 		{
 			ElapsedTime.Reset();
 
-			SpawnObjects(CurrentSpawnCount);
+			// Once | Count | TimeCount | TimeInterval | Infinite
+			if (Frequency == FrequencyType::Once ||
+				Frequency == FrequencyType::Count ||
+				Frequency == FrequencyType::TimeCount ||
+				Frequency == FrequencyType::TimeInterval ||
+				Frequency == FrequencyType::Infinite)
+			{
+				SpawnObjects(CurrentSpawnCount);
+			}
+			// InfinitFillToCount
+			else
+			if (Frequency == FrequencyType::InfiniteFillToCount)
+			{
+				SpawnObjects_InfiniteFillToCount();
+			}
 
 			// Once
 			if (Frequency == FrequencyType::Once)
@@ -549,7 +571,8 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
 
-				CS_COROUTINE_WAIT_UNTIL(R, InfiniteFillToCount_SpawnedObjectByIndexMap.Num() < FrequencyParams->GetCount());
+				// Wait Forever
+				CS_COROUTINE_WAIT_UNTIL(R, 0);
 			}
 
 			if (HasSpawnInterval)
@@ -740,6 +763,153 @@ char ACsSpawnerImpl::SpawnObjects_Internal(FCsRoutine* R)
 }
 
 void ACsSpawnerImpl::SpawnObjects_Internal_OnEnd(FCsRoutine* R)
+{
+	// "Free" the Spawned Objects resource
+	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
+	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
+
+	typedef NCsSpawner::FSpawnedObjects ResourceType;
+
+	ResourceType* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
+
+	Resource->Reset();
+
+	Manager_SpawnedObjects.DeallocateAt(ResourceIndex);
+}
+
+void ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount()
+{
+	using namespace NCsSpawnerImpl::NCached;
+	
+	const FString& Context = Str::SpawnObjects_InfiniteFillToCount;
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s (%s): Spawning Objects"));
+
+		LogCountParams();
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
+
+	check(IsParamsValidImpl(Context, Params));
+
+	NCsCoroutine::NPayload::FImpl* Payload = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE SpawnObjects_InfiniteFillToCount_Internal
+
+	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+	Payload->CoroutineImpl.BindUObject(this, &ACsSpawnerImpl::COROUTINE);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+	Payload->OnEnds.AddDefaulted();
+	Payload->OnEnds.Last().BindUObject(this, &ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount_Internal_OnEnd);
+
+	#undef COROUTINE
+
+	// Allocate a Spawned Objects container
+	typedef NCsSpawner::NSpawnedObjects::FResource ResourceContainerType;
+	typedef NCsSpawner::FSpawnedObjects ResourceType;
+
+	ResourceContainerType* Container = Manager_SpawnedObjects.Allocate();
+	ResourceType* Resource			 = Container->Get();
+
+	Resource->Group = 0;
+
+	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
+	Payload->SetValue_Int(RESOURCE_SPAWNED_OBJECTS, Container->GetIndex());
+
+	static const int32 CURRENT_GROUP = 1;
+	Payload->SetValue_Int(CURRENT_GROUP, 0);
+
+	SpawnObjects_InfiniteFillToCount_Handle = Scheduler->Start(Payload);
+}
+
+char ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount_Internal(FCsRoutine* R)
+{
+	using namespace NCsSpawnerImpl::NCached;
+
+	const FString& Context = Str::SpawnObjects_InfiniteFillToCount_Internal;
+
+	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
+
+	ElapsedTime += R->DeltaTime;
+
+	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;
+	const int32& ResourceIndex = R->GetValue_Int(RESOURCE_SPAWNED_OBJECTS);
+
+	typedef NCsSpawner::FSpawnedObjects ResourceType;
+
+	ResourceType* Resource = Manager_SpawnedObjects.GetResourceAt(ResourceIndex);
+
+	static const int32 CURRENT_GROUP = 1;
+	const int32& CurrentGroup = R->GetValue_Int(CURRENT_GROUP);
+
+	static const int32 CURRENT_COUNT_PER_SPAWN = 2;
+	int32& CurrentCountPerSpawn = R->GetValue_Int(CURRENT_COUNT_PER_SPAWN);
+
+	CS_COROUTINE_BEGIN(R);
+
+	do
+	{
+		{
+			ElapsedTime.Reset();
+			
+		#if !UE_BUILD_SHIPPING
+			if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
+			{
+				UE_LOG(LogCs, Warning, TEXT("%s (%s): Spawning Object: %d / %d"), *Context, *(GetName()), CurrentCountPerSpawn, CountParams->GetCountPerSpawn());
+			}
+		#endif // #if !UE_BUILD_SHIPPING
+
+			// Spawn Object
+			{
+				UObject* SpawnedObject = SpawnObject(CurrentSpawnCount, CurrentGroup, CurrentCountPerSpawn);
+
+				checkf(SpawnedObject, TEXT("%s: Failed to Spawn Object at %d / %d."), *Context, CurrentCountPerSpawn, CountParams->GetCountPerSpawn());
+
+				Resource->Add(SpawnedObject);
+				SpawnedObjects.Add(SpawnedObject);
+
+				OnSpawnObject_Event.Broadcast(this, SpawnedObject);
+				OnSpawnObject_ScriptEvent.Broadcast(this, SpawnedObject);
+			}
+
+			++CurrentSpawnCount;
+			++CurrentCountPerSpawn;
+
+			CurrentCountPerSpawn = CurrentCountPerSpawn % CountParams->GetCountPerSpawn();
+
+			PointImpl->Advance(CurrentSpawnCount, CurrentGroup, CurrentCountPerSpawn);
+
+			OnPreSpawnObject_Event.Broadcast(this, CurrentSpawnCount);
+
+			CS_COROUTINE_WAIT_UNTIL(R, ((ElapsedTime.Time >= CountParams->GetTimeBetweenCountPerSpawn()) && (InfiniteFillToCount_SpawnedObjectByIndexMap.Num() < CountParams->GetCountPerSpawn())));
+		}
+	} while (1);
+
+	OnSpawnObjects_Event.Broadcast(this, Resource->Objects);
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogSpawnerTransactions))
+	{
+
+		UE_LOG(LogCs, Warning, TEXT("%s (%s): Finished Spawning %d Objects."), *Context, *(GetName()), CountParams->GetCountPerSpawn());
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
+	CS_COROUTINE_END(R);
+}
+
+void ACsSpawnerImpl::SpawnObjects_InfiniteFillToCount_Internal_OnEnd(FCsRoutine* R)
 {
 	// "Free" the Spawned Objects resource
 	static const int32 RESOURCE_SPAWNED_OBJECTS = 0;

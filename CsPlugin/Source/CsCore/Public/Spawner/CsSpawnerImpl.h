@@ -291,13 +291,15 @@ protected:
 	
 	//virtual void OnPreSpawnObjects(ICsSpawner* Spawner, const int32& Index);
 
+	void SpawnObjects(const int32& Index);
+	char SpawnObjects_Internal(FCsRoutine* R);
+	void SpawnObjects_Internal_OnEnd(FCsRoutine* R);
 	TArray<FCsRoutineHandle> SpawnObjects_Internal_Handles;
 
-	void SpawnObjects(const int32& Index);
-
-	char SpawnObjects_Internal(FCsRoutine* R);
-
-	void SpawnObjects_Internal_OnEnd(FCsRoutine* R);
+	void SpawnObjects_InfiniteFillToCount();
+	char SpawnObjects_InfiniteFillToCount_Internal(FCsRoutine* R);
+	void SpawnObjects_InfiniteFillToCount_Internal_OnEnd(FCsRoutine* R);
+	FCsRoutineHandle SpawnObjects_InfiniteFillToCount_Handle;
 
 public:
 

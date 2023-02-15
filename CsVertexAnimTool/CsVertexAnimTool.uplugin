@@ -1,0 +1,34 @@
+{
+  "FileVersion": 3,
+  "Version": 2,
+  "VersionName": "0.0.1.0",
+  "FriendlyName": "Closed Sum Games Vertex Anim Tool",
+  "Description": "Closed Sum Games Vertex Anim Tool",
+  "Category": "Programming",
+  "CreatedBy": "Closed Sum Games LLC",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "4.26.0",
+  "CanContainContent": true,
+  "Installed": true,
+  "Modules": [
+    {
+      "Name": "CsVAT",
+      "Type": "Runtime",
+      "LoadingPhase": "PostEngineInit"
+    },
+    {
+      "Name": "CsVATEditor",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CsPlugin",
+      "Enabled": true
+    }
+  ]
+}

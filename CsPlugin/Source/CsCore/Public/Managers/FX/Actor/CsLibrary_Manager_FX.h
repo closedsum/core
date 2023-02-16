@@ -313,8 +313,6 @@ namespace NCsFX
 			*/
 			static const FCsFXActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location);
 
-			
-
 		#undef PooledPayloadType
 
 		#define PayloadType NCsFX::NPayload::IPayload

@@ -527,6 +527,16 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 		{
 			ElapsedTime.Reset();
 
+			SpawnObjects(CurrentSpawnCount);
+
+			// TODO: Need more notes / comments for InfinitFillToCount
+			//		 The behavior is not exactly as expected if the GetCountPerSpawn() > 1.
+			//		 GetCountPerSpawn() is more of "burst" for spawning. Currently this count
+			//		 is NOT filled. This behavior could be supported at later time. For now,
+			//		 keep the implementation for SpawnObjects_InfiniteFillToCount even
+			//		 though it is NOT being used.
+
+			/*
 			// Once | Count | TimeCount | TimeInterval | Infinite
 			if (Frequency == FrequencyType::Once ||
 				Frequency == FrequencyType::Count ||
@@ -542,6 +552,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 			{
 				SpawnObjects_InfiniteFillToCount();
 			}
+			*/
 
 			// Once
 			if (Frequency == FrequencyType::Once)
@@ -571,8 +582,7 @@ char ACsSpawnerImpl::Start_Internal(FCsRoutine* R)
 				CanSpawn		 = true;
 				HasSpawnInterval = true;
 
-				// Wait Forever
-				CS_COROUTINE_WAIT_UNTIL(R, 0);
+				CS_COROUTINE_WAIT_UNTIL(R, InfiniteFillToCount_SpawnedObjectByIndexMap.Num() < FrequencyParams->GetCount());
 			}
 
 			if (HasSpawnInterval)

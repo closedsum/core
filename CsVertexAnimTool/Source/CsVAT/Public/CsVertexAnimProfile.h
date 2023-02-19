@@ -40,6 +40,42 @@ public:
 	void CopyToInfo(FCsVertexAnimInfo* Info) const;
 };
 
+UENUM(BlueprintType)
+enum class ECsVertexAnimSequenceDataFrameRate : uint8
+{
+	Fps_15									UMETA(DisplayName = "15 fps"),
+	Fps_24									UMETA(DisplayName = "24 fps (film)"),
+	Fps_30									UMETA(DisplayName = "30 fps"),
+	Fps_60									UMETA(DisplayName = "60 fps"),
+	Fps_120									UMETA(DisplayName = "120 fps"),
+	Fps_Custom								UMETA(DisplayName = "Custom fps"),
+	Fps_Custom_Frames						UMETA(DisplayName = "Custom Num Frames"),
+	ECsVertexAnimSequenceDataFrameRate_MAX	UMETA(Hidden),
+};
+
+namespace NCsVertexAnimSequenceDataFrameRate
+{
+	typedef ECsVertexAnimSequenceDataFrameRate Type;
+
+	FORCEINLINE float GetFramesPerSecond(const Type& InType)
+	{
+		if (InType == Type::Fps_15)
+			return 15.0f;
+		if (InType == Type::Fps_24)
+			return 24.0f;
+		if (InType == Type::Fps_60)
+			return 60.0f;
+		if (InType == Type::Fps_120)
+			return 120.0f;
+		return 60.0f;
+	}
+
+	FORCEINLINE float GetDeltaTime(const Type& InType)
+	{
+		return 1.0f / GetFramesPerSecond(InType);
+	}
+}
+
 USTRUCT(BlueprintType)
 struct CSVAT_API FCsVertexAnim_SequenceData_Short
 {
@@ -50,14 +86,24 @@ public:
 	UPROPERTY(EditAnywhere, Category = BakeSequence)
 	TSoftObjectPtr<UAnimationAsset> SequenceRef;
 	
+	UPROPERTY(EditAnywhere, Category = BakeSequence)
+	ECsVertexAnimSequenceDataFrameRate FrameRate;
+
+	UPROPERTY(EditAnywhere, Category = BakeSequence, meta = (UIMin = "1.0", ClampMin = "1.0"))
+	float Fps;
+
 	UPROPERTY(EditAnywhere, Category = BakeSequence, meta = (UIMin = "1", ClampMin = "1"))
 	int32 NumFrames;
 
 	FCsVertexAnim_SequenceData_Short() :
 		SequenceRef(nullptr),
+		FrameRate(ECsVertexAnimSequenceDataFrameRate::Fps_60),
+		Fps(1.0f),
 		NumFrames(8)
 	{
 	}
+
+	int32 GetNumFrames() const;
 };
 
 class USkeletalMesh;

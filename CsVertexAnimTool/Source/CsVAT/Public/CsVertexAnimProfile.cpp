@@ -3,6 +3,7 @@
 #include "CsVAT.h"
 
 // Animation
+#include "Animation/AnimSequenceBase.h"
 #include "Animation/AnimationAsset.h"
 #include "Animation/Vertex/CsVertexAnimInfo.h"
 
@@ -21,6 +22,26 @@ void FCsVertexAnim_SequenceData::CopyToInfo(FCsVertexAnimInfo* Info) const
 	Info->NumFrames = NumFrames;
 	Info->AnimStartGenerated = AnimStart_Generated;
 	Info->SpeedGenerated = Speed_Generated;
+}
+
+int32 FCsVertexAnim_SequenceData_Short::GetNumFrames() const
+{
+	if (UAnimSequenceBase* Asset = Cast<UAnimSequenceBase>(SequenceRef.LoadSynchronous()))
+	{
+		const float Length = Asset->GetPlayLength();
+
+		// Custom
+		if (FrameRate == ECsVertexAnimSequenceDataFrameRate::Fps_Custom)
+			return FMath::CeilToInt(Length * Fps);
+		// Custom Frames
+		if (FrameRate == ECsVertexAnimSequenceDataFrameRate::Fps_Custom_Frames)
+			return NumFrames;
+
+		const float _Fps = NCsVertexAnimSequenceDataFrameRate::GetFramesPerSecond(FrameRate);
+
+		return FMath::CeilToInt(Length * _Fps);
+	}
+	return NumFrames;
 }
 
 #pragma endregion FCsVertexAnim_SequenceData

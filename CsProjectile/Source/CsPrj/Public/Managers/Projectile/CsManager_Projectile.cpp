@@ -55,6 +55,8 @@
 #if WITH_EDITOR
 // Library
 #include "Managers/Projectile/CsLibrary_Manager_Projectile.h"
+	// Common
+#include "Library/CsLibrary_World.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
@@ -446,9 +448,22 @@ void UCsManager_Projectile::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+	UObject* ContextRoot = nullptr;
 
-	UObject* ContextRoot = GameInstanceLibrary::GetAsObjectChecked(Context, MyRoot);
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	{
+		// Do Nothing
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+	}
 
 	NCsProjectile::PopulateEnumMapFromSettings(Context, ContextRoot);
 	NCsProjectileClass::PopulateEnumMapFromSettings(Context, ContextRoot);
@@ -492,7 +507,36 @@ void UCsManager_Projectile::SetupInternal()
 	//}
 	//else
 #endif // #if !UE_BUILD_SHIPPING
-		// If any settings have been set for Manager_Projectile, apply them
+
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	{
+		// Populate TypeMapArray
+		{
+			const int32& Count = EMCsProjectile::Get().Num();
+
+			TypeMapArray.Reset(Count);
+			TypeMapToArray.Reset(Count);
+
+			for (const FECsProjectile& Type : EMCsProjectile::Get())
+			{
+				TypeMapArray.Add(Type);
+				TypeMapToArray.AddDefaulted();
+			}
+		}
+
+		ClassHandler->PopulateClassMapFromSettings(Context);
+		DataHandler->PopulateDataMapFromSettings(Context);
+
+		DataHandler->RemapDataMap(Context);
+
+		// Editor or Editor Preview Instance should handle any additional setup.
+	}
+	else
+#endif // #if WITH_EDITOR
+	// If any settings have been set for Manager_Projectile, apply them
 	{
 
 		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;

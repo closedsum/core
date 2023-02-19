@@ -43,6 +43,8 @@
 #if WITH_EDITOR
 // Library
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
+	// Common
+#include "Library/CsLibrary_World.h"
 // Singleton
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
@@ -404,9 +406,22 @@ void UCsManager_Weapon::SetupInternal()
 	const FString& Context = Str::SetupInternal;
 
 	// Populate EnumMaps
-	typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+	UObject* ContextRoot = nullptr;
 
-	UObject* ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	{
+		// Do Nothing
+	}
+	else
+#endif // #if WITH_EDITOR
+	{
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
+
+		ContextRoot = GameInstanceLibrary::GetSafeAsObject(Context, MyRoot);
+	}
 
 	NCsWeapon::PopulateEnumMapFromSettings(Context, ContextRoot);
 	NCsWeaponClass::PopulateEnumMapFromSettings(Context, ContextRoot);
@@ -449,7 +464,37 @@ void UCsManager_Weapon::SetupInternal()
 	//}
 	//else
 #endif // #if !UE_BUILD_SHIPPING
-		// If any settings have been set for Manager_Weapon, apply them
+
+
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
+	{
+		// Populate TypeMapArray
+		{
+			const int32& Count = EMCsWeapon::Get().Num();
+
+			TypeMapArray.Reset(Count);
+			TypeMapToArray.Reset(Count);
+
+			for (const FECsWeapon& Type : EMCsWeapon::Get())
+			{
+				TypeMapArray.Add(Type);
+				TypeMapToArray.AddDefaulted();
+			}
+		}
+
+		ClassHandler->PopulateClassMapFromSettings(Context);
+		DataHandler->PopulateDataMapFromSettings(Context);
+
+		DataHandler->RemapDataMap(Context);
+
+		// Editor or Editor Preview Instance should handle any additional setup.
+	}
+	else
+#endif // #if WITH_EDITOR
+	// If any settings have been set for Manager_Weapon, apply them
 	{
 		typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 

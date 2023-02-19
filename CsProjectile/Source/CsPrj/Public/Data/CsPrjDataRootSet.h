@@ -46,6 +46,8 @@ public:
 
 	UDataTable* GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 
+	UDataTable* GetDataTableChecked(const FString& Context, const EMember& MemberType) const;
+
 	template<typename RowStructType>
 	RowStructType* GetSafeDataTableRow(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const
 	{
@@ -69,4 +71,8 @@ public:
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const;
 
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
 };

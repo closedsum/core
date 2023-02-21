@@ -17,11 +17,16 @@
 // FCsVertexAnim_SequenceData
 #pragma region
 
-void FCsVertexAnim_SequenceData::CopyToInfo(FCsVertexAnimInfo* Info) const
+void FCsVertexAnim_SequenceData::CopyToInfo(FCsVertexAnimInfo* Info, const float& ScaleLength /*=1.0f*/) const
 {
 	Info->NumFrames = NumFrames;
 	Info->AnimStartGenerated = AnimStart_Generated;
 	Info->SpeedGenerated = Speed_Generated;
+
+	if (UAnimSequenceBase* Asset = Cast<UAnimSequenceBase>(SequenceRef.LoadSynchronous()))
+	{
+		Info->Length = ScaleLength * Asset->GetPlayLength();
+	}
 }
 
 int32 FCsVertexAnim_SequenceData_Short::GetNumFrames() const

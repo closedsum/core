@@ -37,7 +37,7 @@ public:
 	{
 	}
 
-	void CopyToInfo(FCsVertexAnimInfo* Info) const;
+	void CopyToInfo(FCsVertexAnimInfo* Info, const float& ScaleLength = 1.0f) const;
 };
 
 UENUM(BlueprintType)

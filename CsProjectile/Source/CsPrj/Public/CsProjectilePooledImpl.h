@@ -118,6 +118,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual bool ShouldTickIfViewportsOnly() const override;
 
 	virtual void FellOutOfWorld(const UDamageType& DmgType) override;
 

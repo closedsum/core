@@ -341,6 +341,19 @@ void ACsProjectilePooledImpl::Tick(float DeltaSeconds)
 	*/
 }
 
+bool ACsProjectilePooledImpl::ShouldTickIfViewportsOnly() const
+{
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		return true;
+	}
+#endif // #if WITH_EDITOR
+	return Super::ShouldTickIfViewportsOnly();
+}
+
 void ACsProjectilePooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Deallocate_Internal();

@@ -116,6 +116,7 @@ public:
 public:
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void FellOutOfWorld(const UDamageType& DmgType) override;
@@ -123,6 +124,10 @@ public:
 	virtual void OutsideWorldBounds() override;
 
 #pragma endregion AActor Interface
+
+protected:
+
+	void Shutdown();
 
 public:
 
@@ -334,6 +339,14 @@ public:
 	FORCEINLINE int32 GetCollisionHitCount() const { return HitCount; }
 
 #pragma endregion ICsGetCollisionHitCount
+
+protected:
+
+#if WITH_EDITOR
+	const UObject* GetWorldContext() const;
+#else
+	FORCEINLINE const UObject* GetWorldContext() const { return this; }
+#endif // #if WITH_EDITOR
 
 // Variables
 #pragma region

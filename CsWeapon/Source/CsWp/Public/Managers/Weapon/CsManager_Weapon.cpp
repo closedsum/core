@@ -471,6 +471,8 @@ void UCsManager_Weapon::SetupInternal()
 
 	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 	{
+		Settings = FCsSettings_Manager_Weapon::GetEd();
+
 		// Populate TypeMapArray
 		{
 			const int32& Count = EMCsWeapon::Get().Num();
@@ -483,13 +485,27 @@ void UCsManager_Weapon::SetupInternal()
 				TypeMapArray.Add(Type);
 				TypeMapToArray.AddDefaulted();
 			}
+
+			for (const TPair<FECsWeapon, FECsWeapon>& Pair : Settings.TypeMap)
+			{
+				const FECsWeapon& From = Pair.Key;
+				const FECsWeapon& To = Pair.Value;
+
+				TypeMapArray[From.GetValue()] = To;
+
+				TypeMapToArray[To.GetValue()].Add(From);
+			}
 		}
 
+		InitInternalFromSettings();
+
+		/*
 		ClassHandler->PopulateClassMapFromSettings(Context);
 		DataHandler->PopulateDataMapFromSettings(Context);
 
 		DataHandler->RemapDataMap(Context);
-
+		*/
+		
 		// Editor or Editor Preview Instance should handle any additional setup.
 	}
 	else

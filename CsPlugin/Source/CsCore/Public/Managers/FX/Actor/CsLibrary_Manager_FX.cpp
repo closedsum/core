@@ -63,9 +63,11 @@ namespace NCsFX
 
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
-				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
-
-				return GetManagerSingleton->_getUObject();
+				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
+				{
+					return GetManagerSingleton->_getUObject();
+				}
+				return nullptr;
 			}
 
 			typedef NCsGameState::FLibrary GameStateLibrary;

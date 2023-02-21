@@ -75,9 +75,11 @@ namespace NCsProjectile
 
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 			{
-				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
-
-				return GetManagerSingleton->_getUObject();
+				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
+				{
+					return GetManagerSingleton->_getUObject();
+				}
+				return nullptr;
 			}
 
 			typedef NCsGameState::FLibrary GameStateLibrary;
@@ -594,7 +596,21 @@ namespace NCsProjectile
 
 				PrjManagerLibrary::GetChecked(Context, WorldContext)->DeallocateVariablesChecked(Context, Variables);
 			}
-				
+			
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, VariablesType* Variables, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Variables)
+
+				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+				if (UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetSafe(Context, WorldContext, Log))
+				{
+					Manager_Projectile->DeallocateVariablesChecked(Context, Variables);
+					return true;
+				}
+				return false;
+			}
+
 			#undef VariablesPayloadType
 			#undef VariablesType
 		}

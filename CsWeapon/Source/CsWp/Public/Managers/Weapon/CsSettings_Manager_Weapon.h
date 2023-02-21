@@ -143,6 +143,7 @@ public:
 	}
 
 	static const FCsSettings_Manager_Weapon& Get();
+	static const FCsSettings_Manager_Weapon& GetEd();
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

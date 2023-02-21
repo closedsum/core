@@ -179,6 +179,7 @@ public:
 	}
 
 	static const FCsSettings_Manager_Projectile& Get();
+	static const FCsSettings_Manager_Projectile& GetEd();
 
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;

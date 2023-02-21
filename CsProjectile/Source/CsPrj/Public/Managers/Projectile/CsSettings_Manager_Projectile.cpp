@@ -71,6 +71,11 @@ const FCsSettings_Manager_Projectile& FCsSettings_Manager_Projectile::Get()
 	return GetMutableDefault<UCsProjectileSettings>()->Manager_Projectile;
 }
 
+const FCsSettings_Manager_Projectile& FCsSettings_Manager_Projectile::GetEd()
+{
+	return GetMutableDefault<UCsProjectileSettings>()->Manager_Projectile;
+}
+
 bool FCsSettings_Manager_Projectile::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(Variables);

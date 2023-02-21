@@ -83,8 +83,13 @@ public:
 public:
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 #pragma endregion AActor Interface
+
+protected:
+
+	void Shutdown();
 
 // ICsUpdate
 #pragma region
@@ -201,6 +206,14 @@ protected:
 	ICsPointWeapon_Event::FOnHit OnHit_Event;
 
 #pragma endregion Events
+
+protected:
+
+#if WITH_EDITOR
+	const UObject* GetWorldContext() const;
+#else
+	FORCEINLINE const UObject* GetWorldContext() const { return this; }
+#endif // #if WITH_EDITOR
 
 // Owner
 #pragma region

@@ -488,6 +488,8 @@ namespace NCsProjectile
 
 				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, VariablesType* Variables);
 
+				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, VariablesType* Variables, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning);
+
 			#undef VariablesPayloadType
 			#undef VariablesType
 			};

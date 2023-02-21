@@ -274,6 +274,8 @@ public:
 
 	void AddPoolParams(const FECsWeapon& Type, const FCsSettings_Manager_Weapon_PoolParams& InPoolParams);
 
+	FORCEINLINE bool HasPoolParams(const FECsWeapon& Type) const { return Settings.PoolParams.Find(Type) != nullptr; }
+
 #pragma endregion Settings
 
 // Internal

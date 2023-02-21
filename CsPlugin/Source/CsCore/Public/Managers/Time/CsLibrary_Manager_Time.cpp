@@ -67,9 +67,11 @@ namespace NCsTime
 
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
-				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
-
-				return GetManagerSingleton->_getUObject();
+				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(ContextObject, UObject, ICsGetManagerSingleton))
+				{
+					return GetManagerSingleton->_getUObject();
+				}
+				return nullptr;
 			}
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;

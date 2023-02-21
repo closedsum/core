@@ -66,9 +66,11 @@ namespace NCsCoroutine
 
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
-				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
-
-				return GetManagerSingleton->_getUObject();
+				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(ContextObject, UObject, ICsGetManagerSingleton))
+				{
+					return GetManagerSingleton->_getUObject();
+				}
+				return nullptr;
 			}
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
@@ -194,6 +196,22 @@ namespace NCsCoroutine
 			Handle.Invalidate();
 
 			return Result;
+		}
+
+		bool FLibrary::SafeEndAndInvalidate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+			if (UCsCoroutineScheduler* Scheduler = GetSafe(Context, ContextObject, Log))
+			{
+				const bool Result = Scheduler->End(Group, Handle);
+
+				Handle.Invalidate();
+
+				return Result;
+			}
+			Handle.Invalidate();
+			return false;	
 		}
 
 		#pragma endregion End

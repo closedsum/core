@@ -82,6 +82,12 @@
 // Animation
 #include "Animation/AnimInstance.h"
 
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+#endif // #if WITH_EDITOR
+
 // Cached 
 #pragma region
 
@@ -107,6 +113,8 @@ namespace NCsProjectileWeaponActorPooled
 			CS_DEFINE_CACHED_STRING(IdleState, "IdleState");
 			CS_DEFINE_CACHED_STRING(FireState, "FireState");
 
+			// AActor Interface
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, PostInitializeComponents);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, OnUpdate_HandleStates);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, CanFire);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectileWeaponActorPooled, Fire);
@@ -253,18 +261,7 @@ void ACsProjectileWeaponActorPooled::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	CS_SAFE_DELETE_PTR(Cache)
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
-
-	if (ProjectileImpl)
-	{
-		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
-
-		delete ProjectileImpl;
-		ProjectileImpl = nullptr;
-	}
-	CS_SAFE_DELETE_PTR(SoundImpl)
-	CS_SAFE_DELETE_PTR(FXImpl)
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -316,7 +313,71 @@ void ACsProjectileWeaponActorPooled::BeginPlay()
 #endif // #if !UE_BUILD_SHIPPING
 }
 
+void ACsProjectileWeaponActorPooled::PostInitializeComponents()
+{
+	using namespace NCsProjectileWeaponActorPooled::NCached;
+
+	const FString& Context = Str::PostInitializeComponents;
+
+	Super::PostInitializeComponents();
+
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		SkeletalMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+
+		ConstructCache();
+
+		TimeBetweenShotsImpl.Outer = this;
+
+		ProjectileImpl = ConstructProjectileImpl();
+		ProjectileImpl->Outer = this;
+
+		SoundImpl = ConstructSoundImpl();
+		SoundImpl->Outer = this;
+
+		FXImpl = ConstructFXImpl();
+		FXImpl->Outer = this;
+
+		// FireScopedHandle
+		{
+			const FString& ScopeName = Str::Fire_Internal;
+			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
+			const FECsCVarLog& ScopeLog = NCsCVarLog::LogWeaponProjectileScopedTimerFire;
+
+			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+		}
+		// LaunchScopedHandle
+		{
+			const FString& ScopeName = NProjectileImpl::Str::Launch;
+			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponProjectile;
+			const FECsCVarLog& ScopeLog = NCsCVarLog::LogWeaponProjectileProjectileScopedTimerLaunch;
+
+			ProjectileImpl->LaunchScopedHandle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
+		}
+	}
+#endif // #if WITH_EDITOR
+}
+
 #pragma endregion AActor Interface
+
+void ACsProjectileWeaponActorPooled::Shutdown()
+{
+	CS_SAFE_DELETE_PTR(Cache)
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+
+	if (ProjectileImpl)
+	{
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
+
+		delete ProjectileImpl;
+		ProjectileImpl = nullptr;
+	}
+	CS_SAFE_DELETE_PTR(SoundImpl)
+	CS_SAFE_DELETE_PTR(FXImpl)
+}
 
 // ICsUpdate
 #pragma region
@@ -376,7 +437,7 @@ void ACsProjectileWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 	typedef NCsWeapon::NProjectile::NData::IData PrjWeaponDataType;
 
-	Data		  = WeaponManagerLibrary::GetDataChecked(Context, this, WeaponType);
+	Data		  = WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
 	PrjWeaponData = WeaponDataLibrary::GetInterfaceChecked<PrjWeaponDataType>(Context, Data);
 
 	ICsData_GetProjectileType* GetProjectileType = WeaponDataLibrary::GetInterfaceChecked<ICsData_GetProjectileType>(Context, Data);
@@ -452,7 +513,7 @@ void ACsProjectileWeaponActorPooled::Deallocate()
 	// End Routines
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(this))
+	if (UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetSafe(GetWorldContext()))
 	{
 		static TSet<FCsRoutineHandle> TempHandles;
 
@@ -578,6 +639,24 @@ void ACsProjectileWeaponActorPooled::StopFire()
 
 #pragma endregion ICsProjectileWeapon
 
+#if WITH_EDITOR
+
+const UObject* ACsProjectileWeaponActorPooled::GetWorldContext() const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		if (MyOwnerAsActor)
+		{
+			return MyOwner;
+		}
+	}
+	return this;
+}
+
+#endif // #if WITH_EDITOR
+
 // State
 #pragma region
 
@@ -589,7 +668,7 @@ void ACsProjectileWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& D
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponProjectileState))
@@ -672,7 +751,7 @@ bool ACsProjectileWeaponActorPooled::CanFire() const
 	
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	const float TimeBetweenShots = GetTimeBetweenShots();
 
@@ -716,11 +795,11 @@ void ACsProjectileWeaponActorPooled::Fire()
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, this, UpdateGroup);
+	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 	Fire_StartTime = TimeSinceStart.Time;
 
@@ -732,7 +811,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 	#define COROUTINE Fire_Internal
 
 	Payload->CoroutineImpl.BindUObject(this, &ACsProjectileWeaponActorPooled::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -831,7 +910,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 			{
 				typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
 				
-				Resource					   = VariablesLibrary::Allocate(Context, this);
+				Resource					   = VariablesLibrary::Allocate(Context, GetWorldContext());
 				SpreadVariablesType* Variables = Resource->Get();
 
 				Variables->SetSizeAndAddDefaulted(ProjectilesPerShot);
@@ -853,7 +932,7 @@ void ACsProjectileWeaponActorPooled::Fire()
 				
 				if (!Resource)
 				{
-					Resource = VariablesLibrary::Allocate(Context, this);
+					Resource = VariablesLibrary::Allocate(Context, GetWorldContext());
 				}
 				SpreadVariablesType* Variables = Resource->Get();
 
@@ -1073,7 +1152,7 @@ void ACsProjectileWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 		{
 			typedef NCsWeapon::NManager::NSpread::NVariables::FLibrary VariablesLibrary;
 
-			VariablesLibrary::Deallocate(Context, this, SpreadVariablesResource);
+			VariablesLibrary::Deallocate(Context, GetWorldContext(), SpreadVariablesResource);
 		}
 		FireHandles.Remove(R->GetHandle());
 
@@ -1093,7 +1172,7 @@ void ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer);
+	UCsCoroutineScheduler* Scheduler = CoroutineSchedulerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Setup Routine
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -1105,7 +1184,7 @@ void ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
 	Payload->CoroutineImpl.BindRaw(this, &ACsProjectileWeaponActorPooled::FTimeBetweenShotsImpl::COROUTINE);
-	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer, Outer->GetUpdateGroup());
+	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
@@ -1240,8 +1319,8 @@ bool ACsProjectileWeaponActorPooled::FProjectileImpl::SetPayload(const FString& 
 		typedef NCsPooledObject::NPayload::IPayload SliceInterfaceType;
 
 		SliceType* Slice = PrjPayloadLibrary::StaticCastChecked<SliceType, SliceInterfaceType>(Context, Payload);
-		Slice->Instigator = Outer;
-		Slice->Owner	  = Outer->GetMyOwner();
+		Slice->Instigator = Outer->GetMyOwner();
+		Slice->Owner	  = Outer;
 	}
 	// Projectile
 	{
@@ -1628,7 +1707,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 		typedef NCsTrace::NRequest::FRequest RequestType;
 
-		UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer);
+		UCsManager_Trace* Manager_Trace = TraceManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 		RequestType* Request = Manager_Trace->AllocateRequest();
 		Request->Start		 = Start;
@@ -1641,7 +1720,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		typedef NCsProjectile::NData::IData PrjDataType;
 		typedef NCsProjectile::NData::NCollision::ICollision PrjCollisionDataType;
 
-		PrjDataType* PrjData				   = PrjManagerLibrary::GetChecked(Context, Outer)->GetDataChecked(Context, Outer->GetProjectileType());
+		PrjDataType* PrjData				   = PrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext())->GetDataChecked(Context, Outer->GetProjectileType());
 		PrjCollisionDataType* PrjCollisionData = PrjDataLibrary::GetInterfaceChecked<PrjCollisionDataType>(Context, PrjData);
 
 		const FCsCollisionPreset& CollisionPreset		 = PrjCollisionData->GetCollisionPreset();
@@ -1762,7 +1841,7 @@ void ACsProjectileWeaponActorPooled::FProjectileImpl::Launch(const LaunchPayload
 	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 	typedef NCsProjectile::NPayload::IPayload PayloadType;
 
-	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetChecked(Context, Outer);
+	UCsManager_Projectile* Manager_Projectile = PrjManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 
 	// Get Payload
 	const FECsProjectile& PrjType = Outer->GetProjectileType();
@@ -1857,7 +1936,7 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProject
 
 				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 				// TODO: Make sure Outer is defined
-				SoundManagerLibrary::SpawnChecked(Context, Outer, &Payload, Sound);
+				SoundManagerLibrary::SpawnChecked(Context, Outer->GetWorldContext(), &Payload, Sound);
 			}
 		}
 		// Shot
@@ -1883,7 +1962,7 @@ void ACsProjectileWeaponActorPooled::FSoundImpl::Play(const int32 CurrentProject
 
 					typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
 					// TODO: Make sure Outer is defined
-					SoundManagerLibrary::SpawnChecked(Context, Outer, &Payload, Sound);
+					SoundManagerLibrary::SpawnChecked(Context, Outer->GetWorldContext(), &Payload, Sound);
 				}
 			}
 		}
@@ -1936,7 +2015,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 				// Get Manager
 				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-				UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+				UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 				// Allocate payload
 				typedef NCsFX::NPayload::IPayload PayloadType;
 
@@ -1968,7 +2047,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 					// Get Manager
 					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-					UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+					UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 					// Allocate payload
 					typedef NCsFX::NPayload::IPayload PayloadType;
 

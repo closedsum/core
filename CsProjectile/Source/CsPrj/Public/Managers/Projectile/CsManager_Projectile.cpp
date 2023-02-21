@@ -513,6 +513,8 @@ void UCsManager_Projectile::SetupInternal()
 
 	if (WorldLibrary::IsPlayInEditorOrEditorPreview(MyRoot))
 	{
+		Settings = FCsSettings_Manager_Projectile::GetEd();
+
 		// Populate TypeMapArray
 		{
 			const int32& Count = EMCsProjectile::Get().Num();
@@ -525,12 +527,27 @@ void UCsManager_Projectile::SetupInternal()
 				TypeMapArray.Add(Type);
 				TypeMapToArray.AddDefaulted();
 			}
+
+			for (const TPair<FECsProjectile, FECsProjectile>& Pair : Settings.TypeMap)
+			{
+				const FECsProjectile& From = Pair.Key;
+				const FECsProjectile& To = Pair.Value;
+
+				TypeMapArray[From.GetValue()] = To;
+
+				TypeMapToArray[To.GetValue()].Add(From);
+				TypeToSet.Add(To);
+			}
 		}
 
+		InitInternalFromSettings();
+
+		/*
 		ClassHandler->PopulateClassMapFromSettings(Context);
 		DataHandler->PopulateDataMapFromSettings(Context);
 
 		DataHandler->RemapDataMap(Context);
+		*/
 
 		// Editor or Editor Preview Instance should handle any additional setup.
 	}

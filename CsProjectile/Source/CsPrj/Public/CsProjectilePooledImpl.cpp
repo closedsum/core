@@ -81,6 +81,12 @@
 // Scoped
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
 
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+#endif // #if WITH_EDITOR
+
 //#define CS_COLLISION_PROJECTILE	ECC_GameTraceChannel2
 
 // Cached
@@ -92,6 +98,8 @@ namespace NCsProjectilePooledImpl
 	{
 		namespace Str
 		{
+			// AActor Interface
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, PostInitializeComponents);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
@@ -264,19 +272,7 @@ void ACsProjectilePooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-	}
-
-	typedef NCsProjectile::NModifier::FAllocated AllocateModifierType;
-
-	for (AllocateModifierType& Modifier : Modifiers)
-	{
-		Modifier.Clear();
-	}
-	Modifiers.Reset();
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -301,6 +297,36 @@ void ACsProjectilePooledImpl::BeginPlay()
 	MovementImpl.Outer = this;
 	TrackingImpl.Outer = this;
 	DamageImpl.Outer = this;
+}
+
+void ACsProjectilePooledImpl::PostInitializeComponents()
+{
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::PostInitializeComponents;
+
+	Super::PostInitializeComponents();
+
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		CollisionComponent->OnComponentHit.AddDynamic(this, &ACsProjectilePooledImpl::OnHit);
+
+		CollisionComponent->SetComponentTickEnabled(false);
+		MovementComponent->SetComponentTickEnabled(false);
+		MeshComponent->SetComponentTickEnabled(false);
+
+		SetActorTickEnabled(false);
+
+		ConstructCache();
+
+		MovementImpl.Outer = this;
+		TrackingImpl.Outer = this;
+		DamageImpl.Outer = this;
+	}
+#endif // #if WITH_EDITOR
 }
 
 void ACsProjectilePooledImpl::Tick(float DeltaSeconds)
@@ -330,6 +356,23 @@ void ACsProjectilePooledImpl::OutsideWorldBounds()
 }
 
 #pragma endregion AActor Interface
+
+void ACsProjectilePooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+	}
+
+	typedef NCsProjectile::NModifier::FAllocated AllocateModifierType;
+
+	for (AllocateModifierType& Modifier : Modifiers)
+	{
+		Modifier.Clear();
+	}
+	Modifiers.Reset();
+}
 
 void ACsProjectilePooledImpl::OnTick_HandleCVars(const float& DeltaSeconds)
 {
@@ -433,7 +476,7 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 		typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
 		// Get Data associated with Type
-		Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
+		Data = PrjManagerLibrary::GetDataChecked(Context, GetWorldContext(), Type);
 	}
 }
 
@@ -499,18 +542,19 @@ void ACsProjectilePooledImpl::Allocate(PooledPayloadType* Payload)
 
 	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsProjectile, Type)
 
-	// Get Data associated with Type
-	// TODO: FUTURE: Add to list of preserved changes
-	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
-
-	Data = PrjManagerLibrary::GetDataChecked(Context, this, Type);
-
-	CS_EDITOR_EXPR(IsValidChecked_Data(Context));
-
 	// TODO: Need to determine best place to set LifeTime from Data
 
 	// Set Data on Cache
 	CacheImpl->Allocate(Payload);
+
+	// Get Data associated with Type
+	// TODO: FUTURE: Add to list of preserved changes
+	typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
+
+	Data = PrjManagerLibrary::GetDataChecked(Context, GetWorldContext(), Type);
+	// TODO: Redundant
+	CS_EDITOR_EXPR(IsValidChecked_Data(Context));
+
 	CacheImpl->SetData(Data);
 	
 	// Variables
@@ -543,9 +587,23 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 	OnDeallocate_Start_Event.Broadcast(this);
 	OnDeallocate_Start_ScriptEvent.Broadcast(this);
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	// End any Coroutines
+	{
+		typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, this, NCsUpdateGroup::GameState, Launch_Delayed_Handle);
+	#if WITH_EDITOR
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+		{
+			CoroutineSchedulerLibrary::SafeEndAndInvalidate(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle, nullptr);
+		}
+		else
+	#endif // #if WITH_EDITOR
+		{
+			CoroutineSchedulerLibrary::EndAndInvalidateChecked(Context, GetWorldContext(), NCsUpdateGroup::GameState, Launch_Delayed_Handle);
+		}
+	}
 
 	GetState() = NCsProjectile::EState::Inactive;
 
@@ -615,7 +673,19 @@ void ACsProjectilePooledImpl::Deallocate_Internal()
 
 	if (Variables)
 	{
-		VariablesLibrary::DeallocateChecked(Context, this, Variables);
+	#if WITH_EDITOR
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+		{
+			VariablesLibrary::SafeDeallocate(Context, GetWorldContext(), Variables, nullptr);
+		}
+		else
+	#endif // #if WITH_EDITOR
+		{
+			VariablesLibrary::DeallocateChecked(Context, GetWorldContext(), Variables);
+		}
+
 		Variables = nullptr;
 	}
 	Cache->Reset();
@@ -772,7 +842,7 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 
 				const FCsFX& TrailFX = VisualData->GetTrailFX();
 
-				TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, this, &PayloadImpl, TrailFX));
+				TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &PayloadImpl, TrailFX));
 			}
 		}
 	}
@@ -934,7 +1004,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 		{
 			typedef NCsProjectile::NManager::NModifier::FLibrary PrjModifierLibrary;
 
-			PrjModifierLibrary::CopyChecked(Context, this, ModifierPayload->GetModifiers(), Modifiers);
+			PrjModifierLibrary::CopyChecked(Context, GetWorldContext(), ModifierPayload->GetModifiers(), Modifiers);
 		}
 	}
 	// DmgModifierPayloadType (NCsProjectile::NPayload::NModifier::NDamage::IDamage)
@@ -945,7 +1015,7 @@ void ACsProjectilePooledImpl::OnLaunch_SetModifiers(const PayloadType* Payload)
 		{
 			typedef NCsDamage::NManager::NModifier::FLibrary DmgModifierLibrary;
 
-			DmgModifierLibrary::CopyChecked(Context, this, DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
+			DmgModifierLibrary::CopyChecked(Context, GetWorldContext(), DmgModifierPayload->GetDamageModifiers(), DamageImpl.Modifiers);
 		}
 	}
 }
@@ -960,7 +1030,7 @@ void ACsProjectilePooledImpl::Launch_Delayed(const FLaunch_Delayed_Payload& Payl
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, this);
+	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, GetWorldContext());
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
 
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -972,7 +1042,7 @@ void ACsProjectilePooledImpl::Launch_Delayed(const FLaunch_Delayed_Payload& Payl
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
 	CoroutinePayload->CoroutineImpl.BindUObject(this, &ACsProjectilePooledImpl::COROUTINE);
-	CoroutinePayload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, this, UpdateGroup);
+	CoroutinePayload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
 	CoroutinePayload->Owner.SetObject(this);
 	CoroutinePayload->SetName(Str::COROUTINE);
 	CoroutinePayload->SetFName(Name::COROUTINE);
@@ -1068,6 +1138,21 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 
 #pragma endregion Launch
 
+#if WITH_EDITOR
+
+const UObject* ACsProjectilePooledImpl::GetWorldContext() const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		return Cache->GetInstigator();
+	}
+	return this;
+}
+
+#endif // #if WITH_EDITOR
+
 // Variables
 #pragma region
 
@@ -1096,7 +1181,7 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 		VariablesPayload.CollisionRadius = CollisionData->GetCollisionRadius();
 	}
 
-	Variables = VariablesLibrary::AllocateChecked(Context, this, VariablesPayload);
+	Variables = VariablesLibrary::AllocateChecked(Context, GetWorldContext(), VariablesPayload);
 }
 
 #pragma endregion Variables
@@ -1636,7 +1721,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				Transform.SetLocation(Hit.Location);
 				Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
 
-				SoundManagerLibrary::SpawnChecked(Context, this, &Payload, Info.GetSound(), Transform);
+				SoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
 			}
 		}
 	}
@@ -1656,10 +1741,10 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 
 			static TArray<DamageDataType*> DamageDatas;
 			DamageDatas.Add(DamageData);
-			DamageManagerLibrary::AddDatasChecked(Context, this, DamageImpl.DataTypes, DamageDatas);
+			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
 
 			static TArray<FECsDamageData> DamageDataTypes;
-			DamageDataTypes.Add(DamageManagerLibrary::GetDataTypeChecked(Context, this, DamageData));
+			DamageDataTypes.Add(DamageManagerLibrary::GetDataTypeChecked(Context, GetWorldContext(), DamageData));
 			DamageDataTypes.Append(DamageImpl.DataTypes);
 
 			// NOTE: For now reset and apply the modifiers on each hit.
@@ -1688,7 +1773,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				ProcessPayload.HitResult  = Hit;
 
 				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
 
 				ProcessPayload.Reset();
 
@@ -1707,11 +1792,11 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
 			typedef NCsDamage::NData::IData DamageDataType;
 
-			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, this, GetDamageDataType);
+			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
 
 			static TArray<DamageDataType*> DamageDatas;
 			DamageDatas.Add(DamageData);
-			DamageManagerLibrary::AddDatasChecked(Context, this, DamageImpl.DataTypes, DamageDatas);
+			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
 
 			static TArray<FECsDamageData> DamageDataTypes;
 			DamageDataTypes.Add(GetDamageDataType->GetDamageDataType());
@@ -1743,7 +1828,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				ProcessPayload.HitResult  = Hit;
 
 				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
 
 				ProcessPayload.Reset();
 
@@ -1763,8 +1848,8 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 			typedef NCsDamage::NData::IData DamageDataType;
 
 			static TArray<DamageDataType*> DamageDatas;
-			DamageManagerLibrary::GetDatasChecked(Context, this, GetDamageDataTypes, DamageDatas);
-			DamageManagerLibrary::AddDatasChecked(Context, this, DamageImpl.DataTypes, DamageDatas);
+			DamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
+			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
 
 			static TArray<FECsDamageData> DamageDataTypes;
 			DamageDataTypes.Append(GetDamageDataTypes->GetDamageDataTypes());
@@ -1796,7 +1881,7 @@ void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* O
 				ProcessPayload.HitResult  = Hit;
 
 				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, this, ProcessPayload);
+				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
 
 				ProcessPayload.Reset();
 
@@ -1922,7 +2007,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 						Transform.SetScale3D(MaxRange * FVector::OneVector);
 					}
 
-					FXManagerLibrary::SpawnChecked(Context, this, &Payload, FXInfo.GetFX(), Transform);
+					FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, FXInfo.GetFX(), Transform);
 				}
 			}
 		}
@@ -1942,7 +2027,7 @@ void ACsProjectilePooledImpl::SetTrailFXPooled(const FString& Context, const FEC
 
 	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-	TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::FindSafeObject(Context, this, FX, Index, Log));
+	TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::FindSafeObject(Context, GetWorldContext(), FX, Index, Log));
 }
 
 #pragma endregion FX
@@ -2094,7 +2179,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 		{
 			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
 
-			const DmgDataType* DmgData = DamageManagerLibrary::GetDataChecked(Context, this, GetDamageDataType);
+			const DmgDataType* DmgData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
 
 			if (const DmgShapeDataType* DmgShapeData = DmgDataLibrary::GetSafeInterfaceChecked<DmgShapeDataType>(Context, DmgData))
 			{
@@ -2112,7 +2197,7 @@ const RangeType* ACsProjectilePooledImpl::GetDamageRangeChecked(const FString& C
 
 			static TArray<DmgDataType*> DamageDatas;
 
-			DamageManagerLibrary::GetDatasChecked(Context, this, GetDamageDataTypes, DamageDatas);
+			DamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
 
 			for (const DmgDataType* DmgData : DamageDatas)
 			{

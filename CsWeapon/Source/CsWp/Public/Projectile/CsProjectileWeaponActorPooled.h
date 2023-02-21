@@ -90,8 +90,13 @@ public:
 public:
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 #pragma endregion AActor Interface
+
+protected:
+
+	void Shutdown();
 
 // ICsUpdate
 #pragma region
@@ -191,6 +196,14 @@ public:
 	void StopFire();
 
 #pragma endregion ICsProjectileWeapon
+
+public:
+
+#if WITH_EDITOR
+	const UObject* GetWorldContext() const;
+#else
+	FORCEINLINE const UObject* GetWorldContext() const { return this; }
+#endif // #if WITH_EDITOR
 
 // Owner
 #pragma region

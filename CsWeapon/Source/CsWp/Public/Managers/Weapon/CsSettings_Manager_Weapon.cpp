@@ -90,6 +90,11 @@ const FCsSettings_Manager_Weapon& FCsSettings_Manager_Weapon::Get()
 	return GetMutableDefault<UCsWeaponSettings>()->Manager_Weapon;
 }
 
+const FCsSettings_Manager_Weapon& FCsSettings_Manager_Weapon::GetEd()
+{
+	return GetMutableDefault<UCsWeaponSettings>()->Manager_Weapon;
+}
+
 bool FCsSettings_Manager_Weapon::IsValidChecked(const FString& Context) const
 {
 	for (const TPair<FECsWeapon, FECsWeapon>& Pair : TypeMap)

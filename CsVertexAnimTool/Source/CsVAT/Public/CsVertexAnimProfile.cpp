@@ -27,6 +27,11 @@ void FCsVertexAnim_SequenceData::CopyToInfo(FCsVertexAnimInfo* Info, const float
 	{
 		Info->Length = ScaleLength * Asset->GetPlayLength();
 	}
+
+	if (Info->PlayRate == 0.0f)
+	{
+		Info->PlayRate = 1.0f;
+	}
 }
 
 int32 FCsVertexAnim_SequenceData_Short::GetNumFrames() const

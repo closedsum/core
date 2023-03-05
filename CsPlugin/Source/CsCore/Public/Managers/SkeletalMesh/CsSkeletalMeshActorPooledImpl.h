@@ -54,6 +54,7 @@ public:
 public:
 
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	virtual void FellOutOfWorld(const UDamageType& DmgType) override;
 

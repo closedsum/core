@@ -11,7 +11,11 @@
 
 #if WITH_EDITOR
 // Library
+	// Common
+#include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameState.h"
+// Managers
+#include "Managers/Singleton/CsGetManagerSingleton.h"
 #endif // #if WITH_EDITOR
 
 namespace NCsStaticMeshActor
@@ -38,6 +42,15 @@ namespace NCsStaticMeshActor
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* WorldContext)
 		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			{
+				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(WorldContext, UObject, ICsGetManagerSingleton);
+
+				return GetManagerSingleton->_getUObject();
+			}
+
 			typedef NCsGameState::FLibrary GameStateLibrary;
 
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
@@ -45,6 +58,17 @@ namespace NCsStaticMeshActor
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
+			{
+				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(WorldContext, UObject, ICsGetManagerSingleton))
+				{
+					return GetManagerSingleton->_getUObject();
+				}
+				return nullptr;
+			}
+
 			typedef NCsGameState::FLibrary GameStateLibrary;
 
 			return GameStateLibrary::GetSafeAsObject(Context, WorldContext, Log);

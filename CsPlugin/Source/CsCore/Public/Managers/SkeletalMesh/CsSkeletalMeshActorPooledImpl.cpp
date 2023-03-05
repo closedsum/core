@@ -11,13 +11,18 @@
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Managers/SkeletalMesh/Payload/CsLibrary_Payload_SkeletalMeshActor.h"
 #include "Material/CsLibrary_Material.h"
-#include "Material/CsLibrary_Material.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Payload/CsPayload_SkeletalMeshActorImpl.h"
 #include "Managers/SkeletalMesh/Params/CsParams_SkeletalMeshActor.h"
 // Animation
 #include "Animation/AnimInstance.h"
+
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+#endif // #if WITH_EDITOR
 
 // Cached
 #pragma region
@@ -101,6 +106,24 @@ void ACsSkeletalMeshActorPooledImpl::BeginPlay()
 	SetActorTickEnabled(false);
 
 	ConstructCache();
+}
+
+void ACsSkeletalMeshActorPooledImpl::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		GetSkeletalMeshComponent()->SetComponentTickEnabled(false);
+
+		SetActorTickEnabled(false);
+
+		ConstructCache();
+	}
+#endif // #if WITH_EDITOR
 }
 
 void ACsSkeletalMeshActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)

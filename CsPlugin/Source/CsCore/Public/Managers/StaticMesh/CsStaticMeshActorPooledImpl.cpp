@@ -17,6 +17,12 @@
 #include "Managers/StaticMesh/Cache/CsCache_StaticMeshActorImpl.h"
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
+#if WITH_EDITOR
+// Library
+	// Common
+#include "Library/CsLibrary_World.h"
+#endif // #if WITH_EDITOR
+
 // Cached
 #pragma region
 
@@ -98,6 +104,24 @@ void ACsStaticMeshActorPooledImpl::BeginPlay()
 	SetActorTickEnabled(false);
 
 	ConstructCache();
+}
+
+void ACsStaticMeshActorPooledImpl::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+#if WITH_EDITOR
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	if (WorldLibrary::IsPlayInEditorOrEditorPreview(this))
+	{
+		GetStaticMeshComponent()->SetComponentTickEnabled(false);
+
+		SetActorTickEnabled(false);
+
+		ConstructCache();
+	}
+#endif // #if WITH_EDITOR
 }
 
 void ACsStaticMeshActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)

@@ -274,6 +274,8 @@ void FCsRoutine::Reset()
 		Messages[I].Reset();
 		Messages_Recieved[I].Reset();
 	}
+
+	pt.lc = 0;
 }
 
 // Children

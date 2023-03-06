@@ -152,6 +152,9 @@ public:
 
 	EndReasonType EndReason;
 
+	FORCEINLINE const EndReasonType& GetEndReason() const { return EndReason; }
+	FORCEINLINE bool IsEndOfExeuction() const { return EndReason == EndReasonType::EndOfExecution; }
+
 	TArray<OnEndType> OnEnds;
 
 	void End(const EndReasonType& InEndReason);

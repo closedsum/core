@@ -15,6 +15,8 @@
 #include "Skin/Data/Visual/Material/Parameter/CsData_Skin_VisualMaterial_WithParameters.h"
 #include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_Uniform.h"
 #include "Skin/Data/Visual/Scale/CsData_Skin_VisualScale_UniformRange.h"
+// Static Mesh
+#include "Managers/StaticMesh/CsStaticMeshActorPooled.h"
 // Components
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -489,6 +491,21 @@ namespace NCsSkin
 				{
 					OutAttachments.Add(Attachment.AttachChecked(Context, WorldContext, Component));
 				}
+			}
+
+			void FLibrary::AttachOnlyTransformChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component, const int32& Index, const FCsStaticMeshActorPooled* Attachment)
+			{
+				typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment AttachmentSkinType;
+				typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;
+
+				const AttachmentSkinType* AttachmentSkin  = GetInterfaceChecked<AttachmentSkinType>(Context, Skin);
+				const TArray<AttachmentType>& Attachments = AttachmentSkin->GetStaticMeshAttachments();
+
+				CS_IS_INT_GREATER_THAN_CHECKED(Index, INDEX_NONE)
+
+				checkf(Attachments.Num() > Index, TEXT("%s: Index for Attachment does NOT exist."), *Context);
+
+				Attachments[Index].AttachOnlyTransformChecked(Context, Component, Attachment->GetMeshComponent());
 			}
 
 		#pragma endregion Attachment

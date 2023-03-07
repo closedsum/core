@@ -68,12 +68,7 @@ bool FCsStaticMeshAttachment::IsValidChecked(const FString& Context) const
 	// Check Materials is Valid
 	CS_IS_VALID_CHECKED(Materials);
 	// Check Transform is Valid
-	if (!Transform.Equals(FTransform::Identity))
-	{
-		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
-	}
-	// Transform.Scale is Valid
-	CS_IS_VECTOR_ZERO_CHECKED(Transform.GetScale3D())
+	check(IsTransformValidChecked(Context));
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -92,16 +87,8 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 	// Check Materials is Valid
 	CS_IS_VALID(Materials)
 	// Check Transform is Valid
-	if (!Transform.Equals(FTransform::Identity))
-	{
-		if (TransformRules == 0)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
-			return true;
-		}
-	}
-	// Transform.Scale is Valid
-	CS_IS_VECTOR_ZERO(Transform.GetScale3D())
+	if (!IsTransformValid(Context, Log))
+		return false;
 
 	typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -112,6 +99,34 @@ bool FCsStaticMeshAttachment::IsValid(const FString& Context, void(*Log)(const F
 	CS_IS_INT_LESS_THAN_OR_EQUAL(CustomDepthStencilValue, 255)
 	// Check Tags is Valid
 	CS_IS_TARRAY_ANY_NONE(Tags)
+	return true;
+}
+
+bool FCsStaticMeshAttachment::IsTransformValidChecked(const FString& Context) const
+{
+	// Check Transform is Valid
+	if (!Transform.Equals(FTransform::Identity))
+	{
+		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
+	}
+	// Transform.Scale is Valid
+	CS_IS_VECTOR_ZERO_CHECKED(Transform.GetScale3D())
+	return true;
+}
+
+bool FCsStaticMeshAttachment::IsTransformValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	// Check Transform is Valid
+	if (!Transform.Equals(FTransform::Identity))
+	{
+		if (TransformRules == 0)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString())));
+			return true;
+		}
+	}
+	// Transform.Scale is Valid
+	CS_IS_VECTOR_ZERO(Transform.GetScale3D())
 	return true;
 }
 
@@ -218,13 +233,8 @@ namespace NCsStaticMesh
 			// Check GetMaterials() is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
-			// Check GetTransform() is Valid
-			if (!GetTransform().Equals(FTransform::Identity))
-			{
-				checkf(GetTransformRules() != 0, TEXT("%s: No GetTransformRules() set for GetTransform(): %s."), *Context, *(GetTransform().ToString()));
-			}
-			// GetTransform().GetScale() is Valid
-			CS_IS_VECTOR_ZERO_CHECKED(GetTransform().GetScale3D())
+			// Check Transform is Valid
+			check(IsTransformValidChecked(Context));
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -243,17 +253,9 @@ namespace NCsStaticMesh
 			// Check Materials is Valid
 			CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
-			// Check GetTransform() is Valid
-			if (!GetTransform().Equals(FTransform::Identity))
-			{
-				if (GetTransformRules() == 0)
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No GetTransformRules() set for GetTransform(): %s."), *Context, *(GetTransform().ToString())));
-					return true;
-				}
-			}
-			// GetTransform().GetScale() is Valid
-			CS_IS_VECTOR_ZERO(GetTransform().GetScale3D())
+			// Check Transform is Valid
+			if (!IsTransformValid(Context, Log))
+				return false;
 
 			typedef NCsMaterial::FLibrary MaterialLibrary;
 
@@ -267,11 +269,38 @@ namespace NCsStaticMesh
 			return true;
 		}
 
+		bool FAttachment::IsTransformValidChecked(const FString& Context) const
+		{
+			// Check Transform is Valid
+			if (!GetTransform().Equals(FTransform::Identity))
+			{
+				checkf(GetTransformRules() != 0, TEXT("%s: No GetTransformRules() set for GetTransform(): %s."), *Context, *(GetTransform().ToString()));
+			}
+			// Transform.Scale is Valid
+			CS_IS_VECTOR_ZERO_CHECKED(GetTransform().GetScale3D())
+			return true;
+		}
+
+		bool FAttachment::IsTransformValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			// Check Transform is Valid
+			if (!GetTransform().Equals(FTransform::Identity))
+			{
+				if (GetTransformRules() == 0)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No GetTransformRules() set for GetTransform(): %s."), *Context, *(GetTransform().ToString())));
+					return true;
+				}
+			}
+			// Transform.Scale is Valid
+			CS_IS_VECTOR_ZERO(GetTransform().GetScale3D())
+			return true;
+		}
+
 		void FAttachment::AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, const TArray<UMaterialInterface*>& OtherMaterials) const
 		{
 			CS_IS_PTR_NULL_CHECKED(Parent)
-
-			CS_IS_PTR_NULL_CHECKED(Child);
+			CS_IS_PTR_NULL_CHECKED(Child)
 
 			CS_IS_TARRAY_EMPTY_CHECKED(OtherMaterials, UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)
@@ -304,8 +333,7 @@ namespace NCsStaticMesh
 		bool FAttachment::AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 		{
 			CS_IS_PTR_NULL(Parent)
-
-			CS_IS_PTR_NULL(Child);
+			CS_IS_PTR_NULL(Child)
 
 			if (!IsValid(Context, Log))
 				return false;
@@ -330,11 +358,26 @@ namespace NCsStaticMesh
 			return true;
 		}
 
+		void FAttachment::AttachOnlyTransformChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const
+		{
+			CS_IS_PTR_NULL_CHECKED(Parent)
+			CS_IS_PTR_NULL_CHECKED(Child)
+
+			check(IsTransformValidChecked(Context));
+
+			typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
+
+			check(SkeletalMeshLibrary::ConditionalIsBoneOrSocketValidChecked(Context, Parent, GetBone()));
+
+			Child->AttachToComponent(Parent, GetAttachmentTransformRules(), GetBone());
+			NCsTransformRules::SetRelativeTransform(Child, GetTransform(), GetTransformRules());
+		}
+
 		void FAttachment::AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, const TArray<UMaterialInterface*>& OtherMaterials, TArray<UMaterialInstanceDynamic*>& OutMIDs) const
 		{
 			CS_IS_PTR_NULL_CHECKED(Parent)
 
-			CS_IS_PTR_NULL_CHECKED(Child);
+			CS_IS_PTR_NULL_CHECKED(Child)
 
 			CS_IS_TARRAY_EMPTY_CHECKED(OtherMaterials, UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(OtherMaterials, UMaterialInterface)

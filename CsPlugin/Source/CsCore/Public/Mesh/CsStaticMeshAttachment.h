@@ -104,6 +104,9 @@ public:
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+	bool IsTransformValidChecked(const FString& Context) const;
+	bool IsTransformValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 	void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
 	bool AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
@@ -113,6 +116,8 @@ public:
 class UStaticMesh;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
+class USceneComponent;
+class UStaticMeshComponent;
 struct FCsStaticMeshActorPooled;
 
 namespace NCsStaticMesh
@@ -216,9 +221,14 @@ namespace NCsStaticMesh
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+			bool IsTransformValidChecked(const FString& Context) const;
+			bool IsTransformValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
 			void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, const TArray<UMaterialInterface*>& OtherMaterials) const;
 			void AttachChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
 			bool AttachSafe(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			void AttachOnlyTransformChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child) const;
 
 			void AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, const TArray<UMaterialInterface*>& OtherMaterials, TArray<UMaterialInstanceDynamic*>& OutMIDs) const;
 			void AttachAndActivateChecked(const FString& Context, USceneComponent* Parent, UStaticMeshComponent* Child, TArray<UMaterialInstanceDynamic*>& OutMIDs) const;

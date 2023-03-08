@@ -477,7 +477,7 @@ namespace NCsSkin
 				return Attachments.Num();
 			}
 
-			void FLibrary::SetAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments)
+			void FLibrary::SetupAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments)
 			{
 				typedef NCsSkin::NData::NVisual::NStaticMesh::NAttachment::IAttachment AttachmentSkinType;
 				typedef NCsStaticMesh::NAttachment::FAttachment AttachmentType;

@@ -228,7 +228,7 @@ namespace NCsSkin
 				* @param Component		SceneComponent to attach Static Mesh attachments to.
 				* @param OutAttachments (out)
 				*/
-				static void SetAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments);
+				static void SetupAttachmentsChecked(const FString& Context, const UObject* WorldContext, const SkinType* Skin, USceneComponent* Component, TArray<FCsStaticMeshActorPooled*>& OutAttachments);
 				
 				/**
 				* Attach Attachment to Component with given Skin only using the Transform Rules.

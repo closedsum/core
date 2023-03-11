@@ -570,16 +570,18 @@ namespace NCsLooseCoarseGrid
 
 		/** Width of the grid */
 		float Width;
+		float WidthBy2;
 		
 		/** Height of the grid */
 		float Height;
+		float HeightBy2;
 
 	public:
 
 		FGrid();
 
-		FORCEINLINE float GetWidthBy2() const { return 0.5f * Width; }
-		FORCEINLINE float GetHeightBy2() const { return 0.5 * Height; }
+		FORCEINLINE float GetWidthBy2() const { return WidthBy2; }
+		FORCEINLINE float GetHeightBy2() const { return HeightBy2; }
 
 		/**
 		* Creates a loose grid encompassing the specified extents using the specified cell 
@@ -624,6 +626,12 @@ namespace NCsLooseCoarseGrid
 
 	public:
 
+	private:
+
+		void Insert_Internal(const int32& ID, const float& CenterX, const float& CenterY, const float& HalfWidth, const float& HalfHeight);
+
+	public:
+
 		/**
 		* Inserts an element to the grid.
 		* 
@@ -633,7 +641,16 @@ namespace NCsLooseCoarseGrid
 		* @param HalfWidth		Half of the Width (Delta along X-axis) of the collision for the object with ID.
 		* @param HalfHeight		Half of the Height (Delta along Y-axis) of the collision for the object with ID.
 		*/
-		void Insert(const int32& ID, const float& CenterX, const float& CenterY, const float& HalfWidth, const float& HalfHeight);
+		FORCEINLINE void Insert(const int32& ID, const float& CenterX, const float& CenterY, const float& HalfWidth, const float& HalfHeight)
+		{
+			Insert_Internal(ID, CenterX + GetWidthBy2(), CenterY + GetHeightBy2(), HalfWidth, HalfHeight);
+		}
+
+	private:
+
+		void Remove_Internal(const int32& ID, const float& CenterX, const float& CenterY);
+
+	public:
 
 		/**
 		* Removes an element from the grid.
@@ -642,7 +659,16 @@ namespace NCsLooseCoarseGrid
 		* @param CenterX	X position in World Space of the collision for the object with ID.
 		* @param CenterY	Y position in World Space of the collision for the object with ID.
 		*/
-		void Remove(const int32& ID, const float& CenterX, const float& CenterY);
+		FORCEINLINE void Remove(const int32& ID, const float& CenterX, const float& CenterY)
+		{
+			Remove_Internal(ID, CenterX + GetWidthBy2(), CenterY + GetHeightBy2());
+		}
+
+	private:
+
+		void Move_Internal(const int32& ID, const float& PrevCenterX, const float& PrevCenterY, float CenterX, float CenterY);
+
+	public:
 
 		/**
 		* Moves an element in the grid from the former position to the new one.
@@ -653,7 +679,10 @@ namespace NCsLooseCoarseGrid
 		* @param CenterX
 		* @param CenterY
 		*/
-		void Move(const int32& ID, const float& PrevCenterX, const float& PrevCenterY, float CenterX, float CenterY);
+		FORCEINLINE void Move(const int32& ID, const float& PrevCenterX, const float& PrevCenterY, float CenterX, float CenterY)
+		{
+			Move_Internal(ID, PrevCenterX + GetWidthBy2(), PrevCenterY + GetHeightBy2(), CenterX + GetWidthBy2(), CenterY + GetHeightBy2());
+		}
 
 		/**
 		* Returns all the element IDs that intersect the specified rectangle excluding elements
@@ -668,7 +697,16 @@ namespace NCsLooseCoarseGrid
 		*/
 		TSmallList<int32> Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID);
 
-		void Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount);
+	private:
+
+		void Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount);
+
+	public:
+		
+		FORCEINLINE void Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount)
+		{
+			Query_Internal(CenterX + GetWidthBy2(), CenterY + GetHeightBy2(), HalfWidth, HalfHeight, OmitID, OutResult, OutResultCount);
+		}
 
 	private:
 

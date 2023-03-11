@@ -22,7 +22,9 @@ namespace NCsLooseCoarseGrid
 		// TODO: Check Unreal orientation from Top
 
 		Width		= Right - Left;
+		WidthBy2    = 0.5f * Width;
 		Height		= Bottom - Top;
+		HeightBy2   = 0.5f * Height;
 		NumElements = 0;
 		Left		= InLeft;
 		Top			= InTop;
@@ -38,7 +40,7 @@ namespace NCsLooseCoarseGrid
 		Tight.Init(NumTightColumns, NumTightRows, TightCellWidth, TightCellHeight);
 	}
 
-	void FGrid::Insert(const int32& ID, const float& CenterX, const float& CenterY, const float& HalfWidth, const float& HalfHeight)
+	void FGrid::Insert_Internal(const int32& ID, const float& CenterX, const float& CenterY, const float& HalfWidth, const float& HalfHeight)
 	{
 		// TODO: Checks
 
@@ -56,7 +58,7 @@ namespace NCsLooseCoarseGrid
 		Expand_AABB(Index, CenterX, CenterY, HalfWidth, HalfHeight);
 	}
 
-	void FGrid::Remove(const int32& ID, const float& CenterX, const float& CenterY)
+	void FGrid::Remove_Internal(const int32& ID, const float& CenterX, const float& CenterY)
 	{
 		// Find the element in the loose cell.
 		typedef NCsLooseCoarseGrid::NLoose::FCell LooseCellType;
@@ -77,7 +79,7 @@ namespace NCsLooseCoarseGrid
 		--NumElements;
 	}
 
-	void FGrid::Move(const int32& ID, const float& PrevCenterX, const float& PrevCenterY, float CenterX, float CenterY)
+	void FGrid::Move_Internal(const int32& ID, const float& PrevCenterX, const float& PrevCenterY, float CenterX, float CenterY)
 	{
 		typedef NCsLooseCoarseGrid::NLoose::FCell LooseCellType;
 
@@ -191,7 +193,7 @@ namespace NCsLooseCoarseGrid
 		return Result;
 	}
 
-	void FGrid::Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount)
+	void FGrid::Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount)
 	{
 		CenterX -= Left;
 		CenterY -= Top;

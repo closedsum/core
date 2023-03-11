@@ -465,7 +465,15 @@ namespace NCsProjectile
 
 			public:
 
+				TArray<uint8> Channels;
+
+				TArray<uint32> BlockMasks;
+
 				TArray<float> Radii;
+
+				TArray<float> HalfHeights;
+
+				TArray<int32> HitCounts;
 
 				DECLARE_DELEGATE_OneParam(FUpdateImpl, const FCsDeltaTime& DeltaTime);
 
@@ -473,18 +481,30 @@ namespace NCsProjectile
 
 				FCollisionInfos() :
 					Outer(nullptr),
+					Channels(),
+					BlockMasks(),
 					Radii(),
+					HalfHeights(),
+					HitCounts(),
 					UpdateImpl()
 				{
 				}
 
 				void SetSize(const int32& InSize)
 				{
+					Channels.Reset(InSize);
+					BlockMasks.Reset(InSize);
 					Radii.Reset(InSize);
+					HalfHeights.Reset(InSize);
+					HitCounts.Reset(InSize);
 
 					for (int32 I = 0; I < InSize; ++I)
 					{
+						Channels.Add(0);
+						BlockMasks.Add(0);
 						Radii.Add(0.0f);
+						HalfHeights.Add(0.0f);
+						HitCounts.Add(0);
 					}
 				}
 
@@ -492,6 +512,9 @@ namespace NCsProjectile
 
 				FORCEINLINE void Reset(const int32& Index)
 				{
+					Channels[Index] = 0;
+					BlockMasks[Index] = 0;
+					HitCounts[Index] = 0;
 				}
 			};
 

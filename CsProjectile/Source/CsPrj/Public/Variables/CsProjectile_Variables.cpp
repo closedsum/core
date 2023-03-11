@@ -184,7 +184,7 @@ namespace NCsProjectile
 				}
 				else
 				{
-					Velocities[ID] = Speeds[ID] * Directions[ID];
+					Velocities[ID]								= Speeds[ID] * Directions[ID];
 					ProjectileImpl->MovementComponent->Velocity = Speeds[ID] * Directions[ID];
 				}
 			}
@@ -336,14 +336,11 @@ namespace NCsProjectile
 			{
 				const int32 Count = Last_DeallocatedIDs.Num();
 
-				const float GridWidthBy2  = LooseCoarseGrid.GetWidthBy2();
-				const float GridHeightBy2 = LooseCoarseGrid.GetHeightBy2();
-
 				for (int32 I = Count - 1; I >= 0; --I)
 				{
 					const int32& ID = Last_DeallocatedIDs[I];
 
-					LooseCoarseGrid.Remove(ID, Last_Locations[ID].X + GridWidthBy2, Last_Locations[ID].Y + GridHeightBy2);
+					LooseCoarseGrid.Remove(ID, Last_Locations[ID].X, Last_Locations[ID].Y);
 
 					Last_Locations[ID] = FVector::ZeroVector;
 
@@ -386,10 +383,7 @@ namespace NCsProjectile
 			const FVector& Location = Payload.Location;
 			const float& Radius		= Payload.CollisionRadius;
 
-			const float GridWidthBy2  = LooseCoarseGrid.GetWidthBy2();
-			const float GridHeightBy2 = LooseCoarseGrid.GetHeightBy2();
-
-			LooseCoarseGrid.Insert(ID, Location.X + GridWidthBy2, Location.Y + GridHeightBy2, Radius, Radius);
+			LooseCoarseGrid.Insert(ID, Location.X, Location.Y, Radius, Radius);
 
 			return GetVariablesPtr(ID);
 		}

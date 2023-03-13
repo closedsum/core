@@ -167,26 +167,6 @@ namespace NCsProjectileClass
 
 #pragma endregion ProjectileClass
 
-// ProjectileDeActivate
-#pragma region
-
-namespace NCsProjectileDeActivate
-{
-	namespace Ref
-	{
-		typedef EMCsProjectileDeActivate EnumMapType;
-
-		CSPRJ_API CS_ADD_TO_ENUM_MAP(Collision);
-		CSPRJ_API CS_ADD_TO_ENUM_MAP(Movement);
-		CSPRJ_API CS_ADD_TO_ENUM_MAP(Mesh);
-		CSPRJ_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsProjectileDeActivate_MAX, "MAX");
-	}
-
-	CSPRJ_API const uint8 MAX = (uint8)Type::ECsProjectileDeActivate_MAX;
-}
-
-#pragma endregion ProjectileDeActivate
-
 // ProjectileMovement
 #pragma region
 

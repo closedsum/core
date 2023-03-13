@@ -172,40 +172,6 @@ namespace NCsProjectile
 
 #pragma endregion ProjectileState
 
-// ProjectileDeActivate
-#pragma region
-
-UENUM(BlueprintType)
-enum class ECsProjectileDeActivate : uint8
-{
-	Collision					UMETA(DisplayName = "Collision"),
-	Movement					UMETA(DisplayName = "Movement"),
-	Mesh						UMETA(DisplayName = "Mesh"),
-	ECsProjectileDeActivate_MAX UMETA(Hidden),
-};
-
-struct CSPRJ_API EMCsProjectileDeActivate : public TCsEnumMap<ECsProjectileDeActivate>
-{
-	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsProjectileDeActivate, ECsProjectileDeActivate)
-};
-
-namespace NCsProjectileDeActivate
-{
-	typedef ECsProjectileDeActivate Type;
-
-	namespace Ref
-	{
-		extern CSPRJ_API const Type Collision;
-		extern CSPRJ_API const Type Movement;
-		extern CSPRJ_API const Type Mesh;
-		extern CSPRJ_API const Type ECsProjectileDeActivate_MAX;
-	}
-
-	extern CSPRJ_API const uint8 MAX;
-}
-
-#pragma endregion ProjectileDeActivate
-
 // ProjectileMovement
 #pragma region
 

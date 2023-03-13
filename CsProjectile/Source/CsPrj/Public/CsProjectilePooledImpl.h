@@ -8,9 +8,13 @@
 #include "CsProjectile.h"
 	// Event
 #include "Event/CsProjectile_Event.h"
+	// Movement
+#include "Movement/CsProjectile_Movement.h"
 	// Collision
 #include "Collision/CsProjectile_Collision.h"
 #include "Collision/CsGetCollisionHitCount.h"
+	// Tracking
+#include "Tracking/CsProjectile_Tracking.h"
 // Types
 #include "Types/CsTypes_Projectile.h"
 #include "Types/CsTypes_Projectile_Tracking.h"
@@ -92,9 +96,13 @@ class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsProjectile,
 										  // Event
 										  public ICsProjectile_Event,
-										  public ICsProjectile_Collision,
+										  // Movement
+										  public ICsProjectile_Movement,
 										  // Collision
-										  public ICsGetCollisionHitCount
+										  public ICsProjectile_Collision,
+										  public ICsGetCollisionHitCount,
+										  // Tracking
+										  public ICsProjectile_Tracking
 {
 	GENERATED_UCLASS_BODY()
 
@@ -322,6 +330,18 @@ private:
 
 #pragma endregion Events
 
+// ICsProjectile_Movement
+#pragma region
+public:
+
+	void Movement_SetLocation(const FVector& Location);
+
+	void Movement_SetRotation(const FRotator& Rotation);
+
+	void Movement_SetVelocity(const FVector& Velocity);
+
+#pragma endregion ICsProjectile_Movement
+
 // ICsProjectile_Collision
 #pragma region
 public:
@@ -340,6 +360,18 @@ public:
 	FORCEINLINE int32 GetCollisionHitCount() const { return HitCount; }
 
 #pragma endregion ICsGetCollisionHitCount
+
+// ICsProjectile_Tracking
+#pragma region
+public:
+
+	virtual bool Tracking_IsValid() const { return true; }
+
+	virtual bool Tracking_ReacquireDestination() { return false; }
+
+	virtual FVector Tracking_GetDestination() const;
+
+#pragma endregion ICsProjectile_Tracking
 
 protected:
 
@@ -374,6 +406,42 @@ protected:
 #pragma region
 public:
 
+	struct FMovementInfo
+	{
+		friend class ACsProjectilePooledImpl;
+
+	private:
+
+		ACsProjectilePooledImpl* Outer;
+
+	public:
+
+		FMovementInfo() :
+			Outer(nullptr)
+		{
+		}
+
+	#define VariablesProxyType NCsProjectile::NVariables::FVariables::FMovementInfo
+		FORCEINLINE const VariablesProxyType& GetProxy() const { return Outer->GetVariables()->MovementInfo; }
+		FORCEINLINE VariablesProxyType& GetProxy() { return Outer->GetVariables()->MovementInfo; }
+	#undef VariablesProxyType
+
+		FORCEINLINE const float& GetInitialSpeed() const { return GetProxy().GetInitialSpeed(); }
+		FORCEINLINE float& GetInitialSpeed() { return GetProxy().GetInitialSpeed(); }
+		FORCEINLINE const float& GetMaxSpeed() const { return GetProxy().GetMaxSpeed(); }
+		FORCEINLINE float& GetMaxSpeed() { return GetProxy().GetMaxSpeed(); }
+		FORCEINLINE const FVector& GetDirection() const { return GetProxy().GetDirection(); }
+		FORCEINLINE FVector& GetDirection() { return GetProxy().GetDirection(); }
+		FORCEINLINE const FVector& GetVelocity() const { return GetProxy().GetVelocity(); }
+		FORCEINLINE FVector& GetVelocity() { return GetProxy().GetVelocity(); }
+		FORCEINLINE const float& GetSpeed() const { return GetProxy().GetSpeed(); }
+		FORCEINLINE float& GetSpeed() { return GetProxy().GetSpeed(); }
+		FORCEINLINE const float& GetGravityScale() const { return GetProxy().GetGravityScale(); }
+		FORCEINLINE float& GetGravityScale() { return GetProxy().GetGravityScale(); }
+	};
+
+	FMovementInfo MovementInfo;
+
 	struct FMovementImpl
 	{
 		friend class ACsProjectilePooledImpl;
@@ -395,8 +463,8 @@ public:
 		{
 		}
 
-		float GetInitialSpeed(const EStart& Start) const;
-		float GetMaxSpeed(const EStart& Start) const;
+		float CalculateInitialSpeed(const EStart& Start) const;
+		float CalculateMaxSpeed(const EStart& Start) const;
 	};
 
 	FMovementImpl MovementImpl;
@@ -452,6 +520,67 @@ protected:
 #pragma region
 public:
 
+	struct FTrackingInfo
+	{
+		friend class ACsProjectilePooledImpl;
+
+	private:
+
+		ACsProjectilePooledImpl* Outer;
+
+	public:
+
+		FTrackingInfo() :
+			Outer(nullptr)
+		{
+		}
+
+	#define VariablesProxyType NCsProjectile::NVariables::FVariables::FTrackingInfo
+		FORCEINLINE const VariablesProxyType& GetProxy() const { return Outer->GetVariables()->TrackingInfo; }
+		FORCEINLINE VariablesProxyType& GetProxy() { return Outer->GetVariables()->TrackingInfo; }
+	#undef VariablesProxyType
+
+		FORCEINLINE const float& GetDelay() const { return GetProxy().GetDelay(); }
+		FORCEINLINE float& GetDelay() { return GetProxy().GetDelay(); }
+		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return GetProxy().GetState(); }
+		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return GetProxy().GetState(); }
+	#define DestinationType NCsProjectile::NTracking::EDestination
+		FORCEINLINE const DestinationType& GetDestinationType() const { return GetProxy().GetDestinationType(); }
+		FORCEINLINE DestinationType& GetDestinationType() { return GetProxy().GetDestinationType(); }
+	#undef DestinationType 
+		FORCEINLINE const uint32& GetDestinationMask() const { return GetProxy().GetDestinationMask(); }
+		FORCEINLINE uint32& GetDestinationMask() { return GetProxy().GetDestinationMask(); }
+		FORCEINLINE const USceneComponent* GetComponent() const { return GetProxy().GetComponent(); }
+		FORCEINLINE USceneComponent*& GetComponent() { return GetProxy().GetComponent(); }
+		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return GetProxy().GetMeshComponent(); }
+		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return GetProxy().GetMeshComponent(); }
+		FORCEINLINE const FName& GetBone() const { return GetProxy().GetBone(); }
+		FORCEINLINE FName& GetBone() { return GetProxy().GetBone(); }
+		FORCEINLINE const FVector& GetLocation() const { return GetProxy().GetDestination(); }
+		FORCEINLINE FVector& GetLocation() { return GetProxy().GetDestination(); }
+		FORCEINLINE const int32& GetID() const { return GetProxy().GetTargetID(); }
+		FORCEINLINE int32& GetID() { return GetProxy().GetTargetID(); }
+		FORCEINLINE const float& GetDuration() const { return GetProxy().GetDuration(); }
+		FORCEINLINE float& GetDuration() { return GetProxy().GetDuration(); }
+		FORCEINLINE const float& GetElapsedTime() const { return GetProxy().GetElapsedTime(); }
+		FORCEINLINE float& GetElapsedTime() { return GetProxy().GetElapsedTime(); }
+		FORCEINLINE const FVector& GetOffset() const { return GetProxy().GetOffset(); }
+		FORCEINLINE FVector& GetOffset() { return GetProxy().GetOffset(); }
+		FORCEINLINE const float& GetMinDotThreshold() const { return GetProxy().GetMinDotThreshold(); }
+		FORCEINLINE float& GetMinDotThreshold() { return GetProxy().GetMinDotThreshold(); }
+		FORCEINLINE const float& GetMaxDotBeforeUsingPitch() const { return GetProxy().GetMaxDotBeforeUsingPitch(); }
+		FORCEINLINE float& GetMaxDotBeforeUsingPitch() { return GetProxy().GetMaxDotBeforeUsingPitch(); }
+		FORCEINLINE const float& GetRotationRate() const { return GetProxy().GetRotationRate(); }
+		FORCEINLINE float& GetRotationRate() { return GetProxy().GetRotationRate(); }
+
+		FORCEINLINE void DestinationMask_SetReacquire() { GetProxy().DestinationMask_SetReacquire(); }
+		FORCEINLINE void DestinationMask_MarkReacquire() { GetProxy().DestinationMask_MarkReacquire(); }
+		FORCEINLINE void DestinationMask_ClearReacquire() { GetProxy().DestinationMask_ClearReacquire(); }
+		FORCEINLINE bool DestinationMask_HasReacquire() { return GetProxy().DestinationMask_HasReacquire(); }
+	};
+
+	FTrackingInfo TrackingInfo;
+
 	struct FTrackingImpl
 	{
 		friend class ACsProjectilePooledImpl;
@@ -466,107 +595,26 @@ public:
 
 		TrackingDataType* TrackingData;
 
-		bool bReacquire;
-
 	public:
 
 		FTrackingImpl() :
-			TrackingData(nullptr),
-			bReacquire(false)
+			TrackingData(nullptr)
 		{
 		}
-
-	private:
-
-	#define VariablesType NCsProjectile::NVariables::FVariables
-		FORCEINLINE const VariablesType* GetVariables() const { return Outer->GetVariables(); }
-		FORCEINLINE VariablesType* GetVariables() { return Outer->GetVariables(); }
-	#undef VariablesType
-
-	#define TrackingVariablesType NCsProjectile::NVariables::FVariables::FTrackingInfo
-		FORCEINLINE const TrackingVariablesType& GetTrackingVariables() const { return GetVariables()->TrackingInfo; }
-		FORCEINLINE TrackingVariablesType& GetTrackingVariables() { return GetVariables()->TrackingInfo; }
-	#undef TrackingVariablesType
-
-		FORCEINLINE const float& GetDelay() const { return GetTrackingVariables().GetDelay(); }
-		FORCEINLINE float& GetDelay() { return GetTrackingVariables().GetDelay(); }
-
-	public:
-		FORCEINLINE const NCsProjectile::NTracking::EState& GetCurrentState() const { return GetTrackingVariables().GetState(); }
-	private:
-		FORCEINLINE NCsProjectile::NTracking::EState& GetCurrentState() { return GetTrackingVariables().GetState(); }
-
-	public:
-
-	#define DestinationType NCsProjectile::NTracking::EDestination
-		FORCEINLINE const DestinationType& GetDestinationType() const { return GetTrackingVariables().GetDestinationType(); }
-		FORCEINLINE DestinationType& GetDestinationType() { return GetTrackingVariables().GetDestinationType(); }
-	#undef DestinationType 
-	
-	private:
-	
-		FORCEINLINE const USceneComponent* GetComponent() const { return GetTrackingVariables().GetComponent(); }
-		FORCEINLINE USceneComponent*& GetComponent() { return GetTrackingVariables().GetComponent(); }
-		FORCEINLINE const USkeletalMeshComponent* GetMeshComponent() const { return GetTrackingVariables().GetMeshComponent(); }
-		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return GetTrackingVariables().GetMeshComponent(); }
-		FORCEINLINE const FName& GetBone() const { return GetTrackingVariables().GetBone(); }
-		FORCEINLINE FName& GetBone() { return GetTrackingVariables().GetBone(); }
-		FORCEINLINE const FVector& GetLocation() const { return GetTrackingVariables().GetDestination(); }
-		FORCEINLINE FVector& GetLocation() { return GetTrackingVariables().GetDestination(); }
-	public:
-		FORCEINLINE const int32& GetID() const { return GetTrackingVariables().GetTargetID(); }
-		FORCEINLINE int32& GetID() { return GetTrackingVariables().GetTargetID(); }
-	private:
-		FORCEINLINE const float& GetDuration() const { return GetTrackingVariables().GetDuration(); }
-		FORCEINLINE float& GetDuration() { return GetTrackingVariables().GetDuration(); }
-		FORCEINLINE const float& GetElapsedTime() const { return GetTrackingVariables().GetElapsedTime(); }
-		FORCEINLINE float& GetElapsedTime() { return GetTrackingVariables().GetElapsedTime(); }
-		FORCEINLINE const FVector& GetOffset() const { return GetTrackingVariables().GetOffset(); }
-		FORCEINLINE FVector& GetOffset() { return GetTrackingVariables().GetOffset(); }
-		FORCEINLINE const float& GetMinDotThreshold() const { return GetTrackingVariables().GetMinDotThreshold(); }
-		FORCEINLINE float& GetMinDotThreshold() { return GetTrackingVariables().GetMinDotThreshold(); }
-		FORCEINLINE const float& GetMaxDotBeforeUsingPitch() const { return GetTrackingVariables().GetMaxDotBeforeUsingPitch(); }
-		FORCEINLINE float& GetMaxDotBeforeUsingPitch() { return GetTrackingVariables().GetMaxDotBeforeUsingPitch(); }
-		FORCEINLINE const float& GetRotationRate() const { return GetTrackingVariables().GetRotationRate(); }
-		FORCEINLINE float& GetRotationRate() { return GetTrackingVariables().GetRotationRate(); }
 
 	public:
 
 		void Init(PayloadType* Payload);
 
-		void Update(const FCsDeltaTime& DeltaTime);
-
-		FVector GetDestination() const;
-
-		FORCEINLINE void Clear()
-		{
-			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
-			GetDestinationType() = NCsProjectile::NTracking::EDestination::Object;
-			GetComponent() = nullptr;
-			GetMeshComponent() = nullptr;
-			GetBone() = NAME_None;
-			GetLocation() = FVector::ZeroVector;
-			GetID() = INDEX_NONE;
-			bReacquire = false;
-			GetElapsedTime()  = 0.0f;
-		}
-
 		FORCEINLINE void Reset()
 		{
 			TrackingData = nullptr;
-			Clear();
 		}
 
 	#undef TrackingDataType
 	};
 
 	FTrackingImpl TrackingImpl;
-
-	virtual bool TrackingImpl_IsValid() const { return true; }
-
-	virtual bool TrackingImpl_ReacquireDestination() { return false; }
-
-	virtual FVector TrackingImpl_GetDestinationByCustom() const;
 
 #pragma endregion Tracking
 

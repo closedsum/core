@@ -5,6 +5,9 @@
 
 #include "CsTypes_Projectile_Tracking.generated.h"
 
+// ProjectileTrackingState
+#pragma region
+
 namespace NCsProjectile
 {
 	namespace NTracking
@@ -17,6 +20,8 @@ namespace NCsProjectile
 		};
 	}
 }
+
+#pragma endregion ProjectileTrackingState
 
 // ProjectileTrackingDestination
 #pragma region
@@ -99,3 +104,30 @@ namespace NCsProjectile
 }
 
 #pragma endregion ProjectileTrackingDestination
+
+// ProjectileTrackingDestinationFlag
+#pragma region
+
+namespace NCsProjectile
+{
+	namespace NTracking
+	{
+		namespace NDestination
+		{
+			enum class EFlag : uint32
+			{
+				Reacquire = 1 << 0
+			};
+
+			namespace NFlag
+			{
+				FORCEINLINE void SetReacquire(uint32& Mask) { Mask = (uint32)EFlag::Reacquire; }
+				FORCEINLINE void MarkReacquire(uint32& Mask) { CS_SET_BITFLAG(Mask, EFlag::Reacquire); }
+				FORCEINLINE void ClearReacquire(uint32& Mask) { CS_CLEAR_BITFLAG(Mask, EFlag::Reacquire); }
+				FORCEINLINE bool HasReacquire(const uint32& Mask) { return CS_TEST_BITFLAG(Mask, EFlag::Reacquire); }
+			}
+		}
+	}
+}
+
+#pragma endregion ProjectileTrackingDestinationFlag

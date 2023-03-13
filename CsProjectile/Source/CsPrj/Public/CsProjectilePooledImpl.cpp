@@ -102,6 +102,7 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, PostInitializeComponents);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
+			// ICsPooledObject
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate_Internal);
@@ -110,6 +111,8 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed_Internal);
+			// ICsProjectile_Tracking
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Tracking_GetDestination);
 			// Variables
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, AllocateVariables);
 			// Modifier
@@ -188,6 +191,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	// Variables,
 	Variables(nullptr),
 	// Movement
+	MovementInfo(),
 	MovementImpl(),
 	bOverride_InitialSpeed(false),
 	Override_InitialSpeed(false),
@@ -196,6 +200,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	Override_MaxSpeed(false),
 	OnOverride_MaxSpeed_ScriptEvent(),
 		// Tracking
+	TrackingInfo(),
 	TrackingImpl(),
 	// Collision
 	IgnoreActors(),
@@ -294,7 +299,9 @@ void ACsProjectilePooledImpl::BeginPlay()
 
 	ConstructCache();
 
+	MovementInfo.Outer = this;
 	MovementImpl.Outer = this;
+	TrackingInfo.Outer = this;
 	TrackingImpl.Outer = this;
 	DamageImpl.Outer = this;
 }
@@ -322,7 +329,9 @@ void ACsProjectilePooledImpl::PostInitializeComponents()
 
 		ConstructCache();
 
+		MovementInfo.Outer = this;
 		MovementImpl.Outer = this;
+		TrackingInfo.Outer = this;
 		TrackingImpl.Outer = this;
 		DamageImpl.Outer = this;
 	}
@@ -498,9 +507,6 @@ void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
 
 void ACsProjectilePooledImpl::Update(const FCsDeltaTime& DeltaTime)
 {
-	Variables->GetLocation() = GetActorLocation();
-
-	TrackingImpl.Update(DeltaTime);
 	CacheImpl->Update(DeltaTime);
 }
 
@@ -1151,6 +1157,58 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 
 #pragma endregion Launch
 
+// ICsProjectile_Movement
+#pragma region
+
+void ACsProjectilePooledImpl::Movement_SetLocation(const FVector& Location)
+{
+	Variables->GetLocation() = GetActorLocation();
+}
+
+void ACsProjectilePooledImpl::Movement_SetRotation(const FRotator& Rotation)
+{
+	SetActorRotation(Rotation);
+}
+
+void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector& Velocity)
+{
+	MovementComponent->Velocity = Velocity;
+}
+
+#pragma endregion ICsProjectile_Movement
+
+// ICsProjectile_Tracking
+#pragma region
+
+FVector ACsProjectilePooledImpl::Tracking_GetDestination() const
+{
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Tracking_GetDestination;
+
+	typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
+
+	// Component
+	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Object)
+	{
+		return TrackingInfo.GetComponent()->GetComponentLocation();
+	}
+	// Bone
+	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Bone)
+	{
+		return TrackingInfo.GetMeshComponent()->GetSocketLocation(TrackingInfo.GetBone());
+	}
+	// Location
+	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Location)
+	{
+		return TrackingInfo.GetLocation();
+	}
+	check(0);
+	return FVector::ZeroVector;
+}
+
+#pragma endregion ICsProjectile_Tracking
+
 #if WITH_EDITOR
 
 const UObject* ACsProjectilePooledImpl::GetWorldContext() const
@@ -1191,7 +1249,7 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 
 	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
-		VariablesPayload.CollisionRadius = CollisionData->GetCollisionRadius();
+		VariablesPayload.MaxExtents = CollisionData->GetCollisionRadius();
 	}
 
 	Variables = VariablesLibrary::AllocateChecked(Context, GetWorldContext(), VariablesPayload);
@@ -1202,7 +1260,7 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 // Movement
 #pragma region
 
-float ACsProjectilePooledImpl::FMovementImpl::GetInitialSpeed(const EStart& Start) const
+float ACsProjectilePooledImpl::FMovementImpl::CalculateInitialSpeed(const EStart& Start) const
 {
 	using namespace NCsProjectilePooledImpl::NMovementImpl::NCached;
 
@@ -1242,7 +1300,7 @@ float ACsProjectilePooledImpl::FMovementImpl::GetInitialSpeed(const EStart& Star
 	return 0.0f;
 }
 
-float ACsProjectilePooledImpl::FMovementImpl::GetMaxSpeed(const EStart& Start) const
+float ACsProjectilePooledImpl::FMovementImpl::CalculateMaxSpeed(const EStart& Start) const
 {
 	using namespace NCsProjectilePooledImpl::NMovementImpl::NCached;
 
@@ -1286,14 +1344,21 @@ void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
 {
 	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
 
-	MovementComponent->InitialSpeed = MovementImpl.GetInitialSpeed(StartType::FromData);
-	MovementComponent->MaxSpeed		= MovementImpl.GetMaxSpeed(StartType::FromData);
+	MovementInfo.GetInitialSpeed() = MovementImpl.CalculateInitialSpeed(StartType::FromData);
+	MovementInfo.GetMaxSpeed()	   = MovementImpl.CalculateMaxSpeed(StartType::FromData);
 
-	if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
-		MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
+	if (MovementInfo.GetInitialSpeed() > MovementInfo.GetMaxSpeed())
+		MovementInfo.GetInitialSpeed() = MovementInfo.GetMaxSpeed();
 
-	MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Direction;
-	MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
+	MovementInfo.GetSpeed()		   = MovementInfo.GetInitialSpeed();
+	MovementInfo.GetDirection()	   = Direction;
+	MovementInfo.GetVelocity()	   = MovementInfo.GetInitialSpeed() * Direction;
+	MovementInfo.GetGravityScale() = Data->GetGravityScale();
+
+	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();
+	MovementComponent->MaxSpeed				  = MovementInfo.GetMaxSpeed();
+	MovementComponent->Velocity				  = MovementInfo.GetVelocity();
+	MovementComponent->ProjectileGravityScale = MovementInfo.GetGravityScale();
 }
 
 	// Tracking
@@ -1324,20 +1389,21 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 	if (TrackingData &&
 		TrackingData->ShouldUseTracking())
 	{
-		Clear();
-
 		typedef NCsProjectile::NTracking::FParams TrackingParamsType;
 		typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
 
 		const TrackingParamsType& TrackingParams = TrackingData->GetTrackingParams();
-		GetDelay()								 = TrackingParams.GetDelay();
-		//GetDestinationType()					 = TrackingParams.GetDestination();
-		GetOffset()								 = TrackingParams.GetOffset();
-		bReacquire								 = TrackingParams.GetbReacquireDestination();
-		GetDuration()							 = TrackingParams.GetDuration();
-		GetMinDotThreshold()					 = TrackingParams.GetMinDotThreshold();
-		GetMaxDotBeforeUsingPitch()				 = TrackingParams.GetMaxDotBeforeUsingPitch();
-		GetRotationRate()						 = TrackingParams.GetRotationRate();
+		Outer->TrackingInfo.GetDelay()		= TrackingParams.GetDelay();
+		//GetDestinationType()				= TrackingParams.GetDestination();
+		Outer->TrackingInfo.GetOffset()		= TrackingParams.GetOffset();
+
+		if (TrackingParams.GetbReacquireDestination())
+			Outer->TrackingInfo.DestinationMask_SetReacquire();
+
+		Outer->TrackingInfo.GetDuration()				= TrackingParams.GetDuration();
+		Outer->TrackingInfo.GetMinDotThreshold()		= TrackingParams.GetMinDotThreshold();
+		Outer->TrackingInfo.GetMaxDotBeforeUsingPitch()	= TrackingParams.GetMaxDotBeforeUsingPitch();
+		Outer->TrackingInfo.GetRotationRate()			= TrackingParams.GetRotationRate();
 
 		// Object | Bone
 		if (USceneComponent* Component = TargetPayload->GetTargetComponent())
@@ -1347,19 +1413,19 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 			// Bone
 			if (Bone != NAME_None)
 			{
-				GetMeshComponent() = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
+				Outer->TrackingInfo.GetMeshComponent() = CS_CAST_CHECKED(Component, USceneComponent, USkeletalMeshComponent);
 
 				typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
 
-				check(SkeletalMeshLibrary::IsBoneValidChecked(Context, GetMeshComponent(), Bone));
+				check(SkeletalMeshLibrary::IsBoneValidChecked(Context, Outer->TrackingInfo.GetMeshComponent(), Bone));
 
-				GetBone()			 = Bone;
-				GetDestinationType() = TrackingDestinationType::Bone;
+				Outer->TrackingInfo.GetBone()			 = Bone;
+				Outer->TrackingInfo.GetDestinationType() = TrackingDestinationType::Bone;
 			}
 			// Object
 			else
 			{
-				GetDestinationType() = TrackingDestinationType::Object;
+				Outer->TrackingInfo.GetDestinationType() = TrackingDestinationType::Object;
 			}
 		}
 		// Custom | Location
@@ -1370,120 +1436,18 @@ void ACsProjectilePooledImpl::FTrackingImpl::Init(PayloadType* Payload)
 			// Custom
 			if (ID != INDEX_NONE)
 			{
-				GetID()				 = TargetPayload->GetTargetID();
-				GetDestinationType() = TrackingDestinationType::Custom;
+				Outer->TrackingInfo.GetID()				 = TargetPayload->GetTargetID();
+				Outer->TrackingInfo.GetDestinationType() = TrackingDestinationType::Custom;
 			}
 			// Location
 			else
 			{
-				GetLocation()		 = TargetPayload->GetTargetLocation();
-				GetDestinationType() = TrackingDestinationType::Location;
+				Outer->TrackingInfo.GetLocation()		 = TargetPayload->GetTargetLocation();
+				Outer->TrackingInfo.GetDestinationType() = TrackingDestinationType::Location;
 			}
 		}
-		GetCurrentState() = GetDelay() > 0.0f ? NCsProjectile::NTracking::EState::Delay : NCsProjectile::NTracking::EState::Active;
+		Outer->TrackingInfo.GetCurrentState() = Outer->TrackingInfo.GetDelay() > 0.0f ? NCsProjectile::NTracking::EState::Delay : NCsProjectile::NTracking::EState::Active;
 	}
-}
-
-void ACsProjectilePooledImpl::FTrackingImpl::Update(const FCsDeltaTime& DeltaTime)
-{
-	if (GetCurrentState() == NCsProjectile::NTracking::EState::Inactive)
-		return;
-
-	if (!Outer->TrackingImpl_IsValid())
-	{
-		if (!Outer->TrackingImpl_ReacquireDestination())
-		{
-			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
-		}
-		return;
-	}
-
-	// Delay
-	if (GetCurrentState() == NCsProjectile::NTracking::EState::Delay)
-	{
-		if (GetElapsedTime() >= GetDelay())
-		{
-			GetCurrentState() = NCsProjectile::NTracking::EState::Active;
-		}
-	}
-	// Active
-	if (GetCurrentState() == NCsProjectile::NTracking::EState::Active)
-	{
-		if (GetDuration() > 0.0f &&
-			GetElapsedTime() >= GetDuration())
-		{
-			GetCurrentState() = NCsProjectile::NTracking::EState::Inactive;
-		}
-		else
-		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			float Speed = 0.0f;
-			float SpeedSq = 0.0f;
-			
-			FVector VelocityDir				 = Outer->IsLaunchComplete() ? MathLibrary::GetSafeNormal(Outer->MovementComponent->Velocity, SpeedSq, Speed) : Outer->GetActorRotation().Vector();
-			const FVector CurrentDestination = GetDestination();
-
-			FVector Direction = (CurrentDestination - Outer->GetActorLocation()).GetSafeNormal();
-
-			const float& MinDotThreshold		= GetMinDotThreshold();
-			const float& MaxDotBeforeUsingPitch = GetMaxDotBeforeUsingPitch();
-
-			const float Dot = FVector::DotProduct(VelocityDir, Direction);
-
-			if (Dot >= MinDotThreshold)
-			{
-				FVector Destination = CurrentDestination;
-
-				// "Normal" Tracking
-				if (Dot > MaxDotBeforeUsingPitch)
-				{
-					Destination = CurrentDestination;
-				}
-				// Ignore Pitch / Z
-				else
-				{
-					Destination.Z = Outer->GetActorLocation().Z;
-				}
-
-				Destination	+= GetOffset();
-				Direction    = (Destination - Outer->GetActorLocation()).GetSafeNormal();
-
-				VelocityDir = FMath::VInterpNormalRotationTo(VelocityDir, Direction, DeltaTime.Time, GetRotationRate());
-
-				if (Outer->IsLaunchComplete())
-					Outer->MovementComponent->Velocity = Speed * VelocityDir;
-				else
-					Outer->SetActorRotation(VelocityDir.Rotation());
-			}
-		}
-	}
-	GetElapsedTime() += DeltaTime.Time;
-}
-
-FVector ACsProjectilePooledImpl::FTrackingImpl::GetDestination() const
-{
-	typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
-
-	// Component
-	if (GetDestinationType() == TrackingDestinationType::Object)
-		return GetComponent()->GetComponentLocation();
-	// Bone
-	if (GetDestinationType() == TrackingDestinationType::Bone)
-		return GetMeshComponent()->GetSocketLocation(GetBone());
-	// Location
-	if (GetDestinationType() == TrackingDestinationType::Location)
-		return GetLocation();
-	// Custom / ID
-	if (GetDestinationType() == TrackingDestinationType::Custom)
-		return Outer->TrackingImpl_GetDestinationByCustom();
-	check(0);
-	return FVector::ZeroVector;
-}
-
-FVector ACsProjectilePooledImpl::TrackingImpl_GetDestinationByCustom() const
-{
-	return FVector::ZeroVector;
 }
 
 #pragma endregion Tracking
@@ -2063,14 +2027,21 @@ void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context,
 {
 	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
 
-	MovementComponent->InitialSpeed = MovementImpl.GetInitialSpeed(StartType::FromModifiers);
-	MovementComponent->MaxSpeed		= MovementImpl.GetMaxSpeed(StartType::FromModifiers);
+	MovementInfo.GetInitialSpeed() = MovementImpl.CalculateInitialSpeed(StartType::FromModifiers);
+	MovementInfo.GetMaxSpeed()	   = MovementImpl.CalculateMaxSpeed(StartType::FromModifiers);
 
-	if (MovementComponent->InitialSpeed > MovementComponent->MaxSpeed)
-		MovementComponent->InitialSpeed = MovementComponent->MaxSpeed;
+	if (MovementInfo.GetInitialSpeed() > MovementInfo.GetMaxSpeed())
+		MovementInfo.GetInitialSpeed() = MovementInfo.GetMaxSpeed();
 
-	MovementComponent->Velocity				  = MovementComponent->InitialSpeed * Direction;
-	MovementComponent->ProjectileGravityScale = Data->GetGravityScale();
+	MovementInfo.GetSpeed()		   = MovementInfo.GetInitialSpeed();
+	MovementInfo.GetDirection()	   = Direction;
+	MovementInfo.GetVelocity()	   = MovementInfo.GetInitialSpeed() * Direction;
+	MovementInfo.GetGravityScale() = Data->GetGravityScale();
+
+	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();
+	MovementComponent->MaxSpeed				  = MovementInfo.GetMaxSpeed();
+	MovementComponent->Velocity				  = MovementInfo.GetVelocity();
+	MovementComponent->ProjectileGravityScale = MovementInfo.GetGravityScale();
 }
 
 #pragma endregion Modifier

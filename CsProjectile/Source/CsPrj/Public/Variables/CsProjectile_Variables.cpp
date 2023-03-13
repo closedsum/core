@@ -11,9 +11,8 @@
 // Managers
 #include "Managers/Projectile/CsManager_Projectile.h"
 // Projectile
-#include "CsProjectilePooledImpl.h"
-// Components
-#include "CsProjectileMovementComponent.h" // TEMP
+#include "Movement/CsProjectile_Movement.h"
+#include "Tracking/CsProjectile_Tracking.h"
 
 // NCsProjectile::NVariables::NAllocate::FPayload
 #pragma region
@@ -42,48 +41,99 @@ namespace NCsProjectile
 {
 	namespace NVariables
 	{
+		// FVariables::FMovementInfo
+		
+		#define PROXY FVariables::FMovementInfo
+		#define GET_BASE GetOuterMost()->MovementInfos
+
+		const float& PROXY::GetInitialSpeed() const { return GET_BASE.InitialSpeeds[GetID()]; }
+		float& PROXY::GetInitialSpeed() { return GET_BASE.InitialSpeeds[GetID()]; }
+		const float& PROXY::GetMaxSpeed() const { return GET_BASE.MaxSpeeds[GetID()]; }
+		float& PROXY::GetMaxSpeed() { return GET_BASE.MaxSpeeds[GetID()]; }
+		const FVector& PROXY::GetDirection() const { return GET_BASE.Directions[GetID()]; }
+		FVector& PROXY::GetDirection() { return GET_BASE.Directions[GetID()]; }
+		const FVector& PROXY::GetVelocity() const { return GET_BASE.Velocities[GetID()]; }
+		FVector& PROXY::GetVelocity() { return GET_BASE.Velocities[GetID()]; }
+		const float& PROXY::GetSpeed() const { return GET_BASE.Speeds[GetID()]; }
+		float& PROXY::GetSpeed() { return GET_BASE.Speeds[GetID()]; }
+		const float& PROXY::GetGravityScale() const { return GET_BASE.GravityScales[GetID()]; }
+		float& PROXY::GetGravityScale() { return GET_BASE.GravityScales[GetID()]; }
+
+		#undef PROXY
+		#undef GET_BASE
+
 		// FVariables::FTrackingInfo
 
-		const float& FVariables::FTrackingInfo::GetDelay() const { return GetOuterMost()->TrackingInfos.Delays[GetID()]; }
-		float& FVariables::FTrackingInfo::GetDelay() { return GetOuterMost()->TrackingInfos.Delays[GetID()]; }
+		#define PROXY FVariables::FTrackingInfo
+		#define GET_BASE GetOuterMost()->TrackingInfos
+
+		const float& PROXY::GetDelay() const { return GET_BASE.Delays[GetID()]; }
+		float& PROXY::GetDelay() { return GET_BASE.Delays[GetID()]; }
 		#define TrackingStateType NCsProjectile::NTracking::EState
-		const TrackingStateType& FVariables::FTrackingInfo::GetState() const { return GetOuterMost()->TrackingInfos.States[GetID()]; }
-		TrackingStateType& FVariables::FTrackingInfo::GetState() { return GetOuterMost()->TrackingInfos.States[GetID()]; }
+		const TrackingStateType& PROXY::GetState() const { return GET_BASE.States[GetID()]; }
+		TrackingStateType& PROXY::GetState() { return GET_BASE.States[GetID()]; }
 		#undef TrackingStateType
 		#define DestinationType NCsProjectile::NTracking::EDestination
-		const DestinationType& FVariables::FTrackingInfo::GetDestinationType() const { return GetOuterMost()->TrackingInfos.DestinationTypes[GetID()]; }
-		DestinationType& FVariables::FTrackingInfo::GetDestinationType() { return GetOuterMost()->TrackingInfos.DestinationTypes[GetID()]; }
+		const DestinationType& PROXY::GetDestinationType() const { return GET_BASE.DestinationTypes[GetID()]; }
+		DestinationType& PROXY::GetDestinationType() { return GET_BASE.DestinationTypes[GetID()]; }
 		#undef DestinationType
-		const USceneComponent* FVariables::FTrackingInfo::GetComponent() const { return GetOuterMost()->TrackingInfos.Components[GetID()]; }
-		USceneComponent*& FVariables::FTrackingInfo::GetComponent() { return GetOuterMost()->TrackingInfos.Components[GetID()]; }
-		const USkeletalMeshComponent* FVariables::FTrackingInfo::GetMeshComponent() const { return GetOuterMost()->TrackingInfos.MeshComponents[GetID()]; }
-		USkeletalMeshComponent*& FVariables::FTrackingInfo::GetMeshComponent() { return GetOuterMost()->TrackingInfos.MeshComponents[GetID()]; }
-		const FName& FVariables::FTrackingInfo::GetBone() const { return GetOuterMost()->TrackingInfos.Bones[GetID()]; }
-		FName& FVariables::FTrackingInfo::GetBone() { return GetOuterMost()->TrackingInfos.Bones[GetID()]; }
-		const int32& FVariables::FTrackingInfo::GetTargetID() const { return GetOuterMost()->TrackingInfos.TargetIDs[GetID()]; }
-		int32& FVariables::FTrackingInfo::GetTargetID() { return GetOuterMost()->TrackingInfos.TargetIDs[GetID()]; }
-		const float& FVariables::FTrackingInfo::GetDuration() const { return GetOuterMost()->TrackingInfos.Durations[GetID()]; }
-		float& FVariables::FTrackingInfo::GetDuration() { return GetOuterMost()->TrackingInfos.Durations[GetID()]; }
-		const float& FVariables::FTrackingInfo::GetElapsedTime() const { return GetOuterMost()->TrackingInfos.ElapsedTimes[GetID()]; }
-		float& FVariables::FTrackingInfo::GetElapsedTime() { return GetOuterMost()->TrackingInfos.ElapsedTimes[GetID()]; }
-		const FVector& FVariables::FTrackingInfo::GetDestination() const { return GetOuterMost()->TrackingInfos.Destinations[GetID()]; }
-		FVector& FVariables::FTrackingInfo::GetDestination() { return GetOuterMost()->TrackingInfos.Destinations[GetID()]; }
-		const FVector& FVariables::FTrackingInfo::GetOffset() const { return GetOuterMost()->TrackingInfos.Offsets[GetID()]; }
-		FVector& FVariables::FTrackingInfo::GetOffset() { return GetOuterMost()->TrackingInfos.Offsets[GetID()]; }
-		const float& FVariables::FTrackingInfo::GetMinDotThreshold() const { return GetOuterMost()->TrackingInfos.MinDotThresholds[GetID()]; }
-		float& FVariables::FTrackingInfo::GetMinDotThreshold() { return GetOuterMost()->TrackingInfos.MinDotThresholds[GetID()]; }
-		const float& FVariables::FTrackingInfo::GetMaxDotBeforeUsingPitch() const { return GetOuterMost()->TrackingInfos.MaxDotBeforeUsingPitches[GetID()]; }
-		float& FVariables::FTrackingInfo::GetMaxDotBeforeUsingPitch() { return GetOuterMost()->TrackingInfos.MaxDotBeforeUsingPitches[GetID()]; }
-		const float& FVariables::FTrackingInfo::GetRotationRate() const { return GetOuterMost()->TrackingInfos.RotationRates[GetID()]; }
-		float& FVariables::FTrackingInfo::GetRotationRate() { return GetOuterMost()->TrackingInfos.RotationRates[GetID()]; }
+		const uint32& PROXY::GetDestinationMask() const { return GET_BASE.DestinationMasks[GetID()]; }
+		uint32& PROXY::GetDestinationMask() { return GET_BASE.DestinationMasks[GetID()]; }
+		const USceneComponent* PROXY::GetComponent() const { return GET_BASE.Components[GetID()]; }
+		USceneComponent*& PROXY::GetComponent() { return GET_BASE.Components[GetID()]; }
+		const USkeletalMeshComponent* PROXY::GetMeshComponent() const { return GET_BASE.MeshComponents[GetID()]; }
+		USkeletalMeshComponent*& PROXY::GetMeshComponent() { return GET_BASE.MeshComponents[GetID()]; }
+		const FName& PROXY::GetBone() const { return GET_BASE.Bones[GetID()]; }
+		FName& PROXY::GetBone() { return GET_BASE.Bones[GetID()]; }
+		const int32& PROXY::GetTargetID() const { return GET_BASE.TargetIDs[GetID()]; }
+		int32& PROXY::GetTargetID() { return GET_BASE.TargetIDs[GetID()]; }
+		const float& PROXY::GetDuration() const { return GET_BASE.Durations[GetID()]; }
+		float& PROXY::GetDuration() { return GET_BASE.Durations[GetID()]; }
+		const float& PROXY::GetElapsedTime() const { return GET_BASE.ElapsedTimes[GetID()]; }
+		float& PROXY::GetElapsedTime() { return GET_BASE.ElapsedTimes[GetID()]; }
+		const FVector& PROXY::GetDestination() const { return GET_BASE.Destinations[GetID()]; }
+		FVector& PROXY::GetDestination() { return GET_BASE.Destinations[GetID()]; }
+		const FVector& PROXY::GetOffset() const { return GET_BASE.Offsets[GetID()]; }
+		FVector& PROXY::GetOffset() { return GET_BASE.Offsets[GetID()]; }
+		const float& PROXY::GetMinDotThreshold() const { return GET_BASE.MinDotThresholds[GetID()]; }
+		float& PROXY::GetMinDotThreshold() { return GET_BASE.MinDotThresholds[GetID()]; }
+		const float& PROXY::GetMaxDotBeforeUsingPitch() const { return GET_BASE.MaxDotBeforeUsingPitches[GetID()]; }
+		float& PROXY::GetMaxDotBeforeUsingPitch() { return GET_BASE.MaxDotBeforeUsingPitches[GetID()]; }
+		const float& PROXY::GetRotationRate() const { return GET_BASE.RotationRates[GetID()]; }
+		float& PROXY::GetRotationRate() { return GET_BASE.RotationRates[GetID()]; }
+
+		#undef PROXY
+		#undef GET_BASE
 
 		// FVariables::FCollisionInfo
 		
-		const float& FVariables::FCollisionInfo::GetRadius() const { return GetOuterMost()->CollisionInfos.Radii[GetID()]; }
-		float& FVariables::FCollisionInfo::GetRadius() { return GetOuterMost()->CollisionInfos.Radii[GetID()]; }
+		#define PROXY FVariables::FCollisionInfo
+		#define GET_BASE GetOuterMost()->CollisionInfos
+
+		const uint8& PROXY::GetChannel() const { return GET_BASE.Channels[GetID()]; }
+		uint8& PROXY::GetChannel() { return GET_BASE.Channels[GetID()]; }
+		const uint32& PROXY::GetBlockMask() const { return GET_BASE.BlockMasks[GetID()]; }
+		uint32& PROXY::GetBlockMask() { return GET_BASE.BlockMasks[GetID()]; }
+		const float& PROXY::GetRadius() const { return GET_BASE.Radii[GetID()]; }
+		float& PROXY::GetRadius() { return GET_BASE.Radii[GetID()]; }
+		const float& PROXY::GetHalfHeight() const { return GET_BASE.HalfHeights[GetID()]; }
+		float& PROXY::GetHalfHeight() { return GET_BASE.HalfHeights[GetID()]; }
+		const int32& PROXY::GetHitCount() const { return GET_BASE.HitCounts[GetID()]; }
+		int32& PROXY::GetHitCount() { return GET_BASE.HitCounts[GetID()]; }
+
+		#undef PROXY
+		#undef GET_BASE
 
 		// FVariables
 
+		const FECsProjectile& FVariables::GetType() const { return Outer->Types[ID]; }
+		FECsProjectile& FVariables::GetType() { return Outer->Types[ID]; }
+		#define StateType NCsProjectile::EState
+		const StateType& FVariables::GetState() const { return Outer->States[ID]; }
+		StateType& FVariables::GetState() { return Outer->States[ID]; }
+		#undef StateType
+		const int32& FVariables::GetGeneration() const { return Outer->Generations[ID]; }
+		int32& FVariables::GetGeneration() { return Outer->Generations[ID]; }
 		const FVector& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
 		FVector& FVariables::GetLastLocation() { return Outer->Last_Locations[ID]; }
 		const FVector& FVariables::GetLocation() const { return Outer->Locations[ID]; }
@@ -149,6 +199,8 @@ namespace NCsProjectile
 
 			const FString& Context = Str::Update;
 
+			void(*Log)(const FString&) = &NCsProjectile::FLog::Warning;
+
 			typedef NCsProjectile::EState StateType;
 
 			// FManager = Outer
@@ -174,18 +226,26 @@ namespace NCsProjectile
 			{
 				const int32& ID = _AliveIDs[I];
 
-				ICsProjectile* Projectile				= _Projectiles[ID];
-				ACsProjectilePooledImpl* ProjectileImpl = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Projectile, ICsProjectile, ACsProjectilePooledImpl);
+				ICsProjectile* Projectile = _Projectiles[ID];
 
-				// LaunchDelay
-				if (_States[ID] == StateType::LaunchDelay)
+				ICsProjectile_Movement* Movement = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Movement);
+
+				if (Movement)
 				{
-					ProjectileImpl->SetActorRotation(_Rotations[ID]);
-				}
-				else
-				{
-					Velocities[ID]								= Speeds[ID] * Directions[ID];
-					ProjectileImpl->MovementComponent->Velocity = Speeds[ID] * Directions[ID];
+					// NOTE: Currently Location is updated by Actor's Location
+					Movement->Movement_SetLocation(FVector::ZeroVector);
+
+					// LaunchDelay
+					if (_States[ID] == StateType::LaunchDelay)
+					{
+						Movement->Movement_SetRotation(_Rotations[ID]);
+					}
+					else
+					{
+						Velocities[ID] = Speeds[ID] * Directions[ID];
+
+						Movement->Movement_SetVelocity(Velocities[ID]);
+					}
 				}
 			}
 		}
@@ -217,6 +277,71 @@ namespace NCsProjectile
 
 			typedef NCsProjectile::NTracking::EState TrackingStateType;
 
+			// FManager = Outer
+			TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
+
+			// Check IsValid
+			{
+				int32 ID = INDEX_NONE;
+
+				// Delay
+				for (int32 I = 0; I < DelayCount; ++I)
+				{
+					ID = DelayIDs[I];
+					
+					ICsProjectile* Projectile		 = _Projectiles[ID];
+					ICsProjectile_Tracking* Tracking = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Tracking);
+
+					if (!Tracking->Tracking_IsValid() &&
+						!Tracking->Tracking_ReacquireDestination())
+					{
+						// Swap with Last Index and Mark as Inactive
+						States[ID] = TrackingStateType::Inactive;
+
+						DelayIDs[I]				 = DelayIDs[DelayCount - 1];
+						DelayIDs[DelayCount - 1] = ID;
+						--DelayCount;
+					}
+				}
+				// Active
+				for (int32 I = 0; I < ActiveCount; ++I)
+				{
+					ID = ActiveIDs[I];
+					
+					ICsProjectile* Projectile		 = _Projectiles[ID];
+					ICsProjectile_Tracking* Tracking = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Tracking);
+
+					if (!Tracking->Tracking_IsValid() &&
+						!Tracking->Tracking_ReacquireDestination())
+					{
+						// Swap with Last Index and Mark as Inactive
+						States[ID] = TrackingStateType::Inactive;
+
+						ActiveIDs[I]			  = ActiveIDs[DelayCount - 1];
+						ActiveIDs[DelayCount - 1] = ID;
+						--ActiveCount;
+					}
+				}
+			}
+
+			// ElapsedTimes
+			{
+				// Delay
+				for (int32 I = 0; I < DelayCount; ++I)
+				{
+					const int32& ID = DelayIDs[I];
+
+					ElapsedTimes[ID] += DeltaTime.Time;
+				}
+				// Active
+				for (int32 I = 0; I < ActiveCount; ++I)
+				{
+					const int32& ID = ActiveIDs[I];
+
+					ElapsedTimes[ID] += DeltaTime.Time;
+				}
+			}
+
 			// Delay -> Active
 			for (int32 I = 0; I < DelayCount; ++I)
 			{
@@ -232,19 +357,18 @@ namespace NCsProjectile
 			
 			typedef NCsMath::FLibrary MathLibrary;
 
-			// FManager = Outer
-			TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
-			TArray<FVector>& _Directions		 = Outer->MovementInfos.Directions;
+			// FManager::FMovementInfos = Outer->MovementInfos
+			TArray<FVector>& _Directions = Outer->MovementInfos.Directions;
 
 			// Get Destinations
 			for (int32 I = 0; I < ActiveCount; ++I)
 			{
 				const int32& ID = ActiveIDs[I];
 
-				ICsProjectile* Projectile				= _Projectiles[ID];
-				ACsProjectilePooledImpl* ProjectileImpl = CS_INTERFACE_TO_UOBJECT_CAST_CHECKED(Projectile, ICsProjectile, ACsProjectilePooledImpl);
+				ICsProjectile* Projectile		 = _Projectiles[ID];
+				ICsProjectile_Tracking* Tracking = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Tracking);
 
-				Destinations[ID] = ProjectileImpl->TrackingImpl.GetDestination();
+				Destinations[ID] = Tracking->Tracking_GetDestination();
 			}
 
 			// FManager = Outer
@@ -326,10 +450,12 @@ namespace NCsProjectile
 				int32& ID = C->GetRef();
 
 				AllocatedIDs[AllocatedCount] = ID;
+				AliveIDs[AliveCount] = ID;
 
 				// Tracking
 				TrackingInfos.SetupIDs(ID);
 
+				++AliveCount;
 				++AllocatedCount;
 			}
 			// Deallocate and prep Search
@@ -381,9 +507,9 @@ namespace NCsProjectile
 			*/
 
 			const FVector& Location = Payload.Location;
-			const float& Radius		= Payload.CollisionRadius;
+			const float& MaxExtents = Payload.MaxExtents;
 
-			LooseCoarseGrid.Insert(ID, Location.X, Location.Y, Radius, Radius);
+			LooseCoarseGrid.Insert(ID, Location.X, Location.Y, MaxExtents, MaxExtents);
 
 			return GetVariablesPtr(ID);
 		}

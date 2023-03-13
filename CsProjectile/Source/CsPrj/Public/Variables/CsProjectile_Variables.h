@@ -32,13 +32,13 @@ namespace NCsProjectile
 
 				FVector Location;
 
-				float CollisionRadius;
+				float MaxExtents;
 
 				FPayload() :
 					Projectile(nullptr),
 					Type(),
 					Location(0.0f),
-					CollisionRadius(0.0f)
+					MaxExtents(0.0f)
 				{
 				}
 
@@ -70,7 +70,7 @@ namespace NCsProjectile
 
 			int32 ID;
 
-			struct CSPRJ_API FTrackingInfo
+			struct CSPRJ_API FMovementInfo
 			{
 				friend struct NCsProjectile::NVariables::FVariables;
 
@@ -80,8 +80,44 @@ namespace NCsProjectile
 
 			public:
 
-			#define TrackingStateType NCsProjectile::NTracking::EState
-			#define DestinationType NCsProjectile::NTracking::EDestination
+				FMovementInfo() :
+					Outer(nullptr)
+				{
+				}
+
+				FORCEINLINE void SetOuter(NCsProjectile::NVariables::FVariables* InOuter) { Outer = InOuter; }
+				FORCEINLINE NCsProjectile::NVariables::FVariables* GetOuter() { return Outer; }
+
+				FORCEINLINE const NCsProjectile::NVariables::FManager* GetOuterMost() const { return Outer->GetOuter(); }
+				FORCEINLINE NCsProjectile::NVariables::FManager* GetOuterMost() { return Outer->GetOuter(); }
+
+				FORCEINLINE const int32& GetID() const { return Outer->GetID(); }
+
+				const float& GetInitialSpeed() const;
+				float& GetInitialSpeed();
+				const float& GetMaxSpeed() const;
+				float& GetMaxSpeed();
+				const FVector& GetDirection() const;
+				FVector& GetDirection();
+				const FVector& GetVelocity() const;
+				FVector& GetVelocity();
+				const float& GetSpeed() const;
+				float& GetSpeed();
+				const float& GetGravityScale() const;
+				float& GetGravityScale();
+			};
+
+			FMovementInfo MovementInfo;
+			 
+			struct CSPRJ_API FTrackingInfo
+			{
+				friend struct NCsProjectile::NVariables::FVariables;
+
+			private:
+
+				NCsProjectile::NVariables::FVariables* Outer;
+
+			public:
 
 				FTrackingInfo() :
 					Outer(nullptr)
@@ -98,10 +134,16 @@ namespace NCsProjectile
 
 				const float& GetDelay() const;
 				float& GetDelay();
+			#define TrackingStateType NCsProjectile::NTracking::EState
 				const TrackingStateType& GetState() const;
 				TrackingStateType& GetState();
+			#undef TrackingStateType
+			#define DestinationType NCsProjectile::NTracking::EDestination
 				const DestinationType& GetDestinationType() const;
 				DestinationType& GetDestinationType();
+			#undef DestinationType
+				const uint32& GetDestinationMask() const;
+				uint32& GetDestinationMask();
 				const USceneComponent* GetComponent() const;
 				USceneComponent*& GetComponent();
 				const USkeletalMeshComponent* GetMeshComponent() const;
@@ -125,12 +167,14 @@ namespace NCsProjectile
 				const float& GetRotationRate() const;
 				float& GetRotationRate();
 
+				FORCEINLINE void DestinationMask_SetReacquire() { NCsProjectile::NTracking::NDestination::NFlag::SetReacquire(GetDestinationMask()); }
+				FORCEINLINE void DestinationMask_MarkReacquire() { NCsProjectile::NTracking::NDestination::NFlag::MarkReacquire(GetDestinationMask()); }
+				FORCEINLINE void DestinationMask_ClearReacquire() { NCsProjectile::NTracking::NDestination::NFlag::ClearReacquire(GetDestinationMask()); }
+				FORCEINLINE bool DestinationMask_HasReacquire() const { return NCsProjectile::NTracking::NDestination::NFlag::HasReacquire(GetDestinationMask()); }
+
 				void Reset()
 				{
 				}
-
-			#undef TrackingStateType
-			#undef DestinationType
 			};
 
 			FTrackingInfo TrackingInfo;
@@ -158,8 +202,16 @@ namespace NCsProjectile
 
 				FORCEINLINE const int32& GetID() const { return Outer->GetID(); }
 
+				const uint8& GetChannel() const;
+				uint8& GetChannel();
+				const uint32& GetBlockMask() const;
+				uint32& GetBlockMask();
 				const float& GetRadius() const;
 				float& GetRadius();
+				const float& GetHalfHeight() const;
+				float& GetHalfHeight();
+				const int32& GetHitCount() const;
+				int32& GetHitCount();
 			};
 
 			FCollisionInfo CollisionInfo;
@@ -167,9 +219,11 @@ namespace NCsProjectile
 			FVariables() :
 				Outer(nullptr),
 				ID(INDEX_NONE),
+				MovementInfo(),
 				TrackingInfo(),
 				CollisionInfo()
 			{
+				MovementInfo.Outer = this;
 				TrackingInfo.Outer = this;
 				CollisionInfo.Outer = this;
 			}
@@ -177,6 +231,7 @@ namespace NCsProjectile
 			FORCEINLINE void SetOuter(NCsProjectile::NVariables::FManager* InOuter) 
 			{
 				Outer = InOuter;
+				MovementInfo.SetOuter(this);
 				TrackingInfo.SetOuter(this);
 				CollisionInfo.SetOuter(this);
 			}
@@ -184,6 +239,14 @@ namespace NCsProjectile
 
 			FORCEINLINE const int32& GetID() const { return ID; }
 
+			const FECsProjectile& GetType() const;
+			FECsProjectile& GetType();
+		#define StateType NCsProjectile::EState
+			const StateType& GetState() const;
+			StateType& GetState();
+		#undef StateType
+			const int32& GetGeneration() const;
+			int32& GetGeneration();
 			const FVector& GetLastLocation() const;
 			FVector& GetLastLocation();
 			const FVector& GetLocation() const;
@@ -262,6 +325,8 @@ namespace NCsProjectile
 
 			TArray<StateType> States;
 
+			TArray<int32> Generations;
+
 		// Movement
 
 			TArray<FVector> Last_Locations;
@@ -280,6 +345,12 @@ namespace NCsProjectile
 
 			public:
 
+				TArray<float> InitialSpeeds;
+
+				TArray<float> MaxSpeeds;
+
+				TArray<float> GravityScales;
+
 				TArray<FVector> Directions;
 
 				TArray<FVector> Velocities;
@@ -288,6 +359,9 @@ namespace NCsProjectile
 
 				FMovementInfos() :
 					Outer(nullptr),
+					InitialSpeeds(),
+					MaxSpeeds(),
+					GravityScales(),
 					Directions(),
 					Velocities(),
 					Speeds()
@@ -296,12 +370,18 @@ namespace NCsProjectile
 
 				void SetSize(const int32& InSize)
 				{
+					InitialSpeeds.Reset(InSize);
+					MaxSpeeds.Reset(InSize);
+					GravityScales.Reset(InSize);
 					Directions.Reset(InSize);
 					Velocities.Reset(InSize);
 					Speeds.Reset(InSize);
 					
 					for (int32 I = 0; I < InSize; ++I)
 					{
+						InitialSpeeds.Add(0.0f);
+						MaxSpeeds.Add(0.0f);
+						GravityScales.Add(0.0f);
 						Directions.Add(FVector::ZeroVector);
 						Velocities.Add(FVector::ZeroVector);
 						Speeds.Add(0.0f);
@@ -340,6 +420,8 @@ namespace NCsProjectile
 
 				TArray<DestinationType> DestinationTypes;
 
+				TArray<uint32> DestinationMasks;
+
 				TArray<USceneComponent*> Components;
 
 				TArray<USkeletalMeshComponent*> MeshComponents;
@@ -371,6 +453,7 @@ namespace NCsProjectile
 					ActiveIDs(),
 					States(),
 					DestinationTypes(),
+					DestinationMasks(),
 					Components(),
 					MeshComponents(),
 					Bones(),
@@ -392,6 +475,7 @@ namespace NCsProjectile
 					ActiveIDs.Reset(InSize);
 					States.Reset(InSize);
 					DestinationTypes.Reset(InSize);
+					DestinationMasks.Reset(InSize);
 					Components.Reset(InSize);
 					MeshComponents.Reset(InSize);
 					Bones.Reset(InSize);
@@ -411,6 +495,7 @@ namespace NCsProjectile
 						ActiveIDs.Add(INDEX_NONE);
 						States.Add(TrackingStateType::Inactive);
 						DestinationTypes.Add(DestinationType::Custom);
+						DestinationMasks.Add(0);
 						Components.Add(nullptr);
 						MeshComponents.Add(nullptr);
 						Bones.Add(NAME_None);
@@ -536,6 +621,7 @@ namespace NCsProjectile
 				// State
 				Types(),
 				States(),
+				Generations(),
 				// Movement
 				Last_Locations(),
 				Locations(),
@@ -580,6 +666,7 @@ namespace NCsProjectile
 				AliveIDs.Reset(InSize);
 				Types.Reset(InSize);
 				States.Reset(InSize);
+				Generations.Reset(InSize);
 				Last_Locations.Reset(InSize);
 				Locations.Reset(InSize);
 				Rotations.Reset(InSize);
@@ -603,6 +690,7 @@ namespace NCsProjectile
 					AliveIDs.Add(INDEX_NONE);
 					Types.Add(EMCsProjectile::Get().GetMAX());
 					States.Add(StateType::Inactive);
+					Generations.Add(0);
 					Last_Locations.Add(FVector::ZeroVector);
 					Locations.Add(FVector::ZeroVector);
 					Rotations.Add(FRotator::ZeroRotator);

@@ -1518,6 +1518,40 @@ namespace NCsValid
 			}
 
 			/**
+			* InterfaceType A to InterfaceType B cast
+			*/
+			template<typename InterfaceTypeA, typename InterfaceTypeB>
+			FORCEINLINE static InterfaceTypeB* InterfaceCast(const FString& Context, InterfaceTypeA* A, const FString& AName, const FString& InterfaceNameA, const FString& InterfaceNameB, void(*Log)(const FString&))
+			{
+				if (UObject* O = _getUObject(Context, A, AName, Log))
+				{
+					if (InterfaceTypeB* Other = Cast<InterfaceTypeB>(O))
+						return Other;
+
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s implementing interface: %s does NOT implement the interface: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceNameA, *InterfaceNameB));
+				}
+				return nullptr;
+			}
+
+			/**
+			* InterfaceType A to InterfaceType B cast
+			*/
+			template<typename InterfaceTypeA, typename InterfaceTypeB>
+			FORCEINLINE static const InterfaceTypeB* InterfaceCast(const FString& Context, const InterfaceTypeA* A, const FString& AName, const FString& InterfaceNameA, const FString& InterfaceNameB, void(*Log)(const FString&))
+			{
+				if (UObject* O = _getUObject(Context, A, AName, Log))
+				{
+					if (InterfaceTypeB* Other = Cast<InterfaceTypeB>(O))
+						return Other;
+
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s: %s with Class: %s implementing interface: %s does NOT implement the interface: %s."), *Context, *AName, *(O->GetName()), *(O->GetClass()->GetName()), *InterfaceNameA, *InterfaceNameB));
+				}
+				return nullptr;
+			}
+
+			/**
 			* InterfaceType A to UObject cast
 			*/
 			template<typename InterfaceType, typename ClassType>
@@ -2854,6 +2888,24 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str = #__Interface; \
 		return NCsValid::NInterface::FLibrary::_getUObject<__InterfaceType>(Context, __In__##__Interface, __temp__str, Log); \
+	}(Context, __Interface, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_INTERFACE_TO_INTERFACE_CAST(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
+	[] (const FString& Context, __InterfaceTypeA* __In__##__Interface, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__  = #__Interface; \
+		static const FString __temp__str__a = #__InterfaceTypeA; \
+		static const FString __temp__str__b = #__InterfaceTypeB; \
+		return NCsValid::NInterface::FLibrary::InterfaceCast<__InterfaceTypeA, __InterfaceTypeB>(Context, __In__##__Interface, __temp__str__, __temp__str__a, __temp__str__b, Log); \
+	}(Context, __Interface, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_CONST_INTERFACE_TO_INTERFACE_CAST(__Interface, __InterfaceTypeA, __InterfaceTypeB) \
+	[] (const FString& Context, const __InterfaceTypeA* __In__##__Interface, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__  = #__Interface; \
+		static const FString __temp__str__a = #__InterfaceTypeA; \
+		static const FString __temp__str__b = #__InterfaceTypeB; \
+		return NCsValid::NInterface::FLibrary::InterfaceCast<__InterfaceTypeA, __InterfaceTypeB>(Context, __In__##__Interface, __temp__str__, __temp__str__a, __temp__str__b, Log); \
 	}(Context, __Interface, Log)
 
 #pragma endregion Interface

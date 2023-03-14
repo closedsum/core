@@ -72,24 +72,4 @@ namespace NCsAnimMontage
 
 	#pragma endregion Play
 	};
-
-	namespace NNotify
-	{
-		class CSCORE_API FLibrary final
-		{
-		public:
-
-			static float GetTimeChecked(const FString& Context, const UAnimMontage* Anim, const FName& NotifyName);
-
-			static float GetRemainingTimeAfterChecked(const FString& Context, UAnimMontage* Anim, const FName& NotifyName);
-
-			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& Time, TArray<FName>& OutNames);
-
-			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& Time, TArray<FName, TFixedAllocator<8>>& OutNames);
-
-			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& MinTime, const float& MaxTime, TArray<FName>& OutNames);
-
-			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& MinTime, const float& MaxTime, TArray<FName, TFixedAllocator<8>>& OutNames);
-		};
-	}
 }

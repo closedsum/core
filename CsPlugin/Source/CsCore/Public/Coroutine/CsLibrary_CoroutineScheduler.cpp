@@ -187,6 +187,19 @@ namespace NCsCoroutine
 			return false;
 		}
 
+		bool FLibrary::EndChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const TArray<FCsRoutineHandle>& Handles)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+
+			bool Result = true;
+
+			for (const FCsRoutineHandle& Handle : Handles)
+			{
+				Result &= GetChecked(Context, ContextObject)->End(Group, Handle);
+			}
+			return Result;
+		}
+
 		bool FLibrary::EndAndInvalidateChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle)
 		{
 			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)

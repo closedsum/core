@@ -85,7 +85,11 @@ namespace NCsAnimMontage
 
 			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& Time, TArray<FName>& OutNames);
 
+			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& Time, TArray<FName, TFixedAllocator<8>>& OutNames);
+
 			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& MinTime, const float& MaxTime, TArray<FName>& OutNames);
+
+			static void GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& MinTime, const float& MaxTime, TArray<FName, TFixedAllocator<8>>& OutNames);
 		};
 	}
 }

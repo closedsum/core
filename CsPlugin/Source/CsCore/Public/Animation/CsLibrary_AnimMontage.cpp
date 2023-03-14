@@ -99,7 +99,35 @@ namespace NCsAnimMontage
 			}
 		}
 
+		void FLibrary::GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& Time, TArray<FName, TFixedAllocator<8>>& OutNames)
+		{
+			CS_IS_PTR_NULL_CHECKED(Anim)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Time, 0.0f)
+
+			for (const FAnimNotifyEvent& Event : Anim->Notifies)
+			{
+				if (Event.GetTime() == Time)
+					OutNames.Add(Event.NotifyName);
+			}
+		}
+
 		void FLibrary::GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& MinTime, const float& MaxTime, TArray<FName>& OutNames)
+		{
+			CS_IS_PTR_NULL_CHECKED(Anim)
+			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinTime, 0.0f)
+			CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(MinTime, MaxTime)
+
+			for (const FAnimNotifyEvent& Event : Anim->Notifies)
+			{
+				if ((Event.GetTime() >= MinTime) &
+					(Event.GetTime() <= MaxTime))
+				{
+					OutNames.Add(Event.NotifyName);
+				}
+			}
+		}
+
+		void FLibrary::GetNamesChecked(const FString& Context, UAnimMontage* Anim, const float& MinTime, const float& MaxTime, TArray<FName, TFixedAllocator<8>>& OutNames)
 		{
 			CS_IS_PTR_NULL_CHECKED(Anim)
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinTime, 0.0f)

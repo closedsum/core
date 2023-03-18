@@ -175,6 +175,7 @@ namespace NCsUserWidget
 				CS_CTOR_SET_MEMBER_PROXY(Material);
 				CS_CTOR_SET_MEMBER_PROXY(Size);
 				CS_CTOR_SET_MEMBER_PROXY(RenderScale);
+				CS_CTOR_SET_MEMBER_PROXY(Justification);
 				CS_CTOR_SET_MEMBER_PROXY(ZOrder);
 				CS_CTOR_SET_MEMBER_PROXY(Color);
 				CS_CTOR_SET_MEMBER_PROXY(bAnimParams);

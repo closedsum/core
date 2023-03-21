@@ -4,7 +4,7 @@
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Types/CsTypes_Projectile.h"
 
 #include "CsProjectile.generated.h"
 
@@ -27,6 +27,8 @@ class CSPRJ_API ICsProjectile
 #define DataType NCsProjectile::NData::IData
 
 public:
+
+	virtual const FECsProjectile& GetProjectileType() const = 0;
 
 	virtual void Launch(PayloadType* Payload) = 0;
 
@@ -88,6 +90,18 @@ public:
 	* @param Payload
 	* return
 	*/
+	DECLARE_DELEGATE_RetVal_OneParam(const FECsProjectile& /*Type*/, FScript_GetProjectileType, UObject* /*Object*/);
+
+	/** Delegate type for  */
+	FScript_GetProjectileType Script_GetProjectileType_Impl;
+
+	/**
+	* Delegate type for
+	*
+	* @param Object		Object->GetClass() that implements the interface: ICsData.
+	* @param Payload
+	* return
+	*/
 	DECLARE_DELEGATE_TwoParams(FScript_Launch, UObject* /*Object*/, PayloadType* /*Payload*/);
 
 	/** Delegate type for  */
@@ -134,6 +148,7 @@ public:
 
 	FCsProjectile() :
 		Super(),
+		Script_GetProjectileType_Impl(),
 		Script_Launch_Impl(),
 		Script_GetData_Impl(),
 		Script_GetOwner_Impl(),
@@ -159,6 +174,7 @@ public:
 	{
 		Super::Reset();
 
+		Script_GetProjectileType_Impl.Unbind();
 		Script_Launch_Impl.Unbind();
 		Script_GetData_Impl.Unbind();
 		Script_GetOwner_Impl.Unbind();
@@ -170,6 +186,13 @@ public:
 // ICsProjectile
 #pragma region
 public:
+
+	FORCEINLINE const FECsProjectile& GetProjectileType()
+	{
+		if (bScript)
+			return Script_GetProjectileType_Impl.Execute(Object);
+		return Interface->GetProjectileType();
+	}
 
 	FORCEINLINE void Launch(PayloadType* Payload)
 	{

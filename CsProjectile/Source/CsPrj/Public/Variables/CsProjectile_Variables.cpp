@@ -199,55 +199,59 @@ namespace NCsProjectile
 
 			const FString& Context = Str::Update;
 
-			void(*Log)(const FString&) = &NCsProjectile::FLog::Warning;
-
-			typedef NCsProjectile::EState StateType;
-
-			// FManager = Outer
-			TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
-			const int32& _AliveCount	     = Outer->AliveCount;
-			const TArray<int32>& _AliveIDs   = Outer->AliveIDs;
-			TArray<FRotator>& _Rotations	 = Outer->Rotations;
-			TArray<FQuat>& _Orientations	 = Outer->Orientations;
-
-			// Resolve Rotation and Orientation
-			for (int32 I = 0; I < _AliveCount; ++I)
+			if (!bOverride_Update)
 			{
-				const int32& ID = _AliveIDs[I];
+				void(*Log)(const FString&) = &NCsProjectile::FLog::Warning;
 
-				_Rotations[ID]	  = Directions[ID].Rotation();
-				_Orientations[ID] = _Rotations[ID].Quaternion();
-			}
+				typedef NCsProjectile::EState StateType;
 
-			const TArray<StateType>& _States = Outer->States;
+				// FManager = Outer
+				TArray<ICsProjectile*>& _Projectiles = Outer->Projectiles;
+				const int32& _AliveCount	     = Outer->AliveCount;
+				const TArray<int32>& _AliveIDs   = Outer->AliveIDs;
+				TArray<FRotator>& _Rotations	 = Outer->Rotations;
+				TArray<FQuat>& _Orientations	 = Outer->Orientations;
 
-			// TEMP
-			for (int32 I = 0; I < _AliveCount; ++I)
-			{
-				const int32& ID = _AliveIDs[I];
-
-				ICsProjectile* Projectile = _Projectiles[ID];
-
-				ICsProjectile_Movement* Movement = CS_INTERFACE_TO_INTERFACE_CAST_CHECKED(Projectile, ICsProjectile, ICsProjectile_Movement);
-
-				if (Movement)
+				// Resolve Rotation and Orientation
+				for (int32 I = 0; I < _AliveCount; ++I)
 				{
-					// NOTE: Currently Location is updated by Actor's Location
-					Movement->Movement_SetLocation(FVector::ZeroVector);
+					const int32& ID = _AliveIDs[I];
 
-					// LaunchDelay
-					if (_States[ID] == StateType::LaunchDelay)
-					{
-						Movement->Movement_SetRotation(_Rotations[ID]);
-					}
-					else
-					{
-						Velocities[ID] = Speeds[ID] * Directions[ID];
+					_Rotations[ID]	  = Directions[ID].Rotation();
+					_Orientations[ID] = _Rotations[ID].Quaternion();
+				}
 
-						Movement->Movement_SetVelocity(Velocities[ID]);
+				const TArray<StateType>& _States = Outer->States;
+
+				// TEMP
+				for (int32 I = 0; I < _AliveCount; ++I)
+				{
+					const int32& ID = _AliveIDs[I];
+
+					ICsProjectile* Projectile = _Projectiles[ID];
+
+					ICsProjectile_Movement* Movement = CS_INTERFACE_TO_INTERFACE_CAST(Projectile, ICsProjectile, ICsProjectile_Movement);
+
+					if (Movement)
+					{
+						// NOTE: Currently Location is updated by Actor's Location
+						Movement->Movement_SetLocation(FVector::ZeroVector);
+
+						// LaunchDelay
+						if (_States[ID] == StateType::LaunchDelay)
+						{
+							Movement->Movement_SetRotation(_Rotations[ID]);
+						}
+						else
+						{
+							Velocities[ID] = Speeds[ID] * Directions[ID];
+
+							Movement->Movement_SetVelocity(Velocities[ID]);
+						}
 					}
 				}
 			}
+			UpdateImpl.ExecuteIfBound(DeltaTime);
 		}
 
 		void FManager::FTrackingInfos::SetupIDs(const int32& ID)
@@ -506,10 +510,18 @@ namespace NCsProjectile
 			}
 			*/
 
-			const FVector& Location = Payload.Location;
-			const float& MaxExtents = Payload.MaxExtents;
+			Locations[ID]	   = Payload.Location;
+			Last_Locations[ID] = Last_Locations[ID];
 
-			LooseCoarseGrid.Insert(ID, Location.X, Location.Y, MaxExtents, MaxExtents);
+			MovementInfos.Directions[ID] = Payload.Direction;
+
+			Rotations[ID]	 = MovementInfos.Directions[ID].Rotation();
+			Orientations[ID] = Rotations[ID].Quaternion();
+
+			CollisionInfos.Radii[ID]	   = Payload.CollisionRadius;
+			CollisionInfos.HalfHeights[ID] = Payload.CollisionHalfHeight;
+
+			LooseCoarseGrid.Insert(ID, Locations[ID].X, Locations[ID].Y, CollisionInfos.HalfHeights[ID], CollisionInfos.HalfHeights[ID]);
 
 			return GetVariablesPtr(ID);
 		}

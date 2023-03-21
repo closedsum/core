@@ -32,13 +32,19 @@ namespace NCsProjectile
 
 				FVector Location;
 
-				float MaxExtents;
+				FVector Direction;
+
+				float CollisionRadius;
+
+				float CollisionHalfHeight;
 
 				FPayload() :
 					Projectile(nullptr),
 					Type(),
 					Location(0.0f),
-					MaxExtents(0.0f)
+					Direction(0.0f),
+					CollisionRadius(0.0f),
+					CollisionHalfHeight(0.0f)
 				{
 				}
 
@@ -334,6 +340,7 @@ namespace NCsProjectile
 
 			TArray<FRotator> Rotations;
 			TArray<FQuat> Orientations;
+			TArray<FVector> FacingDirections;
 
 			struct FMovementInfos
 			{
@@ -357,6 +364,12 @@ namespace NCsProjectile
 
 				TArray<float> Speeds;
 
+				bool bOverride_Update;
+
+				DECLARE_DELEGATE_OneParam(FUpdateImpl, const FCsDeltaTime& DeltaTime);
+
+				FUpdateImpl UpdateImpl;
+
 				FMovementInfos() :
 					Outer(nullptr),
 					InitialSpeeds(),
@@ -364,7 +377,9 @@ namespace NCsProjectile
 					GravityScales(),
 					Directions(),
 					Velocities(),
-					Speeds()
+					Speeds(),
+					bOverride_Update(false),
+					UpdateImpl()
 				{
 				}
 
@@ -717,6 +732,7 @@ namespace NCsProjectile
 			{
 				Variables[Index].Reset();
 				Projectiles[Index]	= nullptr;
+				States[Index]		= StateType::Inactive;
 				Types[Index]		= EMCsProjectile::Get().GetMAX();
 				Locations[Index]	= FVector::ZeroVector;
 				Rotations[Index]	= FRotator::ZeroRotator;

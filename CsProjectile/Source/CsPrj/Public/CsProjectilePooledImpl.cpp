@@ -1165,6 +1165,11 @@ void ACsProjectilePooledImpl::Movement_SetLocation(const FVector& Location)
 	Variables->GetLocation() = GetActorLocation();
 }
 
+FVector ACsProjectilePooledImpl::Movement_GetLocation() const
+{
+	return Variables->GetLocation();
+}
+
 void ACsProjectilePooledImpl::Movement_SetRotation(const FRotator& Rotation)
 {
 	SetActorRotation(Rotation);
@@ -1243,13 +1248,15 @@ void ACsProjectilePooledImpl::AllocateVariables(const PayloadType* Payload)
 	VariablesPayload.Projectile	= this;
 	VariablesPayload.Type		= Type;
 	VariablesPayload.Location	= Payload->GetLocation();
+	VariablesPayload.Direction  = Payload->GetDirection();
 
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
 	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
 
 	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
 	{
-		VariablesPayload.MaxExtents = CollisionData->GetCollisionRadius();
+		VariablesPayload.CollisionRadius	 = CollisionData->GetCollisionRadius();
+		VariablesPayload.CollisionHalfHeight = CollisionData->GetCollisionRadius();
 	}
 
 	Variables = VariablesLibrary::AllocateChecked(Context, GetWorldContext(), VariablesPayload);

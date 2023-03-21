@@ -604,14 +604,14 @@ namespace NCsLooseCoarseGrid
 		* @param Y	Position along Y axis
 		* return	Index
 		*/
-		FORCEINLINE int32 GetCellIndex(const float& X, const float& Y)
+		FORCEINLINE int32 GetCellIndex(const float& X, const float& Y) const
 		{
 			const int32 CellX = NCsLooseCoarseGrid::FHelper::ToCellIndex(X - Left, Loose.InverseCellWidth, Loose.NumColumns);
 			const int32 CellY = NCsLooseCoarseGrid::FHelper::ToCellIndex(Y - Top, Loose.InverseCellHeight, Loose.NumRows);
 			return CellY * Loose.NumColumns + CellX;
 		}
 
-		FORCEINLINE FIntVector4 GetCellIndex4(const FVector4& Rect)
+		FORCEINLINE FIntVector4 GetCellIndex4(const FVector4& Rect) const
 		{
 			FVector4 inv_cell_size_vec = FVector4(Tight.InverseCellWidth, Tight.InverseCellHeight, Tight.InverseCellWidth, Tight.InverseCellHeight);
 			FVector4 cell_xyf_vec	   = Rect * inv_cell_size_vec;
@@ -699,11 +699,11 @@ namespace NCsLooseCoarseGrid
 
 	private:
 
-		void Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount);
+		void Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount) const;
 
 	public:
 		
-		FORCEINLINE void Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount)
+		FORCEINLINE void Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount) const
 		{
 			Query_Internal(CenterX + GetWidthBy2(), CenterY + GetHeightBy2(), HalfWidth, HalfHeight, OmitID, OutResult, OutResultCount);
 		}

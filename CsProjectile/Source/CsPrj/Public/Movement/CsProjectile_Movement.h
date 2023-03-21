@@ -19,6 +19,8 @@ public:
 
 	virtual void Movement_SetLocation(const FVector& Location) = 0;
 
+	virtual FVector Movement_GetLocation() const = 0;
+
 	virtual void Movement_SetRotation(const FRotator& Rotation) = 0;
 
 	virtual void Movement_SetVelocity(const FVector& Velocity) = 0;

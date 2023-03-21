@@ -253,6 +253,8 @@ public:
 #pragma region
 public:
 
+	FORCEINLINE const FECsProjectile& GetProjectileType() const { return GetType(); }
+
 	void Launch(PayloadType* Payload);
 
 	FORCEINLINE DataType* GetData() const { return Data; }
@@ -335,6 +337,8 @@ private:
 public:
 
 	void Movement_SetLocation(const FVector& Location);
+
+	FVector Movement_GetLocation() const;
 
 	void Movement_SetRotation(const FRotator& Rotation);
 

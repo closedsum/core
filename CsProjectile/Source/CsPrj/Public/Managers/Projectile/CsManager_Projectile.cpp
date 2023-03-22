@@ -299,6 +299,13 @@ void UCsManager_Projectile::Initialize()
 
 void UCsManager_Projectile::CleanUp()
 {
+	Projectile_OnAllocate_Event.Clear();
+	Projectile_OnDeallocate_Start_Event.Clear();
+	Projectile_OnHit_Event.Clear();
+	OnSpawn_Event.Clear();
+	OnSpawn_ScriptEvent.Clear();
+	OnDestroy_Event.Clear();
+
 	Internal.Shutdown();
 
 	for (NCsProjectile::NPayload::FInterfaceMap* Map : PayloadInterfaceMaps)

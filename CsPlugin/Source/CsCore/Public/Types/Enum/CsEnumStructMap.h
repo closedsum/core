@@ -211,7 +211,7 @@ public:
 
 	FORCEINLINE bool IsValidEnum(const EnumStruct& Enum) const
 	{
-		return Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+		return Enum.IsValid() && Enum != MAX && Enum.GetValue() < (uint32)Count && Enums.Find(Enum) > INDEX_NONE;
 	}
 
 	FORCEINLINE bool IsValidEnum(const FString& Name) const
@@ -226,7 +226,7 @@ public:
 
 	FORCEINLINE bool IsValidEnumChecked(const EnumStruct& Enum) const
 	{
-		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < (uint32)Count && Enums.Find(Enum) > INDEX_NONE;
 
 		checkf(Result, TEXT("%s::IsValidEnumChecked: Enum: %s is NOT Valid"), *MapName, *(Enum.GetFName().ToString()));
 
@@ -235,7 +235,7 @@ public:
 
 	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const EnumStruct& Enum) const
 	{
-		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < (uint32)Count && Enums.Find(Enum) > INDEX_NONE;
 
 		checkf(Result, TEXT("%s: Enum: %s is NOT Valid"), *Context, *(Enum.GetFName().ToString()));
 
@@ -244,7 +244,7 @@ public:
 
 	FORCEINLINE bool IsValidEnumChecked(const FString& Context, const FString& EnumElementName, const EnumStruct& Enum) const
 	{
-		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < Count && Enums.Find(Enum) > INDEX_NONE;
+		const bool Result = Enum.IsValid() && Enum != MAX && Enum.GetValue() < (uint32)Count && Enums.Find(Enum) > INDEX_NONE;
 
 		checkf(Result, TEXT("%s: %s: %s is NOT Valid"), *Context, *EnumElementName, *(Enum.GetFName().ToString()));
 

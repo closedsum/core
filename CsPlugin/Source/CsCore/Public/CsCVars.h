@@ -1,7 +1,7 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Engine.h"
-#include "Types/Enum/CsEnum_uint8.h"
+#include "Types/Enum/CsEnum_uint32.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "CsCVars.generated.h"
 
@@ -249,18 +249,18 @@ struct CSCORE_API ICsCVarMap
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsCVarLog : public FECsEnum_uint8
+struct CSCORE_API FECsCVarLog : public FECsEnum_uint32
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsCVarLog)
+	CS_ENUM_UINT32_BODY(FECsCVarLog)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCVarLog)
+CS_DEFINE_ENUM_UINT32_GET_TYPE_HASH(FECsCVarLog)
 
-struct CSCORE_API EMCsCVarLog final : public TCsEnumStructMap<FECsCVarLog, uint8>
+struct CSCORE_API EMCsCVarLog final : public TCsEnumStructMap<FECsCVarLog, uint32>
 {
-	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarLog, FECsCVarLog, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarLog, FECsCVarLog, uint32)
 };
 
 	// FCsCVarLogMap
@@ -416,18 +416,18 @@ namespace NCsCVarLog
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsCVarToggle : public FECsEnum_uint8
+struct CSCORE_API FECsCVarToggle : public FECsEnum_uint32
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsCVarToggle)
+	CS_ENUM_UINT32_BODY(FECsCVarToggle)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCVarToggle)
+CS_DEFINE_ENUM_UINT32_GET_TYPE_HASH(FECsCVarToggle)
 
-struct CSCORE_API EMCsCVarToggle final : public TCsEnumStructMap<FECsCVarToggle, uint8>
+struct CSCORE_API EMCsCVarToggle final : public TCsEnumStructMap<FECsCVarToggle, uint32>
 {
-	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarToggle, FECsCVarToggle, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarToggle, FECsCVarToggle, uint32)
 };
 
 	// FCsCVarToggleMap
@@ -541,18 +541,18 @@ namespace NCsCVarToggle
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsCVarDraw : public FECsEnum_uint8
+struct CSCORE_API FECsCVarDraw : public FECsEnum_uint32
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsCVarDraw)
+	CS_ENUM_UINT32_BODY(FECsCVarDraw)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsCVarDraw)
+CS_DEFINE_ENUM_UINT32_GET_TYPE_HASH(FECsCVarDraw)
 
-struct CSCORE_API EMCsCVarDraw final : public TCsEnumStructMap<FECsCVarDraw, uint8>
+struct CSCORE_API EMCsCVarDraw final : public TCsEnumStructMap<FECsCVarDraw, uint32>
 {
-	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarDraw, FECsCVarDraw, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsCVarDraw, FECsCVarDraw, uint32)
 };
 
 	// FCsCVarDrawMap
@@ -661,18 +661,18 @@ namespace NCsCVarDraw
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsScopedGroup : public FECsEnum_uint8
+struct CSCORE_API FECsScopedGroup : public FECsEnum_uint32
 {
 	GENERATED_USTRUCT_BODY()
 
-	CS_ENUM_UINT8_BODY(FECsScopedGroup)
+	CS_ENUM_UINT32_BODY(FECsScopedGroup)
 };
 
-CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsScopedGroup)
+CS_DEFINE_ENUM_UINT32_GET_TYPE_HASH(FECsScopedGroup)
 
-struct CSCORE_API EMCsScopedGroup final : public TCsEnumStructMap<FECsScopedGroup, uint8>
+struct CSCORE_API EMCsScopedGroup final : public TCsEnumStructMap<FECsScopedGroup, uint32>
 {
-	CS_ENUM_STRUCT_MAP_BODY(EMCsScopedGroup, FECsScopedGroup, uint8)
+	CS_ENUM_STRUCT_MAP_BODY(EMCsScopedGroup, FECsScopedGroup, uint32)
 };
 
 	// FCsScopedGroupMap

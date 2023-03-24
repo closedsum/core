@@ -270,10 +270,8 @@ protected:
 
 public:
 
-	FORCEINLINE UObject* GetMyRoot()
-	{
-		return MyRoot;
-	}
+	FORCEINLINE UObject* GetMyRoot() { return MyRoot; }
+	FORCEINLINE const UObject* GetMyRoot() const { return MyRoot; }
 
 #pragma endregion Root
 

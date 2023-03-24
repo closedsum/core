@@ -36,6 +36,16 @@ namespace NCsFX
 			}
 		}
 
+		// Print
+		#pragma region
+
+		FString FLibrary::PrintObjectWithClass(const UCsManager_FX_Actor* Manager)
+		{
+			return FString::Printf(TEXT("%s: with Class: %s"), *(Manager->GetName()), *(Manager->GetClass()->GetName()));
+		}
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 

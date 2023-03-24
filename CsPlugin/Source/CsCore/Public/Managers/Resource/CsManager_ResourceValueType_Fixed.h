@@ -276,6 +276,16 @@ namespace NCsResource
 					return PoolSize == AllocatedSize;
 				}
 
+				/**
+				* Check if there are Count number of resources free to be allocated.
+				* 
+				* return Whether there are Count number of resources free.
+				*/
+				FORCEINLINE bool HasFree(const int32& Count) const
+				{
+					return (PoolSize - AllocatedSize) >= Count;
+				}
+
 				FORCEINLINE void AdvancePoolIndexByIncrement() { PoolIndex = (PoolIndex + 1) & PoolSizeMinusOne; }
 
 				FORCEINLINE void AdvancePoolIndexByOrder() { PoolIndex = AllocationOrder.Advance(); }

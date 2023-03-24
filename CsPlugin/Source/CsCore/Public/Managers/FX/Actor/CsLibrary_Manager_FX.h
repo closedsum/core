@@ -33,6 +33,14 @@ namespace NCsFX
 		*/
 		struct CSCORE_API FLibrary final
 		{
+		// Print
+		#pragma region
+		public:
+
+			static FString PrintObjectWithClass(const UCsManager_FX_Actor* Manager);
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -101,6 +109,23 @@ namespace NCsFX
 			static UCsManager_FX_Actor* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
+			* Get the reference to UCsManager_FX_Actor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsManager_FX_Actor.
+			*/
+			template<typename T>
+			static T* GetChecked(const FString& Context, const UObject* ContextObject)
+			{
+				UCsManager_FX_Actor* O = GetChecked(Context, ContextObject);
+				T* Other			   = Cast<T>(O);
+
+				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
+				return Other;
+			}
+
+			/**
 			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
 			*
 			* @param Context		The calling context.
@@ -109,6 +134,32 @@ namespace NCsFX
 			* return				UCsManager_FX_Actor.
 			*/
 			static UCsManager_FX_Actor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return				UCsManager_FX_Actor.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UCsManager_FX_Actor* O = GetSafe(Context, ContextObject, Log);
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
 
 			/**
 			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.

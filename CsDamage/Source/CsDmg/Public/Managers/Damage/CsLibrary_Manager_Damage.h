@@ -7,7 +7,7 @@
 #include "Modifier/CsAllocated_DamageModifier.h"
 #include "Process/Payload/CsProcessDamageDataPayload.h"
 // Log
-#include "Utility/CsLog.h"
+#include "Utility/CsDmgLog.h"
 
 class UObject;
 class UCsManager_Damage;
@@ -83,9 +83,9 @@ namespace NCsDamage
 			* @param Log			(optional)
 			* return				Context for UCsManager_Damage
 			*/
-			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 		#else
-			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning) { return nullptr; }
+			FORCEINLINE static UObject* GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsDamage::FLog::Warning) { return nullptr; }
 		#endif // #if WITH_EDITOR
 
 		#if WITH_EDITOR
@@ -123,7 +123,7 @@ namespace NCsDamage
 			* @param Log			(optional)
 			* return				UCsManager_Damage.
 			*/
-			static UCsManager_Damage* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_Damage* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_Damage from a WorldContext.
@@ -306,7 +306,7 @@ namespace NCsDamage
 			* @param Log				(optional)
 			* return					Object which implements the interface: DataType (NCsDamage::NData::IData).
 			*/
-			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) = &FCsLog::Warning);
+			static DataType* GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 		#undef GetDamageDataTypeDataType
 
@@ -345,10 +345,32 @@ namespace NCsDamage
 			* @param Log				(optional)
 			* return
 			*/
-			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 		#undef GetDamageDataTypeDataTypes
 			
+			/**
+			* Get the Data as a UObject (implements interface: DataType (ICsData_Damage)) associated with Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Damage type.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (ICsData_Damage).
+			*/
+			static UObject* GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FECsDamageData& Type, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+
+			/**
+			* Get the Data as a UObject (implements interface: DataType (ICsData_Damage)) associated with Type.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Name			Name of the Damage type.
+			* @param Log			(optional)
+			* return				Data that implements the interface: DataType (ICsData_Damage).
+			*/
+			static UObject* GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
+
 			/**
 			* Add the Datas, Objects that implements the interface: DataType (NCsDamage::NData::IData),
 			* associated with the result of GetDamageDataTypes->GetDamageDataTypes (TArray<FECsDamageData>).
@@ -370,7 +392,7 @@ namespace NCsDamage
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
 			*/
-			static DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 		#undef DataHandlerType
 		#undef DataInterfaceMapType
@@ -422,7 +444,7 @@ namespace NCsDamage
 			* @param Log			(optional)
 			* return				Whether the Damage Event was created or not.
 			*/
-			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
 			* Safely process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event
@@ -437,7 +459,7 @@ namespace NCsDamage
 			* @param Log			(optional)
 			* return				Whether the Damage Event was created or not.
 			*/
-			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) = &NCsDamage::FLog::Warning);
 
 			/**
 			* Process, create a Damage Event (NCsDamage::NEvent::IEvent), and broadcast the Event 

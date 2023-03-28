@@ -963,6 +963,25 @@ DataType* UCsManager_Damage::GetSafeData(const FString& Context, const FName& Na
 #endif // #if UE_BUILD_SHIPPING
 }
 
+#define EnumMapType EMCsDamageData
+#define EnumType FECsDamageData
+
+DataType* UCsManager_Damage::GetSafeData(const FString& Context, const EnumType& Type, void(*Log)(const FString&) /*=nullptr*/)
+{
+#if UE_BUILD_SHIPPING
+	return DataHandler->GetSafeData<EnumMapType, EnumType>(Context, Type, Log);
+#else
+	DataType* Data = DataHandler->GetSafeData<EnumMapType, EnumType>(Context, Type, Log);
+
+	if (!IsValid(Context, Data, Log))
+		return nullptr;
+	return Data;
+#endif // #if UE_BUILD_SHIPPING
+}
+
+#undef EnumMapType
+#undef EnumType
+
 #undef DataType
 
 #pragma endregion Data

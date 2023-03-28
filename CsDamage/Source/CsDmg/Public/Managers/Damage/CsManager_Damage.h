@@ -450,11 +450,21 @@ public:
 	* Safely get the Data (implements interface: DataType (NCsData::NData::IData)) associated with Name of the weapon type.
 	*
 	* @param Context	The calling context.
-	* @param Name		Name of the Weapon.
+	* @param Name		Name of the Damage.
 	* @param Log		(optional)
 	* return			Data that implements the interface: DataType (NCsData::NData::IData).
 	*/
 	DataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) = nullptr);
+
+	/**
+	* Safely get the Data (implements interface: DataType (NCsData::NData::IData)) associated with Name of the weapon type.
+	*
+	* @param Context	The calling context.
+	* @param Type		Damage Type.
+	* @param Log		(optional)
+	* return			Data that implements the interface: DataType (NCsData::NData::IData).
+	*/
+	DataType* GetSafeData(const FString& Context, const FECsDamageData& Type, void(*Log)(const FString&) = nullptr);
 
 #define ModifierType NCsDamage::NModifier::IModifier
 

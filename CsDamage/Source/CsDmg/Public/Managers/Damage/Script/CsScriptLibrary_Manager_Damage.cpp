@@ -14,6 +14,8 @@ namespace NCsScriptLibraryManagerDamage
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Damage, GetData);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Damage, GetDataByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Damage, ProcessData);
 		}
 	}
@@ -24,6 +26,28 @@ namespace NCsScriptLibraryManagerDamage
 UCsScriptLibrary_Manager_Damage::UCsScriptLibrary_Manager_Damage(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+UObject* UCsScriptLibrary_Manager_Damage::GetData(const FString& Context, const UObject* WorldContextObject, const FECsDamageData& Type)
+{
+	using namespace NCsScriptLibraryManagerDamage::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetData : Context;
+
+	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+	return DamageManagerLibrary::GetSafeDataAsObject(Context, WorldContextObject, Type);
+}
+
+UObject* UCsScriptLibrary_Manager_Damage::GetDataByName(const FString& Context, const UObject* WorldContextObject, const FName& Name)
+{
+	using namespace NCsScriptLibraryManagerDamage::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDataByName : Context;
+
+	typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+
+	return DamageManagerLibrary::GetSafeDataAsObject(Context, WorldContextObject, Name);
 }
 
 bool UCsScriptLibrary_Manager_Damage::ProcessData(const FString& Context, const UObject* WorldContextObject, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult)

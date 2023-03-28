@@ -7,6 +7,7 @@
 #include "Value/CsLibrary_DamageValue.h"
 #include "Range/CsLibrary_DamageRange.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Damage/CsManager_Damage.h"
@@ -63,7 +64,7 @@ namespace NCsDamage
 			return GameStateLibrary::GetAsObjectChecked(Context, WorldContext);
 		}
 
-		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -106,7 +107,7 @@ namespace NCsDamage
 			return Manager_Damage;
 		}
 
-		UCsManager_Damage* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		UCsManager_Damage* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -318,7 +319,7 @@ namespace NCsDamage
 			return GetChecked(Context, WorldContext)->GetDataChecked(Context, DamageDataType.GetFName());
 		}
 
-		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		DataType* FLibrary::GetSafeData(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataType* GetDamageDataType, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_RET_NULL(GetDamageDataType)
 
@@ -362,7 +363,7 @@ namespace NCsDamage
 			GetDatasChecked(Context, WorldContext, DamageDataTypes, OutDatas);
 		}
 
-		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::GetSafeDatas(const FString& Context, const UObject* WorldContext, const GetDamageDataTypeDataTypes* GetDamageDataTypes, TArray<DataType*>& OutDatas, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(GetDamageDataTypes)
 
@@ -386,6 +387,57 @@ namespace NCsDamage
 
 		#undef GetDamageDataTypeDataTypes
 
+		UObject* FLibrary::GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FECsDamageData& Type, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		{
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				if (DataType* Data = Manager_Damage->GetSafeData(Context, Type, Log))
+				{
+					if (UObject* O = Data->_getUObject())
+					{
+						return O;
+					}
+					else
+					{
+						typedef NCsDamage::NData::FLibrary DataLibrary;
+
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Name: %s"), *Context, *DataLibrary::PrintDataAndClass(Data), Type.ToChar()));
+					}
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Data associated with Name: %s"), *Context, Type.ToChar()));
+				}
+			}
+			return nullptr;
+		}
+
+
+		UObject* FLibrary::GetSafeDataAsObject(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		{
+			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
+			{
+				if (DataType* Data = Manager_Damage->GetSafeData(Context, Name, Log))
+				{
+					if (UObject* O = Data->_getUObject())
+					{
+						return O;
+					}
+					else
+					{
+						typedef NCsDamage::NData::FLibrary DataLibrary;
+
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get UObject for %s associated with Name: %s"), *Context, *DataLibrary::PrintDataAndClass(Data), *(Name.ToString())));
+					}
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Data associated with Name: %s"), *Context, *(Name.ToString())));
+				}
+			}
+			return nullptr;
+		}
+
 		void FLibrary::AddDatasChecked(const FString& Context, const UObject* WorldContext, const TArray<FECsDamageData>& DamageDataTypes, TArray<DataType*>& OutDatas)
 		{
 			CS_IS_ENUM_STRUCT_ARRAY_VALID_CHECKED(EMCsDamageData, FECsDamageData, DamageDataTypes)
@@ -402,7 +454,7 @@ namespace NCsDamage
 
 		#define DataHandlerType NCsData::NManager::NHandler::TData
 		#define DataInterfaceMapType NCsDamage::NData::FInterfaceMap
-		DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		DataHandlerType<DataType, FCsData_DamagePtr, DataInterfaceMapType>* FLibrary::GetSafeDataHandler(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 		#undef DataHandlerType
 		#undef DataInterfaceMapType
@@ -430,7 +482,7 @@ namespace NCsDamage
 			GetChecked(Context, WorldContext)->ProcessData(Context, DataPtr, Data, Instigator, Causer, HitResult);
 		}
 
-		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, DataType* Data, const FECsDamageData& Type, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, const TArray<ModifierType*>& Modifiers, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Data)
 			CS_IS_ENUM_STRUCT_VALID(EMCsDamageData, FECsDamageData, Type)
@@ -450,7 +502,7 @@ namespace NCsDamage
 			return false;
 		}
 
-		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeProcessData(const FString& Context, const UObject* WorldContext, const FName& DataName, UObject* Instigator, UObject* Causer, const FHitResult& HitResult, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			if (UCsManager_Damage* Manager_Damage = GetSafe(Context, WorldContext, Log))
 			{

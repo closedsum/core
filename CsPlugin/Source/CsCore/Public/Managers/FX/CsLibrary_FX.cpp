@@ -685,6 +685,58 @@ namespace NCsFX
 
 	#pragma endregion Parameter
 
+	// Variable
+	#pragma region
+
+	FNiagaraVariable* FLibrary::GetExposedVariableChecked(const FString& Context, UNiagaraSystem* System, const FName& Name)
+	{
+		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_NAME_NONE_CHECKED(Name)
+
+		FNiagaraUserRedirectionParameterStore& Store = System->GetExposedParameters();
+
+		static TArray<FNiagaraVariable> Parameters;
+		Parameters.Reset(Parameters.Max());
+
+		Store.GetParameters(Parameters);
+
+		for (FNiagaraVariable& Var : Parameters)
+		{
+			if (Name == Var.GetName())
+			{
+				return &Var;
+			}
+		}
+		checkf(0, TEXT("%s: Failed to find Parameter with Name: %s on System: %s."), *Context, *(Name.ToString()), *(System->GetName()));
+		return nullptr;
+	}
+
+	FNiagaraVariable* FLibrary::GetSafeExposedVariable(const FString& Context, UNiagaraSystem* System, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(System)
+		CS_IS_NAME_NONE_RET_NULL(Name)
+
+		FNiagaraUserRedirectionParameterStore& Store = System->GetExposedParameters();
+
+		static TArray<FNiagaraVariable> Parameters;
+		Parameters.Reset(Parameters.Max());
+
+		Store.GetParameters(Parameters);
+
+		for (FNiagaraVariable& Var : Parameters)
+		{
+			if (Name == Var.GetName())
+			{
+				return &Var;
+			}
+		}
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Parameter with Name: %s on System: %s."), *Context, *(Name.ToString()), *(System->GetName())));
+		return nullptr;
+	}
+
+	#pragma endregion Variable
+
 	// Spawn
 	#pragma region
 

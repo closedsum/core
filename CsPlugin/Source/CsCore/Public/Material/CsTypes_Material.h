@@ -367,6 +367,64 @@ public:
 		return &Materials_Internal;
 	}
 
+	/**
+	* Safely get the Hard reference to the Material at Index of type: UMaterialInterface.
+	*
+	* @param Context	The calling context.
+	* @param Index
+	* @param Log		(optional)
+	* return			Materials
+	*/
+	UMaterialInterface* GetSafeAt(const FString& Context, const int32& Index, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (Index < 0)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Index: %d is NOT Valid."), *Context, Index));
+			return nullptr;
+		}
+
+		if (Materials.Num() == CS_EMPTY)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: No Materials set."), *Context));
+			return nullptr;
+		}
+
+		if (Materials.Num() != Materials_Internal.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Mismatch between Soft and Hard references to materials, %d != %d."), *Context, Materials.Num(), Materials_Internal.Num()));
+			return nullptr;
+		}
+
+		if (Index > Materials.Num())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Index: %d > number (%d) of Materials."), *Context, Index, Materials.Num()));
+			return nullptr;
+		}
+
+		const TSoftObjectPtr<UMaterialInterface>& SoftObject = Materials[Index];
+
+		if (!SoftObject.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Materials[%d] is NULL."), *Context, Index));
+			return nullptr;
+		}
+
+		UMaterialInterface* Material = Materials_Internal[Index];
+
+		if (!Material)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Materials[%d] has NOT been loaded from Path @ %s."), *Context, Index, *(SoftObject.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+		return Material;
+	}
+
 	void SetChecked(const FString& Context, UPrimitiveComponent* Component) const;
 
 	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;

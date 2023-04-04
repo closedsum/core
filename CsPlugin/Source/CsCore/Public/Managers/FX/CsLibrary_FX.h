@@ -203,6 +203,16 @@ namespace NCsFX
 
 	#pragma endregion Parameter
 
+	// Variable
+	#pragma region
+	public:
+
+		static FNiagaraVariable* GetExposedVariableChecked(const FString& Context, UNiagaraSystem* System, const FName& Name);
+
+		static FNiagaraVariable* GetSafeExposedVariable(const FString& Context, UNiagaraSystem* System, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Variable
+
 	// Spawn
 	#pragma region
 	private:

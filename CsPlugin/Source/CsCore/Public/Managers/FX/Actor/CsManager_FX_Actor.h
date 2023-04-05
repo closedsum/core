@@ -639,11 +639,11 @@ public:
 
 	/**
 	*/
-	void Pause(const FECsUpdateGroup& Group, bool bPaused);
+	virtual void Pause(const FECsUpdateGroup& Group, bool bPaused);
 
 	/**
 	*/
-	void Pause(const FECsFX& Type, bool bPaused);
+	virtual void Pause(const FECsFX& Type, bool bPaused);
 
 private:
 

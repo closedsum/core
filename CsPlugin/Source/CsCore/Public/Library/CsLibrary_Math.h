@@ -734,6 +734,18 @@ namespace NCsMath
 			return A.X * B.X + A.Y * B.Y;
 		}
 
+		FORCEINLINE static FVector Multiply(const FVector& V, const FQuat& Quat)
+		{
+			const FVector QuatXYZ = FVector(Quat.X, Quat.Y, Quat.Z);
+
+			const FVector Part1 = 2.0f * FVector::DotProduct(QuatXYZ, V) * QuatXYZ;
+			const FVector Part2 = (FMath::Square(Quat.W) - FVector::DotProduct(QuatXYZ, QuatXYZ)) * V;
+			const FVector Part3 = 2.0f * Quat.W * FVector::CrossProduct(QuatXYZ, V);
+
+			const FVector Vector = Part1 + Part2 + Part3;
+			return Vector;
+		}
+
 	#pragma endregion Vector
 
 	// Rotator

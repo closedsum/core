@@ -284,7 +284,7 @@ namespace NCsLooseCoarseGrid
 		FORCEINLINE static int32 ToCellIndex(const float& Value, const float& InverseCellSize, const int32& NumCells)
 		{
 			const int32 CellPosition = (int)(Value * InverseCellSize);
-			return MinInt(MinInt(CellPosition, 0), NumCells - 1);
+			return MinInt(MaxInt(CellPosition, 0), NumCells - 1);
 		}
 
 		FORCEINLINE static bool DoesRectIntersect(const FVector4& A, const FVector4& B)
@@ -697,16 +697,36 @@ namespace NCsLooseCoarseGrid
 		*/
 		TSmallList<int32> Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID);
 
+		struct FQuery
+		{
+		public:
+
+			struct FResult
+			{
+			public:
+
+				TArray<int32> IDs;
+
+				int32 Count;
+
+				int32 InterationCount;
+			};
+		};
+
+	#define QueryResultType NCsLooseCoarseGrid::FGrid::FQuery::FResult
+
 	private:
 
-		void Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount) const;
+		void Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, QueryResultType& OutResult) const;
 
 	public:
 		
-		FORCEINLINE void Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount) const
+		FORCEINLINE void Query(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, QueryResultType& OutResult) const
 		{
-			Query_Internal(CenterX + GetWidthBy2(), CenterY + GetHeightBy2(), HalfWidth, HalfHeight, OmitID, OutResult, OutResultCount);
+			Query_Internal(CenterX + GetWidthBy2(), CenterY + GetHeightBy2(), HalfWidth, HalfHeight, OmitID, OutResult);
 		}
+
+	#undef QueryResultType
 
 	private:
 

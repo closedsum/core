@@ -193,8 +193,13 @@ namespace NCsLooseCoarseGrid
 		return Result;
 	}
 
-	void FGrid::Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, TArray<int32>& OutResult, int32& OutResultCount) const
+	#define QueryResultType NCsLooseCoarseGrid::FGrid::FQuery::FResult
+	void FGrid::Query_Internal(float CenterX, float CenterY, float HalfWidth, float HalfHeight, const int32& OmitID, QueryResultType& OutResult) const
 	{
+	#undef QueryResultType
+
+		OutResult.InterationCount = 0;
+
 		CenterX -= Left;
 		CenterY -= Top;
 
@@ -230,12 +235,14 @@ namespace NCsLooseCoarseGrid
 						++Count;
 					}
 					tcell_idx = TightCell.Next;
+
+					++OutResult.InterationCount;
 				}
 			}
 		}
 
 		// For each loose cell, determine what elements intersect.
-		OutResultCount = 0;
+		OutResult.Count = 0;
 
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
@@ -253,11 +260,13 @@ namespace NCsLooseCoarseGrid
 
 				if (Element.GetID() != OmitID && NCsLooseCoarseGrid::FHelper::DoesRectIntersect(qrect_vec, Element.ToRectAsVector4()))
 				{
-					OutResult.Add(Element.GetID());
-					++OutResultCount;
+					OutResult.IDs.Add(Element.GetID());
+					++OutResult.Count;
 				}
 
 				elt_idx = Element.GetNext();
+
+				++OutResult.InterationCount;
 			}
 			LooseCellIndices.RemoveAt(I, 1, false);
 		}

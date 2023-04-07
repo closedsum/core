@@ -617,11 +617,13 @@ namespace NCsProjectile
 
 		namespace NSearch
 		{
-			NCsLooseCoarseGrid::FGrid* FLibrary::GetLooseCoarseGridChecked(const FString& Context, const UObject* WorldContext)
+			#define BoundsWorldType NCsGrid::NUniform::FGrid
+			BoundsWorldType* FLibrary::GetBoundsWorldChecked(const FString& Context, const UObject* WorldContext)
 			{
+			#undef BoundsWorldType
 				typedef NCsProjectile::NManager::FLibrary PrjManagerLibrary;
 
-				return PrjManagerLibrary::GetChecked(Context, WorldContext)->GetLooseCoarseGrid();
+				return PrjManagerLibrary::GetChecked(Context, WorldContext)->GetBoundsWorld();
 			}
 		}
 

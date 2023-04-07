@@ -1466,7 +1466,7 @@ void UCsManager_Projectile::SetupVariablesManager()
 {
 	Manager_Variables.SetOuter(this);
 	Manager_Variables.SetSize(Settings.Variables.PoolSize);
-	Manager_Variables.LooseCoarseGrid.Create(5000.0f, 5000.0f, 1000.0f, 1000.0f, 0.0f, 0.0f, 100000.0f, 100000.0f);
+	Manager_Variables.BoundsWorld.Create(22500.0f, 250.0f, 2048, 32);
 }
 
 void UCsManager_Projectile::UpdateVariablesManager(const FCsDeltaTime& DeltaTime)

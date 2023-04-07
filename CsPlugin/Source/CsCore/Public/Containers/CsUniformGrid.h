@@ -1,4 +1,6 @@
 #pragma once
+// Resource
+#include "Managers/Resource/CsManager_ResourceValueType_Fixed_Int32.h"
 
 namespace NCsGrid
 {
@@ -41,7 +43,12 @@ namespace NCsGrid
 
 		struct CSCORE_API FGrid
 		{
-		public:
+		#define IDManagerType NCsResource::NManager::NValue::NFixed::NInt32::FManager
+		#define ResourceType NCsResource::NManager::NValue::NFixed::NInt32::FResource 
+
+		private:
+
+			IDManagerType Manager_ID;
 
 			/** Width of the grid */
 			float Width;
@@ -64,6 +71,8 @@ namespace NCsGrid
 				Strides[Cell ID] = Number of Elements. */
 			TArray<int32> Strides;
 
+			TArray<ResourceType*> Resources;
+
 			TArray<int32> IDs;
 
 			int32 FreeIndex;
@@ -76,7 +85,7 @@ namespace NCsGrid
 
 		public:
 
-			FGrid(){}
+			FGrid();
 
 			FORCEINLINE float GetWidthBy2() const { return WidthBy2; }
 
@@ -212,6 +221,11 @@ namespace NCsGrid
 			}
 
 		#undef QueryResultType
+
+			void Reset();
+
+		#undef IDManagerType
+		#undef ResourceType
 		};
 	}
 }

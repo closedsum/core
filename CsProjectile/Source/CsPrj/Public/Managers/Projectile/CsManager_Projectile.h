@@ -1123,7 +1123,9 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE NCsLooseCoarseGrid::FGrid* GetLooseCoarseGrid() { return &(Manager_Variables.LooseCoarseGrid); }
+#define BoundsWorldType NCsGrid::NUniform::FGrid
+	FORCEINLINE BoundsWorldType* GetBoundsWorld() { return &(Manager_Variables.BoundsWorld); }
+#undef BoundsWorldType
 
 #pragma endregion Search
 

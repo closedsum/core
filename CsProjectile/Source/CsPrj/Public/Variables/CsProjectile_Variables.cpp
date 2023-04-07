@@ -470,13 +470,19 @@ namespace NCsProjectile
 				{
 					const int32& ID = Last_DeallocatedIDs[I];
 
-					LooseCoarseGrid.Remove(ID, Last_Locations[ID].X, Last_Locations[ID].Y);
-
 					Last_Locations[ID] = FVector::ZeroVector;
 
 					Last_DeallocatedIDs.RemoveAt(I, 1, false);
 				}
-				LooseCoarseGrid.Optimize();
+
+				BoundsWorld.Reset();
+
+				for (int32 I = 0; I < AllocatedCount; ++I)
+				{
+					const int32& ID = AllocatedIDs[I];
+
+					BoundsWorld.Insert(ID, Locations[ID].X, Locations[ID].Y, CollisionInfos.HalfHeights[ID]);
+				}
 			}
 
 			TrackingInfos.Update(DeltaTime);
@@ -521,7 +527,7 @@ namespace NCsProjectile
 			CollisionInfos.Radii[ID]	   = Payload.CollisionRadius;
 			CollisionInfos.HalfHeights[ID] = Payload.CollisionHalfHeight;
 
-			LooseCoarseGrid.Insert(ID, Locations[ID].X, Locations[ID].Y, CollisionInfos.HalfHeights[ID], CollisionInfos.HalfHeights[ID]);
+			BoundsWorld.Insert(ID, Locations[ID].X, Locations[ID].Y, CollisionInfos.HalfHeights[ID]);
 
 			return GetVariablesPtr(ID);
 		}

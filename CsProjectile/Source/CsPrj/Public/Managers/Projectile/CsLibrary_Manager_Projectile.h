@@ -38,8 +38,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsProjectile, NOnHit, NSpawn, NProjectile, NV
 // NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NVariables::FResource
 CS_FWD_DECLARE_STRUCT_NAMESPACE_6(NCsProjectile, NOnHit, NSpawn, NProjectile, NSpread, NVariables, FResource)
 
-// NCsLooseCoarseGrid::FGrid
-CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsLooseCoarseGrid, FGrid)
+// NCsGrid::NUnfiorm::FGrid
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsGrid, NUniform, FGrid)
 
 namespace NCsProjectile
 {
@@ -501,7 +501,9 @@ namespace NCsProjectile
 			{
 			public:
 
-				static NCsLooseCoarseGrid::FGrid* GetLooseCoarseGridChecked(const FString& Context, const UObject* WorldContext);
+			#define BoundsWorldType NCsGrid::NUniform::FGrid
+				static BoundsWorldType* GetBoundsWorldChecked(const FString& Context, const UObject* WorldContext);
+			#undef BoundsWorldType
 			};
 		}
 

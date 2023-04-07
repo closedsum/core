@@ -7,7 +7,7 @@
 // Resource
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed_Int32.h"
 // Containers
-#include "Containers/CsLooseCoarseGrid.h"
+#include "Containers/CsUniformGrid.h"
 
 class ICsProjectile;
 class USceneComponent;
@@ -620,7 +620,9 @@ namespace NCsProjectile
 
 			FCollisionInfos CollisionInfos;
 
-			NCsLooseCoarseGrid::FGrid LooseCoarseGrid;
+		#define BoundsWorldType NCsGrid::NUniform::FGrid
+			BoundsWorldType BoundsWorld;
+		#undef BoundsWorldType
 
 			FManager() :
 				Outer(nullptr),
@@ -645,7 +647,7 @@ namespace NCsProjectile
 				MovementInfos(),
 				TrackingInfos(),
 				CollisionInfos(),
-				LooseCoarseGrid()
+				BoundsWorld()
 			{
 				MovementInfos.Outer = this;
 				TrackingInfos.Outer = this;

@@ -8,6 +8,25 @@ namespace NCsGrid
 {
 	namespace NUniform
 	{
+		FGrid::FGrid() :
+			Manager_ID(),
+			Width(0.0f),
+			WidthBy2(0.0f),
+			NumColumns(0),
+			NumColumnsMinusOne(0),
+			CellWidth(0.0f),
+			InverseCellWidth(0.0f),
+			MaxStride(0),
+			StartingIndices(),
+			Strides(),
+			IDs(),
+			FreeIndex(0),
+			DeallocatedIndices(),
+			Centers(),
+			Radii()
+		{
+		}
+
 		void FGrid::Create(const float& InGridWidth, const float& InCellWidth, const int32& InMaxElements, const int32& InMaxStride)
 		{
 
@@ -22,13 +41,17 @@ namespace NCsGrid
 			const int32 CellCount  = NumColumns * NumColumns;
 
 			// Initialize Cells
+			Manager_ID.CreatePool(CellCount);
+
 			StartingIndices.Reset(CellCount);
 			Strides.Reset(CellCount);
+			Resources.Reset(CellCount);
 
 			for (int32 I = 0; I < CellCount; ++I)
 			{
 				StartingIndices.Add(INDEX_NONE);
 				Strides.Add(0);
+				Resources.Add(nullptr);
 			}
 
 			// Initialize Element IDs for All Cells
@@ -77,6 +100,11 @@ namespace NCsGrid
 					if (StartingIndices[CellIndex] == INDEX_NONE)
 					{
 						StartingIndices[CellIndex] = AllocateStartingIndex();
+
+						check(Resources[CellIndex] == nullptr);
+
+						Resources[CellIndex]		   = Manager_ID.Allocate();
+						Resources[CellIndex]->GetRef() = CellIndex;
 					}
 
 					const int32& StartingIndex = StartingIndices[CellIndex];
@@ -147,8 +175,14 @@ namespace NCsGrid
 
 								DeallocatedIndices.Add(StartingIndex);
 
+								check(Resources[CellIndex]);
+
 								StartingIndices[CellIndex] = INDEX_NONE;
 								Strides[CellIndex] = 0;
+
+								Manager_ID.Deallocate(Resources[CellIndex]);
+
+								Resources[CellIndex] = nullptr;
 							}
 						}
 					}
@@ -247,6 +281,41 @@ namespace NCsGrid
 				++OutResult.Count;
 				++OutResult.InterationCount;
 			}
+		}
+
+		void FGrid::Reset()
+		{
+			typedef NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
+
+			TCsDoubleLinkedList<ResourceType*>* Current = Manager_ID.GetAllocatedHead();
+			TCsDoubleLinkedList<ResourceType*>* Next	= Current;
+
+			int32 End = INDEX_NONE;
+
+			while (Next)
+			{
+				Current			= Next;
+				ResourceType* C = **Current;
+				Next			= Current->GetNextLink();
+
+				int32& CellIndex = C->GetRef();
+
+				const int32& StartingIndex = StartingIndices[CellIndex];
+				const int32& Stride		   = Strides[CellIndex];
+
+				for (int32 I = StartingIndex; I < End; ++I)
+				{
+					IDs[I] = INDEX_NONE;
+				}
+				StartingIndices[CellIndex] = INDEX_NONE;
+				Strides[CellIndex]		   = 0;
+				Resources[CellIndex]	   = nullptr;
+			}
+
+			Manager_ID.DeallocateAll();
+
+			FreeIndex = 0;
+			DeallocatedIndices.Reset(DeallocatedIndices.Max());
 		}
 	}
 }

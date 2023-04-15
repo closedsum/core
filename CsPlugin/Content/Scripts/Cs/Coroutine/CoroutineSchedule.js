@@ -231,6 +231,9 @@ module.exports = class FJsCoroutineSchedule
         if (payload.bPerformFirstUpdate)
         {
             r.StartUpdate();
+            // NOTE: The double update since an initial yield is needed to set the Routine (r).
+            //       Currently there doesn't seem to be a way to "seed" the Routine without doing this.
+            r.Update(new CsDeltaTime());
             r.Update(new CsDeltaTime());
         }
 
@@ -300,6 +303,9 @@ module.exports = class FJsCoroutineSchedule
 	    r.Init(payload);
 
 	    r.StartUpdate();
+        // NOTE: The double update since an initial yield is needed to set the Routine (r).
+        //       Currently there doesn't seem to be a way to "seed" the Routine without doing this.
+        r.Update(new CsDeltaTime());
 	    r.Update(new CsDeltaTime());
 
 	    payload.Reset();

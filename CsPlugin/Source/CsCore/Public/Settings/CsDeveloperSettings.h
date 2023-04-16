@@ -34,6 +34,8 @@
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
 // Anim
 #include "Animation/Vertex/CsVertexAnimNotify.h"
+// Container
+#include "Containers/CsSettings_Container.h"
 
 #include "CsDeveloperSettings.generated.h"
 
@@ -323,6 +325,14 @@ public:
 	FCsSettings_Entry Entry;
 
 #pragma endregion
+
+// Container
+#pragma region
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FCsSettings_Container Container;
+
+#pragma endregion Container
 
 // PIE
 #pragma region

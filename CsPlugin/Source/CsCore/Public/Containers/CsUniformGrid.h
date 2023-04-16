@@ -204,6 +204,23 @@ namespace NCsGrid
 				int32 Count;
 
 				int32 InterationCount;
+
+			// Debug
+
+				UObject* WorldContext;
+
+				bool bDrawCells;
+				bool bDrawCellsWithElements;
+
+				FResult() :
+					IDs(),
+					Count(0),
+					InterationCount(0),
+					WorldContext(nullptr),
+					bDrawCells(false),
+					bDrawCellsWithElements(false)
+				{
+				}
 			};
 		};
 
@@ -223,6 +240,8 @@ namespace NCsGrid
 		#undef QueryResultType
 
 			void Reset();
+
+			void Draw(const UObject* WorldContext);
 
 		#undef IDManagerType
 		#undef ResourceType

@@ -3,6 +3,8 @@
 
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Settings
+#include "Containers/CsSettings_Container.h"
 
 namespace NCsGrid
 {
@@ -236,6 +238,78 @@ namespace NCsGrid
 			FVector4 qrect_vec		= qrect;
 			const FIntVector4 trect = GetCellIndex4(qrect_vec);
 
+		#if WITH_EDITOR
+			if (OutResult.bDrawCells)
+			{
+				const FCsSettings_Container_UniformGrid_Debug& Settings = FCsSettings_Container_UniformGrid_Debug::Get();
+
+				FTransform Transform = FTransform::Identity;
+				FVector Center		 = FVector::ZeroVector;
+				
+				const float CellWidthBy2 = 0.5f * CellWidth;
+				
+				for (int32 Row = trect.Y; Row <= trect.W; ++Row)
+				{
+					for (int32 Column = trect.X; Column <= trect.Z; ++Column)
+					{
+						Center.X = (Column * CellWidth) - WidthBy2 + CellWidthBy2;
+						Center.Y = (Row * CellWidth) - WidthBy2 + CellWidthBy2;
+
+						Transform.SetTranslation(Center);
+
+						Settings.Cell.Draw(OutResult.WorldContext, Transform, FVector(CellWidth));
+					}
+				}
+			}
+
+			if (OutResult.bDrawCellsWithElements)
+			{
+				const FCsSettings_Container_UniformGrid_Debug& Settings = FCsSettings_Container_UniformGrid_Debug::Get();
+
+				FTransform Transform = FTransform::Identity;
+				FVector CellCenter	 = FVector::ZeroVector;
+				FVector ElementCenter = FVector::ZeroVector;
+			
+				const float CellWidthBy2 = 0.5f * CellWidth;
+			
+				int32 End;
+
+				for (int32 Row = trect.Y; Row <= trect.W; ++Row)
+				{
+					for (int32 Column = trect.X; Column <= trect.Z; ++Column)
+					{
+						const int32 CellIndex = Row * NumColumns + Column;
+
+						// If Cell is NOT Empty, then iterate through elements
+						if (StartingIndices[CellIndex] != INDEX_NONE)
+						{
+							CellCenter.X = (Column * CellWidth) - WidthBy2 + CellWidthBy2;
+							CellCenter.Y = (Row * CellWidth) - WidthBy2 + CellWidthBy2;
+
+							Transform.SetTranslation(CellCenter);
+
+							Settings.Cell.Draw(OutResult.WorldContext, Transform, FVector(CellWidth));
+
+							const int32& StartingIndex = StartingIndices[CellIndex];
+							const int32& Stride		   = Strides[CellIndex];
+
+							End = StartingIndex + Stride;
+
+							for (int32 I = StartingIndex; I < End; ++I)
+							{
+								const int32& ID = IDs[I];
+
+								ElementCenter.X = Centers[ID].X - WidthBy2;
+								ElementCenter.Y = Centers[ID].Y - WidthBy2;
+
+								Settings.Element.Draw(OutResult.WorldContext, ElementCenter, Radii[ID]);
+							}
+						}
+					}
+				}
+			}
+		#endif // #if WITH_EDITOR
+
 			// Check intersecting Cells
 			int32 End = INDEX_NONE;
 
@@ -316,6 +390,60 @@ namespace NCsGrid
 
 			FreeIndex = 0;
 			DeallocatedIndices.Reset(DeallocatedIndices.Max());
+		}
+
+		void FGrid::Draw(const UObject* WorldContext)
+		{
+			typedef NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
+
+			TCsDoubleLinkedList<ResourceType*>* Current = Manager_ID.GetAllocatedHead();
+			TCsDoubleLinkedList<ResourceType*>* Next	= Current;
+
+			int32 End	 = INDEX_NONE;
+			int32 Row	 = INDEX_NONE;
+			int32 Column = INDEX_NONE;
+
+			FTransform Transform = FTransform::Identity;
+			FVector CellCenter	 = FVector::ZeroVector;
+			FVector ElementCenter = FVector::ZeroVector;
+
+			const float CellWidthBy2 = 0.5f * CellWidth;
+
+			const FCsSettings_Container_UniformGrid_Debug& Settings = FCsSettings_Container_UniformGrid_Debug::Get();
+
+			while (Next)
+			{
+				Current			= Next;
+				ResourceType* C = **Current;
+				Next			= Current->GetNextLink();
+
+				const int32& CellIndex = C->GetRef();
+
+				Row	   = CellIndex / NumColumns;
+				Column = CellIndex - (Row * NumColumns);
+
+				CellCenter.X = (Column * CellWidth) - WidthBy2 + CellWidthBy2;
+				CellCenter.Y = (Row * CellWidth) - WidthBy2 + CellWidthBy2;
+
+				Transform.SetTranslation(CellCenter);
+
+				Settings.Cell.Draw(WorldContext, Transform, FVector(CellWidth));
+
+				const int32& StartingIndex = StartingIndices[CellIndex];
+				const int32& Stride		   = Strides[CellIndex];
+
+				End = StartingIndex + Stride;
+
+				for (int32 I = StartingIndex; I < End; ++I)
+				{
+					const int32& ID = IDs[I];
+
+					ElementCenter.X = Centers[ID].X - WidthBy2;
+					ElementCenter.Y = Centers[ID].Y - WidthBy2;
+
+					Settings.Element.Draw(WorldContext, ElementCenter, Radii[ID]);
+				}
+			}
 		}
 	}
 }

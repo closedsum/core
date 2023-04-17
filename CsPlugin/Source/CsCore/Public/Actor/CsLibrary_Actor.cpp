@@ -481,12 +481,7 @@ namespace NCsActor
 
 		if (USceneComponent* RootComponent = A->GetRootComponent())
 		{
-			const TArray<USceneComponent*>& Children = RootComponent->GetAttachChildren();
-
-			for (USceneComponent* Child : Children)
-			{
-				Child->SetHiddenInGame(NewHidden, true);
-			}
+			RootComponent->SetHiddenInGame(NewHidden, ApplyToAttachChildren);
 		}
 	}
 
@@ -498,12 +493,7 @@ namespace NCsActor
 
 		if (USceneComponent* RootComponent = A->GetRootComponent())
 		{
-			const TArray<USceneComponent*>& Children = RootComponent->GetAttachChildren();
-
-			for (USceneComponent* Child : Children)
-			{
-				Child->SetHiddenInGame(NewHidden, true);
-			}
+			RootComponent->SetHiddenInGame(NewHidden, ApplyToAttachChildren);
 		}
 		return true;
 	}

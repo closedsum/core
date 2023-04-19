@@ -199,7 +199,7 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValidChecked(const FString& Context, UPrimitiveComponent* Mesh, const int32& Index)
 	{
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
 		checkf(Index < Mesh->GetNumMaterials(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetNumMaterials());
@@ -208,7 +208,7 @@ namespace NCsMaterial
 
 	bool FLibrary::IsValid(const FString& Context, UPrimitiveComponent* Mesh, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Mesh)
+		CS_IS_PENDING_KILL(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Index, 0)
 
 		if (Index >= Mesh->GetNumMaterials())
@@ -222,9 +222,9 @@ namespace NCsMaterial
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PENDING_KILL_CHECKED(Component)
 		// Check Material is Valid
-		CS_IS_PTR_NULL_CHECKED(Material)
+		CS_IS_PENDING_KILL_CHECKED(Material)
 
 		const int32 Count = Component->GetNumMaterials();
 
@@ -237,9 +237,9 @@ namespace NCsMaterial
 	bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL(Component)
+		CS_IS_PENDING_KILL(Component)
 		// Check Material is Valid
-		CS_IS_PTR_NULL(Material)
+		CS_IS_PENDING_KILL(Material)
 
 		const int32 Count = Component->GetNumMaterials();
 
@@ -253,9 +253,9 @@ namespace NCsMaterial
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PENDING_KILL_CHECKED(Component)
 		// Check Material is Valid
-		CS_IS_PTR_NULL_CHECKED(Material)
+		CS_IS_PENDING_KILL_CHECKED(Material)
 		// Check Index is Valid
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
@@ -267,9 +267,9 @@ namespace NCsMaterial
 	bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL(Component)
+		CS_IS_PENDING_KILL(Component)
 		// Check Material is Valid
-		CS_IS_PTR_NULL(Material)
+		CS_IS_PENDING_KILL(Material)
 		// Check Index is Valid
 		CS_IS_INT_GREATER_THAN_OR_EQUAL(Index, 0)
 
@@ -294,7 +294,7 @@ namespace NCsMaterial
 	void FLibrary::SetChecked(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		const int32 Count		  = Component->GetNumMaterials();
 		const int32 MaterialCount = Materials.Num();
@@ -314,7 +314,7 @@ namespace NCsMaterial
 	bool FLibrary::SetSafe(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Component is Valid
-		CS_IS_PTR_NULL(Component)
+		CS_IS_PENDING_KILL(Component)
 
 		const int32 Count		  = Component->GetNumMaterials();
 		const int32 MaterialCount = Materials.Num();
@@ -351,7 +351,7 @@ namespace NCsMaterial
 	void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
 		// Check Mesh is Valid
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
 		const int32 MaterialCount = Materials.Num();
@@ -371,7 +371,7 @@ namespace NCsMaterial
 	void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInterface*>& Materials)
 	{
 		// Check Mesh is Valid
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
 		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
 		const int32 MaterialCount = Materials.Num();
@@ -390,7 +390,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component, const int32& Index)
 	{
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PENDING_KILL_CHECKED(Component)
 		
 		if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 		{
@@ -408,7 +408,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SafeClearOverride(const FString& Context, UPrimitiveComponent* Component, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Component)
+		CS_IS_PENDING_KILL(Component)
 		
 		if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 		{
@@ -425,7 +425,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, UPrimitiveComponent* Component)
 	{
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 		{
@@ -443,7 +443,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SafeClearOverride(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Component)
+		CS_IS_PENDING_KILL(Component)
 
 		if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 		{
@@ -460,7 +460,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, UStaticMeshComponent* Mesh, const int32& Index)
 	{
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
@@ -481,7 +481,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SafeClearOverride(const FString& Context, UStaticMeshComponent* Mesh, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Mesh)
+		CS_IS_PENDING_KILL(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Index, 0)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
@@ -503,7 +503,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, UStaticMeshComponent* Mesh)
 	{
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
@@ -523,7 +523,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SafeClearOverride(const FString& Context, UStaticMeshComponent* Mesh, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Mesh)
+		CS_IS_PENDING_KILL(Mesh)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
@@ -544,7 +544,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, USkeletalMeshComponent* Mesh, const int32& Index)
 	{
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
@@ -565,7 +565,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SafeClearOverride(const FString& Context, USkeletalMeshComponent* Mesh, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Mesh)
+		CS_IS_PENDING_KILL(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Index, 0)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
@@ -587,7 +587,7 @@ namespace NCsMaterial
 
 	void FLibrary::ClearOverrideChecked(const FString& Context, USkeletalMeshComponent* Mesh)
 	{
-		CS_IS_PTR_NULL_CHECKED(Mesh)
+		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
@@ -607,7 +607,7 @@ namespace NCsMaterial
 
 	bool FLibrary::SafeClearOverride(const FString& Context, USkeletalMeshComponent* Mesh, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL(Mesh)
+		CS_IS_PENDING_KILL(Mesh)
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
@@ -632,7 +632,7 @@ namespace NCsMaterial
 	bool FLibrary::IsScalarParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
 	{
 		// Check Material is Valid
-		CS_IS_PTR_NULL_CHECKED(Material)
+		CS_IS_PENDING_KILL_CHECKED(Material)
 		// Check ParamName is Valid
 		CS_IS_NAME_NONE_CHECKED(ParamName)
 
@@ -723,7 +723,7 @@ namespace NCsMaterial
 	bool FLibrary::IsScalarParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Material is Valid
-		CS_IS_PTR_NULL(Material)
+		CS_IS_PENDING_KILL(Material)
 		// Check ParamName is Valid
 		CS_IS_NAME_NONE(ParamName)
 
@@ -839,7 +839,7 @@ namespace NCsMaterial
 	bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
 	{
 		// Check Material is Valid
-		CS_IS_PTR_NULL_CHECKED(Material)
+		CS_IS_PENDING_KILL_CHECKED(Material)
 		// Check ParamName is Valid
 		CS_IS_NAME_NONE_CHECKED(ParamName)
 
@@ -930,7 +930,7 @@ namespace NCsMaterial
 	bool FLibrary::IsVectorParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Material is Valid
-		CS_IS_PTR_NULL(Material)
+		CS_IS_PENDING_KILL(Material)
 		// Check ParamName is Valid
 		CS_IS_NAME_NONE(ParamName)
 
@@ -1046,7 +1046,7 @@ namespace NCsMaterial
 	bool FLibrary::IsTextureParameterValidChecked(const FString& Context, UMaterialInterface* Material, const FName& ParamName)
 	{
 		// Check Material is Valid
-		CS_IS_PTR_NULL_CHECKED(Material)
+		CS_IS_PENDING_KILL_CHECKED(Material)
 		// Check ParamName is Valid
 		CS_IS_NAME_NONE_CHECKED(ParamName)
 
@@ -1137,7 +1137,7 @@ namespace NCsMaterial
 	bool FLibrary::IsTextureParameterValid(const FString& Context, UMaterialInterface* Material, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Material is Valid
-		CS_IS_PTR_NULL(Material)
+		CS_IS_PENDING_KILL(Material)
 		// Check ParamName is Valid
 		CS_IS_NAME_NONE(ParamName)
 
@@ -1308,7 +1308,7 @@ namespace NCsMaterial
 				OutMID->MarkPendingKill();
 			}
 
-			CS_IS_PTR_NULL_CHECKED(Material)
+			CS_IS_PENDING_KILL_CHECKED(Material)
 
 			OutMID = Mesh->CreateDynamicMaterialInstance(Index, Material);
 		}
@@ -1328,7 +1328,7 @@ namespace NCsMaterial
 				OutMID->MarkPendingKill();
 			}
 
-			CS_IS_PTR_NULL(Material)
+			CS_IS_PENDING_KILL(Material)
 
 			OutMID = Mesh->CreateDynamicMaterialInstance(Index, Material);
 			return true;
@@ -1400,7 +1400,7 @@ namespace NCsMaterial
 		void FLibrary::SetChecked(const FString& Context, UStaticMeshComponent* Mesh, const TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
 			// Check Mesh is Valid
-			CS_IS_PTR_NULL_CHECKED(Mesh)
+			CS_IS_PENDING_KILL_CHECKED(Mesh)
 
 			check(IsValidChecked(Context, MIDs));
 
@@ -1436,7 +1436,7 @@ namespace NCsMaterial
 		void FLibrary::SetChecked(const FString& Context, USkeletalMeshComponent* Mesh, const TArray<UMaterialInstanceDynamic*>& MIDs)
 		{
 			// Check Mesh is Valid
-			CS_IS_PTR_NULL_CHECKED(Mesh)
+			CS_IS_PENDING_KILL_CHECKED(Mesh)
 
 			check(IsValidChecked(Context, MIDs));
 
@@ -1471,7 +1471,7 @@ namespace NCsMaterial
 		bool FLibrary::IsScalarParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_PENDING_KILL_CHECKED(MID)
 			// Check ParamName is Valid
 			CS_IS_NAME_NONE_CHECKED(ParamName)
 
@@ -1541,7 +1541,7 @@ namespace NCsMaterial
 		bool FLibrary::IsScalarParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL(MID)
+			CS_IS_PENDING_KILL(MID)
 			// Check ParamName is Valid
 			CS_IS_NAME_NONE(ParamName)
 
@@ -1621,7 +1621,7 @@ namespace NCsMaterial
 		bool FLibrary::AreScalarParametersValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& ParamNames)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_PENDING_KILL_CHECKED(MID)
 			// Are all Names in ParamNames Valid
 			CS_IS_TARRAY_ANY_NONE_CHECKED(ParamNames)
 
@@ -1778,7 +1778,7 @@ namespace NCsMaterial
 		{
 			void(*Log)(const FString&) = nullptr;
 
-			CS_IS_PTR_NULL(MID)
+			CS_IS_PENDING_KILL(MID)
 			CS_IS_NAME_NONE(ParamName)
 
 			MID->SetScalarParameterValue(ParamName, Value);
@@ -1831,7 +1831,7 @@ namespace NCsMaterial
 
 		void FLibrary::PopulateScalarParameterValuesChecked(const FString& Context, UMaterialInstanceDynamic* MID, const TArray<FName>& Names, TArray<FScalarParameterValue*>& Values)
 		{
-			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_PENDING_KILL_CHECKED(MID)
 			CS_IS_TARRAY_ANY_NONE_CHECKED(Names)
 
 			checkf(Names.Num() == Values.Num(), TEXT("%s: The sizes Names: %d != Values: %d."), *Context, Names.Num(), Values.Num());
@@ -1909,7 +1909,7 @@ namespace NCsMaterial
 		bool FLibrary::IsVectorParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_PENDING_KILL_CHECKED(MID)
 			// Check ParamName is Valid
 			CS_IS_NAME_NONE_CHECKED(ParamName)
 
@@ -1979,7 +1979,7 @@ namespace NCsMaterial
 		bool FLibrary::IsVectorParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL(MID)
+			CS_IS_PENDING_KILL(MID)
 			// Check ParamName is Valid
 			CS_IS_NAME_NONE(ParamName)
 
@@ -2119,7 +2119,7 @@ namespace NCsMaterial
 		{
 			void(*Log)(const FString&) = nullptr;
 
-			CS_IS_PTR_NULL(MID)
+			CS_IS_PENDING_KILL(MID)
 			CS_IS_NAME_NONE(ParamName)
 
 			MID->SetVectorParameterValue(ParamName, Value);
@@ -2211,10 +2211,10 @@ namespace NCsMaterial
 			// Check MIDs is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
 
-				for (UMaterialInstanceDynamic* MID : MIDs)
-				{
-					SetVectorParameterValueChecked(Context, MID, ParamName, Value);
-				}
+			for (UMaterialInstanceDynamic* MID : MIDs)
+			{
+				SetVectorParameterValueChecked(Context, MID, ParamName, Value);
+			}
 		}
 
 		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -2353,7 +2353,7 @@ namespace NCsMaterial
 		bool FLibrary::IsTextureParameterValidChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL_CHECKED(MID)
+			CS_IS_PENDING_KILL_CHECKED(MID)
 			// Check ParamName is Valid
 			CS_IS_NAME_NONE_CHECKED(ParamName)
 
@@ -2423,7 +2423,7 @@ namespace NCsMaterial
 		bool FLibrary::IsTextureParameterValid(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MID is Valid
-			CS_IS_PTR_NULL(MID)
+			CS_IS_PENDING_KILL(MID)
 			// Check ParamName is Valid
 			CS_IS_NAME_NONE(ParamName)
 
@@ -2561,7 +2561,7 @@ namespace NCsMaterial
 		{
 			void(*Log)(const FString&) = nullptr;
 
-			CS_IS_PTR_NULL(MID)
+			CS_IS_PENDING_KILL(MID)
 			CS_IS_NAME_NONE(ParamName)
 
 			MID->SetTextureParameterValue(ParamName, Value);

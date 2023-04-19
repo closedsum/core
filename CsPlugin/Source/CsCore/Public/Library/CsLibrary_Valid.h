@@ -1136,6 +1136,31 @@ namespace NCsValid
 	{
 		struct CSCORE_API FLibrary final
 		{
+			FORCEINLINE static bool IsPendingKillChecked(const FString& Context, const UObject* A, const FString& AName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+				checkf(!A->IsPendingKill(), TEXT("%s: %s Is Pending Kill."), *Context, *AName);
+				return true;
+			}
+
+			FORCEINLINE static bool IsPendingKill(const FString& Context, const UObject* A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return false;
+				}
+
+				if (A->IsPendingKill())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s Is Pending Kill."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+
 			template<typename ClassType, typename OtherClassType>
 			FORCEINLINE static bool IsClassOf(const FString& Context, const ClassType* A, const FString& AName, void(*Log)(const FString&))
 			{
@@ -1903,6 +1928,12 @@ namespace NCsValid
 #pragma region
 
 // Assume const FString& Context has been defined
+#define CS_IS_PENDING_KILL_CHECKED(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		check(NCsValid::NObject::FLibrary::IsPendingKillChecked(Context, __Object, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
 #define CS_IS_OBJ_CLASS_OF_CHECKED(__Object, __ObjectType, __ClassType) \
 	{ \
 		static const FString __temp__str__ = #__Object; \
@@ -2119,6 +2150,7 @@ namespace NCsValid
 // Ptr
 #define CS_IS_PTR_NULL_CHECKED(__Ptr)
 // Object
+#define CS_IS_PENDING_KILL_CHECKED(__Object)
 #define CS_IS_OBJ_CLASS_OF_CHECKED(__Object, __ObjectType, __ClassType)
 // Assume const FString& Context has been defined
 #define CS_CAST_CHECKED(__Object, __ObjectType, __OtherObjectType) \
@@ -2753,6 +2785,30 @@ namespace NCsValid
 // Object
 #pragma region
 
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL_EXIT(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL_RET_NULL(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL_RET_Value(__Object, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return __Value; } \
+	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_OBJ_CLASS_OF(__Object, __ObjectType, __ClassType) \
 	{ \

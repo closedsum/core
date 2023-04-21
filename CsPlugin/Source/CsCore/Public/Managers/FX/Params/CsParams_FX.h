@@ -1,6 +1,8 @@
 // Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Types/Enum/CsEnumMap.h"
+// Log
+#include "Utility/CsLog.h"
 
 namespace NCsFX
 {
@@ -540,6 +542,103 @@ namespace NCsFX
 
 				#undef ParameterType
 				#undef ParameterVectorType
+				};
+			}
+		}
+	}
+}
+
+namespace NCsFX
+{
+	namespace NParameter
+	{
+		namespace NDataInterface
+		{
+			namespace NSkeletalMesh
+			{
+				// Method
+				#pragma region
+
+				/**
+				* Describes how the Skeletal Mesh Data Interface is set or passed.
+				*  Usually the parameter information is passed via an FX Payload.
+				*/
+				UENUM(BlueprintType)
+				enum class EMethod : uint8
+				{
+					/** Set the Skeletal Mesh Component directly. */
+					Explicit,
+					/** Use the Root Component of the Owner.
+						NOTE: The Root Component MUST be of type: USkeletalMeshComponent. */
+					Owner_RootComponent,
+					/** Use the Root Component of the Parent.
+						NOTE: The Root Component MUST be of type: USkeletalMeshComponent. */
+					Parent_RootComponent,
+					EMethod_MAX
+				};
+
+				struct CSCORE_API EMMethod final : public TCsEnumMap<EMethod>
+				{
+					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMMethod, EMethod)
+				};
+
+				namespace NMethod
+				{
+					typedef EMethod Type;
+
+					namespace Ref
+					{
+						extern CSCORE_API const Type Explicit;
+						extern CSCORE_API const Type Owner_RootComponent;
+						extern CSCORE_API const Type Parent_RootComponent;
+						extern CSCORE_API const Type EMethod_MAX;
+					}
+				}
+
+				#pragma endregion Method
+
+				/**
+				* Container holding information for Niagara Data Interface Parameter of type: Skeletal Mesh.
+				*/
+				struct CSCORE_API FSkeletalMeshType
+				{
+				#define MethodType NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod
+
+				private:
+
+					int32 Index;
+					/** Name of the Niagara Data Interface Parameter of type: Skeletal Mesh. */
+					CS_DECLARE_MEMBER_WITH_PROXY(Name, FName)
+					/** Describes how the Skeletal Mesh Data Interface is set or passed.
+						Usually the parameter information is passed via an FX Payload. */
+					CS_DECLARE_MEMBER_WITH_PROXY(Method, MethodType)
+					/** Component to set for the Data Interface Parameters.
+						NOTE: Only used if Method == MethodType::Explicit. */
+					USkeletalMeshComponent* Component;
+
+				public:
+
+					FSkeletalMeshType() :
+						Index(INDEX_NONE),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(Method, MethodType::Explicit),
+						Component(nullptr)
+					{
+						CS_CTOR_SET_MEMBER_PROXY(Name);
+						CS_CTOR_SET_MEMBER_PROXY(Method);
+					}
+
+					FORCEINLINE void SetIndex(const int32& InIndex){ Index = InIndex; }
+					FORCEINLINE const int32& GetIndex() const { return Index; }
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Method, MethodType)
+					FORCEINLINE void SetComponent(USkeletalMeshComponent* InComponent) { Component = InComponent; }
+					FORCEINLINE USkeletalMeshComponent* GetComponent() const { return Component; }
+
+					bool IsValidChecked(const FString& Context) const;
+					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+				#undef MethodType
 				};
 			}
 		}

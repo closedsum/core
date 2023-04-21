@@ -527,6 +527,100 @@ bool FCsFX_Parameters_Scaled::IsValid(const FString& Context, void(*Log)(const F
 
 #pragma endregion FCsFX_Parameters_Scaled
 
+// FXParameterDataInterfaceSkeletalMeshMethod
+#pragma region
+
+namespace NCsFXParameterDataInterfaceSkeletalMeshMethod
+{
+	namespace Ref
+	{
+		typedef EMCsFXParameterDataInterfaceSkeletalMeshMethod EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Explicit);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Owner_RootComponent);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Parent_RootComponent);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsFXParameterDataInterfaceSkeletalMeshMethod_MAX, "MAX");
+	}
+}
+
+#pragma endregion FXParameterDataInterfaceSkeletalMeshMethod
+
+// FCsFX_Parameters_DataInterface_SkeletalMesh
+#pragma region
+
+#define ParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+
+void FCsFX_Parameters_DataInterface_SkeletalMesh::CopyToParams(ParameterType* Params)
+{
+	Params->SetName(&Name);
+
+	typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod MethodType;
+
+	Params->SetMethod((MethodType*)(&Method));
+	Params->SetComponent(Component);
+}
+
+void FCsFX_Parameters_DataInterface_SkeletalMesh::CopyToParamsAsValue(ParameterType* Params) const
+{
+	Params->SetName(Name);
+
+	typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::EMethod MethodType;
+
+	Params->SetMethod((MethodType)Method);
+	Params->SetComponent(Component);
+}
+
+#undef ParameterType
+
+bool FCsFX_Parameters_DataInterface_SkeletalMesh::IsValidChecked(const FString& Context) const
+{
+	CS_IS_NAME_NONE_CHECKED(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	checkf(NameAsString.StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Int Parameter Name."), *Context, *NameAsString);
+	return true;
+}
+
+bool FCsFX_Parameters_DataInterface_SkeletalMesh::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	CS_IS_NAME_NONE(Name)
+
+	const FString NameAsString = Name.ToString();
+
+	if (!NameAsString.StartsWith(TEXT("User.")))
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with: 'User.' and is NOT a Valid Int Parameter Name."), *Context, *NameAsString));
+		return false;
+	}
+	return true;
+}
+
+#pragma endregion FCsFX_Parameters_DataInterface_SkeletalMesh
+
+// FCsFX_Parameters_DataInterface
+#pragma region
+
+bool FCsFX_Parameters_DataInterface::IsValidChecked(const FString& Context) const
+{
+	for (const FCsFX_Parameters_DataInterface_SkeletalMesh& Param : SkeletalMeshes)
+	{
+		CS_IS_VALID_CHECKED(Param);
+	}
+	return true;
+}
+
+bool FCsFX_Parameters_DataInterface::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	for (const FCsFX_Parameters_DataInterface_SkeletalMesh& Param : SkeletalMeshes)
+	{
+		CS_IS_VALID(Param)
+	}
+	return true;
+}
+
+#pragma endregion FCsFX_Parameters_DataInterface
+
 // FCsFX
 #pragma region
 
@@ -537,7 +631,7 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	// Check FX is Valid.
 	check(GetChecked(Context));
 	// Check Type is Valid
-	check(EMCsFX::Get().IsValidEnumChecked(Context, Type));
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsFX, Type);
 	// Check DeallocateMethod is Valid
 	CS_IS_ENUM_VALID_CHECKED(EMCsFXDeallocateMethod, DeallocateMethod);
 	// Check LifeTime is Valid
@@ -592,6 +686,7 @@ bool FCsFX::IsValidChecked(const FString& Context) const
 	{
 		check(FXLibrary::HasVariableNameChecked(Context, FX_Internal, Param.Name, ParameterValueType::Vector));
 	}
+	CS_IS_VALID_CHECKED(DataInterfaceParameters);
 	return true;
 }
 
@@ -610,11 +705,7 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLo
 		return false;
 	}
 	// Check Type is Valid.
-	if (!EMCsFX::Get().IsValidEnum(Type))
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s Type: %s is NOT Valid."), *Context, Type.ToChar()));
-		return false;
-	}
+	CS_IS_ENUM_STRUCT_VALID(EMCsFX, FECsFX, Type);
 	// Check DeallocateMethod is Valid
 	CS_IS_ENUM_VALID(EMCsFXDeallocateMethod, ECsFXDeallocateMethod, DeallocateMethod);
 	// Check LifeTime is Valid
@@ -676,6 +767,7 @@ bool FCsFX::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLo
 		if (!FXLibrary::SafeHasVariableName(Context, FX_Internal, Param.Name, ParameterValueType::Vector, Log))
 			return false;
 	}
+	CS_IS_VALID(DataInterfaceParameters)
 	return true;
 }
 
@@ -697,6 +789,7 @@ void FCsFX::Reset()
 	FloatParameters.Reset(FloatParameters.Max());
 	VectorParameters.Reset(VectorParameters.Max());
 	ScaledParameters.Reset();
+	DataInterfaceParameters.Reset();
 }
 
 #pragma endregion FCsFX

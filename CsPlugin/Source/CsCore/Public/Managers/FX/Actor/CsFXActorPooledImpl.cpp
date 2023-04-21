@@ -203,17 +203,19 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	// TODO: Change for Parameters
 
 	// Set Parameters
+	typedef NCsFX::FLibrary FXLibrary;
 	typedef NCsFX::NParameter::IParameter ParameterType;
 	typedef NCsFX::NParameter::NScaled::IScaled ScaledParameterType;
-	typedef NCsFX::FLibrary FXLibrary;
-
+	typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType SkeletalMeshParameterType;
+	
+		// Value
 	const TArray<ParameterType*>& Parameters = FXPayload->GetParameters();
 
 	for (const ParameterType* Param : Parameters)
 	{
 		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
 	}
-
+		// Scaled
 	const TArray<ScaledParameterType*>& ScaledParameters = FXPayload->GetScaledParameters();
 
 	float Scale = FXPayload->ShouldApplyTransformScale() ? 1.0f : FXPayload->GetTransform().GetScale3D().GetMax();
@@ -221,6 +223,15 @@ void UCsFXActorPooledImpl::Allocate(PooledPayloadType* Payload)
 	for (const ScaledParameterType* Param : ScaledParameters)
 	{
 		FXLibrary::SetParameterChecked(Context, FXComponent, Param, Scale);
+	}
+		// Data Interface
+
+			// Skeletal
+	const TArray<SkeletalMeshParameterType*>& SkeletalMeshParameters = FXPayload->GetSkeletalMeshParameters();
+
+	for (const SkeletalMeshParameterType* Param : SkeletalMeshParameters)
+	{
+		FXLibrary::SetParameterChecked(Context, FXComponent, Param);
 	}
 
 	FX->SetActorTickEnabled(true);

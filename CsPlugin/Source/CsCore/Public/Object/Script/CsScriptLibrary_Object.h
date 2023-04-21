@@ -4,7 +4,6 @@
 
 #include "CsScriptLibrary_Object.generated.h"
 
-
 UCLASS()
 class CSCORE_API UCsScriptLibrary_Object : public UObject
 {
@@ -48,4 +47,10 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Object", meta = (AutoCreateRefTerm = "Context"))
 	static bool Object_MarkPendingKill(const FString& Context, UObject* Object);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Object")
+	static bool EqualEqual(UObject* A, UObject* B)
+	{
+		return A == B;
+	}
 };

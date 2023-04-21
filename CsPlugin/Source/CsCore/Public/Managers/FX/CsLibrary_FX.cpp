@@ -23,6 +23,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraDataInterfaceArrayInt.h"
 #include "NiagaraDataInterfaceArrayFloat.h"
+#include "NiagaraDataInterfaceSkeletalMesh.h"
 #include "NiagaraFunctionLibrary.h"
 
 #if WITH_EDITOR
@@ -170,7 +171,7 @@ namespace NCsFX
 	bool FLibrary::HasParameterChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
 		// Check System is Valid
-		CS_IS_PTR_NULL_CHECKED(System)
+		CS_IS_PENDING_KILL_CHECKED(System)
 		// Check Parameter is Valid
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
@@ -206,7 +207,7 @@ namespace NCsFX
 	bool FLibrary::SafeHasParameter(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check System is Valid
-		CS_IS_PTR_NULL(System)
+		CS_IS_PENDING_KILL(System)
 		// Check Parameter is Valid
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
 
@@ -249,12 +250,10 @@ namespace NCsFX
 		return SafeHasParameter(Context, System, Parameter, nullptr);
 	}
 
-	
 	bool FLibrary::HasParameterChecked(const FString& Context, UNiagaraSystem* System, const ScaledParameterType* Parameter)
 	{
 		// Check System is Valid
 		CS_IS_PTR_NULL_CHECKED(System)
-
 		CS_IS_PTR_NULL_CHECKED(Parameter)
 		return HasParameterChecked(Context, System, Parameter->GetParameter());
 	}
@@ -442,6 +441,82 @@ namespace NCsFX
 
 	#undef ParameterType
 	#undef ScaledParameterType
+
+	#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+
+	UNiagaraDataInterfaceSkeletalMesh* FLibrary::GetDataInterfaceChecked(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+		CS_IS_PTR_NULL_CHECKED(Parameter)
+		check(Parameter->IsValidChecked(Context));
+
+		const FNiagaraParameterStore& OverrideParameters = Component->GetOverrideParameters();
+
+		FNiagaraVariable Variable(FNiagaraTypeDefinition(UNiagaraDataInterfaceSkeletalMesh::StaticClass()), Parameter->GetName());
+
+		const int32 Index = OverrideParameters.IndexOf(Variable);
+
+		UNiagaraSystem* System = Component->GetAsset();
+
+		CS_IS_PENDING_KILL_CHECKED(System)
+
+		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: Skeletal Mesh with name: %s for System: %s."), *Context, *(Parameter->GetName().ToString()), *(System->GetName()));
+
+		UNiagaraDataInterfaceSkeletalMesh* DataInterface = Cast<UNiagaraDataInterfaceSkeletalMesh>(OverrideParameters.GetDataInterface(Index));
+	
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: Skeletal Mesh."), *Context, *(Parameter->GetName().ToString()));
+		return DataInterface;
+	}
+
+	UNiagaraDataInterfaceSkeletalMesh* FLibrary::GetSafeDataInterface(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(Component)
+		CS_IS_PTR_NULL_RET_NULL(Parameter)
+
+		if (!Parameter->IsValid(Context, Log))
+			return nullptr;
+
+		const FNiagaraParameterStore& OverrideParameters = Component->GetOverrideParameters();
+
+		FNiagaraVariable Variable(FNiagaraTypeDefinition(UNiagaraDataInterfaceSkeletalMesh::StaticClass()), Parameter->GetName());
+
+		const int32 Index = OverrideParameters.IndexOf(Variable);
+
+		UNiagaraSystem* System = Component->GetAsset();
+
+		CS_IS_PENDING_KILL(System)
+
+		if (Index == INDEX_NONE)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Data Interface of type: Skeletal Mesh with name: %s for System: %s."), *Context, *(Parameter->GetName().ToString()), *(System->GetName())));
+			return nullptr;
+		}
+
+		UNiagaraDataInterfaceSkeletalMesh* DataInterface = Cast<UNiagaraDataInterfaceSkeletalMesh>(OverrideParameters.GetDataInterface(Index));
+	
+		if (!DataInterface)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Data Interface: %s is NOT of type: Skeletal Mesh."), *Context, *(Parameter->GetName().ToString())));
+		}
+		return DataInterface;
+	}
+
+	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter)
+	{
+		UNiagaraDataInterfaceSkeletalMesh* DataInterface = GetDataInterfaceChecked(Context, Component, Parameter);
+
+		DataInterface->SetSourceComponentFromBlueprints(Parameter->GetComponent());
+	}
+
+	void FLibrary::SetSafeParameter(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (UNiagaraDataInterfaceSkeletalMesh* DataInterface = GetSafeDataInterface(Context, Component, Parameter, Log))
+		{
+			DataInterface->SetSourceComponentFromBlueprints(Parameter->GetComponent());
+		}
+	}
+
+	#undef SkeletalMeshParameterType
 
 	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData)
 	{

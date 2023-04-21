@@ -729,6 +729,136 @@ public:
 
 #pragma endregion FCsFX_Parameters_Scaled
 
+// FXParameterDataInterfaceSkeletalMeshMethod
+#pragma region
+
+/**
+* Describes how the Skeletal Mesh Data Interface is set or passed.
+*  Usually the parameter information is passed via an FX Payload.
+*/
+UENUM(BlueprintType)
+enum class ECsFXParameterDataInterfaceSkeletalMeshMethod : uint8
+{
+	/** Set the Skeletal Mesh Component directly. */
+	Explicit											UMETA(DisplayName = "Explicit"),
+	/** Use the Root Component of the Owner.
+		NOTE: The Root Component MUST be of type: USkeletalMeshComponent. */
+	Owner_RootComponent									UMETA(DisplayName = "Owner: RootComponent"),
+	/** Use the Root Component of the Parent.
+		NOTE: The Root Component MUST be of type: USkeletalMeshComponent. */
+	Parent_RootComponent								UMETA(DisplayName = "Parent: RootComponent"),
+	ECsFXParameterDataInterfaceSkeletalMeshMethod_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsFXParameterDataInterfaceSkeletalMeshMethod final : public TCsEnumMap<ECsFXParameterDataInterfaceSkeletalMeshMethod>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsFXParameterDataInterfaceSkeletalMeshMethod, ECsFXParameterDataInterfaceSkeletalMeshMethod)
+};
+
+namespace NCsFXParameterDataInterfaceSkeletalMeshMethod
+{
+	typedef ECsFXParameterDataInterfaceSkeletalMeshMethod Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Explicit;
+		extern CSCORE_API const Type Owner_RootComponent;
+		extern CSCORE_API const Type Parent_RootComponent;
+		extern CSCORE_API const Type ECsFXParameterDataInterfaceSkeletalMeshMethod_MAX;
+	}
+}
+
+#pragma endregion FXParameterDataInterfaceSkeletalMeshMethod
+
+// FCsFX_Parameters_DataInterface_SkeletalMesh
+#pragma region
+
+class USkeletalMeshComponent;
+
+// NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
+
+/**
+* Container holding information for Niagara Data Interface Parameter of type: Skeletal Mesh.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Parameters_DataInterface_SkeletalMesh
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Niagara Data Interface Parameter of type: Skeletal Mesh. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FName Name;
+
+	/** Describes how the Skeletal Mesh Data Interface is set or passed.
+		Usually the parameter information is passed via an FX Payload. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	ECsFXParameterDataInterfaceSkeletalMeshMethod Method;
+
+	/** Component to set for the Data Interface Parameters.
+		NOTE: Only used if Method == ECsFXParameterDataInterfaceSkeletalMesh::Explicit. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	USkeletalMeshComponent* Component;
+
+	FCsFX_Parameters_DataInterface_SkeletalMesh() :
+		Name(NAME_None),
+		Method(ECsFXParameterDataInterfaceSkeletalMeshMethod::Explicit),
+		Component(nullptr)
+	{
+	}
+
+#define ParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+	void CopyToParams(ParameterType* Params);
+	void CopyToParamsAsValue(ParameterType* Params) const;
+#undef ParameterType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsFX_Parameters_DataInterface_SkeletalMesh
+
+// FCsFX_Parameters_DataInterface
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFX_Parameters_DataInterface
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	TArray<FCsFX_Parameters_DataInterface_SkeletalMesh> SkeletalMeshes;
+
+	FCsFX_Parameters_DataInterface() :
+		SkeletalMeshes()
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	FORCEINLINE void Copy(const FCsFX_Parameters_DataInterface& From)
+	{
+		SkeletalMeshes.Reset(FMath::Max(SkeletalMeshes.Max(), From.SkeletalMeshes.Num()));
+
+		for (const FCsFX_Parameters_DataInterface_SkeletalMesh& Param : From.SkeletalMeshes)
+		{
+			SkeletalMeshes.Add(Param);
+		}
+	}
+
+	FORCEINLINE void Reset()
+	{
+		SkeletalMeshes.Reset(SkeletalMeshes.Max());
+	}
+};
+
+#pragma endregion FCsFX_Parameters_DataInterface
+
 // FCsFX
 #pragma region
 
@@ -843,6 +973,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FCsFX_Parameters_Scaled ScaledParameters;
 
+	/** List of all Niagara Data Interface Parameters to change on the FX System. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FCsFX_Parameters_DataInterface DataInterfaceParameters;
+
 public:
 
 	FCsFX() :
@@ -862,7 +996,8 @@ public:
 		IntParameters(),
 		FloatParameters(),
 		VectorParameters(),
-		ScaledParameters()
+		ScaledParameters(),
+		DataInterfaceParameters()
 	{
 	}
 	
@@ -901,6 +1036,7 @@ public:
 		{
 			VectorParameters.Add(Param);
 		}
+		DataInterfaceParameters.Copy(B.DataInterfaceParameters);
 		return *this;
 	}
 

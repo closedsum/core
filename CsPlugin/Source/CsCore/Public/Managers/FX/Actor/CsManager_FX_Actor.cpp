@@ -96,12 +96,13 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 	ClassMap(),
 	DataTables(),
 	// Params
-	Manager_ParameterInt(),
-	Manager_ParameterFloat(),
-	Manager_ParameterVector(),
-	Manager_ScaledParameterInt(),
-	Manager_ScaledParameterFloat(),
-	Manager_ScaledParameterVector()
+	Manager_Parameter_Int(),
+	Manager_Parameter_Float(),
+	Manager_Parameter_Vector(),
+	Manager_Parameter_Scaled_Int(),
+	Manager_Parameter_Scaled_Float(),
+	Manager_Parameter_Scaled_Vector(),
+	Manager_Parameter_DataInterface_SkeletalMesh()
 {
 }
 
@@ -309,12 +310,13 @@ void UCsManager_FX_Actor::CleanUp()
 	}
 	DataMap.Reset();
 	// Params
-	Manager_ParameterInt.Shutdown();
-	Manager_ParameterFloat.Shutdown();
-	Manager_ParameterVector.Shutdown();
-	Manager_ScaledParameterInt.Shutdown();
-	Manager_ScaledParameterFloat.Shutdown();
-	Manager_ScaledParameterVector.Shutdown();
+	Manager_Parameter_Int.Shutdown();
+	Manager_Parameter_Float.Shutdown();
+	Manager_Parameter_Vector.Shutdown();
+	Manager_Parameter_Scaled_Int.Shutdown();
+	Manager_Parameter_Scaled_Float.Shutdown();
+	Manager_Parameter_Scaled_Vector.Shutdown();
+	Manager_Parameter_DataInterface_SkeletalMesh.Shutdown();
 
 	State = EState::None;
 	bInitialized = false;
@@ -395,12 +397,12 @@ void UCsManager_FX_Actor::SetupInternal()
 
 			checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Int] is NOT > 0."), *Context);
 
-			Manager_ParameterInt.CreatePool(Size);
+			Manager_Parameter_Int.CreatePool(Size);
 
 			typedef NCsFX::NParameter::NInt::FResource ResourceContainerType;
 			typedef NCsFX::NParameter::NInt::FIntType ResourceType;
 
-			const TArray<ResourceContainerType*>& ParamPool = Manager_ParameterInt.GetPool();
+			const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_Int.GetPool();
 
 			const int32 Count = ParamPool.Num();
 
@@ -416,12 +418,12 @@ void UCsManager_FX_Actor::SetupInternal()
 
 			checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Float] is NOT > 0."), *Context);
 
-			Manager_ParameterFloat.CreatePool(Size);
+			Manager_Parameter_Float.CreatePool(Size);
 
 			typedef NCsFX::NParameter::NFloat::FResource ResourceContainerType;
 			typedef NCsFX::NParameter::NFloat::FFloatType ResourceType;
 
-			const TArray<ResourceContainerType*>& ParamPool = Manager_ParameterFloat.GetPool();
+			const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_Float.GetPool();
 	
 			const int32 Count = ParamPool.Num();
 
@@ -437,12 +439,12 @@ void UCsManager_FX_Actor::SetupInternal()
 
 			checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Vector] is NOT > 0."), *Context);
 
-			Manager_ParameterVector.CreatePool(Size);
+			Manager_Parameter_Vector.CreatePool(Size);
 
 			typedef NCsFX::NParameter::NVector::FResource ResourceContainerType;
 			typedef NCsFX::NParameter::NVector::FVectorType ResourceType;
 
-			const TArray<ResourceContainerType*>& ParamPool = Manager_ParameterVector.GetPool();
+			const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_Vector.GetPool();
 
 			const int32 Count = ParamPool.Num();
 
@@ -461,12 +463,12 @@ void UCsManager_FX_Actor::SetupInternal()
 
 				checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Int] is NOT > 0."), *Context);
 
-				Manager_ScaledParameterInt.CreatePool(Size);
+				Manager_Parameter_Scaled_Int.CreatePool(Size);
 
 				typedef NCsFX::NParameter::NScaled::NInt::FResource ResourceContainerType;
 				typedef NCsFX::NParameter::NScaled::NInt::FIntType ResourceType;
 
-				const TArray<ResourceContainerType*>& ParamPool = Manager_ScaledParameterInt.GetPool();
+				const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_Scaled_Int.GetPool();
 
 				const int32 Count = ParamPool.Num();
 
@@ -482,12 +484,12 @@ void UCsManager_FX_Actor::SetupInternal()
 
 				checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Float] is NOT > 0."), *Context);
 
-				Manager_ScaledParameterFloat.CreatePool(Size);
+				Manager_Parameter_Scaled_Float.CreatePool(Size);
 
 				typedef NCsFX::NParameter::NScaled::NFloat::FResource ResourceContainerType;
 				typedef NCsFX::NParameter::NScaled::NFloat::FFloatType ResourceType;
 
-				const TArray<ResourceContainerType*>& ParamPool = Manager_ScaledParameterFloat.GetPool();
+				const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_Scaled_Float.GetPool();
 	
 				const int32 Count = ParamPool.Num();
 
@@ -503,12 +505,35 @@ void UCsManager_FX_Actor::SetupInternal()
 
 				checkf(Size > 0, TEXT("%s: UCsDeveloperSettings->Manager_FX.Parameters.PoolSizes[Vector] is NOT > 0."), *Context);
 
-				Manager_ScaledParameterVector.CreatePool(Size);
+				Manager_Parameter_Scaled_Vector.CreatePool(Size);
 
 				typedef NCsFX::NParameter::NScaled::NVector::FResource ResourceContainerType;
 				typedef NCsFX::NParameter::NScaled::NVector::FVectorType ResourceType;
 
-				const TArray<ResourceContainerType*>& ParamPool = Manager_ScaledParameterVector.GetPool();
+				const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_Scaled_Vector.GetPool();
+
+				const int32 Count = ParamPool.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					ResourceType* R = ParamPool[I]->Get();
+					R->SetIndex(I);
+				}
+			}
+		}
+		// Data Interface
+		{
+			// Skeletal Mesh
+			{
+				// TODO: Get from Settings
+				const int32 Size = 8;
+
+				Manager_Parameter_DataInterface_SkeletalMesh.CreatePool(Size);
+
+				typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::FResource ResourceContainerType;
+				typedef NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType ResourceType;
+
+				const TArray<ResourceContainerType*>& ParamPool = Manager_Parameter_DataInterface_SkeletalMesh.GetPool();
 
 				const int32 Count = ParamPool.Num();
 

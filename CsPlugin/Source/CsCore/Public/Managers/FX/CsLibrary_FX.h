@@ -12,11 +12,14 @@ class UNiagaraSystem;
 class UNiagaraComponent;
 struct FCsRoutine;
 
-// NCsFX::NParamter::IParamter
+// NCsFX::NParameter::IParamter
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
-// NCsFX::NParamter::NScaled::IScaled
+// NCsFX::NParameter::NScaled::IScaled
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
+// NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
 
+class UNiagaraDataInterfaceSkeletalMesh;
 struct FNiagaraVariable;
 
 namespace NCsFX
@@ -180,6 +183,52 @@ namespace NCsFX
 	#undef ParameterType
 	#undef ScaledParameterType
 	#undef ParameterValueType
+
+	#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+
+		/**
+		* Get the Niagara Data Interface of type: Skeletal Mesh.
+		*
+		* @param Context	The calling context.
+		* @param System		Niagara System.
+		* @param Parameter
+		* return			Data Interface.
+		*/
+		static UNiagaraDataInterfaceSkeletalMesh* GetDataInterfaceChecked(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter);
+
+		/**
+		* Safely get the Niagara Data Interface of type: Skeletal Mesh.
+		*
+		* @param Context	The calling context.
+		* @param System		Niagara System.
+		* @param Parameter
+		* @param Log		(optional)
+		* return			Data Interface.
+		*/
+		static UNiagaraDataInterfaceSkeletalMesh* GetSafeDataInterface(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Set the Niagara Data Interface of type: Skeletal Mesh associated with Parameter.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param Parameter
+		* return
+		*/
+		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter);
+
+		/**
+		* Safely set the Niagara Data Interface of type: Skeletal Mesh associated with Parameter.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param Parameter
+		* @param Log		(optional)
+		* return
+		*/
+		static void SetSafeParameter(const FString& Context, UNiagaraComponent* Component, const SkeletalMeshParameterType* Parameter, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#undef SkeletalMeshParameterType
 
 		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData);
 

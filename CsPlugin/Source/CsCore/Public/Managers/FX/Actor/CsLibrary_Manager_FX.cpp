@@ -486,44 +486,155 @@ namespace NCsFX
 			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
 			FloatParameterType* FLibrary::AllocateFloatChecked(const FString& Context, const UObject* WorldContext)
 			{
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-				return FXManagerLibrary::GetChecked(Context, WorldContext)->AllocateValue<FloatParameterType>();
+				return GetManagerChecked(Context, WorldContext)->AllocateValue<FloatParameterType>();
 			}
 			#undef FloatParameterType
 
 			#define VectorParameterType NCsFX::NParameter::NVector::FVectorType
 			VectorParameterType* FLibrary::AllocateVectorChecked(const FString& Context, const UObject* WorldContext)
 			{
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-				return FXManagerLibrary::GetChecked(Context, WorldContext)->AllocateValue<VectorParameterType>();
+				return GetManagerChecked(Context, WorldContext)->AllocateValue<VectorParameterType>();
 			}
 			#undef VectorParameterType
 
+			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+			SkeletalMeshParameterType* FLibrary::AllocateSkeletalMeshChecked(const FString& Context, const UObject* WorldContext)
+			{
+				return GetManagerChecked(Context, WorldContext)->AllocateValue<SkeletalMeshParameterType>();
+			}
+			#undef SkeletalMeshParameterType
+
 			#define ParameterType NCsFX::NParameter::IParameter
+
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value)
 			{
-			#undef ParameterType
-
 				CS_IS_PTR_NULL_CHECKED(Value);
 			
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-				FXManagerLibrary::GetChecked(Context, WorldContext)->DeallocateValue(Value);
+				GetManagerChecked(Context, WorldContext)->DeallocateValue(Value);
 			}
 		
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(Values, ParameterType)
+
+				UCsManager_FX_Actor* Manager_FX = GetManagerChecked(Context, WorldContext);
+
+				const int32 Count = Values.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
+				{
+					Manager_FX->DeallocateValue(Values[I]);
+					Values.RemoveAt(I, 1, false);
+				}
+			}
+
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_TARRAY_ANY_NULL(Values, ParameterType)
+
+				if (UCsManager_FX_Actor* Manager_FX = GetSafeManager(Context, WorldContext, Log))
+				{
+					const int32 Count = Values.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						Manager_FX->DeallocateValue(Values[I]);
+						Values.RemoveAt(I, 1, false);
+					}
+					return true;
+				}
+				return false;
+			}
+
+			#undef ParameterType
+
 			#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+
 			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value)
 			{
-			#undef ScaledParameterType
-
 				CS_IS_PTR_NULL_CHECKED(Value);
 			
-				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
-
-				FXManagerLibrary::GetChecked(Context, WorldContext)->DeallocateValue(Value);
+				GetManagerChecked(Context, WorldContext)->DeallocateValue(Value);
 			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(Values, ScaledParameterType)
+
+				UCsManager_FX_Actor* Manager_FX = GetManagerChecked(Context, WorldContext);
+
+				const int32 Count = Values.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
+				{
+					Manager_FX->DeallocateValue(Values[I]);
+					Values.RemoveAt(I, 1, false);
+				}
+			}
+
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_TARRAY_ANY_NULL(Values, ScaledParameterType)
+
+				if (UCsManager_FX_Actor* Manager_FX = GetSafeManager(Context, WorldContext, Log))
+				{
+					const int32 Count = Values.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						Manager_FX->DeallocateValue(Values[I]);
+						Values.RemoveAt(I, 1, false);
+					}
+					return true;
+				}
+				return false;
+			}
+
+			#undef ScaledParameterType
+
+			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, SkeletalMeshParameterType* Value)
+			{
+				CS_IS_PTR_NULL_CHECKED(Value);
+			
+				GetManagerChecked(Context, WorldContext)->DeallocateValue(Value);
+			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values)
+			{
+				CS_IS_TARRAY_ANY_NULL_CHECKED(Values, SkeletalMeshParameterType)
+
+				UCsManager_FX_Actor* Manager_FX = GetManagerChecked(Context, WorldContext);
+
+				const int32 Count = Values.Num();
+
+				for (int32 I = Count - 1; I >= 0; --I)
+				{
+					Manager_FX->DeallocateValue(Values[I]);
+					Values.RemoveAt(I, 1, false);
+				}
+			}
+
+			bool FLibrary::SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_TARRAY_ANY_NULL(Values, SkeletalMeshParameterType)
+
+				if (UCsManager_FX_Actor* Manager_FX = GetSafeManager(Context, WorldContext, Log))
+				{
+					const int32 Count = Values.Num();
+
+					for (int32 I = Count - 1; I >= 0; --I)
+					{
+						Manager_FX->DeallocateValue(Values[I]);
+						Values.RemoveAt(I, 1, false);
+					}
+					return true;
+				}
+				return false;
+			}
+
+			#undef SkeletalMeshParameterType
 		}
 	}
 }

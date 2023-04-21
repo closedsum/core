@@ -12,6 +12,8 @@ class UNiagaraSystem;
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)
 // NCsFX::NParameter::NScaled::IScaled
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
+// NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
 
 namespace NCsFX
 {
@@ -28,6 +30,7 @@ namespace NCsFX
 		#define DeallocateMethodType NCsFX::EDeallocateMethod
 		#define ParameterType NCsFX::NParameter::IParameter
 		#define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
+		#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
 
 		public:
 
@@ -134,9 +137,12 @@ namespace NCsFX
 			*/
 			virtual const TArray<ScaledParameterType*>& GetScaledParameters() const = 0;
 
+			virtual const TArray<SkeletalMeshParameterType*>& GetSkeletalMeshParameters() const = 0;
+
 		#undef DeallocateMethodType
 		#undef ParameterType
 		#undef ScaledParameterType
+		#undef SkeletalMeshParameterType
 		};
 	}
 }

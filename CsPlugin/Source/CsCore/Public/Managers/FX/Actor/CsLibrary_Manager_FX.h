@@ -24,6 +24,8 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NFloat, FFloatType)
 // NCsFX::NParameter::NVector::FVectorType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NVector, FVectorType)
+// NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
 
 namespace NCsFX
 {
@@ -426,6 +428,20 @@ namespace NCsFX
 			{
 			public:
 
+				FORCEINLINE static UCsManager_FX_Actor* GetManagerChecked(const FString& Context, const UObject* WorldContext)
+				{
+					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+					return FXManagerLibrary::GetChecked(Context, WorldContext);
+				}
+
+				FORCEINLINE static UCsManager_FX_Actor* GetSafeManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
+
+					return FXManagerLibrary::GetSafe(Context, WorldContext, Log);
+				}
+
 			#define FloatParameterType NCsFX::NParameter::NFloat::FFloatType
 
 				/**
@@ -452,6 +468,19 @@ namespace NCsFX
 
 			#undef VectorParameterType
 
+			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+
+				/**
+				* Allocate a Data Interface parameter of type: Skeletal Mesh
+				* 
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* return				Data Interface parameter of type: Skeletal Mesh
+				*/
+				static SkeletalMeshParameterType* AllocateSkeletalMeshChecked(const FString& Context, const UObject* WorldContext);
+
+			#undef SkeletalMeshParameterType
+
 			#define ParameterType NCsFX::NParameter::IParameter
 
 				/**
@@ -462,6 +491,27 @@ namespace NCsFX
 				* @param Value
 				*/
 				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, ParameterType* Value);
+
+				/**
+				* Deallocate parameter Values, ParameterType (NCsFX::NParameter::IParameter).
+				*  Preserves memory space and "resets" the array.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Values
+				*/
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values);
+
+				/**
+				* Safely Deallocate parameter Values, ParameterType (NCsFX::NParameter::IParameter).
+				*  Preserves memory space and "resets" the array.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Values
+				* @param Log			(optional)
+				*/
+				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ParameterType*>& Values, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#undef ParameterType
 
@@ -476,7 +526,62 @@ namespace NCsFX
 				*/
 				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, ScaledParameterType* Value);
 
+				/**
+				* Deallocate parameter Values, ScaledParameterType (NCsFX::NParameter::NScaled::IScaled).
+				*  Preserves memory space and "resets" the array.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Values
+				*/
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values);
+
+				/**
+				* Safely deallocate parameter Values, ScaledParameterType (NCsFX::NParameter::NScaled::IScaled).
+				*  Preserves memory space and "resets" the array.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Values
+				* @param Log			(optional)
+				*/
+				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<ScaledParameterType*>& Values, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			#undef ScaledParameterType
+
+			#define SkeletalMeshParameterType NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
+
+				/**
+				* Deallocate parameter Value, SkeletalmeshParameterType (NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType).
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Value
+				*/
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, SkeletalMeshParameterType* Value);
+
+				/**
+				* Deallocate parameter Values, SkeletalmeshParameterType (NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType).
+				*  Preserves memory space and "resets" the array.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Value
+				*/
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values);
+
+				/**
+				* Deallocate parameter Values, SkeletalmeshParameterType (NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType).
+				*  Preserves memory space and "resets" the array.
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param Value
+				* @param Log			(optional)
+				*/
+				static bool SafeDeallocate(const FString& Context, const UObject* WorldContext, TArray<SkeletalMeshParameterType*>& Values, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			#undef SkeletalMeshParameterType
 			};
 		}
 	}

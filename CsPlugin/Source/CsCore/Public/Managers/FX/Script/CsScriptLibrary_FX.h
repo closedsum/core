@@ -8,6 +8,7 @@
 #include "CsScriptLibrary_FX.generated.h"
 
 class UNiagaraSystem;
+class USkeletalMeshComponent;
 
 UCLASS()
 class CSCORE_API UCsScriptLibrary_FX : public UObject
@@ -73,4 +74,10 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
 	static FCsRoutineHandle Spawn(const FString& Context, UObject* WorldContextObject, const FCsFX_Spawn_Params& Params);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Context,Param,Index"))
+	static bool DataInterface_SkeletalMesh_SetComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index, USkeletalMeshComponent* Component);
+
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Context,Param,Index"))
+	static bool DataInterface_SkeletalMesh_ClearComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index);
 };

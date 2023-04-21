@@ -5,6 +5,8 @@
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
+// Utility
+#include "Utility/CsLog.h"
 
 const FName NCsFX::NPayload::FImpl::Name = FName("NCsFX::NPayload::FImpl");;
 
@@ -49,7 +51,8 @@ namespace NCsFX
 			Transform(FTransform::Identity),
 			bApplyTransformScale(true),
 			Parameters(),
-			ScaledParameters()
+			ScaledParameters(),
+			SkeletalMeshParameters()
 		{
 			InterfaceMap = new FCsInterfaceMap();
 
@@ -104,20 +107,10 @@ namespace NCsFX
 			bApplyTransformScale = true;
 
 			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;
-			typedef NCsFX::NParameter::IParameter ParameterType;
-			typedef NCsFX::NParameter::NScaled::IScaled ScaledParameterType;
 
-			for (ParameterType* Param : Parameters)
-			{
-				ParameterLibrary::DeallocateChecked(Context, Root, Param);
-			}
-			Parameters.Reset(Parameters.Max());
-
-			for (ScaledParameterType* Param : ScaledParameters)
-			{
-				ParameterLibrary::DeallocateChecked(Context, Root, Param);
-			}
-			ScaledParameters.Reset(ScaledParameters.Max());
+			ParameterLibrary::DeallocateChecked(Context, GetRoot(), Parameters);
+			ParameterLibrary::DeallocateChecked(Context, GetRoot(), ScaledParameters);
+			ParameterLibrary::DeallocateChecked(Context, GetRoot(), SkeletalMeshParameters);
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

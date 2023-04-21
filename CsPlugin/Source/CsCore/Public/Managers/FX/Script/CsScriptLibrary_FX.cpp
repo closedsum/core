@@ -5,6 +5,7 @@
 // Library
 #include "Library/CsLibrary_Enum.h"
 #include "Managers/FX/CsLibrary_FX.h"
+#include "Library/CsLibrary_Valid.h"
 
 // Cached
 #pragma region
@@ -22,6 +23,8 @@ namespace NCsScriptLibraryFX
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, Spawn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, DataInterface_SkeletalMesh_SetComponent);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_FX, DataInterface_SkeletalMesh_ClearComponent);
 		}
 	}
 }
@@ -127,4 +130,58 @@ FCsRoutineHandle UCsScriptLibrary_FX::Spawn(const FString& Context, UObject* Wor
 	Params.CopyToParamsAsValue(Parms);
 
 	return FXLibrary::SafeSpawn(Ctxt, WorldContextObject, ParmsContainer);
+}
+
+bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_SetComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index, USkeletalMeshComponent* Component)
+{
+	using namespace NCsScriptLibraryFX::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::DataInterface_SkeletalMesh_SetComponent : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (Index < 0)
+	{
+		Log(FString::Printf(TEXT("%s: Index: %d < 0 is NOT Valid."), *Ctxt, Index));
+		return false;
+	}
+
+	if (Index >= Params.Num())
+	{
+		Log(FString::Printf(TEXT("%s: Index: %d > Params.Num(): %d is NOT Valid."), *Ctxt, Index, Params.Num()));
+		return false;
+	}
+
+	if (!Component)
+	{
+		Log(FString::Printf(TEXT("%s: Component is NULL."), *Ctxt));
+		return false;
+	}
+
+	Params[Index].Component = Component;
+	return true;
+}
+
+bool UCsScriptLibrary_FX::DataInterface_SkeletalMesh_ClearComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index)
+{
+	using namespace NCsScriptLibraryFX::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::DataInterface_SkeletalMesh_ClearComponent : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (Index < 0)
+	{
+		Log(FString::Printf(TEXT("%s: Index: %d < 0 is NOT Valid."), *Ctxt, Index));
+		return false;
+	}
+
+	if (Index >= Params.Num())
+	{
+		Log(FString::Printf(TEXT("%s: Index: %d > Params.Num(): %d is NOT Valid."), *Ctxt, Index, Params.Num()));
+		return false;
+	}
+
+	Params[Index].Component = nullptr;
+	return true;
 }

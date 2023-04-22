@@ -955,6 +955,11 @@ namespace NCsFX
 
 		CS_COROUTINE_BEGIN(R)
 
+		if (Params->Delay > 0.0f)
+		{
+			CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= Params->Delay);
+		}
+
 		do
 		{
 			{

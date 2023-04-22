@@ -30,6 +30,9 @@ namespace NCsFX
 				/** Actor for the FX to spawn at or be attached to. */
 				TWeakObjectPtr<AActor> Actor;
 
+				/** Delay before starting spawn. */
+				float Delay;
+
 				/** Parameters describing how often to spawn the FX. */
 				FrequencyParamsType FrequencyParams;
 
@@ -39,6 +42,7 @@ namespace NCsFX
 				FParams() :
 					FX(),
 					Actor(nullptr),
+					Delay(0.0f),
 					FrequencyParams(),
 					Group()
 				{
@@ -90,6 +94,9 @@ public:
 	AActor* Actor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	float Delay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FCsSpawner_FrequencyParams FrequencyParams;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
@@ -98,6 +105,7 @@ public:
 	FCsFX_Spawn_Params() :
 		FX(),
 		Actor(nullptr),
+		Delay(0.0f),
 		FrequencyParams(),
 		Group()
 	{

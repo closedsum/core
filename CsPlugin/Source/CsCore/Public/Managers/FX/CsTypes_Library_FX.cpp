@@ -15,6 +15,7 @@ namespace NCsFX
 			{
 				// Check FX is Valid.
 				CS_IS_VALID_CHECKED(FX);
+				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Delay, 0.0f)
 				// Check Frequency Params are Valid.
 				CS_IS_VALID_CHECKED(FrequencyParams);
 				// Check Group is Valid.
@@ -26,6 +27,7 @@ namespace NCsFX
 			{
 				// Check FX is Valid.
 				CS_IS_VALID(FX)
+				CS_IS_FLOAT_GREATER_THAN_CHECKED(Delay, 0.0f)
 				// Check Frequency Params are Valid.
 				CS_IS_VALID(FrequencyParams)
 				// Check Group is Valid.
@@ -43,8 +45,9 @@ namespace NCsFX
 			void FParams::Reset()
 			{
 				FX.Reset();
-				FrequencyParams.Reset();
 				Actor = nullptr;
+				Delay = 0.0f;
+				FrequencyParams.Reset();		
 				Group = EMCsUpdateGroup::Get().GetMAX();
 			}
 		}
@@ -57,6 +60,7 @@ void FCsFX_Spawn_Params::CopyToParamsAsValue(ParamsType* Params) const
 #undef ParamsType
 
 	Params->FX = FX;
+	Params->Delay = Delay;
 	Params->Actor = Actor;
 	FrequencyParams.CopyToParamsAsValue(Params->GetFrequencyParamsPtr());
 	Params->Group = Group;
@@ -66,6 +70,7 @@ bool FCsFX_Spawn_Params::IsValid(const FString& Context, void(*Log)(const FStrin
 {
 	// Check FX is Valid.
 	CS_IS_VALID(FX)
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Delay, 0.0f)
 	// Check Frequency Params are Valid.
 	CS_IS_VALID(FrequencyParams)
 	// Check Group is Valid.

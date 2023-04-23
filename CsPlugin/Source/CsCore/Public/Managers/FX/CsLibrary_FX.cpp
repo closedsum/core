@@ -922,6 +922,34 @@ namespace NCsFX
 		return SpawnChecked(Context, WorldContext, Params);
 	}
 
+	FCsRoutineHandle FLibrary::Spawn_GameState_OnceWithDelayChecked(const FString& Context, UObject* WorldContext, const FCsFX& FX, const float& Delay)
+	{
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(Delay, 0.0f)
+
+		ParamsResourceType* ParmsContainer = Get().AllocateSpawnParams();
+		ParamsType* Parms				   = ParmsContainer->Get();
+
+		Parms->FX    = FX;
+		Parms->Delay = Delay;
+		Parms->Group = NCsUpdateGroup::GameState;
+
+		return SpawnChecked(Context, WorldContext, ParmsContainer);
+	}
+
+	FCsRoutineHandle FLibrary::SafeSpawn_GameState_OnceWithDelay(const FString& Context, UObject* WorldContext, const FCsFX& FX, const float& Delay, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_FLOAT_GREATER_THAN_RET_VALUE(Delay, 0.0f, FCsRoutineHandle::Invalid)
+
+		ParamsResourceType* ParmsContainer = Get().AllocateSpawnParams();
+		ParamsType* Parms				   = ParmsContainer->Get();
+
+		Parms->FX    = FX;
+		Parms->Delay = Delay;
+		Parms->Group = NCsUpdateGroup::GameState;
+
+		return SafeSpawn(Context, WorldContext, ParmsContainer, Log);
+	}
+
 	char FLibrary::Spawn_Internal(FCsRoutine* R)
 	{
 		using namespace NCsFX::NLibrary::NCached;

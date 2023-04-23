@@ -302,6 +302,28 @@ namespace NCsFX
 		*/
 		static FCsRoutineHandle SafeSpawn(const FString& Context, UObject* WorldContext, ParamsResourceType* Params, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		/**
+		* Spawn an FX ONCE with a DELAY on the UpdateGroup: GameState.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param FX
+		* @param Delay
+		* return
+		*/
+		static FCsRoutineHandle Spawn_GameState_OnceWithDelayChecked(const FString& Context, UObject* WorldContext, const FCsFX& FX, const float& Delay);
+
+		/**
+		* Safely spawn an FX ONCE with a DELAY on the UpdateGroup: GameState.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param FX
+		* @param Delay
+		* return
+		*/
+		static FCsRoutineHandle SafeSpawn_GameState_OnceWithDelay(const FString& Context, UObject* WorldContext, const FCsFX& FX, const float& Delay, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static char Spawn_Internal(FCsRoutine* R);
 
 		static void Spawn_Internal_OnEnd(FCsRoutine* R);

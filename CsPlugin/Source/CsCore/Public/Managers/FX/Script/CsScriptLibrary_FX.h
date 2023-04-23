@@ -75,6 +75,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Params"))
 	static FCsRoutineHandle Spawn(const FString& Context, UObject* WorldContextObject, const FCsFX_Spawn_Params& Params);
 
+	/**
+	* Spawn a Niagara System ONCE with a DELAY on the UpdateGroup: GameState.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param FX
+	* @param Delay
+	* return					Handle to spawn coroutine.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,FX,Delay"))
+	static FCsRoutineHandle Spawn_GameState_OnceWithDelay(const FString& Context, UObject* WorldContextObject, const FCsFX& FX, const float& Delay);
+
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|FX", meta = (AutoCreateRefTerm = "Context,Param,Index"))
 	static bool DataInterface_SkeletalMesh_SetComponent(const FString& Context, TArray<FCsFX_Parameters_DataInterface_SkeletalMesh>& Params, const int32& Index, USkeletalMeshComponent* Component);
 

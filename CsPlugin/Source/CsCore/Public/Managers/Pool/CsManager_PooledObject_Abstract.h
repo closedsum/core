@@ -558,7 +558,7 @@ namespace NCsPooledObject
 			virtual void DeconstructObject(InterfaceContainerType* Object)
 			{
 				// For Actors, Do Nothing. Let the World handle destruction
-				if (AActor* A = Object->GetSafeObject<AActor>())
+				if (AActor* A = Object->template GetSafeObject<AActor>())
 					return;
 				if (UObject* O = Object->GetSafeObject())
 					O->MarkPendingKill();

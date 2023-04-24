@@ -484,7 +484,7 @@ namespace NCsFX
 
 		UNiagaraSystem* System = Component->GetAsset();
 
-		CS_IS_PENDING_KILL(System)
+		CS_IS_PENDING_KILL_RET_NULL(System)
 
 		if (Index == INDEX_NONE)
 		{

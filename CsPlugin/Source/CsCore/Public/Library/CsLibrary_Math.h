@@ -681,6 +681,9 @@ namespace NCsMath
 
 			const float DSq = V.SizeSquared2D();
 			
+			if (DSq < SMALL_NUMBER)
+				return V;
+
 			if (DSq > (Max * Max))
 			{
 				return (Max / DSq) * V;

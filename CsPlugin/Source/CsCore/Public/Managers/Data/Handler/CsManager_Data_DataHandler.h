@@ -394,7 +394,7 @@ namespace NCsData
 					return Data;
 				}
 
-				InterfaceDataType* GetData(const FString& Context, const FName& Name)
+				FORCEINLINE InterfaceDataType* GetData(const FString& Context, const FName& Name)
 				{
 					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
 
@@ -409,9 +409,33 @@ namespace NCsData
 					return nullptr;
 				}
 
+				FORCEINLINE const InterfaceDataType* GetData(const FString& Context, const FName& Name) const
+				{
+					checkf(Name != NAME_None, TEXT("%s: Name: None is NOT Valid."), *Context);
+
+					// Check implemented data
+					if (const InterfaceDataType* const * ImplDataPtr = ImplDataMap.Find(Name))
+						return *ImplDataPtr;
+
+					// Check data
+					if (const InterfaceDataType* const * DataPtr = DataMap.Find(Name))
+						return *DataPtr;
+
+					return nullptr;
+				}
+
 				FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name)
 				{
 					InterfaceDataType* Ptr = GetData(Context, Name);
+
+					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString()));
+
+					return Ptr;
+				}
+
+				FORCEINLINE const InterfaceDataType* GetDataChecked(const FString& Context, const FName& Name) const
+				{
+					const InterfaceDataType* Ptr = GetData(Context, Name);
 
 					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString()));
 
@@ -435,8 +459,35 @@ namespace NCsData
 					return Ptr;
 				}
 
+				FORCEINLINE const InterfaceDataType* GetSafeData(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning) const
+				{
+					if (Name == NAME_None)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+						return nullptr;
+					}
+
+					const InterfaceDataType* Ptr = GetData(Context, Name);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Data associated with Name: %s."), *Context, *(Name.ToString())));
+					}
+					return Ptr;
+				}
+
 				template<typename EnumMap, typename EnumType>
 				FORCEINLINE InterfaceDataType* GetData(const FString& Context, const EnumType& Type)
+				{
+					using namespace NCached;
+
+					check(EnumMap::Get().IsValidEnumChecked(Context, Str::Type, Type));
+
+					return GetData(Context, Type.GetFName());
+				}
+
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE const InterfaceDataType* GetData(const FString& Context, const EnumType& Type) const
 				{
 					using namespace NCached;
 
@@ -449,6 +500,16 @@ namespace NCsData
 				FORCEINLINE InterfaceDataType* GetDataChecked(const FString& Context, const EnumType& Type)
 				{
 					InterfaceDataType* Ptr = GetData<EnumMap, EnumType>(Context, Type);
+
+					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), *Context, Type.ToChar());
+
+					return Ptr;
+				}
+
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE const InterfaceDataType* GetDataChecked(const FString& Context, const EnumType& Type) const
+				{
+					const InterfaceDataType* Ptr = GetData<EnumMap, EnumType>(Context, Type);
 
 					checkf(Ptr, TEXT("%s: Failed to find a Data associated with Type: %s."), *Context, Type.ToChar());
 
@@ -473,6 +534,24 @@ namespace NCsData
 					return Ptr;
 				}
 
+				template<typename EnumMap, typename EnumType>
+				FORCEINLINE const InterfaceDataType* GetSafeData(const FString& Context, const EnumType& Type, void(*Log)(const FString&) = &FCsLog::Warning) const
+				{
+					if (!EnumMap::Get().IsValidEnum(Type))
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Type: %s is NOT Valid."), *Context, Type.ToChar()));
+						return nullptr;
+					}
+
+					const InterfaceDataType* Ptr = GetData<EnumMap, EnumType>(Context, Type);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Data associated with Type: %s."), *Context, Type.ToChar()));
+					}
+					return Ptr;
+				}
+
 				FORCEINLINE DataInterfaceMapType* GetSafeDataInterfaceMap(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					if (Name == NAME_None)
@@ -487,6 +566,28 @@ namespace NCsData
 						return nullptr;
 
 					DataInterfaceMapType** Ptr = ImplDataInterfaceMap.Find(Name);
+
+					if (!Ptr)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find DataInterfaceMap for Data with Name: %s."), *Context, *(Name.ToString())));
+					}
+					return *Ptr;
+				}
+
+				FORCEINLINE const DataInterfaceMapType* GetSafeDataInterfaceMap(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning) const
+				{
+					if (Name == NAME_None)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Name: None is NOT Valid."), *Context));
+						return nullptr;
+					}
+
+					const InterfaceDataType* Data = GetSafeData(Context, Name, Log);
+
+					if (!Data)
+						return nullptr;
+
+					const DataInterfaceMapType* const* Ptr = ImplDataInterfaceMap.Find(Name);
 
 					if (!Ptr)
 					{

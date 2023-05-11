@@ -35,6 +35,8 @@ namespace NCsGameEvent
 	extern CSCORE_API const Type Default__MouseRightButtonReleased__;
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
+	FORCEINLINE bool IsMousePosition(const FECsGameEvent& Event) { return Event == Default__MousePositionXY__; }
 }
 
 #pragma endregion GameEvent

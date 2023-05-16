@@ -30,6 +30,13 @@ namespace NCsMath
 			return &Ease_BounceOut;
 		if (EasingType == ECsEasingType::BounceInOut)
 			return &Ease_BounceInOut;
+	// Quad
+		if (EasingType == ECsEasingType::QuadIn)
+			return &Ease_QuadIn;
+		if (EasingType == ECsEasingType::QuadOut)
+			return &Ease_QuadOut;
+		if (EasingType == ECsEasingType::QuadInOut)
+			return &Ease_QuadInOut;
 	// Cubic
 		if (EasingType == ECsEasingType::CubicIn)
 			return &Ease_CubicIn;

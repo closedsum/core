@@ -52,6 +52,9 @@ enum class ECsEasingType : uint8
 	BounceIn			UMETA(DisplayName = "Bounce In"),
 	BounceOut			UMETA(DisplayName = "Bounce Out"),
 	BounceInOut			UMETA(DisplayName = "Bounce In Out"),
+	QuadIn				UMETA(DisplayName = "Quad In"),
+	QuadOut				UMETA(DisplayName = "Quad Out"),
+	QuadInOut			UMETA(DisplayName = "Quad In Out"),
 	CubicIn				UMETA(DisplayName = "Cubic In"),
 	CubicOut			UMETA(DisplayName = "Cubic Out"),
 	CubicInOut			UMETA(DisplayName = "Cubic In Out"),
@@ -82,6 +85,9 @@ namespace NCsEasingType
 		extern CSCORE_API const Type BounceIn;
 		extern CSCORE_API const Type BounceOut;
 		extern CSCORE_API const Type BounceInOut;
+		extern CSCORE_API const Type QuadIn;
+		extern CSCORE_API const Type QuadOut;
+		extern CSCORE_API const Type QuadInOut;
 		extern CSCORE_API const Type CubicIn;
 		extern CSCORE_API const Type CubicOut;
 		extern CSCORE_API const Type CubicInOut;

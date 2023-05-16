@@ -159,6 +159,29 @@ namespace NCsMath
 		/** Smoothly accelerates and decelerates.  Ease amount controlled by BlendExp. */
 		//EaseInOut,
 
+		// Quad
+		
+		FORCEINLINE static float Ease_QuadIn(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time;
+			T /= Duration;
+			return Final * T * T + Start;
+		}
+
+		FORCEINLINE static float Ease_QuadOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time;
+			T /= Duration;
+			return Final * (1.0f - (1.0f - T) * (1.0f - T)) + Start;
+		}
+
+		FORCEINLINE static float Ease_QuadInOut(const float& Time, const float& Start, const float& Final, const float& Duration)
+		{
+			float T = Time;
+			T /= Duration;
+			return T < 0.5f ? 2.0f * T * T : 1.0f - 0.5f *FMath::Pow((-2.0f * + T) + 2.0f, 2.0f);
+		}
+
 		// Cubic
 
 		FORCEINLINE static float Ease_CubicIn(const float& Time, const float& Start, const float& Final, const float& Duration)

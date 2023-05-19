@@ -539,9 +539,9 @@ const FECsStatusEffectEvent& UCsCoordinator_StatusEffect::GetEventType(const FSt
 	return GetEventType(Context, Event->Get());
 }
 
-void UCsCoordinator_StatusEffect::DeallocateEvent(const FString& Context, EventResourceType* Event)
+void UCsCoordinator_StatusEffect::DeallocateEvent(const FString& Context, EventResourceType* Event, const FECsStatusEffectEvent& Type)
 {
-	const FECsStatusEffectEvent& Type = GetEventType(Context, Event);
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsStatusEffectEvent, Type)
 
 	typedef NCsStatusEffect::NEvent::FLibrary SeEventLibrary;
 
@@ -550,6 +550,11 @@ void UCsCoordinator_StatusEffect::DeallocateEvent(const FString& Context, EventR
 		IReset->Reset();
 
 	Manager_Events[Type.GetValue()].Deallocate(Event);
+}
+
+void UCsCoordinator_StatusEffect::DeallocateEvent(const FString& Context, EventResourceType* Event)
+{
+	DeallocateEvent(Context, Event, GetEventType(Context, Event));
 }
 
 bool UCsCoordinator_StatusEffect::CopyEvent(const FString& Context, const EventType* From, EventType* To)
@@ -581,10 +586,10 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateCopyOfEvent(const FString&
 }
 
 #define ProcessPayloadType NCsStatusEffect::NData::NProcess::FPayload
+
 EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload)
 {
-#undef ProcessPayloadType
-
+	// Get Status Effect Implementation Type
 	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
 
 	const ICsData_GetStatusEffectImplType* GetStatusEffectImplType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectImplType>(Context, ProcessPayload.Data);
@@ -595,12 +600,15 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 	typedef NCsStatusEffect::IStatusEffect StatusEffectType;
 	typedef NCsStatusEffect::NCopy::ICopy CopyType;
 
+	// Allocate and Populate Status Effect from Implementation Type
 	SeResourceType* Container	   = AllocateStatusEffect(ImplType);
 	StatusEffectType* StatusEffect = Container->Get();
 	CopyType* Copy				   = StatusEffectLibrary::GetInterfaceChecked<CopyType>(Context, StatusEffect);
 
 	Copy->CopyFromData(ProcessPayload.Type, ProcessPayload.Data);
 
+	// Allocated and Populate Event
+	
 	// TODO: MAYBE: Fix
 
 	// TODO: FUTURE: Have event composed of slices?
@@ -683,6 +691,113 @@ EventResourceType* UCsCoordinator_StatusEffect::CreateEvent(const FString& Conte
 	}
 	return EventContainer;
 }
+
+EventResourceType* UCsCoordinator_StatusEffect::CreateEvent_NoData(const FString& Context, const ProcessPayloadType& ProcessPayload)
+{
+// Get Status Effect Implementation Type
+	typedef NCsStatusEffect::NData::FLibrary SeDataLibrary;
+
+	const ICsData_GetStatusEffectImplType* GetStatusEffectImplType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectImplType>(Context, ProcessPayload.Data);
+	const FECsStatusEffectImpl& ImplType						   = GetStatusEffectImplType->GetStatusEffectImplType();
+
+	typedef NCsStatusEffect::FLibrary StatusEffectLibrary;	
+	typedef NCsStatusEffect::FResource SeResourceType;
+	typedef NCsStatusEffect::IStatusEffect StatusEffectType;
+	typedef NCsStatusEffect::NCopy::ICopy CopyType;
+
+	// Allocate and Populate Status Effect from Implementation Type
+	SeResourceType* Container	   = AllocateStatusEffect(ProcessPayload.ImplType);
+	StatusEffectType* StatusEffect = Container->Get();
+	CopyType* Copy				   = StatusEffectLibrary::GetInterfaceChecked<CopyType>(Context, StatusEffect);
+
+	Copy->CopyFromData(ProcessPayload.Type, ProcessPayload.Data);
+
+	// Allocated and Populate Event
+	
+	// TODO: MAYBE: Fix
+
+	// TODO: FUTURE: Have event composed of slices?
+
+	const ICsData_GetStatusEffectEventType* GetStatusEffectEventType = SeDataLibrary::GetInterfaceChecked<ICsData_GetStatusEffectEventType>(Context, ProcessPayload.Data);
+	const FECsStatusEffectEvent& EventImplType						 = GetStatusEffectEventType->GetStatusEffectEventType();
+
+	EventResourceType* EventContainer = AllocateEvent(EventImplType);
+	EventType* Event				  = EventContainer->Get();
+
+	typedef NCsStatusEffect::NEvent::FLibrary EventLibrary;
+
+	// Default
+	if (EventImplType == NCsStatusEffectEvent::Default)
+	{
+		typedef NCsStatusEffect::NEvent::FImpl DefaultEventType;
+
+		DefaultEventType* EventImpl	= EventLibrary::PureStaticCastChecked<DefaultEventType>(Context, Event);
+
+		// EventType (NCsStatusEffect::NEvent::IEvent)
+		EventImpl->StatusEffect.Root		 = MyRoot;
+		EventImpl->StatusEffect.Container	 = Container;
+		EventImpl->StatusEffect.StatusEffect = StatusEffect;
+		EventImpl->StatusEffect.Type		 = ProcessPayload.Type;
+		EventImpl->StatusEffect.ImplType	 = ImplType;
+		EventImpl->Data						 = ProcessPayload.Data;
+		EventImpl->Instigator				 = ProcessPayload.Instigator;
+		EventImpl->Causer					 = ProcessPayload.Causer;
+		EventImpl->Receiver					 = ProcessPayload.Receiver;
+
+		// TODO: Pass along Modifiers
+
+		// TODO: For Status Effects, determine which Modifiers to resolve
+	}
+	// Damage
+	else
+	if (EventImplType == NCsStatusEffectEvent::Damage)
+	{
+		typedef NCsStatusEffect::NEvent::NDamage::FImpl DamageSeEventType;
+
+		DamageSeEventType* EventImpl = EventLibrary::PureStaticCastChecked<DamageSeEventType>(Context, Event);
+
+		// EventType (NCsStatusEffect::NEvent::IEvent)
+		EventImpl->StatusEffect.Root		 = MyRoot;
+		EventImpl->StatusEffect.Container	 = Container;
+		EventImpl->StatusEffect.StatusEffect = StatusEffect;
+		EventImpl->StatusEffect.Type		 = ProcessPayload.Type;
+		EventImpl->StatusEffect.ImplType	 = ImplType;
+		EventImpl->Data						 = ProcessPayload.Data;
+		EventImpl->Instigator				 = ProcessPayload.Instigator;
+		EventImpl->Causer					 = ProcessPayload.Causer;
+		EventImpl->Receiver					 = ProcessPayload.Receiver;
+
+		// DamageSeEventType (NCsStatusEffect::NEvent::NDamage::IDamage)
+		typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
+		typedef NCsDamage::NEvent::FResource DmgEventResourceType;
+
+		GetDamageDataTypeDataType* GetDamageDataTypeData = SeDataLibrary::GetInterfaceChecked<GetDamageDataTypeDataType>(Context, ProcessPayload.Data);
+
+		typedef NCsDamage::NData::NProcess::FPayload DmgProcessPayloadType;
+
+		static DmgProcessPayloadType DmgProcessPayload;
+		DmgProcessPayload.Reset();
+
+		DmgProcessPayload.Instigator = ProcessPayload.Instigator;
+		DmgProcessPayload.Causer	 = ProcessPayload.Causer;
+		DmgProcessPayload.Direction  = ProcessPayload.Direction;
+		DmgProcessPayload.HitResult  = ProcessPayload.HitResult;
+
+		typedef NCsDamage::NModifier::FLibrary DmgModifierLibrary;
+
+		DmgModifierLibrary::CopyChecked(Context, ProcessPayload.Modifiers, DmgProcessPayload.Modifiers);
+
+		DmgEventResourceType* DmgEventResource = DamageManagerLibrary::CreateEventChecked(Context, MyRoot, GetDamageDataTypeData, DmgProcessPayload);
+
+		EventImpl->DamageEvent.Root		 = MyRoot;
+		EventImpl->DamageEvent.Container = DmgEventResource;
+		EventImpl->DamageEvent.Event	 = DmgEventResource->Get();
+	}
+	return EventContainer;
+}
+
+#undef ProcessPayloadType
 
 void UCsCoordinator_StatusEffect::ProcessStatusEffectEvent(const EventType* Event)
 {

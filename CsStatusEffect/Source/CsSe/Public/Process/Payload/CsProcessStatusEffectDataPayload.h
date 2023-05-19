@@ -28,6 +28,8 @@ namespace NCsStatusEffect
 
 				FECsStatusEffect Type;
 
+				FECsStatusEffectImpl ImplType;
+
 				DataType* Data;
 
 				UObject* Instigator;
@@ -44,6 +46,7 @@ namespace NCsStatusEffect
 
 				FPayload() :
 					Type(),
+					ImplType(),
 					Data(nullptr),
 					Instigator(nullptr),
 					Causer(nullptr),
@@ -56,6 +59,7 @@ namespace NCsStatusEffect
 				FORCEINLINE void Reset()
 				{
 					Type = EMCsStatusEffect::Get().GetMAX();
+					ImplType = EMCsStatusEffectImpl::Get().GetMAX();
 					Data = nullptr;
 					Instigator = nullptr;
 					Causer = nullptr;

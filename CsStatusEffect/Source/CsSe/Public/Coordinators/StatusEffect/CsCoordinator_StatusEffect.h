@@ -234,12 +234,13 @@ public:
 	* @param Context	The calling context.
 	* @param Event
 	*/
+	void DeallocateEvent(const FString& Context, EventResourceType* Event, const FECsStatusEffectEvent& Type);
+
 	void DeallocateEvent(const FString& Context, EventResourceType* Event);
 
 	virtual bool CopyEvent(const FString& Context, const EventType* From, EventType* To);
 
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventType* Event);
-
 	EventResourceType* CreateCopyOfEvent(const FString& Context, const EventResourceType* Event);
 
 	EventResourceType* CreateEvent(const FString& Context, const ProcessPayloadType& ProcessPayload);
@@ -262,6 +263,8 @@ public:
 	{
 		return CreateEvent(Context, Type, Data, Instigator, Causer, Receiver, FHitResult());
 	}
+
+	EventResourceType* CreateEvent_NoData(const FString& Context, const ProcessPayloadType& ProcessPayload);
 
 private:
 

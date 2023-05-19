@@ -251,5 +251,29 @@ namespace NCsStatusEffect
 		#undef StatusEffectType
 
 		#pragma endregion Modifier
+
+		namespace NEvent
+		{
+			#define EventResourceType NCsStatusEffect::NEvent::FResource
+
+			EventResourceType* FLibrary::AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectEvent& Type)
+			{
+				CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsStatusEffectEvent, Type)
+
+				return GetCoordinatorChecked(Context, WorldContext)->AllocateEvent(Type);
+			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event, const FECsStatusEffectEvent& Type)
+			{
+				GetCoordinatorChecked(Context, WorldContext)->DeallocateEvent(Context, Event, Type);
+			}
+
+			void FLibrary::DeallocateChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event)
+			{
+				GetCoordinatorChecked(Context, WorldContext)->DeallocateEvent(Context, Event);	
+			}
+
+			#undef EventResourceType
+		}
 	}
 }

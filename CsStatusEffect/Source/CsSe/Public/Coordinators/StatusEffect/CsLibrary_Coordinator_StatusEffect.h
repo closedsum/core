@@ -31,6 +31,9 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, IStatusEffect)
 // NCsStatusEffect::FAllocated
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsStatusEffect, FAllocated)
 
+// NCsStatusEffect::NEvent::FResource
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsStatusEffect, NEvent, FResource)
+
 namespace NCsStatusEffect
 {
 	namespace NCoordinator
@@ -250,5 +253,29 @@ namespace NCsStatusEffect
 
 		#pragma endregion StatusEffect
 		};
+
+		namespace NEvent
+		{
+			struct CSSE_API FLibrary
+			{
+			public:
+
+				FORCEINLINE static UCsCoordinator_StatusEffect* GetCoordinatorChecked(const FString& Context, const UObject* WorldContext)
+				{
+					typedef NCsStatusEffect::NCoordinator::FLibrary SeCoordinatorLibrary;
+
+					return SeCoordinatorLibrary::GetChecked(Context, WorldContext);
+				}
+
+			#define EventResourceType NCsStatusEffect::NEvent::FResource
+
+				static EventResourceType* AllocateChecked(const FString& Context, const UObject* WorldContext, const FECsStatusEffectEvent& Type);
+
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event, const FECsStatusEffectEvent& Type);
+				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, EventResourceType* Event);
+
+			#undef EventResourceType
+			};
+		}
 	}
 }

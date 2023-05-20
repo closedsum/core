@@ -40,6 +40,14 @@ namespace NCsStatusEffect
 	{
 		struct CSSE_API FLibrary final
 		{
+		// Print
+		#pragma region
+		public:
+
+			static FString PrintObjectWithClass(const UCsCoordinator_StatusEffect* Coordinator);
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 		public:
@@ -99,6 +107,23 @@ namespace NCsStatusEffect
 			static UCsCoordinator_StatusEffect* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
+			* Get the reference to UCsCoordinator_StatusEffect from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return				UCsCoordinator_StatusEffect.
+			*/
+			template<typename T>
+			static T* GetChecked(const FString& Context, const UObject* ContextObject)
+			{
+				UCsCoordinator_StatusEffect* O = GetChecked(Context, ContextObject);
+				T* Other					   = Cast<T>(O);
+
+				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
+				return Other;
+			}
+
+			/**
 			* Safely get the reference to UCsCoordinator_StatusEffect from a WorldContext.
 			*
 			* @param Context		The calling context.
@@ -107,6 +132,32 @@ namespace NCsStatusEffect
 			* return				UCsCoordinator_StatusEffect.
 			*/
 			static UCsCoordinator_StatusEffect* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning);
+
+			/**
+			* Safely get the reference to UCsCoordinator_StatusEffect from a WorldContext.
+			*
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return				UCsCoordinator_StatusEffect.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &NCsStatusEffect::FLog::Warning)
+			{
+				UCsCoordinator_StatusEffect* O = GetSafe(Context, ContextObject, Log);
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
 
 			/**
 			* Safely get the reference to UCsCoordinator_StatusEffect from a WorldContext.

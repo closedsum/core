@@ -30,6 +30,16 @@ namespace NCsStatusEffect
 			}
 		}
 
+		// Print
+		#pragma region
+
+		FString FLibrary::PrintObjectWithClass(const UCsCoordinator_StatusEffect* Coordinator)
+		{
+			return FString::Printf(TEXT("%s: with Class: %s"), *(Coordinator->GetName()), *(Coordinator->GetClass()->GetName()));
+		}
+
+		#pragma endregion Print
+
 		// ContextRoot
 		#pragma region
 

@@ -3,6 +3,7 @@
 #include "GameFramework/Actor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/Beam/ICsBeam.h"
 // Types
@@ -59,6 +60,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsDamage, NValue, NRange, FImpl)
 UCLASS(Blueprintable)
 class CSBEAM_API ACsBeamActorPooledImpl : public AActor,
 										  public ICsUpdate,
+										  public ICsShutdown,
 										  public ICsPooledObject,
 										  public ICsBeam
 {
@@ -118,6 +120,14 @@ public:
 	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
 
 #pragma endregion Update
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // PooledObject
 #pragma region

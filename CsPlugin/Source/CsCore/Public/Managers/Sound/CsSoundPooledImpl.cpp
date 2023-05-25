@@ -96,11 +96,7 @@ void ACsSoundPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-	}
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -175,6 +171,21 @@ void ACsSoundPooledImpl::Pause(bool bPaused)
 }
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+
+void ACsSoundPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+	}
+}
+
+#pragma endregion ICsShutdown
+
 
 void ACsSoundPooledImpl::ConstructCache()
 {

@@ -2,6 +2,7 @@
 #include "GameFramework/Actor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsWeapon.h"
 #include "Projectile/CsProjectileWeapon.h"
@@ -63,6 +64,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsWeapon, NProjectile, NParams, NLaunch, ILau
 UCLASS(BlueprintType)
 class CSWP_API ACsProjectileWeaponActorPooled : public AActor,
 											    public ICsUpdate,
+												public ICsShutdown,
 											    public ICsPooledObject,
 											    public ICsWeapon,
 											    public ICsProjectileWeapon
@@ -94,10 +96,6 @@ public:
 
 #pragma endregion AActor Interface
 
-protected:
-
-	void Shutdown();
-
 // ICsUpdate
 #pragma region
 public:
@@ -122,6 +120,14 @@ public:
 	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
 
 #pragma endregion Update
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

@@ -77,18 +77,12 @@ UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectIniti
 
 // UObject Interface
 #pragma region
+
 void UCsFXActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
-
-	FX = nullptr;
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -164,6 +158,23 @@ void UCsFXActorPooledImpl::Pause(bool bPaused)
 }
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+
+void UCsFXActorPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+
+	FX = nullptr;
+}
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

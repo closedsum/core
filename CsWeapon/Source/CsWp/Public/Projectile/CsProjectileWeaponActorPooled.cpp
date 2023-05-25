@@ -363,22 +363,6 @@ void ACsProjectileWeaponActorPooled::PostInitializeComponents()
 
 #pragma endregion AActor Interface
 
-void ACsProjectileWeaponActorPooled::Shutdown()
-{
-	CS_SAFE_DELETE_PTR(Cache)
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
-
-	if (ProjectileImpl)
-	{
-		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
-
-		delete ProjectileImpl;
-		ProjectileImpl = nullptr;
-	}
-	CS_SAFE_DELETE_PTR(SoundImpl)
-	CS_SAFE_DELETE_PTR(FXImpl)
-}
-
 // ICsUpdate
 #pragma region
 
@@ -404,6 +388,27 @@ void ACsProjectileWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group
 }
 
 #pragma endregion Update
+
+// ICsShutdown
+#pragma region
+
+void ACsProjectileWeaponActorPooled::Shutdown()
+{
+	CS_SAFE_DELETE_PTR(Cache)
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+
+	if (ProjectileImpl)
+	{
+		CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(ProjectileImpl->LaunchScopedHandle);
+
+		delete ProjectileImpl;
+		ProjectileImpl = nullptr;
+	}
+	CS_SAFE_DELETE_PTR(SoundImpl)
+	CS_SAFE_DELETE_PTR(FXImpl)
+}
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

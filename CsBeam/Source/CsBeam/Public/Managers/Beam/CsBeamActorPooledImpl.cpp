@@ -164,12 +164,7 @@ void ACsBeamActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -235,6 +230,21 @@ void ACsBeamActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 }
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+
+void ACsBeamActorPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+}
+
+#pragma endregion ICsShutdown
 
 void ACsBeamActorPooledImpl::ConstructCache()
 {

@@ -47,22 +47,12 @@ UCsUserWidgetPooledImpl::UCsUserWidgetPooledImpl(const FObjectInitializer& Objec
 
 // UObject Interface
 #pragma region
+
 void UCsUserWidgetPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
-
-	if (UserWidget)
-	{
-		UserWidget->MarkPendingKill();
-		UserWidget = nullptr;
-	}
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -135,6 +125,27 @@ void UCsUserWidgetPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 
 #pragma endregion ICsUpdate
 
+// ICsShutdown
+#pragma region
+
+void UCsUserWidgetPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+
+	if (UserWidget)
+	{
+		UserWidget->MarkPendingKill();
+		UserWidget = nullptr;
+	}
+}
+
+#pragma endregion ICsShutdown
+
 // ICsPooledObject
 #pragma region
 
@@ -186,7 +197,6 @@ void UCsUserWidgetPooledImpl::Deallocate()
 }
 
 #pragma endregion ICsPooledObject
-
 
 void UCsUserWidgetPooledImpl::ConstructCache()
 {

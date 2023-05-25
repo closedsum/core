@@ -76,12 +76,7 @@ void ACsWidgetActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -103,11 +98,6 @@ void ACsWidgetActorPooledImpl::BeginPlay()
 
 	ConstructCache();
 }
-
-#pragma endregion AActor Interface
-
-// AActor Interface
-#pragma region
 
 void ACsWidgetActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
@@ -138,6 +128,21 @@ void ACsWidgetActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 }
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+
+void ACsWidgetActorPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+}
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

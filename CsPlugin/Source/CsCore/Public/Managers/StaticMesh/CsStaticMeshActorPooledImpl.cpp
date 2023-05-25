@@ -78,16 +78,7 @@ void ACsStaticMeshActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
-
-	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-	MIDLibrary::Destroy(MIDs);
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -149,6 +140,25 @@ void ACsStaticMeshActorPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 }
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+
+void ACsStaticMeshActorPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	MIDLibrary::Destroy(MIDs);
+}
+
+#pragma endregion ICsShutdown
 
 // PooledObject
 #pragma region

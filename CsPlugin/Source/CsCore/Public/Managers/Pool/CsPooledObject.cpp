@@ -6,6 +6,7 @@
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Pool/CsOnConstructObject.h"
 #include "Managers/Time/CsPause.h"
+#include "Shutdown/CsShutdown.h"
 
 UCsPooledObject::UCsPooledObject(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -27,6 +28,9 @@ FCsPooledObject::FCsPooledObject() :
 	// ICsPause
 	_Pause(nullptr),
 	bScriptPause(false),
+	_Shutdown(nullptr),
+	bScriptShutdown(false),
+	// ICsShutdown
 	// Script
 		// ICsPooledObject
 	Script_GetCache_Impl(),
@@ -120,6 +124,20 @@ void FCsPooledObject::SetObject(UObject* InObject)
 				SetScriptPause();
 			}
 		}
+		// ICsShutdown
+		{
+			// Interface
+			if (ICsShutdown* U = Cast<ICsShutdown>(Object))
+			{
+				SetShutdown(U);
+			}
+			// Script Interface
+			else
+			if (Class->ImplementsInterface(UCsShutdown::StaticClass()))
+			{
+				SetScriptShutdown();
+			}
+		}
 	}
 }
 
@@ -133,6 +151,8 @@ void FCsPooledObject::Reset()
 	bScriptOnConstructObject = false;
 	_Pause = nullptr;
 	bScriptPause = false;
+	_Shutdown = nullptr;
+	bScriptShutdown = false;
 
 	Script_GetCache_Impl.Unbind();
 	Script_Allocate_Impl.Unbind();
@@ -140,6 +160,7 @@ void FCsPooledObject::Reset()
 	Script_Update_Impl.Unbind();
 	Script_OnConstructObject_Impl.Unbind();
 	Script_Pause_Impl.Unbind();
+	Script_Shutdown_Impl.Unbind();
 }
 
 #pragma endregion TCsInterfaceObject
@@ -185,5 +206,18 @@ void FCsPooledObject::Pause(bool bPaused)
 }
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+
+void FCsPooledObject::Shutdown()
+{
+	if (bScriptShutdown)
+		Script_Shutdown_Impl.Execute(Object);
+	else
+		_Shutdown->Shutdown();
+}
+
+#pragma endregion ICsShutdown
 
 #pragma endregion FCsPooledObject

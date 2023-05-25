@@ -379,23 +379,6 @@ void ACsProjectilePooledImpl::OutsideWorldBounds()
 
 #pragma endregion AActor Interface
 
-void ACsProjectilePooledImpl::Shutdown()
-{
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-	}
-
-	typedef NCsProjectile::NModifier::FAllocated AllocateModifierType;
-
-	for (AllocateModifierType& Modifier : Modifiers)
-	{
-		Modifier.Clear();
-	}
-	Modifiers.Reset();
-}
-
 void ACsProjectilePooledImpl::OnTick_HandleCVars(const float& DeltaSeconds)
 {
 #if WITH_EDITOR
@@ -526,6 +509,28 @@ void ACsProjectilePooledImpl::Pause(bool bPaused)
 }
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+
+void ACsProjectilePooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+	}
+
+	typedef NCsProjectile::NModifier::FAllocated AllocateModifierType;
+
+	for (AllocateModifierType& Modifier : Modifiers)
+	{
+		Modifier.Clear();
+	}
+	Modifiers.Reset();
+}
+
+#pragma endregion ICsShutdown
 
 void ACsProjectilePooledImpl::ConstructCache()
 {

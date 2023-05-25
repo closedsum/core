@@ -4,6 +4,7 @@
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 // Types
 #include "Managers/Sound/CsSoundPooled.h"
@@ -34,6 +35,7 @@ UCLASS()
 class CSCORE_API ACsSoundPooledImpl : public AActor,
 									  public ICsUpdate,
 									  public ICsPause,
+									  public ICsShutdown,
 									  public ICsPooledObject,
 									  public ICsSoundPooled
 {
@@ -83,6 +85,14 @@ public:
 	void Pause(bool bPaused);
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 protected:
 

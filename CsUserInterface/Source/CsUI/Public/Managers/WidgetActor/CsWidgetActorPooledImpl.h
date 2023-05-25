@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/WidgetActor/CsWidgetActor.h"
 
@@ -22,6 +23,7 @@ struct FCsUserWidgetPooled;
 UCLASS()
 class CSUI_API ACsWidgetActorPooledImpl : public AActor,
 										  public ICsUpdate,
+										  public ICsShutdown,
 										  public ICsPooledObject,
 										  public ICsWidgetActor
 {
@@ -64,6 +66,14 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

@@ -58,16 +58,12 @@ UCsUserWidget_TextPooledImpl::UCsUserWidget_TextPooledImpl(const FObjectInitiali
 
 // UObject Interface
 #pragma region
+
 void UCsUserWidget_TextPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
 
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -133,6 +129,21 @@ void UCsUserWidget_TextPooledImpl::Update(const FCsDeltaTime& DeltaTime)
 }
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+
+void UCsUserWidget_TextPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+}
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region
@@ -244,7 +255,6 @@ void UCsUserWidget_TextPooledImpl::Deallocate()
 }
 
 #pragma endregion ICsPooledObject
-
 
 void UCsUserWidget_TextPooledImpl::ConstructCache()
 {

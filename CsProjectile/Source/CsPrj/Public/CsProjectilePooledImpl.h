@@ -4,6 +4,7 @@
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsProjectile.h"
 	// Event
@@ -92,6 +93,7 @@ UCLASS(Blueprintable)
 class CSPRJ_API ACsProjectilePooledImpl : public AActor,
 										  public ICsUpdate,
 										  public ICsPause,
+										  public ICsShutdown,
 										  public ICsPooledObject,
 										  public ICsProjectile,
 										  // Event
@@ -133,10 +135,6 @@ public:
 	virtual void OutsideWorldBounds() override;
 
 #pragma endregion AActor Interface
-
-protected:
-
-	void Shutdown();
 
 public:
 
@@ -192,6 +190,14 @@ public:
 	void Pause(bool bPaused);
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // PooledObject
 #pragma region

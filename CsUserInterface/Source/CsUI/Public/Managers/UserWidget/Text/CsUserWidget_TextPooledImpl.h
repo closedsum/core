@@ -4,6 +4,7 @@
 // Interfaces
 #include "Managers/Pool/CsOnConstructObject.h"
 #include "Managers/Time/CsUpdate.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/UserWidget/CsUserWidgetPooled.h"
 // Types
@@ -26,6 +27,7 @@ UCLASS()
 class CSUI_API UCsUserWidget_TextPooledImpl : public UUserWidget,
 											  public ICsOnConstructObject,
 											  public ICsUpdate,
+											  public ICsShutdown,
 											  public ICsPooledObject,
 											  public ICsUserWidgetPooled
 {
@@ -60,6 +62,14 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+	
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

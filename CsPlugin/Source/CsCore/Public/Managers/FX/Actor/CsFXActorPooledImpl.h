@@ -6,6 +6,7 @@
 #include "Managers/Pool/CsOnConstructObject.h"
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
 
@@ -30,6 +31,7 @@ class CSCORE_API UCsFXActorPooledImpl : public UObject,
 										public ICsOnConstructObject,
 										public ICsUpdate,
 										public ICsPause,
+										public ICsShutdown,
 										public ICsPooledObject,
 										public ICsFXActorPooled
 {
@@ -72,6 +74,14 @@ public:
 	void Pause(bool bPaused);
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

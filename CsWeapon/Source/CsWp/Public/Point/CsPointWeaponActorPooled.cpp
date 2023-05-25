@@ -224,12 +224,7 @@ void ACsPointWeaponActorPooled::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
-	CS_SAFE_DELETE_PTR(Cache)
-
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
-
-	CS_SAFE_DELETE_PTR(SoundImpl)
-	CS_SAFE_DELETE_PTR(FXImpl)
+	Shutdown();
 }
 
 #pragma endregion UObject Interface
@@ -304,15 +299,6 @@ void ACsPointWeaponActorPooled::PostInitializeComponents()
 
 #pragma endregion AActor Interface
 
-void ACsPointWeaponActorPooled::Shutdown()
-{
-	CS_SAFE_DELETE_PTR(Cache)
-
-	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
-
-	CS_SAFE_DELETE_PTR(SoundImpl)
-	CS_SAFE_DELETE_PTR(FXImpl)
-}
 
 // ICsUpdate
 #pragma region
@@ -339,6 +325,22 @@ void ACsPointWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group)
 }
 
 #pragma endregion Update
+
+// ICsShutdown
+#pragma region
+
+void ACsPointWeaponActorPooled::Shutdown()
+{
+	CS_SAFE_DELETE_PTR(Cache)
+
+	CS_SILENT_CLEAR_SCOPED_TIMER_HANDLE(FireScopedHandle.Handle);
+
+	CS_SAFE_DELETE_PTR(SoundImpl)
+	CS_SAFE_DELETE_PTR(FXImpl)
+}
+
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

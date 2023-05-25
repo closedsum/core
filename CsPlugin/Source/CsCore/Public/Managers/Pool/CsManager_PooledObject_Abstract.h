@@ -323,6 +323,7 @@ namespace NCsPooledObject
 							if (!Object->IsPendingKill())
 							{
 								O->Deallocate();
+								O->Shutdown();
 								DeconstructObject(O);
 							}
 						}
@@ -330,6 +331,7 @@ namespace NCsPooledObject
 					else
 					{
 						O->Deallocate();
+						O->Shutdown();
 						DeconstructObject(O);
 					}
 					delete O;
@@ -558,8 +560,8 @@ namespace NCsPooledObject
 			virtual void DeconstructObject(InterfaceContainerType* Object)
 			{
 				// For Actors, Do Nothing. Let the World handle destruction
-				if (AActor* A = Object->template GetSafeObject<AActor>())
-					return;
+				//if (AActor* A = Object->template GetSafeObject<AActor>())
+				//	return;
 				if (UObject* O = Object->GetSafeObject())
 					O->MarkPendingKill();
 			}

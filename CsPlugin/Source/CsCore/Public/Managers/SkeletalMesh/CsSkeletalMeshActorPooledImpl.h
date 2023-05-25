@@ -4,6 +4,7 @@
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
 #include "Managers/Time/CsPause.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/SkeletalMesh/CsSkeletalMeshActor.h"
 // Types
@@ -31,6 +32,7 @@ UCLASS()
 class CSCORE_API ACsSkeletalMeshActorPooledImpl : public ASkeletalMeshActor,
 											      public ICsUpdate,
 												  public ICsPause,
+												  public ICsShutdown,
 												  public ICsPooledObject,
 												  public ICsSkeletalMeshActor
 {
@@ -77,6 +79,14 @@ public:
 	void Pause(bool bPaused);
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // PooledObject
 #pragma region

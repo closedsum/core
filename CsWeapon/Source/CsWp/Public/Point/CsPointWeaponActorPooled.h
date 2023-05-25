@@ -2,6 +2,7 @@
 #include "GameFramework/Actor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "CsWeapon.h"
 #include "Point/CsPointWeapon.h"
@@ -55,6 +56,7 @@ class USceneComponent;
 UCLASS(BlueprintType)
 class CSWP_API ACsPointWeaponActorPooled : public AActor,
 										   public ICsUpdate,
+										   public ICsShutdown,
 										   public ICsPooledObject,
 										   public ICsWeapon,
 										   public ICsPointWeapon,
@@ -87,10 +89,6 @@ public:
 
 #pragma endregion AActor Interface
 
-protected:
-
-	void Shutdown();
-
 // ICsUpdate
 #pragma region
 public:
@@ -115,6 +113,14 @@ public:
 	FORCEINLINE const FECsUpdateGroup& GetUpdateGroup() const { return UpdateGroup; }
 
 #pragma endregion Update
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // ICsPooledObject
 #pragma region

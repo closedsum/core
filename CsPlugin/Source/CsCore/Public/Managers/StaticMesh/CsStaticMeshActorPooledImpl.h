@@ -3,6 +3,7 @@
 #include "Engine/StaticMeshActor.h"
 // Interfaces
 #include "Managers/Time/CsUpdate.h"
+#include "Shutdown/CsShutdown.h"
 #include "Managers/Pool/CsPooledObject.h"
 #include "Managers/StaticMesh/CsStaticMeshActor.h"
 // Types
@@ -26,6 +27,7 @@ class UMaterialInstanceDynamic;
 UCLASS()
 class CSCORE_API ACsStaticMeshActorPooledImpl : public AStaticMeshActor,
 											    public ICsUpdate,
+												public ICsShutdown,
 												public ICsPooledObject,
 												public ICsStaticMeshActor
 {
@@ -64,6 +66,14 @@ public:
 	void Update(const FCsDeltaTime& DeltaTime);
 
 #pragma endregion ICsUpdate
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
 
 // PooledObject
 #pragma region

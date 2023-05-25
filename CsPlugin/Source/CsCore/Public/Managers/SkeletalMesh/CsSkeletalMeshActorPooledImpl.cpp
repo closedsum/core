@@ -79,17 +79,6 @@ ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInit
 void ACsSkeletalMeshActorPooledImpl::BeginDestroy()
 {
 	Super::BeginDestroy();
-	
-	if (Cache)
-	{
-		delete Cache;
-		Cache = nullptr;
-		CacheImpl = nullptr;
-	}
-
-	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
-
-	MIDLibrary::Destroy(MIDs);
 }
 
 #pragma endregion UObject Interface
@@ -162,6 +151,25 @@ void ACsSkeletalMeshActorPooledImpl::Pause(bool bPaused)
 }
 
 #pragma endregion ICsPause
+
+// ICsShutdown
+#pragma region
+
+void ACsSkeletalMeshActorPooledImpl::Shutdown()
+{
+	if (Cache)
+	{
+		delete Cache;
+		Cache = nullptr;
+		CacheImpl = nullptr;
+	}
+
+	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
+
+	MIDLibrary::Destroy(MIDs);
+}
+
+#pragma endregion ICsShutdown
 
 // PooledObject
 #pragma region

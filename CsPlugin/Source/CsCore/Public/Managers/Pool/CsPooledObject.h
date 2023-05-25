@@ -59,6 +59,7 @@ public:
 class ICsUpdate;
 class ICsOnConstructObject;
 class ICsPause;
+class ICsShutdown;
 
 struct CSCORE_API FCsPooledObject : public TCsInterfaceObject<ICsPooledObject>
 {
@@ -93,6 +94,12 @@ protected:
 
 	/** Does the object implements a script interface of type: ICsPause. */
 	bool bScriptPause;
+
+	/** Reference to interface of type: ICsShutdown. */
+	ICsShutdown* _Shutdown;
+
+	/** Does the object implements a script interface of type: ICsShutdown. */
+	bool bScriptShutdown;
 
 // Script
 #pragma region
@@ -199,6 +206,25 @@ public:
 
 #pragma endregion ICsPause
 
+	// ICsShutdown
+#pragma region
+public:
+
+	/**
+	* Delegate type for pausing.
+	*  The object implements a script interface of type: ICsShutdown.
+	*
+	* @param Object		An object of type: ICsShutdown.
+	*/
+	DECLARE_DELEGATE_OneParam(FScript_Shutdown, UObject* /*Object*/);
+
+	/** Delegate for pausing.
+		  The object implements a script interface of type: ICsShutdown. */
+	FScript_Shutdown Script_Shutdown_Impl;
+
+
+#pragma endregion ICsShutdown
+
 #pragma endregion Script
 
 public:
@@ -219,7 +245,9 @@ public:
 			   _OnConstructObject == B._OnConstructObject &&
 			   bScriptOnConstructObject == B.bScriptOnConstructObject &&
 			   _Pause == B._Pause &&
-			   bScriptPause == B.bScriptPause;
+			   bScriptPause == B.bScriptPause &&
+			   _Shutdown == B._Shutdown &&
+			   bScriptShutdown == B.bScriptShutdown;
 	}
 
 	FORCEINLINE bool operator!=(const FCsPooledObject& B) const
@@ -321,7 +349,7 @@ public:
 
 	void Pause(bool bPaused);
 
-#pragma endregion Pause
+#pragma endregion ICsPause
 
 public:
 
@@ -334,6 +362,26 @@ public:
 	FORCEINLINE void SetPause(ICsPause* InPause) { _Pause = InPause; }
 
 	FORCEINLINE ICsPause* GetPause() const { return _Pause; }
+
+// ICsShutdown
+#pragma region
+public:
+
+	void Shutdown();
+
+#pragma endregion ICsShutdown
+
+public:
+
+	FORCEINLINE bool Implements_ICsShutdown() const { return _Shutdown != nullptr || bScriptShutdown; }
+
+	FORCEINLINE void SetScriptShutdown() { bScriptShutdown = true; }
+
+	FORCEINLINE const bool& IsScriptShutdown() const { return bScriptShutdown; }
+
+	FORCEINLINE void SetShutdown(ICsShutdown* InShutdown) { _Shutdown = InShutdown; }
+
+	FORCEINLINE ICsShutdown* GetShutdown() const { return _Shutdown; }
 
 #undef CacheType
 #undef PayloadType

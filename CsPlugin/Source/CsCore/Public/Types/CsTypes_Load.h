@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
 #include "Types/Enum/CsEnum_uint8.h"
@@ -1100,6 +1100,39 @@ public:
 // DataEntry
 #pragma region
 
+	// DataEntryData
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FECsDataEntryData : public FECsEnum_uint8
+{
+	GENERATED_USTRUCT_BODY()
+
+	CS_ENUM_UINT8_BODY(FECsDataEntryData)
+};
+
+CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsDataEntryData)
+
+struct CSCORE_API EMCsDataEntryData : public TCsEnumStructMap<FECsDataEntryData, uint8>
+{
+	CS_ENUM_STRUCT_MAP_BODY(EMCsDataEntryData, FECsDataEntryData, uint8)
+};
+
+class UObject;
+
+namespace NCsDataEntryData
+{
+	typedef FECsDataEntryData Type;
+
+	CSCORE_API void FromDataTable(const FString& Context, UObject* ContextRoot);
+
+	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+}
+
+#pragma endregion DataEntryData
+
 	// FCsDataEntry_Data
 #pragma region
 
@@ -1645,80 +1678,6 @@ struct CSCORE_API FCsCategoryMemberAssociation
 };
 
 #pragma endregion FCsCategoryMemberAssociation
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsPayloadOld
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
-	FName ShortCode;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
-	FECsDataType DataType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
-	ECsLoadFlags_Editor LoadFlags;
-
-	FORCEINLINE bool operator==(const FCsPayloadOld& B) const
-	{
-		if (ShortCode != B.ShortCode) { return false; }
-		if (DataType != B.DataType) { return false; }
-		if (LoadFlags != B.LoadFlags) { return false; }
-		return true;
-	}
-
-	FORCEINLINE bool operator!=(const FCsPayloadOld& B) const
-	{
-		return !(*this == B);
-	}
-};
-
-// FCsTArrayPayload
-#pragma region
-
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsTArrayPayload
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
-	TArray<FCsPayloadOld> Payloads;
-
-	FORCEINLINE FCsTArrayPayload& operator=(const FCsTArrayPayload& B)
-	{
-		Payloads.Reset();
-
-		for (const FCsPayloadOld& Payload : B.Payloads)
-		{
-			Payloads.Add(Payload);
-		}
-		return *this;
-	}
-
-	FORCEINLINE bool operator==(const FCsTArrayPayload& B) const
-	{
-		const int32 CountA = Payloads.Num();
-		const int32 CountB = B.Payloads.Num();
-
-		if (CountA != CountB)
-			return false;
-
-		for (int32 I = 0; I < CountA; ++I)
-		{
-			if (Payloads[I] != B.Payloads[I])
-				return false;
-		}
-		return true;
-	}
-
-	FORCEINLINE bool operator!=(const FCsTArrayPayload& B) const
-	{
-		return !(*this == B);
-	}
-};
-
-#pragma endregion FCsTArrayPayload
 
 class FProperty;
 

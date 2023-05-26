@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 
 #include "Animation/CsAnimInstance.h"
 #include "CsCore.h"
@@ -11,7 +11,7 @@
 #include "Managers/Singleton/CsManager_Singleton_Actor.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 #include "Managers/Sound/CsManager_Sound.h"
 
 UCsAnimInstance::UCsAnimInstance(const FObjectInitializer& ObjectInitializer)
@@ -73,7 +73,7 @@ void UCsAnimInstance::NativeUpdateAnimation(float DeltaTimeX)
 
 			UCsCoroutineScheduler::Get(GEngine)->Update(Group, DeltaTime);
 
-			UCsManager_FX_Actor::Get(Manager_Singleton_Actor)->Update(DeltaTime);
+			UCsManager_FX::Get(Manager_Singleton_Actor)->Update(DeltaTime);
 			UCsManager_Sound::Get(Manager_Singleton_Actor)->Update(DeltaTime);
 		}
 	}

@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/CsLibrary_FX.h"
 #include "CsCore.h"
 
@@ -13,7 +13,7 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // FX

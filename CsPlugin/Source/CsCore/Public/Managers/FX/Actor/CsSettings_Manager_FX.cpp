@@ -1,5 +1,5 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+#include "Managers/FX/Actor/CsSettings_Manager_FX.h"
 
 // Settings
 #include "Settings/CsDeveloperSettings.h"

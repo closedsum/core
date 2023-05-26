@@ -37,7 +37,7 @@
 #include "Managers/Time/CsManager_Time.h"
 #include "Managers/Projectile/CsManager_Projectile.h"
 #include "Managers/Sound/CsManager_Sound.h"
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 #include "Managers/Trace/CsManager_Trace.h"
 // Data
 #include "Data/CsData_Weapon.h"
@@ -2020,7 +2020,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 				// Get Manager
 				typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-				UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
+				UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 				// Allocate payload
 				typedef NCsFX::NPayload::IPayload PayloadType;
 
@@ -2052,7 +2052,7 @@ void ACsProjectileWeaponActorPooled::FFXImpl::Play(const int32 CurrentProjectile
 					// Get Manager
 					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
-					UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
+					UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer->GetWorldContext());
 					// Allocate payload
 					typedef NCsFX::NPayload::IPayload PayloadType;
 

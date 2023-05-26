@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "CsProjectilePooledImpl.h"
 #include "CsPrj.h"
 
@@ -32,7 +32,7 @@
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // Settings
 #include "Settings/CsTypes_ProjectileSettings.h"
 // Data

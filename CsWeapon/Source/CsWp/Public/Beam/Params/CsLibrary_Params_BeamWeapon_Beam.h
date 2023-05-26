@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Containers/CsLibrary_InterfaceMap.h"
 #include "Beam/Params/CsParams_BeamWeapon_Beam.h"

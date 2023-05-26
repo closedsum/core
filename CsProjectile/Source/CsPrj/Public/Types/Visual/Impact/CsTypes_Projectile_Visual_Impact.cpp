@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/Visual/Impact/CsTypes_Projectile_Visual_Impact.h"
 
 // Library

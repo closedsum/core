@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #ifndef __CSSEQEDITOR_H__
 #define __CSSEQEDITOR_H__
 

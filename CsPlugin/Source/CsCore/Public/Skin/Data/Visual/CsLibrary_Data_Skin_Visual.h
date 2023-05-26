@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
 #include "Containers/CsLibrary_InterfaceMap.h"

@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Collision/CsTypes_Collision.h"
 #include "Collision/CsBeam_CollisionShape.h"

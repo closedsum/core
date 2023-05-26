@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Beam/Impl/CsBeamWeapon_Impl_FX.h"
 
 // Library
@@ -10,7 +10,7 @@
 #include "Collision/CsTypes_Collision.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Beam/Data/Visual/CsData_BeamWeapon_VisualFire.h"

@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Payload/CsTypes_Payload_FX.h"
 #include "CsCore.h"
 
@@ -6,7 +6,7 @@
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
@@ -34,7 +34,7 @@ void FCsPayload_FX::CopyToPayloadAsValueChecked(const FString& Context, UObject*
 	typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
 	UObject* ContextRoot			= FXManagerLibrary::GetContextRootChecked(Context, WorldContext);
-	UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+	UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
 
 	// Int
 	for (const FCsFXParameterInt& Param : FX.IntParameters)

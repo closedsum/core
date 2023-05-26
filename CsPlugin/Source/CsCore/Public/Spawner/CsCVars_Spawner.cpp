@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Spawner/CsCVars_Spawner.h"
 
 TAutoConsoleVariable<int32> CsCVarLogSpawnerTransactions(

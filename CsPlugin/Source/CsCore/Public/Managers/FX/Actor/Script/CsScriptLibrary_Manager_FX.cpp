@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Actor/Script/CsScriptLibrary_Manager_FX.h"
 #include "CsCore.h"
 
@@ -6,7 +6,7 @@
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
@@ -56,7 +56,7 @@ UObject* UCsScriptLibrary_Manager_FX::FindObject(const FString& Context, UObject
 		return nullptr;
 	}
 
-	UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+	UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
 
 	if (Index < 0 || Index >= Manager_FX->GetPoolSize(Type))
 	{
@@ -95,7 +95,7 @@ int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldC
 		return INDEX_NONE;
 #endif // #if WITH_EDITOR
 
-	UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+	UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
 
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 

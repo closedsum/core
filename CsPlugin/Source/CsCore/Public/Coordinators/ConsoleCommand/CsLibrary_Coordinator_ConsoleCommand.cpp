@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coordinators/ConsoleCommand/CsLibrary_Coordinator_ConsoleCommand.h"
 #include "CsCore.h"
 

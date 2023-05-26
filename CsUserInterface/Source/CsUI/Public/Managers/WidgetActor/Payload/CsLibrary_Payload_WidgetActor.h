@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/WidgetActor/Payload/CsPayload_WidgetActor.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 #pragma once

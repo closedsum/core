@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Trace/Impl/CsTraceWeapon_Impl_FX.h"
 
 // Library
@@ -10,7 +10,7 @@
 #include "Collision/CsTypes_Collision.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Trace/Data/Visual/CsData_TraceWeapon_VisualFire.h"
@@ -219,7 +219,7 @@ namespace NCsWeapon
 
 						PayloadImplType* Payload = FXManagerLibrary::AllocatePayloadImplChecked(Context, Outer, &PooledPayload, FX, Transform);
 
-						UCsManager_FX_Actor* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
+						UCsManager_FX* Manager_FX = FXManagerLibrary::GetChecked(Context, Outer);
 
 						// Get and Set any Niagara Parameters
 						typedef NCsFX::NParameter::NVector::FVectorType ParameterVectorType;

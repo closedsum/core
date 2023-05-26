@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "GraphEditor/CsGraphPanelPinFactory.h"
 #include "CsEditor.h"
 
@@ -38,6 +38,8 @@
 	// Asset
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsAssetType.h"
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsLoadAssetsType.h"
+	// Data
+#include "GraphEditor/EnumStruct/Data/SCsGraphPin_ECsDataEntryData.h"
 	// Update
 #include "GraphEditor/EnumStruct/Update/SCsGraphPin_ECsUpdateGroup.h"
 	// Input
@@ -104,6 +106,11 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		CS_TEMP_CREATE(ECsAssetType)
 		// FECsLoadAssetsType
 		CS_TEMP_CREATE(ECsLoadAssetsType)
+	}
+	// Data
+	{
+		// FECsDataEntryData
+		CS_TEMP_CREATE(ECsDataEntryData)
 	}
 	// Update
 	{

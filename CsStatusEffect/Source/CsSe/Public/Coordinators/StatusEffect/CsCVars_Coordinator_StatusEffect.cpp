@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Coordinators/StatusEffect/CsCVars_Coordinator_StatusEffect.h"
 
 TAutoConsoleVariable<int32> CsCVarLogCoordinatorStatusEffectEvents(

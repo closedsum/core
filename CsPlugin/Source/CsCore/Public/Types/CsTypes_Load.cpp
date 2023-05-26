@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_Load.h"
 #include "CsCore.h"
 
@@ -7,6 +7,10 @@
 // Library
 #include "Library/Load/CsLibrary_Load.h"
 #include "Library/CsLibrary_Math.h"
+// Data
+#include "Data/CsGetDataRootSet.h"
+// Utility
+#include "Utility/CsPopulateEnumMapFromSettings.h"
 
 namespace ECsLoadCached
 {
@@ -472,6 +476,36 @@ void FCsPayload::Append(const TMap<FName, FCsPayload>& PayloadMap)
 
 // DataEntry
 #pragma region
+
+	// DataEntryData
+#pragma region
+
+namespace NCsDataEntryData
+{
+	namespace Str
+	{
+		const FString DataEntryData = TEXT("DataEntryData");
+	}
+
+	void FromDataTable(const FString& Context, UObject* ContextRoot)
+	{
+		const FCsDataRootSet* DataRootSet = FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, ContextRoot);
+
+		if (!DataRootSet)
+			return;
+
+		FCsPopulateEnumMapFromSettings::FromDataTable_RowAsName<EMCsDataEntryData>(Context, ContextRoot, DataRootSet->Datas, Str::DataEntryData, &FCsLog::Warning);
+	}
+
+	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+	{
+		EMCsDataEntryData::Get().ClearUserDefinedEnums();
+
+		FromDataTable(Context, ContextRoot);
+	}
+}
+
+#pragma endregion DataEntryData
 
 	// FCsDataEntry_Data
 #pragma region

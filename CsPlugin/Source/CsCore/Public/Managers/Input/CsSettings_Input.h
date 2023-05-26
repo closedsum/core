@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/Input/Action/CsInputActionMap.h"
 #include "Managers/Input/GameEvent/CsGameEventDefinition.h"

@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 #include "CsEditor.h"
 
@@ -14,6 +14,8 @@
 		// Asset
 #include "DetailCustomizations/EnumStruct/ECsAssetTypeCustomization.h"
 #include "DetailCustomizations/EnumStruct/ECsLoadAssetsTypeCustomization.h"
+		// Data
+#include "DetailCustomizations/EnumStruct/Data/ECsDataEntryDataCustomization.h"
 		// Update
 #include "DetailCustomizations/EnumStruct/Update/ECsUpdateGroupCustomization.h"
 		// Input
@@ -67,6 +69,8 @@ void FCsRegisterDetailCustomization::Register()
 		// Asset
 		CS_TEMP_REGISTER(ECsAssetType);
 		CS_TEMP_REGISTER(ECsLoadAssetsType);
+		// Data
+		CS_TEMP_REGISTER(ECsDataEntryData);
 		// Update
 		CS_TEMP_REGISTER(ECsUpdateGroup);
 		// Input

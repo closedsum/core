@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
 #include "UObject/Object.h"
@@ -12,15 +12,15 @@
 // FX
 #include "Managers/FX/Payload/CsPayload_FX.h"
 #include "Managers/FX/Actor/CsFXActorPooled.h"
-#include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
+#include "Managers/FX/Actor/CsSettings_Manager_FX.h"
 #include "Managers/FX/Params/CsParams_FX.h"
 
-#include "CsManager_FX_Actor.generated.h"
+#include "CsManager_FX.generated.h"
 
 // Delegates
 #pragma region
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerFXActor_OnSpawn, const FECsFX&, Type, TScriptInterface<ICsFXActorPooled>, FXActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerFX_OnSpawn, const FECsFX&, Type, TScriptInterface<ICsFXActorPooled>, FXActor);
 
 #pragma endregion Delegates
 
@@ -196,12 +196,12 @@ namespace NCsFX
 
 #pragma endregion Internal
 
-class ICsGetManagerFXActor;
+class ICsGetManagerFX;
 class ICsData_FX;
 class UDataTable;
 
 UCLASS()
-class CSCORE_API UCsManager_FX_Actor : public UObject
+class CSCORE_API UCsManager_FX : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
@@ -216,9 +216,9 @@ public:
 public:
 
 #if WITH_EDITOR
-	static UCsManager_FX_Actor* Get(const UObject* InRoot = nullptr);
+	static UCsManager_FX* Get(const UObject* InRoot = nullptr);
 #else
-	FORCEINLINE static UCsManager_FX_Actor* Get(const UObject* InRoot = nullptr)
+	FORCEINLINE static UCsManager_FX* Get(const UObject* InRoot = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
@@ -231,9 +231,9 @@ public:
 	}
 
 #if WITH_EDITOR
-	static UCsManager_FX_Actor* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
+	static UCsManager_FX* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 #else
-	FORCEINLINE static UCsManager_FX_Actor* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
+	FORCEINLINE static UCsManager_FX* GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr)
 	{
 		return s_bShutdown ? nullptr : s_Instance;
 	}
@@ -248,7 +248,7 @@ public:
 	}
 #endif // #if WITH_EDITOR
 
-	static void Init(UObject* InRoot, TSubclassOf<UCsManager_FX_Actor> ManagerFXActorClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_FX> ManagerFXClass, UObject* InOuter = nullptr);
 	
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(const UObject* InRoot = nullptr);
@@ -256,8 +256,8 @@ public:
 #if WITH_EDITOR
 protected:
 
-	static ICsGetManagerFXActor* Get_GetManagerFXActor(const UObject* InRoot);
-	static ICsGetManagerFXActor* GetSafe_GetManagerFXActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
+	static ICsGetManagerFX* Get_GetManagerFX(const UObject* InRoot);
+	static ICsGetManagerFX* GetSafe_GetManagerFX(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) = nullptr);
 
 #endif // #if WITH_EDITOR
 
@@ -277,7 +277,7 @@ protected:
 
 private:
 	// Singleton data
-	static UCsManager_FX_Actor* s_Instance;
+	static UCsManager_FX* s_Instance;
 	static bool s_bShutdown;
 
 	// Root
@@ -751,7 +751,7 @@ public:
 	FOnSpawn OnSpawn_Event;
 
 	/** */
-	FCsManagerFXActor_OnSpawn OnSpawn_ScriptEvent;
+	FCsManagerFX_OnSpawn OnSpawn_ScriptEvent;
 
 #pragma endregion Spawn
 

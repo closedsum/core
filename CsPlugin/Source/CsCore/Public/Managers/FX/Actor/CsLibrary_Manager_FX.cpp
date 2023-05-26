@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "CsCore.h"
 
@@ -6,7 +6,7 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // FX
 #include "Managers/FX/Payload/CsPayload_FXImpl.h"
 
@@ -39,7 +39,7 @@ namespace NCsFX
 		// Print
 		#pragma region
 
-		FString FLibrary::PrintObjectWithClass(const UCsManager_FX_Actor* Manager)
+		FString FLibrary::PrintObjectWithClass(const UCsManager_FX* Manager)
 		{
 			return FString::Printf(TEXT("%s: with Class: %s"), *(Manager->GetName()), *(Manager->GetClass()->GetName()));
 		}
@@ -101,16 +101,16 @@ namespace NCsFX
 		// Get
 		#pragma region
 
-		UCsManager_FX_Actor* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
+		UCsManager_FX* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
 			UObject* ContextRoot			 = GetContextRootChecked(Context, ContextObject);
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::Get(ContextRoot);
+			UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
 
 			CS_IS_PTR_NULL_CHECKED(Manager_FX)
 			return Manager_FX;
 		}
 
-		UCsManager_FX_Actor* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		UCsManager_FX* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
 
@@ -119,7 +119,7 @@ namespace NCsFX
 				return nullptr;
 		#endif // #if WITH_EDITOR
 
-			UCsManager_FX_Actor* Manager_FX = UCsManager_FX_Actor::GetSafe(Context, ContextRoot, Log);
+			UCsManager_FX* Manager_FX = UCsManager_FX::GetSafe(Context, ContextRoot, Log);
 
 			if (!Manager_FX)
 			{
@@ -128,7 +128,7 @@ namespace NCsFX
 			return Manager_FX;
 		}
 
-		UCsManager_FX_Actor* FLibrary::GetSafe(const UObject* ContextObject)
+		UCsManager_FX* FLibrary::GetSafe(const UObject* ContextObject)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 
@@ -162,7 +162,7 @@ namespace NCsFX
 		
 		const FCsFXActorPooled* FLibrary::FindSafeObject(const FString& Context, const UObject* WorldContext, const FECsFX& Type, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			if (UCsManager_FX_Actor* Manager_FX = GetSafe(Context, WorldContext, Log))
+			if (UCsManager_FX* Manager_FX = GetSafe(Context, WorldContext, Log))
 			{
 				return Manager_FX->FindSafeObject(Type, Index);
 			}
@@ -206,7 +206,7 @@ namespace NCsFX
 
 		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
-			UCsManager_FX_Actor* Manager_FX = GetChecked(Context, WorldContext);
+			UCsManager_FX* Manager_FX = GetChecked(Context, WorldContext);
 
 			CS_IS_PTR_NULL_CHECKED(PooledPayload)
 
@@ -306,7 +306,7 @@ namespace NCsFX
 
 		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
 		{
-			UCsManager_FX_Actor* Manager_FX = GetChecked(Context, WorldContext);
+			UCsManager_FX* Manager_FX = GetChecked(Context, WorldContext);
 
 			CS_IS_VALID_CHECKED(FX);
 
@@ -543,7 +543,7 @@ namespace NCsFX
 			{
 				CS_IS_TARRAY_ANY_NULL_CHECKED(Values, ParameterType)
 
-				UCsManager_FX_Actor* Manager_FX = GetManagerChecked(Context, WorldContext);
+				UCsManager_FX* Manager_FX = GetManagerChecked(Context, WorldContext);
 
 				const int32 Count = Values.Num();
 
@@ -558,7 +558,7 @@ namespace NCsFX
 			{
 				CS_IS_TARRAY_ANY_NULL(Values, ParameterType)
 
-				if (UCsManager_FX_Actor* Manager_FX = GetSafeManager(Context, WorldContext, Log))
+				if (UCsManager_FX* Manager_FX = GetSafeManager(Context, WorldContext, Log))
 				{
 					const int32 Count = Values.Num();
 
@@ -587,7 +587,7 @@ namespace NCsFX
 			{
 				CS_IS_TARRAY_ANY_NULL_CHECKED(Values, ScaledParameterType)
 
-				UCsManager_FX_Actor* Manager_FX = GetManagerChecked(Context, WorldContext);
+				UCsManager_FX* Manager_FX = GetManagerChecked(Context, WorldContext);
 
 				const int32 Count = Values.Num();
 
@@ -602,7 +602,7 @@ namespace NCsFX
 			{
 				CS_IS_TARRAY_ANY_NULL(Values, ScaledParameterType)
 
-				if (UCsManager_FX_Actor* Manager_FX = GetSafeManager(Context, WorldContext, Log))
+				if (UCsManager_FX* Manager_FX = GetSafeManager(Context, WorldContext, Log))
 				{
 					const int32 Count = Values.Num();
 
@@ -631,7 +631,7 @@ namespace NCsFX
 			{
 				CS_IS_TARRAY_ANY_NULL_CHECKED(Values, SkeletalMeshParameterType)
 
-				UCsManager_FX_Actor* Manager_FX = GetManagerChecked(Context, WorldContext);
+				UCsManager_FX* Manager_FX = GetManagerChecked(Context, WorldContext);
 
 				const int32 Count = Values.Num();
 
@@ -646,7 +646,7 @@ namespace NCsFX
 			{
 				CS_IS_TARRAY_ANY_NULL(Values, SkeletalMeshParameterType)
 
-				if (UCsManager_FX_Actor* Manager_FX = GetSafeManager(Context, WorldContext, Log))
+				if (UCsManager_FX* Manager_FX = GetSafeManager(Context, WorldContext, Log))
 				{
 					const int32 Count = Values.Num();
 

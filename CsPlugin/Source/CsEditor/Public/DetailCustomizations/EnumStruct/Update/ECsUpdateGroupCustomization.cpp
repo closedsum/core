@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "DetailCustomizations/EnumStruct/Update/ECsUpdateGroupCustomization.h"
 
 #include "Managers/Time/CsTypes_Update.h"

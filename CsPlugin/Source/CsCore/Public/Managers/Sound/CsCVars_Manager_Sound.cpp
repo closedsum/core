@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/Sound/CsCVars_Manager_Sound.h"
 
 TAutoConsoleVariable<int32> CsCVarLogManagerSoundTransactions(

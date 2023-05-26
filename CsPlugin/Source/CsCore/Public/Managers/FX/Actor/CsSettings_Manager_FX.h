@@ -1,8 +1,8 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/FX/CsTypes_FX.h"
 
-#include "CsSettings_Manager_FX_Actor.generated.h"
+#include "CsSettings_Manager_FX.generated.h"
 
 // FCsSettings_Manager_FX_PoolParams
 #pragma region

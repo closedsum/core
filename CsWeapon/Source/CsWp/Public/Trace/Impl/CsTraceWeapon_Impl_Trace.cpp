@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Trace/Impl/CsTraceWeapon_Impl_Trace.h"
 #include "CsWp.h"
 

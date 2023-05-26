@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
 #include "Managers/FX/CsTypes_FX.h"
@@ -6,7 +6,7 @@
 #include "Utility/CsLog.h"
 
 class UObject;
-class UCsManager_FX_Actor;
+class UCsManager_FX;
 struct FCsFXActorPooled;
 
 // NCsFX::NPayload::IPayload
@@ -39,7 +39,7 @@ namespace NCsFX
 		#pragma region
 		public:
 
-			static FString PrintObjectWithClass(const UCsManager_FX_Actor* Manager);
+			static FString PrintObjectWithClass(const UCsManager_FX* Manager);
 
 		#pragma endregion Print
 
@@ -102,25 +102,25 @@ namespace NCsFX
 		public:
 
 			/**
-			* Get the reference to UCsManager_FX_Actor from a WorldContext.
+			* Get the reference to UCsManager_FX from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				UCsManager_FX_Actor.
+			* return				UCsManager_FX.
 			*/
-			static UCsManager_FX_Actor* GetChecked(const FString& Context, const UObject* WorldContext);
+			static UCsManager_FX* GetChecked(const FString& Context, const UObject* WorldContext);
 
 			/**
-			* Get the reference to UCsManager_FX_Actor from a WorldContext.
+			* Get the reference to UCsManager_FX from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				UCsManager_FX_Actor.
+			* return				UCsManager_FX.
 			*/
 			template<typename T>
 			static T* GetChecked(const FString& Context, const UObject* ContextObject)
 			{
-				UCsManager_FX_Actor* O = GetChecked(Context, ContextObject);
+				UCsManager_FX* O = GetChecked(Context, ContextObject);
 				T* Other			   = Cast<T>(O);
 
 				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
@@ -128,27 +128,27 @@ namespace NCsFX
 			}
 
 			/**
-			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
+			* Safely get the reference to UCsManager_FX from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log
-			* return				UCsManager_FX_Actor.
+			* return				UCsManager_FX.
 			*/
-			static UCsManager_FX_Actor* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static UCsManager_FX* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
+			* Safely get the reference to UCsManager_FX from a WorldContext.
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			* @param Log			(optional)
-			* return				UCsManager_FX_Actor.
+			* return				UCsManager_FX.
 			*/
 			template<typename T>
 			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
-				UCsManager_FX_Actor* O = GetSafe(Context, ContextObject, Log);
+				UCsManager_FX* O = GetSafe(Context, ContextObject, Log);
 
 				if (!O)
 					return nullptr;
@@ -164,12 +164,12 @@ namespace NCsFX
 			}
 
 			/**
-			* Safely get the reference to UCsManager_FX_Actor from a WorldContext.
+			* Safely get the reference to UCsManager_FX from a WorldContext.
 			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* return				UCsManager_FX_Actor.
+			* return				UCsManager_FX.
 			*/
-			static UCsManager_FX_Actor* GetSafe(const UObject* WorldContext);
+			static UCsManager_FX* GetSafe(const UObject* WorldContext);
 
 		#pragma endregion Get
 
@@ -178,7 +178,7 @@ namespace NCsFX
 		public:
 
 			/**
-			* Get whether UCsManager_FX_Actor is beginning shutdown or not (UCsManager_FX_Actor->IsBeginningShutdown()).
+			* Get whether UCsManager_FX is beginning shutdown or not (UCsManager_FX->IsBeginningShutdown()).
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -428,14 +428,14 @@ namespace NCsFX
 			{
 			public:
 
-				FORCEINLINE static UCsManager_FX_Actor* GetManagerChecked(const FString& Context, const UObject* WorldContext)
+				FORCEINLINE static UCsManager_FX* GetManagerChecked(const FString& Context, const UObject* WorldContext)
 				{
 					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 
 					return FXManagerLibrary::GetChecked(Context, WorldContext);
 				}
 
-				FORCEINLINE static UCsManager_FX_Actor* GetSafeManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				FORCEINLINE static UCsManager_FX* GetSafeManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
 				{
 					typedef NCsFX::NManager::FLibrary FXManagerLibrary;
 

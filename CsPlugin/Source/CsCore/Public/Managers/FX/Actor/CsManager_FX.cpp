@@ -1,10 +1,9 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+#include "Managers/FX/Actor/CsManager_FX.h"
 #include "CsCore.h"
 
 // CVars
-#include "Managers/FX/Actor/CsCVars_Manager_FX_Actor.h"
+#include "Managers/FX/Actor/CsCVars_Manager_FX.h"
 // Library
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
@@ -21,22 +20,22 @@
 // Managers
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Managers/Singleton/CsManager_Singleton.h"
-#include "Managers/FX/Actor/CsGetManagerFXActor.h"
+#include "Managers/FX/Actor/CsGetManagerFX.h"
 #endif // #if WITH_EDITOR
 
 // Cached
 #pragma region
 
-namespace NCsManagerFXActor
+namespace NCsManagerFX
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, SetupInternal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, InitInternalFromSettings);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, BindToOnPause);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX_Actor, Spawn);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, SetupInternal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, InitInternalFromSettings);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, BindToOnPause);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_FX, Spawn);
 		}
 
 		namespace Name
@@ -61,10 +60,10 @@ namespace NCsFX
 #pragma endregion Internal
 
 // static initializations
-UCsManager_FX_Actor* UCsManager_FX_Actor::s_Instance;
-bool UCsManager_FX_Actor::s_bShutdown = false;
+UCsManager_FX* UCsManager_FX::s_Instance;
+bool UCsManager_FX::s_bShutdown = false;
 
-UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitializer)
+UCsManager_FX::UCsManager_FX(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	// Singleton
 	bInitialized(false),
@@ -111,74 +110,74 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 
 #if WITH_EDITOR
 
-/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::Get(const UObject* InRoot /*=nullptr*/)
+/*static*/ UCsManager_FX* UCsManager_FX::Get(const UObject* InRoot /*=nullptr*/)
 {
-	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor();
+	return Get_GetManagerFX(InRoot)->GetManager_FX();
 }
 
-/*static*/ UCsManager_FX_Actor* UCsManager_FX_Actor::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+/*static*/ UCsManager_FX* UCsManager_FX::GetSafe(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
-	if (ICsGetManagerFXActor* GetManagerFXActor = GetSafe_GetManagerFXActor(Context, InRoot, Log))
-		return GetManagerFXActor->GetManager_FX_Actor();
+	if (ICsGetManagerFX* GetManagerFX = GetSafe_GetManagerFX(Context, InRoot, Log))
+		return GetManagerFX->GetManager_FX();
 	return nullptr;
 }
 
-/*static*/ bool UCsManager_FX_Actor::IsValid(const UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_FX::IsValid(const UObject* InRoot /*=nullptr*/)
 {
-	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor() != nullptr;
+	return Get_GetManagerFX(InRoot)->GetManager_FX() != nullptr;
 }
 
 #endif // #if WITH_EDITOR
 
-/*static*/ void UCsManager_FX_Actor::Init(UObject* InRoot, TSubclassOf<UCsManager_FX_Actor> ManagerFXActorClass, UObject* InOuter /*=nullptr*/)
+/*static*/ void UCsManager_FX::Init(UObject* InRoot, TSubclassOf<UCsManager_FX> ManagerFXClass, UObject* InOuter /*=nullptr*/)
 {
 #if WITH_EDITOR
-	ICsGetManagerFXActor* GetManagerFXActor = Get_GetManagerFXActor(InRoot);
+	ICsGetManagerFX* GetManagerFX = Get_GetManagerFX(InRoot);
 
-	UCsManager_FX_Actor* Manager_FX_Actor = GetManagerFXActor->GetManager_FX_Actor();
+	UCsManager_FX* Manager_FX = GetManagerFX->GetManager_FX();
 
-	if (!Manager_FX_Actor)
+	if (!Manager_FX)
 	{
-		Manager_FX_Actor = NewObject<UCsManager_FX_Actor>(InOuter ? InOuter : InRoot, ManagerFXActorClass, TEXT("Manager_FX_Actor_Singleton"), RF_Transient | RF_Public);
+		Manager_FX = NewObject<UCsManager_FX>(InOuter ? InOuter : InRoot, ManagerFXClass, TEXT("Manager_FX_Singleton"), RF_Transient | RF_Public);
 
-		GetManagerFXActor->SetManager_FX_Actor(Manager_FX_Actor);
+		GetManagerFX->SetManager_FX(Manager_FX);
 
-		Manager_FX_Actor->SetMyRoot(InRoot);
-		Manager_FX_Actor->Initialize();
+		Manager_FX->SetMyRoot(InRoot);
+		Manager_FX->Initialize();
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::Init: Init has already been called."));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX::Init: Init has already been called."));
 	}
 #else
 	s_bShutdown = false;
 
 	if (!s_Instance)
 	{
-		s_Instance = NewObject<UCsManager_FX_Actor>(GetTransientPackage(), ManagerFXActorClass, TEXT("Manager_FX_Actor_Singleton"), RF_Transient | RF_Public);
+		s_Instance = NewObject<UCsManager_FX>(GetTransientPackage(), ManagerFXClass, TEXT("Manager_FX_Singleton"), RF_Transient | RF_Public);
 		s_Instance->AddToRoot();
 		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::Init: Init has already been called."));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX::Init: Init has already been called."));
 	}
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsManager_FX_Actor::Shutdown(UObject* InRoot /*=nullptr*/)
+/*static*/ void UCsManager_FX::Shutdown(UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	ICsGetManagerFXActor* GetManagerFXActor = Get_GetManagerFXActor(InRoot);
-	UCsManager_FX_Actor* Manager_FX_Actor	= GetManagerFXActor->GetManager_FX_Actor();
-	Manager_FX_Actor->CleanUp();
+	ICsGetManagerFX* GetManagerFX = Get_GetManagerFX(InRoot);
+	UCsManager_FX* Manager_FX	= GetManagerFX->GetManager_FX();
+	Manager_FX->CleanUp();
 
-	GetManagerFXActor->SetManager_FX_Actor(nullptr);
+	GetManagerFX->SetManager_FX(nullptr);
 #else
 	if (!s_Instance)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::Shutdown: Manager has already been shutdown."));
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX::Shutdown: Manager has already been shutdown."));
 		return;
 	}
 
@@ -189,10 +188,10 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ bool UCsManager_FX_Actor::HasShutdown(const UObject* InRoot /*=nullptr*/)
+/*static*/ bool UCsManager_FX::HasShutdown(const UObject* InRoot /*=nullptr*/)
 {
 #if WITH_EDITOR
-	return Get_GetManagerFXActor(InRoot)->GetManager_FX_Actor() == nullptr;
+	return Get_GetManagerFX(InRoot)->GetManager_FX() == nullptr;
 #else
 	return s_bShutdown;
 #endif // #if WITH_EDITOR
@@ -200,26 +199,26 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 
 #if WITH_EDITOR
 
-/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::Get_GetManagerFXActor(const UObject* InRoot)
+/*static*/ ICsGetManagerFX* UCsManager_FX::Get_GetManagerFX(const UObject* InRoot)
 {
-	checkf(InRoot, TEXT("UCsManager_FX_Actor::Get_GetManagerProjectile: InRoot is NULL."));
+	checkf(InRoot, TEXT("UCsManager_FX::Get_GetManagerProjectile: InRoot is NULL."));
 
 	const ICsGetManagerSingleton* GetManagerSingleton = Cast<ICsGetManagerSingleton>(InRoot);
 
-	checkf(GetManagerSingleton, TEXT("UCsManager_FX_Actor::Get_GetManagerFXActor: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
+	checkf(GetManagerSingleton, TEXT("UCsManager_FX::Get_GetManagerFX: InRoot: %s with Class: %s does NOT implement interface: ICsGetManagerSingleton."), *(InRoot->GetName()), *(InRoot->GetClass()->GetName()));
 
 	UCsManager_Singleton* Manager_Singleton = GetManagerSingleton->GetManager_Singleton();
 
-	checkf(Manager_Singleton, TEXT("UCsManager_FX_Actor::Get_GetManagerFXActor: Manager_Singleton is NULL."));
+	checkf(Manager_Singleton, TEXT("UCsManager_FX::Get_GetManagerFX: Manager_Singleton is NULL."));
 
-	ICsGetManagerFXActor* GetManagerFXActor = Cast<ICsGetManagerFXActor>(Manager_Singleton);
+	ICsGetManagerFX* GetManagerFX = Cast<ICsGetManagerFX>(Manager_Singleton);
 
-	checkf(GetManagerFXActor, TEXT("UCsManager_FX_Actor::Get_GetManagerFXActor: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerFXActor."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
+	checkf(GetManagerFX, TEXT("UCsManager_FX::Get_GetManagerFX: Manager_Singleton: %s with Class: %s does NOT implement interface: ICsGetManagerFX."), *(Manager_Singleton->GetName()), *(Manager_Singleton->GetClass()->GetName()));
 
-	return GetManagerFXActor;
+	return GetManagerFX;
 }
 
-/*static*/ ICsGetManagerFXActor* UCsManager_FX_Actor::GetSafe_GetManagerFXActor(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
+/*static*/ ICsGetManagerFX* UCsManager_FX::GetSafe_GetManagerFX(const FString& Context, const UObject* InRoot, void(*Log)(const FString&) /*=nullptr*/)
 {
 	CS_IS_PTR_NULL_RET_NULL(InRoot)
 
@@ -238,12 +237,12 @@ UCsManager_FX_Actor::UCsManager_FX_Actor(const FObjectInitializer& ObjectInitial
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Singleton from InRoot: %s with Class: %s."), *Context, *(InRoot->GetName()), *(InRoot->GetClass()->GetName())));
 		return nullptr;
 	}
-	return Cast<ICsGetManagerFXActor>(Manager_Singleton);
+	return Cast<ICsGetManagerFX>(Manager_Singleton);
 }
 
 #endif // #if WITH_EDITOR
 
-void UCsManager_FX_Actor::Initialize()
+void UCsManager_FX::Initialize()
 {
 	SetupInternal();
 
@@ -251,14 +250,14 @@ void UCsManager_FX_Actor::Initialize()
 	bInitialized = true;
 }
 
-/*static*/ bool UCsManager_FX_Actor::HasInitialized(UObject* InRoot)
+/*static*/ bool UCsManager_FX::HasInitialized(UObject* InRoot)
 {
 	if (!HasShutdown(InRoot))
 		return Get(InRoot)->bInitialized;
 	return false;
 }
 
-void UCsManager_FX_Actor::CleanUp()
+void UCsManager_FX::CleanUp()
 {
 	State = EState::BeginShutdown;
 
@@ -325,7 +324,7 @@ void UCsManager_FX_Actor::CleanUp()
 	// Root
 #pragma region
 
-void UCsManager_FX_Actor::SetMyRoot(UObject* InRoot)
+void UCsManager_FX::SetMyRoot(UObject* InRoot)
 {
 	MyRoot = InRoot;
 }
@@ -337,9 +336,9 @@ void UCsManager_FX_Actor::SetMyRoot(UObject* InRoot)
 // Internal
 #pragma region
 
-void UCsManager_FX_Actor::SetupInternal()
+void UCsManager_FX::SetupInternal()
 {
-	using namespace NCsManagerFXActor::NCached;
+	using namespace NCsManagerFX::NCached;
 
 	const FString& Context = Str::SetupInternal;
 
@@ -353,17 +352,17 @@ void UCsManager_FX_Actor::SetupInternal()
 	{
 		// Log
 		Internal.Log_Impl.BindStatic(&FCsLog::Warning);
-		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_FX_Actor::LogTransaction);
+		Internal.LogTransaction_Impl.BindUObject(this, &UCsManager_FX::LogTransaction);
 		// Container
-		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_FX_Actor::ConstructContainer);
+		Internal.ConstructContainer_Impl.BindUObject(this, &UCsManager_FX::ConstructContainer);
 		// Payload
-		Internal.ConstructPayload_Impl.BindUObject(this, &UCsManager_FX_Actor::ConstructPayload);
+		Internal.ConstructPayload_Impl.BindUObject(this, &UCsManager_FX::ConstructPayload);
 		// Pool
-		Internal.OnAddToPool_Event.AddUObject(this, &UCsManager_FX_Actor::OnAddToPool);
+		Internal.OnAddToPool_Event.AddUObject(this, &UCsManager_FX::OnAddToPool);
 		// Update
-		Internal.OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_FX_Actor::OnPreUpdate_Pool);
-		Internal.OnUpdate_Object_Event.AddUObject(this, &UCsManager_FX_Actor::OnUpdate_Object);
-		Internal.OnPostUpdate_Pool_Impl.BindUObject(this, &UCsManager_FX_Actor::OnPostUpdate_Pool);
+		Internal.OnPreUpdate_Pool_Impl.BindUObject(this, &UCsManager_FX::OnPreUpdate_Pool);
+		Internal.OnUpdate_Object_Event.AddUObject(this, &UCsManager_FX::OnUpdate_Object);
+		Internal.OnPostUpdate_Pool_Impl.BindUObject(this, &UCsManager_FX::OnPostUpdate_Pool);
 
 		// Bind delegates for a script interface.
 		Internal.Script_GetCache_Impl = Script_GetCache_Impl;
@@ -373,7 +372,7 @@ void UCsManager_FX_Actor::SetupInternal()
 		Internal.Script_OnConstructObject_Impl = Script_OnConstructObject_Impl;
 	}
 #if !UE_BUILD_SHIPPING
-	//if (FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::EnableManagerFXActorUnitTest))
+	//if (FCsCVarToggleMap::Get().IsEnabled(NCsCVarToggle::EnableManagerFXUnitTest))
 	//{
 		// Do Nothing
 	//}
@@ -551,9 +550,9 @@ void UCsManager_FX_Actor::SetupInternal()
 	ChangeCounter::Get().Reset();
 }
 
-void UCsManager_FX_Actor::InitInternalFromSettings()
+void UCsManager_FX::InitInternalFromSettings()
 {
-	using namespace NCsManagerFXActor::NCached;
+	using namespace NCsManagerFX::NCached;
 
 	const FString& Context = Str::InitInternalFromSettings;
 
@@ -563,7 +562,7 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 
 		ManagerParamsType ManagerParams;
 
-		ManagerParams.Name  = TEXT("UCsManager_FX_Actor::NCsFX::FManager");
+		ManagerParams.Name  = TEXT("UCsManager_FX::NCsFX::FManager");
 		ManagerParams.World = MyRoot->GetWorld();
 
 		for (const TPair<FECsFX, FCsSettings_Manager_FX_PoolParams>& Pair : Settings.PoolParams)
@@ -606,7 +605,7 @@ void UCsManager_FX_Actor::InitInternalFromSettings()
 }
 
 #define ManagerParamsType NCsFX::FManager::FParams
-void UCsManager_FX_Actor::InitInternal(const ManagerParamsType& Params)
+void UCsManager_FX::InitInternal(const ManagerParamsType& Params)
 {
 	// Add CVars
 	{
@@ -619,24 +618,24 @@ void UCsManager_FX_Actor::InitInternal(const ManagerParamsType& Params)
 			PoolParamsType& PoolParams = Pair.Value;
 
 			// Scoped Timer CVars
-			PoolParams.ScopedGroup = NCsScopedGroup::ManagerFXActor;
+			PoolParams.ScopedGroup = NCsScopedGroup::ManagerFX;
 
-			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerCreatePool;
-			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerUpdate;
-			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerUpdateObject;
-			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerAllocate;
-			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXActorScopedTimerAllocateObject;
-			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerFXActorScopedTimerDeallocate;
-			PoolParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerFXActorScopedTimerDeallocateObject;
-			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerFXActorScopedTimerSpawn;
-			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerFXActorScopedTimerDestroy;
+			PoolParams.CreatePoolScopedTimerCVar		= NCsCVarLog::LogManagerFXScopedTimerCreatePool;
+			PoolParams.UpdateScopedTimerCVar			= NCsCVarLog::LogManagerFXScopedTimerUpdate;
+			PoolParams.UpdateObjectScopedTimerCVar		= NCsCVarLog::LogManagerFXScopedTimerUpdateObject;
+			PoolParams.AllocateScopedTimerCVar			= NCsCVarLog::LogManagerFXScopedTimerAllocate;
+			PoolParams.AllocateObjectScopedTimerCVar	= NCsCVarLog::LogManagerFXScopedTimerAllocateObject;
+			PoolParams.DeallocateScopedTimerCVar		= NCsCVarLog::LogManagerFXScopedTimerDeallocate;
+			PoolParams.DeallocateObjectScopedTimerCVar = NCsCVarLog::LogManagerFXScopedTimerDeallocateObject;
+			PoolParams.SpawnScopedTimerCVar				= NCsCVarLog::LogManagerFXScopedTimerSpawn;
+			PoolParams.DestroyScopedTimerCVar			= NCsCVarLog::LogManagerFXScopedTimerDestroy;
 		}
 	}
 	Internal.Init(Params);
 }
 #undef ManagerParamsType
 
-void UCsManager_FX_Actor::Clear()
+void UCsManager_FX::Clear()
 {
 	Internal.Clear();
 }
@@ -644,30 +643,30 @@ void UCsManager_FX_Actor::Clear()
 	// Pool
 #pragma region
 
-void UCsManager_FX_Actor::CreatePool(const FECsFX& Type, const int32& Size)
+void UCsManager_FX::CreatePool(const FECsFX& Type, const int32& Size)
 {
 	const int32& PoolSize = Internal.GetPoolSize(Type);
 
 	if (PoolSize > CS_EMPTY)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor::CreatePool: Pool for Creep: %s has already been created with Size: %d."), Type.ToChar(), PoolSize);
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX::CreatePool: Pool for Creep: %s has already been created with Size: %d."), Type.ToChar(), PoolSize);
 	}
 
 	Internal.CreatePool(Type, Size);
 }
 
-TDelegate<FCsFXActorPooled*(const FECsFX&)>& UCsManager_FX_Actor::GetConstructContainer_Impl()
+TDelegate<FCsFXActorPooled*(const FECsFX&)>& UCsManager_FX::GetConstructContainer_Impl()
 {
 	return Internal.ConstructContainer_Impl;
 }
 
-FCsFXActorPooled* UCsManager_FX_Actor::ConstructContainer(const FECsFX& Type)
+FCsFXActorPooled* UCsManager_FX::ConstructContainer(const FECsFX& Type)
 {
 	return new FCsFXActorPooled();
 }
 
 #define ConstructParamsType NCsPooledObject::NManager::FConstructParams
-TMulticastDelegate<void(const FCsFXActorPooled*, const ConstructParamsType&)>& UCsManager_FX_Actor::GetOnConstructObject_Event(const FECsFX& Type)
+TMulticastDelegate<void(const FCsFXActorPooled*, const ConstructParamsType&)>& UCsManager_FX::GetOnConstructObject_Event(const FECsFX& Type)
 {
 #undef ConstructParamsType
 	return Internal.GetOnConstructObject_Event(Type);
@@ -679,22 +678,22 @@ TMulticastDelegate<void(const FCsFXActorPooled*, const ConstructParamsType&)>& U
 			// Pool
 #pragma region
 
-const FCsFXActorPooled* UCsManager_FX_Actor::AddToPool(const FECsFX& Type, ICsFXActorPooled* Object)
+const FCsFXActorPooled* UCsManager_FX::AddToPool(const FECsFX& Type, ICsFXActorPooled* Object)
 {
 	return Internal.AddToPool(Type, Object);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::AddToPool(const FECsFX& Type, const FCsFXActorPooled* Object)
+const FCsFXActorPooled* UCsManager_FX::AddToPool(const FECsFX& Type, const FCsFXActorPooled* Object)
 {
 	return Internal.AddToPool(Type, Object->GetObject());
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::AddToPool(const FECsFX& Type, UObject* Object)
+const FCsFXActorPooled* UCsManager_FX::AddToPool(const FECsFX& Type, UObject* Object)
 {
 	return Internal.AddToPool(Type, Object);
 }
 
-void UCsManager_FX_Actor::OnAddToPool(const FECsFX& Type, const FCsFXActorPooled* Object)
+void UCsManager_FX::OnAddToPool(const FECsFX& Type, const FCsFXActorPooled* Object)
 {
 	Pool.Add(Object->GetObject());
 }
@@ -704,17 +703,17 @@ void UCsManager_FX_Actor::OnAddToPool(const FECsFX& Type, const FCsFXActorPooled
 			// Allocated Objects
 #pragma region
 
-const FCsFXActorPooled* UCsManager_FX_Actor::AddToAllocatedObjects(const FECsFX& Type, ICsFXActorPooled* Projectile, UObject* Object)
+const FCsFXActorPooled* UCsManager_FX::AddToAllocatedObjects(const FECsFX& Type, ICsFXActorPooled* Projectile, UObject* Object)
 {
 	return Internal.AddToAllocatedObjects(Type, Projectile, Object);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::AddToAllocatedObjects(const FECsFX& Type, ICsFXActorPooled* Object)
+const FCsFXActorPooled* UCsManager_FX::AddToAllocatedObjects(const FECsFX& Type, ICsFXActorPooled* Object)
 {
 	return Internal.AddToAllocatedObjects(Type, Object);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::AddToAllocatedObjects(const FECsFX& Type, UObject* Object)
+const FCsFXActorPooled* UCsManager_FX::AddToAllocatedObjects(const FECsFX& Type, UObject* Object)
 {
 	return Internal.AddToAllocatedObjects(Type, Object);
 }
@@ -723,17 +722,17 @@ const FCsFXActorPooled* UCsManager_FX_Actor::AddToAllocatedObjects(const FECsFX&
 
 #pragma endregion Add
 
-const TArray<FCsFXActorPooled*>& UCsManager_FX_Actor::GetPool(const FECsFX& Type)
+const TArray<FCsFXActorPooled*>& UCsManager_FX::GetPool(const FECsFX& Type)
 {
 	return Internal.GetPool(Type);
 }
 
-const TArray<FCsFXActorPooled*>& UCsManager_FX_Actor::GetAllocatedObjects(const FECsFX& Type)
+const TArray<FCsFXActorPooled*>& UCsManager_FX::GetAllocatedObjects(const FECsFX& Type)
 {
 	return Internal.GetAllocatedObjects(Type);
 }
 
-void UCsManager_FX_Actor::LogAllocatedObjects() const
+void UCsManager_FX::LogAllocatedObjects() const
 {
 #if WITH_EDITOR
 
@@ -742,7 +741,7 @@ void UCsManager_FX_Actor::LogAllocatedObjects() const
 
 	for (const FECsFX& Type : Types)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX_Actor:: Pool: %s"), Type.ToChar());
+		UE_LOG(LogCs, Warning, TEXT("UCsManager_FX:: Pool: %s"), Type.ToChar());
 		
 		const TArray<FCsFXActorPooled*>& AllocatedObjects = Internal.GetAllocatedObjects(Type);
 		
@@ -759,27 +758,27 @@ void UCsManager_FX_Actor::LogAllocatedObjects() const
 #endif // #if WITH_EDITOR
 }
 
-const int32& UCsManager_FX_Actor::GetPoolSize(const FECsFX& Type)
+const int32& UCsManager_FX::GetPoolSize(const FECsFX& Type)
 {
 	return Internal.GetPoolSize(Type);
 }
 
-int32 UCsManager_FX_Actor::GetAllocatedObjectsSize(const FECsFX& Type)
+int32 UCsManager_FX::GetAllocatedObjectsSize(const FECsFX& Type)
 {
 	return Internal.GetAllocatedObjectsSize(Type);
 }
 
-bool UCsManager_FX_Actor::IsExhausted(const FECsFX& Type)
+bool UCsManager_FX::IsExhausted(const FECsFX& Type)
 {
 	return Internal.IsExhausted(Type);
 }
 
-bool UCsManager_FX_Actor::IsAnyAllocated() const
+bool UCsManager_FX::IsAnyAllocated() const
 {
 	return Internal.IsAnyAllocated();
 }
 
-bool UCsManager_FX_Actor::IsNoneAllocated() const
+bool UCsManager_FX::IsNoneAllocated() const
 {
 	return Internal.IsNoneAllocated();
 }
@@ -787,32 +786,32 @@ bool UCsManager_FX_Actor::IsNoneAllocated() const
 	// Find
 #pragma region
 
-const FCsFXActorPooled* UCsManager_FX_Actor::FindObject(const FECsFX& Type, const int32& Index)
+const FCsFXActorPooled* UCsManager_FX::FindObject(const FECsFX& Type, const int32& Index)
 {
 	return Internal.FindObject(Type, Index);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::FindObject(const FECsFX& Type, ICsFXActorPooled* Object)
+const FCsFXActorPooled* UCsManager_FX::FindObject(const FECsFX& Type, ICsFXActorPooled* Object)
 {
 	return Internal.FindObject(Type, Object);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::FindObject(const FECsFX& Type, UObject* Object)
+const FCsFXActorPooled* UCsManager_FX::FindObject(const FECsFX& Type, UObject* Object)
 {
 	return Internal.FindObject(Type, Object);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::FindSafeObject(const FECsFX& Type, const int32& Index)
+const FCsFXActorPooled* UCsManager_FX::FindSafeObject(const FECsFX& Type, const int32& Index)
 {
 	return Internal.FindSafeObject(Type, Index);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::FindSafeObject(const FECsFX& Type, ICsFXActorPooled* Object)
+const FCsFXActorPooled* UCsManager_FX::FindSafeObject(const FECsFX& Type, ICsFXActorPooled* Object)
 {
 	return Internal.FindSafeObject(Type, Object);
 }
 
-const FCsFXActorPooled* UCsManager_FX_Actor::FindSafeObject(const FECsFX& Type, UObject* Object)
+const FCsFXActorPooled* UCsManager_FX::FindSafeObject(const FECsFX& Type, UObject* Object)
 {
 	return Internal.FindSafeObject(Type, Object);
 }
@@ -824,23 +823,23 @@ const FCsFXActorPooled* UCsManager_FX_Actor::FindSafeObject(const FECsFX& Type, 
 	// Update
 #pragma region
 
-void UCsManager_FX_Actor::Update(const FCsDeltaTime& DeltaTime)
+void UCsManager_FX::Update(const FCsDeltaTime& DeltaTime)
 {
 	Internal.Update(DeltaTime);
 }
 
-void UCsManager_FX_Actor::OnPreUpdate_Pool(const FECsFX& Type)
+void UCsManager_FX::OnPreUpdate_Pool(const FECsFX& Type)
 {
 	CurrentUpdatePoolType		 = Type;
 	CurrentUpdatePoolObjectIndex = 0;
 }
 
-void UCsManager_FX_Actor::OnUpdate_Object(const FECsFX& Type, const FCsFXActorPooled* Object)
+void UCsManager_FX::OnUpdate_Object(const FECsFX& Type, const FCsFXActorPooled* Object)
 {
 	++CurrentUpdatePoolObjectIndex;
 }
 
-void UCsManager_FX_Actor::OnPostUpdate_Pool(const FECsFX& Type)
+void UCsManager_FX::OnPostUpdate_Pool(const FECsFX& Type)
 {
 }
 
@@ -849,26 +848,26 @@ void UCsManager_FX_Actor::OnPostUpdate_Pool(const FECsFX& Type)
 	// Pause
 #pragma region
 
-void UCsManager_FX_Actor::Pause(const FECsUpdateGroup& Group, bool bPaused)
+void UCsManager_FX::Pause(const FECsUpdateGroup& Group, bool bPaused)
 {
 	Internal.Pause(bPaused);
 }
 
-void UCsManager_FX_Actor::Pause(const FECsFX& Type, bool bPaused)
+void UCsManager_FX::Pause(const FECsFX& Type, bool bPaused)
 {
 	Internal.Pause(Type, bPaused);
 }
 
-void UCsManager_FX_Actor::BindToOnPause(const FECsUpdateGroup& Group)
+void UCsManager_FX::BindToOnPause(const FECsUpdateGroup& Group)
 {
-	using namespace NCsManagerFXActor::NCached;
+	using namespace NCsManagerFX::NCached;
 
 	const FString& Context = Str::BindToOnPause;
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
 	UObject* ContextRoot   = TimeManagerLibrary::GetContextRootChecked(Context, GetOuter());
-	FDelegateHandle Handle = UCsManager_Time::Get(ContextRoot)->GetOnPause_Event(Group).AddUObject(this, &UCsManager_FX_Actor::Pause);
+	FDelegateHandle Handle = UCsManager_Time::Get(ContextRoot)->GetOnPause_Event(Group).AddUObject(this, &UCsManager_FX::Pause);
 
 	OnPauseHandleByGroupMap.Add(Group, Handle);
 }
@@ -878,7 +877,7 @@ void UCsManager_FX_Actor::BindToOnPause(const FECsUpdateGroup& Group)
 	// Allocate / Deallocate
 #pragma region
 
-void UCsManager_FX_Actor::QueueDeallocateAll()
+void UCsManager_FX::QueueDeallocateAll()
 {
 	Internal.QueueDeallocateAll();
 }
@@ -888,14 +887,14 @@ void UCsManager_FX_Actor::QueueDeallocateAll()
 	// Payload
 #pragma region
 
-void UCsManager_FX_Actor::ConstructPayloads(const FECsFX& Type, const int32& Size)
+void UCsManager_FX::ConstructPayloads(const FECsFX& Type, const int32& Size)
 {
 	Internal.ConstructPayloads(Type, Size);
 }
 
 #define PayloadType NCsFX::NPayload::IPayload
 
-PayloadType* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
+PayloadType* UCsManager_FX::ConstructPayload(const FECsFX& Type)
 {
 	typedef NCsFX::NPayload::FImpl PayloadImplType;
 
@@ -906,7 +905,7 @@ PayloadType* UCsManager_FX_Actor::ConstructPayload(const FECsFX& Type)
 	return Payload;
 }
 
-PayloadType* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
+PayloadType* UCsManager_FX::AllocatePayload(const FECsFX& Type)
 {
 	return Internal.AllocatePayload(Type);
 }
@@ -919,11 +918,11 @@ PayloadType* UCsManager_FX_Actor::AllocatePayload(const FECsFX& Type)
 #pragma region
 
 #define PayloadType NCsFX::NPayload::IPayload
-const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, PayloadType* Payload)
+const FCsFXActorPooled* UCsManager_FX::Spawn(const FECsFX& Type, PayloadType* Payload)
 {
 #undef PayloadType
 
-	using namespace NCsManagerFXActor::NCached;
+	using namespace NCsManagerFX::NCached;
 
 	const FString& Context = Str::Spawn;
 
@@ -939,12 +938,12 @@ const FCsFXActorPooled* UCsManager_FX_Actor::Spawn(const FECsFX& Type, PayloadTy
 	// Destroy
 #pragma region
 
-bool UCsManager_FX_Actor::Destroy(const FECsFX& Type, ICsFXActorPooled* Object)
+bool UCsManager_FX::Destroy(const FECsFX& Type, ICsFXActorPooled* Object)
 {
 	return Internal.Destroy(Type, Object);
 }
 
-bool UCsManager_FX_Actor::Destroy(ICsFXActorPooled* Object)
+bool UCsManager_FX::Destroy(ICsFXActorPooled* Object)
 {
 	return Internal.Destroy(Object);
 }
@@ -954,14 +953,14 @@ bool UCsManager_FX_Actor::Destroy(ICsFXActorPooled* Object)
 	// Log
 #pragma region
 
-void UCsManager_FX_Actor::Log(const FString& Str)
+void UCsManager_FX::Log(const FString& Str)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *Str);
 }
 
-void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsFXActorPooled* Object)
+void UCsManager_FX::LogTransaction(const FString& Context, const ECsPoolTransaction& Transaction, const FCsFXActorPooled* Object)
 {
-	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFXActorTransactions))
+	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFXTransactions))
 	{
 		const FString& TransactionAsString = EMCsPoolTransaction::Get().ToString(Transaction);
 
@@ -1002,11 +1001,11 @@ void UCsManager_FX_Actor::LogTransaction(const FString& Context, const ECsPoolTr
 // Data
 #pragma region
 
-void UCsManager_FX_Actor::DeconstructData(ICsData_FX* Data)
+void UCsManager_FX::DeconstructData(ICsData_FX* Data)
 {
 	FCsInterfaceMap* InterfaceMap = Data->GetInterfaceMap();
 
-	checkf(InterfaceMap, TEXT("UCsManager_FX_Actor::DeconstructData: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
+	checkf(InterfaceMap, TEXT("UCsManager_FX::DeconstructData: Data failed to propertly implement method: GetInterfaceMap for interface: ICsGetInterfaceMap."));
 	
 	// FCsData_FXImpl
 	if (InterfaceMap->GetRootName() == FCsData_FXImpl::Name)
@@ -1015,17 +1014,17 @@ void UCsManager_FX_Actor::DeconstructData(ICsData_FX* Data)
 	}
 	else
 	{
-		checkf(0, TEXT("UCsManager_FX_Actor::DeconstructData: Failed to delete Data."));
+		checkf(0, TEXT("UCsManager_FX::DeconstructData: Failed to delete Data."));
 	}
 }
 
-ICsData_FX* UCsManager_FX_Actor::GetData(const FName& Name)
+ICsData_FX* UCsManager_FX::GetData(const FName& Name)
 {
-	checkf(Name != NAME_None, TEXT("UCsManager_FX_Actor::GetData: Name = None is NOT Valid."));
+	checkf(Name != NAME_None, TEXT("UCsManager_FX::GetData: Name = None is NOT Valid."));
 
 	ICsData_FX** DataPtr = DataMap.Find(Name);
 
-	checkf(DataPtr, TEXT("UCsManager_FX_Actor::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
+	checkf(DataPtr, TEXT("UCsManager_FX::GetData: Failed to find Data for Name: %s."), *(Name.ToString()));
 
 	return *DataPtr;
 }
@@ -1036,10 +1035,10 @@ ICsData_FX* UCsManager_FX_Actor::GetData(const FName& Name)
 #pragma region
 
 #define ParameterType NCsFX::NParameter::IParameter
-void UCsManager_FX_Actor::DeallocateValue(ParameterType* Value)
+void UCsManager_FX::DeallocateValue(ParameterType* Value)
 {
 #undef ParameterType
-	checkf(Value, TEXT("UCsManager_FX_Actor::DeallocateValue: Value is NULL."));
+	checkf(Value, TEXT("UCsManager_FX::DeallocateValue: Value is NULL."));
 
 	typedef NCsFX::NParameter::EValue ParameterValueType;
 
@@ -1061,10 +1060,10 @@ void UCsManager_FX_Actor::DeallocateValue(ParameterType* Value)
 #pragma region
 
 #define ScaledParameterType NCsFX::NParameter::NScaled::IScaled
-void UCsManager_FX_Actor::DeallocateValue(ScaledParameterType* Value)
+void UCsManager_FX::DeallocateValue(ScaledParameterType* Value)
 {
 #undef ScaledParameterType
-	checkf(Value, TEXT("UCsManager_FX_Actor::DeallocateValue: Value is NULL."));
+	checkf(Value, TEXT("UCsManager_FX::DeallocateValue: Value is NULL."));
 
 	typedef NCsFX::NParameter::EValue ParameterValueType;
 

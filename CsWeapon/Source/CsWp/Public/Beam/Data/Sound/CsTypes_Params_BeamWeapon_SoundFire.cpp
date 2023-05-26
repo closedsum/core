@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Beam/Data/Sound/CsTypes_Params_BeamWeapon_SoundFire.h"
 
 #include "Beam/Data/Sound/CsParams_BeamWeapon_SoundFire.h"

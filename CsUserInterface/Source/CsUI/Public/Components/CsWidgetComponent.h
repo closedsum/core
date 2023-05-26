@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, Inc. All rights reserved.
+// Copyright 2017-2023 Closed Sum Games, Inc. All rights reserved.
 #pragma once
 #include "Components/WidgetComponent.h"
 

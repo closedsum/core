@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Managers/FX/Actor/CsFXActorPooledImpl.h"
 #include "CsCore.h"
 
@@ -13,7 +13,7 @@
 #include "Managers/FX/CsLibrary_FX.h"
 #include "Library/CsLibrary_World.h"
 // Managers
-#include "Managers/FX/Actor/CsManager_FX_Actor.h"
+#include "Managers/FX/Actor/CsManager_FX.h"
 // Pooled Object
 #include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 // FX
@@ -106,13 +106,13 @@ void UCsFXActorPooledImpl::OnConstructObject(const ConstructParamsType& Params)
 
 	checkf(MyOuter, TEXT("%s: Outer is NULL. No Outer set for %s."), *Context, *(GetName()));
 
-	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(MyOuter);
+	UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(MyOuter);
 
-	checkf(Manager_FX_Actor, TEXT("%s: Outer for %s is NOT of type: UCsManager_FX_Actor."), *Context, *(GetName()));
+	checkf(Manager_FX, TEXT("%s: Outer for %s is NOT of type: UCsManager_FX."), *Context, *(GetName()));
 
-	UWorld* World = Manager_FX_Actor->GetMyRoot()->GetWorld();
+	UWorld* World = Manager_FX->GetMyRoot()->GetWorld();
 
-	checkf(World, TEXT("%s: World is NULL. No World associated with Manager_FX_Actor."), *Context);
+	checkf(World, TEXT("%s: World is NULL. No World associated with Manager_FX."), *Context);
 
 	FActorSpawnParameters SpawnParams;
 
@@ -267,8 +267,8 @@ void UCsFXActorPooledImpl::Deallocate()
 	using namespace NCsFXActorPooledImpl::NCached;
 
 	// Check if beginning Shutdown
-	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
-	const bool IsBeginningShutdown		  = Manager_FX_Actor->IsBeginningShutdown();
+	UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
+	const bool IsBeginningShutdown		  = Manager_FX->IsBeginningShutdown();
 
 	if (IsBeginningShutdown)
 	{
@@ -592,8 +592,8 @@ void UCsFXActorPooledImpl::Handle_ClearFXSystem()
 		typedef NCsWorld::FLibrary WorldLibrary;
 		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-		UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
-		UObject* OuterRoot					  = Manager_FX_Actor->GetMyRoot();
+		UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
+		UObject* OuterRoot					  = Manager_FX->GetMyRoot();
 
 		if (WorldLibrary::IsPlayInGameOrPIE(OuterRoot) &&
 			GameInstanceLibrary::IsStandaloneFromEditorChecked(Context, OuterRoot))
@@ -631,8 +631,8 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 	const FString& Context = Str::WaitForSystemComplete;
 
 	// Check to Wait for System to "complete"
-	UCsManager_FX_Actor* Manager_FX_Actor = Cast<UCsManager_FX_Actor>(GetOuter());
-	const bool IsBeginningShutdown		  = Manager_FX_Actor->IsBeginningShutdown();
+	UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
+	const bool IsBeginningShutdown		  = Manager_FX->IsBeginningShutdown();
 
 	FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
 

@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Data/OnHit/Ricochet/CsData_Projectile_OnHit_Ricochet.h"
 #include "CsPrj.h"
 

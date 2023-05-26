@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // Types
 #include "Managers/Sound/CsTypes_Library_Sound.h"
 #include "Coroutine/CsRoutineHandle.h"

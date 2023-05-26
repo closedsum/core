@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
@@ -22,7 +22,7 @@
 #include "Managers/Input/CsSettings_Manager_Input.h"
 // FX
 #include "Managers/FX/CsTypes_FX.h"
-#include "Managers/FX/Actor/CsSettings_Manager_FX_Actor.h"
+#include "Managers/FX/Actor/CsSettings_Manager_FX.h"
 // Sound
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Managers/Sound/CsSettings_Manager_Sound.h"

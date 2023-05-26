@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Payload/Damage/CsPayload_Projectile_Damage.h"
 
 const FName NCsProjectile::NPayload::NDamage::IDamage::Name = FName("NCsProjectile::NPayload::NDamage::IDamage");

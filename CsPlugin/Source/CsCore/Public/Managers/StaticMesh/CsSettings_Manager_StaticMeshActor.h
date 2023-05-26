@@ -1,4 +1,4 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
 #include "CsSettings_Manager_StaticMeshActor.generated.h"

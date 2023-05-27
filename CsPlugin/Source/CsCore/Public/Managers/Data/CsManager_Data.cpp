@@ -392,6 +392,7 @@ void UCsManager_Data::GenerateMaps()
 			DataEntryMap.Add(RowName, RowPtr);
 			DataEntryByPathMap.Add(Path, RowPtr);
 		}
+		NCsDataEntryData::PopulateEnumMapFromSettings(Context, MyRoot);
 	}
 	// DataTables
 	if (UDataTable* DataTables = DataRootSet.Get()->GetCsDataRootSet().DataTables)

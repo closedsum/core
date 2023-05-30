@@ -364,6 +364,34 @@ namespace NCsMath
 		*/
 	#pragma endregion Easing
 
+	// Bezier
+	#pragma region
+	public:
+
+		FORCEINLINE static float Bezier_Quadratic_GetArcLength(const float& T, const FVector& P0, const FVector& P1, const FVector& P2)
+		{
+			float ax, ay, bx, by, az, bz, A, B, C, b, c, u, k, L;
+			ax = P0.X - P1.X - P1.X + P2.X;
+			ay = P0.Y - P1.Y - P1.Y + P2.Y;
+			az = P0.Z - P1.Z - P1.Z + P2.Z;
+			bx = P1.X + P1.X - P0.X - P0.X;
+			by = P1.Y + P1.Y - P0.Y - P0.Y;
+			bz = P1.Z + P1.Z - P0.Z - P0.Z;
+			A = 4.0f * ((ax * ax) + (ay * ay) + (az * az));
+			B = 4.0f * ((ax * bx) + (ay * by) + (az * bz));
+			C = (bx * bx) + (by * by) + (bz * bz);
+			b = B / (2.0f * A);
+			c = C / A;
+			u = T + b;
+			k = c - (b * b);
+			L = 0.5f * FMath::Sqrt(A) *
+				((u * FMath::Sqrt((u * u) + k)) - (b * FMath::Sqrt((b * b) + k)) +
+				 (k * FMath::Loge(FMath::Abs((u + FMath::Sqrt((u * u) + k)) / (b + FMath::Sqrt((b * b) + k))))));
+			return L;
+		}
+
+	#pragma endregion Bezier
+
 		FORCEINLINE static int32 Mod(const int32& A, const int32& B)
 		{
 			const int32 C = A % B;

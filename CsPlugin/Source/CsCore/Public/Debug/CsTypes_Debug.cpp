@@ -790,6 +790,11 @@ void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector
 	Draw(WorldContext, Start, Direction.Rotation(), InLength);
 }
 
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction) const
+{
+	Draw(WorldContext, Start, Direction.Rotation(), Length);
+}
+
 #pragma endregion FCsDebugDrawDirectionArrow
 
 // FCsDebugDrawString

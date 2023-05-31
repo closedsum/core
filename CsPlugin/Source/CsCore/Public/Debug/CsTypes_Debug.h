@@ -737,6 +737,7 @@ public:
 	void Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation) const;
 	void Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation, const float& InLength) const;
 	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction, const float& InLength) const;
+	void Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction) const;
 };
 
 #pragma endregion FCsDebugDrawDirectionArrow

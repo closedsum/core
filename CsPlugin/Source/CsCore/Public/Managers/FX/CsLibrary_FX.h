@@ -19,7 +19,13 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 // NCsFX::NParameter::NDataInterface::NSkeletalMesh::FSkeletalMeshType
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
 
+class UNiagaraParameterCollectionInstance;
 class UNiagaraDataInterfaceSkeletalMesh;
+class UNiagaraDataInterfaceArrayInt32;
+class UNiagaraDataInterfaceArrayFloat;
+class UNiagaraDataInterfaceArrayFloat3;
+class UNiagaraDataInterfaceArrayFloat4;
+class UNiagaraDataInterfaceArrayQuat;
 struct FNiagaraVariable;
 
 namespace NCsFX
@@ -230,23 +236,53 @@ namespace NCsFX
 
 	#undef SkeletalMeshParameterType
 
+		static UNiagaraDataInterfaceArrayInt32* GetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);
+		
+		static UNiagaraDataInterfaceArrayInt32* GetArrayInt32Checked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName);
+
 		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData);
+
+		static void SetArrayInt32Checked(const FString& Context, UNiagaraDataInterfaceArrayInt32* ArrayDI, const TArray<int32>& ArrayData, TArray<int32>& Indices);
 
 		static void SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData, TArray<int32>& Indices);
 
+		static UNiagaraDataInterfaceArrayFloat* GetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);
+
+		static UNiagaraDataInterfaceArrayFloat* GetArrayFloatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName);
+
 		static void SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData);
+
+		static void SetArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>& ArrayData, TArray<int32>& Indices);
 
 		static void SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData, TArray<int32>& Indices);
 
+		static UNiagaraDataInterfaceArrayFloat3* GetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);
+
+		static UNiagaraDataInterfaceArrayFloat3* GetArrayVectorChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName);
+
 		static void SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData);
+
+		static void SetArrayVectorChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat3* ArrayDI, const TArray<FVector>& ArrayData, TArray<int32>& Indices);
 
 		static void SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData, TArray<int32>& Indices);
 		
+		static UNiagaraDataInterfaceArrayFloat4* GetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);
+
+		static UNiagaraDataInterfaceArrayFloat4* GetArrayVector4Checked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName);
+
 		static void SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4>& ArrayData);
+
+		static void SetArrayVector4Checked(const FString& Context, UNiagaraDataInterfaceArrayFloat4* ArrayDI, const TArray<FVector4>& ArrayData, TArray<int32>& Indices);
 
 		static void SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4>& ArrayData, TArray<int32>& Indices);
 
+		static UNiagaraDataInterfaceArrayQuat* GetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);
+
+		static UNiagaraDataInterfaceArrayQuat* GetArrayQuatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName);
+
 		static void SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData);
+
+		static void SetArrayQuatChecked(const FString& Context, UNiagaraDataInterfaceArrayQuat* ArrayDI, const TArray<FQuat>& ArrayData, TArray<int32>& Indices);
 
 		static void SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData, TArray<int32>& Indices);
 

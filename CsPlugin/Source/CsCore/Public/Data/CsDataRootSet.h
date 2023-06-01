@@ -83,6 +83,9 @@ public:
 
 	enum class EMember : uint8
 	{
+		Datas,
+		DataTables,
+		Payloads
 	};
 
 	bool IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
@@ -92,6 +95,8 @@ public:
 	UDataTable* GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 
 	UDataTable* GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
+
+	UDataTable* GetDataTableChecked(const FString& Context, const EMember& MemberType) const;
 
 	template<typename RowStructType>
 	RowStructType* GetSafeDataTableRow(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&)) const
@@ -104,13 +109,31 @@ public:
 			}
 			else
 			{
-				Log(FString::Printf(TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName())));
+	#if !UE_BUILD_SHIPPING
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName())));
+	#endif // #if !UE_BUILD_SHIPPING
 			}
 		}
 		return nullptr;
 	}
 
+	template<typename RowStructType>
+	RowStructType* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const
+	{
+		UDataTable* DataTable = GetDataTableChecked(Context, MemberType);
+		RowStructType* RowPtr = DataTable->FindRow<RowStructType>(RowName, Context);
+
+		checkf(RowPtr, TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName()));
+
+		return RowPtr;
+	}
+
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const;
 
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
 };

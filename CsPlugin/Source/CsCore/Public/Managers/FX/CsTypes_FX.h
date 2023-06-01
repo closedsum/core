@@ -324,6 +324,135 @@ public:
 
 #pragma endregion FCsNiagaraSystem
 
+// FCsNiagaraParameterCollectionInstance
+#pragma region
+
+class UNiagaraParameterCollectionInstance;
+
+/**
+* Container for holding a soft and hard reference to a UNiagaraParameterCollectionInstance.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsNiagaraParameterCollectionInstance
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Soft reference to an UNiagaraParameterCollectionInstance. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
+	TSoftObjectPtr<UNiagaraParameterCollectionInstance> Collection;
+
+	/** */
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	int32 Collection_LoadFlags;
+
+	/** Hard reference to an UNiagaraParameterCollectionInstance. */
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
+	UNiagaraParameterCollectionInstance* Collection_Internal;
+
+	FCsNiagaraParameterCollectionInstance() :
+		Collection(nullptr),
+		Collection_LoadFlags(0),
+		Collection_Internal(nullptr)
+	{
+	}
+
+	/**
+	* Get the Hard reference to the UNiagaraParameterCollectionInstance.
+	*
+	* return Collection
+	*/
+	FORCEINLINE UNiagaraParameterCollectionInstance* Get() const { return Collection_Internal; }
+
+	/**
+	* Get the pointer to the Hard reference to the UNiagaraParameterCollectionInstance asset.
+	*
+	* return Collection
+	*/
+	FORCEINLINE UNiagaraParameterCollectionInstance** GetPtr() { return &Collection_Internal; }
+
+	/**
+	* Get the Hard reference to the UNiagaraParameterCollectionInstance asset.
+	*
+	* @param Context	The calling context.
+	* return			Collection
+	*/
+	FORCEINLINE UNiagaraParameterCollectionInstance* GetChecked(const FString& Context) const
+	{
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("%s: Collection is NULL."), *Context);
+
+		checkf(Collection_Internal, TEXT("%s: Collection has NOT been loaded from Path @ %s."), *Context, *(Collection.ToSoftObjectPath().ToString()));
+
+		return Collection_Internal;
+	}
+
+	/**
+	* Get the Hard reference to the UNiagaraParameterCollectionInstance asset.
+	*
+	* return Collection
+	*/
+	FORCEINLINE UNiagaraParameterCollectionInstance* GetChecked() const
+	{
+		checkf(Collection.ToSoftObjectPath().IsValid(), TEXT("FCsNiagaraParameterCollectionInstance::GetChecked: Collection is NULL."));
+
+		checkf(Collection_Internal, TEXT("FCsNiagaraParameterCollectionInstance::GetChecked: Collection has NOT been loaded from Path @ %s."), *(Collection.ToSoftObjectPath().ToString()));
+
+		return Collection_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UNiagaraParameterCollectionInstance asset.
+	*
+	* @param Context	The calling context.
+	* @param Log		(optional)
+	* return			Collection
+	*/
+	UNiagaraParameterCollectionInstance* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Collection.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Collection is NULL."), *Context));
+			return nullptr;
+		}
+
+		if (!Collection_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Collection has NOT been loaded from Path @ %s."), *Context, *(Collection.ToSoftObjectPath().ToString())));
+		}
+		return Collection_Internal;
+	}
+
+	/**
+	* Safely get the Hard reference to the UNiagaraParameterCollectionInstance asset.
+	*
+	* return Collection
+	*/
+	UNiagaraParameterCollectionInstance* GetSafe()
+	{
+		if (!Collection.ToSoftObjectPath().IsValid())
+			return nullptr;
+		return Collection_Internal;
+	}
+
+	bool IsValidChecked(const FString& Context) const
+	{
+		check(GetChecked(Context));
+		return true;
+	}
+
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!GetSafe(Context, Log))
+			return false;
+		return true;
+	}
+};
+
+#pragma endregion FCsNiagaraParameterCollectionInstance
+
 // FXAttachPoint
 #pragma region
 

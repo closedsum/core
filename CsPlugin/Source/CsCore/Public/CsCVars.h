@@ -71,13 +71,6 @@ extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions;
 
 #pragma endregion Script
 
-// FX
-#pragma region
-
-extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions;
-
-#pragma endregion FX
-
 // Inventory
 #pragma region
 

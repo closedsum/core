@@ -105,18 +105,6 @@ TAutoConsoleVariable<int32> CsCVarLogOverrideFunctions(
 
 #pragma endregion Script
 
-// FX
-#pragma region
-
-TAutoConsoleVariable<int32> CsCVarLogManagerFxTransactions(
-	TEXT("log.manager.fx.transactions"),
-	0,
-	TEXT("Log Manager FX Allocation and DeAllocation."),
-	ECVF_SetByConsole
-);
-
-#pragma endregion FX
-
 // Inventory
 #pragma region
 

@@ -110,7 +110,7 @@ public:
 		return true;
 	}
 
-	FORCEINLINE bool IsValidFlag(const uint64& Flag)
+	FORCEINLINE bool IsValidFlag(const uint64& Flag) const
 	{
 		return FlagMap.Find(Flag) != nullptr;
 	}

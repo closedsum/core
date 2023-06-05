@@ -798,10 +798,14 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
 			MeshComponent->SetRelativeLocation(FVector::ZeroVector);
 
-			UStaticMesh* Mesh = VisualData->GetStaticMesh().Mesh.GetChecked(Context);
+			typedef NCsProjectile::NVisual::NStaticMesh::FInfo StaticMeshInfoType;
+
+			const StaticMeshInfoType& StaticMeshInfo = VisualData->GetStaticMeshInfo();
+
+			UStaticMesh* Mesh = StaticMeshInfo.GetMesh();
 
 			MeshComponent->SetStaticMesh(Mesh);
-			MeshComponent->SetWorldScale3D(VisualData->GetStaticMesh().Scale);
+			MeshComponent->SetWorldScale3D(StaticMeshInfo.GetScale());
 			MeshComponent->Activate();
 			MeshComponent->SetVisibility(true);
 			MeshComponent->SetHiddenInGame(false);

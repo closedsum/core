@@ -1,9 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
-#include "UObject/Interface.h"
+// Interface
 #include "Containers/CsGetInterfaceMap.h"
+// Types
 #include "Data/CsTypes_Data_Projectile.h"
+
 #include "CsData_Projectile_VisualStaticMesh.generated.h"
 
 class UStaticMesh;
@@ -28,7 +29,11 @@ namespace NCsProjectile
 
 					virtual ~IStaticMesh(){}
 
-					virtual const FCsPrjStaticMesh& GetStaticMesh() const = 0;
+				#define StaticMeshInfoType NCsProjectile::NVisual::NStaticMesh::FInfo
+
+					virtual const StaticMeshInfoType& GetStaticMeshInfo() const = 0;
+
+				#undef StaticMeshInfoType
 				};
 			}
 		}
@@ -56,5 +61,9 @@ public:
 
 public:
 
-	virtual const FCsPrjStaticMesh& GetStaticMesh() const = 0;
+#define StaticMeshInfoType NCsProjectile::NVisual::NStaticMesh::FInfo
+
+	virtual const StaticMeshInfoType& GetStaticMeshInfo() const = 0;
+
+#undef StaticMeshInfoType
 };

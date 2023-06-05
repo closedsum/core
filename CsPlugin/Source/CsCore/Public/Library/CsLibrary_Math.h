@@ -459,8 +459,10 @@ namespace NCsMath
 
 		FORCEINLINE static float AngleClamp360(float Angle)
 		{
-			while (Angle < 0.0f) { Angle += 360.0f; }
-			while (Angle > 360.0f) { Angle -= 360.0f; }
+			Angle = FMath::Fmod(Angle, 360.0f);
+
+			if (Angle < 0.0f)
+				Angle += 360.0f;
 			return Angle;
 		}
 

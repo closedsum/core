@@ -517,12 +517,13 @@ namespace NCsProjectile
 			*/
 
 			Locations[ID]	   = Payload.Location;
-			Last_Locations[ID] = Last_Locations[ID];
+			Last_Locations[ID] = Locations[ID];
 
 			MovementInfos.Directions[ID] = Payload.Direction;
 
-			Rotations[ID]	 = MovementInfos.Directions[ID].Rotation();
-			Orientations[ID] = Rotations[ID].Quaternion();
+			Rotations[ID]	   = MovementInfos.Directions[ID].Rotation();
+			Last_Rotations[ID] = Rotations[ID];
+			Orientations[ID]   = Rotations[ID].Quaternion();
 
 			CollisionInfos.Radii[ID]	   = Payload.CollisionRadius;
 			CollisionInfos.HalfHeights[ID] = Payload.CollisionHalfHeight;

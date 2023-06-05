@@ -57,12 +57,12 @@ SliceType* FCsData_Projectile_VisualStaticMeshImplSlice::AddSafeSlice_Internal(c
 
 void FCsData_Projectile_VisualStaticMeshImplSlice::CopyToSlice(SliceType* Slice)
 {
-	Slice->SetStaticMesh(&Mesh);
+	Mesh.CopyToInfo(Slice->GetStaticMeshInfoPtr());
 }
 
 void FCsData_Projectile_VisualStaticMeshImplSlice::CopyToSliceAsValue(SliceType* Slice) const
 {
-	Slice->SetStaticMesh(Mesh);
+	Mesh.CopyToInfoAsValue(Slice->GetStaticMeshInfoPtr());
 }
 
 #undef SliceType
@@ -142,7 +142,7 @@ namespace NCsProjectile
 
 						if (StaticMeshPtr)
 						{
-							Slice->SetStaticMesh(StaticMeshPtr);
+							StaticMeshPtr->CopyToInfo(Slice->GetStaticMeshInfoPtr());
 							Success = true;
 						}
 					}
@@ -162,14 +162,13 @@ namespace NCsProjectile
 
 				bool FImplSlice::IsValidChecked(const FString& Context) const
 				{
-					check(GetStaticMesh().IsValidChecked(Context));
+					CS_IS_VALID_CHECKED(GetStaticMeshInfo());
 					return true;
 				}
 
 				bool FImplSlice::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsProjectile::FLog::Warning*/) const
 				{
-					if (!GetStaticMesh().IsValid(Context, Log))
-						return false;
+					CS_IS_VALID(GetStaticMeshInfo())
 					return true;
 				}
 			}

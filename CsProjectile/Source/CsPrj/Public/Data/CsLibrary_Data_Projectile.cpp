@@ -84,7 +84,7 @@ namespace NCsProjectile
 
 			if (const StaticMeshVisualDataType* StaticMeshVisualData = GetSafeInterfaceChecked<StaticMeshVisualDataType>(Context, Data))
 			{
-				CS_IS_VALID_CHECKED(StaticMeshVisualData->GetStaticMesh());
+				CS_IS_VALID_CHECKED(StaticMeshVisualData->GetStaticMeshInfo());
 			}
 			// VisualTrail
 			typedef NCsProjectile::NData::NVisual::NTrail::ITrail TrailVisualDataType;
@@ -152,7 +152,7 @@ namespace NCsProjectile
 
 			if (const StaticMeshVisualDataType* StaticMeshVisualData = GetSafeInterfaceChecked<StaticMeshVisualDataType>(Context, Data))
 			{
-				CS_IS_VALID(StaticMeshVisualData->GetStaticMesh())
+				CS_IS_VALID(StaticMeshVisualData->GetStaticMeshInfo())
 			}
 			// VisualTrail
 			typedef NCsProjectile::NData::NVisual::NTrail::ITrail TrailVisualDataType;

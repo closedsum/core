@@ -79,6 +79,8 @@ namespace NCsProjectile
 				*/
 				struct CSPRJ_API FImplSlice final : public StaticMeshVisualDataType
 				{
+				#define StaticMeshInfoType NCsProjectile::NVisual::NStaticMesh::FInfo
+
 				public:
 
 					static const FName Name;
@@ -93,15 +95,14 @@ namespace NCsProjectile
 
 					// StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 
-					CS_DECLARE_MEMBER_WITH_PROXY(StaticMesh, FCsPrjStaticMesh)
+					StaticMeshInfoType StaticMeshInfo;
 
 				public:
 
 					FImplSlice() :
 						InterfaceMap(nullptr),
-						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(StaticMesh)
+						StaticMeshInfo()
 					{
-						CS_CTOR_SET_MEMBER_PROXY(StaticMesh);
 					}
 
 					~FImplSlice()
@@ -128,7 +129,8 @@ namespace NCsProjectile
 				#pragma region
 				public:
 
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(StaticMesh, FCsPrjStaticMesh)
+					FORCEINLINE const StaticMeshInfoType& GetStaticMeshInfo() const { return StaticMeshInfo; }
+					FORCEINLINE StaticMeshInfoType* GetStaticMeshInfoPtr() { return &StaticMeshInfo; }
 
 				#pragma endregion StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh)
 
@@ -143,6 +145,8 @@ namespace NCsProjectile
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsProjectile::FLog::Warning) const;
+					
+				#undef StaticMeshInfoType
 				};
 
 			#undef StaticMeshVisualDataType

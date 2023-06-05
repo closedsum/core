@@ -338,6 +338,7 @@ namespace NCsProjectile
 			TArray<FVector> Last_Locations;
 			TArray<FVector> Locations;
 
+			TArray<FRotator> Last_Rotations;
 			TArray<FRotator> Rotations;
 			TArray<FQuat> Orientations;
 			TArray<FVector> FacingDirections;
@@ -642,6 +643,7 @@ namespace NCsProjectile
 				// Movement
 				Last_Locations(),
 				Locations(),
+				Last_Rotations(),
 				Rotations(),
 				Orientations(),
 				MovementInfos(),
@@ -686,6 +688,7 @@ namespace NCsProjectile
 				Generations.Reset(InSize);
 				Last_Locations.Reset(InSize);
 				Locations.Reset(InSize);
+				Last_Rotations.Reset(InSize);
 				Rotations.Reset(InSize);
 				Orientations.Reset(InSize);
 
@@ -710,6 +713,7 @@ namespace NCsProjectile
 					Generations.Add(0);
 					Last_Locations.Add(FVector::ZeroVector);
 					Locations.Add(FVector::ZeroVector);
+					Last_Rotations.Add(FRotator::ZeroRotator);
 					Rotations.Add(FRotator::ZeroRotator);
 					Orientations.Add(FQuat::Identity);
 				}

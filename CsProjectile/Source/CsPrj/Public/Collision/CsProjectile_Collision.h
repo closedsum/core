@@ -5,6 +5,50 @@
 
 #include "CsProjectile_Collision.generated.h"
 
+class UPrimitiveComponent;
+class AActor;
+
+namespace NCsProjectile
+{
+	namespace NCollision
+	{
+		namespace NHit
+		{
+			struct CSPRJ_API FResult
+			{
+				UPrimitiveComponent* MyComponent;
+
+				AActor* OtherActor;
+
+				UPrimitiveComponent* OtherComponent;
+
+				FVector NormalImpulse;
+
+				FHitResult Hit;
+
+				int32 OtherType;
+
+				int32 OtherID;
+
+				FResult() :
+					MyComponent(nullptr),
+					OtherActor(nullptr),
+					OtherComponent(nullptr),
+					NormalImpulse(0.0f),
+					Hit(),
+					OtherType(INDEX_NONE),
+					OtherID(INDEX_NONE)
+				{
+				}
+
+				FORCEINLINE UPrimitiveComponent* GetMyComponent() const { return MyComponent; }
+				FORCEINLINE AActor* GetOtherActor() const { return OtherActor; }
+				FORCEINLINE UPrimitiveComponent* GetOtherComponent() const { return OtherComponent; }
+			};
+		}
+	}
+}
+
 UINTERFACE(Blueprintable)
 class CSPRJ_API UCsProjectile_Collision : public UInterface
 {
@@ -20,5 +64,7 @@ class CSPRJ_API ICsProjectile_Collision
 
 public:
 
-	virtual void Hit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) = 0;
+#define ResultType NCsProjectile::NCollision::NHit::FResult
+	virtual void Hit(const ResultType& Result) = 0;
+#undef ResultType
 };

@@ -100,8 +100,7 @@ namespace NCsProjectilePooledImpl
 		{
 			// AActor Interface
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, PostInitializeComponents);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, SetType);	
 			// ICsPooledObject
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Allocate);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Deallocate);
@@ -111,10 +110,14 @@ namespace NCsProjectilePooledImpl
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnLaunch_SetModifiers);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Launch_Delayed_Internal);
+			// ICsProjectile_Hit
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Hit);
 			// ICsProjectile_Tracking
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, Tracking_GetDestination);
 			// Variables
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, AllocateVariables);
+			// Collision
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, OnHit);
 			// Modifier
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsProjectilePooledImpl, ApplyMovementModifiers);
 		}
@@ -207,6 +210,7 @@ ACsProjectilePooledImpl::ACsProjectilePooledImpl(const FObjectInitializer& Objec
 	IgnoreComponents(),
 	IgnoredHitActors(),
 	IgnoredHitComponents(),
+	IgnoreIdByTypeMap(),
 	bDeallocateOnHit(true),
 	HitCount(0),
 	// FX
@@ -1191,6 +1195,304 @@ void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector& Velocity)
 
 #pragma endregion ICsProjectile_Movement
 
+// ICsProjectile_Collision
+#pragma region
+
+#define HitResultType NCsProjectile::NCollision::NHit::FResult
+void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
+{
+	using namespace NCsProjectilePooledImpl::NCached;
+
+	const FString& Context = Str::Hit;
+
+	UPrimitiveComponent* HitComponent = Result.GetMyComponent();
+	AActor* OtherActor				  = Result.GetOtherActor();
+	UPrimitiveComponent* OtherComp	  = Result.GetOtherComponent();
+	const FVector& NormalImpulse	  = Result.NormalImpulse;
+	const FHitResult& HitResult		  = Result.Hit;
+
+	if (IsIgnored(Result.OtherType, Result.OtherID))
+		return;
+	if (IsIgnoredOnHit(OtherActor))
+		return;
+	if (IsIgnoredOnHit(OtherComp))
+		return;
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogProjectileCollision))
+	{
+		UE_LOG(LogCsPrj, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
+
+		UE_LOG(LogCsPrj, Warning, TEXT("- HitComponent: %s"), HitComponent ? *(HitComponent->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("- OtherActor: %s"), OtherActor ? *(OtherActor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("- OtherComp: %s"), OtherComp ? *(OtherComp->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("- NormalImpulse: %s"), *(NormalImpulse.ToString()));
+		// HitResult
+		UE_LOG(LogCsPrj, Warning, TEXT("- Hit"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- bBlockingHit: %s"), HitResult.bBlockingHit ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- bStartPenetrating"), HitResult.bStartPenetrating ? TEXT("True") : TEXT("False"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Time: %f"), HitResult.Time);
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Location: %s"), *(HitResult.Location.ToString()));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- ImpactPoint: %s"), *(HitResult.ImpactPoint.ToString()));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Normal: %s"), *(HitResult.Normal.ToString()));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- ImpactNormal: %s"), *(HitResult.ImpactNormal.ToString()));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- TraceStart: %s"), *(HitResult.TraceStart.ToString()));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- TraceEnd: %s"), *(HitResult.TraceEnd.ToString()));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- PenetrationDepth: %f"), HitResult.PenetrationDepth);
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Item: %d"), HitResult.Item);
+		UE_LOG(LogCsPrj, Warning, TEXT("-- PhysMaterial: %s"), HitResult.PhysMaterial.IsValid() ? *(HitResult.PhysMaterial->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Actor: %s"), HitResult.Actor.IsValid() ? *(HitResult.Actor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Component: %s"), HitResult.Component.IsValid() ? *(HitResult.Component->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
+	}
+#endif // #if !UE_BUILD_SHIPPING
+
+	ClearHitObjects();
+
+	// Get Physics Surface
+	UPhysicalMaterial* PhysMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
+	EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
+
+	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+
+	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
+	OnHit_TryImpactVisual(Context, HitComponent, OtherActor, OtherComp, NormalImpulse, HitResult);
+	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
+	{
+		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
+
+		if (ImpactSoundDataType* ImpactSoundData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
+		{
+			typedef NCsProjectile::NImpact::NSound::FInfo ImpactSoundInfoType;
+
+			const ImpactSoundInfoType& Info = ImpactSoundData->GetImpactSoundInfo(SurfaceType);
+
+			if (Info.GetbSound())
+			{
+				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
+				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
+
+				PayloadImplType Payload;
+				Payload.Instigator = Cache->GetInstigator();
+
+				FTransform Transform = FTransform::Identity;
+				Transform.SetLocation(HitResult.Location);
+				Transform.SetRotation(HitResult.ImpactNormal.Rotation().Quaternion());
+
+				SoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
+			}
+		}
+	}
+	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
+
+		// TODO: Deprecate
+	{
+		typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
+
+		if (PrjDamageDataType* PrjDamageData = PrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+			typedef NCsDamage::NData::IData DamageDataType;
+
+			DamageDataType* DamageData = PrjDamageData->GetDamageData();
+
+			static TArray<DamageDataType*> DamageDatas;
+			DamageDatas.Add(DamageData);
+			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
+
+			static TArray<FECsDamageData> DamageDataTypes;
+			DamageDataTypes.Add(DamageManagerLibrary::GetDataTypeChecked(Context, GetWorldContext(), DamageData));
+			DamageDataTypes.Append(DamageImpl.DataTypes);
+
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+			
+			const int32 Count = DamageDataTypes.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				DamageData = DamageDatas[I];
+
+				// Apply Modifiers
+				DamageImpl.SetValue(DamageData);
+
+				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+
+				static ProcessPayloadType ProcessPayload;
+
+				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Type		  = DamageDataTypes[I];
+				ProcessPayload.Data		  = DamageData;
+				ProcessPayload.Instigator = GetCache()->GetInstigator();
+				ProcessPayload.Causer	  = this;
+				// TODO: Maybe store this value each tick / update
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.HitResult  = HitResult;
+
+				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
+
+				ProcessPayload.Reset();
+
+				DamageDatas.RemoveAt(I, 1, false);
+				DamageDataTypes.RemoveAt(I, 1, false);
+			}
+		}
+	}
+	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
+	{
+		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
+
+		if (GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+			typedef NCsDamage::NData::IData DamageDataType;
+
+			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
+
+			static TArray<DamageDataType*> DamageDatas;
+			DamageDatas.Add(DamageData);
+			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
+
+			static TArray<FECsDamageData> DamageDataTypes;
+			DamageDataTypes.Add(GetDamageDataType->GetDamageDataType());
+			DamageDataTypes.Append(DamageImpl.DataTypes);
+
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+
+			const int32 Count = DamageDataTypes.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				DamageData = DamageDatas[I];
+
+				// Apply Modifiers
+				DamageImpl.SetValue(DamageData);
+
+				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+
+				static ProcessPayloadType ProcessPayload;
+
+				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Type		  = DamageDataTypes[I];
+				ProcessPayload.Data		  = DamageData;
+				ProcessPayload.Instigator = GetCache()->GetInstigator();
+				ProcessPayload.Causer	  = this;
+				// TODO: Maybe store this value each tick / update
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.HitResult  = HitResult;
+
+				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
+
+				ProcessPayload.Reset();
+
+				DamageDatas.RemoveAt(I, 1, false);
+				DamageDataTypes.RemoveAt(I, 1, false);
+			}
+		}
+	}
+	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
+	{
+		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
+
+		if (GetDamageDataTypeDataTypes* GetDamageDataTypes = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
+		{
+			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
+			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
+			typedef NCsDamage::NData::IData DamageDataType;
+
+			static TArray<DamageDataType*> DamageDatas;
+			DamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
+			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
+
+			static TArray<FECsDamageData> DamageDataTypes;
+			DamageDataTypes.Append(GetDamageDataTypes->GetDamageDataTypes());
+			DamageDataTypes.Append(DamageImpl.DataTypes);
+
+			// NOTE: For now reset and apply the modifiers on each hit.
+			// FUTURE: Look into having additional rules on how the modifiers are applied
+
+			const int32 Count = DamageDataTypes.Num();
+
+			for (int32 I = Count - 1; I >= 0; --I)
+			{
+				DamageDataType* DamageData = DamageDatas[I];
+
+				// Apply Modifiers
+				DamageImpl.SetValue(DamageData);
+
+				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
+
+				static ProcessPayloadType ProcessPayload;
+
+				ProcessPayload.Value	  = DamageImpl.GetValue();
+				ProcessPayload.Type		  = DamageDataTypes[I];
+				ProcessPayload.Data		  = DamageData;
+				ProcessPayload.Instigator = GetCache()->GetInstigator();
+				ProcessPayload.Causer	  = this;
+				// TODO: Maybe store this value each tick / update
+				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.HitResult  = HitResult;
+
+				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
+				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
+
+				ProcessPayload.Reset();
+
+				DamageDatas.RemoveAt(I, 1, false);
+				DamageDataTypes.RemoveAt(I, 1, false);
+			}
+		}
+	}
+
+	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
+	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
+
+	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
+	{
+		if (CollisionData->IgnoreHitObjectAfterHit())
+		{
+			// ID
+			if (Result.OtherType != INDEX_NONE &&
+				Result.OtherID != INDEX_NONE)
+			{
+				AddIgnored(Result.OtherType, Result.OtherID);
+			}
+			// Actor
+			if (OtherActor)
+			{
+				AddIgnoredHitActor(OtherActor);
+				AddIgnoreActor(OtherActor);
+				CollisionComponent->MoveIgnoreActors.Add(OtherActor);
+			}
+			// Component
+			if (OtherComp)
+			{
+				AddIgnoredHitComponent(OtherComp);
+				AddIgnoreComponent(OtherComp);
+				CollisionComponent->MoveIgnoreComponents.Add(OtherComp);
+			}
+		}
+	}
+
+	--HitCount;
+
+	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, HitResult);
+
+	if (bDeallocateOnHit && HitCount <= 0)
+		Cache->QueueDeallocate();
+
+	OnHit_Event.Broadcast(this, HitResult);
+}
+#undef HitResultType
+
+#pragma endregion ICsProjectile_Collision
+
 // ICsProjectile_Tracking
 #pragma region
 
@@ -1640,285 +1942,31 @@ void ACsProjectilePooledImpl::ClearHitObjects()
 	IgnoredHitComponents.Reset(IgnoredHitComponents.Max());
 }
 
-void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACsProjectilePooledImpl::ClearIgnored()
 {
-	using namespace NCsProjectilePooledImpl::NCached;
-
-	const FString& Context = Str::OnHit;
-
-	if (IsIgnoredOnHit(OtherActor))
-		return;
-
-	if (IsIgnoredOnHit(OtherComp))
-		return;
-
-#if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogProjectileCollision))
+	for (TPair<int32, TSet<int32>>& Pair : IgnoreIdByTypeMap)
 	{
-		UE_LOG(LogCsPrj, Warning, TEXT("%s (%s):"), *Context, *(GetName()));
+		TSet<int32>& IDs = Pair.Value;
 
-		UE_LOG(LogCsPrj, Warning, TEXT("- HitComponent: %s"), HitComponent ? *(HitComponent->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("- OtherActor: %s"), OtherActor ? *(OtherActor->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("- OtherComp: %s"), OtherComp ? *(OtherComp->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("- NormalImpulse: %s"), *(NormalImpulse.ToString()));
-		// HitResult
-		UE_LOG(LogCsPrj, Warning, TEXT("- Hit"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- bBlockingHit: %s"), Hit.bBlockingHit ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- bStartPenetrating"), Hit.bStartPenetrating ? TEXT("True") : TEXT("False"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Time: %f"), Hit.Time);
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Location: %s"), *(Hit.Location.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- ImpactPoint: %s"), *(Hit.ImpactPoint.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Normal: %s"), *(Hit.Normal.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- ImpactNormal: %s"), *(Hit.ImpactNormal.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- TraceStart: %s"), *(Hit.TraceStart.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- TraceEnd: %s"), *(Hit.TraceEnd.ToString()));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Item: %d"), Hit.Item);
-		UE_LOG(LogCsPrj, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
+		IDs.Reset();
 	}
-#endif // #if !UE_BUILD_SHIPPING
-
-	ClearHitObjects();
-
-	// Get Physics Surface
-	UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
-	EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
-
-	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
-
-	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
-	OnHit_TryImpactVisual(Context, HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
-	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
-	{
-		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
-
-		if (ImpactSoundDataType* ImpactSoundData = PrjDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
-		{
-			typedef NCsProjectile::NImpact::NSound::FInfo ImpactSoundInfoType;
-
-			const ImpactSoundInfoType& Info = ImpactSoundData->GetImpactSoundInfo(SurfaceType);
-
-			if (Info.GetbSound())
-			{
-				typedef NCsSound::NManager::FLibrary SoundManagerLibrary;
-				typedef NCsPooledObject::NPayload::FImplSlice PayloadImplType;
-
-				PayloadImplType Payload;
-				Payload.Instigator = Cache->GetInstigator();
-
-				FTransform Transform = FTransform::Identity;
-				Transform.SetLocation(Hit.Location);
-				Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
-
-				SoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
-			}
-		}
-	}
-	// DamageDataType (NCsProjectile::NData::NDamage::IDamage)
-
-		// TODO: Deprecate
-	{
-		typedef NCsProjectile::NData::NDamage::IDamage PrjDamageDataType;
-
-		if (PrjDamageDataType* PrjDamageData = PrjDataLibrary::GetSafeInterfaceChecked<PrjDamageDataType>(Context, Data))
-		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-			typedef NCsDamage::NData::IData DamageDataType;
-
-			DamageDataType* DamageData = PrjDamageData->GetDamageData();
-
-			static TArray<DamageDataType*> DamageDatas;
-			DamageDatas.Add(DamageData);
-			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
-
-			static TArray<FECsDamageData> DamageDataTypes;
-			DamageDataTypes.Add(DamageManagerLibrary::GetDataTypeChecked(Context, GetWorldContext(), DamageData));
-			DamageDataTypes.Append(DamageImpl.DataTypes);
-
-			// NOTE: For now reset and apply the modifiers on each hit.
-			// FUTURE: Look into having additional rules on how the modifiers are applied
-			
-			const int32 Count = DamageDataTypes.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				DamageData = DamageDatas[I];
-
-				// Apply Modifiers
-				DamageImpl.SetValue(DamageData);
-
-				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
-
-				static ProcessPayloadType ProcessPayload;
-
-				ProcessPayload.Value	  = DamageImpl.GetValue();
-				ProcessPayload.Type		  = DamageDataTypes[I];
-				ProcessPayload.Data		  = DamageData;
-				ProcessPayload.Instigator = GetCache()->GetInstigator();
-				ProcessPayload.Causer	  = this;
-				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
-				ProcessPayload.HitResult  = Hit;
-
-				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
-
-				ProcessPayload.Reset();
-
-				DamageDatas.RemoveAt(I, 1, false);
-				DamageDataTypes.RemoveAt(I, 1, false);
-			}
-		}
-	}
-	// GetDamageDataTypeDataType (NCsData::IGetDamageDataType)
-	{
-		typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
-
-		if (GetDamageDataTypeDataType* GetDamageDataType = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataType>(Context, Data))
-		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-			typedef NCsDamage::NData::IData DamageDataType;
-
-			DamageDataType* DamageData = DamageManagerLibrary::GetDataChecked(Context, GetWorldContext(), GetDamageDataType);
-
-			static TArray<DamageDataType*> DamageDatas;
-			DamageDatas.Add(DamageData);
-			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
-
-			static TArray<FECsDamageData> DamageDataTypes;
-			DamageDataTypes.Add(GetDamageDataType->GetDamageDataType());
-			DamageDataTypes.Append(DamageImpl.DataTypes);
-
-			// NOTE: For now reset and apply the modifiers on each hit.
-			// FUTURE: Look into having additional rules on how the modifiers are applied
-
-			const int32 Count = DamageDataTypes.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				DamageData = DamageDatas[I];
-
-				// Apply Modifiers
-				DamageImpl.SetValue(DamageData);
-
-				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
-
-				static ProcessPayloadType ProcessPayload;
-
-				ProcessPayload.Value	  = DamageImpl.GetValue();
-				ProcessPayload.Type		  = DamageDataTypes[I];
-				ProcessPayload.Data		  = DamageData;
-				ProcessPayload.Instigator = GetCache()->GetInstigator();
-				ProcessPayload.Causer	  = this;
-				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
-				ProcessPayload.HitResult  = Hit;
-
-				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
-
-				ProcessPayload.Reset();
-
-				DamageDatas.RemoveAt(I, 1, false);
-				DamageDataTypes.RemoveAt(I, 1, false);
-			}
-		}
-	}
-	// GetDamageDataTypeDataTypes (NCsData::IGetDamageDataTypes)
-	{
-		typedef NCsData::IGetDamageDataTypes GetDamageDataTypeDataTypes;
-
-		if (GetDamageDataTypeDataTypes* GetDamageDataTypes = PrjDataLibrary::GetSafeInterfaceChecked<GetDamageDataTypeDataTypes>(Context, Data))
-		{
-			typedef NCsDamage::NManager::FLibrary DamageManagerLibrary;
-			typedef NCsDamage::NModifier::FLibrary DamageModifierLibrary;
-			typedef NCsDamage::NData::IData DamageDataType;
-
-			static TArray<DamageDataType*> DamageDatas;
-			DamageManagerLibrary::GetDatasChecked(Context, GetWorldContext(), GetDamageDataTypes, DamageDatas);
-			DamageManagerLibrary::AddDatasChecked(Context, GetWorldContext(), DamageImpl.DataTypes, DamageDatas);
-
-			static TArray<FECsDamageData> DamageDataTypes;
-			DamageDataTypes.Append(GetDamageDataTypes->GetDamageDataTypes());
-			DamageDataTypes.Append(DamageImpl.DataTypes);
-
-			// NOTE: For now reset and apply the modifiers on each hit.
-			// FUTURE: Look into having additional rules on how the modifiers are applied
-
-			const int32 Count = DamageDataTypes.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				DamageDataType* DamageData = DamageDatas[I];
-
-				// Apply Modifiers
-				DamageImpl.SetValue(DamageData);
-
-				typedef NCsDamage::NData::NProcess::FPayload ProcessPayloadType;
-
-				static ProcessPayloadType ProcessPayload;
-
-				ProcessPayload.Value	  = DamageImpl.GetValue();
-				ProcessPayload.Type		  = DamageDataTypes[I];
-				ProcessPayload.Data		  = DamageData;
-				ProcessPayload.Instigator = GetCache()->GetInstigator();
-				ProcessPayload.Causer	  = this;
-				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
-				ProcessPayload.HitResult  = Hit;
-
-				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
-				DamageManagerLibrary::ProcessDataChecked(Context, GetWorldContext(), ProcessPayload);
-
-				ProcessPayload.Reset();
-
-				DamageDatas.RemoveAt(I, 1, false);
-				DamageDataTypes.RemoveAt(I, 1, false);
-			}
-		}
-	}
-
-	// CollisionDataType (NCsProjectile::NData::NCollision::ICollision)
-	typedef NCsProjectile::NData::NCollision::ICollision CollisionDataType;
-
-	if (CollisionDataType* CollisionData = PrjDataLibrary::GetSafeInterfaceChecked<CollisionDataType>(Context, Data))
-	{
-		if (CollisionData->IgnoreHitObjectAfterHit())
-		{
-			// Actor
-			if (OtherActor)
-			{
-				AddIgnoredHitActor(OtherActor);
-				AddIgnoreActor(OtherActor);
-				CollisionComponent->MoveIgnoreActors.Add(OtherActor);
-			}
-			// Component
-			if (OtherComp)
-			{
-				AddIgnoredHitComponent(OtherComp);
-				AddIgnoreComponent(OtherComp);
-				CollisionComponent->MoveIgnoreComponents.Add(OtherComp);
-			}
-		}
-	}
-
-	--HitCount;
-
-	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
-
-	if (bDeallocateOnHit && HitCount <= 0)
-		Cache->QueueDeallocate();
-
-	OnHit_Event.Broadcast(this, Hit);
 }
 
-void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
+{
+	typedef NCsProjectile::NCollision::NHit::FResult HitResultType;
+
+	HitResultType Result;
+	Result.MyComponent	 = HitComponent;
+	Result.OtherActor	 = OtherActor;
+	Result.OtherComponent = OtherComp;
+	Result.NormalImpulse = NormalImpulse;
+	Result.Hit			 = HitResult;
+
+	Hit(Result);
+}
+
+void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
 {
 #if WITH_EDITOR
 	if (bOverride_ImpactFX)
@@ -1928,13 +1976,13 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 			UE_LOG(LogCsPrj, Warning, TEXT("%s: Trail FX is OVERRIDDEN for %s."), *Context, *(GetName()));
 		}
 
-		OnOverride_ImpactFX_ScriptEvent.Broadcast(this, HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+		OnOverride_ImpactFX_ScriptEvent.Broadcast(this, HitComponent, OtherActor, OtherComp, NormalImpulse, HitResult);
 	}
 	else
 #endif // #if WITH_EDITOR
 	{
 		// Get Physics Surface
-		UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
+		UPhysicalMaterial* PhysMaterial = HitResult.PhysMaterial.IsValid() ? HitResult.PhysMaterial.Get() : nullptr;
 		EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
 		typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
@@ -1960,7 +2008,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					Payload.Instigator = Cache->GetInstigator();
 
 					FTransform Transform = FTransform::Identity;
-					Transform.SetLocation(Hit.Location);
+					Transform.SetLocation(HitResult.Location);
 
 					typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
 
@@ -1968,13 +2016,13 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					// Normal
 					if (Direction == DirectionType::Normal)
 					{
-						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+						Transform.SetRotation(HitResult.ImpactNormal.Rotation().Quaternion());
 					}
 					// Inverse Normal
 					else
 					if (Direction == DirectionType::Normal)
 					{
-						Transform.SetRotation((-Hit.ImpactNormal).Rotation().Quaternion());
+						Transform.SetRotation((-HitResult.ImpactNormal).Rotation().Quaternion());
 					}
 					// Velocity
 					else

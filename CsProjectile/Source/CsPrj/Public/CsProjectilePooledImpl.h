@@ -356,10 +356,9 @@ public:
 #pragma region
 public:
 
-	FORCEINLINE void Hit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-	{
-		OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
-	}
+#define HitResultType NCsProjectile::NCollision::NHit::FResult
+	void Hit(const HitResultType& Result);
+#undef HitResultType
 
 #pragma endregion ICsProjectile_Collision
 
@@ -664,6 +663,31 @@ protected:
 	bool IsIgnoredOnHit(UPrimitiveComponent* Component) const;
 
 	virtual void ClearHitObjects();
+
+	TMap<int32, TSet<int32>> IgnoreIdByTypeMap;
+
+	FORCEINLINE bool IsIgnored(const int32& InType, const int32& InID) const
+	{
+		if (InType == INDEX_NONE)
+			return false;
+
+		if (const TSet<int32>* IdsPtr = IgnoreIdByTypeMap.Find(InType))
+		{
+			return IdsPtr->Contains(InID);
+		}
+		return false;
+	}
+
+	FORCEINLINE void AddIgnored(const int32& InType, const int32& InID)
+	{
+		check(InType != INDEX_NONE);
+		check(InID != INDEX_NONE);
+
+		TSet<int32>& IDs = IgnoreIdByTypeMap.FindOrAdd(InType);
+		IDs.Add(InID);
+	}
+
+	void ClearIgnored();
 
 public:
 

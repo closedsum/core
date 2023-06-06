@@ -1,9 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
-#include "UObject/Interface.h"
+// Interface
 #include "Containers/CsGetInterfaceMap.h"
-#include "Managers/FX/CsTypes_FX.h"
+// Types
+#include "Types/Visual/CsTypes_Projectile_Visual_Trail.h"
+
 #include "CsData_Projectile_VisualTrail.generated.h"
 
 namespace NCsProjectile
@@ -26,6 +27,8 @@ namespace NCsProjectile
 
 				public:
 
+				#define TrailInfoType NCsProjectile::NVisual::NTrail::FInfo
+
 					/**
 					* Get the Trail FX to play when Projectile is Launched.
 					* If 
@@ -38,6 +41,15 @@ namespace NCsProjectile
 					* return Trail FX
 					*/
 					virtual const FCsFX& GetTrailFX() const = 0;
+
+					/**
+					* Get any information related to a Trail.
+					* 
+					* return Trail Info
+					*/
+					virtual const TrailInfoType& GetTrailInfo() const = 0;
+
+				#undef TrailInfoType
 				};
 			}
 		}
@@ -64,6 +76,8 @@ public:
 
 public:
 
+#define TrailInfoType NCsProjectile::NVisual::NTrail::FInfo
+
 	/**
 	* Get the Trail FX to play when Projectile is Launched.
 	* If
@@ -76,4 +90,13 @@ public:
 	* return Trail FX
 	*/
 	virtual const FCsFX& GetTrailFX() const = 0;
+
+	/**
+	* Get any information related to a Trail.
+	*
+	* return Trail Info
+	*/
+	virtual const TrailInfoType& GetTrailInfo() const = 0;
+
+#undef TrailInfoType
 };

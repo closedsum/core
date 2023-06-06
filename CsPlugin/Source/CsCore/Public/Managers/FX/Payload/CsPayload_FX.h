@@ -119,6 +119,30 @@ namespace NCsFX
 			*/
 			virtual const FTransform& GetTransform() const = 0;
 
+			/** 
+			* Get whether RelativeLocation should be considered relative to the world, rather than the parent.
+			*  NOTE: This will only be valie if GetAttachmentTransformRule().LocationRule == EAttachmentRule::KeepWorld.
+			* 
+			* return Whether bAbsoluteLocation is set or not
+			*/
+			virtual const bool& GetbAbsoluteLocation() const = 0;
+
+			/**
+			* Get whether RelativeRotation should be considered relative to the world, rather than the parent.
+			*  NOTE: This will only be valie if GetAttachmentTransformRule().RotationRule == EAttachmentRule::KeepWorld.
+			*
+			* return Whether bAbsoluteRotation is set or not
+			*/
+			virtual const bool& GetbAbsoluteRotation() const = 0;
+
+			/**
+			* Get whether RelativeScale should be considered relative to the world, rather than the parent.
+			*  NOTE: This will only be valie if GetAttachmentTransformRule().ScaleRule == EAttachmentRule::KeepWorld.
+			*
+			* return Whether bAbsoluteScale is set or not
+			*/
+			virtual const bool& GetbAbsoluteScale() const = 0;
+
 			/**
 			* Get whether the Transform's Scale should be applied to the FX.
 			* If NOT, the object defaults to FVector::OneVector or just the scale of the object the FX

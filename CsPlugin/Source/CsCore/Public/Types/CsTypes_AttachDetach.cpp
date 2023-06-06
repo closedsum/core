@@ -1,6 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Types/CsTypes_AttachDetach.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
+
 // AttachmentRule
 #pragma region
 
@@ -25,6 +28,56 @@ FCsAttachmentTransformRules FCsAttachmentTransformRules::KeepRelativeTransform(E
 FCsAttachmentTransformRules FCsAttachmentTransformRules::KeepWorldTransform(ECsAttachmentRule::KeepWorld, false);
 FCsAttachmentTransformRules FCsAttachmentTransformRules::SnapToTargetNotIncludingScale(ECsAttachmentRule::SnapToTarget, ECsAttachmentRule::SnapToTarget, ECsAttachmentRule::KeepWorld, false);
 FCsAttachmentTransformRules FCsAttachmentTransformRules::SnapToTargetIncludingScale(ECsAttachmentRule::SnapToTarget, false);
+
+bool FCsAttachmentTransformRules::IsValidChecked(const FString& Context) const
+{
+	if (bAbsoluteLocation)
+	{
+		checkf(LocationRule == ECsAttachmentRule::KeepWorld, TEXT("%s: If bAbsoluteLocation == TRUE, then LocationRule MUST = ECsAttachmentRule::KeepWorld."), *Context);
+	}
+
+	if (bAbsoluteRotation)
+	{
+		checkf(RotationRule == ECsAttachmentRule::KeepWorld, TEXT("%s: If bAbsoluteRotation == TRUE, then RotationRule MUST = ECsAttachmentRule::KeepWorld."), *Context);
+	}
+
+	if (bAbsoluteScale)
+	{
+		checkf(ScaleRule == ECsAttachmentRule::KeepWorld, TEXT("%s: If bAbsoluteScale == TRUE, then ScaleRule MUST = ECsAttachmentRule::KeepWorld."), *Context);
+	}
+	return true;
+}
+
+bool FCsAttachmentTransformRules::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	if (bAbsoluteLocation)
+	{
+		if (LocationRule != ECsAttachmentRule::KeepWorld)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If bAbsoluteLocation == TRUE, then LocationRule MUST = ECsAttachmentRule::KeepWorld."), *Context));
+			return false;
+		}
+	}
+
+	if (bAbsoluteRotation)
+	{
+		if (RotationRule != ECsAttachmentRule::KeepWorld)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If bAbsoluteRotation == TRUE, then RotationRule MUST = ECsAttachmentRule::KeepWorld."), *Context));
+			return false;
+		}
+	}
+
+	if (bAbsoluteScale)
+	{
+		if (ScaleRule != ECsAttachmentRule::KeepWorld)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If bAbsoluteScale == TRUE, then ScaleRule MUST = ECsAttachmentRule::KeepWorld."), *Context));
+			return false;
+		}
+	}
+	return true;
+}
 
 #pragma endregion AttachmentTransformRules
 

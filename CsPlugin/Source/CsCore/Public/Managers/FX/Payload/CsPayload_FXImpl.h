@@ -81,6 +81,12 @@ namespace NCsFX
 
 			FTransform Transform;
 
+			bool bAbsoluteLocation;
+
+			bool bAbsoluteRotation;
+
+			bool bAbsoluteScale;
+
 			bool bApplyTransformScale;
 
 			TArray<ParameterType*> Parameters;
@@ -149,6 +155,9 @@ namespace NCsFX
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
 			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const bool& GetbAbsoluteLocation() const { return bAbsoluteLocation; }
+			FORCEINLINE const bool& GetbAbsoluteRotation() const { return bAbsoluteRotation; }
+			FORCEINLINE const bool& GetbAbsoluteScale() const { return bAbsoluteScale; }
 			FORCEINLINE const bool& ShouldApplyTransformScale() const { return bApplyTransformScale; }
 			FORCEINLINE const TArray<ParameterType*>& GetParameters() const { return Parameters; }
 			FORCEINLINE const TArray<ScaledParameterType*>& GetScaledParameters() const { return ScaledParameters; }

@@ -48,6 +48,21 @@ namespace NCsFX
 			}
 			// Check DeathTime is Valid
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Payload->GetDeathTime(), 0.0f)
+			// Check bAbsoluteLocation
+			if (Payload->GetbAbsoluteLocation())
+			{
+				checkf(Payload->GetAttachmentTransformRule().LocationRule == EAttachmentRule::KeepWorld, TEXT("%s: If GetbAbsoluteLocation() == TRUE, then GetAttachmentTransformRule().LocationRule  MUST = EAttachmentRule::KeepWorld."), *Context);
+			}
+			// Check bAbsoluteRotation
+			if (Payload->GetbAbsoluteRotation())
+			{
+				checkf(Payload->GetAttachmentTransformRule().RotationRule == EAttachmentRule::KeepWorld, TEXT("%s: If GetbAbsoluteRotation() == TRUE, then GetAttachmentTransformRule().RotationRule  MUST = EAttachmentRule::KeepWorld."), *Context);
+			}
+			// Check bAbsoluteScale
+			if (Payload->GetbAbsoluteScale())
+			{
+				checkf(Payload->GetAttachmentTransformRule().ScaleRule == EAttachmentRule::KeepWorld, TEXT("%s: If GetbAbsoluteScale() == TRUE, then GetAttachmentTransformRule().ScaleRule  MUST = EAttachmentRule::KeepWorld."), *Context);
+			}
 			// Check Parameters are Valid.
 			typedef NCsFX::NParameter::IParameter ParameterType;
 
@@ -89,6 +104,33 @@ namespace NCsFX
 			}
 			// Check DeathTime is Valid
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Payload->GetDeathTime(), 0.0f)
+			// Check bAbsoluteLocation
+			if (Payload->GetbAbsoluteLocation())
+			{
+				if (Payload->GetAttachmentTransformRule().LocationRule != EAttachmentRule::KeepWorld)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If GetbAbsoluteLocation() == TRUE, then LocationRule MUST = EAttachmentRule::KeepWorld."), *Context));
+					return false;
+				}
+			}
+			// Check bAbsoluteRotation
+			if (Payload->GetbAbsoluteRotation())
+			{
+				if (Payload->GetAttachmentTransformRule().RotationRule != EAttachmentRule::KeepWorld)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If GetbAbsoluteRotation() == TRUE, then RotationRule MUST = EAttachmentRule::KeepWorld."), *Context));
+					return false;
+				}
+			}
+			// Check bAbsoluteScale
+			if (Payload->GetbAbsoluteScale())
+			{
+				if (Payload->GetAttachmentTransformRule().ScaleRule != EAttachmentRule::KeepWorld)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: If GetbAbsoluteScale() == TRUE, then ScaleRule MUST = EAttachmentRule::KeepWorld."), *Context));
+					return false;
+				}
+			}
 			// Check Parameters are Valid
 			typedef NCsFX::NParameter::IParameter ParameterType;
 
@@ -132,13 +174,15 @@ namespace NCsFX
 			Payload->Transform.SetRotation(Rotation.Quaternion());
 			Payload->Transform.SetScale3D(Transform.GetScale3D() * FX.Transform.GetScale3D());
 
+			Payload->bAbsoluteLocation    = FX.AttachmentTransformRules.bAbsoluteLocation;
+			Payload->bAbsoluteRotation	  = FX.AttachmentTransformRules.bAbsoluteRotation;
+			Payload->bAbsoluteScale		  = FX.AttachmentTransformRules.bAbsoluteScale;
 			Payload->bApplyTransformScale = FX.bApplyTransformScale;
 		}
 
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
-
 			CS_IS_VALID_EXIT(FX);
 
 			SetChecked(Context, Payload, FX, Transform);
@@ -170,9 +214,7 @@ namespace NCsFX
 		void FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_EXIT(Payload)
-
 			CS_IS_PTR_NULL_EXIT(PooledPayload)
-
 			CS_IS_VALID_EXIT(FX)
 
 			SetChecked(Context, Payload, PooledPayload, FX, Transform);

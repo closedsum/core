@@ -49,6 +49,9 @@ namespace NCsFX
 			Bone(NAME_None),
 			TransformRules(0),
 			Transform(FTransform::Identity),
+			bAbsoluteLocation(false),
+			bAbsoluteRotation(false),
+			bAbsoluteScale(false),
 			bApplyTransformScale(true),
 			Parameters(),
 			ScaledParameters(),
@@ -104,6 +107,9 @@ namespace NCsFX
 			Bone = NAME_None;
 			TransformRules = 0;
 			Transform = FTransform::Identity;
+			bAbsoluteLocation = false;
+			bAbsoluteRotation = false;
+			bAbsoluteScale = false;
 			bApplyTransformScale = true;
 
 			typedef NCsFX::NManager::NParameter::FLibrary ParameterLibrary;

@@ -209,7 +209,6 @@ namespace NCsFX
 			UCsManager_FX* Manager_FX = GetChecked(Context, WorldContext);
 
 			CS_IS_PTR_NULL_CHECKED(PooledPayload)
-
 			CS_IS_VALID_CHECKED(FX);
 
 			PayloadImplType* Payload = Manager_FX->AllocatePayload<PayloadImplType>(FX.Type);

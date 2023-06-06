@@ -496,6 +496,9 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 		{
 			AttachToBone = Bone;
 
+			FXComponent->SetUsingAbsoluteLocation(FXPayload->GetbAbsoluteLocation());
+			FXComponent->SetUsingAbsoluteRotation(FXPayload->GetbAbsoluteRotation());
+			FXComponent->SetUsingAbsoluteScale(FXPayload->GetbAbsoluteScale());
 			FXComponent->AttachToComponent(Parent, Rule, Bone);
 			ChangeCounter::Get().AddChanged();
 		}
@@ -720,6 +723,12 @@ void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 		}
 		else
 		{
+			UNiagaraComponent* FXComponent = FX->GetNiagaraComponent();
+
+			FXComponent->SetUsingAbsoluteLocation(false);
+			FXComponent->SetUsingAbsoluteRotation(false);
+			FXComponent->SetUsingAbsoluteScale(false);
+
 			FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			FX->SetActorRelativeTransform(FTransform::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));

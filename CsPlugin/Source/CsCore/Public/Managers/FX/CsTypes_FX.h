@@ -494,6 +494,96 @@ namespace NCsFXAttachPoint
 
 #pragma endregion FXAttachPoint
 
+// FXOrientationRule
+#pragma region
+
+/** Describes Rules for orienting FX.
+*	 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for Rotation
+*		   is set to KeepWorld and bAbsoluteRotation is set to TRUE.
+*/
+UENUM(BlueprintType)
+enum class ECsFXOrientationRule : uint8
+{
+	/** Do NOT update the orientation of the FX. */
+	None						UMETA(DisplayName = "None"),
+	/** Update the orientation to match the orientation of the Parent. */
+	Parent						UMETA(DisplayName = "Parent"),
+	/** Update the orientation based on the direction the FX is moving.
+		NOTE: If attached, this will be the direction of the Parent. */
+	Movement					UMETA(DisplayName = "Movement"),
+	/** Custom */
+	Custom						UMETA(DisplayName = "Custom"),
+	ECsFXOrientationRule_MAX	UMETA(Hidden)
+};
+
+struct CSCORE_API EMCsFXOrientationRule : public TCsEnumMap<ECsFXOrientationRule>
+{
+	CS_ENUM_MAP_BODY(EMCsFXOrientationRule, ECsFXOrientationRule)
+};
+
+namespace NCsFXOrientationRule
+{
+	typedef ECsFXOrientationRule Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type None;
+		extern CSCORE_API const Type Parent;
+		extern CSCORE_API const Type Movement;
+		extern CSCORE_API const Type Custom;
+		extern CSCORE_API const Type ECsFXOrientationRule_MAX;
+	}
+}
+
+#pragma endregion FXOrientationRule
+
+// FCsFXOrientationRules
+#pragma region
+
+/** Describes Rules for orienting FX by each component of Rotation (Pitch, Yaw, Roll).
+*	 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for Rotation
+*		   is set to KeepWorld and bAbsoluteRotation is set to TRUE.
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsFXOrientationRules
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** Describes how the Pitch will be oriented.
+		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for the specified component
+			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	ECsFXOrientationRule Pitch;
+
+	/** Describes how the Yaw will be oriented.
+		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for the specified component
+			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	ECsFXOrientationRule Yaw;
+
+	/** Describes how the Yaw will be oriented.
+		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for the specified component
+			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	ECsFXOrientationRule Roll;
+
+	FCsFXOrientationRules() :
+		Pitch(ECsFXOrientationRule::None),
+		Yaw(ECsFXOrientationRule::None),
+		Roll(ECsFXOrientationRule::None)
+	{
+	}
+
+	FORCEINLINE void Reset()
+	{
+		Pitch = ECsFXOrientationRule::None;
+		Yaw = ECsFXOrientationRule::None;
+		Roll = ECsFXOrientationRule::None;
+	}
+};
+
+#pragma endregion FCsFXOrientationRules
+
 // FXParameterValue
 #pragma region
 
@@ -1077,6 +1167,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	FTransform Transform;
 
+	/** Describes Rules for orienting each component of Rotation (Pitch, Yaw, Roll).	
+		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for Rotation
+			   is set to KeepWorld and bAbsoluteRotation is set to TRUE. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	FCsFXOrientationRules OrientationRules;
+
 	/** Whether the Transform's Scale should be applied to the FX.
 		If NOT, the object defaults to FVector::OneVector or just the scale of the object the FX
 		is attached to.
@@ -1121,7 +1217,8 @@ public:
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
 		Transform(FTransform::Identity),
-		bApplyTransformScale(true),
+		OrientationRules(),
+		bApplyTransformScale(false),
 		IntParameters(),
 		FloatParameters(),
 		VectorParameters(),

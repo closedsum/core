@@ -198,6 +198,25 @@ namespace NCsFXAttachPoint
 
 #pragma endregion FXAttachPoint
 
+// FXOrientationRules
+#pragma region
+
+namespace NCsFXOrientationRule
+{
+	namespace Ref
+	{
+		typedef EMCsFXOrientationRule EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(None);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Parent);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Movement);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsFXOrientationRule_MAX, "MAX");
+	}
+}
+
+#pragma endregion FXOrientationRules
+
 // FXParameterValue
 #pragma region
 
@@ -785,6 +804,8 @@ void FCsFX::Reset()
 	Bone = NAME_None;
 	TransformRules =7; // NCsTransformRules::All
 	Transform = FTransform::Identity;
+	OrientationRules.Reset();
+	bApplyTransformScale = false;
 	IntParameters.Reset(IntParameters.Max());
 	FloatParameters.Reset(FloatParameters.Max());
 	VectorParameters.Reset(VectorParameters.Max());

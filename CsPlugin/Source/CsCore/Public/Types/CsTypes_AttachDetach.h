@@ -2,6 +2,8 @@
 #pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Engine/EngineTypes.h"
+// Log
+#include "Utility/CsLog.h"
 
 #include "CsTypes_AttachDetach.generated.h"
 
@@ -71,13 +73,28 @@ struct CSCORE_API FCsAttachmentTransformRules
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
 	ECsAttachmentRule LocationRule;
 
+	/** If RelativeLocation should be considered relative to the world, rather than the parent.
+		NOTE: This will only be valie if LocationRule == ECsAttachmentRule::KeepWorld. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
+	bool bAbsoluteLocation;
+
 	/** The rule to apply to rotation when attaching */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
 	ECsAttachmentRule RotationRule;
 
+	/** If RelativeRotation should be considered relative to the world, rather than the parent.
+		NOTE: This will only be valie if RotationRule == ECsAttachmentRule::KeepWorld. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
+	bool bAbsoluteRotation;
+
 	/** The rule to apply to scale when attaching */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
 	ECsAttachmentRule ScaleRule;
+
+	/** If RelativeScale should be considered relative to the world, rather than the parent.
+		NOTE: This will only be valie if RotationRule == ECsAttachmentRule::KeepWorld. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
+	bool bAbsoluteScale;
 
 	/** Whether to weld simulated bodies together when attaching */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore")
@@ -85,24 +102,33 @@ struct CSCORE_API FCsAttachmentTransformRules
 
 	FCsAttachmentTransformRules() :
 		LocationRule(ECsAttachmentRule::KeepRelative),
+		bAbsoluteLocation(false),
 		RotationRule(ECsAttachmentRule::KeepRelative),
+		bAbsoluteRotation(false),
 		ScaleRule(ECsAttachmentRule::SnapToTarget),
+		bAbsoluteScale(false),
 		bWeldSimulatedBodies(false)
 	{
 	}
 
 	FCsAttachmentTransformRules(const ECsAttachmentRule& InRule, const bool& bInWeldSimulatedBodies) : 
 		LocationRule(InRule), 
+		bAbsoluteLocation(false),
 		RotationRule(InRule), 
+		bAbsoluteRotation(false),
 		ScaleRule(InRule), 
+		bAbsoluteScale(false),
 		bWeldSimulatedBodies(bInWeldSimulatedBodies)
 	{
 	}
 
 	FCsAttachmentTransformRules(const ECsAttachmentRule& InLocationRule, const ECsAttachmentRule& InRotationRule, const ECsAttachmentRule& InScaleRule, const bool& bInWeldSimulatedBodies) : 
-		LocationRule(InLocationRule), 
-		RotationRule(InRotationRule), 
+		LocationRule(InLocationRule),
+		bAbsoluteLocation(false),
+		RotationRule(InRotationRule),
+		bAbsoluteRotation(false),
 		ScaleRule(InScaleRule), 
+		bAbsoluteScale(false),
 		bWeldSimulatedBodies(bInWeldSimulatedBodies)
 	{
 	}
@@ -114,7 +140,13 @@ struct CSCORE_API FCsAttachmentTransformRules
 
 	FORCEINLINE bool operator==(const FCsAttachmentTransformRules& B) const
 	{
-		return LocationRule == B.LocationRule && RotationRule == B.RotationRule && ScaleRule == B.ScaleRule && bWeldSimulatedBodies ==B.bWeldSimulatedBodies;
+		return LocationRule == B.LocationRule &&
+			   bAbsoluteLocation == B.bAbsoluteLocation &&
+			   RotationRule == B.RotationRule &&
+			   bAbsoluteRotation == B.bAbsoluteRotation &&
+			   ScaleRule == B.ScaleRule &&
+			   bAbsoluteScale == B.bAbsoluteScale &&
+			   bWeldSimulatedBodies ==B.bWeldSimulatedBodies;
 	}
 
 	FORCEINLINE bool operator!=(const FCsAttachmentTransformRules& B) const
@@ -124,7 +156,10 @@ struct CSCORE_API FCsAttachmentTransformRules
 
 	FORCEINLINE bool operator==(const FAttachmentTransformRules& B) const
 	{
-		return LocationRule == (ECsAttachmentRule)B.LocationRule && RotationRule == (ECsAttachmentRule)B.RotationRule && ScaleRule == (ECsAttachmentRule)B.ScaleRule && bWeldSimulatedBodies == B.bWeldSimulatedBodies;
+		return LocationRule == (ECsAttachmentRule)B.LocationRule &&
+			   RotationRule == (ECsAttachmentRule)B.RotationRule && 
+			   ScaleRule == (ECsAttachmentRule)B.ScaleRule && 
+			   bWeldSimulatedBodies == B.bWeldSimulatedBodies;
 	}
 
 	FORCEINLINE bool operator!=(const FAttachmentTransformRules& B) const
@@ -141,6 +176,14 @@ struct CSCORE_API FCsAttachmentTransformRules
 	{
 		return Lhs.LocationRule == Rhs.LocationRule && Lhs.RotationRule == Rhs.RotationRule && Lhs.ScaleRule == Rhs.ScaleRule && Lhs.bWeldSimulatedBodies == Rhs.bWeldSimulatedBodies;
 	}
+
+	FORCEINLINE bool IsAbsoluteRotationValid() const
+	{
+		return bAbsoluteRotation && RotationRule == ECsAttachmentRule::KeepWorld;
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 };
 
 #pragma endregion FCsAttachmentTransformRules

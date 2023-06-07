@@ -91,7 +91,7 @@ namespace NCsProjectile
 
 			if (const TrailVisualDataType* TrailVisualData = GetSafeInterfaceChecked<TrailVisualDataType>(Context, Data))
 			{
-				CS_IS_VALID_CHECKED(TrailVisualData->GetTrailFX());
+				CS_IS_VALID_CHECKED(TrailVisualData->GetTrailInfo());
 			}
 			// Damage
 			typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;
@@ -159,7 +159,7 @@ namespace NCsProjectile
 
 			if (const TrailVisualDataType* TrailVisualData = GetSafeInterfaceChecked<TrailVisualDataType>(Context, Data))
 			{
-				CS_IS_VALID(TrailVisualData->GetTrailFX())
+				CS_IS_VALID(TrailVisualData->GetTrailInfo())
 			}
 			// Damage
 			typedef NCsData::IGetDamageDataType GetDamageDataTypeDataType;

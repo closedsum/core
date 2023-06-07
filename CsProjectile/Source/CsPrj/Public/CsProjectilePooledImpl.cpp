@@ -872,9 +872,13 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 				else
 					PayloadImpl.Parent = CollisionComponent;
 
-				const FCsFX& TrailFX = VisualData->GetTrailFX();
+				typedef NCsProjectile::NVisual::NTrail::FInfo TrailInfoType;
 
-				TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &PayloadImpl, TrailFX));
+				const TrailInfoType& TrailInfo = VisualData->GetTrailInfo();
+
+				const FCsFX& FX = TrailInfo.GetFX();
+
+				TrailFXPooled = const_cast<FCsFXActorPooled*>(FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &PayloadImpl, FX));
 			}
 		}
 	}

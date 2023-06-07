@@ -30,19 +30,6 @@ namespace NCsProjectile
 				#define TrailInfoType NCsProjectile::NVisual::NTrail::FInfo
 
 					/**
-					* Get the Trail FX to play when Projectile is Launched.
-					* If 
-					*  The Projectile Data implements the interface: 
-					*  StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) then
-					*  the Trail with be attached to the Mesh associated with Projectile.
-					* Else
-					*  The Trail is attached to the Collision of the Projectile.
-					* 
-					* return Trail FX
-					*/
-					virtual const FCsFX& GetTrailFX() const = 0;
-
-					/**
 					* Get any information related to a Trail.
 					* 
 					* return Trail Info
@@ -77,19 +64,6 @@ public:
 public:
 
 #define TrailInfoType NCsProjectile::NVisual::NTrail::FInfo
-
-	/**
-	* Get the Trail FX to play when Projectile is Launched.
-	* If
-	*  The Projectile Data implements the interface:
-	*  StaticMeshVisualDataType (NCsProjectile::NData::NVisual::NStaticMesh::IStaticMesh) then
-	*  the Trail with be attached to the Mesh associated with Projectile.
-	* Else
-	*  The Trail is attached to the Collision of the Projectile.
-	*
-	* return Trail FX
-	*/
-	virtual const FCsFX& GetTrailFX() const = 0;
 
 	/**
 	* Get any information related to a Trail.

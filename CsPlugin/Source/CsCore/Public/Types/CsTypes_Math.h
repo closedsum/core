@@ -2,6 +2,7 @@
 #pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Enum/CsEnumFlagMap.h"
+#include "Types/Enum/CsEnumMaskMap.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -639,6 +640,498 @@ namespace NCsTransformRules
 #define CS_TRANSFORM_FLAGS_NONE 0
 
 #pragma endregion TransformRules
+
+// TransformLocationMember
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsTransformLocationMember : uint8
+{
+	X	UMETA(DisplayName = "X"),	// 0
+	Y	UMETA(DisplayName = "Y"),	// 1
+	Z	UMETA(DisplayName = "Z"),	// 2
+};
+
+struct CSCORE_API EMCsTransformLocationMember : public TCsEnumFlagMap<ECsTransformLocationMember>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsTransformLocationMember, ECsTransformLocationMember)
+};
+
+namespace NCsTransformLocationMember
+{
+	typedef ECsTransformLocationMember Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type X;
+		extern CSCORE_API const Type Y;
+		extern CSCORE_API const Type Z;
+	}
+
+	extern CSCORE_API const uint32 None;
+	extern CSCORE_API const uint32 All;
+}
+
+namespace NCsTransform
+{
+	namespace NLocation
+	{
+		enum class EMember : uint32
+		{
+			X = 1 << 0,
+			Y = 1 << 1,
+			Z = 1 << 2
+		};
+
+		struct CSCORE_API EMMember : public TCsEnumMaskMap<EMember>
+		{
+			CS_ENUM_MASK_MAP_BODY(EMMember, EMember)
+		};
+
+		namespace NMember
+		{
+			typedef EMember Type;
+
+			namespace Ref
+			{
+				extern CSCORE_API const Type X;
+				extern CSCORE_API const Type Y;
+				extern CSCORE_API const Type Z;
+			}
+
+			extern CSCORE_API const uint32 None;
+			extern CSCORE_API const uint32 All;
+		}
+	}
+}
+
+#pragma endregion TransformLocationMember
+
+// FCsTransform_Location_Multiplier
+#pragma region
+
+// NCsTransform::NLocation::FMultiplier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTransform, NLocation, FMultiplier)
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTransform_Location_Multiplier
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
+	float Multiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "ECsTransformLocationMember"))
+	int32 Members;
+
+	FCsTransform_Location_Multiplier() :
+		Multiplier(1.0f),
+		Members(7) // All | 1 + 2 + 4
+	{
+	}
+
+#define ProxyType NCsTransform::NLocation::FMultiplier
+	void CopyToProxy(ProxyType* Proxy);
+	void CopyToProxyAsValue(ProxyType* Proxy) const;
+#undef ProxyType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+	{
+		FVector NewValue = Value;
+
+		typedef ECsTransformLocationMember MemberType;
+
+		NewValue.X *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::X) ? Multiplier * Scale : 1.0f;
+		NewValue.Y *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Y) ? Multiplier * Scale : 1.0f;
+		NewValue.Z *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Z) ? Multiplier * Scale : 1.0f;
+
+		return NewValue;
+	}
+};
+
+namespace NCsTransform
+{
+	namespace NLocation
+	{
+		struct CSCORE_API FMultiplier
+		{
+		private:
+
+			CS_DECLARE_MEMBER_WITH_PROXY(Multiplier, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Members, int32)
+
+		public:
+
+			FMultiplier() :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Multiplier, 1.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Members, 7) // All | 1 + 2 + 4
+			{
+				CS_CTOR_SET_MEMBER_PROXY(Multiplier);
+				CS_CTOR_SET_MEMBER_PROXY(Members);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Multiplier, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Members, int32)
+
+			FORCEINLINE void Copy(const FMultiplier& From)
+			{
+				SetMultiplier(From.GetMultiplier());
+				SetMembers(From.GetMembers());
+			}
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+			{
+				FVector NewValue = Value;
+
+				typedef NCsTransform::NLocation::EMember MemberType;
+
+				NewValue.X *= CS_TEST_BITFLAG(GetMembers(), MemberType::X) ? GetMultiplier() * Scale : 1.0f;
+				NewValue.Y *= CS_TEST_BITFLAG(GetMembers(), MemberType::Y) ? GetMultiplier() * Scale : 1.0f;
+				NewValue.Z *= CS_TEST_BITFLAG(GetMembers(), MemberType::Z) ? GetMultiplier() * Scale : 1.0f;
+
+				return NewValue;
+			}
+		};
+	}
+}
+
+#pragma endregion FCsTransform_Location_Multiplier
+
+// TransformRotationMember
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsTransformRotationMember : uint8
+{
+	Pitch	UMETA(DisplayName = "Pitch"),	// 0
+	Yaw		UMETA(DisplayName = "Yaw"),		// 1
+	Roll	UMETA(DisplayName = "Roll"),	// 2
+};
+
+struct CSCORE_API EMCsTransformRotationMember : public TCsEnumFlagMap<ECsTransformRotationMember>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsTransformRotationMember, ECsTransformRotationMember)
+};
+
+namespace NCsTransformRotationMember
+{
+	typedef ECsTransformRotationMember Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type Pitch;
+		extern CSCORE_API const Type Yaw;
+		extern CSCORE_API const Type Roll;
+	}
+
+	extern CSCORE_API const uint32 None;
+	extern CSCORE_API const uint32 All;
+}
+
+namespace NCsTransform
+{
+	namespace NRotation
+	{
+		enum class EMember : uint32
+		{
+			Pitch	= 1 << 0,
+			Yaw		= 1 << 1,
+			Roll	= 1 << 2
+		};
+
+		struct CSCORE_API EMMember : public TCsEnumMaskMap<EMember>
+		{
+			CS_ENUM_MASK_MAP_BODY(EMMember, EMember)
+		};
+
+		namespace NMember
+		{
+			typedef EMember Type;
+
+			namespace Ref
+			{
+				extern CSCORE_API const Type Pitch;
+				extern CSCORE_API const Type Yaw;
+				extern CSCORE_API const Type Roll;
+			}
+
+			extern CSCORE_API const uint32 None;
+			extern CSCORE_API const uint32 All;
+		}
+	}
+}
+
+#pragma endregion TransformRotationMember
+
+// FCsTransform_Rotation_Multiplier
+#pragma region
+
+// NCsTransform::NRotation::FMultiplier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTransform, NRotation, FMultiplier)
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTransform_Rotation_Multiplier
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
+	float Multiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "ECsTransformRotationMember"))
+	int32 Members;
+
+	FCsTransform_Rotation_Multiplier() :
+		Multiplier(1.0f),
+		Members(7) // All | 1 + 2 + 4
+	{
+	}
+
+#define ProxyType NCsTransform::NRotation::FMultiplier
+	void CopyToProxy(ProxyType* Proxy);
+	void CopyToProxyAsValue(ProxyType* Proxy) const;
+#undef ProxyType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	FORCEINLINE FRotator Modify(const FRotator& Value, const float& Scale) const
+	{
+		FRotator NewValue = Value;
+
+		typedef ECsTransformRotationMember MemberType;
+
+		NewValue.Pitch *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Pitch) ? Multiplier * Scale : 1.0f;
+		NewValue.Yaw   *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Yaw) ? Multiplier * Scale : 1.0f;
+		NewValue.Roll  *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Roll) ? Multiplier * Scale : 1.0f;
+
+		return NewValue;
+	}
+};
+
+namespace NCsTransform
+{
+	namespace NRotation
+	{
+		struct CSCORE_API FMultiplier
+		{
+		private:
+
+			CS_DECLARE_MEMBER_WITH_PROXY(Multiplier, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Members, int32)
+
+		public:
+
+			FMultiplier() :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Multiplier, 1.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Members, 7) // All | 1 + 2 + 4
+			{
+				CS_CTOR_SET_MEMBER_PROXY(Multiplier);
+				CS_CTOR_SET_MEMBER_PROXY(Members);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Multiplier, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Members, int32)
+
+			FORCEINLINE void Copy(const FMultiplier& From)
+			{
+				SetMultiplier(From.GetMultiplier());
+				SetMembers(From.GetMembers());
+			}
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			FORCEINLINE FRotator Modify(const FRotator& Value, const float& Scale) const
+			{
+				FRotator NewValue = Value;
+
+				typedef NCsTransform::NRotation::EMember MemberType;
+
+				NewValue.Pitch *= CS_TEST_BITFLAG(GetMembers(), MemberType::Pitch) ? GetMultiplier() * Scale : 1.0f;
+				NewValue.Yaw   *= CS_TEST_BITFLAG(GetMembers(), MemberType::Yaw) ? GetMultiplier() * Scale : 1.0f;
+				NewValue.Roll  *= CS_TEST_BITFLAG(GetMembers(), MemberType::Roll) ? GetMultiplier() * Scale : 1.0f;
+
+				return NewValue;
+			}
+		};
+	}
+}
+
+#pragma endregion FCsTransform_Rotation_Multiplier
+
+// TransformScaleMember
+#pragma region
+
+UENUM(BlueprintType, meta = (Bitflags))
+enum class ECsTransformScaleMember : uint8
+{
+	X	UMETA(DisplayName = "X"),	// 0
+	Y	UMETA(DisplayName = "Y"),	// 1
+	Z	UMETA(DisplayName = "Z"),	// 2
+};
+
+struct CSCORE_API EMCsTransformScaleMember : public TCsEnumFlagMap<ECsTransformScaleMember>
+{
+	CS_ENUM_FLAG_MAP_BODY(EMCsTransformScaleMember, ECsTransformScaleMember)
+};
+
+namespace NCsTransformScaleMember
+{
+	typedef ECsTransformScaleMember Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type X;
+		extern CSCORE_API const Type Y;
+		extern CSCORE_API const Type Z;
+	}
+
+	extern CSCORE_API const uint32 None;
+	extern CSCORE_API const uint32 All;
+}
+
+namespace NCsTransform
+{
+	namespace NScale
+	{
+		enum class EMember : uint32
+		{
+			X = 1 << 0,
+			Y = 1 << 1,
+			Z = 1 << 2
+		};
+
+		struct CSCORE_API EMMember : public TCsEnumMaskMap<EMember>
+		{
+			CS_ENUM_MASK_MAP_BODY(EMMember, EMember)
+		};
+
+		namespace NMember
+		{
+			typedef EMember Type;
+
+			namespace Ref
+			{
+				extern CSCORE_API const Type X;
+				extern CSCORE_API const Type Y;
+				extern CSCORE_API const Type Z;
+			}
+
+			extern CSCORE_API const uint32 None;
+			extern CSCORE_API const uint32 All;
+		}
+	}
+}
+
+#pragma endregion TransformScaleMember
+
+// FCsTransform_Scale_Multiplier
+#pragma region
+
+// NCsTransform::NScale::FMultiplier
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsTransform, NScale, FMultiplier)
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTransform_Scale_Multiplier
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
+	float Multiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "ECsTransformScaleMember"))
+	int32 Members;
+
+	FCsTransform_Scale_Multiplier() :
+		Multiplier(1.0f),
+		Members(7) // All | 1 + 2 + 4
+	{
+	}
+
+#define ProxyType NCsTransform::NScale::FMultiplier
+	void CopyToProxy(ProxyType* Proxy);
+	void CopyToProxyAsValue(ProxyType* Proxy) const;
+#undef ProxyType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+	FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+	{
+		FVector NewValue = Value;
+
+		typedef ECsTransformScaleMember MemberType;
+
+		NewValue.X *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::X) ? Multiplier * Scale : 1.0f;
+		NewValue.Y *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Y) ? Multiplier * Scale : 1.0f;
+		NewValue.Z *= CS_TEST_BLUEPRINT_BITFLAG(Members, MemberType::Z) ? Multiplier * Scale : 1.0f;
+
+		return NewValue;
+	}
+};
+
+namespace NCsTransform
+{
+	namespace NScale
+	{
+		struct CSCORE_API FMultiplier
+		{
+		private:
+
+			CS_DECLARE_MEMBER_WITH_PROXY(Multiplier, float)
+			CS_DECLARE_MEMBER_WITH_PROXY(Members, int32)
+
+		public:
+
+			FMultiplier() :
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Multiplier, 1.0f),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Members, 7) // All | 1 + 2 + 4
+			{
+				CS_CTOR_SET_MEMBER_PROXY(Multiplier);
+				CS_CTOR_SET_MEMBER_PROXY(Members);
+			}
+
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Multiplier, float)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Members, int32)
+
+			FORCEINLINE void Copy(const FMultiplier& From)
+			{
+				SetMultiplier(From.GetMultiplier());
+				SetMembers(From.GetMembers());
+			}
+
+			bool IsValidChecked(const FString& Context) const;
+			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+
+			FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+			{
+				FVector NewValue = Value;
+
+				typedef NCsTransform::NScale::EMember MemberType;
+
+				NewValue.X *= CS_TEST_BITFLAG(GetMembers(), MemberType::X) ? GetMultiplier() * Scale : 1.0f;
+				NewValue.Y *= CS_TEST_BITFLAG(GetMembers(), MemberType::Y) ? GetMultiplier() * Scale : 1.0f;
+				NewValue.Z *= CS_TEST_BITFLAG(GetMembers(), MemberType::Z) ? GetMultiplier() * Scale : 1.0f;
+
+				return NewValue;
+			}
+		};
+	}
+}
+
+#pragma endregion FCsTransform_Scale_Multiplier
 
 // FCsOptionalVectorInterval
 #pragma region

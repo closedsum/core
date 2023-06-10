@@ -296,6 +296,14 @@ namespace NCsFX
 
 		static FNiagaraVariable* GetSafeExposedVariable(const FString& Context, UNiagaraSystem* System, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		static bool SafeIsExposedVariableInt(const FString& Context, UNiagaraSystem* System, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool SetSafeExposedVariableInt(const FString& Context, UNiagaraSystem* System, const FName& Name, const int32& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#if WITH_EDITOR
+		static bool SafeExposedParameters_PostGenericEditChange(const FString& Context, UNiagaraSystem* System, void(*Log)(const FString&) = &FCsLog::Warning);
+	#endif // #if WITH_EDITOR
+
 	#pragma endregion Variable
 
 	// Spawn

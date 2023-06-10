@@ -998,6 +998,51 @@ namespace NCsFX
 		return nullptr;
 	}
 
+	bool FLibrary::SafeIsExposedVariableInt(const FString& Context, UNiagaraSystem* System, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (FNiagaraVariable* Variable = GetSafeExposedVariable(Context, System, Name, Log))
+		{
+			return Variable->GetType() == FNiagaraTypeDefinition::GetIntDef();
+		}
+		return false;
+	}
+
+	bool FLibrary::SetSafeExposedVariableInt(const FString& Context, UNiagaraSystem* System, const FName& Name, const int32& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(System)
+		CS_IS_NAME_NONE(Name)
+
+		FNiagaraUserRedirectionParameterStore& Store = System->GetExposedParameters();
+
+		static TArray<FNiagaraVariable> Parameters;
+		Parameters.Reset(Parameters.Max());
+
+		Store.GetParameters(Parameters);
+
+		for (FNiagaraVariable& Var : Parameters)
+		{
+			if (Name == Var.GetName() &&
+				Var.GetType() == FNiagaraTypeDefinition::GetIntDef())
+			{
+				Store.SetParameterValue(Value, Var);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	#if WITH_EDITOR
+	bool FLibrary::SafeExposedParameters_PostGenericEditChange(const FString& Context, UNiagaraSystem* System, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(System)
+
+		FNiagaraUserRedirectionParameterStore& Store = System->GetExposedParameters();
+
+		Store.PostGenericEditChange();
+		return true;
+	}
+	#endif // #if WITH_EDITOR
+
 	#pragma endregion Variable
 
 	// Spawn

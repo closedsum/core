@@ -118,10 +118,10 @@ namespace NCsFX
 			* return				UCsManager_FX.
 			*/
 			template<typename T>
-			static T* GetChecked(const FString& Context, const UObject* ContextObject)
+			FORCEINLINE static T* GetChecked(const FString& Context, const UObject* ContextObject)
 			{
 				UCsManager_FX* O = GetChecked(Context, ContextObject);
-				T* Other			   = Cast<T>(O);
+				T* Other		 = Cast<T>(O);
 
 				checkf(Other, TEXT("%s: %s is NOT of type: %s."), *Context, *PrintObjectWithClass(O), *(T::StaticClass()->GetName()));
 				return Other;
@@ -146,7 +146,7 @@ namespace NCsFX
 			* return				UCsManager_FX.
 			*/
 			template<typename T>
-			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
+			FORCEINLINE static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
 				UCsManager_FX* O = GetSafe(Context, ContextObject, Log);
 

@@ -458,6 +458,7 @@ namespace NCsProjectile
 
 				// Tracking
 				TrackingInfos.SetupIDs(ID);
+				SetupIDsImpl.ExecuteIfBound(ID);
 
 				++AliveCount;
 				++AllocatedCount;

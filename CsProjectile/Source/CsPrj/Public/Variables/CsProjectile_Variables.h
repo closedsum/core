@@ -625,6 +625,10 @@ namespace NCsProjectile
 			BoundsWorldType BoundsWorld;
 		#undef BoundsWorldType
 
+			DECLARE_DELEGATE_OneParam(FSetupIDsImpl, const int32& ID);
+
+			FSetupIDsImpl SetupIDsImpl;
+
 			FManager() :
 				Outer(nullptr),
 				Projectiles(),
@@ -649,7 +653,8 @@ namespace NCsProjectile
 				MovementInfos(),
 				TrackingInfos(),
 				CollisionInfos(),
-				BoundsWorld()
+				BoundsWorld(),
+				SetupIDsImpl()
 			{
 				MovementInfos.Outer = this;
 				TrackingInfos.Outer = this;

@@ -103,7 +103,7 @@ namespace NCsFX
 
 		UCsManager_FX* FLibrary::GetChecked(const FString& Context, const UObject* ContextObject)
 		{
-			UObject* ContextRoot			 = GetContextRootChecked(Context, ContextObject);
+			UObject* ContextRoot	  = GetContextRootChecked(Context, ContextObject);
 			UCsManager_FX* Manager_FX = UCsManager_FX::Get(ContextRoot);
 
 			CS_IS_PTR_NULL_CHECKED(Manager_FX)

@@ -324,6 +324,270 @@ namespace NCsTransformRules
 
 #pragma endregion TransformRules
 
+// TransformLocationMember
+#pragma region
+
+namespace NCsTransformLocationMember
+{
+	namespace Ref
+	{
+		typedef EMCsTransformLocationMember EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(X);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Y);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Z);
+	}
+
+	CSCORE_API const uint32 None = 0;
+	CSCORE_API const uint32 All = 7; // 1 + 2 + 4
+}
+
+namespace NCsTransform
+{
+	namespace NLocation
+	{
+		namespace NMember
+		{
+			namespace Ref
+			{
+				typedef EMMember EnumMapType;
+
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(X);
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Y);
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Z);
+			}
+
+			CSCORE_API const uint32 None = 0;
+			CSCORE_API const uint32 All = 7; // 1 + 2 + 4
+		}
+	}
+}
+
+#pragma endregion TransformLocationMember
+
+// FCsTransform_Location_Multiplier
+#pragma region
+
+#define ProxyType NCsTransform::NLocation::FMultiplier
+
+void FCsTransform_Location_Multiplier::CopyToProxy(ProxyType* Proxy)
+{
+	Proxy->SetMultiplier(&Multiplier);
+	Proxy->SetMembers(&Members);
+}
+
+void FCsTransform_Location_Multiplier::CopyToProxyAsValue(ProxyType* Proxy) const
+{
+	Proxy->SetMultiplier(Multiplier);
+	Proxy->SetMembers(Members);
+}
+
+#undef ProxyType
+
+bool FCsTransform_Location_Multiplier::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsTransform_Location_Multiplier::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	return true;
+}
+
+namespace NCsTransform
+{
+	namespace NLocation
+	{
+		bool FMultiplier::IsValidChecked(const FString& Context) const
+		{
+			return true;
+		}
+
+		bool FMultiplier::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			return true;
+		}
+	}
+}
+
+#pragma endregion FCsTransform_Location_Multiplier
+
+// TransformRotationMember
+#pragma region
+
+namespace NCsTransformRotationMember
+{
+	namespace Ref
+	{
+		typedef EMCsTransformRotationMember EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Pitch);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Yaw);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Roll);
+	}
+
+	CSCORE_API const uint32 None = 0;
+	CSCORE_API const uint32 All = 7; // 1 + 2 + 4
+}
+
+namespace NCsTransform
+{
+	namespace NRotation
+	{
+		namespace NMember
+		{
+			namespace Ref
+			{
+				typedef EMMember EnumMapType;
+
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Pitch);
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Yaw);
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Roll);
+			}
+
+			CSCORE_API const uint32 None = 0;
+			CSCORE_API const uint32 All = 7; // 1 + 2 + 4
+		}
+	}
+}
+
+#pragma endregion TransformRotationMember
+
+// FCsTransform_Rotation_Multiplier
+#pragma region
+
+#define ProxyType NCsTransform::NRotation::FMultiplier
+
+void FCsTransform_Rotation_Multiplier::CopyToProxy(ProxyType* Proxy)
+{
+	Proxy->SetMultiplier(&Multiplier);
+	Proxy->SetMembers(&Members);
+}
+
+void FCsTransform_Rotation_Multiplier::CopyToProxyAsValue(ProxyType* Proxy) const
+{
+	Proxy->SetMultiplier(Multiplier);
+	Proxy->SetMembers(Members);
+}
+
+#undef ProxyType
+
+bool FCsTransform_Rotation_Multiplier::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsTransform_Rotation_Multiplier::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	return true;
+}
+
+namespace NCsTransform
+{
+	namespace NRotation
+	{
+		bool FMultiplier::IsValidChecked(const FString& Context) const
+		{
+			return true;
+		}
+
+		bool FMultiplier::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			return true;
+		}
+	}
+}
+
+#pragma endregion FCsTransform_Rotation_Multiplier
+
+// TransformScaleMember
+#pragma region
+
+namespace NCsTransformScaleMember
+{
+	namespace Ref
+	{
+		typedef EMCsTransformScaleMember EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(X);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Y);
+		CSCORE_API CS_ADD_TO_ENUM_FLAG_MAP(Z);
+	}
+
+	CSCORE_API const uint32 None = 0;
+	CSCORE_API const uint32 All = 7; // 1 + 2 + 4
+}
+
+namespace NCsTransform
+{
+	namespace NScale
+	{
+		namespace NMember
+		{
+			namespace Ref
+			{
+				typedef EMMember EnumMapType;
+
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(X);
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Y);
+				CSCORE_API CS_ADD_TO_ENUM_MASK_MAP(Z);
+			}
+
+			CSCORE_API const uint32 None = 0;
+			CSCORE_API const uint32 All = 7; // 1 + 2 + 4
+		}
+	}
+}
+
+#pragma endregion TransformScaleMember
+
+// FCsTransform_Scale_Multiplier
+#pragma region
+
+#define ProxyType NCsTransform::NScale::FMultiplier
+
+void FCsTransform_Scale_Multiplier::CopyToProxy(ProxyType* Proxy)
+{
+	Proxy->SetMultiplier(&Multiplier);
+	Proxy->SetMembers(&Members);
+}
+
+void FCsTransform_Scale_Multiplier::CopyToProxyAsValue(ProxyType* Proxy) const
+{
+	Proxy->SetMultiplier(Multiplier);
+	Proxy->SetMembers(Members);
+}
+
+#undef ProxyType
+
+bool FCsTransform_Scale_Multiplier::IsValidChecked(const FString& Context) const
+{
+	return true;
+}
+
+bool FCsTransform_Scale_Multiplier::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	return true;
+}
+
+namespace NCsTransform
+{
+	namespace NScale
+	{
+		bool FMultiplier::IsValidChecked(const FString& Context) const
+		{
+			return true;
+		}
+
+		bool FMultiplier::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+		{
+			return true;
+		}
+	}
+}
+
+#pragma endregion FCsTransform_Scale_Multiplier
+
 // FCsRay
 #pragma region
 

@@ -433,6 +433,8 @@ namespace NCsProjectile
 
 		void FManager::Update(const FCsDeltaTime& DeltaTime)
 		{
+			PreUpdateImpl.ExecuteIfBound(DeltaTime);
+
 			typedef NCsResource::NManager::NValue::NFixed::NInt32::FResource ResourceType;
 
 			TCsDoubleLinkedList<ResourceType*>* Current = Manager_ID.GetAllocatedHead();

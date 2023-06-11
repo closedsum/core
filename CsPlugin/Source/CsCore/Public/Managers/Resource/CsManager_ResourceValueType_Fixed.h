@@ -669,6 +669,114 @@ namespace NCsResource
 				}
 
 				/**
+				* Allocate Count number of ResourceTypes and add the corresponding linked list elements to the
+				*  end of the list
+				*
+				* @param Count
+				* @param OutResources	(out) Allocated ResourceTypes wrapped in a container.
+				*/
+				void Allocate(const int32& Count, TArray<ResourceContainerType*>& OutResources)
+				{
+					checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
+					checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0"), *Name, Count);
+					checkf(HasFree(Count), TEXT("%s: Count number of Resources are NOT free."), *Name, Count);
+
+					int32 Added = 0;
+
+					for (int32 I = 0; I < PoolSize; ++I)
+					{
+						//PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+						((*this).*AdvancePoolIndex)();
+
+						ResourceContainerType* M = Pool[PoolIndex];
+
+						if (!M->IsAllocated())
+						{
+							checkf(M->Get(), TEXT("%s:Allocate: Resource is NULL. Container %d no longer holds a reference to a resource."), *Name, PoolIndex);
+
+							M->Allocate();
+							AddAllocatedLink(&(Links[PoolIndex]));
+							++AllocatedSize;
+							OutResources.Add(M);
+							++Added;
+						}
+					}
+					checkf(Count == Added, TEXT("%s::Allocate: Only allocated %d Resources. Failed to allocate %d Resources."), *Name, Added, Count);
+				}
+
+				/**
+				* Allocate Count number of ResourceTypes and add the corresponding linked list elements to the
+				*  end of the list
+				*
+				* @param Count
+				* @param OutResources	(out) Allocated ResourceTypes.
+				*/
+				void Allocate(const int32& Count, TArray<ResourceType*>& OutResources)
+				{
+					checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
+					checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0"), *Name, Count);
+					checkf(HasFree(Count), TEXT("%s: Count number of Resources are NOT free."), *Name, Count);
+
+					int32 Added = 0;
+
+					for (int32 I = 0; I < PoolSize; ++I)
+					{
+						//PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+						((*this).*AdvancePoolIndex)();
+
+						ResourceContainerType* M = Pool[PoolIndex];
+
+						if (!M->IsAllocated())
+						{
+							checkf(M->Get(), TEXT("%s:Allocate: Resource is NULL. Container %d no longer holds a reference to a resource."), *Name, PoolIndex);
+
+							M->Allocate();
+							AddAllocatedLink(&(Links[PoolIndex]));
+							++AllocatedSize;
+							OutResources.Add(M->Get());
+							++Added;
+						}
+					}
+					checkf(Count == Added, TEXT("%s::Allocate: Only allocated %d Resources. Failed to allocate %d Resources."), *Name, Added, Count);
+				}
+
+				/**
+				* Allocate Count number of ResourceTypes and add the corresponding linked list elements to the
+				*  end of the list
+				*
+				* @param Count
+				* @param OutResources	(out) Allocated ResourceTypes.
+				*/
+				void Allocate(const int32& Count, TArray<ResourceType>& OutResources)
+				{
+					checkf(!IsExhausted(), TEXT("%s::Allocate: Pool is exhausted."), *Name);
+					checkf(Count > 0, TEXT("%s: Count: %d is NOT > 0"), *Name, Count);
+					checkf(HasFree(Count), TEXT("%s: Count number of Resources are NOT free."), *Name, Count);
+
+					int32 Added = 0;
+
+					for (int32 I = 0; I < PoolSize; ++I)
+					{
+						//PoolIndex				 = (PoolIndex + 1) & PoolSizeMinusOne;
+						((*this).*AdvancePoolIndex)();
+
+						ResourceContainerType* M = Pool[PoolIndex];
+
+						if (!M->IsAllocated())
+						{
+							checkf(M->Get(), TEXT("%s:Allocate: Resource is NULL. Container %d no longer holds a reference to a resource."), *Name, PoolIndex);
+
+							M->Allocate();
+							AddAllocatedLink(&(Links[PoolIndex]));
+							++AllocatedSize;
+							OutResources.Add(M->GetRef());
+							++Added;
+						}
+					}
+					checkf(Count == Added, TEXT("%s::Allocate: Only allocated %d Resources. Failed to allocate %d Resources."), *Name, Added, Count);
+				}
+
+				/**
 				* Allocate a ResourceType and add the corresponding linked list element after
 				*  another ResourceContainerType. This is equivalent to inserting a linked list element
 				*  after another element. 

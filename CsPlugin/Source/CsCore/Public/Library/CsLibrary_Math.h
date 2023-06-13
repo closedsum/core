@@ -750,6 +750,16 @@ namespace NCsMath
 		FORCEINLINE static FVector GetRightFromNormal(const FVector& N) { return GetRight(N.Rotation()); }
 		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
 		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N) { return GetRightOnlyYaw(GetYaw(N)); }
+		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N, float& OutYaw) 
+		{
+			OutYaw = GetYaw(N);
+			return GetRightOnlyYaw(OutYaw);
+		}
+		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N, FRotator& OutRotation)
+		{
+			OutRotation.Yaw = GetYaw(N);
+			return GetRightOnlyYaw(OutRotation.Yaw);
+		}
 
 		FORCEINLINE static void GetRightAndUpFromNormal(const FVector& N, FVector& OutRight, FVector& OutUp) { GetRightAndUp(N.Rotation(), OutRight, OutUp); }
 
@@ -800,6 +810,11 @@ namespace NCsMath
 
 			const FVector Vector = Part1 + Part2 + Part3;
 			return Vector;
+		}
+
+		FORCEINLINE static FVector RandRange(const FVector& Min, const FVector& Max)
+		{
+			return FVector(FMath::RandRange(Min.X, Max.X), FMath::RandRange(Min.Y, Max.Y), FMath::RandRange(Min.Z, Max.Z));
 		}
 
 	#pragma endregion Vector

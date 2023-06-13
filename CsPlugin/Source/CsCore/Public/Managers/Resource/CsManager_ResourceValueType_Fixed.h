@@ -700,6 +700,9 @@ namespace NCsResource
 							OutResources.Add(M);
 							++Added;
 						}
+
+						if (Added == Count)
+							return;
 					}
 					checkf(Count == Added, TEXT("%s::Allocate: Only allocated %d Resources. Failed to allocate %d Resources."), *Name, Added, Count);
 				}
@@ -736,6 +739,9 @@ namespace NCsResource
 							OutResources.Add(M->Get());
 							++Added;
 						}
+
+						if (Added == Count)
+							return;
 					}
 					checkf(Count == Added, TEXT("%s::Allocate: Only allocated %d Resources. Failed to allocate %d Resources."), *Name, Added, Count);
 				}
@@ -772,6 +778,9 @@ namespace NCsResource
 							OutResources.Add(M->GetRef());
 							++Added;
 						}
+
+						if (Added == Count)
+							return;
 					}
 					checkf(Count == Added, TEXT("%s::Allocate: Only allocated %d Resources. Failed to allocate %d Resources."), *Name, Added, Count);
 				}

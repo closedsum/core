@@ -122,7 +122,7 @@ namespace NCsMaterial
 
 					typedef NCsMaterial::NParameter::NCollection::FLibrary CollectionLibrary;
 
-					ScalarParameterValuesPtr = CollectionLibrary::GetScalarParameterValuesPtrChecked(Context, Instance);
+					ScalarParameterValues = CollectionLibrary::GetScalarParameterValuesPtrChecked(Context, Instance);
 
 					// Populate ScalarParamterValues with ScalarParamters from Instance
 					{
@@ -134,7 +134,7 @@ namespace NCsMaterial
 						{
 							const FCollectionScalarParameter& Parameter = Instance->GetCollection()->ScalarParameters[I];
 							
-							float& Value = ScalarParameterValuesPtr->FindOrAdd(Parameter.ParameterName);
+							float& Value = ScalarParameterValues->FindOrAdd(Parameter.ParameterName);
 							Value		 = Parameter.DefaultValue;
 						}
 
@@ -150,7 +150,7 @@ namespace NCsMaterial
 
 					ScalarParameterValuesOffset = FMath::DivideAndRoundUp(GetScalarParameterValues().Num(), 4);
 
-					VectorParameterValuesPtr = CollectionLibrary::GetVectorParameterValuesPtrChecked(Context, Instance);
+					VectorParameterValues = CollectionLibrary::GetVectorParameterValuesPtrChecked(Context, Instance);
 
 					// Populate VectorParamterValues with VectorParamters from Instance
 					{
@@ -162,7 +162,7 @@ namespace NCsMaterial
 						{
 							const FCollectionVectorParameter& Parameter = Instance->GetCollection()->VectorParameters[I];
 							
-							FLinearColor& Value = VectorParameterValuesPtr->FindOrAdd(Parameter.ParameterName);
+							FLinearColor& Value = VectorParameterValues->FindOrAdd(Parameter.ParameterName);
 							Value				= Parameter.DefaultValue;
 						}
 
@@ -191,7 +191,7 @@ namespace NCsMaterial
 					
 					ResourceProxy.Init(Instance->GetResource());
 					
-					GameThread_UpdateRenderState(true);
+					//GameThread_UpdateRenderState(true);
 				}
 
 				void FProxy::UpdateParamterData()
@@ -232,17 +232,6 @@ namespace NCsMaterial
 					const FName OwnerName						   = Instance->GetFName();
 
 					ResourceProxy.GameThread_UpdateContents(Collection ? Collection->StateId : FGuid(), ParameterData, OwnerName, bRecreateUniformBuffer);
-
-					/*
-					const UMaterialParameterCollection* Collection = Instance->GetCollection();
-					const FGuid InId							   = Collection ? Collection->StateId : FGuid();
-					const TArray<FVector4>& Data				   = ParameterData;
-					const FName InOwnerName						   = Instance->GetFName();
-
-					FMaterialParameterCollectionInstanceResource* Resource = const_cast<FMaterialParameterCollectionInstanceResource*>(Instance->GetResource());
-
-					Resource->GameThread_UpdateContents(InId, Data, InOwnerName, bRecreateUniformBuffer);
-					*/
 				}
 
 				void FProxy::UpdateRenderState()

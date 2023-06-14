@@ -105,7 +105,7 @@ namespace NCsMaterial
 			{
 				CS_IS_PTR_NULL_CHECKED(Resource)
 
-				// A bit of a hack to get access to Resource->Id, which is protected.
+				// A bit of a hack to get access to Resource->OwnerName, which is protected.
 				// Access is needed to more efficiently update the UniformBuffer
 				
 				// Get pointer to start of struct
@@ -122,7 +122,7 @@ namespace NCsMaterial
 			{
 				CS_IS_PTR_NULL_CHECKED(Resource)
 
-				// A bit of a hack to get access to Resource->Id, which is protected.
+				// A bit of a hack to get access to Resource->UniformBuffer, which is protected.
 				// Access is needed to more efficiently update the UniformBuffer
 				
 				// Get pointer to start of struct
@@ -133,7 +133,12 @@ namespace NCsMaterial
 				size_t Offset = sizeof(FGuid);
 				// Offset by FName	- OwnerName
 				//Offset += sizeof(FName);
-				Offset += 16; // Hack: seems the offset is different
+				// Hack: sizeof doesn't seem to give the correct the offset
+			#if WITH_CASE_PRESERVING_NAME
+				Offset += 16; // FName size changes with editor data
+			#else
+				Offset += 8;
+			#endif // #if WITH_CASE_PRESERVING_NAME
 
 				return (FUniformBufferRHIRef*)(Base + Offset);
 			}
@@ -142,7 +147,7 @@ namespace NCsMaterial
 			{
 				CS_IS_PTR_NULL_CHECKED(Resource)
 
-				// A bit of a hack to get access to Resource->Id, which is protected.
+				// A bit of a hack to get access to Resource->UniformBufferLayout, which is protected.
 				// Access is needed to more efficiently update the UniformBuffer
 				
 				// Get pointer to start of struct
@@ -153,7 +158,12 @@ namespace NCsMaterial
 				size_t Offset = sizeof(FGuid);
 				// Offset by FName					- OwnerName
 				//Offset += sizeof(FName);
-				Offset += 16; // Hack: seems the offset is different
+				// Hack: sizeof doesn't seem to give the correct the offset
+			#if WITH_CASE_PRESERVING_NAME
+				Offset += 16; // FName size changes with editor data
+			#else
+				Offset += 8;
+			#endif // #if WITH_CASE_PRESERVING_NAME
 				// Offset by FUniformBufferRHIRef	- UniformBuffer
 				Offset += sizeof(FUniformBufferRHIRef);
 

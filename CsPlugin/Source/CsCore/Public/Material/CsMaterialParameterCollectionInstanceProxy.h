@@ -78,7 +78,7 @@ namespace NCsMaterial
 
 					/** Overrides for scalar parameter values. 
 						Pointer to Instance->ScalarParamterValues. */
-					TMap<FName, float>* ScalarParameterValuesPtr;
+					TMap<FName, float>* ScalarParameterValues;
 
 					TArray<float*> ScalarParameterValuesByIndex;
 
@@ -87,7 +87,7 @@ namespace NCsMaterial
 
 					/** Overrides for vector parameter values. 
 						Pointer to Instance->VectorParamterValues. */
-					TMap<FName, FLinearColor>* VectorParameterValuesPtr;
+					TMap<FName, FLinearColor>* VectorParameterValues;
 
 					TArray<FLinearColor*> VectorParameterValuesByIndex;
 
@@ -100,10 +100,10 @@ namespace NCsMaterial
 
 					FProxy() : 
 						Instance(nullptr),
-						ScalarParameterValuesPtr(nullptr),
+						ScalarParameterValues(nullptr),
 						ScalarParameterValuesByIndex(),
 						ScalarParameterValuesOffset(0),
-						VectorParameterValuesPtr(nullptr),
+						VectorParameterValues(nullptr),
 						ParameterData(),
 						ResourceProxy(),
 						bDirty(false)
@@ -112,23 +112,23 @@ namespace NCsMaterial
 
 					void Init(UMaterialParameterCollectionInstance* InInstance);
 
-					FORCEINLINE const TMap<FName, float>& GetScalarParameterValues() const { return *ScalarParameterValuesPtr; }
-					FORCEINLINE TMap<FName, float>& GetScalarParameterValues() { return *ScalarParameterValuesPtr; }
+					FORCEINLINE const TMap<FName, float>& GetScalarParameterValues() const { return *ScalarParameterValues; }
+					FORCEINLINE TMap<FName, float>& GetScalarParameterValues() { return *ScalarParameterValues; }
 
 					void SetScalarParamterValue(const int32& Index, const float& Value)
 					{
 						*(ScalarParameterValuesByIndex[Index]) = Value;
-						/*
-						const float StartIndex		  = Index / ScalarParameterValuesOffset;
-						const float VectorMemberIndex = Index % 4;
-						FVector4& VectorValue		  = ParameterData[StartIndex];
-						VectorValue[VectorMemberIndex] = Value;
-						*/
 						bDirty = true;
 					}
 
-					FORCEINLINE const TMap<FName, FLinearColor>& GetVectorParameterValues() const { return *VectorParameterValuesPtr; }
-					FORCEINLINE TMap<FName, FLinearColor>& GetVectorParameterValues() { return *VectorParameterValuesPtr; }
+					FORCEINLINE const TMap<FName, FLinearColor>& GetVectorParameterValues() const { return *VectorParameterValues; }
+					FORCEINLINE TMap<FName, FLinearColor>& GetVectorParameterValues() { return *VectorParameterValues; }
+
+					void SetVectorParamterValue(const int32& Index, const FLinearColor& Value)
+					{
+						*(VectorParameterValuesByIndex[Index]) = Value;
+						bDirty = true;
+					}
 
 					void UpdateParamterData();
 

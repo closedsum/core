@@ -23,6 +23,7 @@ public class CsCore : ModuleRules
                     "Json",
                     "JsonUtilities",
                     "DeveloperSettings",
+                    "RHI", // May need to breakout into plugin
                     "PhysicsCore",
                     "HeadMountedDisplay",
                     "Niagara",

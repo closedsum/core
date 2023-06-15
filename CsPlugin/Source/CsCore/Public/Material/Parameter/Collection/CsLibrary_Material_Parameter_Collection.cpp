@@ -1,5 +1,5 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Material/CsLibrary_Material_Parameter_Collection.h"
+#include "Material/Parameter/Collection/CsLibrary_Material_Parameter_Collection.h"
 
 // Library
 #include "Library/CsLibrary_World.h"

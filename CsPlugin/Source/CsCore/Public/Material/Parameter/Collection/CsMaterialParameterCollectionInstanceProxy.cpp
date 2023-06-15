@@ -1,10 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Material/CsMaterialParameterCollectionInstanceProxy.h"
+#include "Material/Parameter/Collection/CsMaterialParameterCollectionInstanceProxy.h"
 
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Material/CsLibrary_Material_Parameter_Collection.h"
+#include "Material/Parameter/Collection/CsLibrary_Material_Parameter_Collection.h"
 #include "Library/CsLibrary_Valid.h"
 // Material
 #include "Materials/MaterialParameterCollection.h"

@@ -1557,3 +1557,68 @@ namespace NCsDot
 }
 
 #pragma endregion DotDimension
+
+// Vector4Member
+#pragma region
+
+UENUM(BlueprintType)
+enum class ECsVector4Member : uint8
+{
+	X						UMETA(DisplayName = "X"),
+	Y						UMETA(DisplayName = "Y"),
+	Z						UMETA(DisplayName = "Z"),
+	W						UMETA(DisplayName = "W"),
+	ECsVector4Member_MAX	UMETA(Hidden),
+};
+
+struct CSCORE_API EMCsVector4Member : public TCsEnumMap<ECsVector4Member>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsVector4Member, ECsVector4Member)
+};
+
+namespace NCsVector4Member
+{
+	typedef ECsVector4Member Type;
+
+	namespace Ref
+	{
+		extern CSCORE_API const Type X;
+		extern CSCORE_API const Type Y;
+		extern CSCORE_API const Type Z;
+		extern CSCORE_API const Type W;
+		extern CSCORE_API const Type ECsVector4Member_MAX;
+	}
+}
+
+namespace NCsVector4
+{
+	enum class EMember : uint32
+	{
+		X,
+		Y,
+		Z,
+		W,
+		EMember_MAX
+	};
+
+	struct CSCORE_API EMMember : public TCsEnumMap<EMember>
+	{
+		CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMMember, EMember)
+	};
+
+	namespace NMember
+	{
+		typedef EMember Type;
+
+		namespace Ref
+		{
+			extern CSCORE_API const Type X;
+			extern CSCORE_API const Type Y;
+			extern CSCORE_API const Type Z;
+			extern CSCORE_API const Type W;
+			extern CSCORE_API const Type EMember_MAX;
+		}
+	}
+}
+
+#pragma endregion Vector4Member

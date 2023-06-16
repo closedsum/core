@@ -28,6 +28,30 @@ namespace NCsMaterial
 				return Instance;
 			}
 
+			FMaterialParameterCollectionInstanceResource* FLibrary::GetDefaultResourceChecked(const FString& Context, UMaterialParameterCollection* Collection)
+			{
+				CS_IS_PENDING_KILL_CHECKED(Collection)
+
+				// A bit of a hack to get access to Collection->DefaultResource, which is protected.
+			 
+				// Get pointer to start of first Member VectorParameters
+				TArray<FCollectionVectorParameter>& VectorParameters = Collection->VectorParameters;
+
+				TArray<FCollectionVectorParameter>* Property = ((TArray<FCollectionVectorParameter>*)(&VectorParameters));
+				char* Base									 = (char*)Property;
+
+				// Offset by TArray<FCollectionVectorParameter>	- VectorParameters
+				size_t Offset = sizeof(TArray<FCollectionVectorParameter>);
+				// Offset by FThreadSafeBool					- ReleasedByRT
+				//Offset += sizeof(FThreadSafeBool);
+				Offset += 8; // Hack: seems the offset is different
+
+				FMaterialParameterCollectionInstanceResource* Resource = *((FMaterialParameterCollectionInstanceResource**)(Base + Offset));
+
+				CS_IS_PTR_NULL_CHECKED(Resource)
+				return Resource;
+			}
+
 			TMap<FName, float>* FLibrary::GetScalarParameterValuesPtrChecked(const FString& Context, UMaterialParameterCollectionInstance* Collection)
 			{
 				CS_IS_PENDING_KILL_CHECKED(Collection)

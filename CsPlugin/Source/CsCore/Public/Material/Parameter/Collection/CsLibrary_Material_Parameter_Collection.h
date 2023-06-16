@@ -20,6 +20,8 @@ namespace NCsMaterial
 
 				static UMaterialParameterCollectionInstance* GetChecked(const FString& Context, const UObject* WorldContext, UMaterialParameterCollection* Collection);
 
+				static FMaterialParameterCollectionInstanceResource* GetDefaultResourceChecked(const FString& Context, UMaterialParameterCollection* Collection);
+
 				static TMap<FName, float>* GetScalarParameterValuesPtrChecked(const FString& Context, UMaterialParameterCollectionInstance* Collection);
 
 				static TMap<FName, float>& GetScalarParameterValuesChecked(const FString& Context, UMaterialParameterCollectionInstance* Collection);

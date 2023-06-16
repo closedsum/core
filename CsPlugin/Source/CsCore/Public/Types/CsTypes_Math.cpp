@@ -662,3 +662,39 @@ namespace NCsDot
 }
 
 #pragma endregion DotDimension
+
+// Vector4Member
+#pragma region
+
+namespace NCsVector4Member
+{
+	namespace Ref
+	{
+		typedef EMCsVector4Member EnumMapType;
+
+		CSCORE_API CS_ADD_TO_ENUM_MAP(X);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Y);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Z);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(W);
+		CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsVector4Member_MAX, "MAX");
+	}
+}
+
+namespace NCsVector4
+{
+	namespace NMember
+	{
+		namespace Ref
+		{
+			typedef EMMember EnumMapType;
+
+			CSCORE_API CS_ADD_TO_ENUM_MAP(X);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Y);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(Z);
+			CSCORE_API CS_ADD_TO_ENUM_MAP(W);
+			CSCORE_API CS_ADD_TO_ENUM_MAP_CUSTOM(EMember_MAX, "MAX");
+		}
+	}
+}
+
+#pragma endregion Vector4Member

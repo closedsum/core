@@ -53,6 +53,8 @@ namespace NCsMaterial
 
 					void FProxy::GameThread_UpdateContents(const FGuid& InGuid, const TArray<FVector4>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer)
 					{
+						bComplete = false;
+
 						FProxy* Proxy = this;
 						ENQUEUE_RENDER_COMMAND(UpdateCollectionCommand)(
 							[InGuid, Data, InOwnerName, Proxy, bRecreateUniformBuffer](FRHICommandListImmediate& RHICmdList)
@@ -85,12 +87,123 @@ namespace NCsMaterial
 								GetUniformBuffer() = RHICreateUniformBuffer(Data.GetData(), GetUniformBufferLayout(), UniformBuffer_MultiFrame);
 							}
 						}
+						bComplete = true;
 					}
 				}
 			}
 		}
 	}
 }
+
+namespace NCsMaterial
+{
+	namespace NParameter
+	{
+		namespace NCollection
+		{
+			namespace NProxy
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsMaterial::NParameter::NCollection::FProxy, Init);
+					}
+				}
+			}
+
+			void FProxy::Init(UMaterialParameterCollection* InCollection)
+			{
+				using namespace NCsMaterial::NParameter::NCollection::NProxy::NCached;
+
+				const FString& Context = Str::Init;
+
+				CS_IS_PENDING_KILL_CHECKED(InCollection);
+
+				Collection = InCollection;
+
+				ScalarParameterValuesOffset = ScalarParameterValuesOffset = FMath::DivideAndRoundUp(Collection->ScalarParameters.Num(), 4);
+
+				// Populate Parameter Data
+				{
+					const int32 Count = ScalarParameterValuesOffset + Collection->VectorParameters.Num();
+
+					ParameterData.Reset(Count);
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						ParameterData.Add(FVector4(0.0f, 0.0f, 0.0f, 0.0f));
+					}
+					UpdateParamterData();
+				}
+					
+				typedef NCsMaterial::NParameter::NCollection::FLibrary CollectionLibrary;
+
+				FMaterialParameterCollectionInstanceResource* Resource = CollectionLibrary::GetDefaultResourceChecked(Context, Collection);
+
+				ResourceProxy.Init(Resource);
+					
+				//GameThread_UpdateState(true);
+			}
+
+			void FProxy::UpdateParamterData()
+			{
+				// Scalar
+				{
+					const int32 Count = Collection->ScalarParameters.Num();
+
+					int32 VectorIndex;
+					int32 VectorMemberIndex;
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						FCollectionScalarParameter& Value = Collection->ScalarParameters[I];
+
+						VectorIndex					   = I / 4;
+						VectorMemberIndex			   = I % 4;
+						FVector4& VectorValue		   = ParameterData[VectorIndex];
+						VectorValue[VectorMemberIndex] = Value.DefaultValue;
+					}
+				}
+				// Vector
+				{
+					const int32 Count = Collection->VectorParameters.Num();
+
+					for (int32 I = 0; I < Count; ++I)
+					{
+						FCollectionVectorParameter& Value = Collection->VectorParameters[I];
+
+						ParameterData[ScalarParameterValuesOffset + I] = Value.DefaultValue;
+					}
+				}
+			}
+
+			void FProxy::GameThread_UpdateState(bool bRecreateUniformBuffer)
+			{
+				bComplete = false;
+				ResourceProxy.StartUpdateContents();
+
+				FProxy* Proxy = this;
+
+				ENQUEUE_RENDER_COMMAND(UpdateCollections)(
+					[Proxy](FRHICommandListImmediate& RHICmdList)
+				{
+					Proxy->RenderThread_UpdateState();
+				}
+				);
+			}
+
+			void FProxy::RenderThread_UpdateState()
+			{
+				const FName OwnerName = Collection->GetFName();
+
+				ResourceProxy.RenderThread_UpdateContents(Collection ? Collection->StateId : FGuid(), ParameterData, OwnerName, false);
+				bComplete = true;
+			}
+		}
+	}
+}
+
 namespace NCsMaterial
 {
 	namespace NParameter
@@ -191,7 +304,7 @@ namespace NCsMaterial
 					
 					ResourceProxy.Init(Instance->GetResource());
 					
-					//GameThread_UpdateRenderState(true);
+					//GameThread_UpdateState(true);
 				}
 
 				void FProxy::UpdateParamterData()
@@ -226,20 +339,27 @@ namespace NCsMaterial
 					}
 				}
 
-				void FProxy::GameThread_UpdateRenderState(bool bRecreateUniformBuffer)
+				void FProxy::GameThread_UpdateState(bool bRecreateUniformBuffer)
 				{
-					const UMaterialParameterCollection* Collection = Instance->GetCollection();
-					const FName OwnerName						   = Instance->GetFName();
+					bComplete = false;
 
-					ResourceProxy.GameThread_UpdateContents(Collection ? Collection->StateId : FGuid(), ParameterData, OwnerName, bRecreateUniformBuffer);
+					FProxy* Proxy = this;
+
+					ENQUEUE_RENDER_COMMAND(UpdateCollections)(
+						[Proxy](FRHICommandListImmediate& RHICmdList)
+					{
+						Proxy->RenderThread_UpdateState();
+					}
+					);
 				}
 
-				void FProxy::UpdateRenderState()
+				void FProxy::RenderThread_UpdateState()
 				{
 					const UMaterialParameterCollection* Collection = Instance->GetCollection();
 					const FName OwnerName						   = Instance->GetFName();
 
 					ResourceProxy.RenderThread_UpdateContents(Collection ? Collection->StateId : FGuid(), ParameterData, OwnerName, false);
+					bComplete = true;
 				}
 			}
 		}

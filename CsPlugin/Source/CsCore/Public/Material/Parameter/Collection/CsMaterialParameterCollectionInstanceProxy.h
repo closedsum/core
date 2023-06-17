@@ -1,5 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
+#include "Types/CsTypes_Math.h"
 
 class FMaterialParameterCollectionInstanceResource;
 
@@ -202,7 +203,7 @@ namespace NCsMaterial
 					FORCEINLINE const TMap<FName, float>& GetScalarParameterValues() const { return *ScalarParameterValues; }
 					FORCEINLINE TMap<FName, float>& GetScalarParameterValues() { return *ScalarParameterValues; }
 
-					void SetScalarParamterValue(const int32& Index, const float& Value)
+					FORCEINLINE void SetScalarParamterValue(const int32& Index, const float& Value)
 					{
 						*(ScalarParameterValuesByIndex[Index]) = Value;
 						bDirty = true;
@@ -211,9 +212,48 @@ namespace NCsMaterial
 					FORCEINLINE const TMap<FName, FLinearColor>& GetVectorParameterValues() const { return *VectorParameterValues; }
 					FORCEINLINE TMap<FName, FLinearColor>& GetVectorParameterValues() { return *VectorParameterValues; }
 
-					void SetVectorParamterValue(const int32& Index, const FLinearColor& Value)
+					FORCEINLINE void SetVectorParameterValue(const int32& Index, const FLinearColor& Value)
 					{
 						*(VectorParameterValuesByIndex[Index]) = Value;
+						bDirty = true;
+					}
+
+				#define MemberType NCsVector4::EMember
+					FORCEINLINE void SetVectorParameterValue(const int32& Index, const MemberType& Member, const float& Value)
+					{
+						FLinearColor& C  = *(VectorParameterValuesByIndex[Index]);
+						FVector4 V		 = C;
+						V[(uint8)Member] = Value;
+						C				 = FLinearColor(V);
+						bDirty = true;
+					}
+				#undef MemberType
+
+					FORCEINLINE void SetVectorParameterValues(const int32& StartIndex, const TArray<FLinearColor>& Values)
+					{
+						const int32 Count = Values.Num();
+						const int32 End   = StartIndex + Count;
+
+						for (int32 I = StartIndex; I < End; ++I)
+						{
+							*(VectorParameterValuesByIndex[I]) = Values[I - StartIndex];
+						}
+						bDirty = true;
+					}
+
+					FORCEINLINE void SetVectorParameterValuesAndEmpty(const int32& StartIndex, TArray<FLinearColor>& Values)
+					{
+						const int32 Count = Values.Num();
+						const int32 End   = StartIndex + Count;
+						int32 Index;
+
+						for (int32 I = End - 1; I >= StartIndex; --I)
+						{
+							Index = I - StartIndex;
+
+							*(VectorParameterValuesByIndex[I]) = Values[Index];
+							Values.RemoveAt(Index, 1, false);
+						}
 						bDirty = true;
 					}
 

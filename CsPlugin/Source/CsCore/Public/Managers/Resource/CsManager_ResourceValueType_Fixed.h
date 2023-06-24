@@ -901,8 +901,12 @@ namespace NCsResource
 
 				FORCEINLINE bool IsAllocatedChecked(const FString& Context, const int32& Index) const
 				{
-					ResourceContainerType* Container = GetAtChecked(Context, Index);
-					return Container->IsAllocated();
+					return GetAtChecked(Context, Index)->IsAllocated();
+				}
+
+				FORCEINLINE bool IsAllocated(const int32& Index) const
+				{
+					return GetAt(Index)->IsAllocated();
 				}
 
 			#pragma endregion Allocate

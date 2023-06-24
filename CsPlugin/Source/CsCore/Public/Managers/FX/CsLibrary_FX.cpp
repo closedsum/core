@@ -24,6 +24,7 @@
 #include "NiagaraDataInterfaceArrayInt.h"
 #include "NiagaraDataInterfaceArrayFloat.h"
 #include "NiagaraDataInterfaceSkeletalMesh.h"
+#include "NiagaraDataInterfaceArrayImpl.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraParameterCollection.h"
 
@@ -643,6 +644,18 @@ namespace NCsFX
 		return DataInterface;
 	}
 
+	void FLibrary::InitArrayFloatChecked(const FString & Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>&ArrayData)
+	{
+		CS_IS_PTR_NULL_CHECKED(ArrayDI)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
+
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+
+		ArrayDI->FloatData = ArrayData;
+
+		ArrayDI->MarkRenderDataDirty();
+	}
+
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData)
 	{
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
@@ -688,6 +701,49 @@ namespace NCsFX
 
 		SetArrayFloatChecked(Context, ArrayDI, ArrayData, Indices);
 	}
+
+	#define PayloadType NCsFX::NLibrary::NSetArrayFloatChecked::FPayload
+	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, PayloadType& Payload)
+	{
+		CS_IS_PTR_NULL_CHECKED(ArrayDI)
+		CS_IS_VALID_CHECKED(Payload);
+
+		Payload.Start();
+
+		FNiagaraDataInterfaceProxy* Proxy = ArrayDI->GetProxy();
+		PayloadType* PayloadPtr			  = &Payload;
+
+		//-TODO: Only create RT resource if we are servicing a GPU system
+		ENQUEUE_RENDER_COMMAND(UpdateArray)
+		(
+			[RT_Proxy=static_cast<FNiagaraDataInterfaceProxyArrayImpl*>(Proxy), RT_Payload=PayloadPtr](FRHICommandListImmediate& RHICmdList)
+			{
+				const int32 BufferSize = RT_Payload->Values.GetAllocatedSize();
+
+				float* BufferData = (float*)(RHICmdList.LockVertexBuffer(RT_Proxy->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly));
+
+				const int32& Count			 = RT_Payload->Count;
+				const TArray<int32>& Indices = RT_Payload->Indices;
+				const int32& Stride			 = RT_Payload->Stride;
+				
+				int32 Offset = 0;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const int32& Index = Indices[I];
+					Offset			   = Stride * Index;
+
+					FMemory::Memcpy(BufferData + Offset, RT_Payload->Values.GetData() + Offset, Stride * sizeof(float));
+				}
+
+				RHICmdList.UnlockVertexBuffer(RT_Proxy->Buffer.Buffer);
+
+				RT_Payload->Clear();
+				RT_Payload->Complete();
+			}
+		);
+	}
+	#undef PayloadType
 
 	UNiagaraDataInterfaceArrayFloat3* FLibrary::GetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
 	{

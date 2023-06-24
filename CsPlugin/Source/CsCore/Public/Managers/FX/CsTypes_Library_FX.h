@@ -119,3 +119,71 @@ public:
 	void Update();
 	//void OnPostEditChange();
 };
+
+namespace NCsFX
+{
+	namespace NLibrary
+	{
+		namespace NSetArrayFloatChecked
+		{
+			struct CSCORE_API FPayload
+			{
+			public:
+
+				bool bComplete;
+
+				int32 Count;
+
+				int32 Stride;
+
+				TArray<int32> Indices;
+
+				TArray<float> Values;
+
+				FPayload() :
+					bComplete(false),
+					Count(0),
+					Stride(0),
+					Indices(),
+					Values()
+				{
+				}
+
+				void SetSize(const int32& InSize, const int32& InStride)
+				{
+					check(InSize > 0);
+					check(InStride > 0);
+
+					Indices.Reset(InSize);
+
+					for (int32 I = 0; I < InSize; ++I)
+					{
+						Indices.Add(INDEX_NONE);
+					}
+
+					Stride = InStride;
+
+					const int32 ValuesSize = Stride * InSize;
+
+					Values.Reset(ValuesSize);
+
+					for (int32 I = 0; I < ValuesSize; ++I)
+					{
+						Values.Add(0.0f);
+					}
+				}
+
+				FORCEINLINE void Start() { bComplete = false; }
+				FORCEINLINE bool IsComplete() const { return bComplete; }
+				FORCEINLINE void Complete() { bComplete = true; }
+
+				FORCEINLINE void Clear() 
+				{ 
+					Count = 0;
+				}
+
+				bool IsValidChecked(const FString& Context) const;
+			};
+		}
+	}
+}

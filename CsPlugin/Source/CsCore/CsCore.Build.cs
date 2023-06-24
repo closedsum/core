@@ -24,6 +24,7 @@ public class CsCore : ModuleRules
                     "JsonUtilities",
                     "DeveloperSettings",
                     "RHI", // May need to breakout into plugin
+                    "RenderCore", // TODO: Move associated code to plugin
                     "PhysicsCore",
                     "HeadMountedDisplay",
                     "Niagara",
@@ -34,6 +35,16 @@ public class CsCore : ModuleRules
             new string[] {
                 "Engine",
                 "InputCore",
+                "Niagara",
+            }
+        );
+
+        string engine_path = Path.GetFullPath(Target.RelativeEnginePath);
+        string niagara_source_path = engine_path + "Plugins/FX/Niagara/Source/";
+
+        PrivateIncludePaths.AddRange(
+            new string[] {
+                niagara_source_path + "Niagara/Private",
             }
         );
 

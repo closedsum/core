@@ -510,7 +510,7 @@ namespace NCsProjectile
 
 			if (Payload.IsVertexAnimMethod())
 			{
-				const int32 SkinID			  = Niagara_SkinID_AllocateChecked(Context, Payload.Type, Payload.SkinType);
+				const int32 SkinID			  = Skin_AllocateChecked(Context, Payload.Type, Payload.SkinType);
 				Manager_Variables.SkinIDs[ID] = SkinID;
 			}
 			else

@@ -82,3 +82,26 @@ void FCsFX_Spawn_Params::Update()
 {
 	FrequencyParams.Update();
 }
+
+namespace NCsFX
+{
+	namespace NLibrary
+	{
+		namespace NSetArrayFloatChecked
+		{
+			bool FPayload::IsValidChecked(const FString& Context) const
+			{
+				CS_IS_INT_GREATER_THAN_CHECKED(Count, 0)
+				CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
+				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Indices.Num(), Count)
+				CS_IS_INT_GREATER_THAN_CHECKED(Stride, 0)
+				CS_IS_TARRAY_EMPTY_CHECKED(Values, float)
+
+				const int32 MinValuesSize = Stride * Count;
+
+				CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Values.Num(), MinValuesSize)
+				return true;
+			}
+		}
+	}
+}

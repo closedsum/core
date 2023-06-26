@@ -95,7 +95,7 @@ namespace NCsFX
 				FIntType() :
 					Index(INDEX_NONE),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Name, NAME_None),
-					ValueType(EValue::Float),
+					ValueType(EValue::Int),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Value, 0)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Name);

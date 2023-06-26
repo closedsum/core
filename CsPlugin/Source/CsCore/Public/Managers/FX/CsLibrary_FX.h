@@ -20,6 +20,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsFX, NParameter, NScaled, IScaled)
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsFX, NParameter, NDataInterface, NSkeletalMesh, FSkeletalMeshType)
 
 class UNiagaraParameterCollectionInstance;
+class UNiagaraParameterCollection;
 class UNiagaraDataInterfaceSkeletalMesh;
 class UNiagaraDataInterfaceArrayInt32;
 class UNiagaraDataInterfaceArrayFloat;
@@ -74,6 +75,10 @@ namespace NCsFX
 		static UNiagaraSystem* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Load
+
+	public:
+
+		static UNiagaraParameterCollectionInstance* GetInstancedChecked(const FString& Context, const UObject* WorldContext, UNiagaraParameterCollection* Collection);
 
 	// Parameter
 	#pragma region
@@ -178,6 +183,10 @@ namespace NCsFX
 		*/
 		static void SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter, const float& Scale);
 
+		static void SetIntParameterChecked(const FString& Context, ANiagaraActor* Actor, const FName& ParameterName, const int32& Value);
+
+		static void SetIntParameterChecked(const FString& Context, UNiagaraComponent* Component, const FName& ParameterName, const int32& Value);
+
 		static FNiagaraVariable* GetDefaultVariableChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
 
 		static int32 GetDefaultVariableIntChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter);
@@ -248,7 +257,7 @@ namespace NCsFX
 
 		static UNiagaraDataInterfaceArrayFloat* GetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);
 
-		static UNiagaraDataInterfaceArrayFloat* GetArrayFloatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName);
+		static UNiagaraDataInterfaceArrayFloat* GetArrayFloatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const int32& Index);
 
 		static void InitArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>& ArrayData);
 

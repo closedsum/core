@@ -8,6 +8,8 @@
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 	// Common
+#include "NiagaraFunctionLibrary.h"
+#include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
@@ -27,12 +29,6 @@
 #include "NiagaraDataInterfaceArrayImpl.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraParameterCollection.h"
-
-#if WITH_EDITOR
-// Library
-	// Common
-#include "Library/CsLibrary_World.h"
-#endif // #if WITH_EDITOR
 
 namespace NCsFX
 {
@@ -82,6 +78,21 @@ namespace NCsFX
 	}
 
 	#pragma endregion Load
+
+	UNiagaraParameterCollectionInstance* FLibrary::GetInstancedChecked(const FString& Context, const UObject* WorldContext, UNiagaraParameterCollection* Collection)
+	{
+		CS_IS_PENDING_KILL_CHECKED(WorldContext)
+		CS_IS_PTR_NULL_CHECKED(Collection)
+
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		UNiagaraParameterCollectionInstance* Instance = UNiagaraFunctionLibrary::GetNiagaraParameterCollection(World, Collection);
+		
+		CS_IS_PTR_NULL_CHECKED(Instance)
+		return Instance;
+	}
 
 	// Parameter
 	#pragma region
@@ -367,6 +378,24 @@ namespace NCsFX
 		}
 	}
 
+	void FLibrary::SetIntParameterChecked(const FString& Context, ANiagaraActor* Actor, const FName& ParameterName, const int32& Value)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Actor)
+
+		SetIntParameterChecked(Context, Actor->GetNiagaraComponent(), ParameterName, Value);
+	}
+
+	void FLibrary::SetIntParameterChecked(const FString& Context, UNiagaraComponent* Component, const FName& ParameterName, const int32& Value)
+	{
+		typedef NCsFX::NParameter::NInt::FIntType IntType;
+
+		IntType Parameter;
+		Parameter.SetName(ParameterName);
+		Parameter.SetValue(Value);
+
+		SetParameterChecked(Context, Component, &Parameter);
+	}
+
 	FNiagaraVariable* FLibrary::GetDefaultVariableChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
@@ -625,22 +654,20 @@ namespace NCsFX
 		return DataInterface;
 	}
 
-	UNiagaraDataInterfaceArrayFloat* FLibrary::GetArrayFloatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const FName& ParameterName)
+	UNiagaraDataInterfaceArrayFloat* FLibrary::GetArrayFloatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const int32& Index)
 	{
 		CS_IS_PTR_NULL_CHECKED(Collection)
-		CS_IS_NAME_NONE_CHECKED(ParameterName)
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
 		FNiagaraParameterStore& Store = Collection->GetParameterStore();
 
-		FNiagaraVariable Variable(FNiagaraTypeDefinition(UNiagaraDataInterfaceArrayFloat::StaticClass()), ParameterName);
+		const TArray<UNiagaraDataInterface*>& DataInterfaces = Store.GetDataInterfaces();
 
-		const int32 Index = Store.IndexOf(Variable);
+		checkf(Index < DataInterfaces.Num(), TEXT("%s: No Data Interface at Index: %d."), *Context, Index);
 
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<float> with name: %s for System: %s."), *Context, *(ParameterName.ToString()), *(Collection->GetName()));
+		UNiagaraDataInterfaceArrayFloat* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat>(DataInterfaces[Index]);
 
-		UNiagaraDataInterfaceArrayFloat* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat>(Store.GetDataInterface(Index));
-
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<float>."), *Context, *(ParameterName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface at Index: %d is NOT of type: TArray<float>."), *Context, Index);
 		return DataInterface;
 	}
 
@@ -710,36 +737,74 @@ namespace NCsFX
 
 		Payload.Start();
 
-		FNiagaraDataInterfaceProxy* Proxy = ArrayDI->GetProxy();
-		PayloadType* PayloadPtr			  = &Payload;
+		/*
+		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
+
+		const int32 BufferSize = Payload.Values.GetAllocatedSize();
+
+		if (ArrayDI->FloatData.Num() < Payload.Values.Num())
+		{
+			ArrayDI->FloatData.Reset(Payload.Values.Num());
+
+			const int32 Count = Payload.Values.Num();
+
+			for (int32 I = 0; I < Count; ++I)
+			{
+				ArrayDI->FloatData.Add(Payload.Values[I]);
+			}
+		}
+		
+		const int32 Count = Payload.Values.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			ArrayDI->FloatData[I] = Payload.Values[I];
+		}
+
+		//FMemory::Memcpy(ArrayDI->FloatData.GetData(), Payload.Values.GetData(), BufferSize);
+
+		ArrayDI->MarkRenderDataDirty();
+
+		Payload.Complete();
+		Payload.Clear();
+		*/
+		
+		FNiagaraDataInterfaceProxyArrayImpl* ProxyImpl = static_cast<FNiagaraDataInterfaceProxyArrayImpl*>(ArrayDI->GetProxy());
+		PayloadType* PayloadPtr						   = &Payload;
 
 		//-TODO: Only create RT resource if we are servicing a GPU system
 		ENQUEUE_RENDER_COMMAND(UpdateArray)
 		(
-			[RT_Proxy=static_cast<FNiagaraDataInterfaceProxyArrayImpl*>(Proxy), RT_Payload=PayloadPtr](FRHICommandListImmediate& RHICmdList)
+			[ArrayDI, ProxyImpl, PayloadPtr](FRHICommandListImmediate& RHICmdList)
 			{
-				const int32 BufferSize = RT_Payload->Values.GetAllocatedSize();
+				const int32 BufferSize = PayloadPtr->Values.GetAllocatedSize();
 
-				float* BufferData = (float*)(RHICmdList.LockVertexBuffer(RT_Proxy->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly));
+				float* BufferData = (float*)(RHICmdList.LockVertexBuffer(ProxyImpl->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly));
 
-				const int32& Count			 = RT_Payload->Count;
-				const TArray<int32>& Indices = RT_Payload->Indices;
-				const int32& Stride			 = RT_Payload->Stride;
+				const int32& Count			 = PayloadPtr->Count;
+				const TArray<int32>& Indices = PayloadPtr->Indices;
+				const int32& Stride			 = PayloadPtr->Stride;
 				
-				int32 Offset = 0;
+				int32 DestOffset = 0;
+				int32 SrcOffset = 0;
 
 				for (int32 I = 0; I < Count; ++I)
 				{
 					const int32& Index = Indices[I];
-					Offset			   = Stride * Index;
+					DestOffset		   = Stride * Index;
+					SrcOffset		   = Stride * I;
 
-					FMemory::Memcpy(BufferData + Offset, RT_Payload->Values.GetData() + Offset, Stride * sizeof(float));
+					//FMemory::Memcpy(ArrayDI->FloatData.GetData() + DestOffset, PayloadPtr->Values.GetData() + SrcOffset, Stride * sizeof(float));
+					FMemory::Memcpy(BufferData + DestOffset, PayloadPtr->Values.GetData() + SrcOffset, Stride * sizeof(float));
 				}
+				
+				//FMemory::Memcpy(ArrayDI->FloatData.GetData(), PayloadPtr->Values.GetData(), BufferSize);
+				//FMemory::Memcpy(BufferData, PayloadPtr->Values.GetData(), BufferSize);
 
-				RHICmdList.UnlockVertexBuffer(RT_Proxy->Buffer.Buffer);
+				RHICmdList.UnlockVertexBuffer(ProxyImpl->Buffer.Buffer);
 
-				RT_Payload->Clear();
-				RT_Payload->Complete();
+				PayloadPtr->Clear();
+				PayloadPtr->Complete();
 			}
 		);
 	}
@@ -773,11 +838,7 @@ namespace NCsFX
 
 		FNiagaraVariable Variable(FNiagaraTypeDefinition(UNiagaraDataInterfaceArrayFloat3::StaticClass()), ParameterName);
 
-		const int32 Index = Store.IndexOf(Variable);
-
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FVector> with name: %s for System: %s."), *Context, *(ParameterName.ToString()), *(Collection->GetName()));
-
-		UNiagaraDataInterfaceArrayFloat3* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat3>(Store.GetDataInterface(Index));
+		UNiagaraDataInterfaceArrayFloat3* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat3>(Store.GetDataInterface(Variable));
 
 		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector>."), *Context, *(ParameterName.ToString()));
 		return DataInterface;
@@ -859,11 +920,7 @@ namespace NCsFX
 
 		FNiagaraVariable Variable(FNiagaraTypeDefinition(UNiagaraDataInterfaceArrayFloat4::StaticClass()), ParameterName);
 
-		const int32 Index = Store.IndexOf(Variable);
-
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FVector4> with name: %s for System: %s."), *Context, *(ParameterName.ToString()), *(Collection->GetName()));
-
-		UNiagaraDataInterfaceArrayFloat4* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat4>(Store.GetDataInterface(Index));
+		UNiagaraDataInterfaceArrayFloat4* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat4>(Store.GetDataInterface(Variable));
 
 		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector4>."), *Context, *(ParameterName.ToString()));
 		return DataInterface;
@@ -952,7 +1009,6 @@ namespace NCsFX
 		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FQuat>."), *Context, *(ParameterName.ToString()));
 		return DataInterface;
 	}
-
 
 	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData)
 	{

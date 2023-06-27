@@ -1,10 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "FX/DataInterface/CsNiagaraDataInterfaceArrayFloatRW.h"
 
-#include "NiagaraDataInterfaceArrayImpl.h"
+// Data Interface
+#include "FX/DataInterface/CsNiagaraDataInterfaceArrayRWImpl.h"
+//#include "NiagaraDataInterfaceArrayImpl.h"
 //#include "NiagaraRenderer.h"
 
-struct CSCORE_API FCsNDIArrayImplHelper_float : public FNDIArrayImplHelperBase<float>
+template<>
+struct CSCORE_API FCsNDIArrayImplHelper<float> : public FCsNDIArrayImplHelperBase<float>
 {
 	static constexpr TCHAR const* HLSLValueTypeName = TEXT("float");
 	static constexpr TCHAR const* HLSLBufferTypeName = TEXT("float");
@@ -16,6 +19,6 @@ struct CSCORE_API FCsNDIArrayImplHelper_float : public FNDIArrayImplHelperBase<f
 UCsNiagaraDataInterfaceArrayFloatRW::UCsNiagaraDataInterfaceArrayFloatRW(FObjectInitializer const& ObjectInitializer)
 	: UNiagaraDataInterfaceArray(ObjectInitializer)
 {
-	//Proxy.Reset(new FNiagaraDataInterfaceProxyArrayImpl());
-	//Impl.Reset(new FNiagaraDataInterfaceArrayImpl<float, UCsNiagaraDataInterfaceArrayFloatRW>(this, FloatData));
+	Proxy.Reset(new FCsNiagaraDataInterfaceProxyArrayRWImpl());
+	Impl.Reset(new FCsNiagaraDataInterfaceArrayRWImpl<float, UCsNiagaraDataInterfaceArrayFloatRW>(this, FloatData));
 }

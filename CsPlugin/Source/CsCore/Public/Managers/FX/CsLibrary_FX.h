@@ -29,6 +29,8 @@ class UNiagaraDataInterfaceArrayFloat4;
 class UNiagaraDataInterfaceArrayQuat;
 struct FNiagaraVariable;
 
+class UCsNiagaraDataInterfaceArrayFloatRW;
+
 namespace NCsFX
 {
 	/**
@@ -259,7 +261,11 @@ namespace NCsFX
 
 		static UNiagaraDataInterfaceArrayFloat* GetArrayFloatChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const int32& Index);
 
+		static UCsNiagaraDataInterfaceArrayFloatRW* GetArrayFloatRWChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const int32& Index);
+
 		static void InitArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>& ArrayData);
+
+		static void InitArrayFloatChecked(const FString& Context, UCsNiagaraDataInterfaceArrayFloatRW* ArrayDI, const TArray<float>& ArrayData);
 
 		static void SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData);
 
@@ -268,7 +274,11 @@ namespace NCsFX
 		static void SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData, TArray<int32>& Indices);
 
 	#define PayloadType NCsFX::NLibrary::NSetArrayFloatChecked::FPayload
+
 		static void SetArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, PayloadType& Payload);
+
+		static void SetArrayFloatChecked(const FString& Context, UCsNiagaraDataInterfaceArrayFloatRW* ArrayDI, PayloadType& Payload);
+
 	#undef PayloadType
 
 		static UNiagaraDataInterfaceArrayFloat3* GetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName);

@@ -28,6 +28,7 @@ public class CsCore : ModuleRules
                     "PhysicsCore",
                     "HeadMountedDisplay",
                     "Niagara",
+                    "NiagaraCore" // TODO: Move associated code to plugin
                 }
             );
 

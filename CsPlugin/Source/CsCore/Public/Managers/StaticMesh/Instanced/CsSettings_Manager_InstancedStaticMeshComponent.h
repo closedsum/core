@@ -1,0 +1,32 @@
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Log
+#include "Utility/CsLog.h"
+
+#include "CsSettings_Manager_InstancedStaticMeshComponent.generated.h"
+
+// FCsSettings_Manager_InstancedStaticMeshComponent
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSettings_Manager_InstancedStaticMeshComponent
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh|Instanced", meta = (UIMin = "4", ClampMin = "4"))
+	int32 PoolSize;
+
+	FCsSettings_Manager_InstancedStaticMeshComponent() :
+		PoolSize(256)
+	{
+	}
+
+	static const FCsSettings_Manager_InstancedStaticMeshComponent& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsSettings_Manager_InstancedStaticMeshComponent

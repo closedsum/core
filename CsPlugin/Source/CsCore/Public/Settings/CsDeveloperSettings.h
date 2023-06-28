@@ -30,6 +30,7 @@
 #include "Managers/Trace/CsSettings_Manager_Trace.h"
 // StaticMesh
 #include "Managers/StaticMesh/CsSettings_Manager_StaticMeshActor.h"
+#include "Managers/StaticMesh/Instanced/CsSettings_Manager_InstancedStaticMeshComponent.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
 // Anim
@@ -248,10 +249,10 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "ECsStaticMeshActor - Populate Enum Map Method"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "ECsStaticMeshActor - Populate Enum Map Method"))
 	ECsPopulateEnumMapMethod ECsStaticMeshActor_PopulateEnumMapMethod;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "ECsStaticMeshActor", TitleProperty = "Name"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "ECsStaticMeshActor", TitleProperty = "Name"))
 	TArray<FCsSettings_Enum> ECsStaticMeshActor;
 
 	template<>
@@ -259,16 +260,25 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsStaticMeshActor>() const { return NCsDeveloperSettings::Str::StaticMeshActor; }
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "Default Value: ECsStaticMeshActor"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "Default Value: ECsStaticMeshActor"))
 	FECsStaticMeshActor Default_ECsStaticMeshActor;
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMeshActor", meta = (DisplayName = "Manager StaticMeshActor"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "Manager StaticMeshActor"))
 	FCsSettings_Manager_StaticMeshActor Manager_StaticMeshActor;
 
 	// Unit Test
 #pragma region
 
 #pragma endregion Unit Test
+
+	// Instanced
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Instanced|Component", meta = (DisplayName = "Manager InstancedStaticMeshComponent"))
+	FCsSettings_Manager_InstancedStaticMeshComponent Manager_InstancedStaticMeshComponent;
+
+#pragma endregion Instanced
 
 #pragma endregion StaticMesh
 

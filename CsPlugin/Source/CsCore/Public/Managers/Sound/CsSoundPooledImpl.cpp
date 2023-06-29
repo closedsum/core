@@ -332,7 +332,8 @@ void ACsSoundPooledImpl::FadeOut(const float& Duration)
 
 	CS_IS_PTR_NULL_CHECKED(AudioComponent)
 
-	AudioComponent->AdjustVolume(Duration, 0.0f);
+	static const float VERY_LOW_VOLUME = 0.01f;
+	AudioComponent->AdjustVolume(Duration, VERY_LOW_VOLUME);
 }
 
 #pragma endregion ICsSoundPooled

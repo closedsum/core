@@ -2,6 +2,7 @@
 #include "Types/Visual/CsTypes_Projectile_Visual_Trail.h"
 
 // Library
+#include "Managers/FX/CsLibrary_FX.h"
 #include "Library/CsLibrary_Valid.h"
 
 // FCsProjectile_Visual_TrailInfo
@@ -33,14 +34,16 @@ bool FCsProjectile_Visual_TrailInfo::IsValidChecked(const FString& Context) cons
 {
 	CS_IS_VALID_CHECKED(FX);
 
+	typedef NCsFX::FLibrary FXLibrary;
+
 	if (bScaleParameterName)
 	{
-		CS_IS_NAME_NONE_CHECKED(ScaleParameterName)
+		check(FXLibrary::IsValidUserVariableNameChecked(Context, ScaleParameterName));
 	}
 
 	if (bSpeedParameterName)
 	{
-		CS_IS_NAME_NONE_CHECKED(SpeedParameterName)
+		check(FXLibrary::IsValidUserVariableNameChecked(Context, SpeedParameterName));
 	}
 	return true;
 }
@@ -49,14 +52,18 @@ bool FCsProjectile_Visual_TrailInfo::IsValid(const FString& Context, void(*Log)(
 {
 	CS_IS_VALID(FX);
 
+	typedef NCsFX::FLibrary FXLibrary;
+
 	if (bScaleParameterName)
 	{
-		CS_IS_NAME_NONE(ScaleParameterName)
+		if (!FXLibrary::IsValidUserVariableName(Context, ScaleParameterName))
+			return false;
 	}
 
 	if (bSpeedParameterName)
 	{
-		CS_IS_NAME_NONE(SpeedParameterName)
+		if (!FXLibrary::IsValidUserVariableName(Context, SpeedParameterName))
+			return false;
 	}
 	return true;
 }
@@ -71,14 +78,16 @@ namespace NCsProjectile
 			{
 				CS_IS_VALID_CHECKED(GetFX());
 
+				typedef NCsFX::FLibrary FXLibrary;
+
 				if (GetbScaleParameterName())
 				{
-					CS_IS_NAME_NONE_CHECKED(GetScaleParameterName())
+					check(FXLibrary::IsValidUserVariableNameChecked(Context, GetScaleParameterName()));
 				}
 
 				if (GetbSpeedParameterName())
 				{
-					CS_IS_NAME_NONE_CHECKED(GetSpeedParameterName())
+					check(FXLibrary::IsValidUserVariableNameChecked(Context, GetSpeedParameterName()));
 				}
 				return true;
 			}
@@ -87,14 +96,18 @@ namespace NCsProjectile
 			{
 				CS_IS_VALID(GetFX())
 
+				typedef NCsFX::FLibrary FXLibrary;
+
 				if (GetbScaleParameterName())
 				{
-					CS_IS_NAME_NONE(GetScaleParameterName())
+					if (!FXLibrary::IsValidUserVariableName(Context, GetScaleParameterName()))
+						return false;
 				}
 
 				if (GetbSpeedParameterName())
 				{
-					CS_IS_NAME_NONE(GetSpeedParameterName())
+					if (!FXLibrary::IsValidUserVariableName(Context, GetSpeedParameterName()))
+						return false;
 				}
 				return true;
 			}

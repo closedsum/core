@@ -99,6 +99,25 @@ namespace NCsFX
 	// Parameter
 	#pragma region
 
+	bool FLibrary::IsValidUserVariableNameChecked(const FString& Context, const FName& Name)
+	{
+		CS_IS_NAME_NONE_CHECKED(Name)
+		checkf(Name.ToString().StartsWith(TEXT("User.")), TEXT("%s: %s does NOT start with 'User.'"), *Context);
+		return true;
+	}
+
+	bool FLibrary::IsValidUserVariableName(const FString& Context, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_NAME_NONE(Name)
+
+		if (!Name.ToString().StartsWith(TEXT("User.")))
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT start with 'User.'"), *Context));
+			return false;
+		}
+		return true;
+	}
+
 	#define ParameterValueType NCsFX::NParameter::EValue
 
 	bool FLibrary::HasVariableNameChecked(const FString& Context, UNiagaraSystem* System, const FName& Name, const ParameterValueType& ValueType)

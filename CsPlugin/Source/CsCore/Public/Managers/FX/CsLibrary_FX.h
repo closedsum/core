@@ -92,6 +92,25 @@ namespace NCsFX
 	public:
 
 		/**
+		* Check if the Name of a User Parameter is valid or not.
+		*
+		* @param Context	The calling context.
+		* @param Name		Name of the user parameter.
+		* return			Whether or note the Name is a valid User Parameter.
+		*/
+		static bool IsValidUserVariableNameChecked(const FString& Context, const FName& Name);
+
+		/**
+		* Safely check if the Name of a User Parameter is valid or not.
+		*
+		* @param Context	The calling context.
+		* @param Name		Name of the user parameter.
+		* @param Log		(optional)
+		* return			Whether or note the Name is a valid User Parameter.
+		*/
+		static bool IsValidUserVariableName(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Check if the Niagara System has an exposed variable with name: Name.
 		* 
 		* @param Context	The calling context.

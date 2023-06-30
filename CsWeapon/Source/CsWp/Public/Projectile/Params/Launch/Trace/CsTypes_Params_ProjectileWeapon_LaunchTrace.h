@@ -248,21 +248,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	FCsProjectileWeapon_Launch_DirectionParams DirectionParams;
 
-	/** Describes the different methods to get the Direction a Projectile will be Launched. . */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsProjectileWeaponLaunchDirection DirectionType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FRotator DirectionOffset;
-
-	/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	bool bInvertDirection;
-
-	/** Describes which components (Pitch, Yaw, and/or Roll) will be used for the Direction a Projectile will be Launched. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
-	int32 DirectionRules;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsTraceType TraceType;
 
@@ -285,10 +270,6 @@ public:
 	FCsProjectileWeapon_LaunchTraceParams() :
 		LocationParams(),
 		DirectionParams(),
-		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
-		DirectionOffset(0.0f),
-		bInvertDirection(false),
-		DirectionRules(CS_ROTATION_FLAGS_NONE),
 		TraceType(ECsTraceType::Line),
 		TraceMethod(ECsTraceMethod::Single),
 		TraceStartType(ECsProjectileWeaponLaunchTraceStart::LaunchLocation),

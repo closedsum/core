@@ -1,6 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-#include "Types/Enum/CsEnumMap.h"
+#include "Types/CsTypes_Math.h"
+// Log
+#include "Utility/CsWpLog.h"
 
 #include "CsTypes_Params_ProjectileWeapon_Launch.generated.h"
 
@@ -328,3 +330,127 @@ namespace NCsWeapon
 }
 
 #pragma endregion ProjectileWeaponLaunchDirection
+
+// FCsProjectileWeapon_Launch_LocationParams
+#pragma region
+
+// NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NLocation, FParams)
+
+/**
+* Describes any Location information related to Launching a Projectile using a Trace from a Projectile Weapon.
+* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*  Projectile is an object that implements the interface: ICsProjectile.
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsProjectileWeapon_Launch_LocationParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Describes the different methods to get the Location from which a Projectile will be launched from a Weapon. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsProjectileWeaponLaunchLocation Type;
+
+	/** Describes the "Space" the location offset is applied to the Location a Projectile is Launched. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsProjectileWeaponLaunchLocationOffsetSpace OffsetSpace;
+
+	/** Describes which components (Pitch, Yaw, and/or Roll) or Rotation / Direction from LocationOffsetSpace will
+		affect the LocationOffset. Components NOT affected will result the LocationOffset applied "directly" in World Space. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	int32 OffsetSpaceRules;
+
+	/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FRotator OffsetSpaceOffset;
+
+	/** An offset applied to the start position a Projectile will be Launched. 
+		This is always applied in the "Space" defined by LocationOffsetSpace. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FVector Offset;
+
+	FCsProjectileWeapon_Launch_LocationParams() :
+		Type(ECsProjectileWeaponLaunchLocation::Owner),
+		OffsetSpace(ECsProjectileWeaponLaunchLocationOffsetSpace::Owner),
+		OffsetSpaceRules(CS_ROTATION_FLAGS_YAW),
+		OffsetSpaceOffset(0.0f),
+		Offset(0.0f)
+	{
+	}
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NLocation
+				{
+					/**
+					* Describes any Location information related to Launching a Projectile using a Trace from a Projectile Weapon.
+					* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+					*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+					*  Projectile is an object that implements the interface: ICsProjectile.
+					*/
+					struct CSWP_API FParams
+					{
+					#define LocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
+					#define LocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
+
+					private:
+
+						CS_DECLARE_MEMBER_WITH_PROXY(Type, LocationType)
+						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpace, LocationOffsetSpace)
+						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceRules, int32)
+						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator)
+						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+
+					public:
+
+						FParams() :
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, LocationType::Owner),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(OffsetSpace, LocationOffsetSpace::Owner),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(OffsetSpaceRules, CS_ROTATION_FLAGS_YAW),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(OffsetSpaceOffset, 0.0f),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, 0.0f)
+						{
+							CS_CTOR_SET_MEMBER_PROXY(Type);
+							CS_CTOR_SET_MEMBER_PROXY(OffsetSpace);
+							CS_CTOR_SET_MEMBER_PROXY(OffsetSpaceRules);
+							CS_CTOR_SET_MEMBER_PROXY(OffsetSpaceOffset);
+							CS_CTOR_SET_MEMBER_PROXY(Offset);
+						}
+
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, LocationType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpace, LocationOffsetSpace)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceRules, int32)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+					
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+					#undef LocationType
+					#undef LocationOffsetSpace
+					};
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileWeapon_Launch_LocationParams

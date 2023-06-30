@@ -185,15 +185,11 @@ ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice_Internal(const
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 {
 	LocationParams.CopyToParams(Params->GetLocationParamsPtr());
+	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
 
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
 
-	Params->SetDirectionType((LaunchDirectionType*)(&DirectionType));
-	Params->SetDirectionOffset(&DirectionOffset);
-	Params->SetbInvertDirection(&bInvertDirection);
-	Params->SetDirectionRules(&DirectionRules);
 	Params->SetTraceType(&TraceType);
 	Params->SetTraceMethod(&TraceMethod);
 	Params->SetTraceStartType((LaunchTraceStartType*)(&TraceStartType));
@@ -204,15 +200,11 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
+	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
 
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
 
-	Params->SetDirectionType((LaunchDirectionType)DirectionType);
-	Params->SetDirectionOffset(DirectionOffset);
-	Params->SetbInvertDirection(bInvertDirection);
-	Params->SetDirectionRules(DirectionRules);
 	Params->SetTraceType(TraceType);
 	Params->SetTraceMethod(TraceMethod);
 	Params->SetTraceStartType((LaunchTraceStartType)TraceStartType);
@@ -225,17 +217,7 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Para
 bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_IS_VALID(LocationParams)
-
-	typedef EMCsProjectileWeaponLaunchDirection LaunchDirectionMapType;
-	typedef ECsProjectileWeaponLaunchDirection LaunchDirectionType;
-
-	CS_IS_ENUM_VALID(LaunchDirectionMapType, LaunchDirectionType, DirectionType)
-
-	if (DirectionRules == NCsRotationRules::None)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for DirectionType. DirectionRules == 0."), *Context));
-		return false;
-	}
+	CS_IS_VALID(DirectionParams)
 
 	typedef EMCsProjectileWeaponLaunchTraceStart LaunchTraceStartMapType;
 	typedef ECsProjectileWeaponLaunchTraceStart LaunchTraceStartType;

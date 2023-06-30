@@ -69,10 +69,7 @@ namespace NCsWeapon
 						InterfaceMap(nullptr),
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 						LocationParams(),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionType, LaunchDirectionType::Owner),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionOffset, 0.0f),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInvertDirection, false),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionRules, 0),
+						DirectionParams(),
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceType, ECsTraceType::Line),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod::Single),
@@ -91,10 +88,6 @@ namespace NCsWeapon
 						InterfaceMap->Add<LaunchTraceParamsType>(static_cast<LaunchTraceParamsType*>(this));
 
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
-						CS_CTOR_SET_MEMBER_PROXY(DirectionType);
-						CS_CTOR_SET_MEMBER_PROXY(DirectionOffset);
-						CS_CTOR_SET_MEMBER_PROXY(bInvertDirection);
-						CS_CTOR_SET_MEMBER_PROXY(DirectionRules);
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 						CS_CTOR_SET_MEMBER_PROXY(TraceType);
 						CS_CTOR_SET_MEMBER_PROXY(TraceMethod);
@@ -208,9 +201,9 @@ namespace NCsWeapon
 
 								Params->GetLocationParamsPtr()->SetType((LaunchLocationType*)LocationTypePtr);
 								//Params->SetLocationOffset(LocationOffsetPtr);
-								Params->SetDirectionType((LaunchDirectionType*)DirectionTypePtr);
-								Params->SetbInvertDirection(bInvertDirectionPtr);
-								Params->SetDirectionRules(DirectionRulesPtr);
+								Params->GetDirectionParamsPtr()->SetType((LaunchDirectionType*)DirectionTypePtr);
+								Params->GetDirectionParamsPtr()->SetbInvert(bInvertDirectionPtr);
+								Params->GetDirectionParamsPtr()->SetRules(DirectionRulesPtr);
 								Params->SetTraceType(TraceTypePtr);
 								Params->SetTraceMethod(TraceMethodPtr);
 								Params->SetTraceStartType((LaunchTraceStartType*)TraceStartTypePtr);
@@ -248,12 +241,11 @@ namespace NCsWeapon
 					bool FImpl::IsValidChecked(const FString& Context) const
 					{
 						CS_IS_VALID_CHECKED(GetLocationParams());
+						CS_IS_VALID_CHECKED(GetDirectionParams());
 
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection LaunchDirectionMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart LaunchTraceStartMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection LaunchTraceDirectionMapType;
 
-						CS_IS_ENUM_VALID_CHECKED(LaunchDirectionMapType, GetDirectionType())
 						CS_IS_ENUM_VALID_CHECKED(LaunchTraceStartMapType, GetTraceStartType())
 						CS_IS_ENUM_VALID_CHECKED(LaunchTraceDirectionMapType, GetTraceDirectionType())
 						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetTraceDistance(), 0.0f)
@@ -262,16 +254,14 @@ namespace NCsWeapon
 
 					bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						CS_IS_VALID(GetLocationParams());
+						CS_IS_VALID(GetLocationParams())
+						CS_IS_VALID(GetDirectionParams())
 
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection LaunchDirectionMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart LaunchTraceStartMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection LaunchTraceDirectionMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
 
-						CS_IS_ENUM_VALID(LaunchDirectionMapType, LaunchDirectionType, GetDirectionType())
 						CS_IS_ENUM_VALID(LaunchTraceStartMapType, LaunchTraceStartType, GetTraceStartType())
 						CS_IS_ENUM_VALID(LaunchTraceDirectionMapType, LaunchTraceDirectionType, GetTraceDirectionType())
 						CS_IS_FLOAT_GREATER_THAN(GetTraceDistance(), 0.0f)

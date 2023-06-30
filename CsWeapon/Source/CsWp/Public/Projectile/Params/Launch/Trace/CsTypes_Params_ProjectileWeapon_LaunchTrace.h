@@ -244,6 +244,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	FCsProjectileWeapon_Launch_LocationParams LocationParams;
 
+	/** Describes any Direction information related to Launching a Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FCsProjectileWeapon_Launch_DirectionParams DirectionParams;
+
 	/** Describes the different methods to get the Direction a Projectile will be Launched. . */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchDirection DirectionType;
@@ -280,6 +284,7 @@ public:
 
 	FCsProjectileWeapon_LaunchTraceParams() :
 		LocationParams(),
+		DirectionParams(),
 		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
 		DirectionOffset(0.0f),
 		bInvertDirection(false),

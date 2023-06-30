@@ -533,19 +533,23 @@ namespace NCsProjectile
 				FORCEINLINE void Reset(const int32& Index)
 				{
 					States[Index] = TrackingStateType::Inactive;
-					/*
 					DelayIDs[Index]	   = INDEX_NONE;
 					Delays[Index]	   = 0.0f;
 					ActiveIDs[Index]   = INDEX_NONE;
 					States[Index]	   = TrackingStateType::Inactive;
-					ObjectTypes[Index] = ObjectType::ID;
+					DestinationTypes[Index] = DestinationType::Custom;
+					DestinationMasks[Index] = 0;
+					Components[Index] = nullptr;
+					MeshComponents[Index] = nullptr;
+					Bones[Index] = NAME_None;
+					TargetIDs[Index] = INDEX_NONE;
 					Durations[Index]   = 0.0f;
 					ElapsedTimes[Index] = 0.0f;
 					Destinations[Index] = FVector::ZeroVector;
 					Offsets[Index]		= FVector::ZeroVector;
 					MinDotThresholds[Index] = 0.0f;
 					MaxDotBeforeUsingPitches[Index] = 0.0f;
-					*/
+					RotationRates[Index] = 0.0f;
 				}
 
 			#undef TrackingStateType

@@ -1387,19 +1387,139 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 		return GetLaunchSpreadLocation(LaunchPayload.Shot.CachedLaunchLocation, LaunchPayload);
 
 	// Get Launch Params
-	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
-
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::FLibrary ParamsLibrary;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 
-	const ILaunch* LaunchParams = ParamsLibrary::GetChecked(Context, Outer->GetData());
+	const LaunchParamsType* LaunchParams = ParamsLibrary::GetChecked(Context, Outer->GetData());
 
-	const ELocation& LocationType = LaunchParams->GetLocationType();
-	const FVector& LocationOffset = LaunchParams->GetLocationOffset();
+	const LaunchLocationType& LocationType				 = LaunchParams->GetLocationType();
+	const LaunchLocationOffsetSpace& LocationOffsetSpace = LaunchParams->GetLocationOffsetSpace();
+	const int32& LocationOffsetSpaceRules				 = LaunchParams->GetLocationOffsetSpaceRules();
+	const int32 InvLocationOffsetSpaceRules				 = ~LocationOffsetSpaceRules & ((int32)NCsRotationRules::All);
+	const FRotator& LocationOffsetSpaceOffset			 = LaunchParams->GetLocationOffsetSpaceOffset();
+	const FVector& LocationOffset						 = LaunchParams->GetLocationOffset();
+
+	typedef NCsMath::FLibrary MathLibrary;
+
+	// Determine Offset
+	FVector Offset = LocationOffset * NCsRotationRules::GetDirection(FVector::OneVector, InvLocationOffsetSpaceRules);
+	{
+		// None
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Owner)
+		{
+			Offset = LocationOffset;
+		}
+		// Owner
+		else
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Owner)
+		{
+			UObject* TheOwner = Outer->GetMyOwner();
+
+			checkf(TheOwner, TEXT("%s: No Owner found for %s."), *Context, *(Outer->PrintNameAndClass()));
+
+			// AActor
+			if (AActor* Actor = Cast<AActor>(TheOwner))
+			{
+				const FRotator Rotation = NCsRotationRules::GetRotation(Actor, LocationOffsetSpaceRules);
+				FVector Dir				= Rotation.Vector();
+
+				const FRotator RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
+				
+				FVector Right, Up;
+				MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+
+				Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
+			}
+			// USceneComponent
+			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
+			{
+				const FRotator Rotation = NCsRotationRules::GetRotation(Component, LocationOffsetSpaceRules);
+				FVector Dir				= Rotation.Vector();
+
+				const FRotator RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
+				
+				FVector Right, Up;
+				MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+
+				Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
+			}
+			else
+			{
+				checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
+			}
+		}
+		// Bone
+		else
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Owner)
+		{
+			checkf(0, TEXT("NOT IMPLEMENTED"));
+		}
+		// Component
+		else
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Component)
+		{
+			CS_IS_PTR_NULL_CHECKED(LaunchComponentDirection)
+
+			const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentDirection, LocationOffsetSpaceRules);
+			FVector Dir				= Rotation.Vector();
+
+			const FRotator RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+
+			Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+			Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
+
+			FVector Right, Up;
+			MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+
+			Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
+		}
+		// Camera
+		else
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Camera)
+		{
+			// Try to get camera through the owner
+			if (UObject* TheOwner = Outer->GetMyOwner())
+			{
+				typedef NCsCamera::FLibrary CameraLibrary;
+
+				FVector Dir	= CameraLibrary::GetDirectionChecked(Context, Outer, LocationOffsetSpaceRules);
+
+				const FRotator RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
+
+				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
+				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
+
+				FVector Right, Up;
+				MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
+
+				Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
+			}
+			else
+			{
+				checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
+			}
+		}
+		// Custom
+		else
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Custom)
+		{
+			checkf(0, TEXT("NOT IMPLEMENTED"));
+		}
+	}
 
 	// TODO: Have "Apply Spread" for other Location Types
 	
 	// Owner
-	if (LocationType == ELocation::Owner)
+	if (LocationType == LaunchLocationType::Owner)
 	{
 		UObject* TheOwner = Outer->GetMyOwner();
 
@@ -1410,13 +1530,13 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 		// Actor
 		if (AActor* Actor = Cast<AActor>(TheOwner))
 		{
-			Location = Actor->GetActorLocation() + LocationOffset;
+			Location = Actor->GetActorLocation() + Offset;
 		}
 		// Component
 		else
 		if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 		{
-			Location = Component->GetComponentLocation() + LocationOffset;
+			Location = Component->GetComponentLocation() + Offset;
 		}
 		else
 		{
@@ -1425,23 +1545,23 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 		return GetLaunchSpreadLocation(Location, LaunchPayload);
 	}
 	// Bone
-	if (LocationType == ELocation::Bone)
+	if (LocationType == LaunchLocationType::Bone)
 	{
 		checkf(0, TEXT("NOT IMPLEMENTED"));
 	}
 	// Component
-	if (LocationType == ELocation::Component)
+	if (LocationType == LaunchLocationType::Component)
 	{
 		CS_IS_PTR_NULL_CHECKED(LaunchComponentLocation)
 
-		FVector Location = LaunchComponentLocation->GetComponentLocation() + LocationOffset;
+		FVector Location = LaunchComponentLocation->GetComponentLocation() + Offset;
 
 		return GetLaunchSpreadLocation(Location, LaunchPayload);
 	}
 	// Custom
-	if (LocationType == ELocation::Custom)
+	if (LocationType == LaunchLocationType::Custom)
 	{
-		FVector Location = CustomLaunchLocation + LocationOffset;
+		FVector Location = CustomLaunchLocation + Offset;
 
 		// TODO: Get the Launch Direction properly
 		
@@ -1507,17 +1627,18 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 #endif // #if WITH_EDITOR
 
 	// Get Launch Params
-	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
-
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::FLibrary ParamsLibrary;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 
-	const ILaunch* LaunchParams = ParamsLibrary::GetChecked(Context, Outer->GetData());
+	const LaunchParamsType* LaunchParams = ParamsLibrary::GetChecked(Context, Outer->GetData());
 
-	const ELocation& LocationType   = LaunchParams->GetLocationType();
-	const EDirection& DirectionType = LaunchParams->GetDirectionType();
-	const FRotator& DirectionOffset	= LaunchParams->GetDirectionOffset();
-	int32 DirectionScalar			= LaunchParams->InvertDirection() ? -1.0f : 1.0f;
-	const int32& DirectionRules		= LaunchParams->GetDirectionRules();
+	const LaunchLocationType& LocationType   = LaunchParams->GetLocationType();
+	const LaunchDirectionType& DirectionType = LaunchParams->GetDirectionType();
+	const FRotator& DirectionOffset			 = LaunchParams->GetDirectionOffset();
+	int32 DirectionScalar					 = LaunchParams->InvertDirection() ? -1.0f : 1.0f;
+	const int32& DirectionRules				 = LaunchParams->GetDirectionRules();
 
 	if (LaunchPayload.Shot.UseCachedLaunchDirection())
 	{
@@ -1529,7 +1650,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 	typedef NCsMath::FLibrary MathLibrary;
 
 	// Owner
-	if (DirectionType == EDirection::Owner)
+	if (DirectionType == LaunchDirectionType::Owner)
 	{
 		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
@@ -1565,12 +1686,12 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		}
 	}
 	// Bone
-	if (DirectionType == EDirection::Bone)
+	if (DirectionType == LaunchDirectionType::Bone)
 	{
 		checkf(0, TEXT("NOT IMPLEMENTED"));
 	}
 	// Component
-	if (DirectionType == EDirection::Component)
+	if (DirectionType == LaunchDirectionType::Component)
 	{
 		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentDirection, DirectionRules);
 		FVector Dir				= Rotation.Vector();
@@ -1584,7 +1705,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		return Dir;
 	}
 	// Camera
-	if (DirectionType == EDirection::Camera)
+	if (DirectionType == LaunchDirectionType::Camera)
 	{
 		// Try to get camera through the owner
 		if (UObject* TheOwner = Outer->GetMyOwner())
@@ -1604,37 +1725,39 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 	}
 	// ITrace | Get Launch Trace Params
-	if (DirectionType == EDirection::Trace)
+	if (DirectionType == LaunchDirectionType::Trace)
 	{
-		using namespace NCsWeapon::NProjectile::NParams::NLaunch::NTrace;
+		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace TraceParamsType;
 
-		const ITrace* LaunchTraceParams = FLibrary::GetInterfaceChecked<ITrace>(Context, LaunchParams);
+		const TraceParamsType* LaunchTraceParams = ParamsLibrary::GetInterfaceChecked<TraceParamsType>(Context, LaunchParams);
 		
 		// Start
-		const ETraceStart& TraceStart = LaunchTraceParams->GetTraceStartType();
+		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
+
+		const LaunchTraceStartType& TraceStart = LaunchTraceParams->GetTraceStartType();
 
 		FVector Start = FVector::ZeroVector;
 
 		// LaunchLocation
-		if (TraceStart == ETraceStart::LaunchLocation)
+		if (TraceStart == LaunchTraceStartType::LaunchLocation)
 		{
 			Start = GetLaunchLocation(LaunchPayload);
 		}
 		// Owner
 		else
-		if (TraceStart == ETraceStart::Owner)
+		if (TraceStart == LaunchTraceStartType::Owner)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Bone
 		else
-		if (TraceStart == ETraceStart::Bone)
+		if (TraceStart == LaunchTraceStartType::Bone)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Component
 		else
-		if (TraceStart == ETraceStart::Component)
+		if (TraceStart == LaunchTraceStartType::Component)
 		{
 			CS_IS_PTR_NULL_CHECKED(LaunchComponentLocation)
 
@@ -1642,7 +1765,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		}
 		// Camera
 		else
-		if (TraceStart == ETraceStart::Camera)
+		if (TraceStart == LaunchTraceStartType::Camera)
 		{
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
@@ -1659,24 +1782,26 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		}
 
 		// Direction
-		const ETraceDirection& TraceDirection  = LaunchTraceParams->GetTraceDirectionType();
+		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
+
+		const LaunchTraceDirectionType& TraceDirection  = LaunchTraceParams->GetTraceDirectionType();
 
 		FVector Dir = FVector::ZeroVector;
 
 		// Owner
-		if (TraceDirection == ETraceDirection::Owner)
+		if (TraceDirection == LaunchTraceDirectionType::Owner)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Bone
 		else
-		if (TraceDirection == ETraceDirection::Bone)
+		if (TraceDirection == LaunchTraceDirectionType::Bone)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Component
 		else
-		if (TraceDirection == ETraceDirection::Component)
+		if (TraceDirection == LaunchTraceDirectionType::Component)
 		{
 			CS_IS_PTR_NULL_CHECKED(LaunchComponentDirection)
 
@@ -1686,7 +1811,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		}
 		else
 		// Camera
-		if (TraceDirection == ETraceDirection::Camera)
+		if (TraceDirection == LaunchTraceDirectionType::Camera)
 		{
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
@@ -1776,14 +1901,15 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchDirection(cons
 		return Dir;
 	}
 	// Custom
-	if (DirectionType == EDirection::Custom)
+	if (DirectionType == LaunchDirectionType::Custom)
 	{		
 		const FRotator RotationOffset = NCsRotationRules::GetRotation(DirectionOffset, DirectionRules);
+		FVector Direction			  = NCsRotationRules::GetDirection(CustomLaunchDirection, DirectionRules);
 
-		CustomLaunchDirection = CustomLaunchDirection.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(CustomLaunchDirection));
-		CustomLaunchDirection = CustomLaunchDirection.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
+		Direction = Direction.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Direction));
+		Direction = Direction.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
 
-		const FVector Direction = DirectionScalar * GetLaunchSpreadDirection(CustomLaunchDirection, LaunchPayload);
+		Direction = DirectionScalar * GetLaunchSpreadDirection(Direction, LaunchPayload);
 
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Direction));
 		return Direction;

@@ -394,6 +394,11 @@ namespace NCsRotationRules
 	extern CSCORE_API const int32 None;
 	extern CSCORE_API const int32 All;
 
+	FORCEINLINE int32 GetInverse(const int32& Rules)
+	{
+		
+	}
+
 	/**
 	* Get the Rotation filtered by the bit mask, Rules.
 	*
@@ -458,6 +463,12 @@ namespace NCsRotationRules
 		Direction.Z = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Direction.Z : 0.0f;
 
 		return Direction;
+	}
+
+	// NOTE: FUTURE: This can potentially be optimized based on rules
+	FORCEINLINE FVector GetDirection(FRotator Rotation, const int32& Rules)
+	{
+		return GetDirection(Rotation.Vector(), Rules);
 	}
 }
 

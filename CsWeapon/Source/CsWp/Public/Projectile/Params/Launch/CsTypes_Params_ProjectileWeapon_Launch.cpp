@@ -20,7 +20,87 @@ namespace NCsProjectileWeaponLaunchLocation
 	CSWP_API const uint8 MAX = (uint8)Type::ECsProjectileWeaponLaunchLocation_MAX;
 }
 
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NLocation
+				{
+					namespace Ref
+					{
+						typedef EMLocation EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ELocation_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
+}
+
 #pragma endregion ProjectileWeaponLaunchLocation
+
+// ProjectileWeaponLaunchLocationOffsetSpace
+#pragma region
+
+namespace NCsProjectileWeaponLaunchLocationOffsetSpace
+{
+	namespace Ref
+	{
+		typedef EMCsProjectileWeaponLaunchLocationOffsetSpace EnumMapType;
+
+		CSWP_API CS_ADD_TO_ENUM_MAP(None);
+		CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+		CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+		CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+		CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+		CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsProjectileWeaponLaunchLocationOffsetSpace_MAX, "MAX");
+	}
+
+	CSWP_API const uint8 MAX = (uint8)Type::ECsProjectileWeaponLaunchLocationOffsetSpace_MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NLocation
+				{
+					namespace NOffsetSpace
+					{
+						namespace Ref
+						{
+							typedef EMOffsetSpace EnumMapType;
+
+							CSWP_API CS_ADD_TO_ENUM_MAP(None);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+							CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EOffsetSpace_MAX, "MAX");
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion ProjectileWeaponLaunchLocationOffsetSpace
 
 // ProjectileWeaponLaunchDirection
 #pragma region
@@ -41,6 +121,34 @@ namespace NCsProjectileWeaponLaunchDirection
 	}
 
 	CSWP_API const uint8 MAX = (uint8)Type::ECsProjectileWeaponLaunchDirection_MAX;
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NDirection
+				{
+					namespace Ref
+					{
+						typedef EMDirection EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Trace);
+						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDirection_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
 }
 
 #pragma endregion ProjectileWeaponLaunchDirection

@@ -39,19 +39,22 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-				namespace NTraceStart
+				namespace NTrace
 				{
-					namespace Ref
+					namespace NStart
 					{
-						typedef EMTraceStart EnumMapType;
+						namespace Ref
+						{
+							typedef EMStart EnumMapType;
 
-						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(LaunchLocation, "Launch Location");
-						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
-						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ETraceStart_MAX, "MAX");
+							CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(LaunchLocation, "Launch Location");
+							CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+							CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EStart_MAX, "MAX");
+						}
 					}
 				}
 			}
@@ -89,18 +92,21 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-				namespace NTraceDirection
+				namespace NTrace
 				{
-					namespace Ref
+					namespace NDirection
 					{
-						typedef EMTraceDirection EnumMapType;
+						namespace Ref
+						{
+							typedef EMDirection EnumMapType;
 
-						CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Component);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
-						CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
-						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ETraceDirection_MAX, "MAX");
+							CSWP_API CS_ADD_TO_ENUM_MAP(Owner);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Bone);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Component);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Camera);
+							CSWP_API CS_ADD_TO_ENUM_MAP(Custom);
+							CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDirection_MAX, "MAX");
+						}
 					}
 				}
 			}
@@ -178,31 +184,48 @@ ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice_Internal(const
 
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 {
-	Params->SetLocationType(&LocationType);
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
+
+	Params->SetLocationType((LaunchLocationType*)(&LocationType));
+	Params->SetLocationOffsetSpace((LaunchLocationOffsetSpace*)(&LocationOffsetSpace));
+	Params->SetLocationOffsetSpaceRules(&LocationOffsetSpaceRules);
+	Params->SetLocationOffsetSpaceOffset(&LocationOffsetSpaceOffset);
 	Params->SetLocationOffset(&LocationOffset);
-	Params->SetDirectionType(&DirectionType);
+	Params->SetDirectionType((LaunchDirectionType*)(&DirectionType));
 	Params->SetDirectionOffset(&DirectionOffset);
 	Params->SetbInvertDirection(&bInvertDirection);
 	Params->SetDirectionRules(&DirectionRules);
 	Params->SetTraceType(&TraceType);
 	Params->SetTraceMethod(&TraceMethod);
-	Params->SetTraceStartType(&TraceStartType);
-	Params->SetTraceDirectionType(&TraceDirectionType);
+	Params->SetTraceStartType((LaunchTraceStartType*)(&TraceStartType));
+	Params->SetTraceDirectionType((LaunchTraceDirectionType*)(&TraceDirectionType));
 	Params->SetTraceDistance(&TraceDistance);
 }
 
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
 {
-	Params->SetLocationType(LocationType);
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
+
+	Params->SetLocationType((LaunchLocationType)LocationType);
+	Params->SetLocationOffsetSpace((LaunchLocationOffsetSpace)LocationOffsetSpace);
+	Params->SetLocationOffsetSpaceRules(LocationOffsetSpaceRules);
 	Params->SetLocationOffset(LocationOffset);
-	Params->SetDirectionType(DirectionType);
+	Params->SetDirectionType((LaunchDirectionType)DirectionType);
 	Params->SetDirectionOffset(DirectionOffset);
 	Params->SetbInvertDirection(bInvertDirection);
 	Params->SetDirectionRules(DirectionRules);
 	Params->SetTraceType(TraceType);
 	Params->SetTraceMethod(TraceMethod);
-	Params->SetTraceStartType(TraceStartType);
-	Params->SetTraceDirectionType(TraceDirectionType);
+	Params->SetTraceStartType((LaunchTraceStartType)TraceStartType);
+	Params->SetTraceDirectionType((LaunchTraceDirectionType)TraceDirectionType);
 	Params->SetTraceDistance(TraceDistance);
 }
 
@@ -210,12 +233,40 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Para
 
 bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
+	typedef EMCsProjectileWeaponLaunchLocation LaunchLocationMapType;
+	typedef ECsProjectileWeaponLaunchLocation LaunchLocationType;
+	typedef EMCsProjectileWeaponLaunchLocationOffsetSpace LaunchLocationOffsetSpaceMap;
+	typedef ECsProjectileWeaponLaunchLocationOffsetSpace LaunchLocationOffsetSpace;
+	typedef EMCsProjectileWeaponLaunchDirection LaunchDirectionMapType;
+	typedef ECsProjectileWeaponLaunchDirection LaunchDirectionType;
+
+	CS_IS_ENUM_VALID(LaunchLocationMapType, LaunchLocationType, LocationType)
+	CS_IS_ENUM_VALID(LaunchLocationOffsetSpaceMap, LaunchLocationOffsetSpace, LocationOffsetSpace)
+
+	if (LocationOffsetSpace == LaunchLocationOffsetSpace::None)
+	{
+		if (LocationOffsetSpaceRules == NCsRotationRules::None)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for LocationOffsetSpace. LocationOffsetSpaceRules == 0."), *Context));
+			return false;
+		}
+	}
+
+	CS_IS_ENUM_VALID(LaunchDirectionMapType, LaunchDirectionType, DirectionType)
+
 	if (DirectionRules == NCsRotationRules::None)
 	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No DirectionRules set in Launchparams for Data."), *Context));
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for DirectionType. DirectionRules == 0."), *Context));
 		return false;
 	}
 
+	typedef EMCsProjectileWeaponLaunchTraceStart LaunchTraceStartMapType;
+	typedef ECsProjectileWeaponLaunchTraceStart LaunchTraceStartType;
+	typedef EMCsProjectileWeaponLaunchTraceDirection LaunchTraceDirectionMapType;
+	typedef ECsProjectileWeaponLaunchTraceDirection LaunchTraceDirectionType;
+
+	CS_IS_ENUM_VALID(LaunchTraceStartMapType, LaunchTraceStartType, TraceStartType)
+	CS_IS_ENUM_VALID(LaunchTraceDirectionMapType, LaunchTraceDirectionType, TraceDirectionType)
 	CS_IS_FLOAT_GREATER_THAN(TraceDistance, 0.0f)
 	return true;
 }

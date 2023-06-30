@@ -749,16 +749,18 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	WeaponDataType* WeaponData = WeaponDataLibrary::GetInterfaceChecked<WeaponDataType>(Context, Outer->GetData());
 	
 	// Get Launch Params
-	using namespace NCsWeapon::NProjectile::NParams::NLaunch;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ILaunch LaunchParamsType;
 
-	const ILaunch* LaunchParams = WeaponData->GetLaunchParams();
+	const LaunchParamsType* LaunchParams = WeaponData->GetLaunchParams();
 
 	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
 
-	const ELocation& LocationType = LaunchParams->GetLocationType();
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
+
+	const LaunchLocationType& LocationType = LaunchParams->GetLocationType();
 
 	// Owner
-	if (LocationType == ELocation::Owner)
+	if (LocationType == LaunchLocationType::Owner)
 	{
 		UObject* TheOwner = Outer->GetMyOwner();
 
@@ -774,12 +776,12 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 		checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	}
 	// Bone
-	if (LocationType == ELocation::Bone)
+	if (LocationType == LaunchLocationType::Bone)
 	{
 		checkf(0, TEXT("NOT IMPLEMENTED"));
 	}
 	// Component
-	if (LocationType == ELocation::Component)
+	if (LocationType == LaunchLocationType::Component)
 	{
 		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
@@ -824,14 +826,17 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 	checkf(LaunchParams, TEXT("%s: Failed to get LaunchParams from Data."), *Context);
 
-	const ELocation& LocationType   = LaunchParams->GetLocationType();
-	const EDirection& DirectionType = LaunchParams->GetDirectionType();
-	const int32& DirectionRules		= LaunchParams->GetDirectionRules();
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 
-	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in Launchparams for Data."), *Context);
+	const LaunchLocationType& LocationType   = LaunchParams->GetLocationType();
+	const LaunchDirectionType& DirectionType = LaunchParams->GetDirectionType();
+	const int32& DirectionRules				  = LaunchParams->GetDirectionRules();
+
+	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in LaunchParams for Data."), *Context);
 
 	// Owner
-	if (DirectionType == EDirection::Owner)
+	if (DirectionType == LaunchDirectionType::Owner)
 	{
 		if (UObject* TheOwner = Outer->GetMyOwner())
 		{
@@ -853,12 +858,12 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		}
 	}
 	// Bone
-	if (DirectionType == EDirection::Bone)
+	if (DirectionType == LaunchDirectionType::Bone)
 	{
 		checkf(0, TEXT("NOT IMPLEMENTED"));
 	}
 	// Component
-	if (DirectionType == EDirection::Component)
+	if (DirectionType == LaunchDirectionType::Component)
 	{
 		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 		
@@ -869,7 +874,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		return Dir;
 	}
 	// Camera
-	if (DirectionType == EDirection::Camera)
+	if (DirectionType == LaunchDirectionType::Camera)
 	{
 		// Try to get camera through the owner
 		if (UObject* TheOwner = Outer->GetMyOwner())
@@ -883,37 +888,38 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from %s."), *Context, *(Outer->PrintNameAndClass()));
 	}
 	// ITrace | Get Launch Trace Params
-	if (DirectionType == EDirection::Trace)
+	if (DirectionType == LaunchDirectionType::Trace)
 	{
-		using namespace NCsWeapon::NProjectile::NParams::NLaunch::NTrace;
+		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace TraceParamsType;
+		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 
-		const ITrace* LaunchTraceParams = FLibrary::GetInterfaceChecked<ITrace>(Context, LaunchParams);
+		const TraceParamsType* LaunchTraceParams = FLibrary::GetInterfaceChecked<TraceParamsType>(Context, LaunchParams);
 		
 		// Start
-		const ETraceStart& TraceStart = LaunchTraceParams->GetTraceStartType();
+		const LaunchTraceStartType& TraceStart = LaunchTraceParams->GetTraceStartType();
 
 		FVector Start = FVector::ZeroVector;
 
 		// LaunchLocation
-		if (TraceStart == ETraceStart::LaunchLocation)
+		if (TraceStart == LaunchTraceStartType::LaunchLocation)
 		{
 			Start = GetLaunchLocation();
 		}
 		// Owner
 		else
-		if (TraceStart == ETraceStart::Owner)
+		if (TraceStart == LaunchTraceStartType::Owner)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Bone
 		else
-		if (TraceStart == ETraceStart::Bone)
+		if (TraceStart == LaunchTraceStartType::Bone)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Component
 		else
-		if (TraceStart == ETraceStart::Component)
+		if (TraceStart == LaunchTraceStartType::Component)
 		{
 			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
@@ -921,7 +927,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		}
 		// Camera
 		else
-		if (TraceStart == ETraceStart::Camera)
+		if (TraceStart == LaunchTraceStartType::Camera)
 		{
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())
@@ -938,24 +944,26 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		}
 
 		// Direction
-		const ETraceDirection& TraceDirection  = LaunchTraceParams->GetTraceDirectionType();
+		typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
+
+		const LaunchTraceDirectionType& TraceDirection  = LaunchTraceParams->GetTraceDirectionType();
 
 		FVector Dir = FVector::ZeroVector;
 
 		// Owner
-		if (TraceDirection == ETraceDirection::Owner)
+		if (TraceDirection == LaunchTraceDirectionType::Owner)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Bone
 		else
-		if (TraceDirection == ETraceDirection::Bone)
+		if (TraceDirection == LaunchTraceDirectionType::Bone)
 		{
 			checkf(0, TEXT("NOT IMPLEMENTED"));
 		}
 		// Component
 		else
-		if (TraceDirection == ETraceDirection::Component)
+		if (TraceDirection == LaunchTraceDirectionType::Component)
 		{
 			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
@@ -965,7 +973,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		}
 		else
 		// Camera
-		if (TraceDirection == ETraceDirection::Camera)
+		if (TraceDirection == LaunchTraceDirectionType::Camera)
 		{
 			// Try to get camera through the owner
 			if (UObject* TheOwner = Outer->GetMyOwner())

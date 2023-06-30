@@ -26,6 +26,7 @@ enum class ECsProjectileWeaponLaunchTraceStart : uint8
 	/** If there is a Skeletal Mesh that acts as the root object for the Weapon,
 		use the Bone's location. */
 	Bone									UMETA(DisplayName = "Bone"),
+	/** SceneComponent's Location. The Component is marked as the Launch Component Transform. */
 	Component								UMETA(DisplayName = "Component"),
 	/** Owner's Camera's Location. */
 	Camera									UMETA(DisplayName = "Camera"),
@@ -64,45 +65,49 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-				/**
-				* Describes how the start of a trace should be chosen.
-				*/
-				enum class ETraceStart : uint8 
+				namespace NTrace
 				{
-					/** The launch location (the result from ILaunch::GetLocationType()) is used. 
-						See NCsWeapon::NCsProjectile::NParams::NLaunch::ELocation. */
-					LaunchLocation,
-					/** Owner's Location. If the Owner is of type: AActor, then it will
-						be GetActorLocation(). */
-					Owner,
-					/** If there is a Skeletal Mesh that acts as the root object for the Weapon,
-						use the Bone's location. */
-					Bone,
-					Component,
-					/** Owner's Camera's Location. */
-					Camera,
-					Custom,
-					ETraceStart_MAX
-				};
-
-				struct CSWP_API EMTraceStart : public TCsEnumMap<ETraceStart>
-				{
-					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMTraceStart, ETraceStart)
-				};
-
-				namespace NTraceStart
-				{
-					typedef ETraceStart Type;
-
-					namespace Ref
+					/**
+					* Describes how the start of a trace should be chosen.
+					*/
+					enum class EStart : uint8 
 					{
-						extern CSWP_API const Type LaunchLocation;
-						extern CSWP_API const Type Owner;
-						extern CSWP_API const Type Bone;
-						extern CSWP_API const Type Component;
-						extern CSWP_API const Type Camera;
-						extern CSWP_API const Type Custom;
-						extern CSWP_API const Type ETraceStart_MAX;
+						/** The launch location (the result from ILaunch::GetLocationType()) is used. 
+							See NCsWeapon::NCsProjectile::NParams::NLaunch::ELocation. */
+						LaunchLocation,
+						/** Owner's Location. If the Owner is of type: AActor, then it will
+							be GetActorLocation(). */
+						Owner,
+						/** If there is a Skeletal Mesh that acts as the root object for the Weapon,
+							use the Bone's location. */
+						Bone,
+						/** SceneComponent's Location. The Component is marked as the Launch Component Transform. */
+						Component,
+						/** Owner's Camera's Location. */
+						Camera,
+						Custom,
+						EStart_MAX
+					};
+
+					struct CSWP_API EMStart : public TCsEnumMap<EStart>
+					{
+						CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMStart, EStart)
+					};
+
+					namespace NStart
+					{
+						typedef EStart Type;
+
+						namespace Ref
+						{
+							extern CSWP_API const Type LaunchLocation;
+							extern CSWP_API const Type Owner;
+							extern CSWP_API const Type Bone;
+							extern CSWP_API const Type Component;
+							extern CSWP_API const Type Camera;
+							extern CSWP_API const Type Custom;
+							extern CSWP_API const Type EStart_MAX;
+						}
 					}
 				}
 			}
@@ -129,6 +134,7 @@ enum class ECsProjectileWeaponLaunchTraceDirection : uint8
 	/** If there is a Skeletal Mesh that acts as the root object for the Weapon,
 		then use the Bone's rotation (to normalized vector). */
 	Bone										UMETA(DisplayName = "Bone"),
+	/** SceneComponent's Rotation. The Component is marked as the Launch Component Transform. */
 	Component									UMETA(DisplayName = "Component"),
 	/** Owner's Camera's Rotation (forward). */
 	Camera										UMETA(DisplayName = "Camera"),
@@ -166,43 +172,47 @@ namespace NCsWeapon
 		{
 			namespace NLaunch
 			{
-				/**
-				* Describes how the direction (end) of a trace should be chosen. The normalized
-				* direction is used to project outward GetTraceDistance() from the start of the 
-				* trace.
-				*/
-				enum class ETraceDirection : uint8
+				namespace NTrace
 				{
-					/** Owner's Rotation (forward). If the Owner is of type: AActor, then use 
-					    get the Owner's forward vector. */
-					Owner,
-					/** If there is a Skeletal Mesh that acts as the root object for the Weapon,
-						then use the Bone's rotation (to normalized vector). */
-					Bone,
-					Component,
-					/** Owner's Camera's Rotation (forward). */
-					Camera,
-					Custom,
-					ETraceDirection_MAX
-				};
-
-				struct CSWP_API EMTraceDirection : public TCsEnumMap<ETraceDirection>
-				{
-					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMTraceDirection, ETraceDirection)
-				};
-
-				namespace NTraceDirection
-				{
-					typedef ETraceDirection Type;
-
-					namespace Ref
+					/**
+					* Describes how the direction (end) of a trace should be chosen. The normalized
+					* direction is used to project outward GetTraceDistance() from the start of the 
+					* trace.
+					*/
+					enum class EDirection : uint8
 					{
-						extern CSWP_API const Type Owner;
-						extern CSWP_API const Type Bone;
-						extern CSWP_API const Type Component;
-						extern CSWP_API const Type Camera;
-						extern CSWP_API const Type Custom;
-						extern CSWP_API const Type ETraceDirection_MAX;
+						/** Owner's Rotation (forward). If the Owner is of type: AActor, then use 
+							get the Owner's forward vector. */
+						Owner,
+						/** If there is a Skeletal Mesh that acts as the root object for the Weapon,
+							then use the Bone's rotation (to normalized vector). */
+						Bone,
+						/** SceneComponent's Rotation. The Component is marked as the Launch Component Transform. */
+						Component,
+						/** Owner's Camera's Rotation (forward). */
+						Camera,
+						Custom,
+						EDirection_MAX
+					};
+
+					struct CSWP_API EMDirection : public TCsEnumMap<EDirection>
+					{
+						CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDirection, EDirection)
+					};
+
+					namespace NDirection
+					{
+						typedef EDirection Type;
+
+						namespace Ref
+						{
+							extern CSWP_API const Type Owner;
+							extern CSWP_API const Type Bone;
+							extern CSWP_API const Type Component;
+							extern CSWP_API const Type Camera;
+							extern CSWP_API const Type Custom;
+							extern CSWP_API const Type EDirection_MAX;
+						}
 					}
 				}
 			}
@@ -234,10 +244,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchLocation LocationType;
 
+	/** Describes the "Space" the location offset is applied to the Location a Projectile is Launched. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpace;
+
+	/** Describes which components (Pitch, Yaw, and/or Roll) or Rotation / Direction from LocationOffsetSpace will
+		affect the LocationOffset. Components NOT affected will result the LocationOffset applied "directly" in World Space. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	int32 LocationOffsetSpaceRules;
+
+	/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FRotator LocationOffsetSpaceOffset;
+
+	/** An offset applied to the start position a Projectile will be Launched. 
+		This is always applied in the "Space" defined by LocationOffsetSpace. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	FVector LocationOffset;
 
-	/** Describes the different methods to get the Direction from which a Projectile will be launched from a Weapon. */
+	/** Describes the different methods to get the Direction a Projectile will be Launched. . */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	ECsProjectileWeaponLaunchDirection DirectionType;
 
@@ -248,6 +273,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	bool bInvertDirection;
 
+	/** Describes which components (Pitch, Yaw, and/or Roll) will be used for the Direction a Projectile will be Launched. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
 	int32 DirectionRules;
 
@@ -272,6 +298,9 @@ public:
 
 	FCsProjectileWeapon_LaunchTraceParams() :
 		LocationType(ECsProjectileWeaponLaunchLocation::Owner),
+		LocationOffsetSpace(ECsProjectileWeaponLaunchLocationOffsetSpace::Owner),
+		LocationOffsetSpaceRules(CS_ROTATION_FLAGS_YAW),
+		LocationOffsetSpaceOffset(0.0f),
 		LocationOffset(0.0f),
 		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
 		DirectionOffset(0.0f),

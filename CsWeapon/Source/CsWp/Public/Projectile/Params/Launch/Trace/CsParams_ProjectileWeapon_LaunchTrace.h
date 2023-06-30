@@ -28,8 +28,8 @@ namespace NCsWeapon
 
 						virtual ~ITrace() {}
 
-					#define TraceStartType NCsWeapon::NProjectile::NParams::NLaunch::ETraceStart
-					#define TraceDirectionType NCsWeapon::NProjectile::NParams::NLaunch::ETraceDirection
+					#define TraceStartType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart
+					#define TraceDirectionType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection
 
 						/**
 						*

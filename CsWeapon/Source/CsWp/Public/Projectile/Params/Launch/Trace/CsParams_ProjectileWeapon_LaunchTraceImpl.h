@@ -3,16 +3,10 @@
 // Interfaces
 #include "Projectile/Params/Launch/CsParams_ProjectileWeapon_Launch.h"
 #include "Projectile/Params/Launch/Trace/CsParams_ProjectileWeapon_LaunchTrace.h"
-// Types
-#include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 struct FCsInterfaceMap;
-enum class ECsProjectileWeaponLaunchLocation : uint8;
-enum class ECsProjectileWeaponLaunchDirection : uint8;
-enum class ECsProjectileWeaponLaunchTraceStart : uint8;
-enum class ECsProjectileWeaponLaunchTraceDirection : uint8;
 
 namespace NCsWeapon
 {
@@ -38,25 +32,34 @@ namespace NCsWeapon
 
 					private:
 
-						// ICsGetInterfaceMap
+					#define LaunchLocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
+					#define LaunchLocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
+					#define LaunchDirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
+					#define LaunchTraceStartType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart
+					#define LaunchTraceDirectionType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection
+
+					// ICsGetInterfaceMap
 
 						FCsInterfaceMap* InterfaceMap;
 
-						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
+					// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 
-						CS_DECLARE_MEMBER_WITH_PROXY(LocationType, ELocation)
+						CS_DECLARE_MEMBER_WITH_PROXY(LocationType, LaunchLocationType)
+						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffsetSpace, LaunchLocationOffsetSpace)
+						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffsetSpaceRules, int32)
+						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffsetSpaceOffset, FRotator)
 						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffset, FVector)
-						CS_DECLARE_MEMBER_WITH_PROXY(DirectionType, EDirection)
+						CS_DECLARE_MEMBER_WITH_PROXY(DirectionType, LaunchDirectionType)
 						CS_DECLARE_MEMBER_WITH_PROXY(DirectionOffset, FRotator)
 						CS_DECLARE_MEMBER_WITH_PROXY(bInvertDirection, bool)
 						CS_DECLARE_MEMBER_WITH_PROXY(DirectionRules, int32)
 
-						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
+					// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 
 						CS_DECLARE_MEMBER_WITH_PROXY(TraceType, ECsTraceType)
 						CS_DECLARE_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod)
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceStartType, ETraceStart)
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceDirectionType, ETraceDirection)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceStartType, LaunchTraceStartType)
+						CS_DECLARE_MEMBER_WITH_PROXY(TraceDirectionType, LaunchTraceDirectionType)
 						CS_DECLARE_MEMBER_WITH_PROXY(TraceDistance, float)
 
 					public:
@@ -72,30 +75,16 @@ namespace NCsWeapon
 
 					#pragma endregion ICsGetInterfaceMap
 
-					public:
-
-						FORCEINLINE void SetLocationType(const ECsProjectileWeaponLaunchLocation& Value) 
-						{ 
-							LocationType = (ELocation)Value;
-							LocationType_Proxy = &LocationType;
-
-						}
-						FORCEINLINE void SetLocationType(ECsProjectileWeaponLaunchLocation* Value) { LocationType_Proxy = (ELocation*)Value; }
-
-						FORCEINLINE void SetDirectionType(const ECsProjectileWeaponLaunchDirection& Value) 
-						{ 
-							DirectionType = (EDirection)Value;
-							DirectionType_Proxy = &DirectionType;
-						}
-						FORCEINLINE void SetDirectionType(ECsProjectileWeaponLaunchDirection* Value) { DirectionType_Proxy = (EDirection*)Value; }
-
 					// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 					#pragma region
 					public:
 
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationType, ELocation)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationType, LaunchLocationType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffsetSpace, LaunchLocationOffsetSpace)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffsetSpaceRules, int32)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffsetSpaceOffset, FRotator)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffset, FVector)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionType, EDirection)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionType, LaunchDirectionType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionOffset, FRotator)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInvertDirection, bool)
 						FORCEINLINE const bool& InvertDirection() const { return GetbInvertDirection(); }
@@ -103,30 +92,14 @@ namespace NCsWeapon
 
 					#pragma endregion LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 
-					public:
-
-						FORCEINLINE void SetTraceStartType(const ECsProjectileWeaponLaunchTraceStart& Value)
-						{
-							TraceStartType = (ETraceStart)Value;
-							TraceStartType_Proxy = &TraceStartType;
-						}
-						FORCEINLINE void SetTraceStartType(ECsProjectileWeaponLaunchTraceStart* Value) { TraceStartType_Proxy = (ETraceStart*)Value; }
-						
-						FORCEINLINE void SetTraceDirectionType(const ECsProjectileWeaponLaunchTraceDirection& Value) 
-						{ 
-							TraceDirectionType = (ETraceDirection)Value;
-							TraceDirectionType_Proxy = &TraceDirectionType;
-						}
-						FORCEINLINE void SetTraceDirectionType(ECsProjectileWeaponLaunchTraceDirection* Value) { TraceDirectionType_Proxy = (ETraceDirection*)Value; }
-
 					// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 					#pragma region
 					public:
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceType, ECsTraceType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceStartType, ETraceStart)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDirectionType, ETraceDirection)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceStartType, LaunchTraceStartType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDirectionType, LaunchTraceDirectionType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDistance, float)
 		
 					#pragma endregion LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
@@ -137,6 +110,12 @@ namespace NCsWeapon
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+					#undef LaunchLocationType
+					#undef LaunchLocationOffsetSpace
+					#undef LaunchDirectionType
+					#undef LaunchTraceStartType
+					#undef LaunchTraceDirectionType
 					};
 
 				#undef LaunchParamsType

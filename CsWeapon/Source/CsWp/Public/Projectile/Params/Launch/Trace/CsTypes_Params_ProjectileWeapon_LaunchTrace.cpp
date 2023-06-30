@@ -116,6 +116,102 @@ namespace NCsWeapon
 
 #pragma endregion ProjectileWeaponLaunchTraceDirection
 
+// FCsProjectileWeapon_Launch_TraceParams
+#pragma region
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
+
+void FCsProjectileWeapon_Launch_TraceParams::CopyToParams(ParamsType* Params)
+{
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart StartType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection DirectionType;
+
+	Params->SetType(&Type);
+	Params->SetMethod(&Method);
+	Params->SetStart((StartType*)(&Start));
+	Params->SetDirection((DirectionType*)(&Direction));
+	Params->SetDistance(&Distance);
+}
+
+void FCsProjectileWeapon_Launch_TraceParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart StartType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection DirectionType;
+
+	Params->SetType(Type);
+	Params->SetMethod(Method);
+	Params->SetStart((StartType)Start);
+	Params->SetDirection((DirectionType)Direction);
+	Params->SetDistance(Distance);
+}
+
+#undef ParamsType
+
+bool FCsProjectileWeapon_Launch_TraceParams::IsValidChecked(const FString& Context) const
+{
+	typedef EMCsProjectileWeaponLaunchTraceStart StartMapType;
+	typedef EMCsProjectileWeaponLaunchTraceDirection DirectionMapType;
+
+	CS_IS_ENUM_VALID_CHECKED(StartMapType, Start)
+	CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Direction)
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Distance, 0.0f)
+	return true;
+}
+
+bool FCsProjectileWeapon_Launch_TraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	typedef EMCsProjectileWeaponLaunchTraceStart StartMapType;
+	typedef ECsProjectileWeaponLaunchTraceStart StartType;
+	typedef EMCsProjectileWeaponLaunchTraceDirection DirectionMapType;
+	typedef ECsProjectileWeaponLaunchTraceDirection DirectionType;
+
+	CS_IS_ENUM_VALID(StartMapType, StartType, Start)
+	CS_IS_ENUM_VALID(DirectionMapType, DirectionType, Direction)
+	CS_IS_FLOAT_GREATER_THAN(Distance, 0.0f)
+	return true;
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NTrace
+				{
+					bool FParams::IsValidChecked(const FString& Context) const
+					{
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart StartMapType;
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection DirectionMapType;
+
+						CS_IS_ENUM_VALID_CHECKED(StartMapType, GetStart())
+						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetDirection())
+						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetDistance(), 0.0f)
+						return true;
+					}
+
+					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+					{
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart StartMapType;
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart StartType;
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection DirectionMapType;
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection DirectionType;
+
+						CS_IS_ENUM_VALID(StartMapType, StartType, GetStart())
+						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetDirection())
+						CS_IS_FLOAT_GREATER_THAN(GetDistance(), 0.0f)
+						return true;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileWeapon_Launch_TraceParams
+
 // FCsProjectileWeapon_LaunchTraceParams
 #pragma region
 

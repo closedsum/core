@@ -221,6 +221,136 @@ namespace NCsWeapon
 }
 #pragma endregion ProjectileWeaponLaunchTraceDirection
 
+// FCsProjectileWeapon_Launch_TraceParams
+#pragma region
+
+// NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NTrace, FParams)
+
+/**
+* Describes any Trace information related to Launching a Projectile using a Trace from a Projectile Weapon.
+* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*  Projectile is an object that implements the interface: ICsProjectile.
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsProjectileWeapon_Launch_TraceParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Describes what type of Trace to perform. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsTraceType Type;
+
+	/** Describes how (number) the Trace is performed. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsTraceMethod Method;
+
+	/** Describes how the start of a trace should be chosen. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsProjectileWeaponLaunchTraceStart Start;
+
+	/** Describes how the direction (end) of a trace should be chosen. The normalized
+		direction is used to project outward GetTraceDistance() from the start of the
+		trace. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	ECsProjectileWeaponLaunchTraceDirection Direction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (ClampMin = "0.0", UIMin = "0.0"))
+	float Distance;
+
+	FCsProjectileWeapon_Launch_TraceParams() :
+		Type(ECsTraceType::Line),
+		Method(ECsTraceMethod::Single),
+		Start(ECsProjectileWeaponLaunchTraceStart::LaunchLocation),
+		Direction(ECsProjectileWeaponLaunchTraceDirection::Owner),
+		Distance(1000.0f)
+	{
+	}
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NTrace
+				{
+					/**
+					* Describes any Trace information related to Launching a Projectile using a Trace from a Projectile Weapon.
+					* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+					*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+					*  Projectile is an object that implements the interface: ICsProjectile.
+					*/
+					struct CSWP_API FParams
+					{
+					#define StartType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart
+					#define DirectionType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection
+
+					private:
+
+						/** Describes what type of Trace to perform. */
+						CS_DECLARE_MEMBER_WITH_PROXY(Type, ECsTraceType)
+						/** Describes how (number) the Trace is performed. */
+						CS_DECLARE_MEMBER_WITH_PROXY(Method, ECsTraceMethod)
+						/** Describes how the start of a trace should be chosen. */
+						CS_DECLARE_MEMBER_WITH_PROXY(Start, StartType)
+						/** Describes how the direction (end) of a trace should be chosen. The normalized
+							direction is used to project outward GetTraceDistance() from the start of the
+							trace. */
+						CS_DECLARE_MEMBER_WITH_PROXY(Direction, DirectionType)
+						CS_DECLARE_MEMBER_WITH_PROXY(Distance, float)
+						
+
+					public:
+
+						FParams() :
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Type, ECsTraceType::Line),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Method, ECsTraceMethod::Single),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Start, StartType::LaunchLocation),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Direction, DirectionType::Owner),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Distance, 1000.0f)
+						{
+							CS_CTOR_SET_MEMBER_PROXY(Type);
+							CS_CTOR_SET_MEMBER_PROXY(Method);
+							CS_CTOR_SET_MEMBER_PROXY(Start);
+							CS_CTOR_SET_MEMBER_PROXY(Direction);
+							CS_CTOR_SET_MEMBER_PROXY(Distance);
+						}
+
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, ECsTraceType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Method, ECsTraceMethod)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Start, StartType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Direction, DirectionType)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Distance, float)
+					
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+					#undef StartType
+					#undef DirectionType
+					};
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileWeapon_Launch_TraceParams
+
 // FCsProjectileWeapon_LaunchTraceParams
 #pragma region
 

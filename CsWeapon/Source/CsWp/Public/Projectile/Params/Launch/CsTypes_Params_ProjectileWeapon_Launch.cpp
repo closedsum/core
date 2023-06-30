@@ -277,3 +277,97 @@ namespace NCsWeapon
 }
 
 #pragma endregion FCsProjectileWeapon_Launch_LocationParams
+
+// FCsProjectileWeapon_Launch_DirectionParams
+#pragma region
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
+
+void FCsProjectileWeapon_Launch_DirectionParams::CopyToParams(ParamsType* Params)
+{
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection DirectionType;
+
+	Params->SetType((DirectionType*)(&Type));
+	Params->SetbInvert(&bInvert);
+	Params->SetOffset(&Offset);
+	Params->SetRules(&Rules);
+}
+
+void FCsProjectileWeapon_Launch_DirectionParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection DirectionType;
+
+	Params->SetType((DirectionType)Type);
+	Params->SetbInvert(bInvert);
+	Params->SetOffset(Offset);
+	Params->SetRules(Rules);
+}
+
+#undef ParamsType
+
+bool FCsProjectileWeapon_Launch_DirectionParams::IsValidChecked(const FString& Context) const
+{
+	typedef EMCsProjectileWeaponLaunchDirection DirectionMapType;
+
+	CS_IS_ENUM_VALID_CHECKED(DirectionMapType, Type)
+
+	checkf(Rules != NCsRotationRules::None, TEXT("%s: No Rules set for Type, Rules == 0."), *Context);
+	return true;
+}
+
+bool FCsProjectileWeapon_Launch_DirectionParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	typedef EMCsProjectileWeaponLaunchDirection DirectionMapType;
+	typedef ECsProjectileWeaponLaunchDirection DirectionType;
+
+	CS_IS_ENUM_VALID(DirectionMapType, DirectionType, Type)
+
+	if (Rules == NCsRotationRules::None)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for Type, Rules == 0."), *Context));
+		return false;
+	}
+	return true;
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NDirection
+				{
+					bool FParams::IsValidChecked(const FString& Context) const
+					{
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection DirectionMapType;
+
+						CS_IS_ENUM_VALID_CHECKED(DirectionMapType, GetType())
+
+						checkf(GetRules() != NCsRotationRules::None, TEXT("%s: No Rules set for GetType(), GetRules() == 0."), *Context);
+						return true;
+					}
+
+					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+					{
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection DirectionMapType;
+						typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection DirectionType;
+
+						CS_IS_ENUM_VALID(DirectionMapType, DirectionType, GetType())
+
+						if (GetRules() == NCsRotationRules::None)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for GetType(), GetRules() == 0."), *Context));
+							return false;
+						}
+						return true;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileWeapon_Launch_LocationParams

@@ -351,7 +351,7 @@ namespace NCsWeapon
 
 #pragma endregion FCsProjectileWeapon_Launch_TraceParams
 
-// FCsProjectileWeapon_LaunchTraceParams
+// FCsProjectileWeapon_LaunchTraceParams (TODO: DEPRECATE)
 #pragma region
 
 // NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FImpl
@@ -378,33 +378,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
 	FCsProjectileWeapon_Launch_DirectionParams DirectionParams;
 
+	/** Describes any Trace information related to Launching a Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsTraceType TraceType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsTraceMethod TraceMethod;
-
-	/** Describes how the start of a trace should be chosen. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsProjectileWeaponLaunchTraceStart TraceStartType;
-
-	/** Describes how the direction (end) of a trace should be chosen. The normalized
-		direction is used to project outward GetTraceDistance() from the start of the
-		trace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsProjectileWeaponLaunchTraceDirection TraceDirectionType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (ClampMin = "0.0", UIMin = "0.0"))
-	float TraceDistance;
+	FCsProjectileWeapon_Launch_TraceParams TraceParams;
 
 	FCsProjectileWeapon_LaunchTraceParams() :
 		LocationParams(),
 		DirectionParams(),
-		TraceType(ECsTraceType::Line),
-		TraceMethod(ECsTraceMethod::Single),
-		TraceStartType(ECsProjectileWeaponLaunchTraceStart::LaunchLocation),
-		TraceDirectionType(ECsProjectileWeaponLaunchTraceDirection::Owner),
-		TraceDistance(1000.0f)
+		TraceParams()
 	{
 	}
 
@@ -428,3 +409,110 @@ public:
 };
 
 #pragma endregion FCsProjectileWeapon_LaunchTraceParams
+
+// FCsProjectileWeapon_Launch_WithTraceParams
+#pragma region
+
+// NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams
+CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NWithTrace, FParams)
+
+/**
+* Describes any information related to Launching a Projectile from a Projectile Weapon.
+*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+*  Projectile is an object that implements the interface: ICsProjectile.
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsProjectileWeapon_Launch_WithTraceParams
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Describes any Location information related to Launching a Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FCsProjectileWeapon_Launch_LocationParams LocationParams;
+
+	/** Describes any Direction information related to Launching a Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FCsProjectileWeapon_Launch_DirectionParams DirectionParams;
+
+	/** Describes any Trace information related to Launching a Projectile. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
+	FCsProjectileWeapon_Launch_TraceParams TraceParams;
+
+	FCsProjectileWeapon_Launch_WithTraceParams() :
+		LocationParams(),
+		DirectionParams(),
+		TraceParams()
+	{
+	}
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams
+	void CopyToParams(ParamsType* Params);
+	void CopyToParamsAsValue(ParamsType* Params) const;
+#undef ParamsType
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+};
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NWithTrace
+				{
+					/**
+					* Describes any information related to Launching a Projectile from a Projectile Weapon.
+					*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
+					*  Projectile is an object that implements the interface: ICsProjectile.
+					*/
+					struct CSWP_API FParams
+					{
+					#define LocationParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
+					#define DirectionParamsType NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
+					#define TraceParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
+
+					private:
+
+						/** Describes any Location information related to Launching a Projectile. */
+						LocationParamsType LocationParams;
+						/** Describes any Direction information related to Launching a Projectile. */
+						DirectionParamsType DirectionParams;
+						/** Describes any Trace information related to Launching a Projectile. */
+						TraceParamsType TraceParams;
+
+					public:
+
+						FParams() :
+							LocationParams(),
+							DirectionParams(),
+							TraceParams()
+						{
+						}
+
+						FORCEINLINE const LocationParamsType& GetLocationParams() const { return LocationParams; }
+						FORCEINLINE LocationParamsType* GetLocationParamsPtr() { return &LocationParams; }
+						FORCEINLINE const DirectionParamsType& GetDirectionParams() const { return DirectionParams; }
+						FORCEINLINE DirectionParamsType* GetDirectionParamsPtr() { return &DirectionParams; }
+						FORCEINLINE const TraceParamsType& GetTraceParams() const { return TraceParams; }
+						FORCEINLINE TraceParamsType* GetTraceParamsPtr() { return &TraceParams; }
+					
+						bool IsValidChecked(const FString& Context) const;
+						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+					#undef LocationParamsType
+					#undef DirectionParamsType
+					#undef TraceParamsType
+					};
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileWeapon_Launch_WithTraceParams

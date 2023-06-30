@@ -282,30 +282,14 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 {
 	LocationParams.CopyToParams(Params->GetLocationParamsPtr());
 	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
-
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
-
-	Params->SetTraceType(&TraceType);
-	Params->SetTraceMethod(&TraceMethod);
-	Params->SetTraceStartType((LaunchTraceStartType*)(&TraceStartType));
-	Params->SetTraceDirectionType((LaunchTraceDirectionType*)(&TraceDirectionType));
-	Params->SetTraceDistance(&TraceDistance);
+	TraceParams.CopyToParams(Params->GetTraceParamsPtr());
 }
 
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
 	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
-
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
-
-	Params->SetTraceType(TraceType);
-	Params->SetTraceMethod(TraceMethod);
-	Params->SetTraceStartType((LaunchTraceStartType)TraceStartType);
-	Params->SetTraceDirectionType((LaunchTraceDirectionType)TraceDirectionType);
-	Params->SetTraceDistance(TraceDistance);
+	TraceParams.CopyToParamsAsValue(Params->GetTraceParamsPtr());
 }
 
 #undef ParamsType
@@ -314,16 +298,78 @@ bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void
 {
 	CS_IS_VALID(LocationParams)
 	CS_IS_VALID(DirectionParams)
-
-	typedef EMCsProjectileWeaponLaunchTraceStart LaunchTraceStartMapType;
-	typedef ECsProjectileWeaponLaunchTraceStart LaunchTraceStartType;
-	typedef EMCsProjectileWeaponLaunchTraceDirection LaunchTraceDirectionMapType;
-	typedef ECsProjectileWeaponLaunchTraceDirection LaunchTraceDirectionType;
-
-	CS_IS_ENUM_VALID(LaunchTraceStartMapType, LaunchTraceStartType, TraceStartType)
-	CS_IS_ENUM_VALID(LaunchTraceDirectionMapType, LaunchTraceDirectionType, TraceDirectionType)
-	CS_IS_FLOAT_GREATER_THAN(TraceDistance, 0.0f)
+	CS_IS_VALID(TraceParams)
 	return true;
 }
 
 #pragma endregion FCsProjectileWeapon_LaunchTraceParams
+
+// FCsProjectileWeapon_Launch_WithTraceParams
+#pragma region
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NWithTrace::FParams
+
+void FCsProjectileWeapon_Launch_WithTraceParams::CopyToParams(ParamsType* Params)
+{
+	LocationParams.CopyToParams(Params->GetLocationParamsPtr());
+	DirectionParams.CopyToParams(Params->GetDirectionParamsPtr());
+	TraceParams.CopyToParams(Params->GetTraceParamsPtr());
+}
+
+void FCsProjectileWeapon_Launch_WithTraceParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
+	DirectionParams.CopyToParamsAsValue(Params->GetDirectionParamsPtr());
+	TraceParams.CopyToParamsAsValue(Params->GetTraceParamsPtr());
+}
+
+#undef ParamsType
+
+bool FCsProjectileWeapon_Launch_WithTraceParams::IsValidChecked(const FString& Context) const
+{
+	CS_IS_VALID_CHECKED(LocationParams);
+	CS_IS_VALID_CHECKED(DirectionParams);
+	CS_IS_VALID_CHECKED(TraceParams);
+	return true;
+}
+
+bool FCsProjectileWeapon_Launch_WithTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	CS_IS_VALID(LocationParams)
+	CS_IS_VALID(DirectionParams)
+	CS_IS_VALID(TraceParams)
+	return true;
+}
+
+namespace NCsWeapon
+{
+	namespace NProjectile
+	{
+		namespace NParams
+		{
+			namespace NLaunch
+			{
+				namespace NWithTrace
+				{
+					bool FParams::IsValidChecked(const FString& Context) const
+					{
+						CS_IS_VALID_CHECKED(GetLocationParams());
+						CS_IS_VALID_CHECKED(GetDirectionParams());
+						CS_IS_VALID_CHECKED(GetTraceParams());
+						return true;
+					}
+
+					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+					{
+						CS_IS_VALID(GetLocationParams())
+						CS_IS_VALID(GetDirectionParams())
+						CS_IS_VALID(GetTraceParams())
+						return true;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion FCsProjectileWeapon_Launch_WithTraceParams

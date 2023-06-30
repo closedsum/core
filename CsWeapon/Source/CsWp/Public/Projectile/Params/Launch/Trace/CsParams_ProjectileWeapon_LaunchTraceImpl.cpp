@@ -58,12 +58,6 @@ namespace NCsWeapon
 						}
 					}
 
-				#define LaunchLocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
-				#define LaunchLocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
-				#define LaunchDirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
-				#define LaunchTraceStartType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart
-				#define LaunchTraceDirectionType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection
-
 					FImpl::FImpl() :
 						// ICsGetInterfaceMap
 						InterfaceMap(nullptr),
@@ -71,11 +65,7 @@ namespace NCsWeapon
 						LocationParams(),
 						DirectionParams(),
 						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceType, ECsTraceType::Line),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod::Single),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceStartType, LaunchTraceStartType::LaunchLocation),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceDirectionType, LaunchTraceDirectionType::Owner),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(TraceDistance, 0.0f)
+						TraceParams()
 					{
 						InterfaceMap = new FCsInterfaceMap();
 
@@ -86,21 +76,7 @@ namespace NCsWeapon
 
 						InterfaceMap->Add<LaunchParamsType>(static_cast<LaunchParamsType*>(this));
 						InterfaceMap->Add<LaunchTraceParamsType>(static_cast<LaunchTraceParamsType*>(this));
-
-						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
-						// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
-						CS_CTOR_SET_MEMBER_PROXY(TraceType);
-						CS_CTOR_SET_MEMBER_PROXY(TraceMethod);
-						CS_CTOR_SET_MEMBER_PROXY(TraceStartType);
-						CS_CTOR_SET_MEMBER_PROXY(TraceDirectionType);
-						CS_CTOR_SET_MEMBER_PROXY(TraceDistance);
 					}
-
-				#undef LaunchLocationType
-				#undef LaunchLocationOffsetSpace
-				#undef LaunchDirectionType
-				#undef LaunchTraceStartType
-				#undef LaunchTraceDirectionType
 
 					FImpl::~FImpl()
 					{
@@ -204,11 +180,11 @@ namespace NCsWeapon
 								Params->GetDirectionParamsPtr()->SetType((LaunchDirectionType*)DirectionTypePtr);
 								Params->GetDirectionParamsPtr()->SetbInvert(bInvertDirectionPtr);
 								Params->GetDirectionParamsPtr()->SetRules(DirectionRulesPtr);
-								Params->SetTraceType(TraceTypePtr);
-								Params->SetTraceMethod(TraceMethodPtr);
-								Params->SetTraceStartType((LaunchTraceStartType*)TraceStartTypePtr);
-								Params->SetTraceDirectionType((LaunchTraceDirectionType*)TraceDirectionTypePtr);
-								Params->SetTraceDistance(TraceDistancePtr);
+								Params->GetTraceParamsPtr()->SetType(TraceTypePtr);
+								Params->GetTraceParamsPtr()->SetMethod(TraceMethodPtr);
+								Params->GetTraceParamsPtr()->SetStart((LaunchTraceStartType*)TraceStartTypePtr);
+								Params->GetTraceParamsPtr()->SetDirection((LaunchTraceDirectionType*)TraceDirectionTypePtr);
+								Params->GetTraceParamsPtr()->SetDistance(TraceDistancePtr);
 								Success = true;
 							}
 						}
@@ -242,13 +218,7 @@ namespace NCsWeapon
 					{
 						CS_IS_VALID_CHECKED(GetLocationParams());
 						CS_IS_VALID_CHECKED(GetDirectionParams());
-
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart LaunchTraceStartMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection LaunchTraceDirectionMapType;
-
-						CS_IS_ENUM_VALID_CHECKED(LaunchTraceStartMapType, GetTraceStartType())
-						CS_IS_ENUM_VALID_CHECKED(LaunchTraceDirectionMapType, GetTraceDirectionType())
-						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetTraceDistance(), 0.0f)
+						CS_IS_VALID_CHECKED(GetTraceParams());
 						return true;
 					}
 
@@ -256,15 +226,7 @@ namespace NCsWeapon
 					{
 						CS_IS_VALID(GetLocationParams())
 						CS_IS_VALID(GetDirectionParams())
-
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart LaunchTraceStartMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection LaunchTraceDirectionMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
-
-						CS_IS_ENUM_VALID(LaunchTraceStartMapType, LaunchTraceStartType, GetTraceStartType())
-						CS_IS_ENUM_VALID(LaunchTraceDirectionMapType, LaunchTraceDirectionType, GetTraceDirectionType())
-						CS_IS_FLOAT_GREATER_THAN(GetTraceDistance(), 0.0f)
+						CS_IS_VALID(GetTraceParams())
 						return true;
 					}
 				}

@@ -338,8 +338,7 @@ namespace NCsWeapon
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NLocation, FParams)
 
 /**
-* Describes any Location information related to Launching a Projectile using a Trace from a Projectile Weapon.
-* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+* Describes any Location information related to Launching a Projectile from a Projectile Weapon.
 *  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 *  Projectile is an object that implements the interface: ICsProjectile.
 */
@@ -401,8 +400,7 @@ namespace NCsWeapon
 				namespace NLocation
 				{
 					/**
-					* Describes any Location information related to Launching a Projectile using a Trace from a Projectile Weapon.
-					* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+					* Describes any Location information related to Launching a Projectile from a Projectile Weapon.
 					*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 					*  Projectile is an object that implements the interface: ICsProjectile.
 					*/
@@ -469,8 +467,7 @@ namespace NCsWeapon
 CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NProjectile, NParams, NLaunch, NDirection, FParams)
 
 /**
-* Describes any Direction information related to Launching a Projectile using a Trace from a Projectile Weapon.
-* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+* Describes any Direction information related to Launching a Projectile from a Projectile Weapon.
 *  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 *  Projectile is an object that implements the interface: ICsProjectile.
 */
@@ -525,8 +522,7 @@ namespace NCsWeapon
 				namespace NDirection
 				{
 					/**
-					* Describes any Direction information related to Launching a Projectile using a Trace from a Projectile Weapon.
-					* The trace may determine the Location and/or Direction with which to Launch the Projectile.
+					* Describes any Direction information related to Launching a Projectile from a Projectile Weapon.
 					*  Projectile Weapon is an object that implements the interface: ICsProjectileWeapon.
 					*  Projectile is an object that implements the interface: ICsProjectile.
 					*/

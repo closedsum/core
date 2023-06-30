@@ -34,6 +34,7 @@ namespace NCsWeapon
 
 					#define LocationParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
 					#define DirectionParamsType NCsWeapon::NProjectile::NParams::NLaunch::NDirection::FParams
+					#define TraceParamsType NCsWeapon::NProjectile::NParams::NLaunch::NTrace::FParams
 					#define LaunchLocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
 					#define LaunchLocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
 					#define LaunchDirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
@@ -51,11 +52,7 @@ namespace NCsWeapon
 
 					// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceType, ECsTraceType)
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod)
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceStartType, LaunchTraceStartType)
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceDirectionType, LaunchTraceDirectionType)
-						CS_DECLARE_MEMBER_WITH_PROXY(TraceDistance, float)
+						TraceParamsType TraceParams;
 
 					public:
 
@@ -92,16 +89,21 @@ namespace NCsWeapon
 						FORCEINLINE const int32& GetDirectionRules() const { return GetDirectionParams().GetRules(); }
 
 					#pragma endregion LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
+					
+					public:
+
+						FORCEINLINE const TraceParamsType& GetTraceParams() const { return TraceParams; }
+						FORCEINLINE TraceParamsType* GetTraceParamsPtr() { return &TraceParams; }
 
 					// LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 					#pragma region
 					public:
 
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceType, ECsTraceType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceMethod, ECsTraceMethod)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceStartType, LaunchTraceStartType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDirectionType, LaunchTraceDirectionType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TraceDistance, float)
+						FORCEINLINE const ECsTraceType& GetTraceType() const { return GetTraceParams().GetType(); }
+						FORCEINLINE const ECsTraceMethod& GetTraceMethod() const { return GetTraceParams().GetMethod(); }
+						FORCEINLINE const LaunchTraceStartType& GetTraceStartType() const { return GetTraceParams().GetStart(); }
+						FORCEINLINE const LaunchTraceDirectionType& GetTraceDirectionType() const { return GetTraceParams().GetDirection(); }
+						FORCEINLINE const float& GetTraceDistance() const { return GetTraceParams().GetDistance(); }
 		
 					#pragma endregion LaunchTraceParamsType (NCsWeapon::NProjectile::NParams::NLaunch::NTrace::ITrace)
 					
@@ -114,6 +116,7 @@ namespace NCsWeapon
 
 					#undef LocationParamsType
 					#undef DirectionParamsType
+					#undef TraceParamsType
 					#undef LaunchLocationType
 					#undef LaunchLocationOffsetSpace
 					#undef LaunchDirectionType

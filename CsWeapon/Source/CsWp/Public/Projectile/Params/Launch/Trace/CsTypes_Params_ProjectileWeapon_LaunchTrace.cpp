@@ -184,17 +184,12 @@ ParamsType* FCsProjectileWeapon_LaunchTraceParams::AddSafeToSlice_Internal(const
 
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 {
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+	LocationParams.CopyToParams(Params->GetLocationParamsPtr());
+
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
 
-	Params->SetLocationType((LaunchLocationType*)(&LocationType));
-	Params->SetLocationOffsetSpace((LaunchLocationOffsetSpace*)(&LocationOffsetSpace));
-	Params->SetLocationOffsetSpaceRules(&LocationOffsetSpaceRules);
-	Params->SetLocationOffsetSpaceOffset(&LocationOffsetSpaceOffset);
-	Params->SetLocationOffset(&LocationOffset);
 	Params->SetDirectionType((LaunchDirectionType*)(&DirectionType));
 	Params->SetDirectionOffset(&DirectionOffset);
 	Params->SetbInvertDirection(&bInvertDirection);
@@ -208,16 +203,12 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParams(ParamsType* Params)
 
 void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Params) const
 {
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
-	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+	LocationParams.CopyToParamsAsValue(Params->GetLocationParamsPtr());
+
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 	typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
 
-	Params->SetLocationType((LaunchLocationType)LocationType);
-	Params->SetLocationOffsetSpace((LaunchLocationOffsetSpace)LocationOffsetSpace);
-	Params->SetLocationOffsetSpaceRules(LocationOffsetSpaceRules);
-	Params->SetLocationOffset(LocationOffset);
 	Params->SetDirectionType((LaunchDirectionType)DirectionType);
 	Params->SetDirectionOffset(DirectionOffset);
 	Params->SetbInvertDirection(bInvertDirection);
@@ -233,24 +224,10 @@ void FCsProjectileWeapon_LaunchTraceParams::CopyToParamsAsValue(ParamsType* Para
 
 bool FCsProjectileWeapon_LaunchTraceParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
-	typedef EMCsProjectileWeaponLaunchLocation LaunchLocationMapType;
-	typedef ECsProjectileWeaponLaunchLocation LaunchLocationType;
-	typedef EMCsProjectileWeaponLaunchLocationOffsetSpace LaunchLocationOffsetSpaceMap;
-	typedef ECsProjectileWeaponLaunchLocationOffsetSpace LaunchLocationOffsetSpace;
+	CS_IS_VALID(LocationParams)
+
 	typedef EMCsProjectileWeaponLaunchDirection LaunchDirectionMapType;
 	typedef ECsProjectileWeaponLaunchDirection LaunchDirectionType;
-
-	CS_IS_ENUM_VALID(LaunchLocationMapType, LaunchLocationType, LocationType)
-	CS_IS_ENUM_VALID(LaunchLocationOffsetSpaceMap, LaunchLocationOffsetSpace, LocationOffsetSpace)
-
-	if (LocationOffsetSpace == LaunchLocationOffsetSpace::None)
-	{
-		if (LocationOffsetSpaceRules == NCsRotationRules::None)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for LocationOffsetSpace. LocationOffsetSpaceRules == 0."), *Context));
-			return false;
-		}
-	}
 
 	CS_IS_ENUM_VALID(LaunchDirectionMapType, LaunchDirectionType, DirectionType)
 

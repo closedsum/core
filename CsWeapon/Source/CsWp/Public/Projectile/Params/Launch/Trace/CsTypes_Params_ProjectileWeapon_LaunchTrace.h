@@ -240,27 +240,9 @@ struct CSWP_API FCsProjectileWeapon_LaunchTraceParams
 
 public:
 
-	/** Describes the different methods to get the Location from which a Projectile will be launched from a Weapon. */
+	/** Describes any Location information related to Launching a Projectile. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsProjectileWeaponLaunchLocation LocationType;
-
-	/** Describes the "Space" the location offset is applied to the Location a Projectile is Launched. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	ECsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpace;
-
-	/** Describes which components (Pitch, Yaw, and/or Roll) or Rotation / Direction from LocationOffsetSpace will
-		affect the LocationOffset. Components NOT affected will result the LocationOffset applied "directly" in World Space. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
-	int32 LocationOffsetSpaceRules;
-
-	/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FRotator LocationOffsetSpaceOffset;
-
-	/** An offset applied to the start position a Projectile will be Launched. 
-		This is always applied in the "Space" defined by LocationOffsetSpace. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FVector LocationOffset;
+	FCsProjectileWeapon_Launch_LocationParams LocationParams;
 
 	/** Describes the different methods to get the Direction a Projectile will be Launched. . */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
@@ -297,11 +279,7 @@ public:
 	float TraceDistance;
 
 	FCsProjectileWeapon_LaunchTraceParams() :
-		LocationType(ECsProjectileWeaponLaunchLocation::Owner),
-		LocationOffsetSpace(ECsProjectileWeaponLaunchLocationOffsetSpace::Owner),
-		LocationOffsetSpaceRules(CS_ROTATION_FLAGS_YAW),
-		LocationOffsetSpaceOffset(0.0f),
-		LocationOffset(0.0f),
+		LocationParams(),
 		DirectionType(ECsProjectileWeaponLaunchDirection::Owner),
 		DirectionOffset(0.0f),
 		bInvertDirection(false),

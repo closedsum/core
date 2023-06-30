@@ -32,6 +32,7 @@ namespace NCsWeapon
 
 					private:
 
+					#define LocationParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
 					#define LaunchLocationType NCsWeapon::NProjectile::NParams::NLaunch::ELocation
 					#define LaunchLocationOffsetSpace NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace
 					#define LaunchDirectionType NCsWeapon::NProjectile::NParams::NLaunch::EDirection
@@ -44,11 +45,7 @@ namespace NCsWeapon
 
 					// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 
-						CS_DECLARE_MEMBER_WITH_PROXY(LocationType, LaunchLocationType)
-						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffsetSpace, LaunchLocationOffsetSpace)
-						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffsetSpaceRules, int32)
-						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffsetSpaceOffset, FRotator)
-						CS_DECLARE_MEMBER_WITH_PROXY(LocationOffset, FVector)
+						LocationParamsType LocationParams;
 						CS_DECLARE_MEMBER_WITH_PROXY(DirectionType, LaunchDirectionType)
 						CS_DECLARE_MEMBER_WITH_PROXY(DirectionOffset, FRotator)
 						CS_DECLARE_MEMBER_WITH_PROXY(bInvertDirection, bool)
@@ -75,15 +72,20 @@ namespace NCsWeapon
 
 					#pragma endregion ICsGetInterfaceMap
 
+					public:
+
+						FORCEINLINE const LocationParamsType& GetLocationParams() const { return LocationParams; }
+						FORCEINLINE LocationParamsType* GetLocationParamsPtr() { return &LocationParams; }
+
 					// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
 					#pragma region
 					public:
 
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationType, LaunchLocationType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffsetSpace, LaunchLocationOffsetSpace)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffsetSpaceRules, int32)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffsetSpaceOffset, FRotator)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LocationOffset, FVector)
+						FORCEINLINE const LaunchLocationType& GetLocationType() const { return GetLocationParams().GetType(); }
+						FORCEINLINE const LaunchLocationOffsetSpace& GetLocationOffsetSpace() const { return GetLocationParams().GetOffsetSpace(); }
+						FORCEINLINE const int32& GetLocationOffsetSpaceRules() const { return GetLocationParams().GetOffsetSpaceRules(); }
+						FORCEINLINE const FRotator& GetLocationOffsetSpaceOffset() const { return GetLocationParams().GetOffsetSpaceOffset(); }
+						FORCEINLINE const FVector& GetLocationOffset() const { return GetLocationParams().GetOffset(); }
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionType, LaunchDirectionType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(DirectionOffset, FRotator)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInvertDirection, bool)
@@ -111,6 +113,7 @@ namespace NCsWeapon
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
 
+					#undef LocationParamsType
 					#undef LaunchLocationType
 					#undef LaunchLocationOffsetSpace
 					#undef LaunchDirectionType

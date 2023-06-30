@@ -156,6 +156,74 @@ namespace NCsWeapon
 
 #pragma endregion ProjectileWeaponLaunchDirection
 
+// FCsProjectileWeapon_Launch_LocationParams
+#pragma region
+
+#define ParamsType NCsWeapon::NProjectile::NParams::NLaunch::NLocation::FParams
+
+void FCsProjectileWeapon_Launch_LocationParams::CopyToParams(ParamsType* Params)
+{
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace OffsetSpaceType;
+
+	Params->SetType((LocationType*)(&Type));
+	Params->SetOffsetSpace((OffsetSpaceType*)(&OffsetSpace));
+	Params->SetOffsetSpaceRules(&OffsetSpaceRules),
+	Params->SetOffsetSpaceOffset(&OffsetSpaceOffset);
+	Params->SetOffset(&Offset);
+}
+
+void FCsProjectileWeapon_Launch_LocationParams::CopyToParamsAsValue(ParamsType* Params) const
+{
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LocationType;
+	typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace OffsetSpaceType;
+
+	Params->SetType((LocationType)Type);
+	Params->SetOffsetSpace((OffsetSpaceType)OffsetSpace);
+	Params->SetOffsetSpaceRules(OffsetSpaceRules),
+	Params->SetOffsetSpaceOffset(OffsetSpaceOffset);
+	Params->SetOffset(Offset);
+}
+
+#undef ParamsType
+
+bool FCsProjectileWeapon_Launch_LocationParams::IsValidChecked(const FString& Context) const
+{
+	typedef EMCsProjectileWeaponLaunchLocation LocationMapType;
+	typedef EMCsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpaceMap;
+	typedef ECsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpace;
+
+	CS_IS_ENUM_VALID_CHECKED(LocationMapType, Type)
+	CS_IS_ENUM_VALID_CHECKED(LocationOffsetSpaceMap, OffsetSpace)
+
+	if (OffsetSpace != LocationOffsetSpace::None)
+	{
+		checkf(OffsetSpaceRules != NCsRotationRules::None, TEXT("%s: No Rules set for OffsetSpace, OffsetSpaceRules == 0."), *Context);
+	}
+	return true;
+}
+
+bool FCsProjectileWeapon_Launch_LocationParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+{
+	typedef EMCsProjectileWeaponLaunchLocation LocationMapType;
+	typedef ECsProjectileWeaponLaunchLocation LocationType;
+	typedef EMCsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpaceMap;
+	typedef ECsProjectileWeaponLaunchLocationOffsetSpace LocationOffsetSpace;
+
+	CS_IS_ENUM_VALID(LocationMapType, LocationType, Type)
+	CS_IS_ENUM_VALID(LocationOffsetSpaceMap, LocationOffsetSpace, OffsetSpace)
+
+	if (OffsetSpace == LocationOffsetSpace::None)
+	{
+		if (OffsetSpaceRules == NCsRotationRules::None)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for OffsetSpace, OffsetSpaceRules == 0."), *Context));
+			return false;
+		}
+	}
+	return true;
+}
+
 namespace NCsWeapon
 {
 	namespace NProjectile
@@ -207,3 +275,5 @@ namespace NCsWeapon
 		}
 	}
 }
+
+#pragma endregion FCsProjectileWeapon_Launch_LocationParams

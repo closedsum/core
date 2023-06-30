@@ -68,11 +68,7 @@ namespace NCsWeapon
 						// ICsGetInterfaceMap
 						InterfaceMap(nullptr),
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationType, LaunchLocationType::Owner),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationOffsetSpace, LaunchLocationOffsetSpace::Owner),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationOffsetSpaceRules, CS_ROTATION_FLAGS_YAW),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationOffsetSpaceOffset, 0.0f),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(LocationOffset, 0.0f),
+						LocationParams(),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionType, LaunchDirectionType::Owner),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(DirectionOffset, 0.0f),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(bInvertDirection, false),
@@ -95,11 +91,6 @@ namespace NCsWeapon
 						InterfaceMap->Add<LaunchTraceParamsType>(static_cast<LaunchTraceParamsType*>(this));
 
 						// LaunchParamsType (NCsWeapon::NProjectile::NParams::NLaunch::ILaunch)
-						CS_CTOR_SET_MEMBER_PROXY(LocationType);
-						CS_CTOR_SET_MEMBER_PROXY(LocationOffsetSpace);
-						CS_CTOR_SET_MEMBER_PROXY(LocationOffsetSpaceRules);
-						CS_CTOR_SET_MEMBER_PROXY(LocationOffsetSpaceOffset);
-						CS_CTOR_SET_MEMBER_PROXY(LocationOffset);
 						CS_CTOR_SET_MEMBER_PROXY(DirectionType);
 						CS_CTOR_SET_MEMBER_PROXY(DirectionOffset);
 						CS_CTOR_SET_MEMBER_PROXY(bInvertDirection);
@@ -215,7 +206,7 @@ namespace NCsWeapon
 								typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 								typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
 
-								Params->SetLocationType((LaunchLocationType*)LocationTypePtr);
+								Params->GetLocationParamsPtr()->SetType((LaunchLocationType*)LocationTypePtr);
 								//Params->SetLocationOffset(LocationOffsetPtr);
 								Params->SetDirectionType((LaunchDirectionType*)DirectionTypePtr);
 								Params->SetbInvertDirection(bInvertDirectionPtr);
@@ -256,20 +247,11 @@ namespace NCsWeapon
 
 					bool FImpl::IsValidChecked(const FString& Context) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMLocation LaunchLocationMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EMOffsetSpace LaunchLocationOffsetSpaceMap;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+						CS_IS_VALID_CHECKED(GetLocationParams());
+
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection LaunchDirectionMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart LaunchTraceStartMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection LaunchTraceDirectionMapType;
-
-						CS_IS_ENUM_VALID_CHECKED(LaunchLocationMapType, GetLocationType())
-						CS_IS_ENUM_VALID_CHECKED(LaunchLocationOffsetSpaceMap, GetLocationOffsetSpace())
-
-						if (GetLocationOffsetSpace() != LaunchLocationOffsetSpace::None)
-						{
-							checkf(GetLocationOffsetSpaceRules() != NCsRotationRules::None, TEXT("%s: No Rules set for GetLocationOffsetSpace(), GetLocationOffsetSpaceRules() == 0."), *Context);
-						}
 
 						CS_IS_ENUM_VALID_CHECKED(LaunchDirectionMapType, GetDirectionType())
 						CS_IS_ENUM_VALID_CHECKED(LaunchTraceStartMapType, GetTraceStartType())
@@ -280,28 +262,14 @@ namespace NCsWeapon
 
 					bool FImpl::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMLocation LaunchLocationMapType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::ELocation LaunchLocationType;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EMOffsetSpace LaunchLocationOffsetSpaceMap;
-						typedef NCsWeapon::NProjectile::NParams::NLaunch::NLocation::EOffsetSpace LaunchLocationOffsetSpace;
+						CS_IS_VALID(GetLocationParams());
+
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::EMDirection LaunchDirectionMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::EDirection LaunchDirectionType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMStart LaunchTraceStartMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EStart LaunchTraceStartType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EMDirection LaunchTraceDirectionMapType;
 						typedef NCsWeapon::NProjectile::NParams::NLaunch::NTrace::EDirection LaunchTraceDirectionType;
-
-						CS_IS_ENUM_VALID(LaunchLocationMapType, LaunchLocationType, GetLocationType())
-						CS_IS_ENUM_VALID(LaunchLocationOffsetSpaceMap, LaunchLocationOffsetSpace, GetLocationOffsetSpace())
-
-						if (GetLocationOffsetSpace() == LaunchLocationOffsetSpace::None)
-						{
-							if (GetLocationOffsetSpaceRules() == NCsRotationRules::None)
-							{
-								CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No Rules set for GetLocationOffsetSpace(), GetLocationOffsetSpaceRules() == 0."), *Context));
-								return false;
-							}
-						}
 
 						CS_IS_ENUM_VALID(LaunchDirectionMapType, LaunchDirectionType, GetDirectionType())
 						CS_IS_ENUM_VALID(LaunchTraceStartMapType, LaunchTraceStartType, GetTraceStartType())

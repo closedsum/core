@@ -9,6 +9,7 @@
 #pragma region
 
 /**
+* Describes what type of Trace to perform.
 */
 UENUM(BlueprintType)
 enum class ECsTraceType : uint8
@@ -49,6 +50,7 @@ namespace NCsTraceType
 #pragma region TraceMethod
 
 /**
+* Describes how (number) the Trace is performed.
 */
 UENUM(BlueprintType)
 enum class ECsTraceMethod : uint8

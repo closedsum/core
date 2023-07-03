@@ -210,10 +210,6 @@ UDataTable* FCsDataRootSet::GetDataTableChecked(const FString& Context, const EM
 	#undef CS_TEMP_GET_DATA_TABLE
 
 	CS_IS_PTR_NULL_CHECKED(DT)
-
-#if WITH_EDITOR
-	UCsLibrary_Load::LoadDataTable(DT, NCsLoadFlags::All, NCsLoadCodes::All);
-#endif // #if WITH_EDITOR
 	return DT;
 } 
 
@@ -230,6 +226,10 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const UObj
 uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const
 {
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
+
+#if WITH_EDITOR
+	UCsLibrary_Load::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
+#endif // #if WITH_EDITOR
 
 	const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
 
@@ -248,6 +248,10 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMem
 uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const
 {
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
+
+#if WITH_EDITOR
+	UCsLibrary_Load::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
+#endif // #if WITH_EDITOR
 
 	CS_IS_PTR_NULL_CHECKED(RowStruct)
 

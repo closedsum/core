@@ -2,6 +2,8 @@
 #include "Library/Load/CsLibrary_Load.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Sound
 #include "Sound/SoundCue.h"
 // FX
@@ -1852,6 +1854,25 @@ void UCsLibrary_Load::LoadDataTable(UDataTable* DataTable, const int32& LoadFlag
 
 		LoadStruct(RowPtr, Struct, LoadFlags, LoadCodes);
 	}
+}
+
+void UCsLibrary_Load::LoadDataTableRowChecked(const FString& Context, UDataTable* DataTable, const FName& RowName, const int32& LoadFlags, const int32& LoadCodes)
+{
+	CS_IS_PTR_NULL_CHECKED(DataTable)
+	CS_IS_NAME_NONE_CHECKED(RowName)
+
+	const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+
+	checkf(ScriptStruct, TEXT("%s: No RowStruct for DataTable: %s."), *Context, *(DataTable->GetName()));
+
+	UScriptStruct* Temp		= const_cast<UScriptStruct*>(ScriptStruct);
+	UStruct* const Struct	= Temp;
+
+	uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+	checkf(RowPtr, TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName()));
+
+	LoadStruct(RowPtr, Struct, LoadFlags, LoadCodes);
 }
 
 #pragma endregion Load

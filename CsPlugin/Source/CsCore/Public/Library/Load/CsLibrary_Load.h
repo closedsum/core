@@ -295,6 +295,8 @@ public:
 	*/
 	static void LoadDataTable(UDataTable* DataTable, const int32& LoadFlags, const int32& LoadCodes);
 
+	static void LoadDataTableRowChecked(const FString& Context, UDataTable* DataTable, const FName& RowName, const int32& LoadFlags, const int32& LoadCodes);
+
 #pragma endregion Load
 
 // Unload

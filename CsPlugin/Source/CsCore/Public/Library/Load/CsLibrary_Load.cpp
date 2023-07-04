@@ -1489,7 +1489,7 @@ void UCsLibrary_Load::LoadSoftObjectProperty(FSoftObjectProperty* SoftObjectProp
 				{
 					FString Path = Member->ToSoftObjectPath().ToString();
 
-					if (!Path.EndsWith(ECsLoadCached::Str::_C))
+					if (!Path.EndsWith(ECsLoadCached::Str::_C, ESearchCase::CaseSensitive))
 						Path.Append(ECsLoadCached::Str::_C);
 
 					FSoftObjectPath SoftPath(Path);
@@ -1576,7 +1576,7 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 					{
 						FString Path = Ptr->ToSoftObjectPath().ToString();
 
-						if (!Path.EndsWith(ECsLoadCached::Str::_C))
+						if (!Path.EndsWith(ECsLoadCached::Str::_C, ESearchCase::CaseSensitive))
 							Path.Append(ECsLoadCached::Str::_C);
 
 						FSoftObjectPath SoftPath(Path);

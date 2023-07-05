@@ -1,8 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 #include "UObject/Object.h"
-// Types
-#include "Types/CsTypes_Math.h"
 
 #include "CsScriptLibrary_MPC.generated.h"
 
@@ -19,7 +17,8 @@ public:
 
 	/**
 	* Set the Scalar Parameter Value with name: ParamName with value Value on the Collection (Material Parameter Collection).
-	*
+	*  NOTE: Editor ONLY
+	* 
 	* @param Collection		Material Parameter Collection.
 	* @param ParamName		Name of the Scalar Parameter Value to set.
 	* @param Value			The value to set.
@@ -30,7 +29,8 @@ public:
 
 	/**
 	* Set the Scalar Parameter Value with name: ParamName with value Value on the Collection (Material Parameter Collection).
-	*
+	*  NOTE: Editor ONLY
+	* 
 	* @param Collection		Material Parameter Collection.
 	* @param ParamName		Name of the Scalar Parameter Value to set.
 	* @param Value			The value to set.
@@ -47,7 +47,8 @@ public:
 
 	/**
 	* Set the Vector Parameter Value with name: ParamName with value Value on the Collection (Material Parameter Collection).
-	*
+	*  NOTE: Editor ONLY
+	* 
 	* @param Collection		Material Parameter Collection.
 	* @param ParamName		Name of the Scalar Parameter Value to set.
 	* @param Value			The value to set.
@@ -58,7 +59,8 @@ public:
 
 	/**
 	* Set the Vector Parameter Value with name: ParamName with value Value on the Collection (Material Parameter Collection).
-	*
+	*  NOTE: Editor ONLY
+	* 
 	* @param Collection		Material Parameter Collection.
 	* @param ParamName		Name of the Scalar Parameter Value to set.
 	* @param Value			The value to set.
@@ -67,24 +69,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,ParamName,Value"))
 	static bool SetVectorParameterValue_UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const FLinearColor& Value);
 
-	/**
-	* Set the Vector Parameter Value with name: ParamName with value Value for the appropriate Vector4 member on the Collection (Material Parameter Collection).
-	*
-	* @param Collection		Material Parameter Collection.
-	* @param ParamName		Name of the Scalar Parameter Value to set.
-	* @param Value			The value to set.
-	* return				Whether the parameter was successful set or not.
-	*/
-	//UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,ParamName,Value"))
-	//static bool SetVector4ParameterValueByMember(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const FLinearColor& Value);
-
 #pragma endregion Vector
 
 public:
 
+	/**
+	* NOTE: Editor ONLY
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context"))
 	static bool UpdateMaterial(const FString& Context, UMaterialParameterCollection* Collection, UMaterial* Material);
 
+	/**
+	* NOTE: Editor ONLY
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context"))
 	static bool UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, TArray<UMaterial*>& Materials);
 };

@@ -2,21 +2,10 @@
 #include "Material/Parameter/Collection/Script/CsScriptLibrary_MPC.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_Valid.h"
-// Log
-#include "Utility/CsLog.h"
-// Material
-#include "Materials/Material.h"
-#include "Materials/MaterialParameterCollection.h"
-
-#if WITH_EDITOR
-// Material
-#include "Material/Parameter/Collection/CsGetManagerMPCProxy.h"
-#include "Material/Parameter/Collection/CsManager_MPC_Proxy.h"
-// Engine
-#include "Engine/Engine.h"
-#endif // #if WITH_EDITOR
+#include "Material/Parameter/Collection/CsLibrary_Material_Parameter_Collection.h"
 
 // Cached
 #pragma region
@@ -55,58 +44,12 @@ bool UCsScriptLibrary_MPC::SetScalarParameterValue(const FString& Context, UMate
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetScalarParameterValue : Context;
 
-	void (*Log)(const FString&) = &FCsLog::Warning;
-
-	CS_IS_PTR_NULL(Collection)
-	CS_IS_NAME_NONE(ParamName)
-
 #if WITH_EDITOR
-	bool UpdatedParameter = false;
+	typedef NCsMaterial::NParameter::NCollection::FLibrary MPCLibrary;
 
-	const int32 Count = Collection->ScalarParameters.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		FCollectionScalarParameter& Parameter = Collection->ScalarParameters[I];
-
-		if (Parameter.ParameterName == ParamName)
-		{
-			if (Parameter.DefaultValue != Value)
-			{
-				Parameter.DefaultValue = Value;
-				UpdatedParameter = true;
-			}
-		}
-	}
-
-	if (!UpdatedParameter)
-		return false;
-
-	Collection->PreEditChange(nullptr);
-	Collection->PostEditChange();
-	Collection->MarkPackageDirty();
-
-	// Recreate all uniform buffers based off of this collection
-	for (TObjectIterator<UWorld> It; It; ++It)
-	{
-		UWorld* CurrentWorld = *It;
-		CurrentWorld->UpdateParameterCollectionInstances(true, false);
-	}
-
-	if (ICsGetManagerMPCProxy* GetManagerMPCProxy = Cast<ICsGetManagerMPCProxy>(GEngine))
-	{
-		typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
-		typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
-
-		MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
-
-		ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
-
-		Proxy.Init(Collection);
-		Proxy.GameThread_UpdateState(false);
-	}
+	return MPCLibrary::Editor_SetSafeScalarParameter(Ctxt, Collection, ParamName, Value);
 #else
-checkf(0, TEXT("%s: should ONLY be called in Editor"));
+	checkf(0, TEXT("%s: should ONLY be called in Editor"));
 #endif // #if WITH_EDITOR
 	return true;
 }
@@ -115,101 +58,14 @@ bool UCsScriptLibrary_MPC::SetScalarParameterValue_UpdateMaterials(const FString
 {
 	using namespace NCsScriptLibraryMPC::NCached;
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetScalarParameterValue : Context;
-
-	void (*Log)(const FString&) = &FCsLog::Warning;
-
-	CS_IS_PTR_NULL(Collection)
-	CS_IS_NAME_NONE(ParamName)
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetScalarParameterValue_UpdateMaterials : Context;
 
 #if WITH_EDITOR
-	bool UpdatedParameter = false;
+	typedef NCsMaterial::NParameter::NCollection::FLibrary MPCLibrary;
 
-	const int32 Count = Collection->ScalarParameters.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		FCollectionScalarParameter& Parameter = Collection->ScalarParameters[I];
-
-		if (Parameter.ParameterName == ParamName)
-		{
-			if (Parameter.DefaultValue != Value)
-			{
-				Parameter.DefaultValue = Value;
-				UpdatedParameter = true;
-			}
-		}
-	}
-
-	if (!UpdatedParameter)
-		return false;
-
-	Collection->PreEditChange(nullptr);
-	Collection->PostEditChange();
-	Collection->MarkPackageDirty();
-
-	// Create a material update context so we can safely update materials using this parameter collection.
-	{
-		FMaterialUpdateContext UpdateContext;
-
-		// Go through all materials in memory and recompile them if they use this material parameter collection
-		for (TObjectIterator<UMaterial> It; It; ++It)
-		{
-			UMaterial* CurrentMaterial = *It;
-
-			bool bRecompile = false;
-
-			// Preview materials often use expressions for rendering that are not in their Expressions array, 
-			// And therefore their MaterialParameterCollectionInfos are not up to date.
-			if (CurrentMaterial->bIsPreviewMaterial || CurrentMaterial->bIsFunctionPreviewMaterial)
-			{
-				bRecompile = true;
-			}
-			else
-			{
-				for (int32 FunctionIndex = 0; FunctionIndex < CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
-				{
-					if (CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
-					{
-						bRecompile = true;
-						break;
-					}
-				}
-			}
-
-			if (bRecompile)
-			{
-				UpdateContext.AddMaterial(CurrentMaterial);
-
-				// Propagate the change to this material
-				CurrentMaterial->PreEditChange(nullptr);
-				CurrentMaterial->PostEditChange();
-				CurrentMaterial->MarkPackageDirty();
-			}
-		}
-	}
-
-	// Recreate all uniform buffers based off of this collection
-	for (TObjectIterator<UWorld> It; It; ++It)
-	{
-		UWorld* CurrentWorld = *It;
-		CurrentWorld->UpdateParameterCollectionInstances(true, false);
-	}
-
-	if (ICsGetManagerMPCProxy* GetManagerMPCProxy = Cast<ICsGetManagerMPCProxy>(GEngine))
-	{
-		typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
-		typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
-
-		MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
-
-		ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
-
-		Proxy.Init(Collection);
-		Proxy.GameThread_UpdateState(false);
-	}
+	return MPCLibrary::Editor_SetSafeScalarParameter_UpdateMaterials(Ctxt, Collection, ParamName, Value);
 #else
-checkf(0, TEXT("%s: should ONLY be called in Editor"));
+	checkf(0, TEXT("%s: should ONLY be called in Editor"));
 #endif // #if WITH_EDITOR
 	return true;
 }
@@ -225,58 +81,12 @@ bool UCsScriptLibrary_MPC::SetVectorParameterValue(const FString& Context, UMate
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetVectorParameterValue : Context;
 
-	void (*Log)(const FString&) = &FCsLog::Warning;
-
-	CS_IS_PTR_NULL(Collection)
-	CS_IS_NAME_NONE(ParamName)
-
 #if WITH_EDITOR
-	bool UpdatedParameter = false;
+	typedef NCsMaterial::NParameter::NCollection::FLibrary MPCLibrary;
 
-	const int32 Count = Collection->VectorParameters.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		FCollectionVectorParameter& Parameter = Collection->VectorParameters[I];
-
-		if (Parameter.ParameterName == ParamName)
-		{
-			if (Parameter.DefaultValue != Value)
-			{
-				Parameter.DefaultValue = Value;
-				UpdatedParameter = true;
-			}
-		}
-	}
-
-	if (!UpdatedParameter)
-		return false;
-
-	Collection->PreEditChange(nullptr);
-	Collection->PostEditChange();
-	Collection->MarkPackageDirty();
-
-	// Recreate all uniform buffers based off of this collection
-	for (TObjectIterator<UWorld> It; It; ++It)
-	{
-		UWorld* CurrentWorld = *It;
-		CurrentWorld->UpdateParameterCollectionInstances(true, false);
-	}
-
-	if (ICsGetManagerMPCProxy* GetManagerMPCProxy = Cast<ICsGetManagerMPCProxy>(GEngine))
-	{
-		typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
-		typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
-
-		MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
-
-		ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
-
-		Proxy.Init(Collection);
-		Proxy.GameThread_UpdateState(false);
-	}
+	return MPCLibrary::Editor_SetSafeVectorParameter(Ctxt, Collection, ParamName, Value);
 #else
-		checkf(0, TEXT("%s: should ONLY be called in Editor"));
+	checkf(0, TEXT("%s: should ONLY be called in Editor"));
 #endif // #if WITH_EDITOR
 	return true;
 }
@@ -287,97 +97,10 @@ bool UCsScriptLibrary_MPC::SetVectorParameterValue_UpdateMaterials(const FString
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetVectorParameterValue_UpdateMaterials : Context;
 
-	void (*Log)(const FString&) = &FCsLog::Warning;
-
-	CS_IS_PTR_NULL(Collection)
-	CS_IS_NAME_NONE(ParamName)
-
 #if WITH_EDITOR
-	bool UpdatedParameter = false;
+	typedef NCsMaterial::NParameter::NCollection::FLibrary MPCLibrary;
 
-	const int32 Count = Collection->VectorParameters.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		FCollectionVectorParameter& Parameter = Collection->VectorParameters[I];
-
-		if (Parameter.ParameterName == ParamName)
-		{
-			if (Parameter.DefaultValue != Value)
-			{
-				Parameter.DefaultValue = Value;
-				UpdatedParameter = true;
-			}
-		}
-	}
-
-	if (!UpdatedParameter)
-		return false;
-
-	Collection->PreEditChange(nullptr);
-	Collection->PostEditChange();
-	Collection->MarkPackageDirty();
-
-	// Create a material update context so we can safely update materials using this parameter collection.
-	{
-		FMaterialUpdateContext UpdateContext;
-
-		// Go through all materials in memory and recompile them if they use this material parameter collection
-		for (TObjectIterator<UMaterial> It; It; ++It)
-		{
-			UMaterial* CurrentMaterial = *It;
-
-			bool bRecompile = false;
-
-			// Preview materials often use expressions for rendering that are not in their Expressions array, 
-			// And therefore their MaterialParameterCollectionInfos are not up to date.
-			if (CurrentMaterial->bIsPreviewMaterial || CurrentMaterial->bIsFunctionPreviewMaterial)
-			{
-				bRecompile = true;
-			}
-			else
-			{
-				for (int32 FunctionIndex = 0; FunctionIndex < CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
-				{
-					if (CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
-					{
-						bRecompile = true;
-						break;
-					}
-				}
-			}
-
-			if (bRecompile)
-			{
-				UpdateContext.AddMaterial(CurrentMaterial);
-
-				// Propagate the change to this material
-				CurrentMaterial->PreEditChange(nullptr);
-				CurrentMaterial->PostEditChange();
-				CurrentMaterial->MarkPackageDirty();
-			}
-		}
-	}
-
-	// Recreate all uniform buffers based off of this collection
-	for (TObjectIterator<UWorld> It; It; ++It)
-	{
-		UWorld* CurrentWorld = *It;
-		CurrentWorld->UpdateParameterCollectionInstances(true, false);
-	}
-
-	if (ICsGetManagerMPCProxy* GetManagerMPCProxy = Cast<ICsGetManagerMPCProxy>(GEngine))
-	{
-		typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
-		typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
-
-		MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
-
-		ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
-
-		Proxy.Init(Collection);
-		Proxy.GameThread_UpdateState(false);
-	}
+	return MPCLibrary::Editor_SetSafeVectorParameter_UpdateMaterials(Ctxt, Collection, ParamName, Value);
 #else
 	checkf(0, TEXT("%s: should ONLY be called in Editor"));
 #endif // #if WITH_EDITOR
@@ -392,45 +115,12 @@ bool UCsScriptLibrary_MPC::UpdateMaterial(const FString& Context, UMaterialParam
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::UpdateMaterial : Context;
 
-	void (*Log)(const FString&) = &FCsLog::Warning;
-
-	CS_IS_PTR_NULL(Collection)
-	CS_IS_PTR_NULL(Material)
-
 #if WITH_EDITOR
-	// Create a material update context so we can safely update materials using this parameter collection.
-	{
-		FMaterialUpdateContext UpdateContext;
+	typedef NCsMaterial::NParameter::NCollection::FLibrary MPCLibrary;
 
-		bool bRecompile = false;
-
-		// Preview materials often use expressions for rendering that are not in their Expressions array, 
-		// And therefore their MaterialParameterCollectionInfos are not up to date.
-		if (Material->bIsPreviewMaterial || Material->bIsFunctionPreviewMaterial)
-		{
-			bRecompile = true;
-		}
-		else
-		{
-			for (int32 FunctionIndex = 0; FunctionIndex < Material->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
-			{
-				if (Material->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
-				{
-					bRecompile = true;
-				}
-			}
-		}
-
-		if (bRecompile)
-		{
-			UpdateContext.AddMaterial(Material);
-
-			// Propagate the change to this material
-			Material->PreEditChange(nullptr);
-			Material->PostEditChange();
-			Material->MarkPackageDirty();
-		}
-	}
+	return MPCLibrary::Editor_SafeUpdateMaterial(Ctxt, Collection, Material);
+#else
+	checkf(0, TEXT("%s: should ONLY be called in Editor"));
 #endif // #if WITH_EDITOR
 	return true;
 }
@@ -441,48 +131,12 @@ bool UCsScriptLibrary_MPC::UpdateMaterials(const FString& Context, UMaterialPara
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::UpdateMaterials : Context;
 
-	void (*Log)(const FString&) = &FCsLog::Warning;
-
-	CS_IS_PTR_NULL(Collection)
-	CS_IS_TARRAY_ANY_NULL(Materials, UMaterial)
-
 #if WITH_EDITOR
-	// Create a material update context so we can safely update materials using this parameter collection.
-	{
-		FMaterialUpdateContext UpdateContext;
+	typedef NCsMaterial::NParameter::NCollection::FLibrary MPCLibrary;
 
-		bool bRecompile = false;
-
-		for (UMaterial* Material : Materials)
-		{
-			// Preview materials often use expressions for rendering that are not in their Expressions array, 
-			// And therefore their MaterialParameterCollectionInfos are not up to date.
-			if (Material->bIsPreviewMaterial || Material->bIsFunctionPreviewMaterial)
-			{
-				bRecompile = true;
-			}
-			else
-			{
-				for (int32 FunctionIndex = 0; FunctionIndex < Material->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
-				{
-					if (Material->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
-					{
-						bRecompile = true;
-					}
-				}
-			}
-
-			if (bRecompile)
-			{
-				UpdateContext.AddMaterial(Material);
-
-				// Propagate the change to this material
-				Material->PreEditChange(nullptr);
-				Material->PostEditChange();
-				Material->MarkPackageDirty();
-			}
-		}
-	}
+	return MPCLibrary::Editor_SafeUpdateMaterials(Ctxt, Collection, Materials);
+#else
+	checkf(0, TEXT("%s: should ONLY be called in Editor"));
 #endif // #if WITH_EDITOR
 	return true;
 }

@@ -10,6 +10,14 @@
 // World
 #include "Engine/World.h"
 
+#if WITH_EDITOR
+// Material
+#include "Material/Parameter/Collection/CsGetManagerMPCProxy.h"
+#include "Material/Parameter/Collection/CsManager_MPC_Proxy.h"
+// Engine
+#include "Engine/Engine.h"
+#endif // #if WITH_EDITOR
+
 namespace NCsMaterial
 {
 	namespace NParameter
@@ -193,6 +201,397 @@ namespace NCsMaterial
 
 				return (FRHIUniformBufferLayout*)(Base + Offset);
 			}
+
+		#if WITH_EDITOR
+
+			bool FLibrary::Editor_SetSafeScalarParameter(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Collection)
+				CS_IS_NAME_NONE(ParamName)
+
+				bool UpdatedParameter = false;
+
+				const int32 Count = Collection->ScalarParameters.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCollectionScalarParameter& Parameter = Collection->ScalarParameters[I];
+
+					if (Parameter.ParameterName == ParamName)
+					{
+						if (Parameter.DefaultValue != Value)
+						{
+							Parameter.DefaultValue = Value;
+							UpdatedParameter = true;
+						}
+					}
+				}
+
+				if (!UpdatedParameter)
+					return false;
+
+				Collection->PreEditChange(nullptr);
+				Collection->PostEditChange();
+				Collection->MarkPackageDirty();
+
+				// Recreate all uniform buffers based off of this collection
+				for (TObjectIterator<UWorld> It; It; ++It)
+				{
+					UWorld* CurrentWorld = *It;
+					CurrentWorld->UpdateParameterCollectionInstances(true, false);
+				}
+
+				ICsGetManagerMPCProxy* GetManagerMPCProxy = CS_INTERFACE_CAST(GEngine, UEngine, ICsGetManagerMPCProxy);
+
+				if (GetManagerMPCProxy)
+				{
+					typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
+					typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
+
+					MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
+
+					ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
+
+					Proxy.Init(Collection);
+					Proxy.GameThread_UpdateState(false);
+					return true;
+				}
+				return false;
+			}
+
+			bool FLibrary::Editor_SetSafeScalarParameter_UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const float& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Collection)
+				CS_IS_NAME_NONE(ParamName)
+
+				bool UpdatedParameter = false;
+
+				const int32 Count = Collection->ScalarParameters.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCollectionScalarParameter& Parameter = Collection->ScalarParameters[I];
+
+					if (Parameter.ParameterName == ParamName)
+					{
+						if (Parameter.DefaultValue != Value)
+						{
+							Parameter.DefaultValue = Value;
+							UpdatedParameter = true;
+						}
+					}
+				}
+
+				if (!UpdatedParameter)
+					return false;
+
+				// Create a material update context so we can safely update materials using this parameter collection.
+				{
+					FMaterialUpdateContext UpdateContext;
+
+					// Go through all materials in memory and recompile them if they use this material parameter collection
+					for (TObjectIterator<UMaterial> It; It; ++It)
+					{
+						UMaterial* CurrentMaterial = *It;
+
+						bool bRecompile = false;
+
+						// Preview materials often use expressions for rendering that are not in their Expressions array, 
+						// And therefore their MaterialParameterCollectionInfos are not up to date.
+						if (CurrentMaterial->bIsPreviewMaterial || CurrentMaterial->bIsFunctionPreviewMaterial)
+						{
+							bRecompile = true;
+						}
+						else
+						{
+							for (int32 FunctionIndex = 0; FunctionIndex < CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
+							{
+								if (CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
+								{
+									bRecompile = true;
+									break;
+								}
+							}
+						}
+
+						if (bRecompile)
+						{
+							UpdateContext.AddMaterial(CurrentMaterial);
+
+							// Propagate the change to this material
+							CurrentMaterial->PreEditChange(nullptr);
+							CurrentMaterial->PostEditChange();
+							CurrentMaterial->MarkPackageDirty();
+						}
+					}
+				}
+
+				Collection->PreEditChange(nullptr);
+				Collection->PostEditChange();
+				Collection->MarkPackageDirty();
+
+				// Recreate all uniform buffers based off of this collection
+				for (TObjectIterator<UWorld> It; It; ++It)
+				{
+					UWorld* CurrentWorld = *It;
+					CurrentWorld->UpdateParameterCollectionInstances(true, false);
+				}
+
+				ICsGetManagerMPCProxy* GetManagerMPCProxy = CS_INTERFACE_CAST(GEngine, UEngine, ICsGetManagerMPCProxy);
+
+				if (GetManagerMPCProxy)
+				{
+					typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
+					typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
+
+					MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
+
+					ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
+
+					Proxy.Init(Collection);
+					Proxy.GameThread_UpdateState(false);
+					return true;
+				}
+				return false;
+			}
+
+			bool FLibrary::Editor_SetSafeVectorParameter(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Collection)
+				CS_IS_NAME_NONE(ParamName)
+
+				bool UpdatedParameter = false;
+
+				const int32 Count = Collection->VectorParameters.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCollectionVectorParameter& Parameter = Collection->VectorParameters[I];
+
+					if (Parameter.ParameterName == ParamName)
+					{
+						if (Parameter.DefaultValue != Value)
+						{
+							Parameter.DefaultValue = Value;
+							UpdatedParameter = true;
+						}
+					}
+				}
+
+				if (!UpdatedParameter)
+					return false;
+
+				Collection->PreEditChange(nullptr);
+				Collection->PostEditChange();
+				Collection->MarkPackageDirty();
+
+				// Recreate all uniform buffers based off of this collection
+				for (TObjectIterator<UWorld> It; It; ++It)
+				{
+					UWorld* CurrentWorld = *It;
+					CurrentWorld->UpdateParameterCollectionInstances(true, false);
+				}
+
+				ICsGetManagerMPCProxy* GetManagerMPCProxy = CS_INTERFACE_CAST(GEngine, UEngine, ICsGetManagerMPCProxy);
+
+				if (GetManagerMPCProxy)
+				{
+					typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
+					typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
+
+					MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
+
+					ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
+
+					Proxy.Init(Collection);
+					Proxy.GameThread_UpdateState(false);
+					return true;
+				}
+				return false;
+			}
+
+			bool FLibrary::Editor_SetSafeVectorParameter_UpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, const FName& ParamName, const FLinearColor& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Collection)
+				CS_IS_NAME_NONE(ParamName)
+
+				bool UpdatedParameter = false;
+
+				const int32 Count = Collection->VectorParameters.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					FCollectionVectorParameter& Parameter = Collection->VectorParameters[I];
+
+					if (Parameter.ParameterName == ParamName)
+					{
+						if (Parameter.DefaultValue != Value)
+						{
+							Parameter.DefaultValue = Value;
+							UpdatedParameter = true;
+						}
+					}
+				}
+
+				if (!UpdatedParameter)
+					return false;
+
+				// Create a material update context so we can safely update materials using this parameter collection.
+				{
+					FMaterialUpdateContext UpdateContext;
+
+					// Go through all materials in memory and recompile them if they use this material parameter collection
+					for (TObjectIterator<UMaterial> It; It; ++It)
+					{
+						UMaterial* CurrentMaterial = *It;
+
+						bool bRecompile = false;
+
+						// Preview materials often use expressions for rendering that are not in their Expressions array, 
+						// And therefore their MaterialParameterCollectionInfos are not up to date.
+						if (CurrentMaterial->bIsPreviewMaterial || CurrentMaterial->bIsFunctionPreviewMaterial)
+						{
+							bRecompile = true;
+						}
+						else
+						{
+							for (int32 FunctionIndex = 0; FunctionIndex < CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
+							{
+								if (CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
+								{
+									bRecompile = true;
+									break;
+								}
+							}
+						}
+
+						if (bRecompile)
+						{
+							UpdateContext.AddMaterial(CurrentMaterial);
+
+							// Propagate the change to this material
+							CurrentMaterial->PreEditChange(nullptr);
+							CurrentMaterial->PostEditChange();
+							CurrentMaterial->MarkPackageDirty();
+						}
+					}
+				}
+
+				Collection->PreEditChange(nullptr);
+				Collection->PostEditChange();
+				Collection->MarkPackageDirty();
+
+				// Recreate all uniform buffers based off of this collection
+				for (TObjectIterator<UWorld> It; It; ++It)
+				{
+					UWorld* CurrentWorld = *It;
+					CurrentWorld->UpdateParameterCollectionInstances(true, false);
+				}
+
+				ICsGetManagerMPCProxy* GetManagerMPCProxy = CS_INTERFACE_CAST(GEngine, UEngine, ICsGetManagerMPCProxy);
+
+				if (GetManagerMPCProxy)
+				{
+					typedef NCsMaterial::NParameter::NCollection::NProxy::FManager MPCProxyManagerType;
+					typedef NCsMaterial::NParameter::NCollection::FProxy ProxyType;
+
+					MPCProxyManagerType* Manager_MPC_Proxy = GetManagerMPCProxy->GetManagerMPCProxy();
+
+					ProxyType& Proxy = Manager_MPC_Proxy->AllocateResourceRef();
+
+					Proxy.Init(Collection);
+					Proxy.GameThread_UpdateState(false);
+					return true;
+				}
+				return false;
+			}
+
+			bool FLibrary::Editor_SafeUpdateMaterial(const FString& Context, UMaterialParameterCollection* Collection, UMaterial* Material, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Collection)
+				CS_IS_PTR_NULL(Material)
+
+				// Create a material update context so we can safely update materials using this parameter collection.
+				{
+					FMaterialUpdateContext UpdateContext;
+
+					bool bRecompile = false;
+
+					// Preview materials often use expressions for rendering that are not in their Expressions array, 
+					// And therefore their MaterialParameterCollectionInfos are not up to date.
+					if (Material->bIsPreviewMaterial || Material->bIsFunctionPreviewMaterial)
+					{
+						bRecompile = true;
+					}
+					else
+					{
+						for (int32 FunctionIndex = 0; FunctionIndex < Material->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
+						{
+							if (Material->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
+							{
+								bRecompile = true;
+							}
+						}
+					}
+
+					if (bRecompile)
+					{
+						UpdateContext.AddMaterial(Material);
+
+						// Propagate the change to this material
+						Material->PreEditChange(nullptr);
+						Material->PostEditChange();
+						Material->MarkPackageDirty();
+					}
+				}
+				return true;
+			}
+
+			bool FLibrary::Editor_SafeUpdateMaterials(const FString& Context, UMaterialParameterCollection* Collection, TArray<UMaterial*>& Materials, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			{
+				CS_IS_PTR_NULL(Collection)
+				CS_IS_TARRAY_ANY_NULL(Materials, UMaterial)
+
+				// Create a material update context so we can safely update materials using this parameter collection.
+				{
+					FMaterialUpdateContext UpdateContext;
+
+					bool bRecompile = false;
+
+					for (UMaterial* Material : Materials)
+					{
+						// Preview materials often use expressions for rendering that are not in their Expressions array, 
+						// And therefore their MaterialParameterCollectionInfos are not up to date.
+						if (Material->bIsPreviewMaterial || Material->bIsFunctionPreviewMaterial)
+						{
+							bRecompile = true;
+						}
+						else
+						{
+							for (int32 FunctionIndex = 0; FunctionIndex < Material->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
+							{
+								if (Material->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
+								{
+									bRecompile = true;
+								}
+							}
+						}
+
+						if (bRecompile)
+						{
+							UpdateContext.AddMaterial(Material);
+
+							// Propagate the change to this material
+							Material->PreEditChange(nullptr);
+							Material->PostEditChange();
+							Material->MarkPackageDirty();
+						}
+					}
+				}
+				return true;
+			}
+
+		#endif // #if WITH_EDITOR
 		}
 	}
 }

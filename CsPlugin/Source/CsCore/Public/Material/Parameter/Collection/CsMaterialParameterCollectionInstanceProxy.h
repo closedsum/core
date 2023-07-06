@@ -241,6 +241,19 @@ namespace NCsMaterial
 						bDirty = true;
 					}
 
+					template<uint32 SIZE>
+					FORCEINLINE void SetVectorParameterValues(const int32& StartIndex, const TArray<FLinearColor, TFixedAllocator<SIZE>>& Values)
+					{
+						const int32 Count = Values.Num();
+						const int32 End = StartIndex + Count;
+
+						for (int32 I = StartIndex; I < End; ++I)
+						{
+							*(VectorParameterValuesByIndex[I]) = Values[I - StartIndex];
+						}
+						bDirty = true;
+					}
+
 					FORCEINLINE void SetVectorParameterValuesAndEmpty(const int32& StartIndex, TArray<FLinearColor>& Values)
 					{
 						const int32 Count = Values.Num();

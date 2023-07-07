@@ -138,3 +138,32 @@ struct CSWP_API FCsWeaponSettings_PointWeaponImpl
 };
 
 #pragma endregion FCsWeaponSettings_PointWeaponImpl
+
+// FCsWeaponSettings_PointSequenceWeaponImpl
+#pragma region
+
+/**
+*/
+USTRUCT(BlueprintType)
+struct CSWP_API FCsWeaponSettings_PointSequenceWeaponImpl
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
+	FECsWeaponState IdleState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Settings")
+	FECsWeaponState FireState;
+
+	FCsWeaponSettings_PointSequenceWeaponImpl() :
+		IdleState(),
+		FireState()
+	{
+	}
+
+	bool IsValidChecked(const FString& Context) const;
+
+	static const FCsWeaponSettings_PointSequenceWeaponImpl& Get();
+};
+
+#pragma endregion FCsWeaponSettings_PointSequenceWeaponImpl

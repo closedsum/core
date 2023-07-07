@@ -43,3 +43,22 @@ const FCsWeaponSettings_PointWeaponImpl& FCsWeaponSettings_PointWeaponImpl::Get(
 }
 
 #pragma endregion FCsWeaponSettings_PointWeaponImpl
+
+// FCsWeaponSettings_PointSequenceWeaponImpl
+#pragma region
+
+bool FCsWeaponSettings_PointSequenceWeaponImpl::IsValidChecked(const FString& Context) const
+{
+	// Check IdleState is Valid.
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, IdleState);
+	// Check FireState is Valid.
+	CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsWeaponState, FireState);
+	return true;
+}
+
+const FCsWeaponSettings_PointSequenceWeaponImpl& FCsWeaponSettings_PointSequenceWeaponImpl::Get()
+{
+	return GetMutableDefault<UCsWeaponSettings>()->PointSequenceWeaponImpl;
+}
+
+#pragma endregion FCsWeaponSettings_PointWeaponImpl

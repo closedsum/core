@@ -1,8 +1,8 @@
-#include "Point/CsPointWeaponActorPooled.h"
+#include "Point/Sequence/CsPointSequenceWeaponActorPooled.h"
 #include "CsWp.h"
 
 // CVar
-#include "Point/CsCVars_PointWeapon.h"
+#include "Point/Sequence/CsCVars_PointSequenceWeapon.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
@@ -35,9 +35,9 @@
 #include "Managers/Trace/CsManager_Trace.h"
 // Data
 #include "Data/CsData_Weapon.h"
-#include "Point/Data/CsData_PointWeapon.h"
-#include "Point/Data/Sound/Fire/CsData_PointWeapon_SoundFire.h"
-#include "Point/Data/Visual/Fire/CsData_PointWeapon_VisualFire.h"
+#include "Point/Sequence/Data/CsData_PointSequenceWeapon.h"
+#include "Point/Sequence/Data/Sound/Fire/CsData_PointSequenceWeapon_SoundFire.h"
+#include "Point/Sequence/Data/Visual/Fire/CsData_PointSequenceWeapon_VisualFire.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Pooled
@@ -46,7 +46,6 @@
 #include "Payload/CsPayload_WeaponImpl.h"
 #include "Cache/CsCache_WeaponImpl.h"
 #include "Modifier/Types/CsGetWeaponModifierType.h"
-//#include "Point/Params/Spread/CsPointWeapon_Spread_Variables.h"
 // Modifier
 #include "Modifier/CsModifier_Int.h"
 #include "Modifier/CsModifier_Float.h"
@@ -69,55 +68,55 @@
 // Cached 
 #pragma region
 
-namespace NCsPointWeaponActorPooled
+namespace NCsPointSequenceWeaponActorPooled
 {
 	namespace NCached
 	{
 		namespace Str
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, SetUpdateGroup);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, SetUpdateGroup);
 			CS_DEFINE_CACHED_STRING(Group, "Group");
 
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Allocate);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Allocate);
 
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, SetWeaponType);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, SetWeaponType);
 			CS_DEFINE_CACHED_STRING(Type, "Type");
 
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Init);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Init);
 			CS_DEFINE_CACHED_STRING(UpdateGroup, "UpdateGroup");
 			CS_DEFINE_CACHED_STRING(WeaponType, "WeaponType");
 			CS_DEFINE_CACHED_STRING(IdleState, "IdleState");
 			CS_DEFINE_CACHED_STRING(FireState, "FireState");
 
 			// AActor Interface
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, PostInitializeComponents);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, OnUpdate_HandleStates);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, CanFire);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Fire);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Fire_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, Fire_Internal_OnEnd);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, GetTimeBetweenShots);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, PointsPerShot_GetCount);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled, PointsPerShot_GetInterval);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, PostInitializeComponents);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, OnUpdate_HandleStates);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, CanFire);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire_Internal_OnEnd);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, GetTimeBetweenShots);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, PointsPerShot_GetCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, PointsPerShot_GetInterval);
 		}
 
 		namespace Name
 		{
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsPointWeaponActorPooled, Fire_Internal);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsPointWeaponActorPooled, Abort_Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsPointSequenceWeaponActorPooled, Fire_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsPointSequenceWeaponActorPooled, Abort_Fire_Internal);
 		}
 
 		namespace NTimeBetweenShotsImpl
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
 			}
 
 			namespace Name
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsPointWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl, OnElapsedTime_Internal);
 			}
 		}
 
@@ -125,8 +124,8 @@ namespace NCsPointWeaponActorPooled
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled::FSoundImpl, Play);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled::FSoundImpl, SetPayload);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled::FSoundImpl, Play);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled::FSoundImpl, SetPayload);
 			}
 		}
 
@@ -134,8 +133,8 @@ namespace NCsPointWeaponActorPooled
 		{
 			namespace Str
 			{
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled::FFXImpl, Play);
-				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointWeaponActorPooled::FFXImpl, SetPayload);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled::FFXImpl, Play);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled::FFXImpl, SetPayload);
 			}
 		}
 	}
@@ -143,7 +142,7 @@ namespace NCsPointWeaponActorPooled
 
 #pragma endregion Cached
 
-ACsPointWeaponActorPooled::ACsPointWeaponActorPooled(const FObjectInitializer& ObjectInitializer)
+ACsPointSequenceWeaponActorPooled::ACsPointSequenceWeaponActorPooled(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	// ICsUpdate
 	UpdateGroup(),
@@ -151,7 +150,7 @@ ACsPointWeaponActorPooled::ACsPointWeaponActorPooled(const FObjectInitializer& O
 	Cache(nullptr),
 	WeaponType(),
 	Data(nullptr),
-	PointWeaponData(nullptr),
+	PointSequenceWeaponData(nullptr),
 	// Events
 	OnAllocate_Event(),
 	OnDeallocate_Start_Event(),
@@ -220,7 +219,7 @@ ACsPointWeaponActorPooled::ACsPointWeaponActorPooled(const FObjectInitializer& O
 // UObject Interface
 #pragma region
 
-void ACsPointWeaponActorPooled::BeginDestroy()
+void ACsPointSequenceWeaponActorPooled::BeginDestroy()
 {
 	Super::BeginDestroy();
 	
@@ -232,7 +231,7 @@ void ACsPointWeaponActorPooled::BeginDestroy()
 // AActor Interface
 #pragma region
 
-void ACsPointWeaponActorPooled::BeginPlay()
+void ACsPointSequenceWeaponActorPooled::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -253,13 +252,13 @@ void ACsPointWeaponActorPooled::BeginPlay()
 	// ScopedHandles
 #if !UE_BUILD_SHIPPING
 	{
-		using namespace NCsPointWeaponActorPooled::NCached;
+		using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 		// FireScopedHandle
 		{
 			const FString& ScopeName		   = Str::Fire_Internal;
-			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponPoint;
-			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponPointScopedTimerFire;
+			const FECsScopedGroup& ScopedGroup = NCsScopedGroup::WeaponPointSequence;
+			const FECsCVarLog& ScopeLog		   = NCsCVarLog::LogWeaponPointSequenceScopedTimerFire;
 
 			FireScopedHandle.Handle = FCsManager_ScopedTimer::Get().GetHandle(&ScopeName, ScopedGroup, ScopeLog);
 		}
@@ -267,9 +266,9 @@ void ACsPointWeaponActorPooled::BeginPlay()
 #endif // #if !UE_BUILD_SHIPPING
 }
 
-void ACsPointWeaponActorPooled::PostInitializeComponents()
+void ACsPointSequenceWeaponActorPooled::PostInitializeComponents()
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::PostInitializeComponents;
 
@@ -303,7 +302,7 @@ void ACsPointWeaponActorPooled::PostInitializeComponents()
 // ICsUpdate
 #pragma region
 
-void ACsPointWeaponActorPooled::Update(const FCsDeltaTime& DeltaTime)
+void ACsPointSequenceWeaponActorPooled::Update(const FCsDeltaTime& DeltaTime)
 { 
 	OnUpdate_HandleStates(DeltaTime);
 }
@@ -313,9 +312,9 @@ void ACsPointWeaponActorPooled::Update(const FCsDeltaTime& DeltaTime)
 // Update
 #pragma region
 
-void ACsPointWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group)
+void ACsPointSequenceWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group)
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::SetUpdateGroup;
 
@@ -329,7 +328,7 @@ void ACsPointWeaponActorPooled::SetUpdateGroup(const FECsUpdateGroup& Group)
 // ICsShutdown
 #pragma region
 
-void ACsPointWeaponActorPooled::Shutdown()
+void ACsPointSequenceWeaponActorPooled::Shutdown()
 {
 	CS_SAFE_DELETE_PTR(Cache)
 
@@ -346,11 +345,11 @@ void ACsPointWeaponActorPooled::Shutdown()
 #pragma region
 
 #define PooledPayloadType NCsPooledObject::NPayload::IPayload
-void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
+void ACsPointSequenceWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 {
 #undef PooledPayloadType
 
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Allocate;
 
@@ -372,10 +371,10 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	// Get Data
 	typedef NCsWeapon::NManager::FLibrary WeaponManagerLibrary;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
-	typedef NCsWeapon::NPoint::NData::IData PointWeaponDataType;
+	typedef NCsWeapon::NPoint::NSequence::NData::IData PointSequenceWeaponDataType;
 
-	Data		    = WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
-	PointWeaponData = WeaponDataLibrary::GetInterfaceChecked<PointWeaponDataType>(Context, Data);
+	Data					= WeaponManagerLibrary::GetDataChecked(Context, GetWorldContext(), WeaponType);
+	PointSequenceWeaponData = WeaponDataLibrary::GetInterfaceChecked<PointSequenceWeaponDataType>(Context, Data);
 
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
@@ -418,7 +417,7 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	}
 
 	// Set States
-	const FCsWeaponSettings_PointWeaponImpl& Settings = FCsWeaponSettings_PointWeaponImpl::Get();
+	const FCsWeaponSettings_PointSequenceWeaponImpl& Settings = FCsWeaponSettings_PointSequenceWeaponImpl::Get();
 
 	CS_IS_VALID_CHECKED(Settings);
 
@@ -426,12 +425,12 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	FireState	 = Settings.FireState;
 	CurrentState = IdleState;
 
-	CurrentAmmo = PointWeaponData->GetMaxAmmo();
+	CurrentAmmo = PointSequenceWeaponData->GetMaxAmmo();
 
 	OnAllocate_Event.Broadcast(this, Payload);
 }
 
-void ACsPointWeaponActorPooled::Deallocate()
+void ACsPointSequenceWeaponActorPooled::Deallocate()
 {
 	OnDeallocate_Start_Event.Broadcast(this);
 
@@ -482,7 +481,7 @@ void ACsPointWeaponActorPooled::Deallocate()
 	WeaponType = EMCsWeapon::Get().GetMAX();
 
 	Data = nullptr;
-	PointWeaponData = nullptr;
+	PointSequenceWeaponData = nullptr;
 
 	MyOwner = nullptr;
 	MyOwnerAsActor = nullptr;
@@ -516,7 +515,7 @@ void ACsPointWeaponActorPooled::Deallocate()
 // PooledObject
 #pragma region
 
-void ACsPointWeaponActorPooled::ConstructCache()
+void ACsPointSequenceWeaponActorPooled::ConstructCache()
 {
 	typedef NCsWeapon::NCache::FImpl CacheImplType;
 
@@ -525,9 +524,9 @@ void ACsPointWeaponActorPooled::ConstructCache()
 
 #pragma endregion PooledObject
 
-void ACsPointWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
+void ACsPointSequenceWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::SetWeaponType;
 
@@ -544,14 +543,14 @@ void ACsPointWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
 // ICsProjectileWeapon
 #pragma region
 
-void ACsPointWeaponActorPooled::StartFire()
+void ACsPointSequenceWeaponActorPooled::StartFire()
 {
 	bFire = true;
 
 	Update(FCsDeltaTime::Zero);
 }
 
-void ACsPointWeaponActorPooled::StopFire()
+void ACsPointSequenceWeaponActorPooled::StopFire()
 {
 	bFire = false;
 
@@ -562,7 +561,7 @@ void ACsPointWeaponActorPooled::StopFire()
 
 #if WITH_EDITOR
 
-const UObject* ACsPointWeaponActorPooled::GetWorldContext() const
+const UObject* ACsPointSequenceWeaponActorPooled::GetWorldContext() const
 {
 	typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -581,9 +580,9 @@ const UObject* ACsPointWeaponActorPooled::GetWorldContext() const
 // State
 #pragma region
 
-void ACsPointWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
+void ACsPointSequenceWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaTime)
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::OnUpdate_HandleStates;
 
@@ -592,7 +591,7 @@ void ACsPointWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaT
 	const FCsDeltaTime& TimeSinceStart = TimeManagerLibrary::GetTimeSinceStartChecked(Context, GetWorldContext(), UpdateGroup);
 
 #if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointState))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointSequenceState))
 	{
 		UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: %s."), *Context, CurrentState.ToChar());
 	}
@@ -610,7 +609,7 @@ void ACsPointWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaT
 			CurrentState = FireState;
 
 #if !UE_BUILD_SHIPPING
-			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointSequenceStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Idle -> Fire."), *Context);
 			}
@@ -635,7 +634,7 @@ void ACsPointWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaT
 			CurrentState = IdleState;
 
 #if !UE_BUILD_SHIPPING
-			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointStateTransition))
+			if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointSequenceStateTransition))
 			{
 				UE_LOG(LogCsWp, Warning, TEXT("%s: CurrentState: Fire -> Idle."), *Context);
 			}
@@ -651,7 +650,7 @@ void ACsPointWeaponActorPooled::OnUpdate_HandleStates(const FCsDeltaTime& DeltaT
 // Ammo
 #pragma region
 
-void ACsPointWeaponActorPooled::ConsumeAmmo()
+void ACsPointSequenceWeaponActorPooled::ConsumeAmmo()
 {
 	int32 PreviousAmmo = CurrentAmmo;
 	--CurrentAmmo;
@@ -664,9 +663,9 @@ void ACsPointWeaponActorPooled::ConsumeAmmo()
 // Fire
 #pragma region
 
-bool ACsPointWeaponActorPooled::CanFire() const
+bool ACsPointSequenceWeaponActorPooled::CanFire() const
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::CanFire;
 	
@@ -679,16 +678,16 @@ bool ACsPointWeaponActorPooled::CanFire() const
 	// Check if enough time has elapsed to fire again.
 	const bool Pass_Time = !bHasFired || (TimeSinceStart.Time - Fire_StartTime > TimeBetweenShots);
 	// Check if bFire is set, its not on release, and its either bFire is just set or FullAuto.
-	const bool Pass_Fire = bFire && !PointWeaponData->DoFireOnRelease() && (PointWeaponData->IsFullAuto() || !bFire_Last);
+	const bool Pass_Fire = bFire && !PointSequenceWeaponData->DoFireOnRelease() && (PointSequenceWeaponData->IsFullAuto() || !bFire_Last);
 	// Check if bFire has just been unset and on release.
-	const bool Pass_FireOnRelease = !bFire && PointWeaponData->DoFireOnRelease() && bFire_Last;
+	const bool Pass_FireOnRelease = !bFire && PointSequenceWeaponData->DoFireOnRelease() && bFire_Last;
 	// Check if has ammo to fire.
-	const bool Pass_Ammo = PointWeaponData->HasInfiniteAmmo() || CurrentAmmo > 0;
+	const bool Pass_Ammo = PointSequenceWeaponData->HasInfiniteAmmo() || CurrentAmmo > 0;
 	// Check if Destination is Valid.
 	const bool Pass_Destination = PointImpl.HasValidDestination();
 
 #if !UE_BUILD_SHIPPING
-	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointCanFire))
+	if (CS_CVAR_LOG_IS_SHOWING(LogWeaponPointSequenceCanFire))
 	{
 		using namespace NCsCached;
 
@@ -696,11 +695,11 @@ bool ACsPointWeaponActorPooled::CanFire() const
 		// Pass_Time
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Time (%s): %f - %f > %f"), ToChar(Pass_Time), TimeSinceStart.Time, Fire_StartTime, TimeBetweenShots);
 		// Pass_Fire
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PointWeaponData->DoFireOnRelease()), ToChar(PointWeaponData->IsFullAuto()), ToChar(!bFire_Last));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Fire (%s): %s && %s && (%s || %s)"), ToChar(Pass_Fire), ToChar(bFire), ToChar(!PointSequenceWeaponData->DoFireOnRelease()), ToChar(PointSequenceWeaponData->IsFullAuto()), ToChar(!bFire_Last));
 		// Pass_FireOnRelease
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PointWeaponData->DoFireOnRelease()), ToChar(bFire_Last));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_FireOnRelease (%s): %s && %s && %s"), ToChar(Pass_FireOnRelease), ToChar(!bFire), ToChar(PointSequenceWeaponData->DoFireOnRelease()), ToChar(bFire_Last));
 		// Pass_Ammo
-		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PointWeaponData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
+		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Ammo (%s): %s || %s"), ToChar(Pass_Ammo), ToChar(PointSequenceWeaponData->HasInfiniteAmmo()), ToChar(CurrentAmmo > 0));
 		// Pass_Destination
 		UE_LOG(LogCsWp, Warning, TEXT("  Pass_Destination (%s)"));
 
@@ -712,9 +711,9 @@ bool ACsPointWeaponActorPooled::CanFire() const
 	return Pass_Time && (Pass_Fire || Pass_FireOnRelease) && Pass_Ammo && Pass_Destination;
 }
 
-void ACsPointWeaponActorPooled::Fire()
+void ACsPointSequenceWeaponActorPooled::Fire()
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Fire;
 
@@ -735,13 +734,13 @@ void ACsPointWeaponActorPooled::Fire()
 
 	#define COROUTINE Fire_Internal
 
-	Payload->CoroutineImpl.BindUObject(this, &ACsPointWeaponActorPooled::COROUTINE);
+	Payload->CoroutineImpl.BindUObject(this, &ACsPointSequenceWeaponActorPooled::COROUTINE);
 	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, GetWorldContext(), UpdateGroup);
 	Payload->Owner.SetObject(this);
 	Payload->SetName(Str::COROUTINE);
 	Payload->SetFName(Name::COROUTINE);
 	Payload->OnEnds.AddDefaulted();
-	Payload->OnEnds.Last().BindUObject(this, &ACsPointWeaponActorPooled::Fire_Internal_OnEnd);
+	Payload->OnEnds.Last().BindUObject(this, &ACsPointSequenceWeaponActorPooled::Fire_Internal_OnEnd);
 	Payload->AbortMessages.Add(Name::Abort_Fire_Internal);
 
 	#undef COROUTINE
@@ -757,7 +756,7 @@ void ACsPointWeaponActorPooled::Fire()
 	Fire_PreStart(FireID);
 	OnFire_PreStart_Event.Broadcast(this, FireID);
 
-	Payload->SetValue_Flag(CS_FIRST, PointWeaponData->HasInfiniteAmmo());
+	Payload->SetValue_Flag(CS_FIRST, PointSequenceWeaponData->HasInfiniteAmmo());
 
 	// PointsPerShot
 	static const int32 POINTS_PER_SHOT = 0;
@@ -775,13 +774,13 @@ void ACsPointWeaponActorPooled::Fire()
 		FireHandles.Add(Handle);
 }
 
-void ACsPointWeaponActorPooled::Fire_PreStart(const uint32& FireID)
+void ACsPointSequenceWeaponActorPooled::Fire_PreStart(const uint32& FireID)
 {
 }
 
-char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
+char ACsPointSequenceWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Fire_Internal;
 
@@ -844,13 +843,13 @@ char ACsPointWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-void ACsPointWeaponActorPooled::Fire_PreShot(const uint32& FireID)
+void ACsPointSequenceWeaponActorPooled::Fire_PreShot(const uint32& FireID)
 {
 }
 
-void ACsPointWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
+void ACsPointSequenceWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::Fire_Internal_OnEnd;
 
@@ -866,9 +865,9 @@ void ACsPointWeaponActorPooled::Fire_Internal_OnEnd(FCsRoutine* R)
 	}
 }
 
-void ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
+void ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 {
-	using namespace NCsPointWeaponActorPooled::NCached::NTimeBetweenShotsImpl;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached::NTimeBetweenShotsImpl;
 
 	const FString& Context = Str::OnElapsedTime;
 
@@ -885,7 +884,7 @@ void ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 
 	typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
 
-	Payload->CoroutineImpl.BindRaw(this, &ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::COROUTINE);
+	Payload->CoroutineImpl.BindRaw(this, &ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::COROUTINE);
 	Payload->StartTime = TimeManagerLibrary::GetTimeChecked(Context, Outer->GetWorldContext(), Outer->GetUpdateGroup());
 	Payload->Owner.SetObject(Outer);
 	Payload->SetName(Str::COROUTINE);
@@ -899,7 +898,7 @@ void ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime()
 	Scheduler->Start(Payload);
 }
 
-char ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRoutine* R)
+char ACsPointSequenceWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FCsRoutine* R)
 {
 	FCsDeltaTime& ElapsedTime			   = R->GetValue_DeltaTime(CS_FIRST);
 	const FCsDeltaTime PreviousElapsedTime = ElapsedTime;
@@ -933,9 +932,9 @@ char ACsPointWeaponActorPooled::FTimeBetweenShotsImpl::OnElapsedTime_Internal(FC
 	CS_COROUTINE_END(R);
 }
 
-float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
+float ACsPointSequenceWeaponActorPooled::GetTimeBetweenShots() const
 { 
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::GetTimeBetweenShots;
 
@@ -945,7 +944,7 @@ float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PointWeaponData->GetTimeBetweenShots();
+	float Value = PointSequenceWeaponData->GetTimeBetweenShots();
 
 	// TODO: Priority
 
@@ -957,9 +956,9 @@ float ACsPointWeaponActorPooled::GetTimeBetweenShots() const
 	// Point
 #pragma region
 
-int32 ACsPointWeaponActorPooled::PointsPerShot_GetCount() const
+int32 ACsPointSequenceWeaponActorPooled::PointsPerShot_GetCount() const
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::PointsPerShot_GetCount;
 
@@ -969,7 +968,7 @@ int32 ACsPointWeaponActorPooled::PointsPerShot_GetCount() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PointWeaponData->GetPointsPerShotParams().GetCount();
+	float Value = PointSequenceWeaponData->GetPointsPerShotParams().GetCount();
 
 	// TODO: Priority
 
@@ -978,9 +977,9 @@ int32 ACsPointWeaponActorPooled::PointsPerShot_GetCount() const
 	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
 }
 
-float ACsPointWeaponActorPooled::PointsPerShot_GetInterval() const
+float ACsPointSequenceWeaponActorPooled::PointsPerShot_GetInterval() const
 {
-	using namespace NCsPointWeaponActorPooled::NCached;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
 	const FString& Context = Str::PointsPerShot_GetInterval;
 
@@ -990,7 +989,7 @@ float ACsPointWeaponActorPooled::PointsPerShot_GetInterval() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PointWeaponData->GetPointsPerShotParams().GetInterval();
+	float Value = PointSequenceWeaponData->GetPointsPerShotParams().GetInterval();
 
 	// TODO: Priority
 
@@ -999,9 +998,9 @@ float ACsPointWeaponActorPooled::PointsPerShot_GetInterval() const
 	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Interval, Value);
 }
 
-void ACsPointWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)
+void ACsPointSequenceWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)
 {
-	checkf(0, TEXT("ACsPointWeaponActorPooled::Point_Execute:: NOT IMPLEMENTED."));
+	checkf(0, TEXT("ACsPointSequenceWeaponActorPooled::Point_Execute:: NOT IMPLEMENTED."));
 }
 
 #pragma endregion Point
@@ -1009,21 +1008,21 @@ void ACsPointWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIn
 	// Sound
 #pragma region
 
-void ACsPointWeaponActorPooled::FSoundImpl::Play()
+void ACsPointSequenceWeaponActorPooled::FSoundImpl::Play()
 {
-	using namespace NCsPointWeaponActorPooled::NCached::NSoundImpl;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached::NSoundImpl;
 
 	const FString& Context = Str::Play;
 
-	// SoundDataType (NCsWeapon::NPoint::NData::NSound::NFire::IFire)
-	typedef NCsWeapon::NPoint::NData::NSound::NFire::IFire SoundDataType;
+	// SoundDataType (NCsWeapon::NPoint::NSequence::NData::NSound::NFire::IFire)
+	typedef NCsWeapon::NPoint::NSequence::NData::NSound::NFire::IFire SoundDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
 	if (SoundDataType* SoundData = WeaponDataLibrary::GetSafeInterfaceChecked<SoundDataType>(Context, Weapon->GetData()))
 	{
 		if (SoundData->UseFireSoundParams())
 		{
-			typedef NCsWeapon::NPoint::NFire::NSound::FParams ParamsType;
+			typedef NCsWeapon::NPoint::NSequence::NFire::NSound::FParams ParamsType;
 
 			const ParamsType& Params = SoundData->GetFireSoundParams();
 			const FCsSound& Sound	 = Params.GetSound();
@@ -1041,9 +1040,9 @@ void ACsPointWeaponActorPooled::FSoundImpl::Play()
 	}
 }
 
-ACsPointWeaponActorPooled::FSoundImpl* ACsPointWeaponActorPooled::ConstructSoundImpl()
+ACsPointSequenceWeaponActorPooled::FSoundImpl* ACsPointSequenceWeaponActorPooled::ConstructSoundImpl()
 {
-	return new ACsPointWeaponActorPooled::FSoundImpl();
+	return new ACsPointSequenceWeaponActorPooled::FSoundImpl();
 }
 
 #pragma endregion Sound
@@ -1051,21 +1050,21 @@ ACsPointWeaponActorPooled::FSoundImpl* ACsPointWeaponActorPooled::ConstructSound
 	// FX
 #pragma region
 
-void ACsPointWeaponActorPooled::FFXImpl::Play()
+void ACsPointSequenceWeaponActorPooled::FFXImpl::Play()
 {
-	using namespace NCsPointWeaponActorPooled::NCached::NFXImpl;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached::NFXImpl;
 
 	const FString& Context = Str::Play;
 
-	// FXDataType (NCsWeapon::NPoint::NData::NVisual::NFire::IFire)
-	typedef NCsWeapon::NPoint::NData::NVisual::NFire::IFire FXDataType;
+	// FXDataType (NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire)
+	typedef NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire FXDataType;
 	typedef NCsWeapon::NData::FLibrary WeaponDataLibrary;
 
 	if (FXDataType* FXData = WeaponDataLibrary::GetSafeInterfaceChecked<FXDataType>(Context, Outer->GetData()))
 	{
 		if (FXData->UseFireVisualParams())
 		{
-			typedef NCsWeapon::NPoint::NFire::NVisual::FParams ParamsType;
+			typedef NCsWeapon::NPoint::NSequence::NFire::NVisual::FParams ParamsType;
 
 			const ParamsType& Params = FXData->GetFireVisualParams();
 			const FCsFX& FX			 = Params.GetFX();
@@ -1089,18 +1088,18 @@ void ACsPointWeaponActorPooled::FFXImpl::Play()
 }
 
 #define FXPayloadType NCsFX::NPayload::IPayload
-#define FXDataType NCsWeapon::NPoint::NData::NVisual::NFire::IFire
-void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDataType* FXData)
+#define FXDataType NCsWeapon::NPoint::NSequence::NData::NVisual::NFire::IFire
+void ACsPointSequenceWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDataType* FXData)
 {
 #undef FXPayloadType
 #undef FXDataType
 
-	using namespace NCsPointWeaponActorPooled::NCached::NFXImpl;
+	using namespace NCsPointSequenceWeaponActorPooled::NCached::NFXImpl;
 
 	const FString& Context = Str::SetPayload;
 
-	typedef NCsWeapon::NPoint::NFire::NVisual::FParams ParamsType;
-	typedef NCsWeapon::NPoint::NFire::NVisual::EAttach AttachType;
+	typedef NCsWeapon::NPoint::NSequence::NFire::NVisual::FParams ParamsType;
+	typedef NCsWeapon::NPoint::NSequence::NFire::NVisual::EAttach AttachType;
 
 	const ParamsType& Params = FXData->GetFireVisualParams();
 	const FCsFX& FX			 = Params.GetFX();
@@ -1192,12 +1191,12 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 	}
 }
 
-ACsPointWeaponActorPooled::FFXImpl* ACsPointWeaponActorPooled::ConstructFXImpl()
+ACsPointSequenceWeaponActorPooled::FFXImpl* ACsPointSequenceWeaponActorPooled::ConstructFXImpl()
 {
-	return new ACsPointWeaponActorPooled::FFXImpl();
+	return new ACsPointSequenceWeaponActorPooled::FFXImpl();
 }
 
-void ACsPointWeaponActorPooled::FXImpl_SetComponent(USceneComponent* Component)
+void ACsPointSequenceWeaponActorPooled::FXImpl_SetComponent(USceneComponent* Component)
 {
 	FXImpl->SetComponent(Component);
 }
@@ -1209,12 +1208,12 @@ void ACsPointWeaponActorPooled::FXImpl_SetComponent(USceneComponent* Component)
 // Print
 #pragma region
 
-FString ACsPointWeaponActorPooled::PrintNameAndClass()
+FString ACsPointSequenceWeaponActorPooled::PrintNameAndClass()
 {
 	return FString::Printf(TEXT("Weapon: %s with Class: %s"), *(GetName()), *(GetClass()->GetName()));
 }
 
-FString ACsPointWeaponActorPooled::PrintNameClassAndOwner()
+FString ACsPointSequenceWeaponActorPooled::PrintNameClassAndOwner()
 {
 	return FString::Printf(TEXT("Weapon: %s with Class: %s with MyOwner: %s"), *(GetName()), *(GetClass()->GetName()), *(MyOwner->GetName()));
 }

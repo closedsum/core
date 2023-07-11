@@ -3,7 +3,8 @@
 // Interfaces
 #include "Containers/CsGetInterfaceMap.h"
 // Types
-#include "Point/Sequence/Params/Shot/Point/CsParams_PointSequenceWeapon_Shot_Point.h"
+#include "Point/Sequence/Params/CsParams_PointSequenceWeapon_Sequence.h"
+#include "Point/Sequence/Params/Shot/Sequence/CsParams_PointSequenceWeapon_Shot_Sequence.h"
 #include "Point/Sequence/Params/Start/CsParams_PointSequenceWeapon_Start.h"
 
 #include "CsData_PointSequenceWeapon.generated.h"
@@ -29,7 +30,8 @@ namespace NCsWeapon
 
 					virtual ~IData(){}
 
-				#define PointsPerShotParamsType NCsWeapon::NPoint::NSequence::NShot::NPoint::FParams
+				#define SequenceParamsType NCsWeapon::NPoint::NSequence::NSequence::FParams
+				#define SequencesPerShotParamsType NCsWeapon::NPoint::NSequence::NShot::NSequence::FParams
 				#define StartParamsType NCsWeapon::NPoint::NSequence::NStart::FParams
 
 					/**
@@ -79,11 +81,18 @@ namespace NCsWeapon
 					virtual const float& GetTimeBetweenAutoShots() const = 0;
 
 					/**
-					* Get any information related to Points per Shot.
+					* Get any information related to Points for a Sequence.
+					* 
+					* return 
+					*/
+					virtual const SequenceParamsType& GetSequenceParams() const = 0;
+
+					/**
+					* Get any information related to Sequences per Shot.
 					*
 					* return
 					*/
-					virtual const PointsPerShotParamsType& GetPointsPerShotParams() const = 0;
+					virtual const SequencesPerShotParamsType& GetSequencesPerShotParams() const = 0;
 				
 					/**
 					* Get any information related to the Start location.
@@ -92,7 +101,8 @@ namespace NCsWeapon
 					*/
 					virtual const StartParamsType& GetStartParams() const = 0;
 
-				#undef PointsPerShotParamsType
+				#undef SequenceParamsType
+				#undef SequencesPerShotParamsType
 				#undef StartParamsType
 				};
 			}
@@ -119,7 +129,8 @@ public:
 
 public:
 
-#define PointsPerShotParamsType NCsWeapon::NPoint::NSequence::NShot::NPoint::FParams
+#define SequenceParamsType NCsWeapon::NPoint::NSequence::NSequence::FParams
+#define SequencesPerShotParamsType NCsWeapon::NPoint::NSequence::NShot::NSequence::FParams
 #define StartParamsType NCsWeapon::NPoint::NSequence::NStart::FParams
 
 	/**
@@ -168,12 +179,19 @@ public:
 	*/
 	virtual const float& GetTimeBetweenAutoShots() const = 0;
 
+	/**
+	* Get any information related to Points for a Sequence.
+	* 
+	* return 
+	*/
+	virtual const SequenceParamsType& GetSequenceParams() const = 0;
+
 	/** 
-	* Get any information related to Points per Shot.
+	* Get any information related to Sequences per Shot.
 	* 
 	* return
 	*/
-	virtual const PointsPerShotParamsType& GetPointsPerShotParams() const = 0;
+	virtual const SequencesPerShotParamsType& GetSequencesPerShotParams() const = 0;
 
 	/**
 	* Get any information related to the Start location.
@@ -182,6 +200,7 @@ public:
 	*/
 	virtual const StartParamsType& GetStartParams() const = 0;
 
-#undef PointsPerShotParamsType
+#undef SequenceParamsType
+#undef SequencesPerShotParamsType
 #undef StartParamsType
 };

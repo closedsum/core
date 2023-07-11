@@ -26,8 +26,10 @@ namespace NCsWeapon
 					}
 					// Check TimeBetweenShots > 0.0f
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Data->GetTimeBetweenShots(), 0.0f)
-					// Check ProjectilePerShot
-					CS_IS_VALID_CHECKED(Data->GetPointsPerShotParams());
+					// Check SequenceParams
+					CS_IS_VALID_CHECKED(Data->GetSequenceParams());
+					// Check SequencesPerShotParams
+					CS_IS_VALID_CHECKED(Data->GetSequencesPerShotParams());
 					// Check Start
 					CS_IS_VALID_CHECKED(Data->GetStartParams());
 					return true;
@@ -44,8 +46,10 @@ namespace NCsWeapon
 					}
 					// Check TimeBetweenShots > 0.0f
 					CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Data->GetTimeBetweenShots(), 0.0f)
-					// Check ProjectilePerShot
-					CS_IS_VALID(Data->GetPointsPerShotParams())
+					// Check SequenceParams
+					CS_IS_VALID(Data->GetSequenceParams())
+					// Check SequencesPerShotParams
+					CS_IS_VALID(Data->GetSequencesPerShotParams())
 					// Check Start
 					CS_IS_VALID(Data->GetStartParams())
 					return true;

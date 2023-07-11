@@ -92,7 +92,7 @@ namespace NCsWeapon
 
 #pragma endregion PointSequenceWeaponVisualFireAttach
 
-// FCsPointSequenceWeapon_VisualFire_Params
+// FCsPointSequenceWeapon_Visual_FireParams
 #pragma region
 
 // NCsWeapon::NPoint::NSequence::NFire::NVisual::FParams
@@ -104,7 +104,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NPoint, NSequence, NFire, NVisual, 
 *  Point Sequence Weapon is an object that implements the interface: ICsPointSequenceWeapon.
 */
 USTRUCT(BlueprintType)
-struct CSWP_API FCsPointSequenceWeapon_VisualFire_Params
+struct CSWP_API FCsPointSequenceWeapon_Visual_FireParams
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -143,7 +143,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (ScriptName = "m_OrientationParameter", EditCondition = "bOrientationParameter"))
 	FName OrientationParameter;
 
-	FCsPointSequenceWeapon_VisualFire_Params() :
+	FCsPointSequenceWeapon_Visual_FireParams() :
 		FX(),
 		Attach(ECsPointSequenceWeaponVisualFireAttach::Component),
 		bDestinationAsStart(false),
@@ -244,4 +244,4 @@ namespace NCsWeapon
 	}
 }
 
-#pragma endregion FCsPointSequenceWeapon_VisualFire_Params
+#pragma endregion FCsPointSequenceWeapon_Visual_FireParams

@@ -8,7 +8,7 @@
 
 #include "CsParams_PointSequenceWeapon_SoundFire.generated.h"
 
-// FCsPointSequenceWeapon_SoundFire_Params
+// FCsPointSequenceWeapon_Sound_FireParams
 #pragma region
 
 // NCsWeapon::NPoint::NSequence::NFire::NSound::FParams
@@ -20,7 +20,7 @@ CS_FWD_DECLARE_STRUCT_NAMESPACE_5(NCsWeapon, NPoint, NSequence, NFire, NSound, F
 *  Point Sequence Weapon is an object that implements the interface: ICsPointSequenceWeapon.
 */
 USTRUCT(BlueprintType)
-struct CSWP_API FCsPointSequenceWeapon_SoundFire_Params
+struct CSWP_API FCsPointSequenceWeapon_Sound_FireParams
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -34,7 +34,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point")
 	ECsPointSequenceWeaponSoundFireAttach Attach;
 
-	FCsPointSequenceWeapon_SoundFire_Params() :
+	FCsPointSequenceWeapon_Sound_FireParams() :
 		Sound(),
 		Attach(ECsPointSequenceWeaponSoundFireAttach::Component)
 	{
@@ -100,4 +100,4 @@ namespace NCsWeapon
 	}
 }
 
-#pragma endregion FCsPointSequenceWeapon_SoundFire_Params
+#pragma endregion FCsPointSequenceWeapon_Sound_FireParams

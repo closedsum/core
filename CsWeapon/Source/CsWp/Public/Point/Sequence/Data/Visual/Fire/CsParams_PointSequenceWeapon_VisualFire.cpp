@@ -54,12 +54,12 @@ namespace NCsWeapon
 
 #pragma endregion PointSequenceWeaponVisualFireAttach
 
-// FCsPointSequenceWeapon_VisualFire_Params
+// FCsPointSequenceWeapon_Visual_FireParams
 #pragma region
 
 #define ParamsType NCsWeapon::NPoint::NSequence::NFire::NVisual::FParams
 
-void FCsPointSequenceWeapon_VisualFire_Params::CopyToParams(ParamsType* Params)
+void FCsPointSequenceWeapon_Visual_FireParams::CopyToParams(ParamsType* Params)
 {
 	Params->SetFX(&FX);
 
@@ -73,7 +73,7 @@ void FCsPointSequenceWeapon_VisualFire_Params::CopyToParams(ParamsType* Params)
 	Params->SetOrientationParameter(&OrientationParameter);
 }
 
-void FCsPointSequenceWeapon_VisualFire_Params::CopyToParamsAsValue(ParamsType* Params) const
+void FCsPointSequenceWeapon_Visual_FireParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetFX(FX);
 
@@ -89,7 +89,7 @@ void FCsPointSequenceWeapon_VisualFire_Params::CopyToParamsAsValue(ParamsType* P
 
 #undef ParamsType
 
-bool FCsPointSequenceWeapon_VisualFire_Params::IsValidChecked(const FString& Context) const
+bool FCsPointSequenceWeapon_Visual_FireParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_VALID_CHECKED(FX);
 
@@ -109,7 +109,7 @@ bool FCsPointSequenceWeapon_VisualFire_Params::IsValidChecked(const FString& Con
 	return true;
 }
 
-bool FCsPointSequenceWeapon_VisualFire_Params::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
+bool FCsPointSequenceWeapon_Visual_FireParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_IS_VALID(FX)
 
@@ -186,4 +186,4 @@ namespace NCsWeapon
 	}
 }
 
-#pragma endregion FCsPointSequenceWeapon_VisualFire_Params
+#pragma endregion FCsPointSequenceWeapon_Visual_FireParams

@@ -96,8 +96,8 @@ namespace NCsPointSequenceWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire_Internal_OnEnd);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, GetTimeBetweenShots);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, PointsPerShot_GetCount);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, PointsPerShot_GetInterval);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, SequencesPerShot_GetCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, SequencesPerShot_GetInterval);
 		}
 
 		namespace Name
@@ -758,13 +758,13 @@ void ACsPointSequenceWeaponActorPooled::Fire()
 
 	Payload->SetValue_Flag(CS_FIRST, PointSequenceWeaponData->HasInfiniteAmmo());
 
-	// PointsPerShot
-	static const int32 POINTS_PER_SHOT = 0;
-	int32 PointsPerShot = PointsPerShot_GetCount();
-	Payload->SetValue_Int(POINTS_PER_SHOT, PointsPerShot);
+	// SequencesPerShot
+	static const int32 SEQUENCES_PER_SHOT = 0;
+	int32 SequencesPerShot = SequencesPerShot_GetCount();
+	Payload->SetValue_Int(SEQUENCES_PER_SHOT, SequencesPerShot);
 
-	static const int32 POINTS_PER_SHOT_INTERVAL = 0;
-	Payload->SetValue_Float(POINTS_PER_SHOT_INTERVAL, PointsPerShot_GetInterval());
+	static const int32 SEQUENCES_PER_SHOT_INTERVAL = 0;
+	Payload->SetValue_Float(SEQUENCES_PER_SHOT_INTERVAL, SequencesPerShot_GetInterval());
 
 	bHasFired = true;
 
@@ -789,15 +789,15 @@ char ACsPointSequenceWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 
 	// bInfiniteAmmo
 	const bool& bInfiniteAmmo = R->GetValue_Flag(CS_FIRST);
-	// PointsPerShot
-	static const int32 POINTS_PER_SHOT = 0;
-	const int32& PointsPerShot			= R->GetValue_Int(POINTS_PER_SHOT);
-		// PointsPerShot.Interval
-	static const int32 POINTS_PER_SHOT_INTERVAL = 0;
-	const float& PointsPerShot_Interval = R->GetValue_Float(POINTS_PER_SHOT_INTERVAL);
+	// SequencesPerShot
+	static const int32 SEQUENCES_PER_SHOT = 0;
+	const int32& SequencesPerShot = R->GetValue_Int(SEQUENCES_PER_SHOT);
+		// SequencesPerShot.Interval
+	static const int32 SEQUENCES_PER_SHOT_INTERVAL = 0;
+	const float& SequencesPerShot_Interval = R->GetValue_Float(SEQUENCES_PER_SHOT_INTERVAL);
 
-	static const int32 CURRENT_POINT_PER_SHOT_INDEX = 1;
-	int32& CurrentPointPerShotIndex = R->GetValue_Int(CURRENT_POINT_PER_SHOT_INDEX);
+	static const int32 CURRENT_SEQUENCE_PER_SHOT_INDEX = 1;
+	int32& CurrentSequencePerShotIndex = R->GetValue_Int(CURRENT_SEQUENCE_PER_SHOT_INDEX);
 
 	FCsDeltaTime& ElapsedTime = R->GetValue_DeltaTime(CS_FIRST);
 
@@ -815,30 +815,30 @@ char ACsPointSequenceWeaponActorPooled::Fire_Internal(FCsRoutine* R)
 			ElapsedTime.Reset();
 
 			Fire_PreShot(FireID);
-			OnFire_PreShot_Event.Broadcast(this, FireID, CurrentPointPerShotIndex);
+			OnFire_PreShot_Event.Broadcast(this, FireID, CurrentSequencePerShotIndex);
 
 			if (!bInfiniteAmmo)
 				ConsumeAmmo();
 
 			{
 				//ProjectileImpl->Launch(LaunchPayload);
-				Point_Execute(CurrentPointPerShotIndex);
+				Sequence_Execute(CurrentSequencePerShotIndex);
 				SoundImpl->Play();
 				FXImpl->Play();
 			}
 
 			// Increment the shot index
-			CurrentPointPerShotIndex = FMath::Min(CurrentPointPerShotIndex + 1, PointsPerShot);
+			CurrentSequencePerShotIndex = FMath::Min(CurrentSequencePerShotIndex + 1, SequencesPerShot);
 
 			// Check if more points should be fired, if so wait
-			if (CurrentPointPerShotIndex < PointsPerShot)
+			if (CurrentSequencePerShotIndex < SequencesPerShot)
 			{
-				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= PointsPerShot_Interval);
+				CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time >= SequencesPerShot_Interval);
 			}
 
 			CS_UPDATE_SCOPED_TIMER_HANDLE(FireScopedHandle);
 		}
-	} while (CurrentPointPerShotIndex < PointsPerShot);
+	} while (CurrentSequencePerShotIndex < SequencesPerShot);
 
 	CS_COROUTINE_END(R);
 }
@@ -956,11 +956,11 @@ float ACsPointSequenceWeaponActorPooled::GetTimeBetweenShots() const
 	// Point
 #pragma region
 
-int32 ACsPointSequenceWeaponActorPooled::PointsPerShot_GetCount() const
+int32 ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetCount() const
 {
 	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
-	const FString& Context = Str::PointsPerShot_GetCount;
+	const FString& Context = Str::SequencesPerShot_GetCount;
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -968,20 +968,20 @@ int32 ACsPointSequenceWeaponActorPooled::PointsPerShot_GetCount() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PointSequenceWeaponData->GetPointsPerShotParams().GetCount();
+	float Value = PointSequenceWeaponData->GetSequencesPerShotParams().GetCount();
 
 	// TODO: Priority
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Count, Value);
+	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_SequencesPerShot_Count, Value);
 }
 
-float ACsPointSequenceWeaponActorPooled::PointsPerShot_GetInterval() const
+float ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetInterval() const
 {
 	using namespace NCsPointSequenceWeaponActorPooled::NCached;
 
-	const FString& Context = Str::PointsPerShot_GetInterval;
+	const FString& Context = Str::SequencesPerShot_GetInterval;
 
 	typedef NCsWeapon::NModifier::IModifier ModifierType;
 
@@ -989,18 +989,18 @@ float ACsPointSequenceWeaponActorPooled::PointsPerShot_GetInterval() const
 
 	GetWeaponModifiers(Modifiers);
 
-	float Value = PointSequenceWeaponData->GetPointsPerShotParams().GetInterval();
+	float Value = PointSequenceWeaponData->GetSequencesPerShotParams().GetInterval();
 
 	// TODO: Priority
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_PointsPerShot_Interval, Value);
+	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_SequencesPerShot_Interval, Value);
 }
 
-void ACsPointSequenceWeaponActorPooled::Point_Execute(const int32& CurrentPointPerShotIndex)
+void ACsPointSequenceWeaponActorPooled::Sequence_Execute(const int32& CurrentSequencePerShotIndex)
 {
-	checkf(0, TEXT("ACsPointSequenceWeaponActorPooled::Point_Execute:: NOT IMPLEMENTED."));
+	checkf(0, TEXT("ACsPointSequenceWeaponActorPooled::Sequence_Execute:: NOT IMPLEMENTED."));
 }
 
 #pragma endregion Point

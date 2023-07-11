@@ -1,5 +1,5 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Point/CsCVars_PointWeapon.h"
+#include "Point/Sequence/CsCVars_PointSequenceWeapon.h"
 
 TAutoConsoleVariable<int32> CsCVarLogWeaponPointSequenceState(
 	TEXT("log.weapon.point.sequence.state"),

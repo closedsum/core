@@ -78,7 +78,7 @@ namespace NCsWeapon
 				virtual const float& GetTimeBetweenAutoShots() const = 0;
 
 				/**
-				* Get any information related to Points per Shot.
+				* Get any information related to Sequences per Shot.
 				*
 				* return
 				*/

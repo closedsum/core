@@ -434,9 +434,9 @@ protected:
 #pragma region
 protected:
 
-	int32 PointsPerShot_GetCount() const;
+	int32 SequencesPerShot_GetCount() const;
 
-	float PointsPerShot_GetInterval() const;
+	float SequencesPerShot_GetInterval() const;
 
 public:
 
@@ -476,7 +476,7 @@ public:
 
 protected:
 
-	virtual void Point_Execute(const int32& CurrentPointPerShotIndex);
+	virtual void Sequence_Execute(const int32& CurrentSequencePerShotIndex);
 
 #pragma endregion Point
 	

@@ -40,6 +40,11 @@ namespace NCsWeaponModifier
 		// PointsPerShot
 	extern CSWP_API const Type PointWp_PointsPerShot_Count;
 	extern CSWP_API const Type PointWp_PointsPerShot_Interval;
+	// Point Sequence Weapon
+	extern CSWP_API const Type PointSeqWp_TimeBetweenShots;
+		// SequencesPerShot
+	extern CSWP_API const Type PointSeqWp_SequencesPerShot_Count;
+	extern CSWP_API const Type PointSeqWp_SequencesPerShot_Interval;
 }
 
 #pragma endregion WeaponModifier

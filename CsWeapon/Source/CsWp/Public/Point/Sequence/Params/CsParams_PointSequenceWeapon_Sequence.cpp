@@ -12,11 +12,20 @@
 void FCsPointSequenceWeapon_Sequence_SearchParams::CopyToParams(ParamsType* Params)
 {
 	Params->SetMinDistance(&MinDistance);
+	Params->SetMaxDistance(&MaxDistance);
+	Params->SetbMinDot(&bMinDot);
+	Params->SetMinDot(&MinDot);
+	Params->SetMinAngle(&MinAngle);
 }
 
 void FCsPointSequenceWeapon_Sequence_SearchParams::CopyToParamsAsValue(ParamsType* Params) const
 {
 	Params->SetMinDistance(MinDistance);
+	Params->SetMaxDistance(MaxDistance);
+	Params->SetbMinDot(bMinDot);
+	Params->SetMinDot(MinDot);
+	Params->SetMinAngle(MinAngle);
+}
 }
 
 #undef ParamsType
@@ -24,12 +33,30 @@ void FCsPointSequenceWeapon_Sequence_SearchParams::CopyToParamsAsValue(ParamsTyp
 bool FCsPointSequenceWeapon_Sequence_SearchParams::IsValidChecked(const FString& Context) const
 {
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(MinDistance, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxDistance, MinDistance)
+
+	if (bMinDot)
+	{
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinDot, -1.0f)
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(MinDot, 1.0f)
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(MinAngle, -90.0f)
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(MinAngle, 90.0f)
+	}
 	return true;
 }
 
 bool FCsPointSequenceWeapon_Sequence_SearchParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
 	CS_IS_FLOAT_GREATER_THAN(MinDistance, 0.0f)
+	CS_IS_FLOAT_GREATER_THAN(MaxDistance, MinDistance)
+
+	if (bMinDot)
+	{
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MinDot, -1.0f)
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL(MinDot, 1.0f)
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(MinAngle, -90.0f)
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL(MinAngle, 90.0f)
+	}
 	return true;
 }
 
@@ -46,12 +73,30 @@ namespace NCsWeapon
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
 						CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMinDistance(), 0.0f)
+						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetMaxDistance(), GetMinDistance())
+
+						if (GetbMinDot())
+						{
+							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMinDot(), -1.0f)
+							CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(GetMinDot(), 1.0f)
+							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMinAngle(), -90.0f)
+							CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(GetMinAngle(), 90.0f)
+						}
 						return true;
 					}
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
 						CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMinDistance(), 0.0f)
+						CS_IS_FLOAT_GREATER_THAN(GetMaxDistance(), GetMinDistance())
+
+						if (GetbMinDot())
+						{
+							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMinDot(), -1.0f)
+							CS_IS_FLOAT_LESS_THAN_OR_EQUAL(GetMinDot(), 1.0f)
+							CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMinAngle(), -90.0f)
+							CS_IS_FLOAT_LESS_THAN_OR_EQUAL(GetMinAngle(), 90.0f)
+						}
 						return true;
 					}
 				}

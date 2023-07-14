@@ -31,6 +31,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float MinDistance;
 
+	/** The Maximum Distance to prioritize searching for Points. 
+		NOTE: Usually if no valid Points are found and no valid points are found LESS THAN Minimum Distance, then
+			  the Distance is increased / expanded GREATER THAN Maximum Distance. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	float MaxDistance;
+
 	/** Whether to consider using the Dot Product when determine if a Point is Valid. 
 		NOTE: Usually the Dot Product is taken using Direction of the previous Segment (Point to Point). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (ScriptName = "m_bMinDot", InlineEditConditionToggle))
@@ -43,11 +49,12 @@ public:
 
 	/** Minimum Angle in degrees between the Direction of the previous Segment (Previous Point and Current Point)
 		and next Segment (Current Point and the Point to consider). */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (EditCondition = "bMinDot", UIMin = "-89.0", ClampMin = "-90.0", UIMax = "89.0", Clampmax = "89.0"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (EditCondition = "bMinDot", UIMin = "-89.0", ClampMin = "-89.0", UIMax = "89.0", Clampmax = "89.0"))
 	float MinAngle;
 
 	FCsPointSequenceWeapon_Sequence_SearchParams() :
 		MinDistance(1000.0f),
+		MaxDistance(4000.0f),
 		bMinDot(false),
 		MinDot(0.0f),
 		MinAngle(0.0f)
@@ -86,16 +93,41 @@ namespace NCsWeapon
 							NOTE: Usually if no valid Points are found in Minimum Distance, the Distance is increased / expanded before
 								  searching for Points LESS THAN Minimum Distance. */
 						CS_DECLARE_MEMBER_WITH_PROXY(MinDistance, float)
+						/** The Maximum Distance to prioritize searching for Points. 
+							NOTE: Usually if no valid Points are found and no valid points are found LESS THAN Minimum Distance, then
+								  the Distance is increased / expanded GREATER THAN Maximum Distance. */
+						CS_DECLARE_MEMBER_WITH_PROXY(MaxDistance, float)
+						/** Whether to consider using the Dot Product when determine if a Point is Valid. 
+							NOTE: Usually the Dot Product is taken using Direction of the previous Segment (Point to Point). */
+						CS_DECLARE_MEMBER_WITH_PROXY(bMinDot, bool)
+						/** Represents Cosine of the minimum Angle between the Direction of the previous Segment (Previous Point and Current Point) 
+							and next Segment (Current Point and the Point to consider). */
+						CS_DECLARE_MEMBER_WITH_PROXY(MinDot, float)
+						/** Minimum Angle in degrees between the Direction of the previous Segment (Previous Point and Current Point)
+							and next Segment (Current Point and the Point to consider). */
+						CS_DECLARE_MEMBER_WITH_PROXY(MinAngle, float)
 
 					public:
 
 						FParams() :
-							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDistance, 1000.0f)
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDistance, 1000.0f),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDistance, 1000.0f),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(bMinDot, false),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDot, 0.0f),
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinAngle, 0.0f)
 						{
 							CS_CTOR_SET_MEMBER_PROXY(MinDistance);
+							CS_CTOR_SET_MEMBER_PROXY(MaxDistance);
+							CS_CTOR_SET_MEMBER_PROXY(bMinDot);
+							CS_CTOR_SET_MEMBER_PROXY(MinDot);
+							CS_CTOR_SET_MEMBER_PROXY(MinAngle);
 						}
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDistance, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDistance, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bMinDot, bool)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDot, float)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinAngle, float)
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

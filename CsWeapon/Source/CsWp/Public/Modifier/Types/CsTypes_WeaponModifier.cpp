@@ -18,8 +18,11 @@ namespace NCsWeaponModifier
 		// Points Per Shot
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointWp_PointsPerShot_Count, "Points per Shot: Count");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointWp_PointsPerShot_Interval, "Points per Shot: Interval");
-	// Point Sequence Weapon
+	// Point Sequence Weapons
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointSeqWp_TimeBetweenShots, "Point Sequence: Time Between Shots");
+		// Sequence
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointSeqWp_Sequence_Count, "Sequence: Count");
+	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointSeqWp_Sequence_Interval, "Sequence: Interval");
 		// Points Per Shot
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointSeqWp_SequencesPerShot_Count, "Sequences per Shot: Count");
 	CSWP_API CS_CREATE_ENUM_STRUCT_CUSTOM(PointSeqWp_SequencesPerShot_Interval, "Sequences per Shot: Interval");

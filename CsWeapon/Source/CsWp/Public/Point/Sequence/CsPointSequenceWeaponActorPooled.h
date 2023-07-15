@@ -434,6 +434,10 @@ protected:
 #pragma region
 protected:
 
+	int32 Sequence_GetCount() const;
+
+	float Sequence_GetInterval() const;
+
 	int32 SequencesPerShot_GetCount() const;
 
 	float SequencesPerShot_GetInterval() const;

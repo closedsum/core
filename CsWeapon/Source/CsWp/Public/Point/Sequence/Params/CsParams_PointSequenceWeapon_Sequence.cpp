@@ -4,6 +4,47 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 
+// PointSequenceWeaponSearchDimension
+#pragma region
+
+namespace NCsPointSequenceWeaponSearchDimension
+{
+	namespace Ref
+	{
+		typedef EMCsPointSequenceWeaponSearchDimension EnumMapType;
+
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(XY, "2D: X,Y");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(XYZ, "3D: X,Y,Z");
+		CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(ECsPointSequenceWeaponSearchDimension_MAX, "MAX");
+	}
+}
+
+namespace NCsWeapon
+{
+	namespace NPoint
+	{
+		namespace NSequence
+		{
+			namespace NSearch
+			{
+				namespace NDimension
+				{
+					namespace Ref
+					{
+						typedef EMDimension EnumMapType;
+
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(XY, "2D: X,Y");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(XYZ, "3D: X,Y,Z");
+						CSWP_API CS_ADD_TO_ENUM_MAP_CUSTOM(EDimension_MAX, "MAX");
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion PointSequenceWeaponSearchDimension
+
 // FCsPointSequenceWeapon_Sequence_SearchParams
 #pragma region
 
@@ -11,6 +52,9 @@
 
 void FCsPointSequenceWeapon_Sequence_SearchParams::CopyToParams(ParamsType* Params)
 {
+	typedef NCsWeapon::NPoint::NSequence::NSearch::EDimension DimensionType;
+
+	Params->SetDimension((DimensionType*)(&Dimension));
 	Params->SetMinDistance(&MinDistance);
 	Params->SetMaxDistance(&MaxDistance);
 	Params->SetbMinDot(&bMinDot);
@@ -20,18 +64,23 @@ void FCsPointSequenceWeapon_Sequence_SearchParams::CopyToParams(ParamsType* Para
 
 void FCsPointSequenceWeapon_Sequence_SearchParams::CopyToParamsAsValue(ParamsType* Params) const
 {
+	typedef NCsWeapon::NPoint::NSequence::NSearch::EDimension DimensionType;
+
+	Params->SetDimension((DimensionType)Dimension);
 	Params->SetMinDistance(MinDistance);
 	Params->SetMaxDistance(MaxDistance);
 	Params->SetbMinDot(bMinDot);
 	Params->SetMinDot(MinDot);
 	Params->SetMinAngle(MinAngle);
 }
-}
 
 #undef ParamsType
 
 bool FCsPointSequenceWeapon_Sequence_SearchParams::IsValidChecked(const FString& Context) const
 {
+	typedef EMCsPointSequenceWeaponSearchDimension DimensionMapType;
+
+	CS_IS_ENUM_VALID_CHECKED(DimensionMapType, Dimension)
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(MinDistance, 0.0f)
 	CS_IS_FLOAT_GREATER_THAN_CHECKED(MaxDistance, MinDistance)
 
@@ -47,6 +96,10 @@ bool FCsPointSequenceWeapon_Sequence_SearchParams::IsValidChecked(const FString&
 
 bool FCsPointSequenceWeapon_Sequence_SearchParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 {
+	typedef EMCsPointSequenceWeaponSearchDimension DimensionMapType;
+	typedef ECsPointSequenceWeaponSearchDimension DimensionType;
+
+	CS_IS_ENUM_VALID(DimensionMapType, DimensionType, Dimension)
 	CS_IS_FLOAT_GREATER_THAN(MinDistance, 0.0f)
 	CS_IS_FLOAT_GREATER_THAN(MaxDistance, MinDistance)
 
@@ -72,6 +125,9 @@ namespace NCsWeapon
 				{
 					bool FParams::IsValidChecked(const FString& Context) const
 					{
+						typedef NCsWeapon::NPoint::NSequence::NSearch::EMDimension DimensionMapType;
+
+						CS_IS_ENUM_VALID_CHECKED(DimensionMapType, GetDimension())
 						CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(GetMinDistance(), 0.0f)
 						CS_IS_FLOAT_GREATER_THAN_CHECKED(GetMaxDistance(), GetMinDistance())
 
@@ -87,6 +143,10 @@ namespace NCsWeapon
 
 					bool FParams::IsValid(const FString& Context, void(*Log)(const FString&) /*=&NCsWeapon::FLog::Warning*/) const
 					{
+						typedef NCsWeapon::NPoint::NSequence::NSearch::EMDimension DimensionMapType;
+						typedef NCsWeapon::NPoint::NSequence::NSearch::EDimension DimensionType;
+
+						CS_IS_ENUM_VALID(DimensionMapType, DimensionType, GetDimension())
 						CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(GetMinDistance(), 0.0f)
 						CS_IS_FLOAT_GREATER_THAN(GetMaxDistance(), GetMinDistance())
 

@@ -1157,6 +1157,14 @@ void UCsManager_Weapon::SetupModifiers()
 		// PointsPerShot
 	ImplTypeByModifier[NCsWeaponModifier::PointWp_PointsPerShot_Count.GetValue()] = ModifierImplType::Int;
 	ImplTypeByModifier[NCsWeaponModifier::PointWp_PointsPerShot_Interval.GetValue()] = ModifierImplType::Float;
+	// Point Sequence Weapon
+	ImplTypeByModifier[NCsWeaponModifier::PointSeqWp_TimeBetweenShots.GetValue()] = ModifierImplType::Float;
+		// Sequence
+	ImplTypeByModifier[NCsWeaponModifier::PointSeqWp_Sequence_Count.GetValue()] = ModifierImplType::Int;
+	ImplTypeByModifier[NCsWeaponModifier::PointSeqWp_Sequence_Interval.GetValue()] = ModifierImplType::Float;
+		// SequencesPerShot
+	ImplTypeByModifier[NCsWeaponModifier::PointSeqWp_SequencesPerShot_Count.GetValue()] = ModifierImplType::Int;
+	ImplTypeByModifier[NCsWeaponModifier::PointSeqWp_SequencesPerShot_Interval.GetValue()] = ModifierImplType::Float;
 }
 
 #define ModifierImplType NCsWeapon::NModifier::EImpl

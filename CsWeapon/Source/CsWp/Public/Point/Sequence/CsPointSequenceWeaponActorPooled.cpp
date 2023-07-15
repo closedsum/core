@@ -96,6 +96,9 @@ namespace NCsPointSequenceWeaponActorPooled
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Fire_Internal_OnEnd);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, GetTimeBetweenShots);
+			// Point
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Sequence_GetCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, Sequence_GetInterval);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, SequencesPerShot_GetCount);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(ACsPointSequenceWeaponActorPooled, SequencesPerShot_GetInterval);
 		}
@@ -297,7 +300,6 @@ void ACsPointSequenceWeaponActorPooled::PostInitializeComponents()
 }
 
 #pragma endregion AActor Interface
-
 
 // ICsUpdate
 #pragma region
@@ -540,7 +542,7 @@ void ACsPointSequenceWeaponActorPooled::SetWeaponType(const FECsWeapon& Type)
 
 #pragma endregion ICsWeapon
 
-// ICsProjectileWeapon
+// ICsPointSequenceWeapon
 #pragma region
 
 void ACsPointSequenceWeaponActorPooled::StartFire()
@@ -557,7 +559,7 @@ void ACsPointSequenceWeaponActorPooled::StopFire()
 	Update(FCsDeltaTime::Zero);
 }
 
-#pragma endregion ICsProjectileWeapon
+#pragma endregion ICsPointSequenceWeapon
 
 #if WITH_EDITOR
 
@@ -950,11 +952,53 @@ float ACsPointSequenceWeaponActorPooled::GetTimeBetweenShots() const
 
 	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
 
-	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointWp_TimeBetweenShots, Value);
+	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_TimeBetweenShots, Value);
 }
 
 	// Point
 #pragma region
+
+int32 ACsPointSequenceWeaponActorPooled::Sequence_GetCount() const
+{
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
+
+	const FString& Context = Str::Sequence_GetCount;
+
+	typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+	static TArray<ModifierType*> Modifiers;
+
+	GetWeaponModifiers(Modifiers);
+
+	float Value = PointSequenceWeaponData->GetSequenceParams().GetCount();
+
+	// TODO: Priority
+
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+
+	return ModifierLibrary::ModifyIntAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_Sequence_Count, Value);
+}
+
+float ACsPointSequenceWeaponActorPooled::Sequence_GetInterval() const
+{
+	using namespace NCsPointSequenceWeaponActorPooled::NCached;
+
+	const FString& Context = Str::SequencesPerShot_GetInterval;
+
+	typedef NCsWeapon::NModifier::IModifier ModifierType;
+
+	static TArray<ModifierType*> Modifiers;
+
+	GetWeaponModifiers(Modifiers);
+
+	float Value = PointSequenceWeaponData->GetSequenceParams().GetInterval();
+
+	// TODO: Priority
+
+	typedef NCsWeapon::NModifier::FLibrary ModifierLibrary;
+
+	return ModifierLibrary::ModifyFloatAndEmptyChecked(Context, Modifiers, NCsWeaponModifier::PointSeqWp_Sequence_Interval, Value);
+}
 
 int32 ACsPointSequenceWeaponActorPooled::SequencesPerShot_GetCount() const
 {

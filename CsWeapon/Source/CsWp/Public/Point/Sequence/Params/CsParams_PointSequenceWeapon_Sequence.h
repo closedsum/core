@@ -1,11 +1,87 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
 // Types
-#include "Types/CsTypes_Macro.h"
+#include "Types/Enum/CsEnumMap.h"
 // Log
 #include "Utility/CsWpLog.h"
 
 #include "CsParams_PointSequenceWeapon_Sequence.generated.h"
+
+// PointSequenceWeaponSearchDimension
+#pragma region
+
+/**
+* Describes dimensions (XY, XYZ, ... etc) to search.
+*/
+UENUM(BlueprintType)
+enum class ECsPointSequenceWeaponSearchDimension : uint8
+{
+	/** 2D: X,Y */
+	XY											UMETA(DisplayName = "2D: X,Y"),
+	/** 3D: X,Y,Z */
+	XYZ											UMETA(DisplayName = "3D: X,Y,Z"),
+	ECsPointSequenceWeaponSearchDimension_MAX	UMETA(Hidden),
+};
+
+struct CSWP_API EMCsPointSequenceWeaponSearchDimension : public TCsEnumMap<ECsPointSequenceWeaponSearchDimension>
+{
+	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsPointSequenceWeaponSearchDimension, ECsPointSequenceWeaponSearchDimension)
+};
+
+namespace NCsPointSequenceWeaponSearchDimension
+{
+	typedef ECsPointSequenceWeaponSearchDimension Type;
+
+	namespace Ref
+	{
+		extern CSWP_API const Type XY;
+		extern CSWP_API const Type XYZ;
+		extern CSWP_API const Type ECsPointSequenceWeaponSearchDimension_MAX;
+	}
+}
+
+namespace NCsWeapon
+{
+	namespace NPoint
+	{
+		namespace NSequence
+		{
+			namespace NSearch
+			{
+				/**
+				* Describes dimensions (XY, XYZ, ... etc) to search.
+				*/
+				enum class EDimension : uint8 
+				{
+					/** 2D: X,Y */
+					XY,
+					/** 3D: X,Y,Z */
+					XYZ,
+					EDimension_MAX
+				};
+
+				struct CSWP_API EMDimension : public TCsEnumMap<EDimension>
+				{
+					CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMDimension, EDimension)
+				};
+
+				namespace NDimension
+				{
+					typedef EDimension Type;
+
+					namespace Ref
+					{
+						extern CSWP_API const Type XY;
+						extern CSWP_API const Type XYZ;
+						extern CSWP_API const Type EDimension_MAX;
+					}
+				}
+			}
+		}
+	}
+}
+
+#pragma endregion PointSequenceWeaponSearchDimension
 
 // FCsPointSequenceWeapon_Sequence_SearchParams
 #pragma region
@@ -24,6 +100,10 @@ struct CSWP_API FCsPointSequenceWeapon_Sequence_SearchParams
 	GENERATED_USTRUCT_BODY()
 
 public:
+
+	/** Describes dimensions (XY, XYZ, ... etc) to search. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (UIMin = "0.0", ClampMin = "0.0"))
+	ECsPointSequenceWeaponSearchDimension Dimension;
 
 	/** The Minimum Distance to prioritize searching for Points.
 		NOTE: Usually if no valid Points are found in Minimum Distance, the Distance is increased / expanded before
@@ -53,6 +133,7 @@ public:
 	float MinAngle;
 
 	FCsPointSequenceWeapon_Sequence_SearchParams() :
+		Dimension(ECsPointSequenceWeaponSearchDimension::XY),
 		MinDistance(1000.0f),
 		MaxDistance(4000.0f),
 		bMinDot(false),
@@ -87,8 +168,12 @@ namespace NCsWeapon
 					*/
 					struct CSWP_API FParams
 					{
+					#define DimensionType NCsWeapon::NPoint::NSequence::NSearch::EDimension 
+
 					private:
 
+						/** Describes dimensions (XY, XYZ, ... etc) to search. */
+						CS_DECLARE_MEMBER_WITH_PROXY(Dimension, DimensionType)
 						/** The Minimum Distance to prioritize searching for Points.
 							NOTE: Usually if no valid Points are found in Minimum Distance, the Distance is increased / expanded before
 								  searching for Points LESS THAN Minimum Distance. */
@@ -110,12 +195,14 @@ namespace NCsWeapon
 					public:
 
 						FParams() :
+							CS_CTOR_INIT_MEMBER_WITH_PROXY(Dimension, DimensionType::XY),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDistance, 1000.0f),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(MaxDistance, 1000.0f),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(bMinDot, false),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinDot, 0.0f),
 							CS_CTOR_INIT_MEMBER_WITH_PROXY(MinAngle, 0.0f)
 						{
+							CS_CTOR_SET_MEMBER_PROXY(Dimension);
 							CS_CTOR_SET_MEMBER_PROXY(MinDistance);
 							CS_CTOR_SET_MEMBER_PROXY(MaxDistance);
 							CS_CTOR_SET_MEMBER_PROXY(bMinDot);
@@ -123,6 +210,7 @@ namespace NCsWeapon
 							CS_CTOR_SET_MEMBER_PROXY(MinAngle);
 						}
 
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Dimension, DimensionType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MinDistance, float)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MaxDistance, float)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bMinDot, bool)
@@ -131,6 +219,8 @@ namespace NCsWeapon
 
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
+
+					#undef DimensionType
 					};
 				}
 			}

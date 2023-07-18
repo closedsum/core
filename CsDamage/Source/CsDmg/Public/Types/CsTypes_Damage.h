@@ -10,6 +10,7 @@
 // DamageType
 #pragma region
 
+/** Describes the category of Damage. */
 USTRUCT(BlueprintType)
 struct CSDMG_API FECsDamageType : public FECsEnum_uint8
 {

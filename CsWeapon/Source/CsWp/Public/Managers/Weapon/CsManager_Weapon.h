@@ -99,6 +99,7 @@ struct FCsWeaponPtr;
 
 class ICsWeapon;
 class ICsPointWeapon;
+class ICsPointSequenceWeapon;
 
 UCLASS()
 class CSWP_API UCsManager_Weapon : public UObject
@@ -1025,6 +1026,23 @@ private:
 	{
 		PointWeapon_OnHit_Event.Broadcast(Weapon, Hit);
 	}
+
+	// Sequence
+#pragma region
+public:
+
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FPointSequenceWeapon_OnHit, const ICsPointSequenceWeapon* /*Weapon*/, const int32& Index /*Index*/, const FHitResult& /*Hit*/);
+
+	FPointSequenceWeapon_OnHit PointSequenceWeapon_OnHit_Event;
+
+private:
+
+	FORCEINLINE void PointSequenceWeapon_OnHit(const ICsPointSequenceWeapon* Weapon, const int32& Index, const FHitResult& Hit)
+	{
+		PointSequenceWeapon_OnHit_Event.Broadcast(Weapon, Index, Hit);
+	}
+
+#pragma endregion Sequence
 
 #pragma endregion Point
 

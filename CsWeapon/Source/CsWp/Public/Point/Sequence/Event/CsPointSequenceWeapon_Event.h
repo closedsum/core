@@ -20,7 +20,7 @@ class CSWP_API ICsPointSequenceWeapon_Event
 // Collision
 public:
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHit, const ICsPointSequenceWeapon* /*Weapon*/, const FHitResult& /*Hit*/);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnHit, const ICsPointSequenceWeapon* /*Weapon*/, const int32& /*Index*/, const FHitResult& /*Hit*/);
 
 	virtual FOnHit& GetOnHit_Event() = 0;
 };

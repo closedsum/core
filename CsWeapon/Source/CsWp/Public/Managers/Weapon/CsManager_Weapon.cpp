@@ -37,6 +37,7 @@
 	// Event
 #include "Event/CsWeapon_Event.h"
 #include "Point/Event/CsPointWeapon_Event.h"
+#include "Point/Sequence/Event/CsPointSequenceWeapon_Event.h"
 // Modifier
 #include "Modifier/CsWeaponModifierImpl.h"
 
@@ -386,10 +387,15 @@ void UCsManager_Weapon::AddPoolParams(const FECsWeapon& Type, const FCsSettings_
 			Event->GetOnAllocate_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnAllocate);
 			Event->GetOnDeallocate_Start_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnDeallocate_Start);
 		}
-
+		// Point
 		if (ICsPointWeapon_Event* Event = Cast<ICsPointWeapon_Event>(O))
 		{
 			Event->GetOnHit_Event().AddUObject(this, &UCsManager_Weapon::PointWeapon_OnHit);
+		}
+		// Point Sequence
+		if (ICsPointSequenceWeapon_Event* Event = Cast<ICsPointSequenceWeapon_Event>(O))
+		{
+			Event->GetOnHit_Event().AddUObject(this, &UCsManager_Weapon::PointSequenceWeapon_OnHit);
 		}
 	}
 }
@@ -647,10 +653,15 @@ void UCsManager_Weapon::InitInternal(const ManagerParamsType& Params)
 				Event->GetOnAllocate_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnAllocate);
 				Event->GetOnDeallocate_Start_Event().AddUObject(this, &UCsManager_Weapon::Weapon_OnDeallocate_Start);
 			}
-
+			// Point
 			if (ICsPointWeapon_Event* Event = Cast<ICsPointWeapon_Event>(O))
 			{
 				Event->GetOnHit_Event().AddUObject(this, &UCsManager_Weapon::PointWeapon_OnHit);
+			}
+			// Point Sequence
+			if (ICsPointSequenceWeapon_Event* Event = Cast<ICsPointSequenceWeapon_Event>(O))
+			{
+				Event->GetOnHit_Event().AddUObject(this, &UCsManager_Weapon::PointSequenceWeapon_OnHit);
 			}
 		}
 	}

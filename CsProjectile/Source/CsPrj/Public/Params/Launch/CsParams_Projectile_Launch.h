@@ -65,6 +65,8 @@ namespace NCsProjectile
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bCollision, false),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(bTracking, false)
 				{
+					CS_CTOR_SET_MEMBER_PROXY(bCollision);
+					CS_CTOR_SET_MEMBER_PROXY(bTracking);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bCollision, bool)

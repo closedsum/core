@@ -13,11 +13,6 @@
 // FCsPayload_StaticMesh
 #pragma region
 
-void FCsPayload_StaticMesh::UpdateInternalPtrs()
-{
-	Mesh.UpdateInternalPtrs();
-}
-
 #define PayloadType NCsStaticMeshActor::NPayload::FImpl
 void FCsPayload_StaticMesh::CopyToPayloadAsValueChecked(const FString& Context, PayloadType* Payload) const
 {

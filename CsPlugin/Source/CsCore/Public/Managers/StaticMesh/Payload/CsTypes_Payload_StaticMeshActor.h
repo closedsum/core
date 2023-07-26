@@ -66,8 +66,6 @@ public:
 	{
 	}
 
-	void UpdateInternalPtrs();
-
 #define PayloadType NCsStaticMeshActor::NPayload::FImpl
 	void CopyToPayloadAsValueChecked(const FString& Context, PayloadType* Payload) const;
 #undef PayloadType

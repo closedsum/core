@@ -345,8 +345,8 @@ struct CSCORE_API FCsCollisionPreset
 	FORCEINLINE bool operator==(const FCsCollisionPreset& B) const
 	{
 		return bSimulationGeneratesHitEvents == B.bSimulationGeneratesHitEvents && 
-			   bGenerateOverlapEvents == B.bGenerateOverlapEvents && 
 			   PhysMaterialOverride == B.PhysMaterialOverride &&
+			   bGenerateOverlapEvents == B.bGenerateOverlapEvents && 
 			   CollisionEnabled == B.CollisionEnabled && 
 			   ObjectType == B.ObjectType;
 	}

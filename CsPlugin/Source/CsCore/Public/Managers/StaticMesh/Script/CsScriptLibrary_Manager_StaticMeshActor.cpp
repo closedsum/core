@@ -91,9 +91,8 @@ int32 UCsScriptLibrary_Manager_StaticMeshActor::Spawn(const FString& Context, co
 
 	const FECsStaticMeshActor& Type	= Payload.Mesh.Type;
 	PayloadImplType* PayloadImpl	= Manager_StaticMesh->AllocatePayload<PayloadImplType>(Type);
-	// Copy script payload to native payload
-	const_cast<FCsPayload_StaticMesh&>(Payload).UpdateInternalPtrs();
 
+	// Copy script payload to native payload
 	Payload.CopyToPayloadAsValueChecked(Ctxt, PayloadImpl);
 
 	const FCsStaticMeshActorPooled* SkeletalMeshPooled = Manager_StaticMesh->Spawn(Type, PayloadImpl);

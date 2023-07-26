@@ -175,12 +175,6 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
 	ECsStaticMeshActorDeallocateMethod DeallocateMethod;
 
-private:
-
-	NCsStaticMeshActor::EDeallocateMethod* DeallocateMethod_Internal;
-
-public:
-
 	/** Valid if the DeallocateMethod == ECsStaticMeshActorDeallocateMethod::LifeTime.
 		- If a Sound IS attached to a Parent object, 
 		   LifeTime == 0.of means the Sound object will be deallocated immediately
@@ -244,7 +238,6 @@ public:
 		Materials(),
 		Type(),
 		DeallocateMethod(ECsStaticMeshActorDeallocateMethod::Complete),
-		DeallocateMethod_Internal(nullptr),
 		LifeTime(0.0f),
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
@@ -257,19 +250,12 @@ public:
 		CustomDepthStencilValue(0)
 	{
 	}
-	
-	FORCEINLINE void UpdateInternalPtrs()
-	{
-		UpdateDeallocateMethodPtr();
-	}
-
-	FORCEINLINE void UpdateDeallocateMethodPtr() { DeallocateMethod_Internal = (NCsStaticMeshActor::EDeallocateMethod*)&DeallocateMethod; }
 
 #define DeallocateMethodType NCsStaticMeshActor::EDeallocateMethod
 
 	FORCEINLINE FECsStaticMeshActor* GetTypePtr() { return &Type; }
 	FORCEINLINE const DeallocateMethodType& GetDeallocateMethod() const { return *((NCsStaticMeshActor::EDeallocateMethod*)(&DeallocateMethod)); }
-	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return DeallocateMethod_Internal; }
+	FORCEINLINE DeallocateMethodType* GetDeallocateMethodPtr() const { return const_cast<DeallocateMethodType*>(&GetDeallocateMethod()); }
 	FORCEINLINE float* GetLifeTimePtr() { return &LifeTime; }
 	FORCEINLINE FCsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
 	FORCEINLINE FName* GetBonePtr() { return &Bone; }

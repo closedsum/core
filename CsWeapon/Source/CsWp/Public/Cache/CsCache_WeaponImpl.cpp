@@ -69,13 +69,9 @@ namespace NCsWeapon
 			Reset();
 		}
 
-		bool FImpl::HasLifeTimeExpired()
+		bool FImpl::HasLifeTimeExpired() const
 		{
-			if (LifeTime > 0.0f)
-			{
-				return ElapsedTime.Time > LifeTime;
-			}
-			return false;
+			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
 		}
 
 		void FImpl::Reset()

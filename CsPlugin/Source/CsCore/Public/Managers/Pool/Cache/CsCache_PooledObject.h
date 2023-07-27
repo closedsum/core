@@ -148,7 +148,7 @@ namespace NCsPooledObject
 			*
 			* return
 			*/
-			virtual bool HasLifeTimeExpired() = 0;
+			virtual bool HasLifeTimeExpired() const = 0;
 
 			/**
 			*

@@ -123,7 +123,7 @@ namespace NCsSound
 			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
 			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
-			bool HasLifeTimeExpired();
+			bool HasLifeTimeExpired() const;
 
 			void Reset();
 

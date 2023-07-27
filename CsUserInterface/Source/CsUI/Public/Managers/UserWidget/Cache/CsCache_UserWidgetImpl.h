@@ -108,7 +108,7 @@ namespace NCsUserWidget
 			FORCEINLINE const FCsTime& GetStartTime() const { return StartTime; }
 			FORCEINLINE const FCsDeltaTime& GetElapsedTime() const { return ElapsedTime; }
 
-			FORCEINLINE bool HasLifeTimeExpired() { return LifeTime > 0.0f && ElapsedTime.Time > LifeTime; }
+			FORCEINLINE bool HasLifeTimeExpired() const { return LifeTime > 0.0f && ElapsedTime.Time > LifeTime; }
 
 			void Reset();
 

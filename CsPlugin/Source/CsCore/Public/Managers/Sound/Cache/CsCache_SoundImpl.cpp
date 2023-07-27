@@ -152,7 +152,7 @@ namespace NCsSound
 			return false;
 		}
 
-		bool FImpl::HasLifeTimeExpired()
+		bool FImpl::HasLifeTimeExpired() const
 		{
 			return LifeTime > 0.0f && ElapsedTime.Time > LifeTime;
 		}

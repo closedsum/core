@@ -1145,15 +1145,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
 	bool bHideOnQueueDeallocate;
 
+	/** Whether the FX should attach to another object. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (InlineEditConditionToggle))
+	bool bAttach;
+
 	/** Valid if the FX is attached to a Parent object or when an FX object is
 		allocated, the Parent field of the payload is set.If the Parent object is NULL,
 		the FX will NOT be attached. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (EditCondition = "bAttach"))
 	FCsAttachmentTransformRules AttachmentTransformRules;
 
 	/** Valid only when the FX is attached to a Parent object. 
 	    Bone or Socket to attach to. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (EditCondition = "bAttach"))
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
@@ -1213,6 +1217,7 @@ public:
 		LifeTime(0.0f),
 		DeathTime(0.0f),
 		bHideOnQueueDeallocate(false),
+		bAttach(false),
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
@@ -1236,6 +1241,7 @@ public:
 		DeallocateMethod = B.DeallocateMethod;
 		LifeTime = B.LifeTime;
 		bHideOnQueueDeallocate = B.bHideOnQueueDeallocate;
+		bAttach = B.bAttach;
 		AttachmentTransformRules = B.AttachmentTransformRules;
 		Bone = B.Bone;
 		TransformRules = B.TransformRules;

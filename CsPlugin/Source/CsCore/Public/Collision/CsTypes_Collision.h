@@ -359,6 +359,8 @@ struct CSCORE_API FCsCollisionPreset
 	void SetChecked(const FString& Context, UPrimitiveComponent* Component) const;
 	bool SetSafe(const FString& Context, UPrimitiveComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
+	void InitChecked(const FString& Context, UPrimitiveComponent* Component) const;
+
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 

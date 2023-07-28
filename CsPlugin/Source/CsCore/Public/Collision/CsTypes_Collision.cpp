@@ -246,6 +246,22 @@ bool FCsCollisionPreset::SetSafe(const FString& Context, UPrimitiveComponent* Co
 	return true;
 }
 
+void FCsCollisionPreset::InitChecked(const FString& Context, UPrimitiveComponent* Component) const
+{
+	CS_IS_PTR_NULL_CHECKED(Component)
+
+	check(IsValidChecked(Context));
+
+	if (CollisionEnabled != ECollisionEnabled::NoCollision)
+	{
+		Component->SetCollisionObjectType(ObjectType);
+		Component->SetCollisionResponseToChannels(CollisionResponses);
+
+		Component->SetNotifyRigidBodyCollision(bSimulationGeneratesHitEvents);
+		Component->SetGenerateOverlapEvents(bGenerateOverlapEvents);
+	}
+}
+
 bool FCsCollisionPreset::IsValidChecked(const FString& Context) const
 {
 	if (CollisionEnabled != ECollisionEnabled::NoCollision)

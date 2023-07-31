@@ -692,6 +692,26 @@ namespace NCsCoroutine
 				return Index;
 			}
 
+			template<typename T>
+			FORCEINLINE void Init(const FString& Context, T* Object, char(T::*Delegate)(FCsRoutine*), const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal)
+			{
+				static_assert(std::is_base_of<UObject, T>(), "T is NOT of type: UObject.");
+
+				CoroutineImpl.BindUObject(Object, Delegate);
+				Init(Context, Object, ContextObject, UpdateGroup, InName, InNameInternal);
+			}
+
+			template<typename T>
+			FORCEINLINE void Init(const FString& Context, T* Object, char(T::* Delegate)(FCsRoutine*), UObject* InOwner, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal)
+			{
+				static_assert(!std::is_base_of<UObject, T>(), "T IS of type: UObject.");
+
+				CoroutineImpl.BindRaw(Object, Delegate);
+				Init(Context, InOwner, ContextObject, UpdateGroup, InName, InNameInternal);
+			}
+
+			void Init(const FString& Context, UObject* InOwner, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal);
+
 			void Reset();
 
 			bool IsValidChecked(const FString& Context) const;
@@ -760,10 +780,114 @@ namespace NCsCoroutine
 	}
 }
 
+// Payload
+#pragma region
+
+// Flag
+#define CS_COROUTINE_PAYLOAD_PASS_FLAG_START int32 __Coroutine__Payload__Flag__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_FLAG(__Payload, __Value) __Payload->SetValue_Flag(__Coroutine__Payload__Flag__Counter__, __Value); \
+	++__Coroutine__Payload__Flag__Counter__
+// Int
+#define CS_COROUTINE_PAYLOAD_PASS_INT_START int32 __Coroutine__Payload__Int__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_INT(__Payload, __Value) __Payload->SetValue_Int(__Coroutine__Payload__Int__Counter__, __Value); \
+	++__Coroutine__Payload__Int__Counter__
+// Float
+#define CS_COROUTINE_PAYLOAD_PASS_FLOAT_START int32 __Coroutine__Payload__Float__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_FLOAT(__Payload, __Value) __Payload->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
+	++__Coroutine__Payload__Float__Counter__
+// Vector
+#define CS_COROUTINE_PAYLOAD_PASS_VECTOR_START int32 __Coroutine__Payload__Vector__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
+	++__Coroutine__Payload__Vector__Counter__
+// Color
+#define CS_COROUTINE_PAYLOAD_PASS_COLOR_START int32 __Coroutine__Payload__Color__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_COLOR(__Payload, __Value) __Payload->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
+	++__Coroutine__Payload__Color__Counter__
+// Name
+#define CS_COROUTINE_PAYLOAD_PASS_NAME_START int32 __Coroutine__Payload__Name__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_NAME(__Payload, __Value) __Payload->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
+	++__Coroutine__Payload__Name__Counter__
+
+#pragma endregion Payload
+
+// Routine
+#pragma region
+
+// Flag
+#define CS_COROUTINE_READ_FLAG_START int32 __Coroutine__Read__Flag__Counter__ = 0;
+#define CS_COROUTINE_READ_FLAG(__R, __VariableName) bool __VariableName = __R->GetValue_Flag(__Coroutine__Read__Flag__Counter__); \
+	++__Coroutine__Read__Flag__Counter__
+#define CS_COROUTINE_READ_FLAG_REF(__R, __VariableName) bool& __VariableName = __R->GetValue_Flag(__Coroutine__Read__Flag__Counter__); \
+	++__Coroutine__Read__Flag__Counter__
+#define CS_COROUTINE_READ_FLAG_CONST(__R, __VariableName) const bool __VariableName = __R->GetValue_Flag(__Coroutine__Read__Flag__Counter__); \
+	++__Coroutine__Read__Flag__Counter__
+#define CS_COROUTINE_READ_FLAG_CONST_REF(__R, __VariableName) const bool& __VariableName = __R->GetValue_Flag(__Coroutine__Read__Flag__Counter__); \
+	++__Coroutine__Read__Flag__Counter__
+// DeltaTime
+#define CS_COROUTINE_READ_DELTA_TIME_START int32 __Coroutine__Read__DeltaTime__Counter__ = 0;
+#define CS_COROUTINE_READ_DELTA_TIME(__R, __VariableName) FCsDeltaTime __VariableName = __R->GetValue_DeltaTime(__Coroutine__Read__DeltaTime__Counter__); \
+	++__Coroutine__Read__DeltaTime__Counter__
+#define CS_COROUTINE_READ_DELTA_TIME_REF(__R, __VariableName) FCsDeltaTime& __VariableName = __R->GetValue_DeltaTime(__Coroutine__Read__DeltaTime__Counter__); \
+	++__Coroutine__Read__DeltaTime__Counter__
+#define CS_COROUTINE_READ_DELTA_TIME_CONST(__R, __VariableName) const FCsDeltaTime __VariableName = __R->GetValue_DeltaTime(__Coroutine__Read__DeltaTime__Counter__); \
+	++__Coroutine__Read__DeltaTime__Counter__
+#define CS_COROUTINE_READ_DELTA_TIME_CONST_REF(__R, __VariableName) const FCsDeltaTime& __VariableName = __R->GetValue_DeltaTime(__Coroutine__Read__DeltaTime__Counter__); \
+	++__Coroutine__Read__DeltaTime__Counter__
+// Int
+#define CS_COROUTINE_READ_INT_START int32 __Coroutine__Read__Int__Counter__ = 0;
+#define CS_COROUTINE_READ_INT(__R, __VariableName) int32 __VariableName = __R->GetValue_Int(__Coroutine__Read__Int__Counter__); \
+	++__Coroutine__Read__Int__Counter__
+#define CS_COROUTINE_READ_INT_REF(__R, __VariableName) int32& __VariableName = __R->GetValue_Int(__Coroutine__Read__Int__Counter__); \
+	++__Coroutine__Read__Int__Counter__
+#define CS_COROUTINE_READ_INT_CONST(__R, __VariableName) const int32 __VariableName = __R->GetValue_Int(__Coroutine__Read__Int__Counter__); \
+	++__Coroutine__Read__Int__Counter__
+#define CS_COROUTINE_READ_INT_CONST_REF(__R, __VariableName) const int32& __VariableName = __R->GetValue_Int(__Coroutine__Read__Int__Counter__); \
+	++__Coroutine__Read__Int__Counter__
+// Float
+#define CS_COROUTINE_READ_FLOAT_START int32 __Coroutine__Read__Float__Counter__ = 0;
+#define CS_COROUTINE_READ_FLOAT(__R, __VariableName) float __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
+	++__Coroutine__Read__Float__Counter__
+#define CS_COROUTINE_READ_FLOAT_REF(__R, __VariableName) float& __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
+	++__Coroutine__Read__Float__Counter__
+#define CS_COROUTINE_READ_FLOAT_CONST(__R, __VariableName) const float __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
+	++__Coroutine__Read__Float__Counter__
+#define CS_COROUTINE_READ_FLOAT_CONST_REF(__R, __VariableName) const float& __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
+	++__Coroutine__Read__Float__Counter__
+// Vector
+#define CS_COROUTINE_READ_VECTOR_START int32 __Coroutine__Read__Vector__Counter__ = 0;
+#define CS_COROUTINE_READ_VECTOR(__R, __VariableName) FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+	++__Coroutine__Read__Vector__Counter__
+#define CS_COROUTINE_READ_VECTOR_REF(__R, __VariableName) FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+	++__Coroutine__Read__Vector__Counter__
+#define CS_COROUTINE_READ_VECTOR_CONST(__R, __VariableName) const FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+	++__Coroutine__Read__Vector__Counter__
+#define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+	++__Coroutine__Read__Vector__Counter__
+// Color
+#define CS_COROUTINE_READ_COLOR_START int32 __Coroutine__Read__Color__Counter__ = 0;
+#define CS_COROUTINE_READ_COLOR(__R, __VariableName) FLinearColor __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \
+	++__Coroutine__Read__Color__Counter__
+#define CS_COROUTINE_READ_COLOR_REF(__R, __VariableName) FLinearColor& __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \
+	++__Coroutine__Read__Color__Counter__
+#define CS_COROUTINE_READ_COLOR_CONST(__R, __VariableName) const FLinearColor __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \
+	++__Coroutine__Read__Color__Counter__
+#define CS_COROUTINE_READ_COLOR_CONST_REF(__R, __VariableName) const FLinearColor& __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \
+	++__Coroutine__Read__Color__Counter__
+// Name
+#define CS_COROUTINE_READ_NAME_START int32 __Coroutine__Read__Name__Counter__ = 0;
+#define CS_COROUTINE_READ_NAME(__R, __VariableName) FName __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
+	++__Coroutine__Read__Name__Counter__
+#define CS_COROUTINE_READ_NAME_REF(__R, __VariableName) FName& __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
+	++__Coroutine__Read__Name__Counter__
+#define CS_COROUTINE_READ_NAME_CONST(__R, __VariableName) const FName __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
+	++__Coroutine__Read__Name__Counter__
+#define CS_COROUTINE_READ_NAME_CONST_REF(__R, __VariableName) const FName& __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
+	++__Coroutine__Read__Name__Counter__
+
+#pragma endregion Routine
+
 #define CS_ROUTINE_END -1
 #define CS_ROUTINE_FREE -2
-
-
 
 #define CS_COROUTINE_DECLARE(Func)	virtual void Func(); \
 									static char Func##_Internal(struct FCsRoutine* r); \

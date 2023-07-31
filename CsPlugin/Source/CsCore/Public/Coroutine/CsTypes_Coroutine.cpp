@@ -2,6 +2,8 @@
 #include "Coroutine/CsTypes_Coroutine.h"
 
 // Library
+#include "Managers/Time/CsLibrary_Manager_Time.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
 
 namespace NCsCoroutine
@@ -573,6 +575,22 @@ namespace NCsCoroutine
 		void FImpl::SetIndex(const int32& InIndex)
 		{
 			Index = InIndex;
+		}
+
+		void FImpl::Init(const FString& Context, UObject* InOwner, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal)
+		{
+			CS_IS_PENDING_KILL_CHECKED(InOwner)
+			CS_IS_PENDING_KILL_CHECKED(ContextObject)
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, UpdateGroup)
+			CS_IS_STRING_EMPTY_CHECKED(InName)
+			CS_IS_NAME_NONE_CHECKED(InNameInternal)
+
+			typedef NCsTime::NManager::FLibrary TimeManagerLibrary;
+
+			StartTime = TimeManagerLibrary::GetTimeChecked(Context, ContextObject, UpdateGroup);
+			Owner.SetObject(InOwner);
+			SetName(InName);
+			SetFName(InNameInternal);
 		}
 
 		void FImpl::Reset()

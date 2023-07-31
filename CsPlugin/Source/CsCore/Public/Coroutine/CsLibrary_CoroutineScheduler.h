@@ -12,6 +12,9 @@
 class UObject;
 class UCsCoroutineScheduler;
 
+// NCsCoroutine::NPayload::FImpl
+CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsCoroutine, NPayload, FImpl)
+
 namespace NCsCoroutine
 {
 	namespace NScheduler
@@ -108,6 +111,16 @@ namespace NCsCoroutine
 
 		#pragma endregion Get
 		
+		// Start
+		#pragma region
+		public:
+
+		#define PayloadType NCsCoroutine::NPayload::FImpl
+			static const FCsRoutineHandle& StartChecked(const FString& Context, const UObject* ContextObject, PayloadType* Payload);
+		#undef PayloadType
+			
+		#pragma endregion Start
+
 		// Update
 		#pragma region
 		public:
@@ -223,6 +236,16 @@ namespace NCsCoroutine
 			static bool SafeEndAndInvalidate(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, FCsRoutineHandle& Handle, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion End
+
+		// Payload
+		#pragma region
+		public:
+
+		#define PayloadType NCsCoroutine::NPayload::FImpl
+			static PayloadType* AllocatePayloadChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup);
+		#undef PayloadType
+
+		#pragma endregion Payload
 
 		// Handle
 		#pragma region

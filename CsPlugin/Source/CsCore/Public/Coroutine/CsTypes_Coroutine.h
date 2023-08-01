@@ -783,23 +783,27 @@ namespace NCsCoroutine
 // Payload
 #pragma region
 
-// Flag
+// Flag (bool)
 #define CS_COROUTINE_PAYLOAD_PASS_FLAG_START int32 __Coroutine__Payload__Flag__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_FLAG(__Payload, __Value) __Payload->SetValue_Flag(__Coroutine__Payload__Flag__Counter__, __Value); \
 	++__Coroutine__Payload__Flag__Counter__
-// Int
+// Int (int32)
 #define CS_COROUTINE_PAYLOAD_PASS_INT_START int32 __Coroutine__Payload__Int__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_INT(__Payload, __Value) __Payload->SetValue_Int(__Coroutine__Payload__Int__Counter__, __Value); \
 	++__Coroutine__Payload__Int__Counter__
+// Unsigned Int (uint32)
+#define CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT_START int32 __Coroutine__Payload__UnsignedInt__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_UNSIGNED_INT(__Payload, __Value) __Payload->SetValue_UnsignedInt(__Coroutine__Payload__UnsignedInt__Counter__, __Value); \
+	++__Coroutine__Payload__UnsignedInt__Counter__
 // Float
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT_START int32 __Coroutine__Payload__Float__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT(__Payload, __Value) __Payload->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
 	++__Coroutine__Payload__Float__Counter__
-// Vector
+// Vector (FVector)
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR_START int32 __Coroutine__Payload__Vector__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
 	++__Coroutine__Payload__Vector__Counter__
-// Color
+// Color (FLinearColor)
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR_START int32 __Coroutine__Payload__Color__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR(__Payload, __Value) __Payload->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
 	++__Coroutine__Payload__Color__Counter__
@@ -807,13 +811,17 @@ namespace NCsCoroutine
 #define CS_COROUTINE_PAYLOAD_PASS_NAME_START int32 __Coroutine__Payload__Name__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_NAME(__Payload, __Value) __Payload->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
 	++__Coroutine__Payload__Name__Counter__
+// Void
+#define CS_COROUTINE_PAYLOAD_PASS_VOID_START int32 __Coroutine__Payload__Void__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_VOID(__Payload, __Value) __Payload->SetValue_Void(__Coroutine__Payload__Void__Counter__, __Value); \
+	++__Coroutine__Payload__Void__Counter__
 
 #pragma endregion Payload
 
 // Routine
 #pragma region
 
-// Flag
+// Flag (bool)
 #define CS_COROUTINE_READ_FLAG_START int32 __Coroutine__Read__Flag__Counter__ = 0;
 #define CS_COROUTINE_READ_FLAG(__R, __VariableName) bool __VariableName = __R->GetValue_Flag(__Coroutine__Read__Flag__Counter__); \
 	++__Coroutine__Read__Flag__Counter__
@@ -833,7 +841,7 @@ namespace NCsCoroutine
 	++__Coroutine__Read__DeltaTime__Counter__
 #define CS_COROUTINE_READ_DELTA_TIME_CONST_REF(__R, __VariableName) const FCsDeltaTime& __VariableName = __R->GetValue_DeltaTime(__Coroutine__Read__DeltaTime__Counter__); \
 	++__Coroutine__Read__DeltaTime__Counter__
-// Int
+// Int (int32)
 #define CS_COROUTINE_READ_INT_START int32 __Coroutine__Read__Int__Counter__ = 0;
 #define CS_COROUTINE_READ_INT(__R, __VariableName) int32 __VariableName = __R->GetValue_Int(__Coroutine__Read__Int__Counter__); \
 	++__Coroutine__Read__Int__Counter__
@@ -843,6 +851,24 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Int__Counter__
 #define CS_COROUTINE_READ_INT_CONST_REF(__R, __VariableName) const int32& __VariableName = __R->GetValue_Int(__Coroutine__Read__Int__Counter__); \
 	++__Coroutine__Read__Int__Counter__
+#define CS_COROUTINE_READ_INT_AS_ENUM(__R, __VariableName, __EnumType) __EnumType __VariableName = (__EnumType)(__R->GetValue_Int(__Coroutine__Read__Int__Counter__)); \
+	++__Coroutine__Read__Int__Counter__
+#define CS_COROUTINE_READ_INT_AS_ENUM_CONST(__R, __VariableName, __EnumType) const __EnumType __VariableName = (__EnumType)(__R->GetValue_Int(__Coroutine__Read__Int__Counter__)); \
+	++__Coroutine__Read__Int__Counter__
+// Unsigned Int (uint32)
+#define CS_COROUTINE_READ_UNSIGNED_INT_START int32 __Coroutine__Read__UnsignedInt__Counter__ = 0;
+#define CS_COROUTINE_READ_UNSIGNED_INT(__R, __VariableName) uint32 __VariableName = __R->GetValue_UnsignedInt(__Coroutine__Read__UnsignedInt__Counter__); \
+	++__Coroutine__Read__UnsignedInt__Counter__
+#define CS_COROUTINE_READ_UNSIGNED_INT_REF(__R, __VariableName) uint32& __VariableName = __R->GetValue_UnsignedInt(__Coroutine__Read__UnsignedInt__Counter__); \
+	++__Coroutine__Read__UnsignedInt__Counter__
+#define CS_COROUTINE_READ_UNSIGNED_INT_CONST(__R, __VariableName) const uint32 __VariableName = __R->GetValue_UnsignedInt(__Coroutine__Read__UnsignedInt__Counter__); \
+	++__Coroutine__Read__UnsignedInt__Counter__
+#define CS_COROUTINE_READ_UNSIGNED_INT_CONST_REF(__R, __VariableName) const uint32& __VariableName = __R->GetValue_UnsignedInt(__Coroutine__Read__UnsignedInt__Counter__); \
+	++__Coroutine__Read__UnsignedInt__Counter__
+#define CS_COROUTINE_READ_UNSIGNED_INT_AS_ENUM(__R, __VariableName, __EnumType) __EnumType __VariableName = (__EnumType)(__R->GetValue_UnsignedInt(__Coroutine__Read__UnsignedInt__Counter__)); \
+	++__Coroutine__Read__UnsignedInt__Counter__
+#define CS_COROUTINE_READ_UNSIGNED_INT_AS_ENUM_CONST(__R, __VariableName, __EnumType) const __EnumType __VariableName = (__EnumType)(__R->GetValue_UnsignedInt(__Coroutine__Read__UnsignedInt__Counter__)); \
+	++__Coroutine__Read__UnsignedInt__Counter__
 // Float
 #define CS_COROUTINE_READ_FLOAT_START int32 __Coroutine__Read__Float__Counter__ = 0;
 #define CS_COROUTINE_READ_FLOAT(__R, __VariableName) float __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
@@ -853,7 +879,7 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Float__Counter__
 #define CS_COROUTINE_READ_FLOAT_CONST_REF(__R, __VariableName) const float& __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
 	++__Coroutine__Read__Float__Counter__
-// Vector
+// Vector (FVector)
 #define CS_COROUTINE_READ_VECTOR_START int32 __Coroutine__Read__Vector__Counter__ = 0;
 #define CS_COROUTINE_READ_VECTOR(__R, __VariableName) FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
@@ -863,7 +889,7 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Vector__Counter__
 #define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-// Color
+// Color (FLinearColor)
 #define CS_COROUTINE_READ_COLOR_START int32 __Coroutine__Read__Color__Counter__ = 0;
 #define CS_COROUTINE_READ_COLOR(__R, __VariableName) FLinearColor __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \
 	++__Coroutine__Read__Color__Counter__
@@ -883,6 +909,10 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Name__Counter__
 #define CS_COROUTINE_READ_NAME_CONST_REF(__R, __VariableName) const FName& __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
 	++__Coroutine__Read__Name__Counter__
+// Void
+#define CS_COROUTINE_READ_VOID_START int32 __Coroutine__Read__Void__Counter__ = 0;
+#define CS_COROUTINE_READ_VOID(__R, __VariableName, __ObjectType) __ObjectType* __VariableName = __R->GetValue_Void<__ObjectType>(__Coroutine__Read__Void__Counter__); \
+	++__Coroutine__Read__Void__Counter__
 
 #pragma endregion Routine
 

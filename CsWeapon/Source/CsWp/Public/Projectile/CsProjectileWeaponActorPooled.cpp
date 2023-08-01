@@ -81,6 +81,8 @@
 #include "Components/StaticMeshComponent.h"
 // Animation
 #include "Animation/AnimInstance.h"
+// Interface
+#include "Object/Orientation/CsObject_Orientation.h"
 
 #if WITH_EDITOR
 // Library
@@ -1420,27 +1422,34 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 
 			checkf(TheOwner, TEXT("%s: No Owner found for %s."), *Context, *(Outer->PrintNameAndClass()));
 
+			bool IsValidOwner = false;
+
+			FRotator Rotation = FRotator::ZeroRotator;
+
+			// CsObject_Orientation
+			if (ICsObject_Orientation* Object_Movement = Cast<ICsObject_Orientation>(TheOwner))
+			{
+				Rotation	 = NCsRotationRules::GetRotation(Object_Movement->Orientation_GetRotation(), LocationOffsetSpaceRules);
+				IsValidOwner = true;
+			}
 			// AActor
+			else
 			if (AActor* Actor = Cast<AActor>(TheOwner))
 			{
-				const FRotator Rotation = NCsRotationRules::GetRotation(Actor, LocationOffsetSpaceRules);
-				FVector Dir				= Rotation.Vector();
-
-				const FRotator RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
-
-				Dir = Dir.RotateAngleAxis(RotationOffset.Pitch, MathLibrary::GetRightFromNormal(Dir));
-				Dir = Dir.RotateAngleAxis(RotationOffset.Yaw, FVector::UpVector);
-				
-				FVector Right, Up;
-				MathLibrary::GetRightAndUpFromNormal(Dir, Right, Up);
-
-				Offset += LocationOffset.X * Dir + LocationOffset.Y * Right + LocationOffset.Z * Up;
+				Rotation	 = NCsRotationRules::GetRotation(Actor, LocationOffsetSpaceRules);
+				IsValidOwner = true;
 			}
 			// USceneComponent
+			else
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			{
-				const FRotator Rotation = NCsRotationRules::GetRotation(Component, LocationOffsetSpaceRules);
-				FVector Dir				= Rotation.Vector();
+				Rotation	  = NCsRotationRules::GetRotation(Component, LocationOffsetSpaceRules);
+				IsValidOwner  = true;
+			}
+
+			if (IsValidOwner)
+			{
+				FVector Dir	= Rotation.Vector();
 
 				const FRotator RotationOffset = NCsRotationRules::GetRotation(LocationOffsetSpaceOffset, LocationOffsetSpaceRules);
 

@@ -1408,7 +1408,7 @@ FVector ACsProjectileWeaponActorPooled::FProjectileImpl::GetLaunchLocation(const
 	FVector Offset = LocationOffset * NCsRotationRules::GetDirection(FVector::OneVector, InvLocationOffsetSpaceRules);
 	{
 		// None
-		if (LocationOffsetSpace == LaunchLocationOffsetSpace::Owner)
+		if (LocationOffsetSpace == LaunchLocationOffsetSpace::None)
 		{
 			Offset = LocationOffset;
 		}

@@ -219,16 +219,16 @@ namespace NCsProjectile
 					}
 					// PercentAddLast || PercentSubtractLast
 					else
-						if (Application == ApplicationType::PercentAddLast ||
-							Application == ApplicationType::PercentSubtractLast)
-						{
-							LastModifiers.Add(FloatModifier);
-						}
+					if (Application == ApplicationType::PercentAddLast ||
+						Application == ApplicationType::PercentSubtractLast)
+					{
+						LastModifiers.Add(FloatModifier);
+					}
 					// "The Rest"
-						else
-						{
-							Modifiers.Add(FloatModifier);
-						}
+					else
+					{
+						Modifiers.Add(FloatModifier);
+					}
 				}
 			}
 

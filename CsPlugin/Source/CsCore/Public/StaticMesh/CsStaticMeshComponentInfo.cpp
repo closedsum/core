@@ -102,7 +102,7 @@ namespace NCsStaticMesh
 		bool FInfo::IsValidChecked(const FString& Context) const
 		{
 			// Check Mesh is Valid.
-			CS_IS_PTR_NULL_CHECKED(Mesh)
+			CS_IS_PTR_NULL_CHECKED(GetMesh())
 			// Check Materials is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)

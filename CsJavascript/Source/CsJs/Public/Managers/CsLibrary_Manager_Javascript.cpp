@@ -38,6 +38,10 @@ namespace NCsJs
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
+			// TODO: FUTURE: Some sort of flag to properly indicate getting GEngine as ContextRoot
+			if (ContextObject == GEngine)
+				return GEngine;
+
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetChecked(Context, ContextObject);
@@ -45,6 +49,10 @@ namespace NCsJs
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
+			// TODO: FUTURE: Some sort of flag to properly indicate getting GEngine as ContextRoot
+			if (ContextObject == GEngine)
+				return GEngine;
+
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetSafe(Context, ContextObject, Log);

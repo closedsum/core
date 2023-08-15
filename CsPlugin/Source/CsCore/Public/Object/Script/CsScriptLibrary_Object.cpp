@@ -97,12 +97,12 @@ bool UCsScriptLibrary_Object::Object_MarkPendingKill(const FString& Context, UOb
 		return false;
 	}
 
-	if (Object->IsPendingKill())
+	if (!IsValid(Object))
 	{
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s has ALREADY been marked pending kill."), *Ctxt, *(Object->GetName()), *(Object->GetClass()->GetName())));
 		return false;
 	}
 
-	Object->MarkPendingKill();
+	Object->MarkAsGarbage();
 	return true;
 }

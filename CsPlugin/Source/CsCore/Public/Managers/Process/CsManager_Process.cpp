@@ -13,10 +13,10 @@ FCsManager_Process::~FCsManager_Process(){}
 
 void FCsManager_Process::DeconstructObject(UCsProcess* o)
 {
-	if (o && !o->IsPendingKill())
+	if (IsValid(o))
 	{
 		o->RemoveFromRoot();
-		o->ConditionalBeginDestroy();
+		o->MarkAsGarbage();
 	}
 }
 

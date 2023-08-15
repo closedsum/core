@@ -21,5 +21,5 @@ public:
 
 	virtual bool Tracking_ReacquireDestination() = 0;
 
-	virtual FVector Tracking_GetDestination() const = 0;
+	virtual FVector3f Tracking_GetDestination() const = 0;
 };

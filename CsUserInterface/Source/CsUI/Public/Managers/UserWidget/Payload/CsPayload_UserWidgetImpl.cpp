@@ -26,9 +26,9 @@ namespace NCsUserWidget
 			RenderScale(1.0f),
 			LifeTime(0.0f),
 			PositionType(NCsUserWidget::EPosition::Screen),
-			Position(FVector::ZeroVector),
+			Position(FVector3f::ZeroVector),
 			OffsetType(NCsUserWidget::EPosition::Screen),
-			Offset(FVector::ZeroVector),
+			Offset(FVector3f::ZeroVector),
 			ZOrder(0),
 			bAnimParams(false),
 			AnimParams()
@@ -69,9 +69,9 @@ namespace NCsUserWidget
 			RenderScale = 1.0f;
 			LifeTime = 0.0f;
 			PositionType = NCsUserWidget::EPosition::Screen;
-			Position = FVector::ZeroVector;
+			Position = FVector3f::ZeroVector;
 			OffsetType = NCsUserWidget::EPosition::Screen;
-			Offset = FVector::ZeroVector;
+			Offset = FVector3f::ZeroVector;
 			ZOrder = 0;
 			bAnimParams = false;
 			AnimParams.Reset();

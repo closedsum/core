@@ -54,7 +54,7 @@ namespace NCsDamage
 				* return			Damage
 				*
 				*/
-				virtual float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const = 0;
+				virtual float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const = 0;
 
 				/**
 				* Check if a given Point is within the bounds of an Origin.
@@ -63,7 +63,7 @@ namespace NCsDamage
 				* @param Point		The location to evaluate if in bounds.
 				* return			Whether the point is in bounds of the origin.
 				*/
-				virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+				virtual bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const = 0;
 
 				/**
 				* Check if the Direction from Origin is "Facing" the Point
@@ -73,7 +73,7 @@ namespace NCsDamage
 				* @param Point		The location to evaluate.
 				* return			Whether Direction from Origin is "Facing" the Point or not.
 				*/
-				virtual bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const = 0;
+				virtual bool IsFacing(const FVector3f& Direction, const FVector3f& Origin, const FVector3f& Point) const = 0;
 			};
 		}
 	}
@@ -126,7 +126,7 @@ public:
 	* return			Damage
 	*
 	*/
-	virtual float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const = 0;
+	virtual float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const = 0;
 
 	/**
 	* Check if a given Point is within the bounds of an Origin.
@@ -135,7 +135,7 @@ public:
 	* @param Point		The location to evaluate if in bounds.
 	* return			Whether the point is in bounds of the origin.
 	*/
-	virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+	virtual bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const = 0;
 
 	/**
 	* Check if the Direction from Origin is "Facing" the Point
@@ -145,5 +145,5 @@ public:
 	* @param Point		The location to evaluate.
 	* return			Whether Direction from Origin is "Facing" the Point or not.
 	*/
-	virtual bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const = 0;
+	virtual bool IsFacing(const FVector3f& Direction, const FVector3f& Origin, const FVector3f& Point) const = 0;
 };

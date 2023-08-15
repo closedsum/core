@@ -34,7 +34,7 @@ namespace NCsSkin
 							/**
 							* Get the minimum scale. 
 							* The scale is applied:
-							*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector::OneVector.
+							*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector3d::OneVector.
 							* 
 							* return
 							*/
@@ -43,7 +43,7 @@ namespace NCsSkin
 							/**
 							* Get the maximum scale.
 							* The scale is applied:
-							*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector::OneVector.
+							*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector3d::OneVector.
 							*
 							* return
 							*/
@@ -79,7 +79,7 @@ public:
 	/**
 	* Get the minimum scale.
 	* The scale is applied:
-	*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector::OneVector.
+	*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector3d::OneVector.
 	*
 	* return
 	*/
@@ -88,7 +88,7 @@ public:
 	/**
 	* Get the maximum scale.
 	* The scale is applied:
-	*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector::OneVector.
+	*  Scale: FMath::Lerp(Min, Max, FMath::RangeRange(0.0f, 1.0f)) * FVector3d::OneVector.
 	*
 	* return
 	*/

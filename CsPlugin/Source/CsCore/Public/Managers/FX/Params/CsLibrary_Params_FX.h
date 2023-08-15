@@ -157,46 +157,46 @@ namespace NCsFX
 		public:
 
 			/**
-			* Get a value of type: FVector from Parameter implementing the interface:
+			* Get a value of type: FVector3f from Parameter implementing the interface:
 			* ParameterType (NCsFX::NParameter::IParameter).
 			*
 			* @param Context	The calling context.
 			* @param Parameter  Object which implements the interface: ParameterType (NCsFX::NParameter::IParameter).
-			* return			FVector value.
+			* return			FVector3f value.
 			*/
-			static const FVector& GetVectorChecked(const FString& Context, const ParameterType* Parameter);
+			static const FVector3f& GetVectorChecked(const FString& Context, const ParameterType* Parameter);
 
 			/**
-			* Get a value of type: FVector from Parameter implementing the interface:
+			* Get a value of type: FVector3f from Parameter implementing the interface:
 			* ParameterType (NCsFX::NParameter::IParameter).
 			*
 			* @param Parameter  Object which implements the interface: ParameterType (NCsFX::NParameter::IParameter).
-			* return			FVector value.
+			* return			FVector3f value.
 			*/
-			FORCEINLINE static const FVector& GetVectorChecked(const ParameterType* Parameter)
+			FORCEINLINE static const FVector3f& GetVectorChecked(const ParameterType* Parameter)
 			{
 				return GetVectorChecked(NCached::Str::GetVectorChecked, Parameter);
 			}
 
 			/**
-			* Safely get a value of type: FVector from Parameter implementing the interface:
+			* Safely get a value of type: FVector3f from Parameter implementing the interface:
 			* ParameterType (NCsFX::NParameter::IParameter).
 			*
 			* @param Context	The calling context.
 			* @param Parameter	Object which implements the interface: ParameterType (NCsFX::NParameter::IParameter).
 			* @param Log
-			* return			FVector value.
+			* return			FVector3f value.
 			*/
-			static bool GetSafeVector(const FString& Context, const ParameterType* Parameter, FVector& OutValue);
+			static bool GetSafeVector(const FString& Context, const ParameterType* Parameter, FVector3f& OutValue);
 
 			/**
-			* Safely get a value of type: FVector from Parameter implementing the interface:
+			* Safely get a value of type: FVector3f from Parameter implementing the interface:
 			* ParameterType (NCsFX::NParameter::IParameter).
 			*
 			* @param Parameter	Object which implements the interface: ParameterType (NCsFX::NParameter::IParameter).
-			* return			FVector value.
+			* return			FVector3f value.
 			*/
-			FORCEINLINE static bool GetSafeVector(const ParameterType* Parameter, FVector& OutValue)
+			FORCEINLINE static bool GetSafeVector(const ParameterType* Parameter, FVector3f& OutValue)
 			{
 				return GetSafeVector(NCached::Str::GetSafeVector, Parameter, OutValue);
 			}

@@ -29,24 +29,24 @@ class CSCORE_API UCsLibrary_Common : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "Pawn")
 	static bool IsLocallyControlled(AShooterCharacter* InPawn, UWorld *InWorld);
 
-	static FORCEINLINE float GetAngleBetweenVectors(const FVector& v1, const FVector& v2)
+	static FORCEINLINE float GetAngleBetweenVectors(const FVector3f& v1, const FVector3f& v2)
 	{
-		float dotValue = FVector::DotProduct(v1, v2);
+		float dotValue = FVector3f::DotProduct(v1, v2);
 		float radians = FMath::Acos(dotValue);
 		return FMath::RadiansToDegrees(radians);
 	}
 
-	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& otherLocation);
+	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector3f& otherLocation);
 	*/
 
 // Local Client
 #pragma region
 public:
 
-	static void GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation);
+	static void GetLocalPlayerViewPoint(UWorld* InWorld, FVector3f &OutLocation, FRotator3f&OutRotation);
 
 	UFUNCTION(BlueprintCallable, Category = "Common")
-	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& Location);
+	static float GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector3f& Location);
 
 	//static class ACsMotionController_DEPRECATED* GetLocalHand(UWorld *InWorld, const ECsControllerHand &Hand);
 
@@ -65,10 +65,10 @@ public:
 	static bool IsRift();
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static void GetHMDOrientationAndPosition(FRotator& DeviceRotation, FVector& DevicePosition);
+	static void GetHMDOrientationAndPosition(FRotator3f& DeviceRotation, FVector3f& DevicePosition);
 
 	UFUNCTION(BlueprintCallable, Category = "Common")
-	static void GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator& OutRotation);
+	static void GetHMDWorldViewPoint(UWorld* InWorld, FVector3f &OutLocation, FRotator3f& OutRotation);
 
 	//UFUNCTION(BlueprintCallable, Category = "Commmon")
 	//static class ACsMotionController_DEPRECATED* GetMotionController(UWorld* InWorld, const ECsControllerHand &Hand);
@@ -121,7 +121,7 @@ public:
 	*/
 #pragma endregion 
 
-	static FVector GetBoneLocation(USkeletalMeshComponent* InMesh, const int32 &BoneIndex, const TEnumAsByte<EBoneSpaces::Type> &Space = EBoneSpaces::WorldSpace);
+	static FVector3f GetBoneLocation(USkeletalMeshComponent* InMesh, const int32 &BoneIndex, const TEnumAsByte<EBoneSpaces::Type> &Space = EBoneSpaces::WorldSpace);
 	static FName GetParentBone(USkeletalMeshComponent* InMesh, const int32 &BoneIndex);
 
 	static void CopyHitResult(const FHitResult& From, FHitResult& To);
@@ -183,27 +183,32 @@ public:
 #pragma region
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static FRotator Rotator_GetAngleDelta(const FRotator &A, const FRotator &B);
+	static FRotator3f Rotator_GetAngleDelta(const FRotator3f&A, const FRotator3f&B);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static FRotator Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B);
+	static FRotator3f Rotator_GetAbsAngleDelta(const FRotator3f&A, const FRotator3f&B);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static float LerpAngle(const float &FromAngle, const float &ToAngle, const float &LerpRate, const float &DeltaSeconds, float MinAngle, float MaxAngle);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static FVector BuildUniformVector(const FVector &V, const int32 &Axes);
+	static FVector3f BuildUniformVector(const FVector3f&V, const int32 &Axes);
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
-	static FRotator BuildUniformRotator(const FRotator &R, const int32 &Axes);
+	static FRotator3f BuildUniformRotator(const FRotator3f&R, const int32 &Axes);
 
 	UFUNCTION(BlueprintCallable, Category = "Commmon")
 	static int32 GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits);
 
 	static FString UInt64ToString(const uint64 &Value);
 
-	static FVector ClampVectorComponents(FVector V, const float &Clamp);
-	static void ClampMinVectorComponents(FVector &V, const float &Min);
-	static void ClampMaxVectorComponents(FVector &V, const float &Max);
+	static FVector3f ClampVectorComponents(FVector3f V, const float &Clamp);
+	static FVector3d ClampVectorComponents(FVector3d V, const float& Clamp);
+
+	static void ClampMinVectorComponents(FVector3f&V, const float &Min);
+	static void ClampMinVectorComponents(FVector3d& V, const float& Min);
+
+	static void ClampMaxVectorComponents(FVector3f&V, const float &Max);
+	static void ClampMaxVectorComponents(FVector3d& V, const float& Max);
 
 #pragma endregion Math
 
@@ -212,11 +217,11 @@ public:
 	static bool IsOnSameTeam(UWorld *InWorld, AShooterPlayerState* InPlayerStateA, AShooterCharacter* InPawnB);
 	static bool IsOnSameTeam(UWorld *InWorld, AShooterPlayerState* InPlayerStateA, AShooterPlayerState* InPlayerStateB);
 	*/
-	static FVector GetScaledPlayerViewDirection(AController* Controller, const FVector &Scale);
+	static FVector3f GetScaledPlayerViewDirection(AController* Controller, const FVector3f &Scale);
 
 	// Gets world player view point where the HMD is located - not just where PlayerCamera is located
 	// The HMD world position and PlayerCamera can be in different positions
-	//static void GetHMDWorldViewPoint(APlayerController* PlayerController, FVector& out_Location, FRotator& out_Rotation);
+	//static void GetHMDWorldViewPoint(APlayerController* PlayerController, FVector3f& out_Location, FRotator3f& out_Rotation);
 
 	static void GetKeyValue(const FString& Pair, FString& Key, FString& Value, const TCHAR* PairDelimiter = TEXT("="));
 	static bool GrabOption(FString& Options, FString& Result);
@@ -245,8 +250,8 @@ public:
 // Animation
 #pragma region
 
-	static void ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
-	static void ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
+	static void ConvertBoneSpaceTransformToComponentSpace(const FTransform3d& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform3d& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
+	static void ConvertComponentSpaceTransformToBoneSpace(const FTransform3d& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform3d& OutTransform, const FName &BoneName, const EBoneControlSpace &Space);
 
 #pragma endregion Animation
 
@@ -268,15 +273,15 @@ public:
 	static void EndAndClearRoutine(FCsRoutine*& R);
 
 	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale=false);
-	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale=false);
+	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector3f& StartScale, const FVector3f& EndScale, const float& Time, const bool& IsRelativeScale=false);
 	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale=false);
-	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale=false);
+	static const FCsRoutineHandle& ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const FVector3f& StartScale, const FVector3f& EndScale, const float& Time, const bool& IsRelativeScale=false);
 	static char ScaleActorOverTime_Internal(FCsRoutine* R);
 
 	static const FCsRoutineHandle& ScaleActorOverTime_AsCurve(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const bool& IsRelativeScale = false);
 	static char ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R);
 
-	static const FCsRoutineHandle& MoveActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartLocation, const FVector& EndLocation, const float& Time, const bool& IsRelativeLocation=false);
+	static const FCsRoutineHandle& MoveActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector3f& StartLocation, const FVector3f& EndLocation, const float& Time, const bool& IsRelativeLocation=false);
 	static char MoveActorOverTime_Internal(FCsRoutine* R);
 	/*
 	static FCsRoutine* DeAllocateActor(const ECsCoroutineSchedule &CoroutineSchedule, AActor* InActor, const int32 &Index, const float &Delay);

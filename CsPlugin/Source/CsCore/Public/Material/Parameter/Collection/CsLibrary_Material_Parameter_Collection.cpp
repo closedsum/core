@@ -175,7 +175,7 @@ namespace NCsMaterial
 				return (FUniformBufferRHIRef*)(Base + Offset);
 			}
 
-			FRHIUniformBufferLayout* FLibrary::GetUniformBufferLayoutPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource)
+			FUniformBufferLayoutRHIRef* FLibrary::GetUniformBufferLayoutPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource)
 			{
 				CS_IS_PTR_NULL_CHECKED(Resource)
 
@@ -199,7 +199,7 @@ namespace NCsMaterial
 				// Offset by FUniformBufferRHIRef	- UniformBuffer
 				Offset += sizeof(FUniformBufferRHIRef);
 
-				return (FRHIUniformBufferLayout*)(Base + Offset);
+				return (FUniformBufferLayoutRHIRef*)(Base + Offset);
 			}
 
 		#if WITH_EDITOR
@@ -304,6 +304,8 @@ namespace NCsMaterial
 						}
 						else
 						{
+							check(0);
+							/*
 							for (int32 FunctionIndex = 0; FunctionIndex < CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
 							{
 								if (CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
@@ -312,6 +314,7 @@ namespace NCsMaterial
 									break;
 								}
 							}
+							*/
 						}
 
 						if (bRecompile)
@@ -455,6 +458,8 @@ namespace NCsMaterial
 						}
 						else
 						{
+							check(0);
+							/*
 							for (int32 FunctionIndex = 0; FunctionIndex < CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
 							{
 								if (CurrentMaterial->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
@@ -463,6 +468,7 @@ namespace NCsMaterial
 									break;
 								}
 							}
+							*/
 						}
 
 						if (bRecompile)
@@ -525,6 +531,8 @@ namespace NCsMaterial
 					}
 					else
 					{
+						check(0);
+						/*
 						for (int32 FunctionIndex = 0; FunctionIndex < Material->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
 						{
 							if (Material->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
@@ -532,6 +540,7 @@ namespace NCsMaterial
 								bRecompile = true;
 							}
 						}
+						*/
 					}
 
 					if (bRecompile)
@@ -568,6 +577,8 @@ namespace NCsMaterial
 						}
 						else
 						{
+							check(0);
+							/*
 							for (int32 FunctionIndex = 0; FunctionIndex < Material->GetCachedExpressionData().ParameterCollectionInfos.Num() && !bRecompile; FunctionIndex++)
 							{
 								if (Material->GetCachedExpressionData().ParameterCollectionInfos[FunctionIndex].ParameterCollection == Collection)
@@ -575,6 +586,7 @@ namespace NCsMaterial
 									bRecompile = true;
 								}
 							}
+							*/
 						}
 
 						if (bRecompile)

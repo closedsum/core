@@ -41,7 +41,7 @@ namespace NCsAnimation
 				 */
 				static UStaticMesh* ConvertMeshesToStaticMesh(const TArray<UMeshComponent*>& InMeshComponents, const FTransform& InRootTransform = FTransform::Identity, const FString& InPackageName = FString());
 
-				static void VATUVsToStaticMeshLODs(UStaticMesh* StaticMesh, const int32 UVChannel, const TArray <TArray <FVector2D>>& UVs);
+				static void VATUVsToStaticMeshLODs(UStaticMesh* StaticMesh, const int32 UVChannel, const TArray <TArray <FVector2f>>& UVs);
 				static void VATColorsToStaticMeshLODs(UStaticMesh* StaticMesh, const TArray <TArray <FColor>>& Colors);
 			};
 		}

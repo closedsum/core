@@ -5,11 +5,11 @@ struct CSCORE_API FCsVectorWithNormal2D
 {
 public:
 
-	FVector Value;
+	FVector3f Value;
 
 private:
 
-	FVector Normal;
+	FVector3f Normal;
 
 	float Size;
 	float SizeSq;
@@ -24,7 +24,7 @@ public:
 	{
 	}
 
-	FORCEINLINE const FVector& GetNormal() const { return Normal; }
+	FORCEINLINE const FVector3f& GetNormal() const { return Normal; }
 
 	FORCEINLINE const float& GetSize() const { return Size; }
 	FORCEINLINE const float& GetSizeSq() const { return SizeSq; }
@@ -44,19 +44,19 @@ public:
 			}
 			else
 			{
-				Normal = FVector(Value.X, Value.Y, 0.f);
+				Normal = FVector3f(Value.X, Value.Y, 0.f);
 			}
 		}
 		else
 		if (SizeSq < SMALL_NUMBER)
 		{
 			Size   = 0.0f;
-			Normal = FVector::ZeroVector;
+			Normal = FVector3f::ZeroVector;
 		}
 		else
 		{
 			Size   = FMath::Sqrt(SizeSq);
-			Normal = (1.0f / Size) * FVector(Value.X, Value.Y, 0.f);
+			Normal = (1.0f / Size) * FVector3f(Value.X, Value.Y, 0.f);
 		}
 	}
 
@@ -83,8 +83,8 @@ public:
 
 	FORCEINLINE void Reset()
 	{
-		Value  = FVector::ZeroVector;
-		Normal = FVector::ZeroVector;
+		Value  = FVector3f::ZeroVector;
+		Normal = FVector3f::ZeroVector;
 		Size   = 0.0f;
 		SizeSq = 0.0f;
 	}

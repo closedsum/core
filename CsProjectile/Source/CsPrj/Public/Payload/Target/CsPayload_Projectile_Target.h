@@ -26,7 +26,7 @@ namespace NCsProjectile
 
 				virtual USceneComponent* GetTargetComponent() const = 0;
 
-				virtual const FVector& GetTargetLocation() const = 0;
+				virtual const FVector3f& GetTargetLocation() const = 0;
 
 				virtual const FName& GetTargetBone() const = 0;
 

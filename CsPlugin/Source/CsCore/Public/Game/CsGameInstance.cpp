@@ -90,7 +90,7 @@ void UCsGameInstance::Init()
 
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsGameInstance::Tick);
-	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(TickDelegate);
 
 #if WITH_EDITOR
 	bPIE = true;
@@ -134,7 +134,7 @@ void UCsGameInstance::Shutdown()
 	Super::Shutdown();
 
 	// Unregister ticker delegate
-	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+	FTSTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
 
 	UCsCoordinator_GameEvent::Shutdown(this);
 	UCsManager_Load::Shutdown(this);

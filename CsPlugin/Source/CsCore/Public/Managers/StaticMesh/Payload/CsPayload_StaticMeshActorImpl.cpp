@@ -30,7 +30,7 @@ namespace NCsStaticMeshActor
 			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity),
+			Transform(FTransform3f::Identity),
 			bCastShadow(false),
 			bReceivesDecals(false),
 			bUseAsOccluder(false),
@@ -79,7 +79,7 @@ namespace NCsStaticMeshActor
 			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
-			Transform = FTransform::Identity;
+			Transform = FTransform3f::Identity;
 			bCastShadow = false;
 			bReceivesDecals = false;
 			bUseAsOccluder = false;

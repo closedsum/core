@@ -297,7 +297,7 @@ struct CSDMG_API FCsDamageRadial
 	void OnPostLoad() { Init(); }
 	void OnLoad() { Init(); }
 
-	float GetDamage(const FVector& Origin, const FVector &Location)
+	float GetDamage(const FVector3f& Origin, const FVector3f& Location)
 	{
 		if (DeltaRadius == 0.0f)
 			return 0.0f;
@@ -318,7 +318,7 @@ struct CSDMG_API FCsDamageRadial
 		return (*EasingFunction)(Percent, 0.0f, 1.0f, 1.0f) * Delta + Min;
 	}
 
-	float GetOwnerDamage(const FVector &Origin, const FVector &Location)
+	float GetOwnerDamage(const FVector3f& Origin, const FVector3f& Location)
 	{
 		if (!bApplyToOwner)
 			return 0.0f;

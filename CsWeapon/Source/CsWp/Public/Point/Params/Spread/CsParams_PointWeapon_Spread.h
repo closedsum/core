@@ -45,7 +45,7 @@ public:
 			default Direction and World Up vector.
 	*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point")
-	FVector Extents;
+	FVector3f Extents;
 
 	/** Describes the Axis by which the start locations within a Spread Shape are Distributed. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point")
@@ -110,7 +110,7 @@ namespace NCsWeapon
 							The Radius is represented by the Right vector with respect to the
 							default Direction and World Up vector.
 					*/
-					CS_DECLARE_MEMBER_WITH_PROXY(Extents, FVector)
+					CS_DECLARE_MEMBER_WITH_PROXY(Extents, FVector3f)
 					/** Describes the Axis by which the start locations within a Spread Shape are Distributed. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Axis, AxisType)
 					/** Describes the distribution of start locations within a Spread Shape. */
@@ -132,7 +132,7 @@ namespace NCsWeapon
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Shape, ShapeType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Axis, AxisType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Extents, FVector)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Extents, FVector3f)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Distribution, DistributionType)
 
 					bool IsValidChecked(const FString& Context) const;
@@ -146,7 +146,7 @@ namespace NCsWeapon
 						NCsWeapon::NPoint::NSpread::FLibrary::SetAnglesChecked(Context, Count, GetAngleType(), GetAngle(), GetDistribution(), OutAngles);
 					}
 					*/
-					FORCEINLINE FVector GetRandomOffsetChecked(const FString& Context) const
+					FORCEINLINE FVector3f GetRandomOffsetChecked(const FString& Context) const
 					{
 						return NCsWeapon::NPoint::NSpread::FLibrary::GetRandomOffsetChecked(Context, GetShape(), GetExtents(), GetDistribution());
 					}

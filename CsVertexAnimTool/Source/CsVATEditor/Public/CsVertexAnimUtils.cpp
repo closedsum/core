@@ -3,6 +3,8 @@
 
 #if WITH_EDITOR
 
+// Library
+#include "Library/CsLibrary_Math.h"
 // Material
 #include "Materials/MaterialInstanceDynamic.h"
 // Module
@@ -179,8 +181,10 @@ namespace NCsAnimation
 			};
 
 			// Helper function for ConvertMeshesToStaticMesh
-			static void SkinnedMeshToRawMeshes(USkinnedMeshComponent* InSkinnedMeshComponent, int32 InOverallMaxLODs, const FMatrix& InComponentToWorld, const FString& InPackageName, TArray<FRawMeshTracker>& OutRawMeshTrackers, TArray<FRawMesh>& OutRawMeshes, TArray<UMaterialInterface*>& OutMaterials)
+			static void SkinnedMeshToRawMeshes(USkinnedMeshComponent* InSkinnedMeshComponent, int32 InOverallMaxLODs, const FMatrix44d& InComponentToWorld, const FString& InPackageName, TArray<FRawMeshTracker>& OutRawMeshTrackers, TArray<FRawMesh>& OutRawMeshes, TArray<UMaterialInterface*>& OutMaterials)
 			{
+				typedef NCsMath::FLibrary MathLibrary;
+
 				const int32 BaseMaterialIndex = OutMaterials.Num();
 
 				// Export all LODs to raw meshes
@@ -194,7 +198,7 @@ namespace NCsAnimation
 					FRawMeshTracker& RawMeshTracker = OutRawMeshTrackers[OverallLODIndex];
 					const int32 BaseVertexIndex = RawMesh.VertexPositions.Num();
 
-					FSkeletalMeshLODInfo& SrcLODInfo = *(InSkinnedMeshComponent->SkeletalMesh->GetLODInfo(LODIndexRead));
+					FSkeletalMeshLODInfo& SrcLODInfo = *(InSkinnedMeshComponent->GetSkinnedAsset()->GetLODInfo(LODIndexRead));
 
 					// Get the CPU skinned verts for this LOD
 					TArray<FFinalSkinVertex> FinalVertices;
@@ -206,12 +210,14 @@ namespace NCsAnimation
 					// Copy skinned vertex positions
 					for (int32 VertIndex = 0; VertIndex < FinalVertices.Num(); ++VertIndex)
 					{
-						RawMesh.VertexPositions.Add(InComponentToWorld.TransformPosition(FinalVertices[VertIndex].Position));
+						RawMesh.VertexPositions.Add(MathLibrary::Convert(InComponentToWorld.TransformPosition(MathLibrary::Convert(FinalVertices[VertIndex].Position))));
 					}
 
 					const uint32 NumTexCoords = FMath::Min(LODData.StaticVertexBuffers.StaticMeshVertexBuffer.GetNumTexCoords(), (uint32)MAX_MESH_TEXTURE_COORDS);
 					const int32 NumSections = LODData.RenderSections.Num();
 					FRawStaticIndexBuffer16or32Interface& IndexBuffer = *LODData.MultiSizeIndexContainer.GetIndexBuffer();
+
+					typedef NCsMath::FLibrary MathLibrary;
 
 					for (int32 SectionIndex = 0; SectionIndex < NumSections; SectionIndex++)
 					{
@@ -227,14 +233,14 @@ namespace NCsAnimation
 								RawMesh.WedgeIndices.Add(BaseVertexIndex + VertexIndexForWedge);
 
 								const FFinalSkinVertex& SkinnedVertex = FinalVertices[VertexIndexForWedge];
-								const FVector TangentX = InComponentToWorld.TransformVector(SkinnedVertex.TangentX.ToFVector());
-								const FVector TangentZ = InComponentToWorld.TransformVector(SkinnedVertex.TangentZ.ToFVector());
-								const FVector4 UnpackedTangentZ = SkinnedVertex.TangentZ.ToFVector4();
-								const FVector TangentY = (TangentZ ^ TangentX).GetSafeNormal() * UnpackedTangentZ.W;
+								const FVector3d TangentX		= InComponentToWorld.TransformVector(SkinnedVertex.TangentX.ToFVector());
+								const FVector3d TangentZ		= InComponentToWorld.TransformVector(SkinnedVertex.TangentZ.ToFVector());
+								const FVector4d UnpackedTangentZ = SkinnedVertex.TangentZ.ToFVector4();
+								const FVector3d TangentY		= (TangentZ ^ TangentX).GetSafeNormal() * UnpackedTangentZ.W;
 
-								RawMesh.WedgeTangentX.Add(TangentX);
-								RawMesh.WedgeTangentY.Add(TangentY);
-								RawMesh.WedgeTangentZ.Add(TangentZ);
+								RawMesh.WedgeTangentX.Add(MathLibrary::Convert(TangentX));
+								RawMesh.WedgeTangentY.Add(MathLibrary::Convert(TangentY));
+								RawMesh.WedgeTangentZ.Add(MathLibrary::Convert(TangentZ));
 
 								for (uint32 TexCoordIndex = 0; TexCoordIndex < MAX_MESH_TEXTURE_COORDS; TexCoordIndex++)
 								{
@@ -264,7 +270,7 @@ namespace NCsAnimation
 							// use the remapping of material indices if there is a valid value
 							if (SrcLODInfo.LODMaterialMap.IsValidIndex(SectionIndex) && SrcLODInfo.LODMaterialMap[SectionIndex] != INDEX_NONE)
 							{
-								MaterialIndex = FMath::Clamp<int32>(SrcLODInfo.LODMaterialMap[SectionIndex], 0, InSkinnedMeshComponent->SkeletalMesh->Materials.Num());
+								MaterialIndex = FMath::Clamp<int32>(SrcLODInfo.LODMaterialMap[SectionIndex], 0, InSkinnedMeshComponent->GetSkinnedAsset()->GetMaterials().Num());
 							}
 
 							// copy face info
@@ -348,7 +354,7 @@ namespace NCsAnimation
 						}
 						else if (false)//(IsValidStaticMeshComponent(StaticMeshComponent))
 						{
-							OverallMaxLODs = FMath::Max(StaticMeshComponent->GetStaticMesh()->RenderData->LODResources.Num(), OverallMaxLODs);
+							OverallMaxLODs = FMath::Max(StaticMeshComponent->GetStaticMesh()->GetRenderData()->LODResources.Num(), OverallMaxLODs);
 						}
 					}
 
@@ -420,7 +426,7 @@ namespace NCsAnimation
 						StaticMesh = NewObject<UStaticMesh>(Package, *MeshName, RF_Public | RF_Standalone);
 						StaticMesh->InitResources();
 
-						StaticMesh->LightingGuid = FGuid::NewGuid();
+						StaticMesh->SetLightingGuid(FGuid::NewGuid());
 
 						// Determine which texture coordinate map should be used for storing/generating the lightmap UVs
 						const uint32 LightMapIndex = FMath::Min(MaxInUseTextureCoordinate + 1, (uint32)MAX_MESH_TEXTURE_COORDS - 1);
@@ -446,14 +452,14 @@ namespace NCsAnimation
 						// Copy materials to new mesh 
 						for (UMaterialInterface* Material : Materials)
 						{
-							StaticMesh->StaticMaterials.Add(FStaticMaterial(Material));
+							StaticMesh->GetStaticMaterials().Add(FStaticMaterial(Material));
 						}
 
 						//Set the Imported version before calling the build
 						StaticMesh->ImportVersion = EImportStaticMeshVersion::LastVersion;
 
 						// Set light map coordinate index to match DstLightmapIndex
-						StaticMesh->LightMapCoordinateIndex = LightMapIndex;
+						StaticMesh->SetLightMapCoordinateIndex(LightMapIndex);
 
 						// setup section info map
 						for (int32 RawMeshLODIndex = 0; RawMeshLODIndex < RawMeshes.Num(); RawMeshLODIndex++)
@@ -505,8 +511,10 @@ namespace NCsAnimation
 				return StaticMesh;
 			}
 
-			void FUtility::VATUVsToStaticMeshLODs(UStaticMesh* StaticMesh, const int32 UVChannel, const TArray<TArray<FVector2D>>& UVs)
+			void FUtility::VATUVsToStaticMeshLODs(UStaticMesh* StaticMesh, const int32 UVChannel, const TArray<TArray<FVector2f>>& UVs)
 			{
+				typedef NCsMath::FLibrary MathLibrary;
+
 				for (int32 LOD = 0; LOD < StaticMesh->GetNumLODs(); LOD++)
 				{
 					const uint32 PaintingMeshLODIndex = LOD;
@@ -523,8 +531,8 @@ namespace NCsAnimation
 							// Build a mapping of vertex positions to vertex colors.
 							for (int32 WedgeIndex = 0; WedgeIndex < Mesh.WedgeIndices.Num(); ++WedgeIndex)
 							{
-								int32 VertID = Mesh.WedgeIndices[WedgeIndex];
-								FVector Position = Mesh.VertexPositions[VertID];
+								int32 VertID	   = Mesh.WedgeIndices[WedgeIndex];
+								FVector3d Position = MathLibrary::Convert(Mesh.VertexPositions[VertID]);
 
 								for (uint32 TexCoordIndex = 0; TexCoordIndex < MAX_MESH_TEXTURE_COORDS; TexCoordIndex++)
 								{
@@ -560,7 +568,7 @@ namespace NCsAnimation
 
 							StaticMesh->ImportVersion = EImportStaticMeshVersion::LastVersion;
 							// Set light map coordinate index to match DstLightmapIndex
-							StaticMesh->LightMapCoordinateIndex = LightMapIndex;
+							StaticMesh->SetLightMapCoordinateIndex(LightMapIndex);
 			
 
 						}
@@ -599,7 +607,7 @@ namespace NCsAnimation
 							for (int32 WedgeIndex = 0; WedgeIndex < Mesh.WedgeIndices.Num(); ++WedgeIndex)
 							{
 								int32 VertID = Mesh.WedgeIndices[WedgeIndex];
-								FVector Position = Mesh.VertexPositions[VertID];
+								FVector3f Position = Mesh.VertexPositions[VertID];
 								Mesh.WedgeColors[WedgeIndex] = Colors[PaintingMeshLODIndex][VertID];
 							}
 

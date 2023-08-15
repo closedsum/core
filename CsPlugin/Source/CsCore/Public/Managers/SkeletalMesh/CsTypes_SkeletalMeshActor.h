@@ -211,7 +211,7 @@ public:
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh")
 	bool bCastShadow;
@@ -234,7 +234,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity),
+		Transform(FTransform3f::Identity),
 		bCastShadow(false),
 		bReceivesDecals(false),
 		bUseAsOccluder(false)
@@ -257,7 +257,7 @@ public:
 	FORCEINLINE FCsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
 	FORCEINLINE FName* GetBonePtr() { return &Bone; }
 	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
-	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
+	FORCEINLINE FTransform3f* GetTransformPtr() { return &Transform; }
 
 #undef DeallocateMethodType
 

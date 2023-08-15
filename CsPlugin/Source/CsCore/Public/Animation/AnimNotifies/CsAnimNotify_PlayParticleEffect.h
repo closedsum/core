@@ -35,12 +35,12 @@ struct FCsAnimNotifyFX
 	FName Bone;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FVector Location;
+	FVector3f Location;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
-	FQuat RotationQuat;
+	FQuat4f RotationQuat;
 
 	FCsAnimNotifyFX() :
 		Particle(nullptr),

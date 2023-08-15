@@ -159,7 +159,7 @@ namespace NCsStaticMeshActor
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsStaticMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			UCsManager_StaticMeshActor* Manager_StaticMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
@@ -169,7 +169,7 @@ namespace NCsStaticMeshActor
 			// Set Payload
 			typedef NCsStaticMeshActor::NPayload::FLibrary PayloadLibrary;
 
-			checkf(Transform.GetScale3D() != FVector::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context);
+			checkf(Transform.GetScale3D() != FVector3f::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context);
 
 			Payload->Transform = Transform;
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Info);
@@ -177,7 +177,7 @@ namespace NCsStaticMeshActor
 			return Manager_StaticMeshActor->Spawn(Info.Type, Payload);
 		}
 
-		const FCsStaticMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsStaticMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_StaticMeshActor* Manager_StaticMeshActor = GetSafe(Context, WorldContext, Log);
 
@@ -189,9 +189,9 @@ namespace NCsStaticMeshActor
 			if (!Info.IsValid(Context, Log))
 				return nullptr;
 
-			if (Transform.GetScale3D() == FVector::ZeroVector)
+			if (Transform.GetScale3D() == FVector3f::ZeroVector)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context));
 				return nullptr;
 			}
 			return SpawnChecked(Context, WorldContext, PooledPayload, Info, Transform);

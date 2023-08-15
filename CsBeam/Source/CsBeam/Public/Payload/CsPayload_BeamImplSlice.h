@@ -35,11 +35,11 @@ namespace NCsBeam
 
 			FAttachmentTransformRules AttachRules;
 
-			FVector Location;
+			FVector3f Location;
 
-			FVector Direction;
+			FVector3f Direction;
 
-			FVector Scale;
+			FVector3f Scale;
 
 		public:
 
@@ -64,9 +64,9 @@ namespace NCsBeam
 
 			FORCEINLINE const FECsBeam& GetType() const { return Type; }
 			FORCEINLINE const FAttachmentTransformRules& GetAttachRules() const { return AttachRules; }
-			FORCEINLINE const FVector& GetLocation() const { return Location; }
-			FORCEINLINE const FVector& GetDirection() const { return Direction; }
-			FORCEINLINE const FVector& GetScale() const { return Scale; }
+			FORCEINLINE const FVector3f& GetLocation() const { return Location; }
+			FORCEINLINE const FVector3f& GetDirection() const { return Direction; }
+			FORCEINLINE const FVector3f& GetScale() const { return Scale; }
 
 		#pragma endregion BeamPayloadType (NCsBeam::Payload::IPayload)
 

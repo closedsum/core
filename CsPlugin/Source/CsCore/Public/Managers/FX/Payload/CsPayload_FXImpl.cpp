@@ -48,7 +48,7 @@ namespace NCsFX
 			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity),
+			Transform(FTransform3f::Identity),
 			bAbsoluteLocation(false),
 			bAbsoluteRotation(false),
 			bAbsoluteScale(false),
@@ -106,7 +106,7 @@ namespace NCsFX
 			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
-			Transform = FTransform::Identity;
+			Transform = FTransform3f::Identity;
 			bAbsoluteLocation = false;
 			bAbsoluteRotation = false;
 			bAbsoluteScale = false;

@@ -7,10 +7,14 @@
 #include "Types/CsTypes_Curve.h"
 #include "Types/CsTypes_Interpolation.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+	// Common
+#include "Library/CsLibrary_SceneComponent.h"
 #include "Library/CsLibrary_String.h"
 #include "Library/CsLibrary_Math.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Player.h"
+#include "Library/CsLibrary_Valid.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Game
@@ -50,31 +54,40 @@
 // Cache
 #pragma region
 
-namespace NCsCommonCached
+namespace NCsCommon
 {
-	namespace Name
+	namespace NLibrary
 	{
-		// Functions
-		const FName ScaleActorOverTime_Internal = FName("UCsLibrary_Common::ScaleActorOverTime_Internal");
-		const FName ScaleActorOverTime_AsCurve_Internal = FName("UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal");
-		const FName MoveActorOverTime_Internal = FName("UCsLibrary_Common::MoveActorOverTime_Internal");
-		const FName DestroyMaterialInstanceDynamic_Internal = FName("UCsLibrary_Common::DestroyMaterialInstanceDynamic_Internal");
-		const FName FadeCameraOverTime_Internal = FName("UCsLibrary_Common::FadeCameraOverTime_Internal");
-	}
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, ScaleActorOverTime);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, ScaleActorOverTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, ScaleActorOverTime_AsCurve);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, ScaleActorOverTime_AsCurve_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, MoveActorOverTime);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, MoveActorOverTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, DestroyMaterialInstanceDynamic);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, DestroyMaterialInstanceDynamic_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, FadeCameraOverTime);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCommon::FLibrary, FadeCameraOverTime_Internal);
 
-	namespace Str
-	{
-		// Functions
-		const FString ScaleActorOverTime_Internal = TEXT("UCsLibrary_Common::ScaleActorOverTime_Internal");
-		const FString ScaleActorOverTime_AsCurve_Internal = TEXT("UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal");
-		const FString MoveActorOverTime_Internal = TEXT("UCsLibrary_Common::MoveActorOverTime_Internal");
-		const FString DestroyMaterialInstanceDynamic_Internal = TEXT("UCsLibrary_Common::DestroyMaterialInstanceDynamic_Internal");
-		const FString FadeCameraOverTime_Internal = TEXT("UCsLibrary_Common::FadeCameraOverTime_Internal");
+				const FString Client = TEXT("Client");
+				const FString Server_Dedicated = TEXT("Server-Dedicated");
+				const FString Server = TEXT("Server");
+				const FString Unknown = TEXT("Unknown");
+			}
 
-		const FString Client = TEXT("Client");
-		const FString Server_Dedicated = TEXT("Server-Dedicated");
-		const FString Server = TEXT("Server");
-		const FString Unknown = TEXT("Unknown");
+			namespace Name
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(NCsCommon::FLibrary, ScaleActorOverTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(NCsCommon::FLibrary, ScaleActorOverTime_AsCurve_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(NCsCommon::FLibrary, MoveActorOverTime_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(NCsCommon::FLibrary, DestroyMaterialInstanceDynamic_Internal);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(NCsCommon::FLibrary, FadeCameraOverTime_Internal);
+			}
+		}
 	}
 }
 
@@ -135,12 +148,12 @@ bool UCsLibrary_Common::IsLocallyControlled(AShooterCharacter* InPawn, UWorld* I
 // Local Client
 #pragma region
 
-void UCsLibrary_Common::GetLocalPlayerViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator &OutRotation)
+void UCsLibrary_Common::GetLocalPlayerViewPoint(UWorld* InWorld, FVector3f &OutLocation, FRotator3f&OutRotation)
 {
 	//GetLocalPlayerViewPoint<APlayerController>(InWorld, OutLocation, OutRotation);
 }
 
-float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector& Location)
+float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld, const FVector3f& Location)
 {
 	typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
@@ -149,12 +162,13 @@ float UCsLibrary_Common::GetSquaredDistanceToLocalControllerEye(UWorld *InWorld,
 	if (!LocalController)
 		return -1.0f;
 
-	FVector ViewLocation;
-	FRotator ViewRotation;
-
+	FVector3d ViewLocation;
+	FRotator3d ViewRotation;
 	LocalController->GetPlayerViewPoint(ViewLocation, ViewRotation);
 
-	return FVector::DistSquared(ViewLocation, Location);
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return FVector3f::DistSquared(MathLibrary::Convert(ViewLocation), Location);
 }
 
 #pragma endregion Local Client
@@ -181,13 +195,13 @@ bool UCsLibrary_Common::IsRift()
 	return GEngine->StereoRenderingDevice.IsValid() && GEngine->StereoRenderingDevice->IsStereoEnabled();// && GEngine->StereoRenderingDevice->GetHMDDeviceType() == OculusHMD;
 }
 
-void UCsLibrary_Common::GetHMDOrientationAndPosition(FRotator& DeviceRotation, FVector& DevicePosition)
+void UCsLibrary_Common::GetHMDOrientationAndPosition(FRotator3f& DeviceRotation, FVector3f& DevicePosition)
 {
 	// TODO: FIX:
 	if (GEngine->StereoRenderingDevice.IsValid())// && GEngine->HMDDevice->IsHeadTrackingAllowed())
 	{
-		FQuat OrientationAsQuat;
-		FVector Position(0.f);
+		FQuat4f OrientationAsQuat;
+		FVector3f Position(0.f);
 
 		//GEngine->HMDDevice->GetCurrentOrientationAndPosition(OrientationAsQuat, Position);
 
@@ -196,23 +210,30 @@ void UCsLibrary_Common::GetHMDOrientationAndPosition(FRotator& DeviceRotation, F
 	}
 	else
 	{
-		DeviceRotation = FRotator::ZeroRotator;
-		DevicePosition = FVector::ZeroVector;
+		DeviceRotation = FRotator3f::ZeroRotator;
+		DevicePosition = FVector3f::ZeroVector;
 	}
 }
 
-void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocation, FRotator& OutRotation)
+void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector3f &OutLocation, FRotator3f& OutRotation)
 {
 	typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
+	typedef NCsMath::FLibrary MathLibrary;
 
 	APlayerController* PlayerController = PlayerControllerLibrary::GetFirstLocal(InWorld);
 	
-	PlayerController->GetPlayerViewPoint(OutLocation, OutRotation);
+	FVector3d Location;
+	FRotator3d Rotation;
+	PlayerController->GetPlayerViewPoint(Location, Rotation);
+
+	OutLocation = MathLibrary::Convert(Location);
+	OutRotation = MathLibrary::Convert(Rotation);
+
 	// TODO: FIX:
 	if (GEngine->StereoRenderingDevice.IsValid())// && GEngine->HMDDevice->IsHeadTrackingAllowed())
 	{
-		FQuat hmdOrientation;
-		FVector hmdPosition;
+		FQuat4f hmdOrientation;
+		FVector3f hmdPosition;
 
 		//GEngine->StereoRenderingDevice->GetCurrentOrientationAndPosition(hmdOrientation, hmdPosition);
 
@@ -222,19 +243,19 @@ void UCsLibrary_Common::GetHMDWorldViewPoint(UWorld* InWorld, FVector &OutLocati
 		// get hmdPosition relative to hmdRotation's forward coordinate system - not the tracker's coordinate system
 		// Example. headset is facing -X and moves head position 10 units in -X, the actual world location should be forward by 10 units
 
-		const FVector X_Axis = hmdOrientation.GetAxisX();
-		const FVector Y_Axis = hmdOrientation.GetAxisY();
-		const FVector Z_Axis = hmdOrientation.GetAxisZ();
+		const FVector3f X_Axis = hmdOrientation.GetAxisX();
+		const FVector3f Y_Axis = hmdOrientation.GetAxisY();
+		const FVector3f Z_Axis = hmdOrientation.GetAxisZ();
 
-		FVector positionRelativeToHeadsetOrientation;
-		positionRelativeToHeadsetOrientation.X = FVector::DotProduct(X_Axis, hmdPosition);
-		positionRelativeToHeadsetOrientation.Y = FVector::DotProduct(Y_Axis, hmdPosition);
-		positionRelativeToHeadsetOrientation.Z = FVector::DotProduct(Z_Axis, hmdPosition);
+		FVector3f positionRelativeToHeadsetOrientation;
+		positionRelativeToHeadsetOrientation.X = FVector3f::DotProduct(X_Axis, hmdPosition);
+		positionRelativeToHeadsetOrientation.Y = FVector3f::DotProduct(Y_Axis, hmdPosition);
+		positionRelativeToHeadsetOrientation.Z = FVector3f::DotProduct(Z_Axis, hmdPosition);
 
 		//OutRotation = PlayerController->GetControlRotation();
 
 		// now rotate the local position into player's world rotation
-		FVector hmdWorldOffset(OutRotation.RotateVector(positionRelativeToHeadsetOrientation));
+		FVector3f hmdWorldOffset(OutRotation.RotateVector(positionRelativeToHeadsetOrientation));
 		OutLocation += hmdWorldOffset;
 	}
 }
@@ -362,19 +383,21 @@ UCsDataMapping* UCsLibrary_Common::GetDataMapping(UWorld* InWorld)
 */
 #pragma endregion Data
 
-FVector UCsLibrary_Common::GetBoneLocation(USkeletalMeshComponent* InMesh, const int32 &BoneIndex, const TEnumAsByte<EBoneSpaces::Type> &Space)
+FVector3f UCsLibrary_Common::GetBoneLocation(USkeletalMeshComponent* InMesh, const int32 &BoneIndex, const TEnumAsByte<EBoneSpaces::Type> &Space)
 {
 	if (BoneIndex <= INDEX_NONE)
 	{
 		UE_LOG(LogAnimation, Log, TEXT("UShooterStatics::GetBoneLocation: BoneIndex <= INDEX_NONE. Not a Valid BoneIndex."));
-		return FVector::ZeroVector;
+		return FVector3f::ZeroVector;
 	}
 
 	if (BoneIndex >= InMesh->GetNumBones())
 	{
 		UE_LOG(LogAnimation, Log, TEXT("UShooterStatics::GetBoneLocation: BoneIndex >= Maximum Bone Count. Not a Valid BoneIndex."));
-		return FVector::ZeroVector;
+		return FVector3f::ZeroVector;
 	}
+
+	typedef NCsMath::FLibrary MathLibrary;
 
 	if (Space == EBoneSpaces::ComponentSpace)
 	{
@@ -394,17 +417,17 @@ FVector UCsLibrary_Common::GetBoneLocation(USkeletalMeshComponent* InMesh, const
 			}
 
 			// return empty vector
-			return FVector::ZeroVector;
+			return FVector3f::ZeroVector;
 		}
 		*/
-		return InMesh->GetComponentSpaceTransforms()[BoneIndex].GetLocation();
+		return MathLibrary::Convert(InMesh->GetComponentSpaceTransforms()[BoneIndex].GetLocation());
 	}
 	else if (Space == EBoneSpaces::WorldSpace)
 	{
 		// To support non-uniform scale (via LocalToWorld), use GetBoneMatrix
-		return InMesh->GetBoneMatrix(BoneIndex).GetOrigin();
+		return MathLibrary::Convert(InMesh->GetBoneMatrix(BoneIndex).GetOrigin());
 	}
-	return FVector::ZeroVector;
+	return FVector3f::ZeroVector;
 }
 
 FName UCsLibrary_Common::GetParentBone(USkeletalMeshComponent* InMesh, const int32 &BoneIndex)
@@ -413,7 +436,8 @@ FName UCsLibrary_Common::GetParentBone(USkeletalMeshComponent* InMesh, const int
 
 	if ((BoneIndex != INDEX_NONE) && (BoneIndex > 0)) // This checks that this bone is not the root (ie no parent), and that BoneIndex != INDEX_NONE (ie bone name was found)
 	{
-		Result = InMesh->SkeletalMesh->RefSkeleton.GetBoneName(InMesh->SkeletalMesh->RefSkeleton.GetParentIndex(BoneIndex));
+		USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(InMesh->GetSkinnedAsset());
+		Result						= SkeletalMesh->GetRefSkeleton().GetBoneName(SkeletalMesh->GetRefSkeleton().GetParentIndex(BoneIndex));
 	}
 	return Result;
 }
@@ -433,7 +457,7 @@ void UCsLibrary_Common::CopyHitResult(const FHitResult& From, FHitResult& To)
 	To.PenetrationDepth = From.PenetrationDepth;
 	To.Item = From.Item;
 	To.PhysMaterial = From.PhysMaterial;
-	To.Actor = From.Actor;
+	To.HitObjectHandle = From.HitObjectHandle;
 	To.Component = From.Component;
 	To.BoneName = From.BoneName;
 	To.FaceIndex = From.FaceIndex;
@@ -453,7 +477,7 @@ void UCsLibrary_Common::SetHitResult(FHitResult* InHitResult, FHitResult* OutHit
 	OutHitResult->PenetrationDepth = InHitResult->PenetrationDepth;
 	OutHitResult->Item = InHitResult->Item;
 	OutHitResult->PhysMaterial = InHitResult->PhysMaterial;
-	OutHitResult->Actor = InHitResult->Actor;
+	OutHitResult->HitObjectHandle = InHitResult->HitObjectHandle;
 	OutHitResult->Component = InHitResult->Component;
 	OutHitResult->BoneName = InHitResult->BoneName;
 	OutHitResult->FaceIndex = InHitResult->FaceIndex;
@@ -480,12 +504,12 @@ bool UCsLibrary_Common::IsMatchInProgress(UWorld *InWorld)
 // Math
 #pragma region
 
-FRotator UCsLibrary_Common::Rotator_GetAngleDelta(const FRotator &A, const FRotator &B)
+FRotator3f UCsLibrary_Common::Rotator_GetAngleDelta(const FRotator3f&A, const FRotator3f&B)
 {
 	return NCsMath::FLibrary::GetAngleDelta(A, B);
 }
 
-FRotator UCsLibrary_Common::Rotator_GetAbsAngleDelta(const FRotator &A, const FRotator &B)
+FRotator3f UCsLibrary_Common::Rotator_GetAbsAngleDelta(const FRotator3f&A, const FRotator3f&B)
 {
 	return NCsMath::FLibrary::GetAbsAngleDelta(A, B);
 }
@@ -507,30 +531,30 @@ float UCsLibrary_Common::LerpAngle(const float &FromAngle, const float &ToAngle,
 	return FMath::Clamp(NCsMath::FLibrary::AngleClamp360(FromAngle + Percent * DeltaAngle), MinAngle, MaxAngle);
 }
 
-FVector UCsLibrary_Common::BuildUniformVector(const FVector &V, const int32 &Axes)
+FVector3f UCsLibrary_Common::BuildUniformVector(const FVector3f &V, const int32 &Axes)
 {
 	/*
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
-		return FVector(V.X);
+		return FVector3f(V.X);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Y))
-		return FVector(V.Y);
+		return FVector3f(V.Y);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_Z))
-		return FVector(V.Z);
+		return FVector3f(V.Z);
 		*/
-	return FVector::ZeroVector;
+	return FVector3f::ZeroVector;
 }
 
-FRotator UCsLibrary_Common::BuildUniformRotator(const FRotator &R, const int32 &Axes)
+FRotator3f UCsLibrary_Common::BuildUniformRotator(const FRotator3f &R, const int32 &Axes)
 {
 	/*
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_ROLL))
-		return FRotator(R.Roll);
+		return FRotator3f(R.Roll);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_PITCH))
-		return FRotator(R.Pitch);
+		return FRotator3f(R.Pitch);
 	if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_YAW))
-		return FRotator(R.Yaw);
+		return FRotator3f(R.Yaw);
 		*/
-	return FRotator::ZeroRotator;
+	return FRotator3f::ZeroRotator;
 }
 
 int32 UCsLibrary_Common::GetNumBitFlags(const int32 &BitMask, const int32 &MaxBits)
@@ -570,7 +594,7 @@ FString UCsLibrary_Common::UInt64ToString(const uint64 &Value)
 	return Zeroes + FString::Printf(TEXT("%llu"), Value);
 }
 
-FVector UCsLibrary_Common::ClampVectorComponents(FVector V, const float &Clamp)
+FVector3f UCsLibrary_Common::ClampVectorComponents(FVector3f V, const float &Clamp)
 {
 	V.X = FMath::Abs(V.X) < Clamp ? FMath::Sign(V.X) * Clamp : V.X;
 	V.Y = FMath::Abs(V.Y) < Clamp ? FMath::Sign(V.Y) * Clamp : V.Y;
@@ -579,14 +603,37 @@ FVector UCsLibrary_Common::ClampVectorComponents(FVector V, const float &Clamp)
 	return V;
 }
 
-void UCsLibrary_Common::ClampMinVectorComponents(FVector &V, const float &Min)
+FVector3d UCsLibrary_Common::ClampVectorComponents(FVector3d V, const float& Clamp)
+{
+	V.X = FMath::Abs(V.X) < Clamp ? FMath::Sign(V.X) * Clamp : V.X;
+	V.Y = FMath::Abs(V.Y) < Clamp ? FMath::Sign(V.Y) * Clamp : V.Y;
+	V.Y = FMath::Abs(V.Z) < Clamp ? FMath::Sign(V.Z) * Clamp : V.Z;
+
+	return V;
+}
+
+void UCsLibrary_Common::ClampMinVectorComponents(FVector3f&V, const float &Min)
 {
 	V.X = FMath::Max(V.X, Min);
 	V.Y = FMath::Max(V.Y, Min);
 	V.Z = FMath::Max(V.Z, Min);
 }
 
-void UCsLibrary_Common::ClampMaxVectorComponents(FVector &V, const float &Max)
+void UCsLibrary_Common::ClampMinVectorComponents(FVector3d& V, const float& Min)
+{
+	V.X = FMath::Max(V.X, Min);
+	V.Y = FMath::Max(V.Y, Min);
+	V.Z = FMath::Max(V.Z, Min);
+}
+
+void UCsLibrary_Common::ClampMaxVectorComponents(FVector3f&V, const float &Max)
+{
+	V.X = FMath::Min(V.X, Max);
+	V.Y = FMath::Min(V.Y, Max);
+	V.Z = FMath::Min(V.Z, Max);
+}
+
+void UCsLibrary_Common::ClampMaxVectorComponents(FVector3d& V, const float& Max)
 {
 	V.X = FMath::Min(V.X, Max);
 	V.Y = FMath::Min(V.Y, Max);
@@ -671,28 +718,32 @@ bool UCsLibrary_Common::IsOnSameTeam(UWorld *InWorld, AShooterPlayerState* InPla
 	return InPlayerStateA->GetTeamNum() == InPlayerStateB->GetTeamNum();
 }
 */
-FVector UCsLibrary_Common::GetScaledPlayerViewDirection(AController* Controller, const FVector &Scale)
+FVector3f UCsLibrary_Common::GetScaledPlayerViewDirection(AController* Controller, const FVector3f &Scale)
 {
 	if (!Controller)
-		return FVector::ZeroVector;
+		return FVector3f::ZeroVector;
 
-	FVector Origin;
-	FRotator Rotation;
+	FVector3d Origin;
+	FRotator3d Rotation;
 
 	Controller->GetPlayerViewPoint(Origin, Rotation);
 
-	Rotation.Pitch = 0.0f;
-	Rotation.Roll  = 0.0f;
+	Rotation.Pitch = 0.0;
+	Rotation.Roll  = 0.0;
 
-	FRotationMatrix Matrix = FRotationMatrix(Rotation);
-	const FVector Forward  = Scale.X * Matrix.GetScaledAxis(EAxis::X);
-	const FVector Right	   = Scale.Y * Matrix.GetScaledAxis(EAxis::Y);
-	const FVector Up	   = Scale.Z * Matrix.GetScaledAxis(EAxis::Z);
+	FRotationMatrix44d Matrix = FRotationMatrix44d(Rotation);
+	const FVector3d Forward   = Scale.X * Matrix.GetScaledAxis(EAxis::X);
+	const FVector3d Right	  = Scale.Y * Matrix.GetScaledAxis(EAxis::Y);
+	const FVector3d Up	      = Scale.Z * Matrix.GetScaledAxis(EAxis::Z);
 
-	return Forward + Right + Up;
+	const FVector3d Result = Forward + Right + Up;
+	
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::Convert(Result);
 }
 /*
-void UCsLibrary_Common::GetHMDWorldViewPoint(APlayerController* PlayerController, FVector& out_Location, FRotator& out_Rotation)
+void UCsLibrary_Common::GetHMDWorldViewPoint(APlayerController* PlayerController, FVector3f& out_Location, FRotator& out_Rotation)
 {
 	check(PlayerController);
 
@@ -701,7 +752,7 @@ void UCsLibrary_Common::GetHMDWorldViewPoint(APlayerController* PlayerController
 	if (UShooterStatics::IsStereoscopic3D() && PlayerController->IsLocalPlayerController())
 	{
 		FQuat hmdOrientation;
-		FVector hmdPosition;
+		FVector3f hmdPosition;
 
 		GEngine->HMDDevice->GetCurrentOrientationAndPosition(hmdOrientation, hmdPosition);
 
@@ -711,19 +762,19 @@ void UCsLibrary_Common::GetHMDWorldViewPoint(APlayerController* PlayerController
 		// get hmdPosition relative to hmdRotation's forward coordinate system - not the tracker's coordinate system
 		// Example. headset is facing -X and moves head position 10 units in -X, the actual world location should be forward by 10 units
 
-		const FVector X_Axis = hmdOrientation.GetAxisX();
-		const FVector Y_Axis = hmdOrientation.GetAxisY();
-		const FVector Z_Axis = hmdOrientation.GetAxisZ();
+		const FVector3f X_Axis = hmdOrientation.GetAxisX();
+		const FVector3f Y_Axis = hmdOrientation.GetAxisY();
+		const FVector3f Z_Axis = hmdOrientation.GetAxisZ();
 
-		FVector positionRelativeToHeadsetOrientation;
-		positionRelativeToHeadsetOrientation.X = FVector::DotProduct(X_Axis, hmdPosition);
-		positionRelativeToHeadsetOrientation.Y = FVector::DotProduct(Y_Axis, hmdPosition);
-		positionRelativeToHeadsetOrientation.Z = FVector::DotProduct(Z_Axis, hmdPosition);
+		FVector3f positionRelativeToHeadsetOrientation;
+		positionRelativeToHeadsetOrientation.X = FVector3f::DotProduct(X_Axis, hmdPosition);
+		positionRelativeToHeadsetOrientation.Y = FVector3f::DotProduct(Y_Axis, hmdPosition);
+		positionRelativeToHeadsetOrientation.Z = FVector3f::DotProduct(Z_Axis, hmdPosition);
 
 		out_Rotation = PlayerController->GetControlRotation();
 
 		// now rotate the local position into player's world rotation
-		FVector hmdWorldOffset(out_Rotation.RotateVector(positionRelativeToHeadsetOrientation));
+		FVector3f hmdWorldOffset(out_Rotation.RotateVector(positionRelativeToHeadsetOrientation));
 		out_Location += hmdWorldOffset;
 	}
 }
@@ -1144,7 +1195,7 @@ void UCsLibrary_Common::ToggleEditorIcons(AActor* InActor, const bool &IsVisible
 // Animation
 #pragma region
 
-void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
+void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransform3d& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform3d& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
 {
 	const int32 BoneIndex = Mesh->GetBoneIndex(BoneName);
 
@@ -1166,7 +1217,7 @@ void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransfo
 
 				if (ParentBoneIndex != INDEX_NONE)
 				{
-					const FTransform& ParentTransform = Mesh->GetBoneTransform(ParentBoneIndex);
+					const FTransform3d& ParentTransform = Mesh->GetBoneTransform(ParentBoneIndex);
 					OutTransform					 *= ParentTransform;
 				}
 			}
@@ -1177,13 +1228,13 @@ void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransfo
 			{
 				if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
 				{
-					const FTransform& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
+					const FTransform3d& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 					OutTransform				   *= BoneTransform;
 				}
 
 				if (UPoseableMeshComponent* Component = Cast<UPoseableMeshComponent>(Mesh))
 				{
-					const FTransform& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
+					const FTransform3d& BoneTransform = Component->BoneSpaceTransforms[BoneIndex];
 					OutTransform				   *= BoneTransform;
 				}
 			}
@@ -1194,7 +1245,7 @@ void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransfo
 	}
 }
 
-void UCsLibrary_Common::ConvertComponentSpaceTransformToBoneSpace(const FTransform& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
+void UCsLibrary_Common::ConvertComponentSpaceTransformToBoneSpace(const FTransform3d& ComponentTransform, USkinnedMeshComponent* Mesh, FTransform3d& OutTransform, const FName &BoneName, const EBoneControlSpace &Space)
 {
 	const int32 BoneIndex = Mesh->GetBoneIndex(BoneName);
 
@@ -1216,7 +1267,7 @@ void UCsLibrary_Common::ConvertComponentSpaceTransformToBoneSpace(const FTransfo
 
 			if (ParentBoneIndex != INDEX_NONE)
 			{
-				const FTransform& ParentTransform = Mesh->GetBoneTransform(ParentBoneIndex);
+				const FTransform3d& ParentTransform = Mesh->GetBoneTransform(ParentBoneIndex);
 				OutTransform.SetToRelativeTransform(ParentTransform);
 			}
 		}
@@ -1226,13 +1277,13 @@ void UCsLibrary_Common::ConvertComponentSpaceTransformToBoneSpace(const FTransfo
 		{
 			if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
 			{
-				const FTransform& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
+				const FTransform3d& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 				OutTransform.SetToRelativeTransform(BoneTransform);
 			}
 
 			if (UPoseableMeshComponent* Component = Cast<UPoseableMeshComponent>(Mesh))
 			{
-				const FTransform& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
+				const FTransform3d& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 				OutTransform.SetToRelativeTransform(BoneTransform);
 			}
 		}
@@ -1309,112 +1360,149 @@ void UCsLibrary_Common::SetAndAttachEmitter(AEmitter* InEmitter, USceneComponent
 
 const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale)
 {
-	return ScaleActorOverTime(Group, EasingType, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
+	return ScaleActorOverTime(Group, EasingType, InActor, FVector3f(StartScale), FVector3f(EndScale), Time, IsRelativeScale);
 }
 
-const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale)
+const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector3f& StartScale, const FVector3f& EndScale, const float& Time, const bool& IsRelativeScale)
 {
-	if (Time <= 0.0f)
-	{
-		// LOG Warning
-		return FCsRoutineHandle::Invalid;
-	}
+	using namespace NCsCommon::NLibrary::NCached;
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(InActor->GetGameInstance());
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(Group);
+	const FString& Context = Str::ScaleActorOverTime;
 
-	Payload->CoroutineImpl.BindStatic(&UCsLibrary_Common::ScaleActorOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
-	Payload->Owner.SetObject(InActor);
+	CS_IS_INT_GREATER_THAN_CHECKED(Time, 0.0f)
 
-	Payload->SetName(NCsCommonCached::Str::ScaleActorOverTime_Internal);
-	Payload->SetFName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	static const int32 START_SCALE_INDEX = 0;
-	Payload->SetValue_Vector(START_SCALE_INDEX, StartScale);
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, InActor, Group);
 
-	static const int32 END_SCALE_INDEX = 1;
-	Payload->SetValue_Vector(END_SCALE_INDEX, EndScale);
+	typedef UCsLibrary_Common ClassType;
+	#define COROUTINE ScaleActorOverTime_Internal
 
-	static const int32 TIME_INDEX = 2;
-	Payload->SetValue_Float(TIME_INDEX, Time);
+	Payload->Init(Context, &ClassType::COROUTINE, InActor, InActor, Group, Str::COROUTINE, Name::COROUTINE);
 
-	Payload->SetValue_Flag(CS_FIRST, IsRelativeScale);
-	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
+	#undef COROUTINE
 
-	return Scheduler->Start(Payload);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_INT_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR_START
+
+	// Start Scale
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload, StartScale);
+	// End Scale
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload, EndScale);
+
+	// Time
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Time);
+
+	// Is Relative Scale
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, IsRelativeScale);
+	// Easing Type
+	CS_COROUTINE_PAYLOAD_PASS_INT(Payload, (int32)EasingType);
+
+	return CoroutineSchedulerLibrary::StartChecked(Context, InActor, Payload);
 }
 
 const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const float& StartScale, const float& EndScale, const float& Time, const bool& IsRelativeScale)
 {
-	return ScaleActorOverTime(Group, Curve, InActor, FVector(StartScale), FVector(EndScale), Time, IsRelativeScale);
+	return ScaleActorOverTime(Group, Curve, InActor, FVector3f(StartScale), FVector3f(EndScale), Time, IsRelativeScale);
 }
 
-const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const FVector& StartScale, const FVector& EndScale, const float& Time, const bool& IsRelativeScale)
+const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const FVector3f& StartScale, const FVector3f& EndScale, const float& Time, const bool& IsRelativeScale)
 {
-	if (Time <= 0.0f)
-	{
-		// LOG Warning
-		return FCsRoutineHandle::Invalid;
-	}
+	using namespace NCsCommon::NLibrary::NCached;
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(InActor->GetGameInstance());
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(Group);
+	const FString& Context = Str::ScaleActorOverTime;
 
-	Payload->CoroutineImpl.BindStatic(&UCsLibrary_Common::ScaleActorOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
-	Payload->Owner.SetObject(InActor);
+	//CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_VALUE(Time, 0.0f, FCsRoutineHandle::Invalid)
 
-	Payload->SetName(NCsCommonCached::Str::ScaleActorOverTime_Internal);
-	Payload->SetFName(NCsCommonCached::Name::ScaleActorOverTime_Internal);
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	static const int32 START_SCALE_INDEX = 0;
-	Payload->SetValue_Vector(START_SCALE_INDEX, StartScale);
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, InActor, Group);
 
-	static const int32 END_SCALE_INDEX = 1;
-	Payload->SetValue_Vector(END_SCALE_INDEX, EndScale);
+	typedef UCsLibrary_Common ClassType;
+	#define COROUTINE ScaleActorOverTime_Internal
 
-	static const int32 TIME_INDEX = 2;
-	Payload->SetValue_Float(TIME_INDEX, Time);
+	Payload->Init(Context, &ClassType::COROUTINE, InActor, InActor, Group, Str::COROUTINE, Name::COROUTINE);
 
-	Payload->SetValue_Flag(CS_FIRST, IsRelativeScale);
-	Payload->SetValue_Object(CS_FIRST, Curve);
+	#undef COROUTINE
 
-	return Scheduler->Start(Payload);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR_START
+	CS_COROUTINE_PAYLOAD_PASS_OBJECT_START
+
+	// Start Scale
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload, StartScale);
+	// End Scale
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload, EndScale);
+
+	// Time
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Time);
+
+	// Is Relative Scale
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, IsRelativeScale);
+	// Curve
+	CS_COROUTINE_PAYLOAD_PASS_OBJECT(Payload, Curve);
+
+	return CoroutineSchedulerLibrary::StartChecked(Context, InActor, Payload);
 }
 
 char UCsLibrary_Common::ScaleActorOverTime_Internal(FCsRoutine* R)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
+	const FString& Context = Str::ScaleActorOverTime_Internal;
+
+	CS_COROUTINE_READ_FLAG_START
+	CS_COROUTINE_READ_DELTA_TIME_START
+	CS_COROUTINE_READ_INT_START
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_VECTOR_START
+	CS_COROUTINE_READ_OBJECT_START
+
 	AActor* A = R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->GetGroup());
+	// Max Time
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, MaxTime);
 
-	const FCsTime& StartTime = R->GetValue_Timer(CS_FIRST);
+	// Start Scale
+	CS_COROUTINE_READ_VECTOR(R, StartScale);
+	StartScale = ClampVectorComponents(StartScale, CS_ACTOR_SMALLEST_SCALE);
+	// End Scale
+	CS_COROUTINE_READ_VECTOR(R, EndScale);
+	EndScale = ClampVectorComponents(EndScale, CS_ACTOR_SMALLEST_SCALE);
 
-	static const int32 TIME_INDEX = 2;
-	const float& MaxTime = R->GetValue_Float(TIME_INDEX);
+	// Is Relative Scale
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, IsRelativeScale);
+	// Easing Type
+	CS_COROUTINE_READ_INT_AS_ENUM_CONST(R, EasingType, ECsEasingType);
+	// Curve Float
+	CS_COROUTINE_READ_OBJECT_AS(R, CurveFloat, UCurveFloat);
+	CS_COROUTINE_READ_OBJECT_AS(R, CurveVector, UCurveVector);
 
-	static const int32 START_SCALE_INDEX = 0;
-	const FVector StartScale = ClampVectorComponents(R->GetValue_Vector(START_SCALE_INDEX), CS_ACTOR_SMALLEST_SCALE);
+	// Elapsed Time
+	CS_COROUTINE_READ_DELTA_TIME_REF(R, ElapsedTime);
+	ElapsedTime += R->DeltaTime;
 
-	static const int32 END_SCALE_INDEX = 1;
-	const FVector EndScale   = ClampVectorComponents(R->GetValue_Vector(END_SCALE_INDEX), CS_ACTOR_SMALLEST_SCALE);
-
-	const bool& IsRelativeScale		= R->GetValue_Flag(CS_FIRST);
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(R->GetValue_Int(CS_FIRST));
-	UCurveFloat* CurveFloat			= Cast<UCurveFloat>(R->GetValue_Object(CS_FIRST).Get());
-	UCurveVector* CurveVector		= Cast<UCurveVector>(R->GetValue_Object(CS_FIRST).Get());
+	typedef NCsMath::FLibrary MathLibrary;
 
 	CS_COROUTINE_BEGIN(R);
 
+	ElapsedTime.Reset();
+
 	if (R->Delay > 0.0f)
-		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
+		CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time > R->Delay);
+
+	ElapsedTime.Reset();
 
 	do
 	{
 		{
-			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			FVector Scale		= EndScale;
+			const float Percent = FMath::Clamp(ElapsedTime.Time / MaxTime, 0.0f, 1.0f);
+			FVector3f Scale		= EndScale;
 
 			if (CurveFloat)
 			{
@@ -1424,7 +1512,7 @@ char UCsLibrary_Common::ScaleActorOverTime_Internal(FCsRoutine* R)
 			else
 			if (CurveVector)
 			{
-				FVector Times = CurveVector->GetVectorValue(Percent);
+				FVector3f Times = MathLibrary::Convert(CurveVector->GetVectorValue(Percent));
 
 				Scale.X	= FMath::Lerp(StartScale.X, EndScale.X, Times.X);
 				Scale.X	= FMath::Abs(Scale.X) < CS_ACTOR_SMALLEST_SCALE ? FMath::Sign(Scale.X) * CS_ACTOR_SMALLEST_SCALE : Scale.X;
@@ -1435,45 +1523,53 @@ char UCsLibrary_Common::ScaleActorOverTime_Internal(FCsRoutine* R)
 			}
 			else
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				float Time = MathLibrary::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 				Scale	   = ClampVectorComponents(FMath::Lerp(StartScale, EndScale, Time), CS_ACTOR_SMALLEST_SCALE);
 			}
 
 			if (IsRelativeScale)
-				A->SetActorRelativeScale3D(Scale);
+				A->SetActorRelativeScale3D(MathLibrary::Convert(Scale));
 			else
-				A->SetActorScale3D(Scale);
+				A->SetActorScale3D(MathLibrary::Convert(Scale));
 		}
 		CS_COROUTINE_YIELD(R);
-	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
+	} while (ElapsedTime.Time <= MaxTime);
 
 	if (IsRelativeScale)
-		A->SetActorRelativeScale3D(EndScale);
+		A->SetActorRelativeScale3D(MathLibrary::Convert(EndScale));
 	else
-		A->SetActorScale3D(EndScale);
+		A->SetActorScale3D(MathLibrary::Convert(EndScale));
 
 	CS_COROUTINE_END(R);
 }
 
 const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime_AsCurve(const FECsUpdateGroup& Group, UCurveBase* Curve, AActor* InActor, const bool& IsRelativeScale)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
+	const FString& Context = Str::ScaleActorOverTime_AsCurve;
+
 	if (!Cast<UCurveFloat>(Curve) && !Cast<UCurveVector>(Curve))
 	{
 		// Log Warning
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(InActor->GetGameInstance());
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(Group);
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	Payload->CoroutineImpl.BindStatic(&UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal);
-	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
-	Payload->Owner.SetObject(InActor);
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, InActor, Group);
 
-	Payload->SetName(NCsCommonCached::Str::ScaleActorOverTime_AsCurve_Internal);
-	Payload->SetFName(NCsCommonCached::Name::ScaleActorOverTime_AsCurve_Internal);
+	typedef UCsLibrary_Common ClassType;
+	#define COROUTINE ScaleActorOverTime_AsCurve_Internal
+
+	Payload->Init(Context, &ClassType::COROUTINE, InActor, InActor, Group, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
+
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_OBJECT_START
 
 	// TODO: Add Delay to Payload
 	float MinTime = 0.0f;
@@ -1482,62 +1578,78 @@ const FCsRoutineHandle& UCsLibrary_Common::ScaleActorOverTime_AsCurve(const FECs
 	Curve->GetTimeRange(MinTime, MaxTime);
 	R->delay	  = MinTime > 0.0f ? MinTime : 0.0f;
 	*/
-	static const int32 MAX_TIME_INDEX = 2;
-	Payload->SetValue_Float(MAX_TIME_INDEX, MaxTime);
 
-	static const int32 RELATIVE_SCALE_INDEX = 0;
-	Payload->SetValue_Flag(RELATIVE_SCALE_INDEX, IsRelativeScale);
-
-	static const int32 USE_CURVE_FLOAT_INDEX = 1;
-	Payload->SetValue_Flag(USE_CURVE_FLOAT_INDEX, Cast<UCurveFloat>(Curve) != nullptr); // Use CurveFloat
-
-	static const int32 USE_CURVE_VECTOR_INDEX = 2;
-	Payload->SetValue_Flag(USE_CURVE_VECTOR_INDEX, Cast<UCurveVector>(Curve) != nullptr); // Use CurveVector;
+	// Max Time
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, MaxTime);
+	// Is Relative Scale
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, IsRelativeScale);
+	// Use Curve Float
+	const bool UseCurveFloat = Cast<UCurveFloat>(Curve) != nullptr;
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, UseCurveFloat);
+	// Use Curve Vector
+	const bool UseCurveVector = Cast<UCurveVector>(Curve) != nullptr;
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, UseCurveVector);
 	
-	Payload->SetValue_Object(CS_FIRST, Curve);
+	// Curve
+	CS_COROUTINE_PAYLOAD_PASS_OBJECT(Payload, Curve);
 
-	return Scheduler->Start(Payload);
+	return CoroutineSchedulerLibrary::StartChecked(Context, InActor, Payload);
 }
 
 char UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
+	const FString& Context = Str::ScaleActorOverTime_AsCurve_Internal;
+
+	CS_COROUTINE_READ_FLAG_START
+	CS_COROUTINE_READ_DELTA_TIME_START
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_OBJECT_START
+
 	AActor* A= R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->GetGroup());
-	const FCsTime& StartTime   = R->StartTime;
+	// Max Time
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, MaxTime);
+	// Is Relative Scale
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, IsRelativeScale);
+	// Use Curve Float
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, UseCurveFloat);
+	// Use Curve Vector
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, UseCurveVector);
 
-	static const int32 MAX_TIME_INDEX = 2;
-	const float& MaxTime = R->GetValue_Float(MAX_TIME_INDEX);
-	 
-	static const int32 RELATIVE_SCALE_INDEX = 0;
-	const bool& IsRelativeScale = R->GetValue_Flag(RELATIVE_SCALE_INDEX);
+	FVector3d EndScale = FVector3d(1.0f);
+	
+	// Curve Float
+	CS_COROUTINE_READ_OBJECT_AS(R, CurveFloat, UCurveFloat);
 
-	static const int32 USE_CURVE_FLOAT_INDEX = 1;
-	const bool& UseCurveFloat = R->GetValue_Flag(USE_CURVE_FLOAT_INDEX);
-
-	static const int32 USE_CURVE_VECTOR_INDEX = 2;
-	const bool& UseCurveVector = R->GetValue_Flag(USE_CURVE_VECTOR_INDEX);
-
-	FVector EndScale = FVector(1.0f);
-
-	UCurveFloat* CurveFloat	= UseCurveFloat ? Cast<UCurveFloat>(R->GetValue_Object(CS_FIRST).Get()) : nullptr;
-
-	if (CurveFloat)
+	if (UseCurveFloat && CurveFloat)
 	{
-		EndScale = FVector(CurveFloat->GetFloatValue(MaxTime));
+		EndScale = FVector3d(CurveFloat->GetFloatValue(MaxTime));
 	}
 
-	UCurveVector* CurveVector = UseCurveVector ? Cast<UCurveVector>(R->GetValue_Object(CS_FIRST).Get()) : nullptr;
+	// Curve Vector
+	CS_COROUTINE_READ_OBJECT_AS(R, CurveVector, UCurveVector);
 
-	if (CurveVector)
+	if (UseCurveVector && CurveVector)
 	{
 		EndScale = CurveVector->GetVectorValue(MaxTime);
 	}
 
+	// Elapsed Time
+	CS_COROUTINE_READ_DELTA_TIME_REF(R, ElapsedTime);
+	ElapsedTime += R->DeltaTime;
+
+	typedef NCsMath::FLibrary MathLibrary;
+
 	CS_COROUTINE_BEGIN(R);
 
+	ElapsedTime.Reset();
+
 	if (R->Delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
+		CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time > R->Delay);
+
+	ElapsedTime.Reset();
 
 	do
 	{
@@ -1545,14 +1657,14 @@ char UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 			if (!UseCurveFloat && !UseCurveVector)
 				break;
 
-			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
-			FVector Scale		= FVector(1.0f);
+			const float Percent = FMath::Clamp(ElapsedTime.Time / MaxTime, 0.0f, 1.0f);
+			FVector3d Scale		= FVector3d(1.0f);
 
 			if (CurveFloat)
 			{
 				float Value = CurveFloat->GetFloatValue(Percent);
 				Value		= FMath::Abs(Value) < CS_ACTOR_SMALLEST_SCALE ? FMath::Sign(Value) * CS_ACTOR_SMALLEST_SCALE : Value;
-				Scale		= FVector(Value);
+				Scale		= FVector3d(Value);
 			}
 			else
 			if (CurveVector)
@@ -1566,7 +1678,7 @@ char UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 				A->SetActorScale3D(Scale);
 		}
 		CS_COROUTINE_YIELD(R);
-	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
+	} while (ElapsedTime.Time <= MaxTime);
 
 	if (IsRelativeScale)
 		A->SetActorRelativeScale3D(EndScale);
@@ -1576,68 +1688,91 @@ char UCsLibrary_Common::ScaleActorOverTime_AsCurve_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-const FCsRoutineHandle& UCsLibrary_Common::MoveActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector& StartLocation, const FVector& EndLocation, const float& Time, const bool& IsRelativeLocation)
+const FCsRoutineHandle& UCsLibrary_Common::MoveActorOverTime(const FECsUpdateGroup& Group, const ECsEasingType& EasingType, AActor* InActor, const FVector3f& StartLocation, const FVector3f& EndLocation, const float& Time, const bool& IsRelativeLocation)
 {
-	if (Time <= 0.0f)
-	{
-		// Log Warning
-		return FCsRoutineHandle::Invalid;
-	}
+	using namespace NCsCommon::NLibrary::NCached;
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(InActor->GetGameInstance());
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(Group);
+	const FString& Context = Str::MoveActorOverTime;
 
-	Payload->CoroutineImpl.BindStatic(&UCsLibrary_Common::MoveActorOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get(InActor->GetGameInstance())->GetTime(Group);
-	Payload->Owner.SetObject(InActor);
+	CS_IS_FLOAT_GREATER_THAN_CHECKED(Time, 0.0f)
 
-	Payload->SetName(NCsCommonCached::Str::MoveActorOverTime_Internal);
-	Payload->SetFName(NCsCommonCached::Name::MoveActorOverTime_Internal);
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	static const int32 START_LOCATION_INDEX = 0;
-	Payload->SetValue_Vector(START_LOCATION_INDEX, StartLocation);
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, InActor, Group);
 
-	static const int32 END_LOCATION_INDEX = 1;
-	Payload->SetValue_Vector(END_LOCATION_INDEX, EndLocation);
+	typedef UCsLibrary_Common ClassType;
+	#define COROUTINE MoveActorOverTime_Internal
 
-	Payload->SetValue_Float(CS_FIRST, Time);
-	Payload->SetValue_Flag(CS_FIRST, IsRelativeLocation);
-	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
+	Payload->Init(Context, &ClassType::COROUTINE, InActor, InActor, Group, Str::COROUTINE, Name::COROUTINE);
 
-	return Scheduler->Start(Payload);
+	#undef COROUTINE
+
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_INT_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR_START
+
+	// Start Location
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload, StartLocation);
+	// End Location
+	CS_COROUTINE_PAYLOAD_PASS_VECTOR(Payload, EndLocation);
+	// Time
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Time);
+	// Is Relative Location
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, IsRelativeLocation);
+	// Easing Type
+	CS_COROUTINE_PAYLOAD_PASS_INT(Payload, (int32)EasingType);
+
+	return CoroutineSchedulerLibrary::StartChecked(Context, InActor, Payload);
 }
 
 char UCsLibrary_Common::MoveActorOverTime_Internal(FCsRoutine* R)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
+	const FString& Context = Str::MoveActorOverTime_Internal;
+
+	CS_COROUTINE_READ_FLAG_START
+	CS_COROUTINE_READ_DELTA_TIME_START
+	CS_COROUTINE_READ_INT_START
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_VECTOR_START
+
 	AActor* A = R->GetOwnerAsActor();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(A->GetGameInstance())->GetTime(R->GetGroup());
-	const FCsTime& StartTime   = R->StartTime;
+	// Max Time
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, MaxTime);
+	// Start Location
+	CS_COROUTINE_READ_VECTOR_CONST_REF(R, StartLocation);
+	// End Location
+	CS_COROUTINE_READ_VECTOR_CONST_REF(R, EndLocation);
+	// Is Relative Location
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, IsRelativeLocation);
+	// Easing Type
+	CS_COROUTINE_READ_INT_AS_ENUM_CONST(R, EasingType, ECsEasingType);
 
-	const float& MaxTime = R->GetValue_Float(CS_FIRST);
+	// Elapsed Time
+	CS_COROUTINE_READ_DELTA_TIME_REF(R, ElapsedTime);
+	ElapsedTime += R->DeltaTime;
 
-	static const int32 START_LOCATION_INDEX = 0;
-	const FVector& StartLocation = R->GetValue_Vector(START_LOCATION_INDEX);
-
-	static const int32 END_LOCATION_INDEX = 1;
-	const FVector& EndLocation = R->GetValue_Vector(END_LOCATION_INDEX);
-
-	const bool& IsRelativeLocation	= R->GetValue_Flag(CS_FIRST);
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(R->GetValue_Int(CS_FIRST));
+	typedef NCsMath::FLibrary MathLibrary;
 
 	CS_COROUTINE_BEGIN(R);
 
+	ElapsedTime.Reset();
+
 	if (R->Delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
+		CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time > R->Delay);
+
+	ElapsedTime.Reset();
 
 	do
 	{
 		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			const float Percent    = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
+			const float Percent    = FMath::Clamp(ElapsedTime.Time / MaxTime, 0.0f, 1.0f);
 			float Time			   = MathLibrary::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
-			const FVector Location = FMath::Lerp(StartLocation, EndLocation, Time);
+			const FVector3d Location = MathLibrary::Convert(FMath::Lerp(StartLocation, EndLocation, Time));
 
 			if (IsRelativeLocation)
 				A->SetActorRelativeLocation(Location);
@@ -1645,31 +1780,38 @@ char UCsLibrary_Common::MoveActorOverTime_Internal(FCsRoutine* R)
 				A->SetActorLocation(Location);
 		}
 		CS_COROUTINE_YIELD(R);
-	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
+	} while (ElapsedTime.Time <= MaxTime);
 
 	if (IsRelativeLocation)
-		A->SetActorRelativeLocation(EndLocation);
+		A->SetActorRelativeLocation(MathLibrary::Convert(EndLocation));
 	else
-		A->SetActorLocation(EndLocation);
+		A->SetActorLocation(MathLibrary::Convert(EndLocation));
 
 	CS_COROUTINE_END(R);
 }
 
 const FCsRoutineHandle& UCsLibrary_Common::DestroyMaterialInstanceDynamic(const FECsUpdateGroup& Group, UMaterialInstanceDynamic* InMID, const float& Delay)
 {
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get();
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(Group);
+	using namespace NCsCommon::NLibrary::NCached;
 
-	Payload->CoroutineImpl.BindStatic(&UCsLibrary_Common::DestroyMaterialInstanceDynamic_Internal);
-	Payload->StartTime = UCsManager_Time::Get()->GetTime(Group);
-	Payload->Owner.SetObject(InMID);
+	const FString& Context = Str::DestroyMaterialInstanceDynamic;
 
-	Payload->SetName(NCsCommonCached::Str::DestroyMaterialInstanceDynamic_Internal);
-	Payload->SetFName(NCsCommonCached::Name::DestroyMaterialInstanceDynamic_Internal);
+	/*
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	//R->delay	 = Delay;
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, ContextObject, Group);
 
-	return Scheduler->Start(Payload);
+	typedef UCsLibrary_Common ClassType;
+	#define COROUTINE DestroyMaterialInstanceDynamic_Internal
+
+	Payload->Init(Context, &ClassType::COROUTINE, InActor, ContextObject, Group, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
+	*/
+
+	//return CoroutineSchedulerLibrary::StartChecked(Context, ContextObject, Payload);
+	return FCsRoutineHandle::Invalid;
 }
 
 char UCsLibrary_Common::DestroyMaterialInstanceDynamic_Internal(FCsRoutine* R)
@@ -1684,7 +1826,7 @@ char UCsLibrary_Common::DestroyMaterialInstanceDynamic_Internal(FCsRoutine* R)
 	if (R->Delay > 0)
 		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
 
-	M->MarkPendingKill();
+	M->MarkAsGarbage();
 
 	CS_COROUTINE_END(R);
 }
@@ -1719,81 +1861,102 @@ const FCsRoutineHandle& UCsLibrary_Common::DestroyMaterialInstanceDynamics(const
 
 const FCsRoutineHandle& UCsLibrary_Common::FadeCameraOverTime(const FECsUpdateGroup &Group, const ECsEasingType& EasingType, APlayerController* Controller, const float& Start, const float& End, const float& Time, const FLinearColor& Color)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
+	const FString& Context = Str::FadeCameraOverTime;
+
 	if (Time <= 0.0f)
 	{
 		// Log Warning
 		return FCsRoutineHandle::Invalid;
 	}
 
-	UCsCoroutineScheduler* Scheduler		= UCsCoroutineScheduler::Get(Controller->GetGameInstance());
-	NCsCoroutine::NPayload::FImpl* Payload	= Scheduler->AllocatePayload(Group);
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	Payload->CoroutineImpl.BindStatic(&UCsLibrary_Common::FadeCameraOverTime_Internal);
-	Payload->StartTime = UCsManager_Time::Get(Controller->GetGameInstance())->GetTime(Group);
-	Payload->Owner.SetObject(Controller);
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, Controller, Group);
 
-	Payload->SetName(NCsCommonCached::Str::FadeCameraOverTime_Internal);
-	Payload->SetFName(NCsCommonCached::Name::FadeCameraOverTime_Internal);
+	typedef UCsLibrary_Common ClassType;
+	#define COROUTINE FadeCameraOverTime_Internal
 
-	Payload->SetValue_Int(CS_FIRST, (int32)EasingType);
+	Payload->Init(Context, &ClassType::COROUTINE, Controller, Controller, Group, Str::COROUTINE, Name::COROUTINE);
 
-	static const int32 START_INDEX = 0;
-	Payload->SetValue_Float(START_INDEX, Start);
+	#undef COROUTINE
 
-	static const int32 END_INDEX = 1;
-	Payload->SetValue_Float(END_INDEX, End);
+	CS_COROUTINE_PAYLOAD_PASS_INT_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_COLOR_START
 
-	static const int32 TIME_INDEX = 2;
-	Payload->SetValue_Float(TIME_INDEX, Time);
+	// Easing Type
+	CS_COROUTINE_PAYLOAD_PASS_INT(Payload, (int32)EasingType);
+	// Start
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Start);
+	// End
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, End);
+	// Time
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Time);
+	// Color
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Color);
 
-	Payload->SetValue_Color(CS_FIRST, Color);
-
-	return Scheduler->Start(Payload);
+	return CoroutineSchedulerLibrary::StartChecked(Context, Controller, Payload);
 }
 
 char UCsLibrary_Common::FadeCameraOverTime_Internal(FCsRoutine* R)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
+	const FString& Context = Str::FadeCameraOverTime_Internal;
+
+	CS_COROUTINE_READ_INT_START
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_COLOR_START
+	CS_COROUTINE_READ_DELTA_TIME_START
+
 	APlayerController* PC = R->GetOwnerAsObject<APlayerController>();
 
-	const FCsTime& CurrentTime = UCsManager_Time::Get(PC->GetGameInstance())->GetTime(R->GetGroup());
-	const FCsTime& StartTime   = R->StartTime;
-
-	static const int32 MAX_TIME_INDEX = 2;
-	const float& MaxTime = R->GetValue_Float(MAX_TIME_INDEX);
-
-	const ECsEasingType& EasingType = EMCsEasingType::Get().GetEnumAt(R->GetValue_Int(CS_FIRST));
-
-	static const int32 START_INDEX = 0;
-	const float& Start = R->GetValue_Float(START_INDEX);
-
-	static const int32 END_INDEX = 1;
-	const float& End = R->GetValue_Float(END_INDEX);
+	// Start
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, Start);
+	// End
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, End);
+	// Max Time
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, MaxTime);
+	// Easing Type
+	CS_COROUTINE_READ_INT_AS_ENUM_CONST(R, EasingType, ECsEasingType);
 
 	const bool IsFadeOut = Start > End;
 	const float Max		 = FMath::Max(Start, End);
 	const float Min		 = FMath::Min(Start, End);
 	const float Delta	 = Max - Min;
 
-	const FLinearColor& Color = R->GetValue_Color(CS_FIRST);
+	// Color
+	CS_COROUTINE_READ_COLOR_CONST_REF(R, Color);
+
+	// Elapsed Time
+	CS_COROUTINE_READ_DELTA_TIME_REF(R, ElapsedTime);
+	ElapsedTime += R->DeltaTime;
 
 	CS_COROUTINE_BEGIN(R);
 
+	ElapsedTime.Reset();
+
 	if (R->Delay > 0)
-		CS_COROUTINE_WAIT_UNTIL(R, CurrentTime.Time - StartTime.Time > R->Delay);
+		CS_COROUTINE_WAIT_UNTIL(R, ElapsedTime.Time > R->Delay);
+
+	ElapsedTime.Reset();
 
 	do
 	{
 		{
 			typedef NCsMath::FLibrary MathLibrary;
 
-			const float Percent = FMath::Clamp((CurrentTime.Time - StartTime.Time) / MaxTime, 0.0f, 1.0f);
+			const float Percent = FMath::Clamp((ElapsedTime.Time) / MaxTime, 0.0f, 1.0f);
 			const float Time    = MathLibrary::Ease(EasingType, Percent, 0.0f, 1.0f, 1.0f);
 			const float Alpha	= IsFadeOut ? 1.0f - (Min + Percent * Delta) : Min + Percent * Delta;
 
 			PC->PlayerCameraManager->SetManualCameraFade(Alpha, Color, false);
 		}
 		CS_COROUTINE_YIELD(R);
-	} while (CurrentTime.Time - StartTime.Time <= MaxTime);
+	} while (ElapsedTime.Time <= MaxTime);
 
 	PC->PlayerCameraManager->SetManualCameraFade(End, Color, false);
 
@@ -1809,15 +1972,17 @@ bool UCsLibrary_Common::IsDedicatedServer(AActor* InActor)
 
 FString UCsLibrary_Common::GetProxyAsString(AActor* InActor)
 {
+	using namespace NCsCommon::NLibrary::NCached;
+
 	if (InActor->GetLocalRole() < ROLE_Authority)
-		return NCsCommonCached::Str::Client;
+		return Str::Client;
 	if (InActor->GetLocalRole() == ROLE_Authority)
 	{
 		if (IsDedicatedServer(InActor))
-			return NCsCommonCached::Str::Server_Dedicated;
-		return NCsCommonCached::Str::Server;
+			return Str::Server_Dedicated;
+		return Str::Server;
 	}
-	return NCsCommonCached::Str::Unknown;
+	return Str::Unknown;
 }
 
 bool UCsLibrary_Common::IsDefaultObject(UObject* InObject)

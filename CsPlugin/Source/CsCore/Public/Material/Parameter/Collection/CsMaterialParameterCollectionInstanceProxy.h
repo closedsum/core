@@ -28,7 +28,7 @@ namespace NCsMaterial
 						/** Uniform buffer containing the UMaterialParameterCollection default parameter values and UMaterialParameterCollectionInstance instance overrides. */
 						FUniformBufferRHIRef* UniformBuffer;
 
-						FRHIUniformBufferLayout* UniformBufferLayout;
+						FUniformBufferLayoutRHIRef* UniformBufferLayout;
 
 						bool bComplete;
 
@@ -50,13 +50,15 @@ namespace NCsMaterial
 
 						FORCEINLINE FUniformBufferRHIRef& GetUniformBuffer() { return *UniformBuffer; }
 
-						FORCEINLINE FRHIUniformBufferLayout& GetUniformBufferLayout() { return *UniformBufferLayout; }
+						FORCEINLINE FUniformBufferLayoutRHIRef& GetUniformBufferLayout() { return *UniformBufferLayout; }
+
+						FORCEINLINE FUniformBufferLayoutRHIRef* GetUniformBufferLayoutPtr() { return UniformBufferLayout; }
 
 						void Init(FMaterialParameterCollectionInstanceResource* InResource);
 
-						void GameThread_UpdateContents(const FGuid& InId, const TArray<FVector4>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer);
+						void GameThread_UpdateContents(const FGuid& InId, const TArray<FVector4f>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer);
 
-						void RenderThread_UpdateContents(const FGuid& InId, const TArray<FVector4>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer);
+						void RenderThread_UpdateContents(const FGuid& InId, const TArray<FVector4f>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer);
 
 						FORCEINLINE void StartUpdateContents() { bComplete = false; }
 						FORCEINLINE bool IsComplete() const { return bComplete; }
@@ -97,7 +99,7 @@ namespace NCsMaterial
 				int32 ScalarParameterValuesOffset;
 
 				/** Values to be set on the uniform buffer */
-				TArray<FVector4> ParameterData;
+				TArray<FVector4f> ParameterData;
 
 				ResourceProxyType ResourceProxy;
 
@@ -174,7 +176,7 @@ namespace NCsMaterial
 					TArray<FLinearColor*> VectorParameterValuesByIndex;
 
 					/** Values to be set on the uniform buffer */
-					TArray<FVector4> ParameterData;
+					TArray<FVector4f> ParameterData;
 
 					ResourceProxyType ResourceProxy;
 
@@ -222,7 +224,7 @@ namespace NCsMaterial
 					FORCEINLINE void SetVectorParameterValue(const int32& Index, const MemberType& Member, const float& Value)
 					{
 						FLinearColor& C  = *(VectorParameterValuesByIndex[Index]);
-						FVector4 V		 = C;
+						FVector4f V		 = C;
 						V[(uint8)Member] = Value;
 						C				 = FLinearColor(V);
 						bDirty = true;

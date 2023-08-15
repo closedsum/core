@@ -77,7 +77,7 @@ public:
 	float Value;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input|Game Event")
-	FVector Location;
+	FVector3f Location;
 
 private:
 
@@ -93,7 +93,7 @@ public:
 	{
 	}
 
-	FCsGameEventInfo(const FECsGameEvent& InEvent, const float& InValue, const FVector& InLocation)
+	FCsGameEventInfo(const FECsGameEvent& InEvent, const float& InValue, const FVector3f& InLocation)
 	{
 		Event = InEvent;
 		Value = InValue;
@@ -116,7 +116,7 @@ public:
 	{
 		Event = EMCsGameEvent::Get().GetMAX();
 		Value = 0.0f;
-		Location = FVector::ZeroVector;
+		Location = FVector3f::ZeroVector;
 		Definition = nullptr;
 	}
 

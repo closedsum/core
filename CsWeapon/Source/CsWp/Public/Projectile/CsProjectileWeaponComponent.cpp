@@ -26,6 +26,7 @@
 	// Params
 #include "Projectile/Params/Launch/CsLibrary_Params_ProjectileWeapon_Launch.h"
 #include "Library/CsLibrary_Camera.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -730,7 +731,7 @@ bool UCsProjectileWeaponComponent::FProjectileImpl::CopyPayload(const FString& C
 
 #undef ProjectilePayloadType
 
-FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
+FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 {
 	using namespace NCsProjectileWeaponComponent::NCached::NProjectileImpl;
 
@@ -759,6 +760,8 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 	const LaunchLocationType& LocationType = LaunchParams->GetLocationType();
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	// Owner
 	if (LocationType == LaunchLocationType::Owner)
 	{
@@ -768,10 +771,10 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 
 		// Actor
 		if (AActor* Actor = Cast<AActor>(TheOwner))
-			return Actor->GetActorLocation();
+			return MathLibrary::Convert(Actor->GetActorLocation());
 		// Component
 		if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
-			return Component->GetComponentLocation();
+			return MathLibrary::Convert(Component->GetComponentLocation());
 
 		checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(Outer->PrintNameClassAndOwner()));
 	}
@@ -785,12 +788,12 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchLocation()
 	{
 		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
-		return LaunchComponentTransform->GetComponentLocation();
+		return MathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 	}
-	return FVector::ZeroVector;
+	return FVector3f::ZeroVector;
 }
 
-FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
+FVector3f UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 {
 	using namespace NCsProjectileWeaponComponent::NCached::NProjectileImpl;
 
@@ -835,6 +838,8 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 	checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in LaunchParams for Data."), *Context);
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	// Owner
 	if (DirectionType == LaunchDirectionType::Owner)
 	{
@@ -843,14 +848,14 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			// AActor
 			if (AActor* Actor = Cast<AActor>(TheOwner))
 			{
-				const FVector Dir = NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
+				const FVector3f Dir = NCsRotationRules::GetRotation(Actor, DirectionRules).Vector();
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
 			// USceneComponent
 			if (USceneComponent* Component = Cast<USceneComponent>(TheOwner))
 			{
-				const FVector Dir = NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
+				const FVector3f Dir = NCsRotationRules::GetRotation(Component, DirectionRules).Vector();
 				CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 				return Dir;
 			}
@@ -867,9 +872,8 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 	{
 		checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 		
-		const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
-
-		const FVector Dir = Rotation.Vector();
+		const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
+		const FVector3f Dir		  = Rotation.Vector();
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 		return Dir;
 	}
@@ -881,7 +885,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			typedef NCsCamera::FLibrary CameraLibrary;
 
-			const FVector Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner);
+			const FVector3f Dir = CameraLibrary::GetDirectionChecked(Context, TheOwner);
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, Dir));
 			return Dir;
 		}
@@ -898,7 +902,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		// Start
 		const LaunchTraceStartType& TraceStart = LaunchTraceParams->GetTraceStartType();
 
-		FVector Start = FVector::ZeroVector;
+		FVector3f Start = FVector3f::ZeroVector;
 
 		// LaunchLocation
 		if (TraceStart == LaunchTraceStartType::LaunchLocation)
@@ -923,7 +927,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
-			Start = LaunchComponentTransform->GetComponentLocation();
+			Start = MathLibrary::Convert(LaunchComponentTransform->GetComponentLocation());
 		}
 		// Camera
 		else
@@ -948,7 +952,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 		const LaunchTraceDirectionType& TraceDirection  = LaunchTraceParams->GetTraceDirectionType();
 
-		FVector Dir = FVector::ZeroVector;
+		FVector3f Dir = FVector3f::ZeroVector;
 
 		// Owner
 		if (TraceDirection == LaunchTraceDirectionType::Owner)
@@ -967,7 +971,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		{
 			checkf(LaunchComponentTransform, TEXT("%s: LaunchComponentTransform is NULL."));
 
-			const FRotator Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform->GetComponentRotation(), DirectionRules);
+			const FRotator3f Rotation = NCsRotationRules::GetRotation(LaunchComponentTransform, DirectionRules);
 
 			Dir = Rotation.Vector();
 		}
@@ -991,7 +995,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 		const float& Distance = LaunchTraceParams->GetTraceDistance();
 
-		const FVector End = Start + Distance * Dir;
+		const FVector3f End = Start + Distance * Dir;
 
 		// Perform Trace
 		typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
@@ -1029,7 +1033,7 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 
 		ResponseType* Response = Manager_Trace->Trace(Request);
 
-		FVector LookAtLocation = FVector::ZeroVector;
+		FVector3f LookAtLocation = FVector3f::ZeroVector;
 
 		if (Response &&
 			Response->bResult)
@@ -1041,13 +1045,13 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 			LookAtLocation = Start + Distance * Dir;
 		}
 
-		const FVector LaunchLocation  = GetLaunchLocation();
-		const FVector LaunchDirection = (LookAtLocation - LaunchLocation).GetSafeNormal();
+		const FVector3f LaunchLocation  = GetLaunchLocation();
+		const FVector3f LaunchDirection = (LookAtLocation - LaunchLocation).GetSafeNormal();
 
 		// Check the direction is in FRONT of the Start. The trace could produce a result BEHIND the start
 
 		if (Start == LaunchDirection ||
-			FVector::DotProduct(Dir, LaunchDirection) > 0)
+			FVector3f::DotProduct(Dir, LaunchDirection) > 0)
 		{
 			CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, LaunchDirection));
 			return LaunchDirection;
@@ -1061,12 +1065,12 @@ FVector UCsProjectileWeaponComponent::FProjectileImpl::GetLaunchDirection()
 		CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, CustomLaunchDirection));
 		return CustomLaunchDirection;
 	}
-	CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, FVector::ZeroVector));
-	return FVector::ZeroVector;
+	CS_NON_SHIPPING_EXPR(Log_GetLaunchDirection(LaunchParams, FVector3f::ZeroVector));
+	return FVector3f::ZeroVector;
 }
 
 #define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-void UCsProjectileWeaponComponent::FProjectileImpl::Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction)
+void UCsProjectileWeaponComponent::FProjectileImpl::Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction)
 {
 #undef LaunchParamsType
 
@@ -1359,11 +1363,11 @@ void UCsProjectileWeaponComponent::FFXImpl::SetPayload(const int32 InCurrentProj
 	// None
 	if (Type == AttachType::None)
 	{
-		const FVector Location = Outer->ProjectileImpl->GetLaunchLocation();
+		const FVector3f Location = Outer->ProjectileImpl->GetLaunchLocation();
 		PayloadImpl->Transform.SetTranslation(Location);
 
-		const FVector Direction = Outer->ProjectileImpl->GetLaunchDirection();
-		FQuat Rotation			= FX.Transform.GetRotation();
+		const FVector3f Direction = Outer->ProjectileImpl->GetLaunchDirection();
+		FQuat4f Rotation			= FX.Transform.GetRotation();
 		PayloadImpl->Transform.SetRotation(Direction.ToOrientationQuat() * Rotation);
 	}
 	// Owner

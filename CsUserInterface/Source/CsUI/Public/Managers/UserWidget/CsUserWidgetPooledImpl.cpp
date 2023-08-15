@@ -139,7 +139,7 @@ void UCsUserWidgetPooledImpl::Shutdown()
 
 	if (UserWidget)
 	{
-		UserWidget->MarkPendingKill();
+		UserWidget->MarkAsGarbage();
 		UserWidget = nullptr;
 	}
 }
@@ -188,7 +188,7 @@ void UCsUserWidgetPooledImpl::Deallocate()
 	}
 	else
 	{
-		UserWidget->RemoveFromViewport();
+		UserWidget->RemoveFromParent();
 	}
 
 	PreserveChangesToDefaultMask = 0;

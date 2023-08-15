@@ -66,7 +66,7 @@ UObject* UCsScriptLibrary_DamageEvent::GetCauser(const FString& Context, UObject
 	return DamageEventLibrary::GetSafeCauser(Ctxt, Object);
 }
 
-FVector UCsScriptLibrary_DamageEvent::GetDamageDirection(const FString& Context, UObject* Object)
+FVector3f UCsScriptLibrary_DamageEvent::GetDamageDirection(const FString& Context, UObject* Object)
 {
 	using namespace NCsScriptLibraryDamageEvent::NCached;
 

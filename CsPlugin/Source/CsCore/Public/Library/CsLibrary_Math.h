@@ -75,17 +75,17 @@ namespace NCsMath
 
 		FORCEINLINE static float BytesToKilobytes(const int32& Bytes)
 		{
-			return Bytes * FMath::Pow(10, -3);
+			return Bytes * FMath::Pow(10.0f, -3.0f);
 		}
 
 		FORCEINLINE static float BytesToMegabytes(const int32& Bytes)
 		{
-			return Bytes * FMath::Pow(10, -6);
+			return Bytes * FMath::Pow(10.0f, -6.0f);
 		}
 
 		FORCEINLINE static int32 KilobytesToBytes(const float& Kilobytes)
 		{
-			return Kilobytes * FMath::Pow(10, 3);
+			return Kilobytes * FMath::Pow(10.0f, 3.0f);
 		}
 
 	// Easing
@@ -368,7 +368,7 @@ namespace NCsMath
 	#pragma region
 	public:
 
-		FORCEINLINE static float Bezier_Quadratic_GetArcLength(const float& T, const FVector& P0, const FVector& P1, const FVector& P2)
+		FORCEINLINE static float Bezier_Quadratic_GetArcLength(const float& T, const FVector3f& P0, const FVector3f& P1, const FVector3f& P2)
 		{
 			float ax, ay, bx, by, az, bz, A, B, C, b, c, u, k, L;
 			ax = P0.X - P1.X - P1.X + P2.X;
@@ -415,9 +415,9 @@ namespace NCsMath
 			return FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle);
 		}
 
-		FORCEINLINE static FRotator GetAngleDelta(const FRotator& A, const FRotator& B)
+		FORCEINLINE static FRotator3f GetAngleDelta(const FRotator3f& A, const FRotator3f& B)
 		{
-			FRotator Rotation;
+			FRotator3f Rotation;
 
 			Rotation.Pitch = GetAngleDelta(A.Pitch, B.Pitch);
 			Rotation.Yaw   = GetAngleDelta(A.Yaw, B.Yaw);
@@ -434,9 +434,9 @@ namespace NCsMath
 			return FMath::Abs(FMath::Abs(DeltaAngle) > 180.0f ? -1 * Mag * (360.0f - FMath::Abs(DeltaAngle)) : Mag * FMath::Abs(DeltaAngle));
 		}
 
-		FORCEINLINE static FRotator GetAbsAngleDelta(const FRotator& A, const FRotator& B)
+		FORCEINLINE static FRotator3f GetAbsAngleDelta(const FRotator3f& A, const FRotator3f& B)
 		{
-			FRotator Rotation;
+			FRotator3f Rotation;
 
 			Rotation.Pitch = GetAbsAngleDelta(A.Pitch, B.Pitch);
 			Rotation.Yaw   = GetAbsAngleDelta(A.Yaw, B.Yaw);
@@ -452,9 +452,9 @@ namespace NCsMath
 			return Angle;
 		}
 
-		FORCEINLINE static FRotator AngleClamp180(const FRotator& Rotation)
+		FORCEINLINE static FRotator3f AngleClamp180(const FRotator3f& Rotation)
 		{
-			return FRotator(AngleClamp180(Rotation.Pitch), AngleClamp180(Rotation.Yaw), AngleClamp180(Rotation.Roll));
+			return FRotator3f(AngleClamp180(Rotation.Pitch), AngleClamp180(Rotation.Yaw), AngleClamp180(Rotation.Roll));
 		}
 
 		FORCEINLINE static float AngleClamp360(float Angle)
@@ -466,9 +466,9 @@ namespace NCsMath
 			return Angle;
 		}
 
-		FORCEINLINE static FRotator AngleClamp360(const FRotator& Rotation)
+		FORCEINLINE static FRotator3f AngleClamp360(const FRotator3f& Rotation)
 		{
-			return FRotator(AngleClamp360(Rotation.Pitch), AngleClamp360(Rotation.Yaw), AngleClamp360(Rotation.Roll));
+			return FRotator3f(AngleClamp360(Rotation.Pitch), AngleClamp360(Rotation.Yaw), AngleClamp360(Rotation.Roll));
 		}
 
 		FORCEINLINE static float AngleClampTwoPI(float Angle)
@@ -499,6 +499,22 @@ namespace NCsMath
 	#pragma region
 	public:
 		
+		FORCEINLINE static void Set(FVector3f& To, const FVector3d& From)
+		{
+			To.X = (float)From.X;
+			To.Y = (float)From.Y;
+			To.Z = (float)From.Z;
+		}
+
+		FORCEINLINE static FVector2f Convert(const FVector2d& V) { return FVector2f((float)V.X, (float)V.Y); }
+		FORCEINLINE static FVector2d Convert(const FVector2f& V) { return FVector2d((double)V.X, (double)V.Y); }
+
+		FORCEINLINE static FVector3f Convert(const FVector3d& V) { return FVector3f((float)V.X, (float)V.Y, (float)V.Z); }
+		FORCEINLINE static FVector3d Convert(const FVector3f& V) { return FVector3d((double)V.X, (double)V.Y, (double)V.Z); }
+
+		FORCEINLINE static FVector4f Convert(const FVector4d& V) { return FVector4f((float)V.X, (float)V.Y, (float)V.Z, (float)V.W); }
+		FORCEINLINE static FVector4d Convert(const FVector4f& V) { return FVector4d((double)V.X, (double)V.Y, (double)V.Z, (double)V.W); }
+
 		/**
 		* Mostly copied from:  Core\Public\Math\Vector2D.h
 		* 
@@ -511,7 +527,7 @@ namespace NCsMath
 		* @param Tolerance			Minimum squared vector length.
 		* @return					A normalized copy if safe, (0,0,0) otherwise.
 		*/
-		FORCEINLINE static FVector2D GetSafeNormal(const FVector2D& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		FORCEINLINE static FVector2f GetSafeNormal(const FVector2f& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
 		{
 			OutSizeSquared = V.X*V.X + V.Y*V.Y;
 
@@ -525,7 +541,7 @@ namespace NCsMath
 			if (OutSizeSquared < Tolerance)
 			{
 				OutSize = 0.0f;
-				return FVector2D(0.0f);
+				return FVector2f(0.0f);
 			}
 
 			OutSize = FMath::Sqrt(OutSizeSquared);
@@ -545,7 +561,7 @@ namespace NCsMath
 		* @param Tolerance			Minimum squared vector length.
 		* @return					A normalized copy if safe, (0,0,0) otherwise.
 		*/
-		FORCEINLINE static FVector GetSafeNormal(const FVector& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		FORCEINLINE static FVector3f GetSafeNormal(const FVector3f& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
 		{
 			OutSizeSquared = V.X*V.X + V.Y*V.Y + V.Z*V.Z;
 
@@ -559,7 +575,41 @@ namespace NCsMath
 			if (OutSizeSquared < Tolerance)
 			{
 				OutSize = 0.0f;
-				return FVector::ZeroVector;
+				return FVector3f::ZeroVector;
+			}
+
+			OutSize = FMath::Sqrt(OutSizeSquared);
+
+			return (1.0f / OutSize) * V;
+		}
+
+		/**
+		* Mostly copied from:  Core\Public\Math\Vector.h
+		* 
+		* Gets a normalized copy of the vector, checking it is safe to do so based on the length.
+		* Returns zero vector if vector length is too small to safely normalize.
+		*
+		* @param V					The vector to the the normal for.
+		* @param OutSizeSquared		V.SizeSquared().
+		* @param OutSize			V.Size().
+		* @param Tolerance			Minimum squared vector length.
+		* @return					A normalized copy if safe, (0,0,0) otherwise.
+		*/
+		FORCEINLINE static FVector3d GetSafeNormal(const FVector3d& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		{
+			OutSizeSquared = V.X*V.X + V.Y*V.Y + V.Z*V.Z;
+
+			// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+			if(OutSizeSquared == 1.0f)
+			{
+				OutSize = 1.0f;
+				return V;
+			}		
+			else 
+			if (OutSizeSquared < Tolerance)
+			{
+				OutSize = 0.0f;
+				return FVector3d::ZeroVector;
 			}
 
 			OutSize = FMath::Sqrt(OutSizeSquared);
@@ -579,7 +629,7 @@ namespace NCsMath
 		* @param Tolerance			Minimum squared vector length.
 		* @return					A normalized copy if safe, (0,0,0) otherwise.
 		*/
-		FORCEINLINE static FVector GetSafeNormal2D(const FVector& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		FORCEINLINE static FVector3f GetSafeNormal2D(const FVector3f& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
 		{
 			OutSizeSquared = V.X*V.X + V.Y *V.Y;
 
@@ -592,17 +642,55 @@ namespace NCsMath
 				}
 				else
 				{
-					return FVector(V.X, V.Y, 0.f);
+					return FVector3f(V.X, V.Y, 0.f);
 				}
 			}
 			else if (OutSizeSquared < Tolerance)
 			{
-				return FVector::ZeroVector;
+				return FVector3f::ZeroVector;
 			}
 
 			OutSize = FMath::Sqrt(OutSizeSquared);
 
-			return (1.0f / OutSize) * FVector(V.X, V.Y, 0.f);
+			return (1.0f / OutSize) * FVector3f(V.X, V.Y, 0.f);
+		}
+
+		/**
+		* Mostly copied from:  Core\Public\Math\Vector.h
+		*
+		* Gets a normalized copy of the vector, checking it is safe to do so based on the length.
+		* Returns zero vector if vector length is too small to safely normalize.
+		*
+		* @param V					The vector to the the normal for.
+		* @param OutSizeSquared		V.SizeSquared().
+		* @param OutSize			V.Size().
+		* @param Tolerance			Minimum squared vector length.
+		* @return					A normalized copy if safe, (0,0,0) otherwise.
+		*/
+		FORCEINLINE static FVector3d GetSafeNormal2D(const FVector3d& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		{
+			OutSizeSquared = V.X*V.X + V.Y *V.Y;
+
+			// Not sure if it's safe to add tolerance in there. Might introduce too many errors
+			if (OutSizeSquared == 1.f)
+			{
+				if (V.Z == 0.0)
+				{
+					return V;
+				}
+				else
+				{
+					return FVector3d(V.X, V.Y, 0.0);
+				}
+			}
+			else if (OutSizeSquared < Tolerance)
+			{
+				return FVector3d::ZeroVector;
+			}
+
+			OutSize = FMath::Sqrt(OutSizeSquared);
+
+			return (1.0f / OutSize) * FVector3d(V.X, V.Y, 0.0);
 		}
 
 		/**
@@ -617,7 +705,7 @@ namespace NCsMath
 		* @param Tolerance			Minimum squared vector length.
 		* @return					A normalized copy if safe, (0,0,0) otherwise.
 		*/
-		FORCEINLINE static FVector4 GetSafeNormal(const FVector4& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
+		FORCEINLINE static FVector4f GetSafeNormal(const FVector4f& V, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
 		{
 			OutSizeSquared = V.X*V.X + V.Y*V.Y + V.Z*V.Z + V.W*V.W;
 
@@ -631,7 +719,7 @@ namespace NCsMath
 			if (OutSizeSquared < Tolerance)
 			{
 				OutSize = 0.0f;
-				return FVector4(0.0f);
+				return FVector4f(0.0f);
 			}
 
 			OutSize = FMath::Sqrt(OutSizeSquared);
@@ -645,19 +733,19 @@ namespace NCsMath
 		* 
 		* @param V
 		* @param Offset		Value to be added to V.Rotation().Yaw.
-		* return			FRotator(0.0f, V.Rotation().Yaw + Offset, 0.0f).
+		* return			FRotator3f(0.0f, V.Rotation().Yaw + Offset, 0.0f).
 		*/
-		FORCEINLINE static FRotator ToRotatorOnlyYaw(const FVector& V, const float& Offset = 0.0f)
+		FORCEINLINE static FRotator3f ToRotatorOnlyYaw(const FVector3f& V, const float& Offset = 0.0f)
 		{
-			FRotator R = FRotator::ZeroRotator;
+			FRotator3f R = FRotator3f::ZeroRotator;
 
 			R.Yaw = FMath::Atan2(V.Y, V.X) * (180.f / PI);
 
 #if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
 			if (R.ContainsNaN())
 			{
-				logOrEnsureNanError(TEXT("NCsMath::FLibrary::ToRotatorOnlyYaw(): Rotator result %s contains NaN! Input FVector = %s"), *(R.ToString()), *(V.ToString()));
-				R = FRotator::ZeroRotator;
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::ToRotatorOnlyYaw(): Rotator result %s contains NaN! Input FVector3f = %s"), *(R.ToString()), *(V.ToString()));
+				R = FRotator3f::ZeroRotator;
 			}
 #endif
 			R.Yaw += Offset;
@@ -671,14 +759,14 @@ namespace NCsMath
 		* @param V
 		* return	V.Rotation().Yaw.
 		*/
-		FORCEINLINE static float GetYaw(const FVector& V)
+		FORCEINLINE static float GetYaw(const FVector3f& V)
 		{
 			const float Yaw = FMath::Atan2(V.Y, V.X) * (180.f / PI);
 
 #if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
 			if (!FMath::IsFinite(Yaw))
 			{
-				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetYaw(): Yaw result %f contains NaN! Input FVector = %s"), Yaw, *(V.ToString()));
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetYaw(): Yaw result %f contains NaN! Input FVector3f = %s"), Yaw, *(V.ToString()));
 				return 0.0f;
 			}
 #endif
@@ -691,19 +779,19 @@ namespace NCsMath
 		*
 		* @param V
 		* @param Offset		Value to be added to V.Rotation().Pitch.
-		* return			FRotator(0.0f, V.Rotation().Pitch + Offset, 0.0f).
+		* return			FRotator3f(0.0f, V.Rotation().Pitch + Offset, 0.0f).
 		*/
-		FORCEINLINE static FRotator ToRotatorOnlyPitch(const FVector& V, const float& Offset = 0.0f)
+		FORCEINLINE static FRotator3f ToRotatorOnlyPitch(const FVector3f& V, const float& Offset = 0.0f)
 		{
-			FRotator R = FRotator::ZeroRotator;
+			FRotator3f R = FRotator3f::ZeroRotator;
 
 			R.Pitch = FMath::Atan2(V.Z, FMath::Sqrt((V.X * V.X) + (V.Y * V.Y))) * (180.f / PI);
 
 #if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
 			if (R.ContainsNaN())
 			{
-				logOrEnsureNanError(TEXT("NCsMath::FLibrary::ToRotatorOnlyYaw(): Rotator result %s contains NaN! Input FVector = %s"), *(R.ToString()), *(V.ToString()));
-				R = FRotator::ZeroRotator;
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::ToRotatorOnlyYaw(): Rotator result %s contains NaN! Input FVector3f = %s"), *(R.ToString()), *(V.ToString()));
+				R = FRotator3f::ZeroRotator;
 			}
 #endif
 			R.Yaw += Offset;
@@ -717,29 +805,27 @@ namespace NCsMath
 		* @param V
 		* return	V.Rotation().Pitch.
 		*/
-		FORCEINLINE static float GetPitch(const FVector& V)
+		FORCEINLINE static float GetPitch(const FVector3f& V)
 		{
 			const float Pitch = FMath::Atan2(V.Z, FMath::Sqrt((V.X * V.X) + (V.Y * V.Y))) * (180.f / PI);
 
 #if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
 			if (!FMath::IsFinite(Pitch))
 			{
-				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetPitch(): Pitch result %f contains NaN! Input FVector = %s"), Pitch, *(V.ToString()));
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetPitch(): Pitch result %f contains NaN! Input FVector3f = %s"), Pitch, *(V.ToString()));
 				return 0.0f;
 			}
 #endif
 			return Pitch;
 		}
 
-		FORCEINLINE static bool IsAnyComponentZero(const FVector& V)
-		{
-			return V.X == 0.0f || V.Y == 0.0f || V.Z == 0.0f;
-		}
+		FORCEINLINE static bool IsAnyComponentZero(const FVector3f& V) { return V.X == 0.0f || V.Y == 0.0f || V.Z == 0.0f; }
+		FORCEINLINE static bool IsAnyComponentZero(const FVector3d& V) { return V.X == 0.0 || V.Y == 0.0 || V.Z == 0.0; }
 
-		FORCEINLINE static FVector Limit2D(const FVector& V, const float& Max)
+		FORCEINLINE static FVector3f Limit2D(const FVector3f& V, const float& Max)
 		{
 			if (Max == 0.0f)
-				return FVector::ZeroVector;
+				return FVector3f::ZeroVector;
 
 			const float DSq = V.SizeSquared2D();
 			
@@ -753,24 +839,24 @@ namespace NCsMath
 			return V;
 		}
 
-		FORCEINLINE static FVector GetUpFromNormal(const FVector& N) { return GetUp(N.Rotation()); }
-		FORCEINLINE static FVector GetUp(const FVector& V) { return GetUpFromNormal(V.GetSafeNormal()); }
+		FORCEINLINE static FVector3f GetUpFromNormal(const FVector3f& N) { return GetUp(N.Rotation()); }
+		FORCEINLINE static FVector3f GetUp(const FVector3f& V) { return GetUpFromNormal(V.GetSafeNormal()); }
 
-		FORCEINLINE static FVector GetRightFromNormal(const FVector& N) { return GetRight(N.Rotation()); }
-		FORCEINLINE static FVector GetRight(const FVector& V) { return GetRightFromNormal(V.GetSafeNormal()); }
-		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N) { return GetRightOnlyYaw(GetYaw(N)); }
-		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N, float& OutYaw) 
+		FORCEINLINE static FVector3f GetRightFromNormal(const FVector3f& N) { return GetRight(N.Rotation()); }
+		FORCEINLINE static FVector3f GetRight(const FVector3f& V) { return GetRightFromNormal(V.GetSafeNormal()); }
+		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N) { return GetRightOnlyYaw(GetYaw(N)); }
+		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N, float& OutYaw) 
 		{
 			OutYaw = GetYaw(N);
 			return GetRightOnlyYaw(OutYaw);
 		}
-		FORCEINLINE static FVector GetRightFromNormal2D(const FVector& N, FRotator& OutRotation)
+		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N, FRotator3f& OutRotation)
 		{
 			OutRotation.Yaw = GetYaw(N);
 			return GetRightOnlyYaw(OutRotation.Yaw);
 		}
 
-		FORCEINLINE static void GetRightAndUpFromNormal(const FVector& N, FVector& OutRight, FVector& OutUp) { GetRightAndUp(N.Rotation(), OutRight, OutUp); }
+		FORCEINLINE static void GetRightAndUpFromNormal(const FVector3f& N, FVector3f& OutRight, FVector3f& OutUp) { GetRightAndUp(N.Rotation(), OutRight, OutUp); }
 
 		/**
 		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Up' vector relative to N.
@@ -779,16 +865,16 @@ namespace NCsMath
 		* @param Angle	Angle in Degrees
 		* return		N rotated Angle Degrees about 'Up' vector relative to N.
 		*/
-		FORCEINLINE static FVector RotateNormalAngleUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetUpFromNormal(N)); }
+		FORCEINLINE static FVector3f RotateNormalAngleUp(const FVector3f& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetUpFromNormal(N)); }
 		
 		/**
-		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of World Up (FVector::UpVector).
+		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of World Up (FVector3f::UpVector).
 		*
 		* @param N		Normalized Vector
 		* @param Angle	Angle in Degrees
 		* return		N rotated Angle Degrees about 'Up' vector relative to N.
 		*/
-		FORCEINLINE static FVector RotateNormalWorldUp(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, FVector::UpVector); }
+		FORCEINLINE static FVector3f RotateNormalWorldUp(const FVector3f& N, const float& Angle) { return N.RotateAngleAxis(Angle, FVector3f::UpVector); }
 
 		/**
 		* Rotate a Normalized Vector, N, by Angle Degrees about the Axis made of the 'Right' vector relative to N.
@@ -797,33 +883,87 @@ namespace NCsMath
 		* @param Angle	Angle in Degrees
 		* return		N rotated Angle Degrees about 'Right' vector relative to N.
 		*/
-		FORCEINLINE static FVector RotateNormalAngleRight(const FVector& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetRightFromNormal(N));  }
+		FORCEINLINE static FVector3f RotateNormalAngleRight(const FVector3f& N, const float& Angle) { return N.RotateAngleAxis(Angle, GetRightFromNormal(N));  }
 
-		FORCEINLINE static FVector Fractional(const FVector& V)
+		FORCEINLINE static FVector3f Fractional(const FVector3f& V)
 		{
-			return FVector(FMath::Fractional(V.X), FMath::Fractional(V.Y), FMath::Fractional(V.Z));
+			return FVector3f(FMath::Fractional(V.X), FMath::Fractional(V.Y), FMath::Fractional(V.Z));
 		}
 
-		FORCEINLINE static float DotProduct2D(const FVector& A, const FVector& B)
+		FORCEINLINE static float DotProduct2D(const FVector3f& A, const FVector3f& B)
 		{
 			return A.X * B.X + A.Y * B.Y;
 		}
 
-		FORCEINLINE static FVector Multiply(const FVector& V, const FQuat& Quat)
+		FORCEINLINE static FVector3f Multiply(const FVector3f& V, const FQuat4f& Quat)
 		{
-			const FVector QuatXYZ = FVector(Quat.X, Quat.Y, Quat.Z);
+			const FVector3f QuatXYZ = FVector3f(Quat.X, Quat.Y, Quat.Z);
 
-			const FVector Part1 = 2.0f * FVector::DotProduct(QuatXYZ, V) * QuatXYZ;
-			const FVector Part2 = (FMath::Square(Quat.W) - FVector::DotProduct(QuatXYZ, QuatXYZ)) * V;
-			const FVector Part3 = 2.0f * Quat.W * FVector::CrossProduct(QuatXYZ, V);
+			const FVector3f Part1 = 2.0f * FVector3f::DotProduct(QuatXYZ, V) * QuatXYZ;
+			const FVector3f Part2 = (FMath::Square(Quat.W) - FVector3f::DotProduct(QuatXYZ, QuatXYZ)) * V;
+			const FVector3f Part3 = 2.0f * Quat.W * FVector3f::CrossProduct(QuatXYZ, V);
 
-			const FVector Vector = Part1 + Part2 + Part3;
+			const FVector3f Vector = Part1 + Part2 + Part3;
 			return Vector;
 		}
 
-		FORCEINLINE static FVector RandRange(const FVector& Min, const FVector& Max)
+		FORCEINLINE static FVector3f RandRange(const FVector3f& Min, const FVector3f& Max)
 		{
-			return FVector(FMath::RandRange(Min.X, Max.X), FMath::RandRange(Min.Y, Max.Y), FMath::RandRange(Min.Z, Max.Z));
+			return FVector3f(FMath::RandRange(Min.X, Max.X), FMath::RandRange(Min.Y, Max.Y), FMath::RandRange(Min.Z, Max.Z));
+		}
+
+		FORCEINLINE static float GetAbsMax(const FVector4f& V)
+		{
+			return FMath::Max(FMath::Max(FMath::Max(FMath::Abs(V.X), FMath::Abs(V.Y)), FMath::Abs(V.Z)), FMath::Abs(V.W));
+		}
+
+		/**
+		* Interpolate a normal vector Current to Target, by interpolating the angle between those vectors with constant step. 
+		*/
+		FORCEINLINE static FVector3f VInterpNormalRotationTo(const FVector3f& Current, const FVector3f& Target, float DeltaTime, float RotationSpeedDegrees)
+		{
+			// Find delta rotation between both normals.
+			FQuat4f DeltaQuat = FQuat4f::FindBetween(Current, Target);
+
+			// Decompose into an axis and angle for rotation
+			FVector3f DeltaAxis(0.f);
+			FQuat4f::FReal DeltaAngle = 0.f;
+			DeltaQuat.ToAxisAndAngle(DeltaAxis, DeltaAngle);
+
+			// Find rotation step for this frame
+			const float RotationStepRadians = RotationSpeedDegrees * (UE_PI / 180) * DeltaTime;
+
+			if (FMath::Abs(DeltaAngle) > RotationStepRadians)
+			{
+				DeltaAngle = FMath::Clamp<FQuat4f::FReal>(DeltaAngle, -RotationStepRadians, RotationStepRadians);
+				DeltaQuat = FQuat4f(DeltaAxis, DeltaAngle);
+				return DeltaQuat.RotateVector(Current);
+			}
+			return Target;
+		}
+
+		/** 
+		* Interpolate vector from Current to Target with constant step 
+		*/
+		FORCEINLINE static FVector3f VInterpConstantTo(const FVector3f& Current, const FVector3f& Target, const float& DeltaTime, const float& InterpSpeed)
+		{
+			const FVector3f Delta		   = Target - Current;
+			const FVector3f::FReal DeltaM  = Delta.Size();
+			const FVector3f::FReal MaxStep = InterpSpeed * DeltaTime;
+
+			if (DeltaM > MaxStep)
+			{
+				if (MaxStep > 0.f)
+				{
+					const FVector3f DeltaN = Delta / DeltaM;
+					return Current + DeltaN * MaxStep;
+				}
+				else
+				{
+					return Current;
+				}
+			}
+			return Target;
 		}
 
 	#pragma endregion Vector
@@ -832,46 +972,57 @@ namespace NCsMath
 	#pragma region
 	public:
 
-		FORCEINLINE static FVector GetForwardOnlyYaw(const float& Yaw)
+		FORCEINLINE static FRotator3f Convert(const FRotator3d& R) { return FRotator3f((float)R.Pitch, (float)R.Yaw, (float)R.Roll); }
+		FORCEINLINE static FRotator3d Convert(const FRotator3f& R) { return FRotator3d((double)R.Pitch, (double)R.Yaw, (double)R.Roll); }
+
+		FORCEINLINE static FVector3f GetForwardOnlyYaw(const float& Yaw)
 		{
 			const float Y = FMath::Fmod(Yaw, 360.0f);
 
 			float SY, CY;
 			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
 
-			return FVector(CY, SY, 0.0f);
+			return FVector3f(CY, SY, 0.0f);
 		}
 
-		FORCEINLINE static FVector GetRight(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Y); }
-		FORCEINLINE static FVector GetRightOnlyYaw(const float& Yaw)
+		FORCEINLINE static FVector3f GetRight(const FRotator3f& R) { return FRotationMatrix44f(R).GetScaledAxis(EAxis::Y); }
+		FORCEINLINE static FVector3f GetRightOnlyYaw(const float& Yaw)
 		{
 			const float Y = FMath::Fmod(Yaw, 360.0f);
 
 			float SY, CY;
 			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
 
-			return FVector(-SY, CY, 0.0f);
+			return FVector3f(-SY, CY, 0.0f);
 		}
-		FORCEINLINE static FVector GetRightOnlyYaw(const FRotator& R)
+		FORCEINLINE static FVector3f GetRightOnlyYaw(const FRotator3f& R)
 		{
 			return GetRightOnlyYaw(R.Yaw);
 		}
 
-		FORCEINLINE static FVector GetUp(const FRotator& R) { return FRotationMatrix(R).GetScaledAxis(EAxis::Z); }
+		FORCEINLINE static FVector3f GetUp(const FRotator3f& R) { return FRotationMatrix44f(R).GetScaledAxis(EAxis::Z); }
 
-		FORCEINLINE static void GetForwardRightAndUp(const FRotator& R, FVector& OutForward, FVector& OutRight, FVector& OutUp)
+		FORCEINLINE static void GetForwardRightAndUp(const FRotator3f& R, FVector3f& OutForward, FVector3f& OutRight, FVector3f& OutUp)
 		{
-			FRotationMatrix M(R);
+			FRotationMatrix44f M(R);
 			OutForward = M.GetScaledAxis(EAxis::X);
 			OutRight = M.GetScaledAxis(EAxis::Y);
 			OutUp = M.GetScaledAxis(EAxis::Z);
 		}
 
-		FORCEINLINE static void GetRightAndUp(const FRotator& R, FVector& OutRight, FVector& OutUp)
+		FORCEINLINE static void GetRightAndUp(const FRotator3f& R, FVector3f& OutRight, FVector3f& OutUp)
 		{
-			FRotationMatrix M(R);
+			FRotationMatrix44f M(R);
 			OutRight = M.GetScaledAxis(EAxis::Y);
 			OutUp = M.GetScaledAxis(EAxis::Z);
+		}
+
+		/** 
+		* Find a rotation for an object at Start location to point at Target location.
+		*/
+		FORCEINLINE static FRotator3f FindLookAtRotation(const FVector3f& Start, const FVector3f& Target)
+		{
+			return FRotationMatrix44f::MakeFromX(Target - Start).Rotator();
 		}
 
 	#pragma endregion Rotator
@@ -880,69 +1031,123 @@ namespace NCsMath
 	#pragma region
 	public:
 
-		FORCEINLINE static FVector GetRight(const FQuat& Q) { return GetRight(Q.Rotator()); }
-		FORCEINLINE static FVector GetUp(const FQuat& Q) { return GetUp(Q.Rotator()); }
+		FORCEINLINE static FQuat4f Convert(const FQuat4d& Q) { return FQuat4f((float)Q.X, (float)Q.Y, (float)Q.Z, (float)Q.W); }
+		FORCEINLINE static FQuat4d Convert(const FQuat4f& Q) { return FQuat4d((double)Q.X, (double)Q.Y, (double)Q.Z, (double)Q.W); }
 
-		FORCEINLINE static void GetForwardRightAndUp(const FQuat& Q, FVector& OutForward, FVector& OutRight, FVector& OutUp)
+		FORCEINLINE static FVector3f GetRight(const FQuat4f& Q) { return GetRight(Q.Rotator()); }
+		FORCEINLINE static FVector3f GetUp(const FQuat4f& Q) { return GetUp(Q.Rotator()); }
+
+		FORCEINLINE static void GetForwardRightAndUp(const FQuat4f& Q, FVector3f& OutForward, FVector3f& OutRight, FVector3f& OutUp)
 		{
-			FMatrix M = FRotationMatrix::Make(Q);
+			FMatrix44f M = FRotationMatrix44f::Make(Q);
 			OutForward = M.GetScaledAxis(EAxis::X);
 			OutRight = M.GetScaledAxis(EAxis::Y);
 			OutUp = M.GetScaledAxis(EAxis::Z);
 		}
 
-		FORCEINLINE static void RotateByPitch(FQuat& OutQ, float Radians)
+		FORCEINLINE static void RotateByPitch(FQuat4f& OutQ, float Radians)
 		{
-			const FQuat DeltaQuat = FQuat(FVector::RightVector, Radians);
+			const FQuat4f DeltaQuat = FQuat4f(FVector3f::RightVector, Radians);
 			OutQ				 *= DeltaQuat;
 			OutQ.Normalize();
 		}
 
-		FORCEINLINE static FQuat RotateByPitch(const FQuat& Q, float Radians)
+		FORCEINLINE static FQuat4f RotateByPitch(const FQuat4f& Q, float Radians)
 		{
-			FQuat NewQuat = Q;
+			FQuat4f NewQuat = Q;
 			RotateByPitch(NewQuat, Radians);
 			return NewQuat;
 		}
 
-		FORCEINLINE static void RotateByPitchDegrees(FQuat& OutQ, float Degrees) { RotateByPitch(OutQ, FMath::DegreesToRadians(Degrees)); }
-		FORCEINLINE static FQuat RotateByPitchDegrees(const FQuat& Q, float Degrees) { return RotateByPitch(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByPitchDegrees(FQuat4f& OutQ, float Degrees) { RotateByPitch(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4f RotateByPitchDegrees(const FQuat4f& Q, float Degrees) { return RotateByPitch(Q, FMath::DegreesToRadians(Degrees)); }
 		
-		FORCEINLINE static void RotateByRoll(FQuat& OutQ, float Radians)
+		FORCEINLINE static void RotateByRoll(FQuat4f& OutQ, float Radians)
 		{
-			const FQuat DeltaQuat = FQuat(FVector::ForwardVector, Radians);
+			const FQuat4f DeltaQuat = FQuat4f(FVector3f::ForwardVector, Radians);
 			OutQ *= DeltaQuat;
 			OutQ.Normalize();
 		}
 
-		FORCEINLINE static FQuat RotateByRoll(const FQuat& Q, float Radians)
+		FORCEINLINE static FQuat4f RotateByRoll(const FQuat4f& Q, float Radians)
 		{
-			FQuat NewQuat = Q;
+			FQuat4f NewQuat = Q;
 			RotateByRoll(NewQuat, Radians);
 			return NewQuat;
 		}
 
-		FORCEINLINE static void RotateByRollDegrees(FQuat& OutQ, float Degrees) { RotateByRoll(OutQ, FMath::DegreesToRadians(Degrees)); }
-		FORCEINLINE static FQuat RotateByRollDegrees(const FQuat& Q, float Degrees) { return RotateByRoll(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByRollDegrees(FQuat4f& OutQ, float Degrees) { RotateByRoll(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4f RotateByRollDegrees(const FQuat4f& Q, float Degrees) { return RotateByRoll(Q, FMath::DegreesToRadians(Degrees)); }
 
-		FORCEINLINE static void RotateByYaw(FQuat& OutQ, float Radians)
+		FORCEINLINE static void RotateByYaw(FQuat4f& OutQ, float Radians)
 		{
-			const FQuat DeltaQuat = FQuat(FVector::UpVector, Radians);
+			const FQuat4f DeltaQuat = FQuat4f(FVector3f::UpVector, Radians);
 			OutQ *= DeltaQuat;
 			OutQ.Normalize();
 		}
 
-		FORCEINLINE static FQuat RotateByYaw(const FQuat& Q, float Radians)
+		FORCEINLINE static FQuat4f RotateByYaw(const FQuat4f& Q, float Radians)
 		{
-			FQuat NewQuat = Q;
+			FQuat4f NewQuat = Q;
 			RotateByRoll(NewQuat, Radians);
 			return NewQuat;
 		}
 
-		FORCEINLINE static void RotateByYawDegrees(FQuat& OutQ, float Degrees) { RotateByYaw(OutQ, FMath::DegreesToRadians(Degrees)); }
-		FORCEINLINE static FQuat RotateByYawDegrees(const FQuat& Q, float Degrees) { return RotateByYaw(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByYawDegrees(FQuat4f& OutQ, float Degrees) { RotateByYaw(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4f RotateByYawDegrees(const FQuat4f& Q, float Degrees) { return RotateByYaw(Q, FMath::DegreesToRadians(Degrees)); }
 
 	#pragma endregion Quat
+
+	// Transform
+	#pragma region
+	public:
+
+		FORCEINLINE static FTransform3f Convert(const FTransform3d& T) 
+		{
+			FTransform3f Transform;
+			Transform.SetTranslation(Convert(T.GetTranslation()));
+			Transform.SetRotation(Convert(T.GetRotation()));
+			Transform.SetScale3D(Convert(T.GetScale3D()));
+
+			return Transform;
+		}
+
+		FORCEINLINE static FTransform3d Convert(const FTransform3f& T)
+		{
+			FTransform3d Transform;
+			Transform.SetTranslation(Convert(T.GetTranslation()));
+			Transform.SetRotation(Convert(T.GetRotation()));
+			Transform.SetScale3D(Convert(T.GetScale3D()));
+
+			return Transform;
+		}
+
+	#pragma endregion Transform
+
+	// Matrix
+	#pragma region
+	public:
+
+		FORCEINLINE static FMatrix44f Convert(const FMatrix44d& M) 
+		{
+			FMatrix44f Mf;
+			Mf.M[0][0] = (float)M.M[0][0]; Mf.M[0][1] = (float)M.M[0][1]; Mf.M[0][2] = (float)M.M[0][2]; Mf.M[0][3] = (float)M.M[0][3];
+			Mf.M[1][0] = (float)M.M[1][0]; Mf.M[1][1] = (float)M.M[1][1]; Mf.M[1][2] = (float)M.M[1][2]; Mf.M[1][3] = (float)M.M[1][3];
+			Mf.M[2][0] = (float)M.M[2][0]; Mf.M[2][1] = (float)M.M[2][1]; Mf.M[2][2] = (float)M.M[2][2]; Mf.M[2][3] = (float)M.M[2][3];
+			Mf.M[3][0] = (float)M.M[3][0]; Mf.M[3][1] = (float)M.M[3][1]; Mf.M[3][2] = (float)M.M[3][2]; Mf.M[3][3] = (float)M.M[3][3];
+			return Mf;
+		}
+		FORCEINLINE static FMatrix44d Convert(const FMatrix44f& M)
+		{
+			FMatrix44d Md;
+			Md.M[0][0] = (double)M.M[0][0]; Md.M[0][1] = (double)M.M[0][1]; Md.M[0][2] = (double)M.M[0][2]; Md.M[0][3] = (double)M.M[0][3];
+			Md.M[1][0] = (double)M.M[1][0]; Md.M[1][1] = (double)M.M[1][1]; Md.M[1][2] = (double)M.M[1][2]; Md.M[1][3] = (double)M.M[1][3];
+			Md.M[2][0] = (double)M.M[2][0]; Md.M[2][1] = (double)M.M[2][1]; Md.M[2][2] = (double)M.M[2][2]; Md.M[2][3] = (double)M.M[2][3];
+			Md.M[3][0] = (double)M.M[3][0]; Md.M[3][1] = (double)M.M[3][1]; Md.M[3][2] = (double)M.M[3][2]; Md.M[3][3] = (double)M.M[3][3];
+			return Md;
+		}
+
+	#pragma endregion Matrix
 
 	// Segment
 	#pragma region
@@ -959,7 +1164,7 @@ namespace NCsMath
 		* @param OutT			(out) Percentage the closest point lies between StartPoint (0.0f) and EndPoint (1.0f).
 		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
 		*/
-		static FVector ClosestPointOnSegment(const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT);
+		static FVector3f ClosestPointOnSegment(const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT);
 
 		/**
 		* Returns closest point on a segment to a given point.
@@ -973,7 +1178,7 @@ namespace NCsMath
 		* @param OutT			(out) Percentage the closest point lies between StartPoint (0.0f) and EndPoint (1.0f).
 		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
 		*/
-		static FVector ClosestPointOnSegmentChecked(const FString& Context, const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT);
+		static FVector3f ClosestPointOnSegmentChecked(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT);
 
 		/**
 		* Safely returns closest point on a segment to a given point.
@@ -988,7 +1193,7 @@ namespace NCsMath
 		* @param Log			(optional)
 		* return				point on the segment defined by (StartPoint, EndPoint) that is closest to Point.
 		*/
-		static FVector SafeClosestPointOnSegment(const FString& Context, const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT, void(*Log)(const FString&) = &FCsLog::Warning);
+		static FVector3f SafeClosestPointOnSegment(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Segment
 
@@ -996,9 +1201,12 @@ namespace NCsMath
 	#pragma region
 	public:
 
-		static bool IsValidChecked(const FString& Context, const FPlane& Plane);
+		FORCEINLINE static FPlane4f Convert(const FPlane4d& Plane) { return FPlane4f((float)Plane.X, (float)Plane.Y, (float)Plane.Z, (float)Plane.W); }
+		FORCEINLINE static FPlane4d Convert(const FPlane4f& Plane) { return FPlane4d((double)Plane.X, (double)Plane.Y, (double)Plane.Z, (double)Plane.W); }
 
-		static bool IsValid(const FString& Context, const FPlane& Plane, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool IsValidChecked(const FString& Context, const FPlane4f& Plane);
+
+		static bool IsValid(const FString& Context, const FPlane4f& Plane, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Plane
 
@@ -1016,7 +1224,19 @@ namespace NCsMath
 		* @param OutIntersection	(out) The point of intersection between the line and the plane.
 		* return					True if the intersection test was successful.
 		*/
-		static bool RayPlaneIntersectionChecked(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection);
+		static bool RayPlaneIntersectionChecked(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection);
+
+		/**
+		* returns the time (t) of the intersection of the passed segment and a plane (could be <0 or >1)
+		* @param StartPoint - start point of segment
+		* @param EndPoint   - end point of segment
+		* @param Plane		- plane to intersect with
+		* @return time(T) of intersection
+		*/
+		FORCEINLINE static float GetTForSegmentPlaneIntersect(const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane)
+		{
+			return FMath::GetTForSegmentPlaneIntersect(Convert(StartPoint), Convert(EndPoint), Convert(Plane));
+		}
 
 		/**
 		* Computes the intersection point between a ray and a plane.
@@ -1029,7 +1249,7 @@ namespace NCsMath
 		* @param Log
 		* return					True if the intersection test was successful.
 		*/
-		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1042,7 +1262,7 @@ namespace NCsMath
 		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
 		* return					True if intersection occurred
 		*/
-		static bool SegmentPlaneIntersection(const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint);
+		static bool SegmentPlaneIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1056,7 +1276,7 @@ namespace NCsMath
 		* @param OutIntersectPoint	(out) var for the point on the segment that intersects the triangle (if any)
 		* return					True if intersection occurred
 		*/
-		static bool SegmentPlaneIntersectionChecked(const FString& Context, const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint);
+		static bool SegmentPlaneIntersectionChecked(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint);
 
 		/**
 		* Safely returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1071,7 +1291,7 @@ namespace NCsMath
 		* @param Log				(optional)
 		* return					True if intersection occurred
 		*/
-		static bool SafeSegmentPlaneIntersection(const FString& Context, const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeSegmentPlaneIntersection(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1092,7 +1312,7 @@ namespace NCsMath
 		* @param OutNormal			(out) var for the quad normal
 		* @return					True if intersection occurred
 		*/
-		static bool SegmentQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal);
+		static bool SegmentQuadIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& D, float& OutT, FVector3f& OutIntersectPoint, FVector3f& OutNormal);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1114,7 +1334,7 @@ namespace NCsMath
 		* @param OutUV				(out) Percentage OutIntersectPoint lies in the U (AB) and V (AD).
 		* @return					True if intersection occurred
 		*/
-		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal, FVector2D& OutUV);
+		static bool SegmentRectangleQuadIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& D, float& OutT, FVector3f& OutIntersectPoint, FVector3f& OutNormal, FVector2f& OutUV);
 
 		/**
 		* Returns true if there is an intersection between the segment specified by StartPoint and Endpoint, and
@@ -1138,7 +1358,7 @@ namespace NCsMath
 		* @param OutUV				(out) Percentage OutIntersectPoint lies in the U (AB) and V (AD).
 		* @return					True if intersection occurred
 		*/
-		static bool SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, const FPlane& Plane, const FVector& ABC_Normal, const float& ABC_InvArea, const FVector& ADC_Normal, const float& ADC_InvArea, float& OutT, FVector& OutIntersectPoint, FVector2D& OutUV);
+		static bool SegmentRectangleQuadIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& D, const FPlane4f& Plane, const FVector3f& ABC_Normal, const float& ABC_InvArea, const FVector3f& ADC_Normal, const float& ADC_InvArea, float& OutT, FVector3f& OutIntersectPoint, FVector2f& OutUV);
 
 	#pragma endregion Intersection
 
@@ -1151,13 +1371,27 @@ namespace NCsMath
 		*
 		* @param	Point			point to convert to barycentric coordinates (in plane of ABC)
 		* @param	A,B,C			three non-collinear points defining a triangle in CCW
+		*
+		* @return Vector containing the three weights a,b,c such that Point = a*A + b*B + c*C
+		*							                               or Point = A + b*(B-A) + c*(C-A) = (1-b-c)*A + b*B + c*C
+		*/
+		FORCEINLINE static FVector3f ComputeBaryCentric2D(const FVector3f& Point, const FVector3f& A, const FVector3f& B, const FVector3f& C)
+		{
+			return Convert(FMath::ComputeBaryCentric2D(Convert(Point), Convert(A), Convert(B), Convert(C)));
+		}
+
+		/**
+		* Computes the barycentric coordinates for a given point in a triangle
+		*
+		* @param	Point			point to convert to barycentric coordinates (in plane of ABC)
+		* @param	A,B,C			three non-collinear points defining a triangle in CCW
 		* @param	Normal			Normal to triangle ABC
 		* @param	InvArea			Twice area of triangle ABC
 		*
 		* @return Vector containing the three weights a,b,c such that Point = a*A + b*B + c*C
 		*		  or Point = A + b*(B-A) + c*(C-A) = (1-b-c)*A + b*B + c*C
 		*/
-		FORCEINLINE static FVector ComputeBaryCentric2D(const FVector& Point, const FVector& A, const FVector& B, const FVector& C, const FVector& Normal, const float& InvArea)
+		FORCEINLINE static FVector3f ComputeBaryCentric2D(const FVector3f& Point, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& Normal, const float& InvArea)
 		{
 			// Compute a contribution
 			const float AreaPBC = Normal | ((B - Point) ^ (C - Point));
@@ -1168,10 +1402,19 @@ namespace NCsMath
 			const float b		= AreaPCA * InvArea;
 
 			// Compute c contribution
-			return FVector(a, b, 1.0f - a - b);
+			return FVector3f(a, b, 1.0f - a - b);
 		}
 
 	#pragma endregion Triangle
+
+	// Box
+	#pragma region
+	public:
+
+		FORCEINLINE static FBox3f Convert(const FBox3d& B) { return FBox3f(Convert(B.Min), Convert(B.Max)); }
+		FORCEINLINE static FBox3d Convert(const FBox3f& B) { return FBox3d(Convert(B.Min), Convert(B.Max)); }
+
+	#pragma endregion Box
 
 	// LinearColor
 	#pragma region
@@ -1184,14 +1427,14 @@ namespace NCsMath
 		* Returns "zero" (clear) linear color if linear color's "length" is too small to safely normalize.
 		*
 		* @param Color				The color to get the "normal" for.
-		* @param OutSizeSquared		Equivalent to FVector4::SizeSquared().
-		* @param OutSize			Equivlanet to FVector4::Size().
+		* @param OutSizeSquared		Equivalent to FVector4f::SizeSquared().
+		* @param OutSize			Equivlanet to FVector4f::Size().
 		* @param Tolerance			Minimum squared linear color "length".
 		* @return					A normalized copy if safe, (0.0f, 0.0f, 0.0f, 0.0f) otherwise.
 		*/
 		FORCEINLINE static FLinearColor GetSafeNormal(const FLinearColor& Color, float& OutSizeSquared, float& OutSize, const float& Tolerance = SMALL_NUMBER)
 		{
-			return FLinearColor(GetSafeNormal(FVector4(Color), OutSizeSquared, OutSize, Tolerance));
+			return FLinearColor(GetSafeNormal(FVector4f(Color), OutSizeSquared, OutSize, Tolerance));
 		}
 
 	#pragma endregion LinearColor

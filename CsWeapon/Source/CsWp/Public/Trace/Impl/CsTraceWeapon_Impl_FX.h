@@ -87,7 +87,7 @@ namespace NCsWeapon
 					* @param Data
 					* @param End	The end location used by the tracer.
 					*/
-					void TryTracer(TraceDataType* Data, const FVector& End);
+					void TryTracer(TraceDataType* Data, const FVector3f& End);
 
 					/**
 					* Try to apply any Trace Impact Visual Data.

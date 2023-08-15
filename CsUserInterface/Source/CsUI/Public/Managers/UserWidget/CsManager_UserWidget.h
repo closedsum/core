@@ -958,11 +958,11 @@ public:
 
 		TArray<UUserWidget*> UserWidgets;
 
-		TArray<FVector> WorldPositions;
+		TArray<FVector3f> WorldPositions;
 
-		TArray<FVector2D> ScreenPositions;
+		TArray<FVector2f> ScreenPositions;
 
-		TArray<FVector2D> Offsets;
+		TArray<FVector2f> Offsets;
 
 	public:
 
@@ -983,7 +983,7 @@ public:
 		
 		void Deallocate(const int32& ID);
 
-		void UpdateWorldPositionAndOffset(const int32& ID, const FVector& WorldPosition, const FVector2D& Offset);
+		void UpdateWorldPositionAndOffset(const int32& ID, const FVector3f& WorldPosition, const FVector2f& Offset);
 
 		void Update(const FCsDeltaTime& DeltaTime);
 

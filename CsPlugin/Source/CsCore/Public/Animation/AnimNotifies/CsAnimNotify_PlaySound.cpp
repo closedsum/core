@@ -5,6 +5,8 @@
 
 // Library
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
+	// Common
+#include "Library/CsLibrary_Math.h"
 // Pool
 #include "Managers/Pool/Payload/CsPayload_PooledObjectImplSlice.h"
 // Components
@@ -90,7 +92,9 @@ void UCsAnimNotify_PlaySound::Notify(class USkeletalMeshComponent* MeshComp, cla
 		{
 			if (Sound.Bone != NAME_None)
 			{
-				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, Sound.Transform.GetLocation(), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
+				typedef NCsMath::FLibrary MathLibrary;
+
+				UGameplayStatics::SpawnSoundAttached(S, MeshComp, Sound.Bone, MathLibrary::Convert(Sound.Transform.GetLocation()), EAttachLocation::KeepRelativeOffset, false, 1.0f, 1.0f);
 			}
 			else
 			{

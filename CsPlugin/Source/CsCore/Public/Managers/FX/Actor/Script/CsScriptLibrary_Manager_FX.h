@@ -42,5 +42,5 @@ public:
 	* return					Index to spawned FX in pool.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|FX", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Payload,Transform"))
-	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload, const FTransform& Transform);
+	static int32 Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload, const FTransform3f& Transform);
 };

@@ -137,13 +137,13 @@ public:
 	ECsInputValueRule ValueRule;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
-	FVector Location;
+	FVector3f Location;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputLocationRule LocationRule;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
 	ECsInputRotationRule RotationRule;
@@ -295,10 +295,10 @@ struct CSCORE_API FCsInputCompletedValue
 	float Value;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
-	FVector Location;
+	FVector3f Location;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input|Definition")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
 	FCsInputCompletedValue() :
 		ValueType(ECsInputValue::Void),
@@ -541,16 +541,16 @@ struct CSCORE_API FCsInputWord
 
 	FORCEINLINE bool IsCompleted() const { return bCompleted; }
 
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector3f& Location, const FRotator3f& Rotation);
 	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event);
 	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value);
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location);
-	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation);
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector3f& Location);
+	void AddAndInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator3f& Rotation);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector3f& Location, const FRotator3f& Rotation);
 	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event);
 	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value);
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector& Location);
-	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator& Rotation);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FVector3f& Location);
+	void AddOrInput(const FECsInputAction& Action, const ECsInputEvent& Event, const FRotator3f& Rotation);
 
 	FORCEINLINE void Reset()
 	{
@@ -694,8 +694,8 @@ struct CSCORE_API FCsInputPhrase
 
 	FORCEINLINE bool IsCompleted() const { return bCompleted; }
 
-	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
-	void AddOrInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+	void AddAndInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector3f& Location = FVector3f::ZeroVector, const FRotator3f& Rotation = FRotator3f::ZeroRotator);
+	void AddOrInputToWord(const int32& Index, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector3f& Location = FVector3f::ZeroVector, const FRotator3f& Rotation = FRotator3f::ZeroRotator);
 
 	FORCEINLINE void Reset()
 	{

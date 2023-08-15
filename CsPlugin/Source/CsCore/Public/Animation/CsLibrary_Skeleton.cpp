@@ -26,7 +26,7 @@ namespace NCsSkeleton
 
 		checkf(AnimSkeleton, TEXT("%s: Failed to get Skeleton from Anim: %s."), *Context, *(Anim->GetName()));
 		// Check Mesh's Skeleton is compatible with Anim's Skeleton
-		checkf(Mesh->Skeleton->IsCompatible(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName()));
+		checkf(Mesh->GetSkeleton()->IsCompatible(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName()));
 		// Check Mesh is compatible with Anim's Skeleton
 		checkf(AnimSkeleton->IsCompatibleMesh(Mesh), TEXT("%s: Mesh: %s is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName()));
 		return true;
@@ -47,7 +47,7 @@ namespace NCsSkeleton
 			return false;
 		}
 		// Check Mesh's Skeleton is compatible with Anim's Skeleton
-		if (!Mesh->Skeleton->IsCompatible(AnimSkeleton))
+		if (!Mesh->GetSkeleton()->IsCompatible(AnimSkeleton))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName())));
 			return false;
@@ -77,7 +77,7 @@ namespace NCsSkeleton
 
 		checkf(AnimSkeleton, TEXT("%s: Failed to get Skeleton from AnimClass: %s."), *Context, *(AnimClass->GetName()));
 		// Check Mesh's Skeleton is compatible with AnimClass's Skeleton
-		checkf(Mesh->Skeleton->IsCompatible(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName()));
+		checkf(Mesh->GetSkeleton()->IsCompatible(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName()));
 		// Check Mesh is compatible with AnimClass's Skeleton
 		checkf(AnimSkeleton->IsCompatibleMesh(Mesh), TEXT("%s: Mesh: %s is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName()));
 		return true;
@@ -106,7 +106,7 @@ namespace NCsSkeleton
 			return false;
 		}
 		// Check Mesh's Skeleton is compatible with AnimClass's Skeleton
-		if (!Mesh->Skeleton->IsCompatible(AnimSkeleton))
+		if (!Mesh->GetSkeleton()->IsCompatible(AnimSkeleton))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh: %s Skeleton is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName())));
 			return false;

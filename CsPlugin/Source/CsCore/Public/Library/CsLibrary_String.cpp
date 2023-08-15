@@ -79,7 +79,7 @@ namespace NCsString
 		if (FParse::Token(Str, OutValue, false))
 		{
 			if (IsLowerCase)
-				OutValue.ToLower();
+				OutValue = OutValue.ToLower();
 			return true;
 		}
 		return false;
@@ -169,7 +169,7 @@ namespace NCsString
 		return false;
 	}
 
-	bool FLibrary::Stream_GetValue(const TCHAR*& Str, FVector& OutValue)
+	bool FLibrary::Stream_GetValue(const TCHAR*& Str, FVector3f& OutValue)
 	{
 		return OutValue.InitFromString(FString(Str));
 	}

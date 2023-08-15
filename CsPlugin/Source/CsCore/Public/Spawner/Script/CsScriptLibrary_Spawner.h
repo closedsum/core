@@ -58,5 +58,5 @@ public:
 	* @param Center
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Spawner", meta = (AutoCreateRefTerm = "Context, Center"))
-	static bool PointImpl_SetCenterAsTransform(const FString& Context, UObject* Spawner, const FTransform& Center);
+	static bool PointImpl_SetCenterAsTransform(const FString& Context, UObject* Spawner, const FTransform3f& Center);
 };

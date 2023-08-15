@@ -115,7 +115,7 @@ namespace NCsMaterial
 		// Check Mesh is Valid
 		CS_IS_PTR_NULL_CHECKED(Mesh)
 
-		const int32 Count		 = Mesh->StaticMaterials.Num();
+		const int32 Count		 = Mesh->GetStaticMaterials().Num();
 		const int32 MaterialCount = Materials.Num();
 
 		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *(Mesh->GetName()), Count, MaterialCount);
@@ -130,7 +130,7 @@ namespace NCsMaterial
 		// Check Mesh is Valid
 		CS_IS_PTR_NULL(Mesh)
 
-		const int32 Count		  = Mesh->StaticMaterials.Num();
+		const int32 Count		  = Mesh->GetStaticMaterials().Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
@@ -149,7 +149,7 @@ namespace NCsMaterial
 		// Check Mesh is Valid
 		CS_IS_PTR_NULL_CHECKED(Mesh)
 
-		const int32 Count		  = Mesh->Materials.Num();
+		const int32 Count		  = Mesh->GetMaterials().Num();
 		const int32 MaterialCount = Materials.Num();
 
 		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *(Mesh->GetName()), Count, MaterialCount);
@@ -164,7 +164,7 @@ namespace NCsMaterial
 		// Check Mesh is Valid
 		CS_IS_PTR_NULL(Mesh)
 
-		const int32 Count		  = Mesh->Materials.Num();
+		const int32 Count		  = Mesh->GetMaterials().Num();
 		const int32 MaterialCount = Materials.Num();
 
 		if (Count != MaterialCount)
@@ -183,7 +183,7 @@ namespace NCsMaterial
 		CS_IS_PTR_NULL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		checkf(Index < Mesh->Materials.Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->Materials.Num());
+		checkf(Index < Mesh->GetMaterials().Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetMaterials().Num());
 
 		return true;
 	}
@@ -193,7 +193,7 @@ namespace NCsMaterial
 		CS_IS_PTR_NULL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		checkf(Index < Mesh->StaticMaterials.Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->StaticMaterials.Num());
+		checkf(Index < Mesh->GetStaticMaterials().Num(), TEXT("%s: Index: %d is GREATER THAN the number of Materials (%d) for Mesh: %s."), *Context, Index, *(Mesh->GetName()), Mesh->GetStaticMaterials().Num());
 		return true;
 	}
 
@@ -353,7 +353,7 @@ namespace NCsMaterial
 		// Check Mesh is Valid
 		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
-		const int32 Count		  = Mesh->GetStaticMesh()->StaticMaterials.Num();
+		const int32 Count		  = Mesh->GetStaticMesh()->GetStaticMaterials().Num();
 		const int32 MaterialCount = Materials.Num();
 
 		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetStaticMesh()->GetName(), Count, MaterialCount);
@@ -373,10 +373,10 @@ namespace NCsMaterial
 		// Check Mesh is Valid
 		CS_IS_PENDING_KILL_CHECKED(Mesh)
 
-		const int32 Count		  = Mesh->SkeletalMesh->Materials.Num();
+		const int32 Count		  = Mesh->GetSkinnedAsset()->GetMaterials().Num();
 		const int32 MaterialCount = Materials.Num();
 
-		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->SkeletalMesh->GetName(), Count, MaterialCount);
+		checkf(Count == MaterialCount, TEXT("%s: Mismatch between Mesh (%s) material count (%d) != input material count (%d)"), *Context, *Mesh->GetSkinnedAsset()->GetName(), Count, MaterialCount);
 
 		ClearOverrideChecked(Context, Mesh);
 
@@ -463,14 +463,15 @@ namespace NCsMaterial
 		CS_IS_PENDING_KILL_CHECKED(Mesh)
 		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
 		if (Index < Count)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -486,12 +487,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		if (Index < Count)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -507,12 +509,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -527,12 +530,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -549,12 +553,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		if (Index < Count)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -570,12 +575,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		if (Index < Count)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(Index)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(Index, 1, false);
 		}
@@ -591,12 +597,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -611,12 +618,13 @@ namespace NCsMaterial
 
 		const int32 Count = Mesh->GetNumOverrideMaterials();
 
+		typedef NCsObject::FLibrary ObjectLibrary;
+
 		for (int32 I = Count - 1; I >= 0; --I)
 		{
 			if (UMaterialInstanceDynamic* Material = Cast<UMaterialInstanceDynamic>(Mesh->GetMaterial(I)))
 			{
-				if (!Material->IsPendingKill())
-					Material->IsPendingKill();
+				ObjectLibrary::SafeMarkAsGarbage(Context, Material, nullptr);
 			}
 			Mesh->OverrideMaterials.RemoveAt(I, 1, false);
 		}
@@ -1290,7 +1298,7 @@ namespace NCsMaterial
 
 			for (int32 I = 0; I < Count; ++I)
 			{
-				checkf(MIDs[I] && !MIDs[I]->IsPendingKill(), TEXT("%s: MIDs[%d] is NULL or IsPendingKill."), *Context, I);
+				checkf(IsValid(MIDs[I]), TEXT("%s: MIDs[%d] is NULL or IsPendingKill."), *Context, I);
 			}
 			return true;
 		}
@@ -1302,11 +1310,9 @@ namespace NCsMaterial
 			MaterialLibrary::ClearOverrideChecked(Context, Mesh, Index);
 			MaterialLibrary::IsValidChecked(Context, Mesh, Index);
 
-			if (OutMID &&
-				!OutMID->IsPendingKill())
-			{
-				OutMID->MarkPendingKill();
-			}
+			typedef NCsObject::FLibrary ObjectLibrary;
+
+			ObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
 
 			CS_IS_PENDING_KILL_CHECKED(Material)
 
@@ -1322,11 +1328,9 @@ namespace NCsMaterial
 			if (!MaterialLibrary::IsValid(Context, Mesh, Index, Log))
 				return false;
 
-			if (OutMID &&
-				!OutMID->IsPendingKill())
-			{
-				OutMID->MarkPendingKill();
-			}
+			typedef NCsObject::FLibrary ObjectLibrary;
+
+			ObjectLibrary::SafeMarkAsGarbage(Context, OutMID, nullptr);
 
 			CS_IS_PENDING_KILL(Material)
 
@@ -1450,17 +1454,16 @@ namespace NCsMaterial
 
 		void FLibrary::Destroy(TArray<UMaterialInstanceDynamic*>& OutMIDs)
 		{
+			typedef NCsObject::FLibrary ObjectLibrary;
+
 			const int32 Count = OutMIDs.Num();
 
 			for (int32 I = Count - 1; I >= 0; --I)
 			{
 				UMaterialInstanceDynamic* MID = OutMIDs[I];
 
-				if (MID &&
-					!MID->IsPendingKill())
-				{
-					MID->MarkPendingKill();
-				}
+				ObjectLibrary::SafeMarkAsGarbage(MID);
+
 				OutMIDs.RemoveAt(I, 1, false);
 			}
 		}
@@ -2055,14 +2058,14 @@ namespace NCsMaterial
 			return IsVectorParameterValid(Context, MID, ParamName, nullptr);
 		}
 
-		void FLibrary::SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value)
 		{
 			check(IsVectorParameterValidChecked(Context, MID, ParamName));
 
 			MID->SetVectorParameterValue(ParamName, Value);
 		}
 
-		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		void FLibrary::SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value)
 		{
 			// Check MIDs is Valid
 			CS_IS_TARRAY_EMPTY_CHECKED(MIDs, UMaterialInstanceDynamic*)
@@ -2073,7 +2076,7 @@ namespace NCsMaterial
 			}
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			if (IsVectorParameterValid(Context, MID, ParamName, Log))
 			{
@@ -2083,7 +2086,7 @@ namespace NCsMaterial
 			return false;
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
@@ -2092,7 +2095,7 @@ namespace NCsMaterial
 			return SetSafeVectorParameterValue(Context, MID, ParamName, Value, nullptr);
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			// Check MIDs is Valid
 			CS_IS_TARRAY_EMPTY(MIDs, UMaterialInstanceDynamic*)
@@ -2106,7 +2109,7 @@ namespace NCsMaterial
 			return Result;
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
@@ -2115,7 +2118,7 @@ namespace NCsMaterial
 			return SetSafeVectorParameterValue(Context, MIDs, ParamName, Value, nullptr);
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value)
 		{
 			void(*Log)(const FString&) = nullptr;
 
@@ -2126,7 +2129,7 @@ namespace NCsMaterial
 			return true;
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 
@@ -2135,7 +2138,7 @@ namespace NCsMaterial
 			return SetSafeVectorParameterValue_MinChecks(Context, MID, ParamName, Value);
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value)
 		{
 			void(*Log)(const FString&) = nullptr;
 
@@ -2151,7 +2154,7 @@ namespace NCsMaterial
 			return Result;
 		}
 
-		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value)
+		bool FLibrary::SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value)
 		{
 			using namespace NCsMaterial::NMID::NLibrary::NCached;
 

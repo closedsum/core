@@ -221,7 +221,7 @@ namespace NCsInput
 			return false;
 		}
 
-		bool FLibrary::GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector& OutWorldPosition, FVector& OutWorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			FIntPoint Position;
 			GetSafePosition(Context, WorldContext, Position, Log);
@@ -231,7 +231,7 @@ namespace NCsInput
 
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-			return ViewportLibrary::SafeDeprojectScreenToWorld(Context, WorldContext, FVector2D(Position.X, Position.Y), OutWorldPosition, OutWorldDirection, Log);
+			return ViewportLibrary::SafeDeprojectScreenToWorld(Context, WorldContext, FVector2f(Position.X, Position.Y), OutWorldPosition, OutWorldDirection, Log);
 		}
 
 		#pragma endregion Get / Set
@@ -252,7 +252,7 @@ namespace NCsInput
 			SV->SetMouse(Position.X, Position.Y);
 		}
 
-		bool FLibrary::GetWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FPlane& Plane, FVector& OutIntersection)
+		bool FLibrary::GetWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection)
 		{
 			FIntPoint Position;
 			GetPositionChecked(Context, WorldContext, Position);
@@ -262,7 +262,7 @@ namespace NCsInput
 			return ViewportLibrary::GetScreenWorldIntersectionChecked(Context, WorldContext, Position, Plane, OutIntersection);
 		}
 
-		bool FLibrary::GetSafeWorldIntersection(const FString& Context, const UObject* WorldContext, const FPlane& Plane, FVector& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::GetSafeWorldIntersection(const FString& Context, const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			FIntPoint Position;
 			GetSafePosition(Context, WorldContext, Position, Log);
@@ -275,7 +275,7 @@ namespace NCsInput
 			return ViewportLibrary::GetSafeScreenWorldIntersection(Context, WorldContext, Position, Plane, OutIntersection, Log);
 		}
 
-		bool FLibrary::GetSafeWorldIntersection(const UObject* WorldContext, const FPlane& Plane, FVector& OutIntersection)
+		bool FLibrary::GetSafeWorldIntersection(const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection)
 		{
 			using namespace NCsInput::NMouse::NLibrary::NCached;
 
@@ -297,7 +297,7 @@ namespace NCsInput
 
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-			return ViewportLibrary::TraceChecked(Context, WorldContext, FVector2D(Position.X, Position.Y), Request, Distance);
+			return ViewportLibrary::TraceChecked(Context, WorldContext, FVector2f(Position.X, Position.Y), Request, Distance);
 		}
 
 		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -308,7 +308,7 @@ namespace NCsInput
 
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-			return ViewportLibrary::SafeTrace(Context, WorldContext, FVector2D(Position.X, Position.Y), Request, Distance, Log);
+			return ViewportLibrary::SafeTrace(Context, WorldContext, FVector2f(Position.X, Position.Y), Request, Distance, Log);
 		}
 
 		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, RequestType* Request, const float& Distance /*=1000000.0f*/)

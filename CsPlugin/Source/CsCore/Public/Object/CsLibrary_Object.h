@@ -19,6 +19,8 @@ namespace NCsObject
 
 		static FString PrintNameAndClass(const UObject* Object);
 
+		FORCEINLINE static bool IsPendingKill(const UObject* Object) { return IsValid(Object); }
+
 		/**
 		*
 		*
@@ -158,5 +160,9 @@ namespace NCsObject
 		}
 
 	#pragma endregion Load
+
+		static bool SafeMarkAsGarbage(const FString& Context, UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool SafeMarkAsGarbage(UObject* Object);
 	};
 }

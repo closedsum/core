@@ -4,6 +4,8 @@
 
 // Library
 #include "Spawner/Params/CsLibrary_SpawnerParams.h"
+	// Common
+#include "Library/CsLibrary_Math.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"
 // Spawner
@@ -151,7 +153,7 @@ namespace NCsSpawner
 					CenterAsActor = Center;
 				}
 
-				void FImpl::SetCenter(const FTransform& Center) 
+				void FImpl::SetCenter(const FTransform3f& Center) 
 				{ 
 					typedef NCsSpawner::NShape::ECenter CenterType;
 
@@ -174,7 +176,7 @@ namespace NCsSpawner
 					if (CountType == PointCountType::None)
 						return;
 
-					for (FTransform& Transform : Transforms)
+					for (FTransform3f& Transform : Transforms)
 					{
 						Transform.SetTranslation(GenerateRandomLocation());
 					}
@@ -213,18 +215,20 @@ namespace NCsSpawner
 					}
 				}
 
-				FTransform FImpl::GetCenterTransform() const
+				FTransform3f FImpl::GetCenterTransform() const
 				{
+					typedef NCsMath::FLibrary MathLibrary;
+
 					if (CenterAsActor)
-						return CenterAsActor->GetActorTransform();
+						return MathLibrary::Convert(CenterAsActor->GetActorTransform());
 					return CenterAsTransform;
 				}
 
-				FTransform FImpl::GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const
+				FTransform3f FImpl::GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const
 				{
 					typedef NCsSpawner::NPoint::ECount PointCountType;
 
-					FVector Location = FVector::ZeroVector;
+					FVector3f Location = FVector3f::ZeroVector;
 					// None
 					if (CountType == PointCountType::None)
 					{
@@ -243,18 +247,18 @@ namespace NCsSpawner
 						Location = Transforms[CountPerGroup].GetTranslation();
 					}
 
-					FTransform Transform = FTransform::Identity;
+					FTransform3f Transform = FTransform3f::Identity;
 
 					Transform.SetTranslation(Location + GetCenterLocation());
 
 					return Transform;
 				}
 
-				FTransform FImpl::GetCurrentTransform() const
+				FTransform3f FImpl::GetCurrentTransform() const
 				{
 					typedef NCsSpawner::NPoint::ECount PointCountType;
 
-					FVector Location = FVector::ZeroVector;
+					FVector3f Location = FVector3f::ZeroVector;
 					// None
 					if (CountType == PointCountType::None)
 					{
@@ -273,7 +277,7 @@ namespace NCsSpawner
 						Location = Transforms[Index].GetTranslation();
 					}
 
-					FTransform Transform = FTransform::Identity;
+					FTransform3f Transform = FTransform3f::Identity;
 
 					Transform.SetTranslation(Location + GetCenterLocation());
 
@@ -282,9 +286,9 @@ namespace NCsSpawner
 
 				#pragma endregion NCsSpawner::NPoint::IImpl
 
-				FVector FImpl::GenerateRandomLocation() const
+				FVector3f FImpl::GenerateRandomLocation() const
 				{
-					FVector Location = FVector::ZeroVector;
+					FVector3f Location = FVector3f::ZeroVector;
 
 					const float& MinRadius = CircleParams->GetMinRadius();
 					const float& MaxRadius = CircleParams->GetMaxRadius();
@@ -300,19 +304,20 @@ namespace NCsSpawner
 					return Location;
 				}
 
-				FVector FImpl::GetCenterLocation() const
+				FVector3f FImpl::GetCenterLocation() const
 				{
 					using namespace NCsSpawner::NPoint::NShape::NCircle::NCached;
 
 					const FString& Context = Str::GetCenterLocation;
 
 					typedef NCsSpawner::NShape::ECenter CenterType;
+					typedef NCsMath::FLibrary MathLibrary;
 
 					const CenterType& Center = ShapeParams->GetCenterType();
 					// Self (Spawner)
 					if (Center == CenterType::Self)
 					{
-						return SpawnerAsActor->GetActorLocation();
+						return MathLibrary::Convert(SpawnerAsActor->GetActorLocation());
 					}
 					// Transform
 					else
@@ -324,7 +329,7 @@ namespace NCsSpawner
 					else
 					if (Center == CenterType::Actor)
 					{
-						return CenterAsActor->GetActorLocation();
+						return MathLibrary::Convert(CenterAsActor->GetActorLocation());
 					}
 					// Custom - NOTE: Assume Custom serves as an additional filter versus using Transform
 					else
@@ -336,7 +341,7 @@ namespace NCsSpawner
 					typedef NCsSpawner::NShape::EMCenter CenterMapType;
 
 					checkf(0, TEXT("%s: Center: %s is NOT supported."), *Context, CenterMapType::Get().ToChar(Center));
-					return FVector::ZeroVector;
+					return FVector3f::ZeroVector;
 				}
 			}
 		}

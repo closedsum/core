@@ -150,7 +150,7 @@ namespace NCsGameEvent
 						Description += TEXT("[Group]	  = The route / 'group' to direct the GameEvent. See FECsGameEventCoordinatorGroup.\n");
 						Description += TEXT("[GameEvent] = The type of GameEvent. See FECsGameEvent.\n");
 						Description += TEXT("[Value]	  = Optional float value. Defaults to 0.0f.\n");
-						Description += TEXT("[Location]  = Optional FVector value. Defaults to FVector::ZeroVector or FVector(0.0f, 0.0f, 0.0f).");
+						Description += TEXT("[Location]  = Optional FVector3f value. Defaults to FVector3f::ZeroVector or FVector3f(0.0f, 0.0f, 0.0f).");
 					}
 				}
 			}
@@ -241,7 +241,7 @@ namespace NCsGameEvent
 			return ConsoleCommandLibrary::Stream_GetValue<ParamsType>(Context, Str, Params);
 		}
 
-		bool FConsoleCommand::GetLocation(const FString& Context, const TCHAR*& Str, FVector& OutLocation, const FString& Definition)
+		bool FConsoleCommand::GetLocation(const FString& Context, const TCHAR*& Str, FVector3f& OutLocation, const FString& Definition)
 		{
 			typedef NCsConsoleCommand::NLibrary::FParams_GetValue_Vector ParamsType;
 
@@ -264,7 +264,7 @@ namespace NCsGameEvent
 			FString OutString;
 			FParse::Line(&Cmd, OutString, true);
 
-			OutString.ToLower();
+			OutString = OutString.ToLower();
 
 			const TArray<FString>& Commands	   = CommandInfos[(uint8)ECommand::BroadcastGameEvent].Commands;
 			const TArray<FString>& Definitions = CommandInfos[(uint8)ECommand::BroadcastGameEvent].Definitions;
@@ -310,7 +310,7 @@ namespace NCsGameEvent
 
 					// Try Get Location
 					{
-						FVector Location = FVector::ZeroVector;
+						FVector3f Location = FVector3f::ZeroVector;
 
 						if (GetLocation(Context, StrAsChar, Location, Definition))
 						{
@@ -330,7 +330,7 @@ namespace NCsGameEvent
 							if (ConsoleCommandLibrary::ConsumeNextCharAndCheckNotEmpty(Context, OutString, Definition))
 							{
 								// Try Get Location
-								FVector Location = FVector::ZeroVector;
+								FVector3f Location = FVector3f::ZeroVector;
 							
 								if (GetLocation(Context, StrAsChar, Location, Definition))
 								{
@@ -338,12 +338,12 @@ namespace NCsGameEvent
 									return true;
 								}
 							}
-							GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, Value, FVector::ZeroVector, &FCsLog::Warning);
+							GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, Value, FVector3f::ZeroVector, &FCsLog::Warning);
 							return true;
 						}
 					}
 
-					GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, 0.0f, FVector::ZeroVector, &FCsLog::Warning);
+					GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, MyRoot, Group, GameEvent, 0.0f, FVector3f::ZeroVector, &FCsLog::Warning);
 					return true;
 				}
 			}

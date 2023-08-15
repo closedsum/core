@@ -32,7 +32,7 @@ public:
 
 	/** What position offset to apply to the Start location. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point")
-	FVector Offset;
+	FVector3f Offset;
 
 	// Whether to use Spread Params or not.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point", meta = (ScriptName = "m_bSpreadParams", InlineEditConditionToggle))
@@ -80,7 +80,7 @@ namespace NCsWeapon
 				/** Describes how to determine the Start location. */
 				CS_DECLARE_MEMBER_WITH_PROXY(Type, StartType)
 				/** What position offset to apply to the Start location. */
-				CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+				CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
 				// Whether to use Spread Params or not.
 				CS_DECLARE_MEMBER_WITH_PROXY(bSpreadParams, bool)
 				/** Describes any spread information related to the Start location. */
@@ -99,7 +99,7 @@ namespace NCsWeapon
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, StartType)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bSpreadParams, bool)
 				FORCEINLINE const SpreadParamsType& GetSpreadParams() const { return SpreadParams; }
 				FORCEINLINE SpreadParamsType* GetSpreadParamsPtr() { return &SpreadParams; }

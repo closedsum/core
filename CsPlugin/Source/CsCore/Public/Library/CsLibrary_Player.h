@@ -344,7 +344,7 @@ namespace NCsPlayer
 			* @param ControllerId
 			* return				Location for PlayerCameraManager.
 			*/
-			static FVector GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static FVector3f GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
 			/**
 			* Get the Camera location which is associated with PlayerController with
@@ -355,7 +355,7 @@ namespace NCsPlayer
 			* @param ControllerId
 			* return				Location for Camera.
 			*/
-			static FVector GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
+			static FVector3f GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId);
 
 			/**
 			* Get the Camera location and rotation which is associated with PlayerController with
@@ -367,7 +367,7 @@ namespace NCsPlayer
 			* @param OutLocation	(out) Camera's current location.
 			* @param OutRotation	(out) Camera's current rotation.
 			*/
-			static void GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FRotator& OutRotation);
+			static void GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FRotator3f& OutRotation);
 
 			/**
 			* Get the Camera location and rotation which is associated with PlayerController with
@@ -379,7 +379,7 @@ namespace NCsPlayer
 			* @param OutLocation	(out) Camera's current location.
 			* @param OutDirection	(out) Camera's current direction.
 			*/
-			static void GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FVector& OutDirection);
+			static void GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FVector3f& OutDirection);
 		};
 	}
 }

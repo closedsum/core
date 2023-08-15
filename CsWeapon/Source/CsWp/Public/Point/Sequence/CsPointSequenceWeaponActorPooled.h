@@ -454,17 +454,17 @@ public:
 
 	public:
 
-		FVector Start;
+		FVector3f Start;
 
 		bool bDestination;
 
-		FVector Destination;
+		FVector3f Destination;
 
 		FPointImpl() :
 			Outer(nullptr),
-			Start(FVector::ZeroVector),
+			Start(FVector3f::ZeroVector),
 			bDestination(false),
-			Destination(FVector::ZeroVector)
+			Destination(FVector3f::ZeroVector)
 		{
 		}
 
@@ -472,8 +472,8 @@ public:
 
 		FORCEINLINE float CalculateDistance() const { return (Destination - Start).Size(); }
 
-		FORCEINLINE FVector CalculateDirection() const { return (Destination - Start).GetSafeNormal(); }
-		FORCEINLINE FVector CalculateInverseDirection() const { return -1.0f * CalculateDirection(); }
+		FORCEINLINE FVector3f CalculateDirection() const { return (Destination - Start).GetSafeNormal(); }
+		FORCEINLINE FVector3f CalculateInverseDirection() const { return -1.0f * CalculateDirection(); }
 	};
 
 	FPointImpl PointImpl;

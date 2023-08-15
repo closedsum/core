@@ -10,14 +10,14 @@
 void FCsJavascriptFileObjects::Shutdown()
 {
 	if (Isolate &&
-		!Isolate->IsPendingKill())
+		IsValid(Isolate))
 	{
-		Isolate->MarkPendingKill();
+		Isolate->MarkAsGarbage();
 		Isolate = nullptr;
 	}
 
 	if (Context &&
-	    !Context->IsPendingKill())
+	    IsValid(Context))
 	{
 		typedef NCsJs::NCommon::FLibrary JavascriptLibrary;
 
@@ -26,7 +26,7 @@ void FCsJavascriptFileObjects::Shutdown()
 			JavascriptLibrary::ClearObject(Context, Name);
 		}
 
-		Context->MarkPendingKill();
+		Context->MarkAsGarbage();
 		Context = nullptr;
 	}
 	ExposedObjectNames.Reset();

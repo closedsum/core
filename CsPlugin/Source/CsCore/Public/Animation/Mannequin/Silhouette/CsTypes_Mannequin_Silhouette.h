@@ -124,7 +124,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Core
 	{
 	}
 
-	FORCEINLINE void SetFromScale(const FVector& InScale)
+	FORCEINLINE void SetFromScale(const FVector3d& InScale)
 	{
 		static const float MIN = 0.01f;
 
@@ -133,7 +133,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Core
 		Width  = FMath::Max(MIN, InScale.Z);
 	}
 
-	FORCEINLINE FVector GetScale() const { return FVector(Height, Depth, Width); }
+	FORCEINLINE FVector3d GetScale() const { return FVector3d(Height, Depth, Width); }
 
 #define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 
@@ -181,7 +181,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Limb
 	{
 	}
 
-	FORCEINLINE void SetFromScale(const FVector& InScale)
+	FORCEINLINE void SetFromScale(const FVector3d& InScale)
 	{
 		static const float MIN = 0.01f;
 
@@ -190,7 +190,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Limb
 		Width  = FMath::Max(MIN, InScale.Z);
 	}
 
-	FORCEINLINE FVector GetScale() const { return FVector(Length, Depth, Width); }
+	FORCEINLINE FVector3d GetScale() const { return FVector3d(Length, Depth, Width); }
 
 #define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 
@@ -238,7 +238,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Foot
 	{
 	}
 
-	FORCEINLINE void SetFromScale(const FVector& InScale)
+	FORCEINLINE void SetFromScale(const FVector3d& InScale)
 	{
 		static const float MIN = 0.01f;
 
@@ -247,7 +247,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Foot
 		Width  = FMath::Max(MIN, InScale.Z);
 	}
 
-	FORCEINLINE FVector GetScale() const { return FVector(Height, Length, Width); }
+	FORCEINLINE FVector3d GetScale() const { return FVector3d(Height, Length, Width); }
 
 #define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 
@@ -295,7 +295,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Hand
 	{
 	}
 
-	FORCEINLINE void SetFromScale(const FVector& InScale)
+	FORCEINLINE void SetFromScale(const FVector3d& InScale)
 	{
 		static const float MIN = 0.01f;
 
@@ -304,7 +304,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Hand
 		Width	  = FMath::Max(MIN, InScale.Z);
 	}
 
-	FORCEINLINE FVector GetScale() const { return FVector(Length, Thickness, Width); }
+	FORCEINLINE FVector3d GetScale() const { return FVector3d(Length, Thickness, Width); }
 
 #define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 
@@ -356,7 +356,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Head
 	{
 	}
 
-	FORCEINLINE void SetFromScale(const FVector& InScale)
+	FORCEINLINE void SetFromScale(const FVector3d& InScale)
 	{
 		static const float MIN = 0.01f;
 
@@ -365,7 +365,7 @@ struct CSCORE_API FCsMannequinSilhouette_BoneControl_Head
 		Width  = FMath::Max(MIN, InScale.Z);
 	}
 
-	FORCEINLINE FVector GetScale() const { return FVector(Height, Depth, Width); }
+	FORCEINLINE FVector3d GetScale() const { return FVector3d(Height, Depth, Width); }
 
 #define InfoType NCsAnimation::NMannequin::NSilhouette::FBoneControlInfo
 

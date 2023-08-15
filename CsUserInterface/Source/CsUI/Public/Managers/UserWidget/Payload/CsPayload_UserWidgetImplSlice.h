@@ -44,11 +44,11 @@ namespace NCsUserWidget
 
 			NCsUserWidget::EPosition PositionType;
 
-			FVector Position;
+			FVector3f Position;
 
 			NCsUserWidget::EPosition OffsetType;
 
-			FVector Offset;
+			FVector3f Offset;
 
 			int32 ZOrder;
 
@@ -81,9 +81,9 @@ namespace NCsUserWidget
 			FORCEINLINE const float& GetRenderScale() const { return RenderScale; }
 			FORCEINLINE const float& GetLifeTime() const { return LifeTime; }
 			FORCEINLINE const NCsUserWidget::EPosition& GetPositionType() const { return PositionType; }
-			FORCEINLINE const FVector& GetPosition() const { return Position; }
+			FORCEINLINE const FVector3f& GetPosition() const { return Position; }
 			FORCEINLINE const NCsUserWidget::EPosition& GetOffsetType() const { return OffsetType; }
-			FORCEINLINE const FVector& GetOffset() const { return Offset; }
+			FORCEINLINE const FVector3f& GetOffset() const { return Offset; }
 			FORCEINLINE const int32& GetZOrder() const { return ZOrder; }
 			FORCEINLINE const bool& HasAnimParams() const { return bAnimParams; }
 			FORCEINLINE const AnimParamsType& GetAnimParams() const { return AnimParams; }

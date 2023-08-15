@@ -662,8 +662,10 @@ namespace NCsMovement
 					return true;
 				}
 
-				FVector FParams::GetEndLocation() const
+				FVector3f FParams::GetEndLocation() const
 				{
+					typedef NCsMath::FLibrary MathLibrary;
+
 					// TODO: Need to do Relative Location (i.e. check MoveSpace: World or Relative)
 					
 					// Location
@@ -671,31 +673,31 @@ namespace NCsMovement
 						return GetToLocation();
 					// Actor
 					if (GetDestination() == DestinationType::Actor)
-						return GetToActor()->GetActorLocation() + GetToLocation();
+						return MathLibrary::Convert(GetToActor()->GetActorLocation()) + GetToLocation();
 					// Component
 					if (GetDestination() == DestinationType::Component)
-						return GetToComponent()->GetComponentLocation() + GetToLocation();
+						return MathLibrary::Convert(GetToComponent()->GetComponentLocation()) + GetToLocation();
 					// Bone
 					if (GetDestination() == DestinationType::Bone)
-						return GetToMeshComponent()->GetBoneLocation(GetToBone()) + GetToLocation();
+						return MathLibrary::Convert(GetToMeshComponent()->GetBoneLocation(GetToBone())) + GetToLocation();
 
 					typedef NCsMovement::EMDestination DestinationMapType;
 
 					checkf(0, TEXT("NCsMovement::NTo::NInterp::NParams::FParams::GetEndLocation: GetDestination(): %s is NOT Valid."), DestinationMapType::Get().ToChar(GetDestination()));
-					return FVector::ZeroVector;
+					return FVector3f::ZeroVector;
 				}
 
 				void FParams::Reset()
 				{
 					CS_RESET_MEMBER_WITH_PROXY(Easing, ECsEasingType::Linear)
 					CS_RESET_MEMBER_WITH_PROXY(Mover, MoverType::Actor)
-					CS_RESET_MEMBER_WITH_PROXY(FromLocation, FVector::ZeroVector)
+					CS_RESET_MEMBER_WITH_PROXY(FromLocation, FVector3f::ZeroVector)
 					CS_RESET_MEMBER_WITH_PROXY(MoveObjectName, NAME_None)
 					CS_RESET_MEMBER_WITH_PROXY(MoveActorLabel, TEXT(""))
 					MoveActor = nullptr;
 					MoveComponent = nullptr;
 					CS_RESET_MEMBER_WITH_PROXY(Destination, DestinationType::Location)
-					CS_RESET_MEMBER_WITH_PROXY(ToLocation, FVector::ZeroVector)
+					CS_RESET_MEMBER_WITH_PROXY(ToLocation, FVector3f::ZeroVector)
 					CS_RESET_MEMBER_WITH_PROXY(ToObjectName, NAME_None)
 					CS_RESET_MEMBER_WITH_PROXY(ToActorLabel, TEXT(""))
 					CS_RESET_MEMBER_WITH_PROXY(ToBone, NAME_None)

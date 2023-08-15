@@ -140,8 +140,8 @@ namespace NCsWeapon
 							#define CS_TEMP_GET_SAFE_FLOAT_PTR(__PropertyName) PropertyLibrary::GetFloatPropertyValuePtr(Context, Object, Object->GetClass(), Name::__PropertyName, nullptr)
 
 							ECsProjectileWeaponLaunchLocation* LocationTypePtr				= CS_TEMP_GET_SAFE_ENUM_PTR(CsProjectileWeaponLaunchLocation, LocationType);
-							// NOTE: This may need to fixed. FVector might not be treated as a Struct Property
-							//FVector* LocationOffsetPtr									= PropertyLibrary::GetStructPropertyValuePtr<FVector>(Context, Object, Object->GetClass(), Name::LocationOffset, nullptr);
+							// NOTE: This may need to fixed. FVector3f might not be treated as a Struct Property
+							//FVector* LocationOffsetPtr									= PropertyLibrary::GetStructPropertyValuePtr<FVector3f>(Context, Object, Object->GetClass(), Name::LocationOffset, nullptr);
 							ECsProjectileWeaponLaunchDirection* DirectionTypePtr			= CS_TEMP_GET_SAFE_ENUM_PTR(CsProjectileWeaponLaunchDirection, DirectionType);
 							// NOTE: This may need to fixed. FRotator might not be treated as a Struct Property
 							//FRotator* DirectionOffsetPtr									= PropertyLibrary::GetStructPropertyValuePtr<FRotator>(Context, Object, Object->GetClass(), Name::DirectionOffset, nullptr);
@@ -199,7 +199,7 @@ namespace NCsWeapon
 								Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FCsProjectileWeapon_LaunchTraceParams with name: LaunchParams."), *Context));
 								Log(FString::Printf(TEXT("%s: - OR"), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get byte property of enum type: ECsProjectileWeaponLaunchLocation with name: LocationType."), *Context));
-								//Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FVector with name: LocationOffset."), *Context));
+								//Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FVector3f with name: LocationOffset."), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get byte property of enum type: ECsProjectileWeaponLaunchDirection with name: DirectionType."), *Context));
 								//Log(FString::Printf(TEXT("%s: - Failed to get struct property of type: FRotator with name: DirectionOffset."), *Context));
 								Log(FString::Printf(TEXT("%s: - Failed to get bool property with name: bInvertDirection."), *Context));

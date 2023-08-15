@@ -12,6 +12,7 @@
 #include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
 #include "Object/CsLibrary_Object.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -304,6 +305,7 @@ namespace NCsFX
 
 		typedef NCsFX::NParameter::EValue ParameterValueType;
 		typedef NCsFX::NParameter::FLibrary ParameterLibrary;
+		typedef NCsMath::FLibrary MathLibrary;
 
 		const ParameterValueType& ValueType = Parameter->GetValueType();
 
@@ -316,7 +318,7 @@ namespace NCsFX
 		// Vector
 		else
 		if (ValueType == ParameterValueType::Vector)
-			Component->SetVariableVec3(Parameter->GetName(), ParameterLibrary::GetVectorChecked(Context, Parameter));
+			Component->SetVariableVec3(Parameter->GetName(), MathLibrary::Convert(ParameterLibrary::GetVectorChecked(Context, Parameter)));
 	}
 
 	void FLibrary::SetParameterChecked(const FString& Context, UNiagaraComponent* Component, const ScaledParameterType* ScaledParameter, const float& Scale)
@@ -380,7 +382,7 @@ namespace NCsFX
 		else
 		if (ValueType == ParameterValueType::Vector)
 		{
-			FVector Value = FVector::ZeroVector;
+			FVector3f Value = FVector3f::ZeroVector;
 
 			if (ScaledParameter->ShouldSetValue())
 			{
@@ -395,7 +397,9 @@ namespace NCsFX
 			const float Result = ScaledParameter->ShouldApplyInverse() ? 1.0f / Max : Max;
 			Value			   = ScaledParameter->GetScale() * Scale * Value;
 
-			Component->SetVariableVec3(Parameter->GetName(), Value);
+			typedef NCsMath::FLibrary MathLibrary;
+
+			Component->SetVariableVec3(Parameter->GetName(), MathLibrary::Convert(Value));
 		}
 	}
 
@@ -476,7 +480,7 @@ namespace NCsFX
 		return Store.GetParameterValue<float>(*Var);
 	}
 
-	FVector FLibrary::GetDefaultVariableVectorChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
+	FVector3f FLibrary::GetDefaultVariableVectorChecked(const FString& Context, UNiagaraSystem* System, const ParameterType* Parameter)
 	{
 		FNiagaraVariable* Var = GetDefaultVariableChecked(Context, System, Parameter);
 
@@ -488,7 +492,7 @@ namespace NCsFX
 
 		checkf(Parameter->GetSizeInBytes() == Var->GetSizeInBytes(), TEXT("%s: Parameter type: %s does NOT match variable type."), *Context, ParameterValueMapType::Get().ToChar(Parameter->GetValueType()));
 
-		return Store.GetParameterValue<FVector>(*Var);
+		return Store.GetParameterValue<FVector3f>(*Var);
 	}
 
 	#undef ParameterType
@@ -570,6 +574,28 @@ namespace NCsFX
 
 	#undef SkeletalMeshParameterType
 
+	template<typename TArrayType, typename TDataInterace>
+	void SetNiagaraVariantArray(UNiagaraComponent* NiagaraComponent, FName OverrideName, TDataInterace* ExistingDataInterface)
+	{
+		// NOTE: Copied from Engine\Plugins\FX\Niagara\Source\Niagara\Private\NiagaraDataInterfaceArrayFunctionLibrary.h
+	#if WITH_EDITOR
+			// We only need to do this for editor instances of the component as we are storing instance data on them
+			// For runtime instances they already have a unique copy of the data interface that we are modifying
+			UWorld* World = NiagaraComponent->GetWorld();
+			if (World == nullptr || World->IsGameWorld())
+			{
+				return;
+			}
+
+			TDataInterace* VariantDataInterface = CastChecked<TDataInterace>(DuplicateObject(ExistingDataInterface, NiagaraComponent));
+			auto* ExistingProxy = static_cast<typename TDataInterace::FProxyType*>(ExistingDataInterface->GetProxy());
+			auto* VariantProxy = static_cast<typename TDataInterace::FProxyType*>(VariantDataInterface->GetProxy());
+			TArray<TArrayType> TempArrayCopy = ExistingProxy->template GetArrayDataCopy<TArrayType>();
+			VariantProxy->template SetArrayData<TArrayType>(MakeArrayView<TArrayType>(TempArrayCopy.GetData(), TempArrayCopy.Num()));
+			NiagaraComponent->SetParameterOverride(FNiagaraVariableBase(FNiagaraTypeDefinition(TDataInterace::StaticClass()), OverrideName), FNiagaraVariant(VariantDataInterface));
+	#endif // #if WITH_EDITOR
+	}
+
 	UNiagaraDataInterfaceArrayInt32* FLibrary::GetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
@@ -614,11 +640,10 @@ namespace NCsFX
 
 		UNiagaraDataInterfaceArrayInt32* ArrayDI = GetArrayInt32Checked(Context, System, OverrideName);
 
-		checkf(ArrayDI, TEXT("%s: Failed to find TArray<int32> Parameter for System: %s with OverrideName: %s."), *Context, *(System->GetName()), *(OverrideName.ToString()));
-		
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-		ArrayDI->IntData = ArrayData;
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy			   = static_cast<typename UNiagaraDataInterfaceArrayInt32::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<int32> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
+		SetNiagaraVariantArray<int32, UNiagaraDataInterfaceArrayInt32>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraDataInterfaceArrayInt32* ArrayDI, const TArray<int32>& ArrayData, TArray<int32>& Indices)
@@ -626,27 +651,10 @@ namespace NCsFX
 		CS_IS_PTR_NULL_CHECKED(ArrayDI)
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, int32)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
-		
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
 
-		if (ArrayData.Num() > ArrayDI->IntData.Num())
-		{
-			ArrayDI->IntData = ArrayData;
-			Indices.Reset(Indices.Max());
-		}
-		else
-		{
-			const int32 Count = Indices.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const int32& Index = Indices[I];
-
-				ArrayDI->IntData[Index] = ArrayData[Index];
-				Indices.RemoveAt(I, 1, false);
-			}
-		}
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy			   = static_cast<typename UNiagaraDataInterfaceArrayInt32::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<int32> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayInt32Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<int32>& ArrayData, TArray<int32>& Indices)
@@ -654,6 +662,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayInt32* ArrayDI = GetArrayInt32Checked(Context, System, OverrideName);
 
 		SetArrayInt32Checked(Context, ArrayDI, ArrayData, Indices);
+		SetNiagaraVariantArray<int32, UNiagaraDataInterfaceArrayInt32>(System, OverrideName, ArrayDI);
 	}
 
 	UNiagaraDataInterfaceArrayFloat* FLibrary::GetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
@@ -692,6 +701,7 @@ namespace NCsFX
 		return DataInterface;
 	}
 
+	/*
 	UCsNiagaraDataInterfaceArrayFloatRW* FLibrary::GetArrayFloatRWChecked(const FString& Context, UNiagaraParameterCollectionInstance* Collection, const int32& Index)
 	{
 		CS_IS_PTR_NULL_CHECKED(Collection)
@@ -708,6 +718,7 @@ namespace NCsFX
 		checkf(DataInterface, TEXT("%s: Data Interface at Index: %d is NOT of type: TArray<float> (RW)."), *Context, Index);
 		return DataInterface;
 	}
+	*/
 
 	void FLibrary::InitArrayFloatChecked(const FString & Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>&ArrayData)
 	{
@@ -747,6 +758,7 @@ namespace NCsFX
 		*/
 	}
 
+	/*
 	void FLibrary::InitArrayFloatChecked(const FString& Context, UCsNiagaraDataInterfaceArrayFloatRW* ArrayDI, const TArray<float>& ArrayData)
 	{
 		FCsNiagaraDataInterfaceProxyArrayRWImpl* ProxyImpl = static_cast<FCsNiagaraDataInterfaceProxyArrayRWImpl*>(ArrayDI->GetProxy());
@@ -765,14 +777,15 @@ namespace NCsFX
 				check((sizeof(float) % BufferStride) == 0);
 				check(BufferSize == BufferNumElements * BufferStride);
 
-				ProxyImpl->Buffer.Initialize(BufferStride, BufferNumElements, PF_R32_FLOAT, ERHIAccess::UAVCompute, BUF_AnyDynamic, TEXT("NiagaraArrayFloat"));
-				void* GPUMemory = RHICmdList.LockVertexBuffer(ProxyImpl->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly);
+				ProxyImpl->Buffer.Initialize(TEXT("NCsFX::FLibrary::InitArrayFloatChecked"), BufferStride, BufferNumElements, PF_R32_FLOAT, ERHIAccess::UAVCompute, BUF_AnyDynamic, TEXT("NiagaraArrayFloat"));
+				void* GPUMemory = RHICmdList.LockBuffer(ProxyImpl->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly);
 				FMemory::Memcpy(GPUMemory, DataPtr->GetData(), BufferSize);
-				RHICmdList.UnlockVertexBuffer(ProxyImpl->Buffer.Buffer);
+				RHICmdList.UnlockBuffer(ProxyImpl->Buffer.Buffer);
 
 			}
 		);
 	}
+	*/
 
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData)
 	{
@@ -780,9 +793,10 @@ namespace NCsFX
 
 		UNiagaraDataInterfaceArrayFloat* ArrayDI = GetArrayFloatChecked(Context, System, OverrideName);
 
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-		ArrayDI->FloatData = ArrayData;
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<float> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
+		SetNiagaraVariantArray<float, UNiagaraDataInterfaceArrayFloat>(System, OverrideName, ArrayDI);
 	}
 
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat* ArrayDI, const TArray<float>& ArrayData, TArray<int32>& Indices)
@@ -791,26 +805,9 @@ namespace NCsFX
 		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, float)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 		
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-
-		if (ArrayData.Num() > ArrayDI->FloatData.Num())
-		{
-			ArrayDI->FloatData = ArrayData;
-			Indices.Reset(Indices.Max());
-		}
-		else
-		{
-			const int32 Count = Indices.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const int32& Index = Indices[I];
-
-				ArrayDI->FloatData[Index] = ArrayData[Index];
-				Indices.RemoveAt(I, 1, false);
-			}
-		}
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<float> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<float>& ArrayData, TArray<int32>& Indices)
@@ -818,6 +815,7 @@ namespace NCsFX
 		UNiagaraDataInterfaceArrayFloat* ArrayDI = GetArrayFloatChecked(Context, System, OverrideName);
 
 		SetArrayFloatChecked(Context, ArrayDI, ArrayData, Indices);
+		SetNiagaraVariantArray<float, UNiagaraDataInterfaceArrayFloat>(System, OverrideName, ArrayDI);
 	}
 
 	#define PayloadType NCsFX::NLibrary::NSetArrayFloatChecked::FPayload
@@ -829,55 +827,56 @@ namespace NCsFX
 
 		Payload.Start();
 		
-		FNiagaraDataInterfaceProxyArrayImpl* ProxyImpl = static_cast<FNiagaraDataInterfaceProxyArrayImpl*>(ArrayDI->GetProxy());
-		PayloadType* PayloadPtr						   = &Payload;
+		//FNiagaraDataInterfaceProxyArrayImpl* ProxyImpl = static_cast<FNiagaraDataInterfaceProxyArrayImpl*>(ArrayDI->GetProxy());
+		//PayloadType* PayloadPtr						   = &Payload;
 
-		//-TODO: Only create RT resource if we are servicing a GPU system
-		ENQUEUE_RENDER_COMMAND(UpdateArray)
-		(
-			[ArrayDI, ProxyImpl, PayloadPtr](FRHICommandListImmediate& RHICmdList)
-			{
-				ProxyImpl->Buffer.Release();
-				ProxyImpl->NumElements = PayloadPtr->Values.Num();
+		////-TODO: Only create RT resource if we are servicing a GPU system
+		//ENQUEUE_RENDER_COMMAND(UpdateArray)
+		//(
+		//	[ArrayDI, ProxyImpl, PayloadPtr](FRHICommandListImmediate& RHICmdList)
+		//	{
+		//		ProxyImpl->Buffer.Release();
+		//		ProxyImpl->NumElements = PayloadPtr->Values.Num();
 
-				const int32 BufferStride	  = FCsNDIArrayImplHelper<float>::GPUGetTypeStride();
-				const int32 BufferSize		  = PayloadPtr->Values.GetTypeSize() * PayloadPtr->Values.Num();
-				const int32 BufferNumElements = BufferSize / BufferStride;
-				check((sizeof(float) % BufferStride) == 0);
-				check(BufferSize == BufferNumElements * BufferStride);
+		//		const int32 BufferStride	  = FCsNDIArrayImplHelper<float>::GPUGetTypeStride();
+		//		const int32 BufferSize		  = PayloadPtr->Values.GetTypeSize() * PayloadPtr->Values.Num();
+		//		const int32 BufferNumElements = BufferSize / BufferStride;
+		//		check((sizeof(float) % BufferStride) == 0);
+		//		check(BufferSize == BufferNumElements * BufferStride);
 
-				ProxyImpl->Buffer.Initialize(BufferStride, BufferNumElements, PF_R32_FLOAT, BUF_Static, TEXT("NiagaraArrayFloat"));
+		//		ProxyImpl->Buffer.Initialize(BufferStride, BufferNumElements, PF_R32_FLOAT, BUF_Static, TEXT("NiagaraArrayFloat"));
 
-				float* BufferData = (float*)(RHICmdList.LockVertexBuffer(ProxyImpl->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly));
-				/*
-				const int32& Count			 = PayloadPtr->Count;
-				const TArray<int32>& Indices = PayloadPtr->Indices;
-				const int32& Stride			 = PayloadPtr->Stride;
-				
-				int32 DestOffset = 0;
-				int32 SrcOffset = 0;
+		//		float* BufferData = (float*)(RHICmdList.LockVertexBuffer(ProxyImpl->Buffer.Buffer, 0, BufferSize, RLM_WriteOnly));
 
-				for (int32 I = 0; I < Count; ++I)
-				{
-					const int32& Index = Indices[I];
-					DestOffset		   = Stride * Index;
-					SrcOffset		   = Stride * I;
+		//		//const int32& Count			 = PayloadPtr->Count;
+		//		//const TArray<int32>& Indices = PayloadPtr->Indices;
+		//		//const int32& Stride			 = PayloadPtr->Stride;
+		//		//
+		//		//int32 DestOffset = 0;
+		//		//int32 SrcOffset = 0;
 
-					FMemory::Memcpy(ArrayDI->FloatData.GetData() + DestOffset, PayloadPtr->Values.GetData() + SrcOffset, Stride * sizeof(float));
-					FMemory::Memcpy(BufferData + DestOffset, PayloadPtr->Values.GetData() + SrcOffset, Stride * sizeof(float));
-				}
-				*/
-				//FMemory::Memcpy(ArrayDI->FloatData.GetData(), PayloadPtr->Values.GetData(), BufferSize);
-				FMemory::Memcpy(BufferData, PayloadPtr->Values.GetData(), BufferSize);
+		//		//for (int32 I = 0; I < Count; ++I)
+		//		//{
+		//		//	const int32& Index = Indices[I];
+		//		//	DestOffset		   = Stride * Index;
+		//		//	SrcOffset		   = Stride * I;
 
-				RHICmdList.UnlockVertexBuffer(ProxyImpl->Buffer.Buffer);
+		//		//	FMemory::Memcpy(ArrayDI->FloatData.GetData() + DestOffset, PayloadPtr->Values.GetData() + SrcOffset, Stride * sizeof(float));
+		//		//	FMemory::Memcpy(BufferData + DestOffset, PayloadPtr->Values.GetData() + SrcOffset, Stride * sizeof(float));
+		//		//}
 
-				PayloadPtr->Clear();
-				PayloadPtr->Complete();
-			}
-		);
+		//		//FMemory::Memcpy(ArrayDI->FloatData.GetData(), PayloadPtr->Values.GetData(), BufferSize);
+		//		FMemory::Memcpy(BufferData, PayloadPtr->Values.GetData(), BufferSize);
+
+		//		RHICmdList.UnlockVertexBuffer(ProxyImpl->Buffer.Buffer);
+
+		//		PayloadPtr->Clear();
+		//		PayloadPtr->Complete();
+		//	}
+		//);
 	}
 
+	/*
 	void FLibrary::SetArrayFloatChecked(const FString& Context, UCsNiagaraDataInterfaceArrayFloatRW* ArrayDI, PayloadType& Payload)
 	{
 		CS_IS_PTR_NULL_CHECKED(ArrayDI)
@@ -924,6 +923,7 @@ namespace NCsFX
 			}
 		);
 	}
+	*/
 
 	#undef PayloadType
 
@@ -938,11 +938,11 @@ namespace NCsFX
 
 		const int32 Index = OverrideParameters.IndexOf(Variable);
 
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FVector> with name: %s for System: %s."), *Context, *(OverrideName.ToString()), *(System->GetName()));
+		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FVector3f> with name: %s for System: %s."), *Context, *(OverrideName.ToString()), *(System->GetName()));
 
 		UNiagaraDataInterfaceArrayFloat3* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat3>(OverrideParameters.GetDataInterface(Index));
 	
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector>."), *Context, *(OverrideName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector3f>."), *Context, *(OverrideName.ToString()));
 		return DataInterface;
 	}
 
@@ -957,56 +957,41 @@ namespace NCsFX
 
 		UNiagaraDataInterfaceArrayFloat3* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat3>(Store.GetDataInterface(Variable));
 
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector>."), *Context, *(ParameterName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector3f>."), *Context, *(ParameterName.ToString()));
 		return DataInterface;
 	}
 
-	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData)
+	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector3f>& ArrayData)
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector3f)
 
 		UNiagaraDataInterfaceArrayFloat3* ArrayDI = GetArrayVectorChecked(Context, System, OverrideName);
 
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-		ArrayDI->FloatData = ArrayData;
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat3::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<FVector3f> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
+		SetNiagaraVariantArray<FVector3f, UNiagaraDataInterfaceArrayFloat3>(System, OverrideName, ArrayDI);
 	}
 
-	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat3* ArrayDI, const TArray<FVector>& ArrayData, TArray<int32>& Indices)
+	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraDataInterfaceArrayFloat3* ArrayDI, const TArray<FVector3f>& ArrayData, TArray<int32>& Indices)
 	{
 		CS_IS_PTR_NULL_CHECKED(ArrayDI)
-		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector3f)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 		
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-
-		if (ArrayData.Num() > ArrayDI->FloatData.Num())
-		{
-			ArrayDI->FloatData = ArrayData;
-			Indices.Reset(Indices.Max());
-		}
-		else
-		{
-			const int32 Count = Indices.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const int32& Index = Indices[I];
-
-				ArrayDI->FloatData[Index] = ArrayData[Index];
-				Indices.RemoveAt(I, 1, false);
-			}
-		}
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat3::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<FVector3f> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
-	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector>& ArrayData, TArray<int32>& Indices)
+	void FLibrary::SetArrayVectorChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector3f>& ArrayData, TArray<int32>& Indices)
 	{
 		UNiagaraDataInterfaceArrayFloat3* ArrayDI = GetArrayVectorChecked(Context, System, OverrideName);
 
 		SetArrayVectorChecked(Context, ArrayDI, ArrayData, Indices);
+		SetNiagaraVariantArray<FVector3f, UNiagaraDataInterfaceArrayFloat3>(System, OverrideName, ArrayDI);
 	}
 
 	UNiagaraDataInterfaceArrayFloat4* FLibrary::GetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
@@ -1020,11 +1005,11 @@ namespace NCsFX
 
 		const int32 Index = OverrideParameters.IndexOf(Variable);
 
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FVector4> with name: %s for System: %s."), *Context, *(OverrideName.ToString()), *(System->GetName()));
+		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FVector4f> with name: %s for System: %s."), *Context, *(OverrideName.ToString()), *(System->GetName()));
 
 		UNiagaraDataInterfaceArrayFloat4* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat4>(OverrideParameters.GetDataInterface(Index));
 	
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector4>."), *Context, *(OverrideName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector4f>."), *Context, *(OverrideName.ToString()));
 		return DataInterface;
 	}
 
@@ -1039,54 +1024,39 @@ namespace NCsFX
 
 		UNiagaraDataInterfaceArrayFloat4* DataInterface = Cast<UNiagaraDataInterfaceArrayFloat4>(Store.GetDataInterface(Variable));
 
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector4>."), *Context, *(ParameterName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FVector4f>."), *Context, *(ParameterName.ToString()));
 		return DataInterface;
 	}
 
-	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4>& ArrayData)
+	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4f>& ArrayData)
 	{
-		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4f)
 
 		UNiagaraDataInterfaceArrayFloat4* ArrayDI = GetArrayVector4Checked(Context, System, OverrideName);
 	
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-		ArrayDI->FloatData = ArrayData;
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat4::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<FVector4f> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
+		SetNiagaraVariantArray<FVector4f, UNiagaraDataInterfaceArrayFloat4>(System, OverrideName, ArrayDI);
 	}
 
-	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraDataInterfaceArrayFloat4* ArrayDI, const TArray<FVector4>& ArrayData, TArray<int32>& Indices)
+	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraDataInterfaceArrayFloat4* ArrayDI, const TArray<FVector4f>& ArrayData, TArray<int32>& Indices)
 	{
 		CS_IS_PTR_NULL_CHECKED(ArrayDI)
-		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FVector4f)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 		
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-
-		if (ArrayData.Num() > ArrayDI->FloatData.Num())
-		{
-			ArrayDI->FloatData = ArrayData;
-			Indices.Reset(Indices.Max());
-		}
-		else
-		{
-			const int32 Count = Indices.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const int32& Index = Indices[I];
-
-				ArrayDI->FloatData[Index] = ArrayData[Index];
-				Indices.RemoveAt(I, 1, false);
-			}
-		}
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayFloat4::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<FVector4f> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
-	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4>& ArrayData, TArray<int32>& Indices)
+	void FLibrary::SetArrayVector4Checked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FVector4f>& ArrayData, TArray<int32>& Indices)
 	{
 		UNiagaraDataInterfaceArrayFloat4* ArrayDI = GetArrayVector4Checked(Context, System, OverrideName);
 
 		SetArrayVector4Checked(Context, ArrayDI, ArrayData, Indices);
+		SetNiagaraVariantArray<FVector4f, UNiagaraDataInterfaceArrayFloat4>(System, OverrideName, ArrayDI);
 	}
 
 	UNiagaraDataInterfaceArrayQuat* FLibrary::GetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName)
@@ -1100,11 +1070,11 @@ namespace NCsFX
 
 		const int32 Index = OverrideParameters.IndexOf(Variable);
 
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FQuat> with name: %s for System: %s."), *Context, *(OverrideName.ToString()), *(System->GetName()));
+		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FQuat4f> with name: %s for System: %s."), *Context, *(OverrideName.ToString()), *(System->GetName()));
 
 		UNiagaraDataInterfaceArrayQuat* DataInterface = Cast<UNiagaraDataInterfaceArrayQuat>(OverrideParameters.GetDataInterface(Index));
 	
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FQuat>."), *Context, *(OverrideName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FQuat4f>."), *Context, *(OverrideName.ToString()));
 		return DataInterface;
 	}
 
@@ -1119,60 +1089,45 @@ namespace NCsFX
 
 		const int32 Index = Store.IndexOf(Variable);
 
-		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FQuat> with name: %s for System: %s."), *Context, *(ParameterName.ToString()), *(Collection->GetName()));
+		checkf(Index != INDEX_NONE, TEXT("%s: Failed to find Data Interface of type: TArray<FQuat4f> with name: %s for System: %s."), *Context, *(ParameterName.ToString()), *(Collection->GetName()));
 
 		UNiagaraDataInterfaceArrayQuat* DataInterface = Cast<UNiagaraDataInterfaceArrayQuat>(Store.GetDataInterface(Index));
 
-		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FQuat>."), *Context, *(ParameterName.ToString()));
+		checkf(DataInterface, TEXT("%s: Data Interface: %s is NOT of type: TArray<FQuat4f>."), *Context, *(ParameterName.ToString()));
 		return DataInterface;
 	}
 
-	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData)
+	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat4f>& ArrayData)
 	{
 		CS_IS_PTR_NULL_CHECKED(System)
 		CS_IS_NAME_NONE_CHECKED(OverrideName)
-		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat4f)
 
 		UNiagaraDataInterfaceArrayQuat* ArrayDI = GetArrayQuatChecked(Context, System, OverrideName);
 
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-		ArrayDI->QuatData = ArrayData;
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayQuat::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<FQuat4f> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
+		SetNiagaraVariantArray<FQuat4f, UNiagaraDataInterfaceArrayQuat>(System, OverrideName, ArrayDI);
 	}
 
-	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraDataInterfaceArrayQuat* ArrayDI, const TArray<FQuat>& ArrayData, TArray<int32>& Indices)
+	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraDataInterfaceArrayQuat* ArrayDI, const TArray<FQuat4f>& ArrayData, TArray<int32>& Indices)
 	{
 		CS_IS_PTR_NULL_CHECKED(ArrayDI)
-		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat)
+		CS_IS_TARRAY_EMPTY_CHECKED(ArrayData, FQuat4f)
 		CS_IS_TARRAY_EMPTY_CHECKED(Indices, int32)
 
-		FRWScopeLock WriteLock(ArrayDI->ArrayRWGuard, SLT_Write);
-		
-		if (ArrayData.Num() > ArrayDI->QuatData.Num())
-		{
-			ArrayDI->QuatData = ArrayData;
-			Indices.Reset(Indices.Max());
-		}
-		else
-		{
-			const int32 Count = Indices.Num();
-
-			for (int32 I = Count - 1; I >= 0; --I)
-			{
-				const int32& Index = Indices[I];
-
-				ArrayDI->QuatData[Index] = ArrayData[Index];
-				Indices.RemoveAt(I, 1, false);
-			}
-		}
-		ArrayDI->MarkRenderDataDirty();
+		auto* ArrayProxy = static_cast<typename UNiagaraDataInterfaceArrayQuat::FProxyType*>(ArrayDI->GetProxy());
+		TConstArrayView<FQuat4f> ArrData(ArrayData);
+		ArrayProxy->SetArrayData(ArrData);
 	}
 
-	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat>& ArrayData, TArray<int32>& Indices)
+	void FLibrary::SetArrayQuatChecked(const FString& Context, UNiagaraComponent* System, const FName& OverrideName, const TArray<FQuat4f>& ArrayData, TArray<int32>& Indices)
 	{
 		UNiagaraDataInterfaceArrayQuat* ArrayDI = GetArrayQuatChecked(Context, System, OverrideName);
 
 		SetArrayQuatChecked(Context, ArrayDI, ArrayData, Indices);
+		SetNiagaraVariantArray<FQuat4f, UNiagaraDataInterfaceArrayQuat>(System, OverrideName, ArrayDI);
 	}
 
 	#pragma endregion Parameter
@@ -1536,7 +1491,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
 
-		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+		FNiagaraSystemInstance* SystemInstance = GetSystemInstanceChecked(Context, Component);
 
 	#if WITH_EDITOR
 		typedef NCsWorld::FLibrary WorldLibrary;
@@ -1570,7 +1525,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
 	
-		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+		FNiagaraSystemInstance* SystemInstance = GetSystemInstanceChecked(Context, Component);
 
 	#if WITH_EDITOR
 		typedef NCsWorld::FLibrary WorldLibrary;
@@ -1603,7 +1558,7 @@ namespace NCsFX
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
 
-		FNiagaraSystemInstance* SystemInstance = Component->GetSystemInstance();
+		FNiagaraSystemInstance* SystemInstance = GetSystemInstanceChecked(Context, Component);
 
 		checkf(SystemInstance, TEXT("%s: SystemInstance is NULL on FXComponent: %s."), *Context, *(Component->GetName()));
 
@@ -1611,4 +1566,73 @@ namespace NCsFX
 	}
 
 	#pragma endregion State
+
+	// System
+	#pragma region
+	
+	FNiagaraSystemInstance* FLibrary::GetSystemInstanceChecked(const FString& Context, UNiagaraComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component);
+
+		FNiagaraSystemInstanceControllerPtr Controller = Component->GetSystemInstanceController();
+
+		check(Controller.Get());
+		check(Controller->IsValid());
+
+		FNiagaraSystemInstance* System = Controller->GetSystemInstance_Unsafe();
+
+		CS_IS_PTR_NULL_CHECKED(System)
+
+		return System;
+	}
+
+	FNiagaraSystemInstance* FLibrary::GetSafeSystemInstance(const FString& Context, UNiagaraComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(Component)
+
+		FNiagaraSystemInstanceControllerPtr Controller = Component->GetSystemInstanceController();
+
+		if (!Controller->IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System Instance Controller is NOT Valid for Component: %s."), *Context, *(Component->GetName())));
+			return nullptr;
+		}
+
+		FNiagaraSystemInstance* System = Controller->GetSystemInstance_Unsafe();
+
+		if (!System)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System instance is NOT Valid for Component: %s."), *Context, *(Component->GetName())));
+			return nullptr;
+		}
+		return System;
+	}
+
+	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> FLibrary::GetSystemSimulationChecked(const FString& Context, UNiagaraComponent* Component)
+	{
+		FNiagaraSystemInstance* System = GetSystemInstanceChecked(Context, Component);
+
+		TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = System->GetSystemSimulation();
+
+		checkf(Simulation.IsValid(), TEXT("%s: Simulation is NOT Valid."), *Context);
+		return Simulation;
+	}
+	
+	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> FLibrary::GetSafeSystemSimulation(const FString& Context, UNiagaraComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (FNiagaraSystemInstance* System = GetSafeSystemInstance(Context, Component, Log))
+		{
+			TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = System->GetSystemSimulation();
+
+			if (Simulation.IsValid())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Simulation is NOT Valid."), *Context));
+				return TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe>();
+			}
+			return Simulation;
+		}
+		return TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe>();
+	}
+
+	#pragma endregion System
 }

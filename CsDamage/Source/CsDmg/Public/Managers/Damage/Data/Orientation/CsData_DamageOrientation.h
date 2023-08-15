@@ -30,7 +30,7 @@ namespace NCsDamage
 				* 
 				* return Location
 				*/
-				virtual const FVector& GetLocation() const = 0;
+				virtual const FVector3f& GetLocation() const = 0;
 
 				/** 
 				* Get the Rotation Offset to apply to the Direction.
@@ -40,7 +40,7 @@ namespace NCsDamage
 				* 
 				* return Rotation.
 				*/
-				virtual const FRotator& GetRotation() const = 0;
+				virtual const FRotator3f& GetRotation() const = 0;
 			};
 		}
 	}
@@ -71,7 +71,7 @@ public:
 	*
 	* return Location
 	*/
-	virtual const FVector& GetLocation() const = 0;
+	virtual const FVector3f& GetLocation() const = 0;
 
 	/**
 	* Get the Rotation Offset to apply to the Direction.
@@ -81,5 +81,5 @@ public:
 	*
 	* return Rotation.
 	*/
-	virtual const FRotator& GetRotation() const = 0;
+	virtual const FRotator3f& GetRotation() const = 0;
 };

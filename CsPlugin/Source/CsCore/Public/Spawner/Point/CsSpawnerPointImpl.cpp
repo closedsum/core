@@ -1,6 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "Spawner/Point/CsSpawnerPointImpl.h"
 
+// Library
+#include "Library/CsLibrary_Math.h"
 // Spawner
 #include "Spawner/CsSpawner.h"
 // Actor
@@ -26,10 +28,12 @@ namespace NCsSpawner
 			CurrentGroup = Group;
 		}
 
-		FTransform FImpl::GetCenterTransform() const
+		FTransform3f FImpl::GetCenterTransform() const
 		{
+			typedef NCsMath::FLibrary MathLibrary;
+
 			if (CenterAsActor)
-				return CenterAsActor->GetActorTransform();
+				return MathLibrary::Convert(CenterAsActor->GetActorTransform());
 			return CenterAsTransform;
 		}
 

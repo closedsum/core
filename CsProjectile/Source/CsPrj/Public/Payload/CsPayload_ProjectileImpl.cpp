@@ -116,18 +116,18 @@ namespace NCsProjectile
 		void FImpl::Reset()
 		{
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
-			bAllocated = false;
-			UpdateType = NCsPooledObject::EUpdate::Manager;
-			Instigator = nullptr;
-			Owner = nullptr;
-			Parent = nullptr;
+			bAllocated	= false;
+			UpdateType	= NCsPooledObject::EUpdate::Manager;
+			Instigator	= nullptr;
+			Owner		= nullptr;
+			Parent		= nullptr;
 
 			Time.Reset();
 			// ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
-			Type = EMCsProjectile::Get().GetMAX();
-			Generation = 0;
-			Direction = FVector::ZeroVector;
-			Location = FVector::ZeroVector;
+			Type		= EMCsProjectile::Get().GetMAX();
+			Generation	= 0;
+			Direction	= FVector3f::ZeroVector;
+			Location	= FVector3f::ZeroVector;
 		}
 
 		#pragma endregion NCsPooledObject::NPayload::IPayload

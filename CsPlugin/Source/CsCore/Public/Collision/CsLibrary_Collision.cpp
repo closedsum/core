@@ -3,6 +3,7 @@
 #include "CsCore.h"
 
 // Library
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "PhysicsEngine/PhysicsSettings.h"
@@ -17,7 +18,7 @@
 
 namespace NCsCollision
 {
-	bool FLibrary::FindUVChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2D& OutUV)
+	bool FLibrary::FindUVChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2f& OutUV)
 	{
 		checkf(UPhysicsSettings::Get()->bSupportUVFromHitResults, TEXT("%s: 'Support UV From Hit Results' is NOT enabled in project settings. This is required for finding UV for collision results."), *Context);
 
@@ -29,14 +30,48 @@ namespace NCsCollision
 
 		CS_IS_PTR_NULL_CHECKED(BodySetup)
 
-		const FVector LocalHitPos = Component->GetComponentToWorld().InverseTransformPosition(Hit.Location);
+		const FVector3d LocalHitPos = Component->GetComponentToWorld().InverseTransformPosition(Hit.Location);
 
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(UVChannel, 0)
 		
+		typedef NCsMath::FLibrary MathLibrary;
+
 	#if WITH_EDITOR
-		return UGameplayStatics::FindCollisionUV(Hit, UVChannel, OutUV);
+		FVector2d UV;
+		const bool Result = UGameplayStatics::FindCollisionUV(Hit, UVChannel, UV);
+		OutUV = MathLibrary::Convert(UV);
+		return Result;
 	#else
-		return BodySetup->CalcUVAtLocation(LocalHitPos, Hit.FaceIndex, UVChannel, OutUV);
+		FVector2d UV;
+		const bool Result = BodySetup->CalcUVAtLocation(LocalHitPos, Hit.FaceIndex, UVChannel, UV);
+		OutUV = MathLibrary::Convert(UV);
+		return Result;
 	#endif // #if WITH_EDITOR
 	}
+
+	// HitResult
+	#pragma region
+
+	FVector3f FLibrary::GetLocation(const FHitResult& Hit)
+	{
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(Hit.Location);
+	}
+
+	FRotator3f FLibrary::GetImpactRotation(const FHitResult& Hit)
+	{
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(Hit.ImpactNormal.Rotation());
+	}
+
+	FQuat4f FLibrary::GetImpactQuat(const FHitResult& Hit)
+	{
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(Hit.ImpactNormal.ToOrientationQuat());
+	}
+
+	#pragma endregion HitResult
 }

@@ -30,9 +30,9 @@ namespace NCsProjectile
 
 				FECsProjectile Type;
 
-				FVector Location;
+				FVector3f Location;
 
-				FVector Direction;
+				FVector3f Direction;
 
 				float CollisionRadius;
 
@@ -103,10 +103,10 @@ namespace NCsProjectile
 				float& GetInitialSpeed();
 				const float& GetMaxSpeed() const;
 				float& GetMaxSpeed();
-				const FVector& GetDirection() const;
-				FVector& GetDirection();
-				const FVector& GetVelocity() const;
-				FVector& GetVelocity();
+				const FVector3f& GetDirection() const;
+				FVector3f& GetDirection();
+				const FVector3f& GetVelocity() const;
+				FVector3f& GetVelocity();
 				const float& GetSpeed() const;
 				float& GetSpeed();
 				const float& GetGravityScale() const;
@@ -162,10 +162,10 @@ namespace NCsProjectile
 				float& GetDuration();
 				const float& GetElapsedTime() const;
 				float& GetElapsedTime();
-				const FVector& GetDestination() const;
-				FVector& GetDestination();
-				const FVector& GetOffset() const;
-				FVector& GetOffset();
+				const FVector3f& GetDestination() const;
+				FVector3f& GetDestination();
+				const FVector3f& GetOffset() const;
+				FVector3f& GetOffset();
 				const float& GetMinDotThreshold() const;
 				float& GetMinDotThreshold();
 				const float& GetMaxDotBeforeUsingPitch() const;
@@ -253,14 +253,14 @@ namespace NCsProjectile
 		#undef StateType
 			const int32& GetGeneration() const;
 			int32& GetGeneration();
-			const FVector& GetLastLocation() const;
-			FVector& GetLastLocation();
-			const FVector& GetLocation() const;
-			FVector& GetLocation();
-			const FRotator& GetRotation() const;
-			FRotator& GetRotation();
-			const FQuat& GetOrientation() const;
-			FQuat& GetOrientation();
+			const FVector3f& GetLastLocation() const;
+			FVector3f& GetLastLocation();
+			const FVector3f& GetLocation() const;
+			FVector3f& GetLocation();
+			const FRotator3f& GetRotation() const;
+			FRotator3f& GetRotation();
+			const FQuat4f& GetOrientation() const;
+			FQuat4f& GetOrientation();
 
 			FORCEINLINE void ResolveOrientation() { GetOrientation() = GetRotation().Quaternion(); }
 
@@ -335,13 +335,13 @@ namespace NCsProjectile
 
 		// Movement
 
-			TArray<FVector> Last_Locations;
-			TArray<FVector> Locations;
+			TArray<FVector3f> Last_Locations;
+			TArray<FVector3f> Locations;
 
-			TArray<FRotator> Last_Rotations;
-			TArray<FRotator> Rotations;
-			TArray<FQuat> Orientations;
-			TArray<FVector> FacingDirections;
+			TArray<FRotator3f> Last_Rotations;
+			TArray<FRotator3f> Rotations;
+			TArray<FQuat4f> Orientations;
+			TArray<FVector3f> FacingDirections;
 
 			struct FMovementInfos
 			{
@@ -359,9 +359,9 @@ namespace NCsProjectile
 
 				TArray<float> GravityScales;
 
-				TArray<FVector> Directions;
+				TArray<FVector3f> Directions;
 
-				TArray<FVector> Velocities;
+				TArray<FVector3f> Velocities;
 
 				TArray<float> Speeds;
 
@@ -398,8 +398,8 @@ namespace NCsProjectile
 						InitialSpeeds.Add(0.0f);
 						MaxSpeeds.Add(0.0f);
 						GravityScales.Add(0.0f);
-						Directions.Add(FVector::ZeroVector);
-						Velocities.Add(FVector::ZeroVector);
+						Directions.Add(FVector3f::ZeroVector);
+						Velocities.Add(FVector3f::ZeroVector);
 						Speeds.Add(0.0f);
 					}
 				}
@@ -450,9 +450,9 @@ namespace NCsProjectile
 
 				TArray<float> ElapsedTimes;
 
-				TArray<FVector> Destinations;
+				TArray<FVector3f> Destinations;
 
-				TArray<FVector> Offsets;
+				TArray<FVector3f> Offsets;
 
 				TArray<float> MinDotThresholds;
 
@@ -518,8 +518,8 @@ namespace NCsProjectile
 						TargetIDs.Add(INDEX_NONE);
 						Durations.Add(0.0f);
 						ElapsedTimes.Add(0.0f);
-						Destinations.Add(FVector::ZeroVector);
-						Offsets.Add(FVector::ZeroVector);
+						Destinations.Add(FVector3f::ZeroVector);
+						Offsets.Add(FVector3f::ZeroVector);
 						MinDotThresholds.Add(0.0f);
 						MaxDotBeforeUsingPitches.Add(0.0f);
 						RotationRates.Add(0.0f);
@@ -545,8 +545,8 @@ namespace NCsProjectile
 					TargetIDs[Index] = INDEX_NONE;
 					Durations[Index]   = 0.0f;
 					ElapsedTimes[Index] = 0.0f;
-					Destinations[Index] = FVector::ZeroVector;
-					Offsets[Index]		= FVector::ZeroVector;
+					Destinations[Index] = FVector3f::ZeroVector;
+					Offsets[Index]		= FVector3f::ZeroVector;
 					MinDotThresholds[Index] = 0.0f;
 					MaxDotBeforeUsingPitches[Index] = 0.0f;
 					RotationRates[Index] = 0.0f;
@@ -677,11 +677,11 @@ namespace NCsProjectile
 			FORCEINLINE const TArray<ICsProjectile*>& GetProjectiles() const { return Projectiles; }
 
 			// Movement
-			FORCEINLINE FVector* GetLocationPtr(const int32& Index) { return &(Locations[Index]); }
-			FORCEINLINE FRotator* GetRotationPtr(const int32& Index) { return &(Rotations[Index]); }
-			FORCEINLINE FQuat* GetOrientationPtr(const int32& Index) { return &(Orientations[Index]); }
+			FORCEINLINE FVector3f* GetLocationPtr(const int32& Index) { return &(Locations[Index]); }
+			FORCEINLINE FRotator3f* GetRotationPtr(const int32& Index) { return &(Rotations[Index]); }
+			FORCEINLINE FQuat4f* GetOrientationPtr(const int32& Index) { return &(Orientations[Index]); }
 
-			FORCEINLINE void GetAliveLocations(TArray<int32>*& OutIDs, int32*& OutCount, TArray<FVector>*& OutLocations)
+			FORCEINLINE void GetAliveLocations(TArray<int32>*& OutIDs, int32*& OutCount, TArray<FVector3f>*& OutLocations)
 			{
 				OutIDs		 = &AliveIDs;
 				OutCount	 = &AliveCount;
@@ -725,11 +725,11 @@ namespace NCsProjectile
 					Types.Add(EMCsProjectile::Get().GetMAX());
 					States.Add(StateType::Inactive);
 					Generations.Add(0);
-					Last_Locations.Add(FVector::ZeroVector);
-					Locations.Add(FVector::ZeroVector);
-					Last_Rotations.Add(FRotator::ZeroRotator);
-					Rotations.Add(FRotator::ZeroRotator);
-					Orientations.Add(FQuat::Identity);
+					Last_Locations.Add(FVector3f::ZeroVector);
+					Locations.Add(FVector3f::ZeroVector);
+					Last_Rotations.Add(FRotator3f::ZeroRotator);
+					Rotations.Add(FRotator3f::ZeroRotator);
+					Orientations.Add(FQuat4f::Identity);
 				}
 
 				MovementInfos.SetSize(InSize);
@@ -754,9 +754,9 @@ namespace NCsProjectile
 				Projectiles[Index]	= nullptr;
 				States[Index]		= StateType::Inactive;
 				Types[Index]		= EMCsProjectile::Get().GetMAX();
-				Locations[Index]	= FVector::ZeroVector;
-				Rotations[Index]	= FRotator::ZeroRotator;
-				Orientations[Index] = FQuat::Identity;
+				Locations[Index]	= FVector3f::ZeroVector;
+				Rotations[Index]	= FRotator3f::ZeroRotator;
+				Orientations[Index] = FQuat4f::Identity;
 				TrackingInfos.Reset(Index);
 				CollisionInfos.Reset(Index);
 				Manager_ID.DeallocateAt(Index);

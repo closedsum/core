@@ -21,7 +21,7 @@ public:
 protected:
 
 #define ResultType UProjectileMovementComponent::EHandleBlockingHitResult 
-	virtual ResultType HandleBlockingHit(const FHitResult& Hit, float TimeTick, const FVector& MoveDelta, float& SubTickTimeRemaining) override;
+	virtual ResultType HandleBlockingHit(const FHitResult& Hit, float TimeTick, const FVector3d& MoveDelta, float& SubTickTimeRemaining) override;
 #undef ResultType
 
 #pragma endregion UProjectileMovementComponent Interface

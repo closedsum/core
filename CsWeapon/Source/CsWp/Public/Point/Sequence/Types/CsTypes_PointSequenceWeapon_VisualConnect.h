@@ -29,7 +29,7 @@ struct CSWP_API FCsPointSequenceWeapon_Visaul_Connect_FX_EndInfo
 
 	/** Offset to apply to the End Point associated with Parameter Name. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Point|Sequence|Visual|Connect")
-	FVector Offset;
+	FVector3f Offset;
 
 public:
 
@@ -74,7 +74,7 @@ namespace NCsWeapon
 
 								/** Name of the Vector User Parameter associated with End Point of the FX. */
 								CS_DECLARE_MEMBER_WITH_PROXY(ParameterName, FName)
-								CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+								CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
 
 							public:
 
@@ -87,7 +87,7 @@ namespace NCsWeapon
 								}
 
 								CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ParameterName, FName)
-								CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+								CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
 
 								void Copy(const FInfo& From)
 								{

@@ -7,10 +7,13 @@
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
+	// Damage
 #include "Value/CsLibrary_DamageValue.h"
 #include "Range/CsLibrary_DamageRange.h"
+	// Common
 #include "Object/CsLibrary_Object.h"
 #include "Debug/CsTypes_Debug.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsSettings_Damage.h"
@@ -110,7 +113,7 @@ namespace NCsDamage
 			UE_LOG(LogCsDmg, Warning, TEXT("-- PenetrationDepth: %f"), HitResult.PenetrationDepth);
 			UE_LOG(LogCsDmg, Warning, TEXT("-- Item: %d"), HitResult.Item);
 			UE_LOG(LogCsDmg, Warning, TEXT("-- PhysMaterial: %s"), HitResult.PhysMaterial.IsValid() ? *(HitResult.PhysMaterial->GetName()) : TEXT("None"));
-			UE_LOG(LogCsDmg, Warning, TEXT("-- Actor: %s"), HitResult.Actor.IsValid() ? *(HitResult.Actor->GetName()) : TEXT("None"));
+			UE_LOG(LogCsDmg, Warning, TEXT("-- Actor: %s"), HitResult.HasValidHitObjectHandle() ? *(HitResult.GetActor()->GetName()) : TEXT("None"));
 			UE_LOG(LogCsDmg, Warning, TEXT("-- Component: %s"), HitResult.Component.IsValid() ? *(HitResult.Component->GetName()) : TEXT("None"));
 			UE_LOG(LogCsDmg, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
 			UE_LOG(LogCsDmg, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
@@ -130,6 +133,7 @@ namespace NCsDamage
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+			typedef NCsMath::FLibrary MathLibrary;
 
 			// Shape
 			if (const ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
@@ -145,8 +149,8 @@ namespace NCsDamage
 
 				if (const ConeDataType* ConeData = DamageDataLibrary::GetSafeInterfaceChecked<ConeDataType>(Context, Data))
 				{
-					FTransform Transform = FTransform::Identity;
-					Transform.SetTranslation(Event->GetHitResult().ImpactPoint);
+					FTransform3f Transform = FTransform3f::Identity;
+					Transform.SetTranslation(MathLibrary::Convert(Event->GetHitResult().ImpactPoint));
 					Transform.SetRotation(Event->GetDamageDirection().ToOrientationQuat());
 
 					Debug.Pie.Draw(Event->GetInstigator(), FMath::RadiansToDegrees(FMath::Acos(ConeData->GetMinDot())), Transform, Range->GetMaxRange());
@@ -155,9 +159,9 @@ namespace NCsDamage
 				else
 				{
 					if (Debug.bSphereAsCircle)
-						Debug.Circle.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+						Debug.Circle.Draw(Event->GetInstigator(), MathLibrary::Convert(Event->GetHitResult().ImpactPoint), Range->GetMinRange(), Range->GetMaxRange());
 					else
-						Debug.Sphere.Draw(Event->GetInstigator(), Event->GetHitResult().ImpactPoint, Range->GetMinRange(), Range->GetMaxRange());
+						Debug.Sphere.Draw(Event->GetInstigator(), MathLibrary::Convert(Event->GetHitResult().ImpactPoint), Range->GetMinRange(), Range->GetMaxRange());
 				}
 			}
 			// Point
@@ -191,7 +195,7 @@ namespace NCsDamage
 			return false;
 		}
 
-		void FLibrary::SetDamageDirectionChecked(const FString& Context, EventType* Event, const FVector& Direction)
+		void FLibrary::SetDamageDirectionChecked(const FString& Context, EventType* Event, const FVector3f& Direction)
 		{
 			CS_IS_PTR_NULL_CHECKED(Event)
 
@@ -256,12 +260,12 @@ namespace NCsDamage
 			return Event->GetCauser();
 		}
 
-		FVector FLibrary::GetSafeDamageDirection(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
+		FVector3f FLibrary::GetSafeDamageDirection(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&NCsDamage::FLog::Warning*/)
 		{
 			const EventType* Event = GetSafeCurrentDamageEvent(Context, Object, Log);
 
 			if (!Event)
-				return FVector::ZeroVector;
+				return FVector3f::ZeroVector;
 			return Event->GetDamageDirection();
 		}
 
@@ -302,7 +306,7 @@ namespace NCsDamage
 			return true;
 		}
 
-		float FLibrary::GetOrCalculateDamageChecked(const FString& Context, const EventType* Event, const FVector& Point)
+		float FLibrary::GetOrCalculateDamageChecked(const FString& Context, const EventType* Event, const FVector3f& Point)
 		{
 			CS_IS_PTR_NULL_CHECKED(Event)
 
@@ -314,10 +318,11 @@ namespace NCsDamage
 
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+			typedef NCsMath::FLibrary MathLibrary;
 
 			if (ShapeDataType* ShapeData = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
-				return ShapeData->CalculateDamage(Event->GetDamageValue(), Event->GetDamageRange(), Event->GetHitResult().ImpactPoint, Point);
+				return ShapeData->CalculateDamage(Event->GetDamageValue(), Event->GetDamageRange(), MathLibrary::Convert(Event->GetHitResult().ImpactPoint), Point);
 			}
 			return Event->GetDamage();
 		}
@@ -389,6 +394,7 @@ namespace NCsDamage
 
 			typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 			typedef NCsTrace::NRequest::FRequest RequestType;
+			typedef NCsMath::FLibrary MathLibrary;
 
 			// Max Range
 			static TArray<FHitResult> MaxRangeHits;
@@ -402,8 +408,8 @@ namespace NCsDamage
 				Request->Method = ECsTraceMethod::Multi;
 				Request->Query  = ECsTraceQuery::ObjectType;
 
-				Request->Start = Hit.ImpactPoint;
-				Request->End   = Hit.ImpactPoint;
+				Request->Start = MathLibrary::Convert(Hit.ImpactPoint);
+				Request->End   = MathLibrary::Convert(Hit.ImpactPoint);
 				Request->Channel = CollisionInfo.GetChannel();
 
 				Request->Shape.SetSphere(MaxRange);
@@ -446,8 +452,8 @@ namespace NCsDamage
 				Request->Method = ECsTraceMethod::Multi;
 				Request->Query  = ECsTraceQuery::ObjectType;
 
-				Request->Start = Hit.ImpactPoint;
-				Request->End   = Hit.ImpactPoint;
+				Request->Start = MathLibrary::Convert(Hit.ImpactPoint);
+				Request->End   = MathLibrary::Convert(Hit.ImpactPoint);
 				Request->Channel = CollisionInfo.GetChannel();
 
 				Request->Shape.SetSphere(MinRange);
@@ -495,7 +501,7 @@ namespace NCsDamage
 			}
 
 			// Keep facing
-			const FVector& Direction = Event->GetDamageDirection();
+			const FVector3f& Direction = Event->GetDamageDirection();
 
 			const int32 Count = MaxRangeHits.Num();
 
@@ -503,7 +509,7 @@ namespace NCsDamage
 			{
 				FHitResult& HitA = MaxRangeHits[I];
 
-				if (!ShapeData->IsFacing(Direction, Hit.Location, HitA.ImpactPoint))
+				if (!ShapeData->IsFacing(Direction, MathLibrary::Convert(Hit.Location), MathLibrary::Convert(HitA.ImpactPoint)))
 				{
 					MaxRangeHits.RemoveAt(I, 1, false);
 				}

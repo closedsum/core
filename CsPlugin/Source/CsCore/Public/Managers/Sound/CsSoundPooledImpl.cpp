@@ -444,8 +444,8 @@ void ACsSoundPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Payload
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();
 
-	const FTransform& Transform = SoundPayload->GetTransform();
-	const int32& TransformRules = SoundPayload->GetTransformRules();
+	const FTransform3f& Transform = SoundPayload->GetTransform();
+	const int32& TransformRules   = SoundPayload->GetTransformRules();
 
 	typedef NCsSound::NPayload::EChange ChangeType;
 	typedef NCsSound::NPayload::NChange::FCounter ChangeCounter;
@@ -563,7 +563,7 @@ void ACsSoundPooledImpl::Handle_ClearAttachAndTransform()
 		else
 		{
 			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			SetActorRelativeTransform(FTransform::Identity);
+			SetActorRelativeTransform(FTransform3d::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 			AttachToBone = NAME_None;
@@ -580,7 +580,7 @@ void ACsSoundPooledImpl::Handle_ClearAttachAndTransform()
 	}
 	else
 	{
-		SetActorRelativeTransform(FTransform::Identity);
+		SetActorRelativeTransform(FTransform3d::Identity);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 		ChangeCounter::Get().AddCleared();
 	}

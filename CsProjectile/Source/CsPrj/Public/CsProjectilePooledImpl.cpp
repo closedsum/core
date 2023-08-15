@@ -27,6 +27,7 @@
 	// Modifier
 #include "Modifier/CsLibrary_DamageModifier.h"
 	// Common
+#include "Actor/CsLibrary_Actor.h"
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Math.h"
@@ -370,14 +371,14 @@ bool ACsProjectilePooledImpl::ShouldTickIfViewportsOnly() const
 void ACsProjectilePooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Deallocate_Internal();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(FVector3d::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
 void ACsProjectilePooledImpl::OutsideWorldBounds()
 {
 	Deallocate_Internal();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(FVector3d::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
@@ -386,9 +387,11 @@ void ACsProjectilePooledImpl::OutsideWorldBounds()
 void ACsProjectilePooledImpl::OnTick_HandleCVars(const float& DeltaSeconds)
 {
 #if WITH_EDITOR
+	typedef NCsActor::FLibrary ActorLibrary;
+
 	const FCsSettings_Projectile_Debug& Debug = FCsSettings_Projectile_Debug::Get();
 	
-	Debug.Collision.Draw(this, GetActorLocation(), CollisionComponent->GetScaledSphereRadius());
+	Debug.Collision.Draw(this, ActorLibrary::GetLocationChecked(this), CollisionComponent->GetScaledSphereRadius());
 #endif // #if WITH_EDITOR
 }
 
@@ -401,9 +404,9 @@ void ACsProjectilePooledImpl::OnTick_HandleMovementFunction(const float& DeltaSe
 	if (MovementType != ECsProjectileMovement::Function)
 		return;
 
-	const FVector NextLocation	= EvaluateMovementFunction(Cache.ElapsedTime);
-	const FVector MoveDelta		= NextLocation - GetActorLocation();
-	const FQuat Rotation		= MoveDelta.ToOrientationQuat();
+	const FVector3f NextLocation= EvaluateMovementFunction(Cache.ElapsedTime);
+	const FVector3f MoveDelta	= NextLocation - GetActorLocation();
+	const FQuat4f Rotation		= MoveDelta.ToOrientationQuat();
 
 	MovementComponent->MoveUpdatedComponent(MoveDelta, Rotation, true, nullptr);
 
@@ -456,18 +459,18 @@ void ACsProjectilePooledImpl::DrawPath_Internal(const float& DeltaSeconds, const
 	for (uint16 I = 0; I < Segments; ++I)
 	{
 		const float T0   = CurrentTime + I * DeltaTime;
-		const FVector P0 = EvaluateMovementFunction(T0);
+		const FVector3f P0 = EvaluateMovementFunction(T0);
 		const float T1	 = CurrentTime + (I + 1) * DeltaTime;
-		const FVector P1 = EvaluateMovementFunction(T1);
+		const FVector3f P1 = EvaluateMovementFunction(T1);
 
 		DrawDebugLine(GetWorld(), P0, P1, FColor::Red, false, DeltaSeconds + 0.005f, 0, Thickness);
 	}
 	*/
 }
 
-FVector ACsProjectilePooledImpl::EvaluateMovementFunction(const float &Time)
+FVector3f ACsProjectilePooledImpl::EvaluateMovementFunction(const float &Time)
 {
-	return FVector::ZeroVector;// Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
+	return FVector3f::ZeroVector;// Cache.GetData()->EvaluateMovementFunction(Time, Cache.Location, Cache.Transform);
 }
 
 void ACsProjectilePooledImpl::SetType(const FECsProjectile& InType)
@@ -800,16 +803,17 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 			// TODO: Allocate Static Mesh Actor and get Static Mesh Component
 
 			MeshComponent->AttachToComponent(CollisionComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			MeshComponent->SetRelativeLocation(FVector::ZeroVector);
+			MeshComponent->SetRelativeLocation(FVector3d::ZeroVector);
 
 			typedef NCsProjectile::NVisual::NStaticMesh::FInfo StaticMeshInfoType;
+			typedef NCsMath::FLibrary MathLibrary;
 
 			const StaticMeshInfoType& StaticMeshInfo = VisualData->GetStaticMeshInfo();
 
 			UStaticMesh* Mesh = StaticMeshInfo.GetMesh();
 
 			MeshComponent->SetStaticMesh(Mesh);
-			MeshComponent->SetWorldScale3D(StaticMeshInfo.GetScale());
+			MeshComponent->SetWorldScale3D(MathLibrary::Convert(StaticMeshInfo.GetScale()));
 			MeshComponent->Activate();
 			MeshComponent->SetVisibility(true);
 			MeshComponent->SetHiddenInGame(false);
@@ -822,10 +826,12 @@ void ACsProjectilePooledImpl::Launch(PayloadType* Payload)
 	// Simulated
 	if (MovementType == ECsProjectileMovement::Simulated)
 	{
-		const FVector& Direction = Payload->GetDirection();
-		FRotator Rotation		 = Direction.Rotation();
+		typedef NCsMath::FLibrary MathLibrary;
 
-		TeleportTo(Payload->GetLocation(), Rotation, false, true);
+		const FVector3d Direction = MathLibrary::Convert(Payload->GetDirection());
+		FRotator3d Rotation		  = Direction.Rotation();
+
+		TeleportTo(MathLibrary::Convert(Payload->GetLocation()), Rotation, false, true);
 	}
 
 	// Real Visible
@@ -1119,7 +1125,7 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 
 	// Direction
 	static const int32 DIRECTION = 0;
-	const FVector& Direction = R->GetValue_Vector(DIRECTION);
+	const FVector3f& Direction = R->GetValue_Vector(DIRECTION);
 	
 	// Should Update Collision
 	static const int32 SHOULD_UPDATE_COLLISION = 0;
@@ -1177,24 +1183,30 @@ char ACsProjectilePooledImpl::Launch_Delayed_Internal(FCsRoutine* R)
 // ICsProjectile_Movement
 #pragma region
 
-void ACsProjectilePooledImpl::Movement_SetLocation(const FVector& Location)
+void ACsProjectilePooledImpl::Movement_SetLocation(const FVector3f& Location)
 {
-	Variables->GetLocation() = GetActorLocation();
+	typedef NCsMath::FLibrary MathLibrary;
+
+	Variables->GetLocation() = MathLibrary::Convert(GetActorLocation());
 }
 
-FVector ACsProjectilePooledImpl::Movement_GetLocation() const
+FVector3f ACsProjectilePooledImpl::Movement_GetLocation() const
 {
 	return Variables->GetLocation();
 }
 
-void ACsProjectilePooledImpl::Movement_SetRotation(const FRotator& Rotation)
+void ACsProjectilePooledImpl::Movement_SetRotation(const FRotator3f& Rotation)
 {
-	SetActorRotation(Rotation);
+	typedef NCsMath::FLibrary MathLibrary;
+
+	SetActorRotation(MathLibrary::Convert(Rotation));
 }
 
-void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector& Velocity)
+void ACsProjectilePooledImpl::Movement_SetVelocity(const FVector3f& Velocity)
 {
-	MovementComponent->Velocity = Velocity;
+	typedef NCsMath::FLibrary MathLibrary;
+
+	MovementComponent->Velocity = MathLibrary::Convert(Velocity);
 }
 
 #pragma endregion ICsProjectile_Movement
@@ -1212,7 +1224,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	UPrimitiveComponent* HitComponent = Result.GetMyComponent();
 	AActor* OtherActor				  = Result.GetOtherActor();
 	UPrimitiveComponent* OtherComp	  = Result.GetOtherComponent();
-	const FVector& NormalImpulse	  = Result.NormalImpulse;
+	const FVector3f& NormalImpulse	  = Result.NormalImpulse;
 	const FHitResult& HitResult		  = Result.Hit;
 
 	if (IsIgnored(Result.OtherType, Result.OtherID))
@@ -1245,7 +1257,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 		UE_LOG(LogCsPrj, Warning, TEXT("-- PenetrationDepth: %f"), HitResult.PenetrationDepth);
 		UE_LOG(LogCsPrj, Warning, TEXT("-- Item: %d"), HitResult.Item);
 		UE_LOG(LogCsPrj, Warning, TEXT("-- PhysMaterial: %s"), HitResult.PhysMaterial.IsValid() ? *(HitResult.PhysMaterial->GetName()) : TEXT("None"));
-		UE_LOG(LogCsPrj, Warning, TEXT("-- Actor: %s"), HitResult.Actor.IsValid() ? *(HitResult.Actor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsPrj, Warning, TEXT("-- Actor: %s"), HitResult.HasValidHitObjectHandle() ? *(HitResult.GetActor()->GetName()) : TEXT("None"));
 		UE_LOG(LogCsPrj, Warning, TEXT("-- Component: %s"), HitResult.Component.IsValid() ? *(HitResult.Component->GetName()) : TEXT("None"));
 		UE_LOG(LogCsPrj, Warning, TEXT("-- BoneName: %s"), HitResult.BoneName.IsValid() ? *(HitResult.BoneName.ToString()) : TEXT("None"));
 		UE_LOG(LogCsPrj, Warning, TEXT("-- FaceIndex: %d"), HitResult.FaceIndex);
@@ -1259,9 +1271,10 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 	EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 
 	typedef NCsProjectile::NData::FLibrary PrjDataLibrary;
+	typedef NCsMath::FLibrary MathLibrary;
 
 	// ImpactVisualDataType (NCsProjectile::NData::NVisual::NImpact::IImpact)
-	OnHit_TryImpactVisual(Context, HitComponent, OtherActor, OtherComp, NormalImpulse, HitResult);
+	OnHit_TryImpactVisual(Context, HitComponent, OtherActor, OtherComp, MathLibrary::Convert(NormalImpulse), HitResult);
 	// ImpactSoundDataType (NCsProjectile::NData::NSound::NImpact::IImpact)
 	{
 		typedef NCsProjectile::NData::NSound::NImpact::IImpact ImpactSoundDataType;
@@ -1280,9 +1293,9 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				PayloadImplType Payload;
 				Payload.Instigator = Cache->GetInstigator();
 
-				FTransform Transform = FTransform::Identity;
-				Transform.SetLocation(HitResult.Location);
-				Transform.SetRotation(HitResult.ImpactNormal.Rotation().Quaternion());
+				FTransform3f Transform = FTransform3f::Identity;
+				Transform.SetLocation(MathLibrary::Convert(HitResult.Location));
+				Transform.SetRotation(MathLibrary::Convert(HitResult.ImpactNormal.Rotation().Quaternion()));
 
 				SoundManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, Info.GetSound(), Transform);
 			}
@@ -1313,6 +1326,8 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 			
+			typedef NCsMath::FLibrary MathLibrary;
+
 			const int32 Count = DamageDataTypes.Num();
 
 			for (int32 I = Count - 1; I >= 0; --I)
@@ -1332,7 +1347,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
 				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.Direction  = MathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
 				ProcessPayload.HitResult  = HitResult;
 
 				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
@@ -1368,6 +1383,8 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
 
+			typedef NCsMath::FLibrary MathLibrary;
+
 			const int32 Count = DamageDataTypes.Num();
 
 			for (int32 I = Count - 1; I >= 0; --I)
@@ -1387,7 +1404,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
 				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.Direction  = MathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
 				ProcessPayload.HitResult  = HitResult;
 
 				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
@@ -1440,7 +1457,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 				ProcessPayload.Instigator = GetCache()->GetInstigator();
 				ProcessPayload.Causer	  = this;
 				// TODO: Maybe store this value each tick / update
-				ProcessPayload.Direction  = MovementComponent->Velocity.GetSafeNormal();
+				ProcessPayload.Direction  = MathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
 				ProcessPayload.HitResult  = HitResult;
 
 				DamageModifierLibrary::CopyChecked(Context, DamageImpl.Modifiers, ProcessPayload.Modifiers);
@@ -1486,7 +1503,7 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 	--HitCount;
 
-	OnHit_Internal(HitComponent, OtherActor, OtherComp, NormalImpulse, HitResult);
+	OnHit_Internal(HitComponent, OtherActor, OtherComp, MathLibrary::Convert(NormalImpulse), HitResult);
 
 	if (bDeallocateOnHit && HitCount <= 0)
 		Cache->QueueDeallocate();
@@ -1500,23 +1517,24 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 // ICsProjectile_Tracking
 #pragma region
 
-FVector ACsProjectilePooledImpl::Tracking_GetDestination() const
+FVector3f ACsProjectilePooledImpl::Tracking_GetDestination() const
 {
 	using namespace NCsProjectilePooledImpl::NCached;
 
 	const FString& Context = Str::Tracking_GetDestination;
 
 	typedef NCsProjectile::NTracking::EDestination TrackingDestinationType;
+	typedef NCsMath::FLibrary MathLibrary;
 
 	// Component
 	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Object)
 	{
-		return TrackingInfo.GetComponent()->GetComponentLocation();
+		return MathLibrary::Convert(TrackingInfo.GetComponent()->GetComponentLocation());
 	}
 	// Bone
 	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Bone)
 	{
-		return TrackingInfo.GetMeshComponent()->GetSocketLocation(TrackingInfo.GetBone());
+		return MathLibrary::Convert(TrackingInfo.GetMeshComponent()->GetSocketLocation(TrackingInfo.GetBone()));
 	}
 	// Location
 	if (TrackingInfo.GetDestinationType() == TrackingDestinationType::Location)
@@ -1524,7 +1542,7 @@ FVector ACsProjectilePooledImpl::Tracking_GetDestination() const
 		return TrackingInfo.GetLocation();
 	}
 	check(0);
-	return FVector::ZeroVector;
+	return FVector3f::ZeroVector;
 }
 
 #pragma endregion ICsProjectile_Tracking
@@ -1662,7 +1680,7 @@ float ACsProjectilePooledImpl::FMovementImpl::CalculateMaxSpeed(const EStart& St
 	return 0.0f;
 }
 
-void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
+void ACsProjectilePooledImpl::StartMovementFromData(const FVector3f& Direction)
 {
 	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
 
@@ -1677,9 +1695,11 @@ void ACsProjectilePooledImpl::StartMovementFromData(const FVector& Direction)
 	MovementInfo.GetVelocity()	   = MovementInfo.GetInitialSpeed() * Direction;
 	MovementInfo.GetGravityScale() = Data->GetGravityScale();
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();
 	MovementComponent->MaxSpeed				  = MovementInfo.GetMaxSpeed();
-	MovementComponent->Velocity				  = MovementInfo.GetVelocity();
+	MovementComponent->Velocity				  = MathLibrary::Convert(MovementInfo.GetVelocity());
 	MovementComponent->ProjectileGravityScale = MovementInfo.GetGravityScale();
 }
 
@@ -1956,22 +1976,25 @@ void ACsProjectilePooledImpl::ClearIgnored()
 	}
 }
 
-void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
+void ACsProjectilePooledImpl::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& HitResult)
 {
 	typedef NCsProjectile::NCollision::NHit::FResult HitResultType;
+	typedef NCsMath::FLibrary MathLibrary;
 
 	HitResultType Result;
 	Result.MyComponent	 = HitComponent;
 	Result.OtherActor	 = OtherActor;
 	Result.OtherComponent = OtherComp;
-	Result.NormalImpulse = NormalImpulse;
+	Result.NormalImpulse = MathLibrary::Convert(NormalImpulse);
 	Result.Hit			 = HitResult;
 
 	Hit(Result);
 }
 
-void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& HitResult)
+void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& HitResult)
 {
+	typedef NCsMath::FLibrary MathLibrary;
+
 #if WITH_EDITOR
 	if (bOverride_ImpactFX)
 	{
@@ -1980,7 +2003,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 			UE_LOG(LogCsPrj, Warning, TEXT("%s: Trail FX is OVERRIDDEN for %s."), *Context, *(GetName()));
 		}
 
-		OnOverride_ImpactFX_ScriptEvent.Broadcast(this, HitComponent, OtherActor, OtherComp, NormalImpulse, HitResult);
+		OnOverride_ImpactFX_ScriptEvent.Broadcast(this, HitComponent, OtherActor, OtherComp, MathLibrary::Convert(NormalImpulse), HitResult);
 	}
 	else
 #endif // #if WITH_EDITOR
@@ -2011,8 +2034,8 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					PayloadImplType Payload;
 					Payload.Instigator = Cache->GetInstigator();
 
-					FTransform Transform = FTransform::Identity;
-					Transform.SetLocation(HitResult.Location);
+					FTransform3f Transform = FTransform3f::Identity;
+					Transform.SetLocation(MathLibrary::Convert(HitResult.Location));
 
 					typedef NCsProjectile::NImpact::NVisual::EDirection DirectionType;
 
@@ -2020,19 +2043,19 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					// Normal
 					if (Direction == DirectionType::Normal)
 					{
-						Transform.SetRotation(HitResult.ImpactNormal.Rotation().Quaternion());
+						Transform.SetRotation(MathLibrary::Convert(HitResult.ImpactNormal.Rotation().Quaternion()));
 					}
 					// Inverse Normal
 					else
 					if (Direction == DirectionType::Normal)
 					{
-						Transform.SetRotation((-HitResult.ImpactNormal).Rotation().Quaternion());
+						Transform.SetRotation(MathLibrary::Convert((-HitResult.ImpactNormal).Rotation().Quaternion()));
 					}
 					// Velocity
 					else
 					if (Direction == DirectionType::Velocity)
 					{
-						const FVector Normal = MovementComponent->Velocity.GetSafeNormal();
+						const FVector3f Normal = MathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
 
 						Transform.SetRotation(Normal.Rotation().Quaternion());
 					}
@@ -2040,7 +2063,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					else
 					if (Direction == DirectionType::InverseVelocity)
 					{
-						const FVector Normal = -1.0f * MovementComponent->Velocity.GetSafeNormal();
+						const FVector3f Normal = -1.0f * MathLibrary::Convert(MovementComponent->Velocity.GetSafeNormal());
 
 						Transform.SetRotation(Normal.Rotation().Quaternion());
 					}
@@ -2049,7 +2072,7 @@ void ACsProjectilePooledImpl::OnHit_TryImpactVisual(const FString& Context, UPri
 					{
 						float MaxRange = GetMaxDamageRangeChecked(Context);
 
-						Transform.SetScale3D(MaxRange * FVector::OneVector);
+						Transform.SetScale3D(MaxRange * FVector3f::OneVector);
 					}
 
 					FXManagerLibrary::SpawnChecked(Context, GetWorldContext(), &Payload, FXInfo.GetFX(), Transform);
@@ -2091,7 +2114,7 @@ void ACsProjectilePooledImpl::ApplyHitCountModifiers(const FString& Context, con
 	HitCount = ModifierLibrary::ModifyIntChecked(Context, Modifiers, NCsProjectileModifier::HitCount, HitCount);
 }
 
-void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector& Direction)
+void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context, const FVector3f& Direction)
 {
 	typedef ACsProjectilePooledImpl::FMovementImpl::EStart StartType;
 
@@ -2106,9 +2129,11 @@ void ACsProjectilePooledImpl::StartMovementFromModifiers(const FString& Context,
 	MovementInfo.GetVelocity()	   = MovementInfo.GetInitialSpeed() * Direction;
 	MovementInfo.GetGravityScale() = Data->GetGravityScale();
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	MovementComponent->InitialSpeed			  = MovementInfo.GetInitialSpeed();
 	MovementComponent->MaxSpeed				  = MovementInfo.GetMaxSpeed();
-	MovementComponent->Velocity				  = MovementInfo.GetVelocity();
+	MovementComponent->Velocity				  = MathLibrary::Convert(MovementInfo.GetVelocity());
 	MovementComponent->ProjectileGravityScale = MovementInfo.GetGravityScale();
 }
 

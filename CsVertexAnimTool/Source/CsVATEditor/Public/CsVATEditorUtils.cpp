@@ -4,6 +4,8 @@
 
 #if WITH_EDITOR
 
+// Library
+#include "Library/CsLibrary_Math.h"
 // Animation
 #include "CsVertexAnimProfile.h"
 #include "CsVertexAnimUtils.h"
@@ -36,9 +38,9 @@ namespace NCsAnimation
 			{
 				static void MapSkinVerts(
 					UCsVertexAnimProfile* InProfile, const TArray <FFinalSkinVertex>& SkinVerts,
-					TArray <int32>& UniqueVertsSourceID, TArray <FVector2D>& OutUVSet_Vert)
+					TArray <int32>& UniqueVertsSourceID, TArray <FVector2f>& OutUVSet_Vert)
 				{
-					TArray <FVector> UniqueVerts;
+					TArray <FVector3f> UniqueVerts;
 					TArray <int32> UniqueID;
 					UniqueID.SetNumZeroed(SkinVerts.Num());
 
@@ -84,7 +86,7 @@ namespace NCsAnimation
 					const float XStep = 1.f / InProfile->OverrideSize_Vert.X;
 					const float YStep = 1.f / InProfile->OverrideSize_Vert.Y;
 					const FVector2D HalfStep = FVector2D(XStep, YStep) / 2;
-					TArray <FVector2D> UniqueMappedUVs;
+					TArray <FVector2f> UniqueMappedUVs;
 					UniqueMappedUVs.SetNum(UniqueVerts.Num());
 
 					for (int32 i = 0; i < UniqueVerts.Num(); i++)
@@ -92,11 +94,11 @@ namespace NCsAnimation
 						// I SWITCHED THESE to have the UVs lined horizontally.
 						const int32 GridX = i % InProfile->OverrideSize_Vert.X;
 						const int32 GridY = i / InProfile->OverrideSize_Vert.X;
-						const FVector2D GridUV = FVector2D(GridX * XStep, GridY * YStep);
+						const FVector2f GridUV = FVector2f(GridX * XStep, GridY * YStep);
 						UniqueMappedUVs[i] = GridUV;
 					}
 
-					TArray <FVector2D> NewUVSet_Vert;
+					TArray <FVector2f> NewUVSet_Vert;
 					NewUVSet_Vert.SetNum(SkinVerts.Num());
 					for (int32 i = 0; i < SkinVerts.Num(); i++)
 					{
@@ -106,7 +108,7 @@ namespace NCsAnimation
 				};
 
 				static void MapActiveBones(
-					UCsVertexAnimProfile* InProfile, const int32 NumBones, TArray <FVector2D>& OutUVSet_Bone)
+					UCsVertexAnimProfile* InProfile, const int32 NumBones, TArray <FVector2f>& OutUVSet_Bone)
 				{
 					if (InProfile->AutoSize)
 					{
@@ -119,7 +121,7 @@ namespace NCsAnimation
 
 					const float XStep = 1.f / InProfile->OverrideSize_Bone.X;
 					const float YStep = 1.f / InProfile->OverrideSize_Bone.Y;
-					TArray <FVector2D> UniqueMappedUVs;
+					TArray <FVector2f> UniqueMappedUVs;
 					UniqueMappedUVs.SetNum(NumBones);
 
 					for (int32 i = 0; i < NumBones; i++)
@@ -129,12 +131,12 @@ namespace NCsAnimation
 							// I SWITCHED THESE to have the UVs lined horizontally.
 							const int32 GridX = i % InProfile->OverrideSize_Bone.X;
 							const int32 GridY = i / InProfile->OverrideSize_Bone.X;
-							const FVector2D GridUV = FVector2D(GridX * XStep, GridY * YStep);
+							const FVector2f GridUV = FVector2f(GridX * XStep, GridY * YStep);
 							UniqueMappedUVs[i] = GridUV;
 						}
 						else
 						{
-							UniqueMappedUVs[i] = FVector2D();
+							UniqueMappedUVs[i] = FVector2f();
 						}
 					}
 
@@ -145,9 +147,9 @@ namespace NCsAnimation
 				USkinnedMeshComponent* InSkinnedMeshComponent,
 				UCsVertexAnimProfile* InProfile,
 				TArray <int32>& UniqueSourceID,
-				TArray <TArray <FVector2D>>& UVs_VertAnim,
-				TArray <TArray <FVector2D>>& UVs_BoneAnim1, 
-				TArray <TArray <FVector2D>>& UVs_BoneAnim2,
+				TArray <TArray <FVector2f>>& UVs_VertAnim,
+				TArray <TArray <FVector2f>>& UVs_BoneAnim1, 
+				TArray <TArray <FVector2f>>& UVs_BoneAnim2,
 				TArray <TArray <FColor>>& Colors_BoneAnim)
 				{
 					UniqueSourceID.Empty();
@@ -158,11 +160,11 @@ namespace NCsAnimation
 
 					const int32 NumLODs = InSkinnedMeshComponent->GetNumLODs();
 
-					const auto& RefSkeleton = InSkinnedMeshComponent->SkeletalMesh->RefSkeleton;
-					const auto& GlobalRefSkeleton = InSkinnedMeshComponent->SkeletalMesh->Skeleton->GetReferenceSkeleton();
+					const auto& RefSkeleton		  = InSkinnedMeshComponent->GetSkinnedAsset()->GetRefSkeleton();
+					const auto& GlobalRefSkeleton = InSkinnedMeshComponent->GetSkinnedAsset()->GetSkeleton()->GetReferenceSkeleton();
 
-					TArray <FVector2D> GridUVs_Vert;
-					TArray <FVector2D> GridUVs_Bone;
+					TArray <FVector2f> GridUVs_Vert;
+					TArray <FVector2f> GridUVs_Bone;
 
 					TArray<FFinalSkinVertex> AnimMeshFinalVertices;
 					int32 AnimMeshLOD = 0;
@@ -194,7 +196,7 @@ namespace NCsAnimation
 					{
 						int32 LODIndexRead = FMath::Min(OverallLODIndex, NumLODs - 1);
 
-						FSkeletalMeshLODInfo& SrcLODInfo = *(InSkinnedMeshComponent->SkeletalMesh->GetLODInfo(LODIndexRead));
+						FSkeletalMeshLODInfo& SrcLODInfo = *(InSkinnedMeshComponent->GetSkinnedAsset()->GetLODInfo(LODIndexRead));
 
 						// Get the CPU skinned verts for this LOD, WAIT, if it changes LOD on each loop, does that not mean it changes??
 						TArray<FFinalSkinVertex> FinalVertices;
@@ -203,7 +205,7 @@ namespace NCsAnimation
 
 						TArray <FColor> thisLODSkinWeightColor;
 						// Here is where we find the correct grid UVs for this LOD
-						TArray <FVector2D> thisLODGridUVs_Vert, thisLODGridUVs_Bone1, thisLODGridUVs_Bone2;
+						TArray <FVector2f> thisLODGridUVs_Vert, thisLODGridUVs_Bone1, thisLODGridUVs_Bone2;
 
 						thisLODGridUVs_Bone1.SetNum(FinalVertices.Num());
 						thisLODGridUVs_Bone2.SetNum(FinalVertices.Num());
@@ -220,15 +222,15 @@ namespace NCsAnimation
 
 							for (int32 o = 0; o < FinalVertices.Num(); o++)
 							{
-								const FVector Pos = FinalVertices[o].Position;
+								const FVector3f Pos = FinalVertices[o].Position;
 								float Lowest = MAX_FLT;
 								int32 WinnerID = INDEX_NONE;
 
 								for (int32 u = 0; u < UniqueSourceID.Num(); u++)
 								{
-									const FVector TargetPos = AnimMeshFinalVertices[UniqueSourceID[u]].Position;
+									const FVector3f TargetPos = AnimMeshFinalVertices[UniqueSourceID[u]].Position;
 
-									const float Dist = FVector::Dist(Pos, TargetPos);
+									const float Dist = FVector3f::Dist(Pos, TargetPos);
 									if (Dist < Lowest)
 									{
 										Lowest = Dist;
@@ -243,7 +245,7 @@ namespace NCsAnimation
 						}
 
 
-						FSkeletalMeshModel* Resource = InSkinnedMeshComponent->SkeletalMesh->GetImportedModel();
+						FSkeletalMeshModel* Resource = InSkinnedMeshComponent->GetSkinnedAsset()->GetImportedModel();
 						FSkeletalMeshLODRenderData& LODData = SkeletalMeshRenderData.LODRenderData[LODIndexRead];
 
 						{
@@ -312,10 +314,10 @@ namespace NCsAnimation
 										GridUVs_Bone.Num(), LODData.ActiveBoneIndices.Num());
 
 					
-									thisLODGridUVs_Bone1[s] = FVector2D(
+									thisLODGridUVs_Bone1[s] = FVector2f(
 										GridUVs_Bone[Bone0].X,
 										GridUVs_Bone[Bone1].X);
-									thisLODGridUVs_Bone2[s] = FVector2D(
+									thisLODGridUVs_Bone2[s] = FVector2f(
 										GridUVs_Bone[Bone2].X,
 										GridUVs_Bone[Bone3].X);
 								}
@@ -329,12 +331,29 @@ namespace NCsAnimation
 					}
 				}
 
-				static void QuatSave(FQuat& Q)
+				static void QuatSave(FQuat4f& Q)
 				{
 					// Make sure we have a non null SquareSum. It shouldn't happen with a quaternion, but better be safe.
 					if (Q.SizeSquared() <= SMALL_NUMBER)
 					{
-						Q = FQuat::Identity;
+						Q = FQuat4f::Identity;
+					}
+					else
+					{
+						// All transmitted quaternions *MUST BE* unit quaternions, in which case we can deduce the value of W.
+						if (!ensure(Q.IsNormalized()))
+						{
+							Q.Normalize();
+						}
+					}
+				}
+
+				static void QuatSave(FQuat4d& Q)
+				{
+					// Make sure we have a non null SquareSum. It shouldn't happen with a quaternion, but better be safe.
+					if (Q.SizeSquared() <= SMALL_NUMBER)
+					{
+						Q = FQuat4d::Identity;
 					}
 					else
 					{
@@ -361,7 +380,7 @@ namespace NCsAnimation
 					{
 						const int32 InLODIndex = 0;
 						{
-							if (USkinnedMeshComponent* MasterPoseComponentPtr = PreviewComponent->MasterPoseComponent.Get())
+							if (USkinnedMeshComponent* MasterPoseComponentPtr = PreviewComponent->LeaderPoseComponent.Get())
 							{
 								MasterPoseComponentPtr->SetForcedLOD(InLODIndex + 1);
 								MasterPoseComponentPtr->UpdateLODStatus();
@@ -405,21 +424,23 @@ namespace NCsAnimation
 					const int32 PerFrameArrayNum_Vert = Profile->OverrideSize_Vert.X * Profile->RowsPerFrame_Vert;
 					const int32 PerFrameArrayNum_Bone = Profile->OverrideSize_Bone.X;
 
-					TArray <FVector4> ZeroedPos;
+					TArray <FVector4d> ZeroedPos;
 					ZeroedPos.SetNumZeroed(PerFrameArrayNum_Vert);
-					TArray <FVector4> ZeroedNorm;
+					TArray <FVector4d> ZeroedNorm;
 					ZeroedNorm.SetNumZeroed(PerFrameArrayNum_Vert);
 
 					// YOW, need different sizes for vert and bone textures.
-					TArray <FVector4> ZeroedBonePos;
+					TArray <FVector4d> ZeroedBonePos;
 					ZeroedBonePos.SetNumZeroed(PerFrameArrayNum_Bone);
-					TArray <FVector4> ZeroedBoneRot;
+					TArray <FVector4d> ZeroedBoneRot;
 					ZeroedBoneRot.SetNumZeroed(PerFrameArrayNum_Bone);
 
 					FSkeletalMeshRenderData& SkeletalMeshRenderData = PreviewComponent->MeshObject->GetSkeletalMeshRenderData();
 					FSkeletalMeshLODRenderData& LODData = SkeletalMeshRenderData.LODRenderData[0];
 					const auto& ActiveBoneIndices = LODData.ActiveBoneIndices;
-					TArray <FMatrix> RefToLocal;
+					TArray <FMatrix44f> RefToLocal;
+
+					typedef NCsMath::FLibrary MathLibrary;
 
 					// 3º Store Values
 					// Vert Anim
@@ -459,9 +480,9 @@ namespace NCsAnimation
 									{
 										const int32 IndexInZeroed = k;
 										const int32 VertID = UniqueSourceIDs[k];
-										const FVector Delta = FinalVerts[VertID].Position - RefPoseFinalVerts[VertID].Position;
-										MaxValueOffset = FMath::Max(Delta.GetAbsMax(), MaxValueOffset);
-										ZeroedPos[IndexInZeroed] = Delta;
+										const FVector4f Delta = FinalVerts[VertID].Position - RefPoseFinalVerts[VertID].Position;
+										MaxValueOffset = FMath::Max(MathLibrary::GetAbsMax(Delta), MaxValueOffset);
+										ZeroedPos[IndexInZeroed] = MathLibrary::Convert(Delta);
 
 										const FVector DeltaNormal = FinalVerts[VertID].TangentZ.ToFVector() - RefPoseFinalVerts[VertID].TangentZ.ToFVector();
 										ZeroedNorm[IndexInZeroed] = DeltaNormal;
@@ -477,8 +498,8 @@ namespace NCsAnimation
 					// Bone Anim
 					if (Profile->Anims_Bone.Num())
 					{
-						const auto& RefSkeleton = PreviewComponent->SkeletalMesh->RefSkeleton;
-						const auto& GlobalRefSkeleton = PreviewComponent->SkeletalMesh->Skeleton->GetReferenceSkeleton();
+						const auto& RefSkeleton		  = PreviewComponent->GetSkinnedAsset()->GetRefSkeleton();
+						const auto& GlobalRefSkeleton = PreviewComponent->GetSkinnedAsset()->GetSkeleton()->GetReferenceSkeleton();
 						// Ref Pose in Row 0
 						{
 							PreviewComponent->EnablePreview(true, NULL);
@@ -490,7 +511,7 @@ namespace NCsAnimation
 							for (int32 B = 0; B < RefSkeleton.GetNum(); B++)
 							{
 								FTransform RefTM = FAnimationRuntime::GetComponentSpaceTransformRefPose(RefSkeleton, B);
-								FQuat RefQuat = RefTM.GetRotation();
+								FQuat4d RefQuat = RefTM.GetRotation();
 								QuatSave(RefQuat);
 								const int32 GlobalID = GlobalRefSkeleton.FindBoneIndex(RefSkeleton.GetBoneName(B));
 								ZeroedBonePos[GlobalID] = RefTM.GetLocation();
@@ -529,12 +550,12 @@ namespace NCsAnimation
 									{
 										const int32 GlobalID = GlobalRefSkeleton.FindBoneIndex(RefSkeleton.GetBoneName(k));
 
-										FVector Pos = RefToLocal[k].GetOrigin();
-										ZeroedBonePos[GlobalID] = Pos;
+										FVector3f Pos = RefToLocal[k].GetOrigin();
+										ZeroedBonePos[GlobalID] = MathLibrary::Convert(Pos);
 
 										MaxValuePosBone = FMath::Max(MaxValuePosBone, Pos.GetAbsMax());
 
-										FQuat Q = RefToLocal[k].ToQuat();
+										FQuat4f Q = RefToLocal[k].ToQuat();
 										QuatSave(Q);
 										ZeroedBoneRot[GlobalID] = FVector4(Q.X, Q.Y, Q.Z, Q.W);
 									}
@@ -853,9 +874,9 @@ namespace NCsAnimation
 					if ((!DoAnimBake) && (!DoStaticMesh)) return;
 
 					TArray <int32> UniqueSourceIDs;
-					TArray <TArray <FVector2D>> UVs_VertAnim;
-					TArray <TArray <FVector2D>> UVs_BoneAnim1;
-					TArray <TArray <FVector2D>> UVs_BoneAnim2;
+					TArray <TArray <FVector2f>> UVs_VertAnim;
+					TArray <TArray <FVector2f>> UVs_BoneAnim1;
+					TArray <TArray <FVector2f>> UVs_BoneAnim2;
 					TArray <TArray <FColor>> Colors_BoneAnim;
 
 					{
@@ -897,7 +918,7 @@ namespace NCsAnimation
 						{
 							FString AssetName = Profile->GetOutermost()->GetName();
 							//FString Name = Profile->GetName();
-							FString Name = PreviewComponent->SkeletalMesh->GetName();
+							FString Name = PreviewComponent->GetSkinnedAsset()->GetName();
 							//FString AssetName = PreviewComponent->SkeletalMesh->GetOutermost()->GetName();
 							const FString SanitizedBasePackageName = UPackageTools::SanitizePackageName(AssetName);
 							const FString PackagePath = FPackageName::GetLongPackagePath(SanitizedBasePackageName) + TEXT("/") + Name + TEXT("_VAT");
@@ -1034,7 +1055,7 @@ namespace NCsAnimation
 					}
 				}
 
-				void FUtility::UVChannelsToSkeletalMesh(USkeletalMesh* Skel, const int32 LODIndex, const int32 UVChannelStart, TArray<TArray<FVector2D>>& UVChannels)
+				void FUtility::UVChannelsToSkeletalMesh(USkeletalMesh* Skel, const int32 LODIndex, const int32 UVChannelStart, TArray<TArray<FVector2f>>& UVChannels)
 				{
 					check((UVChannelStart + UVChannels.Num()) <= MAX_TEXCOORDS);
 					check(UVChannelStart < (int32)Skel->GetImportedModel()->LODModels[LODIndex].NumTexCoords);

@@ -59,11 +59,11 @@ namespace NCsSpawner
 
 					/** The acting "center", this orientation is played to transform in GetTransform and
 						GetCurrentTransform, as an Transform. */
-					FTransform CenterAsTransform;
+					FTransform3f CenterAsTransform;
 
 					int32 Index;
 
-					TArray<FTransform> Transforms;
+					TArray<FTransform3f> Transforms;
 
 					int32 CurrentGroup;
 
@@ -76,7 +76,7 @@ namespace NCsSpawner
 						ShapeParams(nullptr),
 						CircleParams(nullptr),
 						CenterAsActor(nullptr),
-						CenterAsTransform(FTransform::Identity),
+						CenterAsTransform(FTransform3f::Identity),
 						Index(0),
 						Transforms(),
 						CurrentGroup(INDEX_NONE)
@@ -99,25 +99,25 @@ namespace NCsSpawner
 
 					void SetCenter(AActor* Center);
 
-					void SetCenter(const FTransform& Center);
+					void SetCenter(const FTransform3f& Center);
 
 					void Prepare();
 
 					void Advance(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
-					FTransform GetCenterTransform() const;
+					FTransform3f GetCenterTransform() const;
 
-					FTransform GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const;
+					FTransform3f GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const;
 
-					FTransform GetCurrentTransform() const;
+					FTransform3f GetCurrentTransform() const;
 
 				#pragma endregion ImplType (NCsSpawner::NPoint::IImpl)
 
 				public:
 
-					FVector GenerateRandomLocation() const;
+					FVector3f GenerateRandomLocation() const;
 
-					FVector GetCenterLocation() const;
+					FVector3f GetCenterLocation() const;
 
 					static void Deconstruct(void* Ptr)
 					{

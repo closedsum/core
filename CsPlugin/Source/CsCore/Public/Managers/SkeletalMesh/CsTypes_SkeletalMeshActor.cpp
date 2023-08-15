@@ -146,7 +146,7 @@ bool FCsSkeletalMeshActorPooledInfo::IsValidChecked(const FString& Context) cons
 	// Check Type is Valid
 	check(EMCsSkeletalMeshActor::Get().IsValidEnumChecked(Context, Type));
 
-	if (!Transform.Equals(FTransform::Identity))
+	if (!Transform.Equals(FTransform3f::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -172,7 +172,7 @@ bool FCsSkeletalMeshActorPooledInfo::IsValid(const FString& Context, void(*Log)(
 	// Check Type is Valid
 	CS_IS_ENUM_STRUCT_VALID(EMCsSkeletalMeshActor, FECsSkeletalMeshActor, Type)
 
-	if (!Transform.Equals(FTransform::Identity))
+	if (!Transform.Equals(FTransform3f::Identity))
 	{
 		if (TransformRules == 0)
 		{

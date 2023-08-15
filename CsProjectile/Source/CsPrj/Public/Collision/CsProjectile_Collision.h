@@ -22,7 +22,7 @@ namespace NCsProjectile
 
 				UPrimitiveComponent* OtherComponent;
 
-				FVector NormalImpulse;
+				FVector3f NormalImpulse;
 
 				FHitResult Hit;
 

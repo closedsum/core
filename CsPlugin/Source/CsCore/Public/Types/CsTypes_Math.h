@@ -332,14 +332,14 @@ struct FCsParametricFunction
 		Z.Seed();
 	}
 
-	FVector Evaluate(const float &T)
+	FVector3f Evaluate(const float &T)
 	{
-		return FVector(bX ? X.Evaluate(T) : 0.0f, bY ? Y.Evaluate(T) : 0.0f, bZ ? Z.Evaluate(T) : 0.0f);
+		return FVector3f(bX ? X.Evaluate(T) : 0.0f, bY ? Y.Evaluate(T) : 0.0f, bZ ? Z.Evaluate(T) : 0.0f);
 	}
 
-	FVector Evaluate(const float &Time, const FVector &Location, const FTransform &Transform)
+	FVector3f Evaluate(const float &Time, const FVector3f &Location, const FTransform3f&Transform)
 	{
-		FVector Point = Location;
+		FVector3f Point = Location;
 
 		if (bX)
 			Point.X += X.Evaluate(Time);
@@ -348,9 +348,9 @@ struct FCsParametricFunction
 		if (bZ)
 			Point.Z += Z.Evaluate(Time);
 
-		FTransform LocalTransform = FTransform::Identity;
+		FTransform3f LocalTransform = FTransform3f::Identity;
 		LocalTransform.SetTranslation(Point);
-		const FTransform WorldTransform = LocalTransform * Transform;
+		const FTransform3f WorldTransform = LocalTransform * Transform;
 
 		return WorldTransform.GetTranslation();
 	}
@@ -402,8 +402,48 @@ namespace NCsRotationRules
 	*
 	* return			Rotation filtered by the bit mask, Rules.
 	*/
-	FORCEINLINE FRotator GetRotation(FRotator Rotation, const int32& Rules)
+	FORCEINLINE FRotator3f GetRotation(const FRotator3f& InRotation, const int32& Rules)
 	{
+		FRotator3f Rotation = InRotation;
+
+		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0f;
+		Rotation.Yaw   = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0f;
+		Rotation.Roll  = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0f;
+
+		return Rotation;
+	}
+
+	/**
+	* Get the Rotation filtered by the bit mask, Rules.
+	*
+	* @param Rotation
+	* @param Rules		 Bit mask for which components of the Rotation to return.
+	*
+	* return			Rotation filtered by the bit mask, Rules.
+	*/
+	FORCEINLINE FRotator3d GetRotation(const FRotator3d& InRotation, const int32& Rules)
+	{
+		FRotator3d Rotation = InRotation;
+
+		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0;
+		Rotation.Yaw   = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0;
+		Rotation.Roll  = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0;
+
+		return Rotation;
+	}
+
+	/**
+	* Get the Rotation filtered by the bit mask, Rules.
+	*
+	* @param Rotation
+	* @param Rules		 Bit mask for which components of the Rotation to return.
+	*
+	* return			Rotation filtered by the bit mask, Rules.
+	*/
+	FORCEINLINE FRotator3f GetRotation3f(const FRotator3d& InRotation, const int32& Rules)
+	{
+		FRotator3f Rotation((float)InRotation.Pitch, (float)InRotation.Yaw, (float)InRotation.Roll);
+
 		Rotation.Pitch = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Rotation.Pitch : 0.0f;
 		Rotation.Yaw   = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Rotation.Yaw : 0.0f;
 		Rotation.Roll  = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Roll) ? Rotation.Roll : 0.0f;
@@ -420,7 +460,7 @@ namespace NCsRotationRules
 	*
 	* return			Rotation filtered by the bit mask, Rules.
 	*/
-	FORCEINLINE FRotator GetRotationChecked(const FString& Context, FRotator Rotation, const int32& Rules)
+	FORCEINLINE FRotator3f GetRotationChecked(const FString& Context, FRotator3f Rotation, const int32& Rules)
 	{
 		checkf(Rules != None, TEXT("%s: Rules == 0. No bit flags set."), *Context);
 
@@ -439,7 +479,7 @@ namespace NCsRotationRules
 	*
 	* return		Actor's rotation filtered by the bit mask, Rules. 
 	*/
-	CSCORE_API FRotator GetRotation(AActor* Actor, const int32& Rules);
+	CSCORE_API FRotator3f GetRotation(AActor* Actor, const int32& Rules);
 
 	/**
 	* Get the rotation of Component filtered by the bit mask, Rules.
@@ -449,9 +489,9 @@ namespace NCsRotationRules
 	*
 	* return			Component's rotation filtered by the bit mask, Rules.
 	*/
-	CSCORE_API FRotator GetRotation(USceneComponent* Component, const int32& Rules);
+	CSCORE_API FRotator3f GetRotation(USceneComponent* Component, const int32& Rules);
 
-	FORCEINLINE FVector GetDirection(FVector Direction, const int32& Rules)
+	FORCEINLINE FVector3f GetDirection(FVector3f Direction, const int32& Rules)
 	{
 		Direction.X = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Direction.X : 0.0f;
 		Direction.Y = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Direction.Y : 0.0f;
@@ -460,8 +500,22 @@ namespace NCsRotationRules
 		return Direction;
 	}
 
+	FORCEINLINE FVector3d GetDirection(FVector3d Direction, const int32& Rules)
+	{
+		Direction.X = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Direction.X : 0.0;
+		Direction.Y = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Yaw) ? Direction.Y : 0.0;
+		Direction.Z = CS_TEST_BLUEPRINT_BITFLAG(Rules, Type::Pitch) ? Direction.Z : 0.0;
+
+		return Direction;
+	}
+
 	// NOTE: FUTURE: This can potentially be optimized based on rules
-	FORCEINLINE FVector GetDirection(FRotator Rotation, const int32& Rules)
+	FORCEINLINE FVector3f GetDirection(FRotator3f Rotation, const int32& Rules)
+	{
+		return GetDirection(Rotation.Vector(), Rules);
+	}
+
+	FORCEINLINE FVector3d GetDirection(FRotator3d Rotation, const int32& Rules)
 	{
 		return GetDirection(Rotation.Vector(), Rules);
 	}
@@ -585,7 +639,18 @@ namespace NCsTransformRules
 	* @param Transform
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
-	CSCORE_API void SetRelativeTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules);
+	CSCORE_API void SetRelativeTransform(USceneComponent* Component, const FTransform3d& Transform, const int32& Rules);
+
+	/**
+	* Set the relative transform of a SceneComponent to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Component
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetRelativeTransform(USceneComponent* Component, const FTransform3f& Transform, const int32& Rules);
 
 	/**
 	* Set the relative transform of an Actor to Transform based on some Rules,
@@ -596,8 +661,19 @@ namespace NCsTransformRules
 	* @param Transform
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
-	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
-	 
+	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform3d& Transform, const int32& Rules);
+	
+	/**
+	* Set the relative transform of an Actor to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Actor
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetRelativeTransform(AActor* Actor, const FTransform3f& Transform, const int32& Rules);
+
 	/**
 	* Set the transform of a SceneComponent to Transform based on some Rules,
 	* which determine which component of the Transform to use.
@@ -607,7 +683,18 @@ namespace NCsTransformRules
 	* @param Transform
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
-	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules);
+	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform3d& Transform, const int32& Rules);
+
+	/**
+	* Set the transform of a SceneComponent to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Component
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform3f& Transform, const int32& Rules);
 
 	/**
 	* Set the transform of an Actor to Transform based on some Rules,
@@ -618,7 +705,18 @@ namespace NCsTransformRules
 	* @param Transform
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	*/
-	CSCORE_API void SetTransform(AActor* Actor, const FTransform& Transform, const int32& Rules);
+	CSCORE_API void SetTransform(AActor* Actor, const FTransform3d& Transform, const int32& Rules);
+
+	/**
+	* Set the transform of an Actor to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Actor
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	*/
+	CSCORE_API void SetTransform(AActor* Actor, const FTransform3f& Transform, const int32& Rules);
 
 	/**
 	* Set the transform of a SceneComponent to Transform based on some Rules,
@@ -630,7 +728,19 @@ namespace NCsTransformRules
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	* @param Spaces
 	*/
-	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform& Transform, const int32& Rules, const ECsTransformSpace(&Spaces)[(uint8)ECsTransform::ECsTransform_MAX]);
+	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform3d& Transform, const int32& Rules, const ECsTransformSpace(&Spaces)[(uint8)ECsTransform::ECsTransform_MAX]);
+
+	/**
+	* Set the transform of a SceneComponent to Transform based on some Rules,
+	* which determine which component of the Transform to use.
+	* See ECsTransformRules.
+	*
+	* @param Component
+	* @param Transform
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	* @param Spaces
+	*/
+	CSCORE_API void SetTransform(USceneComponent* Component, const FTransform3f& Transform, const int32& Rules, const ECsTransformSpace(&Spaces)[(uint8)ECsTransform::ECsTransform_MAX]);
 
 	/**
 	* Compare transforms A and B with Rules to determine which components are equal.
@@ -640,7 +750,37 @@ namespace NCsTransformRules
 	* @param Rules		Bit mask using the bit flag ECsTransformRules.
 	* return
 	*/
-	CSCORE_API bool AreTransformsEqual(const FTransform& A, const FTransform& B, const int32& Rules);
+	CSCORE_API bool AreTransformsEqual(const FTransform3d& A, const FTransform3d& B, const int32& Rules);
+
+	/**
+	* Compare transforms A and B with Rules to determine which components are equal.
+	*
+	* @param A
+	* @oaran B
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	* return
+	*/
+	CSCORE_API bool AreTransformsEqual(const FTransform3f& A, const FTransform3f& B, const int32& Rules);
+
+	/**
+	* Compare transforms A and B with Rules to determine which components are equal.
+	*
+	* @param A
+	* @oaran B
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	* return
+	*/
+	CSCORE_API bool AreTransformsEqual(const FTransform3f& A, const FTransform3d& B, const int32& Rules);
+
+	/**
+	* Compare transforms A and B with Rules to determine which components are equal.
+	*
+	* @param A
+	* @oaran B
+	* @param Rules		Bit mask using the bit flag ECsTransformRules.
+	* return
+	*/
+	CSCORE_API bool AreTransformsEqual(const FTransform3d& A, const FTransform3f& B, const int32& Rules);
 }
 
 #define CS_TRANSFORM_FLAGS_NONE 0
@@ -746,9 +886,9 @@ struct CSCORE_API FCsTransform_Location_Multiplier
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-	FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+	FORCEINLINE FVector3f Modify(const FVector3f& Value, const float& Scale) const
 	{
-		FVector NewValue = Value;
+		FVector3f NewValue = Value;
 
 		typedef ECsTransformLocationMember MemberType;
 
@@ -793,9 +933,9 @@ namespace NCsTransform
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-			FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+			FORCEINLINE FVector3f Modify(const FVector3f& Value, const float& Scale) const
 			{
-				FVector NewValue = Value;
+				FVector3f NewValue = Value;
 
 				typedef NCsTransform::NLocation::EMember MemberType;
 
@@ -910,9 +1050,9 @@ struct CSCORE_API FCsTransform_Rotation_Multiplier
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-	FORCEINLINE FRotator Modify(const FRotator& Value, const float& Scale) const
+	FORCEINLINE FRotator3f Modify(const FRotator3f& Value, const float& Scale) const
 	{
-		FRotator NewValue = Value;
+		FRotator3f NewValue = Value;
 
 		typedef ECsTransformRotationMember MemberType;
 
@@ -957,9 +1097,9 @@ namespace NCsTransform
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-			FORCEINLINE FRotator Modify(const FRotator& Value, const float& Scale) const
+			FORCEINLINE FRotator3f Modify(const FRotator3f& Value, const float& Scale) const
 			{
-				FRotator NewValue = Value;
+				FRotator3f NewValue = Value;
 
 				typedef NCsTransform::NRotation::EMember MemberType;
 
@@ -1074,9 +1214,9 @@ struct CSCORE_API FCsTransform_Scale_Multiplier
 	bool IsValidChecked(const FString& Context) const;
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-	FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+	FORCEINLINE FVector3f Modify(const FVector3f& Value, const float& Scale) const
 	{
-		FVector NewValue = Value;
+		FVector3f NewValue = Value;
 
 		typedef ECsTransformScaleMember MemberType;
 
@@ -1121,9 +1261,9 @@ namespace NCsTransform
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-			FORCEINLINE FVector Modify(const FVector& Value, const float& Scale) const
+			FORCEINLINE FVector3f Modify(const FVector3f& Value, const float& Scale) const
 			{
-				FVector NewValue = Value;
+				FVector3f NewValue = Value;
 
 				typedef NCsTransform::NScale::EMember MemberType;
 
@@ -1150,7 +1290,7 @@ struct CSCORE_API FCsOptionalVectorInterval
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
-	FVector Vector; // 3 x 64 bits
+	FVector3f Vector; // 3 x 64 bits
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalX; // 1 bit
@@ -1196,7 +1336,7 @@ struct CSCORE_API FCsOptionalVectorInterval
 
 	FORCEINLINE void Reset()
 	{
-		Vector = FVector::ZeroVector;
+		Vector = FVector3f::ZeroVector;
 		// X
 		bIntervalX = false;
 		IntervalX.Min = 0.0f;
@@ -1234,7 +1374,7 @@ struct CSCORE_API FCsOptionalVectorInterval
 		Vector.Z = bIntervalZ ? FMath::RandRange(IntervalZ.Min, IntervalZ.Max) : Vector.Z;
 	}
 
-	FORCEINLINE const FVector& Get()
+	FORCEINLINE const FVector3f& Get()
 	{
 		return Vector;
 	}
@@ -1253,7 +1393,7 @@ struct CSCORE_API FCsOptionalRotatorInterval
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
-	FRotator Rotator; // 3 x 64 bits
+	FRotator3f Rotator; // 3 x 64 bits
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (InlineEditConditionToggle))
 	bool bIntervalRoll; // 1 bit
@@ -1299,7 +1439,7 @@ struct CSCORE_API FCsOptionalRotatorInterval
 
 	FORCEINLINE void Reset()
 	{
-		Rotator = FRotator::ZeroRotator;
+		Rotator = FRotator3f::ZeroRotator;
 		// Roll
 		bIntervalRoll = false;
 		IntervalRoll.Min = 0.0f;
@@ -1337,7 +1477,7 @@ struct CSCORE_API FCsOptionalRotatorInterval
 		Rotator.Yaw = bIntervalYaw ? FMath::RandRange(IntervalYaw.Min, IntervalYaw.Max) : Rotator.Yaw;
 	}
 
-	FORCEINLINE const FRotator& Get()
+	FORCEINLINE const FRotator3f& Get()
 	{
 		return Rotator;
 	}
@@ -1360,24 +1500,24 @@ public:
 
 	/** Ray origin point */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
-	FVector Origin;
+	FVector3f Origin;
 
 	/** Ray direction vector (always normalized) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
-	FVector Direction;
+	FVector3f Direction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (UIMin = "0.0", ClampMin = "0.0"))
 	float Distance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Math")
-	FVector End;
+	FVector3f End;
 
 	/** Default constructor initializes ray to Zero origin and Z-axis direction */
 	FCsRay() :
-		Origin(FVector::ZeroVector),
-		Direction(FVector(0, 0, 1)),
+		Origin(FVector3f::ZeroVector),
+		Direction(FVector3f(0, 0, 1)),
 		Distance(1000000.0f), // TODO: have a better number for FLT_MAX without overflow
-		End(FVector::ZeroVector)
+		End(FVector3f::ZeroVector)
 	{
 	}
 
@@ -1389,7 +1529,7 @@ public:
 	  * @param InDistance
 	  * @param bDirectionIsNormalized	Direction will be normalized unless this is passed as true (default false)
 	  */
-	FCsRay(const FVector& InOrigin, const FVector& InDirection, const float& InDistance, bool bDirectionIsNormalized = false)
+	FCsRay(const FVector3f& InOrigin, const FVector3f& InDirection, const float& InDistance, bool bDirectionIsNormalized = false)
 	{
 		Origin = InOrigin;
 		Direction = InDirection;
@@ -1408,7 +1548,7 @@ public:
 	  * @param InDirection				Ray Direction Vector
 	  * @param bDirectionIsNormalized	Direction will be normalized unless this is passed as true (default false)
 	  */
-	FCsRay(const FVector& InOrigin, const FVector& InDirection, bool bDirectionIsNormalized = false)
+	FCsRay(const FVector3f& InOrigin, const FVector3f& InDirection, bool bDirectionIsNormalized = false)
 	{
 		Origin = InOrigin;
 		Direction = InDirection;
@@ -1431,7 +1571,7 @@ public:
 	 * @param RayParameter	Scalar distance along Ray
 	 * @return				Point on Ray
 	 */
-	FORCEINLINE FVector PointAt(float RayParameter) const
+	FORCEINLINE FVector3f PointAt(float RayParameter) const
 	{
 		return Origin + RayParameter * Direction;
 	}
@@ -1442,9 +1582,9 @@ public:
 	 * @param Point Query Point
 	 * @return		Distance along ray from origin to closest point
 	 */
-	FORCEINLINE float GetParameter(const FVector& Point) const
+	FORCEINLINE float GetParameter(const FVector3f& Point) const
 	{
-		return FVector::DotProduct((Point - Origin), Direction);
+		return FVector3f::DotProduct((Point - Origin), Direction);
 	}
 
 	/**
@@ -1453,17 +1593,17 @@ public:
 	 * @param Point Query Point
 	 * @return		Squared distance to Ray
 	 */
-	FORCEINLINE float DistSquared(const FVector& Point) const
+	FORCEINLINE float DistSquared(const FVector3f& Point) const
 	{
-		float RayParameter = FVector::DotProduct((Point - Origin), Direction);
+		float RayParameter = FVector3f::DotProduct((Point - Origin), Direction);
 		if (RayParameter < 0)
 		{
-			return FVector::DistSquared(Origin, Point);
+			return FVector3f::DistSquared(Origin, Point);
 		}
 		else 
 		{
-			FVector ProjectionPt = Origin + RayParameter * Direction;
-			return FVector::DistSquared(ProjectionPt, Point);
+			FVector3f ProjectionPt = Origin + RayParameter * Direction;
+			return FVector3f::DistSquared(ProjectionPt, Point);
 		}
 	}
 
@@ -1473,9 +1613,9 @@ public:
 	 * @param Point Query point
 	 * @return		Closest point on Ray
 	 */
-	FORCEINLINE FVector ClosestPoint(const FVector& Point) const
+	FORCEINLINE FVector3f ClosestPoint(const FVector3f& Point) const
 	{
-		float RayParameter = FVector::DotProduct((Point - Origin), Direction);
+		float RayParameter = FVector3f::DotProduct((Point - Origin), Direction);
 		if (RayParameter < 0) 
 		{
 			return Origin;
@@ -1486,7 +1626,7 @@ public:
 		}
 	}
 	
-	FORCEINLINE FVector CalculateEnd() const
+	FORCEINLINE FVector3f CalculateEnd() const
 	{
 		return Origin + Distance * Direction;
 	}

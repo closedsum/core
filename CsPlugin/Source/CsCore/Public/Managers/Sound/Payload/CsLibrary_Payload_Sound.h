@@ -43,7 +43,7 @@ namespace NCsSound
 			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
 			*						Sound.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Safely set the contents of Payload with PoolePayload and Sound
@@ -57,7 +57,7 @@ namespace NCsSound
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with PoolePayload and Sound
@@ -69,7 +69,7 @@ namespace NCsSound
 			*						Sound.Transform is applied as an "offset".
 			* return
 			*/
-			static bool SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static bool SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with Sound
@@ -110,7 +110,7 @@ namespace NCsSound
 			* @param Transform		(optional) Transform to apply the sound after allocation and before playing.
 			*						Sound.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Safely set the contents of Payload with PoolePayload and Sound
@@ -124,7 +124,7 @@ namespace NCsSound
 			* @param Log			(optional)
 			* return
 			*/
-			static bool SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with PoolePayload and Sound
@@ -135,7 +135,7 @@ namespace NCsSound
 			* @param Transform		(optional)
 			* return
 			*/
-			static bool SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static bool SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with Sound

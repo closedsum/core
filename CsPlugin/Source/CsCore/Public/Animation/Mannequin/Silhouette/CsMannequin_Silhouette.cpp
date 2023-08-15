@@ -243,8 +243,8 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 		}
 		// Lats (clavicle_l | clavicle_r)
 		{
-			FTransform Transform_L = clavicle_l_ctrl->GetRelativeTransform();
-			FTransform Transform_R = clavicle_r_ctrl->GetRelativeTransform();
+			FTransform3d Transform_L = clavicle_l_ctrl->GetRelativeTransform();
+			FTransform3d Transform_R = clavicle_r_ctrl->GetRelativeTransform();
 
 			clavicle_l_ctrl_info.Transform = Transform_L;
 			clavicle_r_ctrl_info.Transform = Transform_R;
@@ -252,13 +252,13 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 			// Left (clavicle_l) Changed
 			if (clavicle_l_ctrl_info.HasChanged())
 			{
-				const FVector Scale = Transform_L.GetScale3D();
+				const FVector3d Scale = Transform_L.GetScale3D();
 
 				LatSize = FMath::Max3(Scale.X, Scale.Y, Scale.Z);
 
-				Transform_L.SetScale3D(LatSize* FVector::OneVector);
+				Transform_L.SetScale3D(LatSize* FVector3d::OneVector);
 
-				const FVector Location = Transform_L.GetLocation();
+				const FVector3d Location = Transform_L.GetLocation();
 
 				LatHeightOffset = Location.Z;
 
@@ -271,13 +271,13 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 			// Right (clavicle_r) Changed
 			if (clavicle_r_ctrl_info.HasChanged())
 			{
-				const FVector Scale = Transform_R.GetScale3D();
+				const FVector3d Scale = Transform_R.GetScale3D();
 
 				LatSize = FMath::Max3(Scale.X, Scale.Y, Scale.Z);
 
-				Transform_R.SetScale3D(LatSize* FVector::OneVector);
+				Transform_R.SetScale3D(LatSize* FVector3d::OneVector);
 
-				const FVector Location = Transform_R.GetLocation();
+				const FVector3d Location = Transform_R.GetLocation();
 
 				LatHeightOffset = Location.X;
 
@@ -389,12 +389,12 @@ void ACsMannequin_Silhouette::TickInEditor(const float& DeltaSeconds)
 		}
 		// Lats (clavicle_l | clavicle_r)
 		{
-			const FVector Scale = LatSize * FVector::OneVector;
+			const FVector3d Scale = LatSize * FVector3d::OneVector;
 
 			clavicle_l_ctrl->SetRelativeScale3D(Scale);
 			clavicle_r_ctrl->SetRelativeScale3D(Scale);
 
-			FVector Location = FVector::ZeroVector;
+			FVector3d Location = FVector3d::ZeroVector;
 
 			Location.Z = LatHeightOffset;
 
@@ -461,14 +461,14 @@ void ACsMannequin_Silhouette::SetupAttachements()
 		{
 			UStaticMeshComponent* Bone = Info.Bone;
 
-			FTransform Transform = Bone->GetAttachParent() ? Bone->GetRelativeTransform() : Bone->GetComponentTransform();
+			FTransform3d Transform = Bone->GetAttachParent() ? Bone->GetRelativeTransform() : Bone->GetComponentTransform();
 			Bone->AttachToComponent(RootComponent, Rules, Info.BoneName);
 			Bone->SetRelativeTransform(Transform);
 		}
 		{
 			USceneComponent* Control = Info.Control;
 
-			FTransform Transform = Control->GetAttachParent() ? Control->GetRelativeTransform() : Control->GetComponentTransform();
+			FTransform3d Transform = Control->GetAttachParent() ? Control->GetRelativeTransform() : Control->GetComponentTransform();
 			Control->AttachToComponent(RootComponent, Rules, Info.BoneName);
 			Control->SetRelativeTransform(Transform);
 		}

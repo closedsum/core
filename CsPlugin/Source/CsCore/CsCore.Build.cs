@@ -9,7 +9,7 @@ public class CsCore : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
-        bUseUnity = System.Environment.ProcessorCount < 64;
+        bUseUnity = false; // System.Environment.ProcessorCount < 64;
 
         PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
         //PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
@@ -53,6 +53,7 @@ public class CsCore : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "DeveloperToolSettings",
                     "RenderCore"
                 }
             );

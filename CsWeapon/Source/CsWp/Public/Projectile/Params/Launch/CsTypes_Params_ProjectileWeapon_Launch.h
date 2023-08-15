@@ -364,12 +364,12 @@ public:
 
 	/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FRotator OffsetSpaceOffset;
+	FRotator3f OffsetSpaceOffset;
 
 	/** An offset applied to the start position a Projectile will be Launched. 
 		This is always applied in the "Space" defined by LocationOffsetSpace. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FVector Offset;
+	FVector3f Offset;
 
 	FCsProjectileWeapon_Launch_LocationParams() :
 		Type(ECsProjectileWeaponLaunchLocation::Owner),
@@ -419,10 +419,10 @@ namespace NCsWeapon
 							affect the LocationOffset. Components NOT affected will result the LocationOffset applied "directly" in World Space. */
 						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceRules, int32)
 						/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
-						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator)
+						CS_DECLARE_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator3f)
 						/** An offset applied to the start position a Projectile will be Launched. 
 							This is always applied in the "Space" defined by LocationOffsetSpace. */
-						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
 
 					public:
 
@@ -443,8 +443,8 @@ namespace NCsWeapon
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, LocationType)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpace, LocationOffsetSpace)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceRules, int32)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetSpaceOffset, FRotator3f)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
 					
 						bool IsValidChecked(const FString& Context) const;
 						bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;
@@ -484,7 +484,7 @@ public:
 
 	/** An offset applied to the start direction a Projectile will be Launched.  */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
-	FRotator Offset;
+	FRotator3f Offset;
 
 	/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile")
@@ -535,7 +535,7 @@ namespace NCsWeapon
 						/** Describes the different methods to get the Direction a Projectile will be Launched. */
 						CS_DECLARE_MEMBER_WITH_PROXY(Type, DirectionType)
 						/** An offset applied to the start direction a Projectile will be Launched.  */
-						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FRotator)
+						CS_DECLARE_MEMBER_WITH_PROXY(Offset, FRotator3f)
 						/** Whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f). */
 						CS_DECLARE_MEMBER_WITH_PROXY(bInvert, bool)
 						/** Describes which components (Pitch, Yaw, and/or Roll) will be used for the Direction a Projectile will be Launched. */
@@ -557,7 +557,7 @@ namespace NCsWeapon
 						}
 
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, DirectionType)
-						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FRotator)
+						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FRotator3f)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bInvert, bool)
 						CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rules, int32)
 					

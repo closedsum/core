@@ -273,7 +273,7 @@ namespace NCsBeam
 
 			#define ResponseType NCsTrace::NResponse::FResponse
 			#define RequestType NCsTrace::NRequest::FRequest
-			ResponseType* FLine::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const
+			ResponseType* FLine::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const
 			{
 			#undef ResponseType
 			#undef RequestType
@@ -306,7 +306,7 @@ namespace NCsBeam
 
 			#define ResponseType NCsTrace::NResponse::FResponse
 			#define RequestType NCsTrace::NRequest::FRequest
-			ResponseType* FBox::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const
+			ResponseType* FBox::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const
 			{
 			#undef ResponseType
 			#undef RequestType
@@ -343,7 +343,7 @@ namespace NCsBeam
 
 			#define ResponseType NCsTrace::NResponse::FResponse
 			#define RequestType NCsTrace::NRequest::FRequest
-			ResponseType* FCapsule::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const
+			ResponseType* FCapsule::TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const
 			{
 			#undef ResponseType
 			#undef RequestType

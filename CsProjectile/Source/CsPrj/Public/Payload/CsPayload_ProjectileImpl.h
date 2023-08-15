@@ -57,10 +57,10 @@ public:
 	int32 Generation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
-	FVector Location;
+	FVector3f Location;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsPrj")
-	FVector Direction;
+	FVector3f Direction;
 
 	FCsPayload_Projectile() :
 		// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
@@ -139,9 +139,9 @@ namespace NCsProjectile
 
 			int32 Generation;
 
-			FVector Direction;
+			FVector3f Direction;
 
-			FVector Location;
+			FVector3f Location;
 
 		public:
 
@@ -194,8 +194,8 @@ namespace NCsProjectile
 
 			FORCEINLINE const FECsProjectile& GetType() const { return Type; }
 			FORCEINLINE const int32& GetGeneration() const { return Generation; }
-			FORCEINLINE const FVector& GetDirection() const { return Direction; }
-			FORCEINLINE const FVector& GetLocation() const { return Location; }
+			FORCEINLINE const FVector3f& GetDirection() const { return Direction; }
+			FORCEINLINE const FVector3f& GetLocation() const { return Location; }
 
 		#pragma endregion ProjectilePayloadType (NCsProjectile::NPayload::IPayload)
 		};
@@ -229,14 +229,14 @@ namespace NCsProjectile
 			}
 
 			FORCEINLINE static const FECsProjectile& GetType(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetType)(); }
-			FORCEINLINE static const FVector& GetDirection(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetDirection)(); }
-			FORCEINLINE static const FVector& GetLocation(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetLocation)(); }
+			FORCEINLINE static const FVector3f& GetDirection(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetDirection)(); }
+			FORCEINLINE static const FVector3f& GetLocation(const void* __Outer) { return ((*(static_cast<const FTestTrait*>(__Outer))).GetLocation)(); }
 
 			FORCEINLINE const FECsProjectile& GetType() const { return EMCsProjectile::Get().GetMAX(); }
 
-			FORCEINLINE const FVector& GetDirection() const { return FVector::ZeroVector; }
+			FORCEINLINE const FVector3f& GetDirection() const { return FVector3f::ZeroVector; }
 
-			FORCEINLINE const FVector& GetLocation() const { return FVector::ZeroVector; }
+			FORCEINLINE const FVector3f& GetLocation() const { return FVector3f::ZeroVector; }
 		};
 	}
 }

@@ -51,7 +51,7 @@ namespace NCsMaterial
 						UniformBufferLayout = CollectionLibrary::GetUniformBufferLayoutPtrChecked(Context, Resource);
 					}
 
-					void FProxy::GameThread_UpdateContents(const FGuid& InGuid, const TArray<FVector4>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer)
+					void FProxy::GameThread_UpdateContents(const FGuid& InGuid, const TArray<FVector4f>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer)
 					{
 						bComplete = false;
 
@@ -64,7 +64,7 @@ namespace NCsMaterial
 						);
 					}
 
-					void FProxy::RenderThread_UpdateContents(const FGuid& InId, const TArray<FVector4>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer)
+					void FProxy::RenderThread_UpdateContents(const FGuid& InId, const TArray<FVector4f>& Data, const FName& InOwnerName, bool bRecreateUniformBuffer)
 					{
 						GetId()		   = InId;
 						GetOwnerName() = InOwnerName;
@@ -72,18 +72,22 @@ namespace NCsMaterial
 						if (InId != FGuid() && Data.Num() > 0)
 						{
 							const uint32 NewSize = Data.GetTypeSize() * Data.Num();
-							check(GetUniformBufferLayout().Resources.Num() == 0);
+							check(GetUniformBufferLayout().GetReference()->Resources.Num() == 0);
 
 							if (!bRecreateUniformBuffer && IsValidRef(GetUniformBuffer()))
 							{
-								check(NewSize == GetUniformBufferLayout().ConstantBufferSize);
-								check(GetUniformBuffer()->GetLayout() == GetUniformBufferLayout());
+								check(NewSize == GetUniformBufferLayout().GetReference()->ConstantBufferSize);
+								check(GetUniformBuffer()->GetLayoutPtr() == GetUniformBufferLayout().GetReference());
 								RHIUpdateUniformBuffer(GetUniformBuffer(), Data.GetData());
 							}
 							else
 							{
-								GetUniformBufferLayout().ConstantBufferSize = NewSize;
-								GetUniformBufferLayout().ComputeHash();
+								FRHIUniformBufferLayoutInitializer UniformBufferLayoutInitializer(TEXT("MaterialParameterCollectionInstanceResource"));
+								UniformBufferLayoutInitializer.ConstantBufferSize = NewSize;
+								UniformBufferLayoutInitializer.ComputeHash();
+
+								GetUniformBufferLayout() = RHICreateUniformBufferLayout(UniformBufferLayoutInitializer);
+
 								GetUniformBuffer() = RHICreateUniformBuffer(Data.GetData(), GetUniformBufferLayout(), UniformBuffer_MultiFrame);
 							}
 						}
@@ -132,7 +136,7 @@ namespace NCsMaterial
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-						ParameterData.Add(FVector4(0.0f, 0.0f, 0.0f, 0.0f));
+						ParameterData.Add(FVector4f(0.0f, 0.0f, 0.0f, 0.0f));
 					}
 					UpdateParamterData();
 				}
@@ -161,7 +165,7 @@ namespace NCsMaterial
 
 						VectorIndex					   = I / 4;
 						VectorMemberIndex			   = I % 4;
-						FVector4& VectorValue		   = ParameterData[VectorIndex];
+						FVector4f& VectorValue		   = ParameterData[VectorIndex];
 						VectorValue[VectorMemberIndex] = Value.DefaultValue;
 					}
 				}
@@ -297,7 +301,7 @@ namespace NCsMaterial
 
 						for (int32 I = 0; I < Count; ++I)
 						{
-							ParameterData.Add(FVector4(0.0f, 0.0f, 0.0f, 0.0f));
+							ParameterData.Add(FVector4f(0.0f, 0.0f, 0.0f, 0.0f));
 						}
 						UpdateParamterData();
 					}
@@ -322,7 +326,7 @@ namespace NCsMaterial
 
 							VectorIndex					   = I / 4;
 							VectorMemberIndex			   = I % 4;
-							FVector4& VectorValue		   = ParameterData[VectorIndex];
+							FVector4f& VectorValue		   = ParameterData[VectorIndex];
 							VectorValue[VectorMemberIndex] = *ValuePtr;
 						}
 					}

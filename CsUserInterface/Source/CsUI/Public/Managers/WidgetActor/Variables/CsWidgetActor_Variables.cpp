@@ -43,22 +43,22 @@ namespace NCsWidgetActor
 		float& PROXY::GetLerpRate() { return GET_BASE.LerpRates[GetID()]; }
 		const int32& PROXY::GetLockAxes() const { return GET_BASE.LockAxes[GetID()]; }
 		int32& PROXY::GetLockAxes() { return GET_BASE.LockAxes[GetID()]; }
-		const FRotator& PROXY::GetRotation() const { return GET_BASE.Rotations[GetID()]; }
-		FRotator& PROXY::GetRotation() { return GET_BASE.Rotations[GetID()]; }
+		const FRotator3f& PROXY::GetRotation() const { return GET_BASE.Rotations[GetID()]; }
+		FRotator3f& PROXY::GetRotation() { return GET_BASE.Rotations[GetID()]; }
 
 		#undef PROXY
 		#undef GET_BASE
 
 		// FVariables
 
-		const FVector& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
-		FVector& FVariables::GetLastLocation() { return Outer->Last_Locations[ID]; }
-		const FVector& FVariables::GetLocation() const { return Outer->Locations[ID]; }
-		FVector& FVariables::GetLocation() { return Outer->Locations[ID]; }
-		const FRotator& FVariables::GetRotation() const { return Outer->Rotations[ID]; }
-		FRotator& FVariables::GetRotation() { return Outer->Rotations[ID]; }
-		const FQuat& FVariables::GetOrientation() const { return Outer->Orientations[ID]; }
-		FQuat& FVariables::GetOrientation() { return Outer->Orientations[ID]; }
+		const FVector3f& FVariables::GetLastLocation() const { return Outer->Last_Locations[ID]; }
+		FVector3f& FVariables::GetLastLocation() { return Outer->Last_Locations[ID]; }
+		const FVector3f& FVariables::GetLocation() const { return Outer->Locations[ID]; }
+		FVector3f& FVariables::GetLocation() { return Outer->Locations[ID]; }
+		const FRotator3f& FVariables::GetRotation() const { return Outer->Rotations[ID]; }
+		FRotator3f& FVariables::GetRotation() { return Outer->Rotations[ID]; }
+		const FQuat4f& FVariables::GetOrientation() const { return Outer->Orientations[ID]; }
+		FQuat4f& FVariables::GetOrientation() { return Outer->Orientations[ID]; }
 	}
 }
 

@@ -101,7 +101,7 @@ namespace NCsDamage
 
 				#define ValueType NCsDamage::NValue::IValue
 				#define RangeType NCsDamage::NRange::IRange
-				float FProxy::CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const
+				float FProxy::CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector3f& Origin, const FVector3f& Point) const
 				{
 				#undef ValueType
 				#undef RangeType
@@ -160,7 +160,7 @@ namespace NCsDamage
 					return MaxValue;
 				}
 
-				bool FProxy::IsInBounds(const FVector& Origin, const FVector& Point) const
+				bool FProxy::IsInBounds(const FVector3f& Origin, const FVector3f& Point) const
 				{
 					return false;
 				}
@@ -336,7 +336,7 @@ bool UCsData_DamageSphereImpl::IsLoaded() const
 
 #define ValueType NCsDamage::NValue::IValue
 #define RangeType NCsDamage::NRange::IRange
-float UCsData_DamageSphereImpl::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const
+float UCsData_DamageSphereImpl::CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const
 {
 #undef ValueType
 #undef RangeType
@@ -345,7 +345,7 @@ float UCsData_DamageSphereImpl::CalculateDamage(const ValueType* Value, const Ra
 }
 
 
-bool UCsData_DamageSphereImpl::IsInBounds(const FVector& Origin, const FVector& Point) const
+bool UCsData_DamageSphereImpl::IsInBounds(const FVector3f& Origin, const FVector3f& Point) const
 {
 	return false;
 }

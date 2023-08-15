@@ -18,7 +18,7 @@
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Asset Registry
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 
@@ -178,7 +178,7 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 
 		FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
 		Settings->PostEditChangeProperty(PropChangeEvent);
-		Settings->UpdateDefaultConfigFile();
+		Settings->TryUpdateDefaultConfigFile();
 
 		UProjectPackagingSettings* PackageSettings = GetMutableDefault< UProjectPackagingSettings>();
 
@@ -188,7 +188,7 @@ void UCsEdEngine::LaunchNewProcess(const FRequestPlaySessionParams& InParams, co
 		}
 
 		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Android);
-		PackageSettings->UpdateDefaultConfigFile();
+		PackageSettings->TryUpdateDefaultConfigFile();
 	}
 	
 	Super::LaunchNewProcess(InParams, InInstanceNum, NetMode, bIsDedicatedServer);
@@ -252,7 +252,7 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 
 			FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
 			ModuleSettings->PostEditChangeProperty(PropChangeEvent);
-			ModuleSettings->UpdateDefaultConfigFile();
+			ModuleSettings->TryUpdateDefaultConfigFile();
 		}
 	}
 	OnEndPIE_ScriptEvent.Broadcast(IsSimulating);
@@ -356,7 +356,7 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 
 						FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
 						ModuleSettings->PostEditChangeProperty(PropChangeEvent);
-						ModuleSettings->UpdateDefaultConfigFile();
+						ModuleSettings->TryUpdateDefaultConfigFile();
 
 						PlaySettings->NewWindowWidth  = ModuleSettings->PIE_Mobile.NewWindowWidth;
 						PlaySettings->NewWindowHeight = ModuleSettings->PIE_Mobile.NewWindowHeight;
@@ -903,11 +903,11 @@ char UCsEdEngine::FStandalone::Monitor_Internal(FCsRoutine* R)
 
 		FPropertyChangedEvent PropChangeEvent(UCsDeveloperSettings::StaticClass()->FindPropertyByName(GET_MEMBER_NAME_CHECKED(UCsDeveloperSettings, DataRootSet)));
 		Settings->PostEditChangeProperty(PropChangeEvent);
-		Settings->UpdateDefaultConfigFile();
+		Settings->TryUpdateDefaultConfigFile();
 
 		UProjectPackagingSettings* PackageSettings		   = GetMutableDefault< UProjectPackagingSettings>();
 		PackageSettings->DirectoriesToAlwaysCook[CS_FIRST] = Settings->GetDirectoryToAlwaysCook(ECsPlatform::Windows);
-		PackageSettings->UpdateDefaultConfigFile();
+		PackageSettings->TryUpdateDefaultConfigFile();
 	}
 
 	Outer->SetPlayMode(ECsPlayMode::ECsPlayMode_MAX);

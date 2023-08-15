@@ -109,7 +109,7 @@ void ACsManager_InstancedStaticMeshComponent::BeginDestroy()
 		
 		UWorld* World = WorldLibrary::GetChecked(Context, InRoot);
 
-		Manager_ISMC = World->SpawnActor<ACsManager_InstancedStaticMeshComponent>(ManagerInstancedStaticMeshComponentClass, FTransform::Identity);
+		Manager_ISMC = World->SpawnActor<ACsManager_InstancedStaticMeshComponent>(ManagerInstancedStaticMeshComponentClass, FTransform3d::Identity);
 
 		GetManagerISMC->SetManager_InstancedStaticMeshComponent(Manager_ISMC);
 
@@ -185,7 +185,7 @@ void ACsManager_InstancedStaticMeshComponent::Initialize()
 
 	const FString& Context = Str::Initialize;
 
-	DefaultSceneRoot->SetWorldTransform(FTransform::Identity);
+	DefaultSceneRoot->SetWorldTransform(FTransform3d::Identity);
 
 	const FCsSettings_Manager_InstancedStaticMeshComponent& Settings = FCsSettings_Manager_InstancedStaticMeshComponent::Get();
 
@@ -215,8 +215,8 @@ void ACsManager_InstancedStaticMeshComponent::Initialize()
 		Component->SetReceivesDecals(false);
 		Component->bUseAsOccluder = false;
 		Component->SetComponentTickEnabled(false);
-		Component->SetWorldTransform(FTransform::Identity);
-		Component->SetRelativeTransform(FTransform::Identity);
+		Component->SetWorldTransform(FTransform3d::Identity);
+		Component->SetRelativeTransform(FTransform3d::Identity);
 		Component->AttachToComponent(DefaultSceneRoot, FAttachmentTransformRules::KeepRelativeTransform);;
 
 		Components.Add(Component);

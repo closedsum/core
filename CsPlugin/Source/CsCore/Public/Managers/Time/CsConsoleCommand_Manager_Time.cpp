@@ -349,7 +349,7 @@ namespace NCsTime
 			FString OutString;
 			FParse::Line(&Cmd, OutString, true);
 
-			OutString.ToLower();
+			OutString = OutString.ToLower();
 
 			const TArray<FString>& Commands	   = CommandInfos[(uint8)ECommand::Pause].Commands;
 			const TArray<FString>& Definitions = CommandInfos[(uint8)ECommand::Pause].Definitions;
@@ -406,7 +406,7 @@ namespace NCsTime
 			FString OutString;
 			FParse::Line(&Cmd, OutString, true);
 
-			OutString.ToLower();
+			OutString = OutString.ToLower();
 
 			const TArray<FString>& Commands	   = CommandInfos[(uint8)ECommand::Unpause].Commands;
 			const TArray<FString>& Definitions = CommandInfos[(uint8)ECommand::Unpause].Definitions;
@@ -463,7 +463,7 @@ namespace NCsTime
 			FString OutString;
 			FParse::Line(&Cmd, OutString, true);
 
-			OutString.ToLower();
+			OutString = OutString.ToLower();
 
 			const TArray<FString>& Commands	   = CommandInfos[(uint8)ECommand::CustomUpdate].Commands;
 			const TArray<FString>& Definitions = CommandInfos[(uint8)ECommand::CustomUpdate].Definitions;

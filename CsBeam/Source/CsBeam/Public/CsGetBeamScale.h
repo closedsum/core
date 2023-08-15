@@ -23,5 +23,5 @@ class CSBEAM_API ICsGetBeamScale : public ICsGetInterfaceMap
 
 public:
 
-	virtual FVector GetBeamScale() const = 0;
+	virtual FVector3f GetBeamScale() const = 0;
 };

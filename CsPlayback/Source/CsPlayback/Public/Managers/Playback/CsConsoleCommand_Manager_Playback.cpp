@@ -143,7 +143,7 @@ namespace NCsPlayback
 			FString OutString;
 			FParse::Line(&Cmd, OutString, true);
 
-			OutString.ToLower();
+			OutString = OutString.ToLower();
 
 			const TArray<FString>& Commands	   = CommandInfos[(uint8)ECommand::PlayLatest].Commands;
 			const TArray<FString>& Definitions = CommandInfos[(uint8)ECommand::PlayLatest].Definitions;

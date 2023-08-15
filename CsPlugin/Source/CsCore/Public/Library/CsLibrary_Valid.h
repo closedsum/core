@@ -499,15 +499,15 @@ namespace NCsValid
 		{
 		public:
 
-			FORCEINLINE static bool IsZeroChecked(const FString& Context, const FVector& V, const FString& VName)
+			FORCEINLINE static bool IsZeroChecked(const FString& Context, const FVector3f& V, const FString& VName)
 			{
-				checkf(V != FVector::ZeroVector, TEXT("%s: %s == (0.0f, 0.0f, 0.0f) or ZeroVector is NOT Valid."), *Context, *VName);
+				checkf(V != FVector3f::ZeroVector, TEXT("%s: %s == (0.0f, 0.0f, 0.0f) or ZeroVector is NOT Valid."), *Context, *VName);
 				return true;
 			}
 
-			FORCEINLINE static bool IsZero(const FString& Context, const FVector& V, const FString& VName, void(*Log)(const FString&))
+			FORCEINLINE static bool IsZero(const FString& Context, const FVector3f& V, const FString& VName, void(*Log)(const FString&))
 			{
-				if (V == FVector::ZeroVector)
+				if (V == FVector3f::ZeroVector)
 				{
 					if (Log)
 						Log(FString::Printf(TEXT("%s: %s == (0.0f, 0.0f, 0.0f) or ZeroVector is NOT Valid."), *Context, *VName));
@@ -516,7 +516,7 @@ namespace NCsValid
 				return true;
 			}
 
-			FORCEINLINE static bool ComponentsGreaterThanChecked(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName)
+			FORCEINLINE static bool ComponentsGreaterThanChecked(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName)
 			{
 				checkf(V.X > A, TEXT("%s: %s.X: %f is NOT > %s: %f."), *Context, *VName, V.X, *AName, A);
 				checkf(V.Y > A, TEXT("%s: %s.Y: %f is NOT > %s: %f."), *Context, *VName, V.Y, *AName, A);
@@ -524,7 +524,7 @@ namespace NCsValid
 				return true;
 			}
 
-			FORCEINLINE static bool ComponentsGreaterThan(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
+			FORCEINLINE static bool ComponentsGreaterThan(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
 			{
 				if (V.X <= A)
 				{
@@ -547,7 +547,7 @@ namespace NCsValid
 				return true;
 			}
 
-			FORCEINLINE static bool ComponentsGreaterThanOrEqualChecked(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName)
+			FORCEINLINE static bool ComponentsGreaterThanOrEqualChecked(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName)
 			{
 				checkf(V.X >= A, TEXT("%s: %s.X: %f is NOT >= %s: %f."), *Context, *VName, V.X, *AName, A);
 				checkf(V.Y >= A, TEXT("%s: %s.Y: %f is NOT >= %s: %f."), *Context, *VName, V.Y, *AName, A);
@@ -555,7 +555,7 @@ namespace NCsValid
 				return true;
 			}
 
-			FORCEINLINE static bool ComponentsGreaterThanOrEqual(const FString& Context, const FVector& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
+			FORCEINLINE static bool ComponentsGreaterThanOrEqual(const FString& Context, const FVector3f& V, const FString& VName, const float& A, const FString& AName, void(*Log)(const FString&))
 			{
 				if (V.X < A)
 				{
@@ -1139,7 +1139,7 @@ namespace NCsValid
 			FORCEINLINE static bool IsPendingKillChecked(const FString& Context, const UObject* A, const FString& AName)
 			{
 				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
-				checkf(!A->IsPendingKill(), TEXT("%s: %s Is Pending Kill."), *Context, *AName);
+				checkf(IsValid(A), TEXT("%s: %s Is Pending Kill."), *Context, *AName);
 				return true;
 			}
 
@@ -1152,7 +1152,7 @@ namespace NCsValid
 					return false;
 				}
 
-				if (A->IsPendingKill())
+				if (!IsValid(A))
 				{
 					if (Log)
 						Log(FString::Printf(TEXT("%s: %s Is Pending Kill."), *Context, *AName));
@@ -1784,7 +1784,7 @@ namespace NCsValid
 
 #pragma endregion EnumStruct
 
-// FVector
+// FVector3f
 #pragma region
 
 // Assume const FString& Context has been defined
@@ -1808,7 +1808,7 @@ namespace NCsValid
 		check(NCsValid::NVector::FLibrary::ComponentsGreaterThanOrEqualChecked(Context, __V, __temp__str__v, __A, __temp__str__a)); \
 	}
 
-#pragma endregion FVector
+#pragma endregion FVector3f
 
 // Array
 #pragma region
@@ -2126,7 +2126,7 @@ namespace NCsValid
 #define CS_IS_ENUM_STRUCT_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array)
 #define CS_IS_ENUM_STRUCT_SET_VALID_CHECKED(__EnumMapType, __EnumType, __Set)
 #define CS_IS_ENUM_STRUCT_SET_UNIQUE_CHECKED(__EnumMapType, __EnumType, __Set)
-// FVector
+// FVector3f
 #define CS_IS_VECTOR_ZERO_CHECKED(__V)
 #define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_CHECKED(__V, __A)
 #define CS_IS_VECTOR_COMPONENTS_GREATER_THAN_OR_EQUAL_CHECKED(__V, __A)
@@ -2618,7 +2618,7 @@ namespace NCsValid
 
 #pragma endregion EnumStruct
 
-// FVector
+// FVector3f
 #pragma region
 
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
@@ -2642,7 +2642,7 @@ namespace NCsValid
 		if (!NCsValid::NVector::FLibrary::ComponentsGreaterThanOrEqual(Context, __V, __temp__str__v, __A, __temp__str__a, Log)) { return false; } \
 	}
 
-#pragma endregion FVector
+#pragma endregion FVector3f
 
 // Array
 #pragma region
@@ -2804,7 +2804,7 @@ namespace NCsValid
 		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return nullptr; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
-#define CS_IS_PENDING_KILL_RET_Value(__Object, __Value) \
+#define CS_IS_PENDING_KILL_RET_VALUE(__Object, __Value) \
 	{ \
 		static const FString __temp__str__ = #__Object; \
 		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return __Value; } \

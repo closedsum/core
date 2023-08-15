@@ -157,10 +157,10 @@ public:
 #undef PointImplType
 
 	void SetPointCenter(AActor* Center);
-	void SetPointCenter(const FTransform& Center);
+	void SetPointCenter(const FTransform3f& Center);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Spawner|Point")
-	FTransform PointImpl_GetCurrentTransform();
+	FTransform3f PointImpl_GetCurrentTransform();
 
 #pragma endregion Point
 

@@ -165,7 +165,7 @@ namespace NCsGameEvent
 			* @param Value			Value associated with the GameEvent.
 			* @param Location		Location associated with the GameEvent.
 			*/
-			static void BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector);
+			static void BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value = 0.0f, const FVector3f& Location = FVector3f::ZeroVector);
 
 			/**
 			* Broadcast a GameEvent routed to the appropriated Group. Value and Location maybe be optional for 
@@ -181,7 +181,7 @@ namespace NCsGameEvent
 			*						the GameEvent.
 			* return				Whether the GameEvent, Value, Location was broadcasted or not.
 			*/
-			static bool SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FECsGameEvent& GameEvent, const float& Value, const FVector3f& Location, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 	}
 }

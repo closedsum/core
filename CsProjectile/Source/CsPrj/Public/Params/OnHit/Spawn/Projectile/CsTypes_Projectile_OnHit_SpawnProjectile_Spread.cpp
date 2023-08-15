@@ -210,7 +210,7 @@ namespace NCsProjectile
 					#define ShapeType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape
 					#define DistributionType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution
 
-					FVector FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const DistributionType& Distribution)
+					FVector3f FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution)
 					{
 						typedef NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EMShape ShapeMapType;
 
@@ -222,7 +222,7 @@ namespace NCsProjectile
 
 						checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
 
-						FVector Offset = FVector::ZeroVector;
+						FVector3f Offset = FVector3f::ZeroVector;
 
 						// Line
 						if (Shape == ShapeType::Line)

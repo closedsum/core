@@ -27,7 +27,7 @@ namespace NCsWidgetActor
 			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity),
+			Transform(FTransform3f::Identity),
 			// UserWidgetPayloadType (NCsWidgetActor::NPayload::IUserWidget
 			UserWidgetPooledType(),
 			UserWidgetPayload(nullptr)
@@ -73,7 +73,7 @@ namespace NCsWidgetActor
 			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
-			Transform = FTransform::Identity;
+			Transform = FTransform3f::Identity;
 
 			// UserWidgetType (NCsWidgetActor::NPayload::IUserWidget)
 			UserWidgetPooledType = EMCsUserWidgetPooled::Get().GetMAX();

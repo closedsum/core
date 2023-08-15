@@ -35,7 +35,7 @@ namespace NCsAnimation
                     // used for ldr Pivot Directions (X, Y or Z)
                     static void VectorDataToVertColor(const TArray<FVector>& InVectorData, TArray<FColor>& Colors);
 
-                    static void UVChannelsToSkeletalMesh(USkeletalMesh* Skel, const int32 LODIndex, const int32 UVChannelStart, TArray<TArray<FVector2D>>& UVChannels);
+                    static void UVChannelsToSkeletalMesh(USkeletalMesh* Skel, const int32 LODIndex, const int32 UVChannelStart, TArray<TArray<FVector2f>>& UVChannels);
                     static void UVChannelToStaticMesh(UStaticMesh* Mesh, const int32 TargetUVChannel, TArray <FVector2D>& UVs);
 
                     static void IntoIslands(const TArray <int32>& IndexBuffer, const TArray <FVector2D>& UVs, TArray <int32>& OutIslandIDs, int32& OutNumIslands);

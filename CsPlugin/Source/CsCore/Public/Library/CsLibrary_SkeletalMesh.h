@@ -85,7 +85,7 @@ namespace NCsSkeletalMesh
 		*
 		* return			Bone's Location.
 		*/
-		static FVector GetBoneLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone);
+		static FVector3f GetBoneLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone);
 
 		/**
 		* Get the Bone's rotation from a SkeletalMeshComponent.
@@ -102,7 +102,7 @@ namespace NCsSkeletalMesh
 		*
 		* return			Bone's Rotation.
 		*/
-		static FRotator GetBoneRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules);
+		static FRotator3f GetBoneRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules);
 
 		/**
 		* Get the Bone's normal from a SkeletalMeshComponent.
@@ -119,7 +119,7 @@ namespace NCsSkeletalMesh
 		*
 		* return			Bone's Normal.
 		*/
-		static FVector GetBoneNormalChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules);
+		static FVector3f GetBoneNormalChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules);
 
 	#pragma endregion Bone
 
@@ -148,7 +148,7 @@ namespace NCsSkeletalMesh
 		*
 		* return			Socket's Location.
 		*/
-		static FVector GetSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket);
+		static FVector3f GetSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket);
 
 		/**
 		* Get the Socket's rotation from a SkeletalMeshComponent.
@@ -165,7 +165,7 @@ namespace NCsSkeletalMesh
 		*
 		* return			Socket's Rotation.
 		*/
-		static FRotator GetSocketRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket, const int32& Rules);
+		static FRotator3f GetSocketRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket, const int32& Rules);
 
 		/**
 		* Get the Bone's normal from a SkeletalMeshComponent.
@@ -182,7 +182,7 @@ namespace NCsSkeletalMesh
 		*
 		* return			Socket's Normal.
 		*/
-		static FVector GetSocketNormalChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket, const int32& Rules);
+		static FVector3f GetSocketNormalChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket, const int32& Rules);
 
 	#pragma endregion Socket
 
@@ -245,7 +245,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				BoneOrSocket direction.
 		*/
-		static FVector GetBoneOrSocketDirectionChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket);
+		static FVector3f GetBoneOrSocketDirectionChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket);
 
 		/**
 		* Get the Bone or Socket direction (rotation as vector) for the given Component.
@@ -257,7 +257,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				BoneOrSocket direction.
 		*/
-		static FVector GetBoneOrSocketDirectionChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket);
+		static FVector3f GetBoneOrSocketDirectionChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket);
 
 		/**
 		* Get the Bone or Socket location for the given Component.
@@ -268,7 +268,7 @@ namespace NCsSkeletalMesh
 		*
 		* return				BoneOrSocket location.
 		*/
-		static FVector GetBoneOrSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket);
+		static FVector3f GetBoneOrSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket);
 
 		/**
 		* Get the Bone or Socket location for the given Component.
@@ -280,6 +280,6 @@ namespace NCsSkeletalMesh
 		*
 		* return				BoneOrSocket location.
 		*/
-		static FVector GetBoneOrSocketLocationChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket);
+		static FVector3f GetBoneOrSocketLocationChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket);
 	};
 }

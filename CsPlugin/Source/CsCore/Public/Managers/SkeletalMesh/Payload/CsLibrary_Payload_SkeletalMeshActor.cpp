@@ -41,7 +41,7 @@ namespace NCsSkeletalMeshActor
 
 			if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(PooledPayload->GetParent()))
 			{
-				if (USkeletalMesh* Mesh = Component->SkeletalMesh)
+				if (USkeletalMesh* Mesh = Component->GetSkeletalMeshAsset())
 				{
 					typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
 
@@ -98,7 +98,7 @@ namespace NCsSkeletalMeshActor
 			Payload->TransformRules			  = Shot.GetTransformRules();
 
 			Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Shot.GetTransform().GetTranslation());
-			const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Shot.GetTransform().GetRotation().Rotator();
+			const FRotator3f Rotation = Payload->Transform.GetRotation().Rotator() + Shot.GetTransform().GetRotation().Rotator();
 			Payload->Transform.SetRotation(Rotation.Quaternion());
 			Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Shot.GetTransform().GetScale3D());
 
@@ -179,7 +179,7 @@ namespace NCsSkeletalMeshActor
 			Payload->TransformRules			  = Shot.GetTransformRules();
 
 			Payload->Transform.SetTranslation(Payload->Transform.GetTranslation() + Shot.GetTransform().GetTranslation());
-			const FRotator Rotation = Payload->Transform.GetRotation().Rotator() + Shot.GetTransform().GetRotation().Rotator();
+			const FRotator3f Rotation = Payload->Transform.GetRotation().Rotator() + Shot.GetTransform().GetRotation().Rotator();
 			Payload->Transform.SetRotation(Rotation.Quaternion());
 			Payload->Transform.SetScale3D(Payload->Transform.GetScale3D() * Shot.GetTransform().GetScale3D());
 

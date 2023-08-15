@@ -39,7 +39,7 @@ public:
 	FTickerDelegate	TickDelegate;
 
 	/** Handle to various registered delegates */
-	FDelegateHandle	TickDelegateHandle;
+	FTSTicker::FDelegateHandle	TickDelegateHandle;
 
 	bool Tick(float DeltaSeconds);
 

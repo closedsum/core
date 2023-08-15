@@ -29,7 +29,7 @@ namespace NCsSkeletalMeshActor
 			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity),
+			Transform(FTransform3f::Identity),
 			bCastShadow(false),
 			bReceivesDecals(false),
 			bUseAsOccluder(false),
@@ -78,7 +78,7 @@ namespace NCsSkeletalMeshActor
 			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
-			Transform = FTransform::Identity;
+			Transform = FTransform3f::Identity;
 			bCastShadow = false;
 			bReceivesDecals = false;
 			bUseAsOccluder = false;

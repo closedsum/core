@@ -23,12 +23,12 @@ namespace NCsObject
 				{
 					if (UObject* Object = O.GetObject())
 					{
-						if (!Object->IsPendingKill())
+						if (IsValid(Object))
 						{
 							if (AActor* Actor = Cast<AActor>(Object))
 								Actor->Destroy();
 							else
-								Object->MarkPendingKill();
+								Object->MarkAsGarbage();
 						}
 					}
 					ToRemove.Add(Pair.Key);
@@ -60,12 +60,12 @@ namespace NCsObject
 					{
 						if (UObject* Object = O.GetObject())
 						{
-							if (!Object->IsPendingKill())
+							if (IsValid(Object))
 							{
 								if (AActor* Actor = Cast<AActor>(Object))
 									Actor->Destroy();
 								else
-									Object->MarkPendingKill();
+									Object->MarkAsGarbage();
 							}
 						}
 						ToRemove.Add(Handle);
@@ -76,12 +76,12 @@ namespace NCsObject
 				{
 					if (Object->GetWorld() == World)
 					{
-						if (!Object->IsPendingKill())
+						if (IsValid(Object))
 						{
 							if (AActor* Actor = Cast<AActor>(Object))
 								Actor->Destroy();
 							else
-								Object->MarkPendingKill();
+								Object->MarkAsGarbage();
 						}
 						ToRemove.Add(Handle);
 					}
@@ -109,18 +109,18 @@ namespace NCsObject
 				{
 					typedef NCsWorld::FLibrary WorldLibrary;
 
-					if (Owner->IsPendingKill() ||
+					if (!IsValid(Owner) ||
 						WorldLibrary::IsEditorPreviewOrphaned(Owner))
 					{
 						// If the Object is Valid, check if the Object is about to be destroyed.
 						if (UObject* Object = O.GetObject())
 						{
-							if (!Object->IsPendingKill())
+							if (IsValid(Object))
 							{
 								if (AActor* Actor = Cast<AActor>(Object))
 									Actor->Destroy();
 								else
-									Object->MarkPendingKill();
+									Object->MarkAsGarbage();
 							}
 						}
 						ToRemove.Add(Handle);
@@ -131,7 +131,7 @@ namespace NCsObject
 						if (UObject* Object = O.GetObject())
 						{
 							// If the Object is NOT Valid, add it to the list to be removed.
-							if (Object->IsPendingKill() ||
+							if (!IsValid(Object) ||
 								WorldLibrary::IsEditorPreviewOrphaned(Object))
 							{
 								ToRemove.Add(Handle);
@@ -150,12 +150,12 @@ namespace NCsObject
 					// If the Object is Valid, Mark the Object to be destroyed.
 					if (UObject* Object = O.GetObject())
 					{
-						if (!Object->IsPendingKill())
+						if (IsValid(Object))
 						{
 							if (AActor* Actor = Cast<AActor>(Object))
 								Actor->Destroy();
 							else
-								Object->MarkPendingKill();
+								Object->MarkAsGarbage();
 						}
 					}
 					ToRemove.Add(Handle);

@@ -106,7 +106,7 @@ namespace NCsSkeletalMeshActor
 			*
 			* return Transform
 			*/
-			virtual const FTransform& GetTransform() const = 0;
+			virtual const FTransform3f& GetTransform() const = 0;
 
 			/**
 			* Controls whether the SkeletalMeshActor should cast an shadow or not.

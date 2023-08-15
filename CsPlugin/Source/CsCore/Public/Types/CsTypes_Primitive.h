@@ -493,7 +493,7 @@ public:
 		Z = InZ;
 	}
 
-	FORCEINLINE void ApplyLock(FVector& V)
+	FORCEINLINE void ApplyLock(FVector3f& V)
 	{
 		V.X = X ? 0.0f : V.X;
 		V.Y = Y ? 0.0f : V.Y;

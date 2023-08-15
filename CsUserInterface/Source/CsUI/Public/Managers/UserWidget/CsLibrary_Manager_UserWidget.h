@@ -185,7 +185,7 @@ namespace NCsUserWidget
 
 				static void DeallocateChecked(const FString& Context, const UObject* WorldContext, const int32& ID);
 
-				static void UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector& WorldPosition, const FVector2D& Offset);
+				static void UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector3f& WorldPosition, const FVector2f& Offset);
 			};
 		}
 	}

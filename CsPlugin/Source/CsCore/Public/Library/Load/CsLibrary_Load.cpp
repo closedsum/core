@@ -26,6 +26,19 @@
 // Class
 #include "UObject/Class.h"
 
+namespace NCsLoad
+{
+	// SoftObjectPath
+	#pragma region
+
+	FName FLibrary::GetAssetPathName(const FSoftObjectPath& Path)
+	{
+		return *(Path.ToString());
+	}
+
+	#pragma endregion SoftObjectPath
+}
+
 UCsLibrary_Load::UCsLibrary_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -226,7 +239,7 @@ void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const
 
 				if (Path.IsValid())
 				{
-					OutObjectPathMap.FindOrAdd(Path.GetAssetPathName()) = Path;
+					OutObjectPathMap.FindOrAdd(NCsLoad::FLibrary::GetAssetPathName(Path)) = Path;
 					// TODO: Load SoftClassPtr and GetObjectPaths from that. Have an optional enum for recursive look up with load
 				}
 			}
@@ -240,7 +253,7 @@ void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const
 				const FSoftObjectPath& Path = Ptr->ToSoftObjectPath();
 
 				if (Path.IsValid())
-					OutObjectPathMap.FindOrAdd(Path.GetAssetPathName()) = Path;
+					OutObjectPathMap.FindOrAdd(NCsLoad::FLibrary::GetAssetPathName(Path)) = Path;
 			}
 			continue;
 		}
@@ -253,7 +266,7 @@ void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const
 				if (const FSoftClassPath* Ptr = reinterpret_cast<const FSoftClassPath*>(PropertyValue))
 				{
 					if (Ptr->IsValid())
-						OutObjectPathMap.FindOrAdd(Ptr->GetAssetPathName()) = *Ptr;
+						OutObjectPathMap.FindOrAdd(NCsLoad::FLibrary::GetAssetPathName(*Ptr)) = *Ptr;
 				}
 				continue;
 			}
@@ -263,7 +276,7 @@ void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const
 				if (const FSoftObjectPath* Ptr = reinterpret_cast<const FSoftObjectPath*>(PropertyValue))
 				{
 					if (Ptr->IsValid())
-						OutObjectPathMap.FindOrAdd(Ptr->GetAssetPathName()) = *Ptr;
+						OutObjectPathMap.FindOrAdd(NCsLoad::FLibrary::GetAssetPathName(*Ptr)) = *Ptr;
 				}
 				continue;
 			}
@@ -1340,7 +1353,7 @@ void UCsLibrary_Load::LoadSoftClassProperty(FSoftClassProperty* SoftClassPropert
 
 		if (FClassProperty* InternalClassProperty = FindFProperty<FClassProperty>(Struct, *InternalClassName))
 		{
-			if (UObject** Object = InternalClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+			if (TObjectPtr<UObject>* Object = InternalClassProperty->GetPropertyValuePtr_InContainer(StructValue))
 			{
 				*Object = Member->LoadSynchronous();
 			}
@@ -1356,7 +1369,7 @@ void UCsLibrary_Load::LoadSoftClassProperty(FSoftClassProperty* SoftClassPropert
 			// Check Member is the same type as the Member_Internal
 			if (SoftClassProperty->MetaClass == InternalSubclassOfProperty->MetaClass)
 			{
-				if (UObject** Object = InternalSubclassOfProperty->GetPropertyValuePtr_InContainer(StructValue))
+				if (TObjectPtr<UObject>* Object = InternalSubclassOfProperty->GetPropertyValuePtr_InContainer(StructValue))
 				{
 					*Object = Member->LoadSynchronous();
 				}
@@ -1485,7 +1498,7 @@ void UCsLibrary_Load::LoadSoftObjectProperty(FSoftObjectProperty* SoftObjectProp
 			if (SoftObjectProperty->PropertyClass->IsChildOf(UBlueprint::StaticClass()) &&
 				InternalObjectProperty->PropertyClass->IsChildOf(UBlueprintGeneratedClass::StaticClass()))
 			{
-				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+				if (TObjectPtr<UObject>* Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 				{
 					FString Path = Member->ToSoftObjectPath().ToString();
 
@@ -1513,7 +1526,7 @@ void UCsLibrary_Load::LoadSoftObjectProperty(FSoftObjectProperty* SoftObjectProp
 			else
 			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
 			{
-				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+				if (TObjectPtr<UObject>* Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 				{
 					*Internal = Member->LoadSynchronous();
 
@@ -1589,11 +1602,11 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 
 						checkf(BpGC, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to cast Object: %s to UBlueprintGeneratedClass."), *(O->GetName()));
 
-						checkf(BpGC->ClassGeneratedBy, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: ClassGeneratedBy is NULL for Object: %s."), *(O->GetName()));
+						//checkf(BpGC->ClassGeneratedBy, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: ClassGeneratedBy is NULL for Object: %s."), *(O->GetName()));
 
-						UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+						UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
-						checkf(BpC, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to cast Class: %s to UBlueprintCore."), *(BpGC->ClassGeneratedBy->GetName()));
+						//checkf(BpC, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to cast Class: %s to UBlueprintCore."), *(BpGC->ClassGeneratedBy->GetName()));
 
 						checkf(BpC->GeneratedClass, TEXT("UCsLibrary_Load::LoadArraySoftObjectProperty: Failed to get GeneratedClass from Class: %s."), *(BpC->GetName()));
 
@@ -1652,11 +1665,11 @@ void UCsLibrary_Load::LoadArraySoftObjectProperty(FArrayProperty* ArrayProperty,
 
 void UCsLibrary_Load::LoadClassProperty(FClassProperty* ClassProperty, void* StructValue, UStruct* const& Struct, const int32& LoadFlags, const int32& LoadCodes)
 {
-	if (UObject** Object = ClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+	if (TObjectPtr<UObject>* ObjectPtr = ClassProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
-		if (*Object)
+		if (UObject* Object = ObjectPtr->Get())
 		{
-			UClass* Class = Cast<UClass>(*Object);
+			UClass* Class = Cast<UClass>(Object);
 			UObject* DOb = Class->GetDefaultObject();
 
 			// ICsData
@@ -1913,7 +1926,7 @@ void UCsLibrary_Load::UnloadSoftClassProperty(FSoftClassProperty* SoftClassPrope
 
 		if (FClassProperty* InternalClassProperty = FindFProperty<FClassProperty>(Struct, *InternalClassName))
 		{
-			if (UObject** Object = InternalClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+			if (TObjectPtr<UObject>* Object = InternalClassProperty->GetPropertyValuePtr_InContainer(StructValue))
 			{
 				*Object = nullptr;
 			}
@@ -1929,7 +1942,7 @@ void UCsLibrary_Load::UnloadSoftClassProperty(FSoftClassProperty* SoftClassPrope
 			// Check Member is the same type as the Member_Internal
 			if (SoftClassProperty->MetaClass == InternalSubclassOfProperty->MetaClass)
 			{
-				if (UObject** Object = InternalSubclassOfProperty->GetPropertyValuePtr_InContainer(StructValue))
+				if (TObjectPtr<UObject>* Object = InternalSubclassOfProperty->GetPropertyValuePtr_InContainer(StructValue))
 				{
 					*Object = nullptr;
 				}
@@ -2024,7 +2037,7 @@ void UCsLibrary_Load::UnloadSoftObjectProperty(FSoftObjectProperty* SoftObjectPr
 			// Check Member is the same type as the Member_Internal
 			if (SoftObjectProperty->PropertyClass == InternalObjectProperty->PropertyClass)
 			{
-				if (UObject** Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+				if (TObjectPtr<UObject>* Internal = InternalObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 				{
 					// Recursive Unload DataTable
 					if (*Internal	 &&
@@ -2674,7 +2687,9 @@ UObject* UCsLibrary_Load::GetDefaultObjectChecked(const FString& Context, const 
 	// Blueprint
 	if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
 	{
-		if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+		//if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+		UBlueprintCore* BpC = nullptr;
+		if (BpC)
 		{
 			if (UClass* Class = BpC->GeneratedClass.Get())
 			{
@@ -2686,8 +2701,11 @@ UObject* UCsLibrary_Load::GetDefaultObjectChecked(const FString& Context, const 
 			}
 		}
 		else
-		if (UClass* Class = Cast<UClass>(BpGC->ClassGeneratedBy))
+		//if (UClass* Class = Cast<UClass>(BpGC->ClassGeneratedBy))
+		if (0)
 		{
+			UClass* Class = nullptr;
+
 			UObject* DOb = Class->GetDefaultObject();
 
 			checkf(DOb, TEXT("%s: Failed to get DefaultObject from Object: %s with Class: %s."), *Context, *(O->GetName()), *(Class->GetName()));

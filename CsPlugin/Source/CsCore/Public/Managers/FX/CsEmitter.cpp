@@ -5,7 +5,7 @@
 // Component
 #include "Particles/ParticleSystemComponent.h"
 
-#define CS_EMITTER_DEFAULT_LOCATION FVector(10000.0f)
+#define CS_EMITTER_DEFAULT_LOCATION FVector3f(10000.0f)
 
 ACsEmitter::ACsEmitter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -122,7 +122,7 @@ void ACsEmitter::DeAllocate()
 	}
 
 	SetActorHiddenInGame(true);
-	SetActorRelativeTransform(FTransform::Identity);
+	SetActorRelativeTransform(FTransform3d::Identity);
 	SetTemplate(nullptr);
 	SetOwner(nullptr);
 }

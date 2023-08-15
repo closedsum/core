@@ -31,7 +31,7 @@ namespace NCsStatusEffect
 				* @param Point		The location to evaluate if in bounds.
 				* return			Whether the point is in bounds of the origin.
 				*/
-				virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+				virtual bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const = 0;
 			};
 		}
 	}
@@ -64,5 +64,5 @@ public:
 	* @param Point		The location to evaluate if in bounds.
 	* return			Whether the point is in bounds of the origin.
 	*/
-	virtual bool IsInBounds(const FVector& Origin, const FVector& Point) const = 0;
+	virtual bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const = 0;
 };

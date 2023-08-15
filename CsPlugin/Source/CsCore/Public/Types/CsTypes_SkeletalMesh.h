@@ -20,7 +20,7 @@ struct CSCORE_API FCsSkeletalMesh
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skeletal Mesh")
 	TSoftObjectPtr<USkeletalMesh> Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skeletal Mesh", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skeletal Mesh", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "Skeletal Mesh")

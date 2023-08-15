@@ -16,13 +16,13 @@ namespace NCsAnimation
 			{
 				Transform = Control->GetRelativeTransform();
 
-				FVector Scale = Transform.GetScale3D();
+				FVector3d Scale = Transform.GetScale3D();
 
 				static const float MIN = 0.01f;
 
 				if (Scale.X < MIN || Scale.Y < MIN || Scale.Z < MIN)
 				{
-					Scale = FVector(FMath::Max(MIN, Scale.X), FMath::Max(MIN, Scale.Y), FMath::Max(MIN, Scale.Z));
+					Scale = FVector3d(FMath::Max(MIN, Scale.X), FMath::Max(MIN, Scale.Y), FMath::Max(MIN, Scale.Z));
 
 					Control->SetRelativeScale3D(Scale);
 					DOb.Control->SetRelativeScale3D(Scale);
@@ -40,12 +40,12 @@ void FCsMannequinSilhouette_BoneControl_Core::OnUpdateByComponent(FCsMannequinSi
 	const FTransform Transform = Info.Control->GetRelativeTransform();
 	Info.Transform			   = Transform;
 
-	FVector Scale = Transform.GetScale3D();
+	FVector3d Scale = Transform.GetScale3D();
 
 	SetFromScale(Scale);
 	DOb.SetFromScale(Scale);
 
-	const FVector Location = Transform.GetLocation();
+	const FVector3d Location = Transform.GetLocation();
 
 	HeightOffset	 = Location.Z;
 	DOb.HeightOffset = Location.Z;
@@ -58,12 +58,12 @@ void FCsMannequinSilhouette_BoneControl_Core::OnUpdateByMember(InfoType& DObInfo
 {
 #undef InfoType
 
-	const FVector Scale = GetScale();
+	const FVector3d Scale = GetScale();
 
 	Info.Control->SetRelativeScale3D(Scale);
 	DObInfo.Control->SetRelativeScale3D(Scale);
 
-	FVector Location = FVector::ZeroVector;
+	FVector3d Location = FVector3d::ZeroVector;
 
 	Location.Z = HeightOffset;
 
@@ -90,7 +90,7 @@ void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByComponent(FCsMannequinSi
 	{
 		Right.Transform = Transform_L;
 
-		const FVector Scale = Transform_L.GetScale3D();
+		const FVector3d Scale = Transform_L.GetScale3D();
 
 		SetFromScale(Scale);
 		DOb.SetFromScale(Scale);
@@ -104,7 +104,7 @@ void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByComponent(FCsMannequinSi
 	{
 		Left.Transform = Transform_R;
 
-		const FVector Scale = Transform_R.GetScale3D();
+		const FVector3d Scale = Transform_R.GetScale3D();
 
 		SetFromScale(Scale);
 		DOb.SetFromScale(Scale);
@@ -121,7 +121,7 @@ void FCsMannequinSilhouette_BoneControl_Limb::OnUpdateByMember(InfoType& LeftDOb
 {
 #undef InfoType
 
-	const FVector Scale = GetScale();
+	const FVector3d Scale = GetScale();
 
 	LeftDOb.Control->SetRelativeScale3D(Scale);
 	Left.Control->SetRelativeScale3D(Scale);
@@ -151,7 +151,7 @@ void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByComponent(FCsMannequinSi
 	{
 		Right.Transform = Transform_L;
 
-		const FVector _Scale = Transform_L.GetScale3D();
+		const FVector3d _Scale = Transform_L.GetScale3D();
 
 		SetFromScale(_Scale);
 		DOb.SetFromScale(_Scale);
@@ -165,7 +165,7 @@ void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByComponent(FCsMannequinSi
 	{
 		Left.Transform = Transform_R;
 
-		const FVector _Scale = Transform_R.GetScale3D();
+		const FVector3d _Scale = Transform_R.GetScale3D();
 
 		SetFromScale(_Scale);
 		DOb.SetFromScale(_Scale);
@@ -182,7 +182,7 @@ void FCsMannequinSilhouette_BoneControl_Foot::OnUpdateByMember(InfoType& LeftDOb
 {
 #undef InfoType
 
-	const FVector _Scale = GetScale();
+	const FVector3d _Scale = GetScale();
 
 	LeftDOb.Control->SetRelativeScale3D(_Scale);
 	Left.Control->SetRelativeScale3D(_Scale);
@@ -212,7 +212,7 @@ void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByComponent(FCsMannequinSi
 	{
 		Right.Transform = Transform_L;
 
-		const FVector _Scale = Transform_L.GetScale3D();
+		const FVector3d _Scale = Transform_L.GetScale3D();
 
 		SetFromScale(_Scale);
 		DOb.SetFromScale(_Scale);
@@ -226,7 +226,7 @@ void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByComponent(FCsMannequinSi
 	{
 		Left.Transform = Transform_R;
 
-		const FVector _Scale = Transform_R.GetScale3D();
+		const FVector3d _Scale = Transform_R.GetScale3D();
 
 		SetFromScale(_Scale);
 		DOb.SetFromScale(_Scale);
@@ -243,7 +243,7 @@ void FCsMannequinSilhouette_BoneControl_Hand::OnUpdateByMember(InfoType& LeftDOb
 {
 #undef InfoType
 
-	const FVector _Scale = GetScale();
+	const FVector3d _Scale = GetScale();
 
 	LeftDOb.Control->SetRelativeScale3D(_Scale);
 	Left.Control->SetRelativeScale3D(_Scale);
@@ -265,12 +265,12 @@ void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByComponent(FCsMannequinSi
 	const FTransform Transform = Info.Control->GetRelativeTransform();
 	Info.Transform			   = Transform;
 
-	FVector _Scale = Transform.GetScale3D();
+	FVector3d _Scale = Transform.GetScale3D();
 
 	SetFromScale(_Scale);
 	DOb.SetFromScale(_Scale);
 
-	const FVector Location = Transform.GetLocation();
+	const FVector3d Location = Transform.GetLocation();
 
 	HeightOffset	 = Location.Z;
 	DOb.HeightOffset = Location.Z;
@@ -283,12 +283,12 @@ void FCsMannequinSilhouette_BoneControl_Head::OnUpdateByMember(InfoType& DObInfo
 {
 #undef InfoType
 
-	const FVector _Scale = GetScale();
+	const FVector3d _Scale = GetScale();
 
 	Info.Control->SetRelativeScale3D(_Scale);
 	DObInfo.Control->SetRelativeScale3D(_Scale);
 
-	FVector Location = FVector::ZeroVector;
+	FVector3d Location = FVector3d::ZeroVector;
 
 	Location.Z = HeightOffset;
 

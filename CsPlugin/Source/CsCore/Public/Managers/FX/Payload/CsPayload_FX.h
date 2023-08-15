@@ -117,7 +117,7 @@ namespace NCsFX
 			*
 			* return Transform
 			*/
-			virtual const FTransform& GetTransform() const = 0;
+			virtual const FTransform3f& GetTransform() const = 0;
 
 			/** 
 			* Get whether RelativeLocation should be considered relative to the world, rather than the parent.
@@ -145,7 +145,7 @@ namespace NCsFX
 
 			/**
 			* Get whether the Transform's Scale should be applied to the FX.
-			* If NOT, the object defaults to FVector::OneVector or just the scale of the object the FX
+			* If NOT, the object defaults to FVector3f::OneVector or just the scale of the object the FX
 			* is attached to.
 			* NOTE: Usually when scaling parameters, this should be FALSE.
 			* 

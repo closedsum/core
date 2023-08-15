@@ -196,15 +196,15 @@ namespace NCsCoroutine
 				else
 				if (ValueType == Type::Vector)
 				{
-					FVector* V = (FVector*)Ptr;
-					*V		   = FVector::ZeroVector;
+					FVector3f* V = (FVector3f*)Ptr;
+					*V		   = FVector3f::ZeroVector;
 				}
 				// Rotator
 				else
 				if (ValueType == Type::Rotator)
 				{
-					FRotator* V = (FRotator*)Ptr;
-					*V		    = FRotator::ZeroRotator;
+					FRotator3f* V = (FRotator3f*)Ptr;
+					*V		    = FRotator3f::ZeroRotator;
 				}
 				// Color
 				else
@@ -297,13 +297,13 @@ namespace NCsCoroutine
 				else
 				if (ValueType == Type::Vector)
 				{
-					SetValue_Internal<FVector>(From, To);
+					SetValue_Internal<FVector3f>(From, To);
 				}
 				// Rotator
 				else
 				if (ValueType == Type::Rotator)
 				{
-					SetValue_Internal<FRotator>(From, To);
+					SetValue_Internal<FRotator3f>(From, To);
 				}
 				// Color
 				else
@@ -446,9 +446,9 @@ namespace NCsCoroutine
 			Vectors.AddDefaulted(CS_ROUTINE_VECTOR_SIZE);
 			UsedValues[(uint8)EValueType::Vector].AddDefaulted(Vectors.Max());
 
-			for (FVector& V : Vectors)
+			for (FVector3f& V : Vectors)
 			{
-				V = FVector::ZeroVector;
+				V = FVector3f::ZeroVector;
 				Values[(uint8)EValueType::Vector].Add(&V);
 			}
 
@@ -458,9 +458,9 @@ namespace NCsCoroutine
 			Rotators.AddDefaulted(CS_ROUTINE_ROTATOR_SIZE);
 			UsedValues[(uint8)EValueType::Rotator].AddDefaulted(Rotators.Max());
 
-			for (FRotator& R : Rotators)
+			for (FRotator3f& R : Rotators)
 			{
-				R = FRotator::ZeroRotator;
+				R = FRotator3f::ZeroRotator;
 				Values[(uint8)EValueType::Rotator].Add(&R);
 			}
 

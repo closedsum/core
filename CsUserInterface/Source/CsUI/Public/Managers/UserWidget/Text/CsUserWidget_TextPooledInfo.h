@@ -36,7 +36,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
 	ECsUserWidgetDeallocateMethod DeallocateMethod;
 
-	/** The scale to apply to Render Transform (set via SetRenderScale(GetScale() * FVector2D::UnitVector)). */
+	/** The scale to apply to Render Transform (set via SetRenderScale(GetScale() * FVector2f::UnitVector)). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text", meta = (ClampMin = "0.01", UIMin = "0.01"))
 	float RenderScale;
 
@@ -57,7 +57,7 @@ public:
 
 	/** The offset to apply to the position of the UserWidget. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
-	FVector Offset;
+	FVector3f Offset;
 
 	/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsUI|User Widget|Text")
@@ -90,7 +90,7 @@ public:
 		LifeTime(0.0f),
 		PositionType(ECsUserWidgetPosition::Screen),
 		OffsetType(ECsUserWidgetPosition::Screen),
-		Offset(FVector::ZeroVector),
+		Offset(FVector3f::ZeroVector),
 		ZOrder(0),
 		Color(FLinearColor::White),
 		OutlineSettings(),
@@ -142,7 +142,7 @@ namespace NCsUserWidget
 				CS_DECLARE_MEMBER_WITH_PROXY(Type, FECsUserWidgetPooled)
 				/** Condition to determine when to deallocate the UserWidget. */
 				CS_DECLARE_MEMBER_WITH_PROXY(DeallocateMethod, DeallocateMethodType)
-				/** The scale to apply to Render Transform (set via SetRenderScale(GetScale() * FVector2D::UnitVector)). */
+				/** The scale to apply to Render Transform (set via SetRenderScale(GetScale() * FVector2f::UnitVector)). */
 				CS_DECLARE_MEMBER_WITH_PROXY(RenderScale, float)
 				/** Valid if the DeallocateMethod == DeallocateMethodType::LifeTime.
 					 LifeTime == 0.0f means the UserWidget object will stay active forever.
@@ -154,7 +154,7 @@ namespace NCsUserWidget
 				/** Way to interpret Offset information for being converted to screen space. */
 				CS_DECLARE_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition)
 				/** The offset to apply to the position of the UserWidget. */
-				CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+				CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
 				/** The order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top). */
 				CS_DECLARE_MEMBER_WITH_PROXY(ZOrder, int32)
 				/** Get the color of the text. */
@@ -175,7 +175,7 @@ namespace NCsUserWidget
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(LifeTime, 0.0f),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition::Screen),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition::Screen),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, FVector::ZeroVector),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Offset, FVector3f::ZeroVector),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(ZOrder, 0),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Color, FLinearColor::White),
 					OutlineSettings(),
@@ -202,7 +202,7 @@ namespace NCsUserWidget
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LifeTime, float)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(PositionType, NCsUserWidget::EPosition)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(OffsetType, NCsUserWidget::EPosition)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ZOrder, int32)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Color, FLinearColor)
 				FORCEINLINE const OutlineSettingsType& GetOutlineSettings() const { return OutlineSettings; }
@@ -226,7 +226,7 @@ namespace NCsUserWidget
 				* @param Location		Location in World Space
 				* return
 				*/
-				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const;
+				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector3f& Location) const;
 
 				/**
 				* Spawn a UserWidget Text object with the appropriate text information from that Data.
@@ -239,7 +239,7 @@ namespace NCsUserWidget
 				* @param Location		Location in World Space
 				* return
 				*/
-				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector& Location) const;
+				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector3f& Location) const;
 
 				/**
 				* Spawn a UserWidget Text object with the appropriate text information from that Data. 
@@ -252,7 +252,7 @@ namespace NCsUserWidget
 				* @param Location		Location in World Space
 				* return
 				*/
-				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const;
+				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector3f& Location) const;
 
 				/**
 				* Spawn a UserWidget Text object with the appropriate text information from that Data.
@@ -265,7 +265,7 @@ namespace NCsUserWidget
 				* @param Location		Location in World Space
 				* return
 				*/
-				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector& Location) const;
+				const FCsUserWidgetPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector3f& Location) const;
 
 			#undef DeallocateMethodType
 			#undef OutlineSettingsType

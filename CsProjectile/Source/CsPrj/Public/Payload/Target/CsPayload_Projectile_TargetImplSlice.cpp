@@ -40,11 +40,11 @@ namespace NCsProjectile
 
 			void FImplSlice::Reset()
 			{	
-				bTarget = false;
+				bTarget  = false;
 				Component = nullptr;
-				Location = FVector::ZeroVector;
-				Bone = NAME_None;
-				ID = INDEX_NONE;
+				Location = FVector3f::ZeroVector;
+				Bone	 = NAME_None;
+				ID		 = INDEX_NONE;
 			}
 
 			#pragma endregion ICsReset

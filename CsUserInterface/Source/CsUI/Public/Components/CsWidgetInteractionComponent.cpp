@@ -4,6 +4,7 @@
 
 // Library
 #include "Kismet/GameplayStatics.h"
+#include "Library/CsLibrary_Math.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
 // Coordinators
@@ -137,12 +138,14 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 
 		checkf(LocalPlayer->ViewportClient, TEXT("UCsWidgetInteractionComponent::OnProcessGameEventInfo: ViewportClient is NUll for LocalPlayer: %s."), *(LocalPlayer->GetName()));
 
-		FVector2D MousePosition;
+		typedef NCsMath::FLibrary MathLibrary;
+
+		FVector2d MousePosition;
 
 		if (LocalPlayer->ViewportClient->GetMousePosition(MousePosition))
 		{
-			FVector WorldOrigin;
-			FVector WorldDirection;
+			FVector3d WorldOrigin;
+			FVector3d WorldDirection;
 
 			if (UGameplayStatics::DeprojectScreenToWorld(PlayerController, MousePosition, WorldOrigin, WorldDirection))
 			{
@@ -159,8 +162,8 @@ void UCsWidgetInteractionComponent::OnProcessGameEventInfo(const FECsGameEventCo
 					Request->Type			= ECsTraceType::Line;
 					Request->Method			= ECsTraceMethod::Multi;
 					Request->Query			= ECsTraceQuery::Channel;
-					Request->Start			= WorldOrigin;
-					Request->End			= WorldOrigin + WorldDirection * InteractionDistance;
+					Request->Start			= MathLibrary::Convert(WorldOrigin);
+					Request->End			= MathLibrary::Convert(WorldOrigin + WorldDirection * InteractionDistance);
 					Request->Channel		= TraceChannel;
 
 					Internal_ComponentsToIgnoreOnTrace.Reset(Internal_ComponentsToIgnoreOnTrace.Max());

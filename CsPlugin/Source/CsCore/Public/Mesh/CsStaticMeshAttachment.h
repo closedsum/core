@@ -50,7 +50,7 @@ struct CSCORE_API FCsStaticMeshAttachment
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	/** Controls whether the StaticMeshComponent should cast a shadow or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
@@ -86,7 +86,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity),
+		Transform(FTransform3f::Identity),
 		bCastShadow(false),
 		bReceivesDecals(false),
 		bUseAsOccluder(false),
@@ -151,7 +151,7 @@ namespace NCsStaticMesh
 				If the StaticMeshComponent is attached to a parent object, the Transform is applied as a Relative Transform
 				after the attachment.
 				Else, the Transform is applied as a World Transform. */
-			CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
+			CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform3f)
 
 			/** Controls whether the StaticMeshComponent should cast a shadow or not. */
 			CS_DECLARE_MEMBER_WITH_PROXY(bCastShadow, bool)
@@ -181,7 +181,7 @@ namespace NCsStaticMesh
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 7), // NCsTransformRules::All
-				CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
+				CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform3f::Identity),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bCastShadow, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bReceivesDecals, false),
 				CS_CTOR_INIT_MEMBER_WITH_PROXY(bUseAsOccluder, false),
@@ -210,7 +210,7 @@ namespace NCsStaticMesh
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform3f)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bCastShadow, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bReceivesDecals, bool)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bUseAsOccluder, bool)

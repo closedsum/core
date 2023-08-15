@@ -463,9 +463,9 @@ public:
 
 	public:
 
-		FVector CustomLaunchLocation;
+		FVector3f CustomLaunchLocation;
 
-		FVector CustomLaunchDirection;
+		FVector3f CustomLaunchDirection;
 
 	// Target
 	public:
@@ -474,7 +474,7 @@ public:
 
 		USceneComponent* TargetComponent;
 
-		FVector TargetLocation;
+		FVector3f TargetLocation;
 
 		FName TargetBone;
 
@@ -488,8 +488,8 @@ public:
 			LaunchComponentLocation(nullptr),
 			LaunchComponentDirection(nullptr),
 			LaunchScopedHandle(),
-			CustomLaunchLocation(FVector::ZeroVector),
-			CustomLaunchDirection(FVector::ZeroVector),
+			CustomLaunchLocation(FVector3f::ZeroVector),
+			CustomLaunchDirection(FVector3f::ZeroVector),
 			// Target
 			bTarget(false),
 			TargetComponent(nullptr),
@@ -516,10 +516,10 @@ public:
 			public:
 
 				bool bCachedLaunchLocation;
-				FVector CachedLaunchLocation;
+				FVector3f CachedLaunchLocation;
 
 				bool bCachedLaunchDirection;
-				FVector CachedLaunchDirection;
+				FVector3f CachedLaunchDirection;
 
 				FShot() :
 					bCachedLaunchLocation(false),
@@ -531,7 +531,7 @@ public:
 
 				FORCEINLINE bool UseCachedLaunchLocation() const { return bCachedLaunchLocation; }
 
-				FORCEINLINE void SetCachedLaunchLocation(const FVector& Value)
+				FORCEINLINE void SetCachedLaunchLocation(const FVector3f& Value)
 				{
 					CachedLaunchLocation = Value;
 					bCachedLaunchLocation = true;
@@ -539,7 +539,7 @@ public:
 
 				FORCEINLINE bool UseCachedLaunchDirection() const { return bCachedLaunchDirection; }
 
-				FORCEINLINE void SetCachedLaunchDirection(const FVector& Value)
+				FORCEINLINE void SetCachedLaunchDirection(const FVector3f& Value)
 				{
 					CachedLaunchDirection = Value;
 					bCachedLaunchDirection = true;
@@ -555,7 +555,7 @@ public:
 			public:
 	
 				bool bOffset;
-				FVector Offset;
+				FVector3f Offset;
 
 				int32 Axis;
 
@@ -578,9 +578,9 @@ public:
 
 				FORCEINLINE bool HasOffset() const { return bOffset; }
 				
-				FORCEINLINE void SetOffset(const FVector& Value)
+				FORCEINLINE void SetOffset(const FVector3f& Value)
 				{
-					if (Value != FVector::ZeroVector)
+					if (Value != FVector3f::ZeroVector)
 					{
 						Offset = Value;
 						bOffset = true;
@@ -638,24 +638,24 @@ public:
 
 	public:
 
-		virtual FVector GetLaunchLocation(const LaunchPayloadType& LaunchPayload);
-		FORCEINLINE FVector GetLaunchLocation() { return GetLaunchLocation(LaunchPayloadType()); }
+		virtual FVector3f GetLaunchLocation(const LaunchPayloadType& LaunchPayload);
+		FORCEINLINE FVector3f GetLaunchLocation() { return GetLaunchLocation(LaunchPayloadType()); }
 
 	protected:
 
-		FVector GetLaunchSpreadLocation(const FVector& InLocation, const LaunchPayloadType& LaunchPayload);
+		FVector3f GetLaunchSpreadLocation(const FVector3f& InLocation, const LaunchPayloadType& LaunchPayload);
 
 	public:
 
-		virtual FVector GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
-		FORCEINLINE FVector GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); }
+		virtual FVector3f GetLaunchDirection(const LaunchPayloadType& LaunchPayload);
+		FORCEINLINE FVector3f GetLaunchDirection() { return GetLaunchDirection(LaunchPayloadType()); }
 
 	protected:
 
-		FVector GetLaunchSpreadDirection(const FVector& InDirection, const LaunchPayloadType& LaunchPayload);
+		FVector3f GetLaunchSpreadDirection(const FVector3f& InDirection, const LaunchPayloadType& LaunchPayload);
 
 	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);
+		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction);
 	#undef LaunchParamsType
 
 		void Launch(const LaunchPayloadType& LaunchPayload);
@@ -664,8 +664,8 @@ public:
 		{
 			LaunchComponentLocation = nullptr;
 			LaunchComponentDirection = nullptr;
-			CustomLaunchLocation = FVector::ZeroVector;
-			CustomLaunchDirection = FVector::ZeroVector;
+			CustomLaunchLocation = FVector3f::ZeroVector;
+			CustomLaunchDirection = FVector3f::ZeroVector;
 
 			ResetTarget();
 		}
@@ -674,7 +674,7 @@ public:
 		{
 			bTarget = false;
 			TargetComponent = nullptr;
-			TargetLocation = FVector::ZeroVector;
+			TargetLocation = FVector3f::ZeroVector;
 			TargetBone = NAME_None;
 			TargetID = INDEX_NONE;
 		}
@@ -719,7 +719,7 @@ protected:
 	* return Launch Direction.
 	*/
 	UFUNCTION(BlueprintImplementableEvent)
-	FVector Override_ProjectileImpl_GetLaunchDirection();
+	FVector3f Override_ProjectileImpl_GetLaunchDirection();
 
 	bool UseSpreadParams() const;
 

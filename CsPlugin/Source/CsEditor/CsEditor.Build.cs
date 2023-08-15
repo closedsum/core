@@ -8,7 +8,7 @@ public class CsEditor : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
-        bUseUnity = System.Environment.ProcessorCount < 64;
+        bUseUnity = false;// System.Environment.ProcessorCount < 64;
 
         PublicDependencyModuleNames.AddRange(
                 new string[] {
@@ -41,6 +41,7 @@ public class CsEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
+                    "DeveloperToolSettings"
                 }
             );
         }

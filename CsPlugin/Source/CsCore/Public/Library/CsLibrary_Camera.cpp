@@ -5,6 +5,8 @@
 // Types
 #include "Types/CsTypes_Math.h"
 // Library
+	// Common
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Player
 #include "GameFramework/PlayerController.h"
@@ -34,9 +36,11 @@ namespace NCsCamera
 	// Location
 	#pragma region
 
-	FVector FLibrary::GetLocation(UObject* Object)
+	FVector3f FLibrary::GetLocation(UObject* Object)
 	{
 		checkf(Object, TEXT("NCsCamera::FLibrary::GetLocation: Object is NULL."));
+
+		typedef NCsMath::FLibrary MathLibrary;
 
 		// Try to get camera through the object
 
@@ -44,13 +48,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return Camera->GetComponentLocation();
+			return MathLibrary::Convert(Camera->GetComponentLocation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return PC->PlayerCameraManager->ViewTarget.POV.Location;
+			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Location);
 		}
 		// Pawn
 		else
@@ -59,21 +63,23 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return C->PlayerCameraManager->ViewTarget.POV.Location;
+				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Location);
 			}
 		}
-		return FVector::ZeroVector;
+		return FVector3f::ZeroVector;
 	}
 
-	FVector FLibrary::GetLocation(UObject* Object, const int32& Rules)
+	FVector3f FLibrary::GetLocation(UObject* Object, const int32& Rules)
 	{
 	// TODO: Add Rules
 		return GetLocation(Object);
 	}
 
-	FVector FLibrary::GetLocationChecked(const FString& Context, UObject* Object)
+	FVector3f FLibrary::GetLocationChecked(const FString& Context, UObject* Object)
 	{
 		CS_IS_PTR_NULL_CHECKED(Object)
+
+		typedef NCsMath::FLibrary MathLibrary;
 
 		// Try to get camera through the object
 
@@ -81,13 +87,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return Camera->GetComponentLocation();
+			return MathLibrary::Convert(Camera->GetComponentLocation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return PC->PlayerCameraManager->ViewTarget.POV.Location;
+			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Location);
 		}
 		// Pawn
 		else
@@ -96,7 +102,7 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return C->PlayerCameraManager->ViewTarget.POV.Location;
+				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Location);
 			}
 			else
 			{
@@ -104,10 +110,10 @@ namespace NCsCamera
 			}
 		}
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from Object: %s."), *Context, *(Object->GetName()));
-		return FVector::ZeroVector;
+		return FVector3f::ZeroVector;
 	}
 
-	FVector FLibrary::GetLocationChecked(UObject* Object)
+	FVector3f FLibrary::GetLocationChecked(UObject* Object)
 	{
 		using namespace NCsCamera::NLibrary::NCached;
 
@@ -121,9 +127,11 @@ namespace NCsCamera
 	// Rotation
 	#pragma region
 
-	FRotator FLibrary::GetRotation(UObject* Object)
+	FRotator3f FLibrary::GetRotation(UObject* Object)
 	{
 		checkf(Object, TEXT("NCsCamera::FLibrary::GetRotation: Object is NULL."));
+
+		typedef NCsMath::FLibrary MathLibrary;
 
 		// Try to get camera through the object
 
@@ -131,13 +139,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return Camera->GetComponentRotation();
+			return MathLibrary::Convert(Camera->GetComponentRotation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return PC->PlayerCameraManager->ViewTarget.POV.Rotation;
+			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Rotation);
 		}
 		// Pawn
 		else
@@ -146,20 +154,22 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return C->PlayerCameraManager->ViewTarget.POV.Rotation;
+				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Rotation);
 			}
 		}
-		return FRotator::ZeroRotator;
+		return FRotator3f::ZeroRotator;
 	}
 
-	FRotator FLibrary::GetRotation(UObject* Object, const int32& Rules)
+	FRotator3f FLibrary::GetRotation(UObject* Object, const int32& Rules)
 	{
 		return NCsRotationRules::GetRotation(GetRotation(Object), Rules);
 	}
 
-	FRotator FLibrary::GetRotationChecked(const FString& Context, UObject* Object)
+	FRotator3f FLibrary::GetRotationChecked(const FString& Context, UObject* Object)
 	{
 		CS_IS_PTR_NULL_CHECKED(Object)
+
+		typedef NCsMath::FLibrary MathLibrary;
 
 		// Try to get camera through the object
 
@@ -167,13 +177,13 @@ namespace NCsCamera
 		if (ICsGetCameraComponent* GetCameraComponent = Cast<ICsGetCameraComponent>(Object))
 		{
 			UCameraComponent* Camera = GetCameraComponent->GetCameraComponent();
-			return Camera->GetComponentRotation();
+			return MathLibrary::Convert(Camera->GetComponentRotation());
 		}
 		// PlayerController
 		else
 		if (APlayerController* PC = Cast<APlayerController>(Object))
 		{
-			return PC->PlayerCameraManager->ViewTarget.POV.Rotation;
+			return MathLibrary::Convert(PC->PlayerCameraManager->ViewTarget.POV.Rotation);
 		}
 		// Pawn
 		else
@@ -182,7 +192,7 @@ namespace NCsCamera
 			// PlayerController
 			if (APlayerController* C = Cast<APlayerController>(Pawn->Controller))
 			{
-				return C->PlayerCameraManager->ViewTarget.POV.Rotation;
+				return MathLibrary::Convert(C->PlayerCameraManager->ViewTarget.POV.Rotation);
 			}
 			else
 			{
@@ -190,10 +200,10 @@ namespace NCsCamera
 			}
 		}
 		checkf(0, TEXT("%s: Failed to find Camera / Camera Component from Object: %s."), *Context, *(Object->GetName()));
-		return FRotator::ZeroRotator;
+		return FRotator3f::ZeroRotator;
 	}
 
-	FRotator FLibrary::GetRotationChecked(UObject* Object)
+	FRotator3f FLibrary::GetRotationChecked(UObject* Object)
 	{
 		using namespace NCsCamera::NLibrary::NCached;
 
@@ -202,12 +212,12 @@ namespace NCsCamera
 		return GetRotationChecked(Context, Object);
 	}
 
-	FRotator FLibrary::GetRotationChecked(const FString& Context, UObject* Object, const int32& Rules)
+	FRotator3f FLibrary::GetRotationChecked(const FString& Context, UObject* Object, const int32& Rules)
 	{
 		return NCsRotationRules::GetRotationChecked(Context, GetRotationChecked(Context, Object), Rules);
 	}
 
-	FRotator FLibrary::GetRotationChecked(UObject* Object, const int32& Rules)
+	FRotator3f FLibrary::GetRotationChecked(UObject* Object, const int32& Rules)
 	{
 		using namespace NCsCamera::NLibrary::NCached;
 

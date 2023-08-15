@@ -44,7 +44,7 @@ UCsManager_HMD::UCsManager_HMD(const FObjectInitializer& ObjectInitializer)
 		return;
 
 	// Unregister ticker delegate
-	FTicker::GetCoreTicker().RemoveTicker(s_Instance->TickDelegateHandle);
+	FTSTicker::GetCoreTicker().RemoveTicker(s_Instance->TickDelegateHandle);
 
 	s_Instance->CleanUp();
 	s_Instance->RemoveFromRoot();
@@ -56,7 +56,7 @@ void UCsManager_HMD::Initialize()
 {
 	// Register delegate for ticker callback
 	TickDelegate	   = FTickerDelegate::CreateUObject(this, &UCsManager_HMD::Tick);
-	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(TickDelegate);
+	TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker(TickDelegate);
 
 	FCoreDelegates::VRHeadsetTrackingInitializingAndNeedsHMDToBeTrackedDelegate.AddUObject(this, &UCsManager_HMD::OnHMDTrackingInitializingAndNeedsHMDToBeTracked);
 	FCoreDelegates::VRHeadsetTrackingInitializedDelegate.AddUObject(this, &UCsManager_HMD::OnHMDTrackingInitialized);

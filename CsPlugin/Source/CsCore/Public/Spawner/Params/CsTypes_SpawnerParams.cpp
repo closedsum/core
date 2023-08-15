@@ -587,14 +587,14 @@ namespace NCsSpawner
 //	// Transform
 //	if (Params->Type == ECsSpawnerPoint::Transform)
 //	{
-//		const TArray<FTransform>& _Transforms = Params->Transforms;
+//		const TArray<FTransform3f>& _Transforms = Params->Transforms;
 //
 //		Transforms.Reset(FMath::Max(Transforms.Max(), _Transforms.Num()));
 //		Transforms.Append(_Transforms);
 //
 //		// RandomShuffle
 //		if (Params->Order == ECsSpawnerPointOrder::RandomShuffle)
-//			ArrayLibrary::Shuffle<FTransform>(Transforms);
+//			ArrayLibrary::Shuffle<FTransform3f>(Transforms);
 //	}
 //	// Actor
 //	else
@@ -628,7 +628,7 @@ namespace NCsSpawner
 //		Index = FMath::RandRange(0, Count - 1);
 //}
 //
-//FTransform FCsSpawnerPointHelper::GetSpawnTransform() const
+//FTransform3f FCsSpawnerPointHelper::GetSpawnTransform() const
 //{
 //	// Self
 //	if (Params->Type == ECsSpawnerPoint::Self)
@@ -639,10 +639,10 @@ namespace NCsSpawner
 //	// Actor
 //	if (Params->Type == ECsSpawnerPoint::Actor)
 //		return Actors[Index]->GetActorTransform();
-//	return FTransform::Identity;
+//	return FTransform3f::Identity;
 //}
 //
-//FVector FCsSpawnerPointHelper::GetSpawnLocation() const
+//FVector3f FCsSpawnerPointHelper::GetSpawnLocation() const
 //{
 //	// Self
 //	if (Params->Type == ECsSpawnerPoint::Self)
@@ -653,7 +653,7 @@ namespace NCsSpawner
 //	// Actor
 //	if (Params->Type == ECsSpawnerPoint::Actor)
 //		return Actors[Index]->GetActorLocation();
-//	return FVector::ZeroVector;
+//	return FVector3f::ZeroVector;
 //}
 //
 //#pragma endregion FCsSpawnerPointHelper

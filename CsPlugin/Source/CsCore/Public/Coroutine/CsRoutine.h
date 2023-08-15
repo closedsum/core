@@ -231,8 +231,8 @@ public:
 	FORCEINLINE void SetValue_UnsignedInt(const int32& InIndex, const uint32& Value){		RegisterMap.SetValue_UnsignedInt(InIndex, Value); }
 	FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
 	FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
-	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
-	FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
+	FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector3f& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
+	FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator3f& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
 	FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value){		RegisterMap.SetValue_Color(InIndex, Value); }
 	FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value){				RegisterMap.SetValue_Name(InIndex, Value); }
 	FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value){			RegisterMap.SetValue_String(InIndex, Value); }
@@ -253,13 +253,15 @@ public:
 	FORCEINLINE uint32& GetValue_UnsignedInt(const int32& InIndex){					return RegisterMap.GetValue_UnsignedInt(InIndex); }
 	FORCEINLINE float& GetValue_Float(const int32& InIndex){						return RegisterMap.GetValue_Float(InIndex); }
 	FORCEINLINE double& GetValue_Double(const int32& InIndex){						return RegisterMap.GetValue_Double(InIndex); }
-	FORCEINLINE FVector& GetValue_Vector(const int32& InIndex){						return RegisterMap.GetValue_Vector(InIndex); }
-	FORCEINLINE FRotator& GetValue_Rotator(const int32& InIndex){					return RegisterMap.GetValue_Rotator(InIndex); }
+	FORCEINLINE FVector3f& GetValue_Vector(const int32& InIndex){						return RegisterMap.GetValue_Vector(InIndex); }
+	FORCEINLINE FRotator3f& GetValue_Rotator(const int32& InIndex){					return RegisterMap.GetValue_Rotator(InIndex); }
 	FORCEINLINE FLinearColor& GetValue_Color(const int32& InIndex){					return RegisterMap.GetValue_Color(InIndex); }
 	FORCEINLINE FName& GetValue_Name(const int32& InIndex){							return RegisterMap.GetValue_Name(InIndex); }
 	FORCEINLINE FString& GetValue_String(const int32& InIndex){						return RegisterMap.GetValue_String(InIndex); }
 	FORCEINLINE FString* GetValue_StringPtr(const int32& InIndex){					return RegisterMap.GetValue_StringPtr(InIndex); }
-	FORCEINLINE TCsWeakObjectPtr<UObject>& GetValue_Object(const int32& InIndex){	return RegisterMap.GetValue_Object(InIndex); }
+	FORCEINLINE UObject* GetValue_Object(const int32& InIndex){						return RegisterMap.GetValue_Object(InIndex); }
+	template<typename T>
+	FORCEINLINE T* GetValue_Object(const int32& InIndex) {							return RegisterMap.GetValue_Object<T>(InIndex); }
 	FORCEINLINE void* GetValue_Void(const int32& InIndex){							return RegisterMap.GetValue_Void(InIndex); }
 	template<typename T>
 	FORCEINLINE T* GetValue_Void(const int32& InIndex){								return RegisterMap.GetValue_Void<T>(InIndex); }

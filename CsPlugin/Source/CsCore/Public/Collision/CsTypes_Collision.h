@@ -219,7 +219,7 @@ struct CSCORE_API FCsCollisionShape
 
 	/** Only Valid if Type == ECsCollisionShapeType::Box. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
-	FVector HalfExtent;
+	FVector3f HalfExtent;
 
 	/** Only Valid if 
 		 Type == ECsCollisionShapeType::Sphere
@@ -233,7 +233,7 @@ struct CSCORE_API FCsCollisionShape
 
 	FCsCollisionShape() :
 		Type(ECsCollisionShapeType::Line),
-		HalfExtent(FVector::ZeroVector),
+		HalfExtent(FVector3f::ZeroVector),
 		Radius(0.0f),
 		HalfHeight(0.0f)
 	{
@@ -249,7 +249,7 @@ struct CSCORE_API FCsCollisionShape
 	void Reset()
 	{
 		Type = ECsCollisionShapeType::Line;
-		HalfExtent = FVector::ZeroVector;
+		HalfExtent = FVector3f::ZeroVector;
 		Radius = 0.0f;
 		HalfHeight = 0.0f;
 	}

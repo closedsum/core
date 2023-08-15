@@ -39,11 +39,11 @@ namespace NCsBeam
 		void FImplSlice::Reset()
 		{
 			// BeamPayloadType (NCsBeam::Payload::IPayload)
-			Type = EMCsBeam::Get().GetMAX();
+			Type		= EMCsBeam::Get().GetMAX();
 			AttachRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
-			Location = FVector::ZeroVector;
-			Direction = FVector::ZeroVector;
-			Scale = FVector::OneVector;
+			Location	= FVector3f::ZeroVector;
+			Direction	= FVector3f::ZeroVector;
+			Scale		= FVector3f::OneVector;
 		}
 
 		#pragma endregion ICsReset

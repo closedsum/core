@@ -57,7 +57,7 @@ struct CSCORE_API FCsParticleSystem
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
 	TSoftObjectPtr<UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Particle_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
@@ -215,7 +215,7 @@ public:
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
@@ -344,7 +344,7 @@ public:
 	TSoftObjectPtr<UNiagaraParameterCollection> Collection;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Collection_LoadFlags;
 
 	/** Hard reference to an UNiagaraParameterCollection. */
@@ -722,7 +722,7 @@ struct CSCORE_API FCsFXParameterVector
 	FName Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
-	FVector Value;
+	FVector3f Value;
 
 public:
 
@@ -879,7 +879,7 @@ public:
 
 	/** Value to set for the Niagara Vector Parameter with Name. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (ScriptName = "m_Value"))
-	FVector Value;
+	FVector3f Value;
 
 	/** Whether to apply the FX scale inversely. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
@@ -1103,7 +1103,7 @@ public:
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
@@ -1169,7 +1169,7 @@ public:
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	/** Describes Rules for orienting each component of Rotation (Pitch, Yaw, Roll).	
 		 NOTE: Rule are only applied if the FX is NOT Attached or the Attachment Rule for Rotation
@@ -1178,7 +1178,7 @@ public:
 	FCsFXOrientationRules OrientationRules;
 
 	/** Whether the Transform's Scale should be applied to the FX.
-		If NOT, the object defaults to FVector::OneVector or just the scale of the object the FX
+		If NOT, the object defaults to FVector3f::OneVector or just the scale of the object the FX
 		is attached to.
 		NOTE: Usually when scaling parameters, this should be FALSE. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX")
@@ -1221,7 +1221,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity),
+		Transform(FTransform3f::Identity),
 		OrientationRules(),
 		bApplyTransformScale(false),
 		IntParameters(),

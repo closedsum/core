@@ -151,8 +151,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	{
 		UObject* O = Owner.GetSafeObject();
 
-		if (!O ||
-			O->IsPendingKill())
+		if (!IsValid(O))
 		{
 			End(EndReasonType::OwnerIsInvalid);
 			return;

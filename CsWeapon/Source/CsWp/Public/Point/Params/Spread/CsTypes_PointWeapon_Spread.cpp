@@ -225,7 +225,7 @@ namespace NCsWeapon
 			#define ShapeType NCsWeapon::NPoint::NSpread::EShape
 			#define DistributionType NCsWeapon::NPoint::NSpread::NShape::EDistribution
 
-			FVector FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const DistributionType& Distribution)
+			FVector3f FLibrary::GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution)
 			{
 				typedef NCsWeapon::NPoint::NSpread::EMShape ShapeMapType;
 
@@ -237,7 +237,7 @@ namespace NCsWeapon
 
 				checkf(Distribution == DistributionType::Random, TEXT("%s: Distribution (%s) != DistributionType::Random."), *Context, DistributionMapType::Get().ToChar(Distribution));
 
-				FVector Offset = FVector::ZeroVector;
+				FVector3f Offset = FVector3f::ZeroVector;
 
 				// Line
 				if (Shape == ShapeType::Line)

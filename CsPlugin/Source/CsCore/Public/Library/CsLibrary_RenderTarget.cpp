@@ -51,7 +51,7 @@ namespace NCsRenderTarget
 
 			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget)
 
-			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget->Resource)
+			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget->GetResource())
 
 			UKismetRenderingLibrary::DrawMaterialToRenderTarget(WorldContext, TextureRenderTarget, Material);
 		}
@@ -64,7 +64,7 @@ namespace NCsRenderTarget
 
 			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget)
 
-			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget->Resource)
+			CS_IS_PTR_NULL_CHECKED(TextureRenderTarget->GetResource())
 
 			UKismetRenderingLibrary::ClearRenderTarget2D(WorldContext, TextureRenderTarget, ClearColor);
 		}

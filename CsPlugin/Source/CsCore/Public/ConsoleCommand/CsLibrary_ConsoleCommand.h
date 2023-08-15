@@ -131,7 +131,7 @@ namespace NCsConsoleCommand
 		{
 		public:
 
-			FVector* OutValue;
+			FVector3f* OutValue;
 
 			FString* ValueName;
 

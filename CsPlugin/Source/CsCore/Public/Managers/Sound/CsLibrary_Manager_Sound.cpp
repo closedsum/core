@@ -227,7 +227,7 @@ namespace NCsSound
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsSoundPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			CS_IS_VALID_CHECKED(Sound);
 

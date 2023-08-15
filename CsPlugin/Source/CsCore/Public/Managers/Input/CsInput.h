@@ -41,13 +41,13 @@ public:
 	float Last_Value;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input")
-	FVector Location;
+	FVector3f Location;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input")
-	FVector Last_Location;
+	FVector3f Last_Location;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Input")
 	float Duration;
@@ -77,13 +77,13 @@ public:
 		Value = InValue;
 	}
 
-	FORCEINLINE void Set(const ECsInputEvent& InEvent, const FVector& InLocation)
+	FORCEINLINE void Set(const ECsInputEvent& InEvent, const FVector3f& InLocation)
 	{
 		Event = InEvent;
 		Location = InLocation;
 	}
 
-	FORCEINLINE void Set(const ECsInputEvent& InEvent, const FRotator& InRotation)
+	FORCEINLINE void Set(const ECsInputEvent& InEvent, const FRotator3f& InRotation)
 	{
 		Event = InEvent;
 		Rotation = InRotation;
@@ -110,9 +110,9 @@ public:
 
 	FORCEINLINE void ResetValue(){ Value = Last_Value = 0.0f; }
 
-	FORCEINLINE void ResetLocation() { Location = Last_Location = FVector::ZeroVector; }
+	FORCEINLINE void ResetLocation() { Location = Last_Location = FVector3f::ZeroVector; }
 
-	FORCEINLINE void ResetRotation() { Rotation = FRotator::ZeroRotator; }
+	FORCEINLINE void ResetRotation() { Rotation = FRotator3f::ZeroRotator; }
 };
 
 #pragma endregion FCsInputInfo
@@ -187,10 +187,10 @@ struct CSCORE_API FCsInput
 	float Value;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
-	FVector Location;
+	FVector3f Location;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
-	FRotator Rotation;
+	FRotator3f Rotation;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Input")
 	float Duration;
@@ -229,7 +229,7 @@ struct CSCORE_API FCsInput
 		return !(*this == B);
 	}
 
-	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector& inLocation, const FRotator& inRotation)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue, const FVector3f& inLocation, const FRotator3f& inRotation)
 	{
 		Action		  = inAction;
 		Event		  = inEvent;
@@ -238,24 +238,24 @@ struct CSCORE_API FCsInput
 		Rotation	  = inRotation;
 	}
 
-	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FVector& inLocation)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FVector3f& inLocation)
 	{
-		Set(inAction, inEvent, 0.0f, inLocation, FRotator::ZeroRotator);
+		Set(inAction, inEvent, 0.0f, inLocation, FRotator3f::ZeroRotator);
 	}
 
-	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FRotator& inRotation)
+	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const FRotator3f& inRotation)
 	{
-		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, inRotation);
+		Set(inAction, inEvent, 0.0f, FVector3f::ZeroVector, inRotation);
 	}
 
 	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent, const float& inValue)
 	{
-		Set(inAction, inEvent, inValue, FVector::ZeroVector, FRotator::ZeroRotator);
+		Set(inAction, inEvent, inValue, FVector3f::ZeroVector, FRotator3f::ZeroRotator);
 	}
 
 	FORCEINLINE void Set(const FECsInputAction& inAction, const ECsInputEvent& inEvent)
 	{
-		Set(inAction, inEvent, 0.0f, FVector::ZeroVector, FRotator::ZeroRotator);
+		Set(inAction, inEvent, 0.0f, FVector3f::ZeroVector, FRotator3f::ZeroRotator);
 	}
 
 	FORCEINLINE void QueueDeallocate()
@@ -275,8 +275,8 @@ struct CSCORE_API FCsInput
 		Action	  = EMCsInputAction::Get().GetMAX();
 		Event	  = ECsInputEvent::ECsInputEvent_MAX;
 		Value	  = INFINITY;
-		Location  = FVector::ZeroVector;
-		Rotation  = FRotator::ZeroRotator;
+		Location  = FVector3f::ZeroVector;
+		Rotation  = FRotator3f::ZeroRotator;
 		Duration  = 0.0f;
 	}
 

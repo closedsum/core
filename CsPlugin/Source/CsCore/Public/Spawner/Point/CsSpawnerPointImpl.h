@@ -72,7 +72,7 @@ namespace NCsSpawner
 			*
 			* @param Center
 			*/
-			virtual void SetCenter(const FTransform& Center) = 0;
+			virtual void SetCenter(const FTransform3f& Center) = 0;
 
 			/** 
 			* Populate and setup any data (usually caching locations) related to the spawn params. 
@@ -93,7 +93,7 @@ namespace NCsSpawner
 			* 
 			* return Transform
 			*/
-			virtual FTransform GetCenterTransform() const = 0;
+			virtual FTransform3f GetCenterTransform() const = 0;
 
 			/** 
 			* Get the spawn transform based on Count, Group, and CountPerGroup.
@@ -103,14 +103,14 @@ namespace NCsSpawner
 			* @param CountPerGroup
 			* return				Spawn transform.
 			*/
-			virtual FTransform GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const = 0;
+			virtual FTransform3f GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const = 0;
 
 			/**
 			* Get the current spawn transform. This location is usually the result after Advance is called.
 			* 
 			* return Current spawn transform.
 			*/
-			virtual FTransform GetCurrentTransform() const = 0;
+			virtual FTransform3f GetCurrentTransform() const = 0;
 
 		#undef CountType
 		#undef OrderType
@@ -162,7 +162,7 @@ namespace NCsSpawner
 
 			/** The acting "center", this orientation is played to transform in GetTransform and
 				GetCurrentTransform, as an Transform. */
-			FTransform CenterAsTransform;
+			FTransform3f CenterAsTransform;
 
 			int32 Index;
 
@@ -175,7 +175,7 @@ namespace NCsSpawner
 				Order(OrderType::Random),
 				Params(nullptr),
 				CenterAsActor(nullptr),
-				CenterAsTransform(FTransform::Identity),
+				CenterAsTransform(FTransform3f::Identity),
 				Index(0),
 				CurrentGroup(INDEX_NONE)
 			{
@@ -197,17 +197,17 @@ namespace NCsSpawner
 
 			void SetCenter(AActor* Center) { CenterAsActor = Center; }
 
-			void SetCenter(const FTransform& Center) { CenterAsTransform = Center; }
+			void SetCenter(const FTransform3f& Center) { CenterAsTransform = Center; }
 
 			void Prepare() {}
 
 			void Advance(const int32& Count, const int32& Group, const int32& CountPerGroup);
 
-			FTransform GetCenterTransform() const;
+			FTransform3f GetCenterTransform() const;
 
-			FTransform GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const { return FTransform::Identity; }
+			FTransform3f GetTransform(const int32& Count, const int32& Group, const int32& CountPerGroup) const { return FTransform3f::Identity; }
 
-			FTransform GetCurrentTransform() const { return FTransform::Identity; }
+			FTransform3f GetCurrentTransform() const { return FTransform3f::Identity; }
 
 		#pragma endregion ImplType (NCsSpawner::NPoint::IImpl)
 

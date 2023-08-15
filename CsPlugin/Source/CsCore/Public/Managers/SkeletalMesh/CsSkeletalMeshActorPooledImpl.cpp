@@ -314,9 +314,9 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 	if (CS_TEST_BITFLAG(PreserveChangesToDefaultMask, ChangeType::SkeletalMesh) &&
 		CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh))
 	{
-		if (GetMeshComponent()->SkeletalMesh != Mesh)
+		if (GetMeshComponent()->GetSkinnedAsset() != Mesh)
 		{
-			GetMeshComponent()->SetSkeletalMesh(Mesh);
+			GetMeshComponent()->SetSkeletalMeshAsset(Mesh);
 			CS_SET_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh);
 			ChangeCounter::Get().AddChanged();
 		}
@@ -327,7 +327,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_SetSkeletalMesh(SkeletalMeshPayloadT
 	}
 	else
 	{
-		GetMeshComponent()->SetSkeletalMesh(Mesh);
+		GetMeshComponent()->SetSkeletalMeshAsset(Mesh);
 		CS_SET_BITFLAG(ChangesFromLastMask, ChangeType::SkeletalMesh);
 		ChangeCounter::Get().AddChanged();
 	}
@@ -354,11 +354,11 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetSkeletalMesh(SkeletalMeshPayloadType
 			UE_LOG(LogCs, Warning, TEXT("%s: %s"), *Context, *(ChangeCounter::Get().ToString()));
 
 			// Check if the SkeletalMesh changed
-			if (GetMeshComponent()->SkeletalMesh != Mesh)
+			if (GetMeshComponent()->GetSkeletalMeshAsset() != Mesh)
 			{
 				if (CS_TEST_BITFLAG(ChangesToDefaultMask, ChangeType::SkeletalMesh))
 				{
-					UE_LOG(LogCs, Warning, TEXT(" %s -> %s."), *(GetMeshComponent()->SkeletalMesh ->GetName()), *(Mesh->GetName()));
+					UE_LOG(LogCs, Warning, TEXT(" %s -> %s."), *(GetMeshComponent()->GetSkinnedAsset()->GetName()), *(Mesh->GetName()));
 				}
 				else
 				{
@@ -367,7 +367,7 @@ void ACsSkeletalMeshActorPooledImpl::Log_SetSkeletalMesh(SkeletalMeshPayloadType
 			}
 			else
 			{
-				UE_LOG(LogCs, Warning, TEXT(" (PRESERVED) %s."), *(GetMeshComponent()->SkeletalMesh->GetName()));
+				UE_LOG(LogCs, Warning, TEXT(" (PRESERVED) %s."), *(GetMeshComponent()->GetSkinnedAsset()->GetName()));
 			}
 		}
 	}
@@ -533,8 +533,8 @@ void ACsSkeletalMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadT
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();
 
-	const FTransform& Transform = SkeletalMeshPayload->GetTransform();
-	const int32& TransformRules = SkeletalMeshPayload->GetTransformRules();
+	const FTransform3f& Transform = SkeletalMeshPayload->GetTransform();
+	const int32& TransformRules   = SkeletalMeshPayload->GetTransformRules();
 
 	typedef NCsSkeletalMeshActor::NPayload::EChange ChangeType;
 	typedef NCsSkeletalMeshActor::NPayload::NChange::FCounter ChangeCounter;
@@ -787,7 +787,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 		else
 		{
 			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			SetActorRelativeTransform(FTransform::Identity);
+			SetActorRelativeTransform(FTransform3d::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 			AttachToBone = NAME_None;
@@ -804,7 +804,7 @@ void ACsSkeletalMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 	}
 	else
 	{
-		SetActorRelativeTransform(FTransform::Identity);
+		SetActorRelativeTransform(FTransform3d::Identity);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 		ChangeCounter::Get().AddCleared();
 	}

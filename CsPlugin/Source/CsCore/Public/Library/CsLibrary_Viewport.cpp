@@ -81,7 +81,7 @@ namespace NCsViewport
 				return CanSafeProjectWorldToScreen(Context, WorldContext, nullptr);
 			}
 
-			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const FVector& WorldPosition, FVector2D& ScreenPosition, bool bPlayerViewportRelative /*=false*/)
+			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const FVector3f& WorldPosition, FVector2f& OutScreenPosition, bool bPlayerViewportRelative /*=false*/)
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
@@ -99,24 +99,29 @@ namespace NCsViewport
 
 				// Get the projection data
 				FSceneViewProjectionData ProjectionData;
-				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
+					typedef NCsMath::FLibrary MathLibrary;
+
 					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
-					bool bResult					   = FSceneView::ProjectWorldToScreen(WorldPosition, ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, ScreenPosition);
+					FVector2d Position;
+					bool bResult					   = FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
+
+					OutScreenPosition = MathLibrary::Convert(Position);
 
 					if (bPlayerViewportRelative)
 					{
-						ScreenPosition -= FVector2D(ProjectionData.GetConstrainedViewRect().Min);
+						OutScreenPosition -= FVector2f(ProjectionData.GetConstrainedViewRect().Min);
 					}
 
 					//bResult = bResult && PlayerController->PostProcessWorldToScreen(WorldPosition, ScreenPosition, bPlayerViewportRelative);
 					return bResult;
 				}
-				ScreenPosition = FVector2D::ZeroVector;
+				OutScreenPosition = FVector2f::ZeroVector;
 				return false;
 			}
 
-			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector>& WorldPositions, TArray<FVector2D>& OutScreenPositions)
+			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector3f>& WorldPositions, TArray<FVector2f>& OutScreenPositions)
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
@@ -142,24 +147,28 @@ namespace NCsViewport
 
 				// Get the projection data
 				FSceneViewProjectionData ProjectionData;
-				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
 					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
 
 					const int32 Count = WorldPositions.Num();
 
+					typedef NCsMath::FLibrary MathLibrary;
+
 					for (int32 I = 0; I < Count; ++I)
 					{
-						const FVector& WorldPosition = WorldPositions[I];
-						FVector2D& ScreenPosition	 = OutScreenPositions[I];
+						const FVector3f& WorldPosition = WorldPositions[I];
+						FVector2f& ScreenPosition	 = OutScreenPositions[I];
+						FVector2d Position;
+						Result &= FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
 
-						Result &= FSceneView::ProjectWorldToScreen(WorldPosition, ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, ScreenPosition);
+						ScreenPosition = MathLibrary::Convert(Position);
 					}
 				}
 				return Result;
 			}
 
-			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector>& WorldPositions, const TArray<int32>& Indices, const int32& Count, TArray<FVector2D>& OutScreenPositions)
+			bool FLibrary::ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector3f>& WorldPositions, const TArray<int32>& Indices, const int32& Count, TArray<FVector2f>& OutScreenPositions)
 			{
 				check(CanProjectWorldToScreenChecked(Context, WorldContext));
 
@@ -183,18 +192,23 @@ namespace NCsViewport
 
 				// Get the projection data
 				FSceneViewProjectionData ProjectionData;
-				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
-					FMatrix const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
+					FMatrix44d const ViewProjectionMatrix = ProjectionData.ComputeViewProjectionMatrix();
+
+					typedef NCsMath::FLibrary MathLibrary;
 
 					for (int32 I = 0; I < Count; ++I)
 					{
 						const int32& Index = Indices[I];
 
-						const FVector& WorldPosition = WorldPositions[Index];
-						FVector2D& ScreenPosition	 = OutScreenPositions[Index];
+						const FVector3f& WorldPosition = WorldPositions[Index];
+						FVector2f& ScreenPosition	 = OutScreenPositions[Index];
+						FVector2d Position;
 
-						Result &= FSceneView::ProjectWorldToScreen(WorldPosition, ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, ScreenPosition);
+						Result &= FSceneView::ProjectWorldToScreen(MathLibrary::Convert(WorldPosition), ProjectionData.GetConstrainedViewRect(), ViewProjectionMatrix, Position);
+
+						ScreenPosition = MathLibrary::Convert(Position);
 					}
 				}
 				return Result;
@@ -237,7 +251,7 @@ namespace NCsViewport
 				return CanSafeDeprojectScreenToWorld(Context, WorldContext, nullptr);
 			}
 
-			bool FLibrary::DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection)
+			bool FLibrary::DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection)
 			{
 				check(CanDeprojectScreenToWorldChecked(Context, WorldContext));
 
@@ -255,23 +269,30 @@ namespace NCsViewport
 
 				// Get the projection data
 				FSceneViewProjectionData ProjectionData;
-				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
+					typedef NCsMath::FLibrary MathLibrary;
+
 					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
-					FSceneView::DeprojectScreenToWorld(ScreenPosition, ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ WorldPosition, /*out*/ WorldDirection);
+					FVector3d Position;
+					FVector3d Direction;
+					FSceneView::DeprojectScreenToWorld(MathLibrary::Convert(ScreenPosition), ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ Position, /*out*/ Direction);
+
+					OutWorldPosition = MathLibrary::Convert(Position);
+					OutWorldDirection = MathLibrary::Convert(Direction);
 					return true;
 				}
 
 				// Something went wrong, zero things and return false
-				WorldPosition  = FVector::ZeroVector;
-				WorldDirection = FVector::ZeroVector;
+				OutWorldPosition = FVector3f::ZeroVector;
+				OutWorldDirection = FVector3f::ZeroVector;
 				return false;
 			}
 
-			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				WorldPosition = FVector::ZeroVector;
-				WorldDirection = FVector::ZeroVector;
+				OutWorldPosition = FVector3f::ZeroVector;
+				OutWorldDirection = FVector3f::ZeroVector;
 
 				if (!CanSafeDeprojectScreenToWorld(Context, WorldContext, Log))
 					return false;
@@ -301,10 +322,17 @@ namespace NCsViewport
 
 				// Get the projection data
 				FSceneViewProjectionData ProjectionData;
-				if (LocalPlayer->GetProjectionData(Viewport, eSSP_FULL, /*out*/ ProjectionData))
+				if (LocalPlayer->GetProjectionData(Viewport, /*out*/ ProjectionData))
 				{
+					typedef NCsMath::FLibrary MathLibrary;
+
 					FMatrix const InvViewProjMatrix = ProjectionData.ComputeViewProjectionMatrix().InverseFast();
-					FSceneView::DeprojectScreenToWorld(ScreenPosition, ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ WorldPosition, /*out*/ WorldDirection);
+					FVector3d Position;
+					FVector3d Direction;
+					FSceneView::DeprojectScreenToWorld(MathLibrary::Convert(ScreenPosition), ProjectionData.GetConstrainedViewRect(), InvViewProjMatrix, /*out*/ Position, /*out*/ Direction);
+
+					OutWorldPosition = MathLibrary::Convert(Position);
+					OutWorldDirection = MathLibrary::Convert(Direction);
 					return true;
 				}
 
@@ -313,13 +341,13 @@ namespace NCsViewport
 				return false;
 			}
 
-			bool FLibrary::SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection)
+			bool FLibrary::SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection)
 			{
 				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
 
 				const FString& Context = Str::CanSafeDeprojectScreenToWorld;
 
-				return SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
+				return SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, OutWorldPosition, OutWorldDirection);
 			}
 
 			FSceneViewport* FLibrary::GetViewportChecked(const FString& Context, const UObject* WorldContext)
@@ -399,10 +427,10 @@ namespace NCsViewport
 				return GetSafeSize(Context, WorldContext, nullptr);
 			}
 
-			bool FLibrary::GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
+			bool FLibrary::GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection)
 			{
-				FVector WorldPosition;
-				FVector WorldDirection;
+				FVector3f WorldPosition;
+				FVector3f WorldDirection;
 				bool Success = DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
 
 				checkf(Success, TEXT("%s: Failed to deproject ScreenPosition: %s."), *Context, *(ScreenPosition.ToString()));
@@ -415,10 +443,10 @@ namespace NCsViewport
 				return MathLibrary::RayPlaneIntersectionChecked(Context, Ray, Plane, T, OutIntersection);
 			}
 
-			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				FVector WorldPosition = FVector::ZeroVector;
-				FVector WorldDirection = FVector::ZeroVector;
+				FVector3f WorldPosition = FVector3f::ZeroVector;
+				FVector3f WorldDirection = FVector3f::ZeroVector;
 				bool Success = SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection, Log);
 
 				if (!Success)
@@ -435,7 +463,7 @@ namespace NCsViewport
 				return MathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, T, OutIntersection, Log);
 			}
 
-			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
+			bool FLibrary::GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection)
 			{
 				using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
 
@@ -450,14 +478,14 @@ namespace NCsViewport
 		#define ResponseType NCsTrace::NResponse::FResponse
 		#define RequestType NCsTrace::NRequest::FRequest
 
-		ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/)
+		ResponseType* FLibrary::TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/)
 		{
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(ScreenPosition.X, 0.0f)
 
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(ScreenPosition.Y, 0.0f)
 
-			FVector WorldPosition;
-			FVector WorldDirection;
+			FVector3f WorldPosition;
+			FVector3f WorldDirection;
 
 			bool Success = DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection);
 
@@ -473,14 +501,14 @@ namespace NCsViewport
 			return TraceManagerLibrary::TraceChecked(Context, WorldContext, Request);
 		}
 
-		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		ResponseType* FLibrary::SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_NULL(ScreenPosition.X, 0.0f)
 
 			CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_RET_NULL(ScreenPosition.Y, 0.0f)
 
-			FVector WorldPosition;
-			FVector WorldDirection;
+			FVector3f WorldPosition;
+			FVector3f WorldDirection;
 
 			if (!SafeDeprojectScreenToWorld(Context, WorldContext, ScreenPosition, WorldPosition, WorldDirection, Log))
 				return nullptr;
@@ -495,7 +523,7 @@ namespace NCsViewport
 			return TraceManagerLibrary::SafeTrace(Context, WorldContext, Request, Log);
 		}
 
-		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/)
+		ResponseType* FLibrary::SafeTrace(const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance /*=1000000.0f*/)
 		{
 			using namespace NCsViewport::NLocal::NPlayer::NLibrary::NCached;
 

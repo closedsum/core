@@ -72,7 +72,7 @@ void FCsData_Skin_VisualScale_UniformImplSlice::SetChecked(const FString& Contex
 
 	CS_IS_PTR_NULL_CHECKED(Component);
 
-	Component->SetRelativeScale3D(Scale * FVector::OneVector);
+	Component->SetRelativeScale3D(Scale * FVector3d::OneVector);
 }
 
 bool FCsData_Skin_VisualScale_UniformImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -82,7 +82,7 @@ bool FCsData_Skin_VisualScale_UniformImplSlice::SetSafe(const FString& Context, 
 
 	CS_IS_PTR_NULL(Component)
 
-	Component->SetRelativeScale3D(Scale * FVector::OneVector);
+	Component->SetRelativeScale3D(Scale * FVector3d::OneVector);
 	return true;
 }
 
@@ -208,7 +208,7 @@ namespace NCsSkin
 
 						CS_IS_PTR_NULL_CHECKED(Component);
 
-						Component->SetRelativeScale3D(GetUniformScale() * FVector::OneVector);
+						Component->SetRelativeScale3D(GetUniformScale() * FVector3d::OneVector);
 					}
 
 					bool FImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -218,7 +218,7 @@ namespace NCsSkin
 
 						CS_IS_PTR_NULL(Component)
 
-						Component->SetRelativeScale3D(GetUniformScale() * FVector::OneVector);
+						Component->SetRelativeScale3D(GetUniformScale() * FVector3d::OneVector);
 						return true;
 					}
 				}

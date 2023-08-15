@@ -129,7 +129,7 @@ namespace NCsSkin
 					UStaticMesh* Mesh							 = StaticMeshSkin->GetStaticMesh();
 					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
 
-					checkf(Materials.Num() == Mesh->StaticMaterials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->StaticMaterials.Num());
+					checkf(Materials.Num() == Mesh->GetStaticMaterials().Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetStaticMaterials().Num());
 				}
 				// NOTE: For now this seems reasonable to check
 				if (MaterialWithParamsSkin &&
@@ -140,7 +140,7 @@ namespace NCsSkin
 					UStaticMesh* Mesh					  = StaticMeshSkin->GetStaticMesh();
 					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
-					checkf(Materials.Num() == Mesh->StaticMaterials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->StaticMaterials.Num());
+					checkf(Materials.Num() == Mesh->GetStaticMaterials().Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetStaticMaterials().Num());
 				}
 				// NOTE: For now this seems reasonable to check
 				if (MaterialSkin &&
@@ -149,7 +149,7 @@ namespace NCsSkin
 					USkeletalMesh* Mesh							 = SkeletalMeshSkin->GetSkeletalMesh();
 					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
 
-					checkf(Materials.Num() == Mesh->Materials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num());
+					checkf(Materials.Num() == Mesh->GetMaterials().Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetMaterials().Num());
 				}
 				// NOTE: For now this seems reasonable to check
 				if (MaterialWithParamsSkin &&
@@ -160,7 +160,7 @@ namespace NCsSkin
 					USkeletalMesh* Mesh					  = SkeletalMeshSkin->GetSkeletalMesh();
 					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
-					checkf(Materials.Num() == Mesh->Materials.Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num());
+					checkf(Materials.Num() == Mesh->GetMaterials().Num(), TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetMaterials().Num());
 				}
 
 				// UniformScale
@@ -251,9 +251,9 @@ namespace NCsSkin
 					UStaticMesh* Mesh							 = StaticMeshSkin->GetStaticMesh();
 					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
 
-					if (Materials.Num() != Mesh->StaticMaterials.Num())
+					if (Materials.Num() != Mesh->GetStaticMaterials().Num())
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->StaticMaterials.Num()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->GetStaticMaterials().Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetStaticMaterials().Num()));
 						return false;
 					}
 				}
@@ -266,9 +266,9 @@ namespace NCsSkin
 					UStaticMesh* Mesh					  = StaticMeshSkin->GetStaticMesh();
 					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
-					if (Materials.Num() != Mesh->StaticMaterials.Num())
+					if (Materials.Num() != Mesh->GetStaticMaterials().Num())
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->StaticMaterials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->StaticMaterials.Num()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->GetStaticMaterials().Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetStaticMaterials().Num()));
 						return false;
 					}
 				}
@@ -279,9 +279,9 @@ namespace NCsSkin
 					USkeletalMesh* Mesh							 = SkeletalMeshSkin->GetSkeletalMesh();
 					const TArray<UMaterialInterface*>& Materials = MaterialSkin->GetMaterials();
 
-					if (Materials.Num() != Mesh->Materials.Num())
+					if (Materials.Num() != Mesh->GetMaterials().Num())
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetSkeletalMesh()->GetMaterials().Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetMaterials().Num()));
 						return false;
 					}
 				}
@@ -294,9 +294,9 @@ namespace NCsSkin
 					USkeletalMesh* Mesh					  = SkeletalMeshSkin->GetSkeletalMesh();
 					const TArray<MaterialType>& Materials = MaterialWithParamsSkin->GetMaterials();
 
-					if (Materials.Num() != Mesh->Materials.Num())
+					if (Materials.Num() != Mesh->GetMaterials().Num())
 					{
-						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->Materials.Num() (%d != %d)."), *Context, Materials.Num(), Mesh->Materials.Num()));
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin->GetMaterials().Num() != Skin->GetStaticMesh()->GetMaterials().Num() (%d != %d)."), *Context, Materials.Num(), Mesh->GetMaterials().Num()));
 						return false;
 					}
 				}
@@ -860,7 +860,7 @@ namespace NCsSkin
 
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScale, 0.0f)
 
-				Component->SetWorldScale3D(UniformScale * FVector::OneVector);
+				Component->SetWorldScale3D(UniformScale * FVector3d::OneVector);
 			}
 
 			void FLibrary::SetUniformScaleRelativeChecked(const FString& Context, const SkinType* Skin, USceneComponent* Component)
@@ -875,7 +875,7 @@ namespace NCsSkin
 
 				CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScale, 0.0f)
 
-				Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+				Component->SetRelativeScale3D(UniformScale * FVector3d::OneVector);
 			}
 
 			bool FLibrary::SetSafeUniformScaleRelative(const FString& Context, const SkinType* Skin, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -890,7 +890,7 @@ namespace NCsSkin
 
 					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
 
-					Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+					Component->SetRelativeScale3D(UniformScale * FVector3d::OneVector);
 					return true;
 				}
 				else
@@ -913,7 +913,7 @@ namespace NCsSkin
 
 					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
 
-					Component->SetRelativeScale3D(UniformScale * FVector::OneVector);
+					Component->SetRelativeScale3D(UniformScale * FVector3d::OneVector);
 					return true;
 				}
 				// UniformRange
@@ -930,9 +930,9 @@ namespace NCsSkin
 					CS_IS_FLOAT_GREATER_THAN(Max, 0.0f)
 
 					if (Min == Max)
-						Component->SetRelativeScale3D(Min * FVector::OneVector);
+						Component->SetRelativeScale3D(Min * FVector3d::OneVector);
 					else
-						Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+						Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 					return true;
 				}
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin)));
@@ -953,7 +953,7 @@ namespace NCsSkin
 
 					CS_IS_FLOAT_GREATER_THAN_CHECKED(UniformScale, 0.0f)
 
-					Actor->SetActorScale3D(UniformScale * FVector::OneVector);
+					Actor->SetActorScale3D(UniformScale * FVector3d::OneVector);
 					return;
 				}
 				// UniformRange
@@ -968,9 +968,9 @@ namespace NCsSkin
 					CS_IS_FLOAT_GREATER_THAN_CHECKED(Max, 0.0f)
 
 					if (Min == Max)
-						Actor->SetActorScale3D(Min * FVector::OneVector);
+						Actor->SetActorScale3D(Min * FVector3d::OneVector);
 					else
-						Actor->SetActorScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+						Actor->SetActorScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 					return;
 				}
 				checkf(0, TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin));
@@ -990,7 +990,7 @@ namespace NCsSkin
 
 					CS_IS_FLOAT_GREATER_THAN(UniformScale, 0.0f)
 
-					Actor->SetActorScale3D(UniformScale * FVector::OneVector);
+					Actor->SetActorScale3D(UniformScale * FVector3d::OneVector);
 					return true;
 				}
 				// UniformRange
@@ -1005,9 +1005,9 @@ namespace NCsSkin
 					CS_IS_FLOAT_GREATER_THAN(Max, 0.0f)
 
 					if (Min == Max)
-						Actor->SetActorScale3D(Min * FVector::OneVector);
+						Actor->SetActorScale3D(Min * FVector3d::OneVector);
 					else
-						Actor->SetActorScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+						Actor->SetActorScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 					return true;
 				}
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Skin: %s does NOT implement the interface related to scale."), *Context, *PrintNameAndClass(Skin)));

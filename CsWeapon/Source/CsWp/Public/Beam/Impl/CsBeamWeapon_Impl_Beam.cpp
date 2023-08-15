@@ -11,12 +11,15 @@
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
+	// Data
 #include "Beam/Data/CsLibrary_Data_BeamWeapon.h"
 #include "Data/CsLibrary_Data_Beam.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Beam/Params/CsLibrary_Params_BeamWeapon_Beam.h"
+	// Common
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Library/CsLibrary_Camera.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -153,7 +156,7 @@ namespace NCsWeapon
 
 				#define DataType NCsWeapon::NData::IData
 
-				FVector FImpl::GetLocation()
+				FVector3f FImpl::GetLocation()
 				{
 					using namespace NCached;
 
@@ -170,12 +173,14 @@ namespace NCsWeapon
 					const FLocationInfo& LocationInfo = BeamParams->GetLocationInfo();
 					const ELocation& LocationType	  = LocationInfo.GetType();
 
+					typedef NCsMath::FLibrary MathLibrary;
+
 					// Self
 					if (LocationType == ELocation::Self)
 					{
 						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
-						return RootComponent->GetComponentLocation();
+						return MathLibrary::Convert(RootComponent->GetComponentLocation());
 					}
 					// Owner
 					if (LocationType == ELocation::Owner)
@@ -184,10 +189,10 @@ namespace NCsWeapon
 
 						// Actor
 						if (AActor* Actor = Cast<AActor>(Owner))
-							return Actor->GetActorLocation();
+							return MathLibrary::Convert(Actor->GetActorLocation());
 						// Component
 						if (USceneComponent* OwnerAsComponent = Cast<USceneComponent>(Owner))
-							return OwnerAsComponent->GetComponentLocation();
+							return MathLibrary::Convert(OwnerAsComponent->GetComponentLocation());
 
 						checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(PrintOuterNameClassAndOwner()));
 					}
@@ -210,7 +215,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 
-						return Component->GetComponentLocation();
+						return MathLibrary::Convert(Component->GetComponentLocation());
 					}
 					// Camera
 					if (LocationType == ELocation::Camera)
@@ -231,10 +236,10 @@ namespace NCsWeapon
 
 						return GetStartImpl.Execute();
 					}
-					return FVector::ZeroVector;
+					return FVector3f::ZeroVector;
 				}
 
-				FVector FImpl::GetDirection(const FVector& Start)
+				FVector3f FImpl::GetDirection(const FVector3f& Start)
 				{
 					using namespace NCached;
 
@@ -254,12 +259,14 @@ namespace NCsWeapon
 
 					checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in BeamParams for Data."), *Context);
 
+					typedef NCsMath::FLibrary MathLibrary;
+
 					// Self
 					if (DirectionType == EDirection::Self)
 					{
 						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
-						return NCsRotationRules::GetRotation(RootComponent->GetComponentRotation(), DirectionRules).Vector();
+						return NCsRotationRules::GetRotation(MathLibrary::Convert(RootComponent->GetComponentRotation()), DirectionRules).Vector();
 					}
 					// Owner
 					if (DirectionType == EDirection::Owner)
@@ -293,7 +300,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 		
-						const FRotator Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
+						const FRotator3f Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
 
 						return Rotation.Vector();
 					}
@@ -319,11 +326,11 @@ namespace NCsWeapon
 						{
 							typedef NCsCamera::FLibrary CameraLibrary;
 
-							const FVector CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
-							const FVector Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
+							const FVector3f CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
+							const FVector3f Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
 							// TODO: Fix
-							const FVector End		  = CameraStart + 10000.0f * Dir;
-							//const FVector End		  = CameraStart + BeamParams->GetDistance() * Dir;
+							const FVector3f End		  = CameraStart + 10000.0f * Dir;
+							//const FVector3f End		  = CameraStart + BeamParams->GetDistance() * Dir;
 
 							FHitResult Hit;
 
@@ -331,7 +338,7 @@ namespace NCsWeapon
 
 							if (Hit.bBlockingHit)
 							{
-								return (Hit.ImpactPoint - Start).GetSafeNormal();
+								return (MathLibrary::Convert(Hit.ImpactPoint) - Start).GetSafeNormal();
 							}
 							else
 							{
@@ -340,10 +347,10 @@ namespace NCsWeapon
 						}
 						checkf(0, TEXT("%s: NOT IMPLEMENTED"), *Context);
 					}
-					return FVector::ZeroVector;
+					return FVector3f::ZeroVector;
 				}
 
-				void FImpl::LineTrace(const FVector& Start, const FVector& End, FHitResult& OutHit)
+				void FImpl::LineTrace(const FVector3f& Start, const FVector3f& End, FHitResult& OutHit)
 				{
 					//CS_SCOPED_TIMER(LineBeamScopedHandle);
 
@@ -416,8 +423,8 @@ namespace NCsWeapon
 
 					if (!BeamParams->IsAttached())
 					{
-						const FVector Location  = GetLocation();
-						const FVector Direction	= GetDirection(Location);
+						const FVector3f Location  = GetLocation();
+						const FVector3f Direction = GetDirection(Location);
 					}
 
 					typedef NCsBeam::NManager::FLibrary BeamManagerLibrary;

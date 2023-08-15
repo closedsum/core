@@ -17,11 +17,11 @@ class ICsSensingObject
 
 public:
 
-	virtual FVector GetLocation() = 0;
+	virtual FVector3f GetLocation() = 0;
 
-	virtual FVector GetCustomLocation(const FName& InName) = 0;
+	virtual FVector3f GetCustomLocation(const FName& InName) = 0;
 
-	virtual FVector GetDirection() = 0;
+	virtual FVector3f GetDirection() = 0;
 
-	virtual FVector GetCustomDirection(const FName& InName) = 0;
+	virtual FVector3f GetCustomDirection(const FName& InName) = 0;
 };

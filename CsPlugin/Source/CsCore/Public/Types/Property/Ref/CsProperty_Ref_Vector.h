@@ -3,42 +3,42 @@
 
 #pragma once
 
-struct FCsProperty_Ref_FVector : public TCsProperty_Ref<FVector>
+struct FCsProperty_Ref_FVector : public TCsProperty_Ref<FVector3d>
 {
 private:
-	typedef TCsProperty_Ref<FVector> Super;
+	typedef TCsProperty_Ref<FVector3d> Super;
 
 public:
 
 	FCsProperty_Ref_FVector() : Super()
 	{
-		DefaultValue = FVector::ZeroVector;
+		DefaultValue = FVector3d::ZeroVector;
 	}
 	~FCsProperty_Ref_FVector() {}
 
-	FORCEINLINE FCsProperty_Ref_FVector& operator=(const FVector& B)
+	FORCEINLINE FCsProperty_Ref_FVector& operator=(const FVector3d& B)
 	{
 		*Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FVector& Lhs, const FCsProperty_Ref_FVector& Rhs)
+	FORCEINLINE friend bool operator==(const FVector3d& Lhs, const FCsProperty_Ref_FVector& Rhs)
 	{
 		return Lhs == *(Rhs.Value);
 	}
 
-	FORCEINLINE friend bool operator==(const FCsProperty_Ref_FVector& Lhs, const FVector& Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_Ref_FVector& Lhs, const FVector3d& Rhs)
 	{
 		return *(Lhs.Value) == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FVector& Lhs, const FCsProperty_Ref_FVector& Rhs)
+	FORCEINLINE friend bool operator!=(const FVector3d& Lhs, const FCsProperty_Ref_FVector& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_FVector& Lhs, const FVector& Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_Ref_FVector& Lhs, const FVector3d& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}

@@ -36,7 +36,7 @@ struct CSUI_API FCsWidgetComponent_CameraInfo
 	/** Any rotation offset to apply after the Widget Actor has been oriented to face
 		the Player Camera. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
 	FCsWidgetComponent_CameraInfo() :
 		LerpRate(0.0f),
@@ -74,7 +74,7 @@ namespace NCsWidgetComponent
 			CS_DECLARE_MEMBER_WITH_PROXY(LockAxes, int32)
 			/** Any rotation offset to apply after the Widget Actor has been oriented to face
 				the Player Camera. */
-			CS_DECLARE_MEMBER_WITH_PROXY(Rotation, FRotator)
+			CS_DECLARE_MEMBER_WITH_PROXY(Rotation, FRotator3f)
 
 		public:
 
@@ -90,7 +90,7 @@ namespace NCsWidgetComponent
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LerpRate, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LockAxes, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rotation, FRotator)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rotation, FRotator3f)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;
@@ -157,7 +157,7 @@ struct CSUI_API FCsWidgetComponentInfo
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	/** Whether to use CameraInfo or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component", meta = (ScriptName = "m_bCameraInfo", InlineEditConditionToggle))
@@ -176,7 +176,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::KeepRelativeTransform),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity),
+		Transform(FTransform3f::Identity),
 		bCameraInfo(true),
 		CameraInfo()
 	{
@@ -235,7 +235,7 @@ namespace NCsWidgetComponent
 			If the WidgetActor is attached to a parent object, the Transform is applied as a Relative Transform
 			after the attachment.
 			Else, the Transform is applied as a World Transform. */
-		CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
+		CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform3f)
 		/** Whether to use CameraInfo or not. */
 		CS_DECLARE_MEMBER_WITH_PROXY(bCameraInfo, bool)
 		/** Describes any information related to the Camera. */
@@ -288,7 +288,7 @@ namespace NCsWidgetComponent
 		}
 		FORCEINLINE const ECsTransformSpace (&GetTransformSpaces() const) [(uint8)ECsTransform::ECsTransform_MAX] { return *TransformSpaces_Proxy; }
 		FORCEINLINE ECsTransformSpace (*GetTransformSpacesPtr()) [(uint8)ECsTransform::ECsTransform_MAX] { return TransformSpaces_Proxy; }
-		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
+		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform3f)
 		CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bCameraInfo, bool)
 		FORCEINLINE const CameraInfoType& GetCameraInfo() const { return CameraInfo; }
 		FORCEINLINE CameraInfoType* GetCameraInfoPtr() { return &CameraInfo; }

@@ -4,7 +4,7 @@
 #include "Types/CsTypes_String.h"
 
 #if WITH_EDITOR
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 #include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"

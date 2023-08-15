@@ -5,9 +5,13 @@
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Sound/CsLibrary_Manager_Sound.h"
+	// Data
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Data/CsLibrary_Data_Beam.h"
+	// Payload
 #include "Managers/Sound/Payload/CsLibrary_Payload_Sound.h"
+	// Common
+#include "Collision/CsLibrary_Collision.h"
 // Data
 #include "Beam/Data/Sound/CsData_BeamWeapon_SoundFire.h"
 #include "Data/Sound/CsData_Beam_SoundImpact.h"
@@ -86,6 +90,7 @@ namespace NCsWeapon
 					// ImpactSoundDataType (NCsBeam::NData::NSound::NImpact::IImpact)
 					typedef NCsBeam::NData::NSound::NImpact::IImpact ImpactSoundDataType;
 					typedef NCsBeam::NData::FLibrary BeamDataLibrary;
+					typedef NCsCollision::FLibrary CollisionLibrary;
 
 					if (ImpactSoundDataType* ImpactSoundData = BeamDataLibrary::GetSafeInterfaceChecked<ImpactSoundDataType>(Context, Data))
 					{
@@ -100,9 +105,9 @@ namespace NCsWeapon
 
 						const FCsSound& Sound = ImpactSoundData->GetImpactSound(SurfaceType);
 
-						FTransform Transform = FTransform::Identity;
-						Transform.SetLocation(Hit.Location);
-						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+						FTransform3f Transform = FTransform3f::Identity;
+						Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
+						Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
 
 						// Spawn Sound
 						typedef NCsSound::NManager::FLibrary SoundManagerLibrary;

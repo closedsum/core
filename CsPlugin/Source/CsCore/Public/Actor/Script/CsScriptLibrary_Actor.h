@@ -223,7 +223,7 @@ public:
 	* return				Whether the normal was found successfully.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
-	static bool GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+	static bool GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance);
 
 	/**
 	* Gets the normal 2d between A and B (AB or B - A)
@@ -237,7 +237,7 @@ public:
 	* return				Whether the normal was found successfully.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
-	static bool GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+	static bool GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance);
 
 #pragma endregion Normal
 };

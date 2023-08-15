@@ -4,10 +4,14 @@
 // Library
 #include "Managers/FX/Actor/CsLibrary_Manager_FX.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
+	// Data
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
+	// Payload
+#include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
+	// Common
 #include "Collision/CsTypes_Collision.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX.h"
@@ -114,7 +118,7 @@ namespace NCsWeapon
 
 				#define TraceDataType NCsTrace::NData::IData
 
-				void FImpl::TryTracer(TraceDataType* Data, const FVector& End)
+				void FImpl::TryTracer(TraceDataType* Data, const FVector3f& End)
 				{
 					using namespace NCached;
 
@@ -168,9 +172,11 @@ namespace NCsWeapon
 						// Get FX
 						const FCsFX& FX = TracerVisualData->GetTracerFX();
 
+						typedef NCsMath::FLibrary MathLibrary;
+
 						// Set Transform based on TransformType.
 						// NOTE: This is only valid if AttachType == None.
-						FTransform Transform = FTransform::Identity;
+						FTransform3f Transform = FTransform3f::Identity;
 
 						if (AType == AttachType::None)
 						{
@@ -188,10 +194,10 @@ namespace NCsWeapon
 							if (TType == TransformType::Owner)
 							{
 								if (AActor* Actor = Cast<AActor>(Owner))
-									Transform = Actor->GetActorTransform();
+									Transform = MathLibrary::Convert(Actor->GetActorTransform());
 								else
 								if (USceneComponent* C = Cast<USceneComponent>(Owner))
-									Transform = C->GetComponentTransform();
+									Transform = MathLibrary::Convert(C->GetComponentTransform());
 							}
 							// Component
 							else
@@ -199,7 +205,7 @@ namespace NCsWeapon
 							{
 								CS_IS_PTR_NULL_CHECKED(Component)
 
-								Transform = Component->GetComponentTransform();
+								Transform = MathLibrary::Convert(Component->GetComponentTransform());
 							}
 							// Custom
 							else
@@ -249,14 +255,16 @@ namespace NCsWeapon
 
 					if (ImpactVisualDataType* ImpactVisualData = TraceDataLibrary::GetSafeInterfaceChecked<ImpactVisualDataType>(Context, Data))
 					{
+						typedef NCsMath::FLibrary MathLibrary;
+
 						// Get Physics Surface
 						EPhysicalSurface SurfaceType = NCsHitResult::GetPhysSurfaceType(Hit);
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-						FTransform Transform;
-						Transform.SetLocation(Hit.Location);
-						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+						FTransform3f Transform;
+						Transform.SetLocation(MathLibrary::Convert(Hit.Location));
+						Transform.SetRotation(MathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
 
 						// Spawn FX
 						typedef NCsFX::NManager::FLibrary FXManagerLibrary;

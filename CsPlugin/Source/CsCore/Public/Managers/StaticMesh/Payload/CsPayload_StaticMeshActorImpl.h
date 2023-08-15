@@ -64,7 +64,7 @@ namespace NCsStaticMeshActor
 
 			int32 TransformRules;
 
-			FTransform Transform;
+			FTransform3f Transform;
 
 			bool bCastShadow;
 
@@ -144,7 +144,7 @@ namespace NCsStaticMeshActor
 			FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
-			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const FTransform3f& GetTransform() const { return Transform; }
 			FORCEINLINE const bool& CastShadow() const { return bCastShadow; }
 			FORCEINLINE const bool& ReceivesDecals() const { return bReceivesDecals; }
 			FORCEINLINE const bool& UseAsOccluder() const { return bUseAsOccluder; }

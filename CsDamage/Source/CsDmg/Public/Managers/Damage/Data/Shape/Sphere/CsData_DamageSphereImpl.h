@@ -146,11 +146,11 @@ namespace NCsDamage
 
 					FORCEINLINE const RangeType* GetRange() const { return Range; }
 
-					float CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector& Origin, const FVector& Point) const;
+					float CalculateDamage(const ValueType* InValue, const RangeType* InRange, const FVector3f& Origin, const FVector3f& Point) const;
 
-					bool IsInBounds(const FVector& Origin, const FVector& Point) const;
+					bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const;
 
-					FORCEINLINE bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const { return true; }
+					FORCEINLINE bool IsFacing(const FVector3f& Direction, const FVector3f& Origin, const FVector3f& Point) const { return true; }
 
 				#pragma endregion ShapeDataType (NCsDamage::NData::NShape::IShape)
 
@@ -392,11 +392,11 @@ public:
 
 	FORCEINLINE const RangeType* GetRange() const { return &DamageRangeProxy; }
 
-	float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector& Origin, const FVector& Point) const;
+	float CalculateDamage(const ValueType* Value, const RangeType* Range, const FVector3f& Origin, const FVector3f& Point) const;
 
-	bool IsInBounds(const FVector& Origin, const FVector& Point) const;
+	bool IsInBounds(const FVector3f& Origin, const FVector3f& Point) const;
 
-	FORCEINLINE bool IsFacing(const FVector& Direction, const FVector& Origin, const FVector& Point) const { return true; }
+	FORCEINLINE bool IsFacing(const FVector3f& Direction, const FVector3f& Origin, const FVector3f& Point) const { return true; }
 
 #pragma endregion ICsData_DamageSphere
 

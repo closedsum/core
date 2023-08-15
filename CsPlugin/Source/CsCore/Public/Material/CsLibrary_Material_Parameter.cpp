@@ -23,16 +23,7 @@ namespace NCsMaterial
 			if (Type == EMaterialParameterType::Texture)
 				Material->GetAllTextureParameterInfo(OutParameterInfos, OutParameterIds);
 		#else
-			const FMaterialCachedExpressionData& CachedData = Material->GetCachedExpressionData();
-			const FMaterialCachedParameterEntry& Entry		= CachedData.Parameters.GetParameterTypeEntry(Type);
-			const int32 NumParameters						= Entry.NameHashes.Num();
-
-			typedef NCsArray::FLibrary ArrayLibrary;
-
-			ArrayLibrary::ResetChecked<FMaterialParameterInfo>(OutParameterInfos, NumParameters);
-			ArrayLibrary::ResetChecked<FGuid>(OutParameterIds, NumParameters);
-
-			CachedData.Parameters.GetAllParameterInfoOfType(Type, false, OutParameterInfos, OutParameterIds);
+			Material->GetAllParameterInfoOfType(Type, OutParameterInfos, OutParameterIds);
 		#endif // #if WITH_EDITOR
 		}
 

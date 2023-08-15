@@ -3,10 +3,10 @@
 
 #pragma once
 
-struct FCsProperty_FVector : public TCsProperty<FVector>
+struct FCsProperty_FVector : public TCsProperty<FVector3d>
 {
 private:
-	typedef TCsProperty<FVector> Super;
+	typedef TCsProperty<FVector3d> Super;
 
 protected:
 	bool bDirtys[CS_AXES_3D];
@@ -19,7 +19,7 @@ public:
 		{
 			b = false;
 		}
-		DefaultValue = FVector::ZeroVector;
+		DefaultValue = FVector3d::ZeroVector;
 	}
 	~FCsProperty_FVector(){}
 
@@ -34,63 +34,63 @@ public:
 			OnChange_Event.Broadcast(Value);
 	}
 
-	FCsProperty_FVector& operator=(const FVector& B)
+	FCsProperty_FVector& operator=(const FVector3d& B)
 	{
 		Value = B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FORCEINLINE friend bool operator==(const FVector& Lhs, const FCsProperty_FVector& Rhs)
+	FORCEINLINE friend bool operator==(const FVector3d& Lhs, const FCsProperty_FVector& Rhs)
 	{
 		return Lhs == Rhs.Value;
 	}
 
-	FORCEINLINE friend bool operator==(const FCsProperty_FVector& Lhs, const FVector& Rhs)
+	FORCEINLINE friend bool operator==(const FCsProperty_FVector& Lhs, const FVector3d& Rhs)
 	{
 		return Lhs.Value == Rhs;
 	}
 
-	FORCEINLINE friend bool operator!=(const FVector& Lhs, const FCsProperty_FVector& Rhs)
+	FORCEINLINE friend bool operator!=(const FVector3d& Lhs, const FCsProperty_FVector& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FORCEINLINE friend bool operator!=(const FCsProperty_FVector& Lhs, const FVector& Rhs)
+	FORCEINLINE friend bool operator!=(const FCsProperty_FVector& Lhs, const FVector3d& Rhs)
 	{
 		return !(Lhs == Rhs);
 	}
 
-	FCsProperty_FVector& operator+=(const FVector& B)
+	FCsProperty_FVector& operator+=(const FVector3d& B)
 	{
 		Value += B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsProperty_FVector& operator-=(const FVector& B)
+	FCsProperty_FVector& operator-=(const FVector3d& B)
 	{
 		Value -= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	FCsProperty_FVector& operator*=(const FVector& B)
+	FCsProperty_FVector& operator*=(const FVector3d& B)
 	{
 		Value *= B;
 		UpdateIsDirty();
 		return *this;
 	}
 
-	virtual void Set(const FVector& inValue) override 
+	virtual void Set(const FVector3d& inValue) override 
 	{
 		Value = inValue;
 		UpdateIsDirty();
 	}
 
-	FVector GetAxes(const int32& Axes)
+	FVector3d GetAxes(const int32& Axes)
 	{
-		FVector V = FVector::ZeroVector;
+		FVector3d V = FVector3d::ZeroVector;
 
 		if (CS_TEST_BLUEPRINT_BITFLAG(Axes, CS_AXIS_X))
 			V.X = Value.X;

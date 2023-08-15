@@ -492,8 +492,8 @@ void ACsStaticMeshActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadTyp
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();;
 
-	const FTransform& Transform = StaticMeshPayload->GetTransform();
-	const int32& TransformRules = StaticMeshPayload->GetTransformRules();
+	const FTransform3f& Transform = StaticMeshPayload->GetTransform();
+	const int32& TransformRules   = StaticMeshPayload->GetTransformRules();
 
 	typedef NCsStaticMeshActor::NPayload::EChange ChangeType;
 	typedef NCsStaticMeshActor::NPayload::NChange::FCounter ChangeCounter;
@@ -643,7 +643,7 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 		else
 		{
 			DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			SetActorRelativeTransform(FTransform::Identity);
+			SetActorRelativeTransform(FTransform3d::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 			AttachToBone = NAME_None;
@@ -660,7 +660,7 @@ void ACsStaticMeshActorPooledImpl::Handle_ClearAttachAndTransform()
 	}
 	else
 	{
-		SetActorRelativeTransform(FTransform::Identity);
+		SetActorRelativeTransform(FTransform3d::Identity);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 		ChangeCounter::Get().AddCleared();
 	}

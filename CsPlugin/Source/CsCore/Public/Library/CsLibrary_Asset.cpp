@@ -119,7 +119,7 @@ UAnimSequence* UCsLibrary_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const F
 	FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
 	UAnimSequenceFactory* Factory		= NewObject<UAnimSequenceFactory>();
 
-	Factory->TargetSkeleton = Mesh->Skeleton;
+	Factory->TargetSkeleton		 = Mesh->GetSkeleton();
 	Factory->PreviewSkeletalMesh = Mesh;
 
 	UAnimSequence* NewAsset = Cast<UAnimSequence>(AssetToolsModule.Get().CreateAsset(Name, PackagePath, UAnimSequence::StaticClass(), Factory));;
@@ -135,10 +135,11 @@ UAnimSequence* UCsLibrary_Asset::CreateAnimSequence(USkeletalMesh* Mesh, const F
 
 void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkeletalMeshComponent* Mesh)
 {
-	Anim->RecycleAnimSequence();
+	check(0);
+	//Anim->RecycleAnimSequence();
 
 	USkeleton* AnimSkeleton     = Anim->GetSkeleton();
-	USkeletalMesh* SkeletalMesh = Mesh->SkeletalMesh;
+	USkeletalMesh* SkeletalMesh = Mesh->GetSkeletalMeshAsset();
 
 	const int32 BoneCount = Mesh->GetComponentSpaceTransforms().Num();
 
@@ -150,7 +151,8 @@ void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkelet
 		{
 			// add tracks for the bone existing
 			FName BoneTreeName = AnimSkeleton->GetReferenceSkeleton().GetBoneName(BoneTreeIndex);
-			Anim->AddNewRawTrack(BoneTreeName);
+			check(0);
+			//Anim->AddNewRawTrack(BoneTreeName);
 		}
 	}
 
@@ -160,10 +162,11 @@ void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class USkelet
 
 void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class UPoseableMeshComponent* Mesh)
 {
-	Anim->RecycleAnimSequence();
+	check(0);
+	//Anim->RecycleAnimSequence();
 
 	USkeleton* AnimSkeleton     = Anim->GetSkeleton();
-	USkeletalMesh* SkeletalMesh = Mesh->SkeletalMesh;
+	USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(Mesh->GetSkinnedAsset());
 
 	const int32 BoneCount = Mesh->BoneSpaceTransforms.Num();
 
@@ -175,7 +178,8 @@ void UCsLibrary_Asset::InitAnimSequence(class UAnimSequence* Anim, class UPoseab
 		{
 			// add tracks for the bone existing
 			FName BoneTreeName = AnimSkeleton->GetReferenceSkeleton().GetBoneName(BoneTreeIndex);
-			Anim->AddNewRawTrack(BoneTreeName);
+			check(0);
+			//Anim->AddNewRawTrack(BoneTreeName);
 		}
 	}
 

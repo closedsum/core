@@ -6,6 +6,7 @@
 #include "Library/CsLibrary_Viewport.h"
 #include "Game/CsLibrary_GameState.h"
 #include "Library/CsLibrary_Player.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Trace/CsManager_Trace.h"
@@ -242,15 +243,17 @@ namespace NCsTrace
 
 			RequestType* Request = Manager_Trace->AllocateRequest();
 
-			Request->Type = ECsTraceType::Sweep;
-			Request->Method = ECsTraceMethod::Multi;
-			Request->Query = ECsTraceQuery::Channel;
-			Request->Start = Component->GetComponentLocation();
-			Request->End = Component->GetComponentLocation();
-			Request->Rotation = Component->GetComponentRotation();
+			typedef NCsMath::FLibrary MathLibrary;
+
+			Request->Type	  = ECsTraceType::Sweep;
+			Request->Method   = ECsTraceMethod::Multi;
+			Request->Query	  = ECsTraceQuery::Channel;
+			Request->Start	  = MathLibrary::Convert(Component->GetComponentLocation());
+			Request->End	  = MathLibrary::Convert(Component->GetComponentLocation());
+			Request->Rotation = MathLibrary::Convert(Component->GetComponentRotation());
 			Request->SetShape(Component);
-			Request->Channel = Channel;
-			Request->Params = Params;
+			Request->Channel						  = Channel;
+			Request->Params							  = Params;
 			Request->ResponseParams.CollisionResponse = Container;
 
 			return Manager_Trace->Trace(Request);
@@ -285,17 +288,19 @@ namespace NCsTrace
 			if (!Manager_Trace)
 				return nullptr;
 
+			typedef NCsMath::FLibrary MathLibrary;
+
 			RequestType* Request = Manager_Trace->AllocateRequest();
 
-			Request->Type = ECsTraceType::Sweep;
-			Request->Method = ECsTraceMethod::Multi;
-			Request->Query = ECsTraceQuery::Channel;
-			Request->Start = Component->GetComponentLocation();
-			Request->End = Component->GetComponentLocation();
-			Request->Rotation = Component->GetComponentRotation();
+			Request->Type	  = ECsTraceType::Sweep;
+			Request->Method	  = ECsTraceMethod::Multi;
+			Request->Query	  = ECsTraceQuery::Channel;
+			Request->Start	  = MathLibrary::Convert(Component->GetComponentLocation());
+			Request->End	  = MathLibrary::Convert(Component->GetComponentLocation());
+			Request->Rotation = MathLibrary::Convert(Component->GetComponentRotation());
 			Request->SetShape(Component);
-			Request->Channel = Channel;
-			Request->Params = Params;
+			Request->Channel						  = Channel;
+			Request->Params							  = Params;
 			Request->ResponseParams.CollisionResponse = Container;
 
 			ResponseType* Response = Manager_Trace->Trace(Request);
@@ -351,17 +356,19 @@ namespace NCsTrace
 			if (!Manager_Trace)
 				return nullptr;
 
+			typedef NCsMath::FLibrary MathLibrary;
+
 			RequestType* Request = Manager_Trace->AllocateRequest();
 
-			Request->Type = ECsTraceType::Sweep;
-			Request->Method = ECsTraceMethod::Multi;
-			Request->Query = ECsTraceQuery::Channel;
-			Request->Start = Component->GetComponentLocation();
-			Request->End = Component->GetComponentLocation();
-			Request->Rotation = Component->GetComponentRotation();
+			Request->Type	  = ECsTraceType::Sweep;
+			Request->Method   = ECsTraceMethod::Multi;
+			Request->Query	  = ECsTraceQuery::Channel;
+			Request->Start	  = MathLibrary::Convert(Component->GetComponentLocation());
+			Request->End	  = MathLibrary::Convert(Component->GetComponentLocation());
+			Request->Rotation = MathLibrary::Convert(Component->GetComponentRotation());
 			Request->SetShape(Component);
 			Request->Channel = Channel;
-			Request->Params = Params;
+			Request->Params  = Params;
 			Request->ResponseParams.CollisionResponse = Container;
 
 			ResponseType* Response = Manager_Trace->Trace(Request);
@@ -386,7 +393,7 @@ namespace NCsTrace
 			return Response;
 		}
 
-		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
+		ResponseType* FLibrary::TraceScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const float& Distance, const ECollisionChannel& Channel)
 		{
 			using namespace NCsTrace::NManager::NLibrary::NCached;
 
@@ -396,8 +403,8 @@ namespace NCsTrace
 
 			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-			FVector WorldOrigin;
-			FVector WorldDirection;
+			FVector3f WorldOrigin;
+			FVector3f WorldDirection;
 
 			if (ViewportLibrary::DeprojectScreenToWorldChecked(Context, WorldContext, ScreenPosition, WorldOrigin, WorldDirection))
 			{

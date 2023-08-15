@@ -34,7 +34,7 @@ namespace NCsStaticMesh
 
 						int32 NumCustomDataFloats;
 
-						TArray<FMatrix>* Transforms;
+						TArray<FMatrix44f>* Transforms;
 
 						TArray<float>* CustomDatas;
 
@@ -50,7 +50,7 @@ namespace NCsStaticMesh
 						FORCEINLINE UInstancedStaticMeshComponent* GetComponent() const { return Component; }
 						FORCEINLINE const int32& GetNumInstances() const { return NumInstances; }
 						FORCEINLINE const int32& GetNumCustomDataFloats() const { return NumCustomDataFloats; }
-						FORCEINLINE const TArray<FMatrix>& GetTransforms() const { return *Transforms; }
+						FORCEINLINE const TArray<FMatrix44f>& GetTransforms() const { return *Transforms; }
 						FORCEINLINE const TArray<float>& GetCustomDatas() const { return *CustomDatas; }
 
 						bool IsValidChecked(const FString& Context) const;

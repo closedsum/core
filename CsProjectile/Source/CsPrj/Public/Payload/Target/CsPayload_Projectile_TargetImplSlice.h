@@ -36,7 +36,7 @@ namespace NCsProjectile
 
 				USceneComponent* Component;
 
-				FVector Location;
+				FVector3f Location;
 
 				FName Bone;
 				
@@ -66,7 +66,7 @@ namespace NCsProjectile
 
 				FORCEINLINE const bool& HasTarget() const { return bTarget; }
 				FORCEINLINE USceneComponent* GetTargetComponent() const { return Component; }
-				FORCEINLINE const FVector& GetTargetLocation() const { return Location; }
+				FORCEINLINE const FVector3f& GetTargetLocation() const { return Location; }
 				FORCEINLINE const FName& GetTargetBone() const { return Bone; }
 				FORCEINLINE const int32& GetTargetID() const { return ID; }
 

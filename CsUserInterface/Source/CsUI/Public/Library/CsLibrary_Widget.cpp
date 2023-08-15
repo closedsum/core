@@ -12,6 +12,7 @@
 	// Common
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
+#include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Player.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
@@ -24,6 +25,9 @@
 // Widget
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetTree.h"
+#include "Animation/WidgetAnimation.h"
+// Viewport
+#include "Blueprint/GameViewportSubsystem.h"
 // Components
 #include "Components/Widget.h"
 #include "Components/CanvasPanelSlot.h"
@@ -133,11 +137,11 @@ namespace NCsWidget
 
 		checkf(BpGC, TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName()));
 
-		checkf(BpGC->ClassGeneratedBy, TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName()));
+		//checkf(BpGC->ClassGeneratedBy, TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName()));
 
-		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+		UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
-		checkf(BpC, TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName()));
+		//checkf(BpC, TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName()));
 
 		checkf(BpC->GeneratedClass, TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName()));
 
@@ -161,17 +165,17 @@ namespace NCsWidget
 			return nullptr;
 		}
 
-		if (!BpGC->ClassGeneratedBy)
+		//if (!BpGC->ClassGeneratedBy)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName())));
 			return nullptr;
 		}
 
-		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+		UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
 		if (!BpC)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
+			//CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
 			return nullptr;
 		}
 
@@ -195,11 +199,11 @@ namespace NCsWidget
 
 		checkf(BpGC, TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName()));
 
-		checkf(BpGC->ClassGeneratedBy, TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName()));
+		//checkf(BpGC->ClassGeneratedBy, TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName()));
 
-		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+		UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
-		checkf(BpC, TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName()));
+		//checkf(BpC, TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName()));
 
 		checkf(BpC->GeneratedClass, TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName()));
 
@@ -229,17 +233,17 @@ namespace NCsWidget
 			return nullptr;
 		}
 
-		if (!BpGC->ClassGeneratedBy)
+		//if (!BpGC->ClassGeneratedBy)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName())));
 			return nullptr;
 		}
 
-		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+		UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
 		if (!BpC)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
+			//CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
 			return nullptr;
 		}
 
@@ -252,6 +256,25 @@ namespace NCsWidget
 	}
 
 	#pragma endregion Load
+
+	void FLibrary::AddToScreenChecked(const FString& Context, const UObject* WorldContext, UWidget* Widget, ULocalPlayer* Player, const int32& ZOrder)
+	{
+		CS_IS_PENDING_KILL_CHECKED(WorldContext)
+		CS_IS_PENDING_KILL_CHECKED(Widget)
+		CS_IS_PENDING_KILL_CHECKED(Player)
+
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World				= WorldLibrary::GetChecked(Context, WorldContext);
+		UGameViewportSubsystem* GVS = UGameViewportSubsystem::Get(World);
+
+		CS_IS_PTR_NULL_CHECKED(GVS)
+
+		FGameViewportWidgetSlot Slot;
+		Slot.ZOrder = ZOrder;
+
+		GVS->AddWidgetForPlayer(Widget, Player, Slot);
+	}
 
 	namespace NRender
 	{
@@ -305,7 +328,7 @@ namespace NCsWidget
 		void FLibrary::Scale_EaseChecked(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 		{
 			const float Percent   = GetPercentChecked(Context, Widget, Easing, Start, End, Alpha);
-			const FVector2D Scale = FMath::Lerp(Start, End, Alpha) * FVector2D(1.0f);
+			const FVector2d Scale = FMath::Lerp(Start, End, Alpha) * FVector2d(1.0f);
 
 			Widget->SetRenderScale(Scale);
 		}
@@ -318,7 +341,7 @@ namespace NCsWidget
 			typedef NCsMath::FLibrary MathLibrary;
 
 			const float Percent   = MathLibrary::Ease(Easing, Alpha, 0.0f, 1.0f, 1.0f);
-			const FVector2D Scale = FMath::Lerp(Start, End, Alpha) * FVector2D(1.0f);
+			const FVector2d Scale = FMath::Lerp(Start, End, Alpha) * FVector2d(1.0f);
 
 			Widget->SetRenderScale(Scale);
 			return true;
@@ -358,7 +381,7 @@ namespace NCsWidget
 				}
 			}
 
-			FVector2D FLibrary::GetBySlotChecked(const FString& Context, UWidget* Widget)
+			FVector2d FLibrary::GetBySlot2dChecked(const FString& Context, UWidget* Widget)
 			{
 				CS_IS_PTR_NULL_CHECKED(Widget)
 
@@ -370,21 +393,30 @@ namespace NCsWidget
 
 				checkf(Widget->GetVisibility() != ESlateVisibility::Collapsed, TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName()));
 
+				typedef NCsMath::FLibrary MathLibrary;
+
 				return Slot->GetPosition();
 			}
 
-			FVector2D FLibrary::GetSafeBySlot(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			FVector2f FLibrary::GetBySlot2fChecked(const FString& Context, UWidget* Widget)
+			{
+				typedef NCsMath::FLibrary MathLibrary;
+
+				return MathLibrary::Convert(GetBySlot2dChecked(Context, Widget));
+			}
+
+			FVector2d FLibrary::GetSafeBySlot2d(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				if (!Widget)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget is NULL."), *Context));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 
 				if (!Widget->Slot)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NULL."), *Context, *(Widget->GetName())));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 
 				UCanvasPanelSlot* Slot = Cast<UCanvasPanelSlot>(Widget->Slot);
@@ -392,27 +424,43 @@ namespace NCsWidget
 				if (!Slot)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget: %s's Slot is NOT of type: UCavnasPanelSlot."), *Context, *(Widget->GetName())));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 
 				if (Widget->GetVisibility() == ESlateVisibility::Collapsed)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName())));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 				return Slot->GetPosition();
 			}
 
-			FVector2D FLibrary::GetSafeBySlot(UWidget* Widget)
+			FVector2f FLibrary::GetSafeBySlot2f(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			{
+				typedef NCsMath::FLibrary MathLibrary;
+
+				return MathLibrary::Convert(GetSafeBySlot2d(Context, Widget, Log));
+			}
+
+			FVector2d FLibrary::GetSafeBySlot2d(UWidget* Widget)
 			{
 				using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
 
 				const FString& Context = Str::GetSafeBySlot;
 
-				return GetSafeBySlot(Context, Widget, nullptr);
+				return GetSafeBySlot2d(Context, Widget, nullptr);
 			}
 
-			FVector2D FLibrary::GetAbsoluteByCachedGeometryChecked(const FString& Context, UWidget* Widget)
+			FVector2f FLibrary::GetSafeBySlot2f(UWidget* Widget)
+			{
+				using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeBySlot;
+
+				return GetSafeBySlot2f(Context, Widget, nullptr);
+			}
+
+			FVector2d FLibrary::GetAbsoluteByCachedGeometry2dChecked(const FString& Context, UWidget* Widget)
 			{
 				CS_IS_PTR_NULL_CHECKED(Widget)
 
@@ -420,38 +468,63 @@ namespace NCsWidget
 
 				checkf(Widget->GetVisibility() != ESlateVisibility::Hidden, TEXT("%s: %s's Visibility == ESlateVisibility::Hidden is NOT Valid when getting position."), *Context, *(Widget->GetName()));
 
+				typedef NCsMath::FLibrary MathLibrary;
+
 				return Widget->GetCachedGeometry().GetAbsolutePosition();
 			}
 
-			FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			FVector2f FLibrary::GetAbsoluteByCachedGeometry2fChecked(const FString& Context, UWidget* Widget)
+			{
+				typedef NCsMath::FLibrary MathLibrary;
+
+				return MathLibrary::Convert(GetAbsoluteByCachedGeometry2dChecked(Context, Widget));
+			}
+
+			FVector2d FLibrary::GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				if (!Widget)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget is NULL."), *Context));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 
 				if (Widget->GetVisibility() == ESlateVisibility::Collapsed)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s's Visibility == ESlateVisibility::Collapsed is NOT Valid when getting position."), *Context, *(Widget->GetName())));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 
 				if (Widget->GetVisibility() == ESlateVisibility::Hidden)
 				{
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s's Visibility == ESlateVisibility::Hidden is NOT Valid when getting position."), *Context, *(Widget->GetName())));
-					return FVector2D(-1.0f);
+					return FVector2d(-1.0);
 				}
 				return Widget->GetCachedGeometry().GetAbsolutePosition();
 			}
 
-			FVector2D FLibrary::GetSafeAbsoluteByCachedGeometry(UWidget* Widget)
+			FVector2f FLibrary::GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			{
+				typedef NCsMath::FLibrary MathLibrary;
+
+				return MathLibrary::Convert(GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log));
+			}
+
+			FVector2d FLibrary::GetSafeAbsoluteByCachedGeometry2d(UWidget* Widget)
 			{
 				using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
 
 				const FString& Context = Str::GetSafeAbsoluteByCachedGeometry;
 
-				return GetSafeAbsoluteByCachedGeometry(Context, Widget, nullptr);
+				return GetSafeAbsoluteByCachedGeometry2d(Context, Widget, nullptr);
+			}
+
+			FVector2f FLibrary::GetSafeAbsoluteByCachedGeometry2f(UWidget* Widget)
+			{
+				using namespace NCsWidget::NPosition::NScreen::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeAbsoluteByCachedGeometry;
+
+				return GetSafeAbsoluteByCachedGeometry2f(Context, Widget, nullptr);
 			}
 		}
 
@@ -468,32 +541,65 @@ namespace NCsWidget
 				}
 			}
 
-			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition)
 			{
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
 
-				const FVector2D AbsolutePosition = WidgetScreenPositionLibrary::GetAbsoluteByCachedGeometryChecked(Context, Widget);
+				const FVector2d AbsolutePosition = WidgetScreenPositionLibrary::GetAbsoluteByCachedGeometry2dChecked(Context, Widget);
 
 				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
 			}
 
-			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			void FLibrary::GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition)
+			{
+				FVector2d PixelPosition;
+				FVector2d ViewportPosition;
+				GetByCachedGeometryChecked(Context, Widget, PixelPosition, ViewportPosition);
+
+				typedef NCsMath::FLibrary MathLibrary;
+
+				OutPixelPosition	= MathLibrary::Convert(PixelPosition);
+				OutViewportPosition = MathLibrary::Convert(ViewportPosition);
+			}
+
+			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
 
-				const FVector2D AbsolutePosition = WidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry(Context, Widget, Log);
+				const FVector2d AbsolutePosition = WidgetScreenPositionLibrary::GetSafeAbsoluteByCachedGeometry2d(Context, Widget, Log);
 
-				if (AbsolutePosition == FVector2D(-1.0f))
+				if (AbsolutePosition == FVector2d(-1.0))
 				{
-					OutPixelPosition = FVector2D(-1.0f);
-					OutViewportPosition = FVector2D(-1.0f);
+					OutPixelPosition = FVector2d(-1.0f);
+					OutViewportPosition = FVector2d(-1.0f);
 					return;
 				}
 
 				USlateBlueprintLibrary::AbsoluteToViewport(Widget->GetWorld(), AbsolutePosition, OutPixelPosition, OutViewportPosition);
 			}
 
-			void FLibrary::GetSafeByCachedGeometry(UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition)
+			void FLibrary::GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			{
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FVector2d PixelPosition;
+				FVector2d ViewportPosition;
+				GetSafeByCachedGeometry(Context, Widget, PixelPosition, ViewportPosition, Log);
+
+				OutPixelPosition    = MathLibrary::Convert(PixelPosition);
+				OutViewportPosition = MathLibrary::Convert(ViewportPosition);
+			}
+
+			void FLibrary::GetSafeByCachedGeometry(UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition)
+			{
+				using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeByCachedGeometry;
+
+				GetSafeByCachedGeometry(Context, Widget, OutPixelPosition, OutViewportPosition, nullptr);
+			}
+
+			void FLibrary::GetSafeByCachedGeometry(UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition)
 			{
 				using namespace NCsWidget::NPosition::NViewport::NLibrary::NCached;
 
@@ -517,39 +623,72 @@ namespace NCsWidget
 				}
 			}
 
-			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
 				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+				
 				// Get Screen Position of the Widget
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
 
-				FVector2D ScreenPosition = WidgetScreenPositionLibrary::GetBySlotChecked(Context, Widget);
+				FVector2d ScreenPosition = WidgetScreenPositionLibrary::GetBySlot2dChecked(Context, Widget);
+				
 				// Deproject Screen to World
 				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			bool FLibrary::GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection)
+			{
+				// Deproject Screen to World
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FVector3d Position;
+				FVector3d Direction;
+				const bool Result = GetBySlotChecked(Context, WorldContext, ControllerId, Widget, Position, Direction);
+
+				OutPosition  = MathLibrary::Convert(Position);
+				OutDirection = MathLibrary::Convert(Direction);
+				return Result;
+			}
+
+			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
 				APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
+				
 				// Get Screen Position of the Widget
 				typedef NCsWidget::NPosition::NScreen::FLibrary WidgetScreenPositionLibrary;
 
-				FVector2D ScreenPosition = WidgetScreenPositionLibrary::GetBySlotChecked(Context, Widget);
+				FVector2d ScreenPosition = WidgetScreenPositionLibrary::GetBySlot2dChecked(Context, Widget);
 
-				if (ScreenPosition == FVector2D(-1.0f))
+				if (ScreenPosition == FVector2d(-1.0f))
 					return false;
 
 				// Deproject Screen to World
+				typedef NCsMath::FLibrary MathLibrary;
+
 				return UGameplayStatics::DeprojectScreenToWorld(PC, ScreenPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			{
+				// Deproject Screen to World
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FVector3d Position;
+				FVector3d Direction;
+				const bool Result = GetSafeBySlot(Context, WorldContext, ControllerId, Widget, Position, Direction);
+
+				OutPosition  = MathLibrary::Convert(Position);
+				OutDirection = MathLibrary::Convert(Direction);
+				return Result;
+			}
+
+			bool FLibrary::GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
 
@@ -558,23 +697,49 @@ namespace NCsWidget
 				return GetSafeBySlot(Context, WorldContext, ControllerId, Widget, OutPosition, OutDirection, nullptr);
 			}
 
-			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection)
+			{
+				using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeBySlot;
+
+				return GetSafeBySlot(Context, WorldContext, ControllerId, Widget, OutPosition, OutDirection, nullptr);
+			}
+
+			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
 
 				APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+
 				// Get Pixel Position of the Widget
 				typedef NCsWidget::NPosition::NViewport::FLibrary WidgetScreenPositionLibrary;
 
-				FVector2D PixelPosition;
-				FVector2D ViewportPosition;
+				FVector2d PixelPosition;
+				FVector2d ViewportPosition;
 				WidgetScreenPositionLibrary::GetByCachedGeometryChecked(Context, Widget, PixelPosition, ViewportPosition);
+
 				// Deproject Screen to World
 				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
 			}
 
-			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			bool FLibrary::GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection)
+			{
+				// Deproject Screen to World
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FVector3d Position;
+				FVector3d Direction;
+				const bool Result = GetByCachedGeometryChecked(Context, WorldContext, ControllerId, Widget, Position, Direction);
+				
+				OutPosition  = MathLibrary::Convert(Position);
+				OutDirection = MathLibrary::Convert(Direction);
+
+				return Result;
+			}
+
+			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 			{
 				// Get PlayerController associated with ControllerId
 				typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
@@ -584,18 +749,41 @@ namespace NCsWidget
 				// Get Pixel Position of the Widget
 				typedef NCsWidget::NPosition::NViewport::FLibrary WidgetScreenPositionLibrary;
 
-				FVector2D PixelPosition;
-				FVector2D ViewportPosition;
+				FVector2d PixelPosition;
+				FVector2d ViewportPosition;
 				WidgetScreenPositionLibrary::GetSafeByCachedGeometry(Context, Widget, PixelPosition, ViewportPosition, Log);
 
-				if (PixelPosition == FVector2D(-1.0f))
+				if (PixelPosition == FVector2d(-1.0f))
 					return false;
 
 				// Deproject Screen to World
-				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);
+				return UGameplayStatics::DeprojectScreenToWorld(PC, PixelPosition, OutPosition, OutDirection);;
 			}
 
-			bool FLibrary::GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection)
+			bool FLibrary::GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+			{
+				// Deproject Screen to World
+				typedef NCsMath::FLibrary MathLibrary;
+
+				FVector3d Position;
+				FVector3d Direction;
+				const bool Result = GetSafeByCachedGeometry(Context, WorldContext, ControllerId, Widget, Position, Direction);
+
+				OutPosition  = MathLibrary::Convert(Position);
+				OutDirection = MathLibrary::Convert(Direction);
+				return Result;
+			}
+
+			bool FLibrary::GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection)
+			{
+				using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
+
+				const FString& Context = Str::GetSafeByCachedGeometry;
+
+				return GetSafeByCachedGeometry(Context, WorldContext, ControllerId, Widget, OutPosition, OutDirection, nullptr);
+			}
+
+			bool FLibrary::GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection)
 			{
 				using namespace NCsWidget::NPosition::NWorld::NLibrary::NCached;
 

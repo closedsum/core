@@ -91,7 +91,7 @@ namespace NCsWeapon
 					*
 					* return Start Location
 					*/
-					DECLARE_DELEGATE_RetVal(FVector, FGetStart);
+					DECLARE_DELEGATE_RetVal(FVector3f, FGetStart);
 
 					/**  Delegate for custom implementation of GetStart(). */
 					FGetStart GetStartImpl;
@@ -101,7 +101,7 @@ namespace NCsWeapon
 					*
 					* return Direction
 					*/
-					DECLARE_DELEGATE_RetVal(FVector, FGetDirection);
+					DECLARE_DELEGATE_RetVal(FVector3f, FGetDirection);
 
 					/** Delegate for custom implementation of GetDirection(). */
 					FGetDirection GetDirectionImpl;
@@ -133,10 +133,10 @@ namespace NCsWeapon
 					void SetFXImpl(FXImplType* Value) { FXImpl = Value; }
 					void SetSoundImpl(SoundImplType* Value) { SoundImpl = Value; }
 
-					FVector GetLocation();
-					FVector GetDirection(const FVector& Start);
+					FVector3f GetLocation();
+					FVector3f GetDirection(const FVector3f& Start);
 
-					void LineTrace(const FVector& Start, const FVector& End, FHitResult& OutHit);
+					void LineTrace(const FVector3f& Start, const FVector3f& End, FHitResult& OutHit);
 
 					void Emit();
 

@@ -110,7 +110,7 @@ bool UCsScriptLibrary_Mouse::SetCenterOfViewport(const FString& Context, const U
 // Trace
 #pragma region
 
-bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FPlane& Plane, FVector& OutIntersection)
+bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FPlane4f& Plane, FVector3f& OutIntersection)
 {
 	using namespace NCsScriptLibraryMouse::NCached;
 
@@ -132,7 +132,7 @@ bool UCsScriptLibrary_Mouse::Trace(const FString& Context, const UObject* WorldC
 	if (Req->Shape.IsLine() &&
 		Req->Start == Req->End)
 	{
-		Req->End += FVector(0.0f, 0.0f, 1.0f);
+		Req->End += FVector3f(0.0f, 0.0f, 1.0f);
 	}
 
 	if (!Request.IsValid(Ctxt))

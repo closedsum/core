@@ -92,7 +92,7 @@ struct CSCORE_API FCsSoundCue
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TSoftObjectPtr<USoundCue> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
 	/** Hard reference to a Sound Asset. */
@@ -143,7 +143,7 @@ struct CSCORE_API FCsSoundBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TSoftObjectPtr<USoundBase> Sound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
 	/** Hard reference to a Sound Asset. */
@@ -197,7 +197,7 @@ struct CSCORE_API FCsTArraySoundBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
 	TArray<TSoftObjectPtr<USoundBase>> Sounds;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Sounds_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Sound")
@@ -438,7 +438,7 @@ public:
 	TSoftObjectPtr<USoundBase> Sound;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Sound_LoadFlags;
 
 	/** Hard reference to a Sound Asset. */
@@ -456,7 +456,7 @@ public:
 	TSoftObjectPtr<USoundAttenuation> Attenuation;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Attenuation_LoadFlags;
 
 	/** Hard reference to a Sound Attenuation Asset. */
@@ -509,7 +509,7 @@ public:
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound")
-	FTransform Transform;
+	FTransform3f Transform;
 
 public:
 
@@ -528,7 +528,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity)
+		Transform(FTransform3f::Identity)
 	{
 	}
 	

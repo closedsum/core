@@ -39,7 +39,7 @@ public:
 			the offset is applied in the direction of the Bone's world space orientation. 
 			(i.e. Offset.X = Forward, Offset.Y = Right, Offset.Z = Up) */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking")
-	FVector Offset;
+	FVector3f Offset;
 
 	/** Time before Tracking starts. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CImpl|Projectile|Tracking", meta = (UIMin = "0.0", ClampMin = "0.0"))
@@ -113,7 +113,7 @@ namespace NCsProjectile
 				If Destination == ECsProjectileTrackingDestination::Bone,
 					the offset is applied in the direction of the Bone's world space orientation. 
 					(i.e. Offset.X = Forward, Offset.Y = Right, Offset.Z = Up) */
-			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+			CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
 
 			/** Time before Tracking starts. */
 			CS_DECLARE_MEMBER_WITH_PROXY(Delay, float)
@@ -159,7 +159,7 @@ namespace NCsProjectile
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Destination, DestinationType)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bReacquireDestination, bool)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Delay, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Duration, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(RotationRate, float)

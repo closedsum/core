@@ -6,7 +6,9 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
+	// Common
 #include "Library/CsLibrary_Viewport.h"
+#include "Library/CsLibrary_Math.h"
 
 // Cached
 #pragma region
@@ -32,7 +34,7 @@ UCsScriptLibrary_Viewport::UCsScriptLibrary_Viewport(const FObjectInitializer& O
 {
 }
 
-bool UCsScriptLibrary_Viewport::DeprojectScreenToWorld(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection)
+bool UCsScriptLibrary_Viewport::DeprojectScreenToWorld(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection)
 {
 	using namespace NCsScriptLibraryViewport::NCached;
 
@@ -54,7 +56,7 @@ FIntPoint UCsScriptLibrary_Viewport::GetSize(const FString& Context, const UObje
 	return ViewportLibrary::GetSafeSize(Context, WorldContextObject);
 }
 
-bool UCsScriptLibrary_Viewport::GetScreenWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection)
+bool UCsScriptLibrary_Viewport::GetScreenWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection)
 {
 	using namespace NCsScriptLibraryViewport::NCached;
 
@@ -65,7 +67,7 @@ bool UCsScriptLibrary_Viewport::GetScreenWorldIntersection(const FString& Contex
 	return ViewportLibrary::GetSafeScreenWorldIntersection(Context, WorldContextObject, ScreenPosition, Plane, OutIntersection);
 }
 
-bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse)
+bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse)
 {
 	using namespace NCsScriptLibraryViewport::NCached;
 
@@ -76,7 +78,7 @@ bool UCsScriptLibrary_Viewport::Trace(const FString& Context, const UObject* Wor
 	if (Req->Shape.IsLine() &&
 		Req->Start == Req->End)
 	{
-		Req->End += FVector(0.0f, 0.0f, 1.0f);
+		Req->End += FVector3f(0.0f, 0.0f, 1.0f);
 	}
 
 	if (!Request.IsValid(Ctxt))

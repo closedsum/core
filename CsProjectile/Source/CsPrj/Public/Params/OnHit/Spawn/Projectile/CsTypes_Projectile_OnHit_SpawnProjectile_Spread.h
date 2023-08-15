@@ -434,7 +434,7 @@ namespace NCsProjectile
 					#define ShapeType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::EShape
 					#define DistributionType NCsProjectile::NOnHit::NSpawn::NProjectile::NSpread::NShape::EDistribution
 
-						static FVector GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector& Extents, const DistributionType& Distribution);
+						static FVector3f GetRandomOffsetChecked(const FString& Context, const ShapeType& Shape, const FVector3f& Extents, const DistributionType& Distribution);
 
 					#undef ShapeType
 					#undef DistributionType

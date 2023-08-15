@@ -70,7 +70,7 @@ namespace NCsSound
 			AttachmentTransformRules(FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 			Bone(NAME_None),
 			TransformRules(0),
-			Transform(FTransform::Identity),
+			Transform(FTransform3f::Identity),
 			VolumeMultiplier(1.0f),
 			PitchMultiplier(1.0f)
 		{
@@ -114,7 +114,7 @@ namespace NCsSound
 			AttachmentTransformRules = FAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			Bone = NAME_None;
 			TransformRules = 0;
-			Transform = FTransform::Identity;
+			Transform = FTransform3f::Identity;
 			VolumeMultiplier = 1.0f;
 			PitchMultiplier = 1.0f;
 		}

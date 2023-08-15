@@ -34,6 +34,19 @@ namespace NCsActor
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByTag);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByName);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeByLabel);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetScaleChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetSafeScale);
+				// Orientation
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetRotationChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeRotation);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetQuatChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetRotationChecked);
+				// Movement
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetLocationChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetLocationChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, SetLocationAndRotationChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetForwardChecked);
+					// Interp
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, MoveByInterp_Internal);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeRootComponent);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsActor::FLibrary, GetSafeRootPrimitiveComponent);
@@ -90,7 +103,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!A || !IsValid(A))
 				continue;
 			if (A->Tags.Contains(Tag))
 			{
@@ -130,7 +143,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->Tags.Contains(Tag))
 			{
@@ -145,7 +158,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->Tags.Contains(Tag))
 			{
@@ -183,7 +196,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 
 			if (A->Tags.Num() < Tags.Num())
@@ -224,7 +237,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 
 			if (A->Tags.Num() < Tags.Num())
@@ -269,7 +282,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->GetFName() == Name)
 			{
@@ -300,7 +313,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->GetFName() == Name)
 			{
@@ -334,7 +347,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->GetActorLabel() == Label)
 			{
@@ -370,7 +383,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->GetActorLabel() == Label)
 			{
@@ -500,8 +513,143 @@ namespace NCsActor
 
 	#pragma endregion Visibility
 
-	// Move
+	void FLibrary::SetScaleChecked(const FString& Context, AActor* A, const FVector3f& Scale)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		A->SetActorScale3D(MathLibrary::Convert(Scale));
+	}
+
+	bool FLibrary::SetSafeScale(const FString& Context, AActor* A, const FVector3f& Scale, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		A->SetActorScale3D(MathLibrary::Convert(Scale));
+		return true;
+	}
+
+	// Orientation
+	#pragma region
+
+	FRotator3f FLibrary::GetRotationChecked(const FString& Context, const AActor* A)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(A->GetActorRotation());
+	}
+
+	FRotator3f FLibrary::GetSafeRotation(const FString& Context, const AActor* A, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_VALUE(A, FRotator3f::ZeroRotator)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(A->GetActorRotation());
+	}
+
+	FQuat4f FLibrary::GetQuatChecked(const FString& Context, const AActor* A)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(A->GetActorQuat());
+	}
+
+	void FLibrary::SetRotationChecked(const FString& Context, AActor* A, const FRotator3f& Rotation)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		A->SetActorRotation(MathLibrary::Convert(Rotation));
+	}
+
+	void FLibrary::SetRotationChecked(const FString& Context, AActor* A, const FQuat4f& Rotation)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		A->SetActorRotation(MathLibrary::Convert(Rotation));
+	}
+
+	#pragma endregion Orientation
+
+	// Movement
 	#pragma region 
+
+	bool FLibrary::GetSafeLocation(const FString& Context, const AActor* A, FVector3f& OutLocation, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(A)
+
+		const FVector3d Location = A->GetActorLocation();
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		MathLibrary::Set(OutLocation, Location);
+		return true;
+	}
+
+	FVector3f FLibrary::GetLocationChecked(const FString& Context, const AActor* A)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(A->GetActorLocation());
+	}
+
+	void FLibrary::SetLocationChecked(const FString& Context, AActor* A, const FVector3f& Location)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		A->SetActorLocation(MathLibrary::Convert(Location));
+	}
+
+	bool FLibrary::SetLocationAndRotationChecked(const FString& Context, AActor* A, const FVector3f& Location, const FRotator3f& Rotation)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return A->SetActorLocationAndRotation(MathLibrary::Convert(Location), MathLibrary::Convert(Rotation));
+	}
+
+	bool FLibrary::SetLocationAndRotationChecked(const FString& Context, AActor* A, const FVector3f& Location, const FQuat4f& Rotation)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return A->SetActorLocationAndRotation(MathLibrary::Convert(Location), MathLibrary::Convert(Rotation));
+	}
+
+	FVector3f FLibrary::GetForwardChecked(const FString& Context, const AActor* A)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+
+		return MathLibrary::Convert(A->GetActorForwardVector());
+	}
+
+	bool FLibrary::TeleportToChecked(const FString& Context, AActor* A, const FVector3f& DestLocation, const FRotator3f& DestRotation, const bool& bIsATest /*=false*/, const bool& bNoCheck /*=false*/)
+	{
+		CS_IS_PENDING_KILL_CHECKED(A)
+
+		typedef NCsMath::FLibrary MathLibrary;
+		
+		return A->TeleportTo(MathLibrary::Convert(DestLocation), MathLibrary::Convert(DestRotation), bIsATest, bNoCheck);
+	}
 
 		// Interp
 	#pragma region
@@ -556,8 +704,8 @@ namespace NCsActor
 
 		// Calculate InterpSpeed
 		static const int32 INTERP_SPEED = 0;
-		const FVector Start		= P->GetFromLocation();
-		const FVector End		= P->GetEndLocation();
+		const FVector3f Start		= P->GetFromLocation();
+		const FVector3f End		= P->GetEndLocation();
 		const float Distance    = (End - Start).Size();
 		const float InterpSpeed = Distance / P->GetTime();
 		Payload->SetValue_Float(INTERP_SPEED, InterpSpeed);
@@ -619,7 +767,7 @@ namespace NCsActor
 		typedef NCsMovement::EMover MoverType;
 
 		const MoverType& Mover = Params->GetMover();
-		const FVector& Start   = Params->GetFromLocation();
+		const FVector3f& Start   = Params->GetFromLocation();
 
 		typedef NCsMovement::EDestination DestinationType;
 
@@ -627,17 +775,19 @@ namespace NCsActor
 		const float& Time				   = Params->GetTime();
 
 		static const int32 CURRENT= 0;
-		FVector& Current		  = R->GetValue_Vector(CURRENT);
+		FVector3f& Current		  = R->GetValue_Vector(CURRENT);
 
 		// Set End Location
 		static const int32 END = 1;
-		FVector& End		   = R->GetValue_Vector(END);
+		FVector3f& End		   = R->GetValue_Vector(END);
 		End					   = Params->GetEndLocation();
 
 		static const int32 INTERP_SPEED = 0;
 		const float& InterpSpeed		= R->GetValue_Float(INTERP_SPEED);
 
 		const float Percent = Time > 0.0f ? FMath::Clamp(R->ElapsedTime.Time / Time, 0.0f, 1.0f) : 1.0f;
+
+		typedef NCsMath::FLibrary MathLibrary;
 
 		CS_COROUTINE_BEGIN(R);
 
@@ -646,12 +796,12 @@ namespace NCsActor
 		// Actor
 		if (Mover == MoverType::Actor)
 		{
-			Params->GetMoveActor()->SetActorLocation(Start);
+			Params->GetMoveActor()->SetActorLocation(MathLibrary::Convert(Start));
 		}
 		// Component
 		if (Mover == MoverType::Component)
 		{
-			Params->GetMoveComponent()->SetWorldLocation(Start);
+			Params->GetMoveComponent()->SetWorldLocation(MathLibrary::Convert(Start));
 		}
 		Current = Start;
 
@@ -665,13 +815,13 @@ namespace NCsActor
 				// Linear
 				if (Easing == ECsEasingType::Linear)
 				{
-					Current = FMath::VInterpConstantTo(Current, End, R->DeltaTime.Time, InterpSpeed);
+					Current = MathLibrary::VInterpConstantTo(Current, End, R->DeltaTime.Time, InterpSpeed);
 				}
 				else
 				{					
 					const float Alpha		= MathLibrary::Ease(Easing, Percent, 0.0f, 1.0f, 1.0f);
 					// TODO: Optimize, get size and normal in one function.
-					const FVector Direction = (End - Start).GetSafeNormal();
+					const FVector3f Direction = (End - Start).GetSafeNormal();
 					const float Distance	= (End - Start).Size();
 					Current				    = Start + Alpha * Distance * Direction;
 				}
@@ -679,12 +829,12 @@ namespace NCsActor
 				// Actor
 				if (Mover == MoverType::Actor)
 				{
-					Params->GetMoveActor()->SetActorLocation(Current);
+					Params->GetMoveActor()->SetActorLocation(MathLibrary::Convert(Current));
 				}
 				// Component
 				if (Mover == MoverType::Component)
 				{
-					Params->GetMoveComponent()->SetWorldLocation(Current);
+					Params->GetMoveComponent()->SetWorldLocation(MathLibrary::Convert(Current));
 				}
 				
 				CS_COROUTINE_YIELD(R);
@@ -694,12 +844,12 @@ namespace NCsActor
 		// Actor
 		if (Mover == MoverType::Actor)
 		{
-			Params->GetMoveActor()->SetActorLocation(End);
+			Params->GetMoveActor()->SetActorLocation(MathLibrary::Convert(End));
 		}
 		// Component
 		if (Mover == MoverType::Component)
 		{
-			Params->GetMoveComponent()->SetWorldLocation(End);
+			Params->GetMoveComponent()->SetWorldLocation(MathLibrary::Convert(End));
 		}
 
 		CS_COROUTINE_END(R);
@@ -720,7 +870,7 @@ namespace NCsActor
 
 	#pragma endregion Interp
 
-	#pragma endregion Move
+	#pragma endregion Movement
 
 	// Material
 	#pragma region
@@ -823,10 +973,10 @@ namespace NCsActor
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
 
-		return FVector::DistSquared(VA, VB);
+		return FVector3d::DistSquared(VA, VB);
 	}
 
 	float FLibrary::GetDistanceSq2DChecked(const FString& Context, const AActor* A, const AActor* B)
@@ -834,10 +984,10 @@ namespace NCsActor
 		CS_IS_PTR_NULL_CHECKED(A)
 		CS_IS_PTR_NULL_CHECKED(B)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
 
-		return FVector::DistSquared2D(VA, VB);
+		return FVector3d::DistSquared2D(VA, VB);
 	}
 
 	float FLibrary::GetSafeDistanceSq2D(const FString& Context, const AActor* A, const AActor* B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -845,10 +995,10 @@ namespace NCsActor
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
 
-		return FVector::DistSquared2D(VA, VB);
+		return FVector3d::DistSquared2D(VA, VB);
 	}
 
 	bool FLibrary::IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const AActor* B, const float& R)
@@ -857,10 +1007,10 @@ namespace NCsActor
 		CS_IS_PTR_NULL_CHECKED(B)
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
 
-		return FVector::DistSquared2D(VA, VB) <= (R * R);
+		return FVector3d::DistSquared2D(VA, VB) <= (R * R);
 	}
 
 	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const AActor* B, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -869,50 +1019,56 @@ namespace NCsActor
 		CS_IS_PTR_NULL(B)
 		CS_IS_FLOAT_GREATER_THAN(R, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
 
-		return FVector::DistSquared2D(VA, VB) <= (R * R);
+		return FVector3d::DistSquared2D(VA, VB) <= (R * R);
 	}
 
-	bool FLibrary::IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R)
+	bool FLibrary::IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const FVector3f& Location, const float& R)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
+		const FVector3f VA = GetLocationChecked(Context, A);
 
-		return FVector::DistSquared2D(VA, Location) <= (R * R);
+		return FVector3f::DistSquared2D(VA, Location) <= (R * R);
 	}
 
-	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const FVector& Location, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const FVector3f& Location, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL(A)
 		CS_IS_FLOAT_GREATER_THAN(R, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
+		FVector3f VA;
+		
+		if (!GetSafeLocation(Context, A, VA, Log))
+			return false;
 
-		return FVector::DistSquared2D(VA, Location) <= (R * R);
+		return FVector3f::DistSquared2D(VA, Location) <= (R * R);
 	}
 
-	bool FLibrary::IsDistanceSq2D_GreaterThanChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R)
+	bool FLibrary::IsDistanceSq2D_GreaterThanChecked(const FString& Context, const AActor* A, const FVector3f& Location, const float& R)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
 		CS_IS_FLOAT_GREATER_THAN_CHECKED(R, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
+		const FVector3f VA = GetLocationChecked(Context, A);
 
-		return FVector::DistSquared2D(VA, Location) > (R * R);
+		return FVector3f::DistSquared2D(VA, Location) > (R * R);
 	}
 
-	bool FLibrary::SafeIsDistanceSq2D_GreaterThan(const FString& Context, const AActor* A, const FVector& Location, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeIsDistanceSq2D_GreaterThan(const FString& Context, const AActor* A, const FVector3f& Location, const float& R, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL(A)
 		CS_IS_FLOAT_GREATER_THAN(R, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
+		FVector3f VA;
 
-		return FVector::DistSquared2D(VA, Location) > (R * R);
+		if (!GetSafeLocation(Context, A, VA, Log))
+			return false;
+
+		return FVector3f::DistSquared2D(VA, Location) > (R * R);
 	}
 
 	#pragma endregion Distance
@@ -920,81 +1076,77 @@ namespace NCsActor
 	// Normal
 	#pragma region
 	
-	bool FLibrary::GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
-
-		const FVector& V = VB - VA;
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
+		const FVector3d V = VB - VA;
 
 		typedef NCsMath::FLibrary MathLibrary;
 
-		OutNormal = MathLibrary::GetSafeNormal(V, OutDistanceSq, OutDistance);
+		OutNormal = MathLibrary::Convert(MathLibrary::GetSafeNormal(V, OutDistanceSq, OutDistance));
 
-		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
+		return V != FVector3d::ZeroVector && OutNormal != FVector3f::ZeroVector;
 	}
 
-	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
 		CS_IS_PTR_NULL_CHECKED(B)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
-
-		const FVector& V = VB - VA;
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
+		const FVector3d& V = VB - VA;
 
 		typedef NCsMath::FLibrary MathLibrary;
 
-		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
+		OutNormal = MathLibrary::Convert(MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance));
 	}
 
-	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 		CS_IS_PTR_NULL_RET_VALUE(B, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-		const FVector VB = B->GetActorLocation();
+		const FVector3d VA = A->GetActorLocation();
+		const FVector3d VB = B->GetActorLocation();
 
-		const FVector& V = VB - VA;
-
+		const FVector3d V = VB - VA;
+		
 		typedef NCsMath::FLibrary MathLibrary;
 
-		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
-
-		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
+		OutNormal = MathLibrary::Convert(MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance));
+		
+		return V != FVector3d::ZeroVector && OutNormal != FVector3f::ZeroVector;
 	}
 
-	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const FVector& B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const FVector3f& B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
 
-		const FVector VA = A->GetActorLocation();
-
-		const FVector& V = B - VA;
-
 		typedef NCsMath::FLibrary MathLibrary;
+
+		const FVector3f VA = GetLocationChecked(Context, A);
+		const FVector3f V  = B - VA;
 
 		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
 	}
 
-	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const FVector& B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const FVector3f& B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_VALUE(A, 0.0f)
 
-		const FVector VA = A->GetActorLocation();
-
-		const FVector& V = B - VA;
+		const FVector3f VA = GetLocationChecked(Context, A);
+		const FVector3f V  = B - VA;
 
 		typedef NCsMath::FLibrary MathLibrary;
 
 		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
 
-		return V != FVector::ZeroVector && OutNormal != FVector::ZeroVector;
+		return V != FVector3f::ZeroVector && OutNormal != FVector3f::ZeroVector;
 	}
 
 	#pragma endregion Normal

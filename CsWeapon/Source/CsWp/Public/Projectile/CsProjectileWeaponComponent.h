@@ -337,7 +337,7 @@ public:
 
 	public:
 
-		FVector CustomLaunchDirection;
+		FVector3f CustomLaunchDirection;
 
 	public:
 
@@ -345,7 +345,7 @@ public:
 			Outer(nullptr),
 			LaunchComponentTransform(nullptr),
 			LaunchScopedHandle(),
-			CustomLaunchDirection(FVector::ZeroVector)
+			CustomLaunchDirection(FVector3f::ZeroVector)
 		{
 		}
 		virtual ~FProjectileImpl() {}
@@ -386,14 +386,14 @@ public:
 
 	public:
 
-		virtual FVector GetLaunchLocation();
+		virtual FVector3f GetLaunchLocation();
 
-		virtual FVector GetLaunchDirection();
+		virtual FVector3f GetLaunchDirection();
 
 	protected:
 
 	#define LaunchParamsType NCsWeapon::NProjectile::NParams::NLaunch::ILaunch
-		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector& Direction);
+		void Log_GetLaunchDirection(const LaunchParamsType* LaunchParams, const FVector3f& Direction);
 	#undef LaunchParamsType
 
 		void Launch();
@@ -433,7 +433,7 @@ protected:
 	* return Launch Direction.
 	*/
 	UFUNCTION(BlueprintImplementableEvent)
-	FVector Override_ProjectileImpl_GetLaunchDirection();
+	FVector3f Override_ProjectileImpl_GetLaunchDirection();
 
 public:
 

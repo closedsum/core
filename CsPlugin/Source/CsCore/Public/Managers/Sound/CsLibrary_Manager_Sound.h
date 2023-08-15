@@ -258,7 +258,7 @@ namespace NCsSound
 			*						Sound.Transform is applied as an "offset".
 			* return				Spawned Sound in a pooled container.
 			*/
-			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform = FTransform::Identity);
+			static const FCsSoundPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform = FTransform3f::Identity);
 
 		#undef PooledPayloadType
 

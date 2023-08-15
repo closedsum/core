@@ -26,6 +26,18 @@ public:
 
 #pragma endregion Easing
 
+// Vector
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Vector"))
+	static FVector3f Vector3dTo3f(const FVector& Vector);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Vector"))
+	static FVector Vector3fTo3d(const FVector3f& Vector);
+
+#pragma endregion Vector
+
 // Ray
 #pragma region
 public:
@@ -39,7 +51,7 @@ public:
 	* return			Ray
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Ray", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Direction,Distance"))
-	static FCsRay MakeRay(const FVector& Origin, const FVector& Direction, const float& Distance);
+	static FCsRay MakeRay(const FVector3f& Origin, const FVector3f& Direction, const float& Distance);
 
 	/*
 	* Make a Ray from origin and direction.
@@ -50,7 +62,7 @@ public:
 	* return			Ray
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Ray", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Direction"))
-	static FCsRay MakeRay_OriginAndDirection(const FVector& Origin, const FVector& Direction);
+	static FCsRay MakeRay_OriginAndDirection(const FVector3f& Origin, const FVector3f& Direction);
 
 #pragma endregion Ray
 
@@ -66,7 +78,7 @@ public:
 	* return		Plane
 	*/
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Plane", meta = (Keywords = "construct build", NativeMakeFunc, AutoCreateRefTerm = "Origin,Normal"))
-	static FPlane MakePlane(const FVector& Origin, const FVector& Normal);
+	static FPlane4f MakePlane(const FVector3f& Origin, const FVector3f& Normal);
 
 #pragma endregion Plane
 
@@ -85,7 +97,7 @@ public:
 	* return					True if the intersection test was successful.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Math|Intersection", meta = (AutoCreateRefTerm = "Context,Ray,Plane,OutT,OutIntersection"))
-	static bool RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection);
+	static bool RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection);
 
 #pragma endregion Intersection
 

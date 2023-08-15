@@ -9,11 +9,14 @@
 #include "Collision/CsTypes_Collision.h"
 // Library
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
+	// Data
 #include "Managers/Trace/Data/CsLibrary_Data_Trace.h"
 #include "Data/CsLibrary_Data_Weapon.h"
 #include "Trace/Data/Params/CsLibrary_Params_TraceWeapon_Trace.h"
+	// Common
 #include "Library/CsLibrary_SkeletalMesh.h"
 #include "Library/CsLibrary_Camera.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsWeaponSettings.h"
@@ -134,7 +137,7 @@ namespace NCsWeapon
 
 				#define DataType NCsWeapon::NData::IData
 
-				FVector FImpl::GetStart(DataType* Data)
+				FVector3f FImpl::GetStart(DataType* Data)
 				{
 					using namespace NCached;
 
@@ -165,12 +168,14 @@ namespace NCsWeapon
 					const FLocationInfo& LocationInfo = TraceParams->GetLocationInfo();
 					const ELocation& LocationType	  = LocationInfo.GetType();
 
+					typedef NCsMath::FLibrary MathLibrary;
+
 					// Self
 					if (LocationType == ELocation::Self)
 					{
 						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
-						return RootComponent->GetComponentLocation();
+						return MathLibrary::Convert(RootComponent->GetComponentLocation());
 					}
 					// Owner
 					if (LocationType == ELocation::Owner)
@@ -179,10 +184,10 @@ namespace NCsWeapon
 
 						// Actor
 						if (AActor* Actor = Cast<AActor>(Owner))
-							return Actor->GetActorLocation();
+							return MathLibrary::Convert(Actor->GetActorLocation());
 						// Component
 						if (USceneComponent* OwnerAsComponent = Cast<USceneComponent>(Owner))
-							return OwnerAsComponent->GetComponentLocation();
+							return MathLibrary::Convert(OwnerAsComponent->GetComponentLocation());
 
 						checkf(0, TEXT("%s: Failed to get Location from %s."), *Context, *(PrintOuterNameClassAndOwner()));
 					}
@@ -205,7 +210,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 
-						return Component->GetComponentLocation();
+						return MathLibrary::Convert(Component->GetComponentLocation());
 					}
 					// Camera
 					if (LocationType == ELocation::Camera)
@@ -226,10 +231,10 @@ namespace NCsWeapon
 
 						return GetStartImpl.Execute();
 					}
-					return FVector::ZeroVector;
+					return FVector3f::ZeroVector;
 				}
 
-				FVector FImpl::GetDirection(DataType* Data, const FVector& Start)
+				FVector3f FImpl::GetDirection(DataType* Data, const FVector3f& Start)
 				{
 					using namespace NCached;
 
@@ -261,12 +266,14 @@ namespace NCsWeapon
 
 					checkf(DirectionRules != NCsRotationRules::None, TEXT("%s: No DirectionRules set in TraceParams for Data."), *Context);
 
+					typedef NCsMath::FLibrary MathLibrary;
+
 					// Self
 					if (DirectionType == EDirection::Self)
 					{
 						CS_IS_PTR_NULL_CHECKED(RootComponent)
 
-						return NCsRotationRules::GetRotation(RootComponent->GetComponentRotation(), DirectionRules).Vector();
+						return NCsRotationRules::GetRotation3f(RootComponent->GetComponentRotation(), DirectionRules).Vector();
 					}
 					// Owner
 					if (DirectionType == EDirection::Owner)
@@ -300,7 +307,7 @@ namespace NCsWeapon
 					{
 						CS_IS_PTR_NULL_CHECKED(Component)
 		
-						const FRotator Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
+						const FRotator3f Rotation = NCsRotationRules::GetRotation(Component, DirectionRules);
 
 						return Rotation.Vector();
 					}
@@ -326,9 +333,9 @@ namespace NCsWeapon
 						{
 							typedef NCsCamera::FLibrary CameraLibrary;
 
-							const FVector CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
-							const FVector Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
-							const FVector End		  = CameraStart + TraceParams->GetDistance() * Dir;
+							const FVector3f CameraStart = CameraLibrary::GetLocationChecked(Context, Owner);
+							const FVector3f Dir		  = CameraLibrary::GetDirectionChecked(Context, Owner, DirectionRules);
+							const FVector3f End		  = CameraStart + TraceParams->GetDistance() * Dir;
 
 							FHitResult Hit;
 
@@ -336,7 +343,7 @@ namespace NCsWeapon
 
 							if (Hit.bBlockingHit)
 							{
-								return (Hit.ImpactPoint - Start).GetSafeNormal();
+								return (MathLibrary::Convert(Hit.ImpactPoint) - Start).GetSafeNormal();
 							}
 							else
 							{
@@ -345,10 +352,10 @@ namespace NCsWeapon
 						}
 						checkf(0, TEXT("%s: NOT IMPLEMENTED"), *Context);
 					}
-					return FVector::ZeroVector;
+					return FVector3f::ZeroVector;
 				}
 
-				FVector FImpl::GetEnd(DataType* Data, const FVector& Start)
+				FVector3f FImpl::GetEnd(DataType* Data, const FVector3f& Start)
 				{
 					using namespace NCached;
 
@@ -399,13 +406,13 @@ namespace NCsWeapon
 						UE_LOG(LogCsWp, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
 						UE_LOG(LogCsWp, Warning, TEXT("-- Item: %d"), Hit.Item);
 						UE_LOG(LogCsWp, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
-						UE_LOG(LogCsWp, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
+						UE_LOG(LogCsWp, Warning, TEXT("-- Actor: %s"), Hit.HasValidHitObjectHandle() ? *(Hit.GetActor()->GetName()) : TEXT("None"));
 						UE_LOG(LogCsWp, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
 						UE_LOG(LogCsWp, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
 						UE_LOG(LogCsWp, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
 					}
 				#endif // #if !UE_BUILD_SHIPPING
-
+					
 					// Get Physics Surface
 					UPhysicalMaterial* PhysMaterial = Hit.PhysMaterial.IsValid() ? Hit.PhysMaterial.Get() : nullptr;
 					EPhysicalSurface SurfaceType	= PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
@@ -437,7 +444,7 @@ namespace NCsWeapon
 
 				#define DataType NCsWeapon::NData::IData
 
-				void FImpl::LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit)
+				void FImpl::LineTrace(DataType* Data, const FVector3f& Start, const FVector3f& End, FHitResult& OutHit)
 				{
 					//CS_SCOPED_TIMER(LineTraceScopedHandle);
 
@@ -505,8 +512,8 @@ namespace NCsWeapon
 
 					const FString& Context = Str::Trace;
 
-					const FVector Start = GetStart(Data);
-					const FVector End	= GetEnd(Data, Start);
+					const FVector3f Start = GetStart(Data);
+					const FVector3f End	= GetEnd(Data, Start);
 
 					typedef NCsTrace::NManager::FLibrary TraceManagerLibrary;
 					typedef NCsTrace::NRequest::FRequest RequestType;
@@ -568,8 +575,10 @@ namespace NCsWeapon
 
 				#endif // #if !UE_BUILD_SHIPPING
 
+					typedef NCsMath::FLibrary MathLibrary;
+
 					// TracerVisualDataType (NCsTrace::NData::NVisual::NTracer::ITracer)
-					FXImpl->TryTracer(TraceData, Response->bResult ? Response->OutHits[CS_FIRST].ImpactPoint : End);
+					FXImpl->TryTracer(TraceData, Response->bResult ? MathLibrary::Convert(Response->OutHits[CS_FIRST].ImpactPoint) : End);
 
 					if (Response->bResult)
 						OnHit(Response->OutHits[CS_FIRST]);

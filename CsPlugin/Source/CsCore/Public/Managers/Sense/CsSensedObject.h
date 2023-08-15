@@ -18,9 +18,9 @@ class ICsSensedObject
 
 public:
 
-	virtual FVector GetLocation() = 0;
+	virtual FVector3f GetLocation() = 0;
 
-	virtual FVector GetCustomLocation(const FName& InName) = 0;
+	virtual FVector3f GetCustomLocation(const FName& InName) = 0;
 };
 
 // Delegates
@@ -29,9 +29,9 @@ public:
 	// Script
 #pragma region
 
-DECLARE_DELEGATE_RetVal_OneParam(FVector, FCsSensedObject_Script_GetLocation, UObject*);
+DECLARE_DELEGATE_RetVal_OneParam(FVector3f, FCsSensedObject_Script_GetLocation, UObject*);
 
-DECLARE_DELEGATE_RetVal_TwoParams(FVector, FCsSensedObject_Script_GetCustomLocation, UObject*, const FName&);
+DECLARE_DELEGATE_RetVal_TwoParams(FVector3f, FCsSensedObject_Script_GetCustomLocation, UObject*, const FName&);
 
 #pragma endregion Script
 
@@ -71,14 +71,14 @@ public:
 	// ICsSensedObject
 #pragma region
 
-	FVector GetLocation()
+	FVector3f GetLocation()
 	{
 		if (bScript)
 			return Script_GetLocation_Impl.Execute(Object);
 		return Interface->GetLocation();
 	}
 
-	FVector GetCustomLocation(const FName& InName)
+	FVector3f GetCustomLocation(const FName& InName)
 	{
 		if (bScript)
 			return Script_GetCustomLocation_Impl.Execute(Object, InName);

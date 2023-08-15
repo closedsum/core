@@ -77,9 +77,9 @@ void FCsData_Skin_VisualScale_UniformRangeImplSlice::SetChecked(const FString& C
 	CS_IS_PTR_NULL_CHECKED(Component);
 
 	if (Min == Max)
-		Component->SetRelativeScale3D(Min * FVector::OneVector);
+		Component->SetRelativeScale3D(Min * FVector3d::OneVector);
 	else
-		Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+		Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 }
 
 bool FCsData_Skin_VisualScale_UniformRangeImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -90,9 +90,9 @@ bool FCsData_Skin_VisualScale_UniformRangeImplSlice::SetSafe(const FString& Cont
 	CS_IS_PTR_NULL(Component)
 
 	if (Min == Max)
-	Component->SetRelativeScale3D(Min * FVector::OneVector);
+	Component->SetRelativeScale3D(Min * FVector3d::OneVector);
 	else
-		Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+		Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 	return true;
 }
 
@@ -231,9 +231,9 @@ namespace NCsSkin
 							const float& Max = GetMaxUniformScale();
 
 							if (Min == Max)
-								Component->SetRelativeScale3D(Min * FVector::OneVector);
+								Component->SetRelativeScale3D(Min * FVector3d::OneVector);
 							else
-								Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+								Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 						}
 
 						bool FImplSlice::SetSafe(const FString& Context, USceneComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
@@ -247,9 +247,9 @@ namespace NCsSkin
 							const float& Max = GetMaxUniformScale();
 
 							if (Min == Max)
-								Component->SetRelativeScale3D(Min * FVector::OneVector);
+								Component->SetRelativeScale3D(Min * FVector3d::OneVector);
 							else
-								Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector::OneVector);
+								Component->SetRelativeScale3D(FMath::Lerp(Min, Max, FMath::RandRange(0.0f, 1.0f)) * FVector3d::OneVector);
 							return true;
 						}
 					}

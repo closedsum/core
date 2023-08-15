@@ -182,7 +182,7 @@ void FCsClassInstancePropertyMap::CreateMaps(const FName& ClassName, void* Objec
 		else
 		if (FStructProperty* StructProperty = CastField<FStructProperty>(Property))
 		{
-			// FVector
+			// FVector | FVector3d
 			if (StructProperty->Struct == TBaseStructure<FVector>::Get())
 			{
 				TCsFVector_Ref* Vector_Ref = new TCsFVector_Ref();

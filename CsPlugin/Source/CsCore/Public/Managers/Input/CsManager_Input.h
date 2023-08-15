@@ -135,19 +135,19 @@ public:
 
 	FCsManager_Input Manager_Inputs;
 
-	FCsInput* AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+	FCsInput* AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector3f& Location = FVector3f::ZeroVector, const FRotator3f& Rotation = FRotator3f::ZeroRotator);
 
-	void AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value=0.0f, const FVector& Location=FVector::ZeroVector, const FRotator& Rotation=FRotator::ZeroRotator);
+	void AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value=0.0f, const FVector3f& Location=FVector3f::ZeroVector, const FRotator3f& Rotation=FRotator3f::ZeroRotator);
 
 	bool CanAddInput(const FECsInputAction& Action);
 
-	bool TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+	bool TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector3f& Location = FVector3f::ZeroVector, const FRotator3f& Rotation = FRotator3f::ZeroRotator);
 
-	const ECsInputEvent& ProcessInputEvent(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation);
+	const ECsInputEvent& ProcessInputEvent(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector3f& Location, const FRotator3f& Rotation);
 
 	TArray<FCsInput*> QueuedInputsForNextFrame;
 
-	void QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector& Location = FVector::ZeroVector, const FRotator& Rotation = FRotator::ZeroRotator);
+	void QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value = 0.0f, const FVector3f& Location = FVector3f::ZeroVector, const FRotator3f& Rotation = FRotator3f::ZeroRotator);
 
 	void ConsumeInput(const FECsInputAction& Action);
 
@@ -358,7 +358,7 @@ public:
 
 	float GetInputValue(const FECsInputAction& Action);
 
-	FVector GetInputLocation(const FECsInputAction& Action);
+	FVector3f GetInputLocation(const FECsInputAction& Action);
 
 	ECsInputEvent GetInputEvent(const FECsInputAction& Action);
 
@@ -395,9 +395,9 @@ public:
 
 	void OnAction_Released(const FECsInputAction& Action, const FKey& Key);
 
-	void OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Location);
+	void OnTouchAction_Pressed(ETouchIndex::Type Index, FVector3d Location);
 
-	void OnTouchAction_Released(ETouchIndex::Type Index, FVector Location);
+	void OnTouchAction_Released(ETouchIndex::Type Index, FVector3d Location);
 
 	void OnAxis(const FECsInputAction& Action, const float& Value);
 
@@ -418,7 +418,7 @@ public:
 
 	TArray<FECsInputAction> MouseActions;
 	
-	FVector CurrentMousePosition;
+	FVector3f CurrentMousePosition;
 
 #pragma endregion Mouse
 

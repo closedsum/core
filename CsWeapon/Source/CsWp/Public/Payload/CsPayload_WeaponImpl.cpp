@@ -49,17 +49,17 @@ namespace NCsWeapon
 			bAllocated = false;
 			UpdateType = NCsPooledObject::EUpdate::Manager;
 			Instigator = nullptr;
-			Owner = nullptr;
-			Parent = nullptr;
+			Owner	   = nullptr;
+			Parent	   = nullptr;
 
 			Time.Reset();
 
 			PreserveChangesFromDefaultMask = 0;
 
 			// PayloadType NCsWeapon::NPayload::IPayload
-			Type = EMCsWeapon::Get().GetMAX();
+			Type		= EMCsWeapon::Get().GetMAX();
 			UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
-			Transform = FTransform::Identity;
+			Transform	= FTransform3f::Identity;
 		}
 
 		#pragma endregion PooledPayloadType (NCsPooledObject::NPayload::IPayload)

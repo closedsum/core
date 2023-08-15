@@ -79,7 +79,7 @@ namespace NCsFX
 
 			int32 TransformRules;
 
-			FTransform Transform;
+			FTransform3f Transform;
 
 			bool bAbsoluteLocation;
 
@@ -154,7 +154,7 @@ namespace NCsFX
 			FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
-			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const FTransform3f& GetTransform() const { return Transform; }
 			FORCEINLINE const bool& GetbAbsoluteLocation() const { return bAbsoluteLocation; }
 			FORCEINLINE const bool& GetbAbsoluteRotation() const { return bAbsoluteRotation; }
 			FORCEINLINE const bool& GetbAbsoluteScale() const { return bAbsoluteScale; }

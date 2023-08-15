@@ -40,7 +40,7 @@ namespace NCsStaticMesh
 
 				for (int32 I = 0; I < NumInstances; ++I)
 				{
-					Data.SetInstance(I, FMatrix::Identity, 0.0f, LightmapUVBias, ShadowmapUVBias);
+					Data.SetInstance(I, FMatrix44f::Identity, 0.0f, LightmapUVBias, ShadowmapUVBias);
 
 					for (int32 J = 0; J < NumCustomDataFloats; ++J)
 					{
@@ -67,7 +67,7 @@ namespace NCsStaticMesh
 				UInstancedStaticMeshComponent* Component = Payload.GetComponent();
 				const int32& NumInstances				 = Payload.GetNumInstances();
 				const int32& NumCustomDataFloats		 = Payload.GetNumCustomDataFloats();
-				const TArray<FMatrix>& Transforms		 = Payload.GetTransforms();
+				const TArray<FMatrix44f>& Transforms	 = Payload.GetTransforms();
 				const TArray<float>& CustomDatas		 = Payload.GetCustomDatas();
 
 				// Update PerInstanceSMData
@@ -103,12 +103,12 @@ namespace NCsStaticMesh
 	
 				Data.AllocateInstances(NumInstances, NumCustomDataFloats, EResizeBufferFlags::AllowSlackOnReduce, true);
 
-				FVector2D LightmapUVBias  = FVector2D(-1.0f, -1.0f);
-				FVector2D ShadowmapUVBias = FVector2D(-1.0f, -1.0f);
+				FVector2d LightmapUVBias  = FVector2d(-1.0f, -1.0f);
+				FVector2d ShadowmapUVBias = FVector2d(-1.0f, -1.0f);
 
 				for (int32 I = 0; I < NumInstances; ++I)
 				{
-					const FMatrix& Transform = Transforms[I];
+					const FMatrix44f& Transform = Transforms[I];
 
 					Data.SetInstance(I, Transform, 0.0f, LightmapUVBias, ShadowmapUVBias);
 

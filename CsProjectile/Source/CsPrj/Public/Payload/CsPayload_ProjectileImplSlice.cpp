@@ -38,10 +38,10 @@ namespace NCsProjectile
 		void FImplSlice::Reset()
 		{
 			// IPayload
-			Type = EMCsProjectile::Get().GetMAX();
-			Generation = 0;
-			Direction = FVector::ZeroVector;
-			Location = FVector::ZeroVector;
+			Type		= EMCsProjectile::Get().GetMAX();
+			Generation  = 0;
+			Direction	= FVector3f::ZeroVector;
+			Location	= FVector3f::ZeroVector;
 		}
 
 		#pragma endregion ICsReset

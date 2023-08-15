@@ -87,7 +87,7 @@ struct CSCORE_API FCsAnimSequence
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> Anim;
 
-	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
@@ -262,16 +262,16 @@ struct CSCORE_API FCsFpvAnimSequence
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimSequence> AnimVR;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 AnimVR_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -342,7 +342,7 @@ struct CSCORE_API FCsAnimMontage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> Anim;
 
-	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
@@ -504,16 +504,16 @@ struct CSCORE_API FCsFpvAnimMontage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimMontage> AnimVR;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anim3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 AnimVR_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -584,7 +584,7 @@ struct CSCORE_API FCsTArrayAnimMontage
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TArray<TSoftObjectPtr<UAnimMontage>> Anims;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Anims_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Material")
@@ -936,7 +936,7 @@ struct CSCORE_API FCsAnimBlueprint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> Blueprint;
 
-	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blueprint_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Anim")
@@ -1034,16 +1034,16 @@ struct CSCORE_API FCsFpvAnimBlueprint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAnimBlueprint> BlueprintVR;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blueprint1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blueprint3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blueprint3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 BlueprintVR_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1148,7 +1148,7 @@ struct CSCORE_API FCsBlendSpace1D
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> Blend;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1206,16 +1206,16 @@ struct CSCORE_API FCsFpvBlendSpace1D
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace1D> BlendVR;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 BlendVR_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1286,7 +1286,7 @@ struct CSCORE_API FCsBlendSpace
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> Blend;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1346,16 +1346,16 @@ struct CSCORE_API FCsFpvBlendSpace
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UBlendSpace> BlendVR;
 
-	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = Animation, meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 BlendVR_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1426,7 +1426,7 @@ struct CSCORE_API FCsAimOffset
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> Blend;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1471,16 +1471,16 @@ struct CSCORE_API FCsFpvAimOffset
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Anim")
 	TSoftObjectPtr<UAimOffsetBlendSpace> BlendVR;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Blend3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Anim", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 BlendVR_LoadFlags;
 
 	UPROPERTY(Transient)

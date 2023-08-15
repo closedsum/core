@@ -51,7 +51,7 @@ public:
 	FCsSkeletalMeshAnimSequenceOneShot Shot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	FCsPayload_SkeletalMesh_AnimSequence_OneShot() :
 		Instigator(nullptr),
@@ -60,7 +60,7 @@ public:
 		Time(),
 		PreserveChangesFromDefaultMask(0),
 		Shot(),
-		Transform(FTransform::Identity)
+		Transform(FTransform3f::Identity)
 	{
 	}
 
@@ -122,7 +122,7 @@ public:
 	FCsSkeletalMeshAnimMontageOneShot Shot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	FCsPayload_SkeletalMesh_AnimMontage_OneShot() :
 		Instigator(nullptr),
@@ -131,7 +131,7 @@ public:
 		Time(),
 		PreserveChangesFromDefaultMask(0),
 		Shot(),
-		Transform(FTransform::Identity)
+		Transform(FTransform3f::Identity)
 	{
 	}
 

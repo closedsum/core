@@ -30,7 +30,7 @@ void UCsAnimNotify_PlayParticleEffect::PostLoad()
 {
 	Super::PostLoad();
 
-	FX.RotationQuat = FQuat(FX.Rotation);
+	FX.RotationQuat = FQuat4f(FX.Rotation);
 }
 
 #if WITH_EDITOR
@@ -41,7 +41,7 @@ void UCsAnimNotify_PlayParticleEffect::PostEditChangeProperty(FPropertyChangedEv
 	// Rotation
 	if (PropertyName == GET_MEMBER_NAME_CHECKED(FCsAnimNotifyFX, Rotation))
 	{
-		FX.RotationQuat = FQuat(FX.Rotation);
+		FX.RotationQuat = FQuat4f(FX.Rotation);
 	}
 	Super::PostEditChangeProperty(e);
 }
@@ -63,7 +63,7 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 {
 	if (!FX.Particle)
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsAnimNotify_PlayParticleEffect::Notify (%s): No Particle set on Notify for Anim: %s"), *(MeshComp->SkeletalMesh->GetName()), *(Animation->GetName()));
+		UE_LOG(LogCs, Warning, TEXT("UCsAnimNotify_PlayParticleEffect::Notify (%s): No Particle set on Notify for Anim: %s"), *(MeshComp->GetSkeletalMeshAsset()->GetName()), *(Animation->GetName()));
 		return;
 	}
 
@@ -112,8 +112,8 @@ void UCsAnimNotify_PlayParticleEffect::Notify(class USkeletalMeshComponent* Mesh
 		}
 		else
 		{
-			const FTransform MeshTransform = MeshComp->GetSocketTransform(FX.Bone);
-			FTransform SpawnTransform;
+			const FTransform3d MeshTransform = MeshComp->GetSocketTransform(FX.Bone);
+			FTransform3d SpawnTransform;
 			SpawnTransform.SetLocation(MeshTransform.TransformPosition(FX.Location));
 			SpawnTransform.SetRotation(MeshTransform.GetRotation() * FX.RotationQuat);
 			UGameplayStatics::SpawnEmitterAtLocation(MeshComp->GetWorld(), FX.Particle, SpawnTransform);

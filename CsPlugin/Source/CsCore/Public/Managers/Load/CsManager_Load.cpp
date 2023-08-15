@@ -6,6 +6,7 @@
 // Settings
 #include "Managers/Load/CsSettings_Manager_Load.h"
 // Library
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 
@@ -18,6 +19,17 @@
 // static initializations
 UCsManager_Load* UCsManager_Load::s_Instance;
 bool UCsManager_Load::s_bShutdown = false;
+
+namespace NCsManagerLoad
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Load, CleanUp);
+		}
+	}
+}
 
 UCsManager_Load::UCsManager_Load(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -178,13 +190,15 @@ void UCsManager_Load::Initialize()
 
 void UCsManager_Load::CleanUp()
 {
+	using namespace NCsManagerLoad::NCached;
+
+	const FString& Context = Str::CleanUp;
+
+	typedef NCsObject::FLibrary ObjectLibrary;
+
 	for (UObject* O : Tasks)
 	{
-		if (O &&
-			!O->IsPendingKill())
-		{
-			O->MarkPendingKill();
-		}
+		ObjectLibrary::SafeMarkAsGarbage(O);
 	}
 
 	Tasks.Reset();

@@ -19,6 +19,16 @@ namespace NCsCollision
 		* @param OutUV		(out)
 		* return			Whether a valid UV has been found.
 		*/
-		static bool FindUVChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2D& OutUV);
+		static bool FindUVChecked(const FString& Context, const FHitResult& Hit, const int32& UVChannel, FVector2f& OutUV);
+
+	// HitResult
+	#pragma region
+	public:
+
+		static FVector3f GetLocation(const FHitResult& Hit);
+		static FRotator3f GetImpactRotation(const FHitResult& Hit);
+		static FQuat4f GetImpactQuat(const FHitResult& Hit);
+
+	#pragma endregion HitResult
 	};
 }

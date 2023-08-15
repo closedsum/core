@@ -180,21 +180,21 @@ namespace NCsFX
 
 		#define PayloadType NCsFX::NPayload::IPayload
 
-		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, Transform);
 		}
 
-		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location)
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
-			FTransform T = FTransform::Identity;
+			FTransform3f T = FTransform3f::Identity;
 			T.SetTranslation(Location);
 			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, T);
 		}
 
-		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		PayloadType* FLibrary::AllocatePayloadChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			// NOTE: For now only PayloadImplType (PayloadImplType NCsFX::NPayload::FImpl) is supported
 			return AllocatePayloadImplChecked(Context, WorldContext, FX, Transform);
@@ -204,7 +204,7 @@ namespace NCsFX
 
 		#define PayloadImplType NCsFX::NPayload::FImpl
 
-		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			UCsManager_FX* Manager_FX = GetChecked(Context, WorldContext);
 
@@ -296,14 +296,14 @@ namespace NCsFX
 			return Payload;
 		}
 
-		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location)
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location)
 		{
-			FTransform T = FTransform::Identity;
+			FTransform3f T = FTransform3f::Identity;
 			T.SetTranslation(Location);
 			return AllocatePayloadImplChecked(Context, WorldContext, PooledPayload, FX, T);
 		}
 
-		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		PayloadImplType* FLibrary::AllocatePayloadImplChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			UCsManager_FX* Manager_FX = GetChecked(Context, WorldContext);
 
@@ -410,7 +410,7 @@ namespace NCsFX
 
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			// Allocate Payload
 			typedef NCsFX::NPayload::FImpl PayloadImplType;
@@ -420,7 +420,7 @@ namespace NCsFX
 			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -441,7 +441,7 @@ namespace NCsFX
 			return SpawnChecked(Context, WorldContext, PooledPayload, FX, Transform);
 		}
 		
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 
@@ -450,7 +450,7 @@ namespace NCsFX
 			return SafeSpawn(Context, WorldContext, PooledPayload, FX, Transform, nullptr);
 		}
 
-		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector& Location)
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, PooledPayloadType* PooledPayload, const FCsFX& FX, const FVector3f& Location)
 		{
 			// Allocate Payload
 			typedef NCsFX::NPayload::FImpl PayloadImplType;
@@ -471,7 +471,7 @@ namespace NCsFX
 
 		#undef PayloadType
 
-		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsFXActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			// Allocate Payload
 			typedef NCsFX::NPayload::FImpl PayloadImplType;
@@ -481,7 +481,7 @@ namespace NCsFX
 			return GetChecked(Context, WorldContext)->Spawn(FX.Type, Payload);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UObject* ContextRoot = GetSafeContextRoot(Context, WorldContext, Log);
 
@@ -495,7 +495,7 @@ namespace NCsFX
 			return SpawnChecked(Context, WorldContext, FX, Transform);
 		}
 
-		const FCsFXActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsFXActorPooled* FLibrary::SafeSpawn(const UObject* WorldContext, const FCsFX& FX, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			using namespace NCsFX::NManager::NLibrary::NCached;
 

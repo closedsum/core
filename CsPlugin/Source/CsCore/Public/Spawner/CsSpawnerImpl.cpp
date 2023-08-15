@@ -251,12 +251,12 @@ void ACsSpawnerImpl::SetPointCenter(AActor* Center)
 	PointImpl->SetCenter(Center);
 }
 
-void ACsSpawnerImpl::SetPointCenter(const FTransform& Center)
+void ACsSpawnerImpl::SetPointCenter(const FTransform3f& Center)
 {
 	PointImpl->SetCenter(Center);
 }
 
-FTransform ACsSpawnerImpl::PointImpl_GetCurrentTransform()
+FTransform3f ACsSpawnerImpl::PointImpl_GetCurrentTransform()
 {
 	return PointImpl->GetCurrentTransform();
 }

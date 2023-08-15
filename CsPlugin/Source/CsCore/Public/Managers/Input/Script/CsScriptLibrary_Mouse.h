@@ -103,7 +103,7 @@ public:
 	* return					Whether the intersection exists or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Plane"))
-	static bool GetWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FPlane& Plane, FVector& OutIntersection);
+	static bool GetWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 	/**
 	* Perform a trace with the given Request.

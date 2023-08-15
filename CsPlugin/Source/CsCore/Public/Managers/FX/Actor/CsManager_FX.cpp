@@ -288,12 +288,12 @@ void UCsManager_FX::CleanUp()
 		{
 			for (UObject* O : Pool)
 			{
-				if (O && !O->IsPendingKill())
+				if (IsValid(O))
 				{
 					if (AActor* A = Cast<AActor>(O))
 						A->Destroy();
 					else
-						O->MarkPendingKill();
+						O->MarkAsGarbage();
 				}
 			}
 		}

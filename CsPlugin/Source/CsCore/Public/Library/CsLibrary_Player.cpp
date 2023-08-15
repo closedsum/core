@@ -8,6 +8,7 @@
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_World.h"
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Player
 #include "Engine/LocalPlayer.h"
@@ -596,32 +597,40 @@ namespace NCsPlayer
 			return PC->PlayerCameraManager;
 		}
 
-		FVector FLibrary::GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		FVector3f FLibrary::GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
 
-			return Cast<AActor>(PCM)->GetActorLocation();
+			typedef NCsMath::FLibrary MathLibrary;
+
+			return MathLibrary::Convert(Cast<AActor>(PCM)->GetActorLocation());
 		}
 
-		FVector FLibrary::GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
+		FVector3f FLibrary::GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			return GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation();
+			typedef NCsMath::FLibrary MathLibrary;
+
+			return MathLibrary::Convert(GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation());
 		}
 
-		void FLibrary::GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FRotator& OutRotation)
-		{
-			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
-
-			OutLocation = PCM->GetCameraLocation();
-			OutRotation = PCM->GetCameraRotation();
-		}
-
-		void FLibrary::GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector& OutLocation, FVector& OutDirection)
+		void FLibrary::GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FRotator3f& OutRotation)
 		{
 			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
 
-			OutLocation = PCM->GetCameraLocation();
-			OutDirection = PCM->GetCameraRotation().Vector();
+			typedef NCsMath::FLibrary MathLibrary;
+
+			OutLocation = MathLibrary::Convert(PCM->GetCameraLocation());
+			OutRotation = MathLibrary::Convert(PCM->GetCameraRotation());
+		}
+
+		void FLibrary::GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FVector3f& OutDirection)
+		{
+			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
+
+			typedef NCsMath::FLibrary MathLibrary;
+
+			OutLocation  = MathLibrary::Convert(PCM->GetCameraLocation());
+			OutDirection = MathLibrary::Convert(PCM->GetCameraRotation().Vector());
 		}
 	}
 }

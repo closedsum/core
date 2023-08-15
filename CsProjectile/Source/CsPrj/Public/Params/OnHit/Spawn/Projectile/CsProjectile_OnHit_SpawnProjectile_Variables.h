@@ -33,9 +33,9 @@ namespace NCsProjectile
 
 						UObject* Owner;
 
-						FVector Location;
+						FVector3f Location;
 
-						FVector Direction;
+						FVector3f Direction;
 
 						SpawnProjectileOnHitDataType* SpawnProjectileOnHitData;
 						
@@ -63,8 +63,8 @@ namespace NCsProjectile
 							Generation = 0;
 							Instigator = nullptr;
 							Owner = nullptr;
-							Location = FVector::ZeroVector;
-							Direction = FVector::ZeroVector;
+							Location = FVector3f::ZeroVector;
+							Direction = FVector3f::ZeroVector;
 							SpawnProjectileOnHitData = nullptr;
 							OtherActor = nullptr;
 							OtherComp = nullptr;

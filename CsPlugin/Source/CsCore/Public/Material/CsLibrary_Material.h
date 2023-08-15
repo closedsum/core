@@ -819,7 +819,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Vector Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+			static void SetVectorParameterValueChecked(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -829,7 +829,7 @@ namespace NCsMaterial
 			* @param ParamName	Name of the Vector Parameter Value to set.
 			* @param Value		The value to set.
 			*/
-			static void SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static void SetVectorParameterValueChecked(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -841,7 +841,7 @@ namespace NCsMaterial
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeVectorParameterValue(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -851,7 +851,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -863,7 +863,7 @@ namespace NCsMaterial
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SetSafeVectorParameterValue(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -873,7 +873,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -886,7 +886,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MID.
@@ -898,7 +898,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue_MinChecks(UMaterialInstanceDynamic* MID, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -911,7 +911,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue_MinChecks(const FString& Context, const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Safely set the Vector Parameter Value with name: ParamName with value: Value on MIDs.
@@ -923,7 +923,7 @@ namespace NCsMaterial
 			* @param Value		The value to set.
 			* return
 			*/
-			static bool SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector& Value);
+			static bool SetSafeVectorParameterValue_MinChecks(const TArray<UMaterialInstanceDynamic*>& MIDs, const FName& ParamName, const FVector3f& Value);
 
 			/**
 			* Set the Vector Parameter Value with name: ParamName with value: Value on MID.

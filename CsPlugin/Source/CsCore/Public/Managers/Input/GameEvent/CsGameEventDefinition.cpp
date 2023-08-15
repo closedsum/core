@@ -80,7 +80,7 @@ FString FCsGameEventDefinition::PrintSummary() const
 						ValidCompareValue = true;
 					}
 					// Location
-					const FVector& Location					 = CompareValue.Location;
+					const FVector3f& Location					 = CompareValue.Location;
 					const ECsInputLocationRule& LocationRule = CompareValue.LocationRule;
 
 					if (LocationRule != ECsInputLocationRule::None)
@@ -89,7 +89,7 @@ FString FCsGameEventDefinition::PrintSummary() const
 						ValidCompareValue = true;
 					}
 					// Rotation
-					const FRotator& Rotation				 = CompareValue.Rotation;
+					const FRotator3f& Rotation				 = CompareValue.Rotation;
 					const ECsInputRotationRule& RotationRule = CompareValue.RotationRule;
 
 					if (RotationRule != ECsInputRotationRule::None)
@@ -174,7 +174,7 @@ FString FCsGameEventDefinition::PrintSummary() const
 						ValidCompareValue = true;
 					}
 					// Location
-					const FVector& Location					 = CompareValue.Location;
+					const FVector3f& Location					 = CompareValue.Location;
 					const ECsInputLocationRule& LocationRule = CompareValue.LocationRule;
 
 					if (LocationRule != ECsInputLocationRule::None)
@@ -183,7 +183,7 @@ FString FCsGameEventDefinition::PrintSummary() const
 						ValidCompareValue = true;
 					}
 					// Rotation
-					const FRotator& Rotation				 = CompareValue.Rotation;
+					const FRotator3f& Rotation				 = CompareValue.Rotation;
 					const ECsInputRotationRule& RotationRule = CompareValue.RotationRule;
 
 					if (RotationRule != ECsInputRotationRule::None)

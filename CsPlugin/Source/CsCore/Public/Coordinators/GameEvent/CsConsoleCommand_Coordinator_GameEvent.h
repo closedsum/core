@@ -73,7 +73,7 @@ namespace NCsGameEvent
 			bool GetGameEventAndAdvance(const FString& Context, const TCHAR*& StrAsChar, FString& Str, FECsGameEvent& OutValue, const FString& Definition);
 
 			bool GetValue(const FString& Context, const TCHAR*&Str, float& OutValue, const FString& Definition);
-			bool GetLocation(const FString& Context, const TCHAR*& Str, FVector& OutLocation, const FString& Definition);
+			bool GetLocation(const FString& Context, const TCHAR*& Str, FVector3f& OutLocation, const FString& Definition);
 
 		private:
 
@@ -107,7 +107,7 @@ namespace NCsGameEvent
 			* [Group]	  = The route / "group" to direct the GameEvent. See FECsGameEventCoordinatorGroup.
 			* [GameEvent] = The type of GameEvent. See FECsGameEvent.
 			* [Value]	  = Optional float value. Defaults to 0.0f.
-			* [Location]  = Optional FVector value. Defaults to FVector::ZeroVector or FVector(0.0f, 0.0f, 0.0f)
+			* [Location]  = Optional FVector3f value. Defaults to FVector3f::ZeroVector or FVector3f(0.0f, 0.0f, 0.0f)
 			* 
 			* @param Cmd	Console Command
 			* return		Whether the console command was found / executed

@@ -58,7 +58,7 @@ protected:
 	FTickerDelegate	TickDelegate;
 
 	/** Handle to various registered delegates */
-	FDelegateHandle	TickDelegateHandle;
+	FTSTicker::FDelegateHandle	TickDelegateHandle;
 
 	virtual bool Tick(float DeltaSeconds);
 

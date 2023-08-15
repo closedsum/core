@@ -376,14 +376,14 @@ struct CSPRJ_API FCsProjectileMovementFunction
 		return !(*this == B);
 	}
 
-	FORCEINLINE FVector Evaluate(const float &T)
+	FORCEINLINE FVector3f Evaluate(const float &T)
 	{
-		return FVector(X.Evaluate(T), Y.Evaluate(T), Z.Evaluate(T));
+		return FVector3f(X.Evaluate(T), Y.Evaluate(T), Z.Evaluate(T));
 	}
 
-	FORCEINLINE FVector Evaluate(const float &Time, const FVector &Location, const FTransform &Transform)
+	FORCEINLINE FVector3f Evaluate(const float &Time, const FVector3f &Location, const FTransform3f &Transform)
 	{
-		FVector Point = Evaluate(Time);
+		FVector3f Point = Evaluate(Time);
 
 		// Override the Components that are NOT Active
 		if (!X.IsActive)
@@ -393,9 +393,9 @@ struct CSPRJ_API FCsProjectileMovementFunction
 		if (!Z.IsActive)
 			Point.Z += Location.Z;
 
-		FTransform LocalTransform = FTransform::Identity;
+		FTransform3f LocalTransform = FTransform3f::Identity;
 		LocalTransform.SetTranslation(Point);
-		const FTransform WorldTransform = LocalTransform * Transform;
+		const FTransform3f WorldTransform = LocalTransform * Transform;
 
 		return WorldTransform.GetTranslation();
 	}

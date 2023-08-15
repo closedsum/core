@@ -60,7 +60,7 @@ void UCsManager_Gesture::Clear()
 
 	for (int32 I = 0; I < Count; ++I)
 	{
-		if (Gestures[I] && !Gestures[I]->IsPendingKill())
+		if (Gestures[I] && IsValid(Gestures[I]))
 			Gestures[I]->ConditionalBeginDestroy();
 	}
 	Gestures.Reset();

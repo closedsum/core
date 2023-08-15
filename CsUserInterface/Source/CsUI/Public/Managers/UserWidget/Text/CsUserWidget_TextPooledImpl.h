@@ -112,6 +112,10 @@ protected:
 
 	void Handle_RemoveFromViewport();
 
+private:
+
+	FORCEINLINE const UObject* GetWorldContext() const { return this; }
+
 public:
 
 	UPROPERTY(meta = (BindWidget))

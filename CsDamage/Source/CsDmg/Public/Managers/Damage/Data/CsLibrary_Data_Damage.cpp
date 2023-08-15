@@ -94,7 +94,7 @@ namespace NCsDamage
 
 		#undef RangeType
 
-		bool FLibrary::SafeApplyOrientation(const FString& Context, const DataType* Data, FVector& Origin, FVector& Direction, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Data)
 
@@ -103,18 +103,18 @@ namespace NCsDamage
 
 			if (const OrientationDataType* OrientationData = GetSafeInterfaceChecked<OrientationDataType>(Context, Data))
 			{
-				const FVector& Location = OrientationData->GetLocation();
+				const FVector3f& Location = OrientationData->GetLocation();
 
-				if (Location != FVector::ZeroVector)
+				if (Location != FVector3f::ZeroVector)
 				{
-					FVector Right = FVector::ZeroVector;
-					FVector Up    = FVector::UpVector;
+					FVector3f Right = FVector3f::ZeroVector;
+					FVector3f Up    = FVector3f::UpVector;
 					MathLibrary::GetRightAndUpFromNormal(Direction, Right, Up);
 
 					Origin += Location.X * Direction + Location.Y * Right + Location.Z + Up;
 				}
 
-				const FRotator& Rotation = OrientationData->GetRotation();
+				const FRotator3f& Rotation = OrientationData->GetRotation();
 
 				if (Rotation.Yaw != 0.0f)
 				{

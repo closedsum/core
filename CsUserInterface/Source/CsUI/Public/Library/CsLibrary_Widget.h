@@ -101,6 +101,10 @@ namespace NCsWidget
 		static UClass* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 	#pragma endregion Load
+
+	public:
+
+		static void AddToScreenChecked(const FString& Context, const UObject* WorldContext, UWidget* Widget, ULocalPlayer* Player, const int32& ZOrder);
 	};
 
 	namespace NRender
@@ -150,7 +154,16 @@ namespace NCsWidget
 				* @param Widget
 				* return			Position of the Widget.
 				*/
-				static FVector2D GetBySlotChecked(const FString& Context, UWidget* Widget);
+				static FVector2d GetBySlot2dChecked(const FString& Context, UWidget* Widget);
+
+				/**
+				* Get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
+				*
+				* @param Context	The calling context.
+				* @param Widget
+				* return			Position of the Widget.
+				*/
+				static FVector2f GetBySlot2fChecked(const FString& Context, UWidget* Widget);
 
 				/**
 				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -160,7 +173,17 @@ namespace NCsWidget
 				* @param Log
 				* return			Position of the Widget.
 				*/
-				static FVector2D GetSafeBySlot(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static FVector2d GetSafeBySlot2d(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+				/**
+				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
+				*
+				* @param Context	The calling context.
+				* @param Widget
+				* @param Log
+				* return			Position of the Widget.
+				*/
+				static FVector2f GetSafeBySlot2f(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -168,7 +191,15 @@ namespace NCsWidget
 				* @param Widget
 				* return			Position of the Widget.
 				*/
-				static FVector2D GetSafeBySlot(UWidget* Widget);
+				static FVector2d GetSafeBySlot2d(UWidget* Widget);
+
+				/**
+				* Safely get the screen position of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
+				*
+				* @param Widget
+				* return			Position of the Widget.
+				*/
+				static FVector2f GetSafeBySlot2f(UWidget* Widget);
 
 				/**
 				* Get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -177,7 +208,16 @@ namespace NCsWidget
 				* @param Widget
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2D GetAbsoluteByCachedGeometryChecked(const FString& Context, UWidget* Widget);
+				static FVector2d GetAbsoluteByCachedGeometry2dChecked(const FString& Context, UWidget* Widget);
+
+				/**
+				* Get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
+				*
+				* @param Context	The calling context.
+				* @param Widget
+				* return			Absolute position of the Widget.
+				*/
+				static FVector2f GetAbsoluteByCachedGeometry2fChecked(const FString& Context, UWidget* Widget);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -187,7 +227,17 @@ namespace NCsWidget
 				* @param Log
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2D GetSafeAbsoluteByCachedGeometry(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static FVector2d GetSafeAbsoluteByCachedGeometry2d(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+				/**
+				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
+				*
+				* @param Context	The calling context.
+				* @param Widget
+				* @param Log
+				* return			Absolute position of the Widget.
+				*/
+				static FVector2f GetSafeAbsoluteByCachedGeometry2f(const FString& Context, UWidget* Widget, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -195,7 +245,15 @@ namespace NCsWidget
 				* @param Widget
 				* return			Absolute position of the Widget.
 				*/
-				static FVector2D GetSafeAbsoluteByCachedGeometry(UWidget* Widget);
+				static FVector2d GetSafeAbsoluteByCachedGeometry2d(UWidget* Widget);
+
+				/**
+				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
+				*
+				* @param Widget
+				* return			Absolute position of the Widget.
+				*/
+				static FVector2f GetSafeAbsoluteByCachedGeometry2f(UWidget* Widget);
 			};
 		}
 
@@ -212,10 +270,24 @@ namespace NCsWidget
 				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
 				*									  other uses where you need a coordinate in the space of viewport resolution units.
 				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
+				*									  to add another widget to the viewport at the same position in viewport space as this location,
+				*									  this is what you would use.
+				*/
+				static void GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition);
+
+				/**
+				* Get the pixel and viewport position of the Widget by transform the absolute position:
+				* NCsWidget::NScreen::GetAbsoluteByCachedGeometryChecked to viewport space.
+				*
+				* @param Context				The calling context.
+				* @param Widget
+				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
+				*									  other uses where you need a coordinate in the space of viewport resolution units.
+				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
 				*									  to add another widget to the viewport at the same position in viewport space as this location, 
 				*									  this is what you would use.
 				*/
-				static void GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+				static void GetByCachedGeometryChecked(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition);
 
 				/**
 				* Safely get the pixel and viewport position of the Widget by transform the absolute position:
@@ -230,7 +302,22 @@ namespace NCsWidget
 				*									  this is what you would use.
 				* @param Log
 				*/
-				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+				/**
+				* Safely get the pixel and viewport position of the Widget by transform the absolute position:
+				* NCsWidget::NScreen::GetAbsoluteByCachedGeometryChecked to viewport space.
+				*
+				* @param Context	The calling context.
+				* @param Widget
+				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
+				*									  other uses where you need a coordinate in the space of viewport resolution units.
+				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
+				*									  to add another widget to the viewport at the same position in viewport space as this location,
+				*									  this is what you would use.
+				* @param Log
+				*/
+				static void GetSafeByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the viewport position of the Widget by transform the absolute position:
@@ -243,7 +330,20 @@ namespace NCsWidget
 				*									  to add another widget to the viewport at the same position in viewport space as this location,
 				*									  this is what you would use.
 				*/
-				static void GetSafeByCachedGeometry(UWidget* Widget, FVector2D& OutPixelPosition, FVector2D& OutViewportPosition);
+				static void GetSafeByCachedGeometry(UWidget* Widget, FVector2d& OutPixelPosition, FVector2d& OutViewportPosition);
+
+				/**
+				* Safely get the viewport position of the Widget by transform the absolute position:
+				* NCsWidget::NScreen::GetAbsoluteByCachedGeometryChecked to viewport space.
+				*
+				* @param Widget
+				* @param OutPixelPosition		(out) The position in the game's viewport, usable for line traces and
+				*									  other uses where you need a coordinate in the space of viewport resolution units.
+				* @param OutViewportPosition	(out) The position in the space of other widgets in the viewport.  Like if you wanted
+				*									  to add another widget to the viewport at the same position in viewport space as this location,
+				*									  this is what you would use.
+				*/
+				static void GetSafeByCachedGeometry(UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition);
 			};
 		}
 
@@ -264,7 +364,20 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection);
+
+				/**
+				* Get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllderId	The Id of the player's view to use to deproject the Widget's screen position to a world position.
+				* @param Widget
+				* @param OutPosition	(out) Location of the Widget in World Space (convert the Screen Position to World Space).
+				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
+				* return				Whether a valid world position and direction was found.
+				*/
+				static bool GetBySlotChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection);
 
 				/**
 				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -278,7 +391,21 @@ namespace NCsWidget
 				* @param Log
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+				/**
+				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllderId	The Id of the player's view to use to deproject the Widget's screen position to a world position.
+				* @param Widget
+				* @param OutPosition	(out) Location of the Widget in World Space (convert the Screen Position to World Space).
+				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
+				* @param Log
+				* return				Whether a valid world position and direction was found.
+				*/
+				static bool GetSafeBySlot(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
@@ -291,7 +418,20 @@ namespace NCsWidget
 				* @param Log
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection);
+
+				/**
+				* Safely get the world position and direction of the Widget by Cast<UCanvasPanelSlot>(Widget->Slot)->GetAbsolutePosition().
+				*
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllderId	The Id of the player's view to use to deproject the Widget's screen position to a world position.
+				* @param Widget
+				* @param OutPosition	(out) Location of the Widget in World Space (convert the Screen Position to World Space).
+				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
+				* @param Log
+				* return				Whether a valid world position and direction was found.
+				*/
+				static bool GetSafeBySlot(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection);
 
 				/**
 				* Get the world position and direction of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -304,7 +444,20 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection);
+
+				/**
+				* Get the world position and direction of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllderId	The Id of the player's view to use to deproject the Widget's screen position to a world position.
+				* @param Widget
+				* @param OutPosition	(out) Location of the Widget in World Space (convert the Screen Position to World Space).
+				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
+				* return				Whether a valid world position and direction was found.
+				*/
+				static bool GetByCachedGeometryChecked(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -317,7 +470,20 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+				/**
+				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
+				*
+				* @param Context		The calling context.
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllderId	The Id of the player's view to use to deproject the Widget's screen position to a world position.
+				* @param Widget
+				* @param OutPosition	(out) Location of the Widget in World Space (convert the Screen Position to World Space).
+				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
+				* return				Whether a valid world position and direction was found.
+				*/
+				static bool GetSafeByCachedGeometry(const FString& Context, UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 				/**
 				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
@@ -329,7 +495,19 @@ namespace NCsWidget
 				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
 				* return				Whether a valid world position and direction was found.
 				*/
-				static bool GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector& OutPosition, FVector& OutDirection);
+				static bool GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3d& OutPosition, FVector3d& OutDirection);
+
+				/**
+				* Safely get the absolute screen position of the Widget by Widget->GetCachedGeometry()->GetAbsolutionPosition().
+				*
+				* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+				* @param ControllderId	The Id of the player's view to use to deproject the Widget's screen position to a world position.
+				* @param Widget
+				* @param OutPosition	(out) Location of the Widget in World Space (convert the Screen Position to World Space).
+				* @param OutDirection	(out) World space direction vector away from the camera at the Widget's Screen's position.
+				* return				Whether a valid world position and direction was found.
+				*/
+				static bool GetSafeByCachedGeometry(UObject* WorldContext, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection);
 			};
 		}
 	}

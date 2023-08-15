@@ -31,7 +31,7 @@ public:
 
 	/** What position offset to apply to the Start location. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Weapon|Point")
-	FVector Offset;
+	FVector3f Offset;
 
 	FCsPointSequenceWeapon_StartParams() :
 		Type(ECsPointSequenceWeaponStart::Destination),
@@ -70,7 +70,7 @@ namespace NCsWeapon
 					/** Describes how to determine the Start location. */
 					CS_DECLARE_MEMBER_WITH_PROXY(Type, StartType)
 					/** What position offset to apply to the Start location. */
-					CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector)
+					CS_DECLARE_MEMBER_WITH_PROXY(Offset, FVector3f)
 
 				public:
 
@@ -82,7 +82,7 @@ namespace NCsWeapon
 					}
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, StartType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Offset, FVector3f)
 
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsWeapon::FLog::Warning) const;

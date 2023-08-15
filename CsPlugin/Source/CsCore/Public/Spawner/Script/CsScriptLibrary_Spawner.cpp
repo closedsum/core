@@ -144,7 +144,7 @@ bool UCsScriptLibrary_Spawner::PointImpl_SetCenterAsActor(const FString& Context
 	return true;
 }
 
-bool UCsScriptLibrary_Spawner::PointImpl_SetCenterAsTransform(const FString& Context, UObject* Spawner, const FTransform& Center)
+bool UCsScriptLibrary_Spawner::PointImpl_SetCenterAsTransform(const FString& Context, UObject* Spawner, const FTransform3f& Center)
 {
 	using namespace NCsScriptLibrarySpawner::NCached;
 

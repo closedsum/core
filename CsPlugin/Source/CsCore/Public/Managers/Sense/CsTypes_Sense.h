@@ -117,7 +117,7 @@ struct FCsSenseInfo_DEPRECATED
 	// Me to Actor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
-	FVector MeToActorDir;
+	FVector3f MeToActorDir;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDistance;
@@ -126,7 +126,7 @@ struct FCsSenseInfo_DEPRECATED
 	float MeToActorDistanceSq;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
-	FVector MeToActorDirXY;
+	FVector3f MeToActorDirXY;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float MeToActorDistanceXY;
@@ -141,15 +141,15 @@ struct FCsSenseInfo_DEPRECATED
 	float MeToActorAbsDeltaAngle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
-	FRotator MeToActorBodyRotation;
+	FRotator3f MeToActorBodyRotation;
 
 	// View to Actor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
-	FVector ViewToActorDir;
+	FVector3f ViewToActorDir;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
-	FRotator ViewToActorBodyRotation;
+	FRotator3f ViewToActorBodyRotation;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float ViewToActorDot;
@@ -216,10 +216,10 @@ struct FCsSenseInfo_DEPRECATED
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
 	float LastKnown_DistanceToActor;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Sense")
+	UPROPERTY(VisibleAnywhere, Category = "CsCore|Sense")
 	FVector LastKnown_ActorLocation;
 	TCsFVector_Ref LastKnown_ActorLocationHandle;
-	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_LastKnown_ActorLocation, const uint64&, const uint64&, const FVector&);
+	DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnChange_LastKnown_ActorLocation, const uint64&, const uint64&, const FVector3d&);
 	FOnChange_LastKnown_ActorLocation OnChange_LastKnown_ActorLocation_Event;
 
 	FCsSenseInfo_DEPRECATED()
@@ -229,18 +229,18 @@ struct FCsSenseInfo_DEPRECATED
 		Id = MAX_uint64;
 		ObserveeId = MAX_uint64;
 		// Me to Actor
-		MeToActorDir = FVector::ZeroVector;
+		MeToActorDir = FVector3f::ZeroVector;
 		MeToActorDistance = 0.0f;;
 		MeToActorDistanceSq = 0.0f;
-		MeToActorDirXY = FVector::ZeroVector;
+		MeToActorDirXY = FVector3f::ZeroVector;
 		MeToActorDistanceXY = 0.0f;
 		MeToActorDistanceXYSq = 0.0f;
 		MeToActorDot = 0.0f;
 		MeToActorAbsDeltaAngle = 0.0f;
-		MeToActorBodyRotation = FRotator::ZeroRotator;
+		MeToActorBodyRotation = FRotator3f::ZeroRotator;
 		// View to Actor
-		ViewToActorDir = FVector::ZeroVector;
-		ViewToActorBodyRotation = FRotator::ZeroRotator;
+		ViewToActorDir = FVector3f::ZeroVector;
+		ViewToActorBodyRotation = FRotator3f::ZeroRotator;
 		ViewToActorDot = 0.0f;
 		// Sight
 		bSeesActorByRadius= false;
@@ -260,7 +260,7 @@ struct FCsSenseInfo_DEPRECATED
 		TraceRequestId_MeToActorBody = 255;
 		TraceRequestId_MeToActorHead = 255;
 		LastKnown_DistanceToActor = 0.0f;
-		LastKnown_ActorLocation = FVector::ZeroVector;
+		LastKnown_ActorLocation = FVector3d::ZeroVector;
 	}
 
 	~FCsSenseInfo_DEPRECATED()
@@ -353,7 +353,7 @@ public:
 		OnSeesActorHead_Event.Broadcast(Id, ObserveeId, Value);
 	}
 
-	void OnChange_LastKnown_ActorLocation(const FVector &Value)
+	void OnChange_LastKnown_ActorLocation(const FVector3d& Value)
 	{
 		OnChange_LastKnown_ActorLocation_Event.Broadcast(Id, ObserveeId, Value);
 	}

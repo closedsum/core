@@ -323,7 +323,7 @@ struct CSUI_API FCsWidgetActorPooled_CameraInfo
 	/** Any rotation offset to apply after the Widget Actor has been oriented to face
 		the Player Camera. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
 	FCsWidgetActorPooled_CameraInfo() : 
 		LerpRate(0.0f),
@@ -362,7 +362,7 @@ namespace NCsWidgetActor
 			CS_DECLARE_MEMBER_WITH_PROXY(LockAxes, int32)
 			/** Any rotation offset to apply after the Widget Actor has been oriented to face
 				the Player Camera. */
-			CS_DECLARE_MEMBER_WITH_PROXY(Rotation, FRotator)
+			CS_DECLARE_MEMBER_WITH_PROXY(Rotation, FRotator3f)
 
 		public:
 
@@ -378,7 +378,7 @@ namespace NCsWidgetActor
 
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LerpRate, float)
 			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(LockAxes, int32)
-			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rotation, FRotator)
+			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Rotation, FRotator3f)
 
 			bool IsValidChecked(const FString& Context) const;
 			bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const;

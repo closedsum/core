@@ -8,6 +8,22 @@
 
 #include "CsLibrary_Load.generated.h"
 
+namespace NCsLoad
+{
+	struct CSCORE_API FLibrary
+	{
+	public:
+
+	// SoftObjectPath
+	#pragma region
+	public:
+
+		static FName GetAssetPathName(const FSoftObjectPath& Path);
+
+	#pragma endregion SoftObjectPath
+	};
+}
+	
 class ULevel;
 class UDataTable;
 

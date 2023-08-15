@@ -66,7 +66,7 @@ void UCsScriptLibrary_Manager_Trace::Trace(const FString& Context, const UObject
 // Line
 #pragma region
 
-bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)
+bool UCsScriptLibrary_Manager_Trace::LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector3f& Start, const FVector3f& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit)
 {
 	using namespace NCsScriptLibraryManagerTrace::NCached;
 

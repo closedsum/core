@@ -26,11 +26,11 @@ namespace NCsBeam
 
 			virtual const FAttachmentTransformRules& GetAttachRules() const = 0;
 
-			virtual const FVector& GetLocation() const = 0;
+			virtual const FVector3f& GetLocation() const = 0;
 
-			virtual const FVector& GetDirection() const = 0;
+			virtual const FVector3f& GetDirection() const = 0;
 
-			virtual const FVector& GetScale() const = 0;
+			virtual const FVector3f& GetScale() const = 0;
 		};
 	}
 }

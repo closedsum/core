@@ -104,22 +104,22 @@ namespace NCsFX
 		// Vector
 		#pragma region
 
-		const FVector& FLibrary::GetVectorChecked(const FString& Context, const ParameterType* Parameter)
+		const FVector3f& FLibrary::GetVectorChecked(const FString& Context, const ParameterType* Parameter)
 		{
 			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			checkf(Parameter->GetValueType() == EValue::Vector, TEXT("%s: Parameter->GetValueType(): %s != Vector."), *Context, EMValue::Get().ToChar(Parameter->GetValueType()));
 
-			return *(FVector*)(Parameter->GetValuePtr());
+			return *(FVector3f*)(Parameter->GetValuePtr());
 		}
 
-		bool FLibrary::GetSafeVector(const FString& Context, const ParameterType* Parameter, FVector& OutValue)
+		bool FLibrary::GetSafeVector(const FString& Context, const ParameterType* Parameter, FVector3f& OutValue)
 		{
 			CS_IS_PTR_NULL_CHECKED(Parameter)
 
 			if (Parameter->GetValueType() == EValue::Vector)
 			{
-				OutValue = *(FVector*)(Parameter->GetValuePtr());
+				OutValue = *(FVector3f*)(Parameter->GetValuePtr());
 				return true;
 			}
 			return false;

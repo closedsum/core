@@ -43,7 +43,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_I
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_MaxSpeed, ACsProjectilePooledImpl*, Projectile);
 	// FX
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsProjectilePooledImpl_OnOverride_TrailFX, ACsProjectilePooledImpl*, Projectile);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FCsProjectilePooledImpl_OnOverride_ImpactFX, ACsProjectilePooledImpl*, Projectile, UPrimitiveComponent*, HitComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, FVector, NormalImpulse, const FHitResult&, Hit);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FCsProjectilePooledImpl_OnOverride_ImpactFX, ACsProjectilePooledImpl*, Projectile, UPrimitiveComponent*, HitComponent, AActor*, OtherActor, UPrimitiveComponent*, OtherComp, FVector3f, NormalImpulse, const FHitResult&, Hit);
 
 #pragma endregion Delegates
 
@@ -153,7 +153,7 @@ public:
 	void DrawPath(const float& DeltaSeconds);
 	void DrawPath_Internal(const float& DeltaSeconds, const float& Interval, const uint8& SegmentsPerInterval, const float& Thickness);
 
-	virtual FVector EvaluateMovementFunction(const float& Time);
+	virtual FVector3f EvaluateMovementFunction(const float& Time);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsPrj|Projectile")
 	FECsProjectile Type;
@@ -300,7 +300,7 @@ private:
 
 	struct FLaunch_Delayed_Payload
 	{
-		FVector Direction;
+		FVector3f Direction;
 	};
 
 	void Launch_Delayed(const FLaunch_Delayed_Payload& Payload);
@@ -342,13 +342,13 @@ private:
 #pragma region
 public:
 
-	void Movement_SetLocation(const FVector& Location);
+	void Movement_SetLocation(const FVector3f& Location);
 
-	FVector Movement_GetLocation() const;
+	FVector3f Movement_GetLocation() const;
 
-	void Movement_SetRotation(const FRotator& Rotation);
+	void Movement_SetRotation(const FRotator3f& Rotation);
 
-	void Movement_SetVelocity(const FVector& Velocity);
+	void Movement_SetVelocity(const FVector3f& Velocity);
 
 #pragma endregion ICsProjectile_Movement
 
@@ -378,7 +378,7 @@ public:
 
 	virtual bool Tracking_ReacquireDestination() { return false; }
 
-	virtual FVector Tracking_GetDestination() const;
+	virtual FVector3f Tracking_GetDestination() const;
 
 #pragma endregion ICsProjectile_Tracking
 
@@ -439,10 +439,10 @@ public:
 		FORCEINLINE float& GetInitialSpeed() { return GetProxy().GetInitialSpeed(); }
 		FORCEINLINE const float& GetMaxSpeed() const { return GetProxy().GetMaxSpeed(); }
 		FORCEINLINE float& GetMaxSpeed() { return GetProxy().GetMaxSpeed(); }
-		FORCEINLINE const FVector& GetDirection() const { return GetProxy().GetDirection(); }
-		FORCEINLINE FVector& GetDirection() { return GetProxy().GetDirection(); }
-		FORCEINLINE const FVector& GetVelocity() const { return GetProxy().GetVelocity(); }
-		FORCEINLINE FVector& GetVelocity() { return GetProxy().GetVelocity(); }
+		FORCEINLINE const FVector3f& GetDirection() const { return GetProxy().GetDirection(); }
+		FORCEINLINE FVector3f& GetDirection() { return GetProxy().GetDirection(); }
+		FORCEINLINE const FVector3f& GetVelocity() const { return GetProxy().GetVelocity(); }
+		FORCEINLINE FVector3f& GetVelocity() { return GetProxy().GetVelocity(); }
 		FORCEINLINE const float& GetSpeed() const { return GetProxy().GetSpeed(); }
 		FORCEINLINE float& GetSpeed() { return GetProxy().GetSpeed(); }
 		FORCEINLINE const float& GetGravityScale() const { return GetProxy().GetGravityScale(); }
@@ -523,7 +523,7 @@ public:
 
 protected:
 
-	void StartMovementFromData(const FVector& Direction);
+	void StartMovementFromData(const FVector3f& Direction);
 
 	// Tracking
 #pragma region
@@ -565,16 +565,16 @@ public:
 		FORCEINLINE USkeletalMeshComponent*& GetMeshComponent() { return GetProxy().GetMeshComponent(); }
 		FORCEINLINE const FName& GetBone() const { return GetProxy().GetBone(); }
 		FORCEINLINE FName& GetBone() { return GetProxy().GetBone(); }
-		FORCEINLINE const FVector& GetLocation() const { return GetProxy().GetDestination(); }
-		FORCEINLINE FVector& GetLocation() { return GetProxy().GetDestination(); }
+		FORCEINLINE const FVector3f& GetLocation() const { return GetProxy().GetDestination(); }
+		FORCEINLINE FVector3f& GetLocation() { return GetProxy().GetDestination(); }
 		FORCEINLINE const int32& GetID() const { return GetProxy().GetTargetID(); }
 		FORCEINLINE int32& GetID() { return GetProxy().GetTargetID(); }
 		FORCEINLINE const float& GetDuration() const { return GetProxy().GetDuration(); }
 		FORCEINLINE float& GetDuration() { return GetProxy().GetDuration(); }
 		FORCEINLINE const float& GetElapsedTime() const { return GetProxy().GetElapsedTime(); }
 		FORCEINLINE float& GetElapsedTime() { return GetProxy().GetElapsedTime(); }
-		FORCEINLINE const FVector& GetOffset() const { return GetProxy().GetOffset(); }
-		FORCEINLINE FVector& GetOffset() { return GetProxy().GetOffset(); }
+		FORCEINLINE const FVector3f& GetOffset() const { return GetProxy().GetOffset(); }
+		FORCEINLINE FVector3f& GetOffset() { return GetProxy().GetOffset(); }
 		FORCEINLINE const float& GetMinDotThreshold() const { return GetProxy().GetMinDotThreshold(); }
 		FORCEINLINE float& GetMinDotThreshold() { return GetProxy().GetMinDotThreshold(); }
 		FORCEINLINE const float& GetMaxDotBeforeUsingPitch() const { return GetProxy().GetMaxDotBeforeUsingPitch(); }
@@ -700,11 +700,11 @@ protected:
 	int32 HitCount;
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit);
 
-	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit) {}
+	virtual void OnHit_Internal(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit) {}
 
-	void OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	void OnHit_TryImpactVisual(const FString& Context, UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit);
 
 #pragma endregion Collision
 
@@ -757,7 +757,7 @@ protected:
 	void ApplyHitCountModifiers(const FString& Context, const CollisionDataType* CollisionData);
 #undef CollisionDataType
 
-	void StartMovementFromModifiers(const FString& Context, const FVector& Direction);
+	void StartMovementFromModifiers(const FString& Context, const FVector3f& Direction);
 
 #pragma endregion Modifier
 

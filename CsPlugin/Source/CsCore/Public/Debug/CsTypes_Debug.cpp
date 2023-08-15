@@ -6,6 +6,7 @@
 // Library
 #include "Library/CsLibrary_World.h"
 #include "Debug/CsLibrary_Debug_Draw.h"
+#include "Library/CsLibrary_Math.h"
 // Collision
 #include "CollisionShape.h"
 // Engine
@@ -104,15 +105,15 @@ bool FCsDebugDrawBox::CanDraw(const UObject* WorldContext) const
 	return false;
 }
 
-void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform& Transform) const
+void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform3f& Transform) const
 {
 	if (CanDraw(WorldContext))
 	{
-		Draw_Internal(WorldContext, Transform, FVector::ZeroVector);
+		Draw_Internal(WorldContext, Transform, FVector3f::ZeroVector);
 	}
 }
 
-void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const
+void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform3f& Transform, const FVector3f& InExtent) const
 {
 	if (CanDraw(WorldContext))
 	{
@@ -120,16 +121,17 @@ void FCsDebugDrawBox::Draw(const UObject* WorldContext, const FTransform& Transf
 	}
 }
 
-void FCsDebugDrawBox::Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const FVector& InExtent) const
+void FCsDebugDrawBox::Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform, const FVector3f& InExtent) const
 {
 	typedef NCsWorld::FLibrary WorldLibrary;
+	typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 	UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
 	if (bSolid)
-		DrawDebugSolidBox(World, Transform.GetTranslation() + Location, InExtent + Extent, Rotation.Quaternion() * Transform.GetRotation(), Color, false, LifeTime, 0);
+		DrawLibrary::DrawDebugSolidBox(World, Transform.GetTranslation() + Location, InExtent + Extent, Rotation.Quaternion() * Transform.GetRotation(), Color, false, LifeTime, 0);
 	else
-		DrawDebugBox(World, Transform.GetTranslation() + Location, InExtent + Extent, Rotation.Quaternion() * Transform.GetRotation(), Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugBox(World, Transform.GetTranslation() + Location, InExtent + Extent, Rotation.Quaternion() * Transform.GetRotation(), Color, false, LifeTime, 0, Thickness);
 }
 
 #pragma endregion FCsDebugDrawBox
@@ -187,7 +189,7 @@ bool FCsDebugDrawCircle::CanDraw(const UObject* WorldContext, const FECsCVarDraw
 	return false;
 }
 
-void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FTransform& Transform) const
+void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FTransform3f& Transform) const
 {
 	if (CanDraw(WorldContext))
 	{
@@ -195,22 +197,22 @@ void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FTransform& Tra
 	}
 }
 
-void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const
+void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const FVector3f& InLocation, const float& InMinRadius, const float& InMaxRadius) const
 {
 	if (CanDraw(WorldContext, OtherCVar))
 	{
-		FTransform InTransform = FTransform::Identity;
+		FTransform3f InTransform = FTransform3f::Identity;
 		InTransform.SetLocation(InLocation);
 
 		Draw_Internal(WorldContext, InTransform, InMinRadius, InMaxRadius);
 	}
 }
 
-void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const
+void FCsDebugDrawCircle::Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& InMinRadius, const float& InMaxRadius) const
 {
 	if (CanDraw(WorldContext))
 	{
-		FTransform InTransform = FTransform::Identity;
+		FTransform3f InTransform = FTransform3f::Identity;
 		InTransform.SetLocation(InLocation);
 
 		Draw_Internal(WorldContext, InTransform, InMinRadius, InMaxRadius);
@@ -221,8 +223,10 @@ void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const FECsCVarDraw& Other
 {
 	if (CanDraw(Actor, OtherCVar))
 	{
-		FTransform InTransform = FTransform::Identity;
-		InTransform.SetLocation(Actor->GetActorLocation());
+		typedef NCsMath::FLibrary MathLibrary;
+
+		FTransform3f InTransform = FTransform3f::Identity;
+		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, InTransform, InMinRadius, InMaxRadius);
 	}
@@ -232,8 +236,10 @@ void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const float& InMinRadius,
 {
 	if (CanDraw(Actor))
 	{
-		FTransform InTransform = FTransform::Identity;
-		InTransform.SetLocation(Actor->GetActorLocation());
+		typedef NCsMath::FLibrary MathLibrary;
+
+		FTransform3f InTransform = FTransform3f::Identity;
+		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, InTransform, InMinRadius, InMaxRadius);
 	}
@@ -244,14 +250,15 @@ void FCsDebugDrawCircle::DrawAtLocation(AActor* Actor, const float& Radius) cons
 	DrawAtLocation(Actor, Radius, Radius);
 }
 
-void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const
+void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform) const
 {
 	Draw_Internal(WorldContext, Transform, MinRadius, MaxRadius);
 }
 
-void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const
+void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform, const float& InMinRadius, const float& InMaxRadius) const
 {
 	typedef NCsWorld::FLibrary WorldLibrary;
+	typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 	UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
@@ -261,7 +268,7 @@ void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTrans
 	if (Max == 0.0f)
 		return;
 
-	FTransform AdjustedTransfrom = Transform;
+	FTransform3f AdjustedTransfrom = Transform;
 	AdjustedTransfrom.AddToTranslation(Location);
 
 	// Absolute
@@ -273,24 +280,24 @@ void FCsDebugDrawCircle::Draw_Internal(const UObject* WorldContext, const FTrans
 	else
 	if (RotationType == ECsDebugDrawRotation::Offset)
 	{
-		FQuat Quat   = AdjustedTransfrom.GetRotation();
-		FRotator Rot = Quat.Rotator();
+		FQuat4f Quat   = AdjustedTransfrom.GetRotation();
+		FRotator3f Rot = Quat.Rotator();
 		Rot			+= Rotation;
 				
 		AdjustedTransfrom.SetRotation(Rot.Quaternion());
 	}
 
-	FMatrix Matrix = AdjustedTransfrom.ToMatrixNoScale();
+	FMatrix44f Matrix = AdjustedTransfrom.ToMatrixNoScale();
 
 	// Draw Circle
 	if (Min == 0.0f || Min == Max)
 	{
-		DrawDebugCircle(World, Matrix, Max, Segments, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugCircle(World, Matrix, Max, Segments, Color, false, LifeTime, 0, Thickness);
 	}
 	// Draws 2D Donut
 	else
 	{
-		DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
@@ -331,7 +338,7 @@ bool FCsDebugDrawSphere::CanDraw(const UObject* WorldContext) const
 	return false;
 }
 
-void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform& Transform) const
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform3f& Transform) const
 {
 	if (CanDraw(WorldContext))
 	{
@@ -339,7 +346,7 @@ void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform& Tra
 	}
 }
 
-void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform3f& Transform, const float& InMinRadius, const float& InMaxRadius) const
 {
 	if (CanDraw(WorldContext))
 	{
@@ -347,30 +354,31 @@ void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FTransform& Tra
 	}
 }
 
-void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector& InLocation, const float& InMinRadius, const float& InMaxRadius) const
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& InMinRadius, const float& InMaxRadius) const
 {
 	if (CanDraw(WorldContext))
 	{
-		FTransform InTransform = FTransform::Identity;
+		FTransform3f InTransform = FTransform3f::Identity;
 		InTransform.SetLocation(InLocation);
 
 		Draw_Internal(WorldContext, InTransform, InMinRadius, InMaxRadius);
 	}
 }
 
-void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector& InLocation, const float& Radius) const
+void FCsDebugDrawSphere::Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& Radius) const
 {
 	Draw(WorldContext, InLocation, Radius, Radius);
 }
 
-void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform& Transform) const
+void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform) const
 {
 	Draw_Internal(WorldContext, Transform, MinRadius, MaxRadius);
 }
 
-void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform& Transform, const float& InMinRadius, const float& InMaxRadius) const
+void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTransform3f& Transform, const float& InMinRadius, const float& InMaxRadius) const
 {
 	typedef NCsWorld::FLibrary WorldLibrary;
+	typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 	UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
@@ -383,14 +391,14 @@ void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTrans
 	// Draw Sphere
 	if (Min == 0.0f || Min == Max)
 	{
-		DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
 	}
 	// Draw Sphere + 2D Donut
 	else
 	{
-		DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugSphere(World, Transform.GetTranslation() + Location, Max, Segments, Color, false, LifeTime, 0, Thickness);
 
-		FTransform AdjustedTransfrom = Transform;
+		FTransform3f AdjustedTransfrom = Transform;
 		AdjustedTransfrom.AddToTranslation(Location);
 
 		// Absolute
@@ -402,16 +410,16 @@ void FCsDebugDrawSphere::Draw_Internal(const UObject* WorldContext, const FTrans
 		else
 		if (RotationType == ECsDebugDrawRotation::Offset)
 		{
-			FQuat Quat   = AdjustedTransfrom.GetRotation();
-			FRotator Rot = Quat.Rotator();
+			FQuat4f Quat   = AdjustedTransfrom.GetRotation();
+			FRotator3f Rot = Quat.Rotator();
 			Rot			+= Rotation;
 				
 			AdjustedTransfrom.SetRotation(Rot.Quaternion());
 		}
 
-		FMatrix Matrix = AdjustedTransfrom.ToMatrixNoScale();
+		FMatrix44f Matrix = AdjustedTransfrom.ToMatrixNoScale();
 
-		DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebug2DDonut(World, Matrix, Min, Max, 2.0f * Segments, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
@@ -470,7 +478,7 @@ bool FCsDebugDrawPie::CanDraw(const UObject* WorldContext, const FECsCVarDraw& O
 	return false;
 }
 
-void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FTransform& Transform) const
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FTransform3f& Transform) const
 {
 	if (CanDraw(WorldContext))
 	{
@@ -478,7 +486,7 @@ void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FTransform& Transf
 	}
 }
 
-void FCsDebugDrawPie::Draw(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const float& InAngle, const FTransform3f& Transform, const float& InRadius) const
 {
 	if (CanDraw(WorldContext))
 	{
@@ -486,22 +494,22 @@ void FCsDebugDrawPie::Draw(const UObject* WorldContext, const float& InAngle, co
 	}
 }
 
-void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const float& InAngle, const FVector& InLocation, const float& InRadius) const
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FECsCVarDraw& OtherCVar, const float& InAngle, const FVector3f& InLocation, const float& InRadius) const
 {
 	if (CanDraw(WorldContext, OtherCVar))
 	{
-		FTransform InTransform = FTransform::Identity;
+		FTransform3f InTransform = FTransform3f::Identity;
 		InTransform.SetLocation(InLocation);
 
 		Draw_Internal(WorldContext, InAngle, InTransform, InRadius);
 	}
 }
 
-void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FVector& InLocation, const float& InRadius) const
+void FCsDebugDrawPie::Draw(const UObject* WorldContext, const FVector3f& InLocation, const float& InRadius) const
 {
 	if (CanDraw(WorldContext))
 	{
-		FTransform InTransform = FTransform::Identity;
+		FTransform3f InTransform = FTransform3f::Identity;
 		InTransform.SetLocation(InLocation);
 
 		Draw_Internal(WorldContext, Angle, InTransform, InRadius);
@@ -512,8 +520,10 @@ void FCsDebugDrawPie::DrawAtLocation(AActor* Actor, const FECsCVarDraw& OtherCVa
 {
 	if (CanDraw(Actor, OtherCVar))
 	{
-		FTransform InTransform = FTransform::Identity;
-		InTransform.SetLocation(Actor->GetActorLocation());
+		typedef NCsMath::FLibrary MathLibrary;
+
+		FTransform3f InTransform = FTransform3f::Identity;
+		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, Angle, InTransform, InRadius);
 	}
@@ -523,21 +533,24 @@ void FCsDebugDrawPie::DrawAtLocation(AActor* Actor, const float& InRadius) const
 {
 	if (CanDraw(Actor))
 	{
-		FTransform InTransform = FTransform::Identity;
-		InTransform.SetLocation(Actor->GetActorLocation());
+		typedef NCsMath::FLibrary MathLibrary;
+
+		FTransform3f InTransform = FTransform3f::Identity;
+		InTransform.SetLocation(MathLibrary::Convert(Actor->GetActorLocation()));
 
 		Draw_Internal(Actor, Angle, InTransform, InRadius);
 	}
 }
 
-void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform) const
+void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform3f& Transform) const
 {
 	Draw_Internal(WorldContext, InAngle, Transform, Radius);
 }
 
-void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform& Transform, const float& InRadius) const
+void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& InAngle, const FTransform3f& Transform, const float& InRadius) const
 {
 	typedef NCsWorld::FLibrary WorldLibrary;
+	typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 	UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
@@ -547,7 +560,7 @@ void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& In
 	if (InRadius == 0.0f)
 		return;
 
-	FTransform AdjustedTransfrom = Transform;
+	FTransform3f AdjustedTransfrom = Transform;
 	AdjustedTransfrom.AddToTranslation(Location);
 
 	// Absolute
@@ -559,17 +572,17 @@ void FCsDebugDrawPie::Draw_Internal(const UObject* WorldContext, const float& In
 	else
 	if (RotationType == ECsDebugDrawRotation::Offset)
 	{
-		FQuat Quat   = AdjustedTransfrom.GetRotation();
-		FRotator Rot = Quat.Rotator();
+		FQuat4f Quat   = AdjustedTransfrom.GetRotation();
+		FRotator3f Rot = Quat.Rotator();
 		Rot			+= Rotation;
 				
 		AdjustedTransfrom.SetRotation(Rot.Quaternion());
 	}
 
-	const FVector Origin	= AdjustedTransfrom.GetTranslation();
-	const FVector Direction = AdjustedTransfrom.GetRotation().Vector();
+	const FVector3f Origin	= AdjustedTransfrom.GetTranslation();
+	const FVector3f Direction = AdjustedTransfrom.GetRotation().Vector();
 	
-	DrawDebugCone(World, Origin, Direction, InRadius, FMath::DegreesToRadians(InAngle), FMath::DegreesToRadians(1.0f), Segments, Color, false, LifeTime, 0, Thickness);
+	DrawLibrary::DrawDebugCone(World, Origin, Direction, InRadius, FMath::DegreesToRadians(InAngle), FMath::DegreesToRadians(1.0f), Segments, Color, false, LifeTime, 0, Thickness);
 }
 
 #pragma endregion FCsDebugDrawCircle
@@ -605,11 +618,13 @@ bool FCsDebugDrawPoint::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawPoint::Draw(UWorld* World, const FVector& Location) const
+void FCsDebugDrawPoint::Draw(UWorld* World, const FVector3f& Location) const
 {
 	if (CanDraw(World))
 	{
-		DrawDebugSphere(World, Location + Offset, Radius, Segments, Color, false, LifeTime, 0, Thickness);
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
+
+		DrawLibrary::DrawDebugSphere(World, Location + Offset, Radius, Segments, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
@@ -650,15 +665,16 @@ bool FCsDebugDrawLine::CanDraw(const UObject* WorldContext) const
 	return false;
 }
 
-void FCsDebugDrawLine::Draw(const UObject* WorldContext, const FVector& Start, const FVector& End) const
+void FCsDebugDrawLine::Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End) const
 {
 	if (CanDraw(WorldContext))
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 		UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
-		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
@@ -695,34 +711,39 @@ bool FCsDebugDrawLineAndPoint::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawLineAndPoint::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& InLifeTime) const
+void FCsDebugDrawLineAndPoint::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& InLifeTime) const
 {
 	if (CanDraw(World))
 	{
-		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, InLifeTime, 0, Thickness);
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
-		DrawDebugSphere(World, End + EndOffset, Radius, Segments, Color, false, InLifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, InLifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugSphere(World, End + EndOffset, Radius, Segments, Color, false, InLifeTime, 0, Thickness);
 	}
 }
 
-void FCsDebugDrawLineAndPoint::Draw(UWorld* World, const FVector& Start, const FVector& End) const
+void FCsDebugDrawLineAndPoint::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End) const
 {
 	Draw(World, Start, End, LifeTime);
 }
 
-void FCsDebugDrawLineAndPoint::DrawOnlyLine(UWorld* World, const FVector& Start, const FVector& End) const
+void FCsDebugDrawLineAndPoint::DrawOnlyLine(UWorld* World, const FVector3f& Start, const FVector3f& End) const
 {
 	if (CanDraw(World))
 	{
-		DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
+
+		DrawLibrary::DrawDebugLine(World, Start + StartOffset, End + EndOffset, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
-void FCsDebugDrawLineAndPoint::DrawOnlyPoint(UWorld* World, const FVector& Location) const
+void FCsDebugDrawLineAndPoint::DrawOnlyPoint(UWorld* World, const FVector3f& Location) const
 {
 	if (CanDraw(World))
 	{
-		DrawDebugSphere(World, Location + StartOffset, Radius, Segments, Color, false, LifeTime, 0, Thickness);
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
+
+		DrawLibrary::DrawDebugSphere(World, Location + StartOffset, Radius, Segments, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
@@ -763,34 +784,35 @@ bool FCsDebugDrawDirectionArrow::CanDraw(const UObject* WorldContext) const
 	return false;
 }
 
-void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation) const
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector3f& Start, const FRotator3f& InRotation) const
 {
 	Draw(WorldContext, Start, InRotation, Length);
 }
 
-void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FRotator& InRotation, const float& InLength) const
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector3f& Start, const FRotator3f& InRotation, const float& InLength) const
 {
 	if (CanDraw(WorldContext))
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 		UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
-		const FVector NewStart		= Start + StartOffset;
-		const FRotator NewRotation  = RotationType == ECsDebugDrawRotation::Absolute ? InRotation : Rotation + InRotation;
-		const FVector Direction		= NewRotation.Vector();
-		const FVector End			= NewStart + (InLength * Direction) + EndOffset;
+		const FVector3f NewStart		= Start + StartOffset;
+		const FRotator3f NewRotation  = RotationType == ECsDebugDrawRotation::Absolute ? InRotation : Rotation + InRotation;
+		const FVector3f Direction		= NewRotation.Vector();
+		const FVector3f End			= NewStart + (InLength * Direction) + EndOffset;
 
-		DrawDebugDirectionalArrow(World, NewStart, End, Size, Color, false, LifeTime, 0, Thickness);
+		DrawLibrary::DrawDebugDirectionalArrow(World, NewStart, End, Size, Color, false, LifeTime, 0, Thickness);
 	}
 }
 
-void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction, const float& InLength) const
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& Direction, const float& InLength) const
 {
 	Draw(WorldContext, Start, Direction.Rotation(), InLength);
 }
 
-void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector& Start, const FVector& Direction) const
+void FCsDebugDrawDirectionArrow::Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& Direction) const
 {
 	Draw(WorldContext, Start, Direction.Rotation(), Length);
 }
@@ -832,15 +854,16 @@ bool FCsDebugDrawString::CanDraw(const UObject* WorldContext) const
 	return false;
 }
 
-void FCsDebugDrawString::Draw(const UObject* WorldContext, const FVector& Location, const FString& Text) const
+void FCsDebugDrawString::Draw(const UObject* WorldContext, const FVector3f& Location, const FString& Text) const
 {
 	if (CanDraw(WorldContext))
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
 
 		UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
-		DrawDebugString(World, Location, Text, nullptr, Color, LifeTime, bDrawShadow, FontScale);
+		DrawLibrary::DrawDebugString(World, Location, Text, nullptr, Color, LifeTime, bDrawShadow, FontScale);
 	}
 }
 
@@ -881,32 +904,38 @@ bool FCsDebugDrawTraceLine::CanDraw(const UObject* WorldContext) const
 	return false;
 }
 
-void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const FHitResult& Hit) const
+void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End, const FHitResult& Hit) const
 {
 	if (CanDraw(WorldContext))
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;
+		typedef NCsDebug::NDraw::FLibrary DrawLibrary;
+		typedef NCsMath::FLibrary MathLibrary;
 
 		UWorld* World = WorldLibrary::GetSafe(WorldContext);
 
 		if (Hit.bBlockingHit)
 		{
-			DrawDebugLine(World, Start, Hit.ImpactPoint, Color, false, LifeTime, 0 , Thickness);
-			DrawDebugLine(World, Hit.ImpactPoint, End, HitColor, false, LifeTime, 0, Thickness);
-			DrawDebugPoint(World, Hit.ImpactPoint, HitSize, HitColor, false, LifeTime);
+			const FVector3f ImpactPoint = MathLibrary::Convert(Hit.ImpactPoint);
+
+			DrawLibrary::DrawDebugLine(World, Start, ImpactPoint, Color, false, LifeTime, 0 , Thickness);
+			DrawLibrary::DrawDebugLine(World, ImpactPoint, End, HitColor, false, LifeTime, 0, Thickness);
+			DrawLibrary::DrawDebugPoint(World, ImpactPoint, HitSize, HitColor, false, LifeTime);
 		}
 		else
 		{
-			DrawDebugLine(World, Start, End, Color, false, LifeTime, 0, Thickness);
+			DrawLibrary::DrawDebugLine(World, Start, End, Color, false, LifeTime, 0, Thickness);
 		}
 	}
 }
 
-void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector& Start, const FVector& End, const bool& BlockingHit, const FVector& ImpactPoint) const
+void FCsDebugDrawTraceLine::Draw(const UObject* WorldContext, const FVector3f& Start, const FVector3f& End, const bool& BlockingHit, const FVector3f& ImpactPoint) const
 {
+	typedef NCsMath::FLibrary MathLibrary;
+
 	FHitResult Hit;
 	Hit.bBlockingHit = BlockingHit;
-	Hit.ImpactPoint  = ImpactPoint;
+	Hit.ImpactPoint  = MathLibrary::Convert(ImpactPoint);
 
 	Draw(WorldContext, Start, End, Hit);
 }
@@ -944,7 +973,7 @@ bool FCsDebugDrawTraceBox::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawTraceBox::Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const
+void FCsDebugDrawTraceBox::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FVector3f& HalfSize, const FRotator3f& Rotation, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -985,7 +1014,7 @@ bool FCsDebugDrawTraceSphere::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawTraceSphere::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const
+void FCsDebugDrawTraceSphere::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -1026,7 +1055,7 @@ bool FCsDebugDrawTraceCapsule::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawTraceCapsule::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const
+void FCsDebugDrawTraceCapsule::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -1067,7 +1096,7 @@ bool FCsDebugDrawTraceShape::CanDraw(UWorld* World) const
 	return false;
 }
 
-void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FHitResult& Hit) const
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -1075,7 +1104,7 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 	}
 }
 
-void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FVector& HalfSize, const FRotator& Rotation, const FHitResult& Hit) const
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FVector3f& HalfSize, const FRotator3f& Rotation, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -1083,7 +1112,7 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 	}
 }
 
-void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const FHitResult& Hit) const
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -1091,7 +1120,7 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 	}
 }
 
-void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const float& Radius, const float& HalfHeight, const FHitResult& Hit) const
 {
 	if (CanDraw(World))
 	{
@@ -1099,7 +1128,7 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 	}
 }
 
-void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape, const FHitResult& Hit) const
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FCollisionShape* Shape, const FHitResult& Hit) const
 {
 	// Line
 	if (!Shape)
@@ -1108,13 +1137,15 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 	}
 	else
 	{
+		typedef NCsMath::FLibrary MathLibrary;
+
 		// Line
 		if (Shape->IsLine())
 			Draw(World, Start, End, Hit);
 		// Box
 		else
 		if (Shape->IsBox())
-			Draw(World, Start, End, Shape->GetExtent(), FRotator::ZeroRotator, Hit);
+			Draw(World, Start, End, MathLibrary::Convert(Shape->GetExtent()), FRotator3f::ZeroRotator, Hit);
 		// Sphere
 		else
 		if (Shape->IsSphere())
@@ -1126,7 +1157,7 @@ void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVe
 	}
 }
 
-void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector& Start, const FVector& End, const FCollisionShape* Shape) const
+void FCsDebugDrawTraceShape::Draw(UWorld* World, const FVector3f& Start, const FVector3f& End, const FCollisionShape* Shape) const
 {
 	Draw(World, Start, End, Shape, NCsCollision::NHit::Default);
 }

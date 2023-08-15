@@ -55,7 +55,7 @@ namespace NCsDamage
 			* @param Log		(optional)
 			* return
 			*/
-			static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector& Origin, FVector& Direction, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeApplyOrientation(const FString& Context, const DataType* Data, FVector3f& Origin, FVector3f& Direction, void(*Log)(const FString&) = &FCsLog::Warning);
 		};
 
 	#undef DataType

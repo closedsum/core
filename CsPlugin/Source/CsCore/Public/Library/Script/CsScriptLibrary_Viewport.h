@@ -25,7 +25,7 @@ public:
 	* return					Whether the deproject was successful or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Viewport", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ScreenPosition"))
-	static bool DeprojectScreenToWorld(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, FVector& OutWorldPosition, FVector& OutWorldDirection);
+	static bool DeprojectScreenToWorld(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection);
 
 	/**
 	* Safely get the current Size (GetSizeXY()) of the Viewport associated with the First Local Player.
@@ -50,7 +50,7 @@ public:
 	* return					Whether the intersection exists or not.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Viewport", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ScreenPosition,Plane"))
-	static bool GetScreenWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
+	static bool GetScreenWorldIntersection(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 	/**
 	* Perform a trace with the given Request.
@@ -68,5 +68,5 @@ public:
 	* return				Whether the trace was successful or not
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Viewport", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ScreenPosition,Request,Distance"))
-	static bool Trace(const FString& Context, const UObject* WorldContextObject, const FVector2D& ScreenPosition, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse);
+	static bool Trace(const FString& Context, const UObject* WorldContextObject, const FVector2f& ScreenPosition, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse);
 };

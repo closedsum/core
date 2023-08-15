@@ -23,7 +23,7 @@ public:
 	TSoftObjectPtr<UPhysicalMaterial> Material;
 
 	/** */
-	UPROPERTY(EditAnywhere, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	/** Hard reference to a Physics Material. */
@@ -76,7 +76,7 @@ public:
 	TSoftObjectPtr<UPhysicsAsset> Physics;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Physics_LoadFlags;
 
 	/** Hard reference to a Physics Asset. */
@@ -245,7 +245,7 @@ struct CSCORE_API FCsPhysicsImpulse
 	float ImpulseMagnitude;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "CsCore|Physics")
-	FVector Impulse;
+	FVector3f Impulse;
 
 	/** Used in AddForceAtPosition and AddImpulseAtPosition */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Physics")
@@ -310,9 +310,9 @@ struct CSCORE_API FCsPhysicsImpulse
 																	{ \
 																		if (StructProperty->Struct == FCsPhysicsImpulse::StaticStruct()) \
 																		{ \
-																			if (PropertyName == GET_MEMBER_NAME_CHECKED(FRotator, Roll) || \
-																				PropertyName == GET_MEMBER_NAME_CHECKED(FRotator, Pitch) || \
-																				PropertyName == GET_MEMBER_NAME_CHECKED(FRotator, Yaw)) \
+																			if (PropertyName == GET_MEMBER_NAME_CHECKED(FRotator3f, Roll) || \
+																				PropertyName == GET_MEMBER_NAME_CHECKED(FRotator3f, Pitch) || \
+																				PropertyName == GET_MEMBER_NAME_CHECKED(FRotator3f, Yaw)) \
 																				{ \
 																					MemberName.Impulse = MemberName.ImpulseMagnitude * MemberName.ImpulseRotation.Get().Vector(); \
 																				} \

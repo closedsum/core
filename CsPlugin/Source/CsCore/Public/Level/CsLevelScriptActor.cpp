@@ -37,6 +37,7 @@ ACsLevelScriptActor::ACsLevelScriptActor(const FObjectInitializer& ObjectInitial
 // UObject Interface
 #pragma region
 
+/*
 void ACsLevelScriptActor::PreSave(const ITargetPlatform* TargetPlatform)
 {
 	Super::PreSave(TargetPlatform);
@@ -47,6 +48,7 @@ void ACsLevelScriptActor::PreSave(const ITargetPlatform* TargetPlatform)
 	//PopulatePayloadCombined();
 #endif // #if WITH_EDITOR
  }
+ */
 
 void ACsLevelScriptActor::PostLoad()
 {
@@ -66,10 +68,10 @@ void ACsLevelScriptActor::BeginDestroy()
 	ACsLevelScriptActor* DOb = GetClass()->GetDefaultObject<ACsLevelScriptActor>();
 
 	// Remove delegate to listen for Sub-Levels being saved
-	if (FCoreUObjectDelegates::OnObjectSaved.IsBoundToObject(DOb) &&
+	if (FCoreUObjectDelegates::OnObjectPreSave.IsBoundToObject(DOb) &&
 		DOb->OnSubLevelSavedHandle.IsValid())
 	{
-		FCoreUObjectDelegates::OnObjectSaved.Remove(DOb->OnSubLevelSavedHandle);
+		FCoreUObjectDelegates::OnObjectPreSave.Remove(DOb->OnSubLevelSavedHandle);
 
 		DOb->OnSubLevelSavedHandle.Reset();
 	}
@@ -157,13 +159,13 @@ void ACsLevelScriptActor::SetupOnSubLevelSavedDelegate()
 	ACsLevelScriptActor* DOb = GetClass()->GetDefaultObject<ACsLevelScriptActor>();
 
 	// Bind delegate to listen for Sub-Levels being saved
-	if (!FCoreUObjectDelegates::OnObjectSaved.IsBoundToObject(DOb))
+	if (!FCoreUObjectDelegates::OnObjectPreSave.IsBoundToObject(DOb))
 	{
-		OnSubLevelSavedHandle = FCoreUObjectDelegates::OnObjectSaved.AddUObject(DOb, &ACsLevelScriptActor::OnSubLevelSaved);
+		OnSubLevelSavedHandle = FCoreUObjectDelegates::OnObjectPreSave.AddUObject(DOb, &ACsLevelScriptActor::OnSubLevelSaved);
 	}
 }
 
-void ACsLevelScriptActor::OnSubLevelSaved(UObject* Object)
+void ACsLevelScriptActor::OnSubLevelSaved(UObject* Object, FObjectPreSaveContext SaveContext)
 {
 	if (ULevel* Level = Cast<ULevel>(Object))
 	{

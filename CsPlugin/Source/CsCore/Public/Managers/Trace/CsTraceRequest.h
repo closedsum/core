@@ -55,15 +55,15 @@ struct CSCORE_API FCsTraceRequest
 
 	/** The start location of the trace. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
-	FVector Start;
+	FVector3f Start;
 
 	/** The end location of the trace. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
-	FVector End;
+	FVector3f End;
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
-	FRotator Rotation;
+	FRotator3f Rotation;
 
 	/** */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Trace")
@@ -98,9 +98,9 @@ struct CSCORE_API FCsTraceRequest
 		Type(ECsTraceType::ECsTraceType_MAX),
 		Method(ECsTraceMethod::ECsTraceMethod_MAX),
 		Query(ECsTraceQuery::ECsTraceQuery_MAX),
-		Start(FVector::ZeroVector),
-		End(FVector::ZeroVector),
-		Rotation(FRotator::ZeroRotator),
+		Start(FVector3f::ZeroVector),
+		End(FVector3f::ZeroVector),
+		Rotation(FRotator3f::ZeroRotator),
 		Channel(ECollisionChannel::ECC_MAX),
 		ProfileName(NAME_None),
 		Shape(),
@@ -127,9 +127,9 @@ struct CSCORE_API FCsTraceRequest
 		Type = ECsTraceType::ECsTraceType_MAX;
 		Method = ECsTraceMethod::ECsTraceMethod_MAX;
 		Query = ECsTraceQuery::ECsTraceQuery_MAX;
-		Start = FVector::ZeroVector;
-		End = FVector::ZeroVector;
-		Rotation = FRotator::ZeroRotator;
+		Start = FVector3f::ZeroVector;
+		End = FVector3f::ZeroVector;
+		Rotation = FRotator3f::ZeroRotator;
 		Channel = ECollisionChannel::ECC_MAX;
 		ProfileName = NAME_None;
 		Shape.Reset();
@@ -198,13 +198,13 @@ namespace NCsTrace
 			ECsTraceQuery Query;
 
 			/** The start location of the trace. */
-			FVector Start;
+			FVector3f Start;
 
 			/** The end location of the trace. */
-			FVector End;
+			FVector3f End;
 
 			/** */
-			FRotator Rotation;
+			FRotator3f Rotation;
 
 			/** */
 			TEnumAsByte<ECollisionChannel> Channel;
@@ -251,9 +251,9 @@ namespace NCsTrace
 				Type(ECsTraceType::ECsTraceType_MAX),
 				Method(ECsTraceMethod::ECsTraceMethod_MAX),
 				Query(ECsTraceQuery::ECsTraceQuery_MAX),
-				Start(FVector::ZeroVector),
-				End(FVector::ZeroVector),
-				Rotation(FRotator::ZeroRotator),
+				Start(FVector3f::ZeroVector),
+				End(FVector3f::ZeroVector),
+				Rotation(FRotator3f::ZeroRotator),
 				Channel(ECollisionChannel::ECC_MAX),
 				ProfileName(NAME_None),
 				Shape(),
@@ -333,9 +333,9 @@ namespace NCsTrace
 				Type = ECsTraceType::ECsTraceType_MAX;
 				Method = ECsTraceMethod::ECsTraceMethod_MAX;
 				Query = ECsTraceQuery::ECsTraceQuery_MAX;
-				Start = FVector::ZeroVector;
-				End = FVector::ZeroVector;
-				Rotation = FRotator::ZeroRotator;
+				Start = FVector3f::ZeroVector;
+				End = FVector3f::ZeroVector;
+				Rotation = FRotator3f::ZeroRotator;
 				Channel = ECollisionChannel::ECC_MAX;
 				ProfileName = NAME_None;
 				Shape.ShapeType = ECollisionShape::Line;

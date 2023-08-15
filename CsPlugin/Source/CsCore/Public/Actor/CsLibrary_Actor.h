@@ -22,6 +22,18 @@ namespace NCsActor
 			namespace Str
 			{
 				extern CSCORE_API const FString GetSafeByTag;
+				extern CSCORE_API const FString SetScaleChecked;
+				extern CSCORE_API const FString SetSafeScale;
+				// Orientation
+				extern CSCORE_API const FString GetRotationChecked;
+				extern CSCORE_API const FString GetSafeRotation;
+				extern CSCORE_API const FString GetQuatChecked;
+				extern CSCORE_API const FString SetRotationChecked;
+				// Movement
+				extern CSCORE_API const FString GetLocationChecked;
+				extern CSCORE_API const FString SetLocationChecked;
+				extern CSCORE_API const FString SetLocationAndRotationChecked;
+				extern CSCORE_API const FString GetForwardChecked;
 			}
 		}
 	}
@@ -324,8 +336,152 @@ namespace NCsActor
 
 	#pragma endregion Visibility
 
-	// Move
+	public:
+
+		static void SetScaleChecked(const FString& Context, AActor* A, const FVector3f& Scale);
+		FORCEINLINE static void SetScaleChecked(AActor* A, const FVector3f& Scale)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetScaleChecked;
+
+			SetScaleChecked(Context, A, Scale);
+		}
+
+		static bool SetSafeScale(const FString& Context, AActor* A, const FVector3f& Scale, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static bool SetSafeScale(AActor* A, const FVector3f& Scale, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetSafeScale;
+
+			return SetSafeScale(Context, A, Scale, Log);
+		}
+
+	// Orientation
 	#pragma region
+	public:
+
+		static FRotator3f GetRotationChecked(const FString& Context, const AActor* A);
+		FORCEINLINE static FRotator3f GetRotationChecked(const AActor* A)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetRotationChecked;
+
+			return GetRotationChecked(Context, A);
+		}
+
+		static FRotator3f GetSafeRotation(const FString& Context, const AActor* A, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static FRotator3f GetSafeRotation(const AActor* A, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeRotation;
+
+			return GetSafeRotation(Context, A, Log);
+		}
+
+		static FQuat4f GetQuatChecked(const FString& Context, const AActor* A);
+		FORCEINLINE static FQuat4f GetQuatChecked(const AActor* A)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetQuatChecked;
+
+			return GetQuatChecked(Context, A);
+		}
+
+		static void SetRotationChecked(const FString& Context, AActor* A, const FRotator3f& Rotation);
+		FORCEINLINE static void SetRotationChecked(AActor* A, const FRotator3f& Rotation)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetRotationChecked;
+
+			SetRotationChecked(Context, A, Rotation);
+		}
+
+		static void SetRotationChecked(const FString& Context, AActor* A, const FQuat4f& Rotation);
+		FORCEINLINE static void SetRotationChecked(AActor* A, const FQuat4f& Rotation)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetRotationChecked;
+
+			SetRotationChecked(Context, A, Rotation);
+		}
+
+	#pragma endregion Orientation
+
+	// Movement
+	#pragma region
+	public:
+
+		static bool GetSafeLocation(const FString& Context, const AActor* A, FVector3f& OutLocation, void(*Log)(const FString&) = &FCsLog::Warning);
+	
+		static FVector3f GetLocationChecked(const FString& Context, const AActor* A);
+		FORCEINLINE static FVector3f GetLocationChecked(const AActor* A)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetLocationChecked;
+
+			return GetLocationChecked(Context, A);
+		}
+
+		static void SetLocationChecked(const FString& Context, AActor* A, const FVector3f& Location);
+		FORCEINLINE static void SetLocationChecked(AActor* A, const FVector3f& Location)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetLocationChecked;
+
+			SetLocationChecked(Context, A, Location);
+		}
+
+		static bool SetLocationAndRotationChecked(const FString& Context, AActor* A, const FVector3f& Location, const FRotator3f& Rotation);
+		FORCEINLINE static bool SetLocationAndRotationChecked(AActor* A, const FVector3f& Location, const FRotator3f& Rotation)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetLocationAndRotationChecked;
+
+			return SetLocationAndRotationChecked(Context, A, Location, Rotation);
+		}
+
+		static bool SetLocationAndRotationChecked(const FString& Context, AActor* A, const FVector3f& Location, const FQuat4f& Rotation);
+		FORCEINLINE static bool SetLocationAndRotationChecked(AActor* A, const FVector3f& Location, const FQuat4f& Rotation)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::SetLocationAndRotationChecked;
+
+			return SetLocationAndRotationChecked(Context, A, Location, Rotation);
+		}
+
+		static FVector3f GetForwardChecked(const FString& Context, const AActor* A);
+		FORCEINLINE static FVector3f GetForwardChecked(const AActor* A)
+		{
+			using namespace NCsActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetForwardChecked;
+
+			return GetForwardChecked(Context, A);
+		}
+
+		/**
+		 * Used for adding actors to levels or teleporting them to a new location.
+		 * The result of this function is independent of the actor's current location and rotation.
+		 * If the actor doesn't fit exactly at the location specified, tries to slightly move it out of walls and such if bNoCheck is false.
+		 *
+		 * @param DestLocation The target destination point
+		 * @param DestRotation The target rotation at the destination
+		 * @param bIsATest is true if this is a test movement, which shouldn't cause any notifications (used by AI pathfinding, for example)
+		 * @param bNoCheck is true if we should skip checking for encroachment in the world or other actors
+		 * @return true if the actor has been successfully moved, or false if it couldn't fit.
+		 */
+		static bool TeleportToChecked(const FString& Context, AActor* A, const FVector3f& DestLocation, const FRotator3f& DestRotation, const bool& bIsATest = false, const bool& bNoCheck = false);
 
 		// Interp
 	#pragma region
@@ -529,7 +685,7 @@ namespace NCsActor
 		* @param R
 		* return
 		*/
-		static bool IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R);
+		static bool IsDistanceSq2D_LessThanOrEqualChecked(const FString& Context, const AActor* A, const FVector3f& Location, const float& R);
 
 		/**
 		* Safely check if the distance squared 2D between A and Location is Less Than or Equal to R^2 (R squared).
@@ -541,7 +697,7 @@ namespace NCsActor
 		* @param Log		(optional)
 		* return
 		*/
-		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const FVector& Location, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsDistanceSq2D_LessThanOrEqual(const FString& Context, const AActor* A, const FVector3f& Location, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Check if the distance squared 2D between A and Location is Greater Than R^2 (R squared).
@@ -552,7 +708,7 @@ namespace NCsActor
 		* @param R
 		* return
 		*/
-		static bool IsDistanceSq2D_GreaterThanChecked(const FString& Context, const AActor* A, const FVector& Location, const float& R);
+		static bool IsDistanceSq2D_GreaterThanChecked(const FString& Context, const AActor* A, const FVector3f& Location, const float& R);
 
 		/**
 		* Safely check if the distance squared 2D between A and Location is Greater Than R^2 (R squared).
@@ -563,7 +719,7 @@ namespace NCsActor
 		* @param R
 		* return
 		*/
-		static bool SafeIsDistanceSq2D_GreaterThan(const FString& Context, const AActor* A, const FVector& Location, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsDistanceSq2D_GreaterThan(const FString& Context, const AActor* A, const FVector3f& Location, const float& R, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Distance
 
@@ -583,7 +739,7 @@ namespace NCsActor
 		* @param Log			(optional)
 		* return
 		*/
-		static bool GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool GetSafeNormalAtoB(const FString& Context, const AActor* A, const AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Gets the normal 2d between A and B (AB or B - A)
@@ -595,7 +751,7 @@ namespace NCsActor
 		* @param OutDistanceSq	The distance squared between A and B
 		* @param OutDistance
 		*/
-		static void GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+		static void GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance);
 
 		/**
 		* Safely gets the normal 2d between A and B (AB or B - A)
@@ -609,7 +765,7 @@ namespace NCsActor
 		* @param Log			(optional)
 		* return
 		*/
-		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
 		* Gets the normal 2d between A and B (AB or B - A)
@@ -621,7 +777,7 @@ namespace NCsActor
 		* @param OutDistanceSq	The distance squared between A and B
 		* @param OutDistance
 		*/
-		static void GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const FVector& B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance);
+		static void GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const FVector3f& B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance);
 
 		/**
 		* Safely gets the normal 2d between A and B (AB or B - A)
@@ -635,7 +791,7 @@ namespace NCsActor
 		* @param Log			(optional)
 		* return
 		*/
-		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const FVector& B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool GetSafeNormal2DAtoB(const FString& Context, const AActor* A, const FVector3f& B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Normal
 	};

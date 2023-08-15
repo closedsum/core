@@ -178,10 +178,9 @@ void UCsManager_Fade::Initialize()
 
 void UCsManager_Fade::CleanUp()
 {
-	if (FadeWidget &&
-		!FadeWidget->IsPendingKill())
+	if (IsValid(FadeWidget))
 	{
-		FadeWidget->MarkPendingKill();
+		FadeWidget->MarkAsGarbage();
 		FadeWidget = nullptr;
 	}
 }
@@ -204,11 +203,10 @@ void UCsManager_Fade::CreateFadeWidget()
 
 	const FString& Context = Str::CreateFadeWidget;
 
-	if (FadeWidget &&
-		!FadeWidget->IsPendingKill())
+	if (IsValid(FadeWidget))
 	{
 		FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
-		FadeWidget->MarkPendingKill();
+		FadeWidget->MarkAsGarbage();
 		FadeWidget = nullptr;
 
 #if !UE_BUILD_SHIPPING
@@ -373,8 +371,7 @@ void UCsManager_Fade::SafeFade(const ParamsType& Params)
 
 	const FString& Context = Str::SafeFade;
 
-	if (!FadeWidget ||
-		FadeWidget->IsPendingKill())
+	if (!IsValid(FadeWidget))
 	{
 #if !UE_BUILD_SHIPPING
 		if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))

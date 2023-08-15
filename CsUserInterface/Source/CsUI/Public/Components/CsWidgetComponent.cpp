@@ -72,6 +72,6 @@ void UCsWidgetComponent::ConditionalSetWidgetChecked(const FString& Context, UCl
 
 	if (W)
 	{
-		W->MarkPendingKill();
+		W->MarkAsGarbage();
 	}
 }

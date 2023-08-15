@@ -105,7 +105,7 @@ public:
 	float Value;
 
 	UPROPERTY()
-	FVector Location;
+	FVector3f Location;
 
 	UPROPERTY()
 	ECsPlaybackEventRepeatedState RepeatedState;
@@ -114,7 +114,7 @@ public:
 		Group(),
 		Event(),
 		Value(0.0f),
-		Location(FVector::ZeroVector),
+		Location(FVector3f::ZeroVector),
 		RepeatedState(ECsPlaybackEventRepeatedState::None)
 	{
 	}
@@ -144,7 +144,7 @@ public:
 		Group = EMCsGameEventCoordinatorGroup::Get().GetMAX();
 		Event = EMCsGameEvent::Get().GetMAX();
 		Value = 0.0f;
-		Location = FVector::ZeroVector;
+		Location = FVector3f::ZeroVector;
 		RepeatedState = ECsPlaybackEventRepeatedState::None;
 	}
 

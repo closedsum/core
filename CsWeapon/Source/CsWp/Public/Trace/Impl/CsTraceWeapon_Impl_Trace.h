@@ -71,7 +71,7 @@ namespace NCsWeapon
 					*
 					* return Start Location
 					*/
-					DECLARE_DELEGATE_RetVal(FVector, FGetStart);
+					DECLARE_DELEGATE_RetVal(FVector3f, FGetStart);
 
 					/**  Delegate for custom implementation of GetStart(). */
 					FGetStart GetStartImpl;
@@ -81,7 +81,7 @@ namespace NCsWeapon
 					*
 					* return Direction
 					*/
-					DECLARE_DELEGATE_RetVal(FVector, FGetDirection);
+					DECLARE_DELEGATE_RetVal(FVector3f, FGetDirection);
 
 					/** Delegate for custom implementation of GetDirection(). */
 					FGetDirection GetDirectionImpl;
@@ -113,13 +113,13 @@ namespace NCsWeapon
 
 					bool IsValidChecked(const FString& Context);
 
-					FVector GetStart(DataType* Data);
-					FVector GetDirection(DataType* Data, const FVector& Start);
-					FVector GetEnd(DataType* Data, const FVector& Start);
+					FVector3f GetStart(DataType* Data);
+					FVector3f GetDirection(DataType* Data, const FVector3f& Start);
+					FVector3f GetEnd(DataType* Data, const FVector3f& Start);
 
 					void OnHit(const FHitResult& Hit);
 
-					void LineTrace(DataType* Data, const FVector& Start, const FVector& End, FHitResult& OutHit);
+					void LineTrace(DataType* Data, const FVector3f& Start, const FVector3f& End, FHitResult& OutHit);
 
 					FCsScopedTimerHandle TraceScopedHandle;
 

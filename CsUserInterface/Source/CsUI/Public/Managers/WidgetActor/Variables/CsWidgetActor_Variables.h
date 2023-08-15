@@ -94,8 +94,8 @@ namespace NCsWidgetActor
 				float& GetLerpRate();
 				const int32& GetLockAxes() const;
 				int32& GetLockAxes();
-				const FRotator& GetRotation() const;
-				FRotator& GetRotation();
+				const FRotator3f& GetRotation() const;
+				FRotator3f& GetRotation();
 			};
 			
 			FCameraInfo CameraInfo;
@@ -117,14 +117,14 @@ namespace NCsWidgetActor
 
 			FORCEINLINE const int32& GetID() const { return ID; }
 
-			const FVector& GetLastLocation() const;
-			FVector& GetLastLocation();
-			const FVector& GetLocation() const;
-			FVector& GetLocation();
-			const FRotator& GetRotation() const;
-			FRotator& GetRotation();
-			const FQuat& GetOrientation() const;
-			FQuat& GetOrientation();
+			const FVector3f& GetLastLocation() const;
+			FVector3f& GetLastLocation();
+			const FVector3f& GetLocation() const;
+			FVector3f& GetLocation();
+			const FRotator3f& GetRotation() const;
+			FRotator3f& GetRotation();
+			const FQuat4f& GetOrientation() const;
+			FQuat4f& GetOrientation();
 
 			FORCEINLINE void ResolveOrientation() { GetOrientation() = GetRotation().Quaternion(); }
 
@@ -185,11 +185,11 @@ namespace NCsWidgetActor
 
 			TArray<USceneComponent*> RotateComponents;
 
-			TArray<FVector> Last_Locations;
-			TArray<FVector> Locations;
+			TArray<FVector3f> Last_Locations;
+			TArray<FVector3f> Locations;
 
-			TArray<FRotator> Rotations;
-			TArray<FQuat> Orientations;
+			TArray<FRotator3f> Rotations;
+			TArray<FQuat4f> Orientations;
 
 			struct FCameraInfos
 			{
@@ -205,7 +205,7 @@ namespace NCsWidgetActor
 
 				TArray<int32> LockAxes;
 
-				TArray<FRotator> Rotations;
+				TArray<FRotator3f> Rotations;
 
 				FCameraInfos() :
 					Outer(nullptr),
@@ -238,7 +238,7 @@ namespace NCsWidgetActor
 					{
 						LerpRates.Add(0.0f);
 						LockAxes.Add(4); // Roll (1 << 2)
-						Rotations.Add(FRotator::ZeroRotator);
+						Rotations.Add(FRotator3f::ZeroRotator);
 					}
 				}
 
@@ -248,7 +248,7 @@ namespace NCsWidgetActor
 				{
 					LerpRates[Index] = 0.0f;
 					LockAxes[Index]  = 4; // Roll (1 << 2)
-					Rotations[Index] = FRotator::ZeroRotator;
+					Rotations[Index] = FRotator3f::ZeroRotator;
 				}
 
 			};
@@ -296,9 +296,9 @@ namespace NCsWidgetActor
 			FORCEINLINE const TArray<ICsWidgetActor*>& GetWidgetActors() const { return WidgetActors; }
 
 			// Movement
-			FORCEINLINE FVector* GetLocationPtr(const int32& Index) { return &(Locations[Index]); }
-			FORCEINLINE FRotator* GetRotationPtr(const int32& Index) { return &(Rotations[Index]); }
-			FORCEINLINE FQuat* GetOrientationPtr(const int32& Index) { return &(Orientations[Index]); }
+			FORCEINLINE FVector3f* GetLocationPtr(const int32& Index) { return &(Locations[Index]); }
+			FORCEINLINE FRotator3f* GetRotationPtr(const int32& Index) { return &(Rotations[Index]); }
+			FORCEINLINE FQuat4f* GetOrientationPtr(const int32& Index) { return &(Orientations[Index]); }
 
 			void SetSize(const int32& InSize)
 			{
@@ -329,10 +329,10 @@ namespace NCsWidgetActor
 					Variables.AddDefaulted();
 					ActiveIDs.Add(INDEX_NONE);
 					RotateComponents.Add(nullptr);
-					Last_Locations.Add(FVector::ZeroVector);
-					Locations.Add(FVector::ZeroVector);
-					Rotations.Add(FRotator::ZeroRotator);
-					Orientations.Add(FQuat::Identity);
+					Last_Locations.Add(FVector3f::ZeroVector);
+					Locations.Add(FVector3f::ZeroVector);
+					Rotations.Add(FRotator3f::ZeroRotator);
+					Orientations.Add(FQuat4f::Identity);
 				}
 
 				for (int32 I = 0; I < InSize; ++I)
@@ -358,9 +358,9 @@ namespace NCsWidgetActor
 				Variables[Index].Reset();
 				WidgetActors[Index] = nullptr;
 				RotateComponents[Index] = nullptr;
-				Locations[Index] = FVector::ZeroVector;
-				Rotations[Index] = FRotator::ZeroRotator;
-				Orientations[Index] = FQuat::Identity;
+				Locations[Index] = FVector3f::ZeroVector;
+				Rotations[Index] = FRotator3f::ZeroRotator;
+				Orientations[Index] = FQuat4f::Identity;
 				CameraInfos.Reset(Index);
 				Manager_ID.DeallocateAt(Index);
 			}

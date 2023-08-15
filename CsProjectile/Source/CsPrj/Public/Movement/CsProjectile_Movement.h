@@ -17,11 +17,11 @@ class CSPRJ_API ICsProjectile_Movement
 
 public:
 
-	virtual void Movement_SetLocation(const FVector& Location) = 0;
+	virtual void Movement_SetLocation(const FVector3f& Location) = 0;
 
-	virtual FVector Movement_GetLocation() const = 0;
+	virtual FVector3f Movement_GetLocation() const = 0;
 
-	virtual void Movement_SetRotation(const FRotator& Rotation) = 0;
+	virtual void Movement_SetRotation(const FRotator3f& Rotation) = 0;
 
-	virtual void Movement_SetVelocity(const FVector& Velocity) = 0;
+	virtual void Movement_SetVelocity(const FVector3f& Velocity) = 0;
 };

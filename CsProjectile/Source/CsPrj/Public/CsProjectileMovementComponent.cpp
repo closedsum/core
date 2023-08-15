@@ -39,7 +39,7 @@ bool UCsProjectileMovementComponent::ShouldUseSubStepping() const
 }
 
 #define ResultType UProjectileMovementComponent::EHandleBlockingHitResult 
-ResultType UCsProjectileMovementComponent::HandleBlockingHit(const FHitResult& Hit, float TimeTick, const FVector& MoveDelta, float& SubTickTimeRemaining)
+ResultType UCsProjectileMovementComponent::HandleBlockingHit(const FHitResult& Hit, float TimeTick, const FVector3d& MoveDelta, float& SubTickTimeRemaining)
 {
 	ResultType Result = Super::HandleBlockingHit(Hit, TimeTick, MoveDelta, SubTickTimeRemaining);
 

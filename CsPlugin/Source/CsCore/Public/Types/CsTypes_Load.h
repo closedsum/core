@@ -177,7 +177,7 @@ enum class ECsUnloadCode : uint8
 {
 	/** Data implements the interface: ICsData. */
 	RecursiveUnloadData			UMETA(DisplayName = "Recursive Unload Data"),			// 0
-	RecursiveUnloadDataTable	UMETA(DisplayName = "Recursive Unload DataTable", )		// 1
+	RecursiveUnloadDataTable	UMETA(DisplayName = "Recursive Unload DataTable")		// 1
 };
 
 namespace NCsUnloadCodes
@@ -315,8 +315,8 @@ struct CSCORE_API FCsResourceSize
 	void SetBytes(const int32& InBytes)
 	{
 		Bytes	  = InBytes;
-		Kilobytes = Bytes * FMath::Pow(10, -3);
-		Megabytes = Bytes * FMath::Pow(10, -6);
+		Kilobytes = Bytes * FMath::Pow(10.0f, -3.0f);
+		Megabytes = Bytes * FMath::Pow(10.0f, -6.0f);
 	}
 
 	FString ToString() const
@@ -349,7 +349,7 @@ struct CSCORE_API FCsSoftObjectPath
 
 	FORCEINLINE bool operator==(const FCsSoftObjectPath& B) const
 	{
-		return Path.GetAssetPathName() == B.Path.GetAssetPathName() && Path.GetSubPathString() == B.Path.GetSubPathString();
+		return Path.GetAssetPath() == B.Path.GetAssetPath() && Path.GetSubPathString() == B.Path.GetSubPathString();
 	}
 
 	FORCEINLINE bool operator!=(const FCsSoftObjectPath& B) const
@@ -488,12 +488,12 @@ struct CSCORE_API FCsStringAssetReference
 	FString Reference;
 
 	UPROPERTY()
-	FStringAssetReference Reference_Internal;
+	FSoftObjectPath Reference_Internal;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	FCsResourceSize Size;
 
-	FORCEINLINE FStringAssetReference* Get()
+	FORCEINLINE FSoftObjectPath* Get()
 	{
 		return &Reference_Internal;
 	}
@@ -521,7 +521,7 @@ struct CSCORE_API FCsTArrayStringAssetReference
 		Size.Reset();
 	}
 
-	FORCEINLINE void Get(TArray<FStringAssetReference>& OutReferences)
+	FORCEINLINE void Get(TArray<FSoftObjectPath>& OutReferences)
 	{
 		for (const FCsStringAssetReference& Reference : References)
 		{
@@ -560,7 +560,7 @@ struct CSCORE_API FCsDataMappingEntry
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "CsDataInterface"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Load", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Load", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")

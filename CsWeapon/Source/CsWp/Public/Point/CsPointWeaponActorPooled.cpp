@@ -380,6 +380,8 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 	SetActorHiddenInGame(false);
 	SetActorTickEnabled(true);
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	// TODO: May need to streamline this logic slightly
 	
 	// TODO: Set Skin
@@ -399,7 +401,7 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		if (AActor* Actor = Cast<AActor>(Object))
 			Parent = Actor->GetRootComponent();
 
-		const FTransform& Transform = WeaponPayload->GetTransform();
+		const FTransform3f& Transform = WeaponPayload->GetTransform();
 
 		if (Parent)
 		{
@@ -413,7 +415,7 @@ void ACsPointWeaponActorPooled::Allocate(PooledPayloadType* Payload)
 		// NO Parent, set the Actor Transform
 		else
 		{
-			SetActorTransform(Transform);
+			SetActorTransform(MathLibrary::Convert(Transform));
 		}
 	}
 
@@ -460,7 +462,7 @@ void ACsPointWeaponActorPooled::Deallocate()
 
 	StaticMeshComponent->SetComponentTickEnabled(false);
 	StaticMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	StaticMeshComponent->SetRelativeLocation(FVector::ZeroVector);
+	StaticMeshComponent->SetRelativeLocation(FVector3d::ZeroVector);
 	StaticMeshComponent->SetHiddenInGame(true);
 	StaticMeshComponent->ComponentTags.Reset(StaticMeshComponent->ComponentTags.Max());
 
@@ -473,7 +475,7 @@ void ACsPointWeaponActorPooled::Deallocate()
 	SkeletalMeshComponent->SetAnimInstanceClass(nullptr);
 	SkeletalMeshComponent->SetComponentTickEnabled(false);
 	SkeletalMeshComponent->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	SkeletalMeshComponent->SetRelativeLocation(FVector::ZeroVector);
+	SkeletalMeshComponent->SetRelativeLocation(FVector3d::ZeroVector);
 	SkeletalMeshComponent->SetHiddenInGame(false);
 	SkeletalMeshComponent->ComponentTags.Reset(SkeletalMeshComponent->ComponentTags.Max());
 
@@ -1125,10 +1127,10 @@ void ACsPointWeaponActorPooled::FFXImpl::SetPayload(FXPayloadType* Payload, FXDa
 	if (Type == AttachType::None)
 	{
 		// Spawn Location
-		FVector Location = Params.GetbDestinationAsStart() ? Outer->PointImpl.Destination : Outer->PointImpl.Start;
+		FVector3f Location = Params.GetbDestinationAsStart() ? Outer->PointImpl.Destination : Outer->PointImpl.Start;
 
-		FTransform Transform  = PayloadImpl->Transform;
-		FVector Translation   = Transform.GetTranslation();
+		FTransform3f Transform  = PayloadImpl->Transform;
+		FVector3f Translation   = Transform.GetTranslation();
 		Translation			 += Location;
 
 		Transform.SetTranslation(Translation);

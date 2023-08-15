@@ -74,7 +74,7 @@ namespace NCsGrid
 
 			for (int32 I = 0; I < InMaxElements; ++I)
 			{
-				Centers.Add(FVector2D::ZeroVector);
+				Centers.Add(FVector2f::ZeroVector);
 				Radii.Add(0.0f);
 			}
 
@@ -86,8 +86,8 @@ namespace NCsGrid
 			// TODO: Checks
 
 			// Compute the Cell extents [min_tx, min_ty, max_tx, max_ty].
-			const FVector4 qrect	= FVector4(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
-			FVector4 qrect_vec		= qrect;
+			const FVector4f qrect	= FVector4f(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
+			FVector4f qrect_vec		= qrect;
 			const FIntVector4 trect = GetCellIndex4(qrect_vec);
 
 			// Check intersecting Cells
@@ -133,8 +133,8 @@ namespace NCsGrid
 			
 			// Compute the Cell extents [min_tx, min_ty, max_tx, max_ty].
 			const float& Radius		= Radii[ID];
-			const FVector4 qrect	= FVector4(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
-			FVector4 qrect_vec		= qrect;
+			const FVector4f qrect	= FVector4f(CenterX - Radius, CenterY - Radius, CenterX + Radius, CenterY + Radius);
+			FVector4f qrect_vec		= qrect;
 			const FIntVector4 trect = GetCellIndex4(qrect_vec);
 
 			// Check intersecting Cells
@@ -234,8 +234,8 @@ namespace NCsGrid
 			OutResult.InterationCount = 0;
 
 			// Compute the Cell extents [min_tx, min_ty, max_tx, max_ty].
-			const FVector4 qrect	= FVector4(CenterX - HalfWidth, CenterY - HalfHeight, CenterX + HalfWidth, CenterY + HalfHeight);
-			FVector4 qrect_vec		= qrect;
+			const FVector4f qrect	= FVector4f(CenterX - HalfWidth, CenterY - HalfHeight, CenterX + HalfWidth, CenterY + HalfHeight);
+			FVector4f qrect_vec		= qrect;
 			const FIntVector4 trect = GetCellIndex4(qrect_vec);
 
 		#if WITH_EDITOR
@@ -243,8 +243,8 @@ namespace NCsGrid
 			{
 				const FCsSettings_Container_UniformGrid_Debug& Settings = FCsSettings_Container_UniformGrid_Debug::Get();
 
-				FTransform Transform = FTransform::Identity;
-				FVector Center		 = FVector::ZeroVector;
+				FTransform3f Transform = FTransform3f::Identity;
+				FVector3f Center		 = FVector3f::ZeroVector;
 				
 				const float CellWidthBy2 = 0.5f * CellWidth;
 				
@@ -257,7 +257,7 @@ namespace NCsGrid
 
 						Transform.SetTranslation(Center);
 
-						Settings.Cell.Draw(OutResult.WorldContext, Transform, FVector(CellWidth));
+						Settings.Cell.Draw(OutResult.WorldContext, Transform, FVector3f(CellWidth));
 					}
 				}
 			}
@@ -266,9 +266,9 @@ namespace NCsGrid
 			{
 				const FCsSettings_Container_UniformGrid_Debug& Settings = FCsSettings_Container_UniformGrid_Debug::Get();
 
-				FTransform Transform = FTransform::Identity;
-				FVector CellCenter	 = FVector::ZeroVector;
-				FVector ElementCenter = FVector::ZeroVector;
+				FTransform3f Transform  = FTransform3f::Identity;
+				FVector3f CellCenter	= FVector3f::ZeroVector;
+				FVector3f ElementCenter = FVector3f::ZeroVector;
 			
 				const float CellWidthBy2 = 0.5f * CellWidth;
 			
@@ -288,7 +288,7 @@ namespace NCsGrid
 
 							Transform.SetTranslation(CellCenter);
 
-							Settings.Cell.Draw(OutResult.WorldContext, Transform, FVector(CellWidth));
+							Settings.Cell.Draw(OutResult.WorldContext, Transform, FVector3f(CellWidth));
 
 							const int32& StartingIndex = StartingIndices[CellIndex];
 							const int32& Stride		   = Strides[CellIndex];
@@ -403,9 +403,9 @@ namespace NCsGrid
 			int32 Row	 = INDEX_NONE;
 			int32 Column = INDEX_NONE;
 
-			FTransform Transform = FTransform::Identity;
-			FVector CellCenter	 = FVector::ZeroVector;
-			FVector ElementCenter = FVector::ZeroVector;
+			FTransform3f Transform  = FTransform3f::Identity;
+			FVector3f CellCenter	= FVector3f::ZeroVector;
+			FVector3f ElementCenter = FVector3f::ZeroVector;
 
 			const float CellWidthBy2 = 0.5f * CellWidth;
 
@@ -427,7 +427,7 @@ namespace NCsGrid
 
 				Transform.SetTranslation(CellCenter);
 
-				Settings.Cell.Draw(WorldContext, Transform, FVector(CellWidth));
+				Settings.Cell.Draw(WorldContext, Transform, FVector3f(CellWidth));
 
 				const int32& StartingIndex = StartingIndices[CellIndex];
 				const int32& Stride		   = Strides[CellIndex];

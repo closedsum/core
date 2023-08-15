@@ -10,6 +10,7 @@
 #include "Game/CsLibrary_GameInstance.h"
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Viewport.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsUILog.h"
@@ -1045,7 +1046,7 @@ void UCsManager_UserWidget::FSetPositionInViewports::Deallocate(const int32& ID)
 	Manager_ID.DeallocateAt(ID);
 }
 
-void UCsManager_UserWidget::FSetPositionInViewports::UpdateWorldPositionAndOffset(const int32& ID, const FVector& WorldPosition, const FVector2D& Offset)
+void UCsManager_UserWidget::FSetPositionInViewports::UpdateWorldPositionAndOffset(const int32& ID, const FVector3f& WorldPosition, const FVector2f& Offset)
 {
 	checkf(UserWidgets[ID], TEXT(": ID has NOT been allocated and NO UserWidget has been set."));
 
@@ -1093,10 +1094,12 @@ void UCsManager_UserWidget::FSetPositionInViewports::Update(const FCsDeltaTime& 
 
 	// SetPositionInViewport
 	// NOTE: FUTURE: MAYBE: This can be batched?
+	typedef NCsMath::FLibrary MathLibrary;
+
 	for (int32 I = 0; I < AllocatedCount; ++I)
 	{
 		const int32& ID = AllocatedIDs[I];
 
-		UserWidgets[ID]->SetPositionInViewport(ScreenPositions[ID]);
+		UserWidgets[ID]->SetPositionInViewport(MathLibrary::Convert(ScreenPositions[ID]));
 	}
 }

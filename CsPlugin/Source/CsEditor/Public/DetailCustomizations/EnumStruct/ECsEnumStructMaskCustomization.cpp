@@ -7,7 +7,7 @@
 #include "IDetailGroup.h"
 #include "DetailLayoutBuilder.h"
 // AssetRegistry
-#include "AssetRegistryModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Developer/AssetTools/Public/AssetToolsModule.h"
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 // Blueprint

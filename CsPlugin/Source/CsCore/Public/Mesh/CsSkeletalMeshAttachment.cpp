@@ -70,7 +70,7 @@ bool FCsSkeletalMeshAttachment::IsValidChecked(const FString& Context) const
 	// Check Materials is Valid
 	CS_IS_VALID_CHECKED(Materials);
 	// Check Transform is Valid
-	if (!Transform.Equals(FTransform::Identity))
+	if (!Transform.Equals(FTransform3f::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -94,7 +94,7 @@ bool FCsSkeletalMeshAttachment::IsValid(const FString& Context, void(*Log)(const
 	// Check Materials is Valid
 	CS_IS_VALID(Materials)
 	// Check Transform is Valid
-	if (!Transform.Equals(FTransform::Identity))
+	if (!Transform.Equals(FTransform3f::Identity))
 	{
 		if (TransformRules == 0)
 		{
@@ -133,7 +133,7 @@ void FCsSkeletalMeshAttachment::AttachChecked(const FString& Context, USceneComp
 
 		checkf(Component, TEXT("%s: if bSlavePoseComponent == true, then Parent: %s with Class: %s MUST be a USkeletalMeshComponent."), *Context, *(Parent->GetName()), *(Parent->GetClass()->GetName()));
 
-		Child->SetMasterPoseComponent(Component);
+		Child->SetLeaderPoseComponent(Component);
 	}
 	else
 	{
@@ -177,7 +177,7 @@ bool FCsSkeletalMeshAttachment::AttachSafe(const FString& Context, USceneCompone
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: if bSlavePoseComponent == true, then Parent: %s with Class: %s MUST be a USkeletalMeshComponent."), *Context, *(Parent->GetName()), *(Parent->GetClass()->GetName())));
 			return false;
 		}
-		Child->SetMasterPoseComponent(Component);
+		Child->SetLeaderPoseComponent(Component);
 	}
 	else
 	{
@@ -253,7 +253,7 @@ namespace NCsSkeletalMesh
 			CS_IS_TARRAY_EMPTY_CHECKED(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL_CHECKED(GetMaterials(), UMaterialInterface)
 			// Check GetTransform() is Valid
-			if (!GetTransform().Equals(FTransform::Identity))
+			if (!GetTransform().Equals(FTransform3f::Identity))
 			{
 				checkf(GetTransformRules() != 0, TEXT("%s: No GetTransformRules() set for GetTransform(): %s."), *Context, *(GetTransform().ToString()));
 			}
@@ -278,7 +278,7 @@ namespace NCsSkeletalMesh
 			CS_IS_TARRAY_EMPTY(GetMaterials(), UMaterialInterface*)
 			CS_IS_TARRAY_ANY_NULL(GetMaterials(), UMaterialInterface)
 			// Check GetTransform() is Valid
-			if (!GetTransform().Equals(FTransform::Identity))
+			if (!GetTransform().Equals(FTransform3f::Identity))
 			{
 				if (GetTransformRules() == 0)
 				{
@@ -317,7 +317,7 @@ namespace NCsSkeletalMesh
 
 				checkf(Component, TEXT("%s: if GetbSlavePoseComponent() == true, then Parent: %s with Class: %s MUST be a USkeletalMeshComponent."), *Context, *(Parent->GetName()), *(Parent->GetClass()->GetName()));
 
-				Child->SetMasterPoseComponent(Component);
+				Child->SetLeaderPoseComponent(Component);
 			}
 			else
 			{
@@ -361,7 +361,7 @@ namespace NCsSkeletalMesh
 					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: if GetbSlavePoseComponent() == true, then Parent: %s with Class: %s MUST be a USkeletalMeshComponent."), *Context, *(Parent->GetName()), *(Parent->GetClass()->GetName())));
 					return false;
 				}
-				Child->SetMasterPoseComponent(Component);
+				Child->SetLeaderPoseComponent(Component);
 			}
 			else
 			{
@@ -403,7 +403,7 @@ namespace NCsSkeletalMesh
 
 				checkf(Component, TEXT("%s: if GetbSlavePoseComponent() == true, then Parent: %s with Class: %s MUST be a USkeletalMeshComponent."), *Context, *(Parent->GetName()), *(Parent->GetClass()->GetName()));
 
-				Child->SetMasterPoseComponent(Component);
+				Child->SetLeaderPoseComponent(Component);
 			}
 			else
 			{

@@ -205,7 +205,7 @@ namespace NCsInput
 			* @parma Log				(optional)
 			* return					Whether the deproject was successful or not.
 			*/
-			static bool GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector& OutWorldPosition, FVector& OutWorldDirection, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool GetSafeDeprojectToWorld(const FString& Context, const UObject* WorldContext, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Get / Set
 
@@ -229,7 +229,7 @@ namespace NCsInput
 			* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
 			* return					Whether the intersection exists or not.
 			*/
-			static bool GetWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FPlane& Plane, FVector& OutIntersection);
+			static bool GetWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 			/**
 			* Safely get the intersection between the de-projection of the current mouse position (viewport space) to a world ray (location and direction)
@@ -242,7 +242,7 @@ namespace NCsInput
 			* @param Log
 			* return					Whether the intersection exists or not.
 			*/
-			static bool GetSafeWorldIntersection(const FString& Context, const UObject* WorldContext, const FPlane& Plane, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool GetSafeWorldIntersection(const FString& Context, const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the intersection between the de-projection of the current mouse position (viewport space) to a world ray (location and direction)
@@ -253,7 +253,7 @@ namespace NCsInput
 			* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
 			* return					Whether the intersection exists or not.
 			*/
-			static bool GetSafeWorldIntersection(const UObject* WorldContext, const FPlane& Plane, FVector& OutIntersection);
+			static bool GetSafeWorldIntersection(const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 		// Trace
 		#pragma region

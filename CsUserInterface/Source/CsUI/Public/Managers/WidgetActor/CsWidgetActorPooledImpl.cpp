@@ -12,6 +12,7 @@
 	// Pool
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 	// Common
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
@@ -102,14 +103,14 @@ void ACsWidgetActorPooledImpl::BeginPlay()
 void ACsWidgetActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Deallocate_Internal();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(FVector3d::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
 void ACsWidgetActorPooledImpl::OutsideWorldBounds()
 {
 	Deallocate_Internal();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(FVector3d::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
@@ -204,6 +205,8 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 	WidgetComponent->SetHiddenInGame(false);
 	WidgetComponent->SetComponentTickEnabled(true);
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	// If the Parent is set, attach the WidgetComponent to the Parent
 	if (UObject* Parent = Payload->GetParent())
 	{
@@ -224,8 +227,8 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 		{
 			AttachToComponent(ComponentToAttachTo, WidgetActorPayload->GetAttachmentTransformRule(), WidgetActorPayload->GetBone());
 
-			const FTransform& Transform = WidgetActorPayload->GetTransform();
-			const int32& TransformRules = WidgetActorPayload->GetTransformRules();
+			const FTransform3d& Transform = MathLibrary::Convert(WidgetActorPayload->GetTransform());
+			const int32& TransformRules   = WidgetActorPayload->GetTransformRules();
 		
 			// Location | Rotation | Scale
 			if (TransformRules == NCsTransformRules::All)
@@ -254,13 +257,13 @@ void ACsWidgetActorPooledImpl::Allocate(PayloadType* Payload)
 		// NO Component, set the World Transform of the WidgetComponent
 		else
 		{
-			SetActorTransform(WidgetActorPayload->GetTransform());
+			SetActorTransform(MathLibrary::Convert(WidgetActorPayload->GetTransform()));
 		}
 	}
 	// NO Parent, set the World Transform of the WidgetComponent
 	else
 	{
-		SetActorTransform(WidgetActorPayload->GetTransform());
+		SetActorTransform(MathLibrary::Convert(WidgetActorPayload->GetTransform()));
 	}
 }
 

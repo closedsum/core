@@ -156,17 +156,16 @@ namespace NCsSkeletalMeshActor
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NSequence::FOneShot
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetChecked(Context, WorldContext);
-			// Allocate Payload
+
+			typedef NCsSkeletalMeshActor::NPayload::FLibrary PayloadLibrary;
 			typedef NCsSkeletalMeshActor::NPayload::FImpl PayloadImplType;
 
 			PayloadImplType* Payload = Manager_SkeletalMeshActor->AllocatePayload<PayloadImplType>(Shot.GetType());
-			// Set Payload
-			typedef NCsSkeletalMeshActor::NPayload::FLibrary PayloadLibrary;
 
-			checkf(Transform.GetScale3D() != FVector::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context);
+			checkf(Transform.GetScale3D() != FVector3f::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context);
 
 			Payload->Transform = Transform;
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Shot);
@@ -176,7 +175,7 @@ namespace NCsSkeletalMeshActor
 			return nullptr;
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetSafe(Context, WorldContext, Log);
 
@@ -188,9 +187,9 @@ namespace NCsSkeletalMeshActor
 			if (!Shot.IsValid(Context))
 				return nullptr;
 
-			if (Transform.GetScale3D() == FVector::ZeroVector)
+			if (Transform.GetScale3D() == FVector3f::ZeroVector)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context));
 				return nullptr;
 			}
 			return SpawnChecked(Context, WorldContext, PooledPayload, Shot, Transform);
@@ -202,14 +201,14 @@ namespace NCsSkeletalMeshActor
 
 			const FString& Context = Str::SafeSpawn;
 
-			return SafeSpawn(Context, WorldContext, PooledPayload, Shot, FTransform::Identity, nullptr);
+			return SafeSpawn(Context, WorldContext, PooledPayload, Shot, FTransform3f::Identity, nullptr);
 		}
 
 		#undef ShotType
 
 		#define ShotType NCsSkeletalMeshActor::NAnim::NMontage::FOneShot
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetChecked(Context, WorldContext);
 			// Allocate Payload
@@ -219,7 +218,7 @@ namespace NCsSkeletalMeshActor
 			// Set Payload
 			typedef NCsSkeletalMeshActor::NPayload::FLibrary PayloadLibrary;
 
-			checkf(Transform.GetScale3D() != FVector::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context);
+			checkf(Transform.GetScale3D() != FVector3f::ZeroVector, TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context);
 
 			Payload->Transform = Transform;
 			PayloadLibrary::SetChecked(Context, Payload, PooledPayload, Shot);
@@ -229,7 +228,7 @@ namespace NCsSkeletalMeshActor
 			return nullptr;
 		}
 
-		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		const FCsSkeletalMeshActorPooled* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const ShotType& Shot, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_SkeletalMeshActor* Manager_SkeletalMeshActor = GetSafe(Context, WorldContext, Log);
 
@@ -241,9 +240,9 @@ namespace NCsSkeletalMeshActor
 			if (!Shot.IsValid(Context))
 				return nullptr;
 
-			if (Transform.GetScale3D() == FVector::ZeroVector)
+			if (Transform.GetScale3D() == FVector3f::ZeroVector)
 			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector::ZeroVector is NOT Valid."), *Context));
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Transform.GetScale3D() == FVector3f::ZeroVector is NOT Valid."), *Context));
 				return nullptr;
 			}
 			return SpawnChecked(Context, WorldContext, PooledPayload, Shot, Transform);
@@ -255,7 +254,7 @@ namespace NCsSkeletalMeshActor
 
 			const FString& Context = Str::SafeSpawn;
 
-			return SafeSpawn(Context, WorldContext, PooledPayload, Shot, FTransform::Identity, nullptr);
+			return SafeSpawn(Context, WorldContext, PooledPayload, Shot, FTransform3f::Identity, nullptr);
 		}
 
 		#undef ShotType

@@ -138,7 +138,7 @@ namespace NCsUserWidget
 				UserWidgetManagerLibrary::GetChecked(Context, WorldContext)->SetPositionInViewports.Deallocate(ID);
 			}
 
-			void FLibrary::UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector& WorldPosition, const FVector2D& Offset)
+			void FLibrary::UpdateWorldPositionAndOffsetChecked(const FString& Context, const UObject* WorldContext, const int32& ID, const FVector3f& WorldPosition, const FVector2f& Offset)
 			{
 				typedef NCsUserWidget::NManager::FLibrary UserWidgetManagerLibrary;
 

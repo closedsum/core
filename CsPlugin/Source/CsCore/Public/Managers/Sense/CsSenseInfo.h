@@ -108,7 +108,7 @@ FORCEINLINE uint32 GetTypeHash(const FCsSenseInfoKey& b)
 
 struct CSCORE_API FCsSenseInfoValue
 {
-	FVector MeToObject;
+	FVector3f MeToObject;
 
 // Distance
 #pragma region
@@ -128,9 +128,9 @@ public:
 #pragma region
 public:
 
-	FVector Direction;
+	FVector3f Direction;
 
-	FVector DirectionXY;
+	FVector3f DirectionXY;
 
 #pragma endregion Direction
 

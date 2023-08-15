@@ -75,7 +75,7 @@ UObject* UCsScriptLibrary_Manager_FX::FindObject(const FString& Context, UObject
 
 #pragma endregion Pool
 
-int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload, const FTransform& Transform)
+int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldContextObject, const FCsPayload_FX& Payload, const FTransform3f& Transform)
 {
 	using namespace NCsScriptLibraryManagerFX::NCached;
 
@@ -104,7 +104,7 @@ int32 UCsScriptLibrary_Manager_FX::Spawn(const FString& Context, UObject* WorldC
 	// Copy script payload to native payload
 	Payload.CopyToPayloadAsValueChecked(Ctxt, WorldContextObject, PayloadImpl);
 
-	const FTransform& T = PayloadImpl->Transform;
+	const FTransform3f& T = PayloadImpl->Transform;
 
 	PayloadImpl->Transform.SetTranslation(Transform.GetTranslation() + T.GetTranslation());
 	PayloadImpl->Transform.SetRotation(Transform.GetRotation() + T.GetRotation());

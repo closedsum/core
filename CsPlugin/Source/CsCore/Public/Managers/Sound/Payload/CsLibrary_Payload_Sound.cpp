@@ -39,7 +39,7 @@ namespace NCsSound
 		#define PayloadType NCsSound::NPayload::IPayload
 		#define PooledPayloadType NCsPooledObject::NPayload::IPayload
 
-		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		void FLibrary::SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
 
@@ -55,7 +55,7 @@ namespace NCsSound
 			}
 		}
 		
-		bool FLibrary::SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Payload)
 
@@ -73,7 +73,7 @@ namespace NCsSound
 			return false;
 		}
 
-		bool FLibrary::SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		bool FLibrary::SetSafe(PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 
@@ -125,12 +125,10 @@ namespace NCsSound
 
 		#define PayloadImplType NCsSound::NPayload::FImpl
 
-		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		void FLibrary::SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			CS_IS_PTR_NULL_CHECKED(Payload)
-
 			CS_IS_PTR_NULL_CHECKED(PooledPayload)
-
 			CS_IS_VALID_CHECKED(Sound);
 
 			// PooledPayloadType (NCsPooledObject::NPayload::IPayload)
@@ -156,7 +154,7 @@ namespace NCsSound
 			Payload->Transform.SetScale3D(Transform.GetScale3D() * Sound.Transform.GetScale3D());
 		}
 		
-		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Payload)
 			CS_IS_PTR_NULL(PooledPayload)
@@ -166,7 +164,7 @@ namespace NCsSound
 			return true;
 		}
 
-		bool FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform& Transform /*=FTransform::Identity*/)
+		bool FLibrary::SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsSound& Sound, const FTransform3f& Transform /*=FTransform3f::Identity*/)
 		{
 			using namespace NCsSound::NPayload::NLibrary::NCached;
 

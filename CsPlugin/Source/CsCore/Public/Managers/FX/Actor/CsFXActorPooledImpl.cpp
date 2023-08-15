@@ -458,11 +458,11 @@ void UCsFXActorPooledImpl::Handle_AttachAndSetTransform(PooledPayloadType* Paylo
 	if (AActor* Actor = Cast<AActor>(Object))
 		Parent = Actor->GetRootComponent();
 
-	FTransform Transform = FXPayload->GetTransform();
+	FTransform3f Transform = FXPayload->GetTransform();
 
 	if (!FXPayload->ShouldApplyTransformScale())
 	{
-		Transform.SetScale3D(FVector::OneVector);	
+		Transform.SetScale3D(FVector3f::OneVector);
 	}
 
 	const int32& TransformRules = FXPayload->GetTransformRules();
@@ -637,7 +637,9 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 	UCsManager_FX* Manager_FX = Cast<UCsManager_FX>(GetOuter());
 	const bool IsBeginningShutdown		  = Manager_FX->IsBeginningShutdown();
 
-	FNiagaraSystemInstance* System = FX->GetNiagaraComponent()->GetSystemInstance();
+	typedef NCsFX::FLibrary FXLibrary;
+
+	FNiagaraSystemInstance* System = FXLibrary::GetSafeSystemInstance(Context, FX->GetNiagaraComponent(), nullptr);
 
 	bool WaitForSystem = false;
 	
@@ -676,10 +678,10 @@ void UCsFXActorPooledImpl::WaitForSystemComplete()
 
 	if (WaitForSystem)
 	{
-		System->WaitForAsyncTickDoNotFinalize(false);
+		System->WaitForConcurrentTickDoNotFinalize(false);
 	}
 
-	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FX->GetNiagaraComponent()->GetSystemSimulation();
+	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> Simulation = FXLibrary::GetSafeSystemSimulation(Context, FX->GetNiagaraComponent(), nullptr);
 
 #if WITH_EDITOR
 	/*
@@ -730,7 +732,7 @@ void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 			FXComponent->SetUsingAbsoluteScale(false);
 
 			FX->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			FX->SetActorRelativeTransform(FTransform::Identity);
+			FX->SetActorRelativeTransform(FTransform3d::Identity);
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeHelper::GetAttachAsMask(Mask));
 			CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 			AttachToBone = NAME_None;
@@ -747,7 +749,7 @@ void UCsFXActorPooledImpl::Handle_ClearAttachAndTransform()
 	}
 	else
 	{
-		FX->SetActorRelativeTransform(FTransform::Identity);
+		FX->SetActorRelativeTransform(FTransform3d::Identity);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::Transform);
 		ChangeCounter::Get().AddCleared();
 	}

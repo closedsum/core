@@ -73,10 +73,10 @@ namespace NCsMath
 	// Segment
 	#pragma region
 
-	FVector FLibrary::ClosestPointOnSegment(const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT)
+	FVector3f FLibrary::ClosestPointOnSegment(const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT)
 	{
-		const FVector Segment	  = EndPoint - StartPoint;
-		const FVector VectToPoint = Point - StartPoint;
+		const FVector3f Segment	  = EndPoint - StartPoint;
+		const FVector3f VectToPoint = Point - StartPoint;
 
 		// See if closest point is before StartPoint
 		const float Dot1 = VectToPoint | Segment;
@@ -99,14 +99,14 @@ namespace NCsMath
 		return StartPoint + Segment * OutT;
 	}
 
-	FVector FLibrary::ClosestPointOnSegmentChecked(const FString& Context, const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT)
+	FVector3f FLibrary::ClosestPointOnSegmentChecked(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT)
 	{
 		checkf(StartPoint != EndPoint, TEXT("%s: StartPoint == Endpoint"), *Context);
 
 		return ClosestPointOnSegment(Point, StartPoint, EndPoint, OutT);
 	}
 
-	FVector FLibrary::SafeClosestPointOnSegment(const FString& Context, const FVector& Point, const FVector& StartPoint, const FVector& EndPoint, float& OutT, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	FVector3f FLibrary::SafeClosestPointOnSegment(const FString& Context, const FVector3f& Point, const FVector3f& StartPoint, const FVector3f& EndPoint, float& OutT, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		if (StartPoint == EndPoint)
 		{
@@ -120,14 +120,14 @@ namespace NCsMath
 	// Plane
 	#pragma region
 
-	bool FLibrary::IsValidChecked(const FString& Context, const FPlane& Plane)
+	bool FLibrary::IsValidChecked(const FString& Context, const FPlane4f& Plane)
 	{
 		// Check Normal is Valid
 		checkf(Plane.GetNormal().IsNormalized(), TEXT("%s: Plane.GetNormal() is NOT normalized."), *Context);
 		return true;
 	}
 
-	bool FLibrary::IsValid(const FString& Context, const FPlane& Plane, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::IsValid(const FString& Context, const FPlane4f& Plane, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		// Check Normal is Valid
 		if (!Plane.GetNormal().IsNormalized())
@@ -143,32 +143,32 @@ namespace NCsMath
 	// Intersection
 	#pragma region
 
-	bool FLibrary::RayPlaneIntersectionChecked(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection)
+	bool FLibrary::RayPlaneIntersectionChecked(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection)
 	{
 		check(Ray.IsValidChecked(Context));
 
 		check(IsValidChecked(Context, Plane));
 
-		const FVector& RayDir	  = Ray.End - Ray.Origin;
-		const FVector PlaneNormal = Plane.GetNormal();
+		const FVector3f& RayDir	  = Ray.End - Ray.Origin;
+		const FVector3f PlaneNormal = Plane.GetNormal();
 
 		// Check ray is not parallel to plane
 		if ((RayDir | PlaneNormal) == 0.0f)
 		{
 			OutT = -1.0f;
-			OutIntersection = FVector::ZeroVector;
+			OutIntersection = FVector3f::ZeroVector;
 			return false;
 		}
 
-		const FVector& PlaneOrigin = Plane.GetOrigin();
-		const FVector& LineStart   = Ray.Origin;
+		const FVector3f& PlaneOrigin = Plane.GetOrigin();
+		const FVector3f& LineStart   = Ray.Origin;
 
 		OutT = (((PlaneOrigin - LineStart) | PlaneNormal) / (RayDir | PlaneNormal));
 
 		// Check intersection is not outside line segment
 		if (OutT < 0.0f || OutT > 1.0f)
 		{
-			OutIntersection = FVector::ZeroVector;
+			OutIntersection = FVector3f::ZeroVector;
 			return false;
 		}
 
@@ -177,7 +177,7 @@ namespace NCsMath
 		return true;
 	}
 
-	bool FLibrary::SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeRayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		if (!Ray.IsValid(Context, Log))
 			return false;
@@ -188,9 +188,9 @@ namespace NCsMath
 		return RayPlaneIntersectionChecked(Context, Ray, Plane, OutT, OutIntersection);
 	}
 
-	bool FLibrary::SegmentPlaneIntersection(const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint)
+	bool FLibrary::SegmentPlaneIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint)
 	{
-		OutT = FMath::GetTForSegmentPlaneIntersect(StartPoint, EndPoint, Plane);
+		OutT = GetTForSegmentPlaneIntersect(StartPoint, EndPoint, Plane);
 		// If the parameter value is not between 0 and 1, there is no intersection
 		if (OutT > -KINDA_SMALL_NUMBER && OutT < 1.f + KINDA_SMALL_NUMBER)
 		{
@@ -200,7 +200,7 @@ namespace NCsMath
 		return false;
 	}
 
-	bool FLibrary::SegmentPlaneIntersectionChecked(const FString& Context, const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint)
+	bool FLibrary::SegmentPlaneIntersectionChecked(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint)
 	{
 		checkf(StartPoint != EndPoint, TEXT("%s: StartPoint == EndPoint."), *Context);
 
@@ -209,7 +209,7 @@ namespace NCsMath
 		return SegmentPlaneIntersection(StartPoint, EndPoint, Plane, OutT, OutIntersectionPoint);
 	}
 
-	bool FLibrary::SafeSegmentPlaneIntersection(const FString& Context, const FVector& StartPoint, const FVector& EndPoint, const FPlane& Plane, float& OutT, FVector& OutIntersectionPoint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeSegmentPlaneIntersection(const FString& Context, const FVector3f& StartPoint, const FVector3f& EndPoint, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersectionPoint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		if (StartPoint == EndPoint)
 		{
@@ -223,23 +223,23 @@ namespace NCsMath
 		return SegmentPlaneIntersection(StartPoint, EndPoint, Plane, OutT, OutIntersectionPoint);
 	}
 
-	bool FLibrary::SegmentQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal)
+	bool FLibrary::SegmentQuadIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& D, float& OutT, FVector3f& OutIntersectPoint, FVector3f& OutNormal)
 	{
-		FVector Edge1(B - A);
+		FVector3f Edge1(B - A);
 		Edge1.Normalize();
-		FVector Edge2(C - A);
+		FVector3f Edge2(C - A);
 		Edge2.Normalize();
-		FVector TriNormal = Edge2 ^ Edge1;
+		FVector3f TriNormal = Edge2 ^ Edge1;
 		TriNormal.Normalize();
 
-		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, FPlane(A, TriNormal), OutT, OutIntersectPoint);
+		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, FPlane4f(A, TriNormal), OutT, OutIntersectPoint);
 		if (!Collide)
 		{
 			return false;
 		}
 
 		// Check Triangle ABC
-		FVector BaryCentric = FMath::ComputeBaryCentric2D(OutIntersectPoint, A, B, C);
+		FVector3f BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, B, C);
 		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
 		{
 			OutNormal = TriNormal;
@@ -247,7 +247,7 @@ namespace NCsMath
 		}
 
 		// Check Triangle ADC
-		BaryCentric = FMath::ComputeBaryCentric2D(OutIntersectPoint, A, D, C);
+		BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, D, C);
 		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
 		{
 			OutNormal = TriNormal;
@@ -256,23 +256,23 @@ namespace NCsMath
 		return false;
 	}
 
-	bool FLibrary::SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, float& OutT, FVector& OutIntersectPoint, FVector& OutNormal, FVector2D& OutUV)
+	bool FLibrary::SegmentRectangleQuadIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& D, float& OutT, FVector3f& OutIntersectPoint, FVector3f& OutNormal, FVector2f& OutUV)
 	{
-		FVector Edge1(B - A);
+		FVector3f Edge1(B - A);
 		Edge1.Normalize();
-		FVector Edge2(C - A);
+		FVector3f Edge2(C - A);
 		Edge2.Normalize();
-		FVector TriNormal = Edge2 ^ Edge1;
+		FVector3f TriNormal = Edge2 ^ Edge1;
 		TriNormal.Normalize();
 
-		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, FPlane(A, TriNormal), OutT, OutIntersectPoint);
+		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, FPlane4f(A, TriNormal), OutT, OutIntersectPoint);
 		if (!Collide)
 		{
 			return false;
 		}
 
 		// Check Triangle ABC
-		FVector BaryCentric = FMath::ComputeBaryCentric2D(OutIntersectPoint, A, B, C);
+		FVector3f BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, B, C);
 		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
 		{
 			OutNormal = TriNormal;
@@ -283,7 +283,7 @@ namespace NCsMath
 		}
 
 		// Check Triangle ADC
-		BaryCentric = FMath::ComputeBaryCentric2D(OutIntersectPoint, A, D, C);
+		BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, D, C);
 		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
 		{
 			OutNormal = TriNormal;
@@ -295,7 +295,7 @@ namespace NCsMath
 		return false;
 	}
 
-	bool FLibrary::SegmentRectangleQuadIntersection(const FVector& StartPoint, const FVector& EndPoint, const FVector& A, const FVector& B, const FVector& C, const FVector& D, const FPlane& Plane, const FVector& ABC_Normal, const float& ABC_InvArea, const FVector& ADC_Normal, const float& ADC_InvArea, float& OutT, FVector& OutIntersectPoint, FVector2D& OutUV)
+	bool FLibrary::SegmentRectangleQuadIntersection(const FVector3f& StartPoint, const FVector3f& EndPoint, const FVector3f& A, const FVector3f& B, const FVector3f& C, const FVector3f& D, const FPlane4f& Plane, const FVector3f& ABC_Normal, const float& ABC_InvArea, const FVector3f& ADC_Normal, const float& ADC_InvArea, float& OutT, FVector3f& OutIntersectPoint, FVector2f& OutUV)
 	{
 		bool Collide = SegmentPlaneIntersection(StartPoint, EndPoint, Plane, OutT, OutIntersectPoint);
 		if (!Collide)
@@ -304,7 +304,7 @@ namespace NCsMath
 		}
 
 		// Check Triangle ABC
-		FVector BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, B, C, ABC_Normal, ABC_InvArea);
+		FVector3f BaryCentric = ComputeBaryCentric2D(OutIntersectPoint, A, B, C, ABC_Normal, ABC_InvArea);
 		if (BaryCentric.X > 0.0f && BaryCentric.Y > 0.0f && BaryCentric.Z > 0.0f)
 		{
 			ClosestPointOnSegment(OutIntersectPoint, A, B, OutUV.X);

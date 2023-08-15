@@ -60,11 +60,11 @@ namespace NCsViewport
 				* @param Context					The calling context.
 				* @param WorldContext				Object that contains a reference to a World (GetWorld() is Valid).
 				* @param WorldPosition				World position to project.
-				* @param ScreenPosition				(out) Corresponding 2D position in screen space
+				* @param OutScreenPosition			(out) Corresponding 2D position in screen space
 				* @param bPlayerViewportRelative	Should this be relative to the player viewport subregion (useful when using player attached widgets in split screen)
 				* return							Whether the project was successful or not.
 				*/
-				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const FVector& WorldPosition, FVector2D& ScreenPosition, bool bPlayerViewportRelative = false);
+				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const FVector3f& WorldPosition, FVector2f& OutScreenPosition, bool bPlayerViewportRelative = false);
 
 				/**
 				* Transforms the given 3D world-space points into respective 2D screen space coordinates.
@@ -75,7 +75,7 @@ namespace NCsViewport
 				* @param OutScreenPositions			(out) Array of Corresponding 2D positions in screen space
 				* return							Whether the project was successful or not.
 				*/
-				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector>& WorldPositions, TArray<FVector2D>& OutScreenPositions);
+				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector3f>& WorldPositions, TArray<FVector2f>& OutScreenPositions);
 
 				/**
 				* Transforms the given 3D world-space points into respective 2D screen space coordinates for the first Count number of Indices.
@@ -89,7 +89,7 @@ namespace NCsViewport
 				* @param OutScreenPositions			(out) Array of Corresponding 2D positions in screen space
 				* return							Whether the project was successful or not.
 				*/
-				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector>& WorldPositions, const TArray<int32>& Indices, const int32& Count, TArray<FVector2D>& OutScreenPositions);
+				static bool ProjectWorldToScreenChecked(const FString& Context, const UObject* WorldContext, const TArray<FVector3f>& WorldPositions, const TArray<int32>& Indices, const int32& Count, TArray<FVector2f>& OutScreenPositions);
 
 				/**
 				* Check whether the First Local Player's Viewport can de-project a screen position to a 
@@ -127,11 +127,11 @@ namespace NCsViewport
 				* @param Context			The calling context.
 				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
 				* @param ScreenPosition		2D screen space to deproject.
-				* @param WorldPosition		(out) Corresponding 3D position in world space.
-				* @param WorldDirection		(out) World space direction vector away from the camera at the given 2d point.
+				* @param OutWorldPosition	(out) Corresponding 3D position in world space.
+				* @param OutWorldDirection	(out) World space direction vector away from the camera at the given 2d point.
 				* return					Whether the deproject was successful or not.
 				*/
-				static bool DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection);
+				static bool DeprojectScreenToWorldChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection);
 
 				/**
 				* Safely transforms the given 2D screen space coordinate into a 3D world-space point and direction.
@@ -139,23 +139,23 @@ namespace NCsViewport
 				* @param Context			The calling context.
 				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
 				* @param ScreenPosition		2D screen space to deproject.
-				* @param WorldPosition		(out) Corresponding 3D position in world space.
-				* @param WorldDirection		(out) World space direction vector away from the camera at the given 2d point.
+				* @param OutWorldPosition	(out) Corresponding 3D position in world space.
+				* @param OutWorldDirection	(out) World space direction vector away from the camera at the given 2d point.
 				* @param Log
 				* return					Whether the deproject was successful or not.
 				*/
-				static bool SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool SafeDeprojectScreenToWorld(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Safely transforms the given 2D screen space coordinate into a 3D world-space point and direction.
 				*
 				* @param WorldContext		Object that contains a reference to a World (GetWorld() is Valid).
 				* @param ScreenPosition		2D screen space to deproject.
-				* @param WorldPosition		(out) Corresponding 3D position in world space.
-				* @param WorldDirection		(out) World space direction vector away from the camera at the given 2d point.
+				* @param OutWorldPosition	(out) Corresponding 3D position in world space.
+				* @param OutWorldDirection	(out) World space direction vector away from the camera at the given 2d point.
 				* return					Whether the deproject was successful or not.
 				*/
-				static bool SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2D& ScreenPosition, FVector& WorldPosition, FVector& WorldDirection);
+				static bool SafeDeprojectScreenToWorld(const UObject* WorldContext, const FVector2f& ScreenPosition, FVector3f& OutWorldPosition, FVector3f& OutWorldDirection);
 
 				/**
 				* Get the Viewport associated with the First Local Player.
@@ -222,7 +222,7 @@ namespace NCsViewport
 				* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
 				* return					Whether the intersection exists or not.
 				*/
-				static bool GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
+				static bool GetScreenWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 				/**
 				* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
@@ -236,7 +236,7 @@ namespace NCsViewport
 				* @param Log
 				* return					Whether the intersection exists or not.
 				*/
-				static bool GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool GetSafeScreenWorldIntersection(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Safely get the intersection between the de-projection of the screen position to a world ray (location and direction)
@@ -248,7 +248,7 @@ namespace NCsViewport
 				* @param OutIntersection	Intersection between ray from ScreenPosition and Plane.
 				* return					Whether the intersection exists or not.
 				*/
-				static bool GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2D& ScreenPosition, const FPlane& Plane, FVector& OutIntersection);
+				static bool GetSafeScreenWorldIntersection(const UObject* WorldContext, const FVector2f& ScreenPosition, const FPlane4f& Plane, FVector3f& OutIntersection);
 
 			// Trace
 			#pragma region
@@ -271,7 +271,7 @@ namespace NCsViewport
 				* @param Distance		(optional) The distance to project outward from the Request->Start.
 				* return				Response
 				*/
-				static ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
+				static ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
 
 				/**
 				* Safely perform a trace with the given Request.
@@ -288,7 +288,7 @@ namespace NCsViewport
 				* @param Log			(optional)
 				* return				Response
 				*/
-				static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f, void(*Log)(const FString&) = &FCsLog::Warning);
+				static ResponseType* SafeTrace(const FString& Context, const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f, void(*Log)(const FString&) = &FCsLog::Warning);
 
 				/**
 				* Safely perform a trace with the given Request.
@@ -303,7 +303,7 @@ namespace NCsViewport
 				* @param Distance		(optional) The distance to project outward from the Request->Start.
 				* return				Response
 				*/
-				static ResponseType* SafeTrace(const UObject* WorldContext, const FVector2D& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
+				static ResponseType* SafeTrace(const UObject* WorldContext, const FVector2f& ScreenPosition, RequestType* Request, const float& Distance = 1000000.0f);
 
 			#undef ResponseType
 			#undef RequestType

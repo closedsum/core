@@ -153,7 +153,7 @@ namespace NCsSkeletalMeshActor
 				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
-				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
+				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform3f)
 
 			public:
 
@@ -170,7 +170,7 @@ namespace NCsSkeletalMeshActor
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 0),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform3f::Identity),
 					Params()
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Mesh);
@@ -205,7 +205,7 @@ namespace NCsSkeletalMeshActor
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform3f)
 
 				FORCEINLINE const ParamsType* GetParamsPtr() const { return &Params; }
 
@@ -219,7 +219,7 @@ namespace NCsSkeletalMeshActor
 					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale)
 					CS_RESET_MEMBER_WITH_PROXY(Bone, NAME_None)
 					CS_RESET_MEMBER_WITH_PROXY(TransformRules, 0)
-					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform::Identity)
+					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform3f::Identity)
 					Params.Reset();
 				}
 
@@ -303,7 +303,7 @@ namespace NCsSkeletalMeshActor
 				CS_DECLARE_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DECLARE_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
-				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform)
+				CS_DECLARE_MEMBER_WITH_PROXY(Transform, FTransform3f)
 
 			public:
 
@@ -320,7 +320,7 @@ namespace NCsSkeletalMeshActor
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(Bone, NAME_None),
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(TransformRules, 0),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform::Identity),
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(Transform, FTransform3f::Identity),
 					Params()
 				{
 					CS_CTOR_SET_MEMBER_PROXY(Mesh);
@@ -355,7 +355,7 @@ namespace NCsSkeletalMeshActor
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Bone, FName)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transform, FTransform3f)
 
 				FORCEINLINE const ParamsType* GetParamsPtr() const { return &Params; }
 
@@ -369,7 +369,7 @@ namespace NCsSkeletalMeshActor
 					CS_RESET_MEMBER_WITH_PROXY(AttachmentTransformRules, FAttachmentTransformRules::SnapToTargetNotIncludingScale)
 					CS_RESET_MEMBER_WITH_PROXY(Bone, NAME_None)
 					CS_RESET_MEMBER_WITH_PROXY(TransformRules, 0)
-					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform::Identity)
+					CS_RESET_MEMBER_WITH_PROXY(Transform, FTransform3f::Identity)
 					Params.Reset();
 				}
 

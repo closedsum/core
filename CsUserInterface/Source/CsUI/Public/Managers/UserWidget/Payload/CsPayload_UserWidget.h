@@ -57,7 +57,7 @@ namespace NCsUserWidget
 			* 
 			* return Position
 			*/
-			virtual const FVector& GetPosition() const = 0;
+			virtual const FVector3f& GetPosition() const = 0;
 
 			/**
 			* Get the way to interpret Offset information for being converted to screen space.
@@ -66,7 +66,7 @@ namespace NCsUserWidget
 			*/
 			virtual const PositionType& GetOffsetType() const = 0;
 
-			virtual const FVector& GetOffset() const = 0;
+			virtual const FVector3f& GetOffset() const = 0;
 
 			/** 
 			* Get the order priority this widget is rendered in.  Higher values are rendered last (and so they will appear to be on top).

@@ -44,7 +44,7 @@ namespace NCsFX
 				if (InType == Type::Float)
 					return sizeof(float);
 				if (InType == Type::Vector)
-					return sizeof(FVector);
+					return sizeof(FVector3f);
 				checkf(0, TEXT("NCsFX::NParameter::NValue::GetSizeInBytes: InType is NOT Valid."));
 				return 0;
 			}
@@ -226,7 +226,7 @@ namespace NCsFX
 
 			private:
 
-				CS_DECLARE_MEMBER_WITH_PROXY(Value, FVector)
+				CS_DECLARE_MEMBER_WITH_PROXY(Value, FVector3f)
 
 			public:
 
@@ -244,13 +244,13 @@ namespace NCsFX
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Name, FName)
 
-				FORCEINLINE void SetValue(const FVector& __value)
+				FORCEINLINE void SetValue(const FVector3f& __value)
 				{
 					Value = __value;
 					Value_Proxy = &Value;
 				}
-				FORCEINLINE void SetValue(FVector* __value) { check(__value); Value_Proxy = __value; }
-				FORCEINLINE const FVector& GetValue() const { return *Value_Proxy; }
+				FORCEINLINE void SetValue(FVector3f* __value) { check(__value); Value_Proxy = __value; }
+				FORCEINLINE const FVector3f& GetValue() const { return *Value_Proxy; }
 
 			// IParameter
 			#pragma region
@@ -258,8 +258,8 @@ namespace NCsFX
 
 				FORCEINLINE const int32& GetIndex() const { return Index; }
 				FORCEINLINE const EValue& GetValueType() const { return ValueType; }
-				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector*>(Value_Proxy); }
-				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(FVector); }
+				FORCEINLINE void* GetValuePtr() const { return (void*)const_cast<FVector3f*>(Value_Proxy); }
+				FORCEINLINE uint32 GetSizeInBytes() const { return sizeof(FVector3f); }
 
 			#pragma endregion IParameter
 

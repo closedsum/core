@@ -52,7 +52,7 @@ namespace NCsFX
 			* @param Transform	(optional) Transform to apply the fx after allocation and before playing.
 			*					FX.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Safely set the contents of Payload with FX.
@@ -64,7 +64,7 @@ namespace NCsFX
 			*					FX.Transform is applied as an "offset".
 			* @param Log		(optional)
 			*/
-			static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SetSafe(const FString& Conext, PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with FX.
@@ -74,7 +74,7 @@ namespace NCsFX
 			* @param Transform	(optional) Transform to apply the fx after allocation and before playing.
 			*					FX.Transform is applied as an "offset".
 			*/
-			static void SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static void SetSafe(PayloadImplType* Payload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with Transform.
@@ -83,7 +83,7 @@ namespace NCsFX
 			* @param Payload
 			* @param Transform
 			*/
-			static void SetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform);
+			static void SetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform);
 
 			/**
 			* Set the contents of Payload with PooledPayload and FX.
@@ -95,7 +95,7 @@ namespace NCsFX
 			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
 			*						FX.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static void SetChecked(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Safely set the contents of Payload with PooledPayload and FX.
@@ -108,7 +108,7 @@ namespace NCsFX
 			*						FX.Transform is applied as an "offset".
 			* @param Log			(optional)
 			*/
-			static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static void SetSafe(const FString& Context, PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely set the contents of Payload with PooledPayload and FX.
@@ -119,7 +119,7 @@ namespace NCsFX
 			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
 			*						FX.Transform is applied as an "offset".
 			*/
-			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static void SetSafe(PayloadImplType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with PooledPayload and FX.
@@ -131,7 +131,7 @@ namespace NCsFX
 			* @param Transform		(optional) Transform to apply the fx after allocation and before playing.
 			*						FX.Transform is applied as an "offset".
 			*/
-			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform& Transform = FTransform::Identity);
+			static void SetChecked(const FString& Context, PayloadType* Payload, PooledPayloadType* PooledPayload, const FCsFX& FX, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Set the contents of Payload with PooledPayload.
@@ -159,7 +159,7 @@ namespace NCsFX
 			* @param Transform	Transform to apply the sound after allocation and before playing.
 			*					Sound.Transform is applied as an "offset".
 			*/
-			static void ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform& Transform);
+			static void ApplyAsOffsetChecked(const FString& Context, PayloadType* Payload, const FTransform3f& Transform);
 
 		#undef PooledPayloadType
 		#undef PayloadImplType

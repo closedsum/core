@@ -208,7 +208,7 @@ struct CSCORE_API FCsStaticMeshActorPooledInfo
 		after the attachment.
 	    Else, the Transform is applied as a World Transform. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
-	FTransform Transform;
+	FTransform3f Transform;
 
 	/** Controls whether the StaticMeshComponent should cast a shadow or not. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh")
@@ -242,7 +242,7 @@ public:
 		AttachmentTransformRules(FCsAttachmentTransformRules::SnapToTargetNotIncludingScale),
 		Bone(NAME_None),
 		TransformRules(7), // NCsTransformRules::All
-		Transform(FTransform::Identity),
+		Transform(FTransform3f::Identity),
 		bCastShadow(false),
 		bReceivesDecals(false),
 		bUseAsOccluder(false),
@@ -260,7 +260,7 @@ public:
 	FORCEINLINE FCsAttachmentTransformRules* GetAttachmentTransformRulesPtr() { return &AttachmentTransformRules; }
 	FORCEINLINE FName* GetBonePtr() { return &Bone; }
 	FORCEINLINE int32* GetTransformRulesPtr() { return &TransformRules; }
-	FORCEINLINE FTransform* GetTransformPtr() { return &Transform; }
+	FORCEINLINE FTransform3f* GetTransformPtr() { return &Transform; }
 
 #undef DeallocateMethodType
 

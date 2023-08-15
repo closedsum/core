@@ -18,7 +18,7 @@ namespace NCsProjectile
 						{
 						public:
 
-							TArray<FVector> Offsets;
+							TArray<FVector3f> Offsets;
 
 							TArray<float> Yaws;
 							TArray<float> Pitches;

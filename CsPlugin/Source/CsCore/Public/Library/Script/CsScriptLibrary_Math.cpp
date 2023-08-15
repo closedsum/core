@@ -59,10 +59,29 @@ float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& E
 
 #pragma endregion Easing
 
+// Vector
+#pragma region
+
+FVector3f UCsScriptLibrary_Math::Vector3dTo3f(const FVector& Vector)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::Convert(Vector);
+}
+
+FVector UCsScriptLibrary_Math::Vector3fTo3d(const FVector3f& Vector)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::Convert(Vector);
+}
+
+#pragma endregion Vector
+
 // Ray
 #pragma region
 	
-FCsRay UCsScriptLibrary_Math::MakeRay(const FVector& Origin, const FVector& Direction, const float& Distance)
+FCsRay UCsScriptLibrary_Math::MakeRay(const FVector3f& Origin, const FVector3f& Direction, const float& Distance)
 {
 	bool DirectionIsNormalized = true;
 
@@ -80,7 +99,7 @@ FCsRay UCsScriptLibrary_Math::MakeRay(const FVector& Origin, const FVector& Dire
 	return FCsRay(Origin, Direction, Distance > 0.0f ? Distance : FCsRay::GetDefaultDistance(), DirectionIsNormalized);
 }
 
-FCsRay UCsScriptLibrary_Math::MakeRay_OriginAndDirection(const FVector& Origin, const FVector& Direction)
+FCsRay UCsScriptLibrary_Math::MakeRay_OriginAndDirection(const FVector3f& Origin, const FVector3f& Direction)
 {
 	bool DirectionIsNormalized = true;
 
@@ -98,7 +117,7 @@ FCsRay UCsScriptLibrary_Math::MakeRay_OriginAndDirection(const FVector& Origin, 
 // Plane
 #pragma region
 
-FPlane UCsScriptLibrary_Math::MakePlane(const FVector& Origin, const FVector& Normal)
+FPlane4f UCsScriptLibrary_Math::MakePlane(const FVector3f& Origin, const FVector3f& Normal)
 {
 	bool NormalIsNormalized = true;
 
@@ -108,7 +127,7 @@ FPlane UCsScriptLibrary_Math::MakePlane(const FVector& Origin, const FVector& No
 
 		UE_LOG(LogCs, Warning, TEXT("UCsScriptLibrary_Math::MakeRay_OriginAndDirection: Direction is NOT normalized."));
 	}
-	return FPlane(Origin, NormalIsNormalized ? Normal : Normal.GetSafeNormal());
+	return FPlane4f(Origin, NormalIsNormalized ? Normal : Normal.GetSafeNormal());
 }
 
 #pragma endregion Plane
@@ -116,7 +135,7 @@ FPlane UCsScriptLibrary_Math::MakePlane(const FVector& Origin, const FVector& No
 // Intersection
 #pragma region
 
-bool UCsScriptLibrary_Math::RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane& Plane, float& OutT, FVector& OutIntersection)
+bool UCsScriptLibrary_Math::RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection)
 {
 	using namespace NCsScriptLibraryMath::NCached;
 

@@ -3,8 +3,11 @@
 
 // Library
 #include "Managers/Damage/Data/CsLibrary_Data_Damage.h"
+	// Damage
 #include "Event/CsLibrary_DamageEvent.h"
 #include "Value/CsLibrary_DamageValue.h"
+	// Common
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Damage
 #include "Managers/Damage/Data/CsData_Damage.h"
@@ -105,10 +108,11 @@ namespace NCsDamage
 			// Shape
 			typedef NCsDamage::NData::FLibrary DamageDataLibrary;
 			typedef NCsDamage::NData::NShape::IShape ShapeDataType;
+			typedef NCsMath::FLibrary MathLibrary;
 
 			if (ShapeDataType* Shape = DamageDataLibrary::GetSafeInterfaceChecked<ShapeDataType>(Context, Data))
 			{
-				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), Origin.ImpactPoint, HitResult.ImpactPoint);
+				Damage = Shape->CalculateDamage(DamageValue.GetValue(), DamageRange.GetRange(), MathLibrary::Convert(Origin.ImpactPoint), MathLibrary::Convert(HitResult.ImpactPoint));
 				return true;
 			}
 			// Point
@@ -136,7 +140,7 @@ namespace NCsDamage
 			Data = nullptr;
 			Instigator = nullptr;
 			Causer = nullptr;
-			DamageDirection = FVector::ZeroVector;
+			DamageDirection = FVector3f::ZeroVector;
 			HitType = EMCsHitType::Get().GetMAX();
 			Origin.Reset(0.0f, false);
 			HitResult.Reset(0.0f, false);

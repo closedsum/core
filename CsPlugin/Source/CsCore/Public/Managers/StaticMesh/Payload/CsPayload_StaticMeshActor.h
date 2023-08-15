@@ -101,7 +101,7 @@ namespace NCsStaticMeshActor
 			*
 			* return Transform
 			*/
-			virtual const FTransform& GetTransform() const = 0;
+			virtual const FTransform3f& GetTransform() const = 0;
 
 			/**
 			* Controls whether the StaticMeshActor should cast an shadow or not.

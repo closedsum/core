@@ -168,7 +168,7 @@ public:
 	ECsMover Mover;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
-	FVector FromLocation;
+	FVector3f FromLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
 	FName MoveObjectName;
@@ -194,7 +194,7 @@ public:
 		If Destination != DestinationType::Location (Actor, Component, or Bone),
 			Offset from the ToActor or ToComponent. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Movement")
-	FVector ToLocation;
+	FVector3f ToLocation;
 
 	/** The name of the Object to move to.
 		Object is Actor or Component.
@@ -240,13 +240,13 @@ public:
 	FCsMoveByInterp_Params() :
 		Easing(ECsEasingType::Linear),
 		Mover(ECsMover::Actor),
-		FromLocation(FVector::ZeroVector),
+		FromLocation(FVector3f::ZeroVector),
 		MoveObjectName(NAME_None),
 		MoveActorLabel(),
 		MoveActor(nullptr),
 		MoveComponent(nullptr),
 		Destination(ECsMoveDestination::Location),
-		ToLocation(FVector::ZeroVector),
+		ToLocation(FVector3f::ZeroVector),
 		ToObjectName(NAME_None),
 		ToActorLabel(),
 		ToBone(NAME_None),
@@ -292,7 +292,7 @@ namespace NCsMovement
 
 					CS_DECLARE_MEMBER_WITH_PROXY(Easing, ECsEasingType)
 					CS_DECLARE_MEMBER_WITH_PROXY(Mover, MoverType)
-					CS_DECLARE_MEMBER_WITH_PROXY(FromLocation, FVector)
+					CS_DECLARE_MEMBER_WITH_PROXY(FromLocation, FVector3f)
 					CS_DECLARE_MEMBER_WITH_PROXY(MoveObjectName, FName)
 					CS_DECLARE_MEMBER_WITH_PROXY(MoveActorLabel, FString)
 
@@ -309,7 +309,7 @@ namespace NCsMovement
 							World location to move to.
 						If Destination != DestinationType::Location (Actor, Component, or Bone), 
 							Offset from the ToActor or ToComponent. */
-					CS_DECLARE_MEMBER_WITH_PROXY(ToLocation, FVector)
+					CS_DECLARE_MEMBER_WITH_PROXY(ToLocation, FVector3f)
 					
 					/** The name of the Object to move to.
 						Object is Actor or Component. 
@@ -344,13 +344,13 @@ namespace NCsMovement
 					FParams() :
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Easing, ECsEasingType::Linear),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Mover, MoverType::Actor),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(FromLocation, FVector::ZeroVector),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(FromLocation, FVector3f::ZeroVector),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(MoveObjectName, NAME_None),
 						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(MoveActorLabel),
 						MoveActor(nullptr),
 						MoveComponent(nullptr),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(Destination, DestinationType::Location),
-						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToLocation, FVector::ZeroVector),
+						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToLocation, FVector3f::ZeroVector),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToObjectName, NAME_None),
 						CS_CTOR_INIT_MEMBER_STRUCT_WITH_PROXY(ToActorLabel),
 						CS_CTOR_INIT_MEMBER_WITH_PROXY(ToBone, NAME_None),
@@ -376,11 +376,11 @@ namespace NCsMovement
 
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Easing, ECsEasingType)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Mover, MoverType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FromLocation, FVector)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(FromLocation, FVector3f)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MoveObjectName, FName)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(MoveActorLabel, FString)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Destination, DestinationType)
-					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToLocation, FVector)
+					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToLocation, FVector3f)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToObjectName, FName)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToActorLabel, FString)
 					CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ToBone, FName)
@@ -409,7 +409,7 @@ namespace NCsMovement
 					bool IsValidChecked(const FString& Context) const;
 					bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-					FVector GetEndLocation() const;
+					FVector3f GetEndLocation() const;
 
 					void Reset();
 

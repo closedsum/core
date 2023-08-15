@@ -58,7 +58,7 @@ bool FCsStaticMeshComponentInfo::IsValidChecked(const FString& Context) const
 		check(MaterialLibrary::IsValidChecked(Context, Mesh.Get(), Materials.Get()));
 	}
 
-	if (!Transform.Equals(FTransform::Identity))
+	if (!Transform.Equals(FTransform3f::Identity))
 	{
 		checkf(TransformRules != 0, TEXT("%s: No TransformRules set for Transform: %s."), *Context, *(Transform.ToString()));
 	}
@@ -82,7 +82,7 @@ bool FCsStaticMeshComponentInfo::IsValid(const FString& Context, void(*Log)(cons
 			return false;
 	}
 
-	if (!Transform.Equals(FTransform::Identity))
+	if (!Transform.Equals(FTransform3f::Identity))
 	{
 		if (TransformRules == 0)
 		{
@@ -114,7 +114,7 @@ namespace NCsStaticMesh
 				check(MaterialLibrary::IsValidChecked(Context, GetMesh(), GetMaterials()));
 			}
 
-			if (!GetTransform().Equals(FTransform::Identity))
+			if (!GetTransform().Equals(FTransform3f::Identity))
 			{
 				checkf(GetTransformRules() != 0, TEXT("%s: No TransformRules set for GetTransform(): %s."), *Context, *(GetTransform().ToString()));
 			}
@@ -139,7 +139,7 @@ namespace NCsStaticMesh
 					return false;
 			}
 
-			if (!GetTransform().Equals(FTransform::Identity))
+			if (!GetTransform().Equals(FTransform3f::Identity))
 			{
 				if (GetTransformRules() == 0)
 				{

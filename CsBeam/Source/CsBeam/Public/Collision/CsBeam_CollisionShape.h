@@ -163,7 +163,7 @@ public:
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Box */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FVector HalfExtents;
+	FVector3f HalfExtents;
 
 	/** Only valid if Type == ECsBeamCollisionShapeLength::Capsule */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.0", UIMin = "0.0"))
@@ -236,7 +236,7 @@ namespace NCsBeam
 				virtual bool IsValidChecked(const FString& Context) const { return false; };
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const { return false; };
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const { return nullptr; };
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const { return nullptr; };
 			};
 
 			struct CSBEAM_API FLine : public FShape
@@ -262,7 +262,7 @@ namespace NCsBeam
 				virtual bool IsValidChecked(const FString& Context) const override;
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const override;
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const override;
 			};
 
 			struct CSBEAM_API FBox : public FShape
@@ -273,23 +273,23 @@ namespace NCsBeam
 
 				/** Z component is in the direction of box oriented. 
 					(i.e. the Z component will get scaled if LengthType (NCsBeam::NCollision::NShape::ELength) == ELength::Fixed. */
-				CS_DECLARE_MEMBER_WITH_PROXY(HalfExtents, FVector)
+				CS_DECLARE_MEMBER_WITH_PROXY(HalfExtents, FVector3f)
 
 				FBox() :
 					CS_CTOR_INIT_MEMBER_WITH_PROXY(ScaleType, EScale::Default),
-					CS_CTOR_INIT_MEMBER_WITH_PROXY(HalfExtents, FVector::ZeroVector)
+					CS_CTOR_INIT_MEMBER_WITH_PROXY(HalfExtents, FVector3f::ZeroVector)
 				{
 					CS_CTOR_SET_MEMBER_PROXY(ScaleType);
 					CS_CTOR_SET_MEMBER_PROXY(HalfExtents);
 				}
 
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ScaleType, EScale)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HalfExtents, FVector)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(HalfExtents, FVector3f)
 
 				virtual bool IsValidChecked(const FString& Context) const override;
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const override;
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const override;
 			};
 
 			struct CSBEAM_API FCapsule : public FShape
@@ -317,7 +317,7 @@ namespace NCsBeam
 				virtual bool IsValidChecked(const FString& Context) const override;
 				virtual bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsBeam::FLog::Warning) const override;
 
-				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector& Direction, const FVector& Scale) const override;
+				virtual ResponseType* TraceChecked(const FString& Context, const UObject* WorldContext, RequestType* Request, const FVector3f& Direction, const FVector3f& Scale) const override;
 			};
 
 			#undef ResponseType

@@ -129,7 +129,7 @@ namespace NCsSound
 
 			int32 TransformRules;
 
-			FTransform Transform;
+			FTransform3f Transform;
 
 			float VolumeMultiplier;
 
@@ -190,7 +190,7 @@ namespace NCsSound
 			FORCEINLINE const FAttachmentTransformRules& GetAttachmentTransformRule() const { return AttachmentTransformRules; }
 			FORCEINLINE const FName& GetBone() const { return Bone; }
 			FORCEINLINE const int32& GetTransformRules() const { return TransformRules; }
-			FORCEINLINE const FTransform& GetTransform() const { return Transform; }
+			FORCEINLINE const FTransform3f& GetTransform() const { return Transform; }
 			FORCEINLINE const float& GetVolumeMultiplier() const { return VolumeMultiplier; }
 			FORCEINLINE const float& GetPitchMultiplier() const { return PitchMultiplier; }
 

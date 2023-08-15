@@ -9,9 +9,11 @@
 // Library
 #include "Managers/UserWidget/CsLibrary_Manager_UserWidget.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+	// Common
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Widget.h"
 #include "Library/CsLibrary_Viewport.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/UserWidget/CsManager_UserWidget.h"
@@ -180,7 +182,9 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 	// Screen
 	if (PositionType == NCsUserWidget::EPosition::Screen)
 	{
-		SetPositionInViewport(FVector2D(WidgetPayload->GetPosition()));
+		typedef NCsMath::FLibrary MathLibrary;
+
+		SetPositionInViewport(FVector2d(MathLibrary::Convert(WidgetPayload->GetPosition())));
 	}
 	// World
 	else
@@ -192,12 +196,12 @@ void UCsUserWidget_TextPooledImpl::Allocate(PayloadType* Payload)
 
 		typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
 
-		FVector WorldPosition = WidgetPayload->GetPosition();
-		FVector2D Offset	  = FVector2D::ZeroVector;
+		FVector3f WorldPosition = WidgetPayload->GetPosition();
+		FVector2f Offset	    = FVector2f::ZeroVector;
 
 		if (OffsetType == NCsUserWidget::EPosition::Screen)
 		{
-			Offset = FVector2D(WidgetPayload->GetOffset());
+			Offset = FVector2f(WidgetPayload->GetOffset());
 		}
 		else
 		if (OffsetType == NCsUserWidget::EPosition::World)
@@ -293,22 +297,24 @@ void UCsUserWidget_TextPooledImpl::Handle_AddToViewport(UserWidgetPayloadType* P
 			}
 			else
 			{
-				RemoveFromViewport();
+				RemoveFromParent();
 
 				typedef NCsPlayer::FLibrary PlayerLibrary;
+				typedef NCsWidget::FLibrary WidgetLibrary;
 
-				ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, this);
+				ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, GetWorldContext());
 
-				AddToScreen(Player, ZOrder);
+				WidgetLibrary::AddToScreenChecked(Context, GetWorldContext(), this, Player, ZOrder);
 			}
 		}
 		else
 		{
 			typedef NCsPlayer::FLibrary PlayerLibrary;
+			typedef NCsWidget::FLibrary WidgetLibrary;
 
-			ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, this);
+			ULocalPlayer* Player = PlayerLibrary::GetFirstLocalChecked(Context, GetWorldContext());
 
-			AddToScreen(Player, ZOrder);
+			WidgetLibrary::AddToScreenChecked(Context, GetWorldContext(), this, Player, ZOrder);
 		}
 
 		CurrentZOrder = ZOrder;
@@ -338,7 +344,7 @@ void UCsUserWidget_TextPooledImpl::Handle_RemoveFromViewport()
 	}
 	else
 	{
-		RemoveFromViewport();
+		RemoveFromParent();
 		CurrentZOrder = 0;
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::AddedToViewport);
 		CS_CLEAR_BITFLAG(ChangesToDefaultMask, ChangeType::ZOrder);

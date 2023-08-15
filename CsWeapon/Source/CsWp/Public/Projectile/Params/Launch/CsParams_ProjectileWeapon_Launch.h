@@ -63,14 +63,14 @@ namespace NCsWeapon
 					*
 					* return
 					*/
-					virtual const FRotator& GetLocationOffsetSpaceOffset() const = 0;
+					virtual const FRotator3f& GetLocationOffsetSpaceOffset() const = 0;
 
 					/**
 					* Get the offset to apply to the Location determined from GetLocationType().
 					* 
 					* return
 					*/
-					virtual const FVector& GetLocationOffset() const = 0;
+					virtual const FVector3f& GetLocationOffset() const = 0;
 
 					/**
 					* Get the different methods to get the Direction from which a Projectile is launched from a Projectile Weapon.
@@ -84,7 +84,7 @@ namespace NCsWeapon
 					*
 					* return
 					*/
-					virtual const FRotator& GetDirectionOffset() const = 0;
+					virtual const FRotator3f& GetDirectionOffset() const = 0;
 
 					/**
 					* Get whether the Direction from which the Projectile will be launched from a Weapon should be inverted (multiplied by -1.0f).

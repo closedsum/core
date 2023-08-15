@@ -29,18 +29,18 @@ void FCsSenseInfo::Update(const float& CurrentTime, ICsSensingObject* SensingObj
 		const FCsSenseInfoKey& Key = Pair.Key;
 		FCsSenseInfoValue& Value   = Pair.Value;
 
-		FVector& MeToObject = Value.MeToObject;
+		FVector3f& MeToObject = Value.MeToObject;
 		float& Distance		= Value.Distance;
 		float& DistanceSq	= Value.DistanceSq;
 		float& DistanceXY	= Value.DistanceXY;
 		float& DistanceSqXY = Value.DistanceSqXY;
-		FVector& Direction	= Value.Direction;
-		FVector& DirectionXY = Value.DirectionXY;
+		FVector3f& Direction	= Value.Direction;
+		FVector3f& DirectionXY = Value.DirectionXY;
 		float& Dot			= Value.Dot;
 		float& DotXY		= Value.DotXY;
 
-		const FVector FromLocation = SensingObject->GetCustomLocation(Key.From);
-		const FVector ToLocation   = SensedObject->GetCustomLocation(Key.To);
+		const FVector3f FromLocation = SensingObject->GetCustomLocation(Key.From);
+		const FVector3f ToLocation   = SensedObject->GetCustomLocation(Key.To);
 
 		MeToObject = ToLocation - FromLocation;
 		// Distance
@@ -58,7 +58,7 @@ void FCsSenseInfo::Update(const float& CurrentTime, ICsSensingObject* SensingObj
 			else 
 			if (DistanceSq < SMALL_NUMBER)
 			{
-				Direction = FVector::ZeroVector;
+				Direction = FVector3f::ZeroVector;
 			}
 			else
 			{
@@ -76,7 +76,7 @@ void FCsSenseInfo::Update(const float& CurrentTime, ICsSensingObject* SensingObj
 			else 
 			if (DistanceSqXY < SMALL_NUMBER)
 			{
-				DirectionXY = FVector::ZeroVector;
+				DirectionXY = FVector3f::ZeroVector;
 			}
 			else
 			{
@@ -85,11 +85,11 @@ void FCsSenseInfo::Update(const float& CurrentTime, ICsSensingObject* SensingObj
 			}
 		}
 		// Dot
-		const FVector DotDirection = SensingObject->GetCustomDirection(Key.Direction);
+		const FVector3f DotDirection = SensingObject->GetCustomDirection(Key.Direction);
 
-		if (DotDirection != FVector::ZeroVector)
+		if (DotDirection != FVector3f::ZeroVector)
 		{
-			Dot   = FVector::DotProduct(DotDirection, Direction);
+			Dot   = FVector3f::DotProduct(DotDirection, Direction);
 			DotXY = DotDirection.X * Direction.X + DotDirection.Y * Direction.Y;
 		}
 		else

@@ -109,7 +109,7 @@ namespace NCsSound
 			*
 			* return Transform
 			*/
-			virtual const FTransform& GetTransform() const = 0;
+			virtual const FTransform3f& GetTransform() const = 0;
 
 			/**
 			* Get the amount to multiply / scale the volume of the Sound.

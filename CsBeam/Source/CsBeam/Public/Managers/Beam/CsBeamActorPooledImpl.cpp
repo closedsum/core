@@ -4,6 +4,8 @@
 
 // CVar
 #include "Managers/Beam/CsCVars_Beam.h"
+// Types
+#include "Collision/CsTypes_Collision.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Library
@@ -14,14 +16,19 @@
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Managers/Beam/CsLibrary_Manager_Beam.h"
 #include "Managers/Damage/CsLibrary_Manager_Damage.h"
+	// Data
 #include "Data/CsLibrary_Data_Beam.h"
+	// Payload
 #include "Payload/CsLibrary_Payload_Beam.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
+	// Damage
 #include "Value/CsLibrary_DamageValue.h"
 #include "Modifier/CsLibrary_DamageModifier.h"
-#include "Collision/CsTypes_Collision.h"
+	// Common
+#include "Collision/CsLibrary_Collision.h"
 #include "Library/CsLibrary_Common.h"
 #include "Material/CsLibrary_Material.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Containers
 #include "Containers/CsGetInterfaceMap.h"
@@ -189,14 +196,14 @@ void ACsBeamActorPooledImpl::BeginPlay()
 void ACsBeamActorPooledImpl::FellOutOfWorld(const UDamageType& DmgType)
 {
 	Deallocate_Internal();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(FVector3d::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
 void ACsBeamActorPooledImpl::OutsideWorldBounds()
 {
 	Deallocate_Internal();
-	SetActorLocation(FVector::ZeroVector);
+	SetActorLocation(FVector3d::ZeroVector);
 	Cache->QueueDeallocate();
 }
 
@@ -433,6 +440,8 @@ using namespace NCsBeamActorPooledImpl::NCached;
 
 	PooledPayloadType* PooledPayload = BeamPayloadLibrary::GetInterfaceChecked<PooledPayloadType>(Context, Payload);
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	// Handle Orientation
 	{
 		// Check Parent is set
@@ -454,21 +463,21 @@ using namespace NCsBeamActorPooledImpl::NCached;
 			const FCsAttachmentTransformRules Rule = FCsAttachmentTransformRules::SnapToTargetNotIncludingScale;
 			const FName Bone					   = NAME_None;
 
-			const FVector Scale = GetActorScale3D();
+			const FVector3d Scale = GetActorScale3D();
 
 			MeshComponent->AttachToComponent(Parent, Rule.ToRule(), Bone);
-			MeshComponent->SetWorldScale3D(Scale * Payload->GetScale());
+			MeshComponent->SetWorldScale3D(Scale * MathLibrary::Convert(Payload->GetScale()));
 		}
 		// Teleport / Set Orientation
 		else
 		{
-			const FVector& Direction = Payload->GetDirection();
-			FRotator Rotation		= Direction.Rotation();
+			const FVector3f& Direction = Payload->GetDirection();
+			FRotator3f Rotation		   = Direction.Rotation();
 
-			TeleportTo(Payload->GetLocation(), Rotation, false, true);
+			TeleportTo(MathLibrary::Convert(Payload->GetLocation()), MathLibrary::Convert(Rotation), false, true);
 
-			const FVector Scale = GetActorScale3D();
-			SetActorScale3D(Scale * Payload->GetScale());
+			const FVector3d Scale = GetActorScale3D();
+			SetActorScale3D(Scale * MathLibrary::Convert(Payload->GetScale()));
 		}
 	}
 	// CollisionDataType (NCsBeam::NData::NCollision::ICollision)
@@ -728,11 +737,12 @@ void ACsBeamActorPooledImpl::FCollisionImpl::PerformPass()
 
 	RequestType* Request = TraceManagerLibrary::AllocateRequestChecked(Context, Outer);
 
-	Request->Start = Outer->GetActorLocation();
-	
-	const FVector Dir = Outer->GetActorRotation().Vector();
+	typedef NCsMath::FLibrary MathLibrary;
 
-	FVector Scale = FVector::OneVector;
+	Request->Start = MathLibrary::Convert(Outer->GetActorLocation());
+	
+	const FVector3f Dir = MathLibrary::Convert(Outer->GetActorRotation().Vector());
+	FVector3f Scale	    = FVector3f::OneVector;
 
 	if (UObject* MyOwner = Outer->GetCache()->GetOwner())
 	{
@@ -776,7 +786,7 @@ void ACsBeamActorPooledImpl::FCollisionImpl::Shutdown()
 	EmitInternalHandle.Reset();
 }
 
-void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector3d NormalImpulse, const FHitResult& Hit)
 {
 	using namespace NCsBeamActorPooledImpl::NCached;
 
@@ -811,7 +821,7 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 		UE_LOG(LogCsBeam, Warning, TEXT("-- PenetrationDepth: %f"), Hit.PenetrationDepth);
 		UE_LOG(LogCsBeam, Warning, TEXT("-- Item: %d"), Hit.Item);
 		UE_LOG(LogCsBeam, Warning, TEXT("-- PhysMaterial: %s"), Hit.PhysMaterial.IsValid() ? *(Hit.PhysMaterial->GetName()) : TEXT("None"));
-		UE_LOG(LogCsBeam, Warning, TEXT("-- Actor: %s"), Hit.Actor.IsValid() ? *(Hit.Actor->GetName()) : TEXT("None"));
+		UE_LOG(LogCsBeam, Warning, TEXT("-- Actor: %s"), Hit.HasValidHitObjectHandle() ? *(Hit.GetActor()->GetName()) : TEXT("None"));
 		UE_LOG(LogCsBeam, Warning, TEXT("-- Component: %s"), Hit.Component.IsValid() ? *(Hit.Component->GetName()) : TEXT("None"));
 		UE_LOG(LogCsBeam, Warning, TEXT("-- BoneName: %s"), Hit.BoneName.IsValid() ? *(Hit.BoneName.ToString()) : TEXT("None"));
 		UE_LOG(LogCsBeam, Warning, TEXT("-- FaceIndex: %d"), Hit.FaceIndex);
@@ -822,6 +832,8 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 	EPhysicalSurface SurfaceType	= NCsHitResult::GetPhysSurfaceType(Hit);
 
 	typedef NCsBeam::NData::FLibrary BeamDataLibrary;
+	typedef NCsMath::FLibrary MathLibrary;
+	typedef NCsCollision::FLibrary CollisionLibrary;
 
 	// ImpactVisualDataType (NCsBeam::NData::NVisual::NImpact::IImpact)
 	{
@@ -837,9 +849,9 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 			const FCsFX& ImpactFX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-			FTransform Transform = FTransform::Identity;
-			Transform.SetLocation(Hit.Location);
-			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+			FTransform3f Transform = FTransform3f::Identity;
+			Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
+			Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
 
 			FXManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactFX, Transform);
 		}
@@ -858,9 +870,9 @@ void ACsBeamActorPooledImpl::OnCollision(UPrimitiveComponent* CollidingComponent
 
 			const FCsSound& ImpactSound = ImpactSoundData->GetImpactSound(SurfaceType);
 
-			FTransform Transform = FTransform::Identity;
-			Transform.SetLocation(Hit.Location);
-			Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+			FTransform3f Transform = FTransform3f::Identity;
+			Transform.SetLocation(CollisionLibrary::GetLocation(Hit));
+			Transform.SetRotation(CollisionLibrary::GetImpactQuat(Hit));
 
 			SoundManagerLibrary::SpawnChecked(Context, this, &Payload, ImpactSound, Transform);
 		}

@@ -268,7 +268,7 @@ bool UCsScriptLibrary_Actor::IsDistanceSq2D_LessThanOrEqual(const FString& Conte
 // Normal
 #pragma region
 
-bool UCsScriptLibrary_Actor::GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+bool UCsScriptLibrary_Actor::GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -279,7 +279,7 @@ bool UCsScriptLibrary_Actor::GetNormalAtoB(const FString& Context, AActor* A, AA
 	return ActorLibrary::GetSafeNormalAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
 }
 
-bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector& OutNormal, float& OutDistanceSq, float& OutDistance)
+bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 

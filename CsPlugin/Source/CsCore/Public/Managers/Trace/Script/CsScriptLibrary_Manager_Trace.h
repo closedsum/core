@@ -47,7 +47,7 @@ public:
 	* @return					True if there was a hit, false otherwise.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Trace", meta = (bIgnoreSelf = "true", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Start,End,Channel,ActorsToIgnore", DisplayName = "LineTraceSingleByChannel"))
-	static bool LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector& Start, const FVector& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
+	static bool LineTraceSingleByChannel(const FString& Context, UObject* WorldContextObject, const FVector3f& Start, const FVector3f& End, const TEnumAsByte<ECollisionChannel>& Channel, bool bTraceComplex, bool bIgnoreSelf, const TArray<AActor*>& ActorsToIgnore, FHitResult& OutHit);
 
 #pragma endregion Line
 

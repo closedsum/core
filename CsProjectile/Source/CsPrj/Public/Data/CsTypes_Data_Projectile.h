@@ -23,7 +23,7 @@ struct CSPRJ_API FCsPrjStaticMesh
 	FCsStaticMesh Mesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Mesh")
-	FVector Scale;
+	FVector3f Scale;
 
 	/** Whether to scale the mesh by the Collision Radius. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Mesh")
@@ -61,7 +61,7 @@ struct CSPRJ_API FCsProjectile_Visual_StaticMeshInfo
 
 	/** The size of the Mesh in World Space. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj|Mesh")
-	FVector Scale;
+	FVector3f Scale;
 
 	/** Whether to scale the mesh by the Collision Radius. 
 		NOTE: If TRUE, Scale is ignored. */
@@ -106,7 +106,7 @@ namespace NCsProjectile
 			
 				CS_DECLARE_MEMBER_WITH_PROXY(Mesh, UStaticMesh*)
 				/** The size of the Mesh in World Space. */
-				CS_DECLARE_MEMBER_WITH_PROXY(Scale, FVector)
+				CS_DECLARE_MEMBER_WITH_PROXY(Scale, FVector3f)
 				/** Whether to scale the mesh by the Collision Radius. 
 					NOTE: If TRUE, Scale is ignored. */
 				CS_DECLARE_MEMBER_WITH_PROXY(bScaleByCollisionRadius, bool)
@@ -129,7 +129,7 @@ namespace NCsProjectile
 				}
 	
 				CS_DEFINE_SET_GET_MEMBER_PTR_WITH_PROXY(Mesh, UStaticMesh)
-				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, FVector)
+				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Scale, FVector3f)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(bScaleByCollisionRadius, bool)
 				CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(ScaleByCollisionRadiusMultiplier, float)
 

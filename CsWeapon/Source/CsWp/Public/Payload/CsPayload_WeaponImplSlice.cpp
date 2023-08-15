@@ -15,7 +15,7 @@ namespace NCsWeapon
 			// PayloadType (NCsWeapon::NPayload::IPayload)
 			Type(),
 			UpdateGroup(),
-			Transform(FTransform::Identity)
+			Transform(FTransform3f::Identity)
 		{
 		}
 
@@ -37,9 +37,9 @@ namespace NCsWeapon
 		void FImplSlice::Reset()
 		{
 			// IPayload
-			Type = EMCsWeapon::Get().GetMAX();
+			Type		= EMCsWeapon::Get().GetMAX();
 			UpdateGroup = EMCsUpdateGroup::Get().GetMAX();
-			Transform = FTransform::Identity;
+			Transform	= FTransform3f::Identity;
 		}
 
 		#pragma endregion ICsReset

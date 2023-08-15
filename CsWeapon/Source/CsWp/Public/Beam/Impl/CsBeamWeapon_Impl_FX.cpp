@@ -8,6 +8,7 @@
 #include "Managers/FX/Payload/CsLibrary_Payload_FX.h"
 #include "Data/CsLibrary_Data_Beam.h"
 #include "Collision/CsTypes_Collision.h"
+#include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/FX/Actor/CsManager_FX.h"
@@ -125,9 +126,11 @@ namespace NCsWeapon
 
 						const FCsFX& FX = ImpactVisualData->GetImpactFX(SurfaceType);
 
-						FTransform Transform;
-						Transform.SetLocation(Hit.Location);
-						Transform.SetRotation(Hit.ImpactNormal.Rotation().Quaternion());
+						typedef NCsMath::FLibrary MathLibrary;
+
+						FTransform3f Transform;
+						Transform.SetLocation(MathLibrary::Convert(Hit.Location));
+						Transform.SetRotation(MathLibrary::Convert(Hit.ImpactNormal.Rotation().Quaternion()));
 
 						// Spawn FX
 						typedef NCsFX::NManager::FLibrary FXManagerLibrary;

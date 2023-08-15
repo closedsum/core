@@ -5,10 +5,12 @@
 // CVar
 #include "Managers/Input/CsCVars_Manager_Input.h"
 // Library
-#include "Library/CsLibrary_Math.h"
+	// Common
 #include "Library/Load/CsLibrary_Load.h"
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Player.h"
 #include "Library/CsLibrary_Viewport.h"
+#include "Library/CsLibrary_Math.h"
 // Settings
 #include "Managers/Input/CsSettings_Input.h"
 #include "Managers/Input/CsSettings_Manager_Input.h"
@@ -103,7 +105,7 @@ UCsManager_Input::UCsManager_Input(const FObjectInitializer& ObjectInitializer) 
 	Last_Actions(),
 		// Mouse
 	MouseActions(),
-	CurrentMousePosition(FVector::ZeroVector),
+	CurrentMousePosition(FVector3f::ZeroVector),
 		// Touch
 	TouchActions(),
 	TouchAxisActions(),
@@ -188,13 +190,11 @@ void UCsManager_Input::BeginDestroy()
 {
 	Super::BeginDestroy();
 
+	typedef NCsObject::FLibrary ObjectLibrary;
+
 	for (UCsInputListener* Listener : Listeners)
 	{
-		if (Listener &&
-			!Listener->IsPendingKill())
-		{
-			Listener->MarkPendingKill();
-		}
+		ObjectLibrary::SafeMarkAsGarbage(Listener);
 	}
 	Listeners.Reset();
 }
@@ -349,7 +349,7 @@ void UCsManager_Input::PostProcessInput(const float DeltaTime, const bool bGameP
 			else
 			if (Type == ECsInputType::Location)
 			{
-				const FVector& Location = Info.Location;
+				const FVector3f& Location = Info.Location;
 
 				TryAddInput(Type, Action, Event, Info.Value, Info.Location);	
 			}
@@ -458,7 +458,7 @@ void UCsManager_Input::OnPostProcessInput_CaptureMouseInput(const float& DeltaTi
 
 	// Default__MousePositionXY__
 	{
-		CurrentMousePosition = FVector::ZeroVector;
+		CurrentMousePosition = FVector3f::ZeroVector;
 			
 		if (OwnerAsController->GetMousePosition(CurrentMousePosition.X, CurrentMousePosition.Y))
 		{
@@ -568,7 +568,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureMouseInput()
 
 	const FString& Context = Str::OnPostProcessInput_CaptureMouseInput;
 
-	FVector MousePosition = FVector::ZeroVector;
+	FVector3f MousePosition = FVector3f::ZeroVector;
 
 	// Location | Location Event Change
 	if (CS_CVAR_LOG_IS_SHOWING(LogInputMouseLocation) ||
@@ -585,7 +585,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureMouseInput()
 				FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
 				const ECsInputEvent& Event	  = Info.Event;
 
-				const FVector& Location = Info.Location;
+				const FVector3f& Location = Info.Location;
 
 				const float& Time = CurrentInputFrame->Time.Time;
 
@@ -740,6 +740,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureTouchInput(const float& DeltaTi
 	const FIntPoint Size = ViewportLibrary::GetSizeChecked(Context, this);
 	*/
 	// Check if any Touch Locations have been updated
+	typedef NCsMath::FLibrary MathLibrary;
+
 	const int32 Count = TouchAxisActions.Num();
 
 	for (int32 I = 0; I < Count; ++I)
@@ -747,10 +749,10 @@ void UCsManager_Input::OnPostProcessInput_CaptureTouchInput(const float& DeltaTi
 		const FECsInputAction& Action = TouchAxisActions[I];
 		FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
 
-		FVector CurrentPosition = Info.Location;
+		FVector3f CurrentPosition = Info.Location;
 
-		const FVector& Touch = PlayerInput->Touches[I];
-		const bool IsPressed = Touch.Z != 0.0f;
+		const FVector3f Touch = MathLibrary::Convert(PlayerInput->Touches[I]);
+		const bool IsPressed  = Touch.Z != 0.0f;
 
 		if (IsPressed)
 		{
@@ -810,6 +812,8 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 
 	const FString& Context = Str::OnPostProcessInput_CaptureTouchInput;
 
+	typedef NCsMath::FLibrary MathLibrary;
+
 	// Action | Action Event Change
 	if (CS_CVAR_LOG_IS_SHOWING(LogInputTouchAction) ||
 		CS_CVAR_LOG_IS_SHOWING(LogInputTouchActionEventChange))
@@ -854,7 +858,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 				const ECsInputType& Type	= Info.Type;
 				ECsInputEvent& Event		= Info.Event;
 				const FString& CurrentEvent = EMCsInputEvent::Get().ToString(Event);
-				const FVector& Location		= Info.Location;
+				const FVector3f& Location   = Info.Location;
 
 				// Action
 				if (Type == ECsInputType::Action)
@@ -889,7 +893,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 		for (int32 I = 0; I < Count; ++I)
 		{
 			const FECsInputAction& Action = TouchAxisActions[I];
-			const FVector& Touch		  = PlayerInput->Touches[I];
+			const FVector3f Touch		  = MathLibrary::Convert(PlayerInput->Touches[I]);
 
 			const bool IsPressed = Touch.Z != 0.0f;
 
@@ -908,7 +912,7 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 			for (const int32& I : Indices)
 			{
 				const FECsInputAction& Action = TouchAxisActions[I];
-				const FVector& Touch		  = PlayerInput->Touches[I];
+				const FVector3f Touch		  = MathLibrary::Convert(PlayerInput->Touches[I]);
 
 				const bool IsPressed = Touch.Z != 0.0f;
 
@@ -934,9 +938,9 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 			const FECsInputAction& Action = TouchAxisActions[I];
 			FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
 
-			FVector CurrentPosition = Info.Location;
+			FVector3f CurrentPosition = Info.Location;
 
-			const FVector& Touch = PlayerInput->Touches[I];
+			const FVector3f Touch = MathLibrary::Convert(PlayerInput->Touches[I]);
 			const bool IsPressed = Touch.Z != 0.0f;
 
 			if (IsPressed)
@@ -992,9 +996,9 @@ void UCsManager_Input::OnPostProcessInput_LogCaptureTouchInput()
 				const FECsInputAction& Action = TouchAxisActions[I];
 				FCsInputInfo& Info			  = InputActionEventInfos[Action.GetValue()];
 
-				FVector CurrentPosition = Info.Location;
+				FVector3f CurrentPosition = Info.Location;
 
-				const FVector& Touch = PlayerInput->Touches[I];
+				const FVector3f Touch = MathLibrary::Convert(PlayerInput->Touches[I]);
 				const bool IsPressed = Touch.Z != 0.0f;
 
 				if (IsPressed)
@@ -1048,8 +1052,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureVRInput()
 
 	if (IsVR)
 	{
-		FRotator Rotation;
-		FVector Location;
+		FRotator3f Rotation;
+		FVector3f Location;
 
 		//UCsLibrary_Common::GetHMDOrientationAndPosition(Rotation, Location);
 
@@ -1068,8 +1072,8 @@ void UCsManager_Input::OnPostProcessInput_CaptureVRInput()
 
 		const float WorldToMetersScale = 100.0f;
 
-		FRotator Rotation;
-		FVector Location;
+		FRotator3f Rotation;
+		FVector3f Location;
 
 		// Left
 		if (Controller->GetControllerOrientationAndPosition(LocalPlayerIndex, EMCsControllerHand::Get().ToName(ECsControllerHand::Left), Rotation, Location, WorldToMetersScale))
@@ -1166,7 +1170,7 @@ void UCsManager_Input::OnPostProcessInput_LogInputAction()
 			else
 			if (Type == ECsInputType::Location)
 			{
-				const FVector& Location = Info.Location;
+				const FVector3f& Location = Info.Location;
 
 				if (Info.HasEventChanged() &&
 					(LogAll ||
@@ -1245,7 +1249,7 @@ void UCsManager_Input::OnPostProcessInput_LogInputAction()
 				else
 				if (Type == ECsInputType::Location)
 				{
-					const FVector& Location = Info.Location;
+					const FVector3f& Location = Info.Location;
 
 					if (Info.HasEventChanged() &&
 						(LogAll ||
@@ -1341,7 +1345,7 @@ void UCsManager_Input::OnPostProcessInput_LogGameEventInfo()
 	}
 }
 
-FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
+FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector3f& Location /*=FVector3f::ZeroVector*/, const FRotator3f& Rotation /*=FRotator3f::ZeroRotator*/)
 {
 	FCsInput* Input = Manager_Inputs.AllocateResource();
 
@@ -1350,7 +1354,7 @@ FCsInput* UCsManager_Input::AllocateInput(const FECsInputAction& Action, const E
 	return Input;
 }
 
-void UCsManager_Input::AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
+void UCsManager_Input::AddInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector3f& Location /*=FVector3f::ZeroVector*/, const FRotator3f& Rotation /*=FRotator3f::ZeroRotator*/)
 {
 	FCsInput* Input = AllocateInput(Action, Event, Value, Location, Rotation);
 	InputFrames[CurrentInputFrameIndex].Inputs.Add(Input);
@@ -1361,7 +1365,7 @@ bool UCsManager_Input::CanAddInput(const FECsInputAction& Action)
 	return (CurrentInputActionMap & InputActionMapping[Action.GetValue()]) > 0;
 }
 
-bool UCsManager_Input::TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*= 0.0f*/, const FVector& Location /*= FVector::ZeroVector*/, const FRotator& Rotation /*= FRotator::ZeroRotator*/)
+bool UCsManager_Input::TryAddInput(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*= 0.0f*/, const FVector3f& Location /*= FVector3f::ZeroVector*/, const FRotator3f& Rotation /*= FRotator3f::ZeroRotator*/)
 {
 	if (CanAddInput(Action))
 	{
@@ -1373,12 +1377,12 @@ bool UCsManager_Input::TryAddInput(const ECsInputType& Type, const FECsInputActi
 	return false;
 }
 
-const ECsInputEvent& UCsManager_Input::ProcessInputEvent(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector& Location, const FRotator& Rotation)
+const ECsInputEvent& UCsManager_Input::ProcessInputEvent(const ECsInputType& Type, const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value, const FVector3f& Location, const FRotator3f& Rotation)
 {
 	return Event;
 }
 
-void UCsManager_Input::QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector& Location /*=FVector::ZeroVector*/, const FRotator& Rotation /*=FRotator::ZeroRotator*/)
+void UCsManager_Input::QueueInput(const FECsInputAction& Action, const ECsInputEvent& Event, const float& Value /*=0.0f*/, const FVector3f& Location /*=FVector3f::ZeroVector*/, const FRotator3f& Rotation /*=FRotator3f::ZeroRotator*/)
 {
 	FCsInput* Input = AllocateInput(Action, Event, Value, Location, Rotation);
 
@@ -1967,7 +1971,7 @@ float UCsManager_Input::GetInputValue(const FECsInputAction& Action)
 	return 0.0f;
 }
 
-FVector UCsManager_Input::GetInputLocation(const FECsInputAction& Action)
+FVector3f UCsManager_Input::GetInputLocation(const FECsInputAction& Action)
 {
 	FCsInputFrame& InputFrame = InputFrames[CurrentInputFrameIndex];
 
@@ -1976,7 +1980,7 @@ FVector UCsManager_Input::GetInputLocation(const FECsInputAction& Action)
 		if (Input->Action == Action)
 			return Input->Location;
 	}
-	return FVector::ZeroVector;
+	return FVector3f::ZeroVector;
 }
 
 ECsInputEvent UCsManager_Input::GetInputEvent(const FECsInputAction& Action)
@@ -2033,8 +2037,10 @@ void UCsManager_Input::OnAction_Released(const FECsInputAction& Action, const FK
 	Info.MarkDirty();
 }
 
-void UCsManager_Input::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Location)
+void UCsManager_Input::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector3d Location)
 {
+	typedef NCsMath::FLibrary MathLibrary;
+
 	const FECsInputAction& Action = TouchActions[(uint8)Index];
 
 	FCsInputInfo& Info   = InputActionEventInfos[Action.GetValue()];
@@ -2042,15 +2048,17 @@ void UCsManager_Input::OnTouchAction_Pressed(ETouchIndex::Type Index, FVector Lo
 
 	Info.ResetLocation();
 
-	Info.Location = Location;
+	Info.Location = MathLibrary::Convert(Location);
 
 	Event = ECsInputEvent::FirstPressed;
 
 	Info.MarkDirty();
 }
 
-void UCsManager_Input::OnTouchAction_Released(ETouchIndex::Type Index, FVector Location)
+void UCsManager_Input::OnTouchAction_Released(ETouchIndex::Type Index, FVector3d Location)
 {
+	typedef NCsMath::FLibrary MathLibrary;
+
 	const FECsInputAction& Action = TouchActions[(uint8)Index];
 
 	FCsInputInfo& Info	 = InputActionEventInfos[Action.GetValue()];
@@ -2058,7 +2066,7 @@ void UCsManager_Input::OnTouchAction_Released(ETouchIndex::Type Index, FVector L
 
 	Info.ResetLocation();
 
-	Info.Location = Location;
+	Info.Location = MathLibrary::Convert(Location);
 
 	Event = ECsInputEvent::FirstReleased;
 

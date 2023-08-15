@@ -39,7 +39,7 @@ namespace NCsMaterial
 
 				static FUniformBufferRHIRef* GetUniformBufferPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
 
-				static FRHIUniformBufferLayout* GetUniformBufferLayoutPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
+				static FUniformBufferLayoutRHIRef* GetUniformBufferLayoutPtrChecked(const FString& Context, FMaterialParameterCollectionInstanceResource* Resource);
 
 			#if WITH_EDITOR
 

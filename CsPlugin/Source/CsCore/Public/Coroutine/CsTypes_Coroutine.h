@@ -400,8 +400,8 @@ namespace NCsCoroutine
 			TArray<uint32, TFixedAllocator<CS_ROUTINE_INT_SIZE>> UnsignedInts;
 			TArray<float, TFixedAllocator<CS_ROUTINE_FLOAT_SIZE>> Floats;
 			TArray<double, TFixedAllocator<CS_ROUTINE_DOUBLE_SIZE>> Doubles;
-			TArray<FVector, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
-			TArray<FRotator, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
+			TArray<FVector3f, TFixedAllocator<CS_ROUTINE_VECTOR_SIZE>> Vectors;
+			TArray<FRotator3f, TFixedAllocator<CS_ROUTINE_ROTATOR_SIZE>> Rotators;
 			TArray<FLinearColor, TFixedAllocator<CS_ROUTINE_COLOR_SIZE>> Colors;
 			TArray<FName, TFixedAllocator<CS_ROUTINE_NAME_SIZE>> Names;
 			TArray<FString, TFixedAllocator<CS_ROUTINE_STRING_SIZE>> Strings;
@@ -472,13 +472,13 @@ namespace NCsCoroutine
 				Doubles[InIndex] = Value;
 			}
 
-			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value)
+			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector3f& Value)
 			{
 				SetUsedValue(EValueType::Vector, InIndex);
 				Vectors[InIndex] = Value;
 			}
 
-			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value)
+			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator3f& Value)
 			{
 				SetUsedValue(EValueType::Rotator, InIndex);
 				Rotators[InIndex] = Value;
@@ -567,13 +567,13 @@ namespace NCsCoroutine
 					return Doubles[InIndex];
 				}
 
-				FORCEINLINE FVector& GetValue_Vector(const int32& InIndex)
+				FORCEINLINE FVector3f& GetValue_Vector(const int32& InIndex)
 				{
 					SetUsedValue(EValueType::Vector, InIndex);
 					return Vectors[InIndex];
 				}
 
-				FORCEINLINE FRotator& GetValue_Rotator(const int32& InIndex)
+				FORCEINLINE FRotator3f& GetValue_Rotator(const int32& InIndex)
 				{
 					SetUsedValue(EValueType::Rotator, InIndex);
 					return Rotators[InIndex];
@@ -603,10 +603,17 @@ namespace NCsCoroutine
 					return StringPointers[InIndex];
 				}
 
-				FORCEINLINE TCsWeakObjectPtr<UObject>& GetValue_Object(const int32& InIndex)
+				FORCEINLINE UObject* GetValue_Object(const int32& InIndex)
 				{
 					SetUsedValue(EValueType::Object, InIndex);
-					return Objects[InIndex];
+					return Objects[InIndex].GetSafe();
+				}
+
+				template<typename T>
+				FORCEINLINE T* GetValue_Object(const int32& InIndex)
+				{
+					SetUsedValue(EValueType::Object, InIndex);
+					return Objects[InIndex].GetSafe<T>();
 				}
 
 				FORCEINLINE void* GetValue_Void(const int32& InIndex)
@@ -710,6 +717,12 @@ namespace NCsCoroutine
 				Init(Context, InOwner, ContextObject, UpdateGroup, InName, InNameInternal);
 			}
 
+			FORCEINLINE void Init(const FString& Context, char(* Delegate)(FCsRoutine*), UObject* InOwner, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal)
+			{
+				CoroutineImpl.BindStatic(Delegate);
+				Init(Context, InOwner, ContextObject, UpdateGroup, InName, InNameInternal);
+			}
+
 			void Init(const FString& Context, UObject* InOwner, const UObject* ContextObject, const FECsUpdateGroup& UpdateGroup, const FString& InName, const FName& InNameInternal);
 
 			void Reset();
@@ -730,8 +743,8 @@ namespace NCsCoroutine
 			FORCEINLINE void SetValue_UnsignedInt(const int32& InIndex, const uint32& Value){		RegisterMap.SetValue_UnsignedInt(InIndex, Value); }
 			FORCEINLINE void SetValue_Float(const int32& InIndex, const float& Value){				RegisterMap.SetValue_Float(InIndex, Value); }
 			FORCEINLINE void SetValue_Double(const int32& InIndex, const double& Value){			RegisterMap.SetValue_Double(InIndex, Value); }
-			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
-			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
+			FORCEINLINE void SetValue_Vector(const int32& InIndex, const FVector3f& Value){			RegisterMap.SetValue_Vector(InIndex, Value); }
+			FORCEINLINE void SetValue_Rotator(const int32& InIndex, const FRotator3f& Value){			RegisterMap.SetValue_Rotator(InIndex, Value); }
 			FORCEINLINE void SetValue_Color(const int32& InIndex, const FLinearColor& Value){		RegisterMap.SetValue_Color(InIndex, Value); }
 			FORCEINLINE void SetValue_Name(const int32& InIndex, const FName& Value){				RegisterMap.SetValue_Name(InIndex, Value); }
 			FORCEINLINE void SetValue_String(const int32& InIndex, const FString& Value){			RegisterMap.SetValue_String(InIndex, Value); }
@@ -799,7 +812,7 @@ namespace NCsCoroutine
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT_START int32 __Coroutine__Payload__Float__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_FLOAT(__Payload, __Value) __Payload->SetValue_Float(__Coroutine__Payload__Float__Counter__, __Value); \
 	++__Coroutine__Payload__Float__Counter__
-// Vector (FVector)
+// Vector (FVector3f)
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR_START int32 __Coroutine__Payload__Vector__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
 	++__Coroutine__Payload__Vector__Counter__
@@ -811,6 +824,10 @@ namespace NCsCoroutine
 #define CS_COROUTINE_PAYLOAD_PASS_NAME_START int32 __Coroutine__Payload__Name__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_NAME(__Payload, __Value) __Payload->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
 	++__Coroutine__Payload__Name__Counter__
+// Void
+#define CS_COROUTINE_PAYLOAD_PASS_OBJECT_START int32 __Coroutine__Payload__Object__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_OBJECT(__Payload, __Value) __Payload->SetValue_Object(__Coroutine__Payload__Object__Counter__, __Value); \
+	++__Coroutine__Payload__Object__Counter__
 // Void
 #define CS_COROUTINE_PAYLOAD_PASS_VOID_START int32 __Coroutine__Payload__Void__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_VOID(__Payload, __Value) __Payload->SetValue_Void(__Coroutine__Payload__Void__Counter__, __Value); \
@@ -879,15 +896,15 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Float__Counter__
 #define CS_COROUTINE_READ_FLOAT_CONST_REF(__R, __VariableName) const float& __VariableName = __R->GetValue_Float(__Coroutine__Read__Float__Counter__); \
 	++__Coroutine__Read__Float__Counter__
-// Vector (FVector)
+// Vector (FVector3f)
 #define CS_COROUTINE_READ_VECTOR_START int32 __Coroutine__Read__Vector__Counter__ = 0;
-#define CS_COROUTINE_READ_VECTOR(__R, __VariableName) FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR(__R, __VariableName) FVector3f __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-#define CS_COROUTINE_READ_VECTOR_REF(__R, __VariableName) FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR_REF(__R, __VariableName) FVector3f& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-#define CS_COROUTINE_READ_VECTOR_CONST(__R, __VariableName) const FVector __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR_CONST(__R, __VariableName) const FVector3f __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
-#define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
+#define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector3f& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_READ_COLOR_START int32 __Coroutine__Read__Color__Counter__ = 0;
@@ -909,6 +926,12 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Name__Counter__
 #define CS_COROUTINE_READ_NAME_CONST_REF(__R, __VariableName) const FName& __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
 	++__Coroutine__Read__Name__Counter__
+// Object
+#define CS_COROUTINE_READ_OBJECT_START int32 __Coroutine__Read__Object__Counter__ = 0;
+#define CS_COROUTINE_READ_OBJECT(__R, __VariableName) UObject* __VariableName = __R->GetValue_Object(__Coroutine__Read__Object__Counter__); \
+	++__Coroutine__Read__Object__Counter__
+#define CS_COROUTINE_READ_OBJECT_AS(__R, __VariableName, __ObjectType) __ObjectType* __VariableName = __R->GetValue_Object<__ObjectType>(__Coroutine__Read__Object__Counter__); \
+	++__Coroutine__Read__Object__Counter__
 // Void
 #define CS_COROUTINE_READ_VOID_START int32 __Coroutine__Read__Void__Counter__ = 0;
 #define CS_COROUTINE_READ_VOID(__R, __VariableName, __ObjectType) __ObjectType* __VariableName = __R->GetValue_Void<__ObjectType>(__Coroutine__Read__Void__Counter__); \

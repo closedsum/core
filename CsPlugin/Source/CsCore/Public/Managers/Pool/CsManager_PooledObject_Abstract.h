@@ -320,7 +320,7 @@ namespace NCsPooledObject
 					{
 						if (UObject* Object = O->GetSafeObject())
 						{
-							if (!Object->IsPendingKill())
+							if (IsValid(Object))
 							{
 								O->Deallocate();
 								O->Shutdown();
@@ -563,7 +563,7 @@ namespace NCsPooledObject
 				//if (AActor* A = Object->template GetSafeObject<AActor>())
 				//	return;
 				if (UObject* O = Object->GetSafeObject())
-					O->MarkPendingKill();
+					O->MarkAsGarbage();
 			}
 
 			/**

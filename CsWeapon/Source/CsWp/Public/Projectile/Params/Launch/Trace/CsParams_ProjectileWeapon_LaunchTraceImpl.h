@@ -81,10 +81,10 @@ namespace NCsWeapon
 						FORCEINLINE const LaunchLocationType& GetLocationType() const { return GetLocationParams().GetType(); }
 						FORCEINLINE const LaunchLocationOffsetSpace& GetLocationOffsetSpace() const { return GetLocationParams().GetOffsetSpace(); }
 						FORCEINLINE const int32& GetLocationOffsetSpaceRules() const { return GetLocationParams().GetOffsetSpaceRules(); }
-						FORCEINLINE const FRotator& GetLocationOffsetSpaceOffset() const { return GetLocationParams().GetOffsetSpaceOffset(); }
-						FORCEINLINE const FVector& GetLocationOffset() const { return GetLocationParams().GetOffset(); }
+						FORCEINLINE const FRotator3f& GetLocationOffsetSpaceOffset() const { return GetLocationParams().GetOffsetSpaceOffset(); }
+						FORCEINLINE const FVector3f& GetLocationOffset() const { return GetLocationParams().GetOffset(); }
 						FORCEINLINE const LaunchDirectionType& GetDirectionType() const { return GetDirectionParams().GetType(); }
-						FORCEINLINE const FRotator& GetDirectionOffset() const { return GetDirectionParams().GetOffset(); }
+						FORCEINLINE const FRotator3f& GetDirectionOffset() const { return GetDirectionParams().GetOffset(); }
 						FORCEINLINE const bool& InvertDirection() const { return GetDirectionParams().GetbInvert(); }
 						FORCEINLINE const int32& GetDirectionRules() const { return GetDirectionParams().GetRules(); }
 

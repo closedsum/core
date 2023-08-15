@@ -9,6 +9,17 @@
 
 namespace NCsObject
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsObject::FLibrary, SafeMarkAsGarbage);
+			}
+		}
+	}
+
 	FString FLibrary::PrintObjectAndClass(const UObject* Object)
 	{
 		if (!Object)
@@ -98,8 +109,8 @@ namespace NCsObject
 		if (Object->HasAnyFlags(EObjectFlags::RF_NonPIEDuplicateTransient))
 			Str += TEXT("RF_NonPIEDuplicateTransient,");
 		// RF_Dynamic1
-		if (Object->HasAnyFlags(EObjectFlags::RF_Dynamic))
-			Str += TEXT("RF_Dynamic,");
+		//if (Object->HasAnyFlags(EObjectFlags::RF_Dynamic))
+		//	Str += TEXT("RF_Dynamic,");
 		// RF_WillBeLoaded
 		if (Object->HasAnyFlags(EObjectFlags::RF_WillBeLoaded))
 			Str += TEXT("RF_WillBeLoaded,");
@@ -167,4 +178,25 @@ namespace NCsObject
 	}
 
 	#pragma endregion Load
+
+	bool FLibrary::SafeMarkAsGarbage(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(Object)
+
+		if (IsValid(Object))
+			Object->MarkAsGarbage();
+			return true;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has ALREADY been Marked as Garbage."), *Context, *(PrintObjectAndClass(Object))));
+		return false;
+	}
+
+	bool FLibrary::SafeMarkAsGarbage(UObject* Object)
+	{
+		using namespace NCsObject::NLibrary::NCached;
+		
+		const FString& Context = Str::SafeMarkAsGarbage;
+
+		return SafeMarkAsGarbage(Context, Object, nullptr);
+	}
 }

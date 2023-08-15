@@ -7,6 +7,9 @@
 #include "Level/CsGetLevelPayload.h"
 // Types
 #include "Types/CsTypes_Load.h"
+// Object
+#include "UObject/ObjectSaveContext.h"
+
 #include "CsLevelScriptActor.generated.h"
 
 class ITargetPlatform;
@@ -22,7 +25,7 @@ class CSCORE_API ACsLevelScriptActor : public ALevelScriptActor,
 #pragma region
 public:
 
-	virtual void PreSave(const ITargetPlatform* TargetPlatform) override;
+	//virtual void PreSave(const ITargetPlatform* TargetPlatform) override;
 
 	virtual void PostLoad() override;
 
@@ -96,7 +99,7 @@ public:
 
 	FDelegateHandle OnSubLevelSavedHandle;
 
-	void OnSubLevelSaved(UObject* Object);
+	void OnSubLevelSaved(UObject* Object, FObjectPreSaveContext SaveContext);
 
 #endif // #if WITH_EDITOR
 #pragma endregion SubLevel

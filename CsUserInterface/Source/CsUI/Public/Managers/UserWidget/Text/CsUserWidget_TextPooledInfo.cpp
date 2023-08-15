@@ -275,7 +275,7 @@ namespace NCsUserWidget
 				return true;
 			}
 
-			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector& Location) const
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FText& Value, const FVector3f& Location) const
 			{
 				check(IsValidChecked(Context));
 
@@ -314,14 +314,14 @@ namespace NCsUserWidget
 
 				if (GetPositionType() == NCsUserWidget::EPosition::Screen)
 				{
-					FVector WorldLocation = Location;
+					FVector3f WorldLocation = Location;
 
 					if (GetOffsetType() == NCsUserWidget::EPosition::World)
 					{
 						WorldLocation += GetOffset();
 					}
 
-					FVector2D Pos;
+					FVector2f Pos;
 					const bool Result = ViewportLibrary::ProjectWorldToScreenChecked(Context, WorldContext, Location, Pos);
 
 					Slice->Position.X = Pos.X;
@@ -356,17 +356,17 @@ namespace NCsUserWidget
 				return UserWidgetManagerLibrary::SpawnChecked(Context, WorldContext, GetType(), Payload);
 			}
 
-			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector& Location) const
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const FString& Value, const FVector3f& Location) const
 			{
 				return SpawnChecked(Context, WorldContext, Instigator, Owner, FText::FromString(Value), Location);
 			}
 
-			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector& Location) const
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const float& Value, const FVector3f& Location) const
 			{
 				return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%f"), Value), Location);
 			}
 
-			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector& Location) const
+			const FCsUserWidgetPooled* FInfo::SpawnChecked(const FString& Context, const UObject* WorldContext, UObject* Instigator, UObject* Owner, const int32& Value, const FVector3f& Location) const
 			{
 				return SpawnChecked(Context, WorldContext, Instigator, Owner, FString::Printf(TEXT("%d"), Value), Location);
 			}

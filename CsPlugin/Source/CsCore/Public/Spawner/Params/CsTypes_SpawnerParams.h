@@ -469,7 +469,7 @@ namespace NCsSpawner
 //	int32 TransformRules;
 //
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-//	TArray<FTransform> Transforms;
+//	TArray<FTransform3f> Transforms;
 //
 //	UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
 //	TArray<AActor*> Actors;
@@ -498,7 +498,7 @@ namespace NCsSpawner
 //			CS_DECLARE_MEMBER_WITH_PROXY(Type, PointType)
 //			CS_DECLARE_MEMBER_WITH_PROXY(Order, PointOrderType)
 //			CS_DECLARE_MEMBER_WITH_PROXY(TransformRules, int32)
-//			CS_DECLARE_MEMBER_WITH_PROXY(Transforms, TArray<FTransform>)
+//			CS_DECLARE_MEMBER_WITH_PROXY(Transforms, TArray<FTransform3f>)
 //			CS_DECLARE_MEMBER_WITH_PROXY(Actors, TArray<AActor*>)
 //
 //		public:
@@ -520,7 +520,7 @@ namespace NCsSpawner
 //			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Type, PointType)
 //			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Order, PointOrderType)
 //			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(TransformRules, int32)
-//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transforms, TArray<FTransform>)
+//			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Transforms, TArray<FTransform3f>)
 //			CS_DEFINE_SET_GET_MEMBER_WITH_PROXY(Actors, TArray<AActor*>)
 //
 //		#undef PointType
@@ -551,7 +551,7 @@ namespace NCsSpawner
 //
 //	TArray<AActor*> Actors;
 //
-//	TArray<FTransform> Transforms;
+//	TArray<FTransform3f> Transforms;
 //
 //	// Delegates
 //
@@ -563,11 +563,11 @@ namespace NCsSpawner
 //
 //	FAdvanceIndex AdvanceIndex_Impl;
 //
-//	DECLARE_DELEGATE_RetVal(FTransform, FGetSpawnTransform);
+//	DECLARE_DELEGATE_RetVal(FTransform3f, FGetSpawnTransform);
 //
 //	FGetSpawnTransform GetSpawnTransform_Impl;
 //
-//	DECLARE_DELEGATE_RetVal(FVector, FGetSpawnLocation);
+//	DECLARE_DELEGATE_RetVal(FVector3f, FGetSpawnLocation);
 //
 //	FGetSpawnLocation GetSpawnLocation_Impl;
 //
@@ -606,18 +606,18 @@ namespace NCsSpawner
 //		AdvanceIndex_Impl.Execute();
 //	}
 //
-//	FTransform GetSpawnTransform() const;
+//	FTransform3f GetSpawnTransform() const;
 //
-//	FORCEINLINE FTransform GetSpawnTransformChecked(const FString& Context) const
+//	FORCEINLINE FTransform3f GetSpawnTransformChecked(const FString& Context) const
 //	{
 //		checkf(GetSpawnTransform_Impl.IsBound(), TEXT("%s: GetSpawnTransform_Impl is NOT bound to any function."));
 //
 //		return GetSpawnTransform_Impl.Execute();
 //	}
 //
-//	FVector GetSpawnLocation() const;
+//	FVector3f GetSpawnLocation() const;
 //
-//	FORCEINLINE FVector GetSpawnLocationChecked(const FString& Context) const
+//	FORCEINLINE FVector3f GetSpawnLocationChecked(const FString& Context) const
 //	{
 //		checkf(GetSpawnLocation_Impl.IsBound(), TEXT("%s: GetSpawnLocation_Impl is NOT bound to any function."));
 //

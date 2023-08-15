@@ -166,7 +166,7 @@ struct CSCORE_API FCsTArrayTextureRenderTarget2D
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Texture")
 	TArray<TSoftObjectPtr<UTextureRenderTarget2D>> Textures;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Texture", meta = (Bitmask, BitmaskEnum = "ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Texture", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
 	int32 Textures_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Texture")

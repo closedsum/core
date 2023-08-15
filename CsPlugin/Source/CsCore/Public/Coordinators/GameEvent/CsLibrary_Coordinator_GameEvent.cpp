@@ -159,7 +159,7 @@ namespace NCsGameEvent
 			return false;
 		}
 
-		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector& Location /*=FVector::ZeroVector*/)
+		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value /*=0*/, const FVector3f& Location /*=FVector3f::ZeroVector*/)
 		{
 			FCsGameEventInfo Info;
 			Info.Event = GameEvent;
@@ -169,7 +169,7 @@ namespace NCsGameEvent
 			BroadcastGameEventChecked(Context, ContextObject, Group, Info);
 		}
 
-		bool FLibrary::SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeBroadcastGameEvent(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FECsGameEvent& GameEvent, const float& Value, const FVector3f& Location, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			FCsGameEventInfo Info;
 			Info.Event = GameEvent;

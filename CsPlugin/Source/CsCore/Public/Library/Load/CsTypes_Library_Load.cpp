@@ -14,7 +14,8 @@
 #include "Engine/BlueprintCore.h"
 // Animation
 #include "Animation/AnimCompositeBase.h"
-#include "Animation/BlendSpaceBase.h"
+#include "Animation/BlendSpace.h"
+#include "Animation/AnimData/AnimDataModel.h"
 // Font
 #include "Engine/Font.h"
 // Material
@@ -94,6 +95,7 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 		// Check for SkeletonGeneratedClasses. Skip adding the path.
 		if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
 		{
+		#if WITH_EDITOR
 			if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
 			{
 				if (O == BpC->SkeletonGeneratedClass)
@@ -101,10 +103,12 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 					return;
 				}
 			}
+		#endif // #if WITH_EDITOR
 		}
 
 		if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(Class))
 		{
+		#if WITH_EDITOR
 			if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
 			{
 				if (Class == BpC->SkeletonGeneratedClass)
@@ -112,6 +116,7 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 					return;
 				}
 			}
+		#endif // #if WITH_EDITOR
 		}
 
 		PathSets[(uint8)ECsObjectPathDependencyGroup::Blueprint].Add(SoftPath);
@@ -125,9 +130,14 @@ void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
 	// AnimationAsset
 	else
 	if (Class->IsChildOf<UAnimSequence>() ||
-		Class->IsChildOf<UBlendSpaceBase>())
+		Class->IsChildOf<UBlendSpace>())
 	{
 		PathSets[(uint8)ECsObjectPathDependencyGroup::AnimationAsset].Add(SoftPath);
+	}
+	// AnimData
+	else
+	if (Class->IsChildOf<UAnimDataModel>())
+	{
 	}
 	// FX
 	else

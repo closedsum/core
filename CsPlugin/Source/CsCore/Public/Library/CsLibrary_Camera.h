@@ -33,7 +33,7 @@ namespace NCsCamera
 		* @param Object	Object to get camera related information from.
 		* return		Current camera location.
 		*/
-		static FVector GetLocation(UObject* Object);
+		static FVector3f GetLocation(UObject* Object);
 
 		/**
 		* Get the current camera location from Object with 
@@ -44,7 +44,7 @@ namespace NCsCamera
 		*				Omitted axes will default to 0.0f.
 		* return		Current camera location.
 	`	*/
-		static FVector GetLocation(UObject* Object, const int32& Rules);
+		static FVector3f GetLocation(UObject* Object, const int32& Rules);
 
 		/**
 		* Get the current camera location from Object with checks.
@@ -53,7 +53,7 @@ namespace NCsCamera
 		* @param Object		Object to get camera related information from.
 		* return			Current camera location
 		*/
-		static FVector GetLocationChecked(const FString& Context, UObject* Object);
+		static FVector3f GetLocationChecked(const FString& Context, UObject* Object);
 
 		/**
 		* Get the current camera location from Object with checks.
@@ -61,7 +61,7 @@ namespace NCsCamera
 		* @param Object	Object to get camera related information from.
 		* return		Current camera location
 		*/
-		static FVector GetLocationChecked(UObject* Object);
+		static FVector3f GetLocationChecked(UObject* Object);
 
 	#pragma endregion Location
 
@@ -75,7 +75,7 @@ namespace NCsCamera
 		* @param Object	Object to get camera related information from.
 		* return		Current camera rotation.
 		*/
-		static FRotator GetRotation(UObject* Object);
+		static FRotator3f GetRotation(UObject* Object);
 
 		/**
 		* Get the current camera rotation from Object with
@@ -86,23 +86,23 @@ namespace NCsCamera
 		*				Omitted axes will default to 0.0f.
 		* return		Current camera rotation.
 		*/
-		static FRotator GetRotation(UObject* Object, const int32& Rules);
+		static FRotator3f GetRotation(UObject* Object, const int32& Rules);
 
 		/**
 		*/
-		static FRotator GetRotationChecked(const FString& Context, UObject* Object);
+		static FRotator3f GetRotationChecked(const FString& Context, UObject* Object);
 
 		/**
 		*/
-		static FRotator GetRotationChecked(UObject* Object);
+		static FRotator3f GetRotationChecked(UObject* Object);
 
 		/**
 	*/
-		static FRotator GetRotationChecked(const FString& Context, UObject* Object, const int32& Rules);
+		static FRotator3f GetRotationChecked(const FString& Context, UObject* Object, const int32& Rules);
 
 		/**
 		*/
-		static FRotator GetRotationChecked(UObject* Object, const int32& Rules);
+		static FRotator3f GetRotationChecked(UObject* Object, const int32& Rules);
 
 
 	#pragma endregion Rotation
@@ -117,7 +117,7 @@ namespace NCsCamera
 		* @param Object	Object to get camera related information from.
 		* return		Current camera direction.	
 		*/
-		FORCEINLINE static FVector GetDirection(UObject* Object)
+		FORCEINLINE static FVector3f GetDirection(UObject* Object)
 		{
 			return GetRotation(Object).Vector();
 		}
@@ -131,21 +131,21 @@ namespace NCsCamera
 		*				Omitted axes will default to 0.0f.
 		* @param		Current camera direction.
 		*/
-		FORCEINLINE static FVector GetDirection(UObject* Object, const int32& Rules)
+		FORCEINLINE static FVector3f GetDirection(UObject* Object, const int32& Rules)
 		{
 			return GetRotation(Object, Rules).Vector();
 		}
 
 		/**
 		*/
-		FORCEINLINE static FVector GetDirectionChecked(const FString& Context, UObject* Object)
+		FORCEINLINE static FVector3f GetDirectionChecked(const FString& Context, UObject* Object)
 		{
 			return GetRotationChecked(Context, Object).Vector();
 		}
 
 		/**
 		*/
-		FORCEINLINE static FVector GetDirectionChecked(UObject* Object)
+		FORCEINLINE static FVector3f GetDirectionChecked(UObject* Object)
 		{
 			using namespace NCsCamera::NLibrary::NCached;
 
@@ -156,14 +156,14 @@ namespace NCsCamera
 
 		/**
 		*/
-		FORCEINLINE static FVector GetDirectionChecked(const FString& Context, UObject* Object, const int32& Rules)
+		FORCEINLINE static FVector3f GetDirectionChecked(const FString& Context, UObject* Object, const int32& Rules)
 		{
 			return GetRotationChecked(Context, Object, Rules).Vector();
 		}
 
 		/**
 		*/
-		FORCEINLINE static FVector GetDirectionChecked(UObject* Object, const int32& Rules)
+		FORCEINLINE static FVector3f GetDirectionChecked(UObject* Object, const int32& Rules)
 		{
 			using namespace NCsCamera::NLibrary::NCached;
 

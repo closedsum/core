@@ -79,7 +79,7 @@ namespace NCsGrid
 
 			TArray<int32> DeallocatedIndices;
 
-			TArray<FVector2D> Centers;
+			TArray<FVector2f> Centers;
 
 			TArray<float> Radii;
 
@@ -125,9 +125,9 @@ namespace NCsGrid
 				return CellY * NumColumns + CellX;
 			}
 
-			FORCEINLINE FIntVector4 GetCellIndex4(const FVector4& Rect) const
+			FORCEINLINE FIntVector4 GetCellIndex4(const FVector4f& Rect) const
 			{
-				FVector4 cell_xyf_vec	   = InverseCellWidth * Rect;
+				FVector4f cell_xyf_vec	   = InverseCellWidth * Rect;
 				FIntVector4 cell_xy_vec;
 				cell_xy_vec.X			   = FMath::Clamp((int32)cell_xyf_vec.X, 0, NumColumnsMinusOne);
 				cell_xy_vec.Y			   = FMath::Clamp((int32)cell_xyf_vec.Y, 0, NumColumnsMinusOne);

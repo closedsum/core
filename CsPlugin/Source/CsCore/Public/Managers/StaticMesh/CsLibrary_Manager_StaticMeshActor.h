@@ -175,7 +175,7 @@ namespace NCsStaticMeshActor
 			* @param Transform		(optional)
 			* return				Spawned StaticMeshActor
 			*/
-			static const FCsStaticMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform = FTransform::Identity);
+			static const FCsStaticMeshActorPooled* SpawnChecked(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform3f& Transform = FTransform3f::Identity);
 
 			/**
 			* Safely spawn an StaticMeshActor with the given Pooled Payload, Info and Transform.
@@ -188,7 +188,7 @@ namespace NCsStaticMeshActor
 			* @param Log			(optional)
 			* return				Spawned StaticMeshActor
 			*/
-			static const FCsStaticMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform& Transform = FTransform::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
+			static const FCsStaticMeshActorPooled* SafeSpawn(const FString& Context, const UObject* WorldContext, const PooledPayloadType* PooledPayload, const FCsStaticMeshActorPooledInfo& Info, const FTransform3f& Transform = FTransform3f::Identity, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#undef PooledPayloadType
 

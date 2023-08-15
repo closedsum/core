@@ -23,6 +23,7 @@ var checkf = CommonLibrary.checkf;
 var check = CommonLibrary.check;
 var IsValidObject = CommonLibrary.IsValidObject;
 var IsInstanceOfChecked = CommonLibrary.IsInstanceOfChecked;
+var IsInt = CommonLibrary.IsInt;
 
 // "typedefs" - enums
 var StateType = NJsCoroutine.EState;
@@ -137,17 +138,34 @@ module.exports = class FJsCoroutineSchedule
         let RoutineLibrary = CsScriptLibrary_Routine;
 
         if (!RoutineLibrary.IsValid(handle))
-            return null;
-
-        let poolSize = this.Manager_Routine.GetPoolSize();
-        
-        if (handle.index >= this.PoolSize)
         {
-            console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: " + handle.index + " is not associated with any Routine with Group: " + Group.Name_Internal + ".");
+            //console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle is NOT valid: " + handle.Index + " " + Guid.Conv_GuidToString(handle.Handle));
             return null;
         }
 
-        let container = this.Manager_Routine.GetAt(handle.index);
+        let poolSize = this.Manager_Routine.GetPoolSize();
+        
+        let index = INDEX_NONE; 
+        
+        if (IsInt(handle.Index) &&
+            handle.Index >= 0)
+        {
+            index = handle.Index
+        }
+        else
+        if (IsInt(handle.index) &&
+            handle.index >= 0)
+        {
+            index = handle.index;
+        }
+
+        if (index >= this.PoolSize)
+        {
+            console.log("FCsCoroutineSchedule::GetRoutineContainer: Handle's Index: " + index + " is not associated with any Routine with Group: " + Group.Name_Internal + ".");
+            return null;
+        }
+
+        let container = this.Manager_Routine.GetAt(index);
         let r		  = container.Get();
 
         let IsEqual = RoutineLibrary.EqualEqual;

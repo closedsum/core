@@ -147,6 +147,7 @@ module.exports = class FJsRoutine
 	SetIndex(index) 
 	{ 
 		this.Index = index;
+		this.Handle.Index = index; 
 		this.Handle.index = index; 
 	}
 	GetIndex() { return this.Index; }

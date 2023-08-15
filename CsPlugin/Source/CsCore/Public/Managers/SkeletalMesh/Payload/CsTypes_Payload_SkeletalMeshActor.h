@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload", meta = (Bitmask, BitmaskEnum = "ECsSkeletalMeshPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsSkeletalMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // SkeletalMeshPayloadType (NCsSkeletalMeshActor::Payload::IPayload)
@@ -113,7 +113,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload", meta = (Bitmask, BitmaskEnum = "ECsSkeletalMeshPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsSkeletalMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // SkeletalMeshPayloadType (NCsSkeletalMeshActor::Payload::IPayload)

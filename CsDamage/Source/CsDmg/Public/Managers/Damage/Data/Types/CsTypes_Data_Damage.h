@@ -75,7 +75,7 @@ struct CSDMG_API FCsData_DamagePtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Damage"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsDmg.CsData_Damage"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

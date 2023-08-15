@@ -88,7 +88,7 @@ namespace NCsActor
 			AActor* A = *Itr;
 
 			// Check is Valid and NOT getting destroyed
-			if (!A || A->IsPendingKill())
+			if (!IsValid(A))
 				continue;
 			if (A->Tags.Contains(Tag))
 			{
@@ -810,8 +810,6 @@ namespace NCsActor
 		do
 		{
 			{
-				typedef NCsMath::FLibrary MathLibrary;
-
 				// Linear
 				if (Easing == ECsEasingType::Linear)
 				{

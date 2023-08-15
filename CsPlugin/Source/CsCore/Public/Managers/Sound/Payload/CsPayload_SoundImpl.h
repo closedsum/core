@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload", meta = (Bitmask, BitmaskEnum = "ECsSoundPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Sound|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsSoundPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // SoundPayloadType (NCsSound::Payload::IPayload)

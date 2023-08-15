@@ -42,7 +42,7 @@ struct CSCORE_API FCsSkeletalMeshAttachment
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the SkeletalMeshComponent. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Skeletal Mesh", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the SkeletalMeshComponent.

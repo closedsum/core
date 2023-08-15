@@ -312,7 +312,7 @@ struct CSUI_API FCsData_UserWidgetPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_UserWidget"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsUI.CsData_UserWidget"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -395,7 +395,7 @@ struct CSUI_API FCsUserWidgetPooledPtr : public FTableRowBase
 public:
 
 	/** Soft Class reference to an object that implements the interface: ICsUserWidgetPooled. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsUserWidgetPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsUI.CsUserWidgetPooled"))
 	TSoftClassPtr<UObject> Widget;
 
 	UPROPERTY()

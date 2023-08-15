@@ -30,7 +30,7 @@ struct CSUI_API FCsWidgetComponent_CameraInfo
 	float LerpRate;
 
 	/** Which Axes to Lock, which should NOT Snap to the Player Camera. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 LockAxes;
 
 	/** Any rotation offset to apply after the Widget Actor has been oriented to face
@@ -145,7 +145,7 @@ struct CSUI_API FCsWidgetComponentInfo
 	FName Bone;
 
 	/** Which of the members of Transform to apply to the WidgetComponent. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Component", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** Describes the space (Relative, World, ... etc) in which to apply the members of Transform. */

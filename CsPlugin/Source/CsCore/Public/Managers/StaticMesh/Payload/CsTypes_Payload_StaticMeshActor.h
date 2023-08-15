@@ -47,7 +47,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload", meta = (Bitmask, BitmaskEnum = "ECsStaticMeshPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsStaticMeshPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // StaticMeshPayloadType (NCsStaticMeshActor::Payload::IPayload)

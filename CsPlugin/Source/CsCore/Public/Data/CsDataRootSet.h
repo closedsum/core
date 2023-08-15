@@ -20,16 +20,16 @@ struct CSCORE_API FCsDataRootSet
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath EntryMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath TransitionEntryToMainMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath MainMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath ExitMap;
 
 #pragma endregion Flow

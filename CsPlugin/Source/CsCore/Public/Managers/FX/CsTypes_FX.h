@@ -57,7 +57,7 @@ struct CSCORE_API FCsParticleSystem
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX")
 	TSoftObjectPtr<UParticleSystem> Particle;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Particle_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|FX")
@@ -215,7 +215,7 @@ public:
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
@@ -344,7 +344,7 @@ public:
 	TSoftObjectPtr<UNiagaraParameterCollection> Collection;
 
 	/** */
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Collection_LoadFlags;
 
 	/** Hard reference to an UNiagaraParameterCollection. */
@@ -1103,7 +1103,7 @@ public:
 	TSoftObjectPtr<UNiagaraSystem> FX;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 FX_LoadFlags;
 
 	/** Hard reference to an FX System. */
@@ -1161,7 +1161,7 @@ public:
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the FX. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|FX", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the FX.

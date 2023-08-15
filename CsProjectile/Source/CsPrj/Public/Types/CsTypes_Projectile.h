@@ -415,7 +415,7 @@ struct CSPRJ_API FCsProjectilePtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsPrj.CsProjectile"))
 	TSoftClassPtr<UObject> Projectile;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj")
@@ -460,7 +460,7 @@ struct CSPRJ_API FCsData_ProjectilePtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Projectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsPrj.CsData_Projectile"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -21,7 +21,7 @@ struct CSCORE_API FCsCurveFloat
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
 	TSoftObjectPtr<UCurveFloat> Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")
@@ -143,7 +143,7 @@ struct CSCORE_API FCsCurveVector
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve")
 	TSoftObjectPtr<UCurveVector> Curve;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Curve", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Curve_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Curve")

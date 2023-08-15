@@ -184,9 +184,10 @@ namespace NCsObject
 		CS_IS_PTR_NULL(Object)
 
 		if (IsValid(Object))
+		{
 			Object->MarkAsGarbage();
 			return true;
-
+		}
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has ALREADY been Marked as Garbage."), *Context, *(PrintObjectAndClass(Object))));
 		return false;
 	}

@@ -38,8 +38,8 @@ class CSCORE_API UCsLibrary_Load : public UObject
 	template<typename T>
 	static UClass* LoadAssetClass(const FString& AssetPath)
 	{
-		const FStringAssetReference AssetRef = FStringAssetReference(AssetPath);
-		TSoftClassPtr<T> AssetClass			 = TSoftClassPtr<T>(AssetRef);
+		const FSoftObjectPath AssetRef = FSoftObjectPath(AssetPath);
+		TSoftClassPtr<T> AssetClass	   = TSoftClassPtr<T>(AssetRef);
 
 		if (UClass* Class = AssetClass.LoadSynchronous())
 		{

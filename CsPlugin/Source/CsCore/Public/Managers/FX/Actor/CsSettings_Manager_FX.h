@@ -14,7 +14,7 @@ struct CSCORE_API FCsSettings_Manager_FX_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "CsFXActorPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "/Script.CsCore.CsFXActorPooled"))
 	TSoftClassPtr<UObject> Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (ClampMin = "4", UIMin = "4"))
@@ -104,17 +104,17 @@ struct CSCORE_API FCsSettings_Manager_FX_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsFXActorPooled */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "CsFXActorPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "/Script.CsCore.CsFXActorPooled"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "CsFXActorPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "/Script.CsCore.CsFXActorPooled"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "CsFXActorPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|FX", meta = (MustImplement = "/Script.CsCore.CsFXActorPooled"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_FX_UnitTest() :

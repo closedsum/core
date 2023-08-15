@@ -869,7 +869,7 @@ struct CSCORE_API FCsTransform_Location_Multiplier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float Multiplier;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "ECsTransformLocationMember"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformLocationMember"))
 	int32 Members;
 
 	FCsTransform_Location_Multiplier() :
@@ -1033,7 +1033,7 @@ struct CSCORE_API FCsTransform_Rotation_Multiplier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float Multiplier;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "ECsTransformRotationMember"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRotationMember"))
 	int32 Members;
 
 	FCsTransform_Rotation_Multiplier() :
@@ -1197,7 +1197,7 @@ struct CSCORE_API FCsTransform_Scale_Multiplier
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math")
 	float Multiplier;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "ECsTransformScaleMember"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Math", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformScaleMember"))
 	int32 Members;
 
 	FCsTransform_Scale_Multiplier() :

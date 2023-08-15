@@ -20,7 +20,7 @@ struct CSCORE_API FCsMaterialInterface
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialInterface> Material;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
@@ -143,7 +143,7 @@ struct CSCORE_API FCsMaterialInstance
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialInstance> Material;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
@@ -193,7 +193,7 @@ struct CSCORE_API FCsMaterialInstanceConstant
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialInstanceConstant> Material;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
@@ -231,7 +231,7 @@ struct CSCORE_API FCsTArrayMaterialInterface
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Material")
 	TArray<TSoftObjectPtr<UMaterialInterface>> Materials;
 
-	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadWrite, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Materials_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadWrite, Category = "CsCore|Material")
@@ -507,7 +507,7 @@ struct CSCORE_API FCsTArrayMaterialInstanceConstant
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TArray<TSoftObjectPtr<UMaterialInstanceConstant>> Materials;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Materials_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")
@@ -557,16 +557,16 @@ struct CSCORE_API FCsFpsTArrayMaterialInstanceConstant
 	UPROPERTY(EditAnywhere, Category = "CsCore|Material")
 	TArray<TSoftObjectPtr<UMaterialInstanceConstant>> MaterialsVR;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Materials1P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Materials3P_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Materials3P_Low_LoadFlags;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 MaterialsVR_LoadFlags;
 
 	UPROPERTY(Transient)
@@ -1351,7 +1351,7 @@ struct CSCORE_API FCsMaterialParameterCollection
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Material")
 	TSoftObjectPtr<UMaterialParameterCollection> Collection;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Material", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Collection_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Material")

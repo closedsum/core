@@ -16,7 +16,7 @@ struct CSWP_API FCsTraceWeaponPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsTraceWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsWp.CsTraceWeapon"))
 	TSoftClassPtr<UObject> Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

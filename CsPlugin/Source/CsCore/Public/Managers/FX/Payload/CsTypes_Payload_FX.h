@@ -37,7 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload")
 	FCsTime Time;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload", meta = (Bitmask, BitmaskEnum = "ECsFXPayloadChange"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|FX|Payload", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsFXPayloadChange"))
 	int32 PreserveChangesFromDefaultMask;
 
 // FXPayloadType (NCsFX::Payload::IPayload)

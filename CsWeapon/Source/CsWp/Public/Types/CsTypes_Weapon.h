@@ -371,7 +371,7 @@ struct CSWP_API FCsWeaponPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "CsWeapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "/Script.CsWp.CsWeapon"))
 	TSoftClassPtr<UObject> Weapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")
@@ -410,7 +410,7 @@ struct CSWP_API FCsData_WeaponPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "CsData_Weapon"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp", meta = (MustImplement = "/Script.CsWp.CsData_Weapon"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp")

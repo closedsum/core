@@ -408,10 +408,7 @@ namespace NCsProjectile
 
 						Destinations[ID] += Offsets[ID];
 						NewDirection      = (Destinations[ID] - _Locations[ID]).GetSafeNormal();
-						
-						typedef NCsMath::FLibrary MathLibrary;
-
-						_Directions[ID] = MathLibrary::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
+						_Directions[ID]   = MathLibrary::VInterpNormalRotationTo(_Directions[ID], NewDirection, DeltaTime.Time, RotationRates[ID]);
 					}
 				}
 			}

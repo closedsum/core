@@ -13,7 +13,7 @@ struct CSCORE_API FCsData_ECsTest
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Test")
 	FECsInputAction Action;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "/Script.CsCore.CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	FCsData_ECsTest() :

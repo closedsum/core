@@ -33,7 +33,7 @@ namespace NCsModifier
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
 
-		int32 Result = Modifier->Modify(Result);
+		int32 Result = Modifier->Modify(Value);
 
 		return Result;
 	}
@@ -61,7 +61,7 @@ namespace NCsModifier
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
 
-		int32 Result = Modifier->ModifyMin(Result);
+		int32 Result = Modifier->ModifyMin(Value);
 
 		return Result;
 	}
@@ -85,7 +85,7 @@ namespace NCsModifier
 	{
 		CS_IS_PTR_NULL_CHECKED(Modifier)
 
-		int32 Result = Modifier->ModifyMax(Result);
+		int32 Result = Modifier->ModifyMax(Value);
 
 		return Result;
 	}

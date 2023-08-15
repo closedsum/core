@@ -131,6 +131,12 @@ struct CSCORE_API FRep_CsInput
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Input")
 	ECsInputEvent Event;
 
+	FRep_CsInput() :
+		Action(),
+		Event()
+	{
+	}
+
 	FORCEINLINE FRep_CsInput& operator=(const FRep_CsInput& B)
 	{
 		Action = B.Action;

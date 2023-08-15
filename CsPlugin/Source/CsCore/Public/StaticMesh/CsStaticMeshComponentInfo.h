@@ -34,7 +34,7 @@ struct CSCORE_API FCsStaticMeshComponentInfo
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the StaticMeshComponent. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Static Mesh", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the StaticMeshComponent.

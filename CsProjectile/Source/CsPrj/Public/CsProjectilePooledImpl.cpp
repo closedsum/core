@@ -1325,8 +1325,6 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
-			
-			typedef NCsMath::FLibrary MathLibrary;
 
 			const int32 Count = DamageDataTypes.Num();
 
@@ -1382,8 +1380,6 @@ void ACsProjectilePooledImpl::Hit(const HitResultType& Result)
 
 			// NOTE: For now reset and apply the modifiers on each hit.
 			// FUTURE: Look into having additional rules on how the modifiers are applied
-
-			typedef NCsMath::FLibrary MathLibrary;
 
 			const int32 Count = DamageDataTypes.Num();
 

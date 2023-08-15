@@ -234,6 +234,12 @@ struct CSCORE_API FCsAnimInstance_Blueprint
 
 public:
 
+	FCsAnimInstance_Blueprint() :
+		Blueprint(nullptr),
+		Blueprint_Internal(nullptr)
+	{
+	}
+
 	FORCEINLINE UBlueprintGeneratedClass* Get() const { return Blueprint_Internal; }
 };
 

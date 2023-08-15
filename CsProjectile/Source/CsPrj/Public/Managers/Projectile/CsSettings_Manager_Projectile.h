@@ -201,17 +201,17 @@ struct CSPRJ_API FCsSettings_Manager_Projectile_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsProjectile. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "/Script.CsPrj.CsProjectile"))
 	TSoftClassPtr<AActor> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "/Script.CsPrj.CsProjectile"))
 	TSoftClassPtr<AActor> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "CsProjectile"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsPrj", meta = (MustImplement = "/Script.CsPrj.CsProjectile"))
 	TSoftClassPtr<AActor> ClassC;
 
 	FCsSettings_Manager_Projectile_UnitTest() :

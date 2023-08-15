@@ -139,7 +139,7 @@ struct CSUI_API FCsWidgetActorPtr : public FTableRowBase
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "CsWidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "/Script.CsUI.CsWidgetActor"))
 	TSoftClassPtr<UObject> Widget;
 
 	UPROPERTY()
@@ -225,7 +225,7 @@ struct CSUI_API FCsData_WidgetActorPtr
 public:
 
 	/** Soft Reference to an object that implements the interface: ICsData_WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "CsData_WidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "/Script.CsUI.CsData_WidgetActor"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CsUI|Widget Actor")
@@ -317,7 +317,7 @@ struct CSUI_API FCsWidgetActorPooled_CameraInfo
 	float LerpRate;
 
 	/** Which Axes to Lock, which should NOT Snap to the Player Camera. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 LockAxes;
 
 	/** Any rotation offset to apply after the Widget Actor has been oriented to face
@@ -436,7 +436,7 @@ struct CSUI_API FCsWidgetActorPooledInfo
 	FName Bone;
 
 	/** Which of the components of Transform to apply to the WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 	int32 TransformRules;
 
 	/** The Transform to apply to the WidgetActor.

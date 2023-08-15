@@ -14,7 +14,7 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "/Script.CsCore.CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (ClampMin = "4", UIMin = "4"))
@@ -71,17 +71,17 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (AllowedClasses = "World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (AllowedClasses = "/Script/CsCore.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsSkeletalMeshActor */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "/Script.CsCore.CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "/Script.CsCore.CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "CsSkeletalMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (MustImplement = "/Script.CsCore.CsSkeletalMeshActor"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_SkeletalMeshActor_UnitTest() :

@@ -20,7 +20,7 @@ struct CSCORE_API FCsData_Skin_VisualPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual", meta = (MustImplement = "CsData_Skin_Visual"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual", meta = (MustImplement = "/Script.CsCore.CsData_Skin_Visual"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Skin|Data|Visual")

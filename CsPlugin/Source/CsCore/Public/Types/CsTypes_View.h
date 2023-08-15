@@ -61,6 +61,13 @@ struct FCsViewFlags
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|View")
 	bool FlagVR;
 
+	FCsViewFlags() :
+		Flag1P(false),
+		Flag3P(false),
+		FlagVR(false)
+	{
+	}
+
 	bool Get(const ECsViewType& ViewType)
 	{
 		if (ViewType == ECsViewType::FirstPerson)

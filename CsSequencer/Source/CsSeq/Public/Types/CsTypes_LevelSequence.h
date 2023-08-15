@@ -18,7 +18,7 @@ struct CSSEQ_API FCsLevelSequence
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsSeq|Level|Sequence")
 	TSoftObjectPtr<ULevelSequence> Sequence;
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsSeq|Level|Sequence", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsSeq|Level|Sequence", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Sequence_LoadFlags;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsSeq|Level|Sequence")

@@ -359,7 +359,7 @@ public:
 
 	/** Describes which components (Pitch, Yaw, and/or Roll) or Rotation / Direction from LocationOffsetSpace will
 		affect the LocationOffset. Components NOT affected will result the LocationOffset applied "directly" in World Space. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 OffsetSpaceRules;
 
 	/** The offset to apply to the Rotation determined from LocationOffsetSpace. */
@@ -491,7 +491,7 @@ public:
 	bool bInvert;
 
 	/** Describes which components (Pitch, Yaw, and/or Roll) will be used for the Direction a Projectile will be Launched. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsWp|Projectile", meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 Rules;
 
 	FCsProjectileWeapon_Launch_DirectionParams() :

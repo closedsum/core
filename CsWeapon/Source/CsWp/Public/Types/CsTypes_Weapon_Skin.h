@@ -79,7 +79,7 @@ struct CSWP_API FCsData_Weapon_SkinPtr : public FTableRowBase
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "CsData_Weapon_Skin"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "/Script.CsWp.CsData_Weapon_Skin"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = DataTable)

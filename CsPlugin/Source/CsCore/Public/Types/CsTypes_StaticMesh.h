@@ -18,7 +18,7 @@ struct CSCORE_API FCsStaticMesh
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh")
 	TSoftObjectPtr<UStaticMesh> Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Static Mesh", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Mesh_LoadFlags;
 
 	UPROPERTY(Transient)

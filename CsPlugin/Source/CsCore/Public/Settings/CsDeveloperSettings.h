@@ -80,12 +80,12 @@ public:
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (MustImplement = "CsDataRootSet"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (MustImplement = "/Script.CsCore.CsDataRootSet"))
 	TSoftClassPtr<UObject> DataRootSet;
 
 	UObject* SafeLoadDataRootSet(const FString& Context);
 
-	UPROPERTY(config, EditAnywhere, Category = "Settings|Data", meta = (MustImplement = "CsDataRootSet"))
+	UPROPERTY(config, EditAnywhere, Category = "Settings|Data", meta = (MustImplement = "/Script.CsCore.CsDataRootSet"))
 	FCsSettings_DataRootSet DataRootSets[(uint8)ECsPlatform::ECsPlatform_MAX];
 
 	FORCEINLINE const TSoftClassPtr<UObject>& GetDataRootSet(const ECsPlatform& Platform) const

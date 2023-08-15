@@ -23,7 +23,7 @@ public:
 	TSoftObjectPtr<UPhysicalMaterial> Material;
 
 	/** */
-	UPROPERTY(EditAnywhere, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Material_LoadFlags;
 
 	/** Hard reference to a Physics Material. */
@@ -76,7 +76,7 @@ public:
 	TSoftObjectPtr<UPhysicsAsset> Physics;
 
 	/** */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Physics", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Physics_LoadFlags;
 
 	/** Hard reference to a Physics Asset. */

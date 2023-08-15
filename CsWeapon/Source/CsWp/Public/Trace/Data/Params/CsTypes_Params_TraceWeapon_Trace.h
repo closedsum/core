@@ -222,7 +222,7 @@ public:
 	/** The Rules, components (Pitch, Yaw, Roll), to use from a given rotation
 		when calculating the Direction.
 		See ECsRotationRules */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "ECsRotationRules"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsRotationRules"))
 	int32 Rules;
 
 	FCsTraceWeaponTraceParamsDirectionInfo() :

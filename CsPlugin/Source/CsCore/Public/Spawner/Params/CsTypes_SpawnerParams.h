@@ -465,7 +465,7 @@ namespace NCsSpawner
 //	ECsSpawnerPointOrder Order;
 //
 //	/** Which of the components of Transform to apply to the spawned object. */
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "ECsTransformRules"))
+//	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "/Script.CsCore.ECsTransformRules"))
 //	int32 TransformRules;
 //
 //	UPROPERTY(EditAnywhere, BlueprintReadWrite)

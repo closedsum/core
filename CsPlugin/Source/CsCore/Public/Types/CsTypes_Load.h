@@ -557,10 +557,10 @@ struct CSCORE_API FCsDataMappingEntry
 	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
 	uint16 LookUpCode;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "CsDataInterface"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "/Script.CsCore.CsDataInterface"))
 	TSoftClassPtr<UObject> Data;
 
-	UPROPERTY(EditAnywhere, Category = "CsCore|Load", meta = (Bitmask, BitmaskEnum = "/Script/Cscore.ECsLoadFlags"))
+	UPROPERTY(EditAnywhere, Category = "CsCore|Load", meta = (Bitmask, BitmaskEnum = "/Script/CsCore.ECsLoadFlags"))
 	int32 Data_LoadFlags;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
@@ -786,7 +786,7 @@ public:
 	FName Name;
 
 	/** Object that implements the interface: ICsData. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "/Script.CsCore.CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -1155,7 +1155,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable)
 	bool bPopulateOnSave;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "/Script.CsCore.CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -1402,7 +1402,7 @@ struct CSCORE_API FCsDataRootSetContainer
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load", EditAnywhere, meta = (MustImplement = "CsGetDataRootSet"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load", EditAnywhere, meta = (MustImplement = "/Script.CsCore.CsGetDataRootSet"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")

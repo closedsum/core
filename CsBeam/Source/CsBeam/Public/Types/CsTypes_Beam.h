@@ -84,7 +84,7 @@ struct CSBEAM_API FCsBeamPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsBeam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsBeam"))
 	TSoftClassPtr<UObject> Beam;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -129,7 +129,7 @@ struct CSBEAM_API FCsData_BeamPtr
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "CsData_Beam"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (MustImplement = "/Script.CsBeam.CsData_Beam"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

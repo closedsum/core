@@ -37,6 +37,7 @@ public class CsJs : ModuleRules
             PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "V8",
+                    "InputCore",
                 }
             );
 

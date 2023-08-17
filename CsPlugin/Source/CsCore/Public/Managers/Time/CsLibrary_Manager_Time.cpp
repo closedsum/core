@@ -56,6 +56,9 @@ namespace NCsTime
 				return GetManagerSingleton->_getUObject();
 			}
 
+			if (ContextObject == GEngine)
+				return GEngine;
+
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
@@ -73,6 +76,9 @@ namespace NCsTime
 				}
 				return nullptr;
 			}
+
+			if (ContextObject == GEngine)
+				return GEngine;
 
 			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 

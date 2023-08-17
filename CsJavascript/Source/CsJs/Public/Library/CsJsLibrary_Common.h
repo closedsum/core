@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 class UObject;
@@ -15,32 +17,28 @@ namespace NCsJs
 			/**
 			*/
 			static void SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor);
+
+			/**
+			*/
+			static void ExposeObject(UObject*& JavascriptContext, const FString& Name, UObject* Object);
+
+			/**
+			*/
+			static void ClearObject(UObject*& JavascriptContext, const FString& Name);
+
+			/**
+			*/
+			static void RunFileChecked(const FString& Context, UObject*& JavascriptContext, const FString& FileName);
+
+			/**
+			*/
+			static void RunFile(UObject*& JavascriptContext, const FString& FileName);
 		#else
 			static void SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor){}
-		#endif // #if WITH_EDITOR
-
-		#if WITH_EDITOR
-			/**
-			*/
-			static void ExposeObject(UObject*& Context, const FString& Name, UObject* Object);
-		#else
-			static void ExposeObject(UObject*& Context, const FString& Name, UObject* Object){}
-		#endif // #if WITH_EDITOR
-
-		#if WITH_EDITOR
-			/**
-			*/
-			static void ClearObject(UObject*& Context, const FString& Name);
-		#else
-			static void ClearObject(UObject*& Context, const FString& Name){}
-		#endif // #if WITH_EDITOR
-
-		#if WITH_EDITOR
-			/**
-			*/
-			static void RunFile(UObject*& Context, const FString& FileName);
-		#else
-			static void RunFile(UObject*& Context, const FString& FileName){}
+			static void ExposeObject(UObject*& JavascriptContext, const FString& Name, UObject* Object) {}
+			static void ClearObject(UObject*& JavascriptContext, const FString& Name) {}
+			static void RunFileChecked(const FString& Context, UObject*& JavascriptContext, const FString& FileName) {}
+			static void RunFile(UObject*& JavascriptContext, const FString& FileName) {}
 		#endif // #if WITH_EDITOR
 		};
 	}

@@ -1,18 +1,26 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/CsManager_Javascript.h"
 #include "CsJs.h"
 
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/CsLibrary_Manager_Javascript.h"
+#include "Managers/Input/CsLibrary_Manager_Input.h"
+	// Common
 #include "Library/CsJsLibrary_Common.h"
+#include "Library/CsLibrary_Valid.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 #include "Coroutine/CsRoutine.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+#include "Managers/Input/CsManager_Input.h"
 // Coordinators
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
+// Settings
+#include "Managers/CsSettings_Manager_Javascript.h"
 // Game
 #include "Engine/GameInstance.h"
 #include "GameFramework/GameStateBase.h"
@@ -55,6 +63,9 @@ namespace NCsManagerJavascript
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunScripts);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunScripts_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, ReloadScript);
+			// Events
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupCallbacks);
 		}
 
 		namespace Name
@@ -76,7 +87,11 @@ UCsManager_Javascript* UCsManager_Javascript::s_Instance;
 bool UCsManager_Javascript::s_bShutdown = false;
 
 UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectInitializer) : 
-	Super(ObjectInitializer)
+	Super(ObjectInitializer),
+	// Scripts
+	OnPreReloadScript_ScriptEvent(),
+	CurrentScriptIndex(INDEX_NONE),
+	bScriptReload(false)
 {
 }
 
@@ -514,6 +529,15 @@ void UCsManager_Javascript::CreateScriptObjects()
 	}
 }
 
+void UCsManager_Javascript::ConditionalCreateScriptObject()
+{
+	if (ScriptObjects.Num() == CS_EMPTY ||
+		ScriptObjects.Num() != ScriptInfo.FileInfos.Num())
+	{
+		CreateScriptObjects();
+	}
+}
+
 void UCsManager_Javascript::SetupScriptObjects(UGameInstance* GameInstance /*=nullptr*/)
 {
 	using namespace NCsManagerJavascript::NCached;
@@ -613,6 +637,10 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
 			ScriptObject.ExposedObjectNames.Add(TEXT("GameState"));
 
+			// Manager_Javascript
+			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
+			ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
+
 			// Player Controller
 			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
 			ScriptObject.ExposedObjectNames.Add(TEXT("PlayerController"));
@@ -698,6 +726,7 @@ void UCsManager_Javascript::RunScripts()
 	const int32 MaxScripts = ScriptObjects.Num();
 
 	CurrentScriptIndex = 0;
+	bScriptReload = false;
 
 	for (int32 I = 0; I < MaxScripts; ++I)
 	{
@@ -720,6 +749,43 @@ void UCsManager_Javascript::RunScripts()
 	}
 }
 
+void UCsManager_Javascript::ReloadScript(const int32& Index)
+{
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::ReloadScript;
+
+	if (Index < 0)
+	{
+		UE_LOG(LogCsJs, Warning, TEXT("%s: Index: %d is NOT Valid. Index: %d MUST be > 0."), *Context, Index, Index);
+		return;
+	}
+
+	if (Index > ScriptObjects.Num())
+	{
+		UE_LOG(LogCsJs, Warning, TEXT("%s: No Script associated with Index: %d."), *Context, Index);
+		return;
+	}
+
+	const FCsScript_FileInfo& FileInfo = ScriptInfo.FileInfos[Index];
+
+	if (!FileInfo.bEnable)
+	{
+		UE_LOG(LogCsJs, Warning, TEXT("%s: Script: %s associated with index: %d is NOT Enabled."), *Context, *(FileInfo.File), Index);
+		return;
+	}
+
+	if (!FileInfo.IsValid(Context))
+		return;
+
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	FCsJavascriptFileObjects& ScriptObject = ScriptObjects[Index];
+	const FString& FileName				   = FileInfo.File;
+
+	JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
+}
+
 void UCsManager_Javascript::ShutdownScripts()
 {
 	for (FCsJavascriptFileObjects& ScriptObject : ScriptObjects)
@@ -730,3 +796,53 @@ void UCsManager_Javascript::ShutdownScripts()
 }
 
 #pragma endregion Scripts
+
+// Events
+#pragma region
+
+void UCsManager_Javascript::SetupCallbacks()
+{
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::SetupCallbacks;
+
+	CS_IS_PENDING_KILL_CHECKED(WorldContext)
+
+	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
+
+	UCsManager_Input* Manager_Input = InputManagerLibrary::GetFirstChecked(Context, WorldContext);
+
+	Manager_Input->OnAnyKey_Pressed_Event.RemoveAll(this);
+	Manager_Input->OnAnyKey_Pressed_Event.AddUObject(this, &UCsManager_Javascript::OnAnyKey_Pressed);
+}
+
+void UCsManager_Javascript::OnAnyKey_Pressed(const FKey& Key)
+{
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
+	if (const FCsArray_int32* ArrayPtr = Settings.ReloadScriptsByKeyMap.Find(Key))
+	{
+		TArray<int32> Indices = ArrayPtr->Array;
+
+		Indices.Sort([](const int32& a, const int32& b) {
+			return  a < b;
+		});
+
+		const int32 Count = Indices.Num();
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			CurrentScriptIndex = I;
+			bScriptReload	   = true;
+
+			OnPreReloadScript_ScriptEvent.Broadcast(I);
+
+			ReloadScript(I);
+		}
+
+		CurrentScriptIndex = INDEX_NONE;
+		bScriptReload	   = false;
+	}
+}
+
+#pragma endregion Events

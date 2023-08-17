@@ -1,7 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #pragma once
-
 #include "Engine/DeveloperSettings.h"
+// Types
+#include "Managers/CsSettings_Manager_Javascript.h"
+
 #include "CsJsSettings.generated.h"
 
 UCLASS(config = Game, defaultconfig, meta = (DisplayName = "Cs Javascript Settings"))
@@ -12,8 +14,5 @@ class CSJS_API UCsJsSettings : public UDeveloperSettings
 public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FString GameInstanceEntryPointFileName;
-
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
-	FString GameStateEntryPointFileName;
+	FCsSettings_Manager_Javascript Manager_Javascript;
 };

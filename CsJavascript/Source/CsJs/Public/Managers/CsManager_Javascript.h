@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
@@ -14,6 +16,8 @@
 #pragma region
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdown);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdownScripts);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_OnPreReloadScript, const int32&, Index);
 
 #pragma endregion Delegates
 
@@ -186,6 +190,7 @@ public:
 	FORCEINLINE const FCsScriptInfo& GetScriptInfo() const { return ScriptInfo; }
 
 	void CreateScriptObjects();
+	void ConditionalCreateScriptObject();
 	void SetupScriptObjects(UGameInstance* GameInstance = nullptr);
 
 private:
@@ -221,11 +226,19 @@ private:
 public:
 
 	void RunScripts();
+
+	void ReloadScript(const int32& Index);
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerJavascript_OnPreReloadScript OnPreReloadScript_ScriptEvent;
+
 	void ShutdownScripts();
 
 private:
 
 	int32 CurrentScriptIndex;
+
+public:
 
 	UFUNCTION(BlueprintPure)
 	const int32& GetCurrentScriptIndex() const
@@ -233,5 +246,29 @@ private:
 		return CurrentScriptIndex;
 	}
 
+private:
+
+	bool bScriptReload;
+
+public:
+
+	UFUNCTION(BlueprintPure)
+	bool IsScriptReload() const
+	{
+		return bScriptReload;
+	}
+
 #pragma endregion Scripts
+
+// Events
+#pragma region
+public:
+
+	void SetupCallbacks();
+
+private:
+
+	void OnAnyKey_Pressed(const FKey& Key);
+
+#pragma endregion Events
 };

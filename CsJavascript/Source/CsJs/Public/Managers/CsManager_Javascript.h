@@ -4,6 +4,7 @@
 // Types
 #include "CsTypes_Javascript.h"
 #include "EntryPoint/CsTypes_ScriptEntryPointInfo.h"
+#include "Script/CsTypes_ScriptInfo.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -108,6 +109,14 @@ public:
 
 #pragma endregion Singleton
 
+private:
+
+	UObject* WorldContext;
+
+public:
+
+	FORCEINLINE void SetWorldContext(UObject* InWorldContext) { WorldContext = InWorldContext; }
+
 // Entry Point
 #pragma region
 private:
@@ -159,4 +168,70 @@ public:
 
 	void RunEntryPoint();
 	void ShutdownEntryPoint();
+
+#pragma endregion Entry Point
+
+// Scripts
+#pragma region
+private:
+
+	UPROPERTY(Transient)
+	TArray<FCsJavascriptFileObjects> ScriptObjects;
+
+	FCsScriptInfo ScriptInfo;
+
+public:
+
+	FORCEINLINE void SetScriptInfo(const FCsScriptInfo& Info) { ScriptInfo = Info; }
+	FORCEINLINE const FCsScriptInfo& GetScriptInfo() const { return ScriptInfo; }
+
+	void CreateScriptObjects();
+	void SetupScriptObjects(UGameInstance* GameInstance = nullptr);
+
+private:
+
+	char SetupScriptObjects_Internal(FCsRoutine* R);
+
+public:
+
+	DECLARE_DELEGATE_OneParam(FAdditionalSetupScriptObjects_Impl, const int32& /*Index*/);
+
+	FAdditionalSetupScriptObjects_Impl AdditionalSetupScriptObjects_Impl;
+
+	DECLARE_DELEGATE_RetVal(bool, FIsAdditionalSetupScriptObjectsComplete_Impl);
+
+	FIsAdditionalSetupScriptObjectsComplete_Impl IsAdditionalSetupScriptObjectsComplete_Impl;
+
+private:
+
+	bool bSetupScriptObjectsComplete;
+
+public:
+
+	FORCEINLINE bool IsSetupScriptObjectsComplete() const { return bSetupScriptObjectsComplete; }
+
+public:
+
+	void SetupAndRunScripts(UGameInstance* GameInstance = nullptr);
+
+private:
+
+	char SetupAndRunScripts_Internal(FCsRoutine* R);
+
+public:
+
+	void RunScripts();
+	void ShutdownScripts();
+
+private:
+
+	int32 CurrentScriptIndex;
+
+	UFUNCTION(BlueprintPure)
+	const int32& GetCurrentScriptIndex() const
+	{
+		return CurrentScriptIndex;
+	}
+
+#pragma endregion Scripts
 };

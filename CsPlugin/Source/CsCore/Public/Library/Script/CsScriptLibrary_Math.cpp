@@ -76,7 +76,54 @@ FVector UCsScriptLibrary_Math::Vector3fTo3d(const FVector3f& Vector)
 	return MathLibrary::Convert(Vector);
 }
 
+FVector UCsScriptLibrary_Math::Forward3d_OnlyYaw(const double& Yaw)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetForward3dOnlyYaw(Yaw);
+}
+
+FVector3f UCsScriptLibrary_Math::Forward3f_OnlyYaw(const float& Yaw)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetForward3fOnlyYaw(Yaw);
+}
+
 #pragma endregion Vector
+
+// Rotation
+#pragma region
+
+FVector3f UCsScriptLibrary_Math::Rotator3d_Forward3f_OnlyYaw(const FRotator& Rotation)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetForward3fOnlyYaw(Rotation);
+}
+
+FVector UCsScriptLibrary_Math::Rotator3d_Forward3d_OnlyYaw(const FRotator& Rotation)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetForwardOnlyYaw(Rotation);
+}
+
+FVector3f UCsScriptLibrary_Math::Rotator3f_Forward3f_OnlyYaw(const FRotator3f& Rotation)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetForwardOnlyYaw(Rotation);
+}
+
+FVector UCsScriptLibrary_Math::Rotator3f_Forward3d_OnlyYaw(const FRotator3f& Rotation)
+{
+	typedef NCsMath::FLibrary MathLibrary;
+
+	return MathLibrary::GetForward3dOnlyYaw(Rotation);
+}
+
+#pragma endregion Rotation
 
 // Ray
 #pragma region

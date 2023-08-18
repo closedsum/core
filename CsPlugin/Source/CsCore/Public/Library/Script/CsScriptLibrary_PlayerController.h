@@ -23,6 +23,6 @@ public:
 	* @param WorldContextObject
 	* return					Player Controller
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|World", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Player|Controller", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static APlayerController* GetFirstLocal(const FString& Context, const UObject* WorldContextObject);
 };

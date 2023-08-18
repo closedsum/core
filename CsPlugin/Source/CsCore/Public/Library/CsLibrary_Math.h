@@ -975,7 +975,10 @@ namespace NCsMath
 		FORCEINLINE static FRotator3f Convert(const FRotator3d& R) { return FRotator3f((float)R.Pitch, (float)R.Yaw, (float)R.Roll); }
 		FORCEINLINE static FRotator3d Convert(const FRotator3f& R) { return FRotator3d((double)R.Pitch, (double)R.Yaw, (double)R.Roll); }
 
-		FORCEINLINE static FVector3f GetForwardOnlyYaw(const float& Yaw)
+		FORCEINLINE static FVector3f GetForwardOnlyYaw(const FRotator3f& R) { return GetForward3fOnlyYaw(R.Yaw); }
+		FORCEINLINE static FVector3d GetForwardOnlyYaw(const FRotator3d& R) { return GetForward3dOnlyYaw(R.Yaw); }
+		FORCEINLINE static FVector3f GetForward3fOnlyYaw(const FRotator3d& R) { return GetForward3fOnlyYaw((float)R.Yaw); }
+		FORCEINLINE static FVector3f GetForward3fOnlyYaw(const float& Yaw)
 		{
 			const float Y = FMath::Fmod(Yaw, 360.0f);
 
@@ -983,6 +986,16 @@ namespace NCsMath
 			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
 
 			return FVector3f(CY, SY, 0.0f);
+		}
+		FORCEINLINE static FVector3d GetForward3dOnlyYaw(const FRotator3f& R) { return GetForward3dOnlyYaw((double)R.Yaw); }
+		FORCEINLINE static FVector3d GetForward3dOnlyYaw(const double& Yaw)
+		{
+			const double Y = FMath::Fmod(Yaw, 360.0);
+
+			double SY, CY;
+			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
+
+			return FVector3d(CY, SY, 0.0);
 		}
 
 		FORCEINLINE static FVector3f GetRight(const FRotator3f& R) { return FRotationMatrix44f(R).GetScaledAxis(EAxis::Y); }

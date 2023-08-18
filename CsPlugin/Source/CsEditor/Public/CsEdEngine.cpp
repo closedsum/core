@@ -53,9 +53,9 @@ namespace NCsEdEngine
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnEndPIE_NextFrame_Internal);
 
-			const FString OnObjectSaved_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables");
-			const FString OnObjectSaved_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads");
-			const FString OnObjectSaved_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload");
+			const FString OnObjectPreSave_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables");
+			const FString OnObjectPreSave_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads");
+			const FString OnObjectPreSave_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload");
 		}
 
 		namespace Name
@@ -99,7 +99,7 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
 	FEditorDelegates::EndPIE.AddUObject(this, &UCsEdEngine::OnEndPIE);
 	FEditorDelegates::BeginStandaloneLocalPlay.AddUObject(this, &UCsEdEngine::OnStandaloneLocalPlayEvent);
-	FCoreUObjectDelegates::OnObjectSaved.AddUObject(this, &UCsEdEngine::OnObjectSaved);
+	FCoreUObjectDelegates::OnObjectPreSave.AddUObject(this, &UCsEdEngine::OnObjectPreSave);
 	FCoreUObjectDelegates::OnObjectPropertyChanged.AddUObject(this, &UCsEdEngine::OnObjectPropertyChanged);
 
 	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
@@ -393,7 +393,7 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 // Save
 #pragma region
 
-void UCsEdEngine::OnObjectSaved(UObject* Object)
+void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext Context)
 {
 	if (!Object)
 		return;
@@ -429,11 +429,11 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 					{
 						if (FCsDataEntry_Data::StaticStruct() == DataTable->GetRowStruct())
 						{
-							OnObjectSaved_Update_DataRootSet_Datas(DataTable);
+							OnObjectPreSave_Update_DataRootSet_Datas(DataTable);
 						}
 						else
 						{
-							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 						}
 					}
 					// DataTables
@@ -441,11 +441,11 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 					{
 						if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
 						{
-							OnObjectSaved_Update_DataRootSet_DataTables(DataTable);
+							OnObjectPreSave_Update_DataRootSet_DataTables(DataTable);
 						}
 						else
 						{
-							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 						}
 					}
 					// Payloads
@@ -453,11 +453,11 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 					{
 						if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
 						{
-							OnObjectSaved_Update_DataRootSet_Payloads(DataTable);
+							OnObjectPreSave_Update_DataRootSet_Payloads(DataTable);
 						}
 						else
 						{
-							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectSaved: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
 						}
 					}
 				}
@@ -467,7 +467,7 @@ void UCsEdEngine::OnObjectSaved(UObject* Object)
 	// LevelScriptActor
 	if (ACsLevelScriptActor* LevelScriptActor = Cast<ACsLevelScriptActor>(Object))
 	{
-		OnObjectSaved_Update_DataRootSet_Payload(LevelScriptActor->Payload);
+		OnObjectPreSave_Update_DataRootSet_Payload(LevelScriptActor->Payload);
 	}
 }
 
@@ -553,7 +553,7 @@ void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 // DataRootSet
 #pragma region
 
-void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Datas(UDataTable* DataTable)
+void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable)
 {
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -573,7 +573,7 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Datas(UDataTable* DataTable)
 	}
 }
 
-void UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTable)
+void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* DataTable)
 {
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 	
@@ -593,7 +593,7 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTa
 	}
 }
 
-void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTable)
+void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTable)
 {
 	// Get Settings
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
@@ -618,15 +618,15 @@ void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTabl
 		const FName& RowName = Pair.Key;
 		FCsPayload* RowPtr	 = reinterpret_cast<FCsPayload*>(Pair.Value);
 
-		OnObjectSaved_Update_DataRootSet_Payload(*RowPtr);
+		OnObjectPreSave_Update_DataRootSet_Payload(*RowPtr);
 	}
 }
 
-void UCsEdEngine::OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload)
+void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload(FCsPayload& Payload)
 {
 	using namespace NCsEdEngine::NCached;
 
-	const FString& Context = Str::OnObjectSaved_Update_DataRootSet_Payload;
+	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_Payload;
 
 	// Get Settings
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();

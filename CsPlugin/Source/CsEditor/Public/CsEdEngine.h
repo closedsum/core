@@ -8,6 +8,8 @@
 // Types
 #include "Object/CsTypes_Object.h"
 #include "Types/CsTypes_Load.h"
+// Object
+#include "UObject/ObjectSaveContext.h"
 
 #include "CsEdEngine.generated.h"
 
@@ -139,7 +141,7 @@ void OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent& e);
 #pragma region
 public:
 
-	void OnObjectSaved(UObject* Object);
+	void OnObjectPreSave(UObject* Object, FObjectPreSaveContext Context);
 
 #pragma endregion Save
 
@@ -188,13 +190,13 @@ public:
 #pragma region
 public:
 
-	void OnObjectSaved_Update_DataRootSet_Datas(UDataTable* DataTable);
+	void OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable);
 
-	void OnObjectSaved_Update_DataRootSet_DataTables(UDataTable* DataTable);
+	void OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* DataTable);
 
-	void OnObjectSaved_Update_DataRootSet_Payloads(UDataTable* DataTable);
+	void OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTable);
 
-	void OnObjectSaved_Update_DataRootSet_Payload(FCsPayload& Payload);
+	void OnObjectPreSave_Update_DataRootSet_Payload(FCsPayload& Payload);
 
 #pragma endregion DataRootSet
 

@@ -1,5 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-//#include "CsTypes_Macro.generated.h"
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 #define CS_EMPTY 0

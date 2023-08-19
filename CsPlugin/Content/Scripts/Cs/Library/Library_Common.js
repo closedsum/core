@@ -7,11 +7,39 @@ module.exports = class NJsCommon
 {
     static FLibrary = class Library
     {
+        static FDisableCheck = class DisableCheck
+        {
+            static Setup()
+            {
+                NJsCommon.FLibrary.checkf               = NJsCommon.FLibrary.FDisableCheck.checkf;
+                NJsCommon.FLibrary.check                = NJsCommon.FLibrary.FDisableCheck.check;
+                NJsCommon.FLibrary.IsNullObjectChecked  = NJsCommon.FLibrary.FDisableCheck.IsNullObjectChecked;
+                NJsCommon.FLibrary.IsValidObjectChecked = NJsCommon.FLibrary.FDisableCheck.IsValidObjectChecked;
+                NJsCommon.FLibrary.IsFunctionChecked    = NJsCommon.FLibrary.FDisableCheck.IsFunctionChecked;
+                NJsCommon.FLibrary.IsGeneratorChecked   = NJsCommon.FLibrary.FDisableCheck.IsGeneratorChecked;
+                NJsCommon.FLibrary.IsClassChecked       = NJsCommon.FLibrary.FDisableCheck.IsClassChecked;
+                NJsCommon.FLibrary.IsClassOfChecked     = NJsCommon.FLibrary.FDisableCheck.IsClassOfChecked;
+                NJsCommon.FLibrary.IsInstanceOfChecked  = NJsCommon.FLibrary.FDisableCheck.IsInstanceOfChecked;
+            }
+
+            static checkf(condition /*boolean*/, message /*string*/) {}
+            static check(condition /*boolean*/) {}
+            static /*boolean*/ IsNullObjectChecked(context /*string*/, o /*object*/) { return true; }
+            static /*boolean*/ IsValidObjectChecked(context /*string*/, o /*object*/) { return true; }
+            static /*boolean*/ IsFunctionChecked(context /*context*/, func /*object*/) { return true; }
+            static /*boolean*/ IsGeneratorChecked(context /*context*/, gen /*object*/) { return true; }
+            static /*boolean*/ IsClassChecked(context /*context*/, c /*object*/) { return true; }
+            static /*boolean*/ IsClassOfChecked(context /*string*/, a /*object*/, c /*object*/) { return true; }
+            static /*boolean*/ IsInstanceOfChecked(context /*string*/, a /*object*/, c /*object*/) { return true; }
+        }
+
         /**
-         * @param {boolean} condition 
-         * @param {string} message 
-         */
-        static checkf(condition /*bool*/, message /*string*/)
+        * Assert if condition is FALSE and display a message.
+        *  
+        * @param {boolean}  condition 
+        * @param {string}   message 
+        */
+        static checkf(condition /*boolean*/, message /*string*/)
         {
             if (!condition)
             {   
@@ -21,9 +49,11 @@ module.exports = class NJsCommon
         }
 
         /**
-         * @param {boolean} condition 
-         */
-        static check(condition /*bool*/)
+        * Assert if condition is FALSE. 
+        * 
+        * @param {boolean} condition 
+        */
+        static check(condition /*boolean*/)
         {
             if (!condition)
             {
@@ -33,29 +63,36 @@ module.exports = class NJsCommon
         }
 
         /**
-         * @param {any} o 
-         * @returns {boolean}
-         */
-        static /*bool*/ IsDefined(o /*any*/)
+        * Get whether or not 'o' is defined (NOT undefined).
+        *  
+        * @param {any}          o 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsDefined(o /*any*/)
         {
             return typeof o !== "undefined";    
         }
 
         /**
-         * @param {object} o 
-         * @returns {boolean}
-         */
-        static /*bool*/ IsNullObject(o /*object*/)
+        * Get whether or not 'o' is null.
+        * 
+        * @param {object}       o 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsNullObject(o /*object*/)
         {
             return o == null || typeof o !== "object";
         }
 
         /**
-         * @param {string} context 
-         * @param {object} o 
-         * @returns {boolean}
-         */
-        static /*bool*/ IsNullObjectChecked(context /*string*/, o /*object*/)
+        * Get whether or not 'o' is null. 
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {object}       o 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsNullObjectChecked(context /*string*/, o /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -65,20 +102,25 @@ module.exports = class NJsCommon
         }
 
         /**
-         * @param {object} o 
-         * @returns {boolean}
-         */
-        static /*bool*/ IsValidObject(o /*string*/)
+        * Get whether or not 'o' is a valid object.
+        * 
+        * @param {object}       o 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsValidObject(o /*string*/)
         {
             return o != null && typeof o === "object";
         }
 
         /**
-         * @param {string} context
-         * @param {object} o
-         * @returns {boolean}
-         */
-        static /*bool*/ IsValidObjectChecked(context /*string*/, o /*object*/)
+        * Get whether or not 'o' is a valid object.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context
+        * @param {object}       o
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsValidObjectChecked(context /*string*/, o /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -87,13 +129,27 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsFunction(func)
+        /**
+        * Get whether or not 'func' is a function. 
+        * 
+        * @param {object}       func 
+        * @returns {boolean} 
+        */
+        static /*boolean*/ IsFunction(func /*object*/)
         {
             let getType = {};
             return func && getType.toString.call(func) === '[object Function]';
         }
 
-        static IsFunctionChecked(context, func)
+        /**
+        * Get whether or not 'func' is a function.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {object}       func 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsFunctionChecked(context /*context*/, func /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -102,14 +158,23 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsGenerator(gen)
+        /**
+        * @param {object}       gen 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsGenerator(gen /*object*/)
         {
             let self = NJsCommon.FLibrary;
             
             return self.IsValidObject(gen) && ("" + gen) === '[object Generator]';
         }
 
-        static IsGeneratorChecked(context, gen)
+        /**
+        * @param {string}       context 
+        * @param {object}       gen 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsGeneratorChecked(context /*context*/, gen /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -118,14 +183,23 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsClass(c) 
+        /**
+        * @param {object}       c 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsClass(c /*object*/) 
         { 
             let self = NJsCommon.FLibrary;
 
             return self.IsFunction(c); 
         }
 
-        static IsClassChecked(context, c)
+        /**
+        * @param {string}  context
+        * @param {object}  c
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsClassChecked(context /*context*/, c /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -134,7 +208,14 @@ module.exports = class NJsCommon
             return true;
         }
 
-        static IsClassOf(a, c) 
+        /**
+        * Get whether or not 'a' is a class of 'c'.
+        * 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsClassOf(a /*object*/, c /*object*/) 
         { 
             let self = NJsCommon.FLibrary;
 
@@ -145,19 +226,35 @@ module.exports = class NJsCommon
             return a instanceof c; 
         }
 
-        static IsClassOfChecked(context, a, c)
+        /**
+        * Get whether or not 'a' is a class of 'c'.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsClassOfChecked(context /*string*/, a /*object*/, c /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
-            self.check(self.IsFunctionChecked(context, a));
-            self.check(self.IsFunctionChecked(context, c));
+            self.IsFunctionChecked(context, a);
+            self.IsFunctionChecked(context, c);
 
             let result = a.prototype instanceof c;
             self.checkf(result, context + ": a: " + a + " is NOT an instance of c: " + c);
             return result;
         }
 
-        static IsInstanceOf(a, c) 
+        /**
+        * Get whether or not 'a' is an instance of 'c'.
+        * 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsInstanceOf(a /*object*/, c /*object*/) 
         { 
             let self = NJsCommon.FLibrary;
 
@@ -168,21 +265,39 @@ module.exports = class NJsCommon
             return a instanceof c; 
         }
 
-        static IsInstanceOfChecked(context, a, c)
+        /**
+        * Get whether or not 'a' is an instance of 'c'.
+        *  Assert if NOT.
+        * 
+        * @param {string}       context 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsInstanceOfChecked(context /*string*/, a /*object*/, c /*object*/)
         {
             let self = NJsCommon.FLibrary;
 
-            self.check(self.IsValidObjectChecked(context, a));
-            self.check(self.IsFunctionChecked(context, c));
+            self.IsValidObjectChecked(context, a);
+            self.IsFunctionChecked(context, c);
 
             let result = a instanceof c;
             self.checkf(result, context + ": a: " + a + " is NOT an instance of c: " + c);
             return result;
         }
         
-        static IsBool(a) { return typeof a === "boolean"; }
+        /**
+        * @param {boolean}  a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsBool(a /*boolean*/) { return typeof a === "boolean"; }
 
-        static IsBoolChecked(context, a)
+        /**
+        * @param {string}   context
+        * @param {boolean}  a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsBoolChecked(context /*string*/, a /*boolean*/)
         {
             let self = NJsCommon.FLibrary;
 
@@ -191,9 +306,18 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsInt(a) { return Number.isSafeInteger(a); }
+        /**
+        * @param {number}   a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsInt(a /*number*/) { return Number.isSafeInteger(a); }
 
-        static IsIntChecked(context, a)
+        /**
+        * @param {string}   context
+        * @param {number}   a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsIntChecked(context /*string*/, a /*number*/)
         {
             let self = NJsCommon.FLibrary;
 

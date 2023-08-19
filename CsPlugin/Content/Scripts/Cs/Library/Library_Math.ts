@@ -41,6 +41,12 @@ declare namespace NJsMath {
         * @param {number}       a 
         * @returns {boolean}
         */
+        IsPositiveIntChecked2(a: number): boolean;
+
+        /**
+        * @param {number}       a 
+        * @returns {boolean}
+        */
         IsNonNegativeInt(a: number): boolean;
 
         /**

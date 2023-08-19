@@ -4,52 +4,80 @@ declare namespace NJsCommon {
     class FLibrary {
 
         /**
-        * [static] 
-        * @param {boolean} condition 
-        * @param {string} message 
+        * Assert if condition is FALSE and display a message.
+        * 
+        * @param {boolean}  condition 
+        * @param {string}   message 
         */
         checkf(condition: boolean, message: string): void;
  
         /**
+        * Assert if condition is FALSE. 
+        * 
         * @param {boolean} condition 
         */
         check(condition: boolean): void;
  
         /**
+        * Get whether or not 'o' is defined (NOT undefined).
         * 
-        * @param {any} o
+        * @param {any}          o
         * @returns {boolean} 
         */
         IsDefined(o: any): boolean;
 
         /**
-        * @param {object} o 
+        * Get whether or not 'o' is null. 
+        * 
+        * @param {object}       o 
         * @returns {boolean}
         */
         IsNullObject(o: object): boolean;
  
         /**
-        * @param {string} context 
-        * @param {object} o 
+        * Get whether or not 'o' is null. 
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {object}       o 
         * @returns {boolean}
         */
         IsNullObjectChecked(context: string, o: object): boolean;
  
         /**
-        * @param {object} o 
+        * Get whether or not 'o' is a valid object. 
+        * 
+        * @param {object}   o 
         * @returns {boolean}
         */
         IsValidObject(o: string): boolean;
 
         /**
-        * @param {string} context
-        * @param {object} o
+        * Get whether or not 'o' is a valid object.
+        *  Assert if NOT.  
+        * 
+        * @param {string}       context
+        * @param {object}       o
         * @returns {boolean}
         */
         IsValidObjectChecked(context: string, o: object): boolean;
  
+        /**
+        * Get whether or not 'func' is a function. 
+        * 
+        * @param {object | any} func 
+        * @return {boolean}
+        */
         IsFunction(func: object | any): boolean;
  
+        /**
+        * Get whether or not 'func' is a function. 
+        *  Assert if NOT.
+        * 
+        * @param {string}       context
+        * @param {object | any} func 
+        * @return {boolean}
+        */
         IsFunctionChecked(context: string, func: object | any): boolean;
  
         IsGenerator(gen: object | any): boolean;

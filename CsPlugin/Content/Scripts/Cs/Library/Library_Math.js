@@ -11,11 +11,30 @@ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
 var check = CommonLibrary.check;
+var checkf = CommonLibrary.checkf;
+
+var ClassName = "NJsMath.FLibrary";
 
 module.exports = class NJsMath
 {
     static FLibrary = class Library
     {
+        static FDisableCheck = class DisableCheck
+        {
+            static Setup()
+            {
+                NJsMath.FLibrary.IsPositiveIntChecked     = NJsMath.FLibrary.FDisableCheck.IsPositiveIntChecked;
+                NJsMath.FLibrary.IsPositiveIntChecked2    = NJsMath.FLibrary.FDisableCheck.IsPositiveIntChecked2;
+                NJsMath.FLibrary.IsNonNegativeIntChecked  = NJsMath.FLibrary.FDisableCheck.IsNonNegativeIntChecked;
+                NJsMath.FLibrary.IsNonNegativeIntChecked2 = NJsMath.FLibrary.FDisableCheck.IsNonNegativeIntChecked2;
+            }
+
+            static /*bool*/ IsPositiveIntChecked(context /*string*/, a /*number*/) { return true; }
+            static /*bool*/ IsPositiveIntChecked2(a /*number*/) { return true; }
+            static /*bool*/ IsNonNegativeIntChecked(context /*string*/, a /*number*/) { return true; }
+            static /*bool*/ IsNonNegativeIntChecked2(a /*number*/) { return true; }
+        }
+
         /**
         * @param {number}       bitmask 
         * @param {number}       bit
@@ -77,8 +96,22 @@ module.exports = class NJsMath
             let self = NJsMath.FLibrary;
 
             let result = self.IsPositiveInt(a);
-            self.checkf(result, context + ": a: " + a + " is NOT BOTH an integer AND > 0.");
+            checkf(result, context + ": a: " + a + " is NOT BOTH an integer AND > 0.");
             return result;
+        }
+
+        /**
+        * @param {string}       context
+        * @param {number}       a 
+        * @returns {boolean}
+        */
+        static /*bool*/ IsPositiveIntChecked2(a /*number*/)
+        {
+            let context = ClassName + ".IsPositiveIntChecked";
+
+            let self = NJsMath.FLibrary;
+
+            return self.IsPositiveIntChecked(context, a);
         }
 
         /**
@@ -97,8 +130,21 @@ module.exports = class NJsMath
             let self = NJsMath.FLibrary;
 
             let result = self.IsNonNegativeInt(a);
-            self.checkf(result, context + ": a: " + a + " is NOT BOTH an integer AND >= 0.");
+            checkf(result, context + ": a: " + a + " is NOT BOTH an integer AND >= 0.");
             return result;
+        }
+
+        /**
+        * @param {number}       a 
+        * @returns {boolean}
+        */
+        static /*bool*/ IsNonNegativeIntChecked2(a /*number*/)
+        {
+            let context = ClassName + ".IsNonNegativeIntChecked";
+
+            let self = NJsMath.FLibrary;
+
+            return self.IsNonNegativeIntChecked(context, a);
         }
     };
 };

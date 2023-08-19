@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
@@ -79,6 +81,21 @@ public:
 	static FVector Rotator3f_Right3d_OnlyYaw(const FRotator3f& Rotation);
 
 #pragma endregion Rotation
+
+// Matrix
+#pragma region
+public:
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Matrix", meta = (AutoCreateRefTerm = "Rotation,Axis"))
+	static FVector RotationMatrix44d_UnitAxis(const FRotator& Rotation, const TEnumAsByte<EAxis::Type>& Axis);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Matrix", meta = (AutoCreateRefTerm = "Yaw,Axis"))
+	static FVector RotationMatrix44d_Yaw_UnitAxis(const float& Yaw, const TEnumAsByte<EAxis::Type>& Axis);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Matrix", meta = (AutoCreateRefTerm = "Rotation,Axis"))
+	static FVector RotationMatrix44d_UnitAxis_OnlyYaw(const FRotator& Rotation, const TEnumAsByte<EAxis::Type>& Axis);
+
+#pragma endregion Matrix
 
 // Ray
 #pragma region

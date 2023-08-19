@@ -34,6 +34,8 @@ module.exports = class FJsMask
         this.Value = 0;
     }
 
+    /*boolean*/ AnySet() { return this.Value > 0; }
+    
     Set(bit /*number*/)
     {
         check(IsNonNegativeInt(this.Value));

@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Script/CsScriptLibrary_Math.h"
 #include "CsCore.h"
 
@@ -166,6 +168,26 @@ FVector UCsScriptLibrary_Math::Rotator3f_Right3d_OnlyYaw(const FRotator3f& Rotat
 }
 
 #pragma endregion Rotation
+
+// Matrix
+#pragma region
+
+FVector UCsScriptLibrary_Math::RotationMatrix44d_UnitAxis(const FRotator& Rotation, const TEnumAsByte<EAxis::Type>& Axis)
+{
+	return FRotationMatrix44d(Rotation).GetUnitAxis((EAxis::Type)Axis);
+}
+
+FVector UCsScriptLibrary_Math::RotationMatrix44d_Yaw_UnitAxis(const float& Yaw, const TEnumAsByte<EAxis::Type>& Axis)
+{
+	return FRotationMatrix44d(FRotator(0.0f, Yaw, 0.0f)).GetUnitAxis((EAxis::Type)Axis);
+}
+
+FVector UCsScriptLibrary_Math::RotationMatrix44d_UnitAxis_OnlyYaw(const FRotator& Rotation, const TEnumAsByte<EAxis::Type>& Axis)
+{
+	return FRotationMatrix44d(FRotator(0.0f, Rotation.Yaw, 0.0f)).GetUnitAxis((EAxis::Type)Axis);
+}
+
+#pragma endregion Matrix
 
 // Ray
 #pragma region

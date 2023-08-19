@@ -13,14 +13,16 @@ var FunctionLibrary = NJsFunction.FLibrary;
 
 // "typedefs" - functions
 var check = CommonLibrary.check;
+var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
+var IsValidObject = CommonLibrary.IsValidObject;
 
 module.exports = class NJsSkin
 {
-    static NData = class Data
+    static NData = class NamespaceData
     {
-        static NVisual = class Visual
+        static NVisual = class NamespaceVisual
         {
-            static NSkeletalMesh = class _SkeletalMesh
+            static NSkeletalMesh = class NamespaceSkeletalMesh
             {
                 static ISkeletalMesh = class InterfaceSkeletalMesh
                 {

@@ -7,7 +7,6 @@ module.exports = class NJsCommon
 {
     static FLibrary = class Library
     {
-
         /**
          * @param {boolean} condition 
          * @param {string} message 

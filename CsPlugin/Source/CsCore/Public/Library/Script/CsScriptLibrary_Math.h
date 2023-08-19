@@ -42,6 +42,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Yaw"))
 	static FVector3f Forward3f_OnlyYaw(const float& Yaw);
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Yaw"))
+	static FVector Right3d_OnlyYaw(const double& Yaw);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Yaw"))
+	static FVector3f Right3f_OnlyYaw(const float& Yaw);
+
 #pragma endregion Vector
 
 // Rotation
@@ -59,6 +65,18 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation", meta = (AutoCreateRefTerm = "Rotation"))
 	static FVector Rotator3f_Forward3d_OnlyYaw(const FRotator3f& Rotation);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation", meta = (AutoCreateRefTerm = "Rotation"))
+	static FVector3f Rotator3d_Right3f_OnlyYaw(const FRotator& Rotation);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation", meta = (AutoCreateRefTerm = "Rotation"))
+	static FVector Rotator3d_Right3d_OnlyYaw(const FRotator& Rotation);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation", meta = (AutoCreateRefTerm = "Rotation"))
+	static FVector3f Rotator3f_Right3f_OnlyYaw(const FRotator3f& Rotation);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Rotation", meta = (AutoCreateRefTerm = "Rotation"))
+	static FVector Rotator3f_Right3d_OnlyYaw(const FRotator3f& Rotation);
 
 #pragma endregion Rotation
 

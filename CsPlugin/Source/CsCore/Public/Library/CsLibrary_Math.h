@@ -846,16 +846,16 @@ namespace NCsMath
 
 		FORCEINLINE static FVector3f GetRightFromNormal(const FVector3f& N) { return GetRight(N.Rotation()); }
 		FORCEINLINE static FVector3f GetRight(const FVector3f& V) { return GetRightFromNormal(V.GetSafeNormal()); }
-		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N) { return GetRightOnlyYaw(GetYaw(N)); }
+		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N) { return GetRight3fOnlyYaw(GetYaw(N)); }
 		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N, float& OutYaw) 
 		{
 			OutYaw = GetYaw(N);
-			return GetRightOnlyYaw(OutYaw);
+			return GetRight3fOnlyYaw(OutYaw);
 		}
 		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N, FRotator3f& OutRotation)
 		{
 			OutRotation.Yaw = GetYaw(N);
-			return GetRightOnlyYaw(OutRotation.Yaw);
+			return GetRight3fOnlyYaw(OutRotation.Yaw);
 		}
 
 		FORCEINLINE static void GetRightAndUpFromNormal(const FVector3f& N, FVector3f& OutRight, FVector3f& OutUp) { GetRightAndUp(N.Rotation(), OutRight, OutUp); }
@@ -1001,7 +1001,11 @@ namespace NCsMath
 		}
 
 		FORCEINLINE static FVector3f GetRight(const FRotator3f& R) { return FRotationMatrix44f(R).GetScaledAxis(EAxis::Y); }
-		FORCEINLINE static FVector3f GetRightOnlyYaw(const float& Yaw)
+
+		FORCEINLINE static FVector3f GetRightOnlyYaw(const FRotator3f& R){ return GetRight3fOnlyYaw(R.Yaw); }
+		FORCEINLINE static FVector3d GetRightOnlyYaw(const FRotator3d& R) { return GetRight3dOnlyYaw(R.Yaw); }
+		FORCEINLINE static FVector3f GetRight3fOnlyYaw(const FRotator3d& R) { return GetRight3fOnlyYaw((float)R.Yaw); }
+		FORCEINLINE static FVector3f GetRight3fOnlyYaw(const float& Yaw)
 		{
 			const float Y = FMath::Fmod(Yaw, 360.0f);
 
@@ -1010,9 +1014,15 @@ namespace NCsMath
 
 			return FVector3f(-SY, CY, 0.0f);
 		}
-		FORCEINLINE static FVector3f GetRightOnlyYaw(const FRotator3f& R)
+		FORCEINLINE static FVector3d GetRight3dOnlyYaw(const FRotator3f& R) { return GetRight3dOnlyYaw((double)R.Yaw); }
+		FORCEINLINE static FVector3d GetRight3dOnlyYaw(const double& Yaw)
 		{
-			return GetRightOnlyYaw(R.Yaw);
+			const double Y = FMath::Fmod(Yaw, 360.0);
+
+			double SY, CY;
+			FMath::SinCos(&SY, &CY, FMath::DegreesToRadians(Y));
+
+			return FVector3d(-SY, CY, 0.0);
 		}
 
 		FORCEINLINE static FVector3f GetUp(const FRotator3f& R) { return FRotationMatrix44f(R).GetScaledAxis(EAxis::Z); }

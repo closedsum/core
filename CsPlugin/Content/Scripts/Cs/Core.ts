@@ -1,7 +1,13 @@
 /// <reference path="../typings/ue.d.ts">/>
-// ; typing info for auto-completion in Visual Studio Code
 
 // require("Cs/Core.js");
+
+declare namespace FJsCore {
+        class FScript {
+            Index: number;
+            Manager_Data: FJsManager_Data;
+    }
+}
 
 declare class FJsCore {
     Engine: GameEngine;
@@ -13,6 +19,7 @@ declare class FJsCore {
     PlayerController: PlayerController;
     PlayerState: PlayerState;
     PlayerPawn: Actor;
+    Script: FJsCore.FScript;
     //this.CoroutineScheduler = null;
     GetEngine(): GameEngine;
     GetGameInstance(): CsGameInstance;
@@ -24,6 +31,7 @@ declare class FJsCore {
     GetPlayerState(): PlayerState;
     GetPlayerPawn(): Actor;
     //GetCoroutineScheduler(): ;
+    GetScript(): FJsCore.FScript;
 
     /**
     * @param {string} context 

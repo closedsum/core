@@ -1,11 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-// Types
-#include "Types/CsTypes_Macro.h"
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsTypes_SkeletalMesh.generated.h"
-#pragma once
 
 // FCsSkeletalMesh
 #pragma region
@@ -82,13 +82,19 @@ public:
 	{
 		if (!Mesh.ToSoftObjectPath().IsValid())
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
+			if (Log)
+			{
+				Log(FString::Printf(TEXT("%s: Mesh is NULL."), *Context));
+			}
 			return nullptr;
 		}
 
 		if (!Mesh_Internal)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString())));
+			if (Log)
+			{
+				Log(FString::Printf(TEXT("%s: Mesh has NOT been loaded from Path @ %s."), *Context, *(Mesh.ToSoftObjectPath().ToString())));
+			}
 		}
 		return Mesh_Internal;
 	}

@@ -6,6 +6,8 @@
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 var NJsFunction = require('Cs/Library/Library_Function.js');
+// Managers
+var FJsManager_Data = require('Cs/Managers/Data/Manager_Data.js');
 
 // "typedefs" - class
 var CommonLibrary = NJsCommon.FLibrary;
@@ -14,8 +16,28 @@ var FunctionLibrary = NJsFunction.FLibrary;
 // "typedefs" - functions
 var check = CommonLibrary.check;
 
+// Constants
+const INDEX_NONE = -1;
+
 module.exports = class FJsCore
 {
+    static FScript = class Script
+    {
+        constructor()
+        {
+            /** @type {number} */           this.Index = INDEX_NONE;
+            /** @type {FJsManager_Data} */  this.Manager_Data = new FJsManager_Data();
+        }
+
+        /*number*/          GetIndex()          { return this.Index; }
+        /*FJsManager_Data*/ GetManager_Data()   { return this.Manager_Data; }
+
+        Shutdown()
+        {
+            this.Manager_Data.Shutdown();
+        }
+    }
+
     constructor()
     {
         this.Engine = null;
@@ -32,6 +54,8 @@ module.exports = class FJsCore
         this.CoroutineScheduler = null;
 
         this.Classes = new Map();
+
+        this.Script = new FJsCore.FScript();
     }
 
     GetEngine() { return this.Engine; }
@@ -45,6 +69,7 @@ module.exports = class FJsCore
     GetPlayerState() { return this.PlayerState; }
     GetPlayerPawn() { return this.PlayerPawn; }
     GetCoroutineScheduler() { return this.CoroutineScheduler; }
+    GetScript() { return this.Script; }
 
     /**
      * @param {string} context 
@@ -92,5 +117,8 @@ module.exports = class FJsCore
         this.CoroutineScheduler = null;
 
         this.Classes.clear();
+
+        this.Script.Shutdown();
+        this.Script = null;
     }
 };

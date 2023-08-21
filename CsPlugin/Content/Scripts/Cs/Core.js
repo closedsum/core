@@ -1,5 +1,7 @@
 /// <reference path="../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Managers
+/// <reference path="Managers/Data/Manager_Data.ts">/>
 
 "use strict"
 

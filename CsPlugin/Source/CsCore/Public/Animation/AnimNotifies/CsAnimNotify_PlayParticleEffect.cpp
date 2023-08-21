@@ -1,5 +1,6 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Animation/AnimNotifies/CsAnimNotify_PlayParticleEffect.h"
 #include "CsCore.h"
 

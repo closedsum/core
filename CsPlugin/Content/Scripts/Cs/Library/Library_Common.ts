@@ -84,45 +84,179 @@ declare namespace NJsCommon {
         */
         IsFunctionChecked(context: string, func: object | any): boolean;
  
+        /**
+        * Get whether or not 'gen' is a generator.  
+        * 
+        * @param {object | any}       gen 
+        * @returns {boolean}
+        */
         IsGenerator(gen: object | any): boolean;
  
+        /**
+        * Get whether or not 'gen' is a generator. 
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {object | any} gen 
+        * @returns {boolean}
+        */
         IsGeneratorChecked(context: string, gen: object | any): boolean
  
+        /**
+        * Get whether or not 'c' is a class.
+        * 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
         IsClass(c: object | any): boolean
  
+        /**
+        * Get whether or not 'c' is a class.
+        *  Assert if NOT.
+        *  
+        * @param {string}  context
+        * @param {object}  c
+        * @returns {boolean}
+        */
         IsClassChecked(context: string, c: object): boolean;
  
+        /**
+        * Get whether or not 'a' is a class of 'c'.
+        * 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
         IsClassOf(a: object | any, c: object | any): boolean; 
  
+        /**
+        * Get whether or not 'a' is a class of 'c'.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
         IsClassOfChecked(context: string, a: object, c: object): boolean;
  
+        /**
+        * Get whether or not 'a' is an instance of 'c'.
+        * 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
         IsInstanceOf(a: object, c: object): boolean;
  
+        /**
+        * Get whether or not 'a' is an instance of 'c'.
+        *  Assert if NOT.
+        * 
+        * @param {string}       context 
+        * @param {object}       a 
+        * @param {object}       c 
+        * @returns {boolean}
+        */
         IsInstanceOfChecked(context: string, a: object, c: object): boolean;
          
+        /**
+        * Get whether or not 'a' is a boolean.
+        *  
+        * @param {boolean}  a 
+        * @returns {boolean}
+        */
         IsBool(a: boolean | any): boolean;
  
+        /**
+        * Get whether or not 'a' is a boolean.
+        *  Assert if NOT. 
+        * 
+        * @param {string}   context
+        * @param {boolean}  a 
+        * @returns {boolean}
+        */
         IsBoolChecked(context: string, a: boolean): boolean;
  
+        /**
+        * Get whether or not 'a' is an integer. 
+        * 
+        * @param {number}   a 
+        * @returns {boolean}
+        */
         IsInt(a: number | any): boolean;
  
+        /**
+        * Get whether or not 'a' is an integer.
+        *  Assert if NOT. 
+        * 
+        * @param {string}   context
+        * @param {number}   a 
+        * @returns {boolean}
+        */
         IsIntChecked(context: string, a: number | any): boolean;
  
+        /**
+        * Get whether or not 'a' is an float / double (number). 
+        * 
+        * @param {number}   a 
+        * @returns {boolean}
+        */
         IsFloat(a: number | any): boolean;
  
+        /**
+        * Get whether or not 'a' is an float / double (number). 
+        *  Assert if NOT.
+        * 
+        * @param {string}   context
+        * @param {number}   a 
+        * @returns {boolean}
+        */
         IsFloatChecked(context: string, a: number): boolean;
  
+        /**
+        * Get whether or not 'a' is a number.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {number}       a 
+        * @returns {boolean}
+        */
         IsNumberChecked(context: string, a: number): boolean;
  
+        /**
+        * Get whether or not 'a' is a number.
+        * 
+        * @param {number}       a 
+        * @returns {boolean}
+        */
         IsNumber(a: number): boolean;
  
+        /**
+        * Get whether or not 's' is a string.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {string}       s 
+        * @returns {boolean}
+        */
         IsStringChecked(context: string, s: string): boolean;
  
+        /**
+        * Get whether or not 's' is NOT empty ('')..
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {string}       s 
+        * @returns {boolean}
+        */
         IsStringNotEmptyChecked(context: string, s: string): boolean;
 
         /**
-        * @param {object} o 
-        * @param {string} key
+        * Get wheter or not 'key' is a key / member of 'o'. 
+        * 
+        * @param {object}       o 
+        * @param {string}       key
         * @returns {boolean} 
         */
         DoesKeyExist(o: object | any, key: string): boolean;

@@ -26,6 +26,9 @@ module.exports = class FJsMask
         this.Value = 0;
     }
 
+    /**
+    * @param {number} val 
+    */
     Equal(val /*number*/)
     {
         check(IsNonNegativeInt(val));
@@ -38,8 +41,14 @@ module.exports = class FJsMask
         this.Value = 0;
     }
 
+    /**
+    * @returns {boolean} 
+    */
     /*boolean*/ AnySet() { return this.Value > 0; }
     
+    /**
+    * @param {bit} number 
+    */
     Set(bit /*number*/)
     {
         check(IsNonNegativeInt(this.Value));
@@ -48,6 +57,9 @@ module.exports = class FJsMask
         this.Value |= bit;
     }
 
+    /**
+    * @param {bit} number 
+    */
     Clear(bit /*number*/)
     {
         check(IsNonNegativeInt(this.Value));
@@ -56,6 +68,10 @@ module.exports = class FJsMask
         this.Value &= ~bit;
     }
 
+    /**
+    * @param {bit}          number 
+    * @returns {boolean}
+    */
     /*boolean*/ Test(bit /*number*/)
     {
         check(IsNonNegativeInt(this.Value));

@@ -22,6 +22,13 @@ module.exports = class NJsArray
 {
     static FLibrary = class Library
     {
+        static FDisableCheck = class DisableCheck
+        {
+            static Setup()
+            {
+            }
+        }
+
         /**
          * @param {Array} a 
          * @returns {boolean}
@@ -90,10 +97,8 @@ module.exports = class NJsArray
         {
             let self = NJsArray.FLibrary;
 
-            check(self.IsNotEmptyChecked(context, a));
-
-            check(CommonLibrary.IsIntChecked(context, size));
-
+            self.IsNotEmptyChecked(context, a);
+            CommonLibrary.IsIntChecked(context, size);
             checkf(a.length === size, context + ": a is NOT of length: " + size);
 
             return true;

@@ -15,6 +15,8 @@ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
 var check = CommonLibrary.check;
+var IsStringChecked = CommonLibrary.IsStringChecked;
+var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
 
 module.exports = class NJsTypes
 {
@@ -35,5 +37,16 @@ module.exports = class NJsTypes
         * @param {SkeletalMesh} mesh 
         */
         Set(mesh /*SkeletalMesh*/) { this.Mesh_Internal = mesh; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsStringChecked(context, this.Path);
+            IsValidObjectChecked(context, this.Mesh_Internal);
+            return true;
+        }
     }
 };

@@ -35,7 +35,7 @@ module.exports = class FJsManager_Data
 
     AddData(name /*string*/, data /*NJsData.IData*/)
     {
-        let context = ClassName + ".Add";
+        let context = ClassName + ".AddData";
 
         IsStringChecked(context, name);
         // TODO: Check data interface
@@ -52,6 +52,8 @@ module.exports = class FJsManager_Data
      */
     /*NJsData.IData*/ GetData(name /*string*/)
     {
+        let context = ClassName + ".GetData";
+
         checkf(this.DataByNameMap.has(name), context + " no data is associated with name: " + name);
 
         return this.DataByNameMap.get(name);

@@ -1,4 +1,6 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Animation/AnimNotifies/AnimNotify.h"
 // Types

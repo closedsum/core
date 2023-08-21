@@ -24,6 +24,12 @@ module.exports = class NJsCommon
                 NJsCommon.FLibrary.IsClassChecked       = NJsCommon.FLibrary.FDisableCheck.IsClassChecked;
                 NJsCommon.FLibrary.IsClassOfChecked     = NJsCommon.FLibrary.FDisableCheck.IsClassOfChecked;
                 NJsCommon.FLibrary.IsInstanceOfChecked  = NJsCommon.FLibrary.FDisableCheck.IsInstanceOfChecked;
+                NJsCommon.FLibrary.IsBoolChecked        = NJsCommon.FLibrary.FDisableCheck.IsBoolChecked;
+                NJsCommon.FLibrary.IsIntChecked         = NJsCommon.FLibrary.FDisableCheck.IsIntChecked;
+                NJsCommon.FLibrary.IsFloatChecked       = NJsCommon.FLibrary.FDisableCheck.IsFloatChecked;
+                NJsCommon.FLibrary.IsNumberChecked      = NJsCommon.FLibrary.FDisableCheck.IsNumberChecked;
+                NJsCommon.FLibrary.IsStringChecked      = NJsCommon.FLibrary.FDisableCheck.IsStringChecked;
+                NJsCommon.FLibrary.IsStringNotEmptyChecked = NJsCommon.FLibrary.FDisableCheck.IsStringNotEmptyChecked;
             }
 
             static checkf(condition /*boolean*/, message /*string*/) {}
@@ -35,6 +41,12 @@ module.exports = class NJsCommon
             static /*boolean*/ IsClassChecked(context /*context*/, c /*object*/) { return true; }
             static /*boolean*/ IsClassOfChecked(context /*string*/, a /*object*/, c /*object*/) { return true; }
             static /*boolean*/ IsInstanceOfChecked(context /*string*/, a /*object*/, c /*object*/) { return true; }
+            static /*boolean*/ IsBoolChecked(context /*string*/, a /*boolean*/) { return true; }
+            static /*boolean*/ IsIntChecked(context /*string*/, a /*number*/) { return true; }
+            static /*boolean*/ IsFloatChecked(context /*string*/, a /*number*/) { return true; }
+            static /*boolean*/ IsNumberChecked(context /*string*/, a /*number*/) { return true; }
+            static /*boolean*/ IsStringChecked(context /*string*/, s /*string*/) { return true; }
+            static /*boolean*/ IsStringNotEmptyChecked(context /*string*/, s /*string*/) { return true; }
         }
 
         /**
@@ -163,6 +175,8 @@ module.exports = class NJsCommon
         }
 
         /**
+        * Get whether or not 'gen' is a generator. 
+        * 
         * @param {object}       gen 
         * @returns {boolean}
         */
@@ -174,6 +188,9 @@ module.exports = class NJsCommon
         }
 
         /**
+        * Get whether or not 'gen' is a generator. 
+        *  Assert if NOT.
+        *  
         * @param {string}       context 
         * @param {object}       gen 
         * @returns {boolean}
@@ -188,6 +205,8 @@ module.exports = class NJsCommon
         }
 
         /**
+        * Get whether or not 'c' is a class.
+        * 
         * @param {object}       c 
         * @returns {boolean}
         */
@@ -199,6 +218,9 @@ module.exports = class NJsCommon
         }
 
         /**
+        * Get whether or not 'c' is a class.
+        *  Assert if NOT.
+        *  
         * @param {string}  context
         * @param {object}  c
         * @returns {boolean}
@@ -291,12 +313,17 @@ module.exports = class NJsCommon
         }
         
         /**
+        * Get whether or not 'a' is a boolean.
+        *  
         * @param {boolean}  a 
         * @returns {boolean}
         */
         static /*boolean*/ IsBool(a /*boolean*/) { return typeof a === "boolean"; }
 
         /**
+        * Get whether or not 'a' is a boolean.
+        *  Assert if NOT. 
+        * 
         * @param {string}   context
         * @param {boolean}  a 
         * @returns {boolean}
@@ -311,12 +338,17 @@ module.exports = class NJsCommon
         }
 
         /**
+        * Get whether or not 'a' is an integer. 
+        * 
         * @param {number}   a 
         * @returns {boolean}
         */
         static /*boolean*/ IsInt(a /*number*/) { return Number.isSafeInteger(a); }
 
         /**
+        * Get whether or not 'a' is an integer.
+        *  Assert if NOT. 
+        * 
         * @param {string}   context
         * @param {number}   a 
         * @returns {boolean}
@@ -330,9 +362,23 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsFloat(a) { return Number.isFinite(a) && !Number.isSafeInteger(a); }
+        /**
+        * Get whether or not 'a' is an float / double (number). 
+        * 
+        * @param {number}   a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsFloat(a) { return Number.isFinite(a) && !Number.isSafeInteger(a); }
 
-        static IsFloatChecked(context, a)
+        /**
+        * Get whether or not 'a' is an float / double (number). 
+        *  Assert if NOT.
+        * 
+        * @param {string}   context
+        * @param {number}   a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsFloatChecked(context, a)
         {
             let self = NJsCommon.FLibrary;
 
@@ -341,7 +387,15 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsNumberChecked(context, a)
+        /**
+        * Get whether or not 'a' is a number.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {number}       a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsNumberChecked(context, a)
         {
             let self = NJsCommon.FLibrary;
 
@@ -350,9 +404,23 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsNumber(a) { return Number.isFinite(a); }
+        /**
+        * Get whether or not 'a' is a number.
+        * 
+        * @param {number}       a 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsNumber(a) { return Number.isFinite(a); }
 
-        static IsStringChecked(context, s)
+        /**
+        * Get whether or not 's' is a string.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {string}       s 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsStringChecked(context, s)
         {
             let self = NJsCommon.FLibrary;
 
@@ -361,7 +429,15 @@ module.exports = class NJsCommon
             return result;
         }
 
-        static IsStringNotEmptyChecked(context, s)
+        /**
+        * Get whether or not 's' is NOT empty ('').
+        *  Assert if NOT. 
+        * 
+        * @param {string}       context 
+        * @param {string}       s 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsStringNotEmptyChecked(context, s)
         {
             let self = NJsCommon.FLibrary;
 
@@ -371,10 +447,12 @@ module.exports = class NJsCommon
         }
 
         /**
-         * @param {object} o 
-         * @param {string} key
-         * @returns {boolean} 
-         */
+        * Get wheter or not 'key' is a key / member of 'o'. 
+        * 
+        * @param {object}       o 
+        * @param {string}       key
+        * @returns {boolean} 
+        */
         static /*bool*/ DoesKeyExist(o /*object*/, key /*string*/)
         {
             let self = NJsCommon.FLibrary;

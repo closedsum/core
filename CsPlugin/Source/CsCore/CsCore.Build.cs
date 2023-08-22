@@ -55,7 +55,8 @@ public class CsCore : ModuleRules
             PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "DeveloperToolSettings",
-                    "RenderCore"
+                    "RenderCore",
+                    "ApplicationCore"
                 }
             );
 

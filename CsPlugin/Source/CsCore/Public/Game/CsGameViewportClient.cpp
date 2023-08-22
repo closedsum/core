@@ -4,6 +4,8 @@
 
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Input
+#include "GenericPlatform/GenericPlatformInputDeviceMapper.h"
 
 UCsGameViewportClient::UCsGameViewportClient(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -40,7 +42,13 @@ bool UCsGameViewportClient::InputAxis(FViewport* InViewport, int32 ControllerId,
 
 	int32 AdjustedControlerId = ControllerId < Remap.Num() && Key.IsGamepadKey() ? Remap[ControllerId] : ControllerId;
 
-	return Super::InputAxis(InViewport, AdjustedControlerId, Key, Delta, DeltaTime, NumSamples, bGamepad);
+	// Remap the old int32 ControllerId value to the new InputDeviceId
+	IPlatformInputDeviceMapper& DeviceMapper = IPlatformInputDeviceMapper::Get();
+	FPlatformUserId UserId					 = PLATFORMUSERID_NONE;
+	FInputDeviceId DeviceId					 = INPUTDEVICEID_NONE;
+	DeviceMapper.RemapControllerIdToPlatformUserAndDevice(AdjustedControlerId, UserId, DeviceId);
+
+	return Super::InputAxis(InViewport, DeviceId, Key, Delta, DeltaTime, NumSamples, bGamepad);
 }
 
 #pragma endregion FViewportClient Interface

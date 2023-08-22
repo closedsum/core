@@ -15,6 +15,8 @@ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
 var check = CommonLibrary.check;
+var IsClassChecked = CommonLibrary.IsClassChecked;
+var IsStringChecked = CommonLibrary.IsStringChecked;
 
 module.exports = class NJsTypes
 {
@@ -35,5 +37,16 @@ module.exports = class NJsTypes
         * @param {AnimBlueprintGeneratedClass} ac 
         */
         Set(ac /*AnimBlueprintGeneratedClass*/) { this.Blueprint_Internal = ac; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsStringChecked(context, this.Path);
+            IsClassChecked(context, this.Blueprint_Internal);
+            return true;
+        }
     }
 };

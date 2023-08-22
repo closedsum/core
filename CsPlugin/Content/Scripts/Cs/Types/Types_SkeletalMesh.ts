@@ -18,6 +18,11 @@ declare namespace NJsTypes {
         * @param {SkeletalMesh}
         */
         Set(ac: SkeletalMesh): void;
+        /**
+        * @param {string}   context
+        * @returns {boolean}
+        */
+        IsValidChecked(context: string): boolean;
     }
 }
 

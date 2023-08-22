@@ -9,12 +9,15 @@
 
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
+var NJsArray = require('Cs/Library/Library_Array.js');
 
 // "typedefs" - class
 var CommonLibrary = NJsCommon.FLibrary;
+var ArrayLibrary = NJsArray.FLibrary;
 
 // "typedefs" - functions
 var check = CommonLibrary.check;
+var IsNotEmptyChecked = ArrayLibrary.IsNotEmptyChecked;
 
 module.exports = class NJsTypes
 {
@@ -22,8 +25,8 @@ module.exports = class NJsTypes
     {
         constructor()
         {  
-            /** @type {string[]} */     this.Paths = [];
-            /** @type {MaterialInterface[]} */ this.Materials_Internal = null;
+            /** @type {string[]} */             this.Paths = [];
+            /** @type {MaterialInterface[]} */  this.Materials_Internal = null;
         }
 
         /**
@@ -35,5 +38,17 @@ module.exports = class NJsTypes
         * @param {MaterialInterface[]} mats 
         */
         Set(mats /*MaterialInterface[]*/) { this.Materials_Internal = mats; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsNotEmptyChecked(context, this.Paths);
+            IsNotEmptyChecked(context, this.Materials_Internal);
+            // TODO: Need to check Array has valid objects.
+            return true;
+        }
     }
 };

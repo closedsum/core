@@ -1,6 +1,7 @@
 /// <reference path="../../typings/ue.d.ts">/>
 // Types
 /// <reference path="../Types/Mask.ts">/>
+/// <reference path="../Material/Types_Material.ts">/>
 /// <reference path="../Types/Types_SkeletalMesh.ts">/>
 /// <reference path="../Animation/Types_Anim.ts">/>
 // Library

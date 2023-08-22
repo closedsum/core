@@ -4,20 +4,20 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 
-// require('Cs/Animation/Types_Anim.js');
+// require('Cs/Material/Types_Material.js');
 
 declare namespace NJsTypes {
-    class FAnimBlueprint {
-        Path: string;
-        Blueprint_Internal: AnimBlueprintGeneratedClass;
+    class FTArrayMaterialInterface {
+        Path: string[];
+        Mesh_Internal: MaterialInterface[];
         /**
-        * @returns {AnimBlueprintGeneratedClass}
+        * @returns {MaterialInterface[]}
         */
-        Get(): AnimBlueprintGeneratedClass;
+        Get(): MaterialInterface[];
         /**
-        * @param {AnimBlueprintGeneratedClass}  ac
+        * @param {MaterialInterface[]}  mats
         */
-        Set(ac: AnimBlueprintGeneratedClass): void;
+        Set(mats: MaterialInterface[]): void;
         /**
         * @param {string}   context
         * @returns {boolean}
@@ -26,4 +26,4 @@ declare namespace NJsTypes {
     }
 }
 
-declare type FAnimBlueprint = NJsTypes.FAnimBlueprint;
+declare type FTArrayMaterialInterface = NJsTypes.FTArrayMaterialInterface;

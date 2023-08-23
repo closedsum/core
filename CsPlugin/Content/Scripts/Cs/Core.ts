@@ -1,16 +1,26 @@
 /// <reference path="../typings/ue.d.ts">/>
+// Managers
+/// <reference path="Managers/Data/Manager_Data.ts">/>
 
 // require("Cs/Core.js");
 
 declare namespace FJsCore {
         class FScript {
             Index: number;
+            Id: Guid;
             Manager_Data: FJsManager_Data;
+            Objects: object[];
+            GetIndex(): number;
+            GetId(): Guid;
+            GetManager_Data(): FJsManager_Data;
+            Shutdown(): void;
+            AddObject(o: object): void;
     }
 }
 
 declare class FJsCore {
     ScriptOuter: UObject;
+    ScriptOuterId: number;
     Engine: GameEngine;
     GameInstance: CsGameInstance;
     Manager_Time: CsManager_Time;
@@ -24,6 +34,7 @@ declare class FJsCore {
     Script: FJsCore.FScript;
     //this.CoroutineScheduler = null;
     GetScriptOuter(): UObject;
+    GetScriptOuterId(): number;
     GetEngine(): GameEngine;
     GetGameInstance(): CsGameInstance;
     GetManager_Time(): CsManager_Time;

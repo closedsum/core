@@ -16,6 +16,9 @@ class CSCORE_API UCsScriptLibrary_World : public UObject
 
 public:
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|World", meta = (WorldContext = "WorldContextObject"))
+	static bool IsPlayInEditorPreview(const UObject* WorldContextObject);
+
 	/**
 	* Removes the passed in actor to from special network actor list
 	*

@@ -87,6 +87,11 @@ namespace NCsWorld
 		return World && World->WorldType == EWorldType::EditorPreview;
 	}
 
+	bool FLibrary::IsPlayInEditorPreview(const UObject* WorldContext)
+	{
+		return IsPlayInEditorPreview(GetSafe(WorldContext));
+	}
+
 	bool FLibrary::IsPlayInGameOrPIE(UWorld* World)
 	{
 		return World && (World->WorldType == EWorldType::Game || World->WorldType == EWorldType::PIE);

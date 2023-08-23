@@ -87,6 +87,7 @@ namespace NCsManagerJavascript
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, CreateAndRun);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Reload);
 			}
 		}
 	}
@@ -103,7 +104,12 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 	// Scripts
 	OnPreReloadScript_ScriptEvent(),
 	CurrentScriptIndex(INDEX_NONE),
-	bScriptReload(false)
+	bScriptReload(false),
+	// Editor Scripts
+	EditorScriptImpl(),
+	CurrentEditorScriptIndex(INDEX_NONE),
+	CurrentEditorScriptId(),
+	EditorScript_OnShutdown_ScriptEvent()
 {
 }
 
@@ -929,8 +935,34 @@ FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, con
 		ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 	}
 
+	Outer->CurrentEditorScriptIndex = GetObjects().Num() - 1;
+	Outer->CurrentEditorScriptId    = ScriptObject.Id;
+
 	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
+
 	return ScriptId;
+}
+
+void UCsManager_Javascript::FEditorScriptImpl::Reload(const FGuid& Id, const FString& Path)
+{
+	using namespace NCsManagerJavascript::NCached;
+
+	const FString& Context = Str::ReloadScript;
+
+	if (!OwnerIdByIdMap.Contains(Id))
+	{
+		UE_LOG(LogCsJs, Warning, TEXT("%s: No Script associated with Id: %s."), *Context, *(Id.ToString()));
+		return;
+	}
+
+	const int32& OwnerId = OwnerIdByIdMap[Id];
+	const int32& Index   = IndexByOwnerIdMap[OwnerId];
+
+	FCsJavascriptFileObjects& ScriptObject = GetObjects()[Index];
+
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
 }
 
 void UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
@@ -950,6 +982,9 @@ void UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
 	const int32 LastIndex		 = Objects.Num() - 1;
 
 	Objects.Swap(Index_Remove, LastIndex);
+
+	Outer->EditorScript_OnShutdown_ScriptEvent.Broadcast(ScriptId_Remove);
+
 	Objects.Last().Shutdown();
 	Objects.RemoveAt(LastIndex);
 

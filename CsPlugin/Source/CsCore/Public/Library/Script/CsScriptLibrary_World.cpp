@@ -6,6 +6,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_World.h"
 // Engine
 #include "Engine/World.h"
 
@@ -28,6 +30,13 @@ namespace NCsScriptLibraryWorld
 UCsScriptLibrary_World::UCsScriptLibrary_World(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+}
+
+bool UCsScriptLibrary_World::IsPlayInEditorPreview(const UObject* WorldContextObject)
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	return WorldLibrary::IsPlayInEditorPreview(WorldContextObject);
 }
 
 void UCsScriptLibrary_World::RemoveNetworkActor(const FString& Context, AActor* Actor)

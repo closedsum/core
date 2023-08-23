@@ -18,6 +18,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdown);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdownScripts);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_OnPreReloadScript, const int32&, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_EditorScript_OnShutdown, const FGuid&, Id);
 
 #pragma endregion Delegates
 
@@ -305,10 +306,31 @@ public:
 
 		FGuid CreateAndRun(UObject* Owner, const FString& Path);
 
+		void Reload(const FGuid& Id, const FString& Path);
+
 		void Shutdown(UObject* Owner);
 	};
 
 	FEditorScriptImpl EditorScriptImpl;
+
+	/** Index of the Editor Script in a list of Editor Scripts.
+		This is first assigned with Run is called but can change over the lifetime
+		of the Script if there are many Scripts running at once. 
+		NOTE: FUTURE: This should be updated. */
+	UPROPERTY(BlueprintReadWrite)
+	int32 CurrentEditorScriptIndex;
+
+	/** A Unique Id assigned to the Editor Script when Run is called. 
+		This will remain valid and unchanged until the Script has been Shutdown. */
+	UPROPERTY(BlueprintReadWrite)
+	FGuid CurrentEditorScriptId;
+
+	/**
+	* Delegate for the event when an Editor Script will be Shutdown.
+	* @param Id		Unique Id associated with the Script.
+	*/
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerJavascript_EditorScript_OnShutdown EditorScript_OnShutdown_ScriptEvent;
 
 #pragma endregion Editor Scripts
 

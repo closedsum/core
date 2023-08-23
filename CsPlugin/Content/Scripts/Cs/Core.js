@@ -28,21 +28,42 @@ module.exports = class FJsCore
         constructor()
         {
             /** @type {number} */           this.Index = INDEX_NONE;
+            /** @type {Guid} */             this.Id = Guid.Invalidate_Guid();
             /** @type {FJsManager_Data} */  this.Manager_Data = new FJsManager_Data();
+            /** @type {object[]} */         this.Objects = [];
         }
 
         /*number*/          GetIndex()          { return this.Index; }
+        /*Guid*/            GetId()             { return this.Id; }
         /*FJsManager_Data*/ GetManager_Data()   { return this.Manager_Data; }
 
         Shutdown()
         {
+            this.Index = INDEX_NONE;
+            this.Id = Guid.Invalidate_Guid();
             this.Manager_Data.Shutdown();
+
+            for (let o of this.Objects)
+            {
+                o.Shutdown();
+            }
+            this.Objects = [];
+        }
+
+        /**
+        * @param {object} o 
+        */
+        AddObject(o /*object*/)
+        {
+            // TODO: Check o has function Shutdown
+            this.Objects.push(o);
         }
     }
 
     constructor()
     {
         /** @type {UObject} */          this.ScriptOuter = null;
+        /** @type {number} */           this.ScriptOuterId = INDEX_NONE;
         /** @type {GameEngine} */       this.Engine = null;
         /** @type {CsGameInstance} */   this.GameInstance = null;
         /** @type {CsManager_Time} */   this.Manager_Time = null;
@@ -62,6 +83,7 @@ module.exports = class FJsCore
     }
 
     /*UObject*/                 GetScriptOuter()        { return this.ScriptOuter; }
+    /*number*/                  GetScriptOuterId()      { return this.ScriptOuterId; }
     /*GameEngine*/              GetEngine()             { return this.Engine; }
     /*CsGameInstance*/          GetGameInstance()       { return this.GameInstance; }
     /*CsManager_Time*/          GetManager_Time()       { return this.Manager_Time; }
@@ -107,7 +129,14 @@ module.exports = class FJsCore
 
     Shutdown()
     {
+        this.Script.Shutdown();
+        this.Script = null;
+
+        this.CoroutineScheduler.EndAll();
+        this.CoroutineScheduler = null;
+
         this.ScriptOuter = null;
+        this.ScriptOuterId = INDEX_NONE;
         this.Engine = null;
         this.GameInstance = null;
         this.Manager_Time = null;
@@ -118,12 +147,6 @@ module.exports = class FJsCore
         this.PlayerState = null;
         this.PlayerPawn = null;
 
-        this.CoroutineScheduler.EndAll();
-        this.CoroutineScheduler = null;
-
         this.Classes.clear();
-
-        this.Script.Shutdown();
-        this.Script = null;
     }
 };

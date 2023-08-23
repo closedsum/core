@@ -51,10 +51,13 @@ namespace NCsWorld
 		static bool IsPlayInGame(UWorld* World);
 
 		static bool IsPlayInEditor(UWorld* World);
-	
+
+
 		static bool IsPlayInPIE(UWorld* World);
 
 		static bool IsPlayInEditorPreview(UWorld* World);
+
+		static bool IsPlayInEditorPreview(const UObject* WorldContext);
 
 		static bool IsPlayInGameOrPIE(UWorld* World);
 

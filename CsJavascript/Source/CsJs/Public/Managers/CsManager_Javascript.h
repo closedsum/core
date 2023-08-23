@@ -260,6 +260,58 @@ public:
 
 #pragma endregion Scripts
 
+// Editor Scripts
+#pragma region
+private:
+
+	UPROPERTY(Transient)
+	TArray<FCsJavascriptFileObjects> EditorScriptObjects;
+
+public:
+
+	FORCEINLINE TArray<FCsJavascriptFileObjects>& GetEditorScriptObjects() { return EditorScriptObjects; }
+
+	struct CSJS_API FEditorScriptImpl
+	{
+		friend class UCsManager_Javascript;
+
+	private:
+
+		UCsManager_Javascript* Outer;
+
+	public:
+
+		// <Owner Id, Owner>
+		TMap<int32, UObject*> OwnerByOwnerIdMap;
+		// <Owner Id, Script Index>
+		TMap<int32, int32> IndexByOwnerIdMap;
+		// <Owner Id, Script Id>
+		TMap<int32, FGuid> IdByOwnerIdMap;
+		// <Script Id, Owner Id>
+		TMap<FGuid, int32> OwnerIdByIdMap;
+
+		FEditorScriptImpl() :
+			Outer(nullptr),
+			OwnerByOwnerIdMap(),
+			IndexByOwnerIdMap(),
+			IdByOwnerIdMap(),
+			OwnerIdByIdMap()
+		{
+		}
+
+		FORCEINLINE TArray<FCsJavascriptFileObjects>& GetObjects() { return Outer->GetEditorScriptObjects(); }
+
+		void Validate();
+
+		FGuid CreateAndRun(UObject* Owner, const FString& Path);
+
+		void Shutdown(UObject* Owner);
+	};
+
+	FEditorScriptImpl EditorScriptImpl;
+
+#pragma endregion Editor Scripts
+
 // Events
 #pragma region
 public:

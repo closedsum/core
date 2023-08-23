@@ -15,6 +15,9 @@ struct CSJS_API FCsJavascriptFileObjects
 public:
 
 	UPROPERTY(Transient)
+	FGuid Id;
+
+	UPROPERTY(Transient)
 	UObject* Isolate;
 
 	UPROPERTY(Transient)
@@ -24,6 +27,7 @@ public:
 	TArray<FString> ExposedObjectNames;
 
 	FCsJavascriptFileObjects() :
+		Id(),
 		Isolate(nullptr),
 		Context(nullptr),
 		ExposedObjectNames()

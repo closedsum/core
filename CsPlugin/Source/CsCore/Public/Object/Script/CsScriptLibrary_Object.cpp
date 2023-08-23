@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Object/Script/CsScriptLibrary_Object.h"
 #include "CsCore.h"
 
@@ -22,6 +24,8 @@ namespace NCsScriptLibraryObject
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, ConstructObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, GetDefaultObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_GetUniqueID);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_MarkPendingKill);
 		}
 	}
@@ -81,6 +85,61 @@ UObject* UCsScriptLibrary_Object::ConstructObject(const FString& Context, UObjec
 		return nullptr;
 	}
 	return NewObject<UObject>(Outer, Class);
+}
+
+UObject* UCsScriptLibrary_Object::GetDefaultObject(const FString& Context, UObject* Object)
+{
+	using namespace NCsScriptLibraryObject::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetDefaultObject : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return nullptr;
+	}
+
+	UClass* Class = Object->GetClass();
+
+	if (!Class)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Class from Object: %s."), *Ctxt, *(Class->GetName())));
+		return nullptr;
+	}
+
+	UObject* DOb = Class->GetDefaultObject<UObject>();
+
+	if (!DOb)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object from Object: %s with Class: %s."), *Ctxt, *(Object->GetName()), *(Class->GetName())));
+		return nullptr;
+	}
+	return DOb;
+}
+
+int32 UCsScriptLibrary_Object::Object_GetUniqueID(const FString& Context, UObject* Object)
+{
+	using namespace NCsScriptLibraryObject::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Object_GetUniqueID : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	if (!Object)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
+		return INDEX_NONE;
+	}
+	return Object->GetUniqueID();
+}
+
+int32 UCsScriptLibrary_Object::DOb_GetUniqueID(const FString& Context, UObject* Object)
+{
+	if (UObject* DOb = GetDefaultObject(Context, Object))
+		return DOb->GetUniqueID();
+	return INDEX_NONE;
 }
 
 bool UCsScriptLibrary_Object::Object_MarkPendingKill(const FString& Context, UObject* Object)

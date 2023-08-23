@@ -7,6 +7,7 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Object/CsGetCreatedObjects.h"
 #include "Play/Mode/CsGetPlayMode.h"
+#include "Animation/Event/CsAnimation_Event.h"
 // Types
 #include "Object/CsTypes_Object.h"
 #include "Types/CsTypes_Load.h"
@@ -28,7 +29,8 @@ UCLASS()
 class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
 								 public ICsGetManagerSingleton,
 								 public ICsGetCreatedObjects,
-								 public ICsGetPlayMode
+								 public ICsGetPlayMode,
+								 public ICsAnimation_Event
 {
 public:
 
@@ -130,6 +132,26 @@ public:
 	void SetPlayMode(const ECsPlayMode& Value) { PlayMode = Value; }
 
 #pragma endregion PlayMode
+
+// ICsAnimation_Event
+#pragma region
+public:
+
+	FORCEINLINE ICsAnimation_Event::FOnInit& GetOnInit_Event() { return AnimationEvent_OnInit_Event; }
+	FORCEINLINE FCsAnimationEvent_OnInit& GetOnInit_ScriptEvent() { return AnimationEvent_OnInit_ScriptEvent; }
+
+#pragma endregion ICsAnimation_Event
+
+// Animation_Event
+#pragma region
+public:
+
+	ICsAnimation_Event::FOnInit AnimationEvent_OnInit_Event;
+
+	UPROPERTY(BlueprintAssignable)
+	FCsAnimationEvent_OnInit AnimationEvent_OnInit_ScriptEvent;
+
+#pragma endregion Animation_Event
 
 // PropertyChange
 #pragma region

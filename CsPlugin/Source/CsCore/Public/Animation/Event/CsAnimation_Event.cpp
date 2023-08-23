@@ -1,9 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
-#include "Object/CsGetCreatedObjects.h"
+#include "Animation/Event/CsAnimation_Event.h"
 #include "CsCore.h"
 
-UCsGetCreatedObjects::UCsGetCreatedObjects(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsAnimation_Event::UCsAnimation_Event(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }

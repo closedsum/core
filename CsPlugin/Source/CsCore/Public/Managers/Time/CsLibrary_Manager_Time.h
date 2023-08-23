@@ -240,6 +240,18 @@ namespace NCsTime
 			static void SetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale);
 
 			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* return				scaled DeltaTime.
+			*/
+			static const FCsDeltaTime& GetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
 			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
 			*
 			* @param Context		The calling context.

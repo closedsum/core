@@ -68,10 +68,10 @@ public:
 #pragma region
 protected:
 
-	UPROPERTY()
-	ACsManager_Singleton_Actor* Manager_Singleton_Actor;
+    UPROPERTY()
+    ACsManager_Singleton_Actor* Manager_Singleton_Actor;
 
-	virtual void ConstructManagerSingletonActor(){}
+    virtual void ConstructManagerSingletonActor(){}
 
 #pragma endregion Manager Singleton
 
@@ -79,11 +79,11 @@ protected:
 #pragma region
 public:
 
-	// 0 Setup
+	// Setup
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	bool bSetupInGameSimulation;
 
 	TCsBool_Ref bSetupInGameSimulationHandle;
@@ -92,20 +92,20 @@ public:
 	virtual void OnTick_Handle_bSetupInGameSimulation();
 
 	/** Show Emitter Editor Icons */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	bool ShowEmitterEditorIcons;
 
 	TCsBool_Ref ShowEmitterEditorIconsHandle;
 
 	/** Show Sound Editor Icons */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	bool ShowSoundEditorIcons;
 
 	TCsBool_Ref ShowSoundEditorIconsHandle;
 
 	virtual void OnTick_Handle_ShowEditorIcons();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "0 Setup")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
 	float GlobalPlayRate;
 
 	TCsFloat_Ref GlobalPlayRateHandle;

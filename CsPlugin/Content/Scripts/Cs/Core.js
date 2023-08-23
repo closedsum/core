@@ -42,36 +42,38 @@ module.exports = class FJsCore
 
     constructor()
     {
-        this.Engine = null;
-        this.GameInstance = null;
-        this.Manager_Time = null;
-        this.Coordinator_GameEvent = null;
-        this.World = null;
-        this.GameState = null;
-        this.Manager_Javascript = null;
-        this.PlayerController = null;
-        this.PlayerState = null;
-        this.PlayerPawn = null;
+        /** @type {UObject} */          this.ScriptOuter = null;
+        /** @type {GameEngine} */       this.Engine = null;
+        /** @type {CsGameInstance} */   this.GameInstance = null;
+        /** @type {CsManager_Time} */   this.Manager_Time = null;
+        /** @type {CsCoordinator_GameEvent} */ this.Coordinator_GameEvent = null;
+        /** @type {World} */            this.World = null;
+        /** @type {GameState} */        this.GameState = null;
+        /** @type {CsManager_Javascript} */ this.Manager_Javascript = null;
+        /** @type {PlayerController}*/  this.PlayerController = null;
+        /** @type {PlayerState} */      this.PlayerState = null;
+        /** @type {Actor} */            this.PlayerPawn = null;
 
-        this.CoroutineScheduler = null;
+        /** @type {FJCoroutineScheduler} */ this.CoroutineScheduler = null;
 
         this.Classes = new Map();
 
         this.Script = new FJsCore.FScript();
     }
 
-    GetEngine() { return this.Engine; }
-    GetGameInstance() { return this.GameInstance; }
-    GetManager_Time() { return this.Manager_Time; }
-    GetCoordinator_GameEvent() { return this.Coordinator_GameEvent; }
-    GetWorld() { return this.World; }
-    GetManager_Javascript() { return this.Manager_Javascript; }
-    GetGameState() { return this.GameState; }
-    GetPlayerController() { return this.PlayerController; }
-    GetPlayerState() { return this.PlayerState; }
-    GetPlayerPawn() { return this.PlayerPawn; }
-    GetCoroutineScheduler() { return this.CoroutineScheduler; }
-    GetScript() { return this.Script; }
+    /*UObject*/                 GetScriptOuter()        { return this.ScriptOuter; }
+    /*GameEngine*/              GetEngine()             { return this.Engine; }
+    /*CsGameInstance*/          GetGameInstance()       { return this.GameInstance; }
+    /*CsManager_Time*/          GetManager_Time()       { return this.Manager_Time; }
+    /*CsCoordinator_GameEvent*/ GetCoordinator_GameEvent() { return this.Coordinator_GameEvent; }
+    /*World*/                   GetWorld()              { return this.World; }
+    /*CsManager_Javascript*/    GetManager_Javascript() { return this.Manager_Javascript; }
+    /*GameState*/               GetGameState()          { return this.GameState; }
+    /*PlayerController*/        GetPlayerController()   { return this.PlayerController; }
+    /*PlayerState*/             GetPlayerState()        { return this.PlayerState; }
+    /*Actor*/                   GetPlayerPawn()         { return this.PlayerPawn; }
+    /*FJCoroutineScheduler*/    GetCoroutineScheduler() { return this.CoroutineScheduler; }
+    /*FJsCore.FScript*/         GetScript()             { return this.Script; }
 
     /**
      * @param {string} context 
@@ -105,6 +107,7 @@ module.exports = class FJsCore
 
     Shutdown()
     {
+        this.ScriptOuter = null;
         this.Engine = null;
         this.GameInstance = null;
         this.Manager_Time = null;

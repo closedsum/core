@@ -9,6 +9,7 @@
 #include "Managers/CsLibrary_Manager_Javascript.h"
 #include "Managers/Input/CsLibrary_Manager_Input.h"
 	// Common
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsJsLibrary_Common.h"
 #include "Library/CsLibrary_Valid.h"
 // Coroutine
@@ -76,6 +77,17 @@ namespace NCsManagerJavascript
 			// Scripts
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Javascript, SetupAndRunScripts_Internal);
+		}
+	}
+
+	namespace NEditorScriptImpl
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, CreateAndRun);
+			}
 		}
 	}
 }
@@ -288,6 +300,7 @@ void UCsManager_Javascript::Initialize()
 	{
 	}
 */
+	EditorScriptImpl.Outer = this;
 }
 
 void UCsManager_Javascript::CleanUp()
@@ -796,6 +809,168 @@ void UCsManager_Javascript::ShutdownScripts()
 }
 
 #pragma endregion Scripts
+
+// Editor Scripts
+#pragma region
+
+void UCsManager_Javascript::FEditorScriptImpl::Validate()
+{
+	TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
+
+	// Check other Script Objects are still Valid.
+	typedef NCsObject::FLibrary ObjectLibrary;
+
+	TArray<int32> IdsToRemove;
+
+	for (TPair<int32, UObject*>& Pair : OwnerByOwnerIdMap)
+	{
+		const int32& Id = Pair.Key;
+		UObject* Owner	= Pair.Value;
+
+		if (!ObjectLibrary::IsPendingKill(Owner))
+			IdsToRemove.Add(Id);
+	}
+
+	// Remove any Script Objects associated with Invalid Owners.
+	const int32 Count = IdsToRemove.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		const int32& OwnerId_Remove = IdsToRemove[I];
+
+		OwnerByOwnerIdMap.Remove(OwnerId_Remove);
+
+		// Remove the Invalid Index from the list
+		const int32& Index_Remove	 = IndexByOwnerIdMap[OwnerId_Remove];
+		const FGuid ScriptId_Remove	 = Objects[Index_Remove].Id;
+		const int32 LastIndex		 = Objects.Num() - 1;
+
+		Objects.Swap(Index_Remove, LastIndex);
+		Objects.Last().Shutdown();
+		Objects.RemoveAt(LastIndex);
+
+		// Update the swapped Index
+		if (Objects.Num() > CS_EMPTY)
+		{
+			const int32 NewIndex = Index_Remove;
+
+			FCsJavascriptFileObjects& ScriptObject = Objects[NewIndex];
+			const FGuid& ScriptId_Swapped		   = ScriptObject.Id;
+
+			const int32& OwnerId_Swapped	   = OwnerIdByIdMap[ScriptId_Swapped];
+			IndexByOwnerIdMap[OwnerId_Swapped] = NewIndex;
+		}
+		// Remove from remaining lists
+		IndexByOwnerIdMap.Remove(OwnerId_Remove);
+		IdByOwnerIdMap.Remove(OwnerId_Remove);
+		OwnerIdByIdMap.Remove(ScriptId_Remove);
+	}
+}
+
+FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, const FString& Path)
+{
+	using namespace NCsManagerJavascript::NEditorScriptImpl::NCached;
+
+	const FString& Context = Str::CreateAndRun;
+
+	FGuid ScriptId;
+
+	ScriptId.Invalidate();
+
+	CS_IS_PENDING_KILL_CHECKED(Owner)
+	CS_IS_STRING_EMPTY_CHECKED(Path)
+
+	Validate();
+
+	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+
+	FCsJavascriptFileObjects& ScriptObject = GetObjects().AddDefaulted_GetRef();
+
+	// Setup Isolates and Contexts
+	{
+		JavascriptCommonLibrary::SetupIsolateAndContext(Outer, ScriptObject.Isolate, ScriptObject.Context, false);
+	
+		ScriptObject.Id = FGuid::NewGuid();
+
+		// Update Maps
+		const int32 OwnerId		= Owner->GetClass()->GetDefaultObject()->GetUniqueID();
+		ScriptId			    = ScriptObject.Id;
+		const int32 ScriptIndex = GetObjects().Num() - 1;
+
+		OwnerByOwnerIdMap.Add(OwnerId, Owner);
+		IndexByOwnerIdMap.Add(OwnerId, ScriptIndex);
+		IdByOwnerIdMap.Add(OwnerId, ScriptId);
+		OwnerIdByIdMap.Add(ScriptId, OwnerId);
+	}
+	
+	// Expose Objects
+	{
+		ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
+
+		// Script Outer | Owner
+		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("ScriptOuter"), Owner);
+		ScriptObject.ExposedObjectNames.Add(TEXT("ScriptOuter"));
+
+		// Engine
+		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+		ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
+
+		// Manager_Time
+		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GEngine));
+		ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
+
+		// World
+		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), Owner->GetWorld());
+		ScriptObject.ExposedObjectNames.Add(TEXT("World"));
+		ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
+
+		// Manager_Javascript
+		JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), Outer);
+		ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
+	}
+
+	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
+	return ScriptId;
+}
+
+void UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
+{
+	const int32 OwnerId_Remove = Owner->GetClass()->GetDefaultObject()->GetUniqueID();
+
+	if (!OwnerByOwnerIdMap.Contains(OwnerId_Remove))
+		return;
+
+	OwnerByOwnerIdMap.Remove(OwnerId_Remove);
+
+	TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
+
+	// Remove the Invalid Index from the list
+	const int32& Index_Remove	 = IndexByOwnerIdMap[OwnerId_Remove];
+	const FGuid ScriptId_Remove	 = Objects[Index_Remove].Id;
+	const int32 LastIndex		 = Objects.Num() - 1;
+
+	Objects.Swap(Index_Remove, LastIndex);
+	Objects.Last().Shutdown();
+	Objects.RemoveAt(LastIndex);
+
+	// Update the swapped Index
+	if (Objects.Num() > CS_EMPTY)
+	{
+		const int32 NewIndex = Index_Remove;
+
+		FCsJavascriptFileObjects& ScriptObject = Objects[NewIndex];
+		const FGuid& ScriptId_Swapped		   = ScriptObject.Id;
+
+		const int32& OwnerId_Swapped	   = OwnerIdByIdMap[ScriptId_Swapped];
+		IndexByOwnerIdMap[OwnerId_Swapped] = NewIndex;
+	}
+	// Remove from remaining lists
+	IndexByOwnerIdMap.Remove(OwnerId_Remove);
+	IdByOwnerIdMap.Remove(OwnerId_Remove);
+	OwnerIdByIdMap.Remove(ScriptId_Remove);
+}
+
+#pragma endregion Editor Scripts
 
 // Events
 #pragma region

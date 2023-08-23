@@ -240,6 +240,11 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->SetScaledDeltaTime(Group, Scale);
 		}
 
+		const FCsDeltaTime& FLibrary::GetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			return GetChecked(Context, ContextObject)->GetScaledDeltaTime(Group);
+		}
+
 		void FLibrary::ResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
 			GetChecked(Context, ContextObject)->ResetScaledDeltaTime(Group);

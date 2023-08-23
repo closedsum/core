@@ -24,6 +24,58 @@ declare namespace NJsTypes {
         */
         IsValidChecked(context: string): boolean;
     }
+    class FAnimSequence {
+        Path: string;
+        Anim_Internal: AnimSequence;
+        /**
+        * @returns {AnimSequence}
+        */
+        Get(): AnimSequence;
+        /**
+        * @param {AnimSequence}  a
+        */
+        Set(a: AnimSequence): void;
+        /**
+        * @param {string}   context
+        * @returns {boolean}
+        */
+        IsValidChecked(context: string): boolean;
+    }
+    class FBlendSpace {
+        Path: string;
+        Blend_Internal: BlendSpace;
+        /**
+        * @returns {BlendSpace}
+        */
+        Get(): BlendSpace;
+        /**
+        * @param {BlendSpace}  b
+        */
+        Set(b: BlendSpace): void;
+        /**
+        * @param {string}   context
+        * @returns {boolean}
+        */
+        IsValidChecked(context: string): boolean;
+    }
+    class FBlendSpace1D {
+        Path: string;
+        Blend_Internal: BlendSpace1D;
+        /**
+        * @returns {BlendSpace1D}
+        */
+        Get(): BlendSpace1D;
+        /**
+        * @param {BlendSpace1D}  b
+        */
+        Set(b: BlendSpace1D): void;
+        /**
+        * @param {string}   context
+        * @returns {boolean}
+        */
+        IsValidChecked(context: string): boolean;
+    }
 }
 
 declare type FAnimBlueprint = NJsTypes.FAnimBlueprint;
+declare type FAnimSequence = NJsTypes.FAnimSequence;

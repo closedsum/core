@@ -49,4 +49,94 @@ module.exports = class NJsTypes
             return true;
         }
     }
+
+    static FAnimSequence = class AnimSequence
+    {
+        constructor()
+        {  
+            /** @type {string} */       this.Path = "";
+            /** @type {AnimSequence} */ this.Anim_Internal = null;
+        }
+
+        /**
+        * @returns {AnimSequence}
+        */
+        /*AnimSequence*/ Get() { return this.Anim_Internal; }
+        
+        /**
+        * @param {AnimSequence} a
+        */
+        Set(a /*AnimSequence*/) { this.Anim_Internal = a; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsStringChecked(context, this.Path);
+            IsClassChecked(context, this.Anim_Internal);
+            return true;
+        }
+    }
+
+    static FBlendSpace = class BlendSpace
+    {
+        constructor()
+        {  
+            /** @type {string} */       this.Path = "";
+            /** @type {BlendSpace} */   this.Blend_Internal = null;
+        }
+
+        /**
+        * @returns {BlendSpace}
+        */
+        /*BlendSpace*/ Get() { return this.Blend_Internal; }
+        
+        /**
+        * @param {BlendSpace} b
+        */
+        Set(b /*BlendSpace*/) { this.Blend_Internal = b; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsStringChecked(context, this.Path);
+            IsClassChecked(context, this.Blend_Internal);
+            return true;
+        }
+    }
+
+    static FBlendSpace1D = class BlendSpace1D
+    {
+        constructor()
+        {  
+            /** @type {string} */       this.Path = "";
+            /** @type {BlendSpace1D} */ this.Blend_Internal = null;
+        }
+
+        /**
+        * @returns {BlendSpace1D}
+        */
+        /*BlendSpace1D*/ Get() { return this.Blend_Internal; }
+        
+        /**
+        * @param {BlendSpace1D} a
+        */
+        Set(b /*BlendSpace1D*/) { this.Blend_Internal = b; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsStringChecked(context, this.Path);
+            IsClassChecked(context, this.Blend_Internal);
+            return true;
+        }
+    }
 };

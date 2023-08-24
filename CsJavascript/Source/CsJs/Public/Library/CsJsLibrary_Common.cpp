@@ -30,6 +30,9 @@ namespace NCsJs
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, ClearObject);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, RunFileChecked);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsJs::NCommon::FLibrary, RunFile);
+
+					const FString RunError_empty = TEXT("(empty)");
+					const FString RunError_undefined = TEXT("undefined");
 				}
 			}
 		}
@@ -87,8 +90,10 @@ namespace NCsJs
 			CS_IS_PENDING_KILL_CHECKED(JavascriptContext)
 			CS_IS_STRING_EMPTY_CHECKED(FileName)
 
-			// TODO: Check return value of RunFile
-			Cast<UJavascriptContext>(JavascriptContext)->RunFile(*FileName);
+			FString Output =  Cast<UJavascriptContext>(JavascriptContext)->RunFile(*FileName);
+
+			checkf(Output != Str::RunError_empty, TEXT("%s: Failed to Run File: %s. Error: %s."), *FileName, *Str::RunError_empty);
+			//checkf(Output != Str::RunError_undefined, TEXT("%s: Failed to Run File: %s. Error: %s."), *FileName, *Str::RunError_undefined);
 		}
 
 		void FLibrary::RunFile(UObject*& JavascriptContext, const FString& FileName)
@@ -100,7 +105,29 @@ namespace NCsJs
 			CS_IS_PENDING_KILL_CHECKED(JavascriptContext)
 			CS_IS_STRING_EMPTY_CHECKED(FileName)
 
-			Cast<UJavascriptContext>(JavascriptContext)->RunFile(*FileName);
+			FString Output = Cast<UJavascriptContext>(JavascriptContext)->RunFile(*FileName);
+			
+			bool HasError = false;
+			FString Error = TEXT("");
+
+			if (Output == Str::RunError_empty)
+			{
+				HasError = true;
+				Error	 = Str::RunError_empty;
+			}
+			/*
+			else
+			if (Output == Str::RunError_undefined)
+			{
+				HasError = true;
+				Error	 = Str::RunError_undefined;
+			}
+			*/
+
+			if (HasError)
+			{
+				UE_LOG(LogCsJs, Warning, TEXT("NCsJs::NCommon::FLibrary::RunFile: Failed to Run File: %s. Error: %s."), *FileName, *Error);
+			}
 		}
 
 	#endif // #if WITH_EDITOR

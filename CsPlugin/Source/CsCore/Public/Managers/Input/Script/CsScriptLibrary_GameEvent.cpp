@@ -32,6 +32,11 @@ UCsScriptLibrary_GameEvent::UCsScriptLibrary_GameEvent(const FObjectInitializer&
 #define EnumMapType EMCsGameEvent
 #define EnumType FECsGameEvent
 
+void UCsScriptLibrary_GameEvent::PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
+{
+	NCsGameEvent::PopulateEnumMapFromSettings(Context, ContextRoot);
+}
+
 EnumType UCsScriptLibrary_GameEvent::Create(const FString& Name, const FString& DisplayName)
 {
 	using namespace NCsScriptLibraryGameEvent::NCached;

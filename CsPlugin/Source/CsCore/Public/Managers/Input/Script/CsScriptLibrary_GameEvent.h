@@ -13,6 +13,9 @@ class CSCORE_API UCsScriptLibrary_GameEvent : public UObject
 
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Context"))
+	static void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input", meta = (AutoCreateRefTerm = "Name"))
 	static FECsGameEvent Create(const FString& Name, const FString& DisplayName);
 

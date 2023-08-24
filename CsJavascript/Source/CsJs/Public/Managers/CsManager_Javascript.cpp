@@ -965,12 +965,12 @@ void UCsManager_Javascript::FEditorScriptImpl::Reload(const FGuid& Id, const FSt
 	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
 }
 
-void UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
+bool UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
 {
 	const int32 OwnerId_Remove = Owner->GetClass()->GetDefaultObject()->GetUniqueID();
 
 	if (!OwnerByOwnerIdMap.Contains(OwnerId_Remove))
-		return;
+		return false;
 
 	OwnerByOwnerIdMap.Remove(OwnerId_Remove);
 
@@ -1003,6 +1003,16 @@ void UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
 	IndexByOwnerIdMap.Remove(OwnerId_Remove);
 	IdByOwnerIdMap.Remove(OwnerId_Remove);
 	OwnerIdByIdMap.Remove(ScriptId_Remove);
+	return true;
+}
+
+bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context, UObject* Owner)
+{
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_PENDING_KILL(Owner)
+
+	return EditorScriptImpl.Shutdown(Owner);
 }
 
 #pragma endregion Editor Scripts

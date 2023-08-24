@@ -308,7 +308,7 @@ public:
 
 		void Reload(const FGuid& Id, const FString& Path);
 
-		void Shutdown(UObject* Owner);
+		bool Shutdown(UObject* Owner);
 	};
 
 	FEditorScriptImpl EditorScriptImpl;
@@ -331,6 +331,9 @@ public:
 	*/
 	UPROPERTY(BlueprintAssignable)
 	FCsManagerJavascript_EditorScript_OnShutdown EditorScript_OnShutdown_ScriptEvent;
+
+	UFUNCTION(BlueprintCallable)
+	bool EditorScript_Shutdown_ByOwner(const FString& Context, UObject* Owner);
 
 #pragma endregion Editor Scripts
 

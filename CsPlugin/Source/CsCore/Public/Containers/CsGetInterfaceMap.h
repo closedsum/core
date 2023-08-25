@@ -1,8 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-
-#include "UObject/Interface.h"
-#include "CsGetInterfaceMap.generated.h"
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "UObject/Interface.h"
+
+#include "CsGetInterfaceMap.generated.h"
 
 UINTERFACE()
 class CSCORE_API UCsGetInterfaceMap : public UInterface

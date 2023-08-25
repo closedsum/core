@@ -246,27 +246,27 @@ public:
 
 private:
 
-	static void GetObjectPaths_Class_Internal(UClass* Class, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_Class_Internal(UClass* Class, NCsLoad::FGetObjectPaths& OutPaths);
 
-	static void GetObjectPaths_ClassProperty(FClassProperty* ClassProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths);
-	static void GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, const UObject* Object, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_ClassProperty(FClassProperty* ClassProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
+	static void GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, const UObject* Object, NCsLoad::FGetObjectPaths& OutPaths);
 
-	static void GetObjectPaths_ObjectProperty(FObjectProperty* ObjectProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths);
-	static void GetObjectPaths_ObjectProperty_Internal(UClass* PropertyClass, const UObject* Object, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_ObjectProperty(FObjectProperty* ObjectProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
+	static void GetObjectPaths_ObjectProperty_Internal(UClass* PropertyClass, const UObject* Object, NCsLoad::FGetObjectPaths& OutPaths);
 
-	static void GetObjectPaths_SoftClassProperty(FSoftClassProperty* SoftClassProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths);
-	static void GetObjectPaths_SoftObjectProperty(FSoftObjectProperty* SoftObjectProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_SoftClassProperty(FSoftClassProperty* SoftClassProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
+	static void GetObjectPaths_SoftObjectProperty(FSoftObjectProperty* SoftObjectProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths);
 
-	static void GetObjectPaths_Struct(UStruct* Struct, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_Struct(UStruct* Struct, NCsLoad::FGetObjectPaths& OutPaths);
 
-	static void GetObjectPaths_Function(UFunction* Function, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_Function(UFunction* Function, NCsLoad::FGetObjectPaths& OutPaths);
 
-	static void GetObjectPaths_Internal(const void* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths_Internal(const void* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths);
 
 public:
 
-	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths);
-	static void GetObjectPaths(UObject* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths);
+	static void GetObjectPaths(const void* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths);
+	static void GetObjectPaths(UObject* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths);
 
 #pragma endregion ObjectPath
 

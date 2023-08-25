@@ -1,8 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "CsEdEngine.h"
 #include "CsEditor.h"
-#include "CsCVars.h"
 
+#include "CsCVars.h"
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Type
@@ -53,6 +55,7 @@ namespace NCsEdEngine
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnEndPIE_NextFrame_Internal);
 
+			const FString OnObjectPreSave_Update_DataRootSet_Datas = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas");
 			const FString OnObjectPreSave_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables");
 			const FString OnObjectPreSave_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads");
 			const FString OnObjectPreSave_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload");
@@ -555,6 +558,13 @@ void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
 
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable)
 {
+	using namespace NCsEdEngine::NCached;
+
+	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_Datas;
+
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	TArray<FName> Dependencies;
+
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 	for (const TPair<FName, uint8*>& Pair : RowMap)
@@ -566,6 +576,38 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable
 
 		if (RowPtr->bPopulateOnSave)
 		{
+			UE_LOG(LogCsEditor, Warning, TEXT("%s: Populating Paths for %s.%s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+
+			TSoftClassPtr<UObject>& Data = RowPtr->Data;
+
+			if (!Data.ToSoftObjectPath().IsValid())
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("%s: %s.%s.Data is NOT Valid."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+				continue;
+			}
+
+			UClass* Class = Data.LoadSynchronous();
+
+			if (!Class)
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("%s: Failed to load %s.%s.Data at Path: %s"), *Context, *(DataTable->GetName()), *(RowName.ToString()), *(Data.ToString()));
+				continue;
+			}
+
+			UObject* DOb = Class->GetDefaultObject();
+
+			if (!DOb)
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("%s: Failed to get Default Object for Class: %s"), *Context, *(Class->GetName()));
+				continue;
+			}
+
+			AssetRegistryModule.Get().GetDependencies(FName(Data.ToString()), Dependencies);
+
+			NCsLoad::FGetObjectPaths Result;
+			Result.AddPaths(Dependencies);
+			Result.Resolve();
+
 			RowPtr->Populate();
 
 			RowPtr->bPopulateOnSave = false;
@@ -763,7 +805,7 @@ void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 				{
 					AActor* A = World->SpawnActor(Class);
 
-					FCsLibraryLoad_GetObjectPaths OutPaths;
+					NCsLoad::FGetObjectPaths OutPaths;
 					OutPaths.SetRootName(AssetNameAsString);
 
 					//UCsLibrary_Load::GetObjectPaths(Cast<UObject>(A), Class, OutPaths);
@@ -778,7 +820,7 @@ void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 	// Object
 	else
 	{
-		FCsLibraryLoad_GetObjectPaths OutPaths;
+		NCsLoad::FGetObjectPaths OutPaths;
 		OutPaths.SetRootName(AssetNameAsString);
 
 		//UCsLibrary_Load::GetObjectPaths(DOb, DOb->GetClass(), OutPaths);
@@ -819,7 +861,7 @@ void UCsEdEngine::GetObjectPaths(const FString& AssetPath)
 
 	if (UObject* Object = Path.TryLoad())
 	{
-		FCsLibraryLoad_GetObjectPaths Result;
+		NCsLoad::FGetObjectPaths Result;
 
 		UCsLibrary_Load::GetObjectPaths(Object, Object->GetClass(), Result);
 

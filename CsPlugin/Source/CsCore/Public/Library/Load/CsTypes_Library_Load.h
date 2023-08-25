@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 #include "UObject/SoftObjectPath.h"
@@ -184,85 +186,100 @@ public:
 
 #pragma endregion FCsLibraryLoad_GetSoftObjectPaths
 
-
-// FCsLibraryLoad_GetObjectPaths
+// GetObjectPaths
 #pragma region
 
-struct CSCORE_API FCsLibraryLoad_GetObjectPaths
+namespace NCsLoad
 {
-public:
-
-	FString RootName;
-	FString RootDefaultName;
-
-	TArray<FSoftObjectPath> Paths;
-	TArray<TArray<FSoftObjectPath>> PathGroups;
-	TArray<TSet<FSoftObjectPath>> PathSets;
-
-	TSet<FString> VisitedFunctions;
-
-	TMap<FName, TArray<void*>> VisitedPointers;
-
-	int32 TotalCount;
-
-	FCsLibraryLoad_GetObjectPaths();
-
-	void SetRootName(const FString& Name)
+	struct CSCORE_API FGetObjectPaths
 	{
-		RootName = Name;
-		RootDefaultName = TEXT("Default__") + RootName + TEXT("_C");
-	}
+	public:
 
-	void AddPath(const FSoftObjectPath& SoftPath);
+		FString RootName;
+		FString RootDefaultName;
 
-	void Resolve();
+		TArray<FSoftObjectPath> Paths;
+		TArray<TArray<FSoftObjectPath>> PathGroups;
+		TArray<TSet<FSoftObjectPath>> PathSets;
 
-	void VisitFunction(const FString& FunctionPath)
-	{
-		VisitedFunctions.Add(FunctionPath);
-	}
+		TSet<FString> VisitedFunctions;
 
-	FORCEINLINE bool HasVisitedFunction(const FString& FunctionPath)
-	{
-		return VisitedFunctions.Contains(FunctionPath);
-	}
+		TMap<FName, TArray<void*>> VisitedPointers;
 
-	void VisitPointer(const FName& StructName, const void* Ptr)
-	{
-		TArray<void*>& Ptrs = VisitedPointers.FindOrAdd(StructName);
-		Ptrs.Add(const_cast<void*>(Ptr));
-	}
+		int32 TotalCount;
 
-	FORCEINLINE bool HasVisitedPointer(const FName& StructName, const void* Ptr)
-	{
-		if (TArray<void*>* Ptrs = VisitedPointers.Find(StructName))
+		FGetObjectPaths();
+
+		void SetRootName(const FString& Name)
 		{
-			return Ptrs->Contains(Ptr);
+			RootName = Name;
+			RootDefaultName = TEXT("Default__") + RootName + TEXT("_C");
 		}
-		return false;
-	}
 
-	void Print();
+		void AddPath(const FName& Path)
+		{
+			AddPath(FSoftObjectPath(Path.ToString()));
+		}
 
-	void Reset()
-	{
-		RootName.Empty();
-		RootDefaultName.Empty();
-		Paths.Reset(Paths.Max());
-		PathGroups.Reset(PathGroups.Max());
+		void AddPath(const FSoftObjectPath& SoftPath);
+
+		void AddPaths(const TArray<FName>& Dependencies)
+		{
+			for (const FName& Path : Dependencies)
+			{
+				AddPath(Path);
+			}
+		}
+
+		void Resolve();
+
+		void VisitFunction(const FString& FunctionPath)
+		{
+			VisitedFunctions.Add(FunctionPath);
+		}
+
+		FORCEINLINE bool HasVisitedFunction(const FString& FunctionPath)
+		{
+			return VisitedFunctions.Contains(FunctionPath);
+		}
+
+		void VisitPointer(const FName& StructName, const void* Ptr)
+		{
+			TArray<void*>& Ptrs = VisitedPointers.FindOrAdd(StructName);
+			Ptrs.Add(const_cast<void*>(Ptr));
+		}
+
+		FORCEINLINE bool HasVisitedPointer(const FName& StructName, const void* Ptr)
+		{
+			if (TArray<void*>* Ptrs = VisitedPointers.Find(StructName))
+			{
+				return Ptrs->Contains(Ptr);
+			}
+			return false;
+		}
+
+		void Print();
+
+		void Reset()
+		{
+			RootName.Empty();
+			RootDefaultName.Empty();
+			Paths.Reset(Paths.Max());
+			PathGroups.Reset(PathGroups.Max());
 		
-		for (TSet<FSoftObjectPath>& Set : PathSets)
-		{
-			Set.Reset();
+			for (TSet<FSoftObjectPath>& Set : PathSets)
+			{
+				Set.Reset();
+			}
+
+			VisitedFunctions.Reset();
+			VisitedPointers.Reset();
+			TotalCount = 0;
 		}
+	};
+}
 
-		VisitedFunctions.Reset();
-		VisitedPointers.Reset();
-		TotalCount = 0;
-	}
-};
-
-#pragma endregion FCsLibraryLoad_GetObjectPaths
+#pragma endregion GetObjectPaths
 
 // FCsLibraryLoad_GetReferencesReport_Category
 #pragma region

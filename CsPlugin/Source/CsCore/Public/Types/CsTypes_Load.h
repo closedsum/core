@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
 #include "Types/Enum/CsEnum_uint8.h"
@@ -206,10 +208,17 @@ namespace NCsUnloadCodes
 UENUM(BlueprintType)
 enum class ECsObjectPathDependencyGroup : uint8
 {
-	// Texture | Render Target | Font
+	// Texture | Render Target
 	Texture								UMETA(DisplayName = "Texture"),
-	// Material | Material Instance
+	// Font
+	Font								UMETA(DisplayName = "Font"),
+	// Material Parameter Collection 
+	MaterialParameterCollection			UMETA(DisplayName = "Material Parameter Collection"),
+	// Material
 	Material							UMETA(DisplayName = "Material"),
+	// Material Instance
+	MaterialInstance					UMETA(DisplayName = "Material Instnace"),
+	// Static Mesh
 	StaticMesh							UMETA(DisplayName = "Static Mesh"),
 	// Skeletal Mesh | Physics Asset | Skeleton
 	Skeletal							UMETA(DisplayName = "Skeletal"),
@@ -217,11 +226,13 @@ enum class ECsObjectPathDependencyGroup : uint8
 	Sound								UMETA(DisplayName = "Sound"),
 	// Particle System | TODO: Niagara (need to be careful what Niagara references)
 	FX									UMETA(DisplayName = "FX"),
-	// Anim Sequence | Blend Space
+	// Anim Sequence
 	AnimationAsset						UMETA(DisplayName = "Animation Asset"),
+	// Blend Space
+	BlendSpace							UMETA(DisplayName = "Blend Space"),
 	// Anim Montage | Anim Composite
 	AnimComposite						UMETA(DisplayName = "Anim Composite"),
-	// General umbrella of blueprints: Anim Blueprint, ... etc
+	// Blueprints: General umbrella: Anim Blueprint, ... etc
 	Blueprint							UMETA(DisplayName = "Blueprint"),
 	// IMovieScenePlayer (UMovieSceneSequencePlayer) | IMovieScenePlaybackClient | IMovieSceneBindingOwnerInterface | UMovieSceneSignedObject
 	Sequencer							UMETA(DisplayName = "Sequencer"),
@@ -230,6 +241,7 @@ enum class ECsObjectPathDependencyGroup : uint8
 	Other								UMETA(DisplayName = "Other"),
 	ECsObjectPathDependencyGroup_MAX	UMETA(Hidden),
 };
+
 
 struct CSCORE_API EMCsObjectPathDependencyGroup : public TCsEnumMap<ECsObjectPathDependencyGroup>
 {
@@ -243,12 +255,16 @@ namespace NCsObjectPathDependencyGroup
 	namespace Ref
 	{
 		extern CSCORE_API const Type Texture;
+		extern CSCORE_API const Type Font;
+		extern CSCORE_API const Type MaterialParameterCollection;
 		extern CSCORE_API const Type Material;
+		extern CSCORE_API const Type MaterialInstance;
 		extern CSCORE_API const Type StaticMesh;
 		extern CSCORE_API const Type Skeletal;
 		extern CSCORE_API const Type Sound;
 		extern CSCORE_API const Type FX;
 		extern CSCORE_API const Type AnimationAsset;
+		extern CSCORE_API const Type BlendSpace;
 		extern CSCORE_API const Type AnimComposite;
 		extern CSCORE_API const Type Blueprint;
 		extern CSCORE_API const Type Sequencer;
@@ -475,6 +491,24 @@ struct CSCORE_API FCsTArraySoftObjectPath
 };
 
 #pragma endregion FCsTArraySoftObjectPath
+
+// FCsTArraySoftObjectPathByGroup
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsTArraySoftObjectPathByGroup
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
+
+	FCsTArraySoftObjectPathByGroup()
+	{
+	}
+};
+
+#pragma endregion FCsTArraySoftObjectPathByGroup
 
 // StringAssetReference
 #pragma region
@@ -796,6 +830,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
 	FCsTArraySoftObjectPath Paths;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
+
 	FCsPayload_Data() :
 		Name(NAME_None),
 		Data(),
@@ -818,6 +855,11 @@ public:
 		Name = NAME_None;
 		Data.Reset();
 		Paths.Reset();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.Reset();
+		}
 	}
 
 #if WITH_EDITOR
@@ -1139,6 +1181,9 @@ namespace NCsDataEntryData
 class UObject;
 class UClass;
 
+// NCsLoad::FGetObjectPaths
+CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsLoad, FGetObjectPaths)
+
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsDataEntry_Data : public FTableRowBase
 {
@@ -1170,6 +1215,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = DataTable)
 	FCsTArraySoftObjectPath Paths;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
+
 	FCsDataEntry_Data() :
 		Index(INDEX_NONE),
 		Name(NAME_None),
@@ -1189,6 +1237,13 @@ public:
 		Data_Internal = B.Data_Internal;
 		Data_Class = B.Data_Class;
 		Paths = B.Paths;
+
+		const int32 Count = (int32)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX;
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			PathsByGroup[I] = B.PathsByGroup[I];
+		}
 		return *this;
 	}
 
@@ -1208,6 +1263,11 @@ public:
 		Data_Internal = nullptr;
 		Data_Class = nullptr;
 		Paths.Reset();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.Reset();
+		}
 	}
 
 	FORCEINLINE UObject* Get() { return Data_Internal; }
@@ -1245,6 +1305,11 @@ public:
 	void BuildFromPaths()
 	{
 		Paths.BuildFromPaths();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.BuildFromPaths();
+		}
 	}
 
 #if WITH_EDITOR
@@ -1254,6 +1319,8 @@ public:
 	*  store that in Paths.
 	*/
 	void Populate();
+
+	void Populate(NCsLoad::FGetObjectPaths* Result);
 
 #endif // #if WITH_EDITOR
 };
@@ -1303,6 +1370,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = DataTable)
 	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
 
+	/** */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = DataTable)
+	TMap<FName, FCsTArraySoftObjectPathByGroup> PathsByGroupByRowMap;
+
 	FCsDataEntry_DataTable() :
 		Index(INDEX_NONE),
 		Name(NAME_None),
@@ -1312,7 +1383,8 @@ public:
 		bAllRows(false),
 		Rows(),
 		Paths(),
-		PathsByRowMap()
+		PathsByRowMap(),
+		PathsByGroupByRowMap()
 	{
 	}
 
@@ -1370,6 +1442,14 @@ public:
 		for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
 		{
 			Pair.Value.BuildFromPaths();
+		}
+
+		for (TPair<FName, FCsTArraySoftObjectPathByGroup>& Pair : PathsByGroupByRowMap)
+		{
+			for (FCsTArraySoftObjectPath& Arr : Pair.Value.PathsByGroup)
+			{
+				Arr.BuildFromPaths();
+			}
 		}
 	}
 

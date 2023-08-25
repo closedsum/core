@@ -594,7 +594,7 @@ void UCsLibrary_Load::GetSoftObjectPaths(const void* StructValue, UStruct* const
 
 #pragma endregion Soft
 
-void UCsLibrary_Load::GetObjectPaths_Class_Internal(UClass* Class, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_Class_Internal(UClass* Class, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	const bool ValidClass = Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
 
@@ -624,7 +624,7 @@ void UCsLibrary_Load::GetObjectPaths_Class_Internal(UClass* Class, FCsLibraryLoa
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_ClassProperty(FClassProperty* ClassProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_ClassProperty(FClassProperty* ClassProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	if (UObject* const* Ptr = ClassProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
 	{
@@ -637,7 +637,7 @@ void UCsLibrary_Load::GetObjectPaths_ClassProperty(FClassProperty* ClassProperty
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, const UObject* Object, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, const UObject* Object, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	const bool ValidClass = MetaClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint);
 
@@ -668,7 +668,7 @@ void UCsLibrary_Load::GetObjectPaths_ClassProperty_Internal(UClass* MetaClass, c
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_ObjectProperty(FObjectProperty* ObjectProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_ObjectProperty(FObjectProperty* ObjectProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	if (UObject* const* Ptr = ObjectProperty->ContainerPtrToValuePtr<UObject*>(StructValue))
 	{
@@ -679,7 +679,7 @@ void UCsLibrary_Load::GetObjectPaths_ObjectProperty(FObjectProperty* ObjectPrope
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_ObjectProperty_Internal(UClass* PropertyClass, const UObject* Object, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_ObjectProperty_Internal(UClass* PropertyClass, const UObject* Object, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	const bool ValidClass = PropertyClass->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
 							PropertyClass == UDataTable::StaticClass() ||
@@ -758,7 +758,7 @@ void UCsLibrary_Load::GetObjectPaths_ObjectProperty_Internal(UClass* PropertyCla
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_SoftClassProperty(FSoftClassProperty* SoftClassProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_SoftClassProperty(FSoftClassProperty* SoftClassProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	if (const FSoftObjectPtr* Ptr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
@@ -776,7 +776,7 @@ void UCsLibrary_Load::GetObjectPaths_SoftClassProperty(FSoftClassProperty* SoftC
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_SoftObjectProperty(FSoftObjectProperty* SoftObjectProperty, const void* StructValue, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_SoftObjectProperty(FSoftObjectProperty* SoftObjectProperty, const void* StructValue, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	if (const FSoftObjectPtr* Ptr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
 	{
@@ -792,7 +792,7 @@ void UCsLibrary_Load::GetObjectPaths_SoftObjectProperty(FSoftObjectProperty* Sof
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_Struct(UStruct* Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_Struct(UStruct* Struct, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	for (TFieldIterator<FProperty> It(Struct); It; ++It)
 	{
@@ -882,7 +882,7 @@ void UCsLibrary_Load::GetObjectPaths_Struct(UStruct* Struct, FCsLibraryLoad_GetO
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_Function(UFunction* Function, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_Function(UFunction* Function, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	for (UObject* Object : Function->ScriptAndPropertyObjectReferences)
 	{
@@ -1008,7 +1008,7 @@ void UCsLibrary_Load::GetObjectPaths_Function(UFunction* Function, FCsLibraryLoa
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	for (TFieldIterator<FProperty> It(Struct); It; ++It)
 	{
@@ -1221,7 +1221,7 @@ void UCsLibrary_Load::GetObjectPaths_Internal(const void* StructValue, UStruct* 
 	}
 }
 
-void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	OutPaths.VisitPointer(Struct->GetFName(), StructValue);
 
@@ -1230,7 +1230,7 @@ void UCsLibrary_Load::GetObjectPaths(const void* StructValue, UStruct* const& St
 	OutPaths.Resolve();
 }
 
-void UCsLibrary_Load::GetObjectPaths(UObject* StructValue, UStruct* const& Struct, FCsLibraryLoad_GetObjectPaths& OutPaths)
+void UCsLibrary_Load::GetObjectPaths(UObject* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutPaths)
 {
 	// Subobjects
 

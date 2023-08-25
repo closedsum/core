@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Types/CsTypes_Load.h"
 #include "CsCore.h"
 
@@ -119,12 +121,16 @@ namespace NCsObjectPathDependencyGroup
 		typedef EMCsObjectPathDependencyGroup EnumMapType;
 
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Texture);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Font);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(MaterialParameterCollection);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Material);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(MaterialInstance);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(StaticMesh);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Skeletal);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Sound);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(FX);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(AnimationAsset);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(BlendSpace);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(AnimComposite);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Blueprint);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Sequencer);
@@ -282,7 +288,7 @@ void FCsPayload_DataTable::Populate()
 	}
 
 	// Get Paths for appropriate rows
-	FCsLibraryLoad_GetObjectPaths Result;
+	NCsLoad::FGetObjectPaths Result;
 	FCsResourceSize Size;
 
 	if (CS_CVAR_LOG_IS_SHOWING(LogPayloadPopulate))
@@ -553,7 +559,7 @@ void FCsDataEntry_Data::Populate()
 	}
 
 	// Get Paths for anything Data references
-	FCsLibraryLoad_GetObjectPaths Result;
+	NCsLoad::FGetObjectPaths Result;
 	
 	UCsLibrary_Load::GetObjectPaths(DOb, Class, Result);
 
@@ -609,6 +615,11 @@ void FCsDataEntry_Data::Populate()
 	{
 		UE_LOG(LogCs, Warning, TEXT("- Summary: Populated %d Paths [%s]."), Paths.Internal.Num(), *(Paths.Size.ToString()));
 	}
+}
+
+void FCsDataEntry_Data::Populate(NCsLoad::FGetObjectPaths* Result)
+{
+
 }
 
 #endif // WITH_EDITOR
@@ -684,7 +695,7 @@ void FCsDataEntry_DataTable::Populate()
 	}
 
 	// Get Paths for appropriate rows
-	FCsLibraryLoad_GetObjectPaths Result;
+	NCsLoad::FGetObjectPaths Result;
 	TArray<FName> Keys;
 	FCsResourceSize Size;
 

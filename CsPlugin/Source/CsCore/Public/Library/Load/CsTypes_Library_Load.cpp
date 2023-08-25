@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Library/Load/CsTypes_Library_Load.h"
 #include "CsCore.h"
 
@@ -19,8 +21,9 @@
 // Font
 #include "Engine/Font.h"
 // Material
-#include "Materials/MaterialInstance.h"
+#include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialFunction.h"
+#include "Materials/MaterialInstance.h"
 // FX
 #include "NiagaraSystem.h"
 #include "NiagaraEmitter.h"
@@ -43,217 +46,246 @@ namespace NCsLibraryLoad_GetSoftObjectPaths_Code
 
 #pragma endregion LoadCodes
 
-// FCsLibraryLoad_GetObjectPaths
+// GetObjectPaths
 #pragma region
 
-FCsLibraryLoad_GetObjectPaths::FCsLibraryLoad_GetObjectPaths() :
-	RootName(),
-	RootDefaultName(),
-	Paths(),
-	PathGroups(),
-	PathSets(),
-	VisitedFunctions(),
-	VisitedPointers(),
-	TotalCount(0)
+namespace NCsLoad
 {
-	const int32& Count = EMCsObjectPathDependencyGroup::Get().Num();
-
-	PathSets.Reset(Count);
-
-	for (const ECsObjectPathDependencyGroup& Group : EMCsObjectPathDependencyGroup::Get())
+	FGetObjectPaths::FGetObjectPaths() :
+		RootName(),
+		RootDefaultName(),
+		Paths(),
+		PathGroups(),
+		PathSets(),
+		VisitedFunctions(),
+		VisitedPointers(),
+		TotalCount(0)
 	{
-		PathSets.AddDefaulted();
-	}
-}
+		const int32& Count = EMCsObjectPathDependencyGroup::Get().Num();
 
-void FCsLibraryLoad_GetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
-{
-	UObject* O	  = SoftPath.TryLoad();
-	UClass* Class = O->GetClass();
+		PathSets.Reset(Count);
 
-	// DataTable
-	if (Class->IsChildOf<UDataTable>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::DataTable].Add(SoftPath);
-	}
-	// Sequencer
-	/*
-	else
-	if (Class->IsChildOf<UMovieSceneSequencePlayer>() ||
-		Class->ImplementsInterface(UMovieScenePlaybackClient::StaticClass()) ||
-		Class->ImplementsInterface(UMovieSceneBindingOwnerInterface::StaticClass()) ||
-		Class->IsChildOf<UMovieSceneSignedObject>())
-	{
-		DependencySetList[(uint8)ECsObjectPathDependencyGroup::Sequencer].Add(SoftPath);
-	}
-	*/
-	// Blueprint
-	else
-	if (Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
-		Class->IsChildOf<UBlueprintGeneratedClass>())
-	{
-		// Check for SkeletonGeneratedClasses. Skip adding the path.
-		if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
+		for (const ECsObjectPathDependencyGroup& Group : EMCsObjectPathDependencyGroup::Get())
 		{
-		#if WITH_EDITOR
-			if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
-			{
-				if (O == BpC->SkeletonGeneratedClass)
-				{
-					return;
-				}
-			}
-		#endif // #if WITH_EDITOR
+			PathSets.AddDefaulted();
 		}
+	}
 
-		if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(Class))
+	void FGetObjectPaths::AddPath(const FSoftObjectPath& SoftPath)
+	{
+		UObject* O	  = SoftPath.TryLoad();
+		UClass* Class = O->GetClass();
+
+		typedef ECsObjectPathDependencyGroup GroupType;
+
+		// DataTable
+		if (Class->IsChildOf<UDataTable>())
 		{
-		#if WITH_EDITOR
-			if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
-			{
-				if (Class == BpC->SkeletonGeneratedClass)
-				{
-					return;
-				}
-			}
-		#endif // #if WITH_EDITOR
+			PathSets[(uint8)GroupType::DataTable].Add(SoftPath);
 		}
+		// Sequencer
+		/*
+		else
+		if (Class->IsChildOf<UMovieSceneSequencePlayer>() ||
+			Class->ImplementsInterface(UMovieScenePlaybackClient::StaticClass()) ||
+			Class->ImplementsInterface(UMovieSceneBindingOwnerInterface::StaticClass()) ||
+			Class->IsChildOf<UMovieSceneSignedObject>())
+		{
+			DependencySetList[(uint8)ECsObjectPathDependencyGroup::Sequencer].Add(SoftPath);
+		}
+		*/
+		// Blueprint
+		else
+		if (Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
+			Class->IsChildOf<UBlueprintGeneratedClass>())
+		{
+			// Check for SkeletonGeneratedClasses. Skip adding the path.
+			if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
+			{
+			#if WITH_EDITOR
+				if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+				{
+					if (O == BpC->SkeletonGeneratedClass)
+					{
+						return;
+					}
+				}
+			#endif // #if WITH_EDITOR
+			}
 
-		PathSets[(uint8)ECsObjectPathDependencyGroup::Blueprint].Add(SoftPath);
-	}
-	// AnimComposite
-	else
-	if (Class->IsChildOf<UAnimCompositeBase>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::AnimComposite].Add(SoftPath);
-	}
-	// AnimationAsset
-	else
-	if (Class->IsChildOf<UAnimSequence>() ||
-		Class->IsChildOf<UBlendSpace>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::AnimationAsset].Add(SoftPath);
-	}
-	// AnimData
-	else
-	if (Class->IsChildOf<UAnimDataModel>())
-	{
-	}
-	// FX
-	else
-	if (Class->IsChildOf<UNiagaraSystem>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::FX].Add(SoftPath);
-	}
-	// FX - IGNORE. NOTE: 4.26. Niagara Emitter no longer get cooked
-	else
-	if (Class->IsChildOf<UNiagaraEmitter>())
-	{
-		return;
-	}
-	// Sound
-	else
-	if (Class->IsChildOf<USoundBase>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::Sound].Add(SoftPath);
-	}
-	// Skeletal
-	else
-	if (Class->IsChildOf<USkeletalMesh>() ||
-		Class->IsChildOf<UPhysicsAsset>() ||
-		Class->IsChildOf<USkeleton>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::Skeletal].Add(SoftPath);
-	}
-	// StaticMesh
-	else
-	if (Class->IsChildOf<UStaticMesh>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::StaticMesh].Add(SoftPath);
-	}
-	// Material
-	else
-	if (Class->IsChildOf<UMaterial>() ||
-		Class->IsChildOf<UMaterialInstance>() ||
-		Class->IsChildOf<UMaterialFunction>())
-	{
-		if (Class->IsChildOf<UMaterialFunction>())
+			if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(Class))
+			{
+			#if WITH_EDITOR
+				if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+				{
+					if (Class == BpC->SkeletonGeneratedClass)
+					{
+						return;
+					}
+				}
+			#endif // #if WITH_EDITOR
+			}
+
+			PathSets[(uint8)GroupType::Blueprint].Add(SoftPath);
+		}
+		// AnimComposite
+		else
+		if (Class->IsChildOf<UAnimCompositeBase>())
+		{
+			PathSets[(uint8)GroupType::AnimComposite].Add(SoftPath);
+		}
+		// BlendSpace
+		else
+		if (Class->IsChildOf<UBlendSpace>())
+		{
+			PathSets[(uint8)GroupType::BlendSpace].Add(SoftPath);
+		}
+		// AnimationAsset
+		else
+		if (Class->IsChildOf<UAnimSequence>())
+		{
+			PathSets[(uint8)GroupType::AnimationAsset].Add(SoftPath);
+		}
+		// AnimData - SKIP
+		else
+		if (Class->IsChildOf<UAnimDataModel>())
+		{
 			return;
-
-		PathSets[(uint8)ECsObjectPathDependencyGroup::Material].Add(SoftPath);
-	}
-	// Texture
-	else
-	if (Class->IsChildOf<UTexture>() ||
-		Class->IsChildOf<UFont>())
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::Texture].Add(SoftPath);
-	}
-	// Other
-	else
-	{
-		PathSets[(uint8)ECsObjectPathDependencyGroup::Other].Add(SoftPath);
-	}
-}
-
-void FCsLibraryLoad_GetObjectPaths::Resolve()
-{
-	PathGroups.Reset(PathSets.Num());
-
-	for (TSet<FSoftObjectPath>& Set : PathSets)
-	{
-		if (Set.Num() > CS_EMPTY)
+		}
+		// FX
+		else
+		if (Class->IsChildOf<UNiagaraSystem>())
 		{
-			PathGroups.AddDefaulted();
-			TArray<FSoftObjectPath>& L = PathGroups.Last();
+			PathSets[(uint8)GroupType::FX].Add(SoftPath);
+		}
+		// FX - SKIP - IGNORE. NOTE: 4.26. Niagara Emitter no longer get cooked
+		else
+		if (Class->IsChildOf<UNiagaraEmitter>())
+		{
+			return;
+		}
+		// Sound
+		else
+		if (Class->IsChildOf<USoundBase>())
+		{
+			PathSets[(uint8)GroupType::Sound].Add(SoftPath);
+		}
+		// Skeletal
+		else
+		if (Class->IsChildOf<USkeletalMesh>() ||
+			Class->IsChildOf<UPhysicsAsset>() ||
+			Class->IsChildOf<USkeleton>())
+		{
+			PathSets[(uint8)GroupType::Skeletal].Add(SoftPath);
+		}
+		// StaticMesh
+		else
+		if (Class->IsChildOf<UStaticMesh>())
+		{
+			PathSets[(uint8)GroupType::StaticMesh].Add(SoftPath);
+		}
+		// Material Function - SKIP
+		else
+		if (Class->IsChildOf<UMaterialFunction>())
+		{
+			return;
+		}
+		// Material Parameter Collection
+		else
+		if (Class->IsChildOf<UMaterialParameterCollection>())
+		{
+			PathSets[(uint8)GroupType::MaterialParameterCollection].Add(SoftPath);
+		}
+		// Material
+		else
+		if (Class->IsChildOf<UMaterial>())
+		{
+			PathSets[(uint8)GroupType::Material].Add(SoftPath);
+		}
+		// Material Instance
+		else
+		if (Class->IsChildOf<UMaterialInstance>())
+		{
+			PathSets[(uint8)GroupType::MaterialInstance].Add(SoftPath);
+		}
+		// Font
+		else
+		if (Class->IsChildOf<UFont>())
+		{
+			PathSets[(uint8)GroupType::Font].Add(SoftPath);
+		}
+		// Texture
+		else
+		if (Class->IsChildOf<UTexture>())
+		{
+			PathSets[(uint8)GroupType::Texture].Add(SoftPath);
+		}
+		// Other
+		else
+		{
+			PathSets[(uint8)GroupType::Other].Add(SoftPath);
+		}
+	}
 
-			L.Reset(Set.Num());
+	void FGetObjectPaths::Resolve()
+	{
+		PathGroups.Reset(PathSets.Num());
 
-			for (FSoftObjectPath& SoftPath : Set)
+		for (TSet<FSoftObjectPath>& Set : PathSets)
+		{
+			if (Set.Num() > CS_EMPTY)
 			{
-				L.Add(SoftPath);
+				PathGroups.AddDefaulted();
+				TArray<FSoftObjectPath>& L = PathGroups.Last();
+
+				L.Reset(Set.Num());
+
+				for (FSoftObjectPath& SoftPath : Set)
+				{
+					L.Add(SoftPath);
+				}
+
+				TotalCount += Set.Num();
 			}
+		}
 
-			TotalCount += Set.Num();
+		Paths.Reset(TotalCount);
+
+		for (TSet<FSoftObjectPath>& Set : PathSets)
+		{
+			for (FSoftObjectPath& Path : Set)
+			{
+				Paths.Add(Path);
+			}
 		}
 	}
 
-	Paths.Reset(TotalCount);
-
-	for (TSet<FSoftObjectPath>& Set : PathSets)
+	void FGetObjectPaths::Print()
 	{
-		for (FSoftObjectPath& Path : Set)
+		//UE_LOG(LogRs, Warning, TEXT("GetObjectPaths: %s @ %s"), *Name, *Path);
+		UE_LOG(LogCs, Warning, TEXT("GetObjectPaths"));
+		UE_LOG(LogCs, Warning, TEXT("- Depth List - %d Paths"), TotalCount);
+
+		const int32 Count = PathGroups.Num();
+
+		for (int32 I = 0; I < Count; ++I)
 		{
-			Paths.Add(Path);
+			TArray<FSoftObjectPath>& L = PathGroups[I];
+
+			UE_LOG(LogCs, Warning, TEXT("-- %d - %d Paths"), I, L.Num());
+
+			for (FSoftObjectPath& SoftPath : L)
+			{
+				const FString AssetName = SoftPath.GetAssetName();
+				const FString AssetPath = SoftPath.GetAssetPathString();
+
+				UE_LOG(LogCs, Warning, TEXT("--- %s @ %s"), *AssetName, *AssetPath);
+			}
 		}
 	}
 }
 
-void FCsLibraryLoad_GetObjectPaths::Print()
-{
-	//UE_LOG(LogRs, Warning, TEXT("GetObjectPaths: %s @ %s"), *Name, *Path);
-	UE_LOG(LogCs, Warning, TEXT("GetObjectPaths"));
-	UE_LOG(LogCs, Warning, TEXT("- Depth List - %d Paths"), TotalCount);
-
-	const int32 Count = PathGroups.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		TArray<FSoftObjectPath>& L = PathGroups[I];
-
-		UE_LOG(LogCs, Warning, TEXT("-- %d - %d Paths"), I, L.Num());
-
-		for (FSoftObjectPath& SoftPath : L)
-		{
-			const FString AssetName = SoftPath.GetAssetName();
-			const FString AssetPath = SoftPath.GetAssetPathString();
-
-			UE_LOG(LogCs, Warning, TEXT("--- %s @ %s"), *AssetName, *AssetPath);
-		}
-	}
-}
-
-#pragma endregion FCsLibraryLoad_GetObjectPaths
+#pragma endregion GetObjectPaths
 
 // FCsLibraryLoad_GetReferencesReport_Category
 #pragma region

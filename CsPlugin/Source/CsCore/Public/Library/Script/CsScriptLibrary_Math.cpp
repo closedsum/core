@@ -29,6 +29,8 @@ namespace NCsScriptLibraryMath
 
 #pragma endregion Cached
 
+#define MathLibrary NCsMath::FLibrary
+
 UCsScriptLibrary_Math::UCsScriptLibrary_Math(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -36,8 +38,6 @@ UCsScriptLibrary_Math::UCsScriptLibrary_Math(const FObjectInitializer& ObjectIni
 
 FString UCsScriptLibrary_Math::GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetFloatAsStringWithPrecision(TheFloat, Precision);
 }
 
@@ -54,8 +54,6 @@ float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& E
 
 	CS_IS_ENUM_VALID_RET_VALUE(EMCsEasingType, ECsEasingType, EasingType, 0.0f)
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::Ease(EasingType, Time, Start, Final, Duration);
 }
 
@@ -66,44 +64,62 @@ float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& E
 
 FVector3f UCsScriptLibrary_Math::Vector3dTo3f(const FVector& Vector)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::Convert(Vector);
 }
 
 FVector UCsScriptLibrary_Math::Vector3fTo3d(const FVector3f& Vector)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::Convert(Vector);
 }
 
 FVector UCsScriptLibrary_Math::Forward3d_OnlyYaw(const double& Yaw)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetForward3dOnlyYaw(Yaw);
 }
 
 FVector3f UCsScriptLibrary_Math::Forward3f_OnlyYaw(const float& Yaw)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetForward3fOnlyYaw(Yaw);
 }
 
 FVector UCsScriptLibrary_Math::Right3d_OnlyYaw(const double& Yaw)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetRight3dOnlyYaw(Yaw);
 }
 
 FVector3f UCsScriptLibrary_Math::Right3f_OnlyYaw(const float& Yaw)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetRight3fOnlyYaw(Yaw);
+}
+
+FVector3f UCsScriptLibrary_Math::Vector3f_Right3f_FromNormal(const FVector3f& Normal)
+{
+	return MathLibrary::GetRightFromNormal(Normal);
+}
+
+FVector UCsScriptLibrary_Math::Vector3d_Right3d_FromNormal(const FVector& Normal)
+{
+	return MathLibrary::GetRightFromNormal(Normal);
+}
+
+FVector3f UCsScriptLibrary_Math::Vector3f_Right3f(const FVector3f& Vector)
+{
+	return MathLibrary::GetRight(Vector);
+}
+
+FVector UCsScriptLibrary_Math::Vector3d_Right3d(const FVector& Vector)
+{
+	return MathLibrary::GetRight(Vector);
+}
+
+FVector3f UCsScriptLibrary_Math::Vector3f_Right3f_FromNormal2D(const FVector3f& Normal, FRotator3f& OutRotation)
+{
+	return MathLibrary::GetRightFromNormal2D(Normal, OutRotation);
+}
+
+FVector UCsScriptLibrary_Math::Vector3d_Right3d_FromNormal2D(const FVector& Normal, FRotator& OutRotation)
+{
+	return MathLibrary::GetRightFromNormal2D(Normal, OutRotation);
 }
 
 #pragma endregion Vector
@@ -113,57 +129,41 @@ FVector3f UCsScriptLibrary_Math::Right3f_OnlyYaw(const float& Yaw)
 
 FVector3f UCsScriptLibrary_Math::Rotator3d_Forward3f_OnlyYaw(const FRotator& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetForward3fOnlyYaw(Rotation);
 }
 
 FVector UCsScriptLibrary_Math::Rotator3d_Forward3d_OnlyYaw(const FRotator& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetForwardOnlyYaw(Rotation);
 }
 
 FVector3f UCsScriptLibrary_Math::Rotator3f_Forward3f_OnlyYaw(const FRotator3f& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetForwardOnlyYaw(Rotation);
 }
 
 FVector UCsScriptLibrary_Math::Rotator3f_Forward3d_OnlyYaw(const FRotator3f& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetForward3dOnlyYaw(Rotation);
 }
 
 FVector3f UCsScriptLibrary_Math::Rotator3d_Right3f_OnlyYaw(const FRotator& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetRight3fOnlyYaw(Rotation);
 }
 
 FVector UCsScriptLibrary_Math::Rotator3d_Right3d_OnlyYaw(const FRotator& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetRightOnlyYaw(Rotation);
 }
 
 FVector3f UCsScriptLibrary_Math::Rotator3f_Right3f_OnlyYaw(const FRotator3f& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetRightOnlyYaw(Rotation);
 }
 
 FVector UCsScriptLibrary_Math::Rotator3f_Right3d_OnlyYaw(const FRotator3f& Rotation)
 {
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::GetRight3dOnlyYaw(Rotation);
 }
 
@@ -252,9 +252,9 @@ bool UCsScriptLibrary_Math::RayPlaneIntersection(const FString& Context, const F
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::RayPlaneIntersection : Context;
 
-	typedef NCsMath::FLibrary MathLibrary;
-
 	return MathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, OutT, OutIntersection);
 }
 
 #pragma endregion Intersection
+
+#undef MathLibrary

@@ -11,6 +11,7 @@
 class AActor;
 class UObject;
 struct FCsRoutine;
+class UActorComponent;
 class USceneComponent;
 class UPrimitiveComponent;
 class UMaterialInterface;
@@ -309,6 +310,23 @@ namespace NCsActor
 		static UPrimitiveComponent* GetSafeRootPrimitiveComponent(AActor* Actor);
 
 	#pragma endregion RootComponent
+
+	// Component
+	#pragma region
+	public:
+
+		/**
+		* Safely get a Component with Tag from Actor.
+		*
+		* @param Context	The calling context.
+		* @param A			Actor
+		* @param Tag
+		* @param Log		(optional)
+		* return			Component.
+		*/
+		static UActorComponent* GetSafeComponentByTag(const FString& Context, const AActor* A, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Component
 
 	// Visibility
 	#pragma region

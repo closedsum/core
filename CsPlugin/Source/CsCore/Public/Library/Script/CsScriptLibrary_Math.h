@@ -50,6 +50,24 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Yaw"))
 	static FVector3f Right3f_OnlyYaw(const float& Yaw);
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Normal"))
+	static FVector3f Vector3f_Right3f_FromNormal(const FVector3f& Normal);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Normal"))
+	static FVector Vector3d_Right3d_FromNormal(const FVector& Normal);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Vector"))
+	static FVector3f Vector3f_Right3f(const FVector3f& Vector);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Vector"))
+	static FVector Vector3d_Right3d(const FVector& Vector);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Normal,OutRotation"))
+	static FVector3f Vector3f_Right3f_FromNormal2D(const FVector3f& Normal, FRotator3f& OutRotation);
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math|Vector", meta = (AutoCreateRefTerm = "Normal,OutRotation"))
+	static FVector Vector3d_Right3d_FromNormal2D(const FVector& Normal, FRotator& OutRotation);
+
 #pragma endregion Vector
 
 // Rotation

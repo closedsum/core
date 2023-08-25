@@ -776,6 +776,26 @@ namespace NCsMath
 		}
 
 		/**
+		* Call V.Rotation() and return the Yaw.
+		*
+		* @param V
+		* return	V.Rotation().Yaw.
+		*/
+		FORCEINLINE static double GetYaw(const FVector3d& V)
+		{
+			const double Yaw = FMath::Atan2(V.Y, V.X) * (180. / PI);
+
+		#if ENABLE_NAN_DIAGNOSTIC || (DO_CHECK && !UE_BUILD_SHIPPING)
+			if (!FMath::IsFinite(Yaw))
+			{
+				logOrEnsureNanError(TEXT("NCsMath::FLibrary::GetYaw(): Yaw result %f contains NaN! Input FVector3d = %s"), Yaw, *(V.ToString()));
+				return 0.0;
+			}
+		#endif
+			return Yaw;
+		}
+
+		/**
 		* Call V.Rotation() and return the rotation with ONLY the Pitch value as
 		* Pitch + Offset.
 		*
@@ -845,17 +865,30 @@ namespace NCsMath
 		FORCEINLINE static FVector3f GetUp(const FVector3f& V) { return GetUpFromNormal(V.GetSafeNormal()); }
 
 		FORCEINLINE static FVector3f GetRightFromNormal(const FVector3f& N) { return GetRight(N.Rotation()); }
+		FORCEINLINE static FVector3d GetRightFromNormal(const FVector3d& N) { return GetRight(N.Rotation()); }
 		FORCEINLINE static FVector3f GetRight(const FVector3f& V) { return GetRightFromNormal(V.GetSafeNormal()); }
+		FORCEINLINE static FVector3d GetRight(const FVector3d& V) { return GetRightFromNormal(V.GetSafeNormal()); }
 		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N) { return GetRight3fOnlyYaw(GetYaw(N)); }
+		FORCEINLINE static FVector3d GetRightFromNormal2D(const FVector3d& N) { return GetRight3dOnlyYaw(GetYaw(N)); }
 		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N, float& OutYaw) 
 		{
 			OutYaw = GetYaw(N);
 			return GetRight3fOnlyYaw(OutYaw);
 		}
+		FORCEINLINE static FVector3d GetRightFromNormal2D(const FVector3d& N, double& OutYaw)
+		{
+			OutYaw = GetYaw(N);
+			return GetRight3dOnlyYaw(OutYaw);
+		}
 		FORCEINLINE static FVector3f GetRightFromNormal2D(const FVector3f& N, FRotator3f& OutRotation)
 		{
 			OutRotation.Yaw = GetYaw(N);
 			return GetRight3fOnlyYaw(OutRotation.Yaw);
+		}
+		FORCEINLINE static FVector3d GetRightFromNormal2D(const FVector3d& N, FRotator3d& OutRotation)
+		{
+			OutRotation.Yaw = GetYaw(N);
+			return GetRight3dOnlyYaw(OutRotation.Yaw);
 		}
 
 		FORCEINLINE static void GetRightAndUpFromNormal(const FVector3f& N, FVector3f& OutRight, FVector3f& OutUp) { GetRightAndUp(N.Rotation(), OutRight, OutUp); }
@@ -1001,6 +1034,7 @@ namespace NCsMath
 		}
 
 		FORCEINLINE static FVector3f GetRight(const FRotator3f& R) { return FRotationMatrix44f(R).GetScaledAxis(EAxis::Y); }
+		FORCEINLINE static FVector3d GetRight(const FRotator3d& R) { return FRotationMatrix44d(R).GetScaledAxis(EAxis::Y); }
 
 		FORCEINLINE static FVector3f GetRightOnlyYaw(const FRotator3f& R){ return GetRight3fOnlyYaw(R.Yaw); }
 		FORCEINLINE static FVector3d GetRightOnlyYaw(const FRotator3d& R) { return GetRight3dOnlyYaw(R.Yaw); }

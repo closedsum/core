@@ -11,6 +11,7 @@
 #include "CsScriptLibrary_Actor.generated.h"
 
 class AActor;
+class UActorComponent;
 class USceneComponent;
 
 UCLASS()
@@ -94,6 +95,23 @@ public:
 	static AActor* GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label);
 
 #pragma endregion Get
+
+// Component
+#pragma region
+public:
+
+	/**
+	* Get a Component with Tag from Actor.
+	*
+	* @param Context	The calling context.
+	* @param Actor
+	* @param Tag
+	* return			Component
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,Tag"))
+	static UActorComponent* GetComponentByTag(const FString& Context, const AActor* Actor, const FName& Tag);
+
+#pragma endregion Component
 
 // Visibility
 #pragma region

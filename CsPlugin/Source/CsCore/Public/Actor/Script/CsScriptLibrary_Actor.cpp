@@ -23,6 +23,9 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetAnyByTags);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
+			// Component
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetComponentByTag);
+			// Visibility
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetHiddenInGame);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterial);
@@ -127,6 +130,22 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* Worl
 }
 
 #pragma endregion Get
+
+// Component
+#pragma region
+
+UActorComponent* UCsScriptLibrary_Actor::GetComponentByTag(const FString& Context, const AActor* Actor, const FName& Tag)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetComponentByTag : Context;
+
+	typedef NCsActor::FLibrary ActorLibrary;
+
+	return ActorLibrary::GetSafeComponentByTag(Ctxt, Actor, Tag);
+}
+
+#pragma endregion Component
 
 // Visibility
 #pragma region

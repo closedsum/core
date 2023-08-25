@@ -485,6 +485,44 @@ namespace NCsActor
 
 	#pragma endregion RootComponent
 
+	// Component
+#pragma region
+	
+	UActorComponent* FLibrary::GetSafeComponentByTag(const FString& Context, const AActor* A, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(A)
+		CS_IS_NAME_NONE_RET_NULL(Tag)
+
+		const TSet<UActorComponent*>& Components = A->GetComponents();
+
+		if (Components.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has NO components."), *Context, *NCsObject::FLibrary::PrintNameAndClass(A)));
+		}
+
+		UActorComponent* Component = nullptr;
+
+		for (UActorComponent* C : Components)
+		{
+			if (C->ComponentTags.Contains(Tag))
+			{
+				if (Component)
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has MORE than 1 component with Tag: %s."), *Context, *NCsObject::FLibrary::PrintNameAndClass(A), *(Tag.ToString())));
+				}
+				Component = C;
+			}
+		}
+
+		if (!Component)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s has NO components with Tag: %s."), *Context, *NCsObject::FLibrary::PrintNameAndClass(A), *(Tag.ToString())));
+		}
+		return Component;
+	}
+
+#pragma endregion Component
+
 	// Visibility
 	#pragma region
 

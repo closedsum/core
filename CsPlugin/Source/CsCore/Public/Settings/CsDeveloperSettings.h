@@ -1,9 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
 // Types
-#include "Types/CsTypes_Load.h"
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
 #include "Data/CsTypes_DataRootSet.h"
@@ -45,15 +46,18 @@
 
 namespace NCsDeveloperSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		extern CSCORE_API const FString InputActionMap;
-		extern CSCORE_API const FString GameEvent;
-		extern CSCORE_API const FString FX;
-		extern CSCORE_API const FString Sound;
-		extern CSCORE_API const FString StaticMeshActor;
-		extern CSCORE_API const FString SkeletalMeshActor;
-		extern CSCORE_API const FString VertexAnimNotify;
+		namespace Str
+		{
+			extern CSCORE_API const FString InputActionMap;
+			extern CSCORE_API const FString GameEvent;
+			extern CSCORE_API const FString FX;
+			extern CSCORE_API const FString Sound;
+			extern CSCORE_API const FString StaticMeshActor;
+			extern CSCORE_API const FString SkeletalMeshActor;
+			extern CSCORE_API const FString VertexAnimNotify;
+		}
 	}
 }
 
@@ -152,7 +156,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsInputActionMap>() const { return ECsInputActionMap_Internal; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsInputActionMap>() const { return NCsDeveloperSettings::Str::InputActionMap; }
+	const FString& GetSettingsEnumPath<FECsInputActionMap>() const { return NCsDeveloperSettings::NCached::Str::InputActionMap; }
 
 	// Game Event
 
@@ -165,7 +169,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsGameEvent>() const { return ECsGameEvent_Internal; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsGameEvent>() const { return NCsDeveloperSettings::Str::GameEvent; }
+	const FString& GetSettingsEnumPath<FECsGameEvent>() const { return NCsDeveloperSettings::NCached::Str::GameEvent; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Input")
 	FCsSettings_Input Input;
@@ -193,7 +197,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsFX>() const { return ECsFX; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsFX>() const { return NCsDeveloperSettings::Str::FX; }
+	const FString& GetSettingsEnumPath<FECsFX>() const { return NCsDeveloperSettings::NCached::Str::FX; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|FX")
 	TArray<TSoftObjectPtr<UDataTable>> FXs;
@@ -221,7 +225,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSound>() const { return ECsSound; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsSound>() const { return NCsDeveloperSettings::Str::Sound; }
+	const FString& GetSettingsEnumPath<FECsSound>() const { return NCsDeveloperSettings::NCached::Str::Sound; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Sound")
 	TArray<TSoftObjectPtr<UDataTable>> Sounds;
@@ -258,7 +262,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsStaticMeshActor>() const { return ECsStaticMeshActor; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsStaticMeshActor>() const { return NCsDeveloperSettings::Str::StaticMeshActor; }
+	const FString& GetSettingsEnumPath<FECsStaticMeshActor>() const { return NCsDeveloperSettings::NCached::Str::StaticMeshActor; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|StaticMesh|Actor", meta = (DisplayName = "Default Value: ECsStaticMeshActor"))
 	FECsStaticMeshActor Default_ECsStaticMeshActor;
@@ -295,7 +299,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsSkeletalMeshActor>() const { return ECsSkeletalMeshActor; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsSkeletalMeshActor>() const { return NCsDeveloperSettings::Str::SkeletalMeshActor; }
+	const FString& GetSettingsEnumPath<FECsSkeletalMeshActor>() const { return NCsDeveloperSettings::NCached::Str::SkeletalMeshActor; }
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|SkeletalMeshActor", meta = (DisplayName = "Default Value: ECsSkeletalMeshActor"))
 	FECsSkeletalMeshActor Default_ECsSkeletalMeshActor;
@@ -323,7 +327,7 @@ public:
 	template<>
 	const TArray<FCsSettings_Enum>& GetSettingsEnum<FECsVertexAnimNotify>() const { return ECsVertexAnimNotify; }
 	template<>
-	const FString& GetSettingsEnumPath<FECsVertexAnimNotify>() const { return NCsDeveloperSettings::Str::VertexAnimNotify; }
+	const FString& GetSettingsEnumPath<FECsVertexAnimNotify>() const { return NCsDeveloperSettings::NCached::Str::VertexAnimNotify; }
 
 #pragma endregion Anim
 

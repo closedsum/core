@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
 
 UCsDataRootSetImpl::UCsDataRootSetImpl(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -12,6 +12,7 @@ UCsDataRootSetImpl::UCsDataRootSetImpl(const class FObjectInitializer& ObjectIni
 
 // Editor
 #pragma region
+
 #if WITH_EDITOR
 
 void UCsDataRootSetImpl::PostEditChangeProperty(FPropertyChangedEvent& e)
@@ -36,4 +37,5 @@ void UCsDataRootSetImpl::PostEditChangeProperty(FPropertyChangedEvent& e)
 }
 
 #endif // #if WITH_EDITOR
+
 #pragma endregion Editor

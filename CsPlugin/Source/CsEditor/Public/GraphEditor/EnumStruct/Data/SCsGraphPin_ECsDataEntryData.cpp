@@ -2,7 +2,7 @@
 #include "GraphEditor/EnumStruct/Data/SCsGraphPin_ECsDataEntryData.h"
 #include "CsEditor.h"
 
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
 
 // Cached
 #pragma region

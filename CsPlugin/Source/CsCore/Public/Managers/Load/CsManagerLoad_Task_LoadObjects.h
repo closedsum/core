@@ -5,8 +5,52 @@
 #include "Types/CsTypes_Load.h"
 #include "Managers/Time/CsTypes_Update.h"
 #include "Managers/Time/CsTypes_Time.h"
+// Load
+#include "Load/CsResourceSize.h"
+#include "Load/CsLoadHandle.h"
 
 #include "CsManagerLoad_Task_LoadObjects.generated.h"
+
+// ObjectPathLoadedInfo
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsObjectPathLoadedInfo
+{
+public:
+
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	FSoftObjectPath Path;
+
+	UPROPERTY()
+	int32 Count;
+
+	UPROPERTY()
+	FCsResourceSize Size;
+
+	UPROPERTY()
+	float Time;
+
+	FCsObjectPathLoadedInfo() :
+		Path(),
+		Count(0),
+		Size(),
+		Time(0.0f)
+	{
+	}
+
+	void Reset()
+	{
+		Path.Reset();
+		Count = 0;
+		Size.Reset();
+		Time = 0.0f;
+	}
+};
+
+#pragma endregion ObjectPathLoadedInfo
 
 // Delegates
 #pragma region

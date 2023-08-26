@@ -1,0 +1,718 @@
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#include "Asset/CsLibrary_Asset.h"
+#include "CsEditor.h"
+
+// Types
+#include "Load/CsObjectPathDependencyGroup.h"
+#include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
+// Data
+#include "Engine/DataTable.h"
+// Class
+#include "UObject/Class.h"
+// Asset
+#include "AssetRegistry/AssetRegistryModule.h"
+// Blueprint
+#include "Engine/BlueprintGeneratedClass.h"
+#include "Engine/BlueprintCore.h"
+// Animation
+#include "Animation/AnimCompositeBase.h"
+#include "Animation/BlendSpace.h"
+#include "Animation/AnimData/AnimDataModel.h"
+// Font
+#include "Engine/Font.h"
+// Material
+#include "Materials/MaterialParameterCollection.h"
+#include "Materials/MaterialFunction.h"
+#include "Materials/MaterialInstance.h"
+// FX
+#include "NiagaraSystem.h"
+#include "NiagaraEmitter.h"
+// Sound
+#include "Sound/SoundBase.h"
+// Components
+#include "Components/SkeletalMeshComponent.h"
+#include "Components/PoseableMeshComponent.h"
+// Engine
+#include "Engine.h"
+// Level Sequence
+
+#include "../Classes/Factories/AnimSequenceFactory.h"
+
+#include "Developer/AssetTools/Public/IAssetTools.h"
+#include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"
+
+// TODO: Cleanup Headers
+
+namespace NCsAsset
+{
+	// Asset Registry
+	#pragma region
+
+	IAssetRegistry& FLibrary::GetAssetRegistry()
+	{
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+		return AssetRegistryModule.Get();
+	}
+
+	UCsEnumStructUserDefinedEnumMap* FLibrary::GetEnumStructUserDefinedEnumMap()
+	{
+		// TODO: Make Name a Config variable for UCsEdEngine
+		const FString Name					= TEXT("EnumStructUserDefinedEnumMap");
+		const ECsStringCompare& CompareType = ECsStringCompare::Contains;
+		TArray<UCsEnumStructUserDefinedEnumMap*> OutDefaultObjects;
+		TArray<FString> OutPackagePaths;
+
+		GetBlueprintDefaultObjects<UCsEnumStructUserDefinedEnumMap>(Name, CompareType, UCsEnumStructUserDefinedEnumMap::StaticClass(), OutDefaultObjects, OutPackagePaths);
+	
+		if (OutDefaultObjects.Num() == CS_EMPTY)
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("NCsAsset::FLibrary::GetEnumStructUserDefinedEnumMap: No class found of type: UCsEnumStructUserDefinedEnumMap."));
+			return nullptr;
+		}
+
+		if (OutDefaultObjects.Num() > CS_SINGLETON)
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("NCsAsset::FLibrary::GetEnumStructUserDefinedEnumMap: More than ONE class found of type: UCsEnumStructUserDefinedEnumMap. Choosing the FICST one. There should only be ONE."));
+
+			for (const FString& Path : OutPackagePaths)
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("NCsAsset::FLibrary::GetEnumStructUserDefinedEnumMap: Asset of type: UCsEnumStructUserDefinedEnumMap found at: %s."), *Path);
+			}
+		}
+		return OutDefaultObjects[CS_EMPTY];
+	}
+
+	void FLibrary::SyncBrowserToAsset(UObject* InObject)
+	{
+		TArray<UObject*> ObjectsToSync;
+		ObjectsToSync.Add(InObject);
+
+		FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+		ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
+	}
+
+	void FLibrary::SyncBrowserToAssets(TArray<UObject*> Objects)
+	{
+		FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+		ContentBrowserModule.Get().SyncBrowserToAssets(Objects);
+	}
+
+	UFactory* FLibrary::GetFactory(UClass* ClassToSpawn)
+	{
+		for (TObjectIterator<UClass> It; It; ++It)
+		{
+			UClass* CurrentClass = *It;
+
+			if (CurrentClass->IsChildOf(UFactory::StaticClass()) && !(CurrentClass->HasAnyClassFlags(CLASS_Abstract)))
+			{
+				UFactory* Factory = Cast<UFactory>(CurrentClass->GetDefaultObject());
+
+				if (Factory->CanCreateNew() && Factory->ImportPriority >= 0 && Factory->SupportedClass == ClassToSpawn)
+				{
+					return Factory;
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	UObject* FLibrary::CreateAsset(UClass* ClassToSpawn, const FString& Name, const FString &PackagePath)
+	{
+		FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
+		UFactory* Factory					= GetFactory(ClassToSpawn);
+		UObject* NewAsset					= AssetToolsModule.Get().CreateAsset(Name, PackagePath, ClassToSpawn, Factory);
+
+		TArray<UObject*> ObjectsToSync;
+		ObjectsToSync.Add(NewAsset);
+
+		FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+		ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
+
+		return NewAsset;
+	}
+
+	UAnimSequence* FLibrary::CreateAnimSequence(USkeletalMesh* Mesh, const FString &Name, const FString &PackagePath)
+	{
+		FAssetToolsModule& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools");
+		UAnimSequenceFactory* Factory		= NewObject<UAnimSequenceFactory>();
+
+		Factory->TargetSkeleton		 = Mesh->GetSkeleton();
+		Factory->PreviewSkeletalMesh = Mesh;
+
+		UAnimSequence* NewAsset = Cast<UAnimSequence>(AssetToolsModule.Get().CreateAsset(Name, PackagePath, UAnimSequence::StaticClass(), Factory));;
+
+		TArray<UObject*> ObjectsToSync;
+		ObjectsToSync.Add(NewAsset);
+
+		FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+		ContentBrowserModule.Get().SyncBrowserToAssets(ObjectsToSync);
+	
+		return NewAsset;
+	}
+
+	void FLibrary::InitAnimSequence(UAnimSequence* Anim, USkeletalMeshComponent* Mesh)
+	{
+		check(0);
+		//Anim->RecycleAnimSequence();
+
+		USkeleton* AnimSkeleton     = Anim->GetSkeleton();
+		USkeletalMesh* SkeletalMesh = Mesh->GetSkeletalMeshAsset();
+
+		const int32 BoneCount = Mesh->GetComponentSpaceTransforms().Num();
+
+		for (int32 BoneIndex = 0; BoneIndex < BoneCount; ++BoneIndex)
+		{
+			// verify if this bone exists in skeleton
+			const int32 BoneTreeIndex = AnimSkeleton->GetSkeletonBoneIndexFromMeshBoneIndex(SkeletalMesh, BoneIndex);
+			if (BoneTreeIndex != INDEX_NONE)
+			{
+				// add tracks for the bone existing
+				FName BoneTreeName = AnimSkeleton->GetReferenceSkeleton().GetBoneName(BoneTreeIndex);
+				check(0);
+				//Anim->AddNewRawTrack(BoneTreeName);
+			}
+		}
+
+		// Setup notifies
+		Anim->InitializeNotifyTrack();
+	}
+
+	void FLibrary::InitAnimSequence(UAnimSequence* Anim, UPoseableMeshComponent* Mesh)
+	{
+		check(0);
+		//Anim->RecycleAnimSequence();
+
+		USkeleton* AnimSkeleton     = Anim->GetSkeleton();
+		USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(Mesh->GetSkinnedAsset());
+
+		const int32 BoneCount = Mesh->BoneSpaceTransforms.Num();
+
+		for (int32 BoneIndex = 0; BoneIndex < BoneCount; ++BoneIndex)
+		{
+			// verify if this bone exists in skeleton
+			const int32 BoneTreeIndex = AnimSkeleton->GetSkeletonBoneIndexFromMeshBoneIndex(SkeletalMesh, BoneIndex);
+			if (BoneTreeIndex != INDEX_NONE)
+			{
+				// add tracks for the bone existing
+				FName BoneTreeName = AnimSkeleton->GetReferenceSkeleton().GetBoneName(BoneTreeIndex);
+				check(0);
+				//Anim->AddNewRawTrack(BoneTreeName);
+			}
+		}
+
+		// Setup notifies
+		Anim->InitializeNotifyTrack();
+	}
+
+	#pragma endregion Asset Registry
+
+	// Find
+	#pragma region
+
+	void FLibrary::FindObjectsByClass(const FName& ClassName, const FName& ObjectName, TArray<UObject*>& OutObjects)
+	{
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+		IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+		TArray<FAssetData> AssetDatas;
+
+		AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
+
+		for (FAssetData& Data : AssetDatas)
+		{
+			if (Data.AssetName == ObjectName)
+			{
+				OutObjects.Add(Data.GetAsset());
+			}
+		}
+	}
+
+	UObject* FLibrary::FindObjectByClass(const FName& ClassName, const FName& ObjectName, const ECsFindObjectByClassRule& Rule /*= ECsFindObjectByClassRule::None*/)
+	{
+		// None | First
+		if (Rule == ECsFindObjectByClassRule::None ||
+			Rule == ECsFindObjectByClassRule::First)
+		{
+			FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>(FName("AssetRegistry"));
+			IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
+			TArray<FAssetData> AssetDatas;
+
+			AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
+
+			UObject* Object = nullptr;
+
+			for (FAssetData& Data : AssetDatas)
+			{
+				if (Data.AssetName == ObjectName)
+				{
+					Object = Data.GetAsset();
+				}
+			}
+
+			if (Rule == ECsFindObjectByClassRule::First)
+			{
+				if (!Object)
+				{
+					UE_LOG(LogCsEditor, Warning, TEXT("NCsAsset::FLibrary::FindObjectByClass: Failed to find %s with name: %s."), *(ClassName.ToString()), *(ObjectName.ToString()));
+				}
+			}
+			return Object;
+		}
+		// Exact
+		if (Rule == ECsFindObjectByClassRule::Exact)
+		{
+			TArray<UObject*> Objects;
+			FindObjectsByClass(ClassName, ObjectName, Objects);
+
+			// Check if NO Objects were found
+			if (Objects.Num() == CS_EMPTY)
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("NCsAsset::FLibrary::FindObjectByClass: Failed to find %s with name: %s."), *(ClassName.ToString()), *(ObjectName.ToString()));
+				return nullptr;
+			}
+			// Check if only ONE Object was found
+			if (Objects.Num() != CS_SINGLETON)
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("NCsAsset::FLibrary::FindObjectByClass: Found more than one %s with name: %s."), *(ClassName.ToString()), *(ObjectName.ToString()));
+				return nullptr;
+			}
+			return Objects[CS_FIRST];
+		}
+		return nullptr;
+	}
+
+	#pragma endregion Find
+
+	namespace NDependency
+	{
+		namespace NSoftPath
+		{	
+			FLibrary::FGet::FResult::FResult() :
+				Paths(),
+				PathSet(),
+				PathsByGroup(),
+				PathSetsByGroup()
+			{
+				typedef EMCsObjectPathDependencyGroup GroupMapType;
+				typedef ECsObjectPathDependencyGroup GroupType;
+
+				const int32& Count = GroupMapType::Get().Num();
+
+				PathsByGroup.Reset(Count);
+				PathSetsByGroup.Reset(Count);
+
+				for (const GroupType& Group : GroupMapType::Get())
+				{
+					PathsByGroup.AddDefaulted();
+					PathSetsByGroup.AddDefaulted();
+				}
+			}
+
+			void FLibrary::FGet::FResult::AddPathToGroup(const FSoftObjectPath& Path)
+			{
+				if (!Path.IsValid())
+					return;
+
+				const FString& AssetPath = Path.GetAssetPathString();
+
+				if (!AssetPath.Contains(TEXT("."), ESearchCase::IgnoreCase, ESearchDir::FromEnd))
+					return;
+
+				UObject* O = Path.TryLoad();
+
+				if (!O)
+					return;
+
+				UClass* Class = O->GetClass();
+
+				typedef ECsObjectPathDependencyGroup GroupType;
+
+				// DataTable
+				if (Class->IsChildOf<UDataTable>())
+				{
+					PathSetsByGroup[(uint8)GroupType::DataTable].Add(Path);
+				}
+				// Sequencer
+				/*
+				else
+				if (Class->IsChildOf<UMovieSceneSequencePlayer>() ||
+					Class->ImplementsInterface(UMovieScenePlaybackClient::StaticClass()) ||
+					Class->ImplementsInterface(UMovieSceneBindingOwnerInterface::StaticClass()) ||
+					Class->IsChildOf<UMovieSceneSignedObject>())
+				{
+					DependencySetList[(uint8)ECsObjectPathDependencyGroup::Sequencer].Add(SoftPath);
+				}
+				*/
+				// Blueprint
+				else
+				if (Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
+					Class->IsChildOf<UBlueprintGeneratedClass>())
+				{
+					// Check for SkeletonGeneratedClasses. Skip adding the path.
+					if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(O))
+					{
+					#if WITH_EDITOR
+						if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+						{
+							if (O == BpC->SkeletonGeneratedClass)
+							{
+								return;
+							}
+						}
+					#endif // #if WITH_EDITOR
+					}
+
+					if (UBlueprintGeneratedClass* BpGC = Cast<UBlueprintGeneratedClass>(Class))
+					{
+					#if WITH_EDITOR
+						if (UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy))
+						{
+							if (Class == BpC->SkeletonGeneratedClass)
+							{
+								return;
+							}
+						}
+					#endif // #if WITH_EDITOR
+					}
+
+					PathSetsByGroup[(uint8)GroupType::Blueprint].Add(Path);
+				}
+				// AnimComposite
+				else
+				if (Class->IsChildOf<UAnimCompositeBase>())
+				{
+					PathSetsByGroup[(uint8)GroupType::AnimComposite].Add(Path);
+				}
+				// BlendSpace
+				else
+				if (Class->IsChildOf<UBlendSpace>())
+				{
+					PathSetsByGroup[(uint8)GroupType::BlendSpace].Add(Path);
+				}
+				// AnimationAsset
+				else
+				if (Class->IsChildOf<UAnimSequence>())
+				{
+					PathSetsByGroup[(uint8)GroupType::AnimationAsset].Add(Path);
+				}
+				// AnimData - SKIP
+				else
+				if (Class->IsChildOf<UAnimDataModel>())
+				{
+					return;
+				}
+				// FX
+				else
+				if (Class->IsChildOf<UNiagaraSystem>())
+				{
+					PathSetsByGroup[(uint8)GroupType::FX].Add(Path);
+				}
+				// FX - SKIP - IGNORE. NOTE: 4.26. Niagara Emitter no longer get cooked
+				else
+				if (Class->IsChildOf<UNiagaraEmitter>())
+				{
+					return;
+				}
+				// Sound
+				else
+				if (Class->IsChildOf<USoundBase>())
+				{
+					PathSetsByGroup[(uint8)GroupType::Sound].Add(Path);
+				}
+				// Skeletal
+				else
+				if (Class->IsChildOf<USkeletalMesh>() ||
+					Class->IsChildOf<UPhysicsAsset>() ||
+					Class->IsChildOf<USkeleton>())
+				{
+					PathSetsByGroup[(uint8)GroupType::Skeletal].Add(Path);
+				}
+				// StaticMesh
+				else
+				if (Class->IsChildOf<UStaticMesh>())
+				{
+					PathSetsByGroup[(uint8)GroupType::StaticMesh].Add(Path);
+				}
+				// Material Function - SKIP
+				else
+				if (Class->IsChildOf<UMaterialFunction>())
+				{
+					return;
+				}
+				// Material Parameter Collection
+				else
+				if (Class->IsChildOf<UMaterialParameterCollection>())
+				{
+					PathSetsByGroup[(uint8)GroupType::MaterialParameterCollection].Add(Path);
+				}
+				// Material
+				else
+				if (Class->IsChildOf<UMaterial>())
+				{
+					PathSetsByGroup[(uint8)GroupType::Material].Add(Path);
+				}
+				// Material Instance
+				else
+				if (Class->IsChildOf<UMaterialInstance>())
+				{
+					PathSetsByGroup[(uint8)GroupType::MaterialInstance].Add(Path);
+				}
+				// Font
+				else
+				if (Class->IsChildOf<UFont>())
+				{
+					PathSetsByGroup[(uint8)GroupType::Font].Add(Path);
+				}
+				// Texture
+				else
+				if (Class->IsChildOf<UTexture>())
+				{
+					PathSetsByGroup[(uint8)GroupType::Texture].Add(Path);
+				}
+				// Other
+				else
+				{
+					PathSetsByGroup[(uint8)GroupType::Other].Add(Path);
+				}
+			}
+
+			void FLibrary::FGet::FResult::Resolve()
+			{
+				Paths.Reset(PathSet.Num());
+
+				for (const FSoftObjectPath& Path : PathSet)
+				{
+					AddPathToGroup(Path);
+					Paths.Add(Path);
+				}
+
+				const int32 Count = PathSetsByGroup.Num();
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					const TSet<FSoftObjectPath>& Set = PathSetsByGroup[I];
+					TArray<FSoftObjectPath>& Arr	 = PathsByGroup[I];
+
+					Arr.Reset(Set.Num());
+
+					for (const FSoftObjectPath& Path : Set)
+					{
+						Arr.Add(Path);
+					}
+				}
+			}
+
+			#define ResultType NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult
+
+			void FLibrary::Get_Internal(const void* StructValue, UStruct* const& Struct, ResultType& OutResult)
+			{
+				for (TFieldIterator<FProperty> It(Struct); It; ++It)
+				{
+					FProperty* Property = CastField<FProperty>(*It);
+
+					const FString PropertyName = Property->GetName();
+		
+					// Object
+					if (FObjectProperty* ObjectProperty = CastField<FObjectProperty>(Property))
+					{
+						// DataTable
+						if (ObjectProperty->PropertyClass == UDataTable::StaticClass())
+						{
+							UDataTable* const* DataTablePtr = ObjectProperty->ContainerPtrToValuePtr<UDataTable*>(StructValue);
+				
+							if (UDataTable* DataTable = *DataTablePtr)
+							{
+								// Check each row for any Object Paths
+								const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+								UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+								UStruct* const RowStruct		  = Temp;
+
+								TArray<FName> RowNames = DataTable->GetRowNames();
+
+								for (const FName& RowName : RowNames)
+								{
+									uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+									Get_Internal(RowPtr, RowStruct, OutResult);
+								}
+							}
+						}
+						continue;
+					}
+					// SoftClass
+					if (FSoftClassProperty* SoftClassProperty = CastField<FSoftClassProperty>(Property))
+					{
+						if (const FSoftObjectPtr* Ptr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue))
+						{
+							const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
+
+							if (ObjectPath.IsValid())
+							{
+								FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+								TArray<FName> Dependencies;
+
+
+								AssetRegistryModule.Get().GetDependencies(ObjectPath.GetLongPackageFName(), Dependencies);
+								OutResult.AddPaths(Dependencies);
+							}
+						}
+						continue;
+					}
+					// SoftObject
+					if (FSoftObjectProperty* SoftObjectProperty = CastField<FSoftObjectProperty>(Property))
+					{
+						if (const FSoftObjectPtr* Ptr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue))
+						{
+							const FSoftObjectPath ObjectPath = Ptr->ToSoftObjectPath();
+
+							if (ObjectPath.IsValid())
+							{
+								if (UObject* O = Ptr->LoadSynchronous())
+								{
+									if (UDataTable* DataTable = Cast<UDataTable>(O))
+									{
+										// Check each row for any Object Paths
+										const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+										UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+										UStruct* const RowStruct		  = Temp;
+
+										TArray<FName> RowNames = DataTable->GetRowNames();
+
+										for (const FName& RowName : RowNames)
+										{
+											uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+											Get_Internal(RowPtr, RowStruct, OutResult);
+										}
+									}
+									else
+									{
+										FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+										TArray<FName> Dependencies;
+
+										AssetRegistryModule.Get().GetDependencies(ObjectPath.GetLongPackageFName(), Dependencies);
+										OutResult.AddPaths(Dependencies);
+									}
+								}
+							}
+						}
+						continue;
+					}
+					// Struct
+					if (FStructProperty* StructProperty = CastField<FStructProperty>(Property))
+					{
+						for (int32 I = 0; I < StructProperty->ArrayDim; ++I)
+						{
+							if (const uint8* Ptr = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue, I))
+							{
+								Get_Internal(Ptr, StructProperty->Struct, OutResult);
+							}
+						}
+						continue;
+					}
+		
+					// Array
+					if (FArrayProperty* ArrayProperty = CastField<FArrayProperty>(Property))
+					{
+						FScriptArrayHelper_InContainer Helper(ArrayProperty, StructValue);
+
+						const int32 Count = Helper.Num();
+
+						for (int32 I = 0; I < Count; ++I)
+						{
+							uint8* Ptr = Helper.GetRawPtr(I);
+
+							// SoftClass
+							if (FSoftClassProperty* InnerSoftClassProperty = CastField<FSoftClassProperty>(ArrayProperty->Inner))
+							{
+								TSoftClassPtr<UObject>* ObjectPtr = reinterpret_cast<TSoftClassPtr<UObject>*>(Helper.GetRawPtr(I));
+								const FSoftObjectPath ObjectPath  = ObjectPtr->ToSoftObjectPath();
+
+								if (ObjectPath.IsValid())
+								{
+									FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+									TArray<FName> Dependencies;
+
+									AssetRegistryModule.Get().GetDependencies(ObjectPath.GetLongPackageFName(), Dependencies);
+									OutResult.AddPaths(Dependencies);
+								}
+								continue;
+							}
+							// SoftObject
+							if (FSoftObjectProperty* InnerSoftObjectProperty = CastField<FSoftObjectProperty>(ArrayProperty->Inner))
+							{
+								TSoftObjectPtr<UObject>* ObjectPtr = reinterpret_cast<TSoftObjectPtr<UObject>*>(Helper.GetRawPtr(I));
+								const FSoftObjectPath ObjectPath   = ObjectPtr->ToSoftObjectPath();
+
+								if (ObjectPath.IsValid())
+								{
+									if (UObject* O = ObjectPtr->LoadSynchronous())
+									{
+										if (UDataTable* DataTable = Cast<UDataTable>(O))
+										{
+											// Check each row for any Object Paths
+											const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+											UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+											UStruct* const RowStruct		  = Temp;
+
+											TArray<FName> RowNames = DataTable->GetRowNames();
+
+											for (const FName& RowName : RowNames)
+											{
+												uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+												Get_Internal(RowPtr, RowStruct, OutResult);
+											}
+										}
+										else
+										{
+											FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+											TArray<FName> Dependencies;
+
+											AssetRegistryModule.Get().GetDependencies(ObjectPath.GetLongPackageFName(), Dependencies);
+											OutResult.AddPaths(Dependencies);
+										}
+									}
+								}
+								continue;
+							}
+							// Struct
+							if (FStructProperty* InnerStructProperty = CastField<FStructProperty>(ArrayProperty->Inner))
+							{
+								Get_Internal(Ptr, InnerStructProperty->Struct, OutResult);
+								continue;
+							}
+						}
+						continue;
+					}
+				}
+			}
+
+			void FLibrary::Get(const void* StructValue, UStruct* const& Struct, ResultType& OutResult)
+			{
+				Get_Internal(StructValue, Struct, OutResult);
+
+				FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+
+				TArray<FName> AggregateDependencies;
+
+				for (const FSoftObjectPath& Path : OutResult.PathSet)
+				{
+					TArray<FName> Dependencies;
+					AssetRegistryModule.Get().GetDependencies(Path.GetLongPackageFName(), Dependencies);
+					AggregateDependencies.Append(Dependencies);
+				}
+
+				for (const FName& Path : AggregateDependencies)
+				{
+					OutResult.PathSet.Add(FSoftObjectPath(Path.ToString()));
+				}
+
+				OutResult.Resolve();
+			}
+
+			#undef ResultType
+		}
+	}
+}

@@ -2,7 +2,7 @@
 #include "DetailCustomizations/EnumStruct/Data/ECsDataEntryDataCustomization.h"
 
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
 
 #define LOCTEXT_NAMESPACE "ECsDataEntryDataCustomization"
 

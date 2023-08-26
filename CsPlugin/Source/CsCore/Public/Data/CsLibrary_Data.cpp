@@ -2,6 +2,8 @@
 #include "Data/CsLibrary_Data.h"
 #include "CsCore.h"
 
+// Types
+#include "Types/CsTypes_Load.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 #include "Game/CsLibrary_GameInstance.h"

@@ -2,6 +2,8 @@
 #include "DetailCustomizations/Data/CsData_ECsTestCustomization.h"
 #include "CsEditor.h"
 
+// Types
+#include "Data/CsTypes_DataEntry.h"
 #include "IDetailChildrenBuilder.h"
 #include "DetailWidgetRow.h"
 #include "IDetailGroup.h"

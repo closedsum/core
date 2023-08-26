@@ -2,7 +2,7 @@
 #pragma once
 #include "UObject/Interface.h"
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_Payload.h"
 
 #include "CsGetLevelPayload.generated.h"
 

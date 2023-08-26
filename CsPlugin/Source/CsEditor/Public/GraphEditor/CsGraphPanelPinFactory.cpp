@@ -20,6 +20,7 @@
 #include "Managers/Sense/CsTypes_Sense.h"
 #include "Team/CsTypes_Team.h"
 #include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
 // Input
 #include "Managers/Input/Action/CsInputActionMap.h"
 #include "Managers/Input/Action/CsInputAction.h"

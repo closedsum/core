@@ -3,7 +3,7 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
 #include "Level/CsLibrary_Level.h"

@@ -6,7 +6,7 @@
 #include "Start/CsStartPlay.h"
 #include "Level/CsGetLevelPayload.h"
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_Payload.h"
 // Object
 #include "UObject/ObjectSaveContext.h"
 

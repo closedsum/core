@@ -3,7 +3,7 @@
 
 #include "GameFramework/Actor.h"
 // Types
-#include "Types/CsTypes.h"
+#include "Types/CsTypes_View.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 
 #include "CsPooledActor.generated.h"

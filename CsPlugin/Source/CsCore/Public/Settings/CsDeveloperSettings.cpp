@@ -1,16 +1,24 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsDeveloperSettings.h"
 #include "CsCore.h"
 
 #if WITH_EDITOR
+// Types
+#include "Data/CsTypes_DataEntry.h" // TODO: TEMP
 // Library
 #include "Library/CsLibrary_Property.h"
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/ProjectPackagingSettings.h"
 // Interface
 #include "Data/CsGetDataRootSet.h"
+#include "Data/Tool/CsGetDataEntryTool.h"
 // Editor
 #include "PackageTools.h"
+// Engine
+#include "Engine/Engine.h"
 #endif // #if WITH_EDITOR
 
 // Cached
@@ -18,15 +26,22 @@
 
 namespace NCsDeveloperSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		CSCORE_API CS_DEFINE_CACHED_STRING(InputActionMap, "UCsDeveloperSettings::InputActionMap");
-		CSCORE_API CS_DEFINE_CACHED_STRING(GameEvent, "UCsDeveloperSettings::GameEvent");
-		CSCORE_API CS_DEFINE_CACHED_STRING(FX, "UCsDeveloperSettings::FX");
-		CSCORE_API CS_DEFINE_CACHED_STRING(Sound, "UCsDeveloperSettings::Sound");
-		CSCORE_API CS_DEFINE_CACHED_STRING(StaticMeshActor, "UCsDeveloperSettings::StaticMeshActor");
-		CSCORE_API CS_DEFINE_CACHED_STRING(SkeletalMeshActor, "UCsDeveloperSettings::SkeletalMeshActor");
-		CSCORE_API CS_DEFINE_CACHED_STRING(VertexAnimNotify, "UCsDeveloperSettings::VertexAnimNotify");
+		namespace Str
+		{
+			// Data
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsDeveloperSettings, PopulateAll);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsDeveloperSettings, PostEditChangeChainProperty);
+
+			CSCORE_API CS_DEFINE_CACHED_STRING(InputActionMap, "UCsDeveloperSettings::InputActionMap");
+			CSCORE_API CS_DEFINE_CACHED_STRING(GameEvent, "UCsDeveloperSettings::GameEvent");
+			CSCORE_API CS_DEFINE_CACHED_STRING(FX, "UCsDeveloperSettings::FX");
+			CSCORE_API CS_DEFINE_CACHED_STRING(Sound, "UCsDeveloperSettings::Sound");
+			CSCORE_API CS_DEFINE_CACHED_STRING(StaticMeshActor, "UCsDeveloperSettings::StaticMeshActor");
+			CSCORE_API CS_DEFINE_CACHED_STRING(SkeletalMeshActor, "UCsDeveloperSettings::SkeletalMeshActor");
+			CSCORE_API CS_DEFINE_CACHED_STRING(VertexAnimNotify, "UCsDeveloperSettings::VertexAnimNotify");
+		}
 	}
 }
 
@@ -75,6 +90,10 @@ UObject* UCsDeveloperSettings::SafeLoadDataRootSet(const FString& Context)
 #if WITH_EDITOR
 void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
 {
+	using namespace NCsDeveloperSettings::NCached;
+
+	const FString& Context = Str::PopulateAll;
+
 	FCsSettings_DataRootSet& Set = DataRootSets[(int32)Platform];
 
 	TSoftClassPtr<UObject> SoftClass  = Set.DataRootSet;
@@ -84,7 +103,11 @@ void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
 
 	if (GetDataRootSet)
 	{
-		const FCsDataRootSet& CsDataRootSet = GetDataRootSet->GetCsDataRootSet();
+		typedef NCsData::NEntry::NTool::FImpl DataEntryToolType;
+
+		const FCsDataRootSet& CsDataRootSet   = GetDataRootSet->GetCsDataRootSet();
+		ICsGetDataEntryTool* GetDataEntryTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataEntryTool);
+		DataEntryToolType* DataEntryTool	  = GetDataEntryTool->GetDataEntryTool();
 
 		TArray<UObject*> ObjectsToSave;
 
@@ -100,7 +123,7 @@ void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
 
 				RowPtr->Name = RowName;
 
-				RowPtr->Populate();
+				DataEntryTool->Data_PopulateImpl(RowPtr);
 			}
 		}
 		// DataTables
@@ -115,7 +138,7 @@ void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
 
 				RowPtr->Name = RowName;
 
-				RowPtr->Populate();
+				DataEntryTool->DataTable_PopulateImpl(DataTables, RowName, RowPtr, true);
 			}
 		}
 	}
@@ -136,6 +159,10 @@ void UCsDeveloperSettings::PostEditChangeProperty(struct FPropertyChangedEvent& 
 
 void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEvent& e)
 {
+	using namespace NCsDeveloperSettings::NCached;
+
+	const FString& Context = Str::PostEditChangeChainProperty;
+
 	const FName PropertyFName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 	const FString PropertyName	   = (e.Property != NULL) ? e.Property->GetName() : TEXT("");
 	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
@@ -244,6 +271,11 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 			else
 			if (PropertyName.Contains("bPopulateAll"))
 			{
+				typedef NCsData::NEntry::NTool::FImpl DataEntryToolType;
+
+				ICsGetDataEntryTool* GetDataEntryTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetDataEntryTool);
+				DataEntryToolType* DataEntryTool	  = GetDataEntryTool->GetDataEntryTool();
+
 				UProjectPackagingSettings* PackageSettings = GetMutableDefault<UProjectPackagingSettings>();
 
 				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
@@ -281,7 +313,7 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 									RowPtr->Name = RowName;
 
-									RowPtr->Populate();
+									DataEntryTool->Data_PopulateImpl(RowPtr);
 								}
 								Datas->MarkPackageDirty();
 								ObjectsToSave.Add(Datas);
@@ -298,7 +330,7 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 
 									RowPtr->Name = RowName;
 
-									RowPtr->Populate();
+									DataEntryTool->DataTable_PopulateImpl(DataTables, RowName, RowPtr, true);
 								}
 								DataTables->MarkPackageDirty();
 								ObjectsToSave.Add(DataTables);

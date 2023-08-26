@@ -4,8 +4,6 @@
 
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
-// Types
-#include "Types/CsTypes_Load.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
@@ -44,6 +42,17 @@
 
 namespace NCsWidget
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				const FString _C = TEXT("_C");
+			}
+		}
+	}
+
 	UUserWidget* FLibrary::CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Owner)
@@ -189,9 +198,11 @@ namespace NCsWidget
 
 	UClass* FLibrary::LoadChecked(const FString& Context, const FString& Path)
 	{
+		using namespace NCsWidget::NLibrary::NCached;
+
 		typedef NCsObject::FLibrary ObjectLibrary;
 
-		checkf(Path.EndsWith(ECsLoadCached::Str::_C), TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path);
+		checkf(Path.EndsWith(Str::_C), TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path);
 
 		UObject* O = ObjectLibrary::LoadChecked(Context, Path);
 
@@ -212,9 +223,11 @@ namespace NCsWidget
 
 	UClass* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 	{
+		using namespace NCsWidget::NLibrary::NCached;
+
 		typedef NCsObject::FLibrary ObjectLibrary;
 
-		if (!Path.EndsWith(ECsLoadCached::Str::_C))
+		if (!Path.EndsWith(Str::_C))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s does NOT end with '_C'."), *Context, *Path));
 			return nullptr;

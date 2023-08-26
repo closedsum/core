@@ -8,13 +8,13 @@
 // Coroutine
 #include "Coroutine/CsCoroutineScheduler.h"
 // Type
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Library/Load/CsTypes_Library_Load.h"
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
-#include "Library/CsLibrary_Asset.h"
+#include "Asset/CsLibrary_Asset.h"
 #include "Library/CsLibrary_String.h"
 #include "Library/Load/CsLibrary_Load.h"
 // Managers
@@ -54,6 +54,9 @@ namespace NCsEdEngine
 			const FString StandaloneMobileFromEditor = TEXT("StandaloneMobileFromEditor");
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnEndPIE_NextFrame_Internal);
+
+			// GetDataEntryTool
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, DataEntry_DataTable_PopulateImpl);
 
 			const FString OnObjectPreSave_Update_DataRootSet_Datas = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas");
 			const FString OnObjectPreSave_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables");
@@ -111,6 +114,9 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
+
+	DataEntryTool.Data_PopulateImpl = &UCsEdEngine::DataEntry_Data_PopulateImpl;
+	DataEntryTool.DataTable_PopulateImpl = &UCsEdEngine::DataEntry_DataTable_PopulateImpl;
 }
 
 void UCsEdEngine::PreExit()
@@ -209,11 +215,6 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 	if (Super::Exec(InWorld, Stream, Ar))
 		return true;
 
-	// Data
-	{
-		if (Check_MarkDatasDirty(Stream))
-			return true;
-	}
 	// References
 	{
 		if (Check_PrintBlueprintReferencesReport(Stream))
@@ -325,6 +326,90 @@ void UCsEdEngine::OnWorldContextDestroyed_Internal(FWorldContext& WorldContext)
 }
 
 #pragma endregion World
+
+// GetDataEntryTool
+#pragma region
+
+void UCsEdEngine::DataEntry_Data_PopulateImpl(FCsDataEntry_Data* Entry)
+{
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+
+	ResultType Result;
+	DependencyLibrary::Get(Entry, FCsDataEntry_Data::StaticStruct(), Result);
+
+	Entry->Populate(Result.PathSet, Result.PathSetsByGroup);
+}
+
+void UCsEdEngine::DataEntry_DataTable_PopulateImpl(UObject* DataTable, const FName& RowName, FCsDataEntry_DataTable* Entry, const bool& AllRows)
+{
+	using namespace NCsEdEngine::NCached;
+
+	const FString& Context = Str::DataEntry_DataTable_PopulateImpl;
+
+	FSoftObjectPath DataTablePath = Entry->DataTable.ToSoftObjectPath();
+
+	if (!DataTablePath.IsValid())
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("%s: %s.%s.DataTable is NOT Valid."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+		return;
+	}
+
+	UDataTable* DT = Entry->DataTable.LoadSynchronous();
+
+	if (!DT)
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("%s: Failed to load %s.%s at Path: %s"), *Context, *(DataTable->GetName()), *(RowName.ToString()), *(Entry->DataTable.ToString()));
+		return;
+	}
+
+	Entry->ClearPaths();
+
+	if (CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate))
+	{
+		UE_LOG(LogCsEditor, Warning, TEXT("%s: Populating: %s."), *Context, *(DT->GetName()));
+	}
+
+	TArray<FName> RowNames;
+
+	// All Rows
+	if (AllRows || Entry->bAllRows)
+	{
+		RowNames = DT->GetRowNames();
+	}
+	// Specified Rows
+	else
+	{
+		RowNames = Entry->Rows.Array();
+	}
+
+	if (CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate))
+	{
+		if (RowNames.Num() > CS_EMPTY)
+		{
+			UE_LOG(LogCsEditor, Warning, TEXT("- Processing %d Rows."), RowNames.Num());
+		}
+	}
+
+	Entry->SetupRows(RowNames);
+
+	for (const FName& Name : RowNames)
+	{
+		const UScriptStruct* ScriptStruct = DT->GetRowStruct();
+		UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
+		UStruct* const Struct			  = Temp;
+
+		typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
+		typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+
+		ResultType Result;
+		DependencyLibrary::Get(DT->FindRowUnchecked(Name), Temp, Result);
+
+		Entry->PopulateRow(Name, Result.PathSet, Result.PathSetsByGroup);
+	}
+}
+
+#pragma endregion GetDataEntryTool
 
 // PropertyChange
 #pragma region
@@ -496,63 +581,6 @@ bool UCsEdEngine::Stream_GetString(const TCHAR*& Str, const FString& StringType,
 
 #pragma endregion
 
-// Data
-#pragma region
-
-bool UCsEdEngine::Check_MarkDatasDirty(const TCHAR* Stream)
-{
-	const FString Command	 = TEXT("MarkDatasDirty");
-	const FString Parameters = TEXT("[assetType=optional]");
-	const FString Format	 = Command + TEXT(" ") + Parameters;
-
-	if (FParse::Command(&Stream, *Command))
-	{
-		// AssetType
-		typedef NCsString::FLibrary StringLibrary;
-
-		FString AssetTypeAsString;
-		
-		const bool Success = StringLibrary::Stream_GetValue(Stream, AssetTypeAsString, false);
-
-		if (Success)
-			return false;
-
-		const FECsAssetType AssetType = EMCsAssetType::Get().GetSafeEnum(AssetTypeAsString);
-
-		MarkDatasDirty(AssetType);
-		return true;
-	}
-	return false;
-}
-
-void UCsEdEngine::MarkDatasDirty(const FECsAssetType& AssetType)
-{
-	/*
-	TArray<ACsData*> Datas;
-
-	UClass* Class = (*GetAssetTypeStaticClass)(AssetType);
-
-	UCsLibrary_Asset::GetBlueprintDefaultObjects<ACsData>(TEXT("bp_"), ECsStringCompare::StartsWith, Datas, Class);
-
-	const int32 Count = Datas.Num();
-
-	for (int32 I = 0; I < Count; ++I)
-	{
-		ACsData* Data = Datas[I];
-
-		Data->MarkPackageDirty();
-
-		const FString Name = TEXT(".") + Data->GetName();
-		FString Path	   = Data->GetPathName();
-		Path.RemoveFromEnd(Name);
-
-		UE_LOG(LogCsEditor, Log, TEXT("MarkAllDatasDirty: %s is marked DIRTY."), *Path);
-	}
-	*/
-}
-
-#pragma endregion Data
-
 // DataRootSet
 #pragma region
 
@@ -562,8 +590,8 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable
 
 	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_Datas;
 
-	FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
-	TArray<FName> Dependencies;
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
 
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -576,39 +604,12 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable
 
 		if (RowPtr->bPopulateOnSave)
 		{
-			UE_LOG(LogCsEditor, Warning, TEXT("%s: Populating Paths for %s.%s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
-
-			TSoftClassPtr<UObject>& Data = RowPtr->Data;
-
-			if (!Data.ToSoftObjectPath().IsValid())
+			if (CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate))
 			{
-				UE_LOG(LogCsEditor, Warning, TEXT("%s: %s.%s.Data is NOT Valid."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
-				continue;
+				UE_LOG(LogCsEditor, Warning, TEXT("%s: Populating Paths for %s.%s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
 			}
 
-			UClass* Class = Data.LoadSynchronous();
-
-			if (!Class)
-			{
-				UE_LOG(LogCsEditor, Warning, TEXT("%s: Failed to load %s.%s.Data at Path: %s"), *Context, *(DataTable->GetName()), *(RowName.ToString()), *(Data.ToString()));
-				continue;
-			}
-
-			UObject* DOb = Class->GetDefaultObject();
-
-			if (!DOb)
-			{
-				UE_LOG(LogCsEditor, Warning, TEXT("%s: Failed to get Default Object for Class: %s"), *Context, *(Class->GetName()));
-				continue;
-			}
-
-			AssetRegistryModule.Get().GetDependencies(FName(Data.ToString()), Dependencies);
-
-			NCsLoad::FGetObjectPaths Result;
-			Result.AddPaths(Dependencies);
-			Result.Resolve();
-
-			RowPtr->Populate();
+			DataEntryTool.Data_PopulateImpl(RowPtr);
 
 			RowPtr->bPopulateOnSave = false;
 		}
@@ -617,6 +618,13 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable
 
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* DataTable)
 {
+	using namespace NCsEdEngine::NCached;
+
+	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_DataTables;
+
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 	
 	for (const TPair<FName, uint8*>& Pair : RowMap)
@@ -628,7 +636,7 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* Data
 
 		if (RowPtr->bPopulateOnSave)
 		{
-			RowPtr->Populate();
+			DataEntryTool.DataTable_PopulateImpl(DataTable, RowName, RowPtr, false);
 
 			RowPtr->bPopulateOnSave = false;
 		}
@@ -639,6 +647,9 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads(UDataTable* DataTa
 {
 	// Get Settings
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	// TODO: FIX
+	return;
 
 	if (!Settings)
 		return;
@@ -672,6 +683,9 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload(FCsPayload& Payload
 
 	// Get Settings
 	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+	// TODO: FIX
+	return;
 
 	if (!Settings)
 		return;
@@ -757,7 +771,7 @@ bool UCsEdEngine::Check_PrintBlueprintReferencesReport(const TCHAR* Stream)
 
 void UCsEdEngine::PrintBlueprintReferencesReport(const FName& AssetName)
 {
-	UBlueprint* Bp = UCsLibrary_Asset::FindObjectByClass<UBlueprint>(FName("Blueprint"), AssetName, ECsFindObjectByClassRule::Exact);
+	UBlueprint* Bp = NCsAsset::FLibrary::FindObjectByClass<UBlueprint>(FName("Blueprint"), AssetName, ECsFindObjectByClassRule::Exact);
 
 	const FString AssetNameAsString = AssetName.ToString();
 

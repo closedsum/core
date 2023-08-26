@@ -1,12 +1,18 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Actor/CsActor.h"
 #include "Types/CsTypes_Texture.h"
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/Sound/CsTypes_Sound.h"
 #include "Types/CsTypes_SkeletalMesh.h"
+// Actor
+#include "Actor/CsActor.h"
+// Data
+#include "Data/CsDataTable.h"
 
 #include "CsScriptLibrary_Blueprint.generated.h"
 

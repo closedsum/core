@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Load/CsObjectPathDependencyGroup.h"
 // Movie
 #include "MovieSceneSequencePlayer.h"
 #include "IMovieScenePlaybackClient.h"
@@ -29,6 +29,8 @@
 #include "NiagaraEmitter.h"
 // Sound
 #include "Sound/SoundBase.h"
+// DataTable
+#include "Engine/DataTable.h"
 
 // LoadCodes
 #pragma region

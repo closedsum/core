@@ -6,9 +6,14 @@
 // Managers
 #include "Managers/Resource/CsManager_ResourceValueType_Fixed.h"
 // Types
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_DataEntry.h"
+#include "Data/CsTypes_Payload.h"
 #include "Managers/Load/CsTypes_Streaming.h"
 #include "Types/CsTypes_Map.h"
+// Container
+#include "Data/CsDataRootSetContainer.h"
+// Load
+#include "Load/CsLoadHandle.h"
 // Log
 #include "Utility/CsLog.h"
 

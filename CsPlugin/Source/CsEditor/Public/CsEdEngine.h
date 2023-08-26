@@ -7,10 +7,11 @@
 #include "Managers/Singleton/CsGetManagerSingleton.h"
 #include "Object/CsGetCreatedObjects.h"
 #include "Play/Mode/CsGetPlayMode.h"
+#include "Data/Tool/CsGetDataEntryTool.h"
 #include "Animation/Event/CsAnimation_Event.h"
 // Types
 #include "Object/CsTypes_Object.h"
-#include "Types/CsTypes_Load.h"
+#include "Data/CsTypes_Payload.h"
 // Object
 #include "UObject/ObjectSaveContext.h"
 
@@ -25,12 +26,16 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsEdEngine_OnEndPIE, bool, IsSimula
 
 struct FCsRoutine;
 
+struct FCsDataEntry_Data;
+struct FCsDataEntry_DataTable;
+
 UCLASS()
 class CSEDITOR_API UCsEdEngine : public UUnrealEdEngine,
 								 public ICsGetManagerSingleton,
 								 public ICsGetCreatedObjects,
 								 public ICsGetPlayMode,
-								 public ICsAnimation_Event
+								 public ICsGetDataEntryTool,
+								 public ICsAnimation_Event // TODO: Move
 {
 public:
 
@@ -133,6 +138,29 @@ public:
 
 #pragma endregion PlayMode
 
+// ICsGetDataEntryTool
+#pragma region
+public:
+
+#define DataEntryToolType NCsData::NEntry::NTool::FImpl
+	FORCEINLINE DataEntryToolType* GetDataEntryTool() { return &DataEntryTool; }
+#undef DataEntryToolType
+
+#pragma endregion ICsGetDataEntryTool
+
+// GetDataEntryTool
+#pragma region
+private:
+
+#define DataEntryToolType NCsData::NEntry::NTool::FImpl
+	DataEntryToolType DataEntryTool;
+#undef DataEntryToolType
+
+	static void DataEntry_Data_PopulateImpl(FCsDataEntry_Data* Entry);
+	static void DataEntry_DataTable_PopulateImpl(UObject* DataTable, const FName& RowName, FCsDataEntry_DataTable* Entry, const bool& AllRows);
+
+#pragma endregion GetDataEntryTool
+
 // ICsAnimation_Event
 #pragma region
 public:
@@ -200,15 +228,6 @@ public:
 	bool Stream_GetString(const TCHAR*& Str, const FString& StringType, FString& OutString, const FString& Check, const FString& Format);
 
 #pragma endregion Stream
-
-// Data
-#pragma region
-public:
-
-	bool Check_MarkDatasDirty(const TCHAR* Stream);
-	void MarkDatasDirty(const FECsAssetType& AssetType);
-
-#pragma endregion Data
 
 // DataRootSet
 #pragma region

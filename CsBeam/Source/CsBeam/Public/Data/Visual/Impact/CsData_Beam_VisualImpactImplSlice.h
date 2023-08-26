@@ -1,14 +1,17 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Type
-#include "Types/CsTypes_Load.h"
 #include "Managers/FX/CsTypes_FX.h"
+// Data
+#include "Data/CsDataTable.h"
+#include "Data/Visual/Impact/CsData_Beam_VisualImpact.h"
 // Log
 #include "Utility/CsBeamLog.h"
-// Data
-#include "Data/Visual/Impact/CsData_Beam_VisualImpact.h"
 
 #include "CsData_Beam_VisualImpactImplSlice.generated.h"
-#pragma once
+
 
 // NCsBeam::NData::NVisual::NImpact::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsBeam, NData, NVisual, NImpact, FImplSlice)

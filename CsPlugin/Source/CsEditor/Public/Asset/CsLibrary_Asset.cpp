@@ -7,6 +7,8 @@
 // Types
 #include "Load/CsObjectPathDependencyGroup.h"
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
+// Settings
+#include "Settings/CsDeveloperSettings.h"
 // Data
 #include "Engine/DataTable.h"
 // Class
@@ -22,6 +24,7 @@
 #include "Animation/AnimData/AnimDataModel.h"
 // Font
 #include "Engine/Font.h"
+#include "Engine/FontFace.h"
 // Material
 #include "Materials/MaterialParameterCollection.h"
 #include "Materials/MaterialFunction.h"
@@ -47,6 +50,27 @@
 
 namespace NCsAsset
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				const FString AssetPath_SlateCore = TEXT("/Script/SlateCore");
+				const FString AssetPath_UMG = TEXT("/Script/UMG");
+				const FString AssetPath_UMGEditor = TEXT("/Script/UMGEditor");
+				const FString AssetPath_AudioEditor = TEXT("/Script/AudioEditor");
+				const FString AssetPath_MovieSceneTracks= TEXT("/Script/MovieSceneTracks");
+				const FString AssetPath_MovieSceneTools = TEXT("/Script/MovieSceneTools");
+				const FString AssetPath_Niagara = TEXT("/Script/Niagara");
+				const FString AssetPath_NiagaraEditor = TEXT("/Script/NiagaraEditor");
+				const FString AssetPath_NavigationSystem = TEXT("/Script/NavigationSystem");
+				const FString AssetPath_AnimGraph = TEXT("/Script/AnimGraph");
+				const FString AssetPath_AnimGraphRuntime = TEXT("/Script/AnimGraphRuntime");
+			}
+		}
+	}
+
 	// Asset Registry
 	#pragma region
 
@@ -288,6 +312,78 @@ namespace NCsAsset
 	{
 		namespace NSoftPath
 		{	
+			bool FLibrary::IsValidPath(const FSoftObjectPath& Path)
+			{
+				using namespace NCsAsset::NLibrary::NCached;
+
+				if (!Path.IsValid())
+					return false;
+
+				const FString& AssetPath = Path.ToString();
+
+				if (AssetPath == Str::AssetPath_SlateCore)
+					return false;
+				if (AssetPath == Str::AssetPath_UMG)
+					return false;
+				if (AssetPath == Str::AssetPath_UMGEditor)
+					return false;
+				if (AssetPath == Str::AssetPath_AudioEditor)
+					return false;
+				if (AssetPath == Str::AssetPath_MovieSceneTracks)
+					return false;
+				if (AssetPath == Str::AssetPath_MovieSceneTools)
+					return false;
+				if (AssetPath == Str::AssetPath_Niagara)
+					return false;
+				if (AssetPath == Str::AssetPath_NiagaraEditor)
+					return false;
+				if (AssetPath == Str::AssetPath_NavigationSystem)
+					return false;
+				if (AssetPath == Str::AssetPath_AnimGraph)
+					return false;
+				if (AssetPath == Str::AssetPath_AnimGraphRuntime)
+					return false;
+
+				const TArray<FString>& IgnoreAssetPaths = GetMutableDefault<UCsDeveloperSettings>()->IgnoreAssetPaths;
+
+				for (const FString& IgnoreAssetPath : IgnoreAssetPaths)
+				{
+					if (AssetPath == IgnoreAssetPath)
+						return false;
+				}
+				return true;
+			}
+
+			UClass* FLibrary::GetClass(const FSoftObjectPath& Path)
+			{
+				if (IsValidPath(Path))
+				{
+					UObject* O = Path.TryLoad();
+
+					if (!O)
+						return nullptr;
+
+					return O->GetClass();
+				}
+				return nullptr;
+			}
+
+			void FLibrary::GetObjectAndClass(const FSoftObjectPath& Path, UObject*& O, UClass*& Class)
+			{
+				O	  = nullptr;
+				Class = nullptr;
+
+				if (IsValidPath(Path))
+				{
+					O = Path.TryLoad();
+
+					if (!O)
+						return;
+
+					Class = O->GetClass();
+				}
+			}
+
 			FLibrary::FGet::FResult::FResult() :
 				Paths(),
 				PathSet(),
@@ -309,22 +405,17 @@ namespace NCsAsset
 				}
 			}
 
-			void FLibrary::FGet::FResult::AddPathToGroup(const FSoftObjectPath& Path)
+			bool FLibrary::FGet::FResult::AddPathToGroup(const FSoftObjectPath& Path)
 			{
-				if (!Path.IsValid())
-					return;
+				using namespace NCsAsset::NLibrary::NCached;
 
-				const FString& AssetPath = Path.GetAssetPathString();
+				UObject* O = nullptr;
+				UClass* Class = nullptr;
+				
+				GetObjectAndClass(Path, O, Class);
 
-				if (!AssetPath.Contains(TEXT("."), ESearchCase::IgnoreCase, ESearchDir::FromEnd))
-					return;
-
-				UObject* O = Path.TryLoad();
-
-				if (!O)
-					return;
-
-				UClass* Class = O->GetClass();
+				if (!Class)
+					return false;
 
 				typedef ECsObjectPathDependencyGroup GroupType;
 
@@ -346,6 +437,11 @@ namespace NCsAsset
 				*/
 				// Blueprint
 				else
+				if (Class->HasAnyCastFlag(EClassCastFlags::CASTCLASS_UBlueprint))
+				{
+					PathSetsByGroup[(uint8)GroupType::Blueprint].Add(Path);
+				}
+				else
 				if (Class->HasAnyClassFlags(EClassFlags::CLASS_CompiledFromBlueprint) ||
 					Class->IsChildOf<UBlueprintGeneratedClass>())
 				{
@@ -357,7 +453,7 @@ namespace NCsAsset
 						{
 							if (O == BpC->SkeletonGeneratedClass)
 							{
-								return;
+								return false;
 							}
 						}
 					#endif // #if WITH_EDITOR
@@ -370,7 +466,7 @@ namespace NCsAsset
 						{
 							if (Class == BpC->SkeletonGeneratedClass)
 							{
-								return;
+								return false;
 							}
 						}
 					#endif // #if WITH_EDITOR
@@ -400,7 +496,7 @@ namespace NCsAsset
 				else
 				if (Class->IsChildOf<UAnimDataModel>())
 				{
-					return;
+					return false;
 				}
 				// FX
 				else
@@ -412,7 +508,7 @@ namespace NCsAsset
 				else
 				if (Class->IsChildOf<UNiagaraEmitter>())
 				{
-					return;
+					return false;
 				}
 				// Sound
 				else
@@ -438,7 +534,7 @@ namespace NCsAsset
 				else
 				if (Class->IsChildOf<UMaterialFunction>())
 				{
-					return;
+					return false;
 				}
 				// Material Parameter Collection
 				else
@@ -460,7 +556,8 @@ namespace NCsAsset
 				}
 				// Font
 				else
-				if (Class->IsChildOf<UFont>())
+				if (Class->IsChildOf<UFont>() ||
+					Class->IsChildOf<UFontFace>())
 				{
 					PathSetsByGroup[(uint8)GroupType::Font].Add(Path);
 				}
@@ -475,6 +572,7 @@ namespace NCsAsset
 				{
 					PathSetsByGroup[(uint8)GroupType::Other].Add(Path);
 				}
+				return true;
 			}
 
 			void FLibrary::FGet::FResult::Resolve()
@@ -483,8 +581,17 @@ namespace NCsAsset
 
 				for (const FSoftObjectPath& Path : PathSet)
 				{
-					AddPathToGroup(Path);
-					Paths.Add(Path);
+					const bool Success = AddPathToGroup(Path);
+
+					if (Success)
+						Paths.Add(Path);
+				}
+
+				PathSet.Reset();
+
+				for (const FSoftObjectPath& Path : Paths)
+				{
+					PathSet.Add(Path);
 				}
 
 				const int32 Count = PathSetsByGroup.Num();
@@ -523,6 +630,10 @@ namespace NCsAsset
 				
 							if (UDataTable* DataTable = *DataTablePtr)
 							{
+								const FSoftObjectPath ObjectPath = FSoftObjectPath(DataTable);
+
+								OutResult.AddPath(FName(ObjectPath.ToString()));
+
 								// Check each row for any Object Paths
 								const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
 								UScriptStruct* Temp				  = const_cast<UScriptStruct*>(ScriptStruct);
@@ -549,9 +660,10 @@ namespace NCsAsset
 
 							if (ObjectPath.IsValid())
 							{
+								OutResult.AddPath(FName(ObjectPath.ToString()));
+
 								FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
 								TArray<FName> Dependencies;
-
 
 								AssetRegistryModule.Get().GetDependencies(ObjectPath.GetLongPackageFName(), Dependencies);
 								OutResult.AddPaths(Dependencies);
@@ -570,6 +682,8 @@ namespace NCsAsset
 							{
 								if (UObject* O = Ptr->LoadSynchronous())
 								{
+									OutResult.AddPath(FName(ObjectPath.ToString()));
+
 									if (UDataTable* DataTable = Cast<UDataTable>(O))
 									{
 										// Check each row for any Object Paths
@@ -631,6 +745,8 @@ namespace NCsAsset
 
 								if (ObjectPath.IsValid())
 								{
+									OutResult.AddPath(FName(ObjectPath.ToString()));
+
 									FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
 									TArray<FName> Dependencies;
 
@@ -649,6 +765,8 @@ namespace NCsAsset
 								{
 									if (UObject* O = ObjectPtr->LoadSynchronous())
 									{
+										OutResult.AddPath(FName(ObjectPath.ToString()));
+										
 										if (UDataTable* DataTable = Cast<UDataTable>(O))
 										{
 											// Check each row for any Object Paths
@@ -701,6 +819,11 @@ namespace NCsAsset
 				{
 					TArray<FName> Dependencies;
 					AssetRegistryModule.Get().GetDependencies(Path.GetLongPackageFName(), Dependencies);
+
+					for (const FName& Dependency : Dependencies)
+					{
+						DataTable_CheckAndAdd(FSoftObjectPath(Dependency.ToString()), AggregateDependencies);
+					}
 					AggregateDependencies.Append(Dependencies);
 				}
 
@@ -713,6 +836,20 @@ namespace NCsAsset
 			}
 
 			#undef ResultType
+
+			void FLibrary::DataTable_CheckAndAdd(const FSoftObjectPath& Path, TArray<FName>& Dependecies)
+			{
+				UClass* Class = GetClass(Path);
+
+				if (Class->IsChildOf<UDataTable>())
+				{
+					FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+
+					TArray<FName> AdditionalDependencies;
+					AssetRegistryModule.Get().GetDependencies(Path.GetLongPackageFName(), AdditionalDependencies);
+					Dependecies.Append(AdditionalDependencies);
+				}
+			}
 		}
 	}
 }

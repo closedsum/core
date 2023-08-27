@@ -35,6 +35,8 @@ class USkeletalMesh;
 class USkeletalMeshComponent;
 class UPoseableMeshComponent;
 
+class UClass;
+
 namespace NCsAsset
 {
 	struct CSEDITOR_API FLibrary
@@ -404,6 +406,16 @@ namespace NCsAsset
 			{
 			public:
 
+				static bool IsValidPath(const FSoftObjectPath& Path);
+				FORCEINLINE static bool IsValidPath(const FName& Path)
+				{
+					return IsValidPath(FSoftObjectPath(Path.ToString()));
+				}
+
+				static UClass* GetClass(const FSoftObjectPath& Path);
+
+				static void GetObjectAndClass(const FSoftObjectPath& Path, UObject*& O, UClass*& Class);
+
 				struct FGet
 				{
 				public:
@@ -421,6 +433,11 @@ namespace NCsAsset
 
 						FResult();
 
+						void AddPath(const FName& Path) 
+						{ 
+							PathSet.Add(FSoftObjectPath(Path.ToString()));
+						}
+
 						void AddPaths(const TArray<FName>& Dependecies)
 						{
 							for (const FName& Path : Dependecies)
@@ -429,7 +446,7 @@ namespace NCsAsset
 							}
 						}
 
-						void AddPathToGroup(const FSoftObjectPath& Path);
+						bool AddPathToGroup(const FSoftObjectPath& Path);
 
 						void Resolve();
 					};
@@ -447,6 +464,8 @@ namespace NCsAsset
 				//static void Get(UObject* StructValue, UStruct* const& Struct, NCsLoad::FGetObjectPaths& OutResult);
 
 			#undef ResultType
+
+				static void DataTable_CheckAndAdd(const FSoftObjectPath& Path, TArray<FName>& Dependecies);
 			};
 		}
 	}

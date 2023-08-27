@@ -190,7 +190,7 @@ void FCsDataEntry_Data::Populate(const TSet<FSoftObjectPath>& PathSet, const TAr
 		typedef EMCsObjectPathDependencyGroup GroupMapType;
 		typedef ECsObjectPathDependencyGroup GroupType;
 
-		ArrGroup.PathsByGroup[(uint8)GroupType::Blueprint].Populate(DOb, DataPath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
+		PathsByGroup[(uint8)GroupType::Blueprint].Populate(DOb, DataPath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
 
 		for (const GroupType& Group : GroupMapType::Get())
 		{

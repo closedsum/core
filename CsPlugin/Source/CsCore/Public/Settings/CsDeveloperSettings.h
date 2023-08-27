@@ -89,7 +89,7 @@ public:
 
 	UObject* SafeLoadDataRootSet(const FString& Context);
 
-	UPROPERTY(config, EditAnywhere, Category = "Settings|Data", meta = (MustImplement = "/Script.CsCore.CsDataRootSet"))
+	UPROPERTY(config, EditAnywhere, Category = "Settings|Data")
 	FCsSettings_DataRootSet DataRootSets[(uint8)ECsPlatform::ECsPlatform_MAX];
 
 	FORCEINLINE const TSoftClassPtr<UObject>& GetDataRootSet(const ECsPlatform& Platform) const
@@ -101,6 +101,9 @@ public:
 	{
 		return DataRootSets[(uint8)Platform].DirectoryToAlwaysCook;
 	}
+
+	UPROPERTY(config, EditAnywhere, Category = "Settings|Data")
+	TArray<FString> IgnoreAssetPaths;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "Manager Data"))
 	FCsSettings_Manager_Data Manager_Data;

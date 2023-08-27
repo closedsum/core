@@ -11,6 +11,7 @@
 #include "Data/CsTypes_DataEntry.h"
 #include "Managers/Input/CsTypes_Input.h"
 #include "Library/Load/CsTypes_Library_Load.h"
+#include "Load/CsObjectPathDependencyGroup.h"
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library

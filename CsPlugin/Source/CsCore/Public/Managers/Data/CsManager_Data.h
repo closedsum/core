@@ -690,12 +690,13 @@ public:
 	* @param EntryName
 	* return			Entry
 	*/
-	FORCEINLINE const FCsDataEntry_Data* GetDataEntry(const FName& EntryName) const
+	FORCEINLINE const FCsDataEntry_Data* Data_GetEntry(const FName& EntryName) const
 	{
-		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataEntry: EntryName: None is NOT Valid."));
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::Data_GetEntry: EntryName: None is NOT Valid."));
 
 		if (const FCsDataEntry_Data* const* EntryPtr = DataEntryMap.Find(EntryName))
 			return *EntryPtr;
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::Data_GetEntry: Failed to find Data with EntryName: %s."), *(EntryName.ToString())));
 		return nullptr;
 	}
 
@@ -736,7 +737,7 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPath: EntryName: None is NOT Valid."));
 
-		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntry(EntryName))
 			return Entry->DataTable.ToSoftObjectPath();
 		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableSoftObjectPath: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
 		return FSoftObjectPath();
@@ -774,7 +775,7 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::Data_GetPaths: EntryName: None is NOT Valid."));
 
-		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+		if (const FCsDataEntry_Data* Entry = Data_GetEntry(EntryName))
 		{
 			OutPaths.Append(Entry->Paths.Internal);
 		}
@@ -811,7 +812,7 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::Data_GetPathCount: EntryName: None is NOT Valid."));
 
-		if (const FCsDataEntry_Data* Entry = GetDataEntry(EntryName))
+		if (const FCsDataEntry_Data* Entry = Data_GetEntry(EntryName))
 			return Entry->Paths.Internal.Num();
 		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::Data_GetPathCount: Failed to find Data with EntryName: %s."), *(EntryName.ToString())));
 		return 0;
@@ -1178,13 +1179,13 @@ public:
 	* @param EntryName
 	* return
 	*/
-	FORCEINLINE const FCsDataEntry_DataTable* GetDataTableEntry(const FName& EntryName) const
+	FORCEINLINE const FCsDataEntry_DataTable* DataTable_GetEntry(const FName& EntryName) const
 	{
-		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableEntry: EntryName: None is NOT Valid."));
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::DataTable_GetEntry: EntryName: None is NOT Valid."));
 
 		if (const FCsDataEntry_DataTable* const* EntryPtr = DataTableEntryMap.Find(EntryName))
 			return *EntryPtr;
-		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableEntry: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::DataTable_GetEntry: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
 		return nullptr;
 	}
 
@@ -1224,7 +1225,7 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetDataTableSoftObjectPath: EntryName: None is NOT Valid."));
 
-		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntry(EntryName))
 			return Entry->DataTable.ToSoftObjectPath();
 		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::GetDataTableSoftObjectPath: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
 		return FSoftObjectPath();
@@ -1260,7 +1261,7 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::DataTable_GetPaths: EntryName: None is NOT Valid."));
 
-		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntry(EntryName))
 		{
 			OutPaths.Append(Entry->Paths.Internal);
 		}
@@ -1295,7 +1296,7 @@ public:
 	{
 		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::DataTable_GetPathCount: EntryName: None is NOT Valid."));
 
-		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntry(EntryName))
 			return Entry->Paths.Internal.Num();
 		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::DataTable_GetPathCount: Failed to find DataTable with EntryName: %s."), *(EntryName.ToString())));
 		return 0;
@@ -1327,7 +1328,7 @@ public:
 	{
 		checkf(RowName != NAME_None, TEXT("UCsManager_Data::DataTable_Row_GetPaths: RowName: None is NOT Valid."));
 
-		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntry(EntryName))
 		{
 			if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
 			{
@@ -1391,10 +1392,9 @@ public:
 	*/
 	FORCEINLINE int32 DataTable_Row_GetPathCount(const FName& EntryName, const FName& RowName) const
 	{
-		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::DataTable_Row_GetPathCount: EntryName: None is NOT Valid."));
 		checkf(RowName != NAME_None, TEXT("UCsManager_Data::DataTable_Row_GetPathCount: RowName: None is NOT Valid."));
 
-		if (const FCsDataEntry_DataTable* Entry = GetDataTableEntry(EntryName))
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntry(EntryName))
 		{
 			if (const FCsTArraySoftObjectPath* Paths = Entry->PathsByRowMap.Find(RowName))
 			{
@@ -1469,7 +1469,7 @@ public:
 	* @param PayloadName
 	* @param OutPaths
 	*/
-	void GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths);
+	void Payload_GetPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths) const;
 
 	/**
 	* Get the SoftObjectPaths for Payload associated with Payload Name.
@@ -1481,23 +1481,23 @@ public:
 	void Payload_GetPathsChecked(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths) const;
 
 	/**
-	*
+	* Safely get the SoftObjectPaths for Payload associated with Payload Name.
 	*
 	* @param Context		The calling context.
 	* @param PayloadName
 	* @param OutPaths
 	* @param Log			(optional)
 	*/
-	void GetSafePayloadSoftObjectPaths(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths, void(*Log)(const FString&) = &FCsLog::Warning);
+	void Payload_GetSafePaths(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
 	/**
-	*
+	* Get the number of SoftObjectPaths for Payload associated with Payload Name.
 	*
 	* @param PayloadName
 	* return			Number of SoftObjectPaths for the PayloadName.
 	*					0 for an invalid PayloadName.
 	*/
-	int32 GetPayloadSoftObjectPathCount(const FName& PayloadName);
+	int32 Payload_GetPathCount(const FName& PayloadName) const;
 
 	/**
 	* Get the number of SoftObjectPaths for Payload associated with Payload Name.

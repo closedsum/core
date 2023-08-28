@@ -38,8 +38,8 @@ namespace NCsManagerData
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPaths);
-			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GetPayloadSoftObjectPathCount);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPaths);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPathCount);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddDataCompositionObject_Loaded);
 		}
 	}
@@ -759,7 +759,7 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 	// Set ObjectPaths
 	Payload.ObjectPaths.Reset(Count);
 
-	GetSafePayloadSoftObjectPaths(Context, PayloadName, Payload.ObjectPaths, Log);
+	Payload_GetSafePaths(Context, PayloadName, Payload.ObjectPaths, Log);
 
 	if (Payload.ObjectPaths.Num() == CS_EMPTY)
 	{
@@ -807,15 +807,15 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 		// SoftObjectPath
 #pragma region
 
-void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths)
+void UCsManager_Data::Payload_GetPaths(const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths) const
 {
 	using namespace NCsManagerData::NCached;
 
-	const FString& Context = Str::GetPayloadSoftObjectPaths;
+	const FString& Context = Str::Payload_GetPaths;
 
 	checkf(PayloadName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
 
-	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
 	if (!PayloadPtr)
 		PayloadPtr = PayloadMap_Added.Find(PayloadName);
@@ -911,11 +911,11 @@ void UCsManager_Data::Payload_GetPathsChecked(const FString& Context, const FNam
 #endif // #if UE_BUILD_SHIPPING
 }
 
-void UCsManager_Data::GetSafePayloadSoftObjectPaths(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+void UCsManager_Data::Payload_GetSafePaths(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
 {
 	CS_IS_NAME_NONE_EXIT(PayloadName)
 
-	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
 	if (!PayloadPtr)
 		PayloadPtr = PayloadMap_Added.Find(PayloadName);
@@ -961,17 +961,17 @@ void UCsManager_Data::GetSafePayloadSoftObjectPaths(const FString& Context, cons
 #endif // #if UE_BUILD_SHIPPING
 }
 
-int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
+int32 UCsManager_Data::Payload_GetPathCount(const FName& PayloadName) const
 {
 	using namespace NCsManagerData::NCached;
 
-	const FString& Context = Str::GetPayloadSoftObjectPathCount;
+	const FString& Context = Str::Payload_GetPathCount;
 
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	int32 Count = 0;
 
-	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
 	if (!PayloadPtr)
 		PayloadPtr = PayloadMap_Added.Find(PayloadName);

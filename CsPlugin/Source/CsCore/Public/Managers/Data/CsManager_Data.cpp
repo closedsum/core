@@ -713,7 +713,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 
 	const FString& Context = Str::AsyncLoadPayload;
 
-	const int32 Count = GetPayloadSoftObjectPathCountChecked(Context, PayloadName);
+	const int32 Count = Payload_GetPathCountChecked(Context, PayloadName);
 	
 	if (Count <= CS_EMPTY)
 	{
@@ -728,7 +728,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 	// Set ObjectPaths
 	Payload.ObjectPaths.Reset(Count);
 
-	GetPayloadSoftObjectPathsChecked(Context, PayloadName, Payload.ObjectPaths);
+	Payload_GetPathsChecked(Context, PayloadName, Payload.ObjectPaths);
 	// Set Async Order
 	Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
 	// Set callback On Finish
@@ -743,7 +743,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 
 void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 {
-	const int32 Count = GetSafePayloadSoftObjectPathCount(Context, PayloadName, Log);
+	const int32 Count = Payload_GetSafePathCount(Context, PayloadName, Log);
 
 	if (Count <= CS_EMPTY)
 	{
@@ -829,7 +829,7 @@ void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray
 		{
 			const FName& EntryName = Payload_Data.Name;
 
-			GetDataSoftObjectPathsChecked(Context, EntryName, OutPaths);
+			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
@@ -839,16 +839,16 @@ void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray
 			// All Rows
 			if (Payload_DataTable.bAllRows)
 			{
-				GetDataTableSoftObjectPathsChecked(Context, EntryName, OutPaths);
+				DataTable_GetPathsChecked(Context, EntryName, OutPaths);
 			}
 			else
 			{
 				if (Payload_DataTable.Rows.Num() == CS_EMPTY)
-					OutPaths.Add(GetDataTableSoftObjectPathChecked(Context, EntryName));
+					OutPaths.Add(DataTable_GetPathChecked(Context, EntryName));
 
 				for (const FName& RowName : Payload_DataTable.Rows)
 				{
-					GetDataTableRowSoftObjectPathsChecked(Context, EntryName, RowName, OutPaths);
+					DataTable_Row_GetPathsChecked(Context, EntryName, RowName, OutPaths);
 				}
 			}
 		}
@@ -861,11 +861,11 @@ void UCsManager_Data::GetPayloadSoftObjectPaths(const FName& PayloadName, TArray
 #endif // #if WITH_EDITOR
 }
 
-void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths)
+void UCsManager_Data::Payload_GetPathsChecked(const FString& Context, const FName& PayloadName, TArray<FSoftObjectPath>& OutPaths) const
 {
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
-	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+	 FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
 	if (!PayloadPtr)
 		PayloadPtr = PayloadMap_Added.Find(PayloadName);
@@ -879,7 +879,7 @@ void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, c
 		{
 			const FName& EntryName = Payload_Data.Name;
 
-			GetDataSoftObjectPathsChecked(Context, EntryName, OutPaths);
+			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
@@ -889,16 +889,16 @@ void UCsManager_Data::GetPayloadSoftObjectPathsChecked(const FString& Context, c
 			// All Rows
 			if (Payload_DataTable.bAllRows)
 			{
-				GetDataTableSoftObjectPathsChecked(Context, EntryName, OutPaths);
+				DataTable_GetPathsChecked(Context, EntryName, OutPaths);
 			}
 			else
 			{
 				if (Payload_DataTable.Rows.Num() == CS_EMPTY)
-					OutPaths.Add(GetDataTableSoftObjectPathChecked(Context, EntryName));
+					OutPaths.Add(DataTable_GetPathChecked(Context, EntryName));
 
 				for (const FName& RowName : Payload_DataTable.Rows)
 				{
-					GetDataTableRowSoftObjectPathsChecked(Context, EntryName, RowName, OutPaths);
+					DataTable_Row_GetPathsChecked(Context, EntryName, RowName, OutPaths);
 				}
 			}
 		}
@@ -929,7 +929,7 @@ void UCsManager_Data::GetSafePayloadSoftObjectPaths(const FString& Context, cons
 		{
 			const FName& EntryName = Payload_Data.Name;
 
-			GetDataSoftObjectPathsChecked(Context, EntryName, OutPaths);
+			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
@@ -939,16 +939,16 @@ void UCsManager_Data::GetSafePayloadSoftObjectPaths(const FString& Context, cons
 			// All Rows
 			if (Payload_DataTable.bAllRows)
 			{
-				GetDataTableSoftObjectPathsChecked(Context, EntryName, OutPaths);
+				DataTable_GetPathsChecked(Context, EntryName, OutPaths);
 			}
 			else
 			{
 				if (Payload_DataTable.Rows.Num() == CS_EMPTY)
-					OutPaths.Add(GetDataTableSoftObjectPathChecked(Context, EntryName));
+					OutPaths.Add(DataTable_GetPathChecked(Context, EntryName));
 
 				for (const FName& RowName : Payload_DataTable.Rows)
 				{
-					GetDataTableRowSoftObjectPathsChecked(Context, EntryName, RowName, OutPaths);
+					DataTable_Row_GetPathsChecked(Context, EntryName, RowName, OutPaths);
 				}
 			}
 		}
@@ -985,7 +985,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 		{
 			const FName& EntryName = Payload_Data.Name;
 
-			Count += GetDataSoftObjectPathCountChecked(Context, EntryName);
+			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
@@ -995,7 +995,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 			// All Rows
 			if (Payload_DataTable.bAllRows)
 			{
-				Count += GetDataTableSoftObjectPathCountChecked(Context, EntryName);
+				Count += DataTable_GetPathCountChecked(Context, EntryName);
 			}
 			// Specified Rows
 			else
@@ -1005,7 +1005,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 
 				for (const FName& RowName : Payload_DataTable.Rows)
 				{
-					Count += GetDataTableRowSoftObjectPathCountChecked(Context, EntryName, RowName);
+					Count += DataTable_Row_GetPathCountChecked(Context, EntryName, RowName);
 				}
 			}
 		}
@@ -1015,13 +1015,13 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCount(const FName& PayloadName)
 	return Count;
 }
 
-int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Context, const FName& PayloadName)
+int32 UCsManager_Data::Payload_GetPathCountChecked(const FString& Context, const FName& PayloadName) const
 {
 	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	int32 Count = 0;
 
-	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
 	if (!PayloadPtr)
 		PayloadPtr = PayloadMap_Added.Find(PayloadName);
@@ -1035,7 +1035,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 		{
 			const FName& EntryName = Payload_Data.Name;
 
-			Count += GetDataSoftObjectPathCountChecked(Context, EntryName);
+			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
@@ -1045,7 +1045,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 			// All Rows
 			if (Payload_DataTable.bAllRows)
 			{
-				Count += GetDataTableSoftObjectPathCountChecked(Context, EntryName);
+				Count += DataTable_GetPathCountChecked(Context, EntryName);
 			}
 			// Specified Rows
 			else
@@ -1055,7 +1055,7 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 
 				for (const FName& RowName : Payload_DataTable.Rows)
 				{
-					Count += GetDataTableRowSoftObjectPathCountChecked(Context, EntryName, RowName);
+					Count += DataTable_Row_GetPathCountChecked(Context, EntryName, RowName);
 				}
 			}
 		}
@@ -1066,13 +1066,13 @@ int32 UCsManager_Data::GetPayloadSoftObjectPathCountChecked(const FString& Conte
 	return Count;
 }
 
-int32 UCsManager_Data::GetSafePayloadSoftObjectPathCount(const FString& Context, const FName& PayloadName, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+int32 UCsManager_Data::Payload_GetSafePathCount(const FString& Context, const FName& PayloadName, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 {
 	CS_IS_NAME_NONE_RET_VALUE(PayloadName, 0)
 
 	int32 Count = 0;
 
-	FCsPayload** PayloadPtr = PayloadMap.Find(PayloadName);
+	FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
 	if (!PayloadPtr)
 		PayloadPtr = PayloadMap_Added.Find(PayloadName);
@@ -1086,7 +1086,7 @@ int32 UCsManager_Data::GetSafePayloadSoftObjectPathCount(const FString& Context,
 		{
 			const FName& EntryName = Payload_Data.Name;
 
-			Count += GetDataSoftObjectPathCountChecked(Context, EntryName);
+			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
@@ -1096,7 +1096,7 @@ int32 UCsManager_Data::GetSafePayloadSoftObjectPathCount(const FString& Context,
 			// All Rows
 			if (Payload_DataTable.bAllRows)
 			{
-				Count += GetDataTableSoftObjectPathCountChecked(Context, EntryName);
+				Count += DataTable_GetPathCountChecked(Context, EntryName);
 			}
 			// Specified Rows
 			else
@@ -1106,7 +1106,7 @@ int32 UCsManager_Data::GetSafePayloadSoftObjectPathCount(const FString& Context,
 
 				for (const FName& RowName : Payload_DataTable.Rows)
 				{
-					Count += GetDataTableRowSoftObjectPathCountChecked(Context, EntryName, RowName);
+					Count += DataTable_Row_GetPathCountChecked(Context, EntryName, RowName);
 				}
 			}
 		}

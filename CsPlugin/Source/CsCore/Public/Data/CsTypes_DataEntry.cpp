@@ -438,6 +438,7 @@ void FCsDataEntry_DataTable::PopulateRow(const FName& RowName, const TSet<FSoftO
 		FCsTArraySoftObjectPathByGroup& ArrGroup = PathsByGroupByRowMap[RowName];
 
 		ArrGroup.PathsByGroup[(uint8)GroupType::DataTable].Populate(DT, DataTablePath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
+		PathsByGroup[(uint8)GroupType::DataTable].Populate(DT, DataTablePath, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
 
 		for (const GroupType& Group : GroupMapType::Get())
 		{
@@ -450,6 +451,7 @@ void FCsDataEntry_DataTable::PopulateRow(const FName& RowName, const TSet<FSoftO
 			FCsTArraySoftObjectPath& Arr	 = ArrGroup.PathsByGroup[(uint8)Group];
 
 			Arr.Populate(Set, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
+			PathsByGroup[(uint8)GroupType::DataTable].Populate(Set, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
 		}
 	}
 }

@@ -63,6 +63,16 @@ namespace NCsData
 
 		#pragma endregion ContextRoot
 
+		// Root Set
+		#pragma region
+
+		UObject* FLibrary::GetDataRootSetImplChecked(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetDataRootSetImplChecked(Context);
+		}
+
+		#pragma endregion Root Set
+
 		// Get
 		#pragma region
 
@@ -234,6 +244,26 @@ namespace NCsData
 			const FString& Context = Str::GetSafeDataTable;
 
 			return GetSafeDataTable(Context, ContextObject, SoftObject, nullptr);
+		}
+
+		uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return nullptr;
+
+			return Manager_Data->GetSafeDataTableRow(Context, Path, RowName, Log);
+		}
+
+		uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
+
+			if (!Manager_Data)
+				return nullptr;
+
+			return Manager_Data->GetSafeDataTableRow(Context, SoftObject, RowName, Log);
 		}
 
 		#pragma endregion DataTable

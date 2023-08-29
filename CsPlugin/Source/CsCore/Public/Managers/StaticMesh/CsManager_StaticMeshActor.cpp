@@ -12,8 +12,6 @@
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
 // Data
 #include "Managers/StaticMesh/Data/CsData_StaticMeshActorImpl.h"
 // StaticMeshActor

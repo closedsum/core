@@ -243,6 +243,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = DataTable)
 	FCsTArraySoftObjectPath Paths;
 
+	UPROPERTY(VisibleDefaultsOnly, Category = DataTable)
+	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
+
 	/** */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = DataTable)
 	TMap<FName, FCsTArraySoftObjectPath> PathsByRowMap;
@@ -305,6 +308,12 @@ public:
 	void ClearPaths()
 	{
 		Paths.Reset();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.Reset();
+		}
+
 		PathsByRowMap.Reset();
 
 		for (TPair<FName, FCsTArraySoftObjectPathByGroup>& Pair : PathsByGroupByRowMap)
@@ -325,6 +334,11 @@ public:
 	void BuildFromPaths()
 	{
 		Paths.BuildFromPaths();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.BuildFromPaths();
+		}
 
 		for (TPair<FName, FCsTArraySoftObjectPath>& Pair : PathsByRowMap)
 		{

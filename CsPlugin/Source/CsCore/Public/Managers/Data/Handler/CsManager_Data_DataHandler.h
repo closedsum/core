@@ -1,5 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 	// Manager
 #include "Managers/Data/CsLibrary_Manager_Data.h"
@@ -7,8 +11,6 @@
 #include "Data/CsLibrary_Data.h"
 	// Common
 #include "Library/CsLibrary_Property.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
 
 #if WITH_EDITOR
 // Library
@@ -206,11 +208,7 @@ namespace NCsData
 						FCsLog::Warning(FString::Printf(TEXT("%s: Failed to find StructProperty: Data in DataTable: %s with Struct: %s"), *Context, *(DataTable->GetName()), *(RowStruct->GetName())));
 					}
 
-					// Check which rows from the DataTable have been loaded
-					typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-					UCsManager_Data* Manager_Data = nullptr;
-						
+					// Check which rows from the DataTable have been loaded	
 				#if WITH_EDITOR
 					typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -221,11 +219,7 @@ namespace NCsData
 							GetPersistentObjects->GetPersistentObjects().Add(DataTable);
 						}
 					}
-					else
 				#endif // #if WITH_EDITOR
-					{
-						Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
-					}
 
 					const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -242,7 +236,9 @@ namespace NCsData
 						else
 					#endif // #if WITH_EDITOR
 						{
-							RowPtr = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+							typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+							RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 						}
 
 						if (!RowPtr)

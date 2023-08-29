@@ -17,8 +17,6 @@
 #include "Utility/CsWpLog.h"
 // Settings
 #include "Managers/Weapon/CsGetSettingsManagerWeapon.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
 // Data
 #include "Data/CsWpGetDataRootSet.h"
 #include "Data/CsData_WeaponInterfaceMap.h"

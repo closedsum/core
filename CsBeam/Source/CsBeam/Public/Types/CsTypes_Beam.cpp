@@ -5,7 +5,6 @@
 // Data
 #include "Data/CsBeamGetDataRootSet.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
 #include "Settings/CsBeamSettings.h"
 // Utility
 #include "Utility/CsBeamLog.h"
@@ -43,10 +42,6 @@ namespace NCsBeam
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsBeamSettings* ModuleSettings = GetMutableDefault<UCsBeamSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsBeamSettings."), *Context);
@@ -96,10 +91,6 @@ namespace NCsBeamClass
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		UCsBeamSettings* ModuleSettings = GetMutableDefault<UCsBeamSettings>();
 
 		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsBeamSettings."), *Context);

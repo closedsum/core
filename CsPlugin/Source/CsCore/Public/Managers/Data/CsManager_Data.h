@@ -8,10 +8,13 @@
 // Types
 #include "Data/CsTypes_DataEntry.h"
 #include "Data/CsTypes_Payload.h"
-#include "Managers/Load/CsTypes_Streaming.h"
+#include "Load/CsStreamableHandle.h"
 #include "Types/CsTypes_Map.h"
+#include "Load/CsObjectPathDependencyGroup.h"
 // Container
 #include "Data/CsDataRootSetContainer.h"
+// Routine
+#include "Coroutine/CsRoutineHandle.h"
 // Load
 #include "Load/CsLoadHandle.h"
 // Log
@@ -58,6 +61,8 @@ class ICsGetManagerData;
 class UDataTable;
 class ICsData;
 class UScriptStruct;
+
+struct FCsRoutine;
 
 UCLASS(transient)
 class CSCORE_API UCsManager_Data : public UObject
@@ -126,6 +131,9 @@ public:
 
 	UPROPERTY()
 	FCsDataRootSetContainer DataRootSet;
+
+	FORCEINLINE UObject* GetDataRootSetImplChecked(const FString& Context) const { return DataRootSet.GetObjectChecked(Context); }
+	FORCEINLINE UObject* GetDataRootSetImpl() const { return DataRootSet.GetObject(); }
 
 #pragma endregion Root Set
 
@@ -221,6 +229,9 @@ protected:
 
 	/** <PayloadName, Handles> */
 	TMap<FName, TArray<FCsStreamableHandle>> PayloadHandleMap_Loaded;
+
+	/** <PayloadName, Handle> */
+	//TMap<FName, FCsRoutineHandle> AsyncLoadPayloadHandleByNameMap;
 
 public:
 
@@ -337,14 +348,14 @@ public:
 public:
 
 	/**
-	* Load a payload by Name.
+	* Load a Payload by Payload Name.
 	*
 	* @param PayloadName	Name of the payload to load
 	*/
 	void LoadPayload(const FName& PayloadName);
 
 	/**
-	* Delegate type
+	* Delegate type for the event when a Payload loaded asynchronously completes.
 	*  This is a synchronous event (fired on the Game Thread).
 	*
 	* @param WasSuccessful
@@ -352,14 +363,16 @@ public:
 	*/
 	DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
 
-	/** */
+	/** Event when a Payload loaded asynchronously completes.
+		 This is a synchronous event (fired on the Game Thread). */
 	FOnAsyncLoadPayloadComplete OnAsyncLoadPayloadCompleted_Event;
 
 	/**
+	* Asynchronous load a Payload by Payload Name.
 	*
-	*
-	* @param PayloadName
-	* @param Delegate
+	* @param PayloadName	Name of the Payload to async load.
+	* @param Delegate		Delegate called synchronously (on the Game Thread) 
+	*						when the async load completes.
 	*/
 	void AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
 
@@ -370,6 +383,40 @@ private:
 	TMap<FCsLoadHandle, FName> InProgressAsyncLoadPayloads;
 
 	void OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
+
+	// TODO: NOTE: This process can only be kicked off ONCE at a time.
+	//			   Add checks.
+
+	struct FAsyncLoadPayloadByGroup
+	{
+		friend class UCsManager_Data;
+
+	public:
+
+		struct FInfo
+		{
+		public:
+
+			FName PayloadName;
+
+			int32 Index;
+
+			FInfo() :
+				PayloadName(NAME_None),
+				Index(INDEX_NONE)
+			{
+			}
+		};
+	};
+
+	FAsyncLoadPayloadByGroup::FInfo AsyncLoadPayloadByGroupInfo;
+
+	void AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
+	char AsyncLoadPayloadByGroup_Internal(FCsRoutine* R);
+
+	FCsRoutineHandle AsyncLoadPayloadByGroupHandle;
+
+	void OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
 
 #pragma endregion Payload
 
@@ -831,6 +878,36 @@ public:
 		return Data_GetEntryChecked(Context, EntryName)->Paths.Internal.Num();
 	}
 
+	/**
+	* Get the SoftObjectPaths for Data associated with Entry Name and dependency Group.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void Data_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		OutPaths.Append(Data_GetEntryChecked(Context, EntryName)->PathsByGroup[(uint8)Group].Internal);
+	}
+
+	/**
+	* Get the SoftObjectPaths for Data associated with Entry Name and dependency Group.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void Data_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const ECsObjectPathDependencyGroup& Group, TSet<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		OutPaths.Append(Data_GetEntryChecked(Context, EntryName)->PathsByGroup[(uint8)Group].InternalSet);
+	}
+
 #pragma endregion SoftObjectPath
 
 #pragma endregion Data
@@ -1037,7 +1114,6 @@ public:
 	FORCEINLINE uint8* GetDataTableRow(const FSoftObjectPath& Path, const FName& RowName)
 	{
 		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetDataTableRow: Path is NOT Valid."));
-
 		checkf(RowName != NAME_None, TEXT("UCsManager_Data::GetDataTableRow: RowName: None is NOT Valid."));
 
 		if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
@@ -1082,6 +1158,40 @@ public:
 	}
 
 	/**
+	* Safely get a pointer to the Row with name: Row Name in a DataTable associated with Path.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft Path to the DataTable.
+	* @param RowName	Row Name in the retrieved DataTable.
+	* @param Log		(optional)
+	* return			Pointer to the Row.
+	*/
+	FORCEINLINE uint8* GetSafeDataTableRow(const FString& Context, const FSoftObjectPath& Path, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Path.IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (RowName == NAME_None)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: RowName: None is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (TMap<FName, uint8*>* RowMapPtr = DataTableRowByPathMap_Loaded.Find(Path))
+		{
+			if (uint8** RowPtr = RowMapPtr->Find(RowName))
+			{
+				return *RowPtr;
+			}
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Row for Path.RowName: %s.%s."), *Context, *(Path.ToString()), *(RowName.ToString())));
+		return nullptr;
+	}
+
+	/**
 	* Get a pointer to the row in a data table by the data table's Path
 	* and Row Name.
 	* Check against the current loaded data tables.
@@ -1106,11 +1216,10 @@ public:
 	}
 
 	/**
-	* Get a pointer to the row in a data table by the data table's Soft Object
-	* and Row Name.
+	* Get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
 	*
-	* @param SoftObject	Soft Object to the data table.
-	* @param RowName	Row Name is retrieved data table.
+	* @param SoftObject	Soft Object to the DataTable.
+	* @param RowName	Row Name is retrieved DataTable.
 	* return			Pointer to the row.
 	*/
 	FORCEINLINE uint8* GetDataTableRow(const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
@@ -1131,6 +1240,18 @@ public:
 	FORCEINLINE uint8* GetDataTableRowChecked(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
 	{
 		return GetDataTableRowChecked(Context, SoftObject.ToSoftObjectPath(), RowName);
+	}
+
+	/**
+	* Safely get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
+	*
+	* @param SoftObject	Soft Object to the DataTable.
+	* @param RowName	Row Name is retrieved DataTable.
+	* return			Pointer to the row.
+	*/
+	FORCEINLINE uint8* GetSafeDataTableRow(const FString& Context, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		return GetSafeDataTableRow(Context, SoftObject.ToSoftObjectPath(), RowName, Log);
 	}
 
 	/**
@@ -1318,6 +1439,32 @@ public:
 	}
 
 	/**
+	* Get the SoftObjectPaths for DataTable associated with Entry Name
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void DataTable_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const
+	{
+		OutPaths.Append(DataTable_GetEntryChecked(Context, EntryName)->PathsByGroup[(uint8)Group].Internal);
+	}
+
+	/**
+	* Get the SoftObjectPaths for DataTable associated with Entry Name
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void DataTable_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const ECsObjectPathDependencyGroup& Group, TSet<FSoftObjectPath>& OutPaths) const
+	{
+		OutPaths.Append(DataTable_GetEntryChecked(Context, EntryName)->PathsByGroup[(uint8)Group].InternalSet);
+	}
+
+	/**
 	* Get the SoftObjectPaths for the DataTable Row associated with Entry Name and Row Name.
 	*
 	* @param EntryName
@@ -1451,6 +1598,76 @@ public:
 	#endif // #if UE_BUILD_SHIPPING
 	}
 
+	/**
+	* Get the SoftObjectPaths for the DataTable Row associated with Entry Name and Row Name.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param RowName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void DataTable_Row_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const FName& RowName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
+		check(EMCsObjectPathDependencyGroup::Get().IsValidEnumChecked(Context, Group));
+
+	#if UE_BUILD_SHIPPING
+		OutPaths.Append(DataTable_GetEntryChecked(Context, EntryName)->PathsByGroupByRowMap[RowName].PathsByGroup[(uint8)Group].Internal);
+	#else
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntryChecked(Context, EntryName))
+		{
+			if (const FCsTArraySoftObjectPathByGroup* PathsByGroup = Entry->PathsByGroupByRowMap.Find(RowName))
+			{
+				OutPaths.Append(PathsByGroup->PathsByGroup[(uint8)Group].Internal);
+			}
+			else
+			{
+				checkf(0, TEXT("%s: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
+			}
+		}
+		else
+		{
+			checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		}
+	#endif // #if UE_BUILD_SHIPPING
+	}
+
+	/**
+	* Get the SoftObjectPaths for the DataTable Row associated with Entry Name and Row Name.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param RowName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void DataTable_Row_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const FName& RowName, const ECsObjectPathDependencyGroup& Group, TSet<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(RowName != NAME_None, TEXT("%s: RowName: None is NOT Valid."), *Context);
+		check(EMCsObjectPathDependencyGroup::Get().IsValidEnumChecked(Context, Group));
+
+	#if UE_BUILD_SHIPPING
+		OutPaths.Append(DataTable_GetEntryChecked(Context, EntryName)->PathsByGroupByRowMap[RowName].PathsByGroup[(uint8)Group].InternalSet);
+	#else
+		if (const FCsDataEntry_DataTable* Entry = DataTable_GetEntryChecked(Context, EntryName))
+		{
+			if (const FCsTArraySoftObjectPathByGroup* PathsByGroup = Entry->PathsByGroupByRowMap.Find(RowName))
+			{
+				OutPaths.Append(PathsByGroup->PathsByGroup[(uint8)Group].InternalSet);
+			}
+			else
+			{
+				checkf(0, TEXT("%s: DataTable with EntryName: %s does NOT have Row: %s as an entry."), *Context, *(EntryName.ToString()), *(RowName.ToString()));
+			}
+		}
+		else
+		{
+			checkf(0, TEXT("%s: Failed to find DataTable with EntryName: %s."), *Context, *(EntryName.ToString()));
+		}
+	#endif // #if UE_BUILD_SHIPPING
+	}
+
 #pragma endregion SoftObjectPath
 
 #pragma endregion DataTable
@@ -1519,6 +1736,16 @@ public:
 	*						0 for an invalid PayloadName.
 	*/
 	int32 Payload_GetSafePathCount(const FString& Context, const FName& PayloadName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	/**
+	* Get the SoftObjectPaths for Payload associated with Payload Name.
+	*
+	* @param Context		The calling context.
+	* @param PayloadName
+	* @param Group
+	* @param OutPaths
+	*/
+	void Payload_GetPathsByGroupChecked(const FString& Context, const FName& PayloadName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const;
 
 #pragma endregion SoftObjectPath
 

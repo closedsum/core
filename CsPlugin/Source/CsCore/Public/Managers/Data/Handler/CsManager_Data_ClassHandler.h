@@ -6,7 +6,6 @@
 	// Common
 #include "Library/CsLibrary_Property.h"
 // Managers
-#include "Managers/Data/CsManager_Data.h"
 
 #if WITH_EDITOR
 // Library
@@ -113,10 +112,6 @@ namespace NCsData
 						}
 
 						// Cache any class related information that is loaded.
-						typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-						UCsManager_Data* Manager_Data = nullptr;
-						
 					#if WITH_EDITOR
 						typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -127,11 +122,7 @@ namespace NCsData
 								GetPersistentObjects->GetPersistentObjects().Add(DataTable);
 							}
 						}
-						else
 					#endif // #if WITH_EDITOR
-						{
-							Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
-						}
 
 						const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -148,7 +139,9 @@ namespace NCsData
 							else
 						#endif // #if WITH_EDITOR
 							{
-								RowPtr = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+								typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+								RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 							}
 
 							if (!RowPtr)
@@ -211,10 +204,6 @@ namespace NCsData
 							}
 
 							// Cache any class related information that is loaded.
-							typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-							UCsManager_Data* Manager_Data = nullptr;
-						
 						#if WITH_EDITOR
 							typedef NCsWorld::FLibrary WorldLibrary;
 
@@ -225,11 +214,7 @@ namespace NCsData
 									GetPersistentObjects->GetPersistentObjects().Add(DataTable);
 								}
 							}
-							else
 						#endif // #if WITH_EDITOR
-							{
-								Manager_Data = DataManagerLibrary::GetChecked(Context, MyRoot);
-							}
 
 							const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
@@ -246,7 +231,9 @@ namespace NCsData
 								else
 							#endif // #if WITH_EDITOR
 								{
-									RowPtr = Manager_Data->GetDataTableRow(DataTableSoftObject, RowName);
+									typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+									RowPtr = DataManagerLibrary::GetSafeDataTableRow(Context, MyRoot, DataTableSoftObject, RowName, nullptr);
 								}
 
 								if (!RowPtr)

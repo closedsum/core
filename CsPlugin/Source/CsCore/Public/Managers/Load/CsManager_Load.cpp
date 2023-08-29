@@ -1,5 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Load/CsManager_Load.h"
 #include "CsCore.h"
 
@@ -163,9 +164,11 @@ void UCsManager_Load::Initialize()
 	Manager_Tasks.CreatePool(Manager_Load.PoolSize);
 	// Init Tasks
 	{
-		const TArray<FCsResource_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
+		typedef NCsLoad::NManager::NTask::NLoadObjects::FResource ResourceType;
 
-		for (FCsResource_ManagerLoad_Task_LoadObjects* Container : Pool)
+		const TArray<ResourceType*>& Pool = Manager_Tasks.GetPool();
+
+		for (ResourceType* Container : Pool)
 		{
 			UCsManagerLoad_Task_LoadObjects* Task = NewObject<UCsManagerLoad_Task_LoadObjects>(this, UCsManagerLoad_Task_LoadObjects::StaticClass());
 			
@@ -203,11 +206,14 @@ void UCsManager_Load::CleanUp()
 
 	Tasks.Reset();
 
-	const TArray<FCsResource_ManagerLoad_Task_LoadObjects*>& Pool = Manager_Tasks.GetPool();
+	typedef NCsLoad::NManager::NTask::NLoadObjects::FResource ResourceType;
+	typedef UCsManagerLoad_Task_LoadObjects TaskType;
 
-	for (FCsResource_ManagerLoad_Task_LoadObjects* Container : Pool)
+	const TArray<ResourceType*>& Pool = Manager_Tasks.GetPool();
+
+	for (ResourceType* Container : Pool)
 	{
-		UCsManagerLoad_Task_LoadObjects* Task = Container->Get();
+		TaskType* Task = Container->Get();
 
 		Container->Set(nullptr);
 	}
@@ -229,25 +235,39 @@ void UCsManager_Load::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Load::Update(const FCsDeltaTime& DeltaTime)
 {
-	TCsDoubleLinkedList<FCsResource_ManagerLoad_Task_LoadObjects*>* Current = Manager_Tasks.GetAllocatedHead();
-	TCsDoubleLinkedList<FCsResource_ManagerLoad_Task_LoadObjects*>* Next	= Current;
+	typedef NCsLoad::NManager::NTask::NLoadObjects::FResource ResourceType;
+	typedef UCsManagerLoad_Task_LoadObjects TaskType;
+
+	TCsDoubleLinkedList<ResourceType*>* Current = Manager_Tasks.GetAllocatedHead();
+	TCsDoubleLinkedList<ResourceType*>* Next	= Current;
 
 	while (Next)
 	{
-		Current												= Next;
-		FCsResource_ManagerLoad_Task_LoadObjects* Container = **Current;
-		Next												= Current->GetNextLink();
+		Current					= Next;
+		ResourceType* Container = **Current;
+		Next					= Current->GetNextLink();
 
-		UCsManagerLoad_Task_LoadObjects* Task = Container->Get();
+		TaskType* Task = Container->Get();
 
 		Task->Update(DeltaTime);
+
+		if (Task->IsComplete())
+		{
+			Manager_Tasks.Deallocate(Container);
+		}
 	}
 }
 
-FCsLoadHandle UCsManager_Load::LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload)
+#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
+FCsLoadHandle UCsManager_Load::LoadObjectPaths(const PayloadType& Payload)
 {
-	FCsResource_ManagerLoad_Task_LoadObjects* Resource = Manager_Tasks.Allocate();
-	UCsManagerLoad_Task_LoadObjects* Task			   = Resource->Get();
+#undef PayloadType
+
+	typedef NCsLoad::NManager::NTask::NLoadObjects::FResource ResourceType;
+	typedef UCsManagerLoad_Task_LoadObjects TaskType;
+
+	ResourceType* Resource = Manager_Tasks.Allocate();
+	TaskType* Task		   = Resource->Get();
 
 	FCsLoadHandle Handle = Task->LoadObjectPaths(Payload);
 

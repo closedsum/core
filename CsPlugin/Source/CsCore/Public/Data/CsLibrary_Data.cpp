@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Data/CsLibrary_Data.h"
 #include "CsCore.h"
 
@@ -6,14 +8,8 @@
 #include "Types/CsTypes_Load.h"
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
-#include "Game/CsLibrary_GameInstance.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
-// Game
-#include "Engine/GameInstance.h"
-// World
-#include "Engine/World.h"
 
 namespace NCsData
 {
@@ -104,7 +100,7 @@ namespace NCsData
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		ICsData* UData = DataManagerLibrary::GetChecked(Context, WorldContext)->GetDataChecked(Context, DataName);
+		ICsData* UData = DataManagerLibrary::GetDataChecked(Context, WorldContext, DataName);
 		DataType* Data = UData->_getIData();
 
 		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
@@ -116,18 +112,15 @@ namespace NCsData
 	{
 		typedef NCsData::NManager::FLibrary DataManagerLibrary;
 
-		if (UCsManager_Data* Manager_Data = DataManagerLibrary::GetSafe(Context, WorldContext, Log))
+		if (ICsData* UData = DataManagerLibrary::GetSafeData(Context, WorldContext, DataName, Log))
 		{
-			if (ICsData* UData = Manager_Data->GetSafeData(Context, DataName, Log))
-			{
-				DataType* Data = UData->_getIData();
+			DataType* Data = UData->_getIData();
 
-				if (!Data)
-				{
-					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
-				}
-				return Data;
+			if (!Data)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData))));
 			}
+			return Data;
 		}
 		return nullptr;
 	}

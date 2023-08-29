@@ -1,8 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Log
 #include "Utility/CsLog.h"
-
-#pragma once
 
 class UObject;
 class UCsManager_Data;
@@ -66,6 +67,14 @@ namespace NCsData
 		#endif // #if WITH_EDITOR
 
 		#pragma endregion ContextRoot
+
+		// Root Set
+		#pragma region
+		public:
+
+			static UObject* GetDataRootSetImplChecked(const FString& Context, const UObject* ContextObject);
+
+		#pragma endregion Root Set
 
 		// Get
 		#pragma region
@@ -303,7 +312,7 @@ namespace NCsData
 			static UDataTable* GetSafeDataTable(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
-			* Safely get a DataTable by SoftObjectPtr.
+			* Safely get a DataTable associated with the SoftObject.
 			* Check against the current loaded data tables.
 			*
 			* @param Context		The calling context.
@@ -315,6 +324,34 @@ namespace NCsData
 			* return				DataTable
 			*/
 			static UDataTable* GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
+
+			/**
+			* Safely get a pointer to the Row with name: Row Name in a DataTable associated with Path.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft Path to the DataTable.
+			* @param RowName		Row Name in the retrieved DataTable.
+			* @param Log			(optional)
+			* return				Pointer to the Row.
+			*/
+			static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param SoftObject		Soft reference to the DataTable.
+			* @param RowName		Row Name in the retrieved DataTable.
+			* @param Log			(optional)
+			* return				Pointer to the Row.
+			*/
+			static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion DataTable
 

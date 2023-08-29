@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Engine/StreamableManager.h"
 
@@ -36,6 +38,12 @@ public:
 	friend uint32 GetTypeHash(const FCsStreamableHandle& InHandle)
 	{
 		return GetTypeHash(InHandle.Id);
+	}
+
+	FORCEINLINE void Init(const TSharedPtr<FStreamableHandle>& InHandle)
+	{
+		Handle = InHandle;
+		New();
 	}
 
 	FORCEINLINE bool IsValid() const

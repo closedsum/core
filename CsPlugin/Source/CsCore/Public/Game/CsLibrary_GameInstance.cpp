@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Game/CsLibrary_GameInstance.h"
 #include "CsCore.h"
 
@@ -112,12 +114,12 @@ namespace NCsGameInstance
 	
 	bool FLibrary::IsChecked(const FString& Context, const UObject* ContextObject)
 	{
-		return GetChecked(Context, ContextObject) != nullptr;
+		return CS_CONST_CAST_CHECKED(ContextObject, UObject, UGameInstance) != nullptr;
 	}
 
 	bool FLibrary::IsSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		return GetSafe(Context, ContextObject, Log) != nullptr;
+		return CS_CONST_CAST(ContextObject, UObject, UGameInstance) != nullptr;
 	}
 
 	bool FLibrary::IsSafe(const UObject* ContextObject)

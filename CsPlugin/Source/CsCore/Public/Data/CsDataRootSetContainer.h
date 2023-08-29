@@ -43,9 +43,22 @@ public:
 	FORCEINLINE UObject* GetObject() const { return Data_Internal;}
 
 	template<typename T>
-	FORCEINLINE T* GetObject() const
+	FORCEINLINE T* GetObject() const { return Cast<T>(GetObject()); }
+
+	FORCEINLINE UObject* GetObjectChecked(const FString& Context) const
 	{
-		return Cast<T>(GetObject());
+		checkf(Data_Internal, TEXT("%s: Data_Internal is NULL."), *Context);
+		return Data_Internal;
+	}
+
+	template<typename T>
+	FORCEINLINE UObject* GetObjectChecked(const FString& Context) const
+	{
+		UObject* O = GetObjectChecked(Context);
+		T* Other   = Cast<T>(O);
+
+		checkf(Other, TEXT("%s: Data_Internal is NOT of type: %s."), *Context, *(T::StaticClass()->GetName()));
+		return Other;
 	}
 
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }

@@ -61,6 +61,7 @@ void UCsManagerLoad_Task_LoadObjects::Reset()
 {
 	Handle.Reset();
 	StreamableHandles.Reset(StreamableHandles.Max());
+	bComplete = false;
 	OnStartLoadObjectPath_Event.Unbind();
 	OnFinishLoadObjectPath_Event.Unbind();
 	OnStartLoadObjectPaths_Event.Unbind();
@@ -103,6 +104,8 @@ void UCsManagerLoad_Task_LoadObjects::Update(const FCsDeltaTime& DeltaTime)
 	{
 		UE_LOG(LogCs, Log, TEXT("UCsManagerLoad_Task_LoadObjects::OnUpdate: Finished Loading %d Assets. %s in %f seconds."), Count, *(SizeLoaded.ToString()), LoadTime);
 	}
+
+	bComplete = true;
 
 	OnFinishLoadObjectPaths_Event.ExecuteIfBound(Handle, StreamableHandles, Paths, LoadedObjects, LoadTime);
 
@@ -207,8 +210,10 @@ void UCsManagerLoad_Task_LoadObjects::OnFinishLoadObjectPaths()
 // Load
 #pragma region
 
-FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload)
+#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
+FCsLoadHandle UCsManagerLoad_Task_LoadObjects::LoadObjectPaths(const PayloadType& Payload)
 {
+#undef PayloadType
 	using namespace NCsManagerLoadTaskLoadObjects::NCached;
 
 	const FString& Context = Str::LoadObjectPaths;

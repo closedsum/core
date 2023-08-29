@@ -6,12 +6,18 @@
 
 // CVar
 #include "Managers/Data/CsCVars_Manager_Data.h"
+// Types
+#include "Coroutine/CsTypes_Coroutine.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+	// Common
 #include "Library/Load/CsLibrary_Load.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Coroutine
+#include "Coroutine/CsRoutine.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
 #include "Data/CsData.h"
@@ -34,13 +40,26 @@ namespace NCsManagerData
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, GenerateMaps);
+			// Load
+				// Data
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
+				// DataTable
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
+				// Payload
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPaths);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, Payload_GetPathCount);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AddDataCompositionObject_Loaded);
+		}
+
+		namespace Name
+		{
+			// Load
+				// Payload
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
 		}
 	}
 }
@@ -262,6 +281,7 @@ void UCsManager_Data::CleanUp()
 	{
 		PayloadMap_Added.Reset();
 		Manager_Payload.Shutdown();
+		PayloadHandleMap_Loaded.Reset();
 	}
 }
 
@@ -723,7 +743,12 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 		return;
 	}
 
-	FCsManagerLoad_LoadObjectPathsPayload Payload;
+	TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
+	Handles.Reset(Handles.Max());
+
+	typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+
+	PayloadType Payload;
 
 	// Set ObjectPaths
 	Payload.ObjectPaths.Reset(Count);
@@ -754,7 +779,9 @@ void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& P
 	}
 
 	// TODO: Add bSafe to Payload
-	FCsManagerLoad_LoadObjectPathsPayload Payload;
+	typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+
+	PayloadType Payload;
 
 	// Set ObjectPaths
 	Payload.ObjectPaths.Reset(Count);
@@ -787,11 +814,123 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 	// TODO: Add option to make this Async
 	LoadPayload(PayloadName);
 
+	for (const TSharedPtr<FStreamableHandle>& H : Handles)
+	{
+		PayloadHandleMap_Loaded[PayloadName].AddDefaulted_GetRef().Init(H);
+	}
+
 	OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(true, PayloadName);
 
 	InProgressAsyncLoadPayloads.Remove(Handle);
 
 	OnAsyncLoadPayloadCompleted_Event.Unbind();
+}
+
+void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate)
+{
+	using namespace NCsManagerData::NCached;
+
+	const FString& Context = Str::AsyncLoadPayloadByGroup;
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
+	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
+
+	typedef UCsManager_Data ClassType;
+	#define COROUTINE AsyncLoadPayloadByGroup_Internal
+
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
+
+	TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
+	Handles.Reset(Handles.Max());
+
+	AsyncLoadPayloadByGroupInfo.PayloadName = PayloadName;
+	AsyncLoadPayloadByGroupInfo.Index	    = CS_FIRST;
+
+	CS_COROUTINE_PAYLOAD_PASS_NAME_START
+
+	CS_COROUTINE_PAYLOAD_PASS_NAME(Payload, PayloadName);
+
+	CoroutineSchedulerLibrary::StartChecked(Context, this, Payload);
+}
+
+char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
+{
+	using namespace NCsManagerData::NCached;
+
+	const FString& Context = Str::AsyncLoadPayloadByGroup_Internal;
+
+	CS_COROUTINE_READ_INT_START
+	CS_COROUTINE_READ_NAME_START
+
+	CS_COROUTINE_READ_INT_REF(R, GroupIndex);
+
+	typedef ECsObjectPathDependencyGroup GroupType;
+
+	const GroupType Group  = (GroupType)GroupIndex;
+	const int32 GroupCount = (int32)GroupType::ECsObjectPathDependencyGroup_MAX;
+
+	CS_COROUTINE_READ_NAME_CONST_REF(R, PayloadName);
+
+	CS_COROUTINE_BEGIN(R);
+
+	do 
+	{
+		{
+			{
+				typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+
+				PayloadType Payload;
+
+				// Set ObjectPaths
+				Payload_GetPathsByGroupChecked(Context, PayloadName, Group, Payload.ObjectPaths);
+
+				if (Payload.ObjectPaths.Num() > CS_EMPTY)
+				{
+					// Set Async Order
+					Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
+					// Set callback On Finish
+					Payload.OnFinishLoadObjectPaths.BindUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup);
+
+					FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Payload);
+
+					InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
+				}
+				else
+				{
+					++AsyncLoadPayloadByGroupInfo.Index;
+				}
+			}
+			CS_COROUTINE_WAIT_UNTIL(R, AsyncLoadPayloadByGroupInfo.Index > GroupIndex);
+
+			++GroupIndex;
+		}
+	} while (GroupIndex < GroupCount);
+
+	LoadPayload(PayloadName);
+
+	OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(true, PayloadName);
+	OnAsyncLoadPayloadCompleted_Event.Unbind();
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime)
+{
+	const FName& PayloadName = AsyncLoadPayloadByGroupInfo.PayloadName;
+
+	for (const TSharedPtr<FStreamableHandle>& H : Handles)
+	{
+		PayloadHandleMap_Loaded[PayloadName].AddDefaulted_GetRef().Init(H);
+	}
+	
+	InProgressAsyncLoadPayloads.Remove(Handle);
+
+	++AsyncLoadPayloadByGroupInfo.Index;
 }
 
 #pragma endregion Payload
@@ -1115,6 +1254,59 @@ int32 UCsManager_Data::Payload_GetSafePathCount(const FString& Context, const FN
 
 	CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Payload with PayloadName: %s."), *Context, *(PayloadName.ToString())));
 	return Count;
+}
+
+void UCsManager_Data::Payload_GetPathsByGroupChecked(const FString& Context, const FName& PayloadName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const
+{
+CS_IS_NAME_NONE_CHECKED(PayloadName)
+
+	 FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
+
+	if (!PayloadPtr)
+		PayloadPtr = PayloadMap_Added.Find(PayloadName);
+
+	if (PayloadPtr)
+	{
+		const FCsPayload* Payload = *PayloadPtr;
+
+		TSet<FSoftObjectPath> Paths;
+
+		// Datas
+		for (const FCsPayload_Data& Payload_Data : Payload->Datas)
+		{
+			const FName& EntryName = Payload_Data.Name;
+
+			Data_GetPathsByGroupChecked(Context, EntryName, Group, Paths);
+		}
+		// DataTables
+		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
+		{
+			const FName& EntryName = Payload_DataTable.Name;
+
+			// All Rows
+			if (Payload_DataTable.bAllRows)
+			{
+				DataTable_GetPathsByGroupChecked(Context, EntryName, Group, Paths);
+			}
+			else
+			{
+				if (Payload_DataTable.Rows.Num() == CS_EMPTY)
+					Paths.Add(DataTable_GetPathChecked(Context, EntryName));
+
+				for (const FName& RowName : Payload_DataTable.Rows)
+				{
+					DataTable_Row_GetPathsByGroupChecked(Context, EntryName, RowName, Group, Paths);
+				}
+			}
+		}
+		OutPaths.Append(Paths.Array());
+	}
+#if !UE_BUILD_SHIPPING
+	else
+	{
+		checkf(0, TEXT("%s: Failed to find Payload: %s."), *Context, *(PayloadName.ToString()));
+	}
+#endif // #if UE_BUILD_SHIPPING
 }
 
 #pragma endregion SoftObjectPath

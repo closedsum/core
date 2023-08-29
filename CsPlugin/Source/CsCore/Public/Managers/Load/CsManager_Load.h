@@ -1,8 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Managers
 #include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 #include "Managers/Load/CsManagerLoad_Task_LoadObjects.h"
+
 #include "CsManager_Load.generated.h"
 
 // Structs
@@ -11,13 +14,29 @@
 	// Memory Resource
 #pragma region
 
-struct CSCORE_API FCsResource_ManagerLoad_Task_LoadObjects : public TCsResourceContainer<UCsManagerLoad_Task_LoadObjects>
+namespace NCsLoad
 {
-};
+	namespace NManager
+	{
+		namespace NTask
+		{
+			namespace NLoadObjects
+			{
+			#define TaskType UCsManagerLoad_Task_LoadObjects
 
-struct CSCORE_API FCsManager_ManagerLoad_Task_LoadObjects : public NCsResource::NManager::NPointer::TFixed<UCsManagerLoad_Task_LoadObjects, FCsResource_ManagerLoad_Task_LoadObjects, 0>
-{
-};
+				struct CSCORE_API FResource : public TCsResourceContainer<TaskType>
+				{
+				};
+
+				struct CSCORE_API FManager : public NCsResource::NManager::NPointer::TFixed<TaskType, FResource, 0>
+				{
+				};
+
+			#undef TaskType
+			}
+		}
+	}
+}
 
 #pragma endregion Memory Resource
 
@@ -119,7 +138,9 @@ public:
 #pragma region
 protected:
 
-	FCsManager_ManagerLoad_Task_LoadObjects Manager_Tasks;
+#define TaskManagerType NCsLoad::NManager::NTask::NLoadObjects::FManager
+	TaskManagerType Manager_Tasks;
+#undef TaskManagerType
 
 	UPROPERTY()
 	TArray<UObject*> Tasks;
@@ -130,5 +151,7 @@ public:
 
 	FStreamableManager StreamableManager;
 
-	FCsLoadHandle LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload);
+#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
+	FCsLoadHandle LoadObjectPaths(const PayloadType& Payload);
+#undef PayloadType
 };

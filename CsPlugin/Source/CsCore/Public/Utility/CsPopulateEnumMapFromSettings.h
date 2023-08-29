@@ -1,13 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-
-// Settings
-#include "Settings/CsDeveloperSettings.h"
-// Managers
-#include "Managers/Data/CsManager_Data.h"
-// Game
-#include "Engine/GameInstance.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Library
+#include "Managers/Data/CsLibrary_Manager_Data.h"
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
+	// Common
+#include "Game/CsLibrary_GameInstance.h"
 
 // NOTE: Should only be included in .h files
 
@@ -39,24 +39,23 @@ public:
 	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType&(GetDataRootSetType::*GetDataRootSetFn)() const>
 	static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		// Get DataRootSet
 		UObject* DataRootSetImpl = nullptr;
 
 		// Check context to determine how to load DataRootSetImpl
-		if (ContextRoot &&
-			Cast<UGameInstance>(ContextRoot))
-		{
-			DataRootSetImpl = UCsManager_Data::Get(ContextRoot)->DataRootSet.GetObject();
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			checkf(DataRootSetImpl, TEXT("%s: Failed to get DataRootSet."), *Context);
+		if (GameInstanceLibrary::IsSafe(ContextRoot))
+		{
+			typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+			DataRootSetImpl = DataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
 		}
 		else
 		{
-			TSoftClassPtr<UObject> SoftObject = Settings->DataRootSet;
+			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+
+			TSoftClassPtr<UObject> SoftObject = SettingsLibrary::GetDataRootSetChecked(Context);
 			UClass* Class					  = SoftObject.LoadSynchronous();
 			DataRootSetImpl					  = Class->GetDefaultObject();
 		}
@@ -86,24 +85,23 @@ public:
 	template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
 	static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot, UObject*& OutDataRootSetImpl)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		// Get DataRootSet
 		OutDataRootSetImpl = nullptr;
 
 		// Check context to determine how to load DataRootSetImpl
-		if (ContextRoot &&
-			Cast<UGameInstance>(ContextRoot))
-		{
-			OutDataRootSetImpl = UCsManager_Data::Get(ContextRoot)->DataRootSet.GetObject();
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			checkf(OutDataRootSetImpl, TEXT("%s: Failed to get DataRootSet."), *Context);
+		if (GameInstanceLibrary::IsSafe(ContextRoot))
+		{
+			typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+			OutDataRootSetImpl = DataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
 		}
 		else
 		{
-			TSoftClassPtr<UObject> SoftObject = Settings->DataRootSet;
+			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+
+			TSoftClassPtr<UObject> SoftObject = SettingsLibrary::GetDataRootSetChecked(Context);
 			UClass* Class					  = SoftObject.LoadSynchronous();
 			OutDataRootSetImpl				  = Class->GetDefaultObject();
 		}
@@ -265,12 +263,13 @@ public:
 		UDataTable* DT = nullptr;
 
 		// Check context to determine how to load the DataTable
-		if (ContextRoot &&
-			Cast<UGameInstance>(ContextRoot))
-		{
-			DT = UCsManager_Data::Get(ContextRoot)->GetDataTable(DT_SoftObject);
+		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
-			checkf(DT, TEXT("%s: Failed to Load DataTable @ %s."), *Context, *(DT_SoftObject.ToSoftObjectPath().ToString()));
+		if (GameInstanceLibrary::IsSafe(ContextRoot))
+		{
+			typedef NCsData::NManager::FLibrary DataManagerLibrary;
+
+			DT = DataManagerLibrary::GetDataTableChecked(Context, ContextRoot, DT_SoftObject);
 		}
 		else
 		{

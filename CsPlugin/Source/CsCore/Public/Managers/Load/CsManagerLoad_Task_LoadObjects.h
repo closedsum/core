@@ -11,46 +11,45 @@
 
 #include "CsManagerLoad_Task_LoadObjects.generated.h"
 
-// ObjectPathLoadedInfo
+// NCsLoad::NObjectPath::FInfo
 #pragma region
 
-USTRUCT(BlueprintType)
-struct CSCORE_API FCsObjectPathLoadedInfo
+namespace NCsLoad
 {
-public:
-
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY()
-	FSoftObjectPath Path;
-
-	UPROPERTY()
-	int32 Count;
-
-	UPROPERTY()
-	FCsResourceSize Size;
-
-	UPROPERTY()
-	float Time;
-
-	FCsObjectPathLoadedInfo() :
-		Path(),
-		Count(0),
-		Size(),
-		Time(0.0f)
+	namespace NObjectPath
 	{
-	}
+		struct CSCORE_API FInfo
+		{
+		public:
 
-	void Reset()
-	{
-		Path.Reset();
-		Count = 0;
-		Size.Reset();
-		Time = 0.0f;
-	}
-};
+			FSoftObjectPath Path;
 
-#pragma endregion ObjectPathLoadedInfo
+			int32 Count;
+
+			FCsResourceSize Size;
+
+			float Time;
+
+			FInfo() :
+				Path(),
+				Count(0),
+				Size(),
+				Time(0.0f)
+			{
+			}
+
+			void Reset()
+			{
+				Path.Reset();
+				Count = 0;
+				Size.Reset();
+				Time = 0.0f;
+			}
+		};
+	}
+}
+
+#pragma endregion NCsLoad::NObjectPath::FInfo
 
 // Delegates
 #pragma region
@@ -74,23 +73,32 @@ DECLARE_DELEGATE_FiveParams(FCsManagerLoad_OnFinishLoadObjectPaths, const FCsLoa
 // Structs
 #pragma region
 
-struct CSCORE_API FCsManagerLoad_LoadObjectPathsPayload
+namespace NCsLoad
 {
-public:
-
-	TArray<FSoftObjectPath> ObjectPaths;
-
-	ECsLoadAsyncOrder AsyncOrder;
-	
-	FCsManagerLoad_OnFinishLoadObjectPaths OnFinishLoadObjectPaths;
-
-	FCsManagerLoad_LoadObjectPathsPayload() :
-		ObjectPaths(),
-		AsyncOrder(ECsLoadAsyncOrder::Bulk),
-		OnFinishLoadObjectPaths()
+	namespace NManager
 	{
+		namespace NLoadObjectPaths
+		{
+			struct CSCORE_API FPayload
+			{
+			public:
+
+				TArray<FSoftObjectPath> ObjectPaths;
+
+				ECsLoadAsyncOrder AsyncOrder;
+	
+				FCsManagerLoad_OnFinishLoadObjectPaths OnFinishLoadObjectPaths;
+
+				FPayload() :
+					ObjectPaths(),
+					AsyncOrder(ECsLoadAsyncOrder::Bulk),
+					OnFinishLoadObjectPaths()
+				{
+				}
+			};
+		}
 	}
-};
+}
 
 #pragma endregion Structs
 
@@ -109,6 +117,14 @@ public:
 
 	/** */
 	FCsLoadHandle Handle;
+
+private:
+	
+	bool bComplete;
+
+public:
+
+	FORCEINLINE bool IsComplete() const { return bComplete; }
 
 	void Init();
 	void Reset();
@@ -174,16 +190,20 @@ public:
 	/** Event to broadcast when starting to load an Object's Path. */
 	FOnStartLoadObjectPath OnStartLoadObjectPath_Event;
 
+#define LoadInfoType NCsLoad::NObjectPath::FInfo
+
 	/**
 	*  Delegate type
 	*
 	* @param LoadedInfo
 	* @param LoadedObject
 	*/
-	DECLARE_DELEGATE_TwoParams(FOnFinishLoadObjectPath, const FCsObjectPathLoadedInfo& /*LoadedInfo*/, UObject* /*LoadedObject*/);
+	DECLARE_DELEGATE_TwoParams(FOnFinishLoadObjectPath, const LoadInfoType& /*LoadedInfo*/, UObject* /*LoadedObject*/);
 
 	/** Event to broadcast when finish loading an Object's Path. */
 	FOnFinishLoadObjectPath OnFinishLoadObjectPath_Event;
+
+#undef LoadInfoType
 
 	/**
 	*  Delegate type
@@ -239,8 +259,10 @@ private:
 	/** Current memory size of all objects loaded. */
 	FCsResourceSize SizeLoaded;
 
+#define LoadInfoType NCsLoad::NObjectPath::FInfo
 	/** */
-	FCsObjectPathLoadedInfo Info;
+	LoadInfoType Info;
+#undef LoadInfoType
 
 	/** */
 	float StartTime;
@@ -253,7 +275,9 @@ private:
 
 public:
 
-	FCsLoadHandle LoadObjectPaths(const FCsManagerLoad_LoadObjectPathsPayload& Payload);
+#define PayloadType NCsLoad::NManager::NLoadObjectPaths::FPayload
+	FCsLoadHandle LoadObjectPaths(const PayloadType& Payload);
+#undef PayloadType
 
 #pragma endregion Load
 };

@@ -337,7 +337,7 @@ void UCsEdEngine::DataEntry_Data_PopulateImpl(FCsDataEntry_Data* Entry)
 	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
 
 	ResultType Result;
-	DependencyLibrary::Get(Entry, FCsDataEntry_Data::StaticStruct(), Result);
+	DependencyLibrary::Get(Entry, FCsDataEntry_Data::StaticStruct(), 7, Result);
 
 	Entry->Populate(Result.PathSet, Result.PathSetsByGroup);
 }
@@ -404,7 +404,7 @@ void UCsEdEngine::DataEntry_DataTable_PopulateImpl(UObject* DataTable, const FNa
 		typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
 
 		ResultType Result;
-		DependencyLibrary::Get(DT->FindRowUnchecked(Name), Temp, Result);
+		DependencyLibrary::Get(DT->FindRowUnchecked(Name), Temp, 7, Result);
 
 		Entry->PopulateRow(Name, Result.PathSet, Result.PathSetsByGroup);
 	}

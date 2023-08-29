@@ -33,6 +33,8 @@ public:
 		bLoadbyDependencyGroup(false)
 	{
 	}
+
+	static const FCsSettings_Manager_Data& Get();
 };
 
 #pragma endregion FCsSettings_Manager_Data

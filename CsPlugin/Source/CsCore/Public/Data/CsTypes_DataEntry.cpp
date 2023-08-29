@@ -451,7 +451,7 @@ void FCsDataEntry_DataTable::PopulateRow(const FName& RowName, const TSet<FSoftO
 			FCsTArraySoftObjectPath& Arr	 = ArrGroup.PathsByGroup[(uint8)Group];
 
 			Arr.Populate(Set, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
-			PathsByGroup[(uint8)GroupType::DataTable].Populate(Set, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
+			PathsByGroup[(uint8)Group].Populate(Set, CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate));
 		}
 	}
 }

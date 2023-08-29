@@ -807,27 +807,41 @@ namespace NCsAsset
 				}
 			}
 
-			void FLibrary::Get(const void* StructValue, UStruct* const& Struct, ResultType& OutResult)
+			void FLibrary::Get(const void* StructValue, UStruct* const& Struct, const int32& Depth, ResultType& OutResult)
 			{
 				Get_Internal(StructValue, Struct, OutResult);
 
 				FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
 
-				TArray<FName> AggregateDependencies;
+				TArray<FName> Dependencies_Total;
 
 				for (const FSoftObjectPath& Path : OutResult.PathSet)
 				{
 					TArray<FName> Dependencies;
 					AssetRegistryModule.Get().GetDependencies(Path.GetLongPackageFName(), Dependencies);
-
-					for (const FName& Dependency : Dependencies)
-					{
-						DataTable_CheckAndAdd(FSoftObjectPath(Dependency.ToString()), AggregateDependencies);
-					}
-					AggregateDependencies.Append(Dependencies);
+					Dependencies_Total.Append(Dependencies);
 				}
 
-				for (const FName& Path : AggregateDependencies)
+				int32 Count = 2;
+				TArray<FName> Dependencies_Depth_Current = Dependencies_Total;
+
+				while (Count < Depth)
+				{
+					TArray<FName> Dependencies_Depth_Added;
+
+					for (const FName& Path : Dependencies_Depth_Current)
+					{
+						TArray<FName> Dependencies;
+						AssetRegistryModule.Get().GetDependencies(Path, Dependencies);
+						Dependencies_Depth_Added.Append(Dependencies);
+						Dependencies_Total.Append(Dependencies);
+					}
+					
+					Dependencies_Depth_Current = Dependencies_Depth_Added;
+					++Count;
+				}
+
+				for (const FName& Path : Dependencies_Total)
 				{
 					OutResult.PathSet.Add(FSoftObjectPath(Path.ToString()));
 				}
@@ -839,15 +853,16 @@ namespace NCsAsset
 
 			void FLibrary::DataTable_CheckAndAdd(const FSoftObjectPath& Path, TArray<FName>& Dependecies)
 			{
-				UClass* Class = GetClass(Path);
-
-				if (Class->IsChildOf<UDataTable>())
+				if (UClass* Class = GetClass(Path))
 				{
-					FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
+					if (Class->IsChildOf<UDataTable>())
+					{
+						FAssetRegistryModule& AssetRegistryModule = FModuleManager::GetModuleChecked<FAssetRegistryModule>("AssetRegistry");
 
-					TArray<FName> AdditionalDependencies;
-					AssetRegistryModule.Get().GetDependencies(Path.GetLongPackageFName(), AdditionalDependencies);
-					Dependecies.Append(AdditionalDependencies);
+						TArray<FName> AdditionalDependencies;
+						AssetRegistryModule.Get().GetDependencies(Path.GetLongPackageFName(), AdditionalDependencies);
+						Dependecies.Append(AdditionalDependencies);
+					}
 				}
 			}
 		}

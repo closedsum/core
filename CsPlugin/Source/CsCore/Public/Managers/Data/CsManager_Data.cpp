@@ -10,12 +10,14 @@
 #include "Coroutine/CsTypes_Coroutine.h"
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
 	// Common
 #include "Library/Load/CsLibrary_Load.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Managers/Data/CsSettings_Manager_Data.h"
 // Coroutine
 #include "Coroutine/CsRoutine.h"
 // Data
@@ -190,9 +192,9 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 void UCsManager_Data::Initialize()
 {
 	// Get DataRootSet
-	UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+	typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 
-	TSoftClassPtr<UObject> SoftClass = Settings->DataRootSet;
+	TSoftClassPtr<UObject> SoftClass = SettingsLibrary::GetDataRootSet();
 	const FSoftObjectPath& Path		 = SoftClass.ToSoftObjectPath();
 
 	checkf(Path.IsValid(), TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.DataRootSet is NOT Valid."));
@@ -214,11 +216,13 @@ void UCsManager_Data::Initialize()
 
 	DataRootSet.Interface = GetDataRootSet;
 
+	const FCsSettings_Manager_Data& Settings = FCsSettings_Manager_Data::Get();
+
 	// Manager_Payload
 	{
-		checkf(Settings->Manager_Data.PayloadPoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.PayloadPoolSize is NOT >= 4."));
+		checkf(Settings.PayloadPoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.PayloadPoolSize is NOT >= 4."));
 
-		Manager_Payload.CreatePool(Settings->Manager_Data.PayloadPoolSize);
+		Manager_Payload.CreatePool(Settings.PayloadPoolSize);
 
 		const TArray<FCsResource_Payload*>& Pool = Manager_Payload.GetPool();
 
@@ -231,9 +235,9 @@ void UCsManager_Data::Initialize()
 	}
 	// Manager_DataEntry_Data
 	{
-		checkf(Settings->Manager_Data.DataEntryDataPoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.DataEntryDataPoolSize is NOT >= 4."));
+		checkf(Settings.DataEntryDataPoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.DataEntryDataPoolSize is NOT >= 4."));
 
-		Manager_DataEntry_Data.CreatePool(Settings->Manager_Data.DataEntryDataPoolSize);
+		Manager_DataEntry_Data.CreatePool(Settings.DataEntryDataPoolSize);
 
 		const TArray<FCsResource_DataEntry_Data*>& Pool = Manager_DataEntry_Data.GetPool();
 
@@ -246,9 +250,9 @@ void UCsManager_Data::Initialize()
 	}
 	// Manager_DataEntry_DataTable
 	{
-		checkf(Settings->Manager_Data.DataEntryDataTablePoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.DataEntryDataTablePoolSize is NOT >= 4."));
+		checkf(Settings.DataEntryDataTablePoolSize >= 4, TEXT("UCsManager_Data::Initialize: UCsDeveloperSettings.Manager_Data.DataEntryDataTablePoolSize is NOT >= 4."));
 
-		Manager_DataEntry_DataTable.CreatePool(Settings->Manager_Data.DataEntryDataTablePoolSize);
+		Manager_DataEntry_DataTable.CreatePool(Settings.DataEntryDataTablePoolSize);
 
 		const TArray<FCsResource_DataEntry_DataTable*>& Pool = Manager_DataEntry_DataTable.GetPool();
 
@@ -733,37 +737,46 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 
 	const FString& Context = Str::AsyncLoadPayload;
 
-	const int32 Count = Payload_GetPathCountChecked(Context, PayloadName);
-	
-	if (Count <= CS_EMPTY)
+	const FCsSettings_Manager_Data& Settings = FCsSettings_Manager_Data::Get();
+
+	if (Settings.bLoadbyDependencyGroup)
 	{
-		UE_LOG(LogCs, Warning, TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString()));
-
-		OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
-		return;
+		AsyncLoadPayloadByGroup(PayloadName, Delegate);
 	}
-
-	TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
-	Handles.Reset(Handles.Max());
-
-	typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
-
-	PayloadType Payload;
-
-	// Set ObjectPaths
-	Payload.ObjectPaths.Reset(Count);
-
-	Payload_GetPathsChecked(Context, PayloadName, Payload.ObjectPaths);
-	// Set Async Order
-	Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
-	// Set callback On Finish
-	Payload.OnFinishLoadObjectPaths.BindUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
-
-	FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Payload);
-
-	InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
+	else
+	{
+		const int32 Count = Payload_GetPathCountChecked(Context, PayloadName);
 	
-	OnAsyncLoadPayloadCompleted_Event = Delegate;
+		if (Count <= CS_EMPTY)
+		{
+			UE_LOG(LogCs, Warning, TEXT("%s: No Paths found for Payload: %s."), *Context, *(PayloadName.ToString()));
+
+			OnAsyncLoadPayloadCompleted_Event.ExecuteIfBound(false, PayloadName);
+			return;
+		}
+
+		TArray<FCsStreamableHandle>& Handles = PayloadHandleMap_Loaded.FindOrAdd(PayloadName);
+		Handles.Reset(Handles.Max());
+
+		typedef NCsLoad::NManager::NLoadObjectPaths::FPayload PayloadType;
+
+		PayloadType Payload;
+
+		// Set ObjectPaths
+		Payload.ObjectPaths.Reset(Count);
+
+		Payload_GetPathsChecked(Context, PayloadName, Payload.ObjectPaths);
+		// Set Async Order
+		Payload.AsyncOrder = EMCsLoadAsyncOrder::Get().GetEnumAt(CsCVarManagerDataLoadAsyncOrder->GetInt());
+		// Set callback On Finish
+		Payload.OnFinishLoadObjectPaths.BindUObject(this, &UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload);
+
+		FCsLoadHandle Handle = UCsManager_Load::Get(MyRoot)->LoadObjectPaths(Payload);
+
+		InProgressAsyncLoadPayloads.Add(Handle, PayloadName);
+	
+		OnAsyncLoadPayloadCompleted_Event = Delegate;
+	}
 }
 
 void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
@@ -850,6 +863,8 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsync
 
 	AsyncLoadPayloadByGroupInfo.PayloadName = PayloadName;
 	AsyncLoadPayloadByGroupInfo.Index	    = CS_FIRST;
+
+	OnAsyncLoadPayloadCompleted_Event = Delegate;
 
 	CS_COROUTINE_PAYLOAD_PASS_NAME_START
 

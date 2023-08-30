@@ -9,6 +9,7 @@ class UObject;
 class UCsManager_Data;
 class ICsData;
 class UDataTable;
+class UScriptStruct;
 
 namespace NCsData
 {
@@ -73,6 +74,8 @@ namespace NCsData
 		public:
 
 			static UObject* GetDataRootSetImplChecked(const FString& Context, const UObject* ContextObject);
+
+			static UObject* GetSafeDataRootSetImpl(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Root Set
 
@@ -326,6 +329,19 @@ namespace NCsData
 			static UDataTable* GetSafeDataTable(const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject);
 
 			/**
+			* Get a pointer to the Row with name: Row Name in a DataTable associated with Path.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft Path to the DataTable.
+			* @param RowName		Row Name in the retrieved DataTable.
+			* return				Pointer to the Row.
+			*/
+			static uint8* GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName);
+
+			/**
 			* Safely get a pointer to the Row with name: Row Name in a DataTable associated with Path.
 			*
 			* @param Context		The calling context.
@@ -340,6 +356,19 @@ namespace NCsData
 			static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
+			* Get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param SoftObject		Soft reference to the DataTable.
+			* @param RowName		Row Name in the retrieved DataTable.
+			* return				Pointer to the Row.
+			*/
+			static uint8* GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName);
+
+			/**
 			* Safely get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
 			*
 			* @param Context		The calling context.
@@ -352,6 +381,20 @@ namespace NCsData
 			* return				Pointer to the Row.
 			*/
 			static uint8* GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Get a pointer to the Row with name: Row Name in a DataTable associated with SoftObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param SoftObject		Soft reference to the DataTable.
+			* @param RowStruct
+			* @param RowName		Row Name in the retrieved DataTable.
+			* return				Pointer to the Row.
+			*/
+			static uint8* GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const UScriptStruct* RowStruct, const FName& RowName);
 
 		#pragma endregion DataTable
 

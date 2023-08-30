@@ -64,11 +64,19 @@ namespace NCsData
 		#pragma endregion ContextRoot
 
 		// Root Set
+		
 		#pragma region
 
 		UObject* FLibrary::GetDataRootSetImplChecked(const FString& Context, const UObject* ContextObject)
 		{
 			return GetChecked(Context, ContextObject)->GetDataRootSetImplChecked(Context);
+		}
+
+		UObject* FLibrary::GetSafeDataRootSetImpl(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log))
+				return Manager_Data->GetSafeDataRootSetImpl(Context, Log);
+			return nullptr;
 		}
 
 		#pragma endregion Root Set
@@ -246,6 +254,11 @@ namespace NCsData
 			return GetSafeDataTable(Context, ContextObject, SoftObject, nullptr);
 		}
 
+		uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName)
+		{
+			return GetChecked(Context, ContextObject)->GetDataTableRowChecked(Context, Path, RowName);
+		}
+
 		uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, const FName& RowName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
@@ -256,6 +269,11 @@ namespace NCsData
 			return Manager_Data->GetSafeDataTableRow(Context, Path, RowName, Log);
 		}
 
+		uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName)
+		{
+			return GetChecked(Context, ContextObject)->GetDataTableRowChecked(Context, SoftObject, RowName);
+		}
+
 		uint8* FLibrary::GetSafeDataTableRow(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const FName& RowName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
 			UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject, Log);
@@ -264,6 +282,11 @@ namespace NCsData
 				return nullptr;
 
 			return Manager_Data->GetSafeDataTableRow(Context, SoftObject, RowName, Log);
+		}
+
+		uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* ContextObject, const TSoftObjectPtr<UDataTable>& SoftObject, const UScriptStruct* RowStruct, const FName& RowName)
+		{
+			return GetChecked(Context, ContextObject)->GetDataTableRowChecked(Context, SoftObject, RowStruct, RowName);
 		}
 
 		#pragma endregion DataTable

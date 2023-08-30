@@ -2,12 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-// Library
-#include "Managers/Data/CsLibrary_Manager_Data.h"
-	// Settings
-#include "Settings/CsLibrary_DeveloperSettings.h"
-	// Common
-#include "Game/CsLibrary_GameInstance.h"
 
 // NOTE: Should only be included in .h files
 
@@ -27,6 +21,8 @@ private:
 
 public:
 
+	static UObject* GetDataRootSetImpl(const FString& Context, UObject* ContextRoot);
+
 	/**
 	*
 	*
@@ -40,25 +36,7 @@ public:
 	static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot)
 	{
 		// Get DataRootSet
-		UObject* DataRootSetImpl = nullptr;
-
-		// Check context to determine how to load DataRootSetImpl
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		if (GameInstanceLibrary::IsSafe(ContextRoot))
-		{
-			typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-			DataRootSetImpl = DataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
-		}
-		else
-		{
-			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
-
-			TSoftClassPtr<UObject> SoftObject = SettingsLibrary::GetDataRootSetChecked(Context);
-			UClass* Class					  = SoftObject.LoadSynchronous();
-			DataRootSetImpl					  = Class->GetDefaultObject();
-		}
+		UObject* DataRootSetImpl = GetDataRootSetImpl(Context, ContextRoot);
 
 		if (!DataRootSetImpl)
 			return nullptr;
@@ -86,25 +64,7 @@ public:
 	static const DataRootSetType* GetDataRootSet(const FString& Context, UObject* ContextRoot, UObject*& OutDataRootSetImpl)
 	{
 		// Get DataRootSet
-		OutDataRootSetImpl = nullptr;
-
-		// Check context to determine how to load DataRootSetImpl
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		if (GameInstanceLibrary::IsSafe(ContextRoot))
-		{
-			typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-			OutDataRootSetImpl = DataManagerLibrary::GetDataRootSetImplChecked(Context, ContextRoot);
-		}
-		else
-		{
-			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
-
-			TSoftClassPtr<UObject> SoftObject = SettingsLibrary::GetDataRootSetChecked(Context);
-			UClass* Class					  = SoftObject.LoadSynchronous();
-			OutDataRootSetImpl				  = Class->GetDefaultObject();
-		}
+		OutDataRootSetImpl = GetDataRootSetImpl(Context, ContextRoot);
 
 		if (!OutDataRootSetImpl)
 			return nullptr;
@@ -169,6 +129,8 @@ public:
 		}
 	}
 
+	static UDataTable* GetDataTable(const FString& Context, const UObject* ContextRoot, const TSoftObjectPtr<UDataTable>& DT_SoftObject);
+
 	/**
 	* Populate EnumMap with values corresponding to the rows of the DataTable.
 	*  Assume the struct used as the entry of the DataTable has the properties:
@@ -185,7 +147,7 @@ public:
 	* @param Log
 	*/
 	template<typename EnumMap>
-	static void FromDataTable(const FString& Context, UObject* ContextRoot, UDataTable* DataTable, const FString& EnumName, void(*Log)(const FString&))
+	static void FromDataTable(const FString& Context, const UObject* ContextRoot, UDataTable* DataTable, const FString& EnumName, void(*Log)(const FString&))
 	{
 		const UScriptStruct* RowStruct	  = DataTable->GetRowStruct();
 		const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
@@ -258,25 +220,9 @@ public:
 	* @param Log
 	*/
 	template<typename EnumMap>
-	static void FromDataTable(const FString& Context, UObject* ContextRoot, TSoftObjectPtr<UDataTable> DT_SoftObject, const FString& EnumName, void(*Log)(const FString&))
+	static void FromDataTable(const FString& Context, const UObject* ContextRoot, const TSoftObjectPtr<UDataTable>& DT_SoftObject, const FString& EnumName, void(*Log)(const FString&))
 	{
-		UDataTable* DT = nullptr;
-
-		// Check context to determine how to load the DataTable
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
-		if (GameInstanceLibrary::IsSafe(ContextRoot))
-		{
-			typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
-			DT = DataManagerLibrary::GetDataTableChecked(Context, ContextRoot, DT_SoftObject);
-		}
-		else
-		{
-			DT = DT_SoftObject.LoadSynchronous();
-		}
-
-		if (DT)
+		if (UDataTable* DT = GetDataTable(Context, ContextRoot, DT_SoftObject))
 		{
 			FromDataTable<EnumMap>(Context, ContextRoot, DT, EnumName, Log);
 		}

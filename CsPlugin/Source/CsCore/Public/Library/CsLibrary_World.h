@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Log
 #include "Utility/CsLog.h"
@@ -48,10 +50,11 @@ namespace NCsWorld
 		*/
 		static UObject* GetAsObjectChecked(const FString& Context, const UObject* WorldContext);
 
+		static bool IsGameWorld(UWorld* World);
+
 		static bool IsPlayInGame(UWorld* World);
 
 		static bool IsPlayInEditor(UWorld* World);
-
 
 		static bool IsPlayInPIE(UWorld* World);
 

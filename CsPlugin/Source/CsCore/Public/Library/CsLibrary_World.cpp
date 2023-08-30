@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Library/CsLibrary_World.h"
 #include "CsCore.h"
 
@@ -65,6 +67,11 @@ namespace NCsWorld
 	UObject* FLibrary::GetAsObjectChecked(const FString& Context, const UObject* WorldContext)
 	{
 		return GetChecked(Context, WorldContext);
+	}
+
+	bool FLibrary::IsGameWorld(UWorld* World)
+	{
+		return World && World->IsGameWorld();
 	}
 
 	bool FLibrary::IsPlayInGame(UWorld* World)

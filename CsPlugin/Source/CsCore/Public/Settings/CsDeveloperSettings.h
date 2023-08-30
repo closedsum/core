@@ -87,6 +87,7 @@ public:
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (MustImplement = "/Script.CsCore.CsDataRootSet"))
 	TSoftClassPtr<UObject> DataRootSet;
 
+	UObject* LoadDataRootSetChecked(const FString& Context);
 	UObject* SafeLoadDataRootSet(const FString& Context);
 
 	UPROPERTY(config, EditAnywhere, Category = "Settings|Data")

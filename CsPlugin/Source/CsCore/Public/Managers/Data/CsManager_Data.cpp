@@ -886,7 +886,7 @@ char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 
 	typedef ECsObjectPathDependencyGroup GroupType;
 
-	const GroupType Group  = (GroupType)GroupIndex;
+	GroupType Group		   = (GroupType)GroupIndex;
 	const int32 GroupCount = (int32)GroupType::ECsObjectPathDependencyGroup_MAX;
 
 	CS_COROUTINE_READ_NAME_CONST_REF(R, PayloadName);
@@ -923,6 +923,7 @@ char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 			CS_COROUTINE_WAIT_UNTIL(R, AsyncLoadPayloadByGroupInfo.Index > GroupIndex);
 
 			++GroupIndex;
+			Group = (GroupType)GroupIndex;
 		}
 	} while (GroupIndex < GroupCount);
 

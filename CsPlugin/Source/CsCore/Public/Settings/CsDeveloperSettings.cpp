@@ -59,6 +59,22 @@ UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectIniti
 // Data
 #pragma region
 
+UObject* UCsDeveloperSettings::LoadDataRootSetChecked(const FString& Context)
+{
+	const FSoftObjectPath& SoftPath = DataRootSet.ToSoftObjectPath();
+
+	checkf(SoftPath.IsValid(), TEXT("%s: DataRootSet's Path is NOT Valid."), *Context);
+
+	UClass* Class = DataRootSet.LoadSynchronous();
+
+	checkf(Class, TEXT("%s: Failed to load DataRootSet @ Path: %s."), *Context, *(SoftPath.ToString()));
+
+	UObject* DOb = Class->GetDefaultObject();
+
+	checkf(DOb, TEXT("%s: Failed to get Default Object from DataRootSet @ Path: %s with Class: %s."), *Context, *(SoftPath.ToString()), *(Class->GetName()));
+	return DOb;
+}
+
 UObject* UCsDeveloperSettings::SafeLoadDataRootSet(const FString& Context)
 {
 	const FSoftObjectPath& SoftPath = DataRootSet.ToSoftObjectPath();

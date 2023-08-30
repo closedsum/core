@@ -133,6 +133,7 @@ public:
 	FCsDataRootSetContainer DataRootSet;
 
 	FORCEINLINE UObject* GetDataRootSetImplChecked(const FString& Context) const { return DataRootSet.GetObjectChecked(Context); }
+	FORCEINLINE UObject* GetSafeDataRootSetImpl(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const { return DataRootSet.GetSafeObject(Context, Log); }
 	FORCEINLINE UObject* GetDataRootSetImpl() const { return DataRootSet.GetObject(); }
 
 #pragma endregion Root Set

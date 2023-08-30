@@ -11,6 +11,9 @@ namespace NCsCore
 {
 	namespace NSettings
 	{
+		// Data
+		#pragma region
+
 		const TSoftClassPtr<UObject>& FLibrary::GetDataRootSetChecked(const FString& Context)
 		{
 		#if UE_BUILD_SHIPPING
@@ -28,5 +31,22 @@ namespace NCsCore
 		{ 
 			return GetMutableDefault<UCsDeveloperSettings>()->DataRootSet;
 		}
+
+		UObject* FLibrary::LoadDataRootSetChecked(const FString& Context)
+		{
+			return GetMutableDefault<UCsDeveloperSettings>()->LoadDataRootSetChecked(Context);
+		}
+
+		UObject* FLibrary::SafeLoadDataRootSet(const FString& Context)
+		{
+			return GetMutableDefault<UCsDeveloperSettings>()->SafeLoadDataRootSet(Context);
+		}
+
+		const TArray<FString>& FLibrary::GetIgnoreAssetPaths()
+		{
+			return GetMutableDefault<UCsDeveloperSettings>()->IgnoreAssetPaths;
+		}
+
+		#pragma endregion Data
 	}
 }

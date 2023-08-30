@@ -2,6 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Load/CsObjectPathDependencyGroup.h"
+
 #include "CsCore.h"
 
 // ObjectPathDependencyGroup
@@ -13,9 +14,11 @@ namespace NCsObjectPathDependencyGroup
 	{
 		typedef EMCsObjectPathDependencyGroup EnumMapType;
 
+		CSCORE_API CS_ADD_TO_ENUM_MAP(Enum);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Texture);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Font);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(MaterialParameterCollection);
+		CSCORE_API CS_ADD_TO_ENUM_MAP(MaterialFunction);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(Material);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(MaterialInstance);
 		CSCORE_API CS_ADD_TO_ENUM_MAP(StaticMesh);

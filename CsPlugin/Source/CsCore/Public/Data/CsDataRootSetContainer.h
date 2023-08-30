@@ -61,6 +61,17 @@ public:
 		return Other;
 	}
 
+	FORCEINLINE UObject* GetSafeObject(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (!Data_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%: Data_Internal is NULL."), *Context));
+			return nullptr;
+		}
+		return Data_Internal;
+	}
+
 	FORCEINLINE UClass* GetClass() const { return Data_Class; }
 
 	FORCEINLINE ICsGetDataRootSet* Get() const { return Interface; }

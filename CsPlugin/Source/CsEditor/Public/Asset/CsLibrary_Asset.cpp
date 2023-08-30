@@ -7,8 +7,9 @@
 // Types
 #include "Load/CsObjectPathDependencyGroup.h"
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
+// Library
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
 // Data
 #include "Engine/DataTable.h"
 // Class
@@ -38,6 +39,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/PoseableMeshComponent.h"
 // Engine
+#include "Engine/UserDefinedEnum.h"
+#include "Engine/UserDefinedStruct.h"
 #include "Engine.h"
 // Level Sequence
 
@@ -315,7 +318,7 @@ namespace NCsAsset
 			bool FLibrary::IsValidPath(const FSoftObjectPath& Path)
 			{
 				using namespace NCsAsset::NLibrary::NCached;
-
+				
 				if (!Path.IsValid())
 					return false;
 
@@ -344,7 +347,9 @@ namespace NCsAsset
 				if (AssetPath == Str::AssetPath_AnimGraphRuntime)
 					return false;
 
-				const TArray<FString>& IgnoreAssetPaths = GetMutableDefault<UCsDeveloperSettings>()->IgnoreAssetPaths;
+				typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+
+				const TArray<FString>& IgnoreAssetPaths = SettingsLibrary::GetIgnoreAssetPaths();
 
 				for (const FString& IgnoreAssetPath : IgnoreAssetPaths)
 				{
@@ -530,17 +535,18 @@ namespace NCsAsset
 				{
 					PathSetsByGroup[(uint8)GroupType::StaticMesh].Add(Path);
 				}
-				// Material Function - SKIP
-				else
-				if (Class->IsChildOf<UMaterialFunction>())
-				{
-					return false;
-				}
 				// Material Parameter Collection
 				else
 				if (Class->IsChildOf<UMaterialParameterCollection>())
 				{
 					PathSetsByGroup[(uint8)GroupType::MaterialParameterCollection].Add(Path);
+				}
+				// Material Function
+				else
+				if (Class->IsChildOf<UMaterialFunction>())
+				{
+					PathSetsByGroup[(uint8)GroupType::MaterialFunction].Add(Path);
+					//return false;
 				}
 				// Material
 				else
@@ -554,7 +560,7 @@ namespace NCsAsset
 				{
 					PathSetsByGroup[(uint8)GroupType::MaterialInstance].Add(Path);
 				}
-				// Font
+				// Font | Font Face
 				else
 				if (Class->IsChildOf<UFont>() ||
 					Class->IsChildOf<UFontFace>())
@@ -566,6 +572,12 @@ namespace NCsAsset
 				if (Class->IsChildOf<UTexture>())
 				{
 					PathSetsByGroup[(uint8)GroupType::Texture].Add(Path);
+				}
+				// Enum
+				else
+				if (Class->IsChildOf<UUserDefinedEnum>())
+				{
+					PathSetsByGroup[(uint8)GroupType::Enum].Add(Path);
 				}
 				// Other
 				else

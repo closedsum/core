@@ -20,6 +20,11 @@ namespace NCsCore
 			static const TSoftClassPtr<UObject>& GetDataRootSetChecked(const FString& Context);
 			static const TSoftClassPtr<UObject>& GetDataRootSet();
 
+			static UObject* LoadDataRootSetChecked(const FString& Context);
+			static UObject* SafeLoadDataRootSet(const FString& Context);
+
+			static const TArray<FString>& GetIgnoreAssetPaths();
+
 		#pragma endregion Data
 		};
 	}

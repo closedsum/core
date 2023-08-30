@@ -15,12 +15,16 @@
 UENUM(BlueprintType)
 enum class ECsObjectPathDependencyGroup : uint8
 {
+	// Enum (UserDefinedEnum)
+	Enum								UMETA(DisplayName = "Enum"),
 	// Texture | Render Target
 	Texture								UMETA(DisplayName = "Texture"),
-	// Font
+	// Font | Font Face
 	Font								UMETA(DisplayName = "Font"),
 	// Material Parameter Collection 
 	MaterialParameterCollection			UMETA(DisplayName = "Material Parameter Collection"),
+	// Material Function
+	MaterialFunction					UMETA(DisplayName = "Material Function"),
 	// Material
 	Material							UMETA(DisplayName = "Material"),
 	// Material Instance
@@ -44,7 +48,7 @@ enum class ECsObjectPathDependencyGroup : uint8
 	// IMovieScenePlayer (UMovieSceneSequencePlayer) | IMovieScenePlaybackClient | IMovieSceneBindingOwnerInterface | UMovieSceneSignedObject
 	Sequencer							UMETA(DisplayName = "Sequencer"),
 	DataTable							UMETA(DisplayName = "DataTable"),
-	// Catch all for anything not categorized
+	// Catch all for anything not categorized (UserDefinedStruct, ... etc)
 	Other								UMETA(DisplayName = "Other"),
 	ECsObjectPathDependencyGroup_MAX	UMETA(Hidden),
 };
@@ -61,9 +65,11 @@ namespace NCsObjectPathDependencyGroup
 
 	namespace Ref
 	{
+		extern CSCORE_API const Type Enum;
 		extern CSCORE_API const Type Texture;
 		extern CSCORE_API const Type Font;
 		extern CSCORE_API const Type MaterialParameterCollection;
+		extern CSCORE_API const Type MaterialFunction;
 		extern CSCORE_API const Type Material;
 		extern CSCORE_API const Type MaterialInstance;
 		extern CSCORE_API const Type StaticMesh;

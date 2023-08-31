@@ -1,0 +1,35 @@
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
+// Types
+#include "Settings/CsTypes_Settings_Enum.h"
+
+class UCsBeamSettings;
+
+namespace NCsBeam
+{
+	namespace NSettings
+	{
+		/**
+		*/
+		class CSBEAM_API FLibrary
+		{
+		public:
+
+			static UCsBeamSettings* Get();
+
+		// Enum
+		#pragma region
+		public:
+
+			static const ECsPopulateEnumMapMethod& Get_ECsBeam_PopulateEnumMapMethod();
+			static const TArray<FCsSettings_Enum>& GetSettingsEnum_Beam();
+			static const FString& GetSettingsEnumPath_Beam();
+
+			static const ECsPopulateEnumMapMethod& Get_ECsBeamClass_PopulateEnumMapMethod();
+			static const TArray<FCsSettings_Enum>& GetSettingsEnum_BeamClass();
+			static const FString& GetSettingsEnumPath_BeamClass();
+
+		#pragma endregion Enum
+		};
+	}
+}

@@ -3,13 +3,14 @@
 #include "CsCore.h"
 
 // Library
+// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
+	// Common
 #include "Material/CsLibrary_Material.h"
 #include "Library/CsLibrary_Valid.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 // Utility
-#include "Utility/CsLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLog.h"
 // StaticMeshActor
 #include "Managers/StaticMesh/Payload/CsPayload_StaticMeshActorImpl.h"
 
@@ -18,14 +19,33 @@
 
 namespace NCsStaticMeshActor
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString StaticMeshActor = TEXT("StaticMeshActor");
+		namespace Str
+		{
+			const FString StaticMeshActor = TEXT("StaticMeshActor");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsStaticMeshActor, FECsStaticMeshActor>(Context, Str::StaticMeshActor, &FCsLog::Warning);
+		using namespace NCsStaticMeshActor::NCached;
+
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_StaticMeshActor();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_StaticMeshActor();
+		Payload.EnumName				 = Str::StaticMeshActor;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &FCsLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -37,11 +57,9 @@ namespace NCsStaticMeshActor
 
 	const FECsStaticMeshActor& GetDefault()
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 
-		checkf(Settings, TEXT("NCsStaticMeshActor::GetDefault: Failed to file settings of type: UCsDeveloperSettings."));
-
-		return Settings->Default_ECsStaticMeshActor; 
+		return *(SettingsLibrary::GetDefault_ECsStaticMeshActor());
 	}
 }
 
@@ -52,9 +70,12 @@ namespace NCsStaticMeshActor
 
 namespace NCsStaticMeshActorClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString StaticMeshActorClass = TEXT("StaticMeshActorClass");
+		namespace Str
+		{
+			const FString StaticMeshActorClass = TEXT("StaticMeshActorClass");
+		}
 	}
 	/*
 	const FCsDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
@@ -75,10 +96,6 @@ namespace NCsStaticMeshActorClass
 	*/
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		EMCsStaticMeshActorClass::Get().ClearUserDefinedEnums();
 
 		//FromDataTable(Context, ContextRoot);

@@ -7,11 +7,14 @@
 
 namespace NCsUserInterfaceSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		CSUI_API const FString WidgetActor = TEXT("UCsUserInterfaceSettings.ECsWidgetActor");
-		CSUI_API const FString UserWidget = TEXT("UCsUserInterfaceSettings.ECsUserWidget");
-		CSUI_API const FString UserWidgetPooled = TEXT("UCsUserInterfaceSettings.ECsUserWidgetPooled");
+		namespace Str
+		{
+			CSUI_API const FString WidgetActor = TEXT("UCsUserInterfaceSettings.ECsWidgetActor");
+			CSUI_API const FString UserWidget = TEXT("UCsUserInterfaceSettings.ECsUserWidget");
+			CSUI_API const FString UserWidgetPooled = TEXT("UCsUserInterfaceSettings.ECsUserWidgetPooled");
+		}
 	}
 }
 

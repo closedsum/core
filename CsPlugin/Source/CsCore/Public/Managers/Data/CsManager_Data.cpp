@@ -848,7 +848,7 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsync
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameState;
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, this, UpdateGroup);
 
 	typedef UCsManager_Data ClassType;

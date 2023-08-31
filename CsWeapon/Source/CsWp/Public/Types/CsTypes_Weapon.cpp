@@ -3,10 +3,11 @@
 #include "CsWp.h"
 
 // Library
+	// Settings
+#include "Settings/CsLibrary_WeaponSettings.h"
+	// Common
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_Valid.h"
-// Settings
-#include "Settings/CsWeaponSettings.h"
 // Data
 #include "Data/CsWpGetDataRootSet.h"
 // Utility
@@ -22,14 +23,33 @@
 
 namespace NCsWeapon
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString Weapon = TEXT("Weapon");
+		namespace Str
+		{
+			const FString Weapon = TEXT("Weapon");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeapon, FECsWeapon>(Context, Str::Weapon, &NCsWeapon::FLog::Warning);
+		using namespace NCsWeapon::NCached;
+
+		typedef NCsWeapon::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_Weapon();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_Weapon();
+		Payload.EnumName				 = Str::Weapon;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsWeapon::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -39,25 +59,23 @@ namespace NCsWeapon
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeapon>(Context, ContextRoot, DataRootSet->Weapons, Str::Weapon, &NCsWeapon::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeapon>(Context, ContextRoot, DataRootSet->Weapons, NCached::Str::Weapon, &NCsWeapon::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsWeaponSettings."), *Context);
+		typedef NCsWeapon::NSettings::FLibrary SettingsLibrary;
 
 		EMCsWeapon::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsWeapon_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsWeapon_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsWeapon_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsWeapon_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}
@@ -85,14 +103,33 @@ namespace NCsWeapon
 
 namespace NCsWeaponClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString WeaponClass = TEXT("WeaponClass");
+		namespace Str
+		{
+			const FString WeaponClass = TEXT("WeaponClass");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeaponClass, FECsWeaponClass>(Context, Str::WeaponClass, &NCsWeapon::FLog::Warning);
+		using namespace NCsWeaponClass::NCached;
+
+		typedef NCsWeapon::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_WeaponClass();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_WeaponClass();
+		Payload.EnumName				 = Str::WeaponClass;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsWeapon::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -102,25 +139,23 @@ namespace NCsWeaponClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeaponClass>(Context, ContextRoot, DataRootSet->WeaponClasses, Str::WeaponClass, &NCsWeapon::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWeaponClass>(Context, ContextRoot, DataRootSet->WeaponClasses, NCached::Str::WeaponClass, &NCsWeapon::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsWeaponSettings* ModuleSettings = GetMutableDefault<UCsWeaponSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsWeaponSettings."), *Context);
+		typedef NCsWeapon::NSettings::FLibrary SettingsLibrary;
 
 		EMCsWeaponClass::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsWeaponClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsWeaponClass_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsWeaponClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsWeaponClass_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}
@@ -134,14 +169,33 @@ namespace NCsWeaponClass
 
 namespace NCsWeaponState
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString WeaponState = TEXT("WeaponState");
+		namespace Str
+		{
+			const FString WeaponState = TEXT("WeaponState");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsWeaponSettings, EMCsWeaponState, FECsWeaponState>(Context, Str::WeaponState, &NCsWeapon::FLog::Warning);
+		using namespace NCsWeaponState::NCached;
+
+		typedef NCsWeapon::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_WeaponState();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_WeaponState();
+		Payload.EnumName				 = Str::WeaponState;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsWeapon::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

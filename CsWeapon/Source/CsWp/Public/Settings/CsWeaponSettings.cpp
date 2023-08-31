@@ -6,11 +6,14 @@
 
 namespace NCsWeaponSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		CSWP_API const FString Weapon = TEXT("UCsWeaponSettings.ECsWeapon");
-		CSWP_API const FString WeaponClass = TEXT("UCsWeaponSettings.ECsWeaponClass");
-		CSWP_API const FString WeaponState = TEXT("UCsWeaponSettings.ECsWeaponState");
+		namespace Str
+		{
+			CSWP_API const FString Weapon = TEXT("UCsWeaponSettings.ECsWeapon");
+			CSWP_API const FString WeaponClass = TEXT("UCsWeaponSettings.ECsWeaponClass");
+			CSWP_API const FString WeaponState = TEXT("UCsWeaponSettings.ECsWeaponState");
+		}
 	}
 }
 

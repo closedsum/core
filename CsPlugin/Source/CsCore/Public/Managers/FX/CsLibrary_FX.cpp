@@ -1592,7 +1592,8 @@ namespace NCsFX
 
 		FNiagaraSystemInstanceControllerPtr Controller = Component->GetSystemInstanceController();
 
-		if (!Controller->IsValid())
+		if (!Controller.IsValid() ||
+			!Controller->IsValid())
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System Instance Controller is NOT Valid for Component: %s."), *Context, *(Component->GetName())));
 			return nullptr;

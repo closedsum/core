@@ -32,7 +32,13 @@ class UObject;
 
 namespace NCsWeapon
 {
+	typedef EMCsWeapon EnumMapType;
 	typedef FECsWeapon Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSWP_API void FromEnumSettings(const FString& Context);
 
@@ -88,7 +94,13 @@ class UObject;
 
 namespace NCsWeaponClass
 {
+	typedef EMCsWeaponClass EnumMapType;
 	typedef FECsWeaponClass Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSWP_API void FromEnumSettings(const FString& Context);
 
@@ -119,8 +131,13 @@ struct CSWP_API EMCsWeaponState : public TCsEnumStructMap<FECsWeaponState, uint8
 
 namespace NCsWeaponState
 {
+	typedef EMCsWeaponState EnumMapType;
 	typedef FECsWeaponState Type;
 
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSWP_API void FromEnumSettings(const FString& Context);
 

@@ -3,7 +3,7 @@
 
 #include "Engine/DeveloperSettings.h"
 // Types
-#include "Settings/CsTypes_Settings.h"
+#include "Settings/CsTypes_Settings_Enum.h"
 #include "Settings/CsTypes_UserInterfaceSettings.h"
 #include "Managers/WidgetActor/CsSettings_Manager_WidgetActor.h"
 #include "Managers/UserWidget/CsSettings_Manager_UserWidget.h"
@@ -15,11 +15,14 @@
 
 namespace NCsUserInterfaceSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		extern CSUI_API const FString WidgetActor;
-		extern CSUI_API const FString UserWidget;
-		extern CSUI_API const FString UserWidgetPooled;
+		namespace Str
+		{
+			extern CSUI_API const FString WidgetActor;
+			extern CSUI_API const FString UserWidget;
+			extern CSUI_API const FString UserWidgetPooled;
+		}
 	}
 }
 
@@ -67,7 +70,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsWidgetActor>() const
 	{
-		return NCsUserInterfaceSettings::Str::WidgetActor;
+		return NCsUserInterfaceSettings::NCached::Str::WidgetActor;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|WidgetActor")
@@ -105,7 +108,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsUserWidget>() const
 	{
-		return NCsUserInterfaceSettings::Str::UserWidget;
+		return NCsUserInterfaceSettings::NCached::Str::UserWidget;
 	}
 
 	// UserWidgetPooled
@@ -125,7 +128,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsUserWidgetPooled>() const
 	{
-		return NCsUserInterfaceSettings::Str::UserWidgetPooled;
+		return NCsUserInterfaceSettings::NCached::Str::UserWidgetPooled;
 	}
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|UserWidget")

@@ -3,17 +3,18 @@
 #include "CsPrj.h"
 
 // Library
+	// Settings
+#include "Settings/CsLibrary_ProjectileSettings.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
-// Settings
-#include "Settings/CsProjectileSettings.h"
-// Utility
-#include "Utility/CsPrjLog.h"
-#include "Utility/CsPopulateEnumMapFromSettings.h"
-#include "Utility/CsPrjPopulateEnumMapFromSettings.h"
 // Data
 #include "Data/CsPrjGetDataRootSet.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
+// Utility
+#include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsPrjPopulateEnumMapFromSettings.h"
+#include "Utility/CsPrjLog.h"
 
 // ProjectileRelevance
 #pragma region
@@ -40,14 +41,33 @@ namespace NCsProjectileRelevance
 
 namespace NCsProjectile
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString Projectile = TEXT("Projectile");
+		namespace Str
+		{
+			const FString Projectile = TEXT("Projectile");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsProjectileSettings, EMCsProjectile, FECsProjectile>(Context, Str::Projectile, &NCsProjectile::FLog::Warning);
+		using namespace NCsProjectile::NCached;
+
+		typedef NCsProjectile::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_Projectile();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_Projectile();
+		Payload.EnumName				 = Str::Projectile;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsProjectile::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -57,25 +77,23 @@ namespace NCsProjectile
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, DataRootSet->Projectiles, Str::Projectile, &NCsProjectile::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, DataRootSet->Projectiles, NCached::Str::Projectile, &NCsProjectile::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsProjectileSettings."), *Context);
+		typedef NCsProjectile::NSettings::FLibrary SettingsLibrary;
 
 		EMCsProjectile::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsProjectile_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsProjectile_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsProjectile_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsProjectile_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}
@@ -123,14 +141,33 @@ bool FCsDataNoPropertyView_ECsProjectile::IsValid(const FString& Context, void(*
 
 namespace NCsProjectileClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString ProjectileClass = TEXT("ProjectileClass");
+		namespace Str
+		{
+			const FString ProjectileClass = TEXT("ProjectileClass");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsProjectileSettings, EMCsProjectileClass, FECsProjectileClass>(Context, Str::ProjectileClass, &NCsProjectile::FLog::Warning);
+		using namespace NCsProjectileClass::NCached;
+
+		typedef NCsProjectile::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_ProjectileClass();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_ProjectileClass();
+		Payload.EnumName				 = Str::ProjectileClass;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsProjectile::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -140,25 +177,23 @@ namespace NCsProjectileClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectileClass>(Context, ContextRoot, DataRootSet->ProjectileClasses, Str::ProjectileClass, &NCsProjectile::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectileClass>(Context, ContextRoot, DataRootSet->ProjectileClasses, NCached::Str::ProjectileClass, &NCsProjectile::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsProjectileSettings* ModuleSettings = GetMutableDefault<UCsProjectileSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsProjectileSettings."), *Context);
+		typedef NCsProjectile::NSettings::FLibrary SettingsLibrary;
 
 		EMCsProjectileClass::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsProjectileClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsProjectileClass_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsProjectileClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsProjectileClass_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}

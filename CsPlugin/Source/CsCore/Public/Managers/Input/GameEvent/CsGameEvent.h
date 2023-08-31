@@ -34,6 +34,11 @@ namespace NCsGameEvent
 	extern CSCORE_API const Type Default__MouseRightButtonPressed__;
 	extern CSCORE_API const Type Default__MouseRightButtonReleased__;
 
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
+
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
 
 	FORCEINLINE bool IsMousePosition(const FECsGameEvent& Event) { return Event == Default__MousePositionXY__; }

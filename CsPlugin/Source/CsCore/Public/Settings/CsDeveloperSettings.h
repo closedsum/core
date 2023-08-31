@@ -7,6 +7,7 @@
 // Types
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
+#include "Settings/CsTypes_Settings_Enum.h"
 #include "Data/CsTypes_DataRootSet.h"
 #include "Types/CsTypes_Platform.h"
 // Data

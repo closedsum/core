@@ -67,7 +67,13 @@ struct FCsPrjDataRootSet;
 
 namespace NCsProjectile
 {
+	typedef EMCsProjectile EnumMapType;
 	typedef FECsProjectile Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSPRJ_API void FromEnumSettings(const FString& Context);
 
@@ -146,7 +152,13 @@ struct CSPRJ_API EMCsProjectileClass : public TCsEnumStructMap<FECsProjectileCla
 
 namespace NCsProjectileClass
 {
+	typedef EMCsProjectileClass EnumMapType;
 	typedef FECsProjectileClass Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSPRJ_API void FromEnumSettings(const FString& Context);
 

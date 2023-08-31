@@ -1,6 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Settings/CsTypes_Settings.h"
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#include "Settings/CsTypes_Settings_Enum.h"
 #include "CsCore.h"
+
+// Types
+#include "Types/CsTypes_Macro.h"
 
 // FCsSettings_Enum
 #pragma region
@@ -61,6 +66,50 @@ namespace NCsEnum
 			Enums.Reset(Temp.Num());
 
 			Enums = Temp;
+		}
+
+		#define PayloadType NCsEnum::NSettings::FLibrary::FPopulate::FPayload
+		void FLibrary::Populate(const FString& Context, PayloadType& Payload)
+		{
+		#undef PayloadType
+
+			const TArray<FCsSettings_Enum>& Enums = Payload.Enums;
+			const FString& EnumSettingsPath		  = Payload.EnumSettingsPath;
+			const FString& EnumName				  = Payload.EnumName;
+
+			void(*Log)(const FString&) = Payload.Log;
+
+			if (Enums.Num() > CS_EMPTY)
+			{
+				for (const FCsSettings_Enum& Enum : Enums)
+				{
+					const FString& Name		   = Enum.Name;
+					const FString& DisplayName = Enum.DisplayName;
+
+					if (Name.IsEmpty())
+					{
+						CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath)));
+						return;
+					}
+
+					checkf(!Payload.IsValidEnum(Name), TEXT("%s: %s (Name): %s already exists (declared in native)."), *Context, *EnumName, *Name);
+
+					if (!Enum.DisplayName.IsEmpty())
+					{
+						checkf(!Payload.IsValidEnumByDisplayName(DisplayName), TEXT("%s: %s (DisplayName): %s already exists (declared in native)."), *Context, *EnumName, *DisplayName);
+
+						Payload.CreateCustom(Name, DisplayName, true);
+					}
+					else
+					{
+						Payload.Create(Name, true);
+					}
+				}
+			}
+			else
+			{
+				CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath)));
+			}
 		}
 	}
 }

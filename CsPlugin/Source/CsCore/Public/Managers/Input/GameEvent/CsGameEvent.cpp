@@ -2,8 +2,9 @@
 #include "Managers/Input/GameEvent/CsGameEvent.h"
 #include "CsCore.h"
 
-// Settings
-#include "Settings/CsDeveloperSettings.h"
+// Library
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
 // Utility
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsLog.h"
@@ -15,9 +16,12 @@
 
 namespace NCsGameEvent
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString GameEvent = TEXT("GameEvent");
+		namespace Str
+		{
+			const FString GameEvent = TEXT("GameEvent");
+		}
 	}
 
 	CSCORE_API CS_CREATE_ENUM_STRUCT(Default__MousePositionXY__);
@@ -28,12 +32,23 @@ namespace NCsGameEvent
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
-		{
-			EMCsGameEvent::Get().ClearUserDefinedEnums();
+		using namespace NCsGameEvent::NCached;
 
-			FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsGameEvent, FECsGameEvent>(Context, Str::GameEvent, &FCsLog::Warning);
-		}
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_GameEvent();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_GameEvent();
+		Payload.EnumName				 = Str::GameEvent;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &FCsLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 }
 

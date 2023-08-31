@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "Engine/DeveloperSettings.h"
 // Types
-#include "Settings/CsTypes_Settings.h"
+#include "Settings/CsTypes_Settings_Enum.h"
 #include "Settings/CsTypes_ProjectileSettings.h"
 #include "Managers/Projectile/CsSettings_Manager_Projectile.h"
+
 #include "CsProjectileSettings.generated.h"
 
 // Cached
@@ -13,10 +15,13 @@
 
 namespace NCsProjectileSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		extern CSPRJ_API const FString Projectile;
-		extern CSPRJ_API const FString ProjectileClass;
+		namespace Str
+		{
+			extern CSPRJ_API const FString Projectile;
+			extern CSPRJ_API const FString ProjectileClass;
+		}
 	}
 }
 
@@ -58,7 +63,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsProjectile>() const
 	{
-		return NCsProjectileSettings::Str::Projectile;
+		return NCsProjectileSettings::NCached::Str::Projectile;
 	}
 
 	// ProjectileClass
@@ -78,7 +83,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsProjectileClass>() const
 	{
-		return NCsProjectileSettings::Str::ProjectileClass;
+		return NCsProjectileSettings::NCached::Str::ProjectileClass;
 	}
 
 #pragma endregion Enum

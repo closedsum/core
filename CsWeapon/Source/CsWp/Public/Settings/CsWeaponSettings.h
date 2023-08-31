@@ -3,7 +3,7 @@
 
 #include "Engine/DeveloperSettings.h"
 // Types
-#include "Settings/CsTypes_Settings.h"
+#include "Settings/CsTypes_Settings_Enum.h"
 #include "Settings/CsTypes_WeaponSettings.h"
 #include "Managers/Weapon/CsSettings_Manager_Weapon.h"
 #include "CsWeaponSettings.generated.h"
@@ -13,11 +13,14 @@
 
 namespace NCsWeaponSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		extern CSWP_API const FString Weapon;
-		extern CSWP_API const FString WeaponClass;
-		extern CSWP_API const FString WeaponState;
+		namespace Str
+		{
+			extern CSWP_API const FString Weapon;
+			extern CSWP_API const FString WeaponClass;
+			extern CSWP_API const FString WeaponState;
+		}
 	}
 }
 
@@ -59,7 +62,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsWeapon>() const
 	{
-		return NCsWeaponSettings::Str::Weapon;
+		return NCsWeaponSettings::NCached::Str::Weapon;
 	}
 
 	// WeaponClass
@@ -79,7 +82,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsWeaponClass>() const
 	{
-		return NCsWeaponSettings::Str::WeaponClass;
+		return NCsWeaponSettings::NCached::Str::WeaponClass;
 	}
 
 	// WeaponState
@@ -96,7 +99,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsWeaponState>() const
 	{
-		return NCsWeaponSettings::Str::WeaponState;
+		return NCsWeaponSettings::NCached::Str::WeaponState;
 	}
 
 #pragma endregion Enum

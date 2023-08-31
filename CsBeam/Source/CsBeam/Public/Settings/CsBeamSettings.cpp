@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Settings/CsBeamSettings.h"
 #include "CsBeam.h"
 
@@ -9,10 +11,13 @@
 
 namespace NCsBeamSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		CSBEAM_API CS_DEFINE_CACHED_STRING(Beam, "UCsBeamSettings.ECsBeam");
-		CSBEAM_API CS_DEFINE_CACHED_STRING(BeamClass, "UCsBeamSettings.ECsBeamClass");
+		namespace Str
+		{
+			CSBEAM_API CS_DEFINE_CACHED_STRING(Beam, "UCsBeamSettings.ECsBeam");
+			CSBEAM_API CS_DEFINE_CACHED_STRING(BeamClass, "UCsBeamSettings.ECsBeamClass");
+		}
 	}
 }
 

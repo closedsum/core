@@ -33,6 +33,8 @@
 // FX
 #include "NiagaraSystem.h"
 #include "NiagaraEmitter.h"
+#include "NiagaraScript.h"
+#include "NiagaraParameterDefinitions.h"
 // Sound
 #include "Sound/SoundBase.h"
 // Components
@@ -509,9 +511,12 @@ namespace NCsAsset
 				{
 					PathSetsByGroup[(uint8)GroupType::FX].Add(Path);
 				}
-				// FX - SKIP - IGNORE. NOTE: 4.26. Niagara Emitter no longer get cooked
+				// FX - SKIP - IGNORE. 
+				//	NOTE: 4.26. Niagara Emitter no longer get cooked
 				else
-				if (Class->IsChildOf<UNiagaraEmitter>())
+				if (Class->IsChildOf<UNiagaraEmitter>() ||
+					Class->IsChildOf<UNiagaraScript>() ||
+					Class->IsChildOf<UNiagaraParameterDefinitions>())
 				{
 					return false;
 				}

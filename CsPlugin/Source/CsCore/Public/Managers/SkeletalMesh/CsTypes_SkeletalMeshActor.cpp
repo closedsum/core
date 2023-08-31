@@ -3,27 +3,47 @@
 #include "CsCore.h"
 
 // Library
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
 #include "Material/CsLibrary_Material.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 // Utility
-#include "Utility/CsLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
+#include "Utility/CsLog.h"
 
 // SkeletalMeshActor
 #pragma region
 
 namespace NCsSkeletalMeshActor
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString SkeletalMeshActor = TEXT("SkeletalMeshActor");
+		namespace Str
+		{
+			const FString SkeletalMeshActor = TEXT("SkeletalMeshActor");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsSkeletalMeshActor, FECsSkeletalMeshActor>(Context, Str::SkeletalMeshActor, &FCsLog::Warning);
+		using namespace NCsSkeletalMeshActor::NCached;
+
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_SkeletalMeshActor();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_SkeletalMeshActor();
+		Payload.EnumName				 = Str::SkeletalMeshActor;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &FCsLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	/*
@@ -45,10 +65,6 @@ namespace NCsSkeletalMeshActor
 	*/
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		EMCsSkeletalMeshActor::Get().ClearUserDefinedEnums();
 
 		FromEnumSettings(Context);
@@ -58,11 +74,9 @@ namespace NCsSkeletalMeshActor
 
 	const FECsSkeletalMeshActor& GetDefault()
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 
-		checkf(Settings, TEXT("NCsSkeletalMeshActor::GetDefault: Failed to file settings of type: UCsDeveloperSettings."));
-
-		return Settings->Default_ECsSkeletalMeshActor;
+		return *(SettingsLibrary::GetDefault_ECsSkeletalMeshActor());
 	}
 }
 
@@ -96,10 +110,6 @@ namespace NCsSkeletalMeshActorClass
 	*/
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(Settings, TEXT("%s: Failed to file settings of type: UCsDeveloperSettings."), *Context);
-
 		EMCsSkeletalMeshActorClass::Get().ClearUserDefinedEnums();
 
 		//FromDataTable(Context, ContextRoot);

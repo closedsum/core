@@ -2,26 +2,40 @@
 #include "Managers/Input/Action/CsInputActionMap.h"
 #include "CsCore.h"
 
-// Settings
-#include "Settings/CsDeveloperSettings.h"
+// Library
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
 // Utility
 #include "Utility/CsLog.h"
-#include "Utility/CsPopulateEnumMapFromSettings.h"
 
 namespace NCsInputActionMap
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString InputActionMap = TEXT("InputActionMap");
+		namespace Str
+		{
+			const FString InputActionMap = TEXT("InputActionMap");
+		}
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
-		{
-			EMCsInputActionMap::Get().ClearUserDefinedEnums();
+		using namespace NCsInputActionMap::NCached;
 
-			FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsDeveloperSettings, EMCsInputActionMap, FECsInputActionMap>(Context, Str::InputActionMap, &FCsLog::Warning);
-		}
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_InputActionMap();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_InputActionMap();
+		Payload.EnumName				 = Str::InputActionMap;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &FCsLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 }

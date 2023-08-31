@@ -3,9 +3,10 @@
 #include "CsUI.h"
 
 // Library
+	// Settings
+#include "Settings/CsLibrary_UserInterfaceSettings.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
-// Settings
-#include "Settings/CsUserInterfaceSettings.h"
 // Data
 #include "Data/CsUIGetDataRootSet.h"
 // Utility
@@ -17,14 +18,33 @@
 
 namespace NCsWidgetActor
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString WidgetActor = TEXT("WidgetActor");
+		namespace Str
+		{
+			const FString WidgetActor = TEXT("WidgetActor");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsUserInterfaceSettings, EMCsWidgetActor, FECsWidgetActor>(Context, Str::WidgetActor, &NCsUI::FLog::Warning);
+		using namespace NCsWidgetActor::NCached;
+
+		typedef NCsUI::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_WidgetActor();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_WidgetActor();
+		Payload.EnumName				 = Str::WidgetActor;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsUI::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -34,25 +54,23 @@ namespace NCsWidgetActor
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWidgetActor>(Context, ContextRoot, DataRootSet->WidgetActors, Str::WidgetActor, &NCsUI::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWidgetActor>(Context, ContextRoot, DataRootSet->WidgetActors, NCached::Str::WidgetActor, &NCsUI::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsUserInterfaceSettings* ModuleSettings = GetMutableDefault<UCsUserInterfaceSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsUserInterfaceSettings."), *Context);
+		typedef NCsUI::NSettings::FLibrary SettingsLibrary;
 
 		EMCsWidgetActor::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsWidgetActor_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsWidgetActor_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsWidgetActor_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsWidgetActor_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}
@@ -66,9 +84,12 @@ namespace NCsWidgetActor
 
 namespace NCsWidgetActorClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString WidgetActorClass = TEXT("WidgetActorClass");
+		namespace Str
+		{
+			const FString WidgetActorClass = TEXT("WidgetActorClass");
+		}
 	}
 
 	const FCsUIDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot)
@@ -82,7 +103,7 @@ namespace NCsWidgetActorClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWidgetActorClass>(Context, ContextRoot, DataRootSet->WidgetActorClasses, Str::WidgetActorClass, &NCsUI::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsWidgetActorClass>(Context, ContextRoot, DataRootSet->WidgetActorClasses, NCached::Str::WidgetActorClass, &NCsUI::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

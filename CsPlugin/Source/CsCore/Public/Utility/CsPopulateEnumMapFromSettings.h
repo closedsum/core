@@ -79,57 +79,49 @@ public:
 		return &DataRootSet;
 	}
 
-	/**
-	*
-	*
-	* @param Context	The calling context.
-	* @param EnumName
-	* @param Log
-	*/
-	template<typename ModuleSettingsType, typename EnumMap, typename EnumType>
-	static void FromEnumSettings(const FString& Context, const FString& EnumName, void(*Log)(const FString&))
-	{
-		ModuleSettingsType* ModuleSettings = GetMutableDefault<ModuleSettingsType>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: ModuleSettingsType."), *Context);
-
-		const TArray<FCsSettings_Enum>& Enums = ModuleSettings->template GetSettingsEnum<EnumType>();
-		const FString& EnumSettingsPath		  = ModuleSettings->template GetSettingsEnumPath<EnumType>();
-
-		if (Enums.Num() > CS_EMPTY)
-		{
-			for (const FCsSettings_Enum& Enum : Enums)
-			{
-				const FString& Name		   = Enum.Name;
-				const FString& DisplayName = Enum.DisplayName;
-
-				if (Name.IsEmpty())
-				{
-					CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Empty Enum listed in %s."), *Context, *EnumSettingsPath)));
-					return;
-				}
-
-				checkf(!EnumMap::Get().IsValidEnum(Name), TEXT("%s: %s (Name): %s already exists (declared in native)."), *Context, *EnumName, *Name);
-
-				if (!Enum.DisplayName.IsEmpty())
-				{
-					checkf(!EnumMap::Get().IsValidEnumByDisplayName(DisplayName), TEXT("%s: %s (DisplayName): %s already exists (declared in native)."), *Context, *EnumName, *DisplayName);
-
-					EnumMap::Get().Create(Name, DisplayName, true);
-				}
-				else
-				{
-					EnumMap::Get().Create(Name, true);
-				}
-			}
-		}
-		else
-		{
-			CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Enum Setting @ %s is empty."), *Context, *EnumSettingsPath)));
-		}
-	}
-
 	static UDataTable* GetDataTable(const FString& Context, const UObject* ContextRoot, const TSoftObjectPtr<UDataTable>& DT_SoftObject);
+
+	struct FFromDataTable
+	{
+	public:
+
+		struct FPayload
+		{
+		public:
+			
+			UObject* ContextRoot;
+
+			UDataTable* DataTable;
+
+			TSoftObjectPtr<UDataTable> DataTableSoftObject;
+
+			FString EnumName;
+
+			void(*Create)(const FString& /*Name*/, const bool& /*UserDefinedEnum*/);
+			void(*CreateCustom)(const FString& /*Name*/, const FString& /*DisplayName*/, const bool& /*UserDefinedEnum*/);
+			bool(*IsValidEnum)(const FString& /*Name*/);
+			bool(*IsValidEnumByDisplayName)(const FString& /*DisplayName*/);
+
+			void(*Log)(const FString&);
+
+			FPayload() :
+				ContextRoot(nullptr),
+				DataTable(nullptr),
+				DataTableSoftObject(),
+				EnumName(),
+				Create(nullptr),
+				CreateCustom(nullptr),
+				IsValidEnum(nullptr),
+				IsValidEnumByDisplayName(nullptr),
+				Log(nullptr)
+			{
+			}
+		};
+	};
+
+#define PayloadType FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload
+	static void FromDataTable(const FString& Context, PayloadType& Payload);
+#undef PayloadType
 
 	/**
 	* Populate EnumMap with values corresponding to the rows of the DataTable.
@@ -231,6 +223,22 @@ public:
 			CS_NON_SHIPPING_EXPR(Log(FString::Printf(TEXT("%s: Failed to Load DataTable @ %s."), *Context, *(DT_SoftObject.ToSoftObjectPath().ToString()))));
 		}
 	}
+
+	/**
+	* Populate EnumMap with values corresponding to the rows of the DataTable.
+	*  The row name is used to generate the Name, DisplayName and Value added to the EnumMap.
+	*
+	* @param Context		The calling context.
+	* @param ContextRoot	Context (Root) to route to the UCsManager_Data. This is
+	*						usually a reference to the GameInstance.
+	*						TODO: Eventually change to WorldContext.
+	* @param DataTable
+	* @param EnumName
+	* @param Log
+	*/
+#define PayloadType FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload
+	static void FromDataTable_RowAsName(const FString& Context, PayloadType Payload);
+#undef PayloadType
 
 	/**
 	* Populate EnumMap with values corresponding to the rows of the DataTable.

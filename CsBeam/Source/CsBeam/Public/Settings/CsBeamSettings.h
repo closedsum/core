@@ -1,10 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
 #include "Engine/DeveloperSettings.h"
 // Types
-#include "Settings/CsTypes_Settings.h"
+#include "Settings/CsTypes_Settings_Enum.h"
 #include "Managers/Beam/CsSettings_Manager_Beam.h"
+
 #include "CsBeamSettings.generated.h"
 
 // Cached
@@ -12,10 +15,13 @@
 
 namespace NCsBeamSettings
 {
-	namespace Str
+	namespace NCached
 	{
-		extern CSBEAM_API const FString Beam;
-		extern CSBEAM_API const FString BeamClass;
+		namespace Str
+		{
+			extern CSBEAM_API const FString Beam;
+			extern CSBEAM_API const FString BeamClass;
+		}
 	}
 }
 
@@ -57,7 +63,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsBeam>() const
 	{
-		return NCsBeamSettings::Str::Beam;
+		return NCsBeamSettings::NCached::Str::Beam;
 	}
 
 	// BeamClass
@@ -77,7 +83,7 @@ public:
 	template<>
 	const FString& GetSettingsEnumPath<FECsBeamClass>() const
 	{
-		return NCsBeamSettings::Str::BeamClass;
+		return NCsBeamSettings::NCached::Str::BeamClass;
 	}
 
 #pragma endregion Enum

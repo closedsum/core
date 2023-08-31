@@ -2,28 +2,48 @@
 #include "Types/CsTypes_Beam.h"
 #include "CsBeam.h"
 
+// Library
+	// Settings
+#include "Settings/CsLibrary_BeamSettings.h"
 // Data
 #include "Data/CsBeamGetDataRootSet.h"
-// Settings
-#include "Settings/CsBeamSettings.h"
 // Utility
-#include "Utility/CsBeamLog.h"
 #include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsBeamPopulateEnumMapFromSettings.h"
+#include "Utility/CsBeamLog.h"
 
 // Beam
 #pragma region
 
 namespace NCsBeam
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString Beam = TEXT("Beam");
+		namespace Str
+		{
+			const FString Beam = TEXT("Beam");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsBeamSettings, EMCsBeam, FECsBeam>(Context, Str::Beam, &NCsBeam::FLog::Warning);
+		using namespace NCsBeam::NCached;
+
+		typedef NCsBeam::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_Beam();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_Beam();
+		Payload.EnumName				 = Str::Beam;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsBeam::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -42,20 +62,18 @@ namespace NCsBeam
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsBeamSettings* ModuleSettings = GetMutableDefault<UCsBeamSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsBeamSettings."), *Context);
+		typedef NCsBeam::NSettings::FLibrary SettingsLibrary;
 
 		EMCsBeam::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsBeam_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsBeam_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsBeam_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsBeam_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}
@@ -69,14 +87,33 @@ namespace NCsBeam
 
 namespace NCsBeamClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString BeamClass = TEXT("BeamClass");
+		namespace Str
+		{
+			const FString BeamClass = TEXT("BeamClass");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
 	{
-		FCsPopulateEnumMapFromSettings::FromEnumSettings<UCsBeamSettings, EMCsBeamClass, FECsBeamClass>(Context, Str::BeamClass, &NCsBeam::FLog::Warning);
+		using namespace NCsBeamClass::NCached;
+
+		typedef NCsBeam::NSettings::FLibrary SettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
+		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.Enums					 = SettingsLibrary::GetSettingsEnum_BeamClass();
+		Payload.EnumSettingsPath		 = SettingsLibrary::GetSettingsEnumPath_BeamClass();
+		Payload.EnumName				 = Str::BeamClass;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsBeam::FLog::Warning;
+
+		EnumSettingsLibrary::Populate(Context, Payload);
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
@@ -86,25 +123,23 @@ namespace NCsBeamClass
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsBeamClass>(Context, ContextRoot, DataRootSet->BeamClasses, Str::BeamClass, &NCsBeam::FLog::Warning);
+		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsBeamClass>(Context, ContextRoot, DataRootSet->BeamClasses, NCached::Str::BeamClass, &NCsBeam::FLog::Warning);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsBeamSettings* ModuleSettings = GetMutableDefault<UCsBeamSettings>();
-
-		checkf(ModuleSettings, TEXT("%s: Failed to find settings of type: UCsBeamSettings."), *Context);
+		typedef NCsBeam::NSettings::FLibrary SettingsLibrary;
 
 		EMCsBeamClass::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (ModuleSettings->ECsBeamClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::Get_ECsBeamClass_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
 			FromEnumSettings(Context);
 		}
 
 		// DataTable
-		if (ModuleSettings->ECsBeamClass_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::DataTable)
+		if (SettingsLibrary::Get_ECsBeamClass_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::DataTable)
 		{
 			FromDataTable(Context, ContextRoot);
 		}

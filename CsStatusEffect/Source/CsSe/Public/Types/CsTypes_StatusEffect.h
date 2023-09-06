@@ -38,6 +38,11 @@ namespace NCsStatusEffect
 	typedef FECsStatusEffect Type;
 	typedef EMCsStatusEffect EnumMapType;
 
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
+
 	CSSE_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSSE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);

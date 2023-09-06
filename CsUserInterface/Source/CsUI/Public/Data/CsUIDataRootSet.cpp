@@ -25,10 +25,41 @@ namespace NCsUIDataRootSet
 			CS_DEFINE_CACHED_STRING(UserWidgetClasses, "UserWidgetClasses");
 			CS_DEFINE_CACHED_STRING(UserWidgets, "UserWidgets");
 		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_NAME(WidgetActorClasses, "WidgetActorClasses");
+			CS_DEFINE_CACHED_NAME(WidgetActors, "WidgetActors");
+			CS_DEFINE_CACHED_NAME(UserWidgetPooledClasses, "UserWidgetPooledClasses");
+			CS_DEFINE_CACHED_NAME(UserWidgetPooled, "UserWidgetPooled");
+			CS_DEFINE_CACHED_NAME(UserWidgetClasses, "UserWidgetClasses");
+			CS_DEFINE_CACHED_NAME(UserWidgets, "UserWidgets");
+		}
 	}
 }
 
 #pragma endregion Cached
+
+#define MemberType FCsUIDataRootSet::EMember
+MemberType FCsUIDataRootSet::GetMember(const FName& MemberName)
+{
+	using namespace NCsUIDataRootSet::NCached;
+
+	if (MemberName == Name::WidgetActorClasses)
+		return MemberType::WidgetActorClasses;
+	if (MemberName == Name::WidgetActors)
+		return MemberType::WidgetActors;
+	if (MemberName == Name::UserWidgetPooledClasses)
+		return MemberType::UserWidgetPooledClasses;
+	if (MemberName == Name::UserWidgetPooled)
+		return MemberType::UserWidgetPooled;
+	if (MemberName == Name::UserWidgetClasses)
+		return MemberType::UserWidgetClasses;
+	if (MemberName == Name::UserWidgets)
+		return MemberType::UserWidgets;
+	return MemberType::WidgetActorClasses;
+}
+#undef MemberType
 
 bool FCsUIDataRootSet::IsValidChecked(const FString& Context, UObject* Object, const EMember& MemberType) const
 {

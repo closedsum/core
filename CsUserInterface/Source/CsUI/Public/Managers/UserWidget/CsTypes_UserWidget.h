@@ -77,7 +77,13 @@ struct CSUI_API EMCsUserWidgetClass : public TCsEnumStructMap<FECsUserWidgetClas
 
 namespace NCsUserWidgetClass
 {
+	typedef EMCsUserWidgetClass EnumMapType;
 	typedef FECsUserWidgetClass Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
@@ -178,7 +184,13 @@ struct CSUI_API EMCsUserWidgetPooledClass : public TCsEnumStructMap<FECsUserWidg
 
 namespace NCsUserWidgetPooledClass
 {
+	typedef EMCsUserWidgetPooledClass EnumMapType;
 	typedef FECsUserWidgetPooledClass Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 

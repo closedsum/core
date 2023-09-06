@@ -7,12 +7,9 @@
 #include "Settings/CsLibrary_ProjectileSettings.h"
 	// Common
 #include "Library/CsLibrary_Valid.h"
-// Data
-#include "Data/CsPrjGetDataRootSet.h"
 // Projectile
 #include "Payload/CsPayload_ProjectileImpl.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsPrjPopulateEnumMapFromSettings.h"
 #include "Utility/CsPrjLog.h"
 
@@ -47,6 +44,11 @@ namespace NCsProjectile
 		{
 			const FString Projectile = TEXT("Projectile");
 		}
+
+		namespace Name
+		{
+			const FName Projectiles = FName("Projectiles");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
@@ -72,12 +74,21 @@ namespace NCsProjectile
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsPrjDataRootSet* DataRootSet = FCsPrjPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsProjectile::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsPrjPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectile>(Context, ContextRoot, DataRootSet->Projectiles, NCached::Str::Projectile, &NCsProjectile::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::Projectiles;
+		Payload.EnumName				 = Str::Projectile;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsProjectile::FLog::Warning;
+
+		FCsPrjPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -147,6 +158,11 @@ namespace NCsProjectileClass
 		{
 			const FString ProjectileClass = TEXT("ProjectileClass");
 		}
+
+		namespace Name
+		{
+			const FName ProjectileClasses = FName("ProjectileClass");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
@@ -172,12 +188,21 @@ namespace NCsProjectileClass
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsPrjDataRootSet* DataRootSet = FCsPrjPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsProjectileClass::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsPrjPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsProjectileClass>(Context, ContextRoot, DataRootSet->ProjectileClasses, NCached::Str::ProjectileClass, &NCsProjectile::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::ProjectileClasses;
+		Payload.EnumName				 = Str::ProjectileClass;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsProjectile::FLog::Warning;
+
+		FCsPrjPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

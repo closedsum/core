@@ -7,10 +7,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Utility
 #include "Utility/CsSeLog.h"
-#include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsSePopulateEnumMapFromSettings.h"
 // Data
-#include "Data/CsSeGetDataRootSet.h"
 #include "Data/CsData_StatusEffect.h"
 
 // StatusEffect
@@ -18,19 +16,36 @@
 
 namespace NCsStatusEffect
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString StatusEffect = TEXT("StatusEffect");
+		namespace Str
+		{
+			const FString StatusEffect = TEXT("StatusEffect");
+		}
+
+		namespace Name
+		{
+			const FName StatusEffects = FName("StatusEffects");
+		}
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsSeDataRootSet* DataRootSet = FCsSePopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsStatusEffect::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsSePopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsStatusEffect>(Context, ContextRoot, DataRootSet->StatusEffects, Str::StatusEffect, &NCsStatusEffect::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::StatusEffects;
+		Payload.EnumName				 = Str::StatusEffect;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsStatusEffect::FLog::Warning;
+
+		FCsSePopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

@@ -5,12 +5,9 @@
 // Library
 	// Settings
 #include "Settings/CsLibrary_UserInterfaceSettings.h"
-// Data
-#include "Data/CsUIGetDataRootSet.h"
 // UI
 #include "Blueprint/UserWidget.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsUIPopulateEnumMapFromSettings.h"
 #include "Utility/CsUILog.h"
 
@@ -25,6 +22,11 @@ namespace NCsUserWidget
 		namespace Str
 		{
 			const FString UserWidget = TEXT("UserWidget");
+		}
+
+		namespace Name
+		{
+			const FName UserWidgets = FName("UserWidgets");
 		}
 	}
 
@@ -51,12 +53,21 @@ namespace NCsUserWidget
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsUserWidget::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidget>(Context, ContextRoot, DataRootSet->UserWidgets, NCached::Str::UserWidget, &NCsUI::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::UserWidgets;
+		Payload.EnumName				 = Str::UserWidget;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsUI::FLog::Warning;
+
+		FCsUIPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -86,19 +97,36 @@ namespace NCsUserWidget
 
 namespace NCsUserWidgetClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString UserWidgetClass = TEXT("UserWidgetClass");
+		namespace Str
+		{
+			const FString UserWidgetClass = TEXT("UserWidgetClass");
+		}
+
+		namespace Name
+		{
+			const FName UserWidgetClasses = FName("UserWidgetClasses");
+		}
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsUserWidgetClass::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetClass>(Context, ContextRoot, DataRootSet->UserWidgetClasses, Str::UserWidgetClass, &NCsUI::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::UserWidgetClasses;
+		Payload.EnumName				 = Str::UserWidgetClass;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsUI::FLog::Warning;
+
+		FCsUIPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -131,6 +159,11 @@ namespace NCsUserWidgetPooled
 		{
 			const FString UserWidgetPooled = TEXT("UserWidgetPooled");
 		}
+
+		namespace Name
+		{
+			const FName UserWidgetPooled = FName("UserWidgetPooled");
+		}
 	}
 
 	void FromEnumSettings(const FString& Context)
@@ -156,12 +189,21 @@ namespace NCsUserWidgetPooled
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsUserWidgetPooled::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetPooled>(Context, ContextRoot, DataRootSet->UserWidgetPooled, NCached::Str::UserWidgetPooled, &NCsUI::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::UserWidgetPooled;
+		Payload.EnumName				 = Str::UserWidgetPooled;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsUI::FLog::Warning;
+
+		FCsUIPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
@@ -191,19 +233,36 @@ namespace NCsUserWidgetPooled
 
 namespace NCsUserWidgetPooledClass
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString UserWidgetPooledClass = TEXT("UserWidgetPooledClass");
+		namespace Str
+		{
+			const FString UserWidgetPooledClass = TEXT("UserWidgetPooledClass");
+		}
+
+		namespace Name
+		{
+			const FName UserWidgetPooledClasses = FName("UserWidgetPooledClasses");
+		}
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsUIDataRootSet* DataRootSet = FCsUIPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
+		using namespace NCsUserWidgetPooledClass::NCached;
 
-		if (!DataRootSet)
-			return;
+		typedef FCsUIPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsUserWidgetPooledClass>(Context, ContextRoot, DataRootSet->UserWidgetPooledClasses, Str::UserWidgetPooledClass, &NCsUI::FLog::Warning);
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::UserWidgetPooledClasses;
+		Payload.EnumName				 = Str::UserWidgetPooledClass;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &NCsUI::FLog::Warning;
+
+		FCsUIPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

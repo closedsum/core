@@ -18,19 +18,41 @@
 
 namespace NCsDataEntryData
 {
-	namespace Str
+	namespace NCached
 	{
-		const FString DataEntryData = TEXT("DataEntryData");
+		namespace Str
+		{
+			const FString DataEntryData = TEXT("DataEntryData");
+		}
+
+		namespace Name
+		{
+			const FName Datas = FName("Datas");
+		}
 	}
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
+		using namespace NCsDataEntryData::NCached;
+
 		const FCsDataRootSet* DataRootSet = FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
 
-		FCsPopulateEnumMapFromSettings::FromDataTable_RowAsName<EMCsDataEntryData>(Context, ContextRoot, DataRootSet->Datas, Str::DataEntryData, &FCsLog::Warning);
+		typedef FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableSoftObject		 = DataRootSet->GetDataTableSoftObjectChecked(Context, Name::Datas);
+		Payload.EnumName				 = Str::DataEntryData;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &FCsLog::Warning;
+
+		FCsPopulateEnumMapFromSettings::FromDataTable_RowAsName(Context, Payload);
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

@@ -30,10 +30,26 @@ namespace NCsDmgDataRootSet
 
 			CS_DEFINE_CACHED_STRING(Damages, "Damages");
 		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_NAME(Damages, "Damages");
+		}
 	}
 }
 
 #pragma endregion Cached
+
+#define MemberType FCsDmgDataRootSet::EMember
+MemberType FCsDmgDataRootSet::GetMember(const FName& MemberName)
+{
+	using namespace NCsDmgDataRootSet::NCached;
+
+	if (MemberName == Name::Damages)
+		return MemberType::Damages;
+	return MemberType::Damages;
+}
+#undef MemberType
 
 bool FCsDmgDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {

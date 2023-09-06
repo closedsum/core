@@ -31,11 +31,32 @@ namespace NCsWpDataRootSet
 			CS_DEFINE_CACHED_STRING(Weapons, "Weapons");
 			CS_DEFINE_CACHED_STRING(WeaponSkins, "WeaponSkins");
 		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_NAME(WeaponClasses, "WeaponClasses");
+			CS_DEFINE_CACHED_NAME(Weapons, "Weapons");
+			CS_DEFINE_CACHED_NAME(WeaponSkins, "WeaponSkins");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define MemberType FCsWpDataRootSet::EMember
+MemberType FCsWpDataRootSet::GetMember(const FName& MemberName)
+{
+	using namespace NCsWpDataRootSet::NCached;
+
+	if (MemberName == Name::WeaponClasses)
+		return MemberType::WeaponClasses;
+	if (MemberName == Name::Weapons)
+		return MemberType::Weapons;
+	if (MemberName == Name::WeaponSkins)
+		return MemberType::WeaponSkins;
+	return MemberType::WeaponClasses;
+}
+#undef MemberType
 
 bool FCsWpDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {

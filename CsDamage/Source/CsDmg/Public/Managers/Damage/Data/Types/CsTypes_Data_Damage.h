@@ -31,6 +31,11 @@ namespace NCsDamageData
 	typedef FECsDamageData Type;
 	typedef EMCsDamageData EnumMapType;
 
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
+
 	CSDMG_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSDMG_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);

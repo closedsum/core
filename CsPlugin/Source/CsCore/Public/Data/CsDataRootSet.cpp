@@ -33,10 +33,32 @@ namespace NCsDataRootSet
 			CS_DEFINE_CACHED_STRING(DataTables, "DataTables");
 			CS_DEFINE_CACHED_STRING(Payloads, "Payloads");
 		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_NAME(Datas, "Datas");
+			CS_DEFINE_CACHED_NAME(DataTables, "DataTables");
+			CS_DEFINE_CACHED_NAME(Payloads, "Payloads");
+		}
 	}
 }
 
 #pragma endregion Cached
+
+#define MemberType FCsDataRootSet::EMember
+MemberType FCsDataRootSet::GetMember(const FName& MemberName)
+{
+	using namespace NCsDataRootSet::NCached;
+
+	if (MemberName == Name::Datas)
+		return MemberType::Datas;
+	if (MemberName == Name::DataTables)
+		return MemberType::DataTables;
+	if (MemberName == Name::Payloads)
+		return MemberType::Payloads;
+	return MemberType::Datas;
+}
+#undef MemberType
 
 #if WITH_EDITOR
 

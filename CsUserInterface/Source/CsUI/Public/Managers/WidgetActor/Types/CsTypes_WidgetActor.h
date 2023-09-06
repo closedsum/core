@@ -78,7 +78,13 @@ struct CSUI_API EMCsWidgetActorClass : public TCsEnumStructMap<FECsWidgetActorCl
 
 namespace NCsWidgetActorClass
 {
+	typedef EMCsWidgetActorClass EnumMapType;
 	typedef FECsWidgetActorClass Type;
+
+	FORCEINLINE void Create(const FString& Name, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, UserDefinedEnum); }
+	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
+	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
+	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
 
 	CSUI_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 

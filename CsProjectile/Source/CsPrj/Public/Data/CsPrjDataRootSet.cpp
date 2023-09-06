@@ -30,11 +30,29 @@ namespace NCsPrjDataRootSet
 			CS_DEFINE_CACHED_STRING(Projectiles, "Projectiles");
 			CS_DEFINE_CACHED_STRING(ProjectileClasses, "ProjectileClasses");
 		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_NAME(Projectiles, "Projectiles");
+			CS_DEFINE_CACHED_NAME(ProjectileClasses, "ProjectileClasses");
+		}
 	}
 }
 
 #pragma endregion Cached
 
+#define MemberType FCsPrjDataRootSet::EMember
+MemberType FCsPrjDataRootSet::GetMember(const FName& MemberName)
+{
+	using namespace NCsPrjDataRootSet::NCached;
+
+	if (MemberName == Name::Projectiles)
+		return MemberType::Projectiles;
+	if (MemberName == Name::ProjectileClasses)
+		return MemberType::ProjectileClasses;
+	return MemberType::Projectiles;
+}
+#undef MemberType
 
 bool FCsPrjDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {

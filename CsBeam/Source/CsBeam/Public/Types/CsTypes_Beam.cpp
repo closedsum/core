@@ -5,10 +5,7 @@
 // Library
 	// Settings
 #include "Settings/CsLibrary_BeamSettings.h"
-// Data
-#include "Data/CsBeamGetDataRootSet.h"
 // Utility
-#include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsBeamPopulateEnumMapFromSettings.h"
 #include "Utility/CsBeamLog.h"
 
@@ -22,6 +19,11 @@ namespace NCsBeam
 		namespace Str
 		{
 			const FString Beam = TEXT("Beam");
+		}
+
+		namespace Name
+		{
+			const FName Beams = FName("Beams");
 		}
 	}
 
@@ -48,15 +50,22 @@ namespace NCsBeam
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
-		const FCsBeamDataRootSet* DataRootSet = FCsBeamPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
-
-		if (!DataRootSet)
-			return;
 		/*
-		for (const FCsBeamSettings_DataTable_Beams& Beams : DataRootSet->Beams)
-		{
-			FCsPopulateEnumMapFromSettings::FromDataTable<EMCsBeam>(Context, ContextRoot, Beams.Beams, Str::Beam, &NCsBeam::FLog::Warning);
-		}
+		using namespace NCsBeam::NCached;
+
+		typedef FCsBeamPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
+
+		PayloadType Payload;
+		Payload.ContextRoot				 = ContextRoot;
+		Payload.DataTableName			 = Name::Beams;
+		Payload.EnumName				 = Str::Beam;
+		Payload.Create					 = &Create;
+		Payload.CreateCustom			 = &CreateCustom;
+		Payload.IsValidEnum				 = &IsValidEnum;
+		Payload.IsValidEnumByDisplayName = &IsValidEnumByDisplayName;
+		Payload.Log						 = &FCLog::Warning;
+
+		FCsBeamPopulateEnumMapFromSettings::FromDataTable(Context, Payload);
 		*/
 	}
 
@@ -118,12 +127,15 @@ namespace NCsBeamClass
 
 	void FromDataTable(const FString& Context, UObject* ContextRoot)
 	{
+		// TODO:
+		/*
 		const FCsBeamDataRootSet* DataRootSet = FCsBeamPopulateEnumMapFromSettings::GetDataRootSet(Context, ContextRoot);
 
 		if (!DataRootSet)
 			return;
 
 		FCsPopulateEnumMapFromSettings::FromDataTable<EMCsBeamClass>(Context, ContextRoot, DataRootSet->BeamClasses, NCached::Str::BeamClass, &NCsBeam::FLog::Warning);
+		*/
 	}
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)

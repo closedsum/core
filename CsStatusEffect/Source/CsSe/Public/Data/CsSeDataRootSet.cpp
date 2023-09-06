@@ -22,10 +22,26 @@ namespace NCsSeDataRootSet
 
 			CS_DEFINE_CACHED_STRING(StatusEffects, "StatusEffects");
 		}
+
+		namespace Name
+		{
+			CS_DEFINE_CACHED_NAME(StatusEffects, "StatusEffects");
+		}
 	}
 }
 
 #pragma endregion Cached
+
+#define MemberType FCsSeDataRootSet::EMember
+MemberType FCsSeDataRootSet::GetMember(const FName& MemberName)
+{
+	using namespace NCsSeDataRootSet::NCached;
+
+	if (MemberName == Name::StatusEffects)
+		return MemberType::StatusEffects;
+	return MemberType::StatusEffects;
+}
+#undef MemberType
 
 bool FCsSeDataRootSet::IsValidChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {

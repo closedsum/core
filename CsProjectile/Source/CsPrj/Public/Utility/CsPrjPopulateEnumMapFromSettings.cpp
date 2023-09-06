@@ -10,3 +10,28 @@ const FCsPrjDataRootSet* FCsPrjPopulateEnumMapFromSettings::GetDataRootSet(const
 {
 	return FCsPopulateEnumMapFromSettings::GetDataRootSet<FCsPrjDataRootSet, ICsPrjGetDataRootSet, &ICsPrjGetDataRootSet::GetCsPrjDataRootSet>(Context, ContextRoot);
 }
+
+#define PayloadType FCsPrjPopulateEnumMapFromSettings::FFromDataTable::FPayload
+void FCsPrjPopulateEnumMapFromSettings::FromDataTable(const FString& Context, PayloadType& Payload)
+{
+#undef PayloadType
+
+	const FCsPrjDataRootSet* DataRootSet = GetDataRootSet(Context, Payload.ContextRoot);
+
+	if (!DataRootSet)
+		return;
+
+	typedef FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload PayloadType;
+	PayloadType P;
+
+	P.ContextRoot			= Payload.ContextRoot;
+	P.DataTableSoftObject	= DataRootSet->GetDataTableSoftObjectChecked(Context, Payload.DataTableName);
+	P.EnumName				= Payload.EnumName;
+	P.Create				= Payload.Create;
+	P.CreateCustom			= Payload.CreateCustom;
+	P.IsValidEnum			= Payload.IsValidEnum;
+	P.IsValidEnumByDisplayName = Payload.IsValidEnumByDisplayName;
+	P.Log					= Payload.Log;
+
+	FCsPopulateEnumMapFromSettings::FromDataTable(Context, P);
+}

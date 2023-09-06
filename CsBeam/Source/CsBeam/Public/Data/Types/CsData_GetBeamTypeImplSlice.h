@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Type
 #include "Data/Types/CsData_GetBeamType.h"
 // Log
 #include "Utility/CsBeamLog.h"
 
 #include "CsData_GetBeamTypeImplSlice.generated.h"
-#pragma once
 
 // NCsBeam::NData::NType::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_3(NCsBeam, NData, NType, FImplSlice)

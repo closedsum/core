@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Managers/Data/Handler/CsManager_Data_DataHandler.h"
 // Types
 #include "Types/CsTypes_Beam.h"
 // Data
 #include "Data/CsData_Beam.h"
 #include "Data/CsData_BeamInterfaceMap.h"
-#pragma once
 
 namespace NCsBeam
 {

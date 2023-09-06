@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
 #include "Collision/CsTypes_Collision.h"
 #include "Collision/CsBeam_CollisionShape.h"
@@ -8,7 +11,6 @@
 #include "Data/Collision/CsData_Beam_Collision.h"
 
 #include "CsData_Beam_CollisionImplSlice.generated.h"
-#pragma once
 
 class UObject;
 

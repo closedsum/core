@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_StaticMesh.h"
@@ -8,7 +11,6 @@
 #include "Data/Visual/StaticMesh/CsData_Beam_VisualStaticMesh.h"
 
 #include "CsData_Beam_VisualStaticMeshImplSlice.generated.h"
-#pragma once
 
 // NCsBeam::NData::NVisual::NStaticMesh::FImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsBeam, NData, NVisual, NStaticMesh, FImplSlice)

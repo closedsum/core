@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Data/Damage/CsTypes_Data_Beam_Damage.h"
 
 #include "Managers/Damage/Data/Point/CsData_DamagePointProxy.h"

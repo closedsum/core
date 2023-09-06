@@ -1,11 +1,16 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Types/CsTypes_Macro.h"
 // Library
 	// Manager
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 	// Common
 #include "Library/CsLibrary_Property.h"
-// Managers
+// Engine
+#include "Engine/DataTable.h"
 
 #if WITH_EDITOR
 // Library

@@ -71,7 +71,7 @@ struct CSCORE_API FCsSettings_Manager_SkeletalMeshActor_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (AllowedClasses = "/Script/CsCore.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Skeletal Mesh", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsSkeletalMeshActor */

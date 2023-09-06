@@ -11,6 +11,8 @@
 #include "Data/CsLibrary_Data.h"
 	// Common
 #include "Library/CsLibrary_Property.h"
+// Engine
+#include "Engine/DataTable.h"
 
 #if WITH_EDITOR
 // Library

@@ -44,7 +44,7 @@ namespace NCsDataEntryData
 
 		PayloadType Payload;
 		Payload.ContextRoot				 = ContextRoot;
-		Payload.DataTableSoftObject		 = DataRootSet->GetDataTableSoftObjectChecked(Context, Name::Datas);
+		Payload.DataTable				 = DataRootSet->GetDataTableChecked(Context, Name::Datas);
 		Payload.EnumName				 = Str::DataEntryData;
 		Payload.Create					 = &Create;
 		Payload.CreateCustom			 = &CreateCustom;

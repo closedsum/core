@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Engine
 #include "Engine/DataTable.h"
@@ -20,16 +22,16 @@ struct CSCORE_API FCsDataRootSet
 #pragma region
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath EntryMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath TransitionEntryToMainMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath MainMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/CsCore.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data", meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath ExitMap;
 
 #pragma endregion Flow
@@ -104,6 +106,11 @@ public:
 	UDataTable* GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 
 	UDataTable* GetDataTableChecked(const FString& Context, const EMember& MemberType) const;
+
+	FORCEINLINE UDataTable* GetDataTableChecked(const FString& Context, const FName& MemberName) const
+	{
+		return GetDataTableChecked(Context, FCsDataRootSet::GetMember(MemberName));
+	}
 
 	template<typename RowStructType>
 	RowStructType* GetSafeDataTableRow(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&)) const

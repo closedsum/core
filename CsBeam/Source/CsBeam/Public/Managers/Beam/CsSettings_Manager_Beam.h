@@ -119,7 +119,7 @@ struct CSBEAM_API FCsSettings_Manager_Beam_UnitTest
 public:
 
 	/** Map used for testing. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "/Script/CsCore.World"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowedClasses = "/Script/Engine.World"))
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsBeam. */

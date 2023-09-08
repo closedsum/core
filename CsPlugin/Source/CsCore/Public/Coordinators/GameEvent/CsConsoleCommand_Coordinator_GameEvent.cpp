@@ -1,4 +1,6 @@
-// Copyright 2017-2021 Closed Sum Games, Inc. All rights reserved.
+// Copyright 2017-2023 Closed Sum Games, Inc. All rights reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Coordinators/GameEvent/CsConsoleCommand_Coordinator_GameEvent.h"
 #include "CsCore.h"
 

@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Types/Enum/CsEnumMap.h"
 #include "Types/Property/Multi/CsProperty_Multi_FString_Enum_ThreeParams.h"
 #include "Coroutine/pt.h"
@@ -6,8 +9,6 @@
 #include "Managers/Time/CsTypes_Update.h"
 #include "Containers/CsWeakObjectPtr.h"
 #include "Coroutine/CsRoutineHandle.h"
-
-#pragma once
 
 class UObject;
 class AActor;

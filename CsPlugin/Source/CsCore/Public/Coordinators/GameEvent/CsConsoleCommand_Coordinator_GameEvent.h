@@ -1,4 +1,7 @@
-// Copyright 2017-2021 Closed Sum Games, Inc. All rights reserved.
+// Copyright 2017-2023 Closed Sum Games, Inc. All rights reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Misc/OutputDevice.h"
 // Interfaces
 #include "Managers/ConsoleCommand/CsManager_ConsoleCommand.h"
@@ -8,7 +11,6 @@
 #include "Managers/Input/GameEvent/CsGameEvent.h"
 
 #include "Coordinators/GameEvent/CsTypes_Coordinator_GameEvent.h"
-#pragma once
 
 class UObject;
 class UWorld;

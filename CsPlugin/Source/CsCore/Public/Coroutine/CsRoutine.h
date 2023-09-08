@@ -1,10 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Coroutine/CsTypes_Coroutine.h"
 #include "Coroutine/pt.h"
 #include "Managers/Time/CsTypes_Update.h"
 #include "Managers/ScopedTimer/CsTypes_Manager_ScopedTimer.h"
-
-#pragma once
 
 // Delegates
 #pragma region

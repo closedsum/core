@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Time/CsTypes_Time.h"
@@ -9,7 +12,6 @@
 #include "Utility/CsPlaybackLog.h"
 
 #include "CsTypes_Playback.generated.h"
-#pragma once
 
 // NCsPlayback::EState
 #pragma region

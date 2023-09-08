@@ -1,6 +1,9 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsSettings_Manager_Playback.generated.h"
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+
+#include "CsSettings_Manager_Playback.generated.h"
 
 // FCsSettings_Manager_Playback
 #pragma region

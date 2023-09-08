@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Coroutine
 #include "Coroutine/CsRoutineHandle.h"
 // Types
@@ -6,8 +9,6 @@
 #include "Managers/Time/CsTypes_Time.h"
 // Log
 #include "Utility/CsLog.h"
-
-#pragma once
 
 class UObject;
 class UCsCoroutineScheduler;

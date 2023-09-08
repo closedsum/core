@@ -1,7 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "CsCVars.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "CsCVars.h"
 
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineTransactions;
 extern CSCORE_API TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning;

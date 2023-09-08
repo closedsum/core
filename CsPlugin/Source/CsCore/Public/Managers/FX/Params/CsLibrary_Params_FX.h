@@ -1,10 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 // NCsFX::NParameter::IParameter
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsFX, NParameter, IParameter)

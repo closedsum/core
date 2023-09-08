@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, Inc. All rights reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
 #include "Engine/TextureRenderTarget2D.h"

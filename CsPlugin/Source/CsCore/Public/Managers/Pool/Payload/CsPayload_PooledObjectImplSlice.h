@@ -1,7 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Managers/Pool/Payload/CsPayload_PooledObject.h"
 
 class UObject;
 struct FCsInterfaceMap;

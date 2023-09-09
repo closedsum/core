@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
 #include "Types/CsTypes_Macro.h"
 #include "Types/CsTypes_StaticMesh.h"
@@ -6,7 +9,6 @@
 #include "Skin/Data/Visual/StaticMesh/CsData_Skin_VisualStaticMesh.h"
 
 #include "CsData_Skin_VisualStaticMeshImplSlice.generated.h"
-#pragma once
 
 // NCsSkin::NData::NVisual::NStaticMesh::NImplSlice
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMesh, FImplSlice)

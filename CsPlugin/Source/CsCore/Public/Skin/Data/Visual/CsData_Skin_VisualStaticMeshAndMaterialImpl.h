@@ -1,4 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Interfaces
 #include "Data/CsData.h"
 #include "Skin/Data/Visual/CsData_Skin_Visual.h"
@@ -9,7 +12,6 @@
 #include "Material/CsTypes_Material.h"
 
 #include "CsData_Skin_VisualStaticMeshAndMaterialImpl.generated.h"
-#pragma once
 
 // NCsSkin::NData::NVisual::NStaticMeshAndMaterial::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSkin, NData, NVisual, NStaticMeshAndMaterial, FImpl)

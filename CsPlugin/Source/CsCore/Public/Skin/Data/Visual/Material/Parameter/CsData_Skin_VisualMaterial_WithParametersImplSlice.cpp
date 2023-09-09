@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Skin/Data/Visual/Material/Parameter/CsData_Skin_VisualMaterial_WithParametersImplSlice.h"
 
 // Library

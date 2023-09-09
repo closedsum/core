@@ -1,3 +1,5 @@
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Skin/Data/Visual/CsTypes_Data_Skin_Visual.h"
 #include "CsCore.h"
 

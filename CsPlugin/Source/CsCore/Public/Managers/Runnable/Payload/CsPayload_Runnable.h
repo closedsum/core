@@ -1,8 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Managers/Time/CsTypes_Time.h"
 #include "Runtime/Core/Public/GenericPlatform/GenericPlatformAffinity.h"
 #include "Managers/Runnable/CsTypes_Runnable.h"
-#pragma once
 
 class UObject;
 

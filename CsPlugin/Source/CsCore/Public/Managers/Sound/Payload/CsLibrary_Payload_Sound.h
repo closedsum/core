@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Managers/Sound/Payload/CsPayload_Sound.h"
 #include "Containers/CsLibrary_InterfaceMap.h"
 // Types
 #include "Managers/Sound/CsTypes_Sound.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 // NCsPooledObject::NPayload::IPayload
 CS_FWD_DECLARE_STRUCT_NAMESPACE_2(NCsPooledObject, NPayload, IPayload)

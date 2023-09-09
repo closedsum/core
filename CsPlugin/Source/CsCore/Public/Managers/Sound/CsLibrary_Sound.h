@@ -1,10 +1,12 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
 #include "Managers/Sound/CsTypes_Library_Sound.h"
 #include "Coroutine/CsRoutineHandle.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 class USoundBase;
 class UObject;

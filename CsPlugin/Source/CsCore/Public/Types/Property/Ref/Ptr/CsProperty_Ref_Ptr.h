@@ -1,7 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Property/CsProperty.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/Property/CsProperty.h"
 
 template<typename ClassType>
 struct TCsProperty_Ref_Ptr : public ICsProperty

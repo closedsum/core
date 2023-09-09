@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Spawner
 #include "Spawner/Params/CsSpawnerParams.h"
 #include "Spawner/Params/Shape/CsSpawnerParams_Shape.h"
 #include "Spawner/Params/Shape/CsSpawnerParams_ShapeCircle.h"
 
 #include "CsSpawnerParams_ShapeCircleImpl.generated.h"
-#pragma once
 
 // NCsSpawner::NParams::NShape::NCircle::FImpl
 CS_FWD_DECLARE_STRUCT_NAMESPACE_4(NCsSpawner, NParams, NShape, NCircle, FImpl)

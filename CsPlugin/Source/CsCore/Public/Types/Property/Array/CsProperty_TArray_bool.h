@@ -1,7 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Property/Array/CsProperty_TArray.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/Property/Array/CsProperty_TArray.h"
 
 struct TCsProperty_TArray_bool : public TCsProperty_TArray<bool>
 {

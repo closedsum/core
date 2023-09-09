@@ -1,7 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Property/Map/Ref/CsProperty_TMap_Ref.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/Property/Map/Ref/CsProperty_TMap_Ref.h"
 
 template<typename KeyType>
 struct TCsProperty_TMap_Ref_bool : public TCsProperty_TMap_Ref<KeyType, bool>

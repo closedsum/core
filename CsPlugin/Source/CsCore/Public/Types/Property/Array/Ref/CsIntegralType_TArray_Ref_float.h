@@ -1,7 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
-#include "Types/Property/Array/Ref/CsIntegralType_TArray_Ref.h"
-
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+#include "Types/Property/Array/Ref/CsIntegralType_TArray_Ref.h"
 
 struct TCsIntegralType_TArray_Ref_float : public TCsIntegralType_TArray_Ref<float>
 {

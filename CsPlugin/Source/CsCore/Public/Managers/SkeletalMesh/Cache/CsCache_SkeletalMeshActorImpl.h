@@ -1,9 +1,10 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Managers/Pool/Cache/CsCache_PooledObject.h"
 #include "Managers/SkeletalMesh/Cache/CsCache_SkeletalMeshActor.h"
 #include "Containers/CsWeakObjectPtr.h"
-
-#pragma once
 
 class UObject;
 struct FCsInterfaceMap;

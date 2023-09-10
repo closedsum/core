@@ -64,7 +64,8 @@ bool FCsWpDataRootSet::IsValidChecked(const FString& Context, const UObject* Wor
 
 	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::Member) \
 	{ \
-		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName(), *Str::GetCsWpDataRootSet, *Str::Member)); \
+		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *Str::GetCsWpDataRootSet, *Str::Member); \
+		return false; \
 	}
 
 	// WeaponClasses

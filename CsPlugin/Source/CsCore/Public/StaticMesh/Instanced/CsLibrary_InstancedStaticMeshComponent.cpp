@@ -33,7 +33,7 @@ namespace NCsStaticMesh
 				Component->PerInstanceSMCustomData.AddDefaulted(NumCustomDataFloats);
 
 				// Setup Data
-				FStaticMeshInstanceData Data = FStaticMeshInstanceData(GVertexElementTypeSupport.IsSupported(VET_Half2));
+				FStaticMeshInstanceData Data;// = FStaticMeshInstanceData(GVertexElementTypeSupport.IsSupported(VET_Half2));
 	
 				Data.AllocateInstances(NumInstances, NumCustomDataFloats, EResizeBufferFlags::AllowSlackOnReduce, true);
 
@@ -101,7 +101,7 @@ namespace NCsStaticMesh
 				}
 
 				// Setup Data
-				FStaticMeshInstanceData Data = FStaticMeshInstanceData(GVertexElementTypeSupport.IsSupported(VET_Half2));
+				FStaticMeshInstanceData Data;// = FStaticMeshInstanceData(GVertexElementTypeSupport.IsSupported(VET_Half2));
 	
 				Data.AllocateInstances(NumInstances, NumCustomDataFloats, EResizeBufferFlags::AllowSlackOnReduce, true);
 

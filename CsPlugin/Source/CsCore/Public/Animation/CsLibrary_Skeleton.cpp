@@ -28,7 +28,9 @@ namespace NCsSkeleton
 
 		checkf(AnimSkeleton, TEXT("%s: Failed to get Skeleton from Anim: %s."), *Context, *(Anim->GetName()));
 		// Check Mesh's Skeleton is compatible with Anim's Skeleton
-		checkf(Mesh->GetSkeleton()->IsCompatible(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName()));
+	#if WITH_EDITOR
+		checkf(Mesh->GetSkeleton()->IsCompatibleForEditor(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName()));
+	#endif // #if WITH_EDITOR
 		// Check Mesh is compatible with Anim's Skeleton
 		checkf(AnimSkeleton->IsCompatibleMesh(Mesh), TEXT("%s: Mesh: %s is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName()));
 		return true;
@@ -49,11 +51,13 @@ namespace NCsSkeleton
 			return false;
 		}
 		// Check Mesh's Skeleton is compatible with Anim's Skeleton
-		if (!Mesh->GetSkeleton()->IsCompatible(AnimSkeleton))
+	#if WITH_EDITOR
+		if (!Mesh->GetSkeleton()->IsCompatibleForEditor(AnimSkeleton))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(Mesh->GetName()), *(Anim->GetName())));
 			return false;
 		}
+	#endif // #if WITH_EDITOR
 		// Check Mesh is compatible with Anim's Skeleton
 		if (!AnimSkeleton->IsCompatibleMesh(Mesh))
 		{
@@ -79,7 +83,9 @@ namespace NCsSkeleton
 
 		checkf(AnimSkeleton, TEXT("%s: Failed to get Skeleton from AnimClass: %s."), *Context, *(AnimClass->GetName()));
 		// Check Mesh's Skeleton is compatible with AnimClass's Skeleton
-		checkf(Mesh->GetSkeleton()->IsCompatible(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName()));
+	#if WITH_EDITOR
+		checkf(Mesh->GetSkeleton()->IsCompatibleForEditor(AnimSkeleton), TEXT("%s: Mesh: %s Skeleton is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName()));
+	#endif // #if WITH_EDITOR
 		// Check Mesh is compatible with AnimClass's Skeleton
 		checkf(AnimSkeleton->IsCompatibleMesh(Mesh), TEXT("%s: Mesh: %s is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName()));
 		return true;
@@ -108,11 +114,13 @@ namespace NCsSkeleton
 			return false;
 		}
 		// Check Mesh's Skeleton is compatible with AnimClass's Skeleton
-		if (!Mesh->GetSkeleton()->IsCompatible(AnimSkeleton))
+	#if WITH_EDITOR
+		if (!Mesh->GetSkeleton()->IsCompatibleForEditor(AnimSkeleton))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Mesh: %s Skeleton is NOT compatible with AnimClass: %s Skeleton."), *Context, *(Mesh->GetName()), *(AnimClass->GetName())));
 			return false;
 		}
+	#endif // #if WITH_EDITOR
 		// Check Mesh is compatible with AnimClass's Skeleton
 		if (!AnimSkeleton->IsCompatibleMesh(Mesh))
 		{
@@ -143,7 +151,9 @@ namespace NCsSkeleton
 		checkf(AnimSkeleton, TEXT("%s: Failed to get Skeleton from Anim: %s."), *Context, *(Anim->GetName()));
 
 		// Check AnimClass's Skeleton is compatible with Anim's Skeleton
-		checkf(AnimClassSkeleton->IsCompatible(AnimSkeleton), TEXT("%s: AnimClass: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(AnimClass->GetName()), *(Anim->GetName()));
+	#if WITH_EDITOR
+		checkf(AnimClassSkeleton->IsCompatibleForEditor(AnimSkeleton), TEXT("%s: AnimClass: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(AnimClass->GetName()), *(Anim->GetName()));
+	#endif // #if WITH_EDITOR
 		return true;
 	}
 
@@ -178,11 +188,13 @@ namespace NCsSkeleton
 			return false;
 		}
 		// Check AnimClass's Skeleton is compatible with Anim's Skeleton
-		if (!AnimClassSkeleton->IsCompatible(AnimSkeleton))
+	#if WITH_EDITOR
+		if (!AnimClassSkeleton->IsCompatibleForEditor(AnimSkeleton))
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: AnimClass: %s Skeleton is NOT compatible with Anim: %s Skeleton."), *Context, *(AnimClass->GetName()), *(Anim->GetName())));
 			return false;
 		}
+	#endif // #if WITH_EDITOR
 		return true;
 	}
 }

@@ -34,6 +34,7 @@
 #include "NiagaraDataInterfaceArrayImpl.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraParameterCollection.h"
+#include "NiagaraSystemInstanceController.h"
 
 namespace NCsFX
 {

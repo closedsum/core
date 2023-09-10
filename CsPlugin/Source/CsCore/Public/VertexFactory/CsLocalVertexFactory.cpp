@@ -43,7 +43,7 @@ void FCsLocalVertexFactoryShaderParametersBase::GetElementShaderBindingsBase(
 			VertexFactoryUniformBuffer = LocalVertexFactory->GetUniformBuffer();
 		}
 
-		ShaderBindings.Add(Shader->GetUniformBufferParameter<FLocalVertexFactoryUniformShaderParameters>(), VertexFactoryUniformBuffer);
+		//ShaderBindings.Add(Shader->GetUniformBufferParameter<FLocalVertexFactoryUniformShaderParameters>(), VertexFactoryUniformBuffer);
 	}
 
 	//@todo - allow FMeshBatch to supply vertex streams (instead of requiring that they come from the vertex factory), and this userdata hack will no longer be needed for override vertex color

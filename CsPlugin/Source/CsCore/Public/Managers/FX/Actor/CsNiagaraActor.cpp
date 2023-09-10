@@ -6,6 +6,7 @@
 
 // Niagara
 #include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 
 #if WITH_EDITOR
 // Library

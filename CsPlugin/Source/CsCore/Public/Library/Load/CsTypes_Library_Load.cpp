@@ -31,6 +31,8 @@
 #include "Sound/SoundBase.h"
 // DataTable
 #include "Engine/DataTable.h"
+// Physics
+#include "PhysicsEngine/PhysicsAsset.h"
 
 // LoadCodes
 #pragma region

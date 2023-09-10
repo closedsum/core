@@ -45,6 +45,8 @@
 #include "Engine/UserDefinedStruct.h"
 #include "Engine.h"
 // Level Sequence
+// Physics
+#include "PhysicsEngine/PhysicsAsset.h"
 
 #include "../Classes/Factories/AnimSequenceFactory.h"
 

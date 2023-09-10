@@ -17,6 +17,7 @@
 #include "RawMesh.h"
 #include "Rendering/SkeletalMeshRenderData.h"
 #include "SkeletalRenderPublic.h"
+#include "Engine/SkinnedAssetCommon.h"
 
 namespace NCsAnimation
 {

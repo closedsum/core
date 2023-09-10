@@ -49,7 +49,7 @@ bool FCsSeDataRootSet::IsValidChecked(const FString& Context, const UObject* Wor
 
 	#define CS_TEMP_CHECK(Member) if (MemberType == EMember::Member) \
 	{ \
-		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName(), *Str::GetCsSeDataRootSet, *Str::Member)); \
+		checkf(Member.ToSoftObjectPath().IsValid(), TEXT("%s: %s.%s.%s is NOT Valid."), *Context, *(WorldContext->GetName()), *Str::GetCsSeDataRootSet, *Str::Member); \
 	}
 
 	// StatusEffects

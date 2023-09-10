@@ -1230,7 +1230,7 @@ void UCsLibrary_Common::ConvertBoneSpaceTransformToComponentSpace(const FTransfo
 			{
 				if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
 				{
-					const FTransform3d& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
+					const FTransform3d BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 					OutTransform				   *= BoneTransform;
 				}
 
@@ -1279,7 +1279,7 @@ void UCsLibrary_Common::ConvertComponentSpaceTransformToBoneSpace(const FTransfo
 		{
 			if (USkeletalMeshComponent* Component = Cast<USkeletalMeshComponent>(Mesh))
 			{
-				const FTransform3d& BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
+				const FTransform3d BoneTransform = Component->GetBoneSpaceTransforms()[BoneIndex];
 				OutTransform.SetToRelativeTransform(BoneTransform);
 			}
 

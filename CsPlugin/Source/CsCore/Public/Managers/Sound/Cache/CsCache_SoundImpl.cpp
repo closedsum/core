@@ -10,6 +10,7 @@
 // Sound
 #include "Managers/Sound/Payload/CsPayload_Sound.h"
 #include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Component
 #include "Components/SceneComponent.h"
 

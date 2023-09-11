@@ -36,6 +36,8 @@ namespace NCsGameEvent
 	{
 		using namespace NCsGameEvent::NCached;
 
+		EMCsGameEvent::Get().ClearUserDefinedEnums();
+
 		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
 		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;

@@ -39,6 +39,7 @@ MemberType FCsSeDataRootSet::GetMember(const FName& MemberName)
 
 	if (MemberName == Name::StatusEffects)
 		return MemberType::StatusEffects;
+	check(0);
 	return MemberType::StatusEffects;
 }
 #undef MemberType

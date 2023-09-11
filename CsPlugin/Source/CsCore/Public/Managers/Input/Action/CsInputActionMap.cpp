@@ -24,6 +24,8 @@ namespace NCsInputActionMap
 	{
 		using namespace NCsInputActionMap::NCached;
 
+		EMCsInputActionMap::Get().ClearUserDefinedEnums();
+
 		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 		typedef NCsEnum::NSettings::FLibrary EnumSettingsLibrary;
 		typedef NCsEnum::NSettings::FLibrary::FPopulate::FPayload PayloadType;

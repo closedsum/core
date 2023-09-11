@@ -58,6 +58,7 @@ MemberType FCsDataRootSet::GetMember(const FName& MemberName)
 		return MemberType::DataTables;
 	if (MemberName == Name::Payloads)
 		return MemberType::Payloads;
+	check(0);
 	return MemberType::Datas;
 }
 #undef MemberType

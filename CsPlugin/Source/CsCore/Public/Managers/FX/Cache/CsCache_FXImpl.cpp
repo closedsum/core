@@ -220,7 +220,8 @@ namespace NCsFX
 					// This is to hopefully prevent the GameThread from stalling when
 					// Deactivating the System.
 					else
-					if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+					if (FXLibrary::IsReadyToRunChecked(Context, FXComponent) &&
+						FXLibrary::IsCompleteChecked(Context, FXComponent))
 					{
 						// Reset ElapsedTime
 						ElapsedTime.Reset();
@@ -293,7 +294,15 @@ namespace NCsFX
 					// If Complete, transition to EDeallocateState::LifeTime
 					// This is to hopefully prevent the GameThread from stalling when
 					// Deactivating the System.
+
+					// TODO: HACK: In Editor there instances when an FX doesn't compile its Shaders until its running?
+					//			   The FX is "ready" but the instance is never created.
+				#if WITH_EDITOR
+					if (!FXLibrary::SafeHasSystemInstance(Context, FXComponent, nullptr) ||
+						FXLibrary::IsCompleteChecked(Context, FXComponent))
+				#else
 					if (FXLibrary::IsCompleteChecked(Context, FXComponent))
+				#endif // #if WITH_EDITOR
 					{
 						// Reset ElapsedTime
 						ElapsedTime.Reset();

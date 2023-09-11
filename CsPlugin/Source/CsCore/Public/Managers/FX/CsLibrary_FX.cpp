@@ -1481,9 +1481,35 @@ namespace NCsFX
 	// State
 	#pragma region
 
+	bool FLibrary::IsReadyToRunChecked(const FString& Context, const UNiagaraComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component)
+	
+		const UNiagaraSystem* System = Component->GetAsset();
+
+		CS_IS_PENDING_KILL_CHECKED(System);
+
+	#if WITH_EDITOR
+		if (System->HasOutstandingCompilationRequests(true))
+			return false;
+	#endif // #if WITH_EDITOR
+
+		if (!System->IsReadyToRun() || 
+			!Component->IsWorldReadyToRun())
+		{
+			return false;
+		}
+		// TODO: HACK: This is a bit unintuitive based on the name of function. May need to put this somewhere else.
+	#if WITH_EDITOR
+		if (!SafeHasSystemInstance(Context, Component, nullptr))
+			return false;
+	#endif // #if WITH_EDITOR
+		return true;
+	}
+
 	bool FLibrary::IsCompleteChecked(const FString& Context, ANiagaraActor* Actor)
 	{
-		CS_IS_PTR_NULL_CHECKED(Actor)
+		CS_IS_PENDING_KILL_CHECKED(Actor)
 
 		UNiagaraComponent* Component = Actor->GetNiagaraComponent();
 
@@ -1492,7 +1518,7 @@ namespace NCsFX
 
 	bool FLibrary::IsCompleteChecked(const FString& Context, UNiagaraComponent* Component)
 	{
-		CS_IS_PTR_NULL_CHECKED(Component)
+		CS_IS_PENDING_KILL_CHECKED(Component)
 
 		FNiagaraSystemInstance* SystemInstance = GetSystemInstanceChecked(Context, Component);
 
@@ -1573,6 +1599,22 @@ namespace NCsFX
 	// System
 	#pragma region
 	
+	const FNiagaraSystemInstance* FLibrary::GetSystemInstanceChecked(const FString& Context, const UNiagaraComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component);
+
+		FNiagaraSystemInstanceControllerConstPtr Controller = Component->GetSystemInstanceController();
+
+		check(Controller.Get());
+		check(Controller->IsValid());
+
+		const FNiagaraSystemInstance* System = Controller->GetSystemInstance_Unsafe();
+
+		CS_IS_PTR_NULL_CHECKED(System)
+
+		return System;
+	}
+
 	FNiagaraSystemInstance* FLibrary::GetSystemInstanceChecked(const FString& Context, UNiagaraComponent* Component)
 	{
 		CS_IS_PENDING_KILL_CHECKED(Component);
@@ -1610,6 +1652,29 @@ namespace NCsFX
 			return nullptr;
 		}
 		return System;
+	}
+
+	bool FLibrary::SafeHasSystemInstance(const FString& Context, const UNiagaraComponent* Component, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(Component)
+
+		FNiagaraSystemInstanceControllerConstPtr Controller = Component->GetSystemInstanceController();
+
+		if (!Controller.IsValid() ||
+			!Controller->IsValid())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System Instance Controller is NOT Valid for Component: %s."), *Context, *(Component->GetName())));
+			return false;
+		}
+
+		const FNiagaraSystemInstance* System = Controller->GetSystemInstance_Unsafe();
+
+		if (!System)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: System instance is NOT Valid for Component: %s."), *Context, *(Component->GetName())));
+			return false;
+		}
+		return true;
 	}
 
 	TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> FLibrary::GetSystemSimulationChecked(const FString& Context, UNiagaraComponent* Component)

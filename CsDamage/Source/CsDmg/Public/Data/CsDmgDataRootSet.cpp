@@ -49,6 +49,7 @@ MemberType FCsDmgDataRootSet::GetMember(const FName& MemberName)
 
 	if (MemberName == Name::Damages)
 		return MemberType::Damages;
+	check(0);
 	return MemberType::Damages;
 }
 #undef MemberType

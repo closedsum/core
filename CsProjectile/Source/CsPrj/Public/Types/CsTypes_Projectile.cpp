@@ -161,7 +161,7 @@ namespace NCsProjectileClass
 
 		namespace Name
 		{
-			const FName ProjectileClasses = FName("ProjectileClass");
+			const FName ProjectileClasses = FName("ProjectileClasses");
 		}
 	}
 

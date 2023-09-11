@@ -437,6 +437,15 @@ namespace NCsFX
 	public:
 
 		/**
+		* Check whether the NiagaraSystem on the NiagaraComponent is "Ready to Run".
+		*  This implies there are no pending compilation, setup, etc for the System.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		*/
+		static bool IsReadyToRunChecked(const FString& Context, const UNiagaraComponent* Component);
+
+		/**
 		* Check whether the NiagaraSystem on the RootComponent, a UNiagaraComponent, for Actor
 		* is "complete".
 		* Complete is:		
@@ -483,10 +492,13 @@ namespace NCsFX
 	#pragma region
 	public:
 
+		static const FNiagaraSystemInstance* GetSystemInstanceChecked(const FString& Context, const UNiagaraComponent* Component);
 		static FNiagaraSystemInstance* GetSystemInstanceChecked(const FString& Context, UNiagaraComponent* Component);
 
 		static FNiagaraSystemInstance* GetSafeSystemInstance(const FString& Context, UNiagaraComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
-		
+
+		static bool SafeHasSystemInstance(const FString& Context, const UNiagaraComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> GetSystemSimulationChecked(const FString& Context, UNiagaraComponent* Component);
 
 		static TSharedPtr<FNiagaraSystemSimulation, ESPMode::ThreadSafe> GetSafeSystemSimulation(const FString& Context, UNiagaraComponent* Component, void(*Log)(const FString&) = &FCsLog::Warning);

@@ -54,6 +54,7 @@ MemberType FCsWpDataRootSet::GetMember(const FName& MemberName)
 		return MemberType::Weapons;
 	if (MemberName == Name::WeaponSkins)
 		return MemberType::WeaponSkins;
+	check(0);
 	return MemberType::WeaponClasses;
 }
 #undef MemberType

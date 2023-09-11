@@ -57,6 +57,7 @@ MemberType FCsUIDataRootSet::GetMember(const FName& MemberName)
 		return MemberType::UserWidgetClasses;
 	if (MemberName == Name::UserWidgets)
 		return MemberType::UserWidgets;
+	check(0);
 	return MemberType::WidgetActorClasses;
 }
 #undef MemberType

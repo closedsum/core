@@ -52,6 +52,7 @@ MemberType FCsPrjDataRootSet::GetMember(const FName& MemberName)
 		return MemberType::Projectiles;
 	if (MemberName == Name::ProjectileClasses)
 		return MemberType::ProjectileClasses;
+	check(0);
 	return MemberType::Projectiles;
 }
 #undef MemberType

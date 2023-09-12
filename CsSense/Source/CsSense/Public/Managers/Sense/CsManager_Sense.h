@@ -14,11 +14,11 @@
 // Manager_MemoryResource
 #pragma region
 
-struct CSCORE_API FCsResourceContainer_SenseInfo : public TCsResourceContainer<ICsSenseInfo>
+struct CSSENSE_API FCsResourceContainer_SenseInfo : public TCsResourceContainer<ICsSenseInfo>
 {
 };
 
-class CSCORE_API FCsManager_SenseInfo : public NCsResource::NManager::NValue::TAbstract<ICsSenseInfo, FCsResourceContainer_SenseInfo>
+class CSSENSE_API FCsManager_SenseInfo : public NCsResource::NManager::NValue::TAbstract<ICsSenseInfo, FCsResourceContainer_SenseInfo>
 {
 private:
 
@@ -38,7 +38,7 @@ class ICsSensingObject;
 class ICsSensedObject;
 
 UCLASS()
-class CSCORE_API UCsManager_Sense : public UActorComponent
+class CSSENSE_API UCsManager_Sense : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()
 

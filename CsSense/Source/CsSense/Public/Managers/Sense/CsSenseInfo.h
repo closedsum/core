@@ -13,7 +13,7 @@ class ICsSensedObject;
 class ICsSensingObject;
 class UObject;
 
-struct CSCORE_API ICsSenseInfo
+struct CSSENSE_API ICsSenseInfo
 {
 public:
 
@@ -35,7 +35,7 @@ public:
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsSenseInfoKey : public FECsEnum_uint8
+struct CSSENSE_API FECsSenseInfoKey : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -44,7 +44,7 @@ struct CSCORE_API FECsSenseInfoKey : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseInfoKey)
 
-struct CSCORE_API EMCsSenseInfoKey : public TCsEnumStructMap<FECsSenseInfoKey, uint8>
+struct CSSENSE_API EMCsSenseInfoKey : public TCsEnumStructMap<FECsSenseInfoKey, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsSenseInfoKey, FECsSenseInfoKey, uint8)
 };
@@ -59,7 +59,7 @@ namespace NCsSenseInfoKey
 // FCsSenseInfoKey
 #pragma region
 
-struct CSCORE_API FCsSenseInfoKey
+struct CSSENSE_API FCsSenseInfoKey
 {
 public:
 
@@ -108,7 +108,7 @@ FORCEINLINE uint32 GetTypeHash(const FCsSenseInfoKey& b)
 // FCsSenseInfoValue
 #pragma region
 
-struct CSCORE_API FCsSenseInfoValue
+struct CSSENSE_API FCsSenseInfoValue
 {
 	FVector3f MeToObject;
 
@@ -164,7 +164,7 @@ public:
 // FCsSenseInfo
 #pragma region
 
-struct CSCORE_API FCsSenseInfo : public ICsSenseInfo
+struct CSSENSE_API FCsSenseInfo : public ICsSenseInfo
 {
 public:
 

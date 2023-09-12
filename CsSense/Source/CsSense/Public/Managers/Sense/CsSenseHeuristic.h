@@ -1,18 +1,18 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
 #include "Types/Enum/CsEnumMap.h"
 
 #include "CsSenseHeuristic.generated.h"
-#pragma once
 
 // SenseHeuristic
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsSenseHeuristic : public FECsEnum_uint8
+struct CSSENSE_API FECsSenseHeuristic : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -21,7 +21,7 @@ struct CSCORE_API FECsSenseHeuristic : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseHeuristic)
 
-struct CSCORE_API EMCsSenseHeuristic : public TCsEnumStructMap<FECsSenseHeuristic, uint8>
+struct CSSENSE_API EMCsSenseHeuristic : public TCsEnumStructMap<FECsSenseHeuristic, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsSenseHeuristic, FECsSenseHeuristic, uint8)
 };
@@ -35,7 +35,7 @@ namespace NCsSenseHeuristic
 
 struct ICsSenseInfo;
 
-struct CSCORE_API FCsSenseHeuristicScore
+struct CSSENSE_API FCsSenseHeuristicScore
 { 
 	ICsSenseInfo* Info;
 
@@ -60,7 +60,7 @@ enum class ECsSenseHeuristicScoreSortOrder : uint8
 	ECsSenseHeuristicScoreSortOrder_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSenseHeuristicScoreSortOrder : public TCsEnumMap<ECsSenseHeuristicScoreSortOrder>
+struct CSSENSE_API EMCsSenseHeuristicScoreSortOrder : public TCsEnumMap<ECsSenseHeuristicScoreSortOrder>
 {
 	CS_ENUM_MAP_BODY(EMCsSenseHeuristicScoreSortOrder, ECsSenseHeuristicScoreSortOrder)
 };
@@ -71,10 +71,10 @@ namespace NCsSenseHeuristicScoreSortOrder
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Descending;
-		extern CSCORE_API const Type Ascending;
-		extern CSCORE_API const Type Custom;
-		extern CSCORE_API const Type ECsSenseHeuristicScoreSortOrder_MAX;
+		extern CSSENSE_API const Type Descending;
+		extern CSSENSE_API const Type Ascending;
+		extern CSSENSE_API const Type Custom;
+		extern CSSENSE_API const Type ECsSenseHeuristicScoreSortOrder_MAX;
 	}
 }
 
@@ -82,7 +82,7 @@ namespace NCsSenseHeuristicScoreSortOrder
 
 struct ICsSenseInfo;
 
-struct CSCORE_API FCsSenseHeuristic
+struct CSSENSE_API FCsSenseHeuristic
 {
 public:
 

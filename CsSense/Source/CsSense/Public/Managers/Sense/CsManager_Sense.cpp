@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Sense/CsManager_Sense.h"
-#include "CsCore.h"
+#include "CsSense.h"
 
 #include "UniqueObject/CsUniqueObject.h"
 #include "Managers/Sense/CsSensedObject.h"

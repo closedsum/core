@@ -2,9 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Interface.h"
 #include "Containers/CsInterfaceObject.h"
+
 #include "CsSensedObject.generated.h"
 
 UINTERFACE(BlueprintType, MinimalApi, meta = (CannotImplementInterfaceInBlueprint))
@@ -42,7 +42,7 @@ DECLARE_DELEGATE_RetVal_TwoParams(FVector3f, FCsSensedObject_Script_GetCustomLoc
 // FCsSensedObject
 #pragma region
 
-struct CSCORE_API FCsSensedObject : public TCsInterfaceObject<ICsSensedObject>
+struct CSSENSE_API FCsSensedObject : public TCsInterfaceObject<ICsSensedObject>
 {
 private:
 

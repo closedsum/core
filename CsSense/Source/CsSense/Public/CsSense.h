@@ -1,11 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
-#include "Managers/Sense/CsSensingObject.h"
-#include "CsCore.h"
+#ifndef __CSSENSE_H__
+#define __CSSENSE_H__
 
-UCsSensingObject::UCsSensingObject(const class FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
+#include "CoreMinimal.h"
 
-}
+DECLARE_LOG_CATEGORY_EXTERN(LogCsSense, Log, All);
+
+#endif

@@ -14,7 +14,7 @@
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsSenseObjectType : public FECsEnum_uint8
+struct CSSENSE_API FECsSenseObjectType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -23,7 +23,7 @@ struct CSCORE_API FECsSenseObjectType : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseObjectType)
 
-struct CSCORE_API EMCsSenseObjectType : public TCsEnumStructMap<FECsSenseObjectType, uint8>
+struct CSSENSE_API EMCsSenseObjectType : public TCsEnumStructMap<FECsSenseObjectType, uint8>
 {
 	CS_ENUM_STRUCT_MAP_BODY(EMCsSenseObjectType, FECsSenseObjectType, uint8)
 };
@@ -32,8 +32,8 @@ namespace NCsSenseObjectType
 {
 	typedef FECsSenseObjectType Type;
 
-	extern CSCORE_API const Type Player;
-	extern CSCORE_API const Type AI;
+	extern CSSENSE_API const Type Player;
+	extern CSSENSE_API const Type AI;
 }
 
 #pragma endregion SenseObjectType
@@ -50,7 +50,7 @@ enum class ECsSenseTeam : uint8
 	ECsSenseTeam_MAX	UMETA(Hidden),
 };
 
-struct CSCORE_API EMCsSenseTeam : public TCsEnumMap<ECsSenseTeam>
+struct CSSENSE_API EMCsSenseTeam : public TCsEnumMap<ECsSenseTeam>
 {
 	CS_ENUM_MAP_BODY_WITH_EXPLICIT_MAX(EMCsSenseTeam, ECsSenseTeam)
 };
@@ -61,10 +61,10 @@ namespace NCsSenseTeam
 
 	namespace Ref
 	{
-		extern CSCORE_API const Type Friendly;
-		extern CSCORE_API const Type Enemy;
-		extern CSCORE_API const Type Neutral;
-		extern CSCORE_API const Type ECsSenseTeam_MAX;
+		extern CSSENSE_API const Type Friendly;
+		extern CSSENSE_API const Type Enemy;
+		extern CSSENSE_API const Type Neutral;
+		extern CSSENSE_API const Type ECsSenseTeam_MAX;
 	}
 }
 
@@ -74,7 +74,7 @@ namespace NCsSenseTeam
 #pragma region
 
 USTRUCT(BlueprintType)
-struct CSCORE_API FECsSenseActorType : public FECsEnum_uint8
+struct CSSENSE_API FECsSenseActorType : public FECsEnum_uint8
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -83,15 +83,15 @@ struct CSCORE_API FECsSenseActorType : public FECsEnum_uint8
 
 CS_DEFINE_ENUM_UINT8_GET_TYPE_HASH(FECsSenseActorType)
 
-struct CSCORE_API EMCsSenseActorType : public TCsEnumStructMap<FECsSenseActorType, uint8>
+struct CSSENSE_API EMCsSenseActorType : public TCsEnumStructMap<FECsSenseActorType, uint8>
 {
 	CS_DECLARE_ENUM_STRUCT_MAP_BODY(EMCsSenseActorType)
 };
 
 namespace ECsSenseActorType
 {
-	extern CSCORE_API const FECsSenseActorType Player;
-	extern CSCORE_API const FECsSenseActorType AI;
+	extern CSSENSE_API const FECsSenseActorType Player;
+	extern CSSENSE_API const FECsSenseActorType AI;
 }
 
 #pragma endregion SenseActorType

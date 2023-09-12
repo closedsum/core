@@ -11,7 +11,7 @@
 // Library
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
+#include "Data/Visual/CsLibrary_Data_Skin_Visual.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
 #include "Managers/Time/CsLibrary_Manager_Time.h"
@@ -23,7 +23,7 @@
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Data/Visual/CsData_Weapon_VisualSkin.h"
-#include "Skin/Data/Visual/CsData_Skin_Visual.h"
+#include "Data/Visual/CsData_Skin_Visual.h"
 #include "Trace/Data/CsData_TraceWeapon.h"
 // Containers
 #include "Containers/CsInterfaceMap.h"

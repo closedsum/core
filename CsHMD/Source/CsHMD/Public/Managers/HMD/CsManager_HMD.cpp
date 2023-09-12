@@ -2,9 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/HMD/CsManager_HMD.h"
-#include "CsCore.h"
+#include "CsHMD.h"
 
-#include "HeadMountedDisplay/Public/HeadMountedDisplayFunctionLibrary.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Misc/CoreDelegates.h"
 
 // static initializations

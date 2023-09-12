@@ -2,8 +2,9 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-#include "../CoreUObject/Public/UObject/Object.h"
-#include "HeadMountedDisplay/Public/HeadMountedDisplayTypes.h"
+#include "UObject/Object.h"
+#include "HeadMountedDisplayTypes.h"
+
 #include "CsLibrary_Manager_HMD.generated.h"
 
 /** Sent when the platform needs the user to fix headset tracking on startup (PS4 Morpheus only) */
@@ -26,7 +27,7 @@ DECLARE_DYNAMIC_DELEGATE(FCsLibraryManagerHMD_HMDRemovedFromHead);
 DECLARE_DYNAMIC_DELEGATE(FCsLibraryManagerHMD_VRControllerRecentered);
 
 UCLASS()
-class CSCORE_API UCsLibrary_Manager_HMD : public UObject
+class CSHMD_API UCsLibrary_Manager_HMD : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

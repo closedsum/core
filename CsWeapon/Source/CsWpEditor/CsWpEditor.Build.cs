@@ -38,6 +38,7 @@ public class CsWpEditor : ModuleRules
                     "EditorStyle",
                     "CsCore",
                     "CsEditor",
+                    "CsSkin",
                     "CsPrj",
                     "CsWp"
                 }

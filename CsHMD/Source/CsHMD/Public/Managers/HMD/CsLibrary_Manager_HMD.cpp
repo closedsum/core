@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/HMD/CsLibrary_Manager_HMD.h"
-#include "CsCore.h"
+#include "CsHMD.h"
 
 #include "Managers/HMD/CsManager_HMD.h"
 
@@ -22,14 +22,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitializingAndNeedsHMDToBeT
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -45,14 +45,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitializingAndNeedsHMDT
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitializingAndNeedsHMDToBeTracked: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -68,14 +68,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitialized(FCsLibraryManage
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitialized: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitialized: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitialized: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDTrackingInitialized: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -91,14 +91,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitialized(FCsLibraryMa
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitialized: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitialized: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitialized: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDTrackingInitialized: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -114,14 +114,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDRecenter(FCsLibraryManagerHMD_HMDRec
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRecenter: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRecenter: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRecenter: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRecenter: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -137,14 +137,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRecenter(FCsLibraryManagerHMD_HM
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRecenter: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRecenter: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRecenter: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRecenter: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -160,14 +160,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDLost(FCsLibraryManagerHMD_HMDLost De
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDLost: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDLost: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDLost: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDLost: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -183,14 +183,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDLost(FCsLibraryManagerHMD_HMDLos
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDLost: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDLost: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDLost: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDLost: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -206,14 +206,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDReconnected(FCsLibraryManagerHMD_HMD
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDReconnected: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDReconnected: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDReconnected: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDReconnected: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -229,14 +229,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDReconnected(FCsLibraryManagerHMD
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindToEvent_HMDReconnected: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindToEvent_HMDReconnected: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindToEvent_HMDReconnected: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindToEvent_HMDReconnected: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -252,14 +252,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDConnectCanceled(FCsLibraryManagerHMD
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDConnectCanceled: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDConnectCanceled: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDConnectCanceled: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDConnectCanceled: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -275,14 +275,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDConnectCanceled(FCsLibraryManage
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDConnectCanceled: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDConnectCanceled: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDConnectCanceled: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDConnectCanceled: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -298,14 +298,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDPutOnHead(FCsLibraryManagerHMD_HMDPu
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDPutOnHead: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDPutOnHead: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDPutOnHead: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDPutOnHead: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -321,14 +321,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDPutOnHead(FCsLibraryManagerHMD_H
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDPutOnHead: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDPutOnHead: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDPutOnHead: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDPutOnHead: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -344,14 +344,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_HMDRemovedFromHead(FCsLibraryManagerHMD
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRemovedFromHead: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRemovedFromHead: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRemovedFromHead: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_HMDRemovedFromHead: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -367,14 +367,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRemovedFromHead(FCsLibraryManage
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRemovedFromHead: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRemovedFromHead: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRemovedFromHead: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_HMDRemovedFromHead: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -390,14 +390,14 @@ void UCsLibrary_Manager_HMD::BindToEvent_VRControllerRecentered(FCsLibraryManage
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_VRControllerRecentered: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_VRControllerRecentered: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_VRControllerRecentered: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::BindToEvent_VRControllerRecentered: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }
@@ -413,14 +413,14 @@ void UCsLibrary_Manager_HMD::UnbindFromEvent_VRControllerRecentered(FCsLibraryMa
 #if WITH_EDITOR
 		else
 		{
-			UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_VRControllerRecentered: No Delegate Bound."));
+			UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_VRControllerRecentered: No Delegate Bound."));
 		}
 #endif // #if WITH_EDITOR
 	}
 #if WITH_EDITOR
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_VRControllerRecentered: No Manager HMD of type: UCsManager_HMD was created."));
+		UE_LOG(LogCsHMD, Warning, TEXT("UCsLibrary_Manager_HMD::UnbindFromEvent_VRControllerRecentered: No Manager HMD of type: UCsManager_HMD was created."));
 	}
 #endif // #if WITH_EDITOR
 }

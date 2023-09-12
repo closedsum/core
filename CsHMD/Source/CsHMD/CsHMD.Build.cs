@@ -1,10 +1,11 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 using UnrealBuildTool;
 
-public class CsWp : ModuleRules
+public class CsHMD : ModuleRules
 {
-    public CsWp(ReadOnlyTargetRules Target) : base(Target)
+    public CsHMD(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
@@ -15,23 +16,13 @@ public class CsWp : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "AssetRegistry",
-                    "DeveloperSettings",
-                    "PhysicsCore",
-                    "CsCore",
-                    "CsSkin",
-                    "CsPrj",
-                    "CsBeam"
+                    "CsCore"
                 }
             );
 
         /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
             }
         );
         */

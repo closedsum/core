@@ -23,10 +23,6 @@
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameMode.h"
 //#include "Game/CsGameInstance_DEPRECATED.h"
-// VR
-#include "IHeadMountedDisplay.h"
-#include "MotionControllerComponent.h"
-//#include "MotionController/CsMotionController_DEPRECATED.h"
 // Components
 #include "Components/PoseableMeshComponent.h"
 //#include "Components/CsStaticMeshComponent.h"
@@ -980,10 +976,6 @@ void UCsLibrary_Common::EnableComponent(USceneComponent* Component, const bool &
 	Component->Activate();
 	Component->SetComponentTickEnabled(true);
 
-	// Motion Controller Component
-	if (UMotionControllerComponent* Motion = Cast<UMotionControllerComponent>(Component))
-	{
-	}
 	// Mesh Component
 	if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 	{
@@ -1024,11 +1016,6 @@ void UCsLibrary_Common::DisableComponent(USceneComponent* Component, const bool 
 		Component->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	}
 
-	// Motion Controller Component
-	if (UMotionControllerComponent* Motion = Cast<UMotionControllerComponent>(Component))
-	{
-		Motion->SetComponentTickEnabled(false);
-	}
 	// Mesh Component
 	if (UStaticMeshComponent* Mesh = Cast<UStaticMeshComponent>(Component))
 	{

@@ -27,7 +27,6 @@ public class CsCore : ModuleRules
                     "RHI", // May need to breakout into plugin
                     "RenderCore", // TODO: Move associated code to plugin
                     "PhysicsCore",
-                    "HeadMountedDisplay",
                     "Niagara",
                     "NiagaraCore" // TODO: Move associated code to plugin
                 }

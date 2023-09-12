@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "DetailCustomizations/EnumStruct/ECsEnumStructCustomization.h"
 
 /**
 * Customizes a FECsSenseActorType property to use a dropdown
 */
-class CSEDITOR_API FECsSenseActorTypeCustomization : public FECsEnumStructCustomization
+class CSSENSEEDITOR_API FECsSenseActorTypeCustomization : public FECsEnumStructCustomization
 {
 private:
 	typedef FECsEnumStructCustomization Super;

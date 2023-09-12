@@ -7,7 +7,7 @@
 #include "EdGraph/EdGraphSchema.h"
 #include "EdGraphSchema_K2.h"
 
-class FCsPanelGraphPinFactory : public FGraphPanelPinFactory
+class FCsSensePanelGraphPinFactory : public FGraphPanelPinFactory
 {
 	virtual TSharedPtr<class SGraphPin> CreatePin(class UEdGraphPin* InPin) const override;
 

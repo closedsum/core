@@ -3,9 +3,12 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 
-class CSEDITOR_API FCsRegisterDetailCustomization
+namespace NCsAI
 {
-public:
+	struct CSAI_API FLog final
+	{
+	public:
 
-	static void Register();
-};
+		static void Warning(const FString& Str);
+	};
+}

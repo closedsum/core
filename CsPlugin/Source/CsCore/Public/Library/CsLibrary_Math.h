@@ -1104,56 +1104,98 @@ namespace NCsMath
 			OutUp = M.GetScaledAxis(EAxis::Z);
 		}
 
-		FORCEINLINE static void RotateByPitch(FQuat4f& OutQ, float Radians)
+		FORCEINLINE static void RotateByPitch(FQuat4f& OutQ, const float& Radians)
 		{
 			const FQuat4f DeltaQuat = FQuat4f(FVector3f::RightVector, Radians);
-			OutQ				 *= DeltaQuat;
+			OutQ				   *= DeltaQuat;
+			OutQ.Normalize();
+		}
+		FORCEINLINE static void RotateByPitch(FQuat4d& OutQ, const double& Radians)
+		{
+			const FQuat4d DeltaQuat = FQuat4d(FVector3d::RightVector, Radians);
+			OutQ				   *= DeltaQuat;
 			OutQ.Normalize();
 		}
 
-		FORCEINLINE static FQuat4f RotateByPitch(const FQuat4f& Q, float Radians)
+		FORCEINLINE static FQuat4f RotateByPitch(const FQuat4f& Q, const float& Radians)
 		{
 			FQuat4f NewQuat = Q;
 			RotateByPitch(NewQuat, Radians);
 			return NewQuat;
 		}
+		FORCEINLINE static FQuat4d RotateByPitch(const FQuat4d& Q, const double& Radians)
+		{
+			FQuat4d NewQuat = Q;
+			RotateByPitch(NewQuat, Radians);
+			return NewQuat;
+		}
 
-		FORCEINLINE static void RotateByPitchDegrees(FQuat4f& OutQ, float Degrees) { RotateByPitch(OutQ, FMath::DegreesToRadians(Degrees)); }
-		FORCEINLINE static FQuat4f RotateByPitchDegrees(const FQuat4f& Q, float Degrees) { return RotateByPitch(Q, FMath::DegreesToRadians(Degrees)); }
-		
-		FORCEINLINE static void RotateByRoll(FQuat4f& OutQ, float Radians)
+		FORCEINLINE static void RotateByPitchDegrees(FQuat4f& OutQ, const float& Degrees) { RotateByPitch(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByPitchDegrees(FQuat4d& OutQ, const double& Degrees) { RotateByPitch(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4f RotateByPitchDegrees(const FQuat4f& Q, const float& Degrees) { return RotateByPitch(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4d RotateByPitchDegrees(const FQuat4d& Q, const double& Degrees) { return RotateByPitch(Q, FMath::DegreesToRadians(Degrees)); }
+
+		FORCEINLINE static void RotateByRoll(FQuat4f& OutQ, const float& Radians)
 		{
 			const FQuat4f DeltaQuat = FQuat4f(FVector3f::ForwardVector, Radians);
-			OutQ *= DeltaQuat;
+			OutQ				   *= DeltaQuat;
+			OutQ.Normalize();
+		}
+		FORCEINLINE static void RotateByRoll(FQuat4d& OutQ, const double& Radians)
+		{
+			const FQuat4d DeltaQuat = FQuat4d(FVector3d::ForwardVector, Radians);
+			OutQ				   *= DeltaQuat;
 			OutQ.Normalize();
 		}
 
-		FORCEINLINE static FQuat4f RotateByRoll(const FQuat4f& Q, float Radians)
+		FORCEINLINE static FQuat4f RotateByRoll(const FQuat4f& Q, const float& Radians)
 		{
 			FQuat4f NewQuat = Q;
 			RotateByRoll(NewQuat, Radians);
 			return NewQuat;
 		}
+		FORCEINLINE static FQuat4d RotateByRoll(const FQuat4d& Q, const double& Radians)
+		{
+			FQuat4d NewQuat = Q;
+			RotateByRoll(NewQuat, Radians);
+			return NewQuat;
+		}
 
-		FORCEINLINE static void RotateByRollDegrees(FQuat4f& OutQ, float Degrees) { RotateByRoll(OutQ, FMath::DegreesToRadians(Degrees)); }
-		FORCEINLINE static FQuat4f RotateByRollDegrees(const FQuat4f& Q, float Degrees) { return RotateByRoll(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByRollDegrees(FQuat4f& OutQ, const float& Degrees) { RotateByRoll(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByRollDegrees(FQuat4d& OutQ, const double& Degrees) { RotateByRoll(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4f RotateByRollDegrees(const FQuat4f& Q, const float& Degrees) { return RotateByRoll(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4d RotateByRollDegrees(const FQuat4d& Q, const double& Degrees) { return RotateByRoll(Q, FMath::DegreesToRadians(Degrees)); }
 
-		FORCEINLINE static void RotateByYaw(FQuat4f& OutQ, float Radians)
+		FORCEINLINE static void RotateByYaw(FQuat4f& OutQ, const float& Radians)
 		{
 			const FQuat4f DeltaQuat = FQuat4f(FVector3f::UpVector, Radians);
-			OutQ *= DeltaQuat;
+			OutQ				   *= DeltaQuat;
+			OutQ.Normalize();
+		}
+		FORCEINLINE static void RotateByYaw(FQuat4d& OutQ, const double& Radians)
+		{
+			const FQuat4d DeltaQuat = FQuat4d(FVector3d::UpVector, Radians);
+			OutQ				   *= DeltaQuat;
 			OutQ.Normalize();
 		}
 
-		FORCEINLINE static FQuat4f RotateByYaw(const FQuat4f& Q, float Radians)
+		FORCEINLINE static FQuat4f RotateByYaw(const FQuat4f& Q, const float& Radians)
 		{
 			FQuat4f NewQuat = Q;
 			RotateByRoll(NewQuat, Radians);
 			return NewQuat;
 		}
+		FORCEINLINE static FQuat4d RotateByYaw(const FQuat4d& Q, const double& Radians)
+		{
+			FQuat4d NewQuat = Q;
+			RotateByRoll(NewQuat, Radians);
+			return NewQuat;
+		}
 
-		FORCEINLINE static void RotateByYawDegrees(FQuat4f& OutQ, float Degrees) { RotateByYaw(OutQ, FMath::DegreesToRadians(Degrees)); }
-		FORCEINLINE static FQuat4f RotateByYawDegrees(const FQuat4f& Q, float Degrees) { return RotateByYaw(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByYawDegrees(FQuat4f& OutQ, const float& Degrees) { RotateByYaw(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static void RotateByYawDegrees(FQuat4d& OutQ, const double& Degrees) { RotateByYaw(OutQ, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4f RotateByYawDegrees(const FQuat4f& Q, const float& Degrees) { return RotateByYaw(Q, FMath::DegreesToRadians(Degrees)); }
+		FORCEINLINE static FQuat4d RotateByYawDegrees(const FQuat4d& Q, const double& Degrees) { return RotateByYaw(Q, FMath::DegreesToRadians(Degrees)); }
 
 	#pragma endregion Quat
 

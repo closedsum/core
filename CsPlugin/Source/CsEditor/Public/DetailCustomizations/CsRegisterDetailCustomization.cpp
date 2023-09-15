@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 #include "CsEditor.h"
 
@@ -34,8 +36,6 @@
 #include "DetailCustomizations/EnumStruct/StaticMesh/ECsStaticMeshActorCustomization.h"
 		// SkeletalMesh
 #include "DetailCustomizations/EnumStruct/SkeletalMesh/ECsSkeletalMeshActorCustomization.h"
-		// Sense
-#include "DetailCustomizations/EnumStruct/Sense/ECsSenseActorTypeCustomization.h"
 		// Surface
 #include "DetailCustomizations/EnumStruct/ECsSurfaceTypeCustomization.h"
 		// Team
@@ -98,8 +98,6 @@ void FCsRegisterDetailCustomization::Register()
 		{
 			CS_TEMP_REGISTER(ECsSkeletalMeshActor);
 		}
-		// Sense
-		CS_TEMP_REGISTER(ECsSenseActorType);
 		// Team
 		CS_TEMP_REGISTER(ECsTeam);
 		// Anim

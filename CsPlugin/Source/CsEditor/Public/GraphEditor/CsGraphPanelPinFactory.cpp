@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "GraphEditor/CsGraphPanelPinFactory.h"
 #include "CsEditor.h"
 
@@ -17,7 +19,6 @@
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
 //#include "Types/CsTypes_Interactive.h"
 //#include "AI/CsTypes_AI.h"
-#include "Managers/Sense/CsTypes_Sense.h"
 #include "Team/CsTypes_Team.h"
 #include "Types/CsTypes_Load.h"
 #include "Data/CsTypes_DataEntry.h"
@@ -71,8 +72,6 @@
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIType.h"
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAIState.h"
 //#include "GraphEditor/EnumStruct/AI/SCsGraphPin_ECsAISetup.h"
-	// Sense
-#include "GraphEditor/EnumStruct/Sense/SCsGraphPin_ECsSenseActorType.h"
 	// Surface
 #include "GraphEditor/EnumStruct/SCsGraphPin_ECsSurfaceType.h"
 	// Team
@@ -182,11 +181,6 @@ TSharedPtr<class SGraphPin> FCsPanelGraphPinFactory::CreatePin(class UEdGraphPin
 		//if (DoesPinUseScriptStruct<FECsAIState>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAIState, InPin); }
 		// FECsAISetup
 		//if (DoesPinUseScriptStruct<FECsAISetup>(InPin, K2Schema)) { return SNew(SCsGraphPin_ECsAISetup, InPin); }
-	}
-	// Sense
-	{
-		// FECsSenseActorType
-		CS_TEMP_CREATE(ECsSenseActorType)
 	}
 	// Team
 	{

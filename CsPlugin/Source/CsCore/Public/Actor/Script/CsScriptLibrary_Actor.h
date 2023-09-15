@@ -131,6 +131,54 @@ public:
 
 #pragma endregion Visibility
 
+// Orientation
+#pragma region
+
+	/** 
+	* Returns the quaternion of the RootComponent of this Actor.
+	* 
+	* @param Context	The calling context
+	* @param Actor
+	* return			Quat
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
+	static FQuat GetQuat(const FString& Context, AActor* Actor);
+
+	/**
+	* Rotate an Actor by Pitch in Degrees
+	* 
+	* @param Context	The calling context.
+	* @param Actor
+	* @param Degrees
+	* return			Whether the Rotation was performed or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,Degrees,Teleport"))
+	static bool RotateByPitch(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport = ETeleportType::None);
+
+	/**
+	* Rotate an Actor by Yaw in Degrees
+	* 
+	* @param Context	The calling context.
+	* @param Actor
+	* @param Degrees
+	* return			Whether the Rotation was performed or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,Degrees,Teleport"))
+	static bool RotateByYaw(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport = ETeleportType::None);
+
+	/**
+	* Rotate an Actor by Roll in Degrees
+	* 
+	* @param Context	The calling context.
+	* @param Actor
+	* @param Degrees
+	* return			Whether the Rotation was performed or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,Degrees,Teleport"))
+	static bool RotateByRoll(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport = ETeleportType::None);
+
+#pragma endregion Orientation
+
 // Move
 #pragma region
 public:

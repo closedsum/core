@@ -24,10 +24,6 @@ public class CsCore : ModuleRules
                     "Json",
                     "JsonUtilities",
                     "DeveloperSettings",
-                    "RHI", // May need to breakout into plugin
-                    "RenderCore", // TODO: Move associated code to plugin
-                    "PhysicsCore",
-                    "HeadMountedDisplay",
                     "Niagara",
                     "NiagaraCore" // TODO: Move associated code to plugin
                 }
@@ -55,7 +51,9 @@ public class CsCore : ModuleRules
             PublicDependencyModuleNames.AddRange(
                 new string[] {
                     "DeveloperToolSettings",
-                    "RenderCore",
+                    "RHI", // May need to breakout into plugin
+                    "RenderCore", // TODO: Move associated code to plugin
+                    "PhysicsCore",
                     "ApplicationCore"
                 }
             );

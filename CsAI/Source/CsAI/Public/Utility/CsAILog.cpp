@@ -1,11 +1,13 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
-#pragma once
+#include "Utility/CsAILog.h"
+#include "CsAI.h"
 
-class CSEDITOR_API FCsRegisterDetailCustomization
+namespace NCsAI
 {
-public:
-
-	static void Register();
-};
+	void FLog::Warning(const FString& Str)
+	{
+		UE_LOG(LogCsAI, Warning, TEXT("%s"), *Str);
+	}
+}

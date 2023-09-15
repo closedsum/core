@@ -6,6 +6,7 @@
 
 // Library
 #include "Actor/CsLibrary_Actor.h"
+#include "Library/CsLibrary_Math.h"
 
 // Cached
 #pragma region
@@ -27,6 +28,12 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetComponentByTag);
 			// Visibility
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetHiddenInGame);
+			// Orientation
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetQuat);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, RotateByPitch);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, RotateByYaw);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, RotateByRoll);
+			// Move
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, MoveByInterp);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterial);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetMaterials);
@@ -42,6 +49,8 @@ namespace NCsScriptLibraryActor
 }
 
 #pragma endregion Cached
+
+#define ActorLibrary NCsActor::FLibrary
 
 UCsScriptLibrary_Actor::UCsScriptLibrary_Actor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -91,8 +100,6 @@ AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, UObject* WorldC
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTag : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
 
@@ -101,8 +108,6 @@ bool UCsScriptLibrary_Actor::GetAnyByTags(const FString& Context, UObject* World
 	using namespace NCsScriptLibraryActor::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnyByTags : Context;
-
-	typedef NCsActor::FLibrary ActorLibrary;
 
 	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutActors);
 }
@@ -113,8 +118,6 @@ AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, UObject* World
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByName : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
@@ -123,8 +126,6 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* Worl
 	using namespace NCsScriptLibraryActor::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByLabel : Context;
-
-	typedef NCsActor::FLibrary ActorLibrary;
 
 	return ActorLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
 }
@@ -140,8 +141,6 @@ UActorComponent* UCsScriptLibrary_Actor::GetComponentByTag(const FString& Contex
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetComponentByTag : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeComponentByTag(Ctxt, Actor, Tag);
 }
 
@@ -156,12 +155,92 @@ bool UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Act
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetHiddenInGame : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::SetSafeHiddenInGame(Context, Actor, NewHidden, ApplyToAttachChildren);
 }
 
 #pragma endregion Visibility
+
+// Orientation
+#pragma region
+
+FQuat UCsScriptLibrary_Actor::GetQuat(const FString& Context, AActor* Actor)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetQuat : Context;
+
+	if (!Actor)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
+		return FQuat::Identity;
+	}
+	return Actor->GetActorQuat();
+}
+
+bool UCsScriptLibrary_Actor::RotateByPitch(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport /*=ETeleportType::None*/)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::RotateByPitch : Context;
+
+	if (!Actor)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
+		return false;
+	}
+
+	typedef NCsMath::FLibrary MathLibrary;
+
+	FQuat Q = Actor->GetActorQuat();
+
+	MathLibrary::RotateByPitchDegrees(Q, Degrees);
+
+	return Actor->SetActorRotation(Q, Teleport);
+}
+
+bool UCsScriptLibrary_Actor::RotateByYaw(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport /*=ETeleportType::None*/)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::RotateByYaw : Context;
+
+	if (!Actor)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
+		return false;
+	}
+
+	typedef NCsMath::FLibrary MathLibrary;
+
+	FQuat Q = Actor->GetActorQuat();
+
+	MathLibrary::RotateByYawDegrees(Q, Degrees);
+
+	return Actor->SetActorRotation(Q, Teleport);
+}
+
+bool UCsScriptLibrary_Actor::RotateByRoll(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport /*=ETeleportType::None*/)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::RotateByRoll : Context;
+
+	if (!Actor)
+	{
+		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
+		return false;
+	}
+
+	typedef NCsMath::FLibrary MathLibrary;
+
+	FQuat Q = Actor->GetActorQuat();
+
+	MathLibrary::RotateByRollDegrees(Q, Degrees);
+
+	return Actor->SetActorRotation(Q, Teleport);
+}
+
+#pragma endregion Orientation
 
 // Move
 #pragma region
@@ -181,7 +260,6 @@ FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, co
 		return FCsRoutineHandle::Invalid;
 
 	// Copy script params to native params.
-	typedef NCsActor::FLibrary ActorLibrary;
 	typedef NCsMovement::NTo::NInterp::NParams::FResource ParamsResourceType;
 	typedef NCsMovement::NTo::NInterp::NParams::FParams ParamsType;
 
@@ -204,8 +282,6 @@ void UCsScriptLibrary_Actor::SetMaterial(const FString& Context, AActor* Actor, 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetMaterial : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	ActorLibrary::SetSafeMaterial(Ctxt, Actor, Material, Index);
 }
 
@@ -214,8 +290,6 @@ void UCsScriptLibrary_Actor::SetMaterials(const FString& Context, AActor* Actor,
 	using namespace NCsScriptLibraryActor::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetMaterials : Context;
-
-	typedef NCsActor::FLibrary ActorLibrary;
 
 	ActorLibrary::SetSafeMaterials(Ctxt, Actor, Materials);
 }
@@ -231,8 +305,6 @@ AActor* UCsScriptLibrary_Actor::SpawnBySoftObjectPath(const FString& Context, co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnBySoftObjectPath : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
 }
 
@@ -241,8 +313,6 @@ AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, const 
 	using namespace NCsScriptLibraryActor::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnByStringPath : Context;
-
-	typedef NCsActor::FLibrary ActorLibrary;
 
 	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
 }
@@ -258,8 +328,6 @@ float UCsScriptLibrary_Actor::GetDistanceSq(const FString& Context, AActor* A, A
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetDistanceSq : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeDistanceSq(Ctxt, A, B);
 }
 
@@ -269,8 +337,6 @@ float UCsScriptLibrary_Actor::GetDistanceSq2D(const FString& Context, AActor* A,
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetDistanceSq2D : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeDistanceSq2D(Ctxt, A, B);
 }
 
@@ -279,8 +345,6 @@ bool UCsScriptLibrary_Actor::IsDistanceSq2D_LessThanOrEqual(const FString& Conte
 	using namespace NCsScriptLibraryActor::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::IsDistanceSq2D_LessThanOrEqual : Context;
-
-	typedef NCsActor::FLibrary ActorLibrary;
 
 	return ActorLibrary::SafeIsDistanceSq2D_LessThanOrEqual(Ctxt, A, B, R);
 }
@@ -296,8 +360,6 @@ bool UCsScriptLibrary_Actor::GetNormalAtoB(const FString& Context, AActor* A, AA
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetNormalAtoB : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeNormalAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
 }
 
@@ -307,9 +369,9 @@ bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetNormal2DAtoB : Context;
 
-	typedef NCsActor::FLibrary ActorLibrary;
-
 	return ActorLibrary::GetSafeNormal2DAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
 }
 
 #pragma endregion Normal
+
+#undef ActorLibrary

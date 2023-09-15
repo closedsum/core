@@ -13,7 +13,7 @@
 #include "Managers/Time/CsLibrary_Manager_Time.h"
 #include "Managers/Weapon/CsLibrary_Manager_Weapon.h"
 #include "Data/CsLibrary_Data_Weapon.h"
-#include "Skin/Data/Visual/CsLibrary_Data_Skin_Visual.h"
+#include "Data/Visual/CsLibrary_Data_Skin_Visual.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 #include "Library/CsLibrary_Camera.h"
 #include "Material/CsLibrary_Material.h"
@@ -25,7 +25,7 @@
 // Data
 #include "Data/CsData_Weapon.h"
 #include "Data/Visual/CsData_Weapon_VisualSkin.h"
-#include "Skin/Data/Visual/CsData_Skin_Visual.h"
+#include "Data/Visual/CsData_Skin_Visual.h"
 #include "Beam/Data/CsData_BeamWeapon.h"
 // Components
 #include "Components/StaticMeshComponent.h"

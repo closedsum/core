@@ -1,10 +1,11 @@
-// Copyright 2017-2022 Closed Sum Games, LLC. All Rights Reserved.
-
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 using UnrealBuildTool;
 
-public class CsWpEditor : ModuleRules
+public class CsSenseEditor : ModuleRules
 {
-    public CsWpEditor(ReadOnlyTargetRules Target) : base(Target)
+    public CsSenseEditor(ReadOnlyTargetRules Target) : base(Target)
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bLegacyPublicIncludePaths = false;
@@ -27,27 +28,15 @@ public class CsWpEditor : ModuleRules
                     "Core",
                     "CoreUObject",
                     "Engine",
-                    "AssetRegistry",
                     "UnrealEd",
-                    "AssetTools",
-                    "ContentBrowser",
-                    "BlueprintGraph",
-                    "Slate",
-                    "PropertyEditor",
-                    "GraphEditor",
-                    "EditorStyle",
                     "CsCore",
                     "CsEditor",
-                    "CsSkin",
-                    "CsPrj",
-                    "CsWp"
+                    "CsSense"
                 }
             );
 
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
-                    "Slate",
-                    "SlateCore",
                 }
             );
         }

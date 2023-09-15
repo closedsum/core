@@ -2,8 +2,8 @@
   "FileVersion": 3,
   "Version": 2,
   "VersionName": "0.0.1",
-  "FriendlyName": "Closed Sum Games Weapon",
-  "Description": "Closed Sum Games Weapon",
+  "FriendlyName": "Closed Sum Games Sense",
+  "Description": "Closed Sum Games Sense",
   "Category": "Programming",
   "CreatedBy": "Closed Sum Games LLC",
   "CreatedByURL": "",
@@ -15,31 +15,14 @@
   "Installed": true,
   "Modules": [
     {
-      "Name": "CsWp",
+      "Name": "CsSense",
       "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
-      "Name": "CsWpEditor",
-      "Type": "Editor",
-      "LoadingPhase": "Default"
+      "LoadingPhase": "PostEngineInit"
     }
   ],
   "Plugins": [
     {
       "Name": "CsPlugin",
-      "Enabled": true
-    },
-    {
-      "Name": "CsSkin",
-      "Enabled": true
-    },
-    {
-      "Name": "CsProjectile",
-      "Enabled": true
-    },
-    {
-      "Name": "CsBeam",
       "Enabled": true
     }
   ]

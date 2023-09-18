@@ -32,6 +32,8 @@ public class CsAI : ModuleRules
         {
             PublicDependencyModuleNames.AddRange(
                 new string[] {
+                    "GameplayTasks",
+                    "NavigationSystem"
                 }
             );
 

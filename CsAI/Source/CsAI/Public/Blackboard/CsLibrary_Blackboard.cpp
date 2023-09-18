@@ -172,8 +172,34 @@ namespace NCsBlackboard
 		return KeyType;
 	}
 
+	TSubclassOf<UBlackboardKeyType> FLibrary::GetSafeKeyType(const FString& Context, UClass* KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeyType)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
+			return false;
+		}
+		return TSubclassOf<UBlackboardKeyType>(KeyType);
+	}
+
 		// Object
 	#pragma region
+
+	bool FLibrary::SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeyType.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
+			return false;
+		}
+
+		if (KeyType != UBlackboardKeyType_Object::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType NOT of type: Object but of type: %s."), *Context, *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
 
 	bool FLibrary::IsKey_ObjectChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
@@ -374,6 +400,22 @@ namespace NCsBlackboard
 
 		// Vector
 	#pragma region
+
+	bool FLibrary::SafeIsKeyType_Vector(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeyType.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
+			return false;
+		}
+
+		if (KeyType != UBlackboardKeyType_Vector::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType NOT of type: Object but of type: %s."), *Context, *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
 
 	bool FLibrary::IsKey_VectorChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{

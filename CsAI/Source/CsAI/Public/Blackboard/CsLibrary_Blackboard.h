@@ -126,9 +126,32 @@ namespace NCsBlackboard
 			return GetSafeKeyType(Context, Data, GetSafeKeyID(Context, Data, KeyName));
 		}
 
+		static TSubclassOf<UBlackboardKeyType> GetSafeKeyType(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
 		// Object
 		#pragma region
 		public:
+
+		/**
+		* Safely check whether KeyType is of type Object.
+		* 
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Object or not.
+		*/
+		static bool SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		
+		/**
+		* Safely check whether KeyType is of type Object.
+		*
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Object or not.
+		*/
+		FORCEINLINE static bool SafeIsKeyType_Object(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeIsKeyType_Object(Context, GetSafeKeyType(Context, KeyType, Log), Log);
+		}
 
 		/**
 		* Get whether the Data with Key with KeyName is of type Object or not.
@@ -537,6 +560,27 @@ namespace NCsBlackboard
 
 		// Vector
 		#pragma region
+
+		/**
+		* Safely check whether KeyType is of type Vector.
+		*
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Vector or not.
+		*/
+		static bool SafeIsKeyType_Vector(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely check whether KeyType is of type Vector.
+		*
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Vector or not.
+		*/
+		FORCEINLINE static bool SafeIsKeyType_Vector(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeIsKeyType_Vector(Context, GetSafeKeyType(Context, KeyType, Log), Log);
+		}
 
 		/**
 		* Get whether the Data with Key with KeyName is of type Vector or not.

@@ -60,6 +60,8 @@ namespace NCsActor
 			return Instance;
 		}
 
+		static FString PrintActorAndClass(const AActor* Actor);
+
 	// Get
 	#pragma region
 	public:

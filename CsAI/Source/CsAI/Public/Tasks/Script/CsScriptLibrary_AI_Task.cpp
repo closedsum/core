@@ -48,28 +48,26 @@ AAIController* UCsScriptLibrary_AI_Task::GetAIController(const FString& Context,
 	return Task->GetAIController();
 }
 
-FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result UCsScriptLibrary_AI_Task::MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task)
+bool UCsScriptLibrary_AI_Task::MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task, FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result& OutResult)
 {
 	using namespace NCsScriptLibraryAITask::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::MoveTo_ReadyForActivation : Context;
 
-	FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result Result;
-
 	if (!Task)
 	{
 		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return Result;
+		return false;
 	}
 	Task->ReadyForActivation();
 
-	Result.bValid			  = IsValid(Task);
-	Result.bSuccess			  = true;
-	Result.State			  = Task->GetState();
-	Result.StateAsByte		  = (uint8)Task->GetState();
-	Result.bWasMoveSuccessful = Task->WasMoveSuccessful();
+	OutResult.bValid			 = IsValid(Task);
+	OutResult.bSuccess			 = true;
+	OutResult.State				 = (ECsGameplayTaskState)Task->GetState();
+	OutResult.StateAsByte		 = (uint8)Task->GetState();
+	OutResult.bWasMoveSuccessful = Task->WasMoveSuccessful();
 
-	return Result;
+	return true;
 }
 
 bool UCsScriptLibrary_AI_Task::MoveTo_SetUp(const FString& Context, UAITask_MoveTo* Task, AAIController* Controller, const FCsAIMoveRequest& MoveRequest)

@@ -18,6 +18,9 @@ namespace NCsScriptLibraryAICharacter
 	{
 		namespace Str
 		{
+			// Controller
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, GetController);
+			// Blackboard
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueAsObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueAsClass);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueAsVector);
@@ -31,6 +34,22 @@ UCsScriptLibrary_AI_Character::UCsScriptLibrary_AI_Character(const FObjectInitia
 	: Super(ObjectInitializer)
 {
 }
+
+// Controller
+#pragma region
+
+AAIController* UCsScriptLibrary_AI_Character::GetController(const FString& Context, const ACharacter* Character)
+{
+	using namespace NCsScriptLibraryAICharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetController : Context;
+
+	typedef NCsAI::NCharacter::FLibrary AICharacterLibrary;
+
+	return AICharacterLibrary::GetSafeController(Ctxt, Character);
+}
+
+#pragma endregion Controller
 
 // Blackboard
 #pragma region

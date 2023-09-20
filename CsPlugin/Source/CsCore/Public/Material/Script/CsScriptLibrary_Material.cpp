@@ -37,6 +37,8 @@ UCsScriptLibrary_Material::UCsScriptLibrary_Material(const FObjectInitializer& O
 {
 }
 
+#define MaterialLibrary NCsMaterial::FLibrary
+
 // Load
 #pragma region
 
@@ -45,8 +47,6 @@ UMaterialInterface* UCsScriptLibrary_Material::LoadBySoftObjectPath(const FStrin
 	using namespace NCsScriptLibraryMaterial::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	return MaterialLibrary::SafeLoad(Context, Path);
 }
@@ -57,8 +57,6 @@ UMaterialInterface* UCsScriptLibrary_Material::LoadByStringPath(const FString& C
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
 	return MaterialLibrary::SafeLoad(Ctxt, Path);
 }
 
@@ -67,8 +65,6 @@ bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const 
 	using namespace NCsScriptLibraryMaterial::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPaths : Context;
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	return MaterialLibrary::SafeLoad(Ctxt, Paths, OutMaterials);
 }
@@ -84,8 +80,6 @@ bool UCsScriptLibrary_Material::SetAll(const FString& Context, UPrimitiveCompone
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetAll : Context;
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
 	return MaterialLibrary::SetSafe(Context, Component, Material);
 }
 
@@ -95,8 +89,6 @@ bool UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponen
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetAt : Context;
 
-	typedef NCsMaterial::FLibrary MaterialLibrary;
-
 	return MaterialLibrary::SetSafe(Context, Component, Material, Index);
 }
 
@@ -105,8 +97,6 @@ bool UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent*
 	using namespace NCsScriptLibraryMaterial::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Set : Context;
-
-	typedef NCsMaterial::FLibrary MaterialLibrary;
 
 	return MaterialLibrary::SetSafe(Context, Component, Materials);
 }
@@ -156,9 +146,6 @@ bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* O
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Component is NULL."), *Ctxt));
 				return false;
 			}
-
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			return MaterialLibrary::SetSafe(Ctxt, Component, *MaterialsPtr);
 		}
 	}
@@ -174,3 +161,5 @@ bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* O
 }
 
 #pragma endregion Set
+
+#undef MaterialLibrary

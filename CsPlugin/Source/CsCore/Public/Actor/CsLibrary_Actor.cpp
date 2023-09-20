@@ -73,6 +73,13 @@ namespace NCsActor
 		Manager_MoveByInterpParams.Shutdown();
 	}
 
+	FString FLibrary::PrintActorAndClass(const AActor* Actor)
+	{
+		if (!Actor)
+			return FString::Printf(TEXT("INVALID"));
+		return FString::Printf(TEXT("Actor: %s with Class: %s"), *(Actor->GetName()), *(Actor->GetClass()->GetName()));
+	}
+
 	// Get
 	#pragma region
 

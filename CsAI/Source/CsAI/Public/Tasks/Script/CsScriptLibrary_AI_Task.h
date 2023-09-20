@@ -5,8 +5,7 @@
 #include "UObject/Object.h"
 // Types
 #include "Types/CsTypes_AI.h"
-// Gameplay
-#include "GameplayTask.h"
+#include "Tasks/Types/CsTypes_GameplayTask.h"
 
 #include "CsScriptLibrary_AI_Task.generated.h"
 
@@ -26,7 +25,7 @@ public:
 
 	/** NOTE: EGameplayTaskState doesn't seem to be set correctly in Script. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsAI|Move")
-	EGameplayTaskState State;
+	ECsGameplayTaskState State;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsAI|Move")
 	uint8 StateAsByte;
@@ -37,7 +36,7 @@ public:
 	FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result() :
 		bValid(false),
 		bSuccess(false),
-		State(EGameplayTaskState::Uninitialized),
+		State(ECsGameplayTaskState::Uninitialized),
 		StateAsByte(0),
 		bWasMoveSuccessful(false)
 	{
@@ -73,8 +72,8 @@ public:
 	* @param Task
 	* return			Result
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
-	static FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task);
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context,OutResult"))
+	static bool MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task, FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result& OutResult);
 
 	/**
 	* Task->SetUp()

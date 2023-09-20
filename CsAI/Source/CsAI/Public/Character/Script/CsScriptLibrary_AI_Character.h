@@ -8,6 +8,7 @@
 #include "CsScriptLibrary_AI_Character.generated.h"
 
 class ACharacter;
+class AAIController;
 
 UCLASS()
 class CSAI_API UCsScriptLibrary_AI_Character : public UObject
@@ -15,6 +16,22 @@ class CSAI_API UCsScriptLibrary_AI_Character : public UObject
 	GENERATED_UCLASS_BODY()
 
 public:
+
+// Controller
+#pragma region
+public:
+
+	/**
+	* Get the AI Controller associated with Character.
+	* 
+	* @param Context	The calling context.
+	* @param Character
+	* return			AI Controller.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Character", meta = (AutoCreateRefTerm = "Context"))
+	static AAIController* GetController(const FString& Context, const ACharacter* Character);
+
+#pragma endregion Controller
 
 // Blackboard
 #pragma region

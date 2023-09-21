@@ -16,8 +16,12 @@
 #pragma region
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdown);
+// Scripts
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdownScripts);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_OnPreReloadScript, const int32&, Index);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnRunScriptsComplete);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnSetupAndRunScriptsComplete);
+// Editor Scripts
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_EditorScript_OnShutdown, const FGuid&, Id);
 
 #pragma endregion Delegates
@@ -226,7 +230,13 @@ private:
 
 public:
 
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerJavascript_OnSetupAndRunScriptsComplete OnSetupAndRunScriptsComplete_ScriptEvent;
+
 	void RunScripts();
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerJavascript_OnRunScriptsComplete OnRunScriptsComplete_ScriptEvent;
 
 	void ReloadScript(const int32& Index);
 

@@ -14,6 +14,10 @@ struct CSCORE_API FCsTime
 
 public:
 
+	static const FCsTime Zero;
+
+public:
+
 	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Time")
 	float Time;
 

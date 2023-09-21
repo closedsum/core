@@ -2662,6 +2662,12 @@ namespace NCsValid
 		if (!NCsValid::NArray::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TARRAY_EMPTY_RET_NULL(__Array, __ValueType) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::Empty<__ValueType>(Context, __Array, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_TARRAY_SIZE(__Array, __ValueType, __Size) \
 	{ \
 		static const FString __temp__str__ = #__Array; \
@@ -2690,6 +2696,12 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__Array; \
 		if (!NCsValid::NArray::FLibrary::IsAnyNone(Context, __Array, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TARRAY_ANY_NONE_RET_NULL(__Array) \
+	{ \
+		static const FString __temp__str__ = #__Array; \
+		if (!NCsValid::NArray::FLibrary::IsAnyNone(Context, __Array, __temp__str__, Log)) { return nullptr; } \
 	}
 
 	// Fixed

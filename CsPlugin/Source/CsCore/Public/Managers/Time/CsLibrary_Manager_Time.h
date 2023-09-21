@@ -194,7 +194,8 @@ namespace NCsTime
 			static void UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime);
 
 			/**
-			*
+			* Get the Current Time for Group (this takes into account Paused Time).
+			* 
 			* @param Context		The calling context.
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
 			*						or
@@ -203,6 +204,19 @@ namespace NCsTime
 			* return
 			*/
 			static const FCsTime& GetTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
+			* Get the Current Time for Group (this takes into account Paused Time).
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Log			(optional)
+			* return
+			*/
+			static const FCsTime& GetSafeTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			*

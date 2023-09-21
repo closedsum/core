@@ -58,6 +58,18 @@ public:
 	static AActor* GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag);
 
 	/**
+	* Get an Actor with the given Tags (checks AActor->Tags)
+	* NOTE: Find the FIRST Actor the given Tags.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Tags
+	* return				Actor
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Tags"))
+	static AActor* GetByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags);
+
+	/**
 	* Get a list of Actors with the given Tag (checks AActor->Tags).
 	*
 	* @param Context		The calling context.

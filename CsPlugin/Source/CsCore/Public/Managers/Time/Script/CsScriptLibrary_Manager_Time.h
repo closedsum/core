@@ -46,6 +46,17 @@ public:
 public:
 
 	/**
+	* Get the Current Time for Group (this takes into account Paused Time).
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	static FCsTime GetTime(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
+
+	/**
 	*
 	*
 	* @param Context			The calling context.

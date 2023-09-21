@@ -221,6 +221,17 @@ namespace NCsTime
 			return GetChecked(Context, ContextObject)->GetTime(Group);
 		}
 
+		const FCsTime& FLibrary::GetSafeTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID_RET_VALUE(EMCsUpdateGroup, FECsUpdateGroup, Group, FCsTime::Zero)
+
+				return Manager_Time->GetTime(Group);
+			}
+			return FCsTime::Zero;
+		}
+
 		const FCsDeltaTime& FLibrary::GetTimeSinceStartChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
 			return GetChecked(Context, ContextObject)->GetTimeSinceStart(Group);

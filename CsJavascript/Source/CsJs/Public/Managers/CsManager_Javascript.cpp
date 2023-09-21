@@ -102,6 +102,11 @@ bool UCsManager_Javascript::s_bShutdown = false;
 UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	// Scripts
+	ScriptObjects(),
+	ScriptInfo(),
+	bSetupScriptObjectsComplete(false),
+	OnSetupAndRunScriptsComplete_ScriptEvent(),
+	OnRunScriptsComplete_ScriptEvent(),
 	OnPreReloadScript_ScriptEvent(),
 	CurrentScriptIndex(INDEX_NONE),
 	bScriptReload(false),
@@ -731,11 +736,13 @@ char UCsManager_Javascript::SetupAndRunScripts_Internal(FCsRoutine* R)
 	// Expose Objects
 	SetupScriptObjects(GameInstance);
 
-	// Wait until SetupEntryPoint is complete.
+	// Wait until SetupSriptObjects is complete.
 	CS_COROUTINE_WAIT_UNTIL(R, bSetupScriptObjectsComplete);
 
 	// Run Javascript
 	RunScripts();
+
+	OnSetupAndRunScriptsComplete_ScriptEvent.Broadcast();
 
 	CS_COROUTINE_END(R);
 }
@@ -766,6 +773,7 @@ void UCsManager_Javascript::RunScripts()
 		}
 		++CurrentScriptIndex;
 	}
+	OnRunScriptsComplete_ScriptEvent.Broadcast();
 }
 
 void UCsManager_Javascript::ReloadScript(const int32& Index)

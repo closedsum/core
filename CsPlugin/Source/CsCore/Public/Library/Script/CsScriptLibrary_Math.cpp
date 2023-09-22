@@ -21,6 +21,7 @@ namespace NCsScriptLibraryMath
 		{
 			// Easing
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, Ease);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, EasePercent);
 			// Intersection
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, RayPlaneIntersection);
 		}
@@ -55,6 +56,21 @@ float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& E
 	CS_IS_ENUM_VALID_RET_VALUE(EMCsEasingType, ECsEasingType, EasingType, 0.0f)
 
 	return MathLibrary::Ease(EasingType, Time, Start, Final, Duration);
+}
+
+float UCsScriptLibrary_Math::EasePercent(const FString& Context, const ECsEasingType& EasingType, const float& TimeAsPercent, const float& Start, const float& Final)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::EasePercent : Context;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_ENUM_VALID_RET_VALUE(EMCsEasingType, ECsEasingType, EasingType, 0.0f)
+
+	const float Percent = MathLibrary::Ease(EasingType, TimeAsPercent, 0.0f, 1.0f, 1.0f);
+
+	return Start + Percent * (Final - Start);
 }
 
 #pragma endregion Easing

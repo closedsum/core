@@ -70,7 +70,7 @@ public:
 	* @param Map			A EnumStructFlag (contains a bit flag).
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Map"))
-	static void SetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map);
+	static bool SetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map);
 
 	/**
 	* Sets the bit (Map) in CurrentInputActionMap for player controller with ConrollerId.
@@ -81,7 +81,7 @@ public:
 	* @param Map			A EnumStructFlag (contains a bit flag).
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,Map"))
-	static void SetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map);
+	static bool SetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map);
 
 #pragma endregion Set
 
@@ -97,7 +97,7 @@ public:
 	* @param Map			A EnumStructFlag (contains a bit flag).
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Map"))
-	static void ClearFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map);
+	static bool ClearFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map);
 
 	/**
 	* Clears the bit (Map) in CurrentInputActionMap for the player controller with ControllerId.
@@ -108,7 +108,7 @@ public:
 	* @param Map			A bit flag. See FECsInputActionMap.
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId,Map"))
-	static void ClearInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map);
+	static bool ClearInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map);
 
 #pragma endregion Clear
 
@@ -123,7 +123,7 @@ public:
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static void ResetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject);
+	static bool ResetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject);
 
 	/**
 	* Resets the CurrentInputActionMap to 0 for local player controller with ControllerId.
@@ -133,7 +133,7 @@ public:
 	* @param ControllerId
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId"))
-	static void ResetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+	static bool ResetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
 
 	/**
 	* Resets the CurrentInputActionMap to 0 for all local player controllers.

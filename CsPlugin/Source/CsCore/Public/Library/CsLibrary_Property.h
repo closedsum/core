@@ -572,6 +572,13 @@ namespace NCsProperty
 
 		static int32* GetIntPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		FORCEINLINE static int32 GetIntPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			if (int32* Value = GetIntPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+				return *Value;
+			return 0;
+		}
+
 	#pragma endregion Int
 
 		// Float

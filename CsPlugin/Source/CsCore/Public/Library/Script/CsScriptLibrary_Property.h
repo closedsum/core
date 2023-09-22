@@ -41,6 +41,17 @@ public:
 	static bool SetInt(const FString& Context, UObject* Object, const FName& PropertyName, int32 Value);
 
 	/**
+	* Get the int32 value for the Property with name: PropertyName from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param PropertyName
+	* return				int32 value Property with name: PropertyName.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,PropertyName"))
+	static int32 GetInt(const FString& Context, UObject* Object, const FName& PropertyName);
+
+	/**
 	* Set the float value for the Property with name: PropertyName from Object.
 	*
 	* @param Context		The calling context.

@@ -64,6 +64,8 @@ ACharacter* UCsScriptLibrary_Character::Spawn(const FString& Context, const UObj
 	return Character;
 }
 
+#define CharacterLibrary NCsCharacter::FLibrary
+
 // Get
 #pragma region
 
@@ -72,8 +74,6 @@ ACharacter* UCsScriptLibrary_Character::GetByTag(const FString& Context, UObject
 	using namespace NCsScriptLibraryCharacter::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTag : Context;
-
-	typedef NCsCharacter::FLibrary CharacterLibrary;
 
 	return CharacterLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
@@ -84,8 +84,6 @@ ACharacter* UCsScriptLibrary_Character::GetByTags(const FString& Context, UObjec
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTags : Context;
 
-	typedef NCsCharacter::FLibrary CharacterLibrary;
-
 	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags);
 }
 
@@ -94,8 +92,6 @@ bool UCsScriptLibrary_Character::GetAnyByTags(const FString& Context, UObject* W
 	using namespace NCsScriptLibraryCharacter::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnyByTags : Context;
-
-	typedef NCsCharacter::FLibrary CharacterLibrary;
 
 	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
 }
@@ -106,8 +102,6 @@ ACharacter* UCsScriptLibrary_Character::GetByName(const FString& Context, UObjec
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByName : Context;
 
-	typedef NCsCharacter::FLibrary CharacterLibrary;
-
 	return CharacterLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
@@ -117,9 +111,9 @@ ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, UObje
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByLabel : Context;
 
-	typedef NCsCharacter::FLibrary CharacterLibrary;
-
 	return CharacterLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
 }
 
 #pragma endregion Get
+
+#undef CharacterLibrary

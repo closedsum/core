@@ -20,6 +20,7 @@ namespace NCsScriptLibraryProperty
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetBool);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetInt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetFloat);
 		}
 	}
@@ -32,13 +33,13 @@ UCsScriptLibrary_Property::UCsScriptLibrary_Property(const FObjectInitializer& O
 {
 }
 
+#define PropertyLibrary NCsProperty::FLibrary
+
 bool UCsScriptLibrary_Property::SetBool(const FString& Context, UObject* Object, const FName& PropertyName, bool Value)
 {
 	using namespace NCsScriptLibraryProperty::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetBool : Context;
-
-	typedef NCsProperty::FLibrary PropertyLibrary;
 
 	return PropertyLibrary::SetBoolPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
 }
@@ -49,9 +50,16 @@ bool UCsScriptLibrary_Property::SetInt(const FString& Context, UObject* Object, 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetInt : Context;
 
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	return PropertyLibrary::SetIntPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
+}
+
+int32 UCsScriptLibrary_Property::GetInt(const FString& Context, UObject* Object, const FName& PropertyName)
+{
+	using namespace NCsScriptLibraryProperty::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::SetInt : Context;
+
+	return PropertyLibrary::GetIntPropertyValue(Ctxt, Object, Object->GetClass(), PropertyName);
 }
 
 bool UCsScriptLibrary_Property::SetFloat(const FString& Context, UObject* Object, const FName& PropertyName, float Value)
@@ -60,7 +68,7 @@ bool UCsScriptLibrary_Property::SetFloat(const FString& Context, UObject* Object
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFloat : Context;
 
-	typedef NCsProperty::FLibrary PropertyLibrary;
-
 	return PropertyLibrary::SetFloatPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
 }
+
+#undef PropertyLibrary

@@ -32,6 +32,9 @@ UCsScriptLibrary_Manager_Input::UCsScriptLibrary_Manager_Input(const FObjectInit
 {
 }
 
+#define InputManagerLibrary NCsInput::NManager::FLibrary
+#define InputActionMapLibrary NCsInput::NManager::NInputActionMap::FLibrary
+
 // Get
 #pragma region
 
@@ -40,8 +43,6 @@ UCsManager_Input* UCsScriptLibrary_Manager_Input::Get(const FString& Context, co
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
-
-	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
 
 	return InputManagerLibrary::GetSafe(Context, WorldContextObject, ControllerId);
 }
@@ -54,8 +55,6 @@ bool UCsScriptLibrary_Manager_Input::Init(const FString& Context, const UObject*
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Init : Context;
 
-	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
-
 	return InputManagerLibrary::SafeInit(Context, WorldContextObject, ControllerId);
 }
 
@@ -64,8 +63,6 @@ bool UCsScriptLibrary_Manager_Input::InitAll(const FString& Context, const UObje
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::InitAll : Context;
-
-	typedef NCsInput::NManager::FLibrary InputManagerLibrary;
 
 	return InputManagerLibrary::SafeInit(Context, WorldContextObject);
 }
@@ -76,26 +73,22 @@ bool UCsScriptLibrary_Manager_Input::InitAll(const FString& Context, const UObje
 	// Set
 #pragma region
 
-void UCsScriptLibrary_Manager_Input::SetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map)
+bool UCsScriptLibrary_Manager_Input::SetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map)
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFirstInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
-	InputActionMapLibrary::SetSafeFirst(Ctxt, WorldContextObject, Map);
+	return InputActionMapLibrary::SetSafeFirst(Ctxt, WorldContextObject, Map);
 }
 
-void UCsScriptLibrary_Manager_Input::SetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map)
+bool UCsScriptLibrary_Manager_Input::SetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map)
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
-	InputActionMapLibrary::SetSafe(Ctxt, WorldContextObject, ControllerId, Map);
+	return InputActionMapLibrary::SetSafe(Ctxt, WorldContextObject, ControllerId, Map);
 }
 
 #pragma endregion Set
@@ -103,26 +96,22 @@ void UCsScriptLibrary_Manager_Input::SetInputActionMap(const FString& Context, c
 // Clear
 #pragma region
 
-void UCsScriptLibrary_Manager_Input::ClearFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map)
+bool UCsScriptLibrary_Manager_Input::ClearFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map)
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ClearFirstInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
-	InputActionMapLibrary::SafeClearFirst(Ctxt, WorldContextObject, Map);
+	return InputActionMapLibrary::SafeClearFirst(Ctxt, WorldContextObject, Map);
 }
 
-void UCsScriptLibrary_Manager_Input::ClearInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map)
+bool UCsScriptLibrary_Manager_Input::ClearInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, const FECsInputActionMap& Map)
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ClearInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
-	InputActionMapLibrary::SafeClear(Ctxt, WorldContextObject, ControllerId, Map);
+	return InputActionMapLibrary::SafeClear(Ctxt, WorldContextObject, ControllerId, Map);
 }
 
 #pragma endregion Clear
@@ -130,26 +119,22 @@ void UCsScriptLibrary_Manager_Input::ClearInputActionMap(const FString& Context,
 // Reset
 #pragma region
 
-void UCsScriptLibrary_Manager_Input::ResetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject)
+bool UCsScriptLibrary_Manager_Input::ResetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject)
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ResetFirstInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
-	InputActionMapLibrary::SafeResetFirst(Ctxt, WorldContextObject);
+	return InputActionMapLibrary::SafeResetFirst(Ctxt, WorldContextObject);
 }
 
-void UCsScriptLibrary_Manager_Input::ResetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId)
+bool UCsScriptLibrary_Manager_Input::ResetInputActionMap(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId)
 {
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ResetInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
-	InputActionMapLibrary::SafeReset(Ctxt, WorldContextObject, ControllerId);
+	return InputActionMapLibrary::SafeReset(Ctxt, WorldContextObject, ControllerId);
 }
 
 bool UCsScriptLibrary_Manager_Input::ResetAllInputActionMap(const FString& Context, const UObject* WorldContextObject)
@@ -158,11 +143,12 @@ bool UCsScriptLibrary_Manager_Input::ResetAllInputActionMap(const FString& Conte
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ResetAllInputActionMap : Context;
 
-	typedef NCsInput::NManager::NInputActionMap::FLibrary InputActionMapLibrary;
-
 	return InputActionMapLibrary::SafeReset(Ctxt, WorldContextObject);
 }
 
 #pragma endregion Reset
 
 #pragma endregion InputActionMap
+
+#undef InputManagerLibrary
+#undef InputActionMapLibrary

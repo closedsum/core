@@ -14,12 +14,13 @@ const INDEX_NONE = -1;
 
 const ROUTINE_VALUE_SIZE = 16;
 
-// "typedefs" - class
-/** @type {CommonLibrary} */
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
-var check = CommonLibrary.check;
+var check         = CommonLibrary.check;
+var checkf        = CommonLibrary.checkf;
+var IsValidObject = CommonLibrary.IsValidObject;
 
 module.exports = class NJsCoroutine
 {
@@ -67,9 +68,14 @@ module.exports = class NJsCoroutine
 
         SetObject(o)
         {
+            let context = "NJsCoroutine.FOwner.SetObject";
+
             this.Owner = o;
-            this.UEObject = o;
-            this.bObject = true;
+            this.UEObject = UObject.C(o);
+            this.bObject = IsValidObject(this.UEObject);
+
+            checkf(this.bObject, context + ": o is NOT a UObject.");
+
             this.UEActor = Actor.C(o);
         }
 

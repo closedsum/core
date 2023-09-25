@@ -6,6 +6,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
+#include "MovieScene/CsLibrary_MovieScene.h"
 #include "Library/CsLibrary_World.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Name.h"
@@ -13,10 +14,11 @@
 // Sequence
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
+// MovieScene
+#include "Compilation/MovieSceneCompiledDataManager.h"
 // Utility
 #include "EngineUtils.h"
 // World
-#include "Engine/World.h"
 #include "Engine/World.h"
 
 namespace NCsLevelSequence
@@ -471,5 +473,76 @@ namespace NCsLevelSequence
 		}
 
 		#pragma endregion Player
+	}
+
+	namespace NTrack
+	{
+		namespace NCameraCut
+		{
+			#define TrackLibrary NCsMovieScene::NTrack::NCameraCut::FLibrary
+
+			UMovieSceneCameraCutTrack* FLibrary::GetChecked(const FString& Context, ULevelSequence* Sequence)
+			{
+				CS_IS_PENDING_KILL_CHECKED(Sequence)
+
+				return TrackLibrary::GetChecked(Context, Sequence->GetMovieScene());
+			}
+
+			UMovieSceneCameraCutTrack* FLibrary::GetSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+			{
+				CS_IS_PENDING_KILL_RET_NULL(Sequence)
+
+				return TrackLibrary::GetSafe(Context, Sequence->GetMovieScene(), Log);
+			}
+
+			void FLibrary::EnableChecked(const FString& Context, ULevelSequence* Sequence)
+			{
+				CS_IS_PENDING_KILL_CHECKED(Sequence)
+
+				TrackLibrary::EnableChecked(Context, Sequence->GetMovieScene());
+
+				UMovieSceneCompiledDataManager::GetPrecompiledData()->Compile(Sequence);
+			}
+
+			bool FLibrary::EnableSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+			{
+				CS_IS_PENDING_KILL(Sequence)
+
+				if (!TrackLibrary::EnableSafe(Context, Sequence->GetMovieScene(), Log))
+					return false;
+
+				UMovieSceneCompiledDataManager::GetPrecompiledData()->Compile(Sequence);
+				return true;
+			}
+
+			void FLibrary::MuteChecked(const FString& Context, ULevelSequence* Sequence)
+			{
+				CS_IS_PENDING_KILL_CHECKED(Sequence)
+
+				TrackLibrary::MuteChecked(Context, Sequence->GetMovieScene());
+
+				UMovieSceneCompiledDataManager::GetPrecompiledData()->Compile(Sequence);
+			}
+
+			bool FLibrary::MuteSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+			{
+				CS_IS_PENDING_KILL(Sequence)
+
+				if (!TrackLibrary::MuteSafe(Context, Sequence->GetMovieScene(), Log))
+					return false;
+
+				UMovieSceneCompiledDataManager::GetPrecompiledData()->Compile(Sequence);
+				return true;
+			}
+
+			bool FLibrary::SetSafeEaseInDuration(const FString& Context, ULevelSequence* Sequence, const int32& Frames, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+			{
+				CS_IS_PENDING_KILL(Sequence)
+
+				return TrackLibrary::SetSafeEaseInDuration(Context, Sequence->GetMovieScene(), Frames, Log);
+			}
+
+			#undef TrackLibrary
+		}
 	}
 }

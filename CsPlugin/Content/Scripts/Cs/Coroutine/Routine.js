@@ -197,7 +197,7 @@ module.exports = class FJsRoutine
 		// Check for Abort Messages
 		let msgs		  = this.Messages[MessageType.Abort.Value];
 		let msgs_recieved = this.Messages_Recieved[MessageType.Abort.Value];
-
+		
 		if (msgs.length > EMPTY)
 		{
 			let found = false;
@@ -396,13 +396,13 @@ module.exports = class FJsRoutine
 		
 		if (!move)
 			return;
-
+		
 		++this.TickCount;
 
 		let result		 = this.CoroutineImpl.next(this.self);
 		let yieldCommand = result.value;
 		let done		 = result.done;
-
+		
 		if (!done)
 		{
 			let waitForTimeByObject = false;

@@ -4,6 +4,9 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Library
+/// <reference path="../Library/Library_Common.ts">/>
+/// <reference path="../Library/Library_Math.ts">/>
 
 "use strict"
 
@@ -12,12 +15,12 @@ var NJsCommon = require('Cs/Library/Library_Common.js');
 var NJsMath = require('Cs/Library/Library_Math.js');
 
 // "typedefs" - class
-var CommonLibrary = NJsCommon.FLibrary;
-var MathLibrary = NJsMath.FLibrary;
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
+/** @type {JsMathLibrary} */ var JsMathLibrary = NJsMath.FLibrary;
 
 // "typedefs" - functions
-var check = CommonLibrary.check;
-var IsNonNegativeInt = MathLibrary.IsNonNegativeInt;
+var check            = CommonLibrary.check;
+var IsNonNegativeInt = JsMathLibrary.IsNonNegativeInt;
 
 module.exports = class FJsMask
 {

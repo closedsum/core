@@ -2,15 +2,22 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 
-/// <reference path="../../typings/ue.d.ts">/>
+/// <reference path="../../Cs/custom_typings/Cs.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Coroutine
+/// <reference path="../Coroutine/CoroutineSchedule.ts">/>
 
 "use strict"
 
 // Coroutine
+/** @type {FJsCoroutineSchedule} */
 var FJsCoroutineSchedule = require('Cs/Coroutine/CoroutineSchedule.js');
 
-var Core;
+// "typedefs" - library
+var UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
+
+// Globals
+/** @type {FJsCore} */ var Core;
 
 module.exports = class FJCoroutineScheduler
 {
@@ -18,10 +25,9 @@ module.exports = class FJCoroutineScheduler
     {
 		Core = core;
 		
-		this.Schedules = [];
+		/** @type {FJCoroutineSchedule}*/ this.Schedules = [];
 
-		let UpdateGroupLibrary = CsScriptLibrary_UpdateGroup;
-		let count			   = UpdateGroupLibrary.GetCount();
+		let count = UpdateGroupLibrary.GetCount();
 
 		for (let i = 0; i < count; ++i)
 		{
@@ -49,10 +55,10 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param {FJsResourceContainer} payloadContainer	FJsResourceContainer <PayloadType>
+	* @param {FJsResourceContainer} payloadContainer	FJsResourceContainer<NJsCoroutine_NPayload_FImpl>
 	* @returns {CsRoutineHandle}
 	*/
-	/*CsRoutineHandle*/ StartByContainer(payloadContainer /*FJsResourceContainer<PayloadType>*/)
+	/*CsRoutineHandle*/ StartByContainer(payloadContainer /*FJsResourceContainer<NJsCoroutine_NPayload_FImpl>*/)
 	{
 		let payload = payloadContainer.Get();
 
@@ -62,18 +68,18 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param {NJsCoroutine.NPayload.FImpl} payload
+	* @param {NJsCoroutine_NPayload_FImpl} payload
 	* @returns {CsRoutineHandle}
 	*/
-	/*CsRoutineHandle*/ Start(payload /*PayloadType*/) { return this.Schedules[payload.Group.Value].Start(payload); }
+	/*CsRoutineHandle*/ Start(payload /*NJsCoroutine_NPayload_FImpl*/) { return this.Schedules[payload.Group.Value].Start(payload); }
 
 	/**
 	*
 	*
-	* @param {FJsResourceContainer} payloadContainer	FJsResourceContainer <PayloadType>
+	* @param {FJsResourceContainer} payloadContainer	FJsResourceContainer<NJsCoroutine_NPayload_FImpl>
 	* @returns {CsRoutineHandle}
 	*/
-	/*CsRoutineHandle*/ StartChildByContainer(payloadContainer /*FJsResourceContainer<PayloadType>*/)
+	/*CsRoutineHandle*/ StartChildByContainer(payloadContainer /*FJsResourceContainer<NJsCoroutine_NPayload_FImpl>*/)
 	{
 		let payload = payloadContainer.Get();
 
@@ -83,10 +89,10 @@ module.exports = class FJCoroutineScheduler
 	/**
 	*
 	*
-	* @param {NJsCoroutine.NPayload.FImpl} payload
+	* @param {NJsCoroutine_NPayload_FImpl} payload
 	* @returns {CsRoutineHandle}
 	*/
-	/*CsRoutineHandle*/ StartChild(payload /*PayloadType*/) { return this.Schedules[payload.Group.Value].StartChild(payload); }
+	/*CsRoutineHandle*/ StartChild(payload /*NJsCoroutine_NPayload_FImpl*/) { return this.Schedules[payload.Group.Value].StartChild(payload); }
 
 	// #endregion Start
 
@@ -114,7 +120,7 @@ module.exports = class FJCoroutineScheduler
 	* @param {ECsUpdateGroup} 	group
 	* @returns {boolean}
 	*/
-	/*bool*/ EndByGroup(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].End(); }
+	/*boolean*/ EndByGroup(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].End(); }
 
 	/**
 	*
@@ -165,17 +171,17 @@ module.exports = class FJCoroutineScheduler
 	*
 	*
 	* @param {ECsUpdateGroup} group
-	* @returns {FJsResourceContainer} FJsResourceContainer < PayloadType >
+	* @returns {FJsResourceContainer} FJsResourceContainer<NJsCoroutine_NPayload_FImpl>
 	*/
-	/*FJsResourceContainer<PayloadType>*/ AllocatePayloadContainer(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].AllocatePayloadContainer(); }
+	/*FJsResourceContainer<NJsCoroutine_NPayload_FImpl>*/ AllocatePayloadContainer(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].AllocatePayloadContainer(); }
 
 	/**
 	*
 	*
 	* @param {ECsUpdateGroup} group
-	* @returns {NJsCoroutine.NPayload.FImpl} PayloadType
+	* @returns {NJsCoroutine_NPayload_FImpl} PayloadType
 	*/
-	/*PayloadType*/ AllocatePayload(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].AllocatePayload(); }
+	/*NJsCoroutine_NPayload_FImpl*/ AllocatePayload(group /*ECsUpdateGroup*/) { return this.Schedules[group.Value].AllocatePayload(); }
 
 	// #endregion Payload
 
@@ -190,7 +196,7 @@ module.exports = class FJCoroutineScheduler
 	* @param {CsRoutineHandle} handle
 	* @returns {boolean}
 	*/
-	/*bool*/ IsHandleValid(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/)
+	/*boolean*/ IsHandleValid(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/)
 	{
 		return this.Schedules[group.Value].GetRoutineContainer(handle) != null;
 	}
@@ -202,7 +208,7 @@ module.exports = class FJCoroutineScheduler
 	* @param {CsRoutineHandle} handle
 	* @returns {boolean}
 	*/
-	/*bool*/ IsRunning(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/)
+	/*boolean*/ IsRunning(group /*ECsUpdateGroup*/, handle /*CsRoutineHandle*/)
 	{
 		return this.Schedules[group.Value].IsRunning(handle);
 	}

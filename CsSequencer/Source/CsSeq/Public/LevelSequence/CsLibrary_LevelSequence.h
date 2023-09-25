@@ -5,8 +5,10 @@
 // Log
 #include "Utility/CsSeqLog.h"
 
-class ALevelSequenceActor;
 class UObject;
+class ALevelSequenceActor;
+class ULevelSequence;
+class UMovieSceneCameraCutTrack;
 
 namespace NCsLevelSequence
 {
@@ -188,4 +190,29 @@ namespace NCsLevelSequence
 		#pragma endregion Player
 		};
 	}
-}
+
+	namespace NTrack
+	{
+		namespace NCameraCut
+		{
+			struct CSSEQ_API FLibrary final
+			{
+			public:
+
+				static UMovieSceneCameraCutTrack* GetChecked(const FString& Context, ULevelSequence* Sequence);
+
+				static UMovieSceneCameraCutTrack* GetSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+
+				static void EnableChecked(const FString& Context, ULevelSequence* Sequence);
+
+				static bool EnableSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+
+				static void MuteChecked(const FString& Context, ULevelSequence* Sequence);
+
+				static bool MuteSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+
+				static bool SetSafeEaseInDuration(const FString& Context, ULevelSequence* Sequence, const int32& Frames, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+			};
+		}
+	}
+}                                                                                                                                                                                                                                                                                                                                            

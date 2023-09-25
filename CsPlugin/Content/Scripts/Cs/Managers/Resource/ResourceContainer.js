@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 
-/// <reference path="../../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
 
 "use strict"
@@ -13,18 +12,18 @@ module.exports = class FJsResourceContainer
 {
     constructor()
     {
-        this.Index      = INDEX_NONE;
-        this.bAllocated = false;
-        this.Resource   = null;
+        /** @type {number} */   this.Index      = INDEX_NONE;
+        /** @type {boolean} */  this.bAllocated = false;
+        /** @type {any} */      this.Resource   = null;
     }
 
-    GetIndex() { return this.Index; }
-    SetIndex(index) { this.Index = index; }
+    /*number*/ GetIndex()       { return this.Index; }
+    SetIndex(index /*number*/)  { this.Index = index; }
 
-    IsAllocated() { return this.bAllocated; }
-    Allocate() { return this.bAllocated = true; }
-    Deallocate() { return this.bAllocated = false; }
+    /*boolean*/ IsAllocated() { return this.bAllocated; }
+    Allocate()                { return this.bAllocated = true; }
+    Deallocate()              { return this.bAllocated = false; }
 
-    Get() { return this.Resource; }
-    Set(r) { this.Resource = r; }
+    /*any*/ Get()   { return this.Resource; }
+    Set(r /*any*/)  { this.Resource = r; }
 };

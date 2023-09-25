@@ -24,6 +24,12 @@ namespace NCsScriptLibraryLevelSequence
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, GetByLabel);
 			// Player
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, SetPlaybackPositionFrameZero);
+			// Tracks
+				// Camera
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_GetCameraCut);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_Enable);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_Mute);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_SetEaseInDuration);
 		}
 	}
 }
@@ -87,9 +93,59 @@ bool UCsScriptLibrary_LevelSequence::SetPlaybackPositionFrameZero(const FString&
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetPlaybackPositionFrameZero : Context;
 
-	return LevelSequenceActorLibrary::SetSafePlaybackPositionFrameZero(Context, Sequence);
+	return LevelSequenceActorLibrary::SetSafePlaybackPositionFrameZero(Ctxt, Sequence);
 }
 
 #pragma endregion Player
+
+// Tracks
+#pragma region
+
+#define TrackLibrary NCsLevelSequence::NTrack::NCameraCut::FLibrary
+
+	// Camera
+#pragma region
+
+UMovieSceneCameraCutTrack* UCsScriptLibrary_LevelSequence::Track_GetCameraCut(const FString& Context, ULevelSequence* Sequence)
+{
+	using namespace NCsScriptLibraryLevelSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Track_GetCameraCut : Context;
+
+	return TrackLibrary::GetSafe(Ctxt, Sequence);
+}
+
+bool UCsScriptLibrary_LevelSequence::Track_CameraCut_Enable(const FString& Context, ULevelSequence* Sequence)
+{
+	using namespace NCsScriptLibraryLevelSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Track_CameraCut_Enable : Context;
+
+	return TrackLibrary::EnableSafe(Ctxt, Sequence);
+}
+
+bool UCsScriptLibrary_LevelSequence::Track_CameraCut_Mute(const FString& Context, ULevelSequence* Sequence)
+{
+	using namespace NCsScriptLibraryLevelSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Track_CameraCut_Mute : Context;
+
+	return TrackLibrary::MuteSafe(Ctxt, Sequence);
+}
+
+bool UCsScriptLibrary_LevelSequence::Track_CameraCut_SetEaseInDuration(const FString& Context, ULevelSequence* Sequence, const int32& Frames)
+{
+	using namespace NCsScriptLibraryLevelSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Track_CameraCut_SetEaseInDuration : Context;
+
+	return TrackLibrary::SetSafeEaseInDuration(Ctxt, Sequence, Frames);
+}
+
+#pragma endregion Camera
+
+#undef TrackLibrary
+
+#pragma endregion Tracks
 
 #undef LevelSequenceActorLibrary

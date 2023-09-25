@@ -20,6 +20,7 @@ public class CsSeq : ModuleRules
                     "JsonUtilities",
                     "CsCore",
                     "MovieScene",
+                    "MovieSceneTracks",
                     "LevelSequence"
                 }
             );

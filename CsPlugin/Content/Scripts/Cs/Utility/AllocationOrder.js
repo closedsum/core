@@ -4,29 +4,34 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Library
+/// <reference path="../Library/Library_Common.ts">/>
+// Containers
+/// <reference path="../../Cs/Containers/DoubleLinkedListNode.ts">/>
 
 "use strict"
 
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 // Containers
+/** @type {FJsDoubleLinkedListNode} */
 const FJsDoubleLinkedListNode = require('Cs/Containers/DoubleLinkedListNode.js');
 
 // "typedefs" - class
-var CommonLibrary = NJsCommon.FLibrary;
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - function
-var checkf = CommonLibrary.checkf;
-var IsNullObject = CommonLibrary.IsNullObject;
+var checkf          = CommonLibrary.checkf;
+var IsNullObject    = CommonLibrary.IsNullObject;
 
 module.exports = class FJsAllocationOrder
 {
     constructor()
     {
-        this.Links = []
-        this.Head = null;
-        this.Tail = null;
-        this.Size = 0;
+        /** @type {FJsDoubleLinkedListNode[]} */this.Links = []
+        /** @type {FJsDoubleLinkedListNode} */  this.Head = null;
+        /** @type {FJsDoubleLinkedListNode} */  this.Tail = null;
+        /** @type {number} */                   this.Size = 0;
     }
 
     Shutdown()
@@ -56,7 +61,10 @@ module.exports = class FJsAllocationOrder
         }
     }
 
-    Create(size)
+    /**
+    * @param {number} size 
+    */
+    Create(size /*number*/)
     {
         checkf(CommonLibrary.IsInt(size), "FJsAllocationOrder.Create: s is NOT an Integer.");
 
@@ -76,10 +84,10 @@ module.exports = class FJsAllocationOrder
         }
     }
 
-    GetLinks() { return this.Links; }
-    GetHead() { return this.Head; }
-    GetTail() { return this.Tail; }
-    GetSize() { return this.Size; }
+    /** @type {FJsDoubleLinkedListNode[]} */GetLinks() { return this.Links; }
+    /** @type {FJsDoubleLinkedListNode} */  GetHead() { return this.Head; }
+    /** @type {FJsDoubleLinkedListNode} */  GetTail() { return this.Tail; }
+    /** @type {number} */                   GetSize() { return this.Size; }
 
     Add()
     {
@@ -88,7 +96,10 @@ module.exports = class FJsAllocationOrder
         ++this.Size;
     }
 
-    AddToTail(link)
+    /**
+    * @param {FJsDoubleLinkedListNode} link 
+    */
+    AddToTail(link /*FJsDoubleLinkedListNode*/)
     {
         if (this.Tail)
         {
@@ -112,7 +123,11 @@ module.exports = class FJsAllocationOrder
         this.AddToTail(link);
     }
 
-    AddBefore(link, linkBefore)
+    /**
+    * @param {FJsDoubleLinkedListNode} link
+    * @param {FJsDoubleLinkedListNode} linkBefore 
+    */
+    AddBefore(link /*FJsDoubleLinkedListNode*/, linkBefore /*FJsDoubleLinkedListNode*/)
     {
         link.LinkBefore(linkBefore);
 
@@ -122,7 +137,10 @@ module.exports = class FJsAllocationOrder
         }
     }
 
-    AddBeforeHead(link) { this.AddBefore(link, this.Head); }
+    /**
+    * @param {FJsDoubleLinkedListNode} link 
+    */
+    AddBeforeHead(link /*FJsDoubleLinkedListNode*/) { this.AddBefore(link, this.Head); }
 
     MoveHeadToTail()
     {
@@ -134,7 +152,10 @@ module.exports = class FJsAllocationOrder
         this.AddToTail(previousHead);
     }
 
-    Remove(link)
+    /**
+    * @param {FJsDoubleLinkedListNode} link 
+    */
+    Remove(link /*FJsDoubleLinkedListNode*/)
     {
         // Check to Update HEAD
         if (link === this.Head)
@@ -155,7 +176,10 @@ module.exports = class FJsAllocationOrder
         link.Unlink();
     }
 
-    MoveToHead(index)
+    /**
+    * @param {number} index 
+    */
+    MoveToHead(index /*number*/)
     {
         let link = this.Links[index];
 
@@ -172,5 +196,8 @@ module.exports = class FJsAllocationOrder
         return value;
     }
 
-    Promote(index) { this.MoveToHead(index); }
+    /**
+    * @param {number} index 
+    */
+    Promote(index /*number*/) { this.MoveToHead(index); }
 };

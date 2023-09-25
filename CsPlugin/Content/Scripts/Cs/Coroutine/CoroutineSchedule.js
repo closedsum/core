@@ -4,30 +4,43 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Types
+/// <reference path="../Coroutine/Types_Coroutine.ts">/>
+// Coroutine
+/// <reference path="../Coroutine/Routine.ts">/>
+// Library
+/// <reference path="../Library/Library_Common.ts">/>
+// Managers
+/// <reference path="../Managers/Resource/Manager_Resource_Fixed.ts">/>
 
 "use strict"
 
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 // Managers
+/** @type {FJsManager_Resource_Fixed} */
 var FJsManager_Resource_Fixed = require('Cs/Managers/Resource/Manager_Resource_Fixed.js');
 // Coroutine
 var NJsCoroutine = require('Cs/Coroutine/Types_Coroutine.js');
+/** @type {FJsRoutine} */
 var FJsRoutine = require('Cs/Coroutine/Routine.js');
 
 const ROUTINE_POOL_SIZE = 2048;
 const COROUTINE_PAYLOAD_SIZE = 64;
 const INDEX_NONE = -1;
 
-// "typedefs" - classes
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
+
+// "typedefs" - class
+/** @type {NJsCoroutine_NPayload_FImpl} */ var PayloadType = NJsCoroutine.NPayload.FImpl;
 
 // "typedefs" - functions
-var checkf = CommonLibrary.checkf;
-var check = CommonLibrary.check;
-var IsValidObject = CommonLibrary.IsValidObject;
+var checkf              = CommonLibrary.checkf;
+var check               = CommonLibrary.check;
+var IsValidObject       = CommonLibrary.IsValidObject;
 var IsInstanceOfChecked = CommonLibrary.IsInstanceOfChecked;
-var IsInt = CommonLibrary.IsInt;
+var IsInt               = CommonLibrary.IsInt;
 
 // "typedefs" - enums
 var StateType = NJsCoroutine.EState;
@@ -49,9 +62,10 @@ module.exports = class FJsCoroutineSchedule
     constructor(core)
     {
         Core = core;
-        
-        this.Group = new ECsUpdateGroup();
 
+        /** @type {ECsUpdateGroup} */ this.Group = new ECsUpdateGroup();
+
+        /** @type {FJsManager_Resource_Fixed} */
         this.Manager_Routine = new FJsManager_Resource_Fixed();
         this.Manager_Routine.CreatePool(ROUTINE_POOL_SIZE, FJsRoutine);
 
@@ -70,7 +84,7 @@ module.exports = class FJsCoroutineSchedule
             }
         }
 
-        let PayloadType      = NJsCoroutine.NPayload.FImpl;
+        /** @type {FJsManager_Resource_Fixed} */
         this.Manager_Payload = new FJsManager_Resource_Fixed();
         this.Manager_Payload.CreatePool(COROUTINE_PAYLOAD_SIZE, PayloadType);
 
@@ -94,7 +108,7 @@ module.exports = class FJsCoroutineSchedule
     // #region Schedule
     // public:
 
-    SetGroup(group)
+    SetGroup(group /*ECsUpdateGroup*/)
     {
         this.Group = group;
 
@@ -130,7 +144,7 @@ module.exports = class FJsCoroutineSchedule
     /**
 	*
 	*
-	* @param {CsRoutineHandle} handle
+	* @param {CsRoutineHandle}          handle
 	* @returns {FJsResourceContainer}
 	*/
     /*FJsResourceContainer*/ GetRoutineContainer(handle /*CsRoutineHandle*/)
@@ -202,7 +216,7 @@ module.exports = class FJsCoroutineSchedule
      * @param {CsRoutineHandle} handle 
      * @returns {boolean}
      */
-    /*bool*/ IsHandleValid(handle /*CsRoutineHandle*/)
+    /*boolean*/ IsHandleValid(handle /*CsRoutineHandle*/)
 	{
         return this.GetRoutineContainer(handle) != null;
     }
@@ -211,7 +225,7 @@ module.exports = class FJsCoroutineSchedule
      * @param {CsRoutineHandle} handle 
      * @returns {boolean}
      */
-    /*bool*/ IsRunning(handle /*CsRoutineHandle*/)
+    /*boolean*/ IsRunning(handle /*CsRoutineHandle*/)
     {
         let r = this.GetRoutine(handle);
 
@@ -227,14 +241,15 @@ module.exports = class FJsCoroutineSchedule
 
     /**
 	* @param {FJsResourceContainer} payloadContainer
-	* @returns {boolean}
+	* @returns {CsRoutineHandle}
 	*/
-    StartByContainer(payloadContainer /*FJsResourceContainer*/)
+    /*CsRoutineHandle*/ StartByContainer(payloadContainer /*FJsResourceContainer*/)
     {
         let Str = FJsCoroutineSchedule.NCached.NStr;
 
         let context = Str.StartByContainer;
 
+        /** @type {NJsCoroutine_NPayload_FImpl}*/
 	    let payload = payloadContainer.Get();
 
         checkf(IsValidObject(payload), context + ": payloadContainer does NOT contain a reference to a payload.");
@@ -246,8 +261,9 @@ module.exports = class FJsCoroutineSchedule
 
         checkf(IsEqual(this.Group, payload.Group), context + ": Mismatch between payload.Group: %s and Group: %s", payload.Group.Name_Internal, this.Group.Name_Internal);
 
+        /** @type {FJsRoutine} */
         let r = this.Manager_Routine.AllocateResource();
-
+        
         r.Init(payload);
 
         if (payload.bPerformFirstUpdate)
@@ -267,22 +283,22 @@ module.exports = class FJsCoroutineSchedule
     }
 
     /**
-	* @param {} payload
+	* @param {NJsCoroutine_NPayload_FImpl} payload
 	* @returns {FJsRoutine}
 	*/
-    /*FJsRoutine*/ Start(payload)
+    /*CsRoutineHandle*/ Start(payload /*NJsCoroutine_NPayload_FImpl*/)
     {
         return this.StartByContainer(this.GetPayloadContainer(payload));
     }
 
     /**
-	* @param payloadContainer
+	* @param {FJsResourceContainer} payloadContainer
 	* @returns {FJsRoutine}
 	*/
-    /*FJsRoutine*/ StartChildByContainer(payloadContainer)
+    /*CsRoutineHandle*/ StartChildByContainer(payloadContainer /*FJsResourceContainer*/)
     {
         let Str = FJsCoroutineSchedule.NCached.NStr;
-
+        
         let context = Str.StartChildByContainer;
 
         let payload = payloadContainer.Get();
@@ -338,10 +354,10 @@ module.exports = class FJsCoroutineSchedule
     /**
 	*
 	*
-	* @param {} payload
+	* @param {NJsCoroutine_NPayload_FImpl} payload
 	* @returns {FJsRoutine}
 	*/
-    /*FJsRoutine*/ StartChild(payload)
+    /*CsRoutineHandle*/ StartChild(payload /*NJsCoroutine_NPayload_FImpl*/)
     {
         return this.StartChildByContainer(this.GetPayloadContainer(payload));
     }
@@ -389,7 +405,7 @@ module.exports = class FJsCoroutineSchedule
 	* @returns {boolean}			    Whether the routine has successful ended.
 	*					                NOTE: If the routine has already ended, this will return false.
 	*/
-    /*bool*/ End(handle /*CsRoutineHandle*/)
+    /*boolean*/ End(handle /*CsRoutineHandle*/)
     {
         let container = this.GetRoutineContainer(handle);
 
@@ -415,7 +431,7 @@ module.exports = class FJsCoroutineSchedule
 	* @param {CsRoutineHandle} handle	Handle to a routine.
 	* @returns {boolean}		        Whether the routine has already ended.
 	*/
-	/*bool*/ HasEnded(handle /*CsRoutineHandle*/)
+	/*boolean*/ HasEnded(handle /*CsRoutineHandle*/)
     {
         let r = this.GetRoutine(handle);
 
@@ -430,7 +446,7 @@ module.exports = class FJsCoroutineSchedule
 	* @param {CsRoutineHandle} handle	Handle to a routine.
 	* @returns {boolean}			    Whether the routine has just ended.
 	*/
-	/*bool*/ HasJustEnded(handle /*CsRoutineHandle*/)
+	/*boolean*/ HasJustEnded(handle /*CsRoutineHandle*/)
     {
         let r = this.GetRoutine(handle);
 
@@ -446,7 +462,7 @@ module.exports = class FJsCoroutineSchedule
     // public:
 
     /**
-    * @params {CsDeltaTime} deltaTime
+    * @param {CsDeltaTime} deltaTime
     */
     Update(deltaTime /*CsDeltaTime*/)
     {
@@ -462,7 +478,7 @@ module.exports = class FJsCoroutineSchedule
 		    let r = routineContainer.Get();
 
 		    let state = r.State;
-
+            
 		    // Init -> Update
 		    if (state.Value === StateType.Init.Value)
 		    {
@@ -480,7 +496,7 @@ module.exports = class FJsCoroutineSchedule
 		    if (state.Value === StateType.End.Value)
 		    {
 			    //LogTransaction(NCsCoroutineCached::ToUpdate(ScheduleType), TransactionType::End, R);
-                
+
 			    r.Reset();
 			    this.Manager_Routine.Deallocate(routineContainer);
 		    }
@@ -496,26 +512,26 @@ module.exports = class FJsCoroutineSchedule
 	/**
 	*
 	*
-	* return
+	* @returns {FJsResourceContainer}
 	*/
-	AllocatePayloadContainer() { return this.Manager_Payload.Allocate(); }
+	/*FJsResourceContainer*/ AllocatePayloadContainer() { return this.Manager_Payload.Allocate(); }
 
 	/**
 	*
 	*
-	* @returns {NJsCoroutine.NPayload.FImpl}
+	* @returns {NJsCoroutine_NPayload_FImpl}
 	*/
-	/*PayloadType*/ AllocatePayload() { return this.Manager_Payload.AllocateResource(); }
+	/*NJsCoroutine_NPayload_FImpl*/ AllocatePayload() { return this.Manager_Payload.AllocateResource(); }
 
     // protected:
 
 	/**
 	*
 	*
-	* @param {NJsCoroutine.NPayload.FImpl} payload
-	* @returns {FJsResourceContainer}               FJsResourceContainer < PayloadType >
+	* @param {NJsCoroutine_NPayload_FImpl} payload
+	* @returns {FJsResourceContainer}               FJsResourceContainer<NJsCoroutine_NPayload_FImpl>
 	*/
-    /*FJsResourceContainer<PayloadType>*/ GetPayloadContainer(payload /*PayloadType*/)
+    /*FJsResourceContainer<NJsCoroutine_NPayload_FImpl>*/ GetPayloadContainer(payload /*NJsCoroutine_NPayload_FImpl*/)
     {
         if (payload.GetIndex() === INDEX_NONE)
         {

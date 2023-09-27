@@ -3,8 +3,6 @@
 
 // Managers
 #include "Managers/StaticMesh/CsTypes_StaticMeshActor.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 
 #define LOCTEXT_NAMESPACE "ECsStaticMeshActorCustomization"
 

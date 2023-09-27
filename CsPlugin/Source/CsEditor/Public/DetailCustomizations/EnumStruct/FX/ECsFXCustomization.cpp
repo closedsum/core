@@ -3,8 +3,6 @@
 
 // Managers
 #include "Managers/FX/CsTypes_FX.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 
 #define LOCTEXT_NAMESPACE "ECsFXCustomization"
 

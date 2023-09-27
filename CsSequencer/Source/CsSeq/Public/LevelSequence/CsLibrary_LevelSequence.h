@@ -168,6 +168,28 @@ namespace NCsLevelSequence
 		public:
 
 			/**
+			* Get the Frame Rate for the Player associated with Sequence
+			*  Sequence->GetSequencePlayer()->GetFrameRate().
+			* 
+			* @param Context	The calling context.
+			* @param Sequence
+			* return			Frame Rate.
+			*/
+			static FFrameRate GetFrameRateChecked(const FString& Context, ALevelSequenceActor* Sequence);
+
+			/**
+			* Safely get the Frame Rate for the Player associated with Sequence
+			*  Sequence->GetSequencePlayer()->GetFrameRate().
+			*
+			* @param Context		The calling context.
+			* @param Sequence
+			* @param OutFrameRate
+			* @param Log			(optional)
+			* return				Frame Rate.
+			*/
+			static bool GetSafeFrameRate(const FString& Context, ALevelSequenceActor* Sequence, FFrameRate& OutFrameRate, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+
+			/**
 			* Set the current time of the player by evaluating from the current time to frame 0, as if the sequence is playing.
 			* Triggers events that lie within the evaluated range. Does not alter the persistent playback status of the player (IsPlaying).
 			*
@@ -212,6 +234,10 @@ namespace NCsLevelSequence
 				static bool MuteSafe(const FString& Context, ULevelSequence* Sequence, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
 
 				static bool SetSafeEaseInDuration(const FString& Context, ULevelSequence* Sequence, const int32& Frames, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+
+				static bool SetSafeEaseInFramesByCurrentFps(const FString& Context, ALevelSequenceActor* Sequence, const int32& Frames, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+
+				static bool SetSafeEaseInSeconds(const FString& Context, ALevelSequenceActor* Sequence, const float& Seconds, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
 			};
 		}
 	}

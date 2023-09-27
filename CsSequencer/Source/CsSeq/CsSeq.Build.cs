@@ -25,16 +25,11 @@ public class CsSeq : ModuleRules
                 }
             );
 
-        /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
+                "LevelSequence"
             }
         );
-        */
 
         if (Target.Type == TargetType.Editor)
         {
@@ -49,13 +44,6 @@ public class CsSeq : ModuleRules
                 }
             );
             */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
         }
     }
 }

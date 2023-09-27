@@ -83,6 +83,59 @@ namespace NCsActor
 	// Get
 	#pragma region
 
+	void FLibrary::GetAllOfClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		checkf(ActorClass.Get(), TEXT("%: ActorClass is NULL"), *Context);
+
+		for (TActorIterator<AActor> It(World, ActorClass); It; ++It)
+		{
+			AActor* A = *It;
+
+			if (!IsValid(A))
+				continue;
+
+			OutActors.Add(A);
+		}
+		checkf(OutActors.Num() > CS_EMPTY, TEXT("%s: Failed to find any Actors of type: %s."), *Context, *(ActorClass.Get()->GetName()));
+	}
+
+	bool FLibrary::GetSafeAllOfClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+		if (!World)
+			return false;
+
+		if (!ActorClass.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%: ActorClass is NULL"), *Context));
+			return false;
+		}
+
+		for (TActorIterator<AActor> It(World, ActorClass); It; ++It)
+		{
+			AActor* A = *It;
+
+			if (!IsValid(A))
+				continue;
+
+			OutActors.Add(A);
+		}
+
+		if (OutActors.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find any Actors of type: %s."), *Context, *(ActorClass.Get()->GetName())));
+			return false;
+		}
+		return true;
+	}
+
 	AActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
 		typedef NCsWorld::FLibrary WorldLibrary;

@@ -6,6 +6,8 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
+#include "Settings/CsLibrary_LevelSequenceProjectSettings.h"
+	// Common
 #include "MovieScene/CsLibrary_MovieScene.h"
 #include "Library/CsLibrary_World.h"
 #include "Object/CsLibrary_Object.h"
@@ -439,6 +441,29 @@ namespace NCsLevelSequence
 		// Player
 		#pragma region
 
+		FFrameRate FLibrary::GetFrameRateChecked(const FString& Context, ALevelSequenceActor* Sequence)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Sequence)
+
+			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL_CHECKED(Player)
+
+			return Player->GetFrameRate();
+		}
+
+		bool FLibrary::GetSafeFrameRate(const FString& Context, ALevelSequenceActor* Sequence, FFrameRate& OutFrameRate, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL(Sequence)
+
+			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL(Player)
+
+			OutFrameRate = Player->GetFrameRate();
+			return true;
+		}
+
 		void FLibrary::SetPlaybackPositionFrameZeroChecked(const FString& Context, ALevelSequenceActor* Sequence)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Sequence)
@@ -540,6 +565,37 @@ namespace NCsLevelSequence
 				CS_IS_PENDING_KILL(Sequence)
 
 				return TrackLibrary::SetSafeEaseInDuration(Context, Sequence->GetMovieScene(), Frames, Log);
+			}
+
+			bool FLibrary::SetSafeEaseInFramesByCurrentFps(const FString& Context, ALevelSequenceActor* Sequence, const int32& Frames, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+			{
+				typedef NCsLevelSequence::NActor::FLibrary LevelSequenceActorLibrary;
+
+				FFrameRate FrameRate;
+
+				if (!LevelSequenceActorLibrary::GetSafeFrameRate(Context, Sequence, FrameRate, Log))
+					return false;
+
+				CS_IS_INT_GREATER_THAN(Frames, 1)
+
+				typedef NCsLevelSequence::NProject::NSettings::FLibrary SettingsLibrary;
+
+				const float Time = (float)Frames * FrameRate.AsInterval();
+
+				const int32 Duration = FMath::CeilToInt32(Time * SettingsLibrary::GetDefaultTickResolution());
+
+				return SetSafeEaseInDuration(Context, Sequence->GetSequence(), Duration, Log);
+			}
+
+			bool FLibrary::SetSafeEaseInSeconds(const FString& Context, ALevelSequenceActor* Sequence, const float& Seconds, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+			{
+				CS_IS_FLOAT_GREATER_THAN(Seconds, 0.0f)
+
+				typedef NCsLevelSequence::NProject::NSettings::FLibrary SettingsLibrary;
+
+				const int32 Duration = FMath::CeilToInt32(Seconds * SettingsLibrary::GetDefaultTickResolution());
+
+				return SetSafeEaseInDuration(Context, Sequence->GetSequence(), Duration, Log);
 			}
 
 			#undef TrackLibrary

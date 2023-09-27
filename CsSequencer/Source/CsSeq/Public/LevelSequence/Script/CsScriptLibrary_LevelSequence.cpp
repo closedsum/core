@@ -30,6 +30,8 @@ namespace NCsScriptLibraryLevelSequence
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_Enable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_Mute);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_SetEaseInDuration);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_SetEaseInFramesByCurrentFps);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_LevelSequence, Track_CameraCut_SetEaseSeconds);
 		}
 	}
 }
@@ -140,6 +142,24 @@ bool UCsScriptLibrary_LevelSequence::Track_CameraCut_SetEaseInDuration(const FSt
 	const FString& Ctxt = Context.IsEmpty() ? Str::Track_CameraCut_SetEaseInDuration : Context;
 
 	return TrackLibrary::SetSafeEaseInDuration(Ctxt, Sequence, Frames);
+}
+
+bool UCsScriptLibrary_LevelSequence::Track_CameraCut_SetEaseInFramesByCurrentFps(const FString& Context, ALevelSequenceActor* Sequence, const int32& Frames)
+{
+	using namespace NCsScriptLibraryLevelSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Track_CameraCut_SetEaseInFramesByCurrentFps : Context;
+
+	return TrackLibrary::SetSafeEaseInFramesByCurrentFps(Ctxt, Sequence, Frames);
+}
+
+bool UCsScriptLibrary_LevelSequence::Track_CameraCut_SetEaseSeconds(const FString& Context, ALevelSequenceActor* Sequence, const float& Seconds)
+{
+	using namespace NCsScriptLibraryLevelSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Track_CameraCut_SetEaseSeconds : Context;
+
+	return TrackLibrary::SetSafeEaseInSeconds(Ctxt, Sequence, Seconds);
 }
 
 #pragma endregion Camera

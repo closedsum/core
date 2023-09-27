@@ -35,6 +35,8 @@
 #include "Managers/StaticMesh/Instanced/CsSettings_Manager_InstancedStaticMeshComponent.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
+// Level
+#include "Managers/Level/CsSettings_Manager_Level.h"
 // Anim
 #include "Animation/Vertex/CsVertexAnimNotify.h"
 // Container
@@ -318,6 +320,15 @@ public:
 #pragma endregion Unit Test
 
 #pragma endregion SkeletalMesh
+
+// Level
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Level", meta = (DisplayName = "Manager Level"))
+	FCsSettings_Manager_Level Manager_Level;
+
+#pragma endregion Level
 
 // Anim
 #pragma region

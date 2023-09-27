@@ -12,6 +12,7 @@
 #include "Managers/Time/CsTypes_Update.h"
 // Library
 #include "Level/CsLibrary_Level.h"
+#include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -35,7 +36,9 @@ namespace NCsManagerLevel
 	{
 		namespace Str
 		{
+			// Persistent Level
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
+			// Champ Map
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_Internal);
 		}
 
@@ -178,6 +181,7 @@ void UCsManager_Level::Initialize()
 
 void UCsManager_Level::CleanUp()
 {
+	ReceiveCleanUp();
 }
 
 	// Root
@@ -191,6 +195,13 @@ void UCsManager_Level::SetMyRoot(UObject* InRoot)
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+UObject* UCsManager_Level::GetWorldContext() const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	return WorldLibrary::GetSafe(MyRoot);
+}
 
 // Persistent Level
 #pragma region

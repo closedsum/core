@@ -5,9 +5,10 @@
 #include "CsCore.h"
 
 // Library
+	// Settings
+#include "Settings/CsLibrary_DeveloperSettings.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 
 namespace NCsVertexAnimNotify
 {
@@ -18,15 +19,15 @@ namespace NCsVertexAnimNotify
 
 	void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot)
 	{
-		UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+		typedef NCsCore::NSettings::FLibrary SettingsLibrary;
 
 		EMCsVertexAnimNotify::Get().ClearUserDefinedEnums();
 
 		// Enum Settings
-		if (Settings->ECsVertexAnimNotify_PopulateEnumMapMethod == ECsPopulateEnumMapMethod::EnumSettings)
+		if (SettingsLibrary::GetVertexAnimNotify_PopulateEnumMapMethod() == ECsPopulateEnumMapMethod::EnumSettings)
 		{
-			const TArray<FCsSettings_Enum>& Enums = Settings->GetSettingsEnum<FECsVertexAnimNotify>();
-			const FString& EnumSettingsPath		  = Settings->GetSettingsEnumPath<FECsVertexAnimNotify>();
+			const TArray<FCsSettings_Enum>& Enums = SettingsLibrary::GetSettingsEnum_VertexAnimNotify();
+			const FString& EnumSettingsPath		  = SettingsLibrary::GetSettingsEnumPath_VertexAnimNotify();
 
 			if (Enums.Num() > CS_EMPTY)
 			{

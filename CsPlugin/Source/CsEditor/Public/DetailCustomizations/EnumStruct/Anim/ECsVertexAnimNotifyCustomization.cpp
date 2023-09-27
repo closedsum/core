@@ -3,8 +3,6 @@
 
 // Types
 #include "Animation/Vertex/CsVertexAnimNotify.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 
 #define LOCTEXT_NAMESPACE "ECsVertexAnimNotifyCustomization"
 

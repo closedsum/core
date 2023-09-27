@@ -63,5 +63,14 @@ namespace NCsCore
 		FECsSkeletalMeshActor* FLibrary::GetDefault_ECsSkeletalMeshActor()				{ return &(Get()->Default_ECsSkeletalMeshActor); }
 
 		#pragma endregion SkeletaMesh
+
+		// Anim
+		#pragma region
+
+		const ECsPopulateEnumMapMethod& FLibrary::GetVertexAnimNotify_PopulateEnumMapMethod()	{ return Get()->ECsVertexAnimNotify_PopulateEnumMapMethod; }
+		const TArray<FCsSettings_Enum>& FLibrary::GetSettingsEnum_VertexAnimNotify()			{ return Get()->GetSettingsEnum<FECsVertexAnimNotify>(); }
+		const FString& FLibrary::GetSettingsEnumPath_VertexAnimNotify()							{ return NCsDeveloperSettings::NCached::Str::VertexAnimNotify; }
+
+		#pragma endregion Anim
 	}
 }

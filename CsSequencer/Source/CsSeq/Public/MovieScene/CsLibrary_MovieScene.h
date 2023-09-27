@@ -31,6 +31,8 @@ namespace NCsMovieScene
 
 				static bool MuteSafe(const FString& Context, UMovieScene* Scene, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
 
+				static void SetEaseInDurationChecked(const FString& Context, UMovieScene* Scene, const int32& Frames);
+
 				static bool SetSafeEaseInDuration(const FString& Context, UMovieScene* Scene, const int32& Frames, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
 			};
 		}

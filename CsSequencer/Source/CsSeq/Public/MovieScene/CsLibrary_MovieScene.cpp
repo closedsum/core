@@ -70,6 +70,22 @@ namespace NCsMovieScene
 				return false;
 			}
 
+			void FLibrary::SetEaseInDurationChecked(const FString& Context, UMovieScene* Scene, const int32& Frames)
+			{
+				UMovieSceneCameraCutTrack* Track = GetChecked(Context, Scene);
+				
+				checkf(Track->bCanBlend, TEXT("%s: Camera Cut Track for Scene: %s is NOT set to Blend (Can Blend == FALSE / Not Checked)."), *Context, *(Scene->GetName()));
+				checkf(Track->GetAllSections().Num()> CS_EMPTY, TEXT("%s: Camera Cut Track for Scene: %s has NO Sections."), *Context, *(Scene->GetName()));
+
+				UMovieSceneSection* Section = Track->GetAllSections()[CS_FIRST];
+
+				CS_IS_INT_GREATER_THAN_CHECKED(Frames, 1)
+				CS_IS_INT_LESS_THAN_CHECKED(Frames, Section->GetRange().GetUpperBoundValue().Value)
+
+				Section->Easing.bManualEaseIn = true;
+				Section->Easing.ManualEaseInDuration = Frames;
+			}
+
 			bool FLibrary::SetSafeEaseInDuration(const FString& Context, UMovieScene* Scene, const int32& Frames, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 			{
 				if (UMovieSceneCameraCutTrack* Track = GetSafe(Context, Scene, Log))

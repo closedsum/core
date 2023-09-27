@@ -179,6 +179,14 @@ namespace NCsLevel
 			}
 
 		#pragma endregion Get
+		
+		// Class
+		#pragma region
+		public:
+
+			static TSubclassOf<UCsManager_Level> GetClassChecked(const FString& Context);
+
+		#pragma endregion Class
 		};
 	}
 }

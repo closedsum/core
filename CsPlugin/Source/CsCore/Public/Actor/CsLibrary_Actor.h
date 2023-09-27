@@ -67,6 +67,28 @@ namespace NCsActor
 	public:
 
 		/**
+		*
+		*
+		* @param Context		The calling context.
+		* @param WorldContxt
+		* @param ActorClass
+		* @param OutActors		(out)
+		*/
+		static void GetAllOfClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors);
+
+		/**
+		*
+		*
+		* @param Context		The calling context.
+		* @param WorldContxt
+		* @param ActorClass
+		* @param OutActors		(out)
+		* @param Log			(optional)
+		* return
+		*/
+		static bool GetSafeAllOfClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Get an Actor with the given Tag (checks AActor->Tags)
 		* 
 		* @param Context		The calling context.

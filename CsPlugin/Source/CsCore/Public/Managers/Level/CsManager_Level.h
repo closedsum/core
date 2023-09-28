@@ -15,7 +15,7 @@ class ULevel;
 class ALevelScriptActor;
 class UObject;
 
-UCLASS(transient, BlueprintType, Blueprintable)
+UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSCORE_API UCsManager_Level : public UObject
 {
 	GENERATED_UCLASS_BODY()

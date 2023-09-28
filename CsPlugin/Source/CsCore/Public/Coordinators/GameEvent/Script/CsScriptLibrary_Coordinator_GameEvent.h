@@ -28,7 +28,7 @@ public:
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* return				Coordinator_GameEvent
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
 	static UCsCoordinator_GameEvent* Get(const FString& Context, const UObject* WorldContextObject);
 
 #pragma endregion Get
@@ -45,7 +45,7 @@ public:
 	* @param Info				Game Event Info to broadcast.
 	* return					Whether the info was broadcasted or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Group,Info"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group,Info"))
 	static bool BroadcastGameEventInfo(const FString& Context, const UObject* WorldContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info);
 
 	/**
@@ -57,6 +57,6 @@ public:
 	* @param Event				Game Event to broadcast.
 	* return					Whether the info was broadcasted or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Event"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Event"))
 	static bool BroadcastGameEvent_GameInstance(const FString& Context, const UObject* WorldContextObject, const FECsGameEvent& Event);
 };

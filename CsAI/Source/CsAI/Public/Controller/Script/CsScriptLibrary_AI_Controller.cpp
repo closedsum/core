@@ -6,6 +6,8 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Controller/CsLibrary_AI_Controller.h"
 // AI
 #include "AIController.h"
 
@@ -18,6 +20,8 @@ namespace NCsScriptLibraryAIController
 	{
 		namespace Str
 		{
+			// Blackboard
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Controller, GetBlackboard);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Controller, MoveTo);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Controller, GetDefaultNavigationFilterClass);
 		}
@@ -30,6 +34,22 @@ UCsScriptLibrary_AI_Controller::UCsScriptLibrary_AI_Controller(const FObjectInit
 	: Super(ObjectInitializer)
 {
 }
+
+#define AIControllerLibrary NCsAI::NController::FLibrary
+
+// Blackboard
+#pragma region
+
+UBlackboardComponent* UCsScriptLibrary_AI_Controller::GetBlackboard(const FString& Context, const AAIController* Controller)
+{
+	using namespace NCsScriptLibraryAIController::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetBlackboard : Context;
+
+	return AIControllerLibrary::GetSafeBlackboard(Ctxt, Controller);
+}
+
+#pragma endregion Blackboard
 
 FCsPathFollowingRequestResult UCsScriptLibrary_AI_Controller::MoveTo(const FString& Context, AAIController* Controller, const FCsAIMoveRequest& MoveRequest)
 {
@@ -69,3 +89,5 @@ TSubclassOf<UNavigationQueryFilter> UCsScriptLibrary_AI_Controller::GetDefaultNa
 	}
 	return Controller->GetDefaultNavigationFilterClass();
 }
+
+#undef AIControllerLibrary

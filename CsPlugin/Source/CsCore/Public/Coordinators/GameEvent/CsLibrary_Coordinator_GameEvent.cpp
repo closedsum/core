@@ -10,6 +10,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Coordinators
 #include "Coordinators/GameEvent/CsCoordinator_GameEvent.h"
+// Settings
+#include "Coordinators/GameEvent/CsSettings_Coordinator_GameEvent.h"
 // Game
 #include "Engine/GameInstance.h"
 // World
@@ -25,8 +27,8 @@ namespace NCsGameEvent
 			{
 				namespace Str
 				{
-					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FLibrary, GetSafeContextRoot);
 					CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FLibrary, GetSafe);
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameEvent::NCoordinator::FLibrary, GetSafeContextRoot);
 				}
 			}
 		}
@@ -94,6 +96,28 @@ namespace NCsGameEvent
 		}
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+		
+		TSubclassOf<UCsCoordinator_GameEvent> FLibrary::GetClassChecked(const FString& Context)
+		{
+			const FCsSettings_Coordinator_GameEvent& Settings = FCsSettings_Coordinator_GameEvent::Get();
+
+			return TSubclassOf<UCsCoordinator_GameEvent>(Settings.LoadClassChecked(Context));
+		}
+
+		#pragma endregion Class
+
+		// StartPlay
+		#pragma region
+
+		void FLibrary::StartPlayChecked(const FString& Context, const UObject* ContextObject)
+		{
+			GetChecked(Context, ContextObject)->StartPlay();
+		}
+
+		#pragma endregion StartPlay
 
 		void FLibrary::ProcessGameEventInfoChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const FCsGameEventInfo& Info)
 		{

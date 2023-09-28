@@ -28,7 +28,7 @@ public:
 	* @param ControllerId
 	* return				Manager_Input
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,ControllerId"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,ControllerId"))
 	static UCsManager_Input* Get(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
 
 #pragma endregion Get

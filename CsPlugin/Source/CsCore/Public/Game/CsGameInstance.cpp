@@ -8,6 +8,8 @@
 #include "Coroutine/CsCoroutineScheduler.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
+// Library
+#include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 // Managers
 #include "Managers/ScopedTimer//CsManager_ScopedTimer.h"
 #include "Managers/UnitTest/CsManager_UnitTest.h"
@@ -128,7 +130,10 @@ void UCsGameInstance::Init()
 	UCsCoroutineScheduler::Init(this);
 	UCsManager_Load::Init(this);
 	UCsManager_Runnable::Init(this);
-	UCsCoordinator_GameEvent::Init(this);
+
+	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
+
+	UCsCoordinator_GameEvent::Init(this, GameEventCoordinatorLibrary::GetClassChecked(Context));
 }
 
 void UCsGameInstance::Shutdown()
@@ -201,6 +206,7 @@ bool UCsGameInstance::Tick(float DeltaSeconds)
 
 	const FECsGameEventCoordinatorGroup& EventGroup = NCsGameEventCoordinatorGroup::GameInstance;
 
+	UCsCoordinator_GameEvent::Get(this)->Update(DeltaTime);
 	UCsCoordinator_GameEvent::Get(this)->ProcessQueuedGameEventInfos(EventGroup);
 	FCsManager_ScopedTimer::Get().Update(DeltaTime);
 	UCsCoroutineScheduler::Get(this)->Update(UpdateGroup, DeltaTime);

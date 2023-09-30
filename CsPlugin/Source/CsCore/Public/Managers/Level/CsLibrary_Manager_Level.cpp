@@ -10,6 +10,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Level/CsManager_Level.h"
+// Settings
+#include "Managers/Level/CsSettings_Manager_Level.h"
 
 #if WITH_EDITOR
 // Library
@@ -130,5 +132,17 @@ namespace NCsLevel
 		}
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+
+		TSubclassOf<UCsManager_Level> FLibrary::GetClassChecked(const FString& Context)
+		{
+			const FCsSettings_Manager_Level& Settings = FCsSettings_Manager_Level::Get();
+
+			return TSubclassOf<UCsManager_Level>(Settings.LoadClassChecked(Context));
+		}
+
+		#pragma endregion Class
 	}
 }

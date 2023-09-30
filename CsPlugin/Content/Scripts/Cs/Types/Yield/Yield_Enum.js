@@ -4,19 +4,24 @@
 
 /// <reference path="../../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Types
+/// <reference path="../../Types/Enum/Enum.ts">/>
+// Library
+/// <reference path="../../Library/Library_Common.ts">/>
 
 "use strict"
 
 // Types
+/** @type {FJsEnum} */
 var FJsEnum = require('Cs/Types/Enum/Enum.js');
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
-// "typedefs" - class
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
-var check = CommonLibrary.check;
+var check  = CommonLibrary.check;
 var checkf = CommonLibrary.checkf;
 
 module.exports = class NJsYield
@@ -25,9 +30,9 @@ module.exports = class NJsYield
     {
         constructor()
         {
-            this.Enum = null;/*FJsEnum.FValue*/
-            this.Type = null;/*FJsEnum*/
-            this.Value = null;/*FJsEnum.FValue*/
+            /** @type {FJsEnum_FValue} */    this.Enum = null;
+            /** @type {FJsEnum} */          this.Type = null;
+            /** @type {FJsEnum_FValue} */   this.Value = null;
         }
 
         /**
@@ -45,6 +50,7 @@ module.exports = class NJsYield
 			{
                 // Check yieldCommand.WaitForEnum is of type: FJsEnum.FValue
                 check(CommonLibrary.IsInstanceOfChecked(context, yieldCommand.WaitForEnum, FJsEnum.FValue));
+                /** @type {FJsEnum} */  
                 let enumType = yieldCommand.WaitForEnum.GetOuter();
                 // Check 'Value' key of type: yieldCommand.WaitForEnum.GetOuter() exists for yieldCommand
                 check(CommonLibrary.DoesKeyOfInstanceExistChecked(context, yieldCommand, 'Value', FJsEnum.FValue));

@@ -2,7 +2,7 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 
-/// <reference path="../../typings/ue.d.ts">/>
+/// <reference path="../../Cs/custom_typings/Cs.ts">/>
 /// <reference path="../../Cs/Coroutine/Types_Coroutine.ts">/>
 /// <reference path="../../Cs/Types/Property/Property.ts">/>
 /// <reference path="../../Cs/Types/Yield/Yield_Enum.ts">/>

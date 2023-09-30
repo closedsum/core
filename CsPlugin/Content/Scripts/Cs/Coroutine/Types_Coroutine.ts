@@ -47,6 +47,12 @@ declare namespace NJsCoroutine {
         Reset(): void;
     }
 }
+
+//declare type NJsCoroutine_EState = NJsCoroutine.EState;
+//declare type NJsCoroutine_EMessage = NJsCoroutine.EMessage;
+//declare type NJsCoroutine_EEndReason = NJsCoroutine.EEndReason;
+declare type NJsCoroutine_FOwner = NJsCoroutine.FOwner;
+
 declare namespace NJsCoroutine.NRegister {
     class FInfo {
         Index: number
@@ -62,6 +68,9 @@ declare namespace NJsCoroutine.NRegister {
         Reset(): void;
     }
 }
+
+declare type NJsCoroutine_NRegister_FInfo = NJsCoroutine.NRegister.FInfo;
+declare type NJsCoroutine_NRegister_FMap = NJsCoroutine.NRegister.FMap;
 
 declare namespace NJsCoroutine.NPayload {
     class FImpl {
@@ -87,3 +96,5 @@ declare namespace NJsCoroutine.NPayload {
         IsValidChecked(context: string): boolean;
     }
 }
+
+declare type NJsCoroutine_NPayload_FImpl = NJsCoroutine.NPayload.FImpl;

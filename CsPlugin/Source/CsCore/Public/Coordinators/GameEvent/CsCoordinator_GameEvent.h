@@ -22,7 +22,7 @@ class ICsGetCoordinatorGameEvent;
 // NCsGameEvent::NCoordinator::FConsoleCommand
 CS_FWD_DECLARE_CLASS_NAMESPACE_2(NCsGameEvent, NCoordinator, FConsoleCommand)
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSCORE_API UCsCoordinator_GameEvent : public UObject
 {
 	GENERATED_UCLASS_BODY()
@@ -50,7 +50,7 @@ public:
 
 	static bool IsValid(UObject* InRoot = nullptr);
 
-	static void Init(UObject* InRoot = nullptr);
+	static void Init(UObject* InRoot = nullptr, TSubclassOf<UCsCoordinator_GameEvent> CoordinatorClass = TSubclassOf<UCsCoordinator_GameEvent>(UCsCoordinator_GameEvent::StaticClass()));
 	
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(UObject* InRoot = nullptr);
@@ -115,9 +115,38 @@ private:
 
 #pragma endregion Console Command
 
+// StartPlay
+#pragma region
+public:
+
+	void StartPlay();
+
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Start Play", meta = (DisplayName = "Start Play"))
+	void ReceiveStartPlay();
+
+#pragma endregion StartPlay
+
+// Update
+#pragma region
 public:
 
 	void Update(const FCsDeltaTime& DeltaTime);
+
+protected:
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Update", meta = (DisplayName = "Update"))
+	void ReceiveUpdate(const FCsDeltaTime& DeltaTime);
+
+#pragma endregion Update
+
+public:
+
+	UFUNCTION(BlueprintPure)
+	UObject* GetWorldContext() const;
+
+public:
 
 	void OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info);
 	void OnGameEventInfo_ManagerInput1(const FCsGameEventInfo& Info);

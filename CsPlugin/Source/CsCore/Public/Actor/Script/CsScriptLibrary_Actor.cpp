@@ -20,6 +20,7 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRootComponent);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, SetRole);
 			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetAllOfClass);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByTag);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByTags);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetAnyByTags);
@@ -95,7 +96,16 @@ void UCsScriptLibrary_Actor::SetRole(const FString& Context, AActor* Actor, cons
 // Get
 #pragma region
 
-AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag)
+bool UCsScriptLibrary_Actor::GetAllOfClass(const FString& Context, const UObject* WorldContextObject, TSubclassOf<AActor> ActorClass, TArray<AActor*>& OutActors)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAllOfClass : Context;
+
+	return ActorLibrary::GetSafeAllOfClass(Ctxt, WorldContextObject, ActorClass, OutActors);
+}
+
+AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, const UObject* WorldContextObject, const FName& Tag)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -104,8 +114,7 @@ AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, UObject* WorldC
 	return ActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
 
-
-AActor* UCsScriptLibrary_Actor::GetByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags)
+AActor* UCsScriptLibrary_Actor::GetByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -114,7 +123,7 @@ AActor* UCsScriptLibrary_Actor::GetByTags(const FString& Context, UObject* World
 	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags);
 }
 
-bool UCsScriptLibrary_Actor::GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
+bool UCsScriptLibrary_Actor::GetAnyByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -123,7 +132,7 @@ bool UCsScriptLibrary_Actor::GetAnyByTags(const FString& Context, UObject* World
 	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutActors);
 }
 
-AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name)
+AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, const UObject* WorldContextObject, const FName& Name)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 
@@ -132,7 +141,7 @@ AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, UObject* World
 	return ActorLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
-AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label)
+AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, const UObject* WorldContextObject, const FString& Label)
 {
 	using namespace NCsScriptLibraryActor::NCached;
 

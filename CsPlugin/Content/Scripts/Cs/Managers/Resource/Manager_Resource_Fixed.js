@@ -2,26 +2,34 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 
-/// <reference path="../../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// Library
+/// <reference path="../../Library/Library_Common.ts">/>
+// Utility
+/// <reference path="../../Utility/AllocationOrder.ts">/>
+// Resource
+/// <reference path="ResourceContainer.ts">/>
 
 "use strict"
 
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 // Resource
+/** @type {FJsResourceContainer} */
 var ResourceContainerType = require('Cs/Managers/Resource/ResourceContainer.js');
 // Utility
+/** @type {FJsAllocationOrder} */
 var FJsAllocationOrder = require('Cs/Utility/AllocationOrder.js');
-const FJsDoubleLinkedListNode = require('Cs/Containers/DoubleLinkedListNode');
+/** @type {FJsDoubleLinkedListNode} */
+var FJsDoubleLinkedListNode = require('Cs/Containers/DoubleLinkedListNode');
 
-// "typedefs" - classes
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
-var checkf = CommonLibrary.checkf;
-var IsValidObject = CommonLibrary.IsValidObject;
-var IsNullObject = CommonLibrary.IsNullObject;
+var checkf 			= CommonLibrary.checkf;
+var IsValidObject 	= CommonLibrary.IsValidObject;
+var IsNullObject 	= CommonLibrary.IsNullObject;
 
 const INDEX_NONE = -1;
 
@@ -29,24 +37,24 @@ module.exports = class FJsManager_Resource_Fixed
 {
     constructor()
     {
-        this.Name = "FJsManager_Resource_Fixed";
+        /** @type {string} */ this.Name = "FJsManager_Resource_Fixed";
 
-        this.ResourceContainers = []
-        this.Resources = [];
-        this.Pool = [];
+        /** @type {FJsResourceContainer[]} */ 	this.ResourceContainers = []
+        /** @type {any[]} */					this.Resources = [];
+        /** @type {FJsResourceContainer[]} */	this.Pool = [];
 
-        this.PoolSize = 0;
-        this.PoolSizeMinusOne = 0;
-        this.PoolIndex = 0;
+        /** @type {number} */	this.PoolSize = 0;
+        /** @type {number} */	this.PoolSizeMinusOne = 0;
+        /** @type {number} */	this.PoolIndex = 0;
 
-        this.AdvancePoolIndex = this.AdvancePoolIndexByOrder;
+        /** @type {function} */ this.AdvancePoolIndex = this.AdvancePoolIndexByOrder;
 
-        this.Links = [];
-        this.AllocatedHead = null;
-        this.AllocatedTail = null;
-        this.AllocatedSize = 0;
+        /** @type {FJsDoubleLinkedListNode[]} */	this.Links = [];
+        /** @type {FJsDoubleLinkedListNode} */		this.AllocatedHead = null;
+        /** @type {FJsDoubleLinkedListNode} */		this.AllocatedTail = null;
+        /** @type {number} */ 						this.AllocatedSize = 0;
 
-        this.AllocationOrder = new FJsAllocationOrder();
+        /** @type {FJsAllocationOrder} */ this.AllocationOrder = new FJsAllocationOrder();
     }
 
     // public
@@ -135,30 +143,30 @@ module.exports = class FJsManager_Resource_Fixed
 	/**
 	* Get a reference to the Pool.
 	*
-	* return a reference to the Pool.
+	* @returns {any[]} a reference to the Pool.
 	*/
-	GetPool() { return this.Pool; }
+	/*any[]*/ GetPool() { return this.Pool; }
 
 	/**
 	* Get the number of elements in the pool.
 	*
-	* return Pool Size
+	* @returns {number} Pool Size
 	*/
-	GetPoolSize() { return this.PoolSize; }
+	/*number*/ GetPoolSize() { return this.PoolSize; }
 
 	/**
 	* Get the number of allocated elements.
 	*
-	* return Allocated Size.
+	* @returns {number} Allocated Size.
 	*/
-	GetAllocatedSize() { return this.AllocatedSize; }
+	/*number*/ GetAllocatedSize() { return this.AllocatedSize; }
 
 	/**
 	* Check if all the resources have been allocated.
 	*
-	* return Whether all resources have been allocated.
+	* @returns {boolean} Whether all resources have been allocated.
 	*/
-    IsExhausted() {	return this.PoolSize === this.AllocatedSize; }
+    /*boolean*/ IsExhausted() {	return this.PoolSize === this.AllocatedSize; }
 
 	AdvancePoolIndexByIncrement() { this.PoolIndex = (this.PoolIndex + 1) & this.PoolSizeMinusOne; }
 
@@ -167,10 +175,10 @@ module.exports = class FJsManager_Resource_Fixed
 	/**
 	*
 	*
-	* @param index
-	* return ResourceContainerType
+	* @param {number} 				  index
+	* @returns {FJsResourceContainer} ResourceContainerType
 	*/
-    GetAt(index)
+    /*FJsResourceContainer*/ GetAt(index /*number*/)
 	{
         checkf(index > INDEX_NONE && index < this.PoolSize, this.Name + ".GetAt: Index: " + index + " is >= 0 and < PoolSize: " + this.PoolSize);
 
@@ -180,10 +188,10 @@ module.exports = class FJsManager_Resource_Fixed
 	/**
 	*
 	*
-	* @param index
-	* return ResourceType
+	* @param {number} 	index
+	* @returns {any} 	ResourceType
 	*/
-    GetResourceAt(index)
+    /*any*/ GetResourceAt(index /*number*/)
 	{
         checkf(index > INDEX_NONE && index < this.PoolSize, this.Name + ".GetResourceAt: Index: " + index + " is >= 0 and < PoolSize: " + this.PoolSize);
 
@@ -192,10 +200,10 @@ module.exports = class FJsManager_Resource_Fixed
 
 	/**
 	*
-	* @param resource	Resource to find the associated container for.
-	* return Resource	Container associated with the Resource
+	* @param {any}						resource	Resource to find the associated container for.
+	* @returns {FJsResourceContainer}	Resource	Container associated with the Resource
 	*/
-	GetAllocatedContainer(resource)
+	/*FJsResourceContainer*/ GetAllocatedContainer(resource /*any*/)
 	{
 		checkf(IsValidObject(resource), this.Name + ".GetAllocatedContainer: Resource is NULL.");
 
@@ -228,9 +236,9 @@ module.exports = class FJsManager_Resource_Fixed
 	* Add a link, LinkedList pointer to a ResourceContainerType, to the end, AllocatedTail,
 	*  of the allocated linked list, list of Resources that have been allocated.
 	*
-	* @param link	Pointer to LinkedList element containing a ResourceContainerType.
+	* @param {FJsDoubleLinkedListNode} link	Pointer to LinkedList element containing a ResourceContainerType.
 	*/
-	AddAllocatedLink(link)
+	AddAllocatedLink(link /*FJsDoubleLinkedListNode*/)
 	{
 		if (IsValidObject(this.AllocatedTail))
 		{
@@ -249,10 +257,10 @@ module.exports = class FJsManager_Resource_Fixed
 	*  in the active linked list, list of ResourceTypes that have been allocated. 
 	*  This is equivalent to inserting a linked list element after another element.
 	*
-	* @param link					Pointer to LinkedList element containing a ResourceContainerType.
-	* @param resourceContainer		Container for a ResourceType
+	* @param {FJsDoubleLinkedListNode} 	link					Pointer to LinkedList element containing a ResourceContainerType.
+	* @param {FJsResourceContainer} 	resourceContainer		Container for a ResourceType
 	*/
-	AddAllocatedLinkAfter(link, resourceContainer)
+	AddAllocatedLinkAfter(link /*FJsDoubleLinkedListNode*/, resourceContainer /*FJsResourceContainer*/)
 	{
 		// Resource to Link After
 		let linkAfterIndex = resourceContainer.GetIndex();
@@ -273,10 +281,10 @@ module.exports = class FJsManager_Resource_Fixed
 	*  in the allocated linked list, list of ResourceTypes that have been allocated.
 	*  This is equivalent to inserting a linked list element before another element.
 	*
-	* @param link					Pointer to LinkedList element containing a ResourceContainerType.
-	* @param resourceContainer		Container for a ResourceType
+	* @param {FJsDoubleLinkedListNode}	link					Pointer to LinkedList element containing a ResourceContainerType.
+	* @param {FJsResourceContainer}		resourceContainer		Container for a ResourceType
 	*/
-	AddAllocatedLinkBefore(link, resourceContainer)
+	AddAllocatedLinkBefore(link /*FJsDoubleLinkedListNode*/, resourceContainer /*FJsResourceContainer*/)
 	{
 		// Resource to Link Before
 		let linkBeforeIndex = resourceContainer.GetIndex();
@@ -296,9 +304,9 @@ module.exports = class FJsManager_Resource_Fixed
 	* Remove a link, LinkedList pointer to a ResourceContainerType, from the allocated linked
 	*  list, list of ResourceTypes that have been allocated.
 	*
-	* @param link	Pointer to LinkedList element containing a ResourceContainerType.
+	* @param {FJsDoubleLinkedListNode} link	Pointer to LinkedList element containing a ResourceContainerType.
 	*/
-	RemoveActiveLink(link)
+	RemoveActiveLink(link /*FJsDoubleLinkedListNode*/)
 	{
 		// Check to Update HEAD
 		if (link === this.AllocatedHead)
@@ -324,16 +332,16 @@ module.exports = class FJsManager_Resource_Fixed
 	/**
 	* Get the current head of the allocated linked list.
 	*
-	* return Allocated Head.
+	* @returns {FJsDoubleLinkedListNode} Allocated Head.
 	*/
-	GetAllocatedHead() { return this.AllocatedHead; }
+	/*FJsDoubleLinkedListNode*/ GetAllocatedHead() { return this.AllocatedHead; }
 
 	/**
 	* Get the current tail of the active linked list.
 	*
-	* return Active Tail.
+	* @returns {FJsDoubleLinkedListNode}  Active Tail.
 	*/
-	GetAllocatedTail() { return this.AllocatedTail; }
+	/*FJsDoubleLinkedListNode*/ GetAllocatedTail() { return this.AllocatedTail; }
 
 	// #endregion Linked List
 
@@ -345,9 +353,9 @@ module.exports = class FJsManager_Resource_Fixed
 	* Allocate a ResourceType and add the corresponding linked list element to the 
 	*  end of the list
 	*
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	* @returns {FJsResourceContainer} ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
-	Allocate()
+	/*FJsResourceContainer*/ Allocate()
 	{
 		checkf(!this.IsExhausted(), this.Name + ".Allocate: Pool is exhausted.");
 
@@ -375,9 +383,9 @@ module.exports = class FJsManager_Resource_Fixed
 	* Allocate a ResourceType and add the corresponding linked list element to the
 	*  end of the list
 	*
-	* return ResourceType	Allocated ResourceType
+	* @returns {any} ResourceType	Allocated ResourceType
 	*/
-	AllocateResource()
+	/*any*/ AllocateResource()
 	{
 		return this.Allocate().Get();
 	}
@@ -387,10 +395,10 @@ module.exports = class FJsManager_Resource_Fixed
 	*  another ResourceContainerType. This is equivalent to inserting a linked list element
 	*  after another element. 
 	*
-	* @param resourceContainer		Container for a ResourceType.
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	* @param {FJsResourceContainer}		resourceContainer		Container for a ResourceType.
+	* @returns {FJsResourceContainer} 	ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
-	AllocateAfter(resourceContainer)
+	/*FJsResourceContainer*/ AllocateAfter(resourceContainer /*FJsResourceContainer*/)
 	{
 		checkf(IsValidObject(ResourceContainer), this.Name + ".AllocateAfter: ResourceContainer is NULL.");
 
@@ -430,9 +438,9 @@ module.exports = class FJsManager_Resource_Fixed
 	*  the AllocatedHead. This is equivalent to inserting a linked list element
 	*  after the head of the list.
 	*
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	* @returns {FJsResourceContainer} ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
-	AllocateAfterHead()
+	/*FJsResourceContainer*/ AllocateAfterHead()
 	{
 		if (IsValidObject(this.AllocatedHead))
 			return this.AllocateAfter(this.AllocatedHead.Element);
@@ -444,10 +452,10 @@ module.exports = class FJsManager_Resource_Fixed
 	*  another ResourceContainerType. This is equivalent to inserting a linked list element
 	*  before another element.
 	*
-	* @param resourceContainer		Container for a ResourceType.
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	* @param {FJsResourceContainer} 	resourceContainer		Container for a ResourceType.
+	* @returns {FJsResourceContainer}	ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
-	AllocateBefore(resourceContainer)
+	/*FJsResourceContainer*/ AllocateBefore(resourceContainer /*FJsResourceContainer*/)
 	{
 		checkf(IsValidObject(resourceContainer), this.Name + ".AllocateBefore: ResourceContainer is NULL.");
 
@@ -487,9 +495,9 @@ module.exports = class FJsManager_Resource_Fixed
 	*  the AllocatedHead. This is equivalent to inserting a linked list element
 	*  after the head of the list.
 	*
-	* return ResourceContainerType	Allocated ResourceType wrapped in a container.
+	* @returns {FJsResourceContainer} ResourceContainerType	Allocated ResourceType wrapped in a container.
 	*/
-	AllocateBeforeHead()
+	/*FJsResourceContainer*/ AllocateBeforeHead()
 	{
 		if (IsValidObject(this.AllocatedHead))
 			return this.AllocateBefore(this.AllocatedHead.Element);
@@ -506,10 +514,10 @@ module.exports = class FJsManager_Resource_Fixed
 	* Deallocate a ResourceType and remove the corresponding linked list element from the
 	*  allocated linked list.
 	*
-	* @param resourceContainer		Container for a ResourceType to deallocate.
-	* return Success				Whether the Deallocate performed successfully or not.
+	* @param {FJsResourceContainer} resourceContainer	Container for a ResourceType to deallocate.
+	* @returns {boolean} 			Success				Whether the Deallocate performed successfully or not.
 	*/
-	Deallocate(resourceContainer)
+	/*boolean*/ Deallocate(resourceContainer /*FJsResourceContainer*/)
 	{
 		checkf(IsValidObject(resourceContainer), this.Name + ".Deallocate: ResourceContainer is NULL.");
 
@@ -537,10 +545,10 @@ module.exports = class FJsManager_Resource_Fixed
 	* Deallocate a ResourceType and remove the corresponding linked list element from the
 	*  allocated linked list.
 	*
-	* @param resource	ResourceType to deallocate.
-	* return Success	Whether the Deallocate performed successfully or not.
+	* @param {any}			resource	ResourceType to deallocate.
+	* @returns {boolean} 	Success		Whether the Deallocate performed successfully or not.
 	*/
-	DeallocateByResource(resource)
+	/*boolean*/ DeallocateByResource(resource /*any*/)
 	{
 		checkf(IsValidObject(resource), this.Name + ".Deallocate: Resource is NULL.");
 
@@ -553,10 +561,10 @@ module.exports = class FJsManager_Resource_Fixed
 	* Deallocate a ResourceType and remove the corresponding linked list element from the
 	*  allocated linked list.
 	*
-	* @param index		Index of the ResourceType to deallocate
-	* return Success
+	* @param {number} 		index		Index of the ResourceType to deallocate
+	* @returns {boolean} 	Success
 	*/
-	DeallocateAtByIndex(index)
+	/*boolean*/ DeallocateAtByIndex(index /*number*/)
 	{
 		checkf(index >= 0 && index < this.PoolSize, this.Name + ".DeallocateAt: index: " + index + " (< 0 or >= " + this.PoolSize + ") is NOT Valid.");
 
@@ -578,11 +586,11 @@ module.exports = class FJsManager_Resource_Fixed
 	* Deallocate a ResourceType and remove the corresponding linked list element from the
 	*  allocated linked list.
 	*
-	* @param resource	ResourceType to deallocate.
-	* @param index		Index of the ResourceType to deallocate
-	* return Success
+	* @param {any} 		resource	ResourceType to deallocate.
+	* @param {number} 	index		Index of the ResourceType to deallocate
+	* @return {boolean} Success
 	*/
-	DeallocateAt(resource, index)
+	/*boolean*/ DeallocateAt(resource /*any*/, index /*number*/)
 	{
 		checkf(IsValidObject(resource), this.Name + ".Deallocate: resource is NULL.");
 
@@ -607,9 +615,9 @@ module.exports = class FJsManager_Resource_Fixed
 	/**
 	*
 	*
-	* return
+	* @returns {boolean}
 	*/
-	DeallocateHead()
+	/*boolean*/ DeallocateHead()
 	{
 		if (IsNullObject(this.AllocatedHead))
 			return false;
@@ -648,17 +656,17 @@ module.exports = class FJsManager_Resource_Fixed
 	* Allocate and add the element to end of the list of allocated
 	*  ResourceContainerTypes. This is equivalent to calling Allocate().
 	*
-	* return ResourceContainerType
+	* @returns {FJsResourceContainer} ResourceContainerType
 	*/
-	Enqueue() { return this.Allocate(); }
+	/*FJsResourceContainer*/ Enqueue() { return this.Allocate(); }
 
 	/**
 	* Deallocate the current head of the list of allocated ResourceContainerTypes.
 	*  This is equivalent to called Deallocate on the AllocatedHead.
 	*
-	* return ResourceContainerType
+	* @returns {FJsResourceContainer} ResourceContainerType
 	*/
-	Dequeue()
+	/*FJsResourceContainer*/ Dequeue()
 	{
 		if (this.AllocatedHead)
 		{
@@ -678,17 +686,17 @@ module.exports = class FJsManager_Resource_Fixed
 	* Allocate and add the element AFTER the head of the list of allocated 
 	*  ResourceContainerTypes. This is equivalent to calling AllocateAfterHead().
 	*
-	* return ResourceContainerType
+	* @returns {FJsResourceContainer} ResourceContainerType
 	*/
-	Push() { return this.AllocateAfterHead(); }
+	/*FJsResourceContainer*/ Push() { return this.AllocateAfterHead(); }
 
 	/**
 	* Deallocate the head of the list of allocated ResourceContainerTypes. 
 	*  This is equivalent to calling Deallocate() on the AllocatedHead.
 	*
-	* return ResourceContainerType
+	* @returns {FJsResourceContainer} ResourceContainerType
 	*/
-	Pop()
+	/*FJsResourceContainer*/ Pop()
 	{
 		if (IsValidObject(this.AllocatedHead))
 		{

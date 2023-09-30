@@ -10,13 +10,12 @@
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
-// "typedefs" - classes
-/** @type {CommonLibrary} */
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
 
 // "typedefs" - functions
 var checkf = CommonLibrary.checkf;
-var check = CommonLibrary.check;
+var check  = CommonLibrary.check;
 
 module.exports = class NJsArray
 {

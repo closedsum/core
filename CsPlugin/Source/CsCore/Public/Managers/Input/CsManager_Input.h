@@ -77,7 +77,7 @@ class AActor;
 class APlayerController;
 class UCsInputListener;
 
-UCLASS(Blueprintable)
+UCLASS(BlueprintType, Blueprintable)
 class CSCORE_API UCsManager_Input : public UActorComponent
 {
 	GENERATED_UCLASS_BODY()

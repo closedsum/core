@@ -10,6 +10,8 @@
 #include "Coordinators/GameEvent/CsConsoleCommand_Coordinator_GameEvent.h"
 // Library
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
+	// Common
+#include "Library/CsLibrary_World.h"
 
 #if WITH_EDITOR
 #include "Managers/Singleton/CsGetManagerSingleton.h"
@@ -26,6 +28,7 @@ namespace NCsCoordinatorGameEvent
 	{
 		namespace Str
 		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, GetFromWorldContextObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, ProcessGameEventInfo);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsCoordinator_GameEvent, QueueGameEventInfo);
@@ -67,8 +70,14 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 #endif // #if WITH_EDITOR
 }
 
-/*static*/ void UCsCoordinator_GameEvent::Init(UObject* InRoot)
+/*static*/ void UCsCoordinator_GameEvent::Init(UObject* InRoot /*=nullptr*/, TSubclassOf<UCsCoordinator_GameEvent> CoordinatorClass /*=TSubclassOf<UCsCoordinator_GameEvent>(UCsCoordinator_GameEvent::StaticClass())*/)
 {
+	using namespace NCsCoordinatorGameEvent::NCached;
+
+	const FString& Context = Str::Init;
+
+	checkf(CoordinatorClass.Get(), TEXT("%s: CoordinatorClass is NULL."), *Context);
+
 #if WITH_EDITOR
 	ICsGetCoordinatorGameEvent* GetCoordinatorGameEvent = Get_GetCoordinatorGameEvent(InRoot);
 
@@ -76,7 +85,7 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 
 	if (!Coordinator_GameEvent)
 	{
-		Coordinator_GameEvent = NewObject<UCsCoordinator_GameEvent>(InRoot, UCsCoordinator_GameEvent::StaticClass(), TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
+		Coordinator_GameEvent = NewObject<UCsCoordinator_GameEvent>(InRoot, CoordinatorClass, TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
 
 		GetCoordinatorGameEvent->SetCoordinator_GameEvent(Coordinator_GameEvent);
 
@@ -85,21 +94,21 @@ UCsCoordinator_GameEvent::UCsCoordinator_GameEvent(const FObjectInitializer& Obj
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsCoordinator_GameEvent::Init: Init has already been called."));
+		UE_LOG(LogCs, Warning, TEXT("%s: Init has already been called."), *Context);
 	}
 #else
 	s_bShutdown = false;
 
 	if (!s_Instance)
 	{
-		s_Instance = NewObject<UCsCoordinator_GameEvent>(GetTransientPackage(), UCsCoordinator_GameEvent::StaticClass(), TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
+		s_Instance = NewObject<UCsCoordinator_GameEvent>(GetTransientPackage(), CoordinatorClass, TEXT("Coorindator_Game_Event_Singleton"), RF_Transient | RF_Public);
 		s_Instance->AddToRoot();
 		s_Instance->SetMyRoot(InRoot);
 		s_Instance->Initialize();
 	}
 	else
 	{
-		UE_LOG(LogCs, Warning, TEXT("UCsCoordinator_GameEvent::Init: Init has already been called."));
+		UE_LOG(LogCs, Warning, TEXT("%s: Init has already been called."), *Context);
 	}
 #endif // #if WITH_EDITOR
 }
@@ -263,9 +272,31 @@ void UCsCoordinator_GameEvent::SetMyRoot(UObject* InRoot)
 
 #pragma endregion Singleton
 
+// StartPlay
+#pragma region
+
+void UCsCoordinator_GameEvent::StartPlay()
+{
+	ReceiveStartPlay();
+}
+
+#pragma endregion StartPlay
+
+// Update
+#pragma region
+
 void UCsCoordinator_GameEvent::Update(const FCsDeltaTime& DeltaTime)
 {
+	ReceiveUpdate(DeltaTime);
+}
 
+#pragma endregion Update
+
+UObject* UCsCoordinator_GameEvent::GetWorldContext() const
+{
+	typedef NCsWorld::FLibrary WorldLibrary;
+
+	return WorldLibrary::GetSafe(MyRoot);
 }
 
 void UCsCoordinator_GameEvent::OnGameEventInfo_ManagerInput0(const FCsGameEventInfo& Info)

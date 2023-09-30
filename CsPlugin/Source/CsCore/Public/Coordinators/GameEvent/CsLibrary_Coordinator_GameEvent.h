@@ -121,6 +121,22 @@ namespace NCsGameEvent
 
 		#pragma endregion Get
 
+		// Class
+		#pragma region
+		public:
+
+			static TSubclassOf<UCsCoordinator_GameEvent> GetClassChecked(const FString& Context);
+
+		#pragma endregion Class
+
+		// StartPlay
+		#pragma region
+		public:
+
+			static void StartPlayChecked(const FString& Context, const UObject* ContextObject);
+
+		#pragma endregion StartPlay
+
 			/**
 			* 
 			* 

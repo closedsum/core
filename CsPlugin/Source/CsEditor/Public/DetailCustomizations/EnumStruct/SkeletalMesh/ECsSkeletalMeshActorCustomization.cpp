@@ -3,8 +3,6 @@
 
 // Managers
 #include "Managers/SkeletalMesh/CsTypes_SkeletalMeshActor.h"
-// Settings
-#include "Settings/CsDeveloperSettings.h"
 
 #define LOCTEXT_NAMESPACE "ECsSkeletalMeshActorCustomization"
 

@@ -57,6 +57,8 @@ declare namespace FJsEnum {
     }
 }
 
+declare type FJsEnum_FValue = FJsEnum.FValue;
+
 declare class FJsEnum {
     Name: string;
     Enums: FJsEnum.FValue[];

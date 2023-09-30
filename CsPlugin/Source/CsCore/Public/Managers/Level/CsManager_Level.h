@@ -13,8 +13,9 @@ class ICsGetManagerLevel;
 struct FCsRoutine;
 class ULevel;
 class ALevelScriptActor;
+class UObject;
 
-UCLASS(transient)
+UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSCORE_API UCsManager_Level : public UObject
 {
 	GENERATED_UCLASS_BODY()
@@ -48,7 +49,7 @@ public:
 	}
 #endif // #if WITH_EDITOR
 
-	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Level> ManagerMenuClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Level> ManagerLevelClass, UObject* InOuter = nullptr);
 	static void Shutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR
@@ -63,6 +64,9 @@ protected:
 
 	virtual void Initialize();
 	virtual void CleanUp();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Singleton", meta = (DisplayName = "Clean Up"))
+	void ReceiveCleanUp();
 
 private:
 	// Singleton data
@@ -87,6 +91,11 @@ public:
 #pragma endregion Root
 
 #pragma endregion Singleton
+
+public:
+
+	UFUNCTION(BlueprintPure)
+	UObject* GetWorldContext() const;
 
 // Persistent Level
 #pragma region

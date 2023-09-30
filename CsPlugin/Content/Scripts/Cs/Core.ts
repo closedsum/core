@@ -1,4 +1,6 @@
 /// <reference path="../typings/ue.d.ts">/>
+// Coroutine
+/// <reference path="Coroutine/CoroutineScheduler.ts">/>
 // Managers
 /// <reference path="Managers/Data/Manager_Data.ts">/>
 
@@ -18,6 +20,8 @@ declare namespace FJsCore {
     }
 }
 
+declare type FJsCore_FScript = FJsCore.FScript;
+
 declare class FJsCore {
     ScriptOuter: UObject;
     ScriptOuterId: number;
@@ -32,7 +36,7 @@ declare class FJsCore {
     PlayerState: PlayerState;
     PlayerPawn: Actor;
     Script: FJsCore.FScript;
-    //this.CoroutineScheduler = null;
+    CoroutineScheduler: FJCoroutineScheduler;
     GetScriptOuter(): UObject;
     GetScriptOuterId(): number;
     GetEngine(): GameEngine;
@@ -45,7 +49,7 @@ declare class FJsCore {
     GetPlayerController(): PlayerController;
     GetPlayerState(): PlayerState;
     GetPlayerPawn(): Actor;
-    //GetCoroutineScheduler(): ;
+    GetCoroutineScheduler(): FJCoroutineScheduler;
     GetScript(): FJsCore.FScript;
 
     /**

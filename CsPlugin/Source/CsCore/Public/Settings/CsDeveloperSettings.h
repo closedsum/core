@@ -22,6 +22,8 @@
 #include "Managers/Input/CsTypes_Input.h"
 #include "Managers/Input/CsSettings_Input.h"
 #include "Managers/Input/CsSettings_Manager_Input.h"
+// Game Event
+#include "Coordinators/GameEvent/CsSettings_Coordinator_GameEvent.h"
 // FX
 #include "Managers/FX/CsTypes_FX.h"
 #include "Managers/FX/Actor/CsSettings_Manager_FX.h"
@@ -35,6 +37,8 @@
 #include "Managers/StaticMesh/Instanced/CsSettings_Manager_InstancedStaticMeshComponent.h"
 // SkeletalMesh
 #include "Managers/SkeletalMesh/CsSettings_Manager_SkeletalMeshActor.h"
+// Level
+#include "Managers/Level/CsSettings_Manager_Level.h"
 // Anim
 #include "Animation/Vertex/CsVertexAnimNotify.h"
 // Container
@@ -189,6 +193,15 @@ public:
 
 #pragma endregion Input
 
+// Game Event
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Game Event", meta = (DisplayName = "Coordinator Game Event"))
+	FCsSettings_Coordinator_GameEvent Coordinator_GameEvent;
+
+#pragma endregion Game Event
+
 // FX
 #pragma region
 public:
@@ -318,6 +331,15 @@ public:
 #pragma endregion Unit Test
 
 #pragma endregion SkeletalMesh
+
+// Level
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Level", meta = (DisplayName = "Manager Level"))
+	FCsSettings_Manager_Level Manager_Level;
+
+#pragma endregion Level
 
 // Anim
 #pragma region

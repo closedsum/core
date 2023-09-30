@@ -4,6 +4,8 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+// self
+/// <reference path="../../Cs/Containers/DoubleLinkedListNode.ts">/>
 
 "use strict"
 
@@ -22,9 +24,9 @@ module.exports = class FJsDoubleLinkedListNode
 {
     constructor()
     {
-        this.Element = null;
-        this.NextLink = null;
-        this.PrevLink = null;
+        /** @type {any} */                      this.Element = null;
+        /** @type {FJsDoubleLinkedListNode} */  this.NextLink = null;
+        /** @type {FJsDoubleLinkedListNode} */  this.PrevLink = null;
     }
 
     Unlink()
@@ -39,7 +41,10 @@ module.exports = class FJsDoubleLinkedListNode
         this.PrevLink = null;
     }
 
-    LinkBefore(before)
+    /**
+    * @param {FJsDoubleLinkedListNode} before 
+    */
+    LinkBefore(before /*FJsDoubleLinkedListNode*/)
     {
         checkf(IsValidObject(before), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
 
@@ -60,7 +65,10 @@ module.exports = class FJsDoubleLinkedListNode
         this.NextLink   = before;
     }
 
-    LinkAfter(after)
+    /**
+    * @param {FJsDoubleLinkedListNode} after 
+    */
+    LinkAfter(after /*FJsDoubleLinkedListNode*/)
     {
         checkf(IsValidObject(after), "FJsDoubleLinkedListNode.LinkBefore: is NULL.");
         
@@ -81,15 +89,33 @@ module.exports = class FJsDoubleLinkedListNode
         after.NextLink = this;
     }
 
-    IsLinked()
+    /**
+    * @returns {boolean}
+    */
+    /*boolean*/ IsLinked()
     {
         return IsValidObject(this.NextLink) || IsValidObject(this.PrevLink);
     }
 
-    GetElement() { return this.Element; }
+    /**
+    * @returns {any}
+    */
+    /*any*/ GetElement() { return this.Element; }
 
-    Next() { return this.NextLink; }
-    Prev() { return this.PrevLink; }
-    GetNextLink() { return this.NextLink; }
-    GetPrevLink() { return this.PrevLink; }
+    /**
+    * @returns {FJsDoubleLinkedListNode}
+    */
+    /*FJsDoubleLinkedListNode*/ Next() { return this.NextLink; }
+    /**
+    * @returns {FJsDoubleLinkedListNode}
+    */
+    /*FJsDoubleLinkedListNode*/ Prev() { return this.PrevLink; }
+    /**
+    * @returns {FJsDoubleLinkedListNode}
+    */
+    /*FJsDoubleLinkedListNode*/ GetNextLink() { return this.NextLink; }
+    /**
+    * @returns {FJsDoubleLinkedListNode}
+    */
+    /*FJsDoubleLinkedListNode*/ GetPrevLink() { return this.PrevLink; }
 };

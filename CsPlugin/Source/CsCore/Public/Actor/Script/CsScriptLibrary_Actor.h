@@ -46,6 +46,18 @@ public:
 public:
 
 	/**
+	* Get all Actors of type: ActorClass.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param ActorClass
+	* @param OutActors		(out)
+	* return				
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool GetAllOfClass(const FString& Context, const UObject* WorldContextObject, TSubclassOf<AActor> ActorClass, TArray<AActor*>& OutActors);
+
+	/**
 	* Get an Actor with the given Tag (checks AActor->Tags)
 	* NOTE: Find the FIRST Actor the given Tag.
 	*
@@ -54,8 +66,8 @@ public:
 	* @param Tag
 	* return				Actor
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Tag"))
-	static AActor* GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Tag"))
+	static AActor* GetByTag(const FString& Context, const UObject* WorldContextObject, const FName& Tag);
 
 	/**
 	* Get an Actor with the given Tags (checks AActor->Tags)
@@ -66,8 +78,8 @@ public:
 	* @param Tags
 	* return				Actor
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Tags"))
-	static AActor* GetByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Tags"))
+	static AActor* GetByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags);
 
 	/**
 	* Get a list of Actors with the given Tag (checks AActor->Tags).
@@ -78,8 +90,8 @@ public:
 	* @param OutActors		(out)
 	* return				Whether any actors were found with Tags.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static bool GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool GetAnyByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors);
 
 	/**
 	* Get an Actor with the given Name.
@@ -89,8 +101,8 @@ public:
 	* @param Name
 	* return				Actor
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
-	static AActor* GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Name"))
+	static AActor* GetByName(const FString& Context, const UObject* WorldContextObject, const FName& Name);
 
 	/**
 	* Get an Actor with the given Label.
@@ -103,8 +115,8 @@ public:
 	* @param Name
 	* return				Actor
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Label"))
-	static AActor* GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Actor", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Label"))
+	static AActor* GetByLabel(const FString& Context, const UObject* WorldContextObject, const FString& Label);
 
 #pragma endregion Get
 

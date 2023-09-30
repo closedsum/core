@@ -20,20 +20,16 @@ public class CsSeq : ModuleRules
                     "JsonUtilities",
                     "CsCore",
                     "MovieScene",
+                    "MovieSceneTracks",
                     "LevelSequence"
                 }
             );
 
-        /*
         PrivateDependencyModuleNames.AddRange(
             new string[] {
-                "InputCore",
-                "Slate",
-                "SlateCore",
-                "Json",
+                "LevelSequence"
             }
         );
-        */
 
         if (Target.Type == TargetType.Editor)
         {
@@ -48,13 +44,6 @@ public class CsSeq : ModuleRules
                 }
             );
             */
-        }
-        else
-        {
-            PublicDependencyModuleNames.AddRange(
-                new string[] {
-                }
-            );
         }
     }
 }

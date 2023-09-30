@@ -9,11 +9,28 @@
 #include "CsScriptLibrary_AI_Controller.generated.h"
 
 class AAIController;
+class UBlackboardComponent;
 
 UCLASS()
 class CSAI_API UCsScriptLibrary_AI_Controller : public UObject
 {
 	GENERATED_UCLASS_BODY()
+
+// Blackboard
+#pragma region
+public:
+
+	/**
+	* Get the Blackboard associated with Controller.
+	*
+	* @param Context	The calling context.
+	* @param Controller
+	* return			Blackboard
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsAI|Controller|Library", meta = (AutoCreateRefTerm = "Context"))
+	static UBlackboardComponent* GetBlackboard(const FString& Context, const AAIController* Controller);
+
+#pragma endregion Blackboard
 
 public:
 

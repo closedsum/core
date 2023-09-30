@@ -8,6 +8,7 @@
 #include "CsScriptLibrary_LevelSequence.generated.h"
 
 class ALevelSequenceActor;
+class UMovieSceneCameraCutTrack;
 
 UCLASS()
 class CSSEQ_API UCsScriptLibrary_LevelSequence : public UObject
@@ -82,8 +83,75 @@ public:
 	* @param Context		The calling context.
 	* @param Sequence
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequenceActor", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequenceActor", meta = (AutoCreateRefTerm = "Context"))
 	static bool SetPlaybackPositionFrameZero(const FString& Context, ALevelSequenceActor* Sequence);
 
 #pragma endregion Player
+
+// Tracks
+#pragma region
+public:
+
+	// Camera
+#pragma region
+public:
+
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track|Camera Cut", meta = (AutoCreateRefTerm = "Context"))
+	static UMovieSceneCameraCutTrack* Track_GetCameraCut(const FString& Context, ULevelSequence* Sequence);
+
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track|Camera Cut", meta = (AutoCreateRefTerm = "Context"))
+	static bool Track_CameraCut_Enable(const FString& Context, ULevelSequence* Sequence);
+
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track|Camera Cut", meta = (AutoCreateRefTerm = "Context"))
+	static bool Track_CameraCut_Mute(const FString& Context, ULevelSequence* Sequence);
+
+	/**
+	* Set Camera Track's Section's Ease In Duration in Seconds
+	* 
+	* @parma Context	The calling context.
+	* @param Sequence
+	* @param Seconds
+	* return
+	*/
+	//UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track", meta = (AutoCreateRefTerm = "Context,Seconds"))
+	//static bool Track_CameraCut_SetEaseIn(const FString& Context, ULevelSequence* Sequence, const float& Seconds);
+
+	/**
+	* Set Camera Track's Section's Ease In Duration in Frames
+	*  Frames represents a value the same as the Tick Resolution (i.e. the Default Tick Resolution is 24000 fps).
+	* 
+	* @parma Context	The calling context.
+	* @param Sequence
+	* @param Frames
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track|Camera Cut", meta = (AutoCreateRefTerm = "Context,Frames"))
+	static bool Track_CameraCut_SetEaseInDuration(const FString& Context, ULevelSequence* Sequence, const int32& Frames);
+
+	/**
+	* Set Camera Track's Section's Ease In Frames by the current Fps of the Sequence.
+	*  Frames represents a value with respect to the current Fps (i.e. 30 fps -> 15 Frames = 0.5 sec, etc).
+	* 
+	* @parma Context	The calling context.
+	* @param Sequence
+	* @param Frames
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track|Camera Cut", meta = (AutoCreateRefTerm = "Context,Frames"))
+	static bool Track_CameraCut_SetEaseInFramesByCurrentFps(const FString& Context, ALevelSequenceActor* Sequence, const int32& Frames);
+
+	/**
+	* Set Camera Track's Section's Ease In Seconds.
+	* 
+	* @parma Context	The calling context.
+	* @param Sequence
+	* @param Seconds
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequence|Track|Camera Cut", meta = (AutoCreateRefTerm = "Context,Seconds"))
+	static bool Track_CameraCut_SetEaseSeconds(const FString& Context, ALevelSequenceActor* Sequence, const float& Seconds);
+
+#pragma endregion Camera
+
+#pragma endregion Tracks
 };

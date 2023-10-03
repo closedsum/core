@@ -111,6 +111,9 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 
 	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
 
+	// CVars
+	GetMutableDefault<UCsDeveloperSettings>()->ApplyEnableScriptChecked();
+
 	ConstructManagerSingleton();
 
 	UCsManager_Time::Init(this);

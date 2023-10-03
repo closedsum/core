@@ -32,10 +32,10 @@ UCsScriptLibrary_World::UCsScriptLibrary_World(const FObjectInitializer& ObjectI
 {
 }
 
+#define WorldLibrary NCsWorld::FLibrary
+
 bool UCsScriptLibrary_World::IsPlayInEditorPreview(const UObject* WorldContextObject)
 {
-	typedef NCsWorld::FLibrary WorldLibrary;
-
 	return WorldLibrary::IsPlayInEditorPreview(WorldContextObject);
 }
 
@@ -45,13 +45,7 @@ void UCsScriptLibrary_World::RemoveNetworkActor(const FString& Context, AActor* 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::RemoveNetworkActor : Context;
 
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return;
-	}
-
-	UWorld* World = Actor->GetWorld();
+	UWorld* World = WorldLibrary::GetSafe(Ctxt, Actor);
 
 	if (!World)
 	{
@@ -60,3 +54,5 @@ void UCsScriptLibrary_World::RemoveNetworkActor(const FString& Context, AActor* 
 	}
 	World->RemoveNetworkActor(Actor);
 }
+
+#undef WorldLibrary

@@ -8,6 +8,7 @@
 #include "Utility/CsLog.h"
 
 class UObject;
+class UClass;
 
 namespace NCsObject
 {
@@ -23,6 +24,14 @@ namespace NCsObject
 
 		FORCEINLINE static bool IsPendingKill(const UObject* Object) { return IsValid(Object); }
 
+	#if WITH_EDITOR
+		static bool IsValidChecked(const FString& Context, const UObject* Object);
+	#else
+		FORCEINLINE static bool IsValidChecked(const FString& Context, const UObject* Object) { return true; }
+	#endif // #if WITH_EDITOR
+
+		static bool SafeIsValid(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		/**
 		*
 		*
@@ -31,7 +40,16 @@ namespace NCsObject
 		*/
 		static FString GetFlagsAsString(const UObject* Object);
 
+		static UObject* ConstructChecked(const FString& Context, UObject* Outer, UClass* Class);
+		static UObject* SafeConstruct(const FString& Context, UObject* Outer, UClass* Class, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UObject* GetDefaultObjectChecked(const FString& Context, const UObject* Object);
+		static UObject* GetSafeDefaultObject(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static bool IsDefaultObject(const UObject* Object);
+
+		static int32 GetUniqueIDChecked(const FString& Context, const UObject* Object);
+		static int32 GetSafeUniqueID(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	// Load
 	#pragma region

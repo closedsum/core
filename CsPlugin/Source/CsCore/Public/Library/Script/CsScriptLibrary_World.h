@@ -16,7 +16,13 @@ class CSCORE_API UCsScriptLibrary_World : public UObject
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsCore|Library|World", meta = (WorldContext = "WorldContextObject"))
+	/**
+	* Get whether the current World is of type: Editor Preview (EWorldType::EditorPreview) or not.
+	* 
+	* @param WorldContextObject
+	* return
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|World", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext))
 	static bool IsPlayInEditorPreview(const UObject* WorldContextObject);
 
 	/**

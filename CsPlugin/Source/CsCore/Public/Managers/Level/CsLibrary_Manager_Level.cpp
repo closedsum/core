@@ -122,6 +122,29 @@ namespace NCsLevel
 			return Manager_Level;
 		}
 
+		UCsManager_Level* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Level* Manager_Level = UCsManager_Level::GetSafe(Context, ContextRoot, Log);
+
+			if (!Manager_Level)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Level."), *Context));
+			}
+
+			OutSuccess = true;
+
+			return Manager_Level;
+		}
+
 		UCsManager_Level* FLibrary::GetSafe(const UObject* ContextObject)
 		{
 			using namespace NCsLevel::NManager::NLibrary::NCached;

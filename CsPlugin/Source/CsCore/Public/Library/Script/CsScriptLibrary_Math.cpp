@@ -4,6 +4,8 @@
 #include "Library/Script/CsScriptLibrary_Math.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Library
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
@@ -19,6 +21,16 @@ namespace NCsScriptLibraryMath
 	{
 		namespace Str
 		{
+			// Int
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterChecked_IntInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterEqualChecked_IntInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, LessChecked_IntInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, LessEqualChecked_IntInt);
+			// Float
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterChecked_FloatFloat);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, GreaterEqualChecked_FloatFloat);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, LessChecked_FloatFloat);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, LessEqualChecked_FloatFloat);
 			// Easing
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, Ease);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Math, EasePercent);
@@ -37,10 +49,92 @@ UCsScriptLibrary_Math::UCsScriptLibrary_Math(const FObjectInitializer& ObjectIni
 {
 }
 
+// Int
+#pragma region
+
+bool UCsScriptLibrary_Math::GreaterChecked_IntInt(const FString& Context, const int32& A, const int32& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterChecked_IntInt : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntGreaterThanChecked(Ctxt, A, B), MathLibrary::SafeIsIntGreaterThan(Ctxt, A, B));
+}
+
+bool UCsScriptLibrary_Math::GreaterEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterEqualChecked_IntInt : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntGreaterThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntGreaterThanOrEqual(Ctxt, A, B));
+}
+
+bool UCsScriptLibrary_Math::LessChecked_IntInt(const FString& Context, const int32& A, const int32& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LessChecked_IntInt : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThan(Ctxt, A, B));
+}
+
+bool UCsScriptLibrary_Math::LessEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LessEqualChecked_IntInt : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThanOrEqual(Ctxt, A, B));
+}
+
+#pragma endregion Int
+
+// Float
+#pragma region
+
+bool UCsScriptLibrary_Math::GreaterChecked_FloatFloat(const FString& Context, const float& A, const float& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterChecked_FloatFloat : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatGreaterThanChecked(Ctxt, A, B), MathLibrary::SafeIsFloatGreaterThan(Ctxt, A, B));
+}
+
+bool UCsScriptLibrary_Math::GreaterEqualChecked_FloatFloat(const FString& Context, const float& A, const float& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterEqualChecked_FloatFloat : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatGreaterThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsFloatGreaterThanOrEqual(Ctxt, A, B));
+}
+
+bool UCsScriptLibrary_Math::LessChecked_FloatFloat(const FString& Context, const float& A, const float& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LessChecked_FloatFloat : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatLessThanChecked(Ctxt, A, B), MathLibrary::SafeIsFloatLessThan(Ctxt, A, B));
+}
+
+bool UCsScriptLibrary_Math::LessEqualChecked_FloatFloat(const FString& Context, const float& A, const float& B)
+{
+	using namespace NCsScriptLibraryMath::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LessEqualChecked_FloatFloat : Context;
+
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsFloatLessThanOrEqual(Ctxt, A, B));
+}
+
 FString UCsScriptLibrary_Math::GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
 {
 	return MathLibrary::GetFloatAsStringWithPrecision(TheFloat, Precision);
 }
+
+#pragma endregion Float
 
 // Easing
 #pragma region

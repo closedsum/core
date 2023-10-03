@@ -2,8 +2,11 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
 #include "Types/CsTypes_Math.h"
 #include "Types/CsTypes_Interpolation.h"
+// Log
+#include "Utility/CsLog.h"
 
 /**
 */
@@ -11,9 +14,51 @@ namespace NCsMath
 {
 	struct CSCORE_API FLibrary final
 	{
+	// Int
+	#pragma region
 	public:
 
-		static FORCEINLINE FString GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
+	#if WITH_EDITOR
+		static bool IsIntGreaterThanChecked(const FString& Context, const int32& A, const int32& B);
+		static bool IsIntGreaterThanOrEqualChecked(const FString& Context, const int32& A, const int32& B);
+		static bool IsIntLessThanChecked(const FString& Context, const int32& A, const int32& B);
+		static bool IsIntLessThanOrEqualChecked(const FString& Context, const int32& A, const int32& B);
+	#else
+		FORCEINLINE static bool IsIntGreaterThanChecked(const FString& Context, const int32& A, const int32& B) { return true; }
+		FORCEINLINE static bool IsIntGreaterThanOrEqualChecked(const FString& Context, const int32& A, const int32& B) { return true; }
+		FORCEINLINE static bool IsIntLessThanChecked(const FString& Context, const int32& A, const int32& B) { return true; }
+		FORCEINLINE static bool IsIntLessThanOrEqualChecked(const FString& Context, const int32& A, const int32& B) { return true; }
+	#endif // #if WITH_EDITOR
+
+		static bool SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Int
+
+	// Float
+	#pragma region
+	public:
+
+	#if WITH_EDITOR
+		static bool IsFloatGreaterThanChecked(const FString& Context, const float& A, const float& B);
+		static bool IsFloatGreaterThanOrEqualChecked(const FString& Context, const float& A, const float& B);
+		static bool IsFloatLessThanChecked(const FString& Context, const float& A, const float& B);
+		static bool IsFloatLessThanOrEqualChecked(const FString& Context, const float& A, const float& B);
+	#else
+		FORCEINLINE static bool IsFloatGreaterThanChecked(const FString& Context, const float& A, const float& B) { return true; }
+		FORCEINLINE static bool IsFloatGreaterThanOrEqualChecked(const FString& Context, const float& A, const float& B) { return true; }
+		FORCEINLINE static bool IsFloatLessThanChecked(const FString& Context, const float& A, const float& B) { return true; }
+		FORCEINLINE static bool IsFloatLessThanOrEqualChecked(const FString& Context, const float& A, const float& B) { return true; }
+	#endif // #if WITH_EDITOR
+
+		static bool SafeIsFloatGreaterThan(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsFloatGreaterThanOrEqual(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsFloatLessThan(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeIsFloatLessThanOrEqual(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		FORCEINLINE static FString GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
 		{
 			const TCHAR* TheDot = TEXT(".");
 
@@ -61,6 +106,8 @@ namespace NCsMath
 
 			return LeftS + RightS;
 		}
+
+	#pragma endregion Float
 
 	// Abs
 	#pragma region

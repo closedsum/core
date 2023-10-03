@@ -229,6 +229,24 @@ public:
 	~TCsAutoConsoleVariable_int32() {}
 };
 
+struct TCsAutoConsoleVariable_bool : public TCsAutoConsoleVariable<bool>
+{
+private:
+	typedef TCsAutoConsoleVariable<bool> Super;
+
+public:
+
+	TCsAutoConsoleVariable_bool() : Super()
+	{
+		GetValue = &IConsoleVariable::GetBool;
+		SetValue = &IConsoleVariable::Set;
+
+		Value = false;
+		Last_Value = false;
+	}
+	~TCsAutoConsoleVariable_bool() {}
+};
+
 struct CSCORE_API ICsCVarMap
 {
 	virtual void Resolve() = 0;
@@ -443,8 +461,8 @@ protected:
 public:
 	virtual ~FCsCVarToggleMap() {}
 private:
-	TArray<TCsAutoConsoleVariable_int32> Map;
-	TArray<int32> DefaultValues;
+	TArray<TCsAutoConsoleVariable_bool> Map;
+	TArray<bool> DefaultValues;
 	TArray<bool> DirtyMap;
 	int32 Num;
 public:
@@ -456,7 +474,7 @@ public:
 
 public:
 
-	FORCEINLINE const FECsCVarToggle& Add(const FECsCVarToggle& Toggle, TAutoConsoleVariable<int32>* CVar)
+	FORCEINLINE const FECsCVarToggle& Add(const FECsCVarToggle& Toggle, TAutoConsoleVariable<bool>* CVar)
 	{
 		const int32 Index = Toggle.GetValue();
 

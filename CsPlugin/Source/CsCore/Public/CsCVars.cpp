@@ -308,7 +308,7 @@ void FCsCVarLogMap::ResetDirty()
 
 void FCsCVarToggleMap::Resolve()
 {
-	for (TCsAutoConsoleVariable_int32& Var : Map)
+	for (TCsAutoConsoleVariable_bool& Var : Map)
 	{
 		Var.Resolve();
 	}

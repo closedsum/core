@@ -375,6 +375,22 @@ public:
 
 #pragma endregion Container
 
+// Script
+#pragma region
+public:
+
+	/** Whether to enable the CVar: CsCVarEnableScriptChecked or not.
+		 Script Checked versions by default use the 'safe' versions for Editor unless set to true.
+		 By default, this is FALSE in Editor. */
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	bool bEnableScriptChecked;
+
+#if WITH_EDITOR
+	void ApplyEnableScriptChecked();
+#endif // #if WITH_EDITOR
+
+#pragma endregion Script
+
 // PIE
 #pragma region
 public:

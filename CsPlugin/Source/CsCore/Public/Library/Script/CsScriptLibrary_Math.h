@@ -14,10 +14,52 @@ class CSCORE_API UCsScriptLibrary_Math : public UObject
 { 
 	GENERATED_UCLASS_BODY() 
 
+// Int
+#pragma region
 public:
+
+	/** Returns true if A is greater than B (A > B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "integer > integer (Checked)", CompactNodeTitle = ">", Keywords = "> greater", AutoCreateRefTerm = "Context,A,B"))
+	static bool GreaterChecked_IntInt(const FString& Context, const int32& A, const int32& B);
+
+	/** Returns true if A is greater than or equal to B (A >= B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "integer >= integer (Checked)", CompactNodeTitle = ">=", Keywords = ">= greater", AutoCreateRefTerm = "Context,A,B"))
+	static bool GreaterEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B);
+	
+	/** Returns true if A is less than B (A > B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "integer < integer (Checked)", CompactNodeTitle = "<", Keywords = "< less", AutoCreateRefTerm = "Context,A,B"))
+	static bool LessChecked_IntInt(const FString& Context, const int32& A, const int32& B);
+
+	/** Returns true if A is less than or equal to B (A > B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "integer <= integer (Checked)", CompactNodeTitle = "<=", Keywords = "<= less", AutoCreateRefTerm = "Context,A,B"))
+	static bool LessEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B);
+
+#pragma endregion Int
+
+// Float
+#pragma region
+public:
+
+	/** Returns true if A is greater than B (A > B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "float > float (Checked)", CompactNodeTitle = ">", Keywords = "> greater", AutoCreateRefTerm = "Context,A,B"))
+	static bool GreaterChecked_FloatFloat(const FString& Context, const float& A, const float& B);
+
+	/** Returns true if A is greater than or equal to B (A >= B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "float >= float (Checked)", CompactNodeTitle = ">=", Keywords = ">= greater", AutoCreateRefTerm = "Context,A,B"))
+	static bool GreaterEqualChecked_FloatFloat(const FString& Context, const float& A, const float& B);
+	
+	/** Returns true if A is less than B (A > B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "float < float (Checked)", CompactNodeTitle = "<", Keywords = "< less", AutoCreateRefTerm = "Context,A,B"))
+	static bool LessChecked_FloatFloat(const FString& Context, const float& A, const float& B);
+
+	/** Returns true if A is less than or equal to B (A > B) and ASSERT if NOT. */
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Math", meta = (DisplayName = "float <= float (Checked)", CompactNodeTitle = "<=", Keywords = "<= less", AutoCreateRefTerm = "Context,A,B"))
+	static bool LessEqualChecked_FloatFloat(const FString& Context, const float& A, const float& B);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Math", meta = (AutoCreateRefTerm = "TheFloat,Precision"))
 	static FString GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision);
+
+#pragma endregion Float
 
 // Easing
 #pragma region

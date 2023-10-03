@@ -8,6 +8,8 @@ struct CSCORE_API FCsLog final
 public:
 
 	static void Warning(const FString& Str);
+
+	static void Error(const FString& Str);
 };
 
 #if !UE_BUILD_SHIPPING

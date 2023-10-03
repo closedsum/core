@@ -21,8 +21,14 @@ namespace NCsScriptLibraryAICharacter
 			// Controller
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, GetController);
 			// Blackboard
+				// Object
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueAsObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueBySelectorAsObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_GetValueAsObject);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_GetValueBySelectorAsObject);
+				// Class
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueAsClass);
+				// Vector
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Character, Blackboard_SetValueAsVector);
 		}
 	}
@@ -56,6 +62,9 @@ AAIController* UCsScriptLibrary_AI_Character::GetController(const FString& Conte
 
 #define BlackboardLibrary NCsAI::NCharacter::NBlackboard::FLibrary
 
+	// Object
+#pragma region
+
 bool UCsScriptLibrary_AI_Character::Blackboard_SetValueAsObject(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue)
 {
 	using namespace NCsScriptLibraryAICharacter::NCached;
@@ -64,6 +73,35 @@ bool UCsScriptLibrary_AI_Character::Blackboard_SetValueAsObject(const FString& C
 
 	return BlackboardLibrary::SetSafeValue(Ctxt, Character, KeyName, ObjectValue);
 }
+
+bool UCsScriptLibrary_AI_Character::Blackboard_SetValueBySelectorAsObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue)
+{
+	using namespace NCsScriptLibraryAICharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Blackboard_SetValueBySelectorAsObject : Context;
+
+	return BlackboardLibrary::SetSafeValue(Ctxt, Character, KeySelector, ObjectValue);
+}
+
+UObject* UCsScriptLibrary_AI_Character::Blackboard_GetValueAsObject(const FString& Context, const ACharacter* Character, const FName& KeyName)
+{
+	using namespace NCsScriptLibraryAICharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Blackboard_GetValueAsObject : Context;
+
+	return BlackboardLibrary::GetSafeObject(Ctxt, Character, KeyName);
+}
+
+UObject* UCsScriptLibrary_AI_Character::Blackboard_GetValueBySelectorAsObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector)
+{
+	using namespace NCsScriptLibraryAICharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Blackboard_GetValueBySelectorAsObject : Context;
+
+	return BlackboardLibrary::GetSafeObject(Ctxt, Character, KeySelector);
+}
+
+#pragma endregion Object
 
 bool UCsScriptLibrary_AI_Character::Blackboard_SetValueAsClass(const FString& Context, const ACharacter* Character, const FName& KeyName, UClass* ClassValue)
 {

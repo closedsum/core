@@ -49,10 +49,10 @@ public:
 	static UObject* GetDefaultObject(const FString& Context, UObject* Object);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Object", meta = (AutoCreateRefTerm = "Context"))
-	static int32 Object_GetUniqueID(const FString& Context, UObject* Object);
+	static int32 Object_GetUniqueID(const FString& Context, const UObject* Object);
 
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Object", meta = (AutoCreateRefTerm = "Context"))
-	static int32 DOb_GetUniqueID(const FString& Context, UObject* Object);
+	static int32 DOb_GetUniqueID(const FString& Context, const UObject* Object);
 
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Object")
 	static bool IsNull(UObject* Object)
@@ -65,6 +65,9 @@ public:
 	{
 		return !IsValid(Object);
 	}
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Object", meta = (DisplayName = "! NULL (Checked)", CompactNodeTitle = "!NULL", Keywords = "! not null", AutoCreateRefTerm = "Context"))
+	static bool IsValidChecked(const FString& Context, UObject* Object);
 
 	/**
 	*/

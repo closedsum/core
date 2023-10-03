@@ -12,6 +12,7 @@
 #include "Particles/ParticleSystem.h"
 // Data
 #include "Data/CsData.h"
+#include "Data/CsScriptData.h"
 #include "Engine/DataTable.h"
 // Material
 #include "Materials/Material.h"
@@ -1332,12 +1333,23 @@ void UCsLibrary_Load::LoadSoftClassProperty(FSoftClassProperty* SoftClassPropert
 						// ICsData
 						if (ICsData* Data = Cast<ICsData>(*Internal))
 						{
-#if WITH_EDITOR
+						#if WITH_EDITOR
 							Data->Load(LoadFlags);
-#else
+						#else
 							if (!Data->IsLoaded())
 								Data->Load(LoadFlags);
-#endif // #if WITH_EDITOR
+						#endif // #if WITH_EDITOR
+						}
+						// ICsScriptData
+						else
+						if ((*Internal)->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+						{
+						#if WITH_EDITOR
+							ICsScriptData::Execute_Script_Load(*Internal, LoadFlags);
+						#else
+							if (!ICsScriptData::Execute_Script_IsLoaded(*Internal))
+								ICsScriptData::Execute_Script_Load(*Internal, LoadFlags);
+						#endif // #if WITH_EDITOR
 						}
 						else
 						{
@@ -1424,12 +1436,23 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(FArrayProperty* ArrayProperty, 
 							// ICsData
 							if (ICsData* Data = Cast<ICsData>(*InternalPtr))
 							{
-#if WITH_EDITOR
+							#if WITH_EDITOR
 								Data->Load(LoadFlags);
-#else
+							#else
 								if (!Data->IsLoaded())
 									Data->Load(LoadFlags);
-#endif // #if WITH_EDITOR
+							#endif // #if WITH_EDITOR
+							}
+							// ICsScriptData
+							else
+							if ((*InternalPtr)->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+							{
+							#if WITH_EDITOR
+								ICsScriptData::Execute_Script_Load(*InternalPtr, LoadFlags);
+							#else
+								if (!ICsScriptData::Execute_Script_IsLoaded(*InternalPtr))
+									ICsScriptData::Execute_Script_Load(*InternalPtr, LoadFlags);
+							#endif // #if WITH_EDITOR
 							}
 							else
 							{
@@ -1677,12 +1700,23 @@ void UCsLibrary_Load::LoadClassProperty(FClassProperty* ClassProperty, void* Str
 			// ICsData
 			if (ICsData* Data = Cast<ICsData>(DOb))
 			{
-#if WITH_EDITOR
+			#if WITH_EDITOR
 				Data->Load(LoadFlags);
-#else
+			#else
 				if (!Data->IsLoaded())
 					Data->Load(LoadFlags);
-#endif // #if WITH_EDITOR
+			#endif // #if WITH_EDITOR
+			}
+			// ICsScriptData
+			else
+			if (DOb->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+			{
+			#if WITH_EDITOR
+				ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+			#else
+				if (!ICsScriptData::Execute_Script_IsLoaded(DOb))
+					ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+			#endif // #if WITH_EDITOR
 			}
 		}
 	}
@@ -1706,12 +1740,23 @@ void UCsLibrary_Load::LoadArrayClassProperty(FArrayProperty* ArrayProperty, void
 			// ICsData
 			if (ICsData* Data = Cast<ICsData>(DOb))
 			{
-#if WITH_EDITOR
+			#if WITH_EDITOR
 				Data->Load(LoadFlags);
-#else
+			#else
 				if (!Data->IsLoaded())
 					Data->Load(LoadFlags);
-#endif // #if WITH_EDITOR
+			#endif // #if WITH_EDITOR
+			}
+			// ICsScriptData
+			else
+			if (DOb->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+			{
+			#if WITH_EDITOR
+				ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+			#else
+				if (!ICsScriptData::Execute_Script_IsLoaded(DOb))
+					ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+			#endif // #if WITH_EDITOR
 			}
 		}
 	}
@@ -1888,6 +1933,44 @@ void UCsLibrary_Load::LoadDataTableRowChecked(const FString& Context, UDataTable
 	checkf(RowPtr, TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName()));
 
 	LoadStruct(RowPtr, Struct, LoadFlags, LoadCodes);
+}
+
+UObject* UCsLibrary_Load::LoadSoftClassPtrChecked(const FString& Context, const TSoftClassPtr<UObject>& SoftClass, const int32& LoadFlags, const int32& LoadCodes)
+{
+	checkf(SoftClass.ToSoftObjectPath().IsValid(), TEXT("%: SoftClass is NOT Valid."), *Context);
+
+	UObject* O	  = SoftClass.LoadSynchronous();
+	UClass* Class = Cast<UClass>(O);
+	UObject* DOb  = Class->GetDefaultObject();
+
+	checkf(DOb, TEXT("%s: Failed to get Default Object from Class: %s"), *Context, *(Class->GetName()));
+
+	// ICsData
+	if (ICsData* Data = Cast<ICsData>(DOb))
+	{
+	#if WITH_EDITOR
+		Data->Load(LoadFlags);
+	#else
+		if (!Data->IsLoaded())
+			Data->Load(LoadFlags);
+	#endif // #if WITH_EDITOR
+	}
+	// ICsScriptData
+	else
+	if (DOb->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+	{
+	#if WITH_EDITOR
+		ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+	#else
+		if (!ICsScriptData::Execute_Script_IsLoaded(DOb))
+			ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+	#endif // #if WITH_EDITOR
+	}
+	else
+	{
+		LoadStruct(DOb, Class, LoadFlags, LoadCodes);
+	}
+	return DOb;
 }
 
 #pragma endregion Load

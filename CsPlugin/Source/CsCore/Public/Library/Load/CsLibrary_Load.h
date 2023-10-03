@@ -315,6 +315,8 @@ public:
 
 	static void LoadDataTableRowChecked(const FString& Context, UDataTable* DataTable, const FName& RowName, const int32& LoadFlags, const int32& LoadCodes);
 
+	static UObject* LoadSoftClassPtrChecked(const FString& Context, const TSoftClassPtr<UObject>& SoftClass, const int32& LoadFlags, const int32& LoadCodes);
+
 #pragma endregion Load
 
 // Unload

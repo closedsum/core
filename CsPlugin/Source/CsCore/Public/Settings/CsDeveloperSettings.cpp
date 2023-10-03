@@ -5,6 +5,8 @@
 #include "CsCore.h"
 
 #if WITH_EDITOR
+// CVar
+#include "Script/CsCVars_Script.h"
 // Types
 #include "Data/CsTypes_DataEntry.h" // TODO: TEMP
 // Library
@@ -52,7 +54,9 @@ UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectIniti
 	// Data
 	DataRootSet(),
 	Manager_Data(),
-	bOnEditorStartup_LoadDataRootSet(false)
+	bOnEditorStartup_LoadDataRootSet(false),
+	// Script
+	bEnableScriptChecked(false)
 {
 }
 
@@ -163,6 +167,20 @@ void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
 
 #pragma endregion Data
 
+// Script
+#pragma region
+
+#if WITH_EDITOR
+
+void UCsDeveloperSettings::ApplyEnableScriptChecked()
+{
+	CsCVarEnableScriptChecked->Set(bEnableScriptChecked, ECVF_SetByConsole);
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion Script
+
 #if WITH_EDITOR
 
 void UCsDeveloperSettings::PostEditChangeProperty(struct FPropertyChangedEvent& e)
@@ -170,6 +188,10 @@ void UCsDeveloperSettings::PostEditChangeProperty(struct FPropertyChangedEvent& 
 	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
 
+	if (PropertyName == FName("bEnableScriptChecked"))
+	{
+		ApplyEnableScriptChecked();
+	}
 	Super::PostEditChangeProperty(e);
 }
 

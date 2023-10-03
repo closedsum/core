@@ -8,3 +8,8 @@ void FCsLog::Warning(const FString& Str)
 {
 	UE_LOG(LogCs, Warning, TEXT("%s"), *Str);
 }
+
+void FCsLog::Error(const FString& Str)
+{
+	UE_LOG(LogCs, Error, TEXT("%s"), *Str);
+}

@@ -10,4 +10,9 @@ namespace NCsAI
 	{
 		UE_LOG(LogCsAI, Warning, TEXT("%s"), *Str);
 	}
+
+	void FLog::Error(const FString& Str)
+	{
+		UE_LOG(LogCsAI, Error, TEXT("%s"), *Str);
+	}
 }

@@ -4,6 +4,8 @@
 #include "Object/Script/CsScriptLibrary_Object.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
@@ -26,6 +28,7 @@ namespace NCsScriptLibraryObject
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, ConstructObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, GetDefaultObject);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_GetUniqueID);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, IsValidChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Object, Object_MarkPendingKill);
 		}
 	}
@@ -38,6 +41,8 @@ UCsScriptLibrary_Object::UCsScriptLibrary_Object(const FObjectInitializer& Objec
 {
 }
 
+#define ObjectLibrary NCsObject::FLibrary
+
 // Load
 #pragma region
 
@@ -47,8 +52,6 @@ UObject* UCsScriptLibrary_Object::LoadBySoftObjectPath(const FString& Context, c
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
 
-	typedef NCsObject::FLibrary ObjectLibrary;
-
 	return ObjectLibrary::SafeLoad(Ctxt, Path);
 }
 
@@ -57,8 +60,6 @@ UObject* UCsScriptLibrary_Object::LoadByStringPath(const FString& Context, const
 	using namespace NCsScriptLibraryObject::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
-
-	typedef NCsObject::FLibrary ObjectLibrary;
 
 	return ObjectLibrary::SafeLoad(Ctxt, Path);
 }
@@ -71,20 +72,7 @@ UObject* UCsScriptLibrary_Object::ConstructObject(const FString& Context, UObjec
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ConstructObject : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
-
-	if (!Outer)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Outer is NULL."), *Ctxt));
-		return nullptr;
-	}
-
-	if (!Class)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Class is NULL."), *Ctxt));
-		return nullptr;
-	}
-	return NewObject<UObject>(Outer, Class);
+	return ObjectLibrary::SafeConstruct(Ctxt, Outer, Class);
 }
 
 UObject* UCsScriptLibrary_Object::GetDefaultObject(const FString& Context, UObject* Object)
@@ -93,53 +81,32 @@ UObject* UCsScriptLibrary_Object::GetDefaultObject(const FString& Context, UObje
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetDefaultObject : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
-
-	if (!Object)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
-		return nullptr;
-	}
-
-	UClass* Class = Object->GetClass();
-
-	if (!Class)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Class from Object: %s."), *Ctxt, *(Class->GetName())));
-		return nullptr;
-	}
-
-	UObject* DOb = Class->GetDefaultObject<UObject>();
-
-	if (!DOb)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object from Object: %s with Class: %s."), *Ctxt, *(Object->GetName()), *(Class->GetName())));
-		return nullptr;
-	}
-	return DOb;
+	return ObjectLibrary::GetSafeDefaultObject(Ctxt, Object);
 }
 
-int32 UCsScriptLibrary_Object::Object_GetUniqueID(const FString& Context, UObject* Object)
+int32 UCsScriptLibrary_Object::Object_GetUniqueID(const FString& Context, const UObject* Object)
 {
 	using namespace NCsScriptLibraryObject::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Object_GetUniqueID : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
-
-	if (!Object)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
-		return INDEX_NONE;
-	}
-	return Object->GetUniqueID();
+	return ObjectLibrary::GetSafeUniqueID(Ctxt, Object);
 }
 
-int32 UCsScriptLibrary_Object::DOb_GetUniqueID(const FString& Context, UObject* Object)
+int32 UCsScriptLibrary_Object::DOb_GetUniqueID(const FString& Context, const UObject* Object)
 {
-	if (UObject* DOb = GetDefaultObject(Context, Object))
+	if (UObject* DOb = ObjectLibrary::GetSafeDefaultObject(Context, Object))
 		return DOb->GetUniqueID();
 	return INDEX_NONE;
+}
+
+bool UCsScriptLibrary_Object::IsValidChecked(const FString& Context, UObject* Object)
+{
+	using namespace NCsScriptLibraryObject::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::IsValidChecked : Context;
+
+	return CS_SCRIPT_GET_CHECKED(ObjectLibrary::IsValidChecked(Ctxt, Object), ObjectLibrary::SafeIsValid(Ctxt, Object));
 }
 
 bool UCsScriptLibrary_Object::Object_MarkPendingKill(const FString& Context, UObject* Object)
@@ -148,20 +115,7 @@ bool UCsScriptLibrary_Object::Object_MarkPendingKill(const FString& Context, UOb
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Object_MarkPendingKill : Context;
 
-	void(*Log)(const FString&) = &FCsLog::Warning;
-
-	if (!Object)
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object is NULL."), *Ctxt));
-		return false;
-	}
-
-	if (!IsValid(Object))
-	{
-		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Object: %s with Class: %s has ALREADY been marked pending kill."), *Ctxt, *(Object->GetName()), *(Object->GetClass()->GetName())));
-		return false;
-	}
-
-	Object->MarkAsGarbage();
-	return true;
+	return ObjectLibrary::SafeMarkAsGarbage(Ctxt, Object);
 }
+
+#undef ObjectLibrary

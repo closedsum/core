@@ -19,6 +19,8 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Name.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Rotator.h"
+// Pawn
+#include "GameFramework/Pawn.h"
 
 namespace NCsBlackboard
 {
@@ -64,6 +66,62 @@ namespace NCsBlackboard
 
 	// Key
 	#pragma region
+
+	bool FLibrary::IsValidChecked(const FString& Context, const FBlackboardKeySelector& KeySelector)
+	{
+		checkf(KeySelector.IsSet(), TEXT("%s: KeySelector is NOT Set."), *Context);
+		CS_IS_NAME_NONE_CHECKED(KeySelector.SelectedKeyName);
+		checkf(KeySelector.SelectedKeyType.Get(), TEXT("%s: KeySelector has NO type."), *Context);
+		return true;
+	}
+
+	bool FLibrary::IsValid(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeySelector.IsSet())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeySelector is NOT Set."), *Context));
+			return false;
+		}
+
+		CS_IS_NAME_NONE(KeySelector.SelectedKeyName);
+
+		if (!KeySelector.SelectedKeyType.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeySelector has NO type."), *Context));
+			return false;
+		}
+		return true;
+	}
+
+	bool FLibrary::AreEqualChecked(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B)
+	{
+		checkf(A.Get(), TEXT("%s: A is NULL."), *Context);
+		checkf(B.Get(), TEXT("%s: B is NULL."), *Context);
+		checkf(A.Get() == B.Get(), TEXT("%s: A != B."), *Context);
+		return true;
+	}
+
+	bool FLibrary::SafeAreEqual(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!A.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A is NULL."), *Context));
+			return false;
+		}
+
+		if (!B.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: B is NULL."), *Context));
+			return false;
+		}
+
+		if (A.Get() != B.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: A != B."), *Context));
+			return false;
+		}
+		return true;
+	}
 
 	bool FLibrary::HasKeyChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
@@ -201,21 +259,65 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::IsKey_ObjectChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+#if !UE_BUILD_SHIPPING
+
+	bool FLibrary::IsKeyChecked_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 		
-		checkf(KeyType == UBlackboardKeyType_Object::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Object but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType));
+		checkf(KeyType.Get() == UBlackboardKeyType_Object::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Object but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType));
 		return true;
 	}
+
+	bool FLibrary::IsKeyChecked_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector)
+	{
+		check(HasKeyChecked(Context, Data, KeySelector));
+		checkf(KeySelector.SelectedKeyType.Get() == UBlackboardKeyType_Object::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Object but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType));
+		return true;
+	}
+
+	bool FLibrary::IsKeyChecked_Object(const FString& Context, const FBlackboardKeySelector& KeySelector)
+	{
+		check(IsValidChecked(Context, KeySelector));
+		checkf(KeySelector.SelectedKeyType.Get() == UBlackboardKeyType_Object::StaticClass(), TEXT("%s: KeySelector: %s is NOT of type: Object but of type: %s."), *Context, *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType));
+		return true;
+	}
+
+#endif // #if !UE_BUILD_SHIPPING
 
 	bool FLibrary::SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetSafeKeyType(Context, Data, KeyName, Log);
 
-		if (KeyType != UBlackboardKeyType_Object::StaticClass())
+		if (KeyType.Get() != UBlackboardKeyType_Object::StaticClass())
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Object but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
+
+	bool FLibrary::SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeHasKey(Context, Data, KeySelector, Log))
+			return false;
+
+		if (KeySelector.SelectedKeyType.Get() != UBlackboardKeyType_Object::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Object but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType)));
+			return false;
+		}
+		return true;
+	}
+
+	bool FLibrary::SafeIsKey_Object(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!IsValid(Context, KeySelector, Log))
+			return false;
+
+		if (KeySelector.SelectedKeyType.Get() != UBlackboardKeyType_Object::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeySelector: %s is NOT of type: Object but of type: %s."), *Context, *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType)));
 			return false;
 		}
 		return true;
@@ -226,7 +328,7 @@ namespace NCsBlackboard
 		// Class
 	#pragma region
 
-	bool FLibrary::IsKey_ClassChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Class(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -251,11 +353,34 @@ namespace NCsBlackboard
 		// Enum
 	#pragma region
 
-	bool FLibrary::IsKey_EnumChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::SafeIsKeyType_Enum(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeyType.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
+			return false;
+		}
+
+		if (KeyType != UBlackboardKeyType_Enum::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType NOT of type: Enum but of type: %s."), *Context, *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
+
+	bool FLibrary::IsKeyChecked_Enum(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
 		checkf(KeyType == UBlackboardKeyType_Enum::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Enum but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType));
+		return true;
+	}
+
+	bool FLibrary::IsKeyChecked_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector)
+	{
+		check(HasKeyChecked(Context, Data, KeySelector));
+		checkf(KeySelector.SelectedKeyType.Get() == UBlackboardKeyType_Enum::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Enum but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType));
 		return true;
 	}
 
@@ -271,12 +396,25 @@ namespace NCsBlackboard
 		return true;
 	}
 
+	bool FLibrary::SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeHasKey(Context, Data, KeySelector, Log))
+			return false;
+
+		if (KeySelector.SelectedKeyType.Get() != UBlackboardKeyType_Enum::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Enum but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType)));
+			return false;
+		}
+		return true;
+	}
+
 	#pragma endregion Enum
 
 		// Int
 	#pragma region
 
-	bool FLibrary::IsKey_IntChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -301,7 +439,7 @@ namespace NCsBlackboard
 		// Float
 	#pragma region
 
-	bool FLibrary::IsKey_FloatChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -326,7 +464,7 @@ namespace NCsBlackboard
 		// Bool
 	#pragma region
 
-	bool FLibrary::IsKey_BoolChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Bool(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -351,7 +489,7 @@ namespace NCsBlackboard
 		// String
 	#pragma region
 
-	bool FLibrary::IsKey_StringChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_String(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -376,7 +514,7 @@ namespace NCsBlackboard
 		// Name
 	#pragma region
 
-	bool FLibrary::IsKey_NameChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Name(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -417,7 +555,7 @@ namespace NCsBlackboard
 		return true;
 	}
 
-	bool FLibrary::IsKey_VectorChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Vector(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -442,7 +580,7 @@ namespace NCsBlackboard
 		// Rotator
 	#pragma region
 
-	bool FLibrary::IsKey_RotatorChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
+	bool FLibrary::IsKeyChecked_Rotator(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
@@ -465,4 +603,334 @@ namespace NCsBlackboard
 	#pragma endregion Rotator
 
 	#pragma endregion Key
+
+	// Set
+	#pragma region
+
+		// Object
+	#pragma region
+	
+	void FLibrary::SetObjectChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeyName));
+
+		Component->SetValueAsObject(KeyName, ObjectValue);
+	}
+	
+	void FLibrary::SetObjectChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeySelector));
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
+	}
+
+	bool FLibrary::SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeyName))
+			return false;
+
+		Component->SetValueAsObject(KeyName, ObjectValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeySelector))
+			return false;
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
+		return true;
+	}
+
+	void FLibrary::SetObjectChecked2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeyName));
+		CS_IS_PENDING_KILL_CHECKED(ObjectValue)
+
+		Component->SetValueAsObject(KeyName, ObjectValue);
+	}
+	
+	void FLibrary::SetObjectChecked2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeySelector));
+		CS_IS_PENDING_KILL_CHECKED(ObjectValue)
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
+	}
+
+	bool FLibrary::SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeyName))
+			return false;
+
+		CS_IS_PENDING_KILL(ObjectValue)
+
+		Component->SetValueAsObject(KeyName, ObjectValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeySelector))
+			return false;
+
+		CS_IS_PENDING_KILL(ObjectValue)
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, ObjectValue);
+		return true;
+	}
+
+	#pragma endregion Object
+
+		// Pawn
+	#pragma region
+	
+	void FLibrary::SetPawnChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeyName));
+
+		Component->SetValueAsObject(KeyName, PawnValue);
+	}
+	
+	void FLibrary::SetPawnChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeySelector));
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, PawnValue);
+	}
+
+	bool FLibrary::SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeyName))
+			return false;
+
+		Component->SetValueAsObject(KeyName, PawnValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeySelector))
+			return false;
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, PawnValue);
+		return true;
+	}
+
+	void FLibrary::SetPawnChecked2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeyName));
+		CS_IS_PENDING_KILL_CHECKED(PawnValue)
+
+		Component->SetValueAsObject(KeyName, PawnValue);
+	}
+	
+	void FLibrary::SetPawnChecked2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeySelector));
+		CS_IS_PENDING_KILL_CHECKED(PawnValue)
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, PawnValue);
+	}
+
+	bool FLibrary::SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeyName))
+			return false;
+
+		CS_IS_PENDING_KILL(PawnValue)
+
+		Component->SetValueAsObject(KeyName, PawnValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Object(Context, Component, KeySelector))
+			return false;
+
+		CS_IS_PENDING_KILL(PawnValue)
+
+		Component->SetValueAsObject(KeySelector.SelectedKeyName, PawnValue);
+		return true;
+	}
+
+	#pragma endregion Pawn
+
+		// Enum
+	#pragma region
+	
+	void FLibrary::SetEnumChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue)
+	{
+		check(IsKeyChecked_Enum(Context, Component, KeyName));
+
+		Component->SetValueAsEnum(KeyName, EnumValue);
+	}
+	
+	void FLibrary::SetEnumChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue)
+	{
+		check(IsKeyChecked_Enum(Context, Component, KeySelector));
+
+		Component->SetValueAsEnum(KeySelector.SelectedKeyName, EnumValue);
+	}
+
+	bool FLibrary::SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Enum(Context, Component, KeyName))
+			return false;
+
+		Component->SetValueAsEnum(KeyName, EnumValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Enum(Context, Component, KeySelector))
+			return false;
+
+		Component->SetValueAsEnum(KeySelector.SelectedKeyName, EnumValue);
+		return true;
+	}
+
+	#pragma endregion Enum
+
+	#pragma endregion Set
+
+	// Get
+	#pragma region
+
+		// Object
+	#pragma region
+
+	UObject* FLibrary::GetObjectChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeyName));
+		return Component->GetValueAsObject(KeyName);
+	}
+
+	UObject* FLibrary::GetObjectChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeySelector));
+		return Component->GetValueAsObject(KeySelector.SelectedKeyName);
+	}
+
+	UObject* FLibrary::GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Object(Context, Component, KeyName, Log))
+			return nullptr;
+
+		UObject* O = Component->GetValueAsObject(KeyName);
+		OutSuccess = O != nullptr;
+
+		return O;
+	}
+
+	UObject* FLibrary::GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Object(Context, Component, KeySelector, Log))
+			return nullptr;
+
+		UObject* O = Component->GetValueAsObject(KeySelector.SelectedKeyName);
+		OutSuccess = O != nullptr;
+
+		return O;
+	}
+
+	#pragma endregion Object
+
+		// Pawn
+	#pragma region
+
+	APawn* FLibrary::GetPawnChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeyName));
+
+		UObject* O = Component->GetValueAsObject(KeyName);
+
+		return CS_CAST_CHECKED(O, UObject, APawn);
+	}
+
+	APawn* FLibrary::GetPawnChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+	{
+		check(IsKeyChecked_Object(Context, Component, KeySelector));
+
+		UObject* O = Component->GetValueAsObject(KeySelector.SelectedKeyName);
+
+		return CS_CAST_CHECKED(O, UObject, APawn);
+	}
+
+	APawn* FLibrary::GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Object(Context, Component, KeyName, Log))
+			return nullptr;
+
+		UObject* O = Component->GetValueAsObject(KeyName);
+		APawn* P   = CS_CAST(O, UObject, APawn);
+		OutSuccess = P != nullptr;
+
+		return P;
+	}
+
+	APawn* FLibrary::GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Object(Context, Component, KeySelector, Log))
+			return nullptr;
+
+		UObject* O = Component->GetValueAsObject(KeySelector.SelectedKeyName);
+		APawn* P   = CS_CAST(O, UObject, APawn);
+		OutSuccess = P != nullptr;
+
+		return P;
+	}
+
+	#pragma endregion Pawn
+
+		// Enum
+	#pragma region
+
+	uint8 FLibrary::GetEnumChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+	{
+		check(IsKeyChecked_Enum(Context, Component, KeyName));
+		return Component->GetValueAsEnum(KeyName);
+	}
+
+	uint8 FLibrary::GetEnumChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+	{
+		check(IsKeyChecked_Enum(Context, Component, KeySelector));
+		return Component->GetValueAsEnum(KeySelector.SelectedKeyName);
+	}
+
+	uint8 FLibrary::GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Enum(Context, Component, KeyName, Log))
+			return 0;
+
+		OutSuccess = true;
+		return Component->GetValueAsEnum(KeyName);
+	}
+
+	uint8 FLibrary::GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Enum(Context, Component, KeySelector, Log))
+			return 0;
+
+		OutSuccess = true;
+		return Component->GetValueAsEnum(KeySelector.SelectedKeyName);
+	}
+
+	#pragma endregion Enum
+
+	#pragma endregion Get
 }

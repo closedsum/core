@@ -117,7 +117,7 @@ namespace NCsLevel
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsManager_Level.
 			*/
 			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -129,7 +129,7 @@ namespace NCsLevel
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsManager_Level.
 			*/
 			template<typename T>
@@ -147,6 +147,53 @@ namespace NCsLevel
 					if (Log)
 						Log(FString::Printf(TEXT("%s: Manager_Level is NOT of type: %s."), *Context, *(T::StaticClass()->GetName())));
 				}
+				return Other;
+			}
+
+			/**
+			* Safely get the reference to UCsManager_Level from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				UCsManager_Level.
+			*/
+			static UCsManager_Level* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Level from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				UCsManager_Level.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UCsManager_Level* O = GetSafe(Context, ContextObject, OutSuccess, Log);
+
+				OutSuccess = false;
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: Manager_Level is NOT of type: %s."), *Context, *(T::StaticClass()->GetName())));
+				}
+
+				OutSuccess = true;
+
 				return Other;
 			}
 

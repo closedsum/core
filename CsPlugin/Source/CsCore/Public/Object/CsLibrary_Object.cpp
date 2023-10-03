@@ -36,6 +36,22 @@ namespace NCsObject
 		return FString::Printf(TEXT("%s with Class: %s"), *(Object->GetName()), *(Object->GetClass()->GetName()));
 	}
 
+	#if WITH_EDITOR
+
+	bool FLibrary::IsValidChecked(const FString& Context, const UObject* Object)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Object)
+		return true;
+	}
+
+	#endif // #if WITH_EDITOR
+	
+	bool FLibrary::SafeIsValid(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(Object)
+		return true;
+	}
+
 	FString FLibrary::GetFlagsAsString(const UObject* Object)
 	{
 		FString Str = TEXT("(");
@@ -124,9 +140,83 @@ namespace NCsObject
 		return Str;
 	}
 
+	UObject* FLibrary::ConstructChecked(const FString& Context, UObject* Outer, UClass* Class)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Outer)
+		CS_IS_PENDING_KILL_CHECKED(Class)
+
+		UObject* O  = NewObject<UObject>(Outer, Class);
+
+		checkf(O, TEXT("%s: Failed to Create New Object with Outer: %s and Class: %s."), *Context, *(Outer->GetName()), *(Class->GetName()));
+		return O;
+	}
+
+	UObject* FLibrary::SafeConstruct(const FString& Context, UObject* Outer, UClass* Class, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(Outer)
+		CS_IS_PENDING_KILL(Class)
+
+		UObject* O  = NewObject<UObject>(Outer, Class);
+
+		if (!O)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to Create New Object with Outer: %s and Class: %s."), *Context, *(Outer->GetName()), *(Class->GetName())));
+			return nullptr;
+		}
+		return O;
+	}
+
+	UObject* FLibrary::GetDefaultObjectChecked(const FString& Context, const UObject* Object)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Object)
+
+		UClass* Class = Object->GetClass();
+
+		checkf(Class, TEXT("%s: Failed to get Class from Object: %s."), *Context, *(Class->GetName()));
+
+		UObject* DOb = Class->GetDefaultObject<UObject>();
+
+		checkf(DOb, TEXT("%s: Failed to get Default Object from Object: %s with Class: %s."), *Context, *(Object->GetName()), *(Class->GetName()));
+		return DOb;
+	}
+
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(Object)
+
+		UClass* Class = Object->GetClass();
+
+		if (!Class)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Class from Object: %s."), *Context, *(Class->GetName())));
+			return nullptr;
+		}
+
+		UObject* DOb = Class->GetDefaultObject<UObject>();
+
+		if (!DOb)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object from Object: %s with Class: %s."), *Context, *(Object->GetName()), *(Class->GetName())));
+			return nullptr;
+		}
+		return DOb;
+	}
+
 	bool FLibrary::IsDefaultObject(const UObject* Object)
 	{
 		return Object ? Object->GetName().StartsWith(TEXT("Default__")) : false;
+	}
+
+	int32 FLibrary::GetUniqueIDChecked(const FString& Context, const UObject* Object)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Object)
+		return Object->GetUniqueID();
+	}
+
+	int32 FLibrary::GetSafeUniqueID(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_VALUE(Object, INDEX_NONE)
+		return Object->GetUniqueID();
 	}
 
 	// Load

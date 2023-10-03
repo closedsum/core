@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+//Types
+#include "BehaviorTree/BehaviorTreeTypes.h"
 // Log
 #include "Utility/CsAILog.h"
 
@@ -91,6 +93,10 @@ namespace NCsAI
 
 			// Set
 			#pragma region
+				
+				// Object
+			#pragma region
+			public:
 
 				/**
 				* Set the Character's Blackboard Object Key value associated with KeyName.
@@ -103,6 +109,16 @@ namespace NCsAI
 				static void SetValueChecked(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue);
 	
 				/**
+				* Set the Character's Blackboard Object Key value associated with KeySelector.
+				*
+				* @param Context	The calling context.
+				* @param Character
+				* @param KeySelector
+				* @parma ObjectValue
+				*/
+				static void SetValueChecked(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue);
+
+				/**
 				* Safely set the Character's Blackboard Object Key value associated with KeyName.
 				*
 				* @param Context		The calling context.
@@ -113,6 +129,24 @@ namespace NCsAI
 				* return				Whether the value was set or not.
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+				/**
+				* Safely set the Character's Blackboard Object Key value associated with KeySelector.
+				*
+				* @param Context		The calling context.
+				* @param Character
+				* @param KeySelector
+				* @parma ObjectValue
+				* @param Log			(optional)
+				* return				Whether the value was set or not.
+				*/
+				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion Object
+
+				// Class
+			#pragma region 
+			public:
 
 				/**
 				* Set the Character's Blackboard Class Key value associated with KeyName.
@@ -136,6 +170,12 @@ namespace NCsAI
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, UClass* ClassValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
+			#pragma endregion Class
+
+				// Enum
+			#pragma region
+			public:
+
 				/**
 				* Set the Character's Blackboard Enum (uint8) Key value associated with KeyName.
 				*
@@ -157,6 +197,12 @@ namespace NCsAI
 				* return				Whether the value was set or not.
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion Enum
+
+				// Int
+			#pragma region
+			public:
 
 				/**
 				* Set the Character's Blackboard Int (int32) Key value associated with KeyName.
@@ -180,6 +226,12 @@ namespace NCsAI
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
+			#pragma endregion Int
+
+				// Float
+			#pragma region
+			public:
+
 				/**
 				* Set the Character's Blackboard Float Key value associated with KeyName.
 				*
@@ -201,6 +253,12 @@ namespace NCsAI
 				* return				Whether the value was set or not.
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion Float
+
+				// Bool
+			#pragma region
+			public:
 
 				/**
 				* Set the Character's Blackboard Bool Key value associated with KeyName.
@@ -224,6 +282,12 @@ namespace NCsAI
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const bool& BoolValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
+			#pragma endregion Bool
+
+				// String
+			#pragma region
+			public:
+
 				/**
 				* Set the Character's Blackboard String Key value associated with KeyName.
 				*
@@ -245,6 +309,12 @@ namespace NCsAI
 				* return				Whether the value was set or not.
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FString& StringValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion String
+
+				// Name
+			#pragma region
+			public:
 
 				/**
 				* Set the Character's Blackboard Name Key value associated with KeyName.
@@ -268,6 +338,12 @@ namespace NCsAI
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FName& NameValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
+			#pragma endregion Name
+
+				// Vector (Vector3d)
+			#pragma region
+			public:
+
 				/**
 				* Set the Character's Blackboard Vector (Vector3d) Key value associated with KeyName.
 				*
@@ -289,6 +365,12 @@ namespace NCsAI
 				* return				Whether the value was set or not.
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FVector3d& VectorValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion Vector (Vector3d)
+
+				// Rotator (Rotator3d)
+			#pragma region
+			public:
 
 				/**
 				* Set the Character's Blackboard Rotator (Rotator3d) Key value associated with KeyName.
@@ -312,7 +394,63 @@ namespace NCsAI
 				*/
 				static bool SetSafeValue(const FString& Context, const ACharacter* Character, const FName& KeyName, const FRotator3d& RotatorValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
+			#pragma endregion Rotator (Rotator3d)
+
 			#pragma endregion Set
+
+			// Get
+			#pragma region
+			public:
+
+				// Object
+			#pragma region
+			public:
+
+				/**
+				* Get the Character's Blackboard Object Key value associated with KeyName.
+				*
+				* @param Context	The calling context.
+				* @param Character
+				* @param KeyName
+				* return			Object.
+				*/
+				static UObject* GetObjectChecked(const FString& Context, const ACharacter* Character, const FName& KeyName);
+
+				/**
+				* Get the Character's Blackboard Object Key value associated with KeySelector.
+				*
+				* @param Context		The calling context.
+				* @param Character
+				* @param KeySelector
+				* return				Object.
+				*/
+				static UObject* GetObjectChecked(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector);
+
+				/**
+				* Safely get the Character's Blackboard Object Key value associated with KeyName.
+				*
+				* @param Context		The calling context.
+				* @param Character
+				* @param KeyName
+				* @param Log			(optional)
+				* return				Object.
+				*/
+				static UObject* GetSafeObject(const FString& Context, const ACharacter* Character, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+				/**
+				* Safely get the Character's Blackboard Object Key value associated with KeySelector.
+				*
+				* @param Context		The calling context.
+				* @param Character
+				* @param KeySelector
+				* @param Log			(optional)
+				* return				Object.
+				*/
+				static UObject* GetSafeObject(const FString& Context, const ACharacter* Character, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion Object
+
+			#pragma endregion Get
 			};
 		}
 	}

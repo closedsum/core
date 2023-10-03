@@ -6,9 +6,124 @@
 
 // Library
 #include "Kismet/KismetSystemLibrary.h"
+#include "Library/CsLibrary_Valid.h"
 
 namespace NCsMath
 {
+	// Int
+	#pragma region
+
+	#if WITH_EDITOR
+
+	bool FLibrary::IsIntGreaterThanChecked(const FString& Context, const int32& A, const int32& B)
+	{
+		CS_IS_INT_GREATER_THAN_CHECKED(A, B)
+		return true;
+	}
+
+	bool FLibrary::IsIntGreaterThanOrEqualChecked(const FString& Context, const int32& A, const int32& B)
+	{
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(A, B)
+		return true;
+	}
+
+	bool FLibrary::IsIntLessThanChecked(const FString& Context, const int32& A, const int32& B)
+	{
+		CS_IS_INT_LESS_THAN_CHECKED(A, B)
+		return true;
+	}
+
+	bool FLibrary::IsIntLessThanOrEqualChecked(const FString& Context, const int32& A, const int32& B)
+	{
+		CS_IS_INT_LESS_THAN_OR_EQUAL_CHECKED(A, B)
+		return true;
+	}
+
+	#endif // #if WITH_EDITOR
+
+	bool FLibrary::SafeIsIntGreaterThan(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_INT_GREATER_THAN(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsIntGreaterThanOrEqual(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_INT_GREATER_THAN_OR_EQUAL(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsIntLessThan(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_INT_LESS_THAN(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsIntLessThanOrEqual(const FString& Context, const int32& A, const int32& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_INT_LESS_THAN_OR_EQUAL(A, B)
+		return true;
+	}
+
+	#pragma endregion Int
+
+	// Float
+	#pragma region
+
+	#if WITH_EDITOR
+
+	bool FLibrary::IsFloatGreaterThanChecked(const FString& Context, const float& A, const float& B)
+	{
+		CS_IS_FLOAT_GREATER_THAN_CHECKED(A, B)
+		return true;
+	}
+
+	bool FLibrary::IsFloatGreaterThanOrEqualChecked(const FString& Context, const float& A, const float& B)
+	{
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL_CHECKED(A, B)
+		return true;
+	}
+
+	bool FLibrary::IsFloatLessThanChecked(const FString& Context, const float& A, const float& B)
+	{
+		CS_IS_FLOAT_LESS_THAN_CHECKED(A, B)
+		return true;
+	}
+
+	bool FLibrary::IsFloatLessThanOrEqualChecked(const FString& Context, const float& A, const float& B)
+	{
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL_CHECKED(A, B)
+		return true;
+	}
+
+	#endif // #if WITH_EDITOR
+
+	bool FLibrary::SafeIsFloatGreaterThan(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_FLOAT_GREATER_THAN(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsFloatGreaterThanOrEqual(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsFloatLessThan(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_FLOAT_LESS_THAN(A, B)
+		return true;
+	}
+
+	bool FLibrary::SafeIsFloatLessThanOrEqual(const FString& Context, const float& A, const float& B, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_FLOAT_LESS_THAN_OR_EQUAL(A, B)
+		return true;
+	}
+
+	#pragma endregion Float
+
 	// Easing
 	#pragma region
 

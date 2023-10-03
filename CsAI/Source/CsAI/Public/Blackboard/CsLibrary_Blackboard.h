@@ -2,12 +2,15 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+//Types
+#include "BehaviorTree/BehaviorTreeTypes.h"
 // Log
 #include "Utility/CsAILog.h"
 
 class UBlackboardComponent;
 class UBlackboardData;
 class UBlackboardKeyType;
+class APawn;
 
 namespace NCsBlackboard
 {
@@ -41,6 +44,14 @@ namespace NCsBlackboard
 	#pragma region
 	public:
 
+		static bool IsValidChecked(const FString& Context, const FBlackboardKeySelector& KeySelector);
+
+		static bool IsValid(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		static bool AreEqualChecked(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B);
+
+		static bool SafeAreEqual(const FString& Context, const TSubclassOf<UBlackboardKeyType>& A, const TSubclassOf<UBlackboardKeyType>& B, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
 		/**
 		* Get whether the Data has the Key with name KeyName or not.
 		*
@@ -62,6 +73,33 @@ namespace NCsBlackboard
 		FORCEINLINE static bool HasKeyChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
 			return HasKeyChecked(Context, GetDataChecked(Context, Component), KeyName);
+		}
+
+		/**
+		* Get whether the Data has Key associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has Key associated with KeySelector or not.
+		*/
+		FORCEINLINE static bool HasKeyChecked(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector)
+		{
+			check(IsValidChecked(Context, KeySelector));
+			return AreEqualChecked(Context, KeySelector.SelectedKeyType, GetKeyTypeChecked(Context, Data, KeySelector.SelectedKeyName));
+		}
+
+		/**
+		* Get whether the Component has Key associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* return			Whether the Component has Key associated with KeySelector or not.
+		*/
+		FORCEINLINE static bool HasKeyChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return HasKeyChecked(Context, GetDataChecked(Context, Component), KeySelector);
 		}
 
 		/**
@@ -87,6 +125,36 @@ namespace NCsBlackboard
 		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
 		{
 			return SafeHasKey(Context, GetSafeData(Context, Component, Log), KeyName, Log);
+		}
+
+		/**
+		* Safely Get whether the Data has the Key associated with KeySelector or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeyName
+		* @param Log		(optional)
+		* return			Whether the Data has the Key associated with KeySelector or not.
+		*/
+		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			if (!IsValid(Context, KeySelector, Log))
+				return false;
+			return SafeAreEqual(Context, KeySelector.SelectedKeyType, GetSafeKeyType(Context, Data, KeySelector.SelectedKeyName, Log), Log);
+		}
+
+		/**
+		* Safely Get whether the Component has the Key associated with KeySelector or not.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @param Log		(optional)
+		* return			Whether the Component has the Key associated with KeySelector or not.
+		*/
+		FORCEINLINE static bool SafeHasKey(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeHasKey(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
 
 		/**
@@ -137,6 +205,7 @@ namespace NCsBlackboard
 		* 
 		* @param Context	The calling context
 		* @param KeyType
+		* @param Log		(optional)
 		* return			Whether KeyType is of type Object or not.
 		*/
 		static bool SafeIsKeyType_Object(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
@@ -146,6 +215,7 @@ namespace NCsBlackboard
 		*
 		* @param Context	The calling context
 		* @param KeyType
+		* @param Log		(optional)
 		* return			Whether KeyType is of type Object or not.
 		*/
 		FORCEINLINE static bool SafeIsKeyType_Object(const FString& Context, UClass* KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
@@ -161,7 +231,11 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Object or not.
 		*/
-		static bool IsKey_ObjectChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+	#if !UE_BUILD_SHIPPING
+		static bool IsKeyChecked_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+	#else
+		FORCEINLINE static bool IsKeyChecked_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName) { return true; }
+	#endif // #if !UE_BUILD_SHIPPING
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Object or not.
@@ -169,12 +243,52 @@ namespace NCsBlackboard
 		* @param Context	The calling context.
 		* @param Data
 		* @param KeyName
-		* return			Whether the Data has the Key with name KeyName is of type Object or not.
+		* return			Whether the Component has the Key with name KeyName is of type Object or not.
 		*/
-		FORCEINLINE static bool IsKey_ObjectChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Object(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_ObjectChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Object(Context, GetDataChecked(Context, Component), KeyName);
 		}
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Object or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Object or not.
+		*/
+	#if !UE_BUILD_SHIPPING
+		static bool IsKeyChecked_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector);
+	#else
+		FORCEINLINE static bool IsKeyChecked_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector) { return true; }
+	#endif // #if !UE_BUILD_SHIPPING
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Object or not.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* return			Whether the Component has the Key associated with KeySelector is of type Object or not.
+		*/
+		FORCEINLINE static bool IsKeyChecked_Object(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return IsKeyChecked_Object(Context, GetDataChecked(Context, Component), KeySelector);
+		}
+
+		/**
+		* Get whether the KeySelector is Valid and of type Object or not.
+		*
+		* @param Context	The calling context.
+		* @param KeySelector
+		* return			Whether the KeySelector is Valid and of type Object or not.
+		*/
+	#if !UE_BUILD_SHIPPING
+		static bool IsKeyChecked_Object(const FString& Context, const FBlackboardKeySelector& KeySelector);
+	#else
+		FORCEINLINE static bool IsKeyChecked_Object(const FString& Context, const FBlackboardKeySelector& KeySelector) { return true; }
+	#endif // #if !UE_BUILD_SHIPPING
 
 		/**
 		* Safely get whether the Data with Key with KeyName is of type Object or not.
@@ -182,6 +296,7 @@ namespace NCsBlackboard
 		* @param Context	The calling context.
 		* @param Data
 		* @param KeyName
+		* @param Log		(optional)
 		* return			Whether the Data has the Key with name KeyName is of type Object or not.
 		*/
 		static bool SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
@@ -192,12 +307,48 @@ namespace NCsBlackboard
 		* @param Context	The calling context.
 		* @param Data
 		* @param KeyName
+		* @param Log		(optional)
 		* return			Whether the Data has the Key with name KeyName is of type Object or not.
 		*/
 		FORCEINLINE static bool SafeIsKey_Object(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
 		{
 			return SafeIsKey_Object(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Object or not.
+		*
+		* @param Context		The calling context.
+		* @param Data
+		* @param KeySelector
+		* @param Log			(optional)
+		* return				Whether the Data has the Key associated with KeySelector is of type Object or not.
+		*/
+		static bool SafeIsKey_Object(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Object or not.
+		*
+		* @param Context		The calling context.
+		* @param Data
+		* @param KeySelector
+		* @param Log			(optional)
+		* return				Whether the Data has the Key associated with KeySelector is of type Object or not.
+		*/
+		FORCEINLINE static bool SafeIsKey_Object(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeIsKey_Object(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
+		}
+
+		/**
+		* Safely get whether the KeySelector is Valid and of type Object or not.
+		*
+		* @param Context		The calling context.
+		* @param KeySelector
+		* @param Log			(optional)
+		* return				Whether the KeySelector is Valid and of type Object or not.
+		*/
+		static bool SafeIsKey_Object(const FString& Context, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 		#pragma endregion Object
 		
@@ -212,7 +363,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Class or not.
 		*/
-		static bool IsKey_ClassChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Class(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Class or not.
@@ -222,9 +373,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Class or not.
 		*/
-		FORCEINLINE static bool IsKey_ClassChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Class(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_ClassChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Class(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -256,6 +407,15 @@ namespace NCsBlackboard
 		#pragma region
 
 		/**
+		* Safely check whether KeyType is of type Enum or not.
+		*
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Enum or not.
+		*/
+		static bool SafeIsKeyType_Enum(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
 		* Get whether the Data with Key with KeyName is of type Enum or not.
 		*
 		* @param Context	The calling context.
@@ -263,7 +423,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Enum or not.
 		*/
-		static bool IsKey_EnumChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Enum(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Enum or not.
@@ -273,9 +433,32 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Enum or not.
 		*/
-		FORCEINLINE static bool IsKey_EnumChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Enum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_EnumChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Enum(Context, GetDataChecked(Context, Component), KeyName);
+		}
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Enum or not.
+		*
+		* @param Context		The calling context.
+		* @param Data
+		* @param KeySelector
+		* return				Whether the Data has the Key associated with KeySelector is of type Enum or not.
+		*/
+		static bool IsKeyChecked_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector);
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Enum or not.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* return				Whether the Component has the Key associated with KeySelector is of type Enum or not.
+		*/
+		FORCEINLINE static bool IsKeyChecked_Enum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return IsKeyChecked_Enum(Context, GetDataChecked(Context, Component), KeySelector);
 		}
 
 		/**
@@ -301,6 +484,29 @@ namespace NCsBlackboard
 			return SafeIsKey_Enum(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
 
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Enum or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Enum or not.
+		*/
+		static bool SafeIsKey_Enum(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Enum or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Enum or not.
+		*/
+		FORCEINLINE static bool SafeIsKey_Enum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeIsKey_Enum(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
+		}
+
 		#pragma endregion Enum
 
 		// Int
@@ -314,7 +520,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Int or not.
 		*/
-		static bool IsKey_IntChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Int or not.
@@ -324,9 +530,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Int or not.
 		*/
-		FORCEINLINE static bool IsKey_IntChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Int(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_IntChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Int(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -365,7 +571,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Float or not.
 		*/
-		static bool IsKey_FloatChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Float or not.
@@ -375,9 +581,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Float or not.
 		*/
-		FORCEINLINE static bool IsKey_FloatChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Float(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_FloatChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Float(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -416,7 +622,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Bool or not.
 		*/
-		static bool IsKey_BoolChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Bool(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Bool or not.
@@ -426,9 +632,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Bool or not.
 		*/
-		FORCEINLINE static bool IsKey_BoolChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Bool(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_BoolChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Bool(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -467,7 +673,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type String or not.
 		*/
-		static bool IsKey_StringChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_String(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type String or not.
@@ -477,9 +683,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type String or not.
 		*/
-		FORCEINLINE static bool IsKey_StringChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_String(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_StringChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_String(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -518,7 +724,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Name or not.
 		*/
-		static bool IsKey_NameChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Name(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Name or not.
@@ -528,9 +734,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Name or not.
 		*/
-		FORCEINLINE static bool IsKey_NameChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Name(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_NameChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Name(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -590,7 +796,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Vector or not.
 		*/
-		static bool IsKey_VectorChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Vector(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Vector or not.
@@ -600,9 +806,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Vector or not.
 		*/
-		FORCEINLINE static bool IsKey_VectorChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Vector(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_VectorChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Vector(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -641,7 +847,7 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Rotator or not.
 		*/
-		static bool IsKey_RotatorChecked(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
+		static bool IsKeyChecked_Rotator(const FString& Context, const UBlackboardData* Data, const FName& KeyName);
 
 		/**
 		* Get whether the Component with Key with KeyName is of type Rotator or not.
@@ -651,9 +857,9 @@ namespace NCsBlackboard
 		* @param KeyName
 		* return			Whether the Data has the Key with name KeyName is of type Rotator or not.
 		*/
-		FORCEINLINE static bool IsKey_RotatorChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+		FORCEINLINE static bool IsKeyChecked_Rotator(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
-			return IsKey_RotatorChecked(Context, GetDataChecked(Context, Component), KeyName);
+			return IsKeyChecked_Rotator(Context, GetDataChecked(Context, Component), KeyName);
 		}
 
 		/**
@@ -682,5 +888,411 @@ namespace NCsBlackboard
 		#pragma endregion Rotator
 
 	#pragma endregion Key
+
+	// Set
+	#pragma region
+
+		// Object
+	#pragma region
+	public:
+
+		/**
+		* Set the Component's Blackboard Object Key value associated with KeyName.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma ObjectValue
+		*/
+		static void SetObjectChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue);
+	
+		/**
+		* Set the Component's Blackboard Object Key value associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma ObjectValue
+		*/
+		static void SetObjectChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @param ObjectValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @param ObjectValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeObject(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Set the Component's Blackboard Object Key value associated with KeyName.
+		*  ObjectValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma ObjectValue
+		*/
+		static void SetObjectChecked2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue);
+	
+		/**
+		* Set the Component's Blackboard Object Key value associated with KeySelector.
+		*  ObjectValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma ObjectValue
+		*/
+		static void SetObjectChecked2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value associated with KeyName.
+		*  ObjectValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @param ObjectValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value associated with KeySelector.
+		*  ObjectValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @param ObjectValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeObject2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, UObject* ObjectValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Object
+
+		// Pawn
+	#pragma region
+	public:
+
+		/**
+		* Set the Component's Blackboard Object Key value as a Pawn associated with KeyName.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma PawnValue
+		*/
+		static void SetPawnChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue);
+	
+		/**
+		* Set the Component's Blackboard Object Key value as a Pawn associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma PawnValue
+		*/
+		static void SetPawnChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value as a Pawn associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma PawnValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value as a Pawn associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma PawnValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafePawn(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Set the Component's Blackboard Object Key value as a Pawn associated with KeyName.
+		*  PawnValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma PawnValue
+		*/
+		static void SetPawnChecked2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue);
+	
+		/**
+		* Set the Component's Blackboard Object Key value as a Pawn associated with KeySelector.
+		*  PawnValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma PawnValue
+		*/
+		static void SetPawnChecked2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value as a Pawn associated with KeyName.
+		*  PawnValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		* 
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma PawnValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely set the Component's Blackboard Object Key value as a Pawn associated with KeySelector.
+		*  PawnValue MUST be Valid (NOT NULL and NOT Marked as Garbage).
+		* 
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma PawnValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafePawn2(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, APawn* PawnValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Pawn
+
+		// Enum
+	#pragma region
+	public:
+			
+		/**
+		* Set the Component's Blackboard Enum (uint8) Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma EnumValue
+		*/
+		static void SetEnumChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue);
+
+		/**
+		* Set the Component's Blackboard Enum Key value associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma EnumValue
+		*/
+		static void SetEnumChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue);
+
+		/**
+		* Safely set the Component's Blackboard Enum (uint8) Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma EnumValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const uint8& EnumValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely set the Component's Blackboard Enum Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma EnumValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeEnum(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const uint8& EnumValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Enum
+
+	#pragma endregion Set
+
+	// Get
+	#pragma region
+
+		// Object
+	#pragma region
+	public:
+
+		/*
+		* Get the Component's Blackboard Object Key value associated with KeyName.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName	
+		* return			Pawn.
+		*/
+		static UObject* GetObjectChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName);
+
+		/*
+		* Get the Component's Blackboard Object Key value associated with KeySelector.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName	
+		* return			Pawn.
+		*/
+		static UObject* GetObjectChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector);
+
+		/*
+		* Safely get the Component's Blackboard Object Key value associated with KeyName.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName	
+		* @param OutSuccess (out)
+		* @param Log		(optional)
+		* return			Pawn.
+		*/
+		static UObject* GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/*
+		* Safely get the Component's Blackboard Object Key value associated with KeySelector.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @param OutSuccess (out)
+		* @param Log		(optional)
+		* return			Pawn.
+		*/
+		static UObject* GetSafeObject(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Object
+
+		// Pawn
+	#pragma region
+	public:
+
+		/*
+		* Get the Component's Blackboard Object Key value as a Pawn associated with KeyName.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName	
+		* return			Pawn.
+		*/
+		static APawn* GetPawnChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName);
+
+		/*
+		* Get the Component's Blackboard Object Key value as Pawn associated with KeySelector.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName	
+		* return			Pawn.
+		*/
+		static APawn* GetPawnChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector);
+
+		/*
+		* Safely get the Component's Blackboard Object Key value as a Pawn associated with KeyName.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName	
+		* @param OutSuccess (out)
+		* @param Log		(optional)
+		* return			Pawn.
+		*/
+		static APawn* GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/*
+		* Safely get the Component's Blackboard Object Key value as Pawn associated with KeySelector.
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @param OutSuccess (out)
+		* @param Log		(optional)
+		* return			Pawn.
+		*/
+		static APawn* GetSafePawn(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Pawn
+
+		// Enum
+	#pragma region
+	public:
+
+		/**
+		* Get the Component's Blackboard Enum Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* return			Enum (as Byte).
+		*/
+		static uint8 GetEnumChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName);
+
+		/**
+		* Get the Component's Blackboard Enum Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* return				Enum (as Byte).
+		*/
+		static uint8 GetEnumChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector);
+
+		/**
+		* Safely get the Component's Blackboard Enum Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Enum (as Byte).
+		*/
+		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get the Component's Blackboard Enum Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Enum (as Byte).
+		*/
+		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Enum
+
+	#pragma endregion Get
 	};
 }

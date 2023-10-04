@@ -25,7 +25,7 @@ namespace NCsCVarLog
 
 #pragma endregion CVarLog
 
-TAutoConsoleVariable<int32> CsCVarEnableManagerAchievement(
+TAutoConsoleVariable<bool> CsCVarEnableManagerAchievement(
 	TEXT("enable.manager.achievement"),
 	0,
 	TEXT("[Non-Shipping][.ini - SystemSettings] Enable Manager Achievement."),

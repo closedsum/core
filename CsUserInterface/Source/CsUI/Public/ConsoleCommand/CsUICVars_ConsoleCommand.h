@@ -1,9 +1,8 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+#pragma once
 #include "CsCVars.h"
 
-#pragma once
-
-extern CSUI_API TAutoConsoleVariable<int32> CsUICVarEnableConsoleCommandUI;
+extern CSUI_API TAutoConsoleVariable<bool> CsUICVarEnableConsoleCommandUI;
 
 // CVarToggle
 #pragma region

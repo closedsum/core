@@ -1,7 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 #include "ConsoleCommand/CsUICVars_ConsoleCommand.h"
 
-TAutoConsoleVariable<int32> CsUICVarEnableConsoleCommandUI(
+TAutoConsoleVariable<bool> CsUICVarEnableConsoleCommandUI(
 	TEXT("enable.consolecommand.ui"),
 	0,
 	TEXT("Enable Console Command UI."),

@@ -16,7 +16,7 @@ namespace NCsCVarLog
 	}
 }
 
-extern CSPLATFORMSERVICES_API TAutoConsoleVariable<int32> CsCVarEnableManagerAchievement;
+extern CSPLATFORMSERVICES_API TAutoConsoleVariable<bool> CsCVarEnableManagerAchievement;
 
 namespace NCsCVarToggle
 {

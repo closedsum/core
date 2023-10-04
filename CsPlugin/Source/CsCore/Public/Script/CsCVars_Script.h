@@ -22,6 +22,14 @@ namespace NCsCVarToggle
 #pragma endregion CVarToggle
 
 #if WITH_EDITOR
+#define CS_SCRIPT_CHECKED(ExprChecked, SafeExpr) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
+	{ \
+		ExprChecked; \
+	} \
+	else \
+	{ \
+		SafeExpr; \
+	}
 #define CS_SCRIPT_GET_CHECKED(ExprChecked, SafeExpr) CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked) ? ExprChecked : SafeExpr
 #define CS_SCRIPT_SET_CHECKED(ExprChecked, SafeExpr) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
 	{ \
@@ -29,7 +37,17 @@ namespace NCsCVarToggle
 		return true; \
 	} \
 	return SafeExpr;
+#define CS_SCRIPT_SET_CHECKED_NO_RET(ExprChecked, SafeExpr) if (CS_CVAR_TOGGLE_IS_ENABLED(EnableScriptChecked)) \
+	{ \
+		ExprChecked; \
+	} \
+	else \
+	{ \
+		SafeExpr; \
+	}
 #else
+#define CS_SCRIPT_CHECKED(ExprChecked, SafeExpr)
 #define CS_SCRIPT_GET_CHECKED(ExprChecked, SafeExpr) ExprChecked
 #define CS_SCRIPT_SET_CHECKED(ExprChecked, SafeExpr) ExprChecked; return true;
+#define CS_SCRIPT_SET_CHECKED_NO_RET(ExprChecked, SafeExpr) ExprChecked;
 #endif // #if WITH_EDITOR

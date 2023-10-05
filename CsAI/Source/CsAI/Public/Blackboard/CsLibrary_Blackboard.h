@@ -7,6 +7,7 @@
 // Log
 #include "Utility/CsAILog.h"
 
+class UBehaviorTreeComponent;
 class UBlackboardComponent;
 class UBlackboardData;
 class UBlackboardKeyType;
@@ -39,6 +40,27 @@ namespace NCsBlackboard
 		* return			Data
 		*/
 		static const UBlackboardData* GetSafeData(const FString& Context, const UBlackboardComponent* Component, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Get the Blackboard Component associated with Component
+		* 
+		* @param Context	The calling context.
+		* @param Component
+		* return			Component
+		*/
+		static const UBlackboardComponent* GetComponentChecked(const FString& Context, const UBehaviorTreeComponent* Component);
+		static UBlackboardComponent* GetComponentChecked(const FString& Context, UBehaviorTreeComponent* Component);
+
+		/**
+		* Safely get the Blackboard Component associated with Component
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param Log		(optional)
+		* return			Component
+		*/
+		static const UBlackboardComponent* GetSafeComponent(const FString& Context, const UBehaviorTreeComponent* Component, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		static UBlackboardComponent* GetSafeComponent(const FString& Context, UBehaviorTreeComponent* Component, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 	// Key
 	#pragma region
@@ -564,6 +586,15 @@ namespace NCsBlackboard
 		#pragma region
 
 		/**
+		* Safely check whether KeyType is of type Float or not.
+		*
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Float or not.
+		*/
+		static bool SafeIsKeyType_Float(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
 		* Get whether the Data with Key with KeyName is of type Float or not.
 		*
 		* @param Context	The calling context.
@@ -587,6 +618,29 @@ namespace NCsBlackboard
 		}
 
 		/**
+		* Get whether the Data with Key associated with KeySelector is of type Float or not.
+		*
+		* @param Context		The calling context.
+		* @param Data
+		* @param KeySelector
+		* return				Whether the Data has the Key associated with KeySelector is of Float Enum or not.
+		*/
+		static bool IsKeyChecked_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector);
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Float or not.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* return				Whether the Component has the Key associated with KeySelector is of type Float or not.
+		*/
+		FORCEINLINE static bool IsKeyChecked_Float(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return IsKeyChecked_Float(Context, GetDataChecked(Context, Component), KeySelector);
+		}
+
+		/**
 		* Safely get whether the Data with Key with KeyName is of type Float or not.
 		*
 		* @param Context	The calling context.
@@ -607,6 +661,29 @@ namespace NCsBlackboard
 		FORCEINLINE static bool SafeIsKey_Float(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
 		{
 			return SafeIsKey_Float(Context, GetSafeData(Context, Component, Log), KeyName, Log);
+		}
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Float or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Float or not.
+		*/
+		static bool SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Float or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Float or not.
+		*/
+		FORCEINLINE static bool SafeIsKey_Float(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeIsKey_Float(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
 		}
 
 		#pragma endregion Float
@@ -1138,6 +1215,66 @@ namespace NCsBlackboard
 
 	#pragma endregion Enum
 
+		// Float
+	#pragma region
+	public:
+			
+		/**
+		* Set the Component's Blackboard Float Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma FloatValue
+		*/
+		static void SetFloatChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue);
+
+		/**
+		* Set the Component's Blackboard Float Key value associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma FloatValue
+		*/
+		static void SetFloatChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue);
+
+		FORCEINLINE static void SetFloatChecked(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue)
+		{
+			SetFloatChecked(Context, GetComponentChecked(Context, Component), KeySelector, FloatValue);
+		}
+
+		/**
+		* Safely set the Component's Blackboard Float Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma FloatValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely set the Component's Blackboard Float Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma FloatValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		FORCEINLINE static bool SetSafeFloat(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SetSafeFloat(Context, GetSafeComponent(Context, Component, Log), KeySelector, FloatValue, Log);
+		}
+
+	#pragma endregion Enum
+
 	#pragma endregion Set
 
 	// Get
@@ -1292,6 +1429,88 @@ namespace NCsBlackboard
 		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 	#pragma endregion Enum
+
+		// Float
+	#pragma region
+	public:
+
+		/**
+		* Get the Component's Blackboard Float Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* return			Float.
+		*/
+		static float GetFloatChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName);
+
+		/**
+		* Get the Component's Blackboard Float Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* return				Float.
+		*/
+		static float GetFloatChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector);
+
+		FORCEINLINE static float GetFloatChecked(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return GetFloatChecked(Context, GetComponentChecked(Context, Component), KeySelector);
+		}
+
+		/**
+		* Safely get the Component's Blackboard Float Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Float.
+		*/
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get the Component's Blackboard Float Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Float.
+		*/
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get the Component's Blackboard Float Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @param Log			(optional)
+		* return				Float.
+		*/
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get the Component's Blackboard Float Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @param Log			(optional)
+		* return				Float.
+		*/
+		static float GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		FORCEINLINE static float GetSafeFloat(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return GetSafeFloat(Context, GetSafeComponent(Context, Component, Log), KeySelector, Log);
+		}
+
+	#pragma endregion Float
 
 	#pragma endregion Get
 	};

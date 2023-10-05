@@ -8,6 +8,7 @@
 // Library
 #include "Library/CsLibrary_Valid.h"
 // AI
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Class.h"
@@ -62,6 +63,46 @@ namespace NCsBlackboard
 
 		CS_IS_PENDING_KILL_RET_NULL(Data)
 		return Data;
+	}
+
+	const UBlackboardComponent* FLibrary::GetComponentChecked(const FString& Context, const UBehaviorTreeComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component);
+
+		const UBlackboardComponent* Blackboard = Component->GetBlackboardComponent();
+
+		CS_IS_PENDING_KILL_CHECKED(Blackboard);
+		return Blackboard;
+	}
+
+	UBlackboardComponent* FLibrary::GetComponentChecked(const FString& Context, UBehaviorTreeComponent* Component)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Component);
+
+		UBlackboardComponent* Blackboard = Component->GetBlackboardComponent();
+
+		CS_IS_PENDING_KILL_CHECKED(Blackboard);
+		return Blackboard;
+	}
+
+	const UBlackboardComponent* FLibrary::GetSafeComponent(const FString& Context, const UBehaviorTreeComponent* Component, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(Component);
+
+		const UBlackboardComponent* Blackboard = Component->GetBlackboardComponent();
+
+		CS_IS_PENDING_KILL_RET_NULL(Blackboard);
+		return Blackboard;
+	}
+
+	UBlackboardComponent* FLibrary::GetSafeComponent(const FString& Context, UBehaviorTreeComponent* Component, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL_RET_NULL(Component);
+
+		UBlackboardComponent* Blackboard = Component->GetBlackboardComponent();
+
+		CS_IS_PENDING_KILL_RET_NULL(Blackboard);
+		return Blackboard;
 	}
 
 	// Key
@@ -439,11 +480,34 @@ namespace NCsBlackboard
 		// Float
 	#pragma region
 
+	bool FLibrary::SafeIsKeyType_Float(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeyType.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
+			return false;
+		}
+
+		if (KeyType != UBlackboardKeyType_Float::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType NOT of type: Float but of type: %s."), *Context, *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
+
 	bool FLibrary::IsKeyChecked_Float(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
 		checkf(KeyType == UBlackboardKeyType_Float::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Float but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType));
+		return true;
+	}
+
+	bool FLibrary::IsKeyChecked_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector)
+	{
+		check(HasKeyChecked(Context, Data, KeySelector));
+		checkf(KeySelector.SelectedKeyType.Get() == UBlackboardKeyType_Float::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Float but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType));
 		return true;
 	}
 
@@ -454,6 +518,19 @@ namespace NCsBlackboard
 		if (KeyType != UBlackboardKeyType_Float::StaticClass())
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Float but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
+
+	bool FLibrary::SafeIsKey_Float(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeHasKey(Context, Data, KeySelector, Log))
+			return false;
+
+		if (KeySelector.SelectedKeyType.Get() != UBlackboardKeyType_Float::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Float but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType)));
 			return false;
 		}
 		return true;
@@ -794,6 +871,43 @@ namespace NCsBlackboard
 
 	#pragma endregion Enum
 
+		// Float
+	#pragma region
+	
+	void FLibrary::SetFloatChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue)
+	{
+		check(IsKeyChecked_Float(Context, Component, KeyName));
+
+		Component->SetValueAsFloat(KeyName, FloatValue);
+	}
+	
+	void FLibrary::SetFloatChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue)
+	{
+		check(IsKeyChecked_Float(Context, Component, KeySelector));
+
+		Component->SetValueAsFloat(KeySelector.SelectedKeyName, FloatValue);
+	}
+
+	bool FLibrary::SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const float& FloatValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Float(Context, Component, KeyName))
+			return false;
+
+		Component->SetValueAsFloat(KeyName, FloatValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafeFloat(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const float& FloatValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Float(Context, Component, KeySelector))
+			return false;
+
+		Component->SetValueAsFloat(KeySelector.SelectedKeyName, FloatValue);
+		return true;
+	}
+
+	#pragma endregion Float
+
 	#pragma endregion Set
 
 	// Get
@@ -931,6 +1045,59 @@ namespace NCsBlackboard
 	}
 
 	#pragma endregion Enum
+
+		// Float
+	#pragma region
+
+	float FLibrary::GetFloatChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+	{
+		check(IsKeyChecked_Float(Context, Component, KeyName));
+		return Component->GetValueAsFloat(KeyName);
+	}
+
+	float FLibrary::GetFloatChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+	{
+		check(IsKeyChecked_Float(Context, Component, KeySelector));
+		return Component->GetValueAsFloat(KeySelector.SelectedKeyName);
+	}
+
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Float(Context, Component, KeyName, Log))
+			return 0;
+
+		OutSuccess = true;
+		return Component->GetValueAsFloat(KeyName);
+	}
+
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Float(Context, Component, KeySelector, Log))
+			return 0;
+
+		OutSuccess = true;
+		return Component->GetValueAsFloat(KeySelector.SelectedKeyName);
+	}
+
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Float(Context, Component, KeyName, Log))
+			return 0;
+		return Component->GetValueAsFloat(KeyName);
+	}
+
+	float FLibrary::GetSafeFloat(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Float(Context, Component, KeySelector, Log))
+			return 0;
+		return Component->GetValueAsFloat(KeySelector.SelectedKeyName);
+	}
+
+	#pragma endregion Float
 
 	#pragma endregion Get
 }

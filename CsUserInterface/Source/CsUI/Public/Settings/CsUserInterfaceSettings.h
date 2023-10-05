@@ -9,6 +9,8 @@
 #include "Settings/CsTypes_UserInterfaceSettings.h"
 #include "Managers/WidgetActor/CsSettings_Manager_WidgetActor.h"
 #include "Managers/UserWidget/CsSettings_Manager_UserWidget.h"
+#include "Managers/Menu/CsSettings_Manager_Menu.h"
+#include "Managers/Fade/CsSettings_Manager_Fade.h"
 
 #include "CsUserInterfaceSettings.generated.h"
 
@@ -140,4 +142,22 @@ public:
 	FCsSettings_Manager_UserWidget Manager_UserWidget;
 
 #pragma endregion UserWidget
+
+// Menu
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FCsSettings_Manager_Menu Manager_Menu;
+
+#pragma endregion Menu
+
+// Fade
+#pragma region
+public:
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings")
+	FCsSettings_Manager_Fade Manager_Fade;
+
+#pragma endregion Fade
 };

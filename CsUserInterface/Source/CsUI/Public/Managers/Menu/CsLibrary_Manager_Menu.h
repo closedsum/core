@@ -117,7 +117,7 @@ namespace NCsMenu
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsManager_Menu.
 			*/
 			static UCsManager_Menu* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -129,13 +129,55 @@ namespace NCsMenu
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsManager_Menu.
 			*/
 			template<typename T>
 			static T* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning)
 			{
 				UCsManager_Menu* O = GetSafe(Context, ContextObject, Log);
+
+				if (!O)
+					return nullptr;
+
+				T* Other = Cast<T>(O);
+
+				if (!Other)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: Manager_Menu is NOT of type: %s."), *Context, *(T::StaticClass()->GetName())));
+				}
+				return Other;
+			}
+
+			/**
+			* Safely get the reference to UCsManager_Menu from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				UCsManager_Menu.
+			*/
+			static UCsManager_Menu* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Menu from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				UCsManager_Menu.
+			*/
+			template<typename T>
+			static T* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UCsManager_Menu* O = GetSafe(Context, ContextObject, OutSuccess, Log);
 
 				if (!O)
 					return nullptr;
@@ -179,6 +221,14 @@ namespace NCsMenu
 			}
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+		public:
+
+			static TSubclassOf<UCsManager_Menu> GetClassChecked(const FString& Context);
+
+		#pragma endregion Class
 		};
 	}
 }

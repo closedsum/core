@@ -7,6 +7,8 @@
 #include "Managers/Fade/CsManager_Fade.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
+// Settings
+#include "Managers/Fade/CsSettings_Manager_Fade.h"
 
 #if WITH_EDITOR
 // Library
@@ -34,17 +36,15 @@ namespace NCsFade
 
 		#if WITH_EDITOR
 
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
@@ -56,6 +56,8 @@ namespace NCsFade
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
+
+		#undef GameInstanceLibrary
 
 		#endif // #if WITH_EDITOR
 
@@ -87,7 +89,31 @@ namespace NCsFade
 			if (!Manager_Fade)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Fade."), *Context));
+				return nullptr;
 			}
+			return Manager_Fade;
+		}
+
+		UCsManager_Fade* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) /*= &NCsPlayback::FLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Fade* Manager_Fade = UCsManager_Fade::GetSafe(Context, ContextRoot, Log);
+
+			if (!Manager_Fade)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Fade."), *Context));
+				return nullptr;
+			}
+
+			OutSuccess = true;
 			return Manager_Fade;
 		}
 
@@ -101,6 +127,18 @@ namespace NCsFade
 		}
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+
+		TSubclassOf<UCsManager_Fade> FLibrary::GetClassChecked(const FString& Context)
+		{
+			const FCsSettings_Manager_Fade& Settings = FCsSettings_Manager_Fade::Get();
+
+			return TSubclassOf<UCsManager_Fade>(Settings.LoadClassChecked(Context));
+		}
+
+		#pragma endregion Class
 
 		void FLibrary::CreateFadeWidget(const FString& Context, const UObject* ContextObject)
 		{

@@ -16,6 +16,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+// Settings
+#include "Managers/Fade/CsSettings_Manager_Fade.h"
 // UI
 #include "Managers/Fade/CsUserWidget_Fade.h"
 #include "Components/Image.h"
@@ -35,6 +37,8 @@ namespace NCsManagerFade
 	{
 		namespace Str
 		{
+			// Singleton
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, CreateFadeWidget);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Fade, Fade_Internal);
@@ -106,6 +110,17 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 		s_Instance->Initialize();
 	}
 #endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Fade::Init(UObject* InRoot, UObject* InOuter /*= nullptr*/)
+{
+	using namespace NCsManagerFade::NCached;
+
+	const FString& Context = Str::Init;
+
+	const FCsSettings_Manager_Fade& Settings = FCsSettings_Manager_Fade::Get();
+
+	Init(InRoot, Settings.LoadClassChecked(Context), InOuter);
 }
 
 /*static*/ void UCsManager_Fade::Shutdown(const UObject* InRoot /*=nullptr*/)

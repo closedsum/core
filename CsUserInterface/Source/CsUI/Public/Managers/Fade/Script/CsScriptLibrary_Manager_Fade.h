@@ -24,8 +24,19 @@ public:
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* return					UCsManager_Fade.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static UCsManager_Fade* Get(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Get the reference to UCsManager_Fade from a WorldContext.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	* return					UCsManager_Fade.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Manager|Fade", meta = (DisplayName = "Get (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static UCsManager_Fade* GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 #pragma endregion Get
 

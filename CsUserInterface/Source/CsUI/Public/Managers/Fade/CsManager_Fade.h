@@ -48,6 +48,7 @@ public:
 #endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Fade> ManagerMenuClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
 	static void Shutdown(const UObject* InRoot = nullptr);
 
 #if WITH_EDITOR

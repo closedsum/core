@@ -43,6 +43,7 @@ public:
 #endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Menu> ManagerMenuClass, UObject* InOuter = nullptr);
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
 	static void Shutdown(UObject* InRoot = nullptr);
 
 #if WITH_EDITOR

@@ -22,6 +22,9 @@ namespace NCsUserInterfaceSettings
 
 #pragma endregion Cached
 
-UCsUserInterfaceSettings::UCsUserInterfaceSettings(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+UCsUserInterfaceSettings::UCsUserInterfaceSettings(const FObjectInitializer& ObjectInitializer) : 
+	Super(ObjectInitializer),
+	Manager_Menu(),
+	Manager_Fade()
 {
 }

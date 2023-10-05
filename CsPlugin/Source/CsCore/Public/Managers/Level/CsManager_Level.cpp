@@ -16,6 +16,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
+// Settings
+#include "Managers/Level/CsSettings_Manager_Level.h"
 // World
 #include "Engine/World.h"
 // Level
@@ -36,6 +38,8 @@ namespace NCsManagerLevel
 	{
 		namespace Str
 		{
+			// Singleton
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Init);
 			// Persistent Level
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
 			// Champ Map
@@ -107,6 +111,17 @@ UCsManager_Level::UCsManager_Level(const FObjectInitializer& ObjectInitializer)
 		s_Instance->Initialize();
 	}
 #endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Level::Init(UObject* InRoot, UObject* InOuter /*= nullptr*/)
+{
+	using namespace NCsManagerLevel::NCached;
+
+	const FString& Context = Str::Init;
+
+	const FCsSettings_Manager_Level& Settings = FCsSettings_Manager_Level::Get();
+
+	Init(InRoot, Settings.LoadClassChecked(Context), InOuter);
 }
 
 /*static*/ void UCsManager_Level::Shutdown(const UObject* InRoot /*=nullptr*/)

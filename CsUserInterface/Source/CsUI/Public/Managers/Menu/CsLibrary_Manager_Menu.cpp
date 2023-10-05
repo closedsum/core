@@ -10,6 +10,8 @@
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Menu/CsManager_Menu.h"
+// Settings
+#include "Managers/Menu/CsSettings_Manager_Menu.h"
 
 #if WITH_EDITOR
 // Library
@@ -38,17 +40,15 @@ namespace NCsMenu
 
 		#if WITH_EDITOR
 
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
@@ -60,6 +60,8 @@ namespace NCsMenu
 
 			return GetSafeContextRoot(Context, ContextObject, nullptr);
 		}
+
+		#undef GameInstanceLibrary
 
 		#endif // #if WITH_EDITOR
 
@@ -91,7 +93,31 @@ namespace NCsMenu
 			if (!Manager_Menu)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Menu."), *Context));
+				return nullptr;
 			}
+			return Manager_Menu;
+		}
+
+		UCsManager_Menu* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsManager_Menu* Manager_Menu = UCsManager_Menu::GetSafe(Context, ContextRoot, Log);
+
+			if (!Manager_Menu)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Menu."), *Context));
+				return nullptr;
+			}
+
+			OutSuccess = true;
 			return Manager_Menu;
 		}
 
@@ -105,5 +131,17 @@ namespace NCsMenu
 		}
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+
+		TSubclassOf<UCsManager_Menu> FLibrary::GetClassChecked(const FString& Context)
+		{
+			const FCsSettings_Manager_Menu& Settings = FCsSettings_Manager_Menu::Get();
+
+			return TSubclassOf<UCsManager_Menu>(Settings.LoadClassChecked(Context));
+		}
+
+		#pragma endregion Class
 	}
 }

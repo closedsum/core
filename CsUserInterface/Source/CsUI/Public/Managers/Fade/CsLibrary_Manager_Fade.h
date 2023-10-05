@@ -89,10 +89,23 @@ namespace NCsFade
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.
-			* @param Log
+			* @param Log			(optional)
 			* return				UCsManager_Fade.
 			*/
 			static UCsManager_Fade* GetSafe(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsManager_Fade from a ContextObject.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				UCsManager_Fade.
+			*/
+			static UCsManager_Fade* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			/**
 			* Safely get the reference to UCsManager_Fade from a ContextObject.
@@ -105,6 +118,14 @@ namespace NCsFade
 			static UCsManager_Fade* GetSafe(const UObject* ContextObject);
 
 		#pragma endregion Get
+
+		// Class
+		#pragma region
+		public:
+
+			static TSubclassOf<UCsManager_Fade> GetClassChecked(const FString& Context);
+
+		#pragma endregion Class
 
 		public:
 

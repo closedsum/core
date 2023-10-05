@@ -43,6 +43,8 @@ namespace NCsInput
 
 			static UCsManager_Input* GetSafe(const FString& Context, APlayerController* PC, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			static UCsManager_Input* GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			static UCsManager_Input* GetSafe(APawn* Pawn);
 
 			/**
@@ -65,6 +67,18 @@ namespace NCsInput
 			* return				Manager_Input
 			*/
 			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the Manager_Input associated with the player controller with ControllerId.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param ControllerId
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				Manager_Input
+			*/
+			static UCsManager_Input* GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Get
 

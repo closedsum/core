@@ -173,6 +173,8 @@ namespace NCsPlayer
 
 			static APlayerController* GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) = &FCsLog::Warning);
 
+			static APlayerController* GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
 			static APlayerController* GetSafeLocal(const UObject* WorldContext, const int32& ControllerId);
 
 			static APlayerController* GetOrFirstLocalChecked(const FString& Context, APawn* Pawn);

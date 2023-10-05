@@ -274,6 +274,39 @@ namespace NCsPlayer
 			return PC;
 		}
 
+		APlayerController* FLibrary::GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			typedef NCsWorld::FLibrary WorldLibrary;
+
+			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
+
+			if (!World)
+				return nullptr;
+
+			CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_NULL(ControllerId, 0)
+
+			ULocalPlayer* Player = GEngine->GetLocalPlayerFromControllerId(World, ControllerId);
+
+			if (!Player)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Local Player with ControllerId: %d."), *Context, ControllerId));
+				return nullptr;
+			}
+
+			APlayerController* PC = Player->PlayerController;
+
+			if (!PC)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get PlayerController from Local Player: %s with ControllerId: %d."), *Context, *(Player->GetName()), ControllerId));
+			}
+
+			OutSuccess = true;
+			return PC;
+		}
+			
+
 		APlayerController* FLibrary::GetSafeLocal(const UObject* WorldContext, const int32& ControllerId)
 		{
 			using namespace NCsPlayer::NController::NLibrary::NCached;

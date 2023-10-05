@@ -157,6 +157,31 @@ namespace NCsInput
 			return Manager_Input;
 		}
 
+		UCsManager_Input* FLibrary::GetSafe(const FString& Context, APlayerController* PC, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			CS_IS_PTR_NULL_RET_NULL(PC)
+
+			ICsGetManagerInput* GetManagerInput = Cast<ICsGetManagerInput>(PC);
+
+			if (!GetManagerInput)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: PlayerController: %s with Class: %s does NOT implement interface: ICsGetManagerInput"), *Context, *(PC->GetName()), *(PC->GetClass()->GetName())));
+				return nullptr;
+			}
+
+			UCsManager_Input* Manager_Input = GetManagerInput->GetManager_Input();
+
+			if (!Manager_Input)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Manager_Input from PlayerController: %s with Class: %s."), *Context, *(PC->GetName()), *(PC->GetClass()->GetName())));
+			}
+
+			OutSuccess = true;
+			return Manager_Input;
+		}
+
 		UCsManager_Input* FLibrary::GetSafe(APawn* Pawn)
 		{
 			if (!Pawn)
@@ -191,6 +216,18 @@ namespace NCsInput
 				return nullptr;
 
 			return GetSafe(Context, PC, Log);
+		}
+
+		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
+
+			APlayerController* PC = PlayerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, OutSuccess, Log);
+
+			if (!PC)
+				return nullptr;
+
+			return GetSafe(Context, PC, OutSuccess, Log);
 		}
 
 		#pragma endregion Get

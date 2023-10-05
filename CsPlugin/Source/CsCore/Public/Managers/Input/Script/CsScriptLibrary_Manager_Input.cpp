@@ -4,6 +4,8 @@
 #include "Managers/Input/Script/CsScriptLibrary_Manager_Input.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Library
 #include "Managers/Input/CsLibrary_Manager_Input.h"
 
@@ -36,6 +38,7 @@ UCsScriptLibrary_Manager_Input::UCsScriptLibrary_Manager_Input(const FObjectInit
 {
 }
 
+#define LogError &FCsLog::Error
 #define InputManagerLibrary NCsInput::NManager::FLibrary
 #define InputActionMapLibrary NCsInput::NManager::NInputActionMap::FLibrary
 
@@ -48,7 +51,7 @@ UCsManager_Input* UCsScriptLibrary_Manager_Input::Get(const FString& Context, co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
 
-	return InputManagerLibrary::GetSafe(Context, WorldContextObject, ControllerId);
+	return InputManagerLibrary::GetSafe(Ctxt, WorldContextObject, ControllerId);
 }
 
 UCsManager_Input* UCsScriptLibrary_Manager_Input::GetChecked(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, bool& OutSuccess)
@@ -56,6 +59,8 @@ UCsManager_Input* UCsScriptLibrary_Manager_Input::GetChecked(const FString& Cont
 	using namespace NCsScriptLibraryManagerInput::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
+
+	return CS_SCRIPT_GET_CHECKED(InputManagerLibrary::GetChecked(Ctxt, WorldContextObject, ControllerId), InputManagerLibrary::GetSafe(Ctxt, WorldContextObject, ControllerId, OutSuccess, LogError));
 }
 
 #pragma endregion Get
@@ -66,7 +71,7 @@ bool UCsScriptLibrary_Manager_Input::Init(const FString& Context, const UObject*
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Init : Context;
 
-	return InputManagerLibrary::SafeInit(Context, WorldContextObject, ControllerId);
+	return InputManagerLibrary::SafeInit(Ctxt, WorldContextObject, ControllerId);
 }
 
 bool UCsScriptLibrary_Manager_Input::InitAll(const FString& Context, const UObject* WorldContextObject)
@@ -75,7 +80,7 @@ bool UCsScriptLibrary_Manager_Input::InitAll(const FString& Context, const UObje
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::InitAll : Context;
 
-	return InputManagerLibrary::SafeInit(Context, WorldContextObject);
+	return InputManagerLibrary::SafeInit(Ctxt, WorldContextObject);
 }
 
 // InputActionMap
@@ -104,7 +109,7 @@ bool UCsScriptLibrary_Manager_Input::SetInputActionMap(const FString& Context, c
 
 #pragma endregion Set
 
-// Clear
+	// Clear
 #pragma region
 
 bool UCsScriptLibrary_Manager_Input::ClearFirstInputActionMap(const FString& Context, const UObject* WorldContextObject, const FECsInputActionMap& Map)
@@ -127,7 +132,7 @@ bool UCsScriptLibrary_Manager_Input::ClearInputActionMap(const FString& Context,
 
 #pragma endregion Clear
 
-// Reset
+	// Reset
 #pragma region
 
 bool UCsScriptLibrary_Manager_Input::ResetFirstInputActionMap(const FString& Context, const UObject* WorldContextObject)
@@ -161,5 +166,6 @@ bool UCsScriptLibrary_Manager_Input::ResetAllInputActionMap(const FString& Conte
 
 #pragma endregion InputActionMap
 
+#undef LogError
 #undef InputManagerLibrary
 #undef InputActionMapLibrary

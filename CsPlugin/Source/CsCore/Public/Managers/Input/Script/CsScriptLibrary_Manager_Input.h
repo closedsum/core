@@ -28,8 +28,20 @@ public:
 	* @param ControllerId
 	* return				Manager_Input
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,ControllerId"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Input", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,ControllerId"))
 	static UCsManager_Input* Get(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId);
+
+	/**
+	* Get the Manager_Input associated with the player controller with ControllerId.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param ControllerId
+	* @param OutSuccess		(out)
+	* return				Manager_Input
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Manager|Input", meta = (DisplayName = "Get (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,ControllerId"))
+	static UCsManager_Input* GetChecked(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, bool& OutSuccess);
 
 #pragma endregion Get
 

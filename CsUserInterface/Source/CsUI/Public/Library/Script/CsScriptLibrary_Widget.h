@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "UObject/Object.h"
 // Types
@@ -118,6 +120,9 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context,AnimName"))
 	static UWidgetAnimation* GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName);
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Animation", meta = (DisplayName = "Get Animation (Checked)", AutoCreateRefTerm = "Context,AnimName"))
+	static UWidgetAnimation* GetAnimationChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess);
 
 	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context,Params"))
 	static bool PlayAnimation(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params);

@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
 #include "Types/CsTypes_UserWidget_Anim.h"
@@ -534,10 +536,22 @@ namespace NCsWidget
 			* @param Context	The calling context.
 			* @param Widget
 			* @param AnimName	Name of the animation.
-			* @param Log
+			* @param Log		(optional)
 			* return			Widget Animation.
 			*/
 			static UWidgetAnimation* GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+			/**
+			* Safely get a Widget Animation with AnimName from Widget.
+			*
+			* @param Context	The calling context.
+			* @param Widget
+			* @param AnimName	Name of the animation.
+			* @param OutSuccess (out)
+			* @param Log		(optional)
+			* return			Widget Animation.
+			*/
+			static UWidgetAnimation* GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 			/**
 			* Safely get a Widget Animation with AnimName from Widget.

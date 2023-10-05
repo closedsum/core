@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Library/CsLibrary_Widget.h"
 #include "CsUI.h"
 
@@ -821,11 +823,11 @@ namespace NCsWidget
 			}
 		}
 
+	#define PropertyLibrary NCsProperty::FLibrary
+
 		UWidgetAnimation* FLibrary::GetChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			return PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName);
 		}
@@ -834,9 +836,16 @@ namespace NCsWidget
 		{
 			CS_IS_PTR_NULL_RET_NULL(Widget)
 
-			typedef NCsProperty::FLibrary PropertyLibrary;
-
 			return PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, Log);
+		}
+
+		UWidgetAnimation* FLibrary::GetSafe(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsUI::FLog; :Warning*/)
+		{
+			OutSuccess = false;
+
+			CS_IS_PTR_NULL_RET_NULL(Widget)
+
+			return PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), AnimName, OutSuccess, Log);
 		}
 
 		UWidgetAnimation* FLibrary::GetSafe(UUserWidget* Widget, const FName& AnimName)
@@ -863,10 +872,7 @@ namespace NCsWidget
 		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const ParamsType& Params)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
-
 			CS_IS_VALID_CHECKED(Params);
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName());
 
@@ -879,10 +885,7 @@ namespace NCsWidget
 		void FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const ParamsType& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL_EXIT(Widget)
-
 			CS_IS_VALID_EXIT(Params)
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.GetName(), Log);
 
@@ -909,10 +912,7 @@ namespace NCsWidget
 		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
-
 			CS_IS_VALID_CHECKED(Params);
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
 
@@ -925,10 +925,7 @@ namespace NCsWidget
 		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidgetAnimPlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Widget)
-
 			CS_IS_VALID(Params)
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
 
@@ -954,10 +951,7 @@ namespace NCsWidget
 		void FLibrary::PlayChecked(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params)
 		{
 			CS_IS_PTR_NULL_CHECKED(Widget)
-
 			CS_IS_VALID_CHECKED(Params);
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValueChecked<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name);
 
@@ -970,10 +964,7 @@ namespace NCsWidget
 		bool FLibrary::SafePlay(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(Widget)
-
 			CS_IS_VALID(Params)
-
-			typedef NCsProperty::FLibrary PropertyLibrary;
 
 			UWidgetAnimation* Animation = PropertyLibrary::GetObjectPropertyValue<UWidgetAnimation>(Context, Widget, Widget->GetClass(), Params.Name, Log);
 
@@ -995,6 +986,8 @@ namespace NCsWidget
 
 			return SafePlay(Context, Widget, Params, nullptr);
 		}
+
+	#undef PropertyLibrary
 	}
 
 	namespace NTextBlock

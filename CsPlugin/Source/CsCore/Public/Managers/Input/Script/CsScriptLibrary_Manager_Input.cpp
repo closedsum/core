@@ -13,9 +13,13 @@ namespace NCsScriptLibraryManagerInput
 	{
 		namespace Str
 		{
+			// Get
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, Get);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, GetChecked);
+			// Init
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, InitAll);
+			// InputActionMap
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, SetFirstInputActionMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, SetInputActionMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Input, ClearFirstInputActionMap);
@@ -45,6 +49,13 @@ UCsManager_Input* UCsScriptLibrary_Manager_Input::Get(const FString& Context, co
 	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
 
 	return InputManagerLibrary::GetSafe(Context, WorldContextObject, ControllerId);
+}
+
+UCsManager_Input* UCsScriptLibrary_Manager_Input::GetChecked(const FString& Context, const UObject* WorldContextObject, const int32& ControllerId, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryManagerInput::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
 }
 
 #pragma endregion Get

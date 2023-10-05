@@ -1,4 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/UserWidget/Data/Text/CsData_UserWidget_Text.h"
 #include "CsUI.h"
 

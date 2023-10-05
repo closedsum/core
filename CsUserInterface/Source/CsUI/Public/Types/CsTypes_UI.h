@@ -1,8 +1,12 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 #include "Engine/DataTable.h"
+// Log
+#include "Utility/CsUILog.h"
 
 #include "CsTypes_UI.generated.h"
-#pragma once
 
 // FCsUserWidget
 #pragma region
@@ -51,7 +55,80 @@ public:
 	template<typename T>
 	FORCEINLINE T* GetClass() const { return Cast<T>(GetClass()); }
 
-	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
+	FORCEINLINE UClass* GetClassChecked() const
+	{
+		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("FCsUserWidgetPtr::GetClassChecked: Widget's Path: %s is NOT Valid."), *(Widget.ToSoftObjectPath().ToString()));
+		checkf(Widget_Class, TEXT("FCsUserWidgetPtr::GetClassChecked: Widget has NOT been loaded from Path @ %s."), *(Widget.ToSoftObjectPath().ToString()));
+		return Widget_Class;
+	}
+
+	FORCEINLINE UClass* GetClassChecked(const FString& Context) const
+	{
+		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("%s: Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString()));
+		checkf(Widget_Class, TEXT("%s: Widget has NOT been loaded from Path @ %s."), *Context, *(Widget.ToSoftObjectPath().ToString()));
+		return Widget_Class;
+	}
+
+	FORCEINLINE UClass* GetSafeClass(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const
+	{
+		if (!Widget.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+
+		if (!Widget_Class)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Widget has NOT been loaded from Path @ %s."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+		return Widget_Class;
+	}
+
+	FORCEINLINE UClass* GetSafeClass(const FString& Context, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const
+	{
+		OutSuccess = false;
+
+		if (!Widget.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+
+		if (!Widget_Class)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Widget has NOT been loaded from Path @ %s."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+
+		OutSuccess = true;
+		return Widget_Class;
+	}
+
+	FORCEINLINE UClass** GetClassPtr() { return &Widget_Class; }
+
+	FORCEINLINE const TSubclassOf<UUserWidget>& GetSubclassOf() const { return Widget_SubclassOf; }
+
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
+	{
+		checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("%s: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString()));
+		return true;
+	}
+
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning) const
+	{
+		if (!Widget.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+			return false;
+		}
+		return true;
+	}
 };
 
 #pragma endregion FCsUserWidget

@@ -777,6 +777,7 @@ namespace NCsProperty
 		* @param StructValue
 		* @param Struct
 		* @param PropertyName
+		* @param Log			(optional)
 		* return				UObject of type: T.
 		*/
 		template<typename T>
@@ -794,6 +795,39 @@ namespace NCsProperty
 				if (Log)
 					Log(FString::Printf(TEXT("%s: %s.%s = %s with Class: %s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName())));
 			}
+			return O;
+		}
+
+		/**
+		* Get the UObject value of type: T for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				UObject of type: T.
+		*/
+		template<typename T>
+		static T* GetObjectPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess      = false;
+			UObject* Object = GetObjectPropertyValue(Context, StructValue, Struct, PropertyName, Log);
+
+			if (!Object)
+				return nullptr;
+
+			T* O = Cast<T>(Object);
+
+			if (!O)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s = %s with Class: %s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Object->GetName()), *(Object->GetClass()->GetName()), *(T::StaticClass()->GetName())));
+				return nullptr;
+			}
+
+			OutSuccess = true;
 			return O;
 		}
 

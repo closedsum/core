@@ -1,4 +1,6 @@
 // Copyright 2017-2021 Closed Sum Games, Inc. All rights reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #include "Managers/Menu/CsLibrary_Manager_Menu.h"
 #include "CsUI.h"
 

@@ -1,4 +1,6 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 #include "Types/Enum/CsEnum_uint8.h"
 #include "Types/Enum/CsEnumStructMap.h"
@@ -259,7 +261,7 @@ public:
 
 	FORCEINLINE UClass** GetClassPtr() { return &Widget_Class; }
 
-	FORCEINLINE TSubclassOf<UUserWidget> GetSubclassOf() const { return Widget_SubclassOf; }
+	FORCEINLINE const TSubclassOf<UUserWidget>& GetSubclassOf() const { return Widget_SubclassOf; }
 
 	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{

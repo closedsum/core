@@ -8,7 +8,7 @@
 
 class ICsGetManagerMenu;
 
-UCLASS(transient)
+UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSUI_API UCsManager_Menu : public UObject
 {
 	GENERATED_UCLASS_BODY()

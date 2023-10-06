@@ -13,7 +13,7 @@ class ICsGetManagerFade;
 struct FCsRoutine;
 class UCsUserWidget_Fade;
 
-UCLASS(transient)
+UCLASS(transient, BlueprintType, Blueprintable, Meta = (ShowWorldContextPin))
 class CSUI_API UCsManager_Fade : public UObject
 {
 	GENERATED_UCLASS_BODY()

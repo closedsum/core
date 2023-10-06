@@ -7,7 +7,11 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
+#include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
+// Game
+#include "Game/Transition/CsGameState_Transition.h"
+#include "Game/ExitGame/CsGameState_ExitGame.h"
 // World
 #include "Engine/World.h"
 #include "GameFramework/GameStateBase.h"
@@ -22,6 +26,8 @@ namespace NCsGameState
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameState::FLibrary, GetSafe);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameState::FLibrary, GetSafeAsObject);
+				// ICsGameState_ExitGame
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsGameState::FLibrary, SafeHasFinishedExitGame);
 			}
 		}
 	}
@@ -31,14 +37,11 @@ namespace NCsGameState
 		return FString::Printf(TEXT("GameState: %s with Class: %s"), *(GameState->GetName()), *(GameState->GetClass()->GetName()));
 	}
 
+	#define WorldLibrary NCsWorld::FLibrary
+
 	AGameStateBase* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
-		CS_IS_PTR_NULL_CHECKED(WorldContext)
-
-		UWorld* World = WorldContext->GetWorld();
-
-		checkf(World, TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName()));
-
+		UWorld* World			  = WorldLibrary::GetChecked(Context, WorldContext);
 		AGameStateBase* GameState = World->GetGameState();
 
 		checkf(GameState, TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName()));
@@ -47,23 +50,18 @@ namespace NCsGameState
 
 	AGameStateBase* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL_RET_NULL(WorldContext)
-
-		UWorld* World = WorldContext->GetWorld();
+		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get World from WorldContext: %s."), *Context, *(WorldContext->GetName())));
 			return nullptr;
-		}
 
 		AGameStateBase* GameState = World->GetGameState();
 
 		if (!GameState)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GameState from World: %s."), *Context, *(World->GetName())));
+			return nullptr;
 		}
-
 		return GameState;
 	}
 
@@ -75,6 +73,8 @@ namespace NCsGameState
 
 		return GetSafe(Context, WorldContext, nullptr);
 	}
+
+	#undef WorldLibrary
 
 	UObject* FLibrary::GetAsObjectChecked(const FString& Context, const UObject* WorldContext)
 	{
@@ -94,4 +94,61 @@ namespace NCsGameState
 
 		return GetSafeAsObject(Context, WorldContext, nullptr);
 	}
+
+	// ICsGameState_Transition
+	#pragma region
+
+	bool FLibrary::HasFinishedTransitionOutChecked(const FString& Context, const UObject* WorldContext)
+	{
+		AGameStateBase* GameState		   = GetChecked(Context, WorldContext);
+		ICsGameState_Transition* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Transition);
+
+		return Interface->HasFinishedTransitionOut();
+	}
+
+	void FLibrary::TransitionOutChecked(const FString& Context, const UObject* WorldContext)
+	{
+		AGameStateBase* GameState		   = GetChecked(Context, WorldContext);
+		ICsGameState_Transition* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_Transition);
+
+		Interface->TransitionOut();
+	}
+
+	#pragma endregion ICsGameState_Transition
+
+	// ICsGameState_ExitGame
+	#pragma region
+		
+	bool FLibrary::HasFinishedExitGameChecked(const FString& Context, const UObject* WorldContext)
+	{
+		AGameStateBase* GameState		 = GetChecked(Context, WorldContext);
+		ICsGameState_ExitGame* Interface = CS_INTERFACE_CAST_CHECKED(GameState, AGameStateBase, ICsGameState_ExitGame);
+
+		return Interface->HasFinishedExitGame();
+	}
+
+	bool FLibrary::SafeHasFinishedExitGame(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		AGameStateBase* GameState = GetSafe(Context, WorldContext, Log);
+
+		if (!GameState)
+			return true;
+
+		ICsGameState_ExitGame* Interface = CS_INTERFACE_CAST(GameState, AGameStateBase, ICsGameState_ExitGame);
+
+		if (!Interface)
+			return true;
+		return Interface->HasFinishedExitGame();
+	}
+
+	bool FLibrary::SafeHasFinishedExitGame(const UObject* WorldContext)
+	{
+		using namespace NCsGameState::NLibrary::NCached;
+
+		const FString& Context = Str::SafeHasFinishedExitGame;
+
+		return SafeHasFinishedExitGame(Context, WorldContext, nullptr);
+	}
+
+	#pragma endregion ICsGameState_ExitGame
 }

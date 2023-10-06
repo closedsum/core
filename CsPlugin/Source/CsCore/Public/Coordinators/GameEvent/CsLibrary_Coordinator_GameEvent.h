@@ -105,6 +105,19 @@ namespace NCsGameEvent
 			/**
 			* Safely get the reference to UCsCoordinator_GameEvent from a ContextObject.
 			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param OutSuccess		(out)
+			* @param Log			(optional)
+			* return				UCsCoordinator_GameEvent.
+			*/
+			static UCsCoordinator_GameEvent* GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Safely get the reference to UCsCoordinator_GameEvent from a ContextObject.
+			*
 			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 			*						or
 			*						A reference to the GameInstance.

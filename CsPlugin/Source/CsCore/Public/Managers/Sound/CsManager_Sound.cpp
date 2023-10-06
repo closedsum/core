@@ -12,7 +12,7 @@
 	// Common
 #include "Library/CsLibrary_Valid.h"
 // Settings
-#include "Settings/CsDeveloperSettings.h"
+#include "Managers/Sound/CsSettings_Manager_Sound.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Data
@@ -41,6 +41,8 @@ namespace NCsManagerSound
 	{
 		namespace Str
 		{
+			// Singleton
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Init);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, SetupInternal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Sound, Spawn);
 		}
@@ -163,6 +165,17 @@ UCsManager_Sound::UCsManager_Sound(const FObjectInitializer& ObjectInitializer)
 		UE_LOG(LogCs, Warning, TEXT("UCsManager_Sound::Init: Init has already been called."));
 	}
 #endif // #if WITH_EDITOR
+}
+
+/*static*/ void UCsManager_Sound::Init(UObject* InRoot, UObject* InOuter /*=nullptr*/)
+{
+	using namespace NCsManagerSound::NCached;
+
+	const FString& Context = Str::Init;
+
+	const FCsSettings_Manager_Sound& Settings = FCsSettings_Manager_Sound::Get();
+
+	Init(InRoot, Settings.LoadClassChecked(Context), InOuter);
 }
 
 /*static*/ void UCsManager_Sound::Shutdown(UObject* InRoot /*=nullptr*/)
@@ -373,18 +386,14 @@ void UCsManager_Sound::SetupInternal()
 #endif // #if !UE_BUILD_SHIPPING
 		// If any settings have been set for Manager_Sound, apply them
 	{
-		UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>();
-
-		checkf(ModuleSettings, TEXT("UCsManager_Sound::SetupInternal: Failed to get settings of type: UCsDeveloperSettings."));
-
-		Settings = ModuleSettings->Manager_Sound;
+		Settings = FCsSettings_Manager_Sound::Get();
 
 		// Populate TypesByUpdateGroup
 		{
 			TypesByUpdateGroup.Reset(EMCsUpdateGroup::Get().Num());
 			TypesByUpdateGroup.AddDefaulted(EMCsUpdateGroup::Get().Num());
 
-			for (TPair<FECsUpdateGroup, FCsSettings_Manager_Sound_TypeArray>& Pair : Settings.TypesByUpdateGroupMap)
+			for (const TPair<FECsUpdateGroup, FCsSettings_Manager_Sound_TypeArray>& Pair : Settings.TypesByUpdateGroupMap)
 			{
 				const FECsUpdateGroup& Group					 = Pair.Key;
 				const FCsSettings_Manager_Sound_TypeArray& Array = Pair.Value;
@@ -842,7 +851,6 @@ void UCsManager_Sound::PopulateDataMapFromSettings()
 {
 	using namespace NCsManagerSound;
 
-	if (UCsDeveloperSettings* ModuleSettings = GetMutableDefault<UCsDeveloperSettings>())
 	{
 		/*
 		for (FCsProjectileSettings_DataTable_Projectiles& Projectiles : ModuleSettings->Projectiles)

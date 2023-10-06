@@ -4,6 +4,8 @@
 #include "Coordinators/GameEvent/Script/CsScriptLibrary_Coordinator_GameEvent.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Library
 #include "Coordinators/GameEvent/CsLibrary_Coordinator_GameEvent.h"
 
@@ -13,7 +15,9 @@ namespace NCsScriptLibraryCoordinatorGameEvent
 	{
 		namespace Str
 		{
+			// Get
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, Get);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, GetChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, BroadcastGameEventInfo);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Coordinator_GameEvent, BroadcastGameEvent_GameInstance);
 		}
@@ -25,6 +29,9 @@ UCsScriptLibrary_Coordinator_GameEvent::UCsScriptLibrary_Coordinator_GameEvent(c
 {
 }
 
+#define LogError &FCsLog::Error
+#define GameEventCoordinatorLibrary NCsGameEvent::NCoordinator::FLibrary
+
 // Get
 #pragma region
 
@@ -34,9 +41,16 @@ UCsCoordinator_GameEvent* UCsScriptLibrary_Coordinator_GameEvent::Get(const FStr
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
 
-	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
+	return GameEventCoordinatorLibrary::GetSafe(Ctxt, WorldContextObject);
+}
 
-	return GameEventCoordinatorLibrary::GetSafe(Context, WorldContextObject);
+UCsCoordinator_GameEvent* UCsScriptLibrary_Coordinator_GameEvent::GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryCoordinatorGameEvent::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Get : Context;
+
+	return CS_SCRIPT_GET_CHECKED(GameEventCoordinatorLibrary::GetChecked(Ctxt, WorldContextObject), GameEventCoordinatorLibrary::GetSafe(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion Get
@@ -47,9 +61,7 @@ bool UCsScriptLibrary_Coordinator_GameEvent::BroadcastGameEventInfo(const FStrin
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::BroadcastGameEventInfo : Context;
 
-	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
-
-	return GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, WorldContextObject, Group, Info);
+	return GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Ctxt, WorldContextObject, Group, Info);
 }
 
 bool UCsScriptLibrary_Coordinator_GameEvent::BroadcastGameEvent_GameInstance(const FString& Context, const UObject* WorldContextObject, const FECsGameEvent& Event)
@@ -58,10 +70,11 @@ bool UCsScriptLibrary_Coordinator_GameEvent::BroadcastGameEvent_GameInstance(con
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::BroadcastGameEvent_GameInstance : Context;
 
-	typedef NCsGameEvent::NCoordinator::FLibrary GameEventCoordinatorLibrary;
-
 	FCsGameEventInfo Info;
 	Info.Event = Event;
 
-	return GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Context, WorldContextObject, NCsGameEventCoordinatorGroup::GameInstance, Info);
+	return GameEventCoordinatorLibrary::SafeBroadcastGameEvent(Ctxt, WorldContextObject, NCsGameEventCoordinatorGroup::GameInstance, Info);
 }
+
+#undef LogError
+#undef GameEventCoordinatorLibrary

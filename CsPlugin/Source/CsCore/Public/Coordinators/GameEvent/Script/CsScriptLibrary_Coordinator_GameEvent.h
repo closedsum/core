@@ -28,8 +28,19 @@ public:
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* return				Coordinator_GameEvent
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Coordinator|GameEvent", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
 	static UCsCoordinator_GameEvent* Get(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Get Coordinator_GameEvent.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess		(out)
+	* return				Coordinator_GameEvent
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Coordinator|GameEvent", meta = (DisplayName = "Get (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static UCsCoordinator_GameEvent* GetChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 #pragma endregion Get
 

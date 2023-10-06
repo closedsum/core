@@ -91,7 +91,31 @@ namespace NCsGameEvent
 			if (!Coordinator_GameEvent)
 			{
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameEvent."), *Context));
+				return nullptr;
 			}
+			return Coordinator_GameEvent;
+		}
+
+		UCsCoordinator_GameEvent* FLibrary::GetSafe(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			UObject* ContextRoot = GetSafeContextRoot(Context, ContextObject, Log);
+
+		#if WITH_EDITOR
+			if (!ContextRoot)
+				return nullptr;
+		#endif // #if WITH_EDITOR
+
+			UCsCoordinator_GameEvent* Coordinator_GameEvent = UCsCoordinator_GameEvent::Get(ContextRoot);
+
+			if (!Coordinator_GameEvent)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Coordinator_GameEvent."), *Context));
+				return nullptr;
+			}
+
+			OutSuccess = true;
 			return Coordinator_GameEvent;
 		}
 
@@ -124,9 +148,9 @@ namespace NCsGameEvent
 			UObject* ContextRoot = GetContextRootChecked(Context, ContextObject);
 
 			// Check Group is Valid.
-			checkf(EMCsGameEventCoordinatorGroup::Get().IsValidEnum(Group), TEXT("%s: Group: %s is NOT Valid."), *Context, Group.ToChar());
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameEventCoordinatorGroup, Group)
 			// Check Info is Valid.
-			check(Info.IsValidChecked(Context));
+			CS_IS_VALID_CHECKED(Info);
 
 			UCsCoordinator_GameEvent* Coordinator_GameEvent = GetChecked(Context, ContextObject);
 
@@ -144,9 +168,9 @@ namespace NCsGameEvent
 		void FLibrary::BroadcastGameEventChecked(const FString& Context, const UObject* ContextObject, const FECsGameEventCoordinatorGroup& Group, const  FCsGameEventInfo& Info)
 		{
 			// Check Group is Valid.
-			check(EMCsGameEventCoordinatorGroup::Get().IsValidEnumChecked(Context, Group));
-			// Check GameEvent is Valid.
-			check(Info.IsValidChecked(Context));
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsGameEventCoordinatorGroup, Group)
+			// Check Info is Valid.
+			CS_IS_VALID_CHECKED(Info);
 
 			UCsCoordinator_GameEvent* Coordinator_GameEvent = GetChecked(Context, ContextObject);
 
@@ -165,9 +189,7 @@ namespace NCsGameEvent
 		{
 			// Check Group is Valid.
 			CS_IS_ENUM_STRUCT_VALID(EMCsGameEventCoordinatorGroup, FECsGameEventCoordinatorGroup, Group)
-
-			if (!Info.IsValid(Context, Log))
-				return false;
+			CS_IS_VALID(Info)
 
 			if (UCsCoordinator_GameEvent* Coordinator_GameEvent = GetSafe(Context, ContextObject, Log))
 			{ 

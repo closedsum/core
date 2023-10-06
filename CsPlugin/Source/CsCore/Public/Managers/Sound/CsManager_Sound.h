@@ -113,7 +113,8 @@ public:
 #endif // #if WITH_EDITOR
 
 	static void Init(UObject* InRoot, TSubclassOf<UCsManager_Sound> ManagerSoundClass, UObject* InOuter = nullptr);
-	
+	static void Init(UObject* InRoot, UObject* InOuter = nullptr);
+
 	static void Shutdown(UObject* InRoot = nullptr);
 	static bool HasShutdown(UObject* InRoot = nullptr);
 

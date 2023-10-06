@@ -68,6 +68,7 @@ public:
 
 class UObject;
 class UClass;
+class UCsManager_Sound;
 
 USTRUCT(BlueprintType)
 struct CSCORE_API FCsSettings_Manager_Sound
@@ -75,6 +76,9 @@ struct CSCORE_API FCsSettings_Manager_Sound
 	GENERATED_USTRUCT_BODY()
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script.CsCore.CsManager_Sound"))
+	TSoftClassPtr<UCsManager_Sound> Class;
 
 	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
 		is important to indicate when a particular Sound type WILL or will NOT get "ticked" or updated. */
@@ -85,11 +89,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound")
 	TMap<FECsSound, FCsSettings_Manager_Sound_PoolParams> PoolParams;
 
-	FCsSettings_Manager_Sound() :
-		TypesByUpdateGroupMap(),
-		PoolParams()
-	{
-	}
+	FCsSettings_Manager_Sound();
+
+	static const FCsSettings_Manager_Sound& Get();
+
+	bool IsValidChecked(const FString& Context) const;
+
+	UClass* LoadClassChecked(const FString& Context) const;
 };
 
 #pragma endregion FCsSettings_Manager_Sound

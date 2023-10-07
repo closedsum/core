@@ -17,9 +17,9 @@ class CSUI_API UCsScriptLibrary_UI_Types : public UObject
 
 public:
 
-	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Types", meta = (DisplayName = "Get Class (UUserWidget)", ScriptMethod = "Get", Keywords = "get class", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Types", meta = (DisplayName = "Get Class (UUserWidget)", Keywords = "get class", AutoCreateRefTerm = "Context"))
 	static UClass* FCsUserWidget_GetClass(const FString& Context, const FCsUserWidget& A);
 
-	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Types", meta = (DisplayName = "Get Class (UUserWidget | Checked)", ScriptMethod = "Get", Keywords = "get class", AutoCreateRefTerm = "Context"))
-	static UClass* FCsUserWidget_GetClassChecked(const FString& Context, const FCsUserWidget& A);
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Types", meta = (DisplayName = "Get Class (UUserWidget | Checked)", Keywords = "get class", AutoCreateRefTerm = "Context"))
+	static UClass* FCsUserWidget_GetClassChecked(const FString& Context, const FCsUserWidget& A, bool& OutSuccess);
 };

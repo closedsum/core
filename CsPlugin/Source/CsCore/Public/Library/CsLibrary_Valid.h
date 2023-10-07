@@ -1403,6 +1403,61 @@ namespace NCsValid
 		};
 	}
 
+	namespace NSoftObjectPtr
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			template<typename ObjectType>
+			FORCEINLINE static bool IsValidChecked(const FString& Context, const TSoftObjectPtr<ObjectType>& A, const FString& AName)
+			{
+				checkf(A.ToSoftObjectPath().IsValid(), TEXT("%s: %s is NOT Valid."), *Context, *AName);
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static bool IsValid(const FString& Context, const TSoftObjectPtr<ObjectType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A.ToSoftObjectPath().IsValid())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT Valid."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* GetChecked(const FString& Context, const TSoftObjectPtr<ObjectType>& A, const FString& AName)
+			{
+				check(IsValidChecked<ObjectType>(Context, A, AName));
+
+				ObjectType* O = A.Get();
+
+				checkf(O, TEXT("%s: %s is NULL. Path @ %s has NOT been Loaded."), *Context, *AName, *(A.ToSoftObjectPath().ToString()));
+				return O;
+			}
+
+			template<typename ObjectType>
+			FORCEINLINE static ObjectType* Get(const FString& Context, const TSoftObjectPtr<ObjectType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!IsValid<ObjectType>(Context, A, AName, Log))
+					return nullptr;
+
+				ObjectType* O = A.Get();
+
+				if (!O)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL. Path @ %s has NOT been Loaded."), *Context, *AName, *(A.ToSoftObjectPath().ToString())));
+					return nullptr;
+				}
+				return O;
+			}
+		};
+	}
+
 	namespace NSoftObjectPath
 	{
 		struct CSCORE_API FLibrary final
@@ -2002,6 +2057,26 @@ namespace NCsValid
 
 #pragma endregion WeakObjectPtr
 
+// TSoftObjectPtr
+#pragma region 
+
+// Assume const FString& Context has been defined
+#define CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(__A, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NSoftObjectPtr::FLibrary::IsValidChecked<__ObjectType>(Context, __A, __temp__str__)); \
+	}
+
+// Assume const FString& Context has been defined
+#define CS_SOFT_OBJECT_PTR_GET_CHECKED(__A, __ObjectType) \
+	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		return NCsValid::NSoftObjectPtr::FLibrary::GetChecked<__ObjectType>(Context, __A, __temp__str__); \
+	}(Context, __A)
+
+#pragma endregion TSoftObjectPtr
+
 // FSoftObjectPath
 #pragma region 
 
@@ -2202,6 +2277,15 @@ namespace NCsValid
 	}(Context, this, __Class)	
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
+// TSoftObjectPtr
+#define CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(__A)
+	// Assume const FString& Context has been defined
+#define CS_SOFT_OBJECT_PTR_GET_CHECKED(__A, __ObjectType) \
+	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSoftObjectPtr::FLibrary::GetChecked<__ObjectType>(Context, __A, __temp__str__); \
+	}(Context, __A)
 // FSoftObjectPath
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
 // SubclassOf
@@ -2906,6 +2990,31 @@ namespace NCsValid
 	}
 
 #pragma endregion WeakObjectPtr
+
+// TSoftObjectPtr
+#pragma region 
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PTR_VALID(__A, __ObjectType) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_SOFT_OBJECT_PTR_GET(__A, __ObjectType) \
+	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		return NCsValid::NSoftObjectPtr::FLibrary::Get<__ObjectType>(Context, __A, __temp__str__, Log); \
+	}(Context, __A, Log)
+
+#pragma endregion TSoftObjectPtr
 
 // FSoftObjectPath
 #pragma region 

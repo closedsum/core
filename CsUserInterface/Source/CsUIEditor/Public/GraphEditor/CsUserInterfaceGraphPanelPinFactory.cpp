@@ -13,6 +13,7 @@
 // EnumStructs
 	// Menu
 #include "GraphEditor/EnumStruct/Menu/SCsGraphPin_ECsMenu.h"
+#include "GraphEditor/EnumStruct/Menu/SCsGraphPin_ECsMenuEvent.h"
 	// WidgetActor
 #include "GraphEditor/EnumStruct/WidgetActor/SCsGraphPin_ECsWidgetActor.h"
 #include "GraphEditor/EnumStruct/WidgetActor/SCsGraphPin_ECsWidgetActorClass.h"
@@ -36,6 +37,8 @@ TSharedPtr<SGraphPin> FCsUserInterfacePanelGraphPinFactory::CreatePin(UEdGraphPi
 	{
 		// FECsMenu
 		CS_TEMP_CREATE(ECsMenu)
+		// FECsMenuEvent
+		CS_TEMP_CREATE(ECsMenuEvent)
 	}
 	// WidgetActor
 	{

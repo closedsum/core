@@ -5,6 +5,7 @@
 #include "Data/CsUIDataRootSet.h"
 
 class UObject;
+class UClass;
 
 namespace NCsUI
 {
@@ -144,6 +145,8 @@ namespace NCsUI
 			static bool GetSafeDataTablePath(const FString& Context, const UObject* WorldContext, const MemberType& Member, FString& OutPath, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 		#undef MemberType
+
+			static UClass* GetFadeWidgetClassChecked(const FString& Context, const UObject* WorldContext);
 		};
 	}
 }

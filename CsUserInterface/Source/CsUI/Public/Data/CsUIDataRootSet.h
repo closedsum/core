@@ -123,4 +123,6 @@ public:
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const;
 
 	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
+
+	UClass* GetFadeWidgetClassChecked(const FString& Context) const;
 };

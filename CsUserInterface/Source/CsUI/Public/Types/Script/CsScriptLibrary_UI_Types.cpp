@@ -43,13 +43,14 @@ UClass* UCsScriptLibrary_UI_Types::FCsUserWidget_GetClass(const FString& Context
 	return A.GetSafeClass(Ctxt);
 }
 
-UClass* UCsScriptLibrary_UI_Types::FCsUserWidget_GetClassChecked(const FString& Context, const FCsUserWidget& A)
+UClass* UCsScriptLibrary_UI_Types::FCsUserWidget_GetClassChecked(const FString& Context, const FCsUserWidget& A, bool& OutSuccess)
 {
 	using namespace NCsScriptLibraryUITypes::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::FCsUserWidget_GetClass : Context;
 
-	return CS_SCRIPT_GET_CHECKED(A.GetClassChecked(Ctxt), A.GetSafeClass(Ctxt, LogError));
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(A.GetClassChecked(Ctxt), A.GetSafeClass(Ctxt, OutSuccess, LogError));
 }
 
 #undef LogError

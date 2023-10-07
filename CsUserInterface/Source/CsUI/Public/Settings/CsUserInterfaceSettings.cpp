@@ -16,6 +16,7 @@ namespace NCsUserInterfaceSettings
 			CSUI_API const FString WidgetActor = TEXT("UCsUserInterfaceSettings.ECsWidgetActor");
 			CSUI_API const FString UserWidget = TEXT("UCsUserInterfaceSettings.ECsUserWidget");
 			CSUI_API const FString UserWidgetPooled = TEXT("UCsUserInterfaceSettings.ECsUserWidgetPooled");
+			CSUI_API const FString MenuEvent = TEXT("UCsUserInterfaceSettings.ECsMenuEvent");
 		}
 	}
 }

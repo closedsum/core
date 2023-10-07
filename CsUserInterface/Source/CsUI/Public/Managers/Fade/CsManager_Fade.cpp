@@ -223,7 +223,9 @@ void UCsManager_Fade::CreateFadeWidget()
 	if (IsValid(FadeWidget))
 	{
 		FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
-		FadeWidget->MarkAsGarbage();
+
+		if (FadeWidget->GetParent())
+			FadeWidget->RemoveFromParent();
 		FadeWidget = nullptr;
 
 #if !UE_BUILD_SHIPPING
@@ -236,13 +238,8 @@ void UCsManager_Fade::CreateFadeWidget()
 
 	typedef NCsUI::NDataRootSet::FLibrary DataRootSetLibrary;
 
-	const FCsUIDataRootSet& DataRootSet = DataRootSetLibrary::GetChecked(Context, MyRoot);
-
-	UClass* Class = DataRootSet.FadeWidget.Get();
-
-	checkf(Class, TEXT("%s: FCsUIDataRootSet.FadeWidget is NULL."), *Context);
-
-	FadeWidget = CreateWidget<UCsUserWidget_Fade>(Cast<UGameInstance>(MyRoot), Class);
+	UClass* Class = DataRootSetLibrary::GetFadeWidgetClassChecked(Context, MyRoot);
+	FadeWidget	  = CreateWidget<UCsUserWidget_Fade>(Cast<UGameInstance>(MyRoot), Class);
 
 	static const int32 ZOrder = 1000;
 	FadeWidget->AddToViewport(ZOrder);
@@ -266,40 +263,33 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 	const FString& Context = Str::Fade;
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, MyRoot);
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(MyRoot);
-
-	Scheduler->End(UpdateGroup, FadeHandle);
-
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	PayloadType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
+	CoroutineSchedulerLibrary::EndChecked(Context, MyRoot, UpdateGroup, FadeHandle);
+
+	PayloadType* Payload = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+
+	typedef UCsManager_Fade ClassType;
 	#define COROUTINE Fade_Internal
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Fade::COROUTINE);
-	Payload->StartTime = UCsManager_Time::Get(ContextRoot)->GetTime(UpdateGroup);
-	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::COROUTINE);
-	Payload->SetFName(Name::COROUTINE);
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
 
 	#undef COROUTINE
 
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT_START
+	CS_COROUTINE_PAYLOAD_PASS_COLOR_START
+
 	// From
-	static const int32 FROM = 0;
-	Payload->SetValue_Color(FROM, Params.From);
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.From);
 	// To
-	static const int32 TO = 1;
-	Payload->SetValue_Color(TO, Params.To);
+	CS_COROUTINE_PAYLOAD_PASS_COLOR(Payload, Params.To);
 	// Time
-	static const int32 TIME = 0;
-	Payload->SetValue_Float(TIME, Params.Time);
+	CS_COROUTINE_PAYLOAD_PASS_FLOAT(Payload, Params.Time);
 	// bCollapseOnEnd
-	static const int32 COLLAPSE = 0;
-	Payload->SetValue_Flag(COLLAPSE, Params.bCollapseOnEnd);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, Params.bCollapseOnEnd);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
@@ -312,7 +302,7 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	FadeHandle = Scheduler->Start(Payload);
+	FadeHandle = CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
@@ -321,18 +311,18 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 
 	const FString& Context = Str::Fade_Internal;
 
+	CS_COROUTINE_READ_FLAG_START
+	CS_COROUTINE_READ_FLOAT_START
+	CS_COROUTINE_READ_COLOR_START
+
 	// From
-	static const int32 FROM = 0;
-	const FLinearColor& From = R->GetValue_Color(FROM);
+	CS_COROUTINE_READ_COLOR_CONST_REF(R, From);
 	// To
-	static const int32 TO = 1;
-	const FLinearColor& To = R->GetValue_Color(TO);
+	CS_COROUTINE_READ_COLOR_CONST_REF(R, To);
 	// Time
-	static const int32 TIME = 0;
-	const float& Time = R->GetValue_Float(TIME);
+	CS_COROUTINE_READ_FLOAT_CONST_REF(R, Time);
 	// bCollapseOnEnd
-	static const int32 COLLAPSE = 0;
-	const bool& bCollapseOnEnd = R->GetValue_Flag(COLLAPSE);
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, bCollapseOnEnd);
 
 	const float Percent = Time > 0.0f ? R->ElapsedTime.Time / Time : 0.0f;
 
@@ -422,13 +412,6 @@ void UCsManager_Fade::StopFade()
 
 	const FString& Context = Str::StopFade;
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
-
-	UObject* ContextRoot = CoroutineSchedulerLibrary::GetContextRootChecked(Context, MyRoot);
-
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
-	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(ContextRoot);
-
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
 	{
@@ -436,7 +419,11 @@ void UCsManager_Fade::StopFade()
 	}
 #endif // #if !UE_BUILD_SHIPPING
 
-	Scheduler->End(UpdateGroup, FadeHandle);
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+
+	CoroutineSchedulerLibrary::EndChecked(Context, MyRoot, UpdateGroup, FadeHandle);
 }
 
 void UCsManager_Fade::ClearFade()

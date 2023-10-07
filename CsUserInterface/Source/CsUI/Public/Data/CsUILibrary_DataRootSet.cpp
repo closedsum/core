@@ -85,5 +85,10 @@ namespace NCsUI
 		}
 
 		#undef MemberType
+
+		UClass* FLibrary::GetFadeWidgetClassChecked(const FString& Context, const UObject* WorldContext)
+		{
+			return GetChecked(Context, WorldContext).GetFadeWidgetClassChecked(Context);
+		}
 	}
 }

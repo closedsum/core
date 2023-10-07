@@ -8,6 +8,10 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Data/CsLibrary_DataRootSet.h"
+	// Common
+#include "Library/CsLibrary_Valid.h"
+// UI
+#include "Managers/Fade/CsUserWidget_Fade.h"
 
 // Cached
 #pragma region
@@ -195,4 +199,11 @@ uint8* FCsUIDataRootSet::GetDataTableRowChecked(const FString& Context, const UO
 	typedef NCsDataRootSet::FLibrary DataRootSetLibrary;
 
 	return DataRootSetLibrary::GetDataTableRowChecked(Context, WorldContext, GetDataTableSoftObjectChecked(Context, MemberType), RowStruct, RowName);
+}
+
+UClass* FCsUIDataRootSet::GetFadeWidgetClassChecked(const FString& Context) const
+{
+	CS_IS_SUBCLASS_OF_NULL_CHECKED(FadeWidget, UCsUserWidget_Fade)
+
+	return FadeWidget.Get();
 }

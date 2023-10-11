@@ -23,6 +23,8 @@ declare namespace FJsCore {
 declare type FJsCore_FScript = FJsCore.FScript;
 
 declare class FJsCore {
+    EntryFileName: string;
+    EntryFilePath: string;
     ScriptOuter: UObject;
     ScriptOuterId: number;
     Engine: GameEngine;
@@ -37,6 +39,8 @@ declare class FJsCore {
     PlayerPawn: Actor;
     Script: FJsCore.FScript;
     CoroutineScheduler: FJCoroutineScheduler;
+    GetEntryFileName(): string;
+    GetEntryFilePath(): string;
     GetScriptOuter(): UObject;
     GetScriptOuterId(): number;
     GetEngine(): GameEngine;

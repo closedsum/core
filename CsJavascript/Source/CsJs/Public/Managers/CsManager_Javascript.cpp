@@ -763,7 +763,7 @@ void UCsManager_Javascript::RunScripts()
 		{
 			checkf(ScriptObject.Context, TEXT("UCsManager_Javascript::RunScripts: Context is NULL."));
 
-			const FString& FileName = FileInfo.File;
+			const FString& FileName = FileInfo.Entry;
 
 			checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::RunScripts: FileName is Empty."));
 
@@ -798,7 +798,7 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 
 	if (!FileInfo.bEnable)
 	{
-		UE_LOG(LogCsJs, Warning, TEXT("%s: Script: %s associated with index: %d is NOT Enabled."), *Context, *(FileInfo.File), Index);
+		UE_LOG(LogCsJs, Warning, TEXT("%s: Script: %s associated with index: %d is NOT Enabled."), *Context, *(FileInfo.Entry), Index);
 		return;
 	}
 
@@ -808,7 +808,7 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
 	FCsJavascriptFileObjects& ScriptObject = ScriptObjects[Index];
-	const FString& FileName				   = FileInfo.File;
+	const FString& FileName				   = FileInfo.Entry;
 
 	JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
 }

@@ -62,6 +62,8 @@ module.exports = class FJsCore
 
     constructor()
     {
+        /** @type {string} */           this.EntryFileName = "";
+        /** @type {string} */           this.EntryFilePath = "";
         /** @type {UObject} */          this.ScriptOuter = null;
         /** @type {number} */           this.ScriptOuterId = INDEX_NONE;
         /** @type {GameEngine} */       this.Engine = null;
@@ -82,6 +84,8 @@ module.exports = class FJsCore
         this.Script = new FJsCore.FScript();
     }
 
+    /*string*/                  GetEntryFileName()      { return this.EntryFileName; }
+    /*string*/                  GetEntryFilePath()      { return this.EntryFilePath; }
     /*UObject*/                 GetScriptOuter()        { return this.ScriptOuter; }
     /*number*/                  GetScriptOuterId()      { return this.ScriptOuterId; }
     /*GameEngine*/              GetEngine()             { return this.Engine; }
@@ -135,6 +139,8 @@ module.exports = class FJsCore
         this.CoroutineScheduler.EndAll();
         this.CoroutineScheduler = null;
 
+        this.EntryFileName = "";
+        this.EntryFilePath = "";
         this.ScriptOuter = null;
         this.ScriptOuterId = INDEX_NONE;
         this.Engine = null;

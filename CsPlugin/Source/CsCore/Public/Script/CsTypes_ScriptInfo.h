@@ -16,11 +16,15 @@ struct FCsScript_FileInfo
 	bool bEnable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Script")
-	FString File;
+	FString Entry;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Script")
+	FString Target;
 
 	FCsScript_FileInfo() :
 		bEnable(false),
-		File()
+		Entry(),
+		Target()
 	{
 	}
 
@@ -28,11 +32,11 @@ struct FCsScript_FileInfo
 	{
 		if (bEnable)
 		{
-			if (File.IsEmpty())
+			if (Entry.IsEmpty())
 			{
 				if (Log)
 				{
-					Log(FString::Printf(TEXT("%s: File is EMPTY."), *Context));
+					Log(FString::Printf(TEXT("%s: Entry is EMPTY."), *Context));
 				}
 				return false;
 			}

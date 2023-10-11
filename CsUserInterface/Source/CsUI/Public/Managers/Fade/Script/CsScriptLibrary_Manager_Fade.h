@@ -43,24 +43,67 @@ public:
 public:
 
 	/**
-	* fade the screen from Clear to Black over Time.
+	* 
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* return					
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool ClearFade(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* 
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	* return					
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (DisplayName = "Clear Fade (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static void ClearFadeChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
+
+	/**
+	* Fade the screen from Clear to Black over Time.
 	* 
 	* @param Context		The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Time
 	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Time"))
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Time"))
 	static bool FadeClearToBlack(const FString& Context, const UObject* WorldContextObject, const float& Time);
 
 	/**
-	* fade the screen from Black to Clear over Time.
+	* Fade the screen from Clear to Black over Time.
+	* 
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Time
+	* @param OutSuccess			(out)
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (DisplayName = "Fade Clear to Black (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Time"))
+	static void FadeClearToBlackChecked(const FString& Context, const UObject* WorldContextObject, const float& Time, bool& OutSuccess);
+
+	/**
+	* Fade the screen from Black to Clear over Time.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Time
 	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Time"))
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Time"))
 	static bool FadeBlackToClear(const FString& Context, const UObject* WorldContextObject, const float& Time);
+
+	/**
+	* Fade the screen from Black to Clear over Time.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Time
+	* @param OutSuccess			(out)
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsUI|Library|Manager|Fade", meta = (DisplayName = "Fade Black to Clear (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Time"))
+	static void FadeBlackToClearChecked(const FString& Context, const UObject* WorldContextObject, const float& Time, bool& OutSuccess);
 };

@@ -13,6 +13,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 #include "Data/CsUILibrary_DataRootSet.h"
+	// Common
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
@@ -257,10 +258,11 @@ void UCsManager_Fade::CreateFadeWidget()
 void UCsManager_Fade::Fade(const ParamsType& Params)
 {
 #undef ParamsType
-
 	using namespace NCsManagerFade::NCached;
 
 	const FString& Context = Str::Fade;
+
+	CS_IS_VALID_CHECKED(Params);
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -373,10 +375,13 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 void UCsManager_Fade::SafeFade(const ParamsType& Params)
 {
 #undef ParamsType
-
 	using namespace NCsManagerFade::NCached;
 
 	const FString& Context = Str::SafeFade;
+
+	void(*Log)(const FString&) = &FCsLog::Warning;
+
+	CS_IS_VALID_EXIT(Params)
 
 	if (!IsValid(FadeWidget))
 	{

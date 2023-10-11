@@ -4,6 +4,8 @@
 #include "Managers/Input/Script/CsScriptLibrary_Mouse.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
@@ -16,13 +18,21 @@ namespace NCsScriptLibraryMouse
 	{
 		namespace Str
 		{
+			// Show / Hide
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, IsShowingCursor);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, IsShowingCursorChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, ShowCursor);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, ShowCursorChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, HideCursor);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, HideCursorChecked);
+			// Get / Set
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, GetPosition);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, SetPosition);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, SetCenterOfViewport);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, RefreshPosition);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, RefreshPositionChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, GetWorldIntersection);
+			// Trace
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Mouse, Trace);
 		}
 	}
@@ -33,6 +43,9 @@ UCsScriptLibrary_Mouse::UCsScriptLibrary_Mouse(const FObjectInitializer& ObjectI
 {
 }
 
+#define LogError &FCsLog::Error
+#define MouseLibrary NCsInput::NMouse::FLibrary
+
 // Show / Hide
 #pragma region
 
@@ -42,31 +55,55 @@ bool UCsScriptLibrary_Mouse::IsShowingCursor(const FString& Context, const UObje
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::IsShowingCursor : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
-
 	return MouseLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject);
 }
 
-void UCsScriptLibrary_Mouse::ShowCursor(const FString& Context, const UObject* WorldContextObject)
+bool UCsScriptLibrary_Mouse::IsShowingCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryMouse::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::IsShowingCursorChecked : Context;
+
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(MouseLibrary::IsShowingCursorChecked(Ctxt, WorldContextObject), MouseLibrary::SafeIsShowingCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
+}
+
+bool UCsScriptLibrary_Mouse::ShowCursor(const FString& Context, const UObject* WorldContextObject)
 {
 	using namespace NCsScriptLibraryMouse::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::ShowCursor : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
-
-	MouseLibrary::SafeShowCursor(Context, WorldContextObject);
+	return MouseLibrary::SafeShowCursor(Ctxt, WorldContextObject);
 }
 
-void UCsScriptLibrary_Mouse::HideCursor(const FString& Context, const UObject* WorldContextObject) 
+void UCsScriptLibrary_Mouse::ShowCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryMouse::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::ShowCursor : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(MouseLibrary::ShowCursorChecked(Ctxt, WorldContextObject), MouseLibrary::SafeShowCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
+}
+
+bool UCsScriptLibrary_Mouse::HideCursor(const FString& Context, const UObject* WorldContextObject) 
 {
 	using namespace NCsScriptLibraryMouse::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::HideCursor : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
+	return MouseLibrary::SafeHideCursor(Ctxt, WorldContextObject);
+}
 
-	MouseLibrary::SafeHideCursor(Context, WorldContextObject);
+void UCsScriptLibrary_Mouse::HideCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess) 
+{
+	using namespace NCsScriptLibraryMouse::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::HideCursorChecked : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(MouseLibrary::HideCursorChecked(Ctxt, WorldContextObject), MouseLibrary::SafeHideCursor(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion Show / Hide
@@ -80,9 +117,7 @@ bool UCsScriptLibrary_Mouse::GetPosition(const FString& Context, const UObject* 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetPosition : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
-
-	return MouseLibrary::GetSafePosition(Context, WorldContextObject, OutPosition);
+	return MouseLibrary::GetSafePosition(Ctxt, WorldContextObject, OutPosition);
 }
 
 bool UCsScriptLibrary_Mouse::SetPosition(const FString& Context, const UObject* WorldContextObject, const int32& X, const int32& Y)
@@ -91,9 +126,7 @@ bool UCsScriptLibrary_Mouse::SetPosition(const FString& Context, const UObject* 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetPosition : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
-
-	return MouseLibrary::SetSafePosition(Context, WorldContextObject, X, Y);
+	return MouseLibrary::SetSafePosition(Ctxt, WorldContextObject, X, Y);
 }
 
 bool UCsScriptLibrary_Mouse::SetCenterOfViewport(const FString& Context, const UObject* WorldContextObject)
@@ -102,9 +135,26 @@ bool UCsScriptLibrary_Mouse::SetCenterOfViewport(const FString& Context, const U
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetCenterOfViewport : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
+	return MouseLibrary::SetSafeCenterOfViewport(Ctxt, WorldContextObject);
+}
 
-	return MouseLibrary::SetSafeCenterOfViewport(Context, WorldContextObject);
+bool UCsScriptLibrary_Mouse::RefreshPosition(const FString& Context, const UObject* WorldContextObject)
+{
+	using namespace NCsScriptLibraryMouse::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::RefreshPosition : Context;
+
+	return MouseLibrary::SafeRefreshPosition(Ctxt, WorldContextObject);
+}
+
+void UCsScriptLibrary_Mouse::RefreshPositionChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryMouse::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::RefreshPositionChecked : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(MouseLibrary::RefreshPositionChecked(Ctxt, WorldContextObject), MouseLibrary::SafeRefreshPosition(Ctxt, WorldContextObject, OutSuccess, LogError));
 }
 
 #pragma endregion Get / Set
@@ -118,9 +168,7 @@ bool UCsScriptLibrary_Mouse::GetWorldIntersection(const FString& Context, const 
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetWorldIntersection : Context;
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
-
-	return MouseLibrary::GetSafeWorldIntersection(Context, WorldContextObject, Plane, OutIntersection);
+	return MouseLibrary::GetSafeWorldIntersection(Ctxt, WorldContextObject, Plane, OutIntersection);
 }
 
 bool UCsScriptLibrary_Mouse::Trace(const FString& Context, const UObject* WorldContextObject, const FCsTraceRequest& Request, const float& Distance, FCsTraceResponse& OutResponse)
@@ -150,7 +198,6 @@ bool UCsScriptLibrary_Mouse::Trace(const FString& Context, const UObject* WorldC
 
 	Request.CopyToRequestAsValue(RequestPtr);
 
-	typedef NCsInput::NMouse::FLibrary MouseLibrary;
 	typedef NCsTrace::NResponse::FResponse ResponseType;
 
 	ResponseType* ResponsePtr = MouseLibrary::SafeTrace(Ctxt, WorldContextObject, RequestPtr, Distance);
@@ -166,3 +213,6 @@ bool UCsScriptLibrary_Mouse::Trace(const FString& Context, const UObject* WorldC
 }
 
 #pragma endregion Trace
+
+#undef LogError
+#undef MouseLibrary

@@ -23,8 +23,13 @@ namespace NCsScriptLibraryManagerFade
 			// Get
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, Get);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, GetChecked);
+			// Fade
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, ClearFade);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, ClearFadeChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeClearToBlack);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeClearToBlackChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeBlackToClear);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Manager_Fade, FadeBlackToClearChecked);
 		}
 	}
 }
@@ -62,6 +67,25 @@ UCsManager_Fade* UCsScriptLibrary_Manager_Fade::GetChecked(const FString& Contex
 
 #pragma endregion Get
 
+bool UCsScriptLibrary_Manager_Fade::ClearFade(const FString& Context, const UObject* WorldContextObject)
+{
+	using namespace NCsScriptLibraryManagerFade::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::ClearFade : Context;
+
+	return FadeManagerLibrary::SafeClearFade(Ctxt, WorldContextObject);
+}
+
+void UCsScriptLibrary_Manager_Fade::ClearFadeChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryManagerFade::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::ClearFadeChecked : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(FadeManagerLibrary::ClearFadeChecked(Ctxt, WorldContextObject), FadeManagerLibrary::SafeClearFade(Ctxt, WorldContextObject, OutSuccess, LogError));
+}
+
 bool UCsScriptLibrary_Manager_Fade::FadeClearToBlack(const FString& Context, const UObject* WorldContextObject, const float& Time)
 {
 	using namespace NCsScriptLibraryManagerFade::NCached;
@@ -71,6 +95,16 @@ bool UCsScriptLibrary_Manager_Fade::FadeClearToBlack(const FString& Context, con
 	return FadeManagerLibrary::SafeFadeClearToBlack(Ctxt, WorldContextObject, Time);
 }
 
+void UCsScriptLibrary_Manager_Fade::FadeClearToBlackChecked(const FString& Context, const UObject* WorldContextObject, const float& Time, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryManagerFade::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::FadeClearToBlackChecked : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(FadeManagerLibrary::FadeClearToBlackChecked(Ctxt, WorldContextObject, Time), FadeManagerLibrary::SafeFadeClearToBlack(Ctxt, WorldContextObject, Time, OutSuccess, LogError));
+}
+
 bool UCsScriptLibrary_Manager_Fade::FadeBlackToClear(const FString& Context, const UObject* WorldContextObject, const float& Time)
 {
 	using namespace NCsScriptLibraryManagerFade::NCached;
@@ -78,6 +112,16 @@ bool UCsScriptLibrary_Manager_Fade::FadeBlackToClear(const FString& Context, con
 	const FString& Ctxt = Context.IsEmpty() ? Str::FadeBlackToClear : Context;
 
 	return FadeManagerLibrary::SafeFadeBlackToClear(Ctxt, WorldContextObject, Time);
+}
+
+void UCsScriptLibrary_Manager_Fade::FadeBlackToClearChecked(const FString& Context, const UObject* WorldContextObject, const float& Time, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryManagerFade::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::FadeBlackToClearChecked : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(FadeManagerLibrary::FadeBlackToClearChecked(Ctxt, WorldContextObject, Time), FadeManagerLibrary::SafeFadeBlackToClear(Ctxt, WorldContextObject, Time, OutSuccess, LogError));
 }
 
 #undef LogError

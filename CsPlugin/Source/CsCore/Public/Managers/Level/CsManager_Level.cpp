@@ -7,15 +7,15 @@
 // CVar
 //#include "CsCVars_Manager_Data.h"
 // Coroutine
-#include "Coroutine/CsCoroutineScheduler.h"
+#include "Coroutine/CsRoutine.h"
 // Types
 #include "Managers/Time/CsTypes_Update.h"
 // Library
+#include "Coroutine/CsLibrary_CoroutineScheduler.h"
+	// Common
 #include "Level/CsLibrary_Level.h"
 #include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Valid.h"
-// Managers
-#include "Managers/Time/CsManager_Time.h"
 // Settings
 #include "Managers/Level/CsSettings_Manager_Level.h"
 // World
@@ -41,15 +41,21 @@ namespace NCsManagerLevel
 			// Singleton
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Init);
 			// Persistent Level
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
-			// Champ Map
+			// Change Map
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, ChangeMap_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, DestroyOtherPIEWorld);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Level, DestroyOtherPIEWorld_Internal);
 		}
 
 		namespace Name
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, Check_FinishedLoadingPersistentLevel_Internal);
+			// Change Map
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, ChangeMap_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsManager_Level, DestroyOtherPIEWorld_Internal);
 		}
 	}
 }
@@ -225,57 +231,67 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 {
 	using namespace NCsManagerLevel::NCached;
 
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	const FString& Context = Str::Check_FinishedLoadingPersistentLevel;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
-	PayloadImplType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	PayloadImplType* Payload		   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal);
-	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
-	Payload->Owner.SetOwner(this);
-	Payload->SetName(Str::Check_FinishedLoadingPersistentLevel_Internal);
-	Payload->SetFName(Name::Check_FinishedLoadingPersistentLevel_Internal);
+	typedef UCsManager_Level ClassType;
+	#define COROUTINE Check_FinishedLoadingPersistentLevel_Internal
+
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
 
 	bFinishedLoadingPersistentlLevel = false;
 
-	Payload->SetValue_Flag(CS_FIRST, false);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
 
-	Scheduler->Start(Payload);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, false);
+
+	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPackageName)
 {
 	using namespace NCsManagerLevel::NCached;
 
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	const FString& Context = Str::Check_FinishedLoadingPersistentLevel;
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
-	PayloadImplType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	PayloadImplType* Payload		   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal);
-	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
-	Payload->Owner.SetOwner(this);
-	Payload->SetName(Str::Check_FinishedLoadingPersistentLevel_Internal);
-	Payload->SetFName(Name::Check_FinishedLoadingPersistentLevel_Internal);
+	typedef UCsManager_Level ClassType;
+	#define COROUTINE Check_FinishedLoadingPersistentLevel_Internal
+
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
 
 	bFinishedLoadingPersistentlLevel = false;
 
-	Payload->SetValue_Flag(CS_FIRST, MapPackageName.IsEmpty() ? false : true);
-	Payload->SetValue_String(CS_FIRST, MapPackageName);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG_START
+	CS_COROUTINE_PAYLOAD_PASS_STRING_START
 
-	Scheduler->Start(Payload);
+	CS_COROUTINE_PAYLOAD_PASS_FLAG(Payload, MapPackageName.IsEmpty() ? false : true);
+	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, MapPackageName);
+
+	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine* R)
 {
-	const bool& CheckMapName	  = R->GetValue_Flag(CS_FIRST);
-	const FString& MapPackageName = R->GetValue_String(CS_FIRST);
+	CS_COROUTINE_READ_FLAG_START
+	CS_COROUTINE_READ_STRING_START
+
+	CS_COROUTINE_READ_FLAG_CONST_REF(R, CheckMapName);
+	CS_COROUTINE_READ_STRING_CONST_REF(R, MapPackageName);
 
 	if (UWorld* World = MyRoot->GetWorld())
 	{
@@ -315,33 +331,36 @@ char UCsManager_Level::Check_FinishedLoadingPersistentLevel_Internal(FCsRoutine*
 
 #pragma endregion Persistent Level
 
-// TODO: Add ChangeMap Params
+// Change Map
+#pragma region
 
-void UCsManager_Level::ChangeMap(const FChangeMapParams& Params)
+#define ChangeMapParamsType NCsLevel::NManager::NChangeMap::FParams
+void UCsManager_Level::ChangeMap(const ChangeMapParamsType& Params)
 {
+#undef ChangeMapParamsType
 	using namespace NCsManagerLevel::NCached;
 
-	checkf(!Params.Map.IsEmpty(), TEXT("UCsManager_Level::ChangeMap: Params.Map is Empty."));
+	const FString& Context = Str::ChangeMap;
 
-	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	CS_IS_VALID_CHECKED(Params);
 
-	UCsCoroutineScheduler* Scheduler = UCsCoroutineScheduler::Get(MyRoot);
-
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineScheculerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
 
-	PayloadImplType* Payload = Scheduler->AllocatePayload(UpdateGroup);
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	PayloadImplType* Payload		   = CoroutineScheculerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
-	Payload->CoroutineImpl.BindUObject(this, &UCsManager_Level::ChangeMap_Internal);
-	Payload->StartTime = UCsManager_Time::Get(MyRoot)->GetTime(UpdateGroup);
-	Payload->Owner.SetObject(this);
-	Payload->SetName(Str::ChangeMap_Internal);
-	Payload->SetFName(Name::ChangeMap_Internal);
+	typedef UCsManager_Level ClassType;
+	#define COROUTINE ChangeMap_Internal
 
-	static const int32 MAP_INDEX = 0;
-	Payload->SetValue_String(MAP_INDEX, Params.Map);
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
 
-	static const int32 TRANSITION_MAP_INDEX = 1;
-	Payload->SetValue_String(TRANSITION_MAP_INDEX, Params.TransitionMap);
+	#undef COROUTINE
+
+	CS_COROUTINE_PAYLOAD_PASS_STRING_START
+
+	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.Map);
+	CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, Params.TransitionMap);
 
 	typedef NCsLevel::NPersistent::FLibrary LevelLibrary;
 
@@ -349,16 +368,15 @@ void UCsManager_Level::ChangeMap(const FChangeMapParams& Params)
 
 	bChangeMapCompleted = false;
 
-	Scheduler->Start(Payload);
+	CoroutineScheculerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 {
-	static const int32 MAP_INDEX = 0;
-	const FString& NewMap = R->GetValue_String(MAP_INDEX);
+	CS_COROUTINE_READ_STRING_START
 
-	static const int32 TRANSITION_MAP_INDEX = 1;
-	const FString& TransitionMap = R->GetValue_String(TRANSITION_MAP_INDEX);
+	CS_COROUTINE_READ_STRING_CONST_REF(R, NewMap);
+	CS_COROUTINE_READ_STRING_CONST_REF(R, TransitionMap);
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -392,3 +410,73 @@ char UCsManager_Level::ChangeMap_Internal(FCsRoutine* R)
 
 	CS_COROUTINE_END(R);
 }
+
+#pragma endregion Change Map
+
+#if WITH_EDITOR
+
+void UCsManager_Level::DestroyOtherPIEWorld(const FString& URL)
+{
+	using namespace NCsManagerLevel::NCached;
+
+	const FString& Context = Str::DestroyOtherPIEWorld;
+
+	// TODO: Check URL is not Current World
+
+	CS_IS_STRING_EMPTY_CHECKED(URL);
+
+	typedef NCsCoroutine::NScheduler::FLibrary CoroutineScheculerLibrary;
+	typedef NCsCoroutine::NPayload::FImpl PayloadImplType;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
+	PayloadImplType* Payload		   = CoroutineScheculerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
+
+	typedef UCsManager_Level ClassType;
+	#define COROUTINE DestroyOtherPIEWorld_Internal
+
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+
+	#undef COROUTINE
+
+	const FString URL_PIE = UWorld::ConvertToPIEPackageName(URL, 0);
+
+	UPackage* WorldPackage = Cast<UPackage>(StaticFindObject(nullptr, nullptr, *URL_PIE, true));
+	UWorld* OtherWorld	   = WorldPackage ? UWorld::FindWorldInPackage(WorldPackage) : nullptr;
+
+	if (IsValid(OtherWorld))
+	{
+		CS_COROUTINE_PAYLOAD_PASS_STRING_START
+
+		CS_COROUTINE_PAYLOAD_PASS_STRING(Payload, URL_PIE);
+
+		bFinishedDestroyingOtherPIEWorld = false;
+
+		CoroutineScheculerLibrary::StartChecked(Context, MyRoot, Payload);
+	}
+	else
+	{
+		bFinishedDestroyingOtherPIEWorld = true;
+	}
+}
+
+char UCsManager_Level::DestroyOtherPIEWorld_Internal(FCsRoutine* R)
+{
+	CS_COROUTINE_READ_STRING_START
+
+	CS_COROUTINE_READ_STRING_CONST_REF(R, URL_PIE);
+
+	UPackage* WorldPackage = Cast<UPackage>(StaticFindObject(nullptr, nullptr, *URL_PIE, true));
+	UWorld* OtherWorld	   = WorldPackage ? UWorld::FindWorldInPackage(WorldPackage) : nullptr;
+
+	CS_COROUTINE_BEGIN(R);
+
+	OtherWorld->DestroyWorld(true);
+
+	CS_COROUTINE_WAIT_UNTIL(R, !IsValid(OtherWorld))
+
+	bFinishedDestroyingOtherPIEWorld = true;
+
+	CS_COROUTINE_END(R);
+}
+
+#endif // #if WITH_EDITOR

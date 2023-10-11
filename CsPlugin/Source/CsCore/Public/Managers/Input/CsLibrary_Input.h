@@ -44,10 +44,15 @@ namespace NCsInput
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
+			* @param Log			(optional)
 			* return				Whether or not the cursor is being shown.
 			*/
 			static bool SafeIsShowingCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeIsShowingCursor(const FString& Context, const UObject* WorldContext, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeIsShowingCursor(Context, WorldContext, Log);
+				return OutSuccess;
+			}
 
 			/**
 			* Safely check if the mouse cursor is being shown. This checks bShowMouseCursor == true
@@ -73,17 +78,24 @@ namespace NCsInput
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
+			* @param Log			(optional)
+			* return
 			*/
-			static void SafeShowCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeShowCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeShowCursor(const FString& Context, const UObject* WorldContext, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeShowCursor(Context, WorldContext, Log);
+				return OutSuccess;
+			}
 
 			/**
 			* Safely show the mouse cursor. This sets bShowMouseCursor = true for the
 			* First Local Player Controller.
 			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return
 			*/
-			static void SafeShowCursor(const UObject* WorldContext);
+			static bool SafeShowCursor(const UObject* WorldContext);
 
 			/**
 			* Hide the mouse cursor. This sets bShowMouseCursor = false for the 
@@ -100,17 +112,24 @@ namespace NCsInput
 			*
 			* @param Context		The calling context.
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-			* @param Log
+			* @param Log			(optional)
+			* return
 			*/
-			static void SafeHideCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			static bool SafeHideCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeHideCursor(const FString& Context, const UObject* WorldContext, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeHideCursor(Context, WorldContext, Log);
+				return OutSuccess;
+			}
 
 			/**
 			* Safely hide the mouse cursor. This sets bShowMouseCursor = false for the
 			* Fist Local Player Controller.
 			*
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* return
 			*/
-			static void SafeHideCursor(const UObject* WorldContext);
+			static bool SafeHideCursor(const UObject* WorldContext);
 
 		#pragma endregion Show / Hide
 
@@ -220,6 +239,21 @@ namespace NCsInput
 			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 			*/
 			static void RefreshPositionChecked(const FString& Context, const UObject* WorldContext);
+
+			/**
+			* Safely Refresh the mouse position.
+			* 
+			* @param Context		The calling context.
+			* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeRefreshPosition(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeRefreshPosition(const FString& Context, const UObject* WorldContext, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeRefreshPosition(Context, WorldContext, Log);
+				return OutSuccess;
+			}
 
 			/**
 			* Get the intersection between the de-projection of the current mouse position (viewport space) to a world ray (location and direction)

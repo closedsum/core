@@ -134,6 +134,11 @@ namespace NCsTime
 			* return				Whether the pause was successfully executed or not.
 			*/
 			static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafePause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafePause(Context, ContextObject, Group, Log);
+				return OutSuccess;
+			}
 
 			/**
 			* Unpause the update of Group.
@@ -158,6 +163,11 @@ namespace NCsTime
 			* return				Whether the unpause was successfully executed or not.
 			*/
 			static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeUnpause(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeUnpause(Context, ContextObject, Group, Log);
+				return OutSuccess;
+			}
 
 		#pragma endregion Pause
 
@@ -266,6 +276,17 @@ namespace NCsTime
 			* return				scaled DeltaTime.
 			*/
 			static const FCsDeltaTime& GetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+			/**
+			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			*/
+			static void ResetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
 
 			/**
 			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.

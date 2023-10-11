@@ -180,13 +180,62 @@ namespace NCsFade
 			GetChecked(Context, ContextObject)->ClearFade();
 		}
 
-		bool FLibrary::SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
+		bool FLibrary::SafeClearFade(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsFade::FParams ParamsType;
-
 			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Time, 0.0f)
+				Manager_Fade->ClearFade();
+				return true;
+			}
+			return false;
+		}
+
+		void FLibrary::FadeBlackToBlackChecked(const FString& Context, const UObject* ContextObject, const float& Time)
+		{
+			typedef NCsFade::FParams FadeParamsType;
+
+			FadeParamsType Params;
+			Params.From = FLinearColor::Black; 
+			Params.To	= FLinearColor::Black;
+			Params.Time = Time;
+
+			GetChecked(Context, ContextObject)->SafeFade(Params);
+		}
+
+		bool FLibrary::SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject))
+			{
+				typedef NCsFade::FParams FadeParamsType;
+
+				FadeParamsType Params;
+				Params.From = FLinearColor::Black; 
+				Params.To	= FLinearColor::Black;
+				Params.Time = Time;
+
+				Manager_Fade->SafeFade(Params);
+				return false;
+			}
+			return true;
+		}
+		
+		void FLibrary::FadeClearToBlackChecked(const FString& Context, const UObject* ContextObject, const float& Time)
+		{
+			typedef NCsFade::FParams FadeParamsType;
+
+			FadeParamsType Params;
+			Params.From = FLinearColor::Transparent; 
+			Params.To	= FLinearColor::Black;
+			Params.Time = Time;
+
+			GetChecked(Context, ContextObject)->SafeFade(Params);
+		}
+
+		bool FLibrary::SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
+			{
+				typedef NCsFade::FParams ParamsType;
 
 				ParamsType Params;
 				Params.From = FLinearColor::Transparent;
@@ -194,8 +243,22 @@ namespace NCsFade
 				Params.Time = Time;
 
 				Manager_Fade->SafeFade(Params);
+				return true;
 			}
 			return false;
+		}
+
+		void FLibrary::FadeBlackToClearChecked(const FString& Context, const UObject* ContextObject, const float& Time)
+		{
+			typedef NCsFade::FParams FadeParamsType;
+
+			FadeParamsType Params;
+			Params.From = FLinearColor::Black; 
+			Params.To	= FLinearColor::Transparent;
+			Params.Time = Time;
+			Params.bCollapseOnEnd = true;
+
+			GetChecked(Context, ContextObject)->SafeFade(Params);
 		}
 
 		bool FLibrary::SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
@@ -204,14 +267,14 @@ namespace NCsFade
 
 			if (UCsManager_Fade* Manager_Fade = GetSafe(Context, ContextObject, Log))
 			{
-				CS_IS_FLOAT_GREATER_THAN_OR_EQUAL(Time, 0.0f)
-
 				ParamsType Params;
 				Params.From = FLinearColor::Black;
 				Params.To	= FLinearColor::Transparent;
 				Params.Time = Time;
+				Params.bCollapseOnEnd = true;
 
 				Manager_Fade->SafeFade(Params);
+				return true;
 			}
 			return false;
 		}

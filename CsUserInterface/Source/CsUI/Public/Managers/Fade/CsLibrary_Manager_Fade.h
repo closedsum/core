@@ -185,6 +185,65 @@ namespace NCsFade
 			static void ClearFadeChecked(const FString& Context, const UObject* ContextObject);
 
 			/**
+			*
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeClearFade(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeClearFade(const FString& Context, const UObject* ContextObject, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeClearFade(Context, ContextObject, Log);
+				return OutSuccess;
+			}
+
+			/**
+			* Fade the screen from Black to Black over Time.
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Time
+			* return
+			*/
+			static void FadeBlackToBlackChecked(const FString& Context, const UObject* ContextObject, const float& Time);
+
+			/**
+			* Safely fade the screen from Black to Black over Time.
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Time
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeFadeBlackToBlack(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeFadeBlackToBlack(Context, ContextObject, Time, Log);
+				return OutSuccess;
+			}
+
+			/**
+			* Fade the screen from Clear to Black over Time.
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Time
+			* return
+			*/
+			static void FadeClearToBlackChecked(const FString& Context, const UObject* ContextObject, const float& Time);
+
+			/**
 			* Safely fade the screen from Clear to Black over Time.
 			* 
 			* @param Context		The calling context.
@@ -196,6 +255,23 @@ namespace NCsFade
 			* return
 			*/
 			static bool SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeFadeClearToBlack(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeFadeClearToBlack(Context, ContextObject, Time, Log);
+				return OutSuccess;
+			}
+
+			/**
+			* Fade the screen from Black to Clear over Time.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Time
+			* return
+			*/
+			static void FadeBlackToClearChecked(const FString& Context, const UObject* ContextObject, const float& Time);
 
 			/**
 			* Safely fade the screen from Black to Clear over Time.
@@ -209,6 +285,11 @@ namespace NCsFade
 			* return
 			*/
 			static bool SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static bool SafeFadeBlackToClear(const FString& Context, const UObject* ContextObject, const float& Time, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeFadeBlackToClear(Context, ContextObject, Time, Log);
+				return OutSuccess;
+			}
 		};
 	}
 }

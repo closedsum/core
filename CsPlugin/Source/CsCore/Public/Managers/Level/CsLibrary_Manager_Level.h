@@ -2,8 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-// Log
-#include "Utility/CsLog.h"
+// Types
+#include "Managers/Level/CsTypes_Manager_Level.h"
 
 class UObject;
 class UCsManager_Level;
@@ -234,6 +234,54 @@ namespace NCsLevel
 			static TSubclassOf<UCsManager_Level> GetClassChecked(const FString& Context);
 
 		#pragma endregion Class
+
+		// Persistent Level
+		#pragma region
+		public:
+
+			static bool HasFinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot);
+
+			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot);
+
+			static void Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot, const FString& MapPackageName);
+
+		#pragma endregion Persistent Level
+
+		// Change Map
+		#pragma region
+		public:
+
+			static bool HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextRoot);
+
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			static bool SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
+
+			static void ChangeMapChecked(const FString& Context, const UObject* ContextRoot, const ParamsType& Params);
+
+			static bool SafeChangeMap(const FString& Context, const UObject* ContextRoot, const ParamsType& Params, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			FORCEINLINE static bool SafeChangeMap(const FString& Context, const UObject* ContextRoot, const ParamsType& Params, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				OutSuccess = SafeChangeMap(Context, ContextRoot, Params, Log);
+				return OutSuccess;
+			}
+
+		#undef ParamsType
+
+		#pragma endregion Change Map
+
+		#if WITH_EDITOR
+
+		public:
+
+			static bool HasFinishedDestroyingOtherPIEWorld(const FString& Context, UObject* ContextObject);
+
+			static void DestroyOtherPIEWorldChecked(const FString& Context, UObject* ContextObject, const FString& URL);
+
+		#endif // #if WITH_EDITOR
 		};
 	}
 }

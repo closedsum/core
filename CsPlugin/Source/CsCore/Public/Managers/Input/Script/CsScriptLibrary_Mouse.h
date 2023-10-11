@@ -31,14 +31,38 @@ public:
 	static bool IsShowingCursor(const FString& Context, const UObject* WorldContextObject);
 
 	/**
+	* Check if the mouse cursor is being shown. This checks bShowMouseCursor == true
+	* for the First Local Player Controller.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	* return					Whether or not the cursor is being shown.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input|Mouse", meta = (DisplayName = "Is Showing Cursor (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool IsShowingCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
+
+	/**
 	* Show the mouse cursor. This sets bShowMouseCursor = true for the
 	* First Local Player Controller.
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static void ShowCursor(const FString& Context, const UObject* WorldContextObject);
+	static bool ShowCursor(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Show the mouse cursor. This sets bShowMouseCursor = true for the
+	* First Local Player Controller.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (DisplayName = "Show Cursor (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static void ShowCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 	/**
 	* Hide the mouse cursor. This sets bShowMouseCursor = false for the
@@ -46,9 +70,21 @@ public:
 	*
 	* @param Context			The calling context.
 	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* return
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static void HideCursor(const FString& Context, const UObject* WorldContextObject);
+	static bool HideCursor(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Hide the mouse cursor. This sets bShowMouseCursor = false for the
+	* Fist Local Player Controller.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (DisplayName = "Hide Cursor (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static void HideCursorChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 #pragma endregion Show / Hide
 
@@ -64,7 +100,7 @@ public:
 	* @param OutPosition		(out)
 	* return					Whether current mouse position was obtained successfully.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static bool GetPosition(const FString& Context, const UObject* WorldContextObject, FIntPoint& OutPosition);
 
 	/**
@@ -76,7 +112,7 @@ public:
 	* @param Y
 	* return					Whether current mouse position was set successfully.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,X,Y"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,X,Y"))
 	static bool SetPosition(const FString& Context, const UObject* WorldContextObject, const int32& X, const int32& Y);
 
 	/**
@@ -87,6 +123,27 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
 	static bool SetCenterOfViewport(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Refresh the mouse position.
+	* 
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static bool RefreshPosition(const FString& Context, const UObject* WorldContextObject);
+
+	/**
+	* Refresh the mouse position.
+	* 
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param OutSuccess			(out)
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Input|Mouse", meta = (DisplayName = "Refresh Position (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	static void RefreshPositionChecked(const FString& Context, const UObject* WorldContextObject, bool& OutSuccess);
 
 #pragma endregion Get / Set
 

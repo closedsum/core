@@ -157,6 +157,9 @@ namespace NCsTime
 
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
+				if (Manager_Time->IsPaused(Group))
+					return false;
+
 				Manager_Time->Pause(Group);
 				return true;
 			}
@@ -176,6 +179,9 @@ namespace NCsTime
 
 			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
 			{
+				if (!Manager_Time->IsPaused(Group))
+					return false;
+
 				Manager_Time->Unpause(Group);
 				return true;
 			}
@@ -256,6 +262,13 @@ namespace NCsTime
 		const FCsDeltaTime& FLibrary::GetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
 			return GetChecked(Context, ContextObject)->GetScaledDeltaTime(Group);
+		}
+
+		void FLibrary::ResetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+
+			GetChecked(Context, ContextObject)->ResetScaledDeltaTime(Group);
 		}
 
 		void FLibrary::ResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)

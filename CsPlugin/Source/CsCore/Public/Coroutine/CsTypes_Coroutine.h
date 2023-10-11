@@ -825,6 +825,10 @@ namespace NCsCoroutine
 #define CS_COROUTINE_PAYLOAD_PASS_NAME_START int32 __Coroutine__Payload__Name__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_NAME(__Payload, __Value) __Payload->SetValue_Name(__Coroutine__Payload__Name__Counter__, __Value); \
 	++__Coroutine__Payload__Name__Counter__
+// String
+#define CS_COROUTINE_PAYLOAD_PASS_STRING_START int32 __Coroutine__Payload__String__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_STRING(__Payload, __Value) __Payload->SetValue_String(__Coroutine__Payload__String__Counter__, __Value); \
+	++__Coroutine__Payload__String__Counter__
 // Void
 #define CS_COROUTINE_PAYLOAD_PASS_OBJECT_START int32 __Coroutine__Payload__Object__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_OBJECT(__Payload, __Value) __Payload->SetValue_Object(__Coroutine__Payload__Object__Counter__, __Value); \
@@ -927,6 +931,16 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Name__Counter__
 #define CS_COROUTINE_READ_NAME_CONST_REF(__R, __VariableName) const FName& __VariableName = __R->GetValue_Name(__Coroutine__Read__Name__Counter__); \
 	++__Coroutine__Read__Name__Counter__
+// String
+#define CS_COROUTINE_READ_STRING_START int32 __Coroutine__Read__String__Counter__ = 0;
+#define CS_COROUTINE_READ_STRING(__R, __VariableName) FString __VariableName = __R->GetValue_String(__Coroutine__Read__String__Counter__); \
+	++__Coroutine__Read__String__Counter__
+#define CS_COROUTINE_READ_STRING_REF(__R, __VariableName) FString& __VariableName = __R->GetValue_String(__Coroutine__Read__String__Counter__); \
+	++__Coroutine__Read__String__Counter__
+#define CS_COROUTINE_READ_STRING_CONST(__R, __VariableName) const FString __VariableName = __R->GetValue_String(__Coroutine__Read__String__Counter__); \
+	++__Coroutine__Read__String__Counter__
+#define CS_COROUTINE_READ_STRING_CONST_REF(__R, __VariableName) const FString& __VariableName = __R->GetValue_String(__Coroutine__Read__String__Counter__); \
+	++__Coroutine__Read__String__Counter__
 // Object
 #define CS_COROUTINE_READ_OBJECT_START int32 __Coroutine__Read__Object__Counter__ = 0;
 #define CS_COROUTINE_READ_OBJECT(__R, __VariableName) UObject* __VariableName = __R->GetValue_Object(__Coroutine__Read__Object__Counter__); \

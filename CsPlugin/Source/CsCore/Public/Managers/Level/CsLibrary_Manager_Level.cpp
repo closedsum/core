@@ -167,5 +167,91 @@ namespace NCsLevel
 		}
 
 		#pragma endregion Class
+
+		// Persistent Level
+		#pragma region
+
+		bool FLibrary::HasFinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot)
+		{
+			return GetChecked(Context, ContextRoot)->HasFinishedLoadingPersistentLevel();
+		}
+
+		void FLibrary::Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot)
+		{
+			GetChecked(Context, ContextRoot)->Check_FinishedLoadingPersistentLevel();
+		}
+
+		void FLibrary::Check_FinishedLoadingPersistentLevelChecked(const FString& Context, const UObject* ContextRoot, const FString& MapPackageName)
+		{
+			GetChecked(Context, ContextRoot)->Check_FinishedLoadingPersistentLevel(MapPackageName);
+		}
+
+		#pragma endregion Persistent Level
+
+		// Change Map
+		#pragma region
+
+		bool FLibrary::HasChangeMapCompletedChecked(const FString& Context, const UObject* ContextRoot)
+		{
+			return GetChecked(Context, ContextRoot)->HasChangeMapCompleted();
+		}
+
+		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextRoot, Log))
+			{
+				return Manager_Level->HasChangeMapCompleted();
+			}
+			return false;
+		}
+
+		bool FLibrary::SafeHasChangeMapCompleted(const FString& Context, const UObject* ContextRoot, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			OutSuccess = false;
+
+			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextRoot, Log))
+			{
+				OutSuccess = true;
+				return Manager_Level->HasChangeMapCompleted();
+			}
+			return false;
+		}
+
+		#define ParamsType NCsLevel::NManager::NChangeMap::FParams
+
+		void FLibrary::ChangeMapChecked(const FString& Context, const UObject* ContextRoot, const ParamsType& Params)
+		{
+			GetChecked(Context, ContextRoot)->ChangeMap(Params);
+		}
+
+		bool FLibrary::SafeChangeMap(const FString& Context, const UObject* ContextRoot, const ParamsType& Params, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Level* Manager_Level = GetSafe(Context, ContextRoot, Log))
+			{
+				CS_IS_VALID(Params)
+
+				Manager_Level->ChangeMap(Params);
+				return true;
+			}
+			return false;
+		}
+
+		#undef ParamsType
+
+		#pragma endregion Change Map
+
+		#if WITH_EDITOR
+
+		bool FLibrary::HasFinishedDestroyingOtherPIEWorld(const FString& Context, UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->HasFinishedDestroyingOtherPIEWorld();
+		}
+
+		void FLibrary::DestroyOtherPIEWorldChecked(const FString& Context, UObject* ContextObject, const FString& URL)
+		{
+			GetChecked(Context, ContextObject)->DestroyOtherPIEWorld(URL);
+		}
+
+		#endif // #if WITH_EDITOR
 	}
 }

@@ -25,9 +25,11 @@ namespace NCsInput
 			{
 				namespace Str
 				{
+					// Show / Hide
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, SafeIsShowingCursor);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, SafeShowCursor);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, SafeHideCursor);
+					// Get / Set
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, GetSafePosition);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, SetSafePosition);
 					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsInput::NMouse::FLibrary, GetSafeWorldIntersection);
@@ -39,10 +41,10 @@ namespace NCsInput
 		// Show / Hide
 		#pragma region
 
+		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+
 		bool FLibrary::IsShowingCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 			return PC->bShowMouseCursor;
@@ -50,8 +52,6 @@ namespace NCsInput
 
 		bool FLibrary::SafeIsShowingCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
 
 			return PC ? PC->bShowMouseCursor : false;
@@ -68,24 +68,22 @@ namespace NCsInput
 
 		void FLibrary::ShowCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
 
 			PC->bShowMouseCursor = true;
 		}
 
-		void FLibrary::SafeShowCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeShowCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
-
-			if (PC)
+			if (APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log))
+			{
 				PC->bShowMouseCursor = true;
+				return true;
+			}
+			return false;
 		}
 
-		void FLibrary::SafeShowCursor(const UObject* WorldContext)
+		bool FLibrary::SafeShowCursor(const UObject* WorldContext)
 		{
 			using namespace NCsInput::NMouse::NLibrary::NCached;
 
@@ -96,24 +94,21 @@ namespace NCsInput
 
 		void FLibrary::HideCursorChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, WorldContext);
-
-			PC->bShowMouseCursor = false;
+			PC->bShowMouseCursor  = false;
 		}
 
-		void FLibrary::SafeHideCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		bool FLibrary::SafeHideCursor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log);
-
-			if (PC)
+			if (APlayerController* PC = PlayerControllerLibrary::GetSafeFirstLocal(Context, WorldContext, Log))
+			{
 				PC->bShowMouseCursor = false;
+				return true;
+			}
+			return false;
 		}
 
-		void FLibrary::SafeHideCursor(const UObject* WorldContext)
+		bool FLibrary::SafeHideCursor(const UObject* WorldContext)
 		{
 			using namespace NCsInput::NMouse::NLibrary::NCached;
 
@@ -122,15 +117,17 @@ namespace NCsInput
 			return SafeHideCursor(Context, WorldContext, nullptr);
 		}
 
+		#undef PlayerControllerLibrary
+
 		#pragma endregion Show / Hide
 
 		// Get / Set
 		#pragma region
 
+		#define ViewportLibrary NCsViewport::NLocal::NPlayer::FLibrary 
+
 		void FLibrary::GetPositionChecked(const FString& Context, const UObject* WorldContext, FIntPoint& OutPosition)
 		{
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
 
 			SV->GetMousePos(OutPosition);
@@ -140,11 +137,7 @@ namespace NCsInput
 		{
 			OutPosition = FIntPoint::NoneValue;
 
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
-			FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext, Log);
-
-			if (SV)
+			if (FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext, Log))
 			{
 				SV->GetMousePos(OutPosition);
 
@@ -168,8 +161,6 @@ namespace NCsInput
 
 		void FLibrary::SetPositionChecked(const FString& Context, const UObject* WorldContext, const int32& X, const int32& Y)
 		{
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
 
 			SV->SetMouse(X, Y);
@@ -177,11 +168,7 @@ namespace NCsInput
 
 		bool FLibrary::SetSafePosition(const FString& Context, const UObject* WorldContext, const int32& X, const int32& Y, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
-			FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext);
-
-			if (SV)
+			if (FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext))
 			{
 				SV->SetMouse(X, Y);
 				return true;
@@ -200,10 +187,7 @@ namespace NCsInput
 
 		void FLibrary::SetCenterOfViewportChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
-			FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
-
+			FSceneViewport* SV   = ViewportLibrary::GetViewportChecked(Context, WorldContext);
 			const FIntPoint Size = SV->GetSizeXY();
 
 			SV->SetMouse(Size.X / 2, Size.Y / 2);
@@ -211,8 +195,6 @@ namespace NCsInput
 
 		bool FLibrary::SetSafeCenterOfViewport(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			if (FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext, Log))
 			{
 				const FIntPoint Size = SV->GetSizeXY();
@@ -230,18 +212,17 @@ namespace NCsInput
 
 			if (Position == FIntPoint::NoneValue)
 				return false;
-
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			return ViewportLibrary::SafeDeprojectScreenToWorld(Context, WorldContext, FVector2f(Position.X, Position.Y), OutWorldPosition, OutWorldDirection, Log);
 		}
 
+		#undef ViewportLibrary
+
 		#pragma endregion Get / Set
+
+		#define ViewportLibrary NCsViewport::NLocal::NPlayer::FLibrary 
 
 		void FLibrary::RefreshPositionChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			FSceneViewport* SV = ViewportLibrary::GetViewportChecked(Context, WorldContext);
 
 			FIntPoint Position;
@@ -254,13 +235,27 @@ namespace NCsInput
 			SV->SetMouse(Position.X, Position.Y);
 		}
 
+		bool FLibrary::SafeRefreshPosition(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (FSceneViewport* SV = ViewportLibrary::GetSafeViewport(Context, WorldContext, Log))
+			{
+				FIntPoint Position;
+
+				SV->GetMousePos(Position);
+
+				const FIntPoint Size = SV->GetSizeXY();
+
+				SV->SetMouse(Size.X / 2, Size.Y / 2);
+				SV->SetMouse(Position.X, Position.Y);
+				return true;
+			}
+			return false;
+		}
+
 		bool FLibrary::GetWorldIntersectionChecked(const FString& Context, const UObject* WorldContext, const FPlane4f& Plane, FVector3f& OutIntersection)
 		{
 			FIntPoint Position;
 			GetPositionChecked(Context, WorldContext, Position);
-
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			return ViewportLibrary::GetScreenWorldIntersectionChecked(Context, WorldContext, Position, Plane, OutIntersection);
 		}
 
@@ -271,9 +266,6 @@ namespace NCsInput
 
 			if (Position == FIntPoint::NoneValue)
 				return false;
-
-			typedef NCsViewport::NLocal::NPlayer::FLibrary ViewportLibrary;
-
 			return ViewportLibrary::GetSafeScreenWorldIntersection(Context, WorldContext, Position, Plane, OutIntersection, Log);
 		}
 
@@ -285,6 +277,8 @@ namespace NCsInput
 
 			return GetSafeWorldIntersection(Context, WorldContext, Plane, OutIntersection, nullptr);
 		}
+
+		#undef ViewportLibrary
 
 		// Trace
 		#pragma region

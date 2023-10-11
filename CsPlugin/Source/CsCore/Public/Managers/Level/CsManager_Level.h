@@ -132,22 +132,9 @@ public:
 
 	FORCEINLINE bool HasChangeMapCompleted() const { return bChangeMapCompleted; }
 
-	struct FChangeMapParams
-	{
-	public:
-
-		FString Map;
-
-		FString TransitionMap;
-
-		FChangeMapParams() :
-			Map(),
-			TransitionMap()
-		{
-		}
-	};
-
-	void ChangeMap(const FChangeMapParams& Params);
+#define ChangeMapParamsType NCsLevel::NManager::NChangeMap::FParams
+	void ChangeMap(const ChangeMapParamsType& Params);
+#undef ChangeMapParamsType
 
 protected:
 
@@ -160,4 +147,20 @@ public:
 	FOnChangeMapComplete OnChangeMapComplete_Event;
 
 #pragma endregion Change Map
+
+#if WITH_EDITOR
+
+protected:
+
+	bool bFinishedDestroyingOtherPIEWorld;
+
+public:
+
+	FORCEINLINE bool HasFinishedDestroyingOtherPIEWorld() const { return bFinishedDestroyingOtherPIEWorld; }
+
+	void DestroyOtherPIEWorld(const FString& URL);
+private:
+	char DestroyOtherPIEWorld_Internal(FCsRoutine* R);
+
+#endif // #if WITH_EDITOR
 };

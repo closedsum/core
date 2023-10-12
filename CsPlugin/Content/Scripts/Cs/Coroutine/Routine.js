@@ -413,6 +413,7 @@ module.exports = class FJsRoutine
 				// Objects that contain the 'WaitForTime' key are used
 				// when floats (i.e. 1.0) get coerced to integers (i.e. 1.0 -> 1)
 				// and the yieldCommand get interpretted as WaitForFrame
+				// Format: r = yield {WaitForTime: 'seconds'};
 				if ('WaitForTime' in yieldCommand)
 				{
 					checkf(Number.isFinite(yieldCommand.WaitForTime), "FJsRoutine.Update: yieldCommand with key 'WaitForTime' does NOT have a numeric value.");

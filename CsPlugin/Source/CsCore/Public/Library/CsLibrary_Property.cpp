@@ -57,6 +57,59 @@ namespace NCsProperty
 		return  Property;
 	}
 
+		// Bool
+	#pragma region
+
+	FBoolProperty* FLibrary::FindBoolPropertyByPath(const FString& Context, const UStruct* Struct, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(Struct)
+		CS_IS_STRING_EMPTY_RET_NULL(Path)
+
+		TArray<FString> PropertyNames;
+		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
+
+		if (PropertyNames.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+			return nullptr;
+		}
+
+		const int32 Count = PropertyNames.Num();
+		int32 I = 0;
+
+		UStruct* CurrentStruct	   = const_cast<UStruct*>(Struct);
+		FProperty* CurrentProperty = nullptr;
+
+		while (I < Count)
+		{
+			const FString& PropertyName = PropertyNames[I];
+
+			if (I < (Count - 2))
+			{
+				// Struct
+				FStructProperty* StructProperty = FindStructPropertyByName(Context, CurrentStruct, FName(*PropertyName), Log);
+				CurrentProperty					= StructProperty;
+
+				if (StructProperty->ArrayDim == 1)
+				{
+					CurrentStruct = StructProperty->Struct;
+				}
+				else
+				{
+				}
+			}
+			else
+			if (I < (Count - 1))
+			{
+				return FindPropertyByName<FBoolProperty>(Context, CurrentStruct, FName(*PropertyName), Log);
+			}
+			++I;
+		}
+		return nullptr;
+	}
+
+	#pragma endregion Bool
+
 		// Enum
 	#pragma region
 
@@ -131,6 +184,34 @@ namespace NCsProperty
 	}
 
 	#pragma endregion Struct
+
+		// Vector
+	#pragma region
+
+	FStructProperty* FLibrary::FindVectorPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+	{
+		FStructProperty* Prop = FindStructPropertyByNameChecked(Context, Struct, PropertyName);
+
+		checkf(Prop->Struct == TBaseStructure<FVector>::Get(), TEXT("%s: %s.%s of type: %s is NOT FVector."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Prop->Struct->GetName()));
+		return Prop;
+	}
+
+	FStructProperty* FLibrary::FindVectorPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FStructProperty* Prop = FindStructPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Prop)
+			return nullptr;
+
+		if (Prop->Struct != TBaseStructure<FVector>::Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s of type: %s is NOT FVector."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Prop->Struct->GetName())));
+			return nullptr;
+		}
+		return Prop;
+	}
+
+	#pragma endregion Vector
 
 		// Object
 	#pragma region
@@ -362,6 +443,65 @@ namespace NCsProperty
 		return Value;
 	}
 
+	bool FLibrary::GetBoolPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		CS_IS_PTR_NULL(Struct)
+		CS_IS_STRING_EMPTY(Path)
+
+		TArray<FString> PropertyNames;
+		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
+
+		if (PropertyNames.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+			return false;
+		}
+
+		const int32 Count = PropertyNames.Num();
+		int32 I = 0;
+
+		void* CurrentStructValue   = StructValue;
+		UStruct* CurrentStruct	   = const_cast<UStruct*>(Struct);
+		FProperty* CurrentProperty = nullptr;
+
+		while (I < Count)
+		{
+			// TODO: Check PropertyName for [] and ""
+			const FString& PropertyName = PropertyNames[I];
+
+			if (I < (Count - 1))
+			{
+				// Struct
+				if (FStructProperty* StructProperty = FindStructPropertyByName(Context, CurrentStruct, FName(*PropertyName), Log))
+				{
+					CurrentProperty = StructProperty;
+
+					if (StructProperty->ArrayDim == 1)
+					{
+						CurrentStructValue = StructProperty->ContainerPtrToValuePtr<uint8>(CurrentStructValue, 0);
+						CurrentStruct	   = StructProperty->Struct;
+					}
+					else
+					{
+					}
+				}
+				else
+				{
+					// TODO: Need to "build" path for better error output.
+					return false;
+				}
+			}
+			else
+			{
+				return GetBoolPropertyValue(Context, CurrentStructValue, CurrentStruct, FName(*PropertyName), OutSuccess, Log);
+			}
+			++I;
+		}
+		return false;
+	}
+
 	#pragma endregion Bool
 
 		// Int
@@ -397,6 +537,65 @@ namespace NCsProperty
 		return Value;
 	}
 
+	int32 FLibrary::GetIntPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		CS_IS_PTR_NULL_RET_VALUE(Struct, 0)
+		//CS_IS_STRING_EMPTY_RET_VALUE(Path, 0)
+
+		TArray<FString> PropertyNames;
+		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
+
+		if (PropertyNames.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+			return 0;
+		}
+
+		const int32 Count = PropertyNames.Num();
+		int32 I = 0;
+
+		void* CurrentStructValue   = StructValue;
+		UStruct* CurrentStruct	   = const_cast<UStruct*>(Struct);
+		FProperty* CurrentProperty = nullptr;
+
+		while (I < Count)
+		{
+			// TODO: Check PropertyName for [] and ""
+			const FString& PropertyName = PropertyNames[I];
+
+			if (I < (Count - 1))
+			{
+				// Struct
+				if (FStructProperty* StructProperty = FindStructPropertyByName(Context, CurrentStruct, FName(*PropertyName), Log))
+				{
+					CurrentProperty = StructProperty;
+
+					if (StructProperty->ArrayDim == 1)
+					{
+						CurrentStructValue = StructProperty->ContainerPtrToValuePtr<uint8>(CurrentStructValue, 0);
+						CurrentStruct	   = StructProperty->Struct;
+					}
+					else
+					{
+					}
+				}
+				else
+				{
+					// TODO: Need to "build" path for better error output.
+					return 0;
+				}
+			}
+			else
+			{
+				return GetIntPropertyValue(Context, CurrentStructValue, CurrentStruct, FName(*PropertyName), OutSuccess, Log);
+			}
+			++I;
+		}
+		return 0;
+	}
+
 	#pragma endregion Int
 
 		// Float
@@ -430,6 +629,65 @@ namespace NCsProperty
 			return nullptr;
 		}
 		return Value;
+	}
+
+	float FLibrary::GetFloatPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		CS_IS_PTR_NULL_RET_VALUE(Struct, 0.0f)
+		//CS_IS_STRING_EMPTY_RET_VALUE(Path, 0)
+
+		TArray<FString> PropertyNames;
+		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
+
+		if (PropertyNames.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+			return 0.0f;
+		}
+
+		const int32 Count = PropertyNames.Num();
+		int32 I = 0;
+
+		void* CurrentStructValue   = StructValue;
+		UStruct* CurrentStruct	   = const_cast<UStruct*>(Struct);
+		FProperty* CurrentProperty = nullptr;
+
+		while (I < Count)
+		{
+			// TODO: Check PropertyName for [] and ""
+			const FString& PropertyName = PropertyNames[I];
+
+			if (I < (Count - 1))
+			{
+				// Struct
+				if (FStructProperty* StructProperty = FindStructPropertyByName(Context, CurrentStruct, FName(*PropertyName), Log))
+				{
+					CurrentProperty = StructProperty;
+
+					if (StructProperty->ArrayDim == 1)
+					{
+						CurrentStructValue = StructProperty->ContainerPtrToValuePtr<uint8>(CurrentStructValue, 0);
+						CurrentStruct	   = StructProperty->Struct;
+					}
+					else
+					{
+					}
+				}
+				else
+				{
+					// TODO: Need to "build" path for better error output.
+					return 0.0f;
+				}
+			}
+			else
+			{
+				return GetFloatPropertyValue(Context, CurrentStructValue, CurrentStruct, FName(*PropertyName), OutSuccess, Log);
+			}
+			++I;
+		}
+		return 0.0f;
 	}
 
 	#pragma endregion Float
@@ -487,12 +745,69 @@ namespace NCsProperty
 		return true;
 	}
 
+	bool FLibrary::SetBoolPropertyByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(Struct)
+		CS_IS_STRING_EMPTY(Path)
+
+		TArray<FString> PropertyNames;
+		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
+
+		if (PropertyNames.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+			return false;
+		}
+
+		const int32 Count = PropertyNames.Num();
+		int32 I = 0;
+
+		void* CurrentStructValue   = StructValue;
+		UStruct* CurrentStruct	   = const_cast<UStruct*>(Struct);
+		FProperty* CurrentProperty = nullptr;
+
+		while (I < Count)
+		{
+			// TODO: Check PropertyName for [] and ""
+			const FString& PropertyName = PropertyNames[I];
+
+			if (I < (Count - 1))
+			{
+				// Struct
+				if (FStructProperty* StructProperty = FindStructPropertyByName(Context, CurrentStruct, FName(*PropertyName), Log))
+				{
+					CurrentProperty = StructProperty;
+
+					if (StructProperty->ArrayDim == 1)
+					{
+						CurrentStructValue = StructProperty->ContainerPtrToValuePtr<uint8>(CurrentStructValue, 0);
+						CurrentStruct	   = StructProperty->Struct;
+					}
+					else
+					{
+					}
+				}
+				else
+				{
+					// TODO: Need to "build" path for better error output.
+					return false;
+				}
+			}
+			else
+			{
+				return SetBoolPropertyByName(Context, CurrentStructValue, CurrentStruct, FName(*PropertyName), Value, Log);
+			}
+			++I;
+		}
+		return false;
+	}
+
 	#pragma endregion Bool
 
 		// Int
 	#pragma region
 
-	bool FLibrary::SetIntPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, int32 Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SetIntPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, const int32& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		FIntProperty* IntProperty = FindPropertyByName<FIntProperty>(Context, Struct, PropertyName, Log);
 
@@ -501,6 +816,63 @@ namespace NCsProperty
 
 		IntProperty->SetPropertyValue_InContainer(StructValue, Value);
 		return true;
+	}
+
+	bool FLibrary::SetIntPropertyByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, const int32& Value, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(Struct)
+		CS_IS_STRING_EMPTY(Path)
+
+		TArray<FString> PropertyNames;
+		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
+
+		if (PropertyNames.Num() == CS_EMPTY)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+			return false;
+		}
+
+		const int32 Count = PropertyNames.Num();
+		int32 I = 0;
+
+		void* CurrentStructValue   = StructValue;
+		UStruct* CurrentStruct	   = const_cast<UStruct*>(Struct);
+		FProperty* CurrentProperty = nullptr;
+
+		while (I < Count)
+		{
+			// TODO: Check PropertyName for [] and ""
+			const FString& PropertyName = PropertyNames[I];
+
+			if (I < (Count - 1))
+			{
+				// Struct
+				if (FStructProperty* StructProperty = FindStructPropertyByName(Context, CurrentStruct, FName(*PropertyName), Log))
+				{
+					CurrentProperty = StructProperty;
+
+					if (StructProperty->ArrayDim == 1)
+					{
+						CurrentStructValue = StructProperty->ContainerPtrToValuePtr<uint8>(CurrentStructValue, 0);
+						CurrentStruct	   = StructProperty->Struct;
+					}
+					else
+					{
+					}
+				}
+				else
+				{
+					// TODO: Need to "build" path for better error output.
+					return false;
+				}
+			}
+			else
+			{
+				return SetIntPropertyByName(Context, CurrentStructValue, CurrentStruct, FName(*PropertyName), Value, Log);
+			}
+			++I;
+		}
+		return false;
 	}
 
 	#pragma endregion Int

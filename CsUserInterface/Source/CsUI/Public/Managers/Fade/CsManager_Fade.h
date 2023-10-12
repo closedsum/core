@@ -9,6 +9,13 @@
 
 #include "CsManager_Fade.generated.h"
 
+// Delegates
+#pragma region
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerFade_OnFadeComplete);
+
+#pragma endregion Delegates
+
 class ICsGetManagerFade;
 struct FCsRoutine;
 class UCsUserWidget_Fade;
@@ -96,11 +103,21 @@ public:
 #define ParamsType NCsFade::FParams
 
 	void Fade(const ParamsType& Params);
+private:
 	char Fade_Internal(FCsRoutine* R);
 
 	FCsRoutineHandle FadeHandle;
 
+public:
+
 	void SafeFade(const ParamsType& Params);
+
+	DECLARE_MULTICAST_DELEGATE(FOnFadeComplete)
+
+	FOnFadeComplete OnFadeComplete_Event;
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerFade_OnFadeComplete OnFadeComplete_ScriptEvent;
 
 	void StopFade();
 	void ClearFade();

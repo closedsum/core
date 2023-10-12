@@ -20,6 +20,7 @@ namespace NCsScriptLibraryProperty
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetBool);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetInt);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetBoolByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetInt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetFloat);
 		}
@@ -53,13 +54,22 @@ bool UCsScriptLibrary_Property::SetInt(const FString& Context, UObject* Object, 
 	return PropertyLibrary::SetIntPropertyByName(Ctxt, Object, Object->GetClass(), PropertyName, Value);
 }
 
-int32 UCsScriptLibrary_Property::GetInt(const FString& Context, UObject* Object, const FName& PropertyName)
+bool UCsScriptLibrary_Property::GetBoolByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryProperty::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetBoolByPath : Context;
+
+	return PropertyLibrary::GetBoolPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
+}
+
+int32 UCsScriptLibrary_Property::GetInt(const FString& Context, UObject* Object, const FName& PropertyName, bool& OutSuccess)
 {
 	using namespace NCsScriptLibraryProperty::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetInt : Context;
 
-	return PropertyLibrary::GetIntPropertyValue(Ctxt, Object, Object->GetClass(), PropertyName);
+	return PropertyLibrary::GetIntPropertyValue(Ctxt, Object, Object->GetClass(), PropertyName, OutSuccess);
 }
 
 bool UCsScriptLibrary_Property::SetFloat(const FString& Context, UObject* Object, const FName& PropertyName, float Value)

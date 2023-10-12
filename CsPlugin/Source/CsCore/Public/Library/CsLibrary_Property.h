@@ -8,6 +8,7 @@
 class UStruct;
 class FProperty;
 class FByteProperty;
+class FBoolProperty;
 class FStructProperty;
 class FObjectProperty;
 class FArrayProperty;
@@ -135,6 +136,14 @@ namespace NCsProperty
 			return FindPropertyByName<T>(Context, Struct, PropertyName, nullptr);
 		}
 
+		// Bool
+	#pragma region
+	public:
+
+		static FBoolProperty* FindBoolPropertyByPath(const FString& Context, const UStruct* Struct, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Bool
+
 		// Enum
 	#pragma region
 	public:
@@ -177,7 +186,7 @@ namespace NCsProperty
 		static FStructProperty* FindStructPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
 
 		/**
-		* Find the Struct Property of type: T from Struct with name: PropertyName.
+		* Find the Struct Property from Struct with name: PropertyName.
 		*
 		* @param Context		The calling context.
 		* @param Struct
@@ -263,6 +272,39 @@ namespace NCsProperty
 		}
 
 	#pragma endregion Struct
+
+		// Vector
+	#pragma region
+	public:
+
+		/**
+		* Find the Struct Property of type FVector from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		static FStructProperty* FindVectorPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
+
+		/**
+		* Find the Struct Property of type: FVector from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		static FStructProperty* FindVectorPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static FStructProperty* FindVectorPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FStructProperty* Prop = FindVectorPropertyByName(Context, Struct, PropertyName, Log);
+			OutSuccess			  = Prop != nullptr;
+			return Prop;
+		}
+
+	#pragma endregion Vector
 
 		// Object
 	#pragma region
@@ -562,6 +604,20 @@ namespace NCsProperty
 
 		static bool* GetBoolPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		FORCEINLINE static bool GetBoolPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			if (bool* Value = GetBoolPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
+				return *Value;
+			}
+			return false;
+		}
+
+		static bool GetBoolPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
 	#pragma endregion Bool
 
 		// Int
@@ -572,12 +628,19 @@ namespace NCsProperty
 
 		static int32* GetIntPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
-		FORCEINLINE static int32 GetIntPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		FORCEINLINE static int32 GetIntPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
+			OutSuccess = false;
+
 			if (int32* Value = GetIntPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
 				return *Value;
+			}
 			return 0;
 		}
+
+		static int32 GetIntPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Int
 
@@ -588,6 +651,20 @@ namespace NCsProperty
 		static float* GetFloatPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
 
 		static float* GetFloatPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		FORCEINLINE static float GetFloatPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			if (float* Value = GetFloatPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
+				return *Value;
+			}
+			return 0.0f;
+		}
+
+		static float GetFloatPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Float
 
@@ -658,7 +735,7 @@ namespace NCsProperty
 			return Value;
 		}
 
-		#pragma endregion Struct
+	#pragma endregion Struct
 
 		// Object
 	#pragma region
@@ -1038,28 +1115,28 @@ namespace NCsProperty
 		* @param PropertyName
 		* return				TSet<T>* (struct of type: T).
 		*/
-		template<typename T>
-		static TSet<T>* GetSetStructPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
-		{
-			FSetProperty* Property = FindSetStructPropertyByName<T>(Context, Struct, PropertyName, Log);
+template<typename T>
+static TSet<T>* GetSetStructPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+{
+	FSetProperty* Property = FindSetStructPropertyByName<T>(Context, Struct, PropertyName, Log);
 
-			if (!Property)
-				return nullptr;
+	if (!Property)
+		return nullptr;
 
-			TSet<T>* Value = Property->ContainerPtrToValuePtr<TSet<T>>(StructValue);
+	TSet<T>* Value = Property->ContainerPtrToValuePtr<TSet<T>>(StructValue);
 
-			if (!Value)
-			{
-				if (Log)
-					Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
-				return nullptr;
-			}
-			return Value;
-		}
+	if (!Value)
+	{
+		if (Log)
+			Log(FString::Printf(TEXT("%s: %s.%s is NULL."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		return nullptr;
+	}
+	return Value;
+}
 
-	#pragma endregion Set
+#pragma endregion Set
 
-	#pragma endregion Get
+#pragma endregion Get
 
 	// Set
 	#pragma region
@@ -1077,10 +1154,29 @@ namespace NCsProperty
 		* @param Struct
 		* @param PropertyName
 		* @param Value
+		* @param Log			(optional)
 		* return				Whether Value was successfully set or not.
 		*/
 		static bool SetBoolPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool Value, void(*Log)(const FString&) = &FCsLog::Warning);
-		
+
+		/**
+		* Set the bool value by Path for StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param Value
+		* @param Log			(optional)
+		* return				Whether Value was successfully set or not.
+		*/
+		static bool SetBoolPropertyByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool Value, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static bool SetBoolPropertyByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool Value, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = SetBoolPropertyByPath(Context, StructValue, Struct, Path, Value, Log);
+			return OutSuccess;
+		}
+
 	#pragma endregion Bool
 
 		// Int
@@ -1095,9 +1191,28 @@ namespace NCsProperty
 		* @param Struct
 		* @param PropertyName
 		* @param Value
+		* @param Log			(optional)
 		* return				Whether Value was successfully set or not.
 		*/
-		static bool SetIntPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, int32 Value, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SetIntPropertyByName(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, const int32& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Set the int32 value by Path for StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param Value
+		* @param Log			(optional)
+		* return				Whether Value was successfully set or not.
+		*/
+		static bool SetIntPropertyByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, const int32& Value, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static bool SetIntPropertyByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, const int32& Value, bool& OutSuccess, void(* Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = SetIntPropertyByPath(Context, StructValue, Struct, Path, Value, Log);
+			return OutSuccess;
+		}
 
 	#pragma endregion Int
 

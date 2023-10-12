@@ -61,7 +61,11 @@ UCsManager_Fade* UCsManager_Fade::s_Instance;
 bool UCsManager_Fade::s_bShutdown = false;
 
 UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	FadeWidget(nullptr),
+	FadeHandle(),
+	OnFadeComplete_Event(),
+	OnFadeComplete_ScriptEvent()
 {
 }
 
@@ -367,6 +371,9 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 	{
 		FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	OnFadeComplete_Event.Broadcast();
+	OnFadeComplete_ScriptEvent.Broadcast();
 
 	CS_COROUTINE_END(R);
 }

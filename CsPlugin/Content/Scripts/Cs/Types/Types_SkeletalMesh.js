@@ -4,19 +4,27 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
+/// <reference path="../Library/Library_Common.ts">/>
 
 "use strict"
 
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
-// "typedefs" - class
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library (js)
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
+
+// "typedefs" - library (c++)
+var PropertyLibrary      = CsScriptLibrary_Property;
+var SkeletalMeshLibrary  = CsScriptLibrary_SkeletalMesh;
 
 // "typedefs" - functions
-var check = CommonLibrary.check;
-var IsStringChecked = CommonLibrary.IsStringChecked;
+var check                = CommonLibrary.check;
+var IsStringChecked      = CommonLibrary.IsStringChecked;
 var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
+var IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked;
+
+// Globals
 
 module.exports = class NJsTypes
 {
@@ -27,6 +35,8 @@ module.exports = class NJsTypes
             /** @type {string} */       this.Path = "";
             /** @type {SkeletalMesh} */ this.Mesh_Internal = null;
         }
+
+        /*string*/ GetName() { return " NJsTypes.FSkeletalMesh" }
 
         /**
         * @returns {SkeletalMesh}
@@ -47,6 +57,23 @@ module.exports = class NJsTypes
             IsStringChecked(context, this.Path);
             IsValidObjectChecked(context, this.Mesh_Internal);
             return true;
+        }
+
+        OverrideByUObject(context, o, memberPath)
+        {
+            let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Mesh");
+            check(result.OutSuccess);
+            this.Path = result.$;
+            result = SkeletalMeshLibrary.GetByPath(context, o, memberPath + ".Mesh_Internal");
+            check(result.OutSuccess);
+            this.Mesh_Internal = result.$;
+        }
+
+        Load()
+        {
+            let context = this.GetName() + ".Load";
+
+            this.Mesh_Internal = SkeletalMeshLibrary.LoadByStringPath(context, this.Path);
         }
     }
 };

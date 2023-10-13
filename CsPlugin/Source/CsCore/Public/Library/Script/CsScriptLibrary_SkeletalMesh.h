@@ -38,4 +38,22 @@ public:
 	static USkeletalMesh* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the SkeletalMesh value at the give Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the SkeletalMesh value on Object.
+	* @param OutSuccess	(out)
+	* return			SkeletalMesh
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|SkeletalMesh", meta = (AutoCreateRefTerm = "Context,Path"))
+	static USkeletalMesh* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+#pragma endregion Get
 };

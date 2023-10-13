@@ -19,8 +19,12 @@ namespace NCsScriptLibraryAnimSequence
 	{
 		namespace Str
 		{
+			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, LoadByStringPath);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, GetByPath);
+			//Set
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimSequence, SetProperty);
 		}
 	}
@@ -33,6 +37,8 @@ UCsScriptLibrary_AnimSequence::UCsScriptLibrary_AnimSequence(const FObjectInitia
 {
 }
 
+#define AnimSequenceLibrary NCsAnimSequence::FLibrary
+
 // Load
 #pragma region
 
@@ -41,8 +47,6 @@ UAnimSequence* UCsScriptLibrary_AnimSequence::LoadBySoftObjectPath(const FString
 	using namespace NCsScriptLibraryAnimSequence::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	typedef NCsAnimSequence::FLibrary AnimSequenceLibrary;
 
 	return AnimSequenceLibrary::SafeLoad(Context, Path);
 }
@@ -53,12 +57,24 @@ UAnimSequence* UCsScriptLibrary_AnimSequence::LoadByStringPath(const FString& Co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
-	typedef NCsAnimSequence::FLibrary AnimSequenceLibrary;
-
 	return AnimSequenceLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+UAnimSequence* UCsScriptLibrary_AnimSequence::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryAnimSequence::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+
+	return AnimSequenceLibrary::GetSafe(Context, Object, Path, OutSuccess);
+}
+
+#pragma endregion Get
 
 // Property
 #pragma region
@@ -75,3 +91,5 @@ bool UCsScriptLibrary_AnimSequence::SetProperty(const FString& Context, UObject*
 }
 
 #pragma endregion Property
+
+#undef AnimSequenceLibrary

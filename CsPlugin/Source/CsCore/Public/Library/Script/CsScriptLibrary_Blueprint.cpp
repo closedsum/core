@@ -32,6 +32,8 @@ UCsScriptLibrary_Blueprint::UCsScriptLibrary_Blueprint(const FObjectInitializer&
 {
 }
 
+#define BlueprintLibrary NCsBlueprint::FLibrary
+
 // Load
 #pragma region
 
@@ -40,8 +42,6 @@ UBlueprint* UCsScriptLibrary_Blueprint::LoadBySoftObjectPath(const FString& Cont
 	using namespace NCsScriptLibraryBlueprint::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	typedef NCsBlueprint::FLibrary BlueprintLibrary;
 
 	return BlueprintLibrary::SafeLoad(Ctxt, Path);
 }
@@ -52,8 +52,6 @@ UBlueprint* UCsScriptLibrary_Blueprint::LoadByStringPath(const FString& Context,
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
-	typedef NCsBlueprint::FLibrary BlueprintLibrary;
-
 	return BlueprintLibrary::SafeLoad(Ctxt, Path);
 }
 
@@ -63,12 +61,8 @@ UBlueprintGeneratedClass* UCsScriptLibrary_Blueprint::LoadAndGetGeneratedClassBy
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadAndGetGeneratedClassByStringPath : Context;
 
-	typedef NCsBlueprint::FLibrary BlueprintLibrary;
-
 	if (UBlueprint* Blueprint = BlueprintLibrary::SafeLoad(Ctxt, Path))
-	{
 		return BlueprintLibrary::GetSafeClass(Ctxt, Blueprint);
-	}
 	return nullptr;
 }
 
@@ -78,12 +72,8 @@ UObject* UCsScriptLibrary_Blueprint::LoadAndGetDefaultObjectByStringPath(const F
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadAndGetDefaultObjectByStringPath : Context;
 
-	typedef NCsBlueprint::FLibrary BlueprintLibrary;
-
 	if (UBlueprint* Blueprint = BlueprintLibrary::SafeLoad(Ctxt, Path))
-	{
 		return BlueprintLibrary::GetSafeDefaultObject(Ctxt, Blueprint);
-	}
 	return nullptr;
 }
 
@@ -98,8 +88,6 @@ UBlueprintGeneratedClass* UCsScriptLibrary_Blueprint::GetGeneratedClass(const FS
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetGeneratedClass : Context;
 
-	typedef NCsBlueprint::FLibrary BlueprintLibrary;
-
 	return BlueprintLibrary::GetSafeClass(Ctxt, Blueprint);
 }
 
@@ -108,8 +96,6 @@ UObject* UCsScriptLibrary_Blueprint::GetDefaultObject(const FString& Context, UB
 	using namespace NCsScriptLibraryBlueprint::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetDefaultObject : Context;
-
-	typedef NCsBlueprint::FLibrary BlueprintLibrary;
 
 	return BlueprintLibrary::GetSafeDefaultObject(Ctxt, Blueprint);
 }
@@ -190,3 +176,5 @@ FName UCsScriptLibrary_Blueprint::GetFName_SoftClassPtr(const TSoftClassPtr<UObj
 }
 
 #pragma endregion TSoftClassPtr
+
+#undef BlueprintLibrary

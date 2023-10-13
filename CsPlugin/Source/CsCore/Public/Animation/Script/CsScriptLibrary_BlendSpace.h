@@ -59,4 +59,35 @@ public:
 	static UBlendSpace1D* Load1DByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+	/**
+	* Get BlendSpace value associated with member at Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess	(out)
+	* @param Log		(optional)
+	* return			BlendSpace.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Anim|Blend Space", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UBlendSpace* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get BlendSpace1D value associated with member at Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess	(out)
+	* @param Log		(optional)
+	* return			BlendSpace1D.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Anim|Blend Space", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UBlendSpace1D* Get1DByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+#pragma endregion Get
 };

@@ -41,6 +41,24 @@ namespace NCsAnimMontage
 
 	#pragma endregion Load
 
+	// Get
+	#pragma region
+	public:
+
+		/**
+		* Get Anim Montage value associated with member at Path for Object.
+		* 
+		* @param Context	The calling context.
+		* @param Object
+		* @param Path
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			Anim Montage.
+		*/
+		static UAnimMontage* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Get
+
 	// Play
 	#pragma region
 	public:

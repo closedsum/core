@@ -10,12 +10,19 @@
 // Library
 var NJsCommon = require('Cs/Library/Library_Common.js');
 
-// "typedefs" - class
-var CommonLibrary = NJsCommon.FLibrary;
+// "typedefs" - library (js)
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
+
+// "typedefs" - library (c++)
+var PropertyLibrary      = CsScriptLibrary_Property;
+var AnimInstanceLibrary  = CsScriptLibrary_AnimInstance;
+var AnimSequenceLibrary  = CsScriptLibrary_AnimSequence;
+var AnimMontageLibrary   = CsScriptLibrary_AnimMontage;
+var BlendSpaceLibrary    = CsScriptLibrary_BlendSpace;
 
 // "typedefs" - functions
-var check = CommonLibrary.check;
-var IsClassChecked = CommonLibrary.IsClassChecked;
+var check           = CommonLibrary.check;
+var IsClassChecked  = CommonLibrary.IsClassChecked;
 var IsStringChecked = CommonLibrary.IsStringChecked;
 
 module.exports = class NJsTypes
@@ -27,6 +34,8 @@ module.exports = class NJsTypes
             /** @type {string} */                       this.Path = "";
             /** @type {AnimBlueprintGeneratedClass} */  this.Blueprint_Internal = null;
         }
+
+        /*string*/ GetName() { return " NJsTypes.FAnimBlueprint" }
 
         /**
         * @returns {AnimBlueprintGeneratedClass}
@@ -48,6 +57,23 @@ module.exports = class NJsTypes
             IsClassChecked(context, this.Blueprint_Internal);
             return true;
         }
+
+        OverrideByUObject(context, o, memberPath)
+        {
+            let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Blueprint");
+            check(result.OutSuccess);
+            this.Path = result.$;
+            result = AnimInstanceLibrary.GetClassByPath(context, o, memberPath + ".Blueprint_Internal");
+            check(result.OutSuccess);
+            this.Blueprint_Internal = result.$;
+        }
+
+        Load()
+        {
+            let context = this.GetName() + ".Load";
+
+            this.Blueprint_Internal = AnimInstanceLibrary.LoadAndGetGeneratedClassByStringPath(context, this.Path);
+        }
     }
 
     static FAnimSequence = class AnimSequence
@@ -57,6 +83,8 @@ module.exports = class NJsTypes
             /** @type {string} */       this.Path = "";
             /** @type {AnimSequence} */ this.Anim_Internal = null;
         }
+
+        /*string*/ GetName() { return " NJsTypes.FAnimSequence" }
 
         /**
         * @returns {AnimSequence}
@@ -78,6 +106,23 @@ module.exports = class NJsTypes
             IsClassChecked(context, this.Anim_Internal);
             return true;
         }
+
+        OverrideByUObject(context, o, memberPath)
+        {
+            let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Anim");
+            check(result.OutSuccess);
+            this.Path = result.$;
+            result = AnimSequenceLibrary.GetByPath(context, o, memberPath + ".Anim_Internal");
+            check(result.OutSuccess);
+            this.Anim_Internal = result.$;
+        }
+
+        Load()
+        {
+            let context = this.GetName() + ".Load";
+
+            this.Anim_Internal = AnimSequenceLibrary.LoadByStringPath(context, this.Path);
+        }
     }
 
     static FBlendSpace = class BlendSpace
@@ -87,6 +132,8 @@ module.exports = class NJsTypes
             /** @type {string} */       this.Path = "";
             /** @type {BlendSpace} */   this.Blend_Internal = null;
         }
+
+        /*string*/ GetName() { return " NJsTypes.FBlendSpace" }
 
         /**
         * @returns {BlendSpace}
@@ -108,6 +155,23 @@ module.exports = class NJsTypes
             IsClassChecked(context, this.Blend_Internal);
             return true;
         }
+
+        OverrideByUObject(context, o, memberPath)
+        {
+            let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Blend");
+            check(result.OutSuccess);
+            this.Path = result.$;
+            result = BlendSpaceLibrary.GetByPath(context, o, memberPath + ".Blend_Internal");
+            check(result.OutSuccess);
+            this.Blend_Internal = result.$;
+        }
+
+        Load()
+        {
+            let context = this.GetName() + ".Load";
+
+            this.Blend_Internal = BlendSpaceLibrary.LoadByStringPath(context, this.Path);
+        }
     }
 
     static FBlendSpace1D = class BlendSpace1D
@@ -117,6 +181,8 @@ module.exports = class NJsTypes
             /** @type {string} */       this.Path = "";
             /** @type {BlendSpace1D} */ this.Blend_Internal = null;
         }
+
+        /*string*/ GetName() { return " NJsTypes.FBlendSpace1D" }
 
         /**
         * @returns {BlendSpace1D}
@@ -137,6 +203,23 @@ module.exports = class NJsTypes
             IsStringChecked(context, this.Path);
             IsClassChecked(context, this.Blend_Internal);
             return true;
+        }
+
+        OverrideByUObject(context, o, memberPath)
+        {
+            let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Blend");
+            check(result.OutSuccess);
+            this.Path = result.$;
+            result = BlendSpaceLibrary.Get1DByPath(context, o, memberPath + ".Blend_Internal");
+            check(result.OutSuccess);
+            this.Blend_Internal = result.$;
+        }
+
+        Load()
+        {
+            let context = this.GetName() + ".Load";
+
+            this.Blend_Internal = BlendSpaceLibrary.Load1DByStringPath(context, this.Path);
         }
     }
 };

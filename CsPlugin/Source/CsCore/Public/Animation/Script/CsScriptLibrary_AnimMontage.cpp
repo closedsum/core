@@ -18,8 +18,11 @@ namespace NCsScriptLibraryAnimMontage
 	{
 		namespace Str
 		{
+			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimMontage, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimMontage, LoadByStringPath);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AnimMontage, GetByPath);
 		}
 	}
 }
@@ -31,6 +34,8 @@ UCsScriptLibrary_AnimMontage::UCsScriptLibrary_AnimMontage(const FObjectInitiali
 {
 }
 
+#define AnimMontageLibrary NCsAnimMontage::FLibrary
+
 // Load
 #pragma region
 
@@ -39,8 +44,6 @@ UAnimMontage* UCsScriptLibrary_AnimMontage::LoadBySoftObjectPath(const FString& 
 	using namespace NCsScriptLibraryAnimMontage::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	typedef NCsAnimMontage::FLibrary AnimMontageLibrary;
 
 	return AnimMontageLibrary::SafeLoad(Context, Path);
 }
@@ -51,9 +54,23 @@ UAnimMontage* UCsScriptLibrary_AnimMontage::LoadByStringPath(const FString& Cont
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
-	typedef NCsAnimMontage::FLibrary AnimMontageLibrary;
-
 	return AnimMontageLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+UAnimMontage* UCsScriptLibrary_AnimMontage::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryAnimMontage::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+
+	return AnimMontageLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
+}
+
+#pragma endregion Get
+
+#undef AnimMontageLibrary

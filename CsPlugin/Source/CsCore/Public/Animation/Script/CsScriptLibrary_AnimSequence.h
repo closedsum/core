@@ -39,6 +39,24 @@ public:
 
 #pragma endregion Load
 
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the AnimSequence value at the give Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the AnimSequence value on Object.
+	* @param OutSuccess	(out)
+	* return			AnimSequence
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|AnimSequence", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UAnimSequence* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+#pragma endregion Get
+
 // Property
 #pragma region
 public:

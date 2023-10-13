@@ -2612,10 +2612,22 @@ namespace NCsValid
 		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_STRING_EMPTY_EXIT(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_STRING_EMPTY_RET_NULL(__A) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_STRING_EMPTY_RET_VALUE(__A, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return __Value; } \
 	}
 
 #pragma endregion FString

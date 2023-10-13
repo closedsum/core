@@ -51,6 +51,18 @@ namespace NCsAnimInstance
 		static UAnimBlueprintGeneratedClass* GetSafeClass(const FString& Context, UAnimBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
+		* Get AnimBlueprintGeneratedClass value associated with member at Path for Object.
+		* 
+		* @param Context	The calling context.
+		* @param Object
+		* @param Path
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			AnimBlueprintGeneratedClass.
+		*/
+		static UAnimBlueprintGeneratedClass* GetSafeClass(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
 		* Get the AnimInstance associated with Component.
 		* NOTE: Component MUST be of type: USkeletalMeshComponent.
 		* 

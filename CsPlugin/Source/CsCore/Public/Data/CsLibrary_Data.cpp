@@ -10,6 +10,8 @@
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 	// Common
 #include "Library/CsLibrary_Valid.h"
+// Interface
+#include "Data/CsScriptData.h"
 
 namespace NCsData
 {
@@ -74,6 +76,24 @@ namespace NCsData
 
 	#undef DataType
 	#pragma endregion Load
+
+	// ICsScriptData
+	#pragma region
+	
+	bool FLibrary::SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(Object)
+
+		if (Object->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+		{
+			ICsScriptData::Execute_Script_Load(Object, LoadFlags);
+			return true;
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *PrintObjectAndClass(Object)));
+		return true;
+	}
+
+	#pragma endregion ICsScriptData
 
 	#define DataType NCsData::IData
 

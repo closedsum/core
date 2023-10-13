@@ -18,9 +18,15 @@ namespace NCsScriptLibraryMaterial
 	{
 		namespace Str
 		{
+			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPaths);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetArrayByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetSoftObjectArrayAsStringByPath);
+			// Set
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAll);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, SetAt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, Set);
@@ -70,6 +76,38 @@ bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const 
 }
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+UMaterialInterface* UCsScriptLibrary_Material::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+
+	return MaterialLibrary::GetSafe(Context, Object, Path, OutSuccess);
+}
+
+bool UCsScriptLibrary_Material::GetArrayByPath(const FString& Context, UObject* Object, const FString& Path, TArray<UMaterialInterface*>& OutArray, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetArrayByPath : Context;
+
+	return MaterialLibrary::GetSafe(Context, Object, Path, OutArray, OutSuccess);
+}
+
+bool UCsScriptLibrary_Material::GetSoftObjectArrayAsStringByPath(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryMaterial::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectArrayAsStringByPath : Context;
+
+	return MaterialLibrary::GetSafe(Context, Object, Path, OutArray, OutSuccess);
+}
+
+#pragma endregion Get
 
 // Set
 #pragma region

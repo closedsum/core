@@ -11,6 +11,7 @@
 // Library
 #include "Coroutine/CsLibrary_CoroutineScheduler.h"
 	// Common
+#include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
 #include "Material/CsLibrary_Material_Parameter.h"
 #include "Library/CsLibrary_Math.h"
@@ -79,6 +80,39 @@ namespace NCsMaterial
 	}
 
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+	
+	UMaterialInterface* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary PropertyLibrary;
+
+		return PropertyLibrary::GetObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<TSoftObjectPtr<UMaterialInterface>>& OutArray, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary PropertyLibrary;
+
+		return PropertyLibrary::GetArraySoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary PropertyLibrary;
+
+		return PropertyLibrary::GetArraySoftObjectPropertyValueAsStringByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<UMaterialInterface*>& OutArray, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary PropertyLibrary;
+
+		return PropertyLibrary::GetArrayObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);
+	}
+
+	#pragma endregion Get
 
 	bool FLibrary::IsValidChecked(const FString& Context, const TArray<UMaterialInterface*>& Materials)
 	{

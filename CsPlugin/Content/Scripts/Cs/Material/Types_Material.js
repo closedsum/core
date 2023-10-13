@@ -11,12 +11,15 @@
 var NJsCommon = require('Cs/Library/Library_Common.js');
 var NJsArray = require('Cs/Library/Library_Array.js');
 
-// "typedefs" - class
-var CommonLibrary = NJsCommon.FLibrary;
-var ArrayLibrary = NJsArray.FLibrary;
+// "typedefs" - library (js)
+/** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
+/** @type {ArrayLibrary} */ var ArrayLibrary   = NJsArray.FLibrary;
+
+// "typedefs" - library (c++)
+var MaterialLibrary  = CsScriptLibrary_Material;
 
 // "typedefs" - functions
-var check = CommonLibrary.check;
+var check             = CommonLibrary.check;
 var IsNotEmptyChecked = ArrayLibrary.IsNotEmptyChecked;
 
 module.exports = class NJsTypes
@@ -49,6 +52,25 @@ module.exports = class NJsTypes
             IsNotEmptyChecked(context, this.Materials_Internal);
             // TODO: Need to check Array has valid objects.
             return true;
+        }
+
+        OverrideByUObject(context, o, memberPath)
+        {
+            let result = MaterialLibrary.GetSoftObjectArrayAsStringByPath(context, o, memberPath + ".Materials");
+            check(result.OutSuccess);
+            this.Paths = result.OutArray;
+            result = MaterialLibrary.GetArrayByPath(context, o, memberPath + ".Materials_Internal");
+            check(result.OutSuccess);
+            this.Materials_Internal = result.OutArray;
+        }
+
+        Load()
+        {
+            let context = ClassName = ".Load";
+
+            let result = MaterialLibrary.LoadByStringPaths(context, this.Path);
+            check(result.$);
+            this.Materials_Internal = result.OutMaterials;
         }
     }
 };

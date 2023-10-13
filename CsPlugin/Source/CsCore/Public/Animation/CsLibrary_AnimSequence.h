@@ -40,5 +40,23 @@ namespace NCsAnimSequence
 		static UAnimSequence* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+	public:
+
+		/**
+		* Get Anim Sequence value associated with member at Path for Object.
+		* 
+		* @param Context	The calling context.
+		* @param Object
+		* @param Path
+		* @param OutSuccess	(out)
+		* @param Log		(optional)
+		* return			Anim Sequence.
+		*/
+		static UAnimSequence* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Get
 	};
 }

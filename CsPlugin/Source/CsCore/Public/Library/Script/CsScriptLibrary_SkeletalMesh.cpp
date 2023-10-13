@@ -18,8 +18,11 @@ namespace NCsScriptLibrarySkeletalMesh
 	{
 		namespace Str
 		{
+			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_SkeletalMesh, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_SkeletalMesh, LoadByStringPath);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_SkeletalMesh, GetByPath);
 		}
 	}
 }
@@ -31,6 +34,8 @@ UCsScriptLibrary_SkeletalMesh::UCsScriptLibrary_SkeletalMesh(const FObjectInitia
 {
 }
 
+#define SkeletalMeshLibrary NCsSkeletalMesh::FLibrary
+
 // Load
 #pragma region
 
@@ -40,9 +45,7 @@ USkeletalMesh* UCsScriptLibrary_SkeletalMesh::LoadBySoftObjectPath(const FString
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
 
-	typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
-	return SkeletalMeshLibrary::SafeLoad(Context, Path);
+	return SkeletalMeshLibrary::SafeLoad(Ctxt, Path);
 }
 
 USkeletalMesh* UCsScriptLibrary_SkeletalMesh::LoadByStringPath(const FString& Context, const FString& Path)
@@ -51,9 +54,23 @@ USkeletalMesh* UCsScriptLibrary_SkeletalMesh::LoadByStringPath(const FString& Co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
-	typedef NCsSkeletalMesh::FLibrary SkeletalMeshLibrary;
-
 	return SkeletalMeshLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+USkeletalMesh* UCsScriptLibrary_SkeletalMesh::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibrarySkeletalMesh::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+
+	return SkeletalMeshLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
+}
+
+#pragma endregion Get
+
+#undef SkeletalMeshLibrary

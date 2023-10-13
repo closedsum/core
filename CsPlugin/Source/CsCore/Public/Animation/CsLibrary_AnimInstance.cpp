@@ -8,6 +8,7 @@
 #include "Types/CsCached.h"
 // Library
 #include "Object/CsLibrary_Object.h"
+#include "Library/CsLibrary_Property.h"
 #include "Library/CsLibrary_Valid.h"
 // Blueprint
 #include "Animation/AnimBlueprintGeneratedClass.h"
@@ -20,19 +21,19 @@ namespace NCsAnimInstance
 	// Load
 	#pragma region
 
+	#define ObjectLibrary NCsObject::FLibrary
+
 	UAnimBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
 	}
 
 	UAnimBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
 	}
+
+	#undef ObjectLibrary
 
 	#pragma endregion Load
 
@@ -64,6 +65,13 @@ namespace NCsAnimInstance
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get AnimBlueprintGeneratedClass from Blueprint: %s with Class: %s."), *Context, *(Blueprint->GetName()), *(Blueprint->GetClass()->GetName())));
 		}
 		return (UAnimBlueprintGeneratedClass*)(O);
+	}
+
+	UAnimBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary PropertyLibrary;
+
+		return PropertyLibrary::GetObjectPropertyValueByPath<UAnimBlueprintGeneratedClass>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
 	UAnimInstance* FLibrary::GetChecked(const FString& Context, UPrimitiveComponent* Component)

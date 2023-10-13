@@ -61,6 +61,14 @@ namespace NCsSkeletalMesh
 
 	#pragma endregion Load
 
+	// Get
+	#pragma region
+	public:
+
+		static USkeletalMesh* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Get
+
 	// Bone
 	#pragma region
 	public:

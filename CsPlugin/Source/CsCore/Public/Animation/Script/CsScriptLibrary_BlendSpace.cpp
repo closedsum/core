@@ -18,10 +18,14 @@ namespace NCsScriptLibraryBlendSpace
 	{
 		namespace Str
 		{
+			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BlendSpace, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BlendSpace, LoadByStringPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BlendSpace, Load1DBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BlendSpace, Load1DByStringPath);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BlendSpace, GetByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BlendSpace, Get1DByPath);
 		}
 	}
 }
@@ -33,6 +37,9 @@ UCsScriptLibrary_BlendSpace::UCsScriptLibrary_BlendSpace(const FObjectInitialize
 {
 }
 
+#define BlendSpaceLibrary NCsBlendSpace::FLibrary
+#define BlendSpace1DLibrary NCsBlendSpace::N1D::FLibrary
+
 // Load
 #pragma region
 
@@ -41,8 +48,6 @@ UBlendSpace* UCsScriptLibrary_BlendSpace::LoadBySoftObjectPath(const FString& Co
 	using namespace NCsScriptLibraryBlendSpace::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	typedef NCsBlendSpace::FLibrary BlendSpaceLibrary;
 
 	return BlendSpaceLibrary::SafeLoad(Context, Path);
 }
@@ -53,8 +58,6 @@ UBlendSpace* UCsScriptLibrary_BlendSpace::LoadByStringPath(const FString& Contex
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
-	typedef NCsBlendSpace::FLibrary BlendSpaceLibrary;
-
 	return BlendSpaceLibrary::SafeLoad(Ctxt, Path);
 }
 
@@ -64,9 +67,7 @@ UBlendSpace1D* UCsScriptLibrary_BlendSpace::Load1DBySoftObjectPath(const FString
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Load1DBySoftObjectPath : Context;
 
-	typedef NCsBlendSpace::N1D::FLibrary BlendSpaceLibrary;
-
-	return BlendSpaceLibrary::SafeLoad(Context, Path);
+	return BlendSpace1DLibrary::SafeLoad(Context, Path);
 }
 
 UBlendSpace1D* UCsScriptLibrary_BlendSpace::Load1DByStringPath(const FString& Context, const FString& Path)
@@ -75,9 +76,34 @@ UBlendSpace1D* UCsScriptLibrary_BlendSpace::Load1DByStringPath(const FString& Co
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Load1DByStringPath : Context;
 
-	typedef NCsBlendSpace::N1D::FLibrary BlendSpaceLibrary;
-
-	return BlendSpaceLibrary::SafeLoad(Ctxt, Path);
+	return BlendSpace1DLibrary::SafeLoad(Ctxt, Path);
 }
 
 #pragma endregion Load
+
+
+// Get
+#pragma region
+
+UBlendSpace* UCsScriptLibrary_BlendSpace::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryBlendSpace::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+
+	return BlendSpaceLibrary::GetSafe(Context, Object, Path, OutSuccess);
+}
+
+UBlendSpace1D* UCsScriptLibrary_BlendSpace::Get1DByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryBlendSpace::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::Get1DByPath : Context;
+
+	return BlendSpace1DLibrary::GetSafe(Context, Object, Path, OutSuccess);
+}
+
+#pragma endregion Get
+
+#undef BlendSpaceLibrary
+#undef BlendSpace1DLibrary

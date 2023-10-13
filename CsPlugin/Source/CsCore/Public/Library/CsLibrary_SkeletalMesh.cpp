@@ -7,6 +7,7 @@
 // Types
 #include "Types/CsTypes_Math.h"
 // Library
+#include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
@@ -15,38 +16,48 @@
 
 namespace NCsSkeletalMesh
 {
+	#define MathLibrary NCsMath::FLibrary
+
 	// Load
 	#pragma region
 
+	#define ObjectLibrary NCsObject::FLibrary
+
 	USkeletalMesh* FLibrary::LoadChecked(const FString& Context, const FSoftObjectPath& Path)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
 	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
 	}
 
 	USkeletalMesh* FLibrary::LoadChecked(const FString& Context, const FString& Path)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::LoadChecked<USkeletalMesh>(Context, Path);
 	}
 
 	USkeletalMesh* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<USkeletalMesh>(Context, Path, Log);
 	}
 
+	#undef ObjectLibrary
+
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+
+	USkeletalMesh* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary PropertyLibrary;
+
+		return PropertyLibrary::GetObjectPropertyValueByPath<USkeletalMesh>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+	}
+
+	#pragma endregion Get
 
 	// Bone
 	#pragma region
@@ -54,13 +65,11 @@ namespace NCsSkeletalMesh
 	bool FLibrary::IsBoneValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone)
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
-
 		CS_IS_NAME_NONE_CHECKED(Bone)
 
 		USkeletalMesh* Mesh = Component->GetSkeletalMeshAsset();
 
 		checkf(Mesh, TEXT("%s: SkeletalMesh is NULL for Component: %s."), *Context, *(Component->GetName()));
-
 		checkf(Component->GetBoneIndex(Bone) != INDEX_NONE, TEXT("%s: Bone: %s does NOT exist on Component: %s with SkeletalMesh: %s."), *Context, *(Bone.ToString()), *(Component->GetName()), *(Mesh->GetName()));
 
 		return true;
@@ -69,17 +78,12 @@ namespace NCsSkeletalMesh
 	FVector3f FLibrary::GetBoneLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone)
 	{
 		check(IsBoneValidChecked(Context, Component, Bone));
-
-		typedef NCsMath::FLibrary MathLibrary;
-
 		return MathLibrary::Convert(Component->GetBoneLocation(Bone));
 	}
 
 	FRotator3f FLibrary::GetBoneRotationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Bone, const int32& Rules)
 	{
 		check(IsBoneValidChecked(Context, Component, Bone));
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		FRotator3f Rotation = MathLibrary::Convert(Component->GetBoneQuaternion(Bone).Rotator());
 
@@ -99,23 +103,18 @@ namespace NCsSkeletalMesh
 	bool FLibrary::IsSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket)
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
-
 		CS_IS_NAME_NONE_CHECKED(Socket)
 
 		USkeletalMesh* Mesh = Component->GetSkeletalMeshAsset();
 
 		checkf(Mesh, TEXT("%s: SkeletalMesh is NULL for Component: %s."), *Context, *(Component->GetName()));
-
 		checkf(Component->DoesSocketExist(Socket), TEXT("%s: Socket: %s does NOT exist on Component: %s with SkeletalMesh: %s."), *Context, *(Socket.ToString()), *(Component->GetName()), *(Mesh->GetName()));
-
 		return true;
 	}
 
 	FVector3f FLibrary::GetSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& Socket)
 	{
 		check(IsSocketValidChecked(Context, Component, Socket));
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		const FTransform3f Transform = MathLibrary::Convert(Component->GetSocketTransform(Socket));
 
@@ -126,11 +125,8 @@ namespace NCsSkeletalMesh
 	{
 		check(IsSocketValidChecked(Context, Component, Socket));
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		const FTransform3f Transform = MathLibrary::Convert(Component->GetSocketTransform(Socket));
-
-		FRotator3f Rotation = Transform.GetRotation().Rotator();
+		FRotator3f Rotation			 = Transform.GetRotation().Rotator();
 
 		return NCsRotationRules::GetRotationChecked(Context, Rotation, Rules);
 	}
@@ -145,7 +141,6 @@ namespace NCsSkeletalMesh
 	bool FLibrary::IsBoneOrSocketValidChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		CS_IS_PTR_NULL_CHECKED(Component)
-
 		CS_IS_NAME_NONE_CHECKED(BoneOrSocket)
 
 		USkeletalMesh* Mesh = Component->GetSkeletalMeshAsset();
@@ -170,7 +165,6 @@ namespace NCsSkeletalMesh
 	bool FLibrary::SafeIsBoneOrSocketValid(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL(Component)
-
 		CS_IS_NAME_NONE(BoneOrSocket)
 
 		USkeletalMesh* Mesh = Component->GetSkeletalMeshAsset();
@@ -217,10 +211,7 @@ namespace NCsSkeletalMesh
 	FVector3f FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
-
-		typedef NCsMath::FLibrary MathLibary;
-
-		return MathLibary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Vector());
+		return MathLibrary::Convert(Component->GetBoneQuaternion(BoneOrSocket).Vector());
 	}
 
 	FVector3f FLibrary::GetBoneOrSocketDirectionChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket)
@@ -233,10 +224,7 @@ namespace NCsSkeletalMesh
 	FVector3f FLibrary::GetBoneOrSocketLocationChecked(const FString& Context, USkeletalMeshComponent* Component, const FName& BoneOrSocket)
 	{
 		check(IsBoneOrSocketValidChecked(Context, Component, BoneOrSocket));
-
-		typedef NCsMath::FLibrary MathLibary;
-
-		return MathLibary::Convert(Component->GetBoneLocation(BoneOrSocket));
+		return MathLibrary::Convert(Component->GetBoneLocation(BoneOrSocket));
 	}
 
 	FVector3f FLibrary::GetBoneOrSocketLocationChecked(const FString& Context, USceneComponent* Component, const FName& BoneOrSocket)
@@ -245,4 +233,6 @@ namespace NCsSkeletalMesh
 
 		return GetBoneOrSocketLocationChecked(Context, C, BoneOrSocket);
 	}
+
+	#undef MathLibrary
 }

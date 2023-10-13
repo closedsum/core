@@ -114,6 +114,14 @@ namespace NCsData
 
 	#pragma endregion Load
 
+	// ICsScriptData
+	#pragma region
+	public:
+
+		static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion ICsScriptData
+
 		/**
 		* Get Data with name DataName which implements the interface: DataType (NCsData::IData).
 		* 

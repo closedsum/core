@@ -63,8 +63,21 @@ public:
 	* @param Blueprint	
 	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context"))
 	static UAnimBlueprintGeneratedClass* GetGeneratedClass(const FString& Context, UAnimBlueprint* Blueprint);
+
+	/**
+	* Get AnimBlueprintGeneratedClass value associated with member at Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess	(out)
+	* @param Log		(optional)
+	* return			AnimBlueprintGeneratedClass.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|AnimInstance", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UAnimBlueprintGeneratedClass* GetClassByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
 
 #pragma endregion Get
 };

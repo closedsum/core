@@ -38,4 +38,23 @@ public:
 	static UAnimMontage* LoadByStringPath(const FString& Context, const FString& Path);
 
 #pragma endregion Load
+
+// Get
+#pragma region
+public:
+
+	/**
+	* Get AnimMontage value associated with member at Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess	(out)
+	* @param Log		(optional)
+	* return			AnimMontage.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|AnimMontage", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UAnimMontage* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+#pragma endregion Get
 };

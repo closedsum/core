@@ -52,6 +52,50 @@ public:
 
 #pragma endregion Load
 
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the Material Interface value at the give Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the Material Interface value on Object.
+	* @param OutSuccess	(out)
+	* return			Material Interface
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UMaterialInterface* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get an Array of Material Interface values at the give Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the Material Interface value on Object.
+	* @param OutArray	(out)
+	* @param OutSuccess	(out)
+	* return			Material Interface
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Path"))
+	static bool GetArrayByPath(const FString& Context, UObject* Object, const FString& Path, TArray<UMaterialInterface*>& OutArray, bool& OutSuccess);
+
+	/**
+	* Get an Array of SoftObjectPtr of type: Material Interface values at the give Path for Object as an Array of Strings.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the Material Interface value on Object.
+	* @param OutArray	(out)
+	* @param OutSuccess	(out)
+	* return			Material Interface
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Material", meta = (AutoCreateRefTerm = "Context,Path"))
+	static bool GetSoftObjectArrayAsStringByPath(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess);
+
+#pragma endregion Get
+
 // Set
 #pragma region
 public:

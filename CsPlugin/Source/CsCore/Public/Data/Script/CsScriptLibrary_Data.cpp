@@ -36,13 +36,13 @@ UCsScriptLibrary_Data::UCsScriptLibrary_Data(const FObjectInitializer& ObjectIni
 // ICsScriptData
 #pragma region
 
-bool UCsScriptLibrary_Data::Script_Load(const FString& Context, UObject* Object, const int32& LoadFlags)
+bool UCsScriptLibrary_Data::Script_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess)
 {
 	using namespace NCsScriptLibraryData::NCached;
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Script_Load : Context;
 
-	return DataLibrary::SafeScript_Load(Ctxt, Object, LoadFlags);
+	return DataLibrary::SafeScript_Load(Ctxt, Object, LoadFlags, OutSuccess);
 }
 
 #pragma endregion ICsScriptData

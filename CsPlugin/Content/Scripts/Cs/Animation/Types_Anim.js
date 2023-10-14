@@ -21,9 +21,11 @@ var AnimMontageLibrary   = CsScriptLibrary_AnimMontage;
 var BlendSpaceLibrary    = CsScriptLibrary_BlendSpace;
 
 // "typedefs" - functions
-var check           = CommonLibrary.check;
-var IsClassChecked  = CommonLibrary.IsClassChecked;
-var IsStringChecked = CommonLibrary.IsStringChecked;
+var check                   = CommonLibrary.check;
+var IsClassChecked          = CommonLibrary.IsClassChecked;
+var IsValidObjectChecked    = CommonLibrary.IsValidObjectChecked;
+var IsStringChecked         = CommonLibrary.IsStringChecked;
+var IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked;
 
 module.exports = class NJsTypes
 {
@@ -62,9 +64,11 @@ module.exports = class NJsTypes
         {
             let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Blueprint");
             check(result.OutSuccess);
+            IsStringNotEmptyChecked(context, result.$);
             this.Path = result.$;
             result = AnimInstanceLibrary.GetClassByPath(context, o, memberPath + ".Blueprint_Internal");
             check(result.OutSuccess);
+            IsClassChecked(context, result.$);
             this.Blueprint_Internal = result.$;
         }
 
@@ -103,7 +107,7 @@ module.exports = class NJsTypes
         /*boolean*/ IsValidChecked(context /*string*/)
         {
             IsStringChecked(context, this.Path);
-            IsClassChecked(context, this.Anim_Internal);
+            IsValidObjectChecked(context, this.Anim_Internal);
             return true;
         }
 
@@ -111,9 +115,11 @@ module.exports = class NJsTypes
         {
             let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Anim");
             check(result.OutSuccess);
+            IsStringNotEmptyChecked(context, result.$);
             this.Path = result.$;
             result = AnimSequenceLibrary.GetByPath(context, o, memberPath + ".Anim_Internal");
             check(result.OutSuccess);
+            IsValidObjectChecked(context, result.$);
             this.Anim_Internal = result.$;
         }
 
@@ -160,9 +166,11 @@ module.exports = class NJsTypes
         {
             let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Blend");
             check(result.OutSuccess);
+            IsStringNotEmptyChecked(context, result.$);
             this.Path = result.$;
             result = BlendSpaceLibrary.GetByPath(context, o, memberPath + ".Blend_Internal");
             check(result.OutSuccess);
+            IsValidObjectChecked(context, result.$);
             this.Blend_Internal = result.$;
         }
 
@@ -205,13 +213,20 @@ module.exports = class NJsTypes
             return true;
         }
 
-        OverrideByUObject(context, o, memberPath)
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context /*string*/, o /*object*/, memberPath /*string*/)
         {
             let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Blend");
             check(result.OutSuccess);
+            IsStringNotEmptyChecked(context, result.$);
             this.Path = result.$;
             result = BlendSpaceLibrary.Get1DByPath(context, o, memberPath + ".Blend_Internal");
             check(result.OutSuccess);
+            IsValidObjectChecked(context, result.$);
             this.Blend_Internal = result.$;
         }
 

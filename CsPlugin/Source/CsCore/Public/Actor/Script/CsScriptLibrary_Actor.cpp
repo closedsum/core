@@ -26,6 +26,8 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetAnyByTags);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
+			// Has
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, HasTags);
 			// Component
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetComponentByTag);
 			// Visibility
@@ -151,6 +153,20 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, const UObject
 }
 
 #pragma endregion Get
+
+// Has
+#pragma region
+
+bool UCsScriptLibrary_Actor::HasTags(const FString& Context, const AActor* Actor, const TArray<FName>& Tags)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::HasTags : Context;
+
+	return ActorLibrary::SafeHasTags(Ctxt, Actor, Tags);
+}
+
+#pragma endregion Has
 
 // Component
 #pragma region

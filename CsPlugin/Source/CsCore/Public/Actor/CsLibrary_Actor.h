@@ -296,6 +296,18 @@ namespace NCsActor
 
 	#pragma endregion Get
 
+	// Has
+	#pragma region
+	public:
+
+		static bool HasTagsChecked(const FString& Context, const AActor* A, const TArray<FName>& Tags);
+
+		static bool SafeHasTags(const FString& Context, const AActor* A, const TArray<FName>& Tags, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool SafeHasTags(const FString& Context, const AActor* A, const TArray<FName>& Tags, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Has
+
 	// RootComponent
 	#pragma region
 	public:

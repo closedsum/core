@@ -120,6 +120,24 @@ public:
 
 #pragma endregion Get
 
+// Has
+#pragma region
+public:
+
+	/**
+	* Get whether Actor has Tags.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Actor
+	* @param Tags
+	* return				Get whether Actor has Tags or not.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
+	static bool HasTags(const FString& Context, const AActor* Actor, const TArray<FName>& Tags);
+
+#pragma endregion Has
+
 // Component
 #pragma region
 public:

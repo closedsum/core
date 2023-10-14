@@ -11,6 +11,10 @@ declare namespace NJsTypes {
         Path: string;
         Mesh_Internal: SkeletalMesh;
         /**
+        * @returns {string}
+        */
+        GetName(): string;
+        /**
         * @returns {SkeletalMesh}
         */
         Get(): SkeletalMesh;
@@ -23,6 +27,13 @@ declare namespace NJsTypes {
         * @returns {boolean}
         */
         IsValidChecked(context: string): boolean;
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context: string, o: object, memberPath: string): void;
+        Load(): void;
     }
 }
 

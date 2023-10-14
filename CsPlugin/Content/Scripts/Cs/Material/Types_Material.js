@@ -32,6 +32,8 @@ module.exports = class NJsTypes
             /** @type {MaterialInterface[]} */  this.Materials_Internal = null;
         }
 
+        /*string*/ GetName() { return " NJsTypes.FTArrayMaterialInterface" }
+
         /**
         * @returns {MaterialInterface[]}
         */
@@ -54,22 +56,29 @@ module.exports = class NJsTypes
             return true;
         }
 
-        OverrideByUObject(context, o, memberPath)
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context /*string*/, o /*object*/, memberPath /*string*/)
         {
             let result = MaterialLibrary.GetSoftObjectArrayAsStringByPath(context, o, memberPath + ".Materials");
             check(result.OutSuccess);
             this.Paths = result.OutArray;
             result = MaterialLibrary.GetArrayByPath(context, o, memberPath + ".Materials_Internal");
             check(result.OutSuccess);
+            IsNotEmptyChecked(context, result.OutArray);
             this.Materials_Internal = result.OutArray;
         }
 
         Load()
         {
-            let context = ClassName = ".Load";
+            let context = this.GetName() + ".Load";
 
-            let result = MaterialLibrary.LoadByStringPaths(context, this.Path);
+            let result = MaterialLibrary.LoadByStringPaths(context, this.Paths);
             check(result.$);
+            IsNotEmptyChecked(context, result.OutMaterials);
             this.Materials_Internal = result.OutMaterials;
         }
     }

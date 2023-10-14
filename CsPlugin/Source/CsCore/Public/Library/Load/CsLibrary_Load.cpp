@@ -1344,11 +1344,12 @@ void UCsLibrary_Load::LoadSoftClassProperty(FSoftClassProperty* SoftClassPropert
 						else
 						if ((*Internal)->GetClass()->ImplementsInterface(UCsData::StaticClass()))
 						{
+							bool OutSuccess = false;
 						#if WITH_EDITOR
-							ICsScriptData::Execute_Script_Load(*Internal, LoadFlags);
+							ICsScriptData::Execute_Script_Load(*Internal, LoadFlags, OutSuccess);
 						#else
-							if (!ICsScriptData::Execute_Script_IsLoaded(*Internal))
-								ICsScriptData::Execute_Script_Load(*Internal, LoadFlags);
+							if (!ICsScriptData::Execute_Script_IsLoaded(*Internal, OutSuccess))
+								ICsScriptData::Execute_Script_Load(*Internal, LoadFlags, OutSuccess);
 						#endif // #if WITH_EDITOR
 						}
 						else
@@ -1447,11 +1448,12 @@ void UCsLibrary_Load::LoadArraySoftClassProperty(FArrayProperty* ArrayProperty, 
 							else
 							if ((*InternalPtr)->GetClass()->ImplementsInterface(UCsData::StaticClass()))
 							{
+								bool OutSuccess = false;
 							#if WITH_EDITOR
-								ICsScriptData::Execute_Script_Load(*InternalPtr, LoadFlags);
+								ICsScriptData::Execute_Script_Load(*InternalPtr, LoadFlags, OutSuccess);
 							#else
-								if (!ICsScriptData::Execute_Script_IsLoaded(*InternalPtr))
-									ICsScriptData::Execute_Script_Load(*InternalPtr, LoadFlags);
+								if (!ICsScriptData::Execute_Script_IsLoaded(*InternalPtr, OutSuccess))
+									ICsScriptData::Execute_Script_Load(*InternalPtr, LoadFlags, OutSuccess);
 							#endif // #if WITH_EDITOR
 							}
 							else
@@ -1711,11 +1713,12 @@ void UCsLibrary_Load::LoadClassProperty(FClassProperty* ClassProperty, void* Str
 			else
 			if (DOb->GetClass()->ImplementsInterface(UCsData::StaticClass()))
 			{
+				bool OutSuccess = false;
 			#if WITH_EDITOR
-				ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+				ICsScriptData::Execute_Script_Load(DOb, LoadFlags, OutSuccess);
 			#else
-				if (!ICsScriptData::Execute_Script_IsLoaded(DOb))
-					ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+				if (!ICsScriptData::Execute_Script_IsLoaded(DOb, OutSuccess))
+					ICsScriptData::Execute_Script_Load(DOb, LoadFlags, OutSuccess);
 			#endif // #if WITH_EDITOR
 			}
 		}
@@ -1751,11 +1754,12 @@ void UCsLibrary_Load::LoadArrayClassProperty(FArrayProperty* ArrayProperty, void
 			else
 			if (DOb->GetClass()->ImplementsInterface(UCsData::StaticClass()))
 			{
+				bool OutSuccess = false;
 			#if WITH_EDITOR
-				ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+				ICsScriptData::Execute_Script_Load(DOb, LoadFlags, OutSuccess);
 			#else
-				if (!ICsScriptData::Execute_Script_IsLoaded(DOb))
-					ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+				if (!ICsScriptData::Execute_Script_IsLoaded(DOb, OutSuccess))
+					ICsScriptData::Execute_Script_Load(DOb, LoadFlags, OutSuccess);
 			#endif // #if WITH_EDITOR
 			}
 		}
@@ -1959,11 +1963,12 @@ UObject* UCsLibrary_Load::LoadSoftClassPtrChecked(const FString& Context, const 
 	else
 	if (DOb->GetClass()->ImplementsInterface(UCsData::StaticClass()))
 	{
+		bool OutSuccess = false;
 	#if WITH_EDITOR
-		ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+		ICsScriptData::Execute_Script_Load(DOb, LoadFlags, OutSuccess);
 	#else
-		if (!ICsScriptData::Execute_Script_IsLoaded(DOb))
-			ICsScriptData::Execute_Script_Load(DOb, LoadFlags);
+		if (!ICsScriptData::Execute_Script_IsLoaded(DOb, OutSuccess))
+			ICsScriptData::Execute_Script_Load(DOb, LoadFlags, OutSuccess);
 	#endif // #if WITH_EDITOR
 	}
 	else

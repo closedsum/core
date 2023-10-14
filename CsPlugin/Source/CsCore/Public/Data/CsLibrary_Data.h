@@ -118,7 +118,7 @@ namespace NCsData
 	#pragma region
 	public:
 
-		static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, void(*Log)(const FString&) = &FCsLog::Warning);
+		static bool SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion ICsScriptData
 

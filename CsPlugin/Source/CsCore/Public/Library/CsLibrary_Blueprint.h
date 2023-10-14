@@ -51,5 +51,12 @@ namespace NCsBlueprint
 		static UObject* GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Get
+
+	// Is
+	#pragma region
+
+		static bool SafeIs(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion
 	};
 }

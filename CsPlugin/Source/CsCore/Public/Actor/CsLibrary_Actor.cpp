@@ -621,6 +621,62 @@ namespace NCsActor
 
 	#pragma endregion Get
 
+	// Has
+	#pragma region
+	
+	bool FLibrary::HasTagsChecked(const FString& Context, const AActor* A, const TArray<FName>& Tags)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
+		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
+
+		int32 Count = Tags.Num();
+
+		for (const FName& Tag : Tags)
+		{
+			if (A->Tags.Contains(Tag))
+				--Count;
+		}
+		return Count <= 0;
+	}
+
+	bool FLibrary::SafeHasTags(const FString& Context, const AActor* A, const TArray<FName>& Tags, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(A)
+		CS_IS_TARRAY_EMPTY(Tags, FName)
+		CS_IS_TARRAY_ANY_NONE(Tags)
+
+		int32 Count = Tags.Num();
+
+		for (const FName& Tag : Tags)
+		{
+			if (A->Tags.Contains(Tag))
+				--Count;
+		}
+		return Count <= 0;
+	}
+
+	bool FLibrary::SafeHasTags(const FString& Context, const AActor* A, const TArray<FName>& Tags, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		CS_IS_PTR_NULL(A)
+		CS_IS_TARRAY_EMPTY(Tags, FName)
+		CS_IS_TARRAY_ANY_NONE(Tags)
+
+		int32 Count = Tags.Num();
+
+		for (const FName& Tag : Tags)
+		{
+			if (A->Tags.Contains(Tag))
+				--Count;
+		}
+		OutSuccess = true;
+		return Count <= 0;
+	}
+
+	#pragma endregion Has
+
 	// RootComponent
 	#pragma region
 

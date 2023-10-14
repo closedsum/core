@@ -97,4 +97,36 @@ namespace NCsBlueprint
 	}
 
 	#pragma endregion Get
+
+	// Is
+	#pragma region
+
+	bool FLibrary::SafeIs(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(Object)
+
+		UClass* Class = Object->GetClass();
+
+		if (!Class)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Class from Object: %s."), *Context, *(Object->GetName())));
+			return false;
+		}
+
+		UBlueprintGeneratedClass* BpGC = CS_CAST(Class, UClass, UBlueprintGeneratedClass);
+
+		if (!BpGC)
+			return false;
+
+	#if WITH_EDITOR
+		UObject* CGB = BpGC->ClassGeneratedBy;
+
+		CS_IS_PTR_NULL(CGB)
+
+		UBlueprint* Bp = CS_CAST(CGB, UObject, UBlueprint);
+	#endif // #if WITH_EDITOR
+		return true;
+	}
+
+	#pragma endregion
 }

@@ -59,7 +59,12 @@ module.exports = class NJsTypes
             return true;
         }
 
-        OverrideByUObject(context, o, memberPath)
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context /*string*/, o /*object*/, memberPath /*string*/)
         {
             let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Mesh");
             check(result.OutSuccess);

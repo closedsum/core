@@ -25,7 +25,7 @@ public:
 	* return			
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Data|ICsScriptData", meta = (AutoCreateRefTerm = "Context,LoadFlags"))
-	static bool Script_Load(const FString& Context, UObject* Object, const int32& LoadFlags);
+	static bool Script_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess);
 
 #pragma endregion ICsScriptData
 };

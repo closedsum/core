@@ -11,6 +11,10 @@ declare namespace NJsTypes {
         Path: string;
         Blueprint_Internal: AnimBlueprintGeneratedClass;
         /**
+        * @return {string} 
+        */
+        GetName(): string;
+        /**
         * @returns {AnimBlueprintGeneratedClass}
         */
         Get(): AnimBlueprintGeneratedClass;
@@ -23,10 +27,21 @@ declare namespace NJsTypes {
         * @returns {boolean}
         */
         IsValidChecked(context: string): boolean;
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context: string, o: object, memberPath: string): void;
+        Load(): void;
     }
     class FAnimSequence {
         Path: string;
         Anim_Internal: AnimSequence;
+        /**
+        * @return {string} 
+        */
+        GetName(): string;
         /**
         * @returns {AnimSequence}
         */
@@ -40,10 +55,21 @@ declare namespace NJsTypes {
         * @returns {boolean}
         */
         IsValidChecked(context: string): boolean;
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context: string, o: object, memberPath: string): void;
+        Load(): void;
     }
     class FBlendSpace {
         Path: string;
         Blend_Internal: BlendSpace;
+        /**
+        * @return {string} 
+        */
+        GetName(): string;
         /**
         * @returns {BlendSpace}
         */
@@ -57,10 +83,21 @@ declare namespace NJsTypes {
         * @returns {boolean}
         */
         IsValidChecked(context: string): boolean;
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context: string, o: object, memberPath: string): void;
+        Load(): void;
     }
     class FBlendSpace1D {
         Path: string;
         Blend_Internal: BlendSpace1D;
+        /**
+        * @return {string} 
+        */
+        GetName(): string;
         /**
         * @returns {BlendSpace1D}
         */
@@ -74,8 +111,17 @@ declare namespace NJsTypes {
         * @returns {boolean}
         */
         IsValidChecked(context: string): boolean;
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context: string, o: object, memberPath: string): void;
+        Load(): void;
     }
 }
 
 declare type FAnimBlueprint = NJsTypes.FAnimBlueprint;
 declare type FAnimSequence = NJsTypes.FAnimSequence;
+declare type FBlendSpace = NJsTypes.FBlendSpace;
+declare type FBlendSpace1D = NJsTypes.FBlendSpace1D;

@@ -21,6 +21,11 @@ namespace NCsData
 		{
 			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
 		}
+
+		namespace Name
+		{
+			const FName Script_Load = FName("Script_Load");
+		}
 	}
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)
@@ -80,14 +85,25 @@ namespace NCsData
 	// ICsScriptData
 	#pragma region
 	
-	bool FLibrary::SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PENDING_KILL(Object)
+		using namespace NCsData::NCached;
 
-		if (Object->GetClass()->ImplementsInterface(UCsData::StaticClass()))
+		OutSuccess = false;
+
+		CS_IS_PENDING_KILL(Object)
+		
+		if (Object->GetClass()->ImplementsInterface(UCsScriptData::StaticClass()))
 		{
-			ICsScriptData::Execute_Script_Load(Object, LoadFlags);
-			return true;
+			UFunction* Function = Object->FindFunction(Name::Script_Load);
+
+			if (!Function ||
+				!Function->IsInBlueprint())
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the Function: %s."), *Context, *PrintObjectAndClass(Object), *(Name::Script_Load.ToString())));
+				return false;
+			}
+			return ICsScriptData::Execute_Script_Load(Object, LoadFlags, OutSuccess);
 		}
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *PrintObjectAndClass(Object)));
 		return true;

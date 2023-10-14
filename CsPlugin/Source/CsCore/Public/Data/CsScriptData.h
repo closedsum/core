@@ -14,7 +14,7 @@ class UCsScriptData : public UCsData
 
 class CSCORE_API ICsScriptData : public ICsData
 {
-	GENERATED_IINTERFACE_BODY()
+	GENERATED_BODY()
 
 // ICsData
 #pragma region
@@ -34,14 +34,14 @@ public:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsScriptData", meta = (DisplayName = "Is Valid"))
-	bool Script_IsValid(const int32& LoadFlags);
+	bool Script_IsValid(const int32& LoadFlags, bool& OutSuccess);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsScriptData", meta = (DisplayName = "Load"))
-	void Script_Load(const int32& LoadFlags);
+	bool Script_Load(const int32& LoadFlags, bool& OutSuccess);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsScriptData", meta = (DisplayName = "Unload"))
-	void Script_Unload();
+	bool Script_Unload(bool& OutSuccess);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "ICsScriptData", meta = (DisplayName = "Is Loaded"))
-	bool Script_IsLoaded() const;
+	bool Script_IsLoaded(bool& OutSuccess) const;
 };

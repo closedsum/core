@@ -15,22 +15,26 @@ UCsScriptData::UCsScriptData(const class FObjectInitializer& ObjectInitializer)
 
 bool ICsScriptData::IsValid(const int32& LoadFlags)
 {
-	return ICsScriptData::Execute_Script_IsValid(_getUObject(), LoadFlags);
+	bool OutSuccess = false;
+	return ICsScriptData::Execute_Script_IsValid(_getUObject(), LoadFlags, OutSuccess);
 }
 
 void ICsScriptData::Load(const int32& LoadFlags)
 {
-	ICsScriptData::Execute_Script_Load(_getUObject(), LoadFlags);
+	bool OutSuccess = false;
+	ICsScriptData::Execute_Script_Load(_getUObject(), LoadFlags, OutSuccess);
 }
 
 void ICsScriptData::Unload()
 {
-	ICsScriptData::Execute_Script_Unload(_getUObject());
+	bool OutSuccess = false;
+	ICsScriptData::Execute_Script_Unload(_getUObject(), OutSuccess);
 }
 
 bool ICsScriptData::IsLoaded() const
 {
-	return ICsScriptData::Execute_Script_IsLoaded(_getUObject());
+	bool OutSuccess = false;
+	return ICsScriptData::Execute_Script_IsLoaded(_getUObject(), OutSuccess);
 }
 
 #pragma endregion ICsScriptData

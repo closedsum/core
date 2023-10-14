@@ -1,0 +1,11 @@
+// Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
+// MIT License: https://opensource.org/license/mit/
+// Free for use and distribution: https://github.com/closedsum/core
+#include "Start/Event/CsStartPlay_Event.h"
+#include "CsCore.h"
+
+UCsStartPlay_Event::UCsStartPlay_Event(const class FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+
+}

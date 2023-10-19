@@ -25,6 +25,9 @@ namespace NCsScriptLibraryBehaviorTree
 			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree, LoadByStringPath);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree, GetByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree, GetSoftObjectAsStringByPath);
 			// Log
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree, VLog);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_BehaviorTree, VLog_Error);
@@ -64,6 +67,29 @@ UBehaviorTree* UCsScriptLibrary_BehaviorTree::LoadByStringPath(const FString& Co
 }
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+UBehaviorTree* UCsScriptLibrary_BehaviorTree::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryBehaviorTree::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+
+	return BehaviorTreeLibrary::GetSafe(Context, Object, Path, OutSuccess);
+}
+
+bool UCsScriptLibrary_BehaviorTree::GetSoftObjectAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryBehaviorTree::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectAsStringByPath : Context;
+
+	return BehaviorTreeLibrary::GetSafe(Context, Object, Path, OutPathAsString, OutSuccess);
+}
+
+#pragma endregion Get
 
 // Log
 #pragma region

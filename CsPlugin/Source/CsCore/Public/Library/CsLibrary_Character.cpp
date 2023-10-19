@@ -185,6 +185,55 @@ namespace NCsCharacter
 
 		checkf(OutCharacters.Num() > CS_EMPTY, TEXT("%s: Failed to find Characters with Tags: %s."), *Context, *(NameLibrary::ToString(Tags)));
 	}
+	
+	ACharacter* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
+	{
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
+		CS_IS_TARRAY_ANY_NONE_CHECKED(Tags)
+
+		ACharacter* C = nullptr;
+
+		int32 Count = 0;
+
+		for (TActorIterator<ACharacter> Itr(World); Itr; ++Itr)
+		{
+			ACharacter* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+
+			if (A->Tags.Num() < Tags.Num())
+				continue;
+
+			bool HasAllTags = true;
+
+			for (const FName& Tag : Tags)
+			{
+				if (!A->Tags.Contains(Tag))
+				{
+					HasAllTags = false;
+					break;
+				}
+			}
+
+			if (HasAllTags)
+			{
+				if (!C)
+					C = A;
+				++Count;
+			}
+		}
+
+		typedef NCsName::FLibrary NameLibrary;
+
+		checkf(Count == 1, TEXT("%s: Found %d Character. Failed to find Only ONE Character with Tags: %s."), *Context, Count, *(NameLibrary::ToString(Tags)));
+		return C;
+	}
 
 	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{

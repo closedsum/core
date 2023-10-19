@@ -29,6 +29,7 @@ public class CsAIEditor : ModuleRules
                     "CoreUObject",
                     "Engine",
                     "UnrealEd",
+                    "Slate",
                     "CsCore",
                     "CsEditor",
                     "CsAI"
@@ -37,6 +38,8 @@ public class CsAIEditor : ModuleRules
 
             PrivateDependencyModuleNames.AddRange(
                 new string[] {
+                    "Slate",
+                    "SlateCore"
                 }
             );
         }

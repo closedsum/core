@@ -30,7 +30,7 @@ module.exports = class NJsYield
     {
         constructor()
         {
-            /** @type {FJsEnum_FValue} */    this.Enum = null;
+            /** @type {FJsEnum_FValue} */   this.Enum = null;
             /** @type {FJsEnum} */          this.Type = null;
             /** @type {FJsEnum_FValue} */   this.Value = null;
         }

@@ -23,7 +23,7 @@ public:
 	* @param WorldContextObject
 	* return					Character
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
 	static ACharacter* Spawn(const FString& Context, const UObject* WorldContextObject);
 
 // Get
@@ -39,20 +39,32 @@ public:
 	* @param Tag
 	* return				Actor
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Tag"))
-	static ACharacter* GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Tag"))
+	static ACharacter* GetByTag(const FString& Context, const UObject* WorldContextObject, const FName& Tag);
 
 	/**
 	* Get an Character with the given Tags (checks AActor->Tags)
-	* NOTE: Find the FIRST Character the given Tag.
+	*  NOTE: Find the FIRST Character the given Tag.
 	*
 	* @param Context		The calling context.
 	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 	* @param Tag
 	* return				Actor
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static ACharacter* GetByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static ACharacter* GetByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags);
+
+	/**
+	* Get an Character with the given Tags (checks AActor->Tags)
+	*  NOTE: Find the FIRST Character the given Tags.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Tag
+	* return				Actor
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (DisplayName = "Get by Tags (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static ACharacter* GetByTagsChecked(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, bool& OutSuccess);
 
 	/**
 	* Get a list of Actors with the given Tag (checks AActor->Tags).
@@ -63,8 +75,32 @@ public:
 	* @param OutActors		(out)
 	* return				Whether any actors were found with Tags.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context"))
-	static bool GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool GetAnyByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters);
+
+	/**
+	* Get a list of Actors with the given Tag (checks AActor->Tags).
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Tags
+	* @param OutActors		(out)
+	* return				Whether any actors were found with Tags.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static bool GetAllByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters);
+
+	/**
+	* Get a list of Actors with the given Tag (checks AActor->Tags).
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Tags
+	* @param OutActors		(out)
+	* return				Whether any actors were found with Tags.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (DisplayName = "Get All by Tags (Checked)", WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context"))
+	static void GetAllByTagsChecked(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, bool& OutSuccess);
 
 	/**
 	* Get an Character with the given Name.
@@ -74,8 +110,8 @@ public:
 	* @param Name
 	* return				Character
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Name"))
-	static ACharacter* GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Name"))
+	static ACharacter* GetByName(const FString& Context, const UObject* WorldContextObject, const FName& Name);
 
 	/**
 	* Get an Character with the given Label.
@@ -88,8 +124,8 @@ public:
 	* @param Name
 	* return				Character
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Label"))
-	static ACharacter* GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label);
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Character", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Label"))
+	static ACharacter* GetByLabel(const FString& Context, const UObject* WorldContextObject, const FString& Label);
 
 #pragma endregion Get
 };

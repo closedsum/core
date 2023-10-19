@@ -306,6 +306,12 @@ namespace NCsActor
 
 		static bool SafeHasTags(const FString& Context, const AActor* A, const TArray<FName>& Tags, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		static bool HasTagChecked(const FString& Context, const AActor* A, const FName& Tag);
+
+		static bool SafeHasTag(const FString& Context, const AActor* A, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool SafeHasTag(const FString& Context, const AActor* A, const FName& Tag, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
 	#pragma endregion Has
 
 	// RootComponent

@@ -32,6 +32,8 @@ namespace NCsCharacter
 
 		/**
 		* Get an Character with the given Tag (checks ACharacter->Tags)
+		*  NOTE: Find the FIRST Character the given Tag.
+		*  NOTE: There should be only ONE Character with given Tag.
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -42,7 +44,9 @@ namespace NCsCharacter
 
 		/**
 		* Get an Character (casted to type T) with the given Tag (checks ACharacter->Tags)
-		*
+		*  NOTE: Find the FIRST Character the given Tag.
+		*  NOTE: There should be only ONE Character with given Tag.
+		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param Tag
@@ -60,7 +64,8 @@ namespace NCsCharacter
 
 		/**
 		* Safely get an Character with the given Tag (checks ACharacter->Tags)
-		*
+		*  NOTE: Find the FIRST Character the given Tag.
+		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param Tag
@@ -68,10 +73,17 @@ namespace NCsCharacter
 		* return				Character
 		*/
 		static ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE ACharacter* GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			ACharacter* C = GetSafeByTag(Context, WorldContext, Tag, Log);
+			OutSuccess    = C != nullptr;
+			return C;
+		}
 
 		/**
 		* Safely get an Character (casted to type T) with the given Tag (checks ACharacter->Tags)
-		*
+		*  NOTE: Find the FIRST Character the given Tag.
+		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param Tag
@@ -93,7 +105,8 @@ namespace NCsCharacter
 
 		/**
 		* Safely get an Character with the given Tag (checks ACharacter->Tags)
-		*
+		*  NOTE: Find the FIRST Character the given Tag.
+		* 
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param Tag
 		* return				Character
@@ -109,7 +122,8 @@ namespace NCsCharacter
 
 		/**
 		* Safely get an Character (casted to type T) with the given Tag (checks ACharacter->Tags)
-		*
+		*  NOTE: Find the FIRST Character the given Tag.
+		* 
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
 		* @param Tag
 		* return				Character
@@ -125,7 +139,7 @@ namespace NCsCharacter
 		}
 
 		/**
-		* Get a list of Characters with the given Tag (checks ACharacter->Tags).
+		* Get a list of Characters with the given Tags (checks ACharacter->Tags).
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -133,6 +147,18 @@ namespace NCsCharacter
 		* @param OutCharacters		(out)
 		*/
 		static void GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters);
+
+		/**
+		* Get a Character with the given Tags (checks ACharacter->Tags).
+		*  NOTE: Find the FIRST Character the given Tag.
+		*  NOTE: There should be only ONE Character with given Tag.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tags
+		* return				Character
+		*/
+		static ACharacter* GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags);
 
 		/**
 		* Safely get a list of Characters with the given Tag (checks ACharacter->Tags).
@@ -145,9 +171,14 @@ namespace NCsCharacter
 		* return				Whether any Characters were found with Tags.
 		*/
 		static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static bool GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = GetSafeByTags(Context, WorldContext, Tags, OutCharacters, Log);
+			return OutSuccess;
+		}
 
 		/**
-		* Safely get a of Characters with the given Tags (checks ACharacter->Tags).
+		* Safely get a Character with the given Tags (checks ACharacter->Tags).
 		*
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
@@ -156,6 +187,12 @@ namespace NCsCharacter
 		* return				Character.
 		*/
 		static ACharacter* GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, void(*Log)(const FString&) = &FCsLog::Warning);
+		FORCEINLINE static ACharacter* GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			ACharacter* C = GetSafeByTags(Context, WorldContext, Tags, Log);
+			OutSuccess    = C != nullptr;
+			return C;
+		}
 
 		/**
 		* Get an Character with the given Name.

@@ -29,9 +29,11 @@ module.exports = class NJsArray
         }
 
         /**
-         * @param {Array} a 
-         * @returns {boolean}
-         */
+        * Get whether the Array 'a' is empty or not.
+        * 
+        * @param {Array}        a 
+        * @returns {boolean}
+        */
         static /*bool*/ IsEmpty(a /*Array*/)
         {
             if (!Array.isArray(a))
@@ -40,10 +42,13 @@ module.exports = class NJsArray
         }
 
         /**
-         * @param {string} context 
-         * @param {Array} a 
-         * @returns {boolean}
-         */
+        * Get whether the Array 'a' is NOT empty or not.
+        *  Assert if NOT. 
+        *  
+        * @param {string}       context 
+        * @param {Array}        a 
+        * @returns {boolean}
+        */
         static /*bool*/ IsNotEmptyChecked(context /*string*/, a /*Array*/)
         {
             // Check is array
@@ -54,9 +59,11 @@ module.exports = class NJsArray
         }
 
         /**
-         * @param {Array} a 
-         * @returns {boolean}
-         */
+        * Get whether the Array 'a' is NOT empty or not.
+        * 
+        * @param {Array}        a 
+        * @returns {boolean}
+        */
         static /*bool*/ IsNotEmpty(a /*Array*/)
         {
             // Check is array

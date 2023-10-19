@@ -34,6 +34,7 @@ declare namespace NJsTypes {
         */
         OverrideByUObject(context: string, o: object, memberPath: string): void;
         Load(): void;
+        Unload(): void;
     }
 }
 

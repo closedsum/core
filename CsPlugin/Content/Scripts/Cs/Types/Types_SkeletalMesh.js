@@ -80,5 +80,10 @@ module.exports = class NJsTypes
 
             this.Mesh_Internal = SkeletalMeshLibrary.LoadByStringPath(context, this.Path);
         }
+
+        Unload()
+        {
+            this.Mesh_Internal = null;
+        }
     }
 };

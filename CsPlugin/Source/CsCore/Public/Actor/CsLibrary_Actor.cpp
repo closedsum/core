@@ -675,6 +675,33 @@ namespace NCsActor
 		return Count <= 0;
 	}
 
+	bool FLibrary::HasTagChecked(const FString& Context, const AActor* A, const FName& Tag)
+	{
+		CS_IS_PTR_NULL_CHECKED(A)
+		CS_IS_NAME_NONE_CHECKED(Tag)
+
+		return A->Tags.Contains(Tag);
+	}
+
+	bool FLibrary::SafeHasTag(const FString& Context, const AActor* A, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(A)
+		CS_IS_NAME_NONE(Tag)
+
+		return A->Tags.Contains(Tag);
+	}
+
+	bool FLibrary::SafeHasTag(const FString& Context, const AActor* A, const FName& Tag, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		CS_IS_PTR_NULL(A)
+		CS_IS_NAME_NONE(Tag)
+
+		OutSuccess = true;
+		return A->Tags.Contains(Tag);
+	}
+
 	#pragma endregion Has
 
 	// RootComponent

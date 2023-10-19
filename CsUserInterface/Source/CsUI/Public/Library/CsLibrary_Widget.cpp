@@ -55,15 +55,53 @@ namespace NCsWidget
 		}
 	}
 
+	UUserWidget* FLibrary::CreateChecked(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Owner)
+		CS_IS_SUBCLASS_OF_NULL_CHECKED(UserWidgetClass, UUserWidget)
+
+		UUserWidget* Widget		 = nullptr;
+		bool CastOwnerSuccessful = false;
+
+		if (UWidget* W = Cast<UWidget>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*W, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UWidgetTree* WT = Cast<UWidgetTree>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*WT, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (APlayerController* PC = Cast<APlayerController>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*PC, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UGameInstance* GI = Cast<UGameInstance>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*GI, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UWorld* World = Cast<UWorld>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*World, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+
+		checkf(CastOwnerSuccessful, TEXT("%s: Owner: %s with Class: %s is NOT of type: UWidget, UWidgetTree, APlayerController, UGameInstance, or UWorld."), *Context, *(Owner->GetName()), *(Owner->GetClass()->GetName()));
+		checkf(Widget, TEXT("%s: Failed to create widget of type: %s with Owner: %s with Class: %s."), *Context, *(UserWidgetClass->GetName()), *(Owner->GetName()), *(Owner->GetClass()->GetName()));
+		return Widget;
+	}
+
 	UUserWidget* FLibrary::CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Owner)
-
-		if (!UserWidgetClass.Get())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: UserWidgetClass is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_SUBCLASS_OF_NULL_RET_NULL(UserWidgetClass, UUserWidget)
 
 		UUserWidget* Widget		 = nullptr;
 		bool CastOwnerSuccessful = false;

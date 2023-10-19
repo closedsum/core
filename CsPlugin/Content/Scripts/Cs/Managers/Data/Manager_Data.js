@@ -30,6 +30,8 @@ module.exports = class FJsManager_Data
 
     Shutdown()
     {
+        this.UnloadAll();
+        
         this.DataByNameMap.clear();
     }
 
@@ -55,8 +57,13 @@ module.exports = class FJsManager_Data
         let context = ClassName + ".GetData";
 
         checkf(this.DataByNameMap.has(name), context + " no data is associated with name: " + name);
-
+        // TODO: Check Data is Valid
         return this.DataByNameMap.get(name);
+    }
+
+    Load(name /*string*/)
+    {
+        this.GetData(name).Load();
     }
 
     LoadAll()
@@ -64,6 +71,14 @@ module.exports = class FJsManager_Data
         for (var [name, data] of this.DataByNameMap)
         {
             data.Load();
+        }
+    }
+
+    UnloadAll()
+    {
+        for (var [name, data] of this.DataByNameMap)
+        {
+            data.Unload();
         }
     }
 };

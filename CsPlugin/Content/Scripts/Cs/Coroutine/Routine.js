@@ -449,7 +449,7 @@ module.exports = class FJsRoutine
 			if (typeof yieldCommand === "undefined" || yieldCommand == null)
 				yieldCommand = 1;
 
-			// WaitForFrame
+			// WaitForFrame - r = yield 'int'
 			if (CommonLibrary.IsInt(yieldCommand))
 			{
 				this.WaitForFrame = yieldCommand;
@@ -466,7 +466,7 @@ module.exports = class FJsRoutine
                     this.WaitForFrameCounter = 0;
                 }
 			}
-			// WaitForFrameType
+			// WaitForFrameType - r = yield 'int property';
 			else
 			if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsInt())
@@ -504,7 +504,7 @@ module.exports = class FJsRoutine
                     this.WaitForTimeTimer = 0.0;
                 }
 			}
-			// WaitForTimeType
+			// WaitForTimeType - r = yield 'float property';
             else
             if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsFloat())
@@ -536,7 +536,7 @@ module.exports = class FJsRoutine
                 InsertRoutine(Schedule, this, WaitingFor);
             }
 			*/
-            // WaitForFlag
+            // WaitForFlag - r = yield 'flag property';
             else
             if (IsInstanceOf(yieldCommand, FJsProperty) &&
 				yieldCommand.IsBoolean())

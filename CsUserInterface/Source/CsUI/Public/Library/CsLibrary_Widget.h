@@ -30,6 +30,8 @@ namespace NCsWidget
 	{
 	public:
 
+		static UUserWidget* CreateChecked(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None);
+
 		/**
 		*
 		*

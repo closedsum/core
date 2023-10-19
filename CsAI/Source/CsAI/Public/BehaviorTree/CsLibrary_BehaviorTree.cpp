@@ -7,6 +7,7 @@
 // Library
 	// Common
 #include "Object/CsLibrary_Object.h"
+#include "Library/CsLibrary_Property.h"
 // BehaviorTree
 #include "BehaviorTree/BehaviorTree.h"
 
@@ -30,4 +31,39 @@ namespace NCsBehaviorTree
 	#undef ObjectLibrary
 
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+	
+	#define PropertyLibrary NCsProperty::FLibrary
+
+	UBehaviorTree* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		return PropertyLibrary::GetObjectPropertyValueByPath<UBehaviorTree>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftObjectPtr<UBehaviorTree>& OutSoftObjectPtr, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftObjectPropertyValueByPath<UBehaviorTree>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutSoftObjectPtr			 = SoftObjectPtr.ToSoftObjectPath();
+		return OutSuccess;
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftObjectPath& OutSoftObjectPath, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftObjectPropertyValueByPath<UBehaviorTree>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutSoftObjectPath			 = SoftObjectPtr.ToSoftObjectPath();
+		return OutSuccess;
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftObjectPropertyValueByPath<UBehaviorTree>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutPathAsString				 = SoftObjectPtr.ToString();
+		return OutSuccess;
+	}
+
+	#undef PropertyLibrary
+
+	#pragma endregion Get
 }

@@ -81,5 +81,10 @@ module.exports = class NJsTypes
             IsNotEmptyChecked(context, result.OutMaterials);
             this.Materials_Internal = result.OutMaterials;
         }
+
+        Unload()
+        {
+            this.Materials_Internal = [];
+        }
     }
 };

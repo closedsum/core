@@ -17,6 +17,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdown);
 // Scripts
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdownScripts_Start);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnShutdownScripts);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsManagerJavascript_OnPreReloadScript, const int32&, Index);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsManagerJavascript_OnRunScriptsComplete);
@@ -244,6 +245,9 @@ public:
 	FCsManagerJavascript_OnPreReloadScript OnPreReloadScript_ScriptEvent;
 
 	void ShutdownScripts();
+
+	UPROPERTY(BlueprintAssignable)
+	FCsManagerJavascript_OnShutdownScripts_Start OnShutdownScripts_Start_ScriptEvent;
 
 private:
 

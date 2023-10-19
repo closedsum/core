@@ -815,6 +815,8 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 
 void UCsManager_Javascript::ShutdownScripts()
 {
+	OnShutdownScripts_Start_ScriptEvent.Broadcast();
+
 	for (FCsJavascriptFileObjects& ScriptObject : ScriptObjects)
 	{
 		ScriptObject.Shutdown();
@@ -864,7 +866,8 @@ void UCsManager_Javascript::FEditorScriptImpl::Validate()
 		Objects.RemoveAt(LastIndex);
 
 		// Update the swapped Index
-		if (Objects.Num() > CS_EMPTY)
+		if (Index_Remove != LastIndex &&
+			Objects.Num() > CS_EMPTY)
 		{
 			const int32 NewIndex = Index_Remove;
 
@@ -997,7 +1000,8 @@ bool UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
 	Objects.RemoveAt(LastIndex);
 
 	// Update the swapped Index
-	if (Objects.Num() > CS_EMPTY)
+	if (Index_Remove != LastIndex &&
+		Objects.Num() > CS_EMPTY)
 	{
 		const int32 NewIndex = Index_Remove;
 

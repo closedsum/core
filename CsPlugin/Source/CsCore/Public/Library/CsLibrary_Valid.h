@@ -322,6 +322,31 @@ namespace NCsValid
 		};
 	}
 
+	namespace NText
+	{
+		struct CSCORE_API Library final
+		{
+		public:
+
+			FORCEINLINE static bool EmptyChecked(const FString& Context, const FText& A, const FString& AName)
+			{
+				checkf(!A.IsEmpty(), TEXT("%s: %s is EMPTY."), *Context, *AName);
+				return true;
+			}
+
+			FORCEINLINE static bool Empty(const FString& Context, const FText& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (A.IsEmpty())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is EMPTY."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+		
 	namespace NEnum
 	{
 		struct CSCORE_API FLibrary final
@@ -1410,7 +1435,7 @@ namespace NCsValid
 				if (!C->ImplementsInterface(UInterfaceType::StaticClass()))
 				{
 					if (Log)
-						Log(FString::Printf(TEXT("%s: %s's Class: %s does NOT implement the interface: %s."), *Context, *AName, *(Class->GetName()), *InterfaceName));
+						Log(FString::Printf(TEXT("%s: %s's Class: %s does NOT implement the interface: %s."), *Context, *AName, *(C->GetName()), *InterfaceName));
 					return false;
 				}
 				return true;
@@ -1916,6 +1941,18 @@ namespace NCsValid
 
 #pragma endregion FString
 
+// FText
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_TEXT_EMPTY_CHECKED(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NText::FLibrary::EmptyChecked(Context, __A, __temp__str__)); \
+	}
+
+#pragma endregion FString
+
 // Enum
 #pragma region
 
@@ -2352,6 +2389,8 @@ namespace NCsValid
 #define CS_IS_NAME_NONE_CHECKED(__A)
 // FString
 #define CS_IS_STRING_EMPTY_CHECKED(__A)
+// FText
+#define CS_IS_TEXT_EMPTY_CHECKED(__A)
 // Enum
 #define CS_IS_ENUM_VALID_CHECKED(__EnumMapType, __Enum)
 #define CS_IS_ENUM_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array)
@@ -2437,7 +2476,8 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
-		check(NCsValid::NObject::FLibrary::ImplementsInterfaceChecked()<__ObjectType, __InterfaceType::UClassType>(Context, __ObjectType, __temp__str__a, __temp__str__b)); \
+		bool __temp__result = NCsValid::NObject::FLibrary::ImplementsInterfaceChecked<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		check(__temp__restul); \
 	}
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
@@ -2808,6 +2848,36 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return __Value; } \
+	}
+
+#pragma endregion FString
+
+// FText
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY_EXIT(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY_RET_NULL(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY_RET_VALUE(__A, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return __Value; } \
 	}
 
 #pragma endregion FString

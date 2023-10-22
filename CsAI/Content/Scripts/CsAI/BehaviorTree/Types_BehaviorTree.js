@@ -4,7 +4,6 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 // ; typing info for auto-completion in Visual Studio Code
-/// <reference path="../Library/Library_Common.ts">/>
 
 "use strict"
 
@@ -13,40 +12,37 @@ var NJsCommon = require('Cs/Library/Library_Common.js');
 
 // "typedefs" - library (js)
 /** @type {CommonLibrary} */ var CommonLibrary = NJsCommon.FLibrary;
+/** @type {ArrayLibrary} */ var ArrayLibrary   = NJsArray.FLibrary;
 
 // "typedefs" - library (c++)
-var PropertyLibrary      = CsScriptLibrary_Property;
-var SkeletalMeshLibrary  = CsScriptLibrary_SkeletalMesh;
+var BehaviorTreeLibrary  = CsScriptLibrary_BehaviorTree;
 
 // "typedefs" - functions
 var check                = CommonLibrary.check;
-var IsStringChecked      = CommonLibrary.IsStringChecked;
 var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
 var IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked;
 
-// Globals
-
 module.exports = class NJsTypes
 {
-    static FSkeletalMesh = class SkeletalMesh
+    static FBehaviorTree = class BehaviorTreeClass
     {
         constructor()
         {  
-            /** @type {string} */       this.Path = "";
-            /** @type {SkeletalMesh} */ this.Mesh_Internal = null;
+            /** @type {string[]} */      this.Path = "";
+            /** @type {BehaviorTree} */  this.Tree_Internal = null;
         }
 
-        /*string*/ GetName() { return " NJsTypes.FSkeletalMesh" }
+        /*string*/ GetName() { return " NJsTypes.FBehaviorTree" }
 
         /**
-        * @returns {SkeletalMesh}
+        * @returns {BehaviorTree}
         */
-        /*SkeletalMesh*/ Get() { return this.Mesh_Internal; }
-        
+        /*BehaviorTree*/ Get() { return this.Tree_Internal; }
+
         /**
-        * @param {SkeletalMesh} mesh 
+        * @param {BehaviorTree} tree 
         */
-        Set(mesh /*SkeletalMesh*/) { this.Mesh_Internal = mesh; }
+        Set(tree /*BehaviorTree*/) { this.Tree_Internal = tree; }
 
         /**
         * @param {string}   context
@@ -54,8 +50,8 @@ module.exports = class NJsTypes
         */
         /*boolean*/ IsValidChecked(context /*string*/)
         {
-            IsStringChecked(context, this.Path);
-            IsValidObjectChecked(context, this.Mesh_Internal);
+            IsNotEmptyChecked(context, this.Path);
+            IsValidObjectChecked(context, this.Tree_Internal);
             return true;
         }
 
@@ -66,24 +62,28 @@ module.exports = class NJsTypes
         */
         OverrideByUObject(context /*string*/, o /*object*/, memberPath /*string*/)
         {
-            let result = PropertyLibrary.GetSoftObjectPtrAsStringByPath(context, o, memberPath + ".Mesh");
+            let result = BehaviorTreeLibrary.GetSoftObjectAsStringByPath(context, o, memberPath + ".Tree");
             check(result.OutSuccess);
-            this.Path = result.$;
-            result = SkeletalMeshLibrary.GetByPath(context, o, memberPath + ".Mesh_Internal");
+            IsStringNotEmptyChecked(context, result.OutPathAsString);
+            this.Path = result.OutPathAsString;
+            result = BehaviorTreeLibrary.GetByPath(context, o, memberPath + ".Tree_Internal");
             check(result.OutSuccess);
-            this.Mesh_Internal = result.$;
+            IsValidObjectChecked(context, result.$);
+            this.Tree_Internal = result.$;
         }
 
         Load()
         {
             let context = this.GetName() + ".Load";
 
-            this.Mesh_Internal = SkeletalMeshLibrary.LoadByStringPath(context, this.Path);
+            let tree = BehaviorTreeLibrary.LoadByStringPath(context, this.Path);
+            IsValidObjectChecked(context, tree);
+            this.Tree_Internal = tree;
         }
 
         Unload()
         {
-            this.Mesh_Internal = null;
+            this.Tree_Internal = null;
         }
     }
 };

@@ -55,15 +55,55 @@ namespace NCsWidget
 		}
 	}
 
+	UUserWidget* FLibrary::CreateChecked(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Owner)
+		CS_IS_SUBCLASS_OF_NULL_CHECKED(UserWidgetClass, UUserWidget)
+
+		typedef NCsWorld::FLibrary WorldLibrary;
+
+		UUserWidget* Widget		 = nullptr;
+		bool CastOwnerSuccessful = false;
+
+		if (UWidget* W = Cast<UWidget>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*W, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UWidgetTree* WT = Cast<UWidgetTree>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*WT, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (APlayerController* PC = Cast<APlayerController>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*PC, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UGameInstance* GI = Cast<UGameInstance>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*GI, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+		else
+		if (UWorld* World = Cast<UWorld>(Owner))
+		{
+			Widget = UUserWidget::CreateWidgetInstance(*World, UserWidgetClass, WidgetName);
+			CastOwnerSuccessful = true;
+		}
+
+		checkf(CastOwnerSuccessful, TEXT("%s: Owner: %s with Class: %s is NOT of type: UWidget, UWidgetTree, APlayerController, UGameInstance, or UWorld OR can NOT route to UWorld."), *Context, *(Owner->GetName()), *(Owner->GetClass()->GetName()));
+		checkf(Widget, TEXT("%s: Failed to create widget of type: %s with Owner: %s with Class: %s."), *Context, *(UserWidgetClass->GetName()), *(Owner->GetName()), *(Owner->GetClass()->GetName()));
+		return Widget;
+	}
+
 	UUserWidget* FLibrary::CreateSafe(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName /*=NAME_None*/, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_RET_NULL(Owner)
-
-		if (!UserWidgetClass.Get())
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: UserWidgetClass is NULL."), *Context));
-			return nullptr;
-		}
+		CS_IS_SUBCLASS_OF_NULL_RET_NULL(UserWidgetClass, UUserWidget)
 
 		UUserWidget* Widget		 = nullptr;
 		bool CastOwnerSuccessful = false;
@@ -175,18 +215,19 @@ namespace NCsWidget
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName())));
 			return nullptr;
 		}
+		return BpGC;
 
-		//if (!BpGC->ClassGeneratedBy)
+		/*if (!BpGC->ClassGeneratedBy)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName())));
 			return nullptr;
 		}
 
-		UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
 		if (!BpC)
 		{
-			//CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
 			return nullptr;
 		}
 
@@ -195,7 +236,7 @@ namespace NCsWidget
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName())));
 			return nullptr;
 		}
-		return BpC->GeneratedClass;
+		return BpC->GeneratedClass;*/
 	}
 
 	UClass* FLibrary::LoadChecked(const FString& Context, const FString& Path)
@@ -247,18 +288,19 @@ namespace NCsWidget
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Object: %s to UBlueprintGeneratedClass."), *Context, *(O->GetName())));
 			return nullptr;
 		}
+		return BpGC;
 
-		//if (!BpGC->ClassGeneratedBy)
+		/*if (!BpGC->ClassGeneratedBy)
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: ClassGeneratedBy is NULL for Object: %s."), *Context, *(O->GetName())));
 			return nullptr;
 		}
 
-		UBlueprintCore* BpC = nullptr;//Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
+		UBlueprintCore* BpC = Cast<UBlueprintCore>(BpGC->ClassGeneratedBy);
 
 		if (!BpC)
 		{
-			//CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to cast Class: %s to UBlueprintCore."), *Context, *(BpGC->ClassGeneratedBy->GetName())));
 			return nullptr;
 		}
 
@@ -267,10 +309,45 @@ namespace NCsWidget
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get GeneratedClass from Class: %s."), *Context, *(BpC->GetName())));
 			return nullptr;
 		}
-		return BpC->GeneratedClass;
+		return BpC->GeneratedClass;*/
 	}
 
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+	
+	#define PropertyLibrary NCsProperty::FLibrary
+
+	UUserWidget* FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+	{
+		return PropertyLibrary::GetObjectPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftClassPtr, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutSoftClassPtr			     = SoftObjectPtr.ToSoftObjectPath();
+		return OutSuccess;
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutSoftClassPath			 = SoftObjectPtr.ToSoftObjectPath().ToString();
+		return OutSuccess;
+	}
+
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValueByPath<UUserWidget>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutPathAsString				 = SoftObjectPtr.ToString();
+		return OutSuccess;
+	}
+
+	#undef PropertyLibrary
+
+	#pragma endregion Get
 
 	void FLibrary::AddToScreenChecked(const FString& Context, const UObject* WorldContext, UWidget* Widget, ULocalPlayer* Player, const int32& ZOrder)
 	{

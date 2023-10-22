@@ -4,24 +4,24 @@
 
 /// <reference path="../../typings/ue.d.ts">/>
 
-// require('Cs/Types/Types_SkeletalMesh.js');
+// require('Cs/Material/Types_Material.js');
 
 declare namespace NJsTypes {
-    class FSkeletalMesh {
-        Path: string;
-        Mesh_Internal: SkeletalMesh;
+    class FUserWidget {
+        Path: string[];
+        Widget_Class: UnrealEngineClass;
         /**
-        * @returns {string}
+        * @returns {string} 
         */
         GetName(): string;
         /**
-        * @returns {SkeletalMesh}
+        * @returns {UnrealEngineClass}
         */
-        Get(): SkeletalMesh;
+        GetClass(): UnrealEngineClass;
         /**
-        * @param {SkeletalMesh}
+        * @param {UnrealEngineClass}  widgetClass
         */
-        Set(ac: SkeletalMesh): void;
+        Set(widgetClass: UnrealEngineClass): void;
         /**
         * @param {string}   context
         * @returns {boolean}
@@ -38,4 +38,4 @@ declare namespace NJsTypes {
     }
 }
 
-declare type FSkeletalMesh = NJsTypes.FSkeletalMesh;
+declare type FUserWidget = NJsTypes.FUserWidget;

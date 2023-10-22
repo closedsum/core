@@ -39,5 +39,19 @@ namespace NCsBehaviorTree
 		static UBehaviorTree* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+	public:
+
+		static UBehaviorTree* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftObjectPtr<UBehaviorTree>& OutSoftObjectPtr, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftObjectPath& OutSoftObjectPath, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Get
 	};
 }

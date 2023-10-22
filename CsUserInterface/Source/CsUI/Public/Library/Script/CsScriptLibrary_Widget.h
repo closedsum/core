@@ -63,6 +63,37 @@ public:
 
 #pragma endregion Load
 
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the UserWidget value at the give Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the UserWidget value on Object.
+	* @param OutSuccess	(out)
+	* return			UserWidget
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UUserWidget* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get a SoftClassPtr of type: UserWidget value at the give Path for Object as a String.
+	* 
+	* @param Context			The calling context.
+	* @param Object
+	* @param Path				Full variable path to the UserWidget value on Object.
+	* @param OutPathAsString	(out)
+	* @param OutSuccess			(out)
+	* return					String
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget", meta = (AutoCreateRefTerm = "Context,Path"))
+	static bool GetSoftClassAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess);
+
+#pragma endregion Get
+
 // Render
 #pragma region
 public:

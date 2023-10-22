@@ -12,6 +12,9 @@ class FBoolProperty;
 class FStructProperty;
 class FNameProperty;
 class FStrProperty;
+class FSoftObjectProperty;
+class FSoftClassProperty;
+class FClassProperty;
 class FObjectProperty;
 class FArrayProperty;
 class FSetProperty;
@@ -26,6 +29,7 @@ namespace NCsProperty
 			{
 				extern CSCORE_API const FString FindPropertyByName;
 				extern CSCORE_API const FString FindStructPropertyByName;
+				extern CSCORE_API const FString FindClassPropertyByName;
 				extern CSCORE_API const FString FindObjectPropertyByName;
 				extern CSCORE_API const FString GetObjectPropertyValue;
 			}
@@ -421,7 +425,94 @@ namespace NCsProperty
 		*/
 		static FSoftObjectProperty* FindSoftObjectPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
-	#pragma endregion String
+	#pragma endregion SoftObjectPtr
+
+		// SoftClassPtr
+	#pragma region
+	public:
+
+		/**
+		* Find the SoftClassPtr Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		static FSoftClassProperty* FindSoftClassPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
+
+		/**
+		* Find the SoftClassPtr Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		static FSoftClassProperty* FindSoftClassPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion SoftClassPtr
+
+		// Class
+	#pragma region
+	public:
+
+		/**
+		* Find the Class Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		static FClassProperty* FindClassPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName);
+
+		/**
+		* Find the Class Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		static FClassProperty* FindClassPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Class Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		FORCEINLINE static FClassProperty* FindClassPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FClassProperty* Prop = FindClassPropertyByName(Context, Struct, PropertyName, Log);
+			OutSuccess			 = Prop != nullptr;
+			return Prop;
+		}
+
+		/**
+		* Find the Class Property of type: T from Struct with name: PropertyName.
+		*
+		* @param Struct
+		* @param PropertyName
+		* return				Property.
+		*/
+		FORCEINLINE static FClassProperty* FindClassPropertyByName(const UStruct* Struct, const FName& PropertyName)
+		{
+			using namespace NCsProperty::NLibrary::NCached;
+
+			const FString& Context = Str::FindClassPropertyByName;
+
+			return FindClassPropertyByName(Context, Struct, PropertyName, nullptr);
+		}
+
+	#pragma endregion Class
 
 		// Object
 	#pragma region
@@ -1016,6 +1107,80 @@ namespace NCsProperty
 
 		static FSoftObjectPtr* GetSoftObjectPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		/**
+		* Get the pointer to the TSoftObjectPtr<T> (as FSoftObjectPtr) for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				pointer to TSoftObjectPtr<T> (as FSoftObjectPtr).
+		*/
+		template<typename T>
+		static FSoftObjectPtr* GetSoftObjectPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSoftObjectProperty* SoftObjectProperty = FindSoftObjectPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!SoftObjectProperty)
+				return nullptr;
+
+			if (!SoftObjectProperty->PropertyClass->IsChildOf(T::StaticClass()))
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+				return nullptr;
+			}
+
+			if (!StructValue)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
+				return nullptr;
+			}
+
+			FSoftObjectPtr* ValuePtr = SoftObjectProperty->GetPropertyValuePtr_InContainer(StructValue);
+
+			if (!ValuePtr)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Failed to get Value Ptr from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return ValuePtr;
+		}
+		template<typename T>
+		FORCEINLINE static FSoftObjectPtr* GetSoftObjectPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSoftObjectPtr* Ptr = GetSoftObjectPropertyValuePtr<T>(Context, StructValue, Struct, PropertyName, Log);
+			OutSuccess			= Ptr != nullptr;
+			return Ptr;
+		}
+
+		/**
+		* Get the pointer to the TSoftObjectPtr<T> (as FSoftObjectPtr) for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				pointer to TSoftObjectPtr<T> (as FSoftObjectPtr).
+		*/
+		template<typename T>
+		FORCEINLINE static FSoftObjectPtr* GetSoftObjectPropertyValuePtrByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+			ResultType Result;
+			OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+			if (!OutSuccess)
+				return nullptr;
+			return GetSoftObjectPropertyValuePtr<T>(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+		}
+
 		FORCEINLINE static FSoftObjectPtr GetSoftObjectPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
 		{
 			OutSuccess = false;
@@ -1030,7 +1195,219 @@ namespace NCsProperty
 
 		static FSoftObjectPtr GetSoftObjectPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		/**
+		* Get the value of TSoftObjectPtr<T> (as FSoftObjectPtr) for the Path from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param OutSuccess		(Out)
+		* @param Log			(optional)
+		* return				TSoftObjectPtr<T> (as FSoftObjectPtr).
+		*/
+		template<typename T>
+		FORCEINLINE static FSoftObjectPtr GetSoftObjectPropertyValueByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSoftObjectPtr* Ptr = GetSoftObjectPropertyValuePtrByPath<T>(Context, StructValue, Struct, Path, OutSuccess, Log);
+
+			if (!Ptr)
+				return FSoftObjectPtr();
+			return *Ptr;
+		}
+
 	#pragma endregion SoftObjectPtr
+
+		// SoftClassPtr
+	#pragma region
+	public:
+
+		static FSoftObjectPtr* GetSoftClassPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName);
+
+		static FSoftObjectPtr* GetSoftClassPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the pointer to the TSoftClassPtr<T> (as FSoftObjectPtr) for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				pointer to TSoftClassPtr<T> (as FSoftObjectPtr).
+		*/
+		template<typename T>
+		static FSoftObjectPtr* GetSoftClassPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSoftClassProperty* SoftClassProperty = FindSoftClassPropertyByName(Context, Struct, PropertyName, Log);
+
+			if (!SoftClassProperty)
+				return nullptr;
+
+			if (!SoftClassProperty->MetaClass->IsChildOf(T::StaticClass()))
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+				return nullptr;
+			}
+
+			if (!StructValue)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
+				return nullptr;
+			}
+
+			FSoftObjectPtr* ValuePtr = SoftClassProperty->GetPropertyValuePtr_InContainer(StructValue);
+
+			if (!ValuePtr)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: Failed to get Value Ptr from %s.%s."), *Context, *(T::StaticClass()->GetName()), *(Struct->GetName()), *(PropertyName.ToString())));
+				return nullptr;
+			}
+			return ValuePtr;
+		}
+		template<typename T>
+		FORCEINLINE static FSoftObjectPtr* GetSoftClassPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSoftObjectPtr* Ptr = GetSoftClassPropertyValuePtr<T>(Context, StructValue, Struct, PropertyName, Log);
+			OutSuccess			= Ptr != nullptr;
+			return Ptr;
+		}
+
+		/**
+		* Get the pointer to the TSoftClassPtr<T> (as FSoftObjectPtr) for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				pointer to TSoftClassPtr<T> (as FSoftObjectPtr).
+		*/
+		template<typename T>
+		FORCEINLINE static FSoftObjectPtr* GetSoftClassPropertyValuePtrByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+			ResultType Result;
+			OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+			if (!OutSuccess)
+				return nullptr;
+			return GetSoftClassPropertyValuePtr<T>(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+		}
+
+		FORCEINLINE static FSoftObjectPtr GetSoftClassPropertyValue(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			OutSuccess = false;
+
+			if (FSoftObjectPtr* Value = GetSoftClassPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+			{
+				OutSuccess = true;
+				return *Value;
+			}
+			return FSoftObjectPtr();
+		}
+
+		static FSoftObjectPtr GetSoftClassPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the value of TSoftClassPtr<T> (as FSoftObjectPtr) for the Path from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param OutSuccess		(Out)
+		* @param Log			(optional)
+		* return				TSoftClassPtr<T> (as FSoftObjectPtr).
+		*/
+		template<typename T>
+		FORCEINLINE static FSoftObjectPtr GetSoftClassPropertyValueByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			FSoftObjectPtr* Ptr = GetSoftClassPropertyValuePtrByPath<T>(Context, StructValue, Struct, Path, OutSuccess, Log);
+
+			if (!Ptr)
+				return FSoftObjectPtr();
+			return *Ptr;
+		}
+
+	#pragma endregion SoftClassPtr
+
+		// Class
+	#pragma region
+	public:
+
+		/**
+		* Get the pointer to the UClass for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				pointer to UClass (TObjectPtr<UObject>).
+		*/
+		static TObjectPtr<UObject>* GetClassPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Get the pointer to the UClass for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				pointer to UClass (TObjectPtr<UObject>).
+		*/
+		FORCEINLINE static TObjectPtr<UObject>* GetClassPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			TObjectPtr<UObject>* ValuePtr = GetClassPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log);
+			OutSuccess					  = ValuePtr != nullptr;
+			return ValuePtr;
+		}
+
+		/**
+		* Get the UClass for the Property with name: PropertyName from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param PropertyName
+		* @param Log
+		* return				UClass.
+		*/
+		FORCEINLINE static UClass* GetClassPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			if (TObjectPtr<UObject>* ValuePtr = GetClassPropertyValuePtr(Context, StructValue, Struct, PropertyName, Log))
+				return ValuePtr->GetClass();
+			return nullptr;
+		}
+		FORCEINLINE static UClass* GetClassPropertyValue(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			UClass* Value = GetClassPropertyValue(Context, StructValue, Struct, PropertyName, Log);
+			OutSuccess    = Value != nullptr;
+			return Value;
+		}
+
+		/**
+		* Get the UClass value for the Path from StructValue.
+		*
+		* @param Context		The calling context.
+		* @param StructValue
+		* @param Struct
+		* @param Path
+		* @param OutSuccess		(Out)
+		* @param Log			(optional)
+		* return				UClass.
+		*/
+		static UClass* GetClassPropertyValueByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Class
 
 		// Object
 	#pragma region
@@ -1074,6 +1451,13 @@ namespace NCsProperty
 				return nullptr;
 			}
 
+			if (!StructValue)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
+				return nullptr;
+			}
+
 			T** Value = ObjectProperty->ContainerPtrToValuePtr<T*>(StructValue);
 
 			if (!Value)
@@ -1108,6 +1492,14 @@ namespace NCsProperty
 			{
 				if (Log)
 					Log(FString::Printf(TEXT("%s: %s.%s is NOT of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(T::StaticClass()->GetName())));
+				OutSuccess = false;
+				return nullptr;
+			}
+
+			if (!StructValue)
+			{
+				if (Log)
+					Log(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
 				OutSuccess = false;
 				return nullptr;
 			}

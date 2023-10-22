@@ -66,6 +66,18 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
 	static FString GetSoftObjectPtrAsStringByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
 
+	/**
+	* Get the UClass value by Path from Object.
+	*
+	* @param Context		The calling context.
+	* @param Object
+	* @param Path
+	* @param OutSuccess		(out)
+	* return				UClass value by Path.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Property", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UClass* GetClassByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
 #pragma endregion Get
 
 // Set

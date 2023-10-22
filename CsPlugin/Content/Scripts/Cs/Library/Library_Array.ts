@@ -8,20 +8,27 @@ declare namespace NJsArray {
     class FLibrary {
         
         /**
-        * @param {Array} a 
+        * Get whether the Array 'a' is empty or not.
+        * 
+        * @param {Array}        a 
         * @returns {boolean}
         */
         IsEmpty(a: any[] | any): boolean;
  
         /**
-        * @param {string} context 
-        * @param {Array} a 
+        * Get whether the Array 'a' is NOT empty or not.
+        *  Assert if NOT. 
+        *  
+        * @param {string}       context 
+        * @param {Array}        a 
         * @returns {boolean}
         */
         IsNotEmptyChecked(context: string, a: any[]): boolean;
  
         /**
-        * @param {Array} a 
+        * Get whether the Array 'a' is NOT empty or not.
+        *  
+        * @param {Array}        a 
         * @returns {boolean}
         */
         IsNotEmpty(a: any[] | any): boolean;

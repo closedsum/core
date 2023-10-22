@@ -4,6 +4,8 @@
 #include "Actor/Script/CsScriptLibrary_Actor.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Library
 #include "Actor/CsLibrary_Actor.h"
 #include "Library/CsLibrary_Math.h"
@@ -28,6 +30,8 @@ namespace NCsScriptLibraryActor
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetByLabel);
 			// Has
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, HasTags);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, HasTag);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, HasTagChecked);
 			// Component
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Actor, GetComponentByTag);
 			// Visibility
@@ -54,6 +58,7 @@ namespace NCsScriptLibraryActor
 
 #pragma endregion Cached
 
+#define LogError &FCsLog::Error
 #define ActorLibrary NCsActor::FLibrary
 
 UCsScriptLibrary_Actor::UCsScriptLibrary_Actor(const FObjectInitializer& ObjectInitializer)
@@ -164,6 +169,25 @@ bool UCsScriptLibrary_Actor::HasTags(const FString& Context, const AActor* Actor
 	const FString& Ctxt = Context.IsEmpty() ? Str::HasTags : Context;
 
 	return ActorLibrary::SafeHasTags(Ctxt, Actor, Tags);
+}
+
+bool UCsScriptLibrary_Actor::HasTag(const FString& Context, const AActor* Actor, const FName& Tag)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::HasTag : Context;
+
+	return ActorLibrary::SafeHasTag(Ctxt, Actor, Tag);
+}
+
+bool UCsScriptLibrary_Actor::HasTagChecked(const FString& Context, const AActor* Actor, const FName& Tag, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryActor::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::HasTagChecked : Context;
+
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(ActorLibrary::HasTagChecked(Ctxt, Actor, Tag), ActorLibrary::SafeHasTag(Ctxt, Actor, Tag, OutSuccess, LogError));
 }
 
 #pragma endregion Has
@@ -410,4 +434,5 @@ bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, 
 
 #pragma endregion Normal
 
+#undef LogError
 #undef ActorLibrary

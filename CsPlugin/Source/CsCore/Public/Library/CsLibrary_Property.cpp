@@ -19,6 +19,7 @@ namespace NCsProperty
 			{
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindPropertyByName);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindStructPropertyByName);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindClassPropertyByName);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, FindObjectPropertyByName);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsProperty::FLibrary, GetObjectPropertyValue);
 			}
@@ -329,6 +330,67 @@ namespace NCsProperty
 	}
 
 	#pragma endregion SoftObjectPtr
+
+		// SoftClassPtr
+	#pragma region
+
+	FSoftClassProperty* FLibrary::FindSoftClassPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+	{
+		FProperty* Property		 = FindPropertyByNameChecked(Context, Struct, PropertyName);
+		FSoftClassProperty* Prop = CastField<FSoftClassProperty>(Property);
+
+		checkf(Prop, TEXT("%s: %s.%s is NOT a TSoftClassPtr."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Prop;
+	}
+
+	FSoftClassProperty* FLibrary::FindSoftClassPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FSoftClassProperty* Prop = CastField<FSoftClassProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TSoftClassPtr."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Prop;
+	}
+
+	#pragma endregion SoftClassPtr
+
+		// Class
+	#pragma region
+
+	FClassProperty* FLibrary::FindClassPropertyByNameChecked(const FString& Context, const UStruct* Struct, const FName& PropertyName)
+	{
+		FProperty* Property  = FindPropertyByNameChecked(Context, Struct, PropertyName);
+		FClassProperty* Prop = CastField<FClassProperty>(Property);
+
+		checkf(Prop, TEXT("%s: %s.%s is NOT a UClass."), *Context, *(Struct->GetName()), *(PropertyName.ToString()));
+		return Prop;
+	}
+
+	FClassProperty* FLibrary::FindClassPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FClassProperty* Prop = CastField<FClassProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a UClass."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+		return Prop;
+	}
+
+	#pragma endregion Class
 
 		// Object
 	#pragma region
@@ -818,6 +880,95 @@ namespace NCsProperty
 	}
 
 	#pragma endregion SoftObjectPtr
+
+		// SoftClassPtr
+	#pragma region
+
+	FSoftObjectPtr* FLibrary::GetSoftClassPropertyValuePtrChecked(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName)
+	{
+		CS_IS_PTR_NULL_CHECKED(StructValue)
+
+		FSoftClassProperty* Property = FindSoftClassPropertyByNameChecked(Context, Struct, PropertyName);
+		FSoftObjectPtr* ValuePtr	  = Property->GetPropertyValuePtr_InContainer(StructValue);
+
+		checkf(ValuePtr, TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *(Property->GetClass()->GetName()), *(Property->GetName()))
+		return ValuePtr;
+	}
+
+	FSoftObjectPtr* FLibrary::GetSoftClassPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_RET_NULL(StructValue)
+
+		FSoftClassProperty* Property  = FindSoftClassPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FSoftObjectPtr* ValuePtr = Property->GetPropertyValuePtr_InContainer(StructValue);
+
+		if (!ValuePtr)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed get Value Ptr from %s: %s."), *Context, *(Property->GetClass()->GetName()), *(Property->GetName())));
+			return nullptr;
+		}
+		return ValuePtr;
+	}
+
+	FSoftObjectPtr FLibrary::GetSoftClassPropertyValueByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+		ResultType Result;
+		OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+		if (!OutSuccess)
+			return FSoftObjectPtr();
+		return GetSoftClassPropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+	}
+
+	#pragma endregion SoftClassPtr
+
+		// Class
+	#pragma region
+	
+	TObjectPtr<UObject>* FLibrary::GetClassPropertyValuePtr(const FString& Context, void* StructValue, UStruct* const& Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FClassProperty* ClassProperty = FindClassPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!ClassProperty)
+			return nullptr;
+
+		if (!StructValue)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: StructValue is NULL."), *Context));
+			return nullptr;
+		}
+
+		TObjectPtr<UObject>* ValuePtr = ClassProperty->GetPropertyValuePtr_InContainer(StructValue);
+
+		if (!ValuePtr)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Failed to get Value Ptr to member from %s.%s."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+			return nullptr;
+		}
+		return ValuePtr;
+	}
+
+	UClass* FLibrary::GetClassPropertyValueByPath(const FString& Context, void* StructValue, UStruct* const& Struct, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult ResultType;
+		
+		ResultType Result;
+		OutSuccess = GetEndPropertyInfoByPath(Context, StructValue, Struct, Path, Result, Log);
+
+		if (!OutSuccess)
+			return nullptr;
+		return GetClassPropertyValue(Context, Result.StructValue, Result.Struct, Result.PropertyName, OutSuccess, Log);
+	}
+
+	#pragma endregion Class
 
 		// Object
 	#pragma region

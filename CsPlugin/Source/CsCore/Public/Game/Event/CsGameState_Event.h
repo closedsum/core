@@ -21,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameState_Event_OnStartupComplete);
 // Update
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCsGameState_Event_OnUpdate, const FCsDeltaTime&, DeltaTime);
 // Shutdown
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameState_Event_OnShutdown_Start);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCsGameState_Event_OnShutdown);
 
 class CSCORE_API ICsGameState_Event
@@ -34,6 +35,8 @@ public:
 	virtual FCsGameState_Event_OnStartupComplete& GetOnStartupComplete_ScriptEvent() = 0;
 
 	virtual FCsGameState_Event_OnUpdate& GetOnUpdate_ScriptEvent() = 0;
+
+	virtual FCsGameState_Event_OnShutdown_Start& GetOnShutdown_Start_ScriptEvent() = 0;
 
 	virtual FCsGameState_Event_OnShutdown& GetOnShutdown_ScriptEvent() = 0;
 };

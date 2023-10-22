@@ -28,7 +28,7 @@ namespace NCsWorld
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
-		* @param Log
+		* @param Log			(optional)
 		* return				World
 		*/
 		static UWorld* GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
@@ -49,6 +49,16 @@ namespace NCsWorld
 		* return				World
 		*/
 		static UObject* GetAsObjectChecked(const FString& Context, const UObject* WorldContext);
+
+		/**
+		* Safely get World as UObject from WorldContext.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Log			(optional)
+		* return				World
+		*/
+		static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		static bool IsGameWorld(UWorld* World);
 

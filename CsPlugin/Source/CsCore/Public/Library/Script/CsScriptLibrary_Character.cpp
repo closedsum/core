@@ -4,6 +4,8 @@
 #include "Library/Script/CsScriptLibrary_Character.h"
 #include "CsCore.h"
 
+// CVar
+#include "Script/CsCVars_Script.h"
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
@@ -27,7 +29,10 @@ namespace NCsScriptLibraryCharacter
 			// Get
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetByTag);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetByTags);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetByTagsChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetAnyByTags);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetAllByTags);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetAllByTagsChecked);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetByName);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Character, GetByLabel);
 		}
@@ -40,6 +45,9 @@ UCsScriptLibrary_Character::UCsScriptLibrary_Character(const FObjectInitializer&
 	: Super(ObjectInitializer)
 {
 }
+
+#define LogError &FCsLog::Error
+#define CharacterLibrary NCsCharacter::FLibrary
 
 ACharacter* UCsScriptLibrary_Character::Spawn(const FString& Context, const UObject* WorldContextObject)
 {
@@ -64,12 +72,10 @@ ACharacter* UCsScriptLibrary_Character::Spawn(const FString& Context, const UObj
 	return Character;
 }
 
-#define CharacterLibrary NCsCharacter::FLibrary
-
 // Get
 #pragma region
 
-ACharacter* UCsScriptLibrary_Character::GetByTag(const FString& Context, UObject* WorldContextObject, const FName& Tag)
+ACharacter* UCsScriptLibrary_Character::GetByTag(const FString& Context, const UObject* WorldContextObject, const FName& Tag)
 {
 	using namespace NCsScriptLibraryCharacter::NCached;
 
@@ -78,7 +84,7 @@ ACharacter* UCsScriptLibrary_Character::GetByTag(const FString& Context, UObject
 	return CharacterLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
 
-ACharacter* UCsScriptLibrary_Character::GetByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags)
+ACharacter* UCsScriptLibrary_Character::GetByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags)
 {
 	using namespace NCsScriptLibraryCharacter::NCached;
 
@@ -87,7 +93,17 @@ ACharacter* UCsScriptLibrary_Character::GetByTags(const FString& Context, UObjec
 	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags);
 }
 
-bool UCsScriptLibrary_Character::GetAnyByTags(const FString& Context, UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
+ACharacter* UCsScriptLibrary_Character::GetByTagsChecked(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryCharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTagsChecked : Context;
+
+	OutSuccess = true;
+	return CS_SCRIPT_GET_CHECKED(CharacterLibrary::GetByTagsChecked(Ctxt, WorldContextObject, Tags), CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutSuccess, LogError));
+}
+
+bool UCsScriptLibrary_Character::GetAnyByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
 {
 	using namespace NCsScriptLibraryCharacter::NCached;
 
@@ -96,7 +112,26 @@ bool UCsScriptLibrary_Character::GetAnyByTags(const FString& Context, UObject* W
 	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
 }
 
-ACharacter* UCsScriptLibrary_Character::GetByName(const FString& Context, UObject* WorldContextObject, const FName& Name)
+bool UCsScriptLibrary_Character::GetAllByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
+{
+	using namespace NCsScriptLibraryCharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAllByTags : Context;
+
+	return CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters);
+}
+
+void UCsScriptLibrary_Character::GetAllByTagsChecked(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryCharacter::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetAllByTagsChecked : Context;
+
+	OutSuccess = true;
+	CS_SCRIPT_CHECKED(CharacterLibrary::GetByTagsChecked(Ctxt, WorldContextObject, Tags, OutCharacters), CharacterLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutCharacters, OutSuccess, LogError));
+}
+
+ACharacter* UCsScriptLibrary_Character::GetByName(const FString& Context, const UObject* WorldContextObject, const FName& Name)
 {
 	using namespace NCsScriptLibraryCharacter::NCached;
 
@@ -105,7 +140,7 @@ ACharacter* UCsScriptLibrary_Character::GetByName(const FString& Context, UObjec
 	return CharacterLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
-ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, UObject* WorldContextObject, const FString& Label)
+ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, const UObject* WorldContextObject, const FString& Label)
 {
 	using namespace NCsScriptLibraryCharacter::NCached;
 
@@ -116,4 +151,5 @@ ACharacter* UCsScriptLibrary_Character::GetByLabel(const FString& Context, UObje
 
 #pragma endregion Get
 
+#undef LogError
 #undef CharacterLibrary

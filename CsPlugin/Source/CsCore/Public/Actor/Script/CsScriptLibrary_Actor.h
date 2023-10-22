@@ -136,6 +136,30 @@ public:
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context"))
 	static bool HasTags(const FString& Context, const AActor* Actor, const TArray<FName>& Tags);
 
+	/**
+	* Get whether Actor has Tag.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Actor
+	* @param Tag
+	* return				Get whether Actor has Tag or not.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Actor", meta = (AutoCreateRefTerm = "Context,Tag"))
+	static bool HasTag(const FString& Context, const AActor* Actor, const FName& Tag);
+
+	/**
+	* Get whether Actor has Tag.
+	*
+	* @param Context		The calling context.
+	* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Actor
+	* @param Tag
+	* return				Get whether Actor has Tag or not.
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Actor", meta = (DisplayName = "Has Tag (Checked)", AutoCreateRefTerm = "Context,Tag"))
+	static bool HasTagChecked(const FString& Context, const AActor* Actor, const FName& Tag, bool& OutSuccess);
+
 #pragma endregion Has
 
 // Component

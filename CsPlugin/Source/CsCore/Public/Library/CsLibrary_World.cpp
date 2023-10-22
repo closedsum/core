@@ -69,6 +69,11 @@ namespace NCsWorld
 		return GetChecked(Context, WorldContext);
 	}
 
+	UObject* FLibrary::GetSafeAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		return GetSafe(Context, WorldContext, Log);
+	}
+
 	bool FLibrary::IsGameWorld(UWorld* World)
 	{
 		return World && World->IsGameWorld();

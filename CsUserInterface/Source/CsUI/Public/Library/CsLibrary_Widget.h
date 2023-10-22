@@ -30,6 +30,8 @@ namespace NCsWidget
 	{
 	public:
 
+		static UUserWidget* CreateChecked(const FString& Context, UObject* Owner, TSubclassOf<UUserWidget> UserWidgetClass, const FName& WidgetName = NAME_None);
+
 		/**
 		*
 		*
@@ -103,6 +105,20 @@ namespace NCsWidget
 		static UClass* SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
 
 	#pragma endregion Load
+
+	// Get
+	#pragma region
+	public:
+
+		static UUserWidget* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TSoftClassPtr<UUserWidget>& OutSoftObjectPtr, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FSoftClassPath& OutSoftClassPath, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
+	#pragma endregion Get
 
 	public:
 

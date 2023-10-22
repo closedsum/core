@@ -22,6 +22,9 @@ namespace NCsScriptLibraryWidget
 			// Load
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, LoadBySoftObjectPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, LoadByStringPath);
+			// Get
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, GetSoftClassAsStringByPath);
 			// Render
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, Render_Opacity_Ease);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget, Render_Scale_Ease);
@@ -90,6 +93,29 @@ UClass* UCsScriptLibrary_Widget::LoadByStringPath(const FString& Context, const 
 }
 
 #pragma endregion Load
+
+// Get
+#pragma region
+
+UUserWidget* UCsScriptLibrary_Widget::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+
+	return WidgetLibrary::GetSafe(Context, Object, Path, OutSuccess);
+}
+
+bool UCsScriptLibrary_Widget::GetSoftClassAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryWidget::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftClassAsStringByPath : Context;
+
+	return WidgetLibrary::GetSafe(Context, Object, Path, OutPathAsString, OutSuccess);
+}
+
+#pragma endregion Get
 
 // Render
 #pragma region

@@ -23,6 +23,7 @@ namespace NCsScriptLibraryProperty
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetInt);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetIntByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetSoftObjectPtrAsStringByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, GetClassByPath);
 			// Set
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetBool);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Property, SetInt);
@@ -81,6 +82,15 @@ FString UCsScriptLibrary_Property::GetSoftObjectPtrAsStringByPath(const FString&
 	if (OutSuccess)
 		return SoftObject.ToSoftObjectPath().ToString();
 	return FString();
+}
+
+UClass* UCsScriptLibrary_Property::GetClassByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
+{
+	using namespace NCsScriptLibraryProperty::NCached;
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetClassByPath : Context;
+
+	return PropertyLibrary::GetClassPropertyValueByPath(Ctxt, Object, Object->GetClass(), Path, OutSuccess);
 }
 
 #pragma endregion Get

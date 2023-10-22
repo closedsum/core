@@ -42,6 +42,37 @@ public:
 
 #pragma endregion Load
 
+// Get
+#pragma region
+public:
+
+	/**
+	* Get the BehaviorTree value at the give Path for Object.
+	* 
+	* @param Context	The calling context.
+	* @param Object
+	* @param Path		Full variable path to the BehaviorTree value on Object.
+	* @param OutSuccess	(out)
+	* return			BehaviorTree
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Behavior Tree", meta = (AutoCreateRefTerm = "Context,Path"))
+	static UBehaviorTree* GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess);
+
+	/**
+	* Get a SoftObjectPtr of type: BehaviorTree value at the give Path for Object as a String.
+	* 
+	* @param Context			The calling context.
+	* @param Object
+	* @param Path				Full variable path to the BehaviorTree value on Object.
+	* @param OutPathAsString	(out)
+	* @param OutSuccess			(out)
+	* return					String
+	*/
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Behavior Tree", meta = (AutoCreateRefTerm = "Context,Path"))
+	static bool GetSoftObjectAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess);
+
+#pragma endregion Get
+
 // Log
 #pragma region
 public:

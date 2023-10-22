@@ -78,6 +78,11 @@ module.exports = class NJsTypes
 
             this.Blueprint_Internal = AnimInstanceLibrary.LoadAndGetGeneratedClassByStringPath(context, this.Path);
         }
+
+        Unload()
+        {
+            this.Blueprint_Internal = null;
+        }
     }
 
     static FAnimSequence = class AnimSequence
@@ -128,6 +133,11 @@ module.exports = class NJsTypes
             let context = this.GetName() + ".Load";
 
             this.Anim_Internal = AnimSequenceLibrary.LoadByStringPath(context, this.Path);
+        }
+
+        Unload()
+        {
+            this.Anim_Internal = null;
         }
     }
 
@@ -180,6 +190,11 @@ module.exports = class NJsTypes
 
             this.Blend_Internal = BlendSpaceLibrary.LoadByStringPath(context, this.Path);
         }
+
+        Unload()
+        {
+            this.Blend_Internal = null;
+        }
     }
 
     static FBlendSpace1D = class BlendSpace1D
@@ -209,7 +224,7 @@ module.exports = class NJsTypes
         /*boolean*/ IsValidChecked(context /*string*/)
         {
             IsStringChecked(context, this.Path);
-            IsClassChecked(context, this.Blend_Internal);
+            IsValidObjectChecked(context, this.Blend_Internal);
             return true;
         }
 
@@ -235,6 +250,11 @@ module.exports = class NJsTypes
             let context = this.GetName() + ".Load";
 
             this.Blend_Internal = BlendSpaceLibrary.Load1DByStringPath(context, this.Path);
+        }
+
+        Unload()
+        {
+            this.Blend_Internal = null;
         }
     }
 };

@@ -322,6 +322,31 @@ namespace NCsValid
 		};
 	}
 
+	namespace NText
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			FORCEINLINE static bool EmptyChecked(const FString& Context, const FText& A, const FString& AName)
+			{
+				checkf(!A.IsEmpty(), TEXT("%s: %s is EMPTY."), *Context, *AName);
+				return true;
+			}
+
+			FORCEINLINE static bool Empty(const FString& Context, const FText& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (A.IsEmpty())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is EMPTY."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+		};
+	}
+		
 	namespace NEnum
 	{
 		struct CSCORE_API FLibrary final
@@ -1375,6 +1400,46 @@ namespace NCsValid
 
 				return O;
 			}
+
+			template<typename ClassType, typename UInterfaceType>
+			FORCEINLINE static bool ImplementsInterfaceChecked(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName)
+			{
+				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
+
+				UClass* C = A->GetClass();
+
+				checkf(C, TEXT("%s: %s's Class is NULL."), *Context, *AName);
+				checkf(C->ImplementsInterface(UInterfaceType::StaticClass()), TEXT("%s: %s's Class: %s does NOT implement the interface: %s."), *Context, *AName, *(C->GetName()), *InterfaceName);
+				return true;
+			}
+
+			template<typename ClassType, typename UInterfaceType>
+			FORCEINLINE static bool ImplementsInterface(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
+			{
+				if (!A)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL."), *Context, *AName));
+					return false;
+				}
+
+				UClass* C = A->GetClass();
+
+				if (!C)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s's Class is NULL."), *Context, *AName));
+					return false;
+				}
+
+				if (!C->ImplementsInterface(UInterfaceType::StaticClass()))
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s's Class: %s does NOT implement the interface: %s."), *Context, *AName, *(C->GetName()), *InterfaceName));
+					return false;
+				}
+				return true;
+			}
 		};
 	}
 
@@ -1451,6 +1516,89 @@ namespace NCsValid
 				{
 					if (Log)
 						Log(FString::Printf(TEXT("%s: %s is NULL. Path @ %s has NOT been Loaded."), *Context, *AName, *(A.ToSoftObjectPath().ToString())));
+					return nullptr;
+				}
+				return O;
+			}
+		};
+	}
+
+	namespace NSoftClassPtr
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			template<typename ClassType>
+			FORCEINLINE static bool IsValidChecked(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName)
+			{
+				checkf(A.ToSoftObjectPath().IsValid(), TEXT("%s: %s is NOT Valid."), *Context, *AName);
+				return true;
+			}
+
+			template<typename ClassType>
+			FORCEINLINE static bool IsValid(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!A.ToSoftObjectPath().IsValid())
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NOT Valid."), *Context, *AName));
+					return false;
+				}
+				return true;
+			}
+
+			template<typename ClassType>
+			FORCEINLINE static UClass* GetChecked(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName)
+			{
+				check(IsValidChecked<ClassType>(Context, A, AName));
+
+				UClass* O = A.Get();
+
+				checkf(O, TEXT("%s: %s is NULL. Path @ %s has NOT been Loaded."), *Context, *AName, *(A.ToSoftObjectPath().ToString()));
+				return O;
+			}
+
+			template<typename ClassType>
+			FORCEINLINE static UClass* Get(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!IsValid<ClassType>(Context, A, AName, Log))
+					return nullptr;
+
+				UClass* O = A.Get();
+
+				if (!O)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: %s is NULL. Path @ %s has NOT been Loaded."), *Context, *AName, *(A.ToSoftObjectPath().ToString())));
+					return nullptr;
+				}
+				return O;
+			}
+
+			template<typename ClassType>
+			FORCEINLINE static UClass* LoadChecked(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName)
+			{
+				check(IsValidChecked<ClassType>(Context, A, AName));
+
+				UClass* O = A.LoadSynchronous();
+
+				checkf(O, TEXT("%s: Failed to Load %s @ %s.."), *Context, *AName, *(A.ToSoftObjectPath().ToString()));
+				return O;
+			}
+
+			template<typename ClassType>
+			FORCEINLINE static UClass* Load(const FString& Context, const TSoftClassPtr<ClassType>& A, const FString& AName, void(*Log)(const FString&))
+			{
+				if (!IsValid<ClassType>(Context, A, AName, Log))
+					return nullptr;
+
+				UClass* O = A.LoadSynchronous();
+
+				if (!O)
+				{
+					if (Log)
+						Log(FString::Printf(TEXT("%s: Failed to Load %s @ %s."), *Context, *AName, *(A.ToSoftObjectPath().ToString())));
 					return nullptr;
 				}
 				return O;
@@ -1793,6 +1941,18 @@ namespace NCsValid
 
 #pragma endregion FString
 
+// FText
+#pragma region
+
+// Assume const FString& Context has been defined
+#define CS_IS_TEXT_EMPTY_CHECKED(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NText::FLibrary::EmptyChecked(Context, __A, __temp__str__)); \
+	}
+
+#pragma endregion FString
+
 // Enum
 #pragma region
 
@@ -2042,6 +2202,14 @@ namespace NCsValid
 		static const FString __temp__str__b = #__Class; \
 		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __In__##__Outer, __temp__str__a, __In__##__Class, __temp__str__b); \
 	}(Context, this, __Class)
+// Assume const FString& Context has been defined
+#define CS_IMPLEMENTS_INTERFACE_CHECKED(__Object, __ObjectType, __InterfaceType) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		bool __temp__result = NCsValid::NObject::FLibrary::ImplementsInterfaceChecked<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		check(__temp__result); \
+	}
 
 #pragma endregion Object
 
@@ -2072,10 +2240,36 @@ namespace NCsValid
 	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A) \
 	{ \
 		static const FString __temp__str__ = #__A; \
-		return NCsValid::NSoftObjectPtr::FLibrary::GetChecked<__ObjectType>(Context, __A, __temp__str__); \
+		return NCsValid::NSoftObjectPtr::FLibrary::GetChecked<__ObjectType>(Context, __In__##__A, __temp__str__); \
 	}(Context, __A)
 
 #pragma endregion TSoftObjectPtr
+
+// TSoftClassPtr
+#pragma region 
+
+// Assume const FString& Context has been defined
+#define CS_IS_SOFT_CLASS_PTR_VALID_CHECKED(__A, __ClassType) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		check(NCsValid::NSoftClassPtr::FLibrary::IsValidChecked<__ClassType>(Context, __A, __temp__str__)); \
+	}
+// Assume const FString& Context has been defined
+#define CS_SOFT_CLASS_PTR_GET_CHECKED(__A, __ClassType) \
+	[] (const FString& Context, const TSoftClassPtr<__ClassType>& __In__##__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		return NCsValid::NSoftClassPtr::FLibrary::GetChecked<__ClassType>(Context, __In__##__A, __temp__str__); \
+	}(Context, __A)
+// Assume const FString& Context has been defined
+#define CS_SOFT_CLASS_PTR_LOAD_CHECKED(__A, __ClassType) \
+	[] (const FString& Context, const TSoftClassPtr<__ClassType>& __In__##__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		return NCsValid::NSoftClassPtr::FLibrary::LoadChecked<__ClassType>(Context, __In__##__A, __temp__str__); \
+	}(Context, __A)
+
+#pragma endregion TSoftClassPtr
 
 // FSoftObjectPath
 #pragma region 
@@ -2195,6 +2389,8 @@ namespace NCsValid
 #define CS_IS_NAME_NONE_CHECKED(__A)
 // FString
 #define CS_IS_STRING_EMPTY_CHECKED(__A)
+// FText
+#define CS_IS_TEXT_EMPTY_CHECKED(__A)
 // Enum
 #define CS_IS_ENUM_VALID_CHECKED(__EnumMapType, __Enum)
 #define CS_IS_ENUM_ARRAY_VALID_CHECKED(__EnumMapType, __EnumType, __Array)
@@ -2274,7 +2470,15 @@ namespace NCsValid
 		static const FString __temp__str__a; \
 		static const FString __temp__str__b; \
 		return NCsValid::NObject::FLibrary::NewChecked<__ObjectType>(Context, __In__##__Outer, __temp__str__a, __In__##__Class, __temp__str__b); \
-	}(Context, this, __Class)	
+	}(Context, this, __Class)
+// Assume const FString& Context has been defined
+#define CS_IMPLEMENTS_INTERFACE_CHECKED(__Object, __ObjectType, __InterfaceType) \
+	{ \
+		static const FString __temp__str__a; \
+		static const FString __temp__str__b; \
+		bool __temp__result = NCsValid::NObject::FLibrary::ImplementsInterfaceChecked<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b); \
+		check(__temp__restul); \
+	}
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // TSoftObjectPtr
@@ -2284,7 +2488,23 @@ namespace NCsValid
 	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A) \
 	{ \
 		static const FString __temp__str__; \
-		return NCsValid::NSoftObjectPtr::FLibrary::GetChecked<__ObjectType>(Context, __A, __temp__str__); \
+		return NCsValid::NSoftObjectPtr::FLibrary::GetChecked<__ObjectType>(Context, __In__##__A), __temp__str__); \
+	}(Context, __A)
+// TSoftClassPtr
+#define CS_IS_SOFT_CLASS_PTR_VALID_CHECKED(__A, __ClassType)
+	// Assume const FString& Context has been defined
+#define CS_SOFT_CLASS_PTR_GET_CHECKED(__A, __ClassType) \
+	[] (const FString& Context, const TSoftClassPtr<__ClassType>& __In__##__A) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSoftClassPtr::FLibrary::GetChecked<__ClassType>(Context, __In__##__A, __temp__str__); \
+	}(Context, __A)
+	// Assume const FString& Context has been defined
+#define CS_SOFT_CLASS_PTR_LOAD_CHECKED(__A, __ClassType) \
+	[] (const FString& Context, const TSoftClassPtr<__ClassType>& __In__##__A) \
+	{ \
+		static const FString __temp__str__; \
+		return NCsValid::NSoftClassPtr::FLibrary::LoadChecked<__ClassType>(Context, __In__##__A, __temp__str__); \
 	}(Context, __A)
 // FSoftObjectPath
 #define CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(__A)
@@ -2628,6 +2848,36 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NString::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return __Value; } \
+	}
+
+#pragma endregion FString
+
+// FText
+#pragma region
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY_EXIT(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY_RET_NULL(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_TEXT_EMPTY_RET_VALUE(__A, __Value) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NText::FLibrary::Empty(Context, __A, __temp__str__, Log)) { return __Value; } \
 	}
 
 #pragma endregion FString
@@ -2976,6 +3226,13 @@ namespace NCsValid
 		static const FString __temp__str__b = #__InterfaceType; \
 		return NCsValid::NObject::FLibrary::InterfaceCast<__ObjectType, __InterfaceType>(Context, __In__##__Object, __temp__str__a, __temp__str__b, Log); \
 	}(Context, __Object, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IMPLEMENTS_INTERFACE(__Object, __ObjectType, __InterfaceType) \
+	{ \
+		static const FString __temp__str__a = #__Object; \
+		static const FString __temp__str__b = #__InterfaceType; \
+		if (!NCsValid::NObject::FLibrary::ImplementsInterface<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return false; } \
+	}
 
 #pragma endregion Object
 
@@ -3023,10 +3280,42 @@ namespace NCsValid
 	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A, void(*Log)(const FString&)) \
 	{ \
 		static const FString __temp__str__ = #__A; \
-		return NCsValid::NSoftObjectPtr::FLibrary::Get<__ObjectType>(Context, __A, __temp__str__, Log); \
+		return NCsValid::NSoftObjectPtr::FLibrary::Get<__ObjectType>(Context, __In__##__A, __temp__str__, Log); \
 	}(Context, __A, Log)
 
 #pragma endregion TSoftObjectPtr
+
+// TSoftClassPtr
+#pragma region 
+
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_CLASS_PTR_VALID(__A, __ClassType) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(__A) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_SOFT_CLASS_PTR_GET(__A, __ClassType) \
+	[] (const FString& Context, const TSoftClassPtr<__ClassType>& __In__##__A, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		return NCsValid::NSoftClassPtr::FLibrary::Get<__ClassType>(Context, __In__##__A, __temp__str__, Log); \
+	}(Context, __A, Log)
+// Assume const FString& Context and void(Log*)(const FString&) have been defined
+#define CS_SOFT_CLASS_PTR_LOAD(__A, __ClassType) \
+	[] (const FString& Context, const TSoftClassPtr<__ClassType>& __In__##__A, void(*Log)(const FString&)) \
+	{ \
+		static const FString __temp__str__ = #__A; \
+		return NCsValid::NSoftClassPtr::FLibrary::Load<__ClassType>(Context, __In__##__A, __temp__str__, Log); \
+	}(Context, __A, Log)
+
+#pragma endregion TSoftClassPtr
 
 // FSoftObjectPath
 #pragma region 

@@ -324,7 +324,11 @@ namespace NCsValid
 
 	namespace NText
 	{
+<<<<<<< HEAD
 		struct CSCORE_API FLibrary final
+=======
+		struct CSCORE_API Library final
+>>>>>>> origin/master
 		{
 		public:
 
@@ -3231,7 +3235,11 @@ namespace NCsValid
 	{ \
 		static const FString __temp__str__a = #__Object; \
 		static const FString __temp__str__b = #__InterfaceType; \
+<<<<<<< HEAD
 		if (!NCsValid::NObject::FLibrary::ImplementsInterface<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b, Log)) { return false; } \
+=======
+		return NCsValid::NObject::FLibrary::ImplementsInterface<__ObjectType, __InterfaceType::UClassType>(Context, __Object, __temp__str__a, __temp__str__b, Log); \
+>>>>>>> origin/master
 	}
 
 #pragma endregion Object

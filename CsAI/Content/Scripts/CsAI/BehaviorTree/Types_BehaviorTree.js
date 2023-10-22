@@ -20,7 +20,10 @@ var BehaviorTreeLibrary  = CsScriptLibrary_BehaviorTree;
 // "typedefs" - functions
 var check                = CommonLibrary.check;
 var IsValidObjectChecked = CommonLibrary.IsValidObjectChecked;
+<<<<<<< HEAD
 var IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked;
+=======
+>>>>>>> origin/master
 
 module.exports = class NJsTypes
 {
@@ -62,6 +65,7 @@ module.exports = class NJsTypes
         */
         OverrideByUObject(context /*string*/, o /*object*/, memberPath /*string*/)
         {
+<<<<<<< HEAD
             let result = BehaviorTreeLibrary.GetSoftObjectAsStringByPath(context, o, memberPath + ".Tree");
             check(result.OutSuccess);
             IsStringNotEmptyChecked(context, result.OutPathAsString);
@@ -70,6 +74,15 @@ module.exports = class NJsTypes
             check(result.OutSuccess);
             IsValidObjectChecked(context, result.$);
             this.Tree_Internal = result.$;
+=======
+            // let result = MaterialLibrary.GetSoftObjectArrayAsStringByPath(context, o, memberPath + ".Materials");
+            // check(result.OutSuccess);
+            // this.Paths = result.OutArray;
+            // result = MaterialLibrary.GetArrayByPath(context, o, memberPath + ".Materials_Internal");
+            // check(result.OutSuccess);
+            // IsNotEmptyChecked(context, result.OutArray);
+            // this.Materials_Internal = result.OutArray;
+>>>>>>> origin/master
         }
 
         Load()

@@ -60,11 +60,17 @@ namespace NCsWidget
 		CS_IS_PENDING_KILL_CHECKED(Owner)
 		CS_IS_SUBCLASS_OF_NULL_CHECKED(UserWidgetClass, UUserWidget)
 
+<<<<<<< HEAD
 		typedef NCsWorld::FLibrary WorldLibrary;
 
 		UUserWidget* Widget		 = nullptr;
 		bool CastOwnerSuccessful = false;
 
+=======
+		UUserWidget* Widget		 = nullptr;
+		bool CastOwnerSuccessful = false;
+
+>>>>>>> origin/master
 		if (UWidget* W = Cast<UWidget>(Owner))
 		{
 			Widget = UUserWidget::CreateWidgetInstance(*W, UserWidgetClass, WidgetName);
@@ -95,7 +101,11 @@ namespace NCsWidget
 			CastOwnerSuccessful = true;
 		}
 
+<<<<<<< HEAD
 		checkf(CastOwnerSuccessful, TEXT("%s: Owner: %s with Class: %s is NOT of type: UWidget, UWidgetTree, APlayerController, UGameInstance, or UWorld OR can NOT route to UWorld."), *Context, *(Owner->GetName()), *(Owner->GetClass()->GetName()));
+=======
+		checkf(CastOwnerSuccessful, TEXT("%s: Owner: %s with Class: %s is NOT of type: UWidget, UWidgetTree, APlayerController, UGameInstance, or UWorld."), *Context, *(Owner->GetName()), *(Owner->GetClass()->GetName()));
+>>>>>>> origin/master
 		checkf(Widget, TEXT("%s: Failed to create widget of type: %s with Owner: %s with Class: %s."), *Context, *(UserWidgetClass->GetName()), *(Owner->GetName()), *(Owner->GetClass()->GetName()));
 		return Widget;
 	}

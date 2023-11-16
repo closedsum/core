@@ -338,7 +338,17 @@ namespace NCsAI
 				* @param KeyName
 				* @parma IntValue
 				*/
-				static void SetValueChecked(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue);
+				static void SetIntChecked(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue);
+
+				/**
+				* Set the Controller's Blackboard Int (int32) Key value associated with KeySelector.
+				*
+				* @param Context	The calling context.
+				* @param Controller
+				* @param KeySelector
+				* @parma IntValue
+				*/
+				static void SetIntChecked(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, const int32& IntValue);
 
 				/**
 				* Safely set the Controller's Blackboard Int (int32) Key value associated with KeyName.
@@ -350,7 +360,39 @@ namespace NCsAI
 				* @param Log			(optional)
 				* return				Whether the value was set or not.
 				*/
-				static bool SetSafeValue(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+				static bool SetSafeInt(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+				/**
+				* Safely set the Controller's Blackboard Int (int32) Key value associated with KeySelector.
+				*
+				* @param Context		The calling context.
+				* @param Controller
+				* @param KeySelector
+				* @parma IntValue
+				* @param Log			(optional)
+				* return				Whether the value was set or not.
+				*/
+				static bool SetSafeInt(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+				/**
+				* Increment the Controller's Blackboard Int (int32) Key value associated with KeySelector.
+				*
+				* @param Context	The calling context.
+				* @param Controller
+				* @param KeySelector
+				* @parma Amount
+				*/
+				static void IncrementIntChecked(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& Amount = 1);
+
+				/**
+				* Safely increment the Controller's Blackboard Int (int32) Key value associated with KeySelector.
+				*
+				* @param Context	The calling context.
+				* @param Controller
+				* @param KeySelector
+				* @parma Amount
+				*/
+				static bool SafeIncrementInt(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& Amount = 1, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 			#pragma endregion Int
 
@@ -675,6 +717,56 @@ namespace NCsAI
 				static uint8 GetSafeEnum(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 			#pragma endregion Enum
+
+				// Int
+			#pragma region
+			public:
+
+				/**
+				* Get the Controller's Blackboard Int (int32) Key value associated with KeyName.
+				*
+				* @param Context	The calling context.
+				* @param Controller
+				* @param KeyName
+				* return			Int (int32).
+				*/
+				static int32 GetIntChecked(const FString& Context, const AAIController* Controller, const FName& KeyName);
+
+				/**
+				* Get the Controller's Blackboard Int (int32) Key value associated with KeySelector.
+				*
+				* @param Context		The calling context.
+				* @param Controller
+				* @param KeySelector
+				* return				Int (int32).
+				*/
+				static int32 GetIntChecked(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector);
+
+				/**
+				* Safely get the Controller's Blackboard Int (int32) Key value associated with KeyName.
+				*
+				* @param Context		The calling context.
+				* @param Controller
+				* @param KeyName
+				* @param OutSuccess		(out)
+				* @param Log			(optional)
+				* return				Int (int32).
+				*/
+				static int32 GetSafeInt(const FString& Context, const AAIController* Controller, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+				/**
+				* Safely get the Controller's Blackboard Int (int32) Key value associated with KeySelector.
+				*
+				* @param Context		The calling context.
+				* @param Controller
+				* @param KeySelector
+				* @param OutSuccess		(out)
+				* @param Log			(optional)
+				* return				Int (int32).
+				*/
+				static int32 GetSafeInt(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+			#pragma endregion Int
 
 			#pragma endregion Get
 			};

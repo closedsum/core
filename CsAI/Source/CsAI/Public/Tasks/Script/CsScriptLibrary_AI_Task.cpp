@@ -6,8 +6,13 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // AI
+#include "AIController.h"
 #include "Tasks/AITask_MoveTo.h"
+// Log
+#include "Utility/CsAILog.h"
 
 // Cached
 #pragma region
@@ -19,6 +24,8 @@ namespace NCsScriptLibraryAITask
 		namespace Str
 		{
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, GetAIController);
+			// MoveTo
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, New_MoveTo);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_ReadyForActivation);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_SetUp);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_AI_Task, MoveTo_ConditionalPerformMove);
@@ -34,31 +41,43 @@ UCsScriptLibrary_AI_Task::UCsScriptLibrary_AI_Task(const FObjectInitializer& Obj
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryAITask::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAITask::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
+
 AAIController* UCsScriptLibrary_AI_Task::GetAIController(const FString& Context, const UAITask* Task)
 {
-	using namespace NCsScriptLibraryAITask::NCached;
+	CONDITIONAL_SET_CTXT(GetAIController);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAIController : Context;
-
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return false;
-	}
+	CS_IS_PENDING_KILL_RET_NULL2(Task)
 	return Task->GetAIController();
+}
+
+UAITask_MoveTo* UCsScriptLibrary_AI_Task::New_MoveTo(const FString& Context, AAIController* OwnerController)
+{
+	CONDITIONAL_SET_CTXT(New_MoveTo);
+	SET_LOG_WARNING
+
+	CS_IS_PENDING_KILL_RET_NULL2(OwnerController)
+
+	UAITask_MoveTo* NewTask = UAITask::NewAITask<UAITask_MoveTo>(*OwnerController);
+
+	if (!NewTask)
+	{
+		UE_LOG(LogCsAI, Warning, TEXT("%s: Failed to create new Task of type: UAITask_MoveTo."), *Ctxt);
+	}
+	return NewTask;
 }
 
 bool UCsScriptLibrary_AI_Task::MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task, FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result& OutResult)
 {
-	using namespace NCsScriptLibraryAITask::NCached;
+	CONDITIONAL_SET_CTXT(MoveTo_ReadyForActivation);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::MoveTo_ReadyForActivation : Context;
+	CS_IS_PENDING_KILL2(Task)
 
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return false;
-	}
 	Task->ReadyForActivation();
 
 	OutResult.bValid			 = IsValid(Task);
@@ -72,21 +91,11 @@ bool UCsScriptLibrary_AI_Task::MoveTo_ReadyForActivation(const FString& Context,
 
 bool UCsScriptLibrary_AI_Task::MoveTo_SetUp(const FString& Context, UAITask_MoveTo* Task, AAIController* Controller, const FCsAIMoveRequest& MoveRequest)
 {
-	using namespace NCsScriptLibraryAITask::NCached;
+	CONDITIONAL_SET_CTXT(MoveTo_SetUp);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::MoveTo_SetUp : Context;
-
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return false;
-	}
-
-	if (!Controller)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Controller is NULL."), *Ctxt);
-		return false;
-	}
+	CS_IS_PENDING_KILL2(Task)
+	CS_IS_PENDING_KILL2(Controller)
 
 	FAIMoveRequest Request;
 	MoveRequest.CopyTo(Request);
@@ -97,30 +106,26 @@ bool UCsScriptLibrary_AI_Task::MoveTo_SetUp(const FString& Context, UAITask_Move
 
 bool UCsScriptLibrary_AI_Task::MoveTo_ConditionalPerformMove(const FString& Context, UAITask_MoveTo* Task)
 {
-	using namespace NCsScriptLibraryAITask::NCached;
+	CONDITIONAL_SET_CTXT(MoveTo_ConditionalPerformMove);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::MoveTo_ConditionalPerformMove : Context;
+	CS_IS_PENDING_KILL2(Task)
 
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return false;
-	}
 	Task->ConditionalPerformMove();
 	return true;
 }
 
 bool UCsScriptLibrary_AI_Task::MoveTo_WasMoveSuccessful(const FString& Context, UAITask_MoveTo* Task)
 {
-	using namespace NCsScriptLibraryAITask::NCached;
+	CONDITIONAL_SET_CTXT(MoveTo_WasMoveSuccessful);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::MoveTo_WasMoveSuccessful : Context;
+	CS_IS_PENDING_KILL2(Task)
 
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return false;
-	}
 	Task->WasMoveSuccessful();
 	return true;
 }
+
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef SET_LOG_WARNING

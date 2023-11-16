@@ -80,13 +80,14 @@ namespace NCsActor
 		return FString::Printf(TEXT("Actor: %s with Class: %s"), *(Actor->GetName()), *(Actor->GetClass()->GetName()));
 	}
 
+	#define WorldLibrary NCsWorld::FLibrary
+	#define MathLibrary NCsMath::FLibrary
+
 	// Get
 	#pragma region
 
 	void FLibrary::GetAllOfClassChecked(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		checkf(ActorClass.Get(), TEXT("%: ActorClass is NULL"), *Context);
@@ -105,8 +106,6 @@ namespace NCsActor
 
 	bool FLibrary::GetSafeAllOfClass(const FString& Context, const UObject* WorldContext, const TSubclassOf<AActor>& ActorClass, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
@@ -138,8 +137,6 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_NAME_NONE_CHECKED(Tag)
@@ -190,8 +187,6 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -245,8 +240,6 @@ namespace NCsActor
 
 	void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
@@ -285,8 +278,6 @@ namespace NCsActor
 
 	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<AActor*>& OutActors, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY(Tags, FName)
@@ -329,8 +320,6 @@ namespace NCsActor
 
 	AActor* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
@@ -405,8 +394,6 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_RET_NULL(Tags, FName)
@@ -482,7 +469,6 @@ namespace NCsActor
 	AActor* FLibrary::GetByNameChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
 	{
 		CS_IS_PTR_NULL_CHECKED(WorldContext)
-
 		CS_IS_NAME_NONE_CHECKED(Name)
 
 		UWorld* World = WorldContext->GetWorld();
@@ -507,8 +493,6 @@ namespace NCsActor
 
 	AActor* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -548,8 +532,6 @@ namespace NCsActor
 	AActor* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 	{
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		checkf(!Label.IsEmpty(), TEXT("%s: Label is EMPTY."), *Context);
@@ -577,8 +559,6 @@ namespace NCsActor
 	AActor* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -850,16 +830,12 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		A->SetActorScale3D(MathLibrary::Convert(Scale));
 	}
 
 	bool FLibrary::SetSafeScale(const FString& Context, AActor* A, const FVector3f& Scale, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
 	{
 		CS_IS_PENDING_KILL(A)
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		A->SetActorScale3D(MathLibrary::Convert(Scale));
 		return true;
@@ -872,16 +848,12 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		return MathLibrary::Convert(A->GetActorRotation());
 	}
 
 	FRotator3f FLibrary::GetSafeRotation(const FString& Context, const AActor* A, void(*Log)(const FString&)/*=&FCsLog::Warning*/)
 	{
 		CS_IS_PENDING_KILL_RET_VALUE(A, FRotator3f::ZeroRotator)
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		return MathLibrary::Convert(A->GetActorRotation());
 	}
@@ -890,8 +862,6 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		return MathLibrary::Convert(A->GetActorQuat());
 	}
 
@@ -899,16 +869,12 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		A->SetActorRotation(MathLibrary::Convert(Rotation));
 	}
 
 	void FLibrary::SetRotationChecked(const FString& Context, AActor* A, const FQuat4f& Rotation)
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		A->SetActorRotation(MathLibrary::Convert(Rotation));
 	}
@@ -924,8 +890,6 @@ namespace NCsActor
 
 		const FVector3d Location = A->GetActorLocation();
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		MathLibrary::Set(OutLocation, Location);
 		return true;
 	}
@@ -934,16 +898,12 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		return MathLibrary::Convert(A->GetActorLocation());
 	}
 
 	void FLibrary::SetLocationChecked(const FString& Context, AActor* A, const FVector3f& Location)
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		A->SetActorLocation(MathLibrary::Convert(Location));
 	}
@@ -952,16 +912,12 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		return A->SetActorLocationAndRotation(MathLibrary::Convert(Location), MathLibrary::Convert(Rotation));
 	}
 
 	bool FLibrary::SetLocationAndRotationChecked(const FString& Context, AActor* A, const FVector3f& Location, const FQuat4f& Rotation)
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		return A->SetActorLocationAndRotation(MathLibrary::Convert(Location), MathLibrary::Convert(Rotation));
 	}
@@ -970,8 +926,6 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		return MathLibrary::Convert(A->GetActorForwardVector());
 	}
 
@@ -979,8 +933,6 @@ namespace NCsActor
 	{
 		CS_IS_PENDING_KILL_CHECKED(A)
 
-		typedef NCsMath::FLibrary MathLibrary;
-		
 		return A->TeleportTo(MathLibrary::Convert(DestLocation), MathLibrary::Convert(DestRotation), bIsATest, bNoCheck);
 	}
 
@@ -1120,8 +1072,6 @@ namespace NCsActor
 
 		const float Percent = Time > 0.0f ? FMath::Clamp(R->ElapsedTime.Time / Time, 0.0f, 1.0f) : 1.0f;
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		CS_COROUTINE_BEGIN(R);
 
 		// TODO: Need to do Relative Location (i.e. check MoveSpace: World or Relative)
@@ -1206,11 +1156,11 @@ namespace NCsActor
 	// Material
 	#pragma region
 
+	#define MaterialLibrary NCsMaterial::FLibrary
+
 	void FLibrary::SetMaterialChecked(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index)
 	{
 		UPrimitiveComponent* Component = GetRootPrimitiveComponentChecked(Context, Actor);
-
-		typedef NCsMaterial::FLibrary MaterialLibrary;
 
 		MaterialLibrary::SetChecked(Context, Component, Material, Index);
 	}
@@ -1219,8 +1169,6 @@ namespace NCsActor
 	{
 		if (UPrimitiveComponent* Component = GetSafeRootPrimitiveComponent(Context, Actor, Log))
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			MaterialLibrary::SetSafe(Context, Component, Material, Index, Log);
 		}
 	}
@@ -1238,8 +1186,6 @@ namespace NCsActor
 	{
 		UPrimitiveComponent* Component = GetRootPrimitiveComponentChecked(Context, Actor);
 
-		typedef NCsMaterial::FLibrary MaterialLibrary;
-
 		MaterialLibrary::SetChecked(Context, Component, Materials);
 	}
 
@@ -1247,11 +1193,11 @@ namespace NCsActor
 	{
 		if (UPrimitiveComponent* Component = GetSafeRootPrimitiveComponent(Context, Actor, Log))
 		{
-			typedef NCsMaterial::FLibrary MaterialLibrary;
-
 			MaterialLibrary::SetSafe(Context, Component, Materials, Log);
 		}
 	}
+
+	#undef MaterialLibrary
 
 	#pragma endregion Material
 
@@ -1260,8 +1206,6 @@ namespace NCsActor
 
 	AActor* FLibrary::SafeSpawn(const FString& Context, const UObject* WorldContext, const FSoftObjectPath& Path, void (*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!World)
@@ -1416,8 +1360,6 @@ namespace NCsActor
 		const FVector3d VB = B->GetActorLocation();
 		const FVector3d V = VB - VA;
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		OutNormal = MathLibrary::Convert(MathLibrary::GetSafeNormal(V, OutDistanceSq, OutDistance));
 
 		return V != FVector3d::ZeroVector && OutNormal != FVector3f::ZeroVector;
@@ -1432,8 +1374,6 @@ namespace NCsActor
 		const FVector3d VB = B->GetActorLocation();
 		const FVector3d& V = VB - VA;
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		OutNormal = MathLibrary::Convert(MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance));
 	}
 
@@ -1444,11 +1384,8 @@ namespace NCsActor
 
 		const FVector3d VA = A->GetActorLocation();
 		const FVector3d VB = B->GetActorLocation();
-
-		const FVector3d V = VB - VA;
+		const FVector3d V  = VB - VA;
 		
-		typedef NCsMath::FLibrary MathLibrary;
-
 		OutNormal = MathLibrary::Convert(MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance));
 		
 		return V != FVector3d::ZeroVector && OutNormal != FVector3f::ZeroVector;
@@ -1457,8 +1394,6 @@ namespace NCsActor
 	void FLibrary::GetNormal2DAtoBChecked(const FString& Context, const AActor* A, const FVector3f& B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 	{
 		CS_IS_PTR_NULL_CHECKED(A)
-
-		typedef NCsMath::FLibrary MathLibrary;
 
 		const FVector3f VA = GetLocationChecked(Context, A);
 		const FVector3f V  = B - VA;
@@ -1473,12 +1408,13 @@ namespace NCsActor
 		const FVector3f VA = GetLocationChecked(Context, A);
 		const FVector3f V  = B - VA;
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		OutNormal = MathLibrary::GetSafeNormal2D(V, OutDistanceSq, OutDistance);
 
 		return V != FVector3f::ZeroVector && OutNormal != FVector3f::ZeroVector;
 	}
 
 	#pragma endregion Normal
+
+	#undef WorldLibrary
+	#undef MathLibrary
 }

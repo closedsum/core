@@ -13,6 +13,8 @@
 #include "Components/PrimitiveComponent.h"
 // Physics
 #include "PhysicsEngine/BodySetup.h"
+// Collision
+#include "Engine/CollisionProfile.h"
 
 #if WITH_EDITOR
 #include "Kismet/GameplayStatics.h" // TODO: FIX
@@ -76,4 +78,71 @@ namespace NCsCollision
 	}
 
 	#pragma endregion HitResult
+
+	namespace NProfile
+	{
+		bool FLibrary::IsValidChecked(const FString& Context, const FName& Name)
+		{
+			CS_IS_NAME_NONE_CHECKED(Name)
+
+			UCollisionProfile* Settings = UCollisionProfile::Get();
+
+			checkf(Settings, TEXT("%s: Failed to Get CollisionProfile settings."), *Context);
+
+			static TArray<TSharedPtr<FName>> Names;
+			Names.Reset(Names.Max());
+
+			Settings->GetProfileNames(Names);
+
+			bool Found = false;
+
+			for (const TSharedPtr<FName>& N : Names)
+			{
+				if (*N == Name)
+				{
+					Found = true;
+					break;
+				}
+			}
+
+			checkf(Found, TEXT("%s: Failed to find a Collision Profile with Name: %s."), *Context, *(Name.ToString()));
+			return true;
+		}
+
+		bool FLibrary::IsValid(const FString& Context, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			CS_IS_NAME_NONE_CHECKED(Name)
+
+			UCollisionProfile* Settings = UCollisionProfile::Get();
+
+			if (!Settings)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to Get CollisionProfile settings."), *Context));
+				return false;
+			}
+
+			static TArray<TSharedPtr<FName>> Names;
+			Names.Reset(Names.Max());
+
+			Settings->GetProfileNames(Names);
+
+			bool Found = false;
+
+			for (const TSharedPtr<FName>& N : Names)
+			{
+				if (*N == Name)
+				{
+					Found = true;
+					break;
+				}
+			}
+
+			if (!Found)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find a Collision Profile with Name: %s."), *Context, *(Name.ToString())));
+				return false;
+			}
+			return true;
+		}
+	}
 }

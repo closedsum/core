@@ -21,7 +21,7 @@ class CSAI_API UCsScriptLibrary_BehaviorTree_Task : public UObject
 
 public:
 
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Behavior Tree|Task", meta = (AutoCreateRefTerm="Context"))
 	static UBehaviorTreeComponent* GetBTComponentForTask(const FString& Context, UBTNode* Task, UGameplayTask* GameplayTask);
 
 	/**
@@ -30,9 +30,9 @@ public:
 	* @param Context	The calling context
 	* @param Task
 	* @param OwnerComp
-	* return			Whether Task->ConditionalPerformMove() was called or not.
+	* return			Whether NewBTAITask<UAITask_MoveTo>(OwnerComp) was successful or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Behavior Tree|Task", meta = (AutoCreateRefTerm="Context"))
 	static UAITask_MoveTo* New_MoveTo(const FString& Context, UBTNode* Task, UBehaviorTreeComponent* OwnerComp);
 
 	/**
@@ -44,6 +44,6 @@ public:
 	* @param TaskResult
 	* return			Whether Task->FinishLatentTask() was called or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context,TaskResult"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Behavior Tree|Task", meta = (AutoCreateRefTerm="Context,TaskResult"))
 	static bool FinishLatentTask(const FString& Context, UBTTaskNode* Task, UBehaviorTreeComponent* OwnerComp, const TEnumAsByte<EBTNodeResult::Type>& TaskResult);
 };

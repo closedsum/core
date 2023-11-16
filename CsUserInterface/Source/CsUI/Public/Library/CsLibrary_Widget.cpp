@@ -26,6 +26,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetTree.h"
 #include "Animation/WidgetAnimation.h"
+#include "Animation/UMGSequencePlayer.h"
 // Viewport
 #include "Blueprint/GameViewportSubsystem.h"
 // Components
@@ -1062,6 +1063,60 @@ namespace NCsWidget
 			const FString& Context = Str::SafePlay;
 
 			return SafePlay(Context, Widget, Params, nullptr);
+		}
+
+		bool FLibrary::SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL(Widget)
+			CS_IS_PENDING_KILL(Animation)
+
+			// TODO: Check Widget contains Animation
+
+			// Active
+			{
+				const TArray<TObjectPtr<UUMGSequencePlayer>>& ActiveSequencePlayers = Widget->ActiveSequencePlayers;
+			
+				for (const TObjectPtr<UUMGSequencePlayer>& Player : ActiveSequencePlayers)
+				{
+					if (UUMGSequencePlayer* Ptr = Player.Get())
+					{
+						if (Ptr->GetAnimation() == Animation)
+						{
+							const float ElapsedTime = Ptr->GetCurrentTime().AsSeconds() - Animation->GetStartTime();
+							const float Duration    = Animation->GetEndTime() - Animation->GetStartTime();;
+
+							if (ElapsedTime >= Duration ||
+								FMath::Abs(ElapsedTime - Duration) <= KINDA_SMALL_NUMBER)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			// Stopped
+			{
+				const TArray<TObjectPtr<UUMGSequencePlayer>>& StoppedSequencePlayers = Widget->StoppedSequencePlayers;
+
+				for (const TObjectPtr<UUMGSequencePlayer>& Player : StoppedSequencePlayers)
+				{
+					if (UUMGSequencePlayer* Ptr = Player.Get())
+					{
+						if (Ptr->GetAnimation() == Animation)
+						{
+							const float ElapsedTime = Ptr->GetCurrentTime().AsSeconds() - Animation->GetStartTime();
+							const float Duration    = Animation->GetEndTime() - Animation->GetStartTime();;
+
+							if (ElapsedTime >= Duration ||
+								FMath::Abs(ElapsedTime - Duration) <= KINDA_SMALL_NUMBER)
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
 		}
 
 	#undef PropertyLibrary

@@ -42,6 +42,11 @@ namespace NCsScriptLibraryMath
 
 #pragma endregion Cached
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryMath::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryMath::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define SET_LOG_WARNING void(*Log)(const FString&) = &FCsLog::Warning;
+#define LogError &FCsLog::Error
 #define MathLibrary NCsMath::FLibrary
 
 UCsScriptLibrary_Math::UCsScriptLibrary_Math(const FObjectInitializer& ObjectInitializer)
@@ -54,38 +59,30 @@ UCsScriptLibrary_Math::UCsScriptLibrary_Math(const FObjectInitializer& ObjectIni
 
 bool UCsScriptLibrary_Math::GreaterChecked_IntInt(const FString& Context, const int32& A, const int32& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(GreaterChecked_IntInt);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterChecked_IntInt : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntGreaterThanChecked(Ctxt, A, B), MathLibrary::SafeIsIntGreaterThan(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntGreaterThanChecked(Ctxt, A, B), MathLibrary::SafeIsIntGreaterThan(Ctxt, A, B, LogError));
 }
 
 bool UCsScriptLibrary_Math::GreaterEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(GreaterEqualChecked_IntInt);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterEqualChecked_IntInt : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntGreaterThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntGreaterThanOrEqual(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntGreaterThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntGreaterThanOrEqual(Ctxt, A, B, LogError));
 }
 
 bool UCsScriptLibrary_Math::LessChecked_IntInt(const FString& Context, const int32& A, const int32& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(LessChecked_IntInt);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LessChecked_IntInt : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThan(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThan(Ctxt, A, B, LogError));
 }
 
 bool UCsScriptLibrary_Math::LessEqualChecked_IntInt(const FString& Context, const int32& A, const int32& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(LessEqualChecked_IntInt);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LessEqualChecked_IntInt : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThanOrEqual(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsIntLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsIntLessThanOrEqual(Ctxt, A, B, LogError));
 }
 
 #pragma endregion Int
@@ -95,38 +92,30 @@ bool UCsScriptLibrary_Math::LessEqualChecked_IntInt(const FString& Context, cons
 
 bool UCsScriptLibrary_Math::GreaterChecked_FloatFloat(const FString& Context, const float& A, const float& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(GreaterChecked_FloatFloat);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterChecked_FloatFloat : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatGreaterThanChecked(Ctxt, A, B), MathLibrary::SafeIsFloatGreaterThan(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatGreaterThanChecked(Ctxt, A, B), MathLibrary::SafeIsFloatGreaterThan(Ctxt, A, B, LogError));
 }
 
 bool UCsScriptLibrary_Math::GreaterEqualChecked_FloatFloat(const FString& Context, const float& A, const float& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(GreaterEqualChecked_FloatFloat);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GreaterEqualChecked_FloatFloat : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatGreaterThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsFloatGreaterThanOrEqual(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatGreaterThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsFloatGreaterThanOrEqual(Ctxt, A, B, LogError));
 }
 
 bool UCsScriptLibrary_Math::LessChecked_FloatFloat(const FString& Context, const float& A, const float& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(LessChecked_FloatFloat);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LessChecked_FloatFloat : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatLessThanChecked(Ctxt, A, B), MathLibrary::SafeIsFloatLessThan(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatLessThanChecked(Ctxt, A, B), MathLibrary::SafeIsFloatLessThan(Ctxt, A, B, LogError));
 }
 
 bool UCsScriptLibrary_Math::LessEqualChecked_FloatFloat(const FString& Context, const float& A, const float& B)
 {
-	using namespace NCsScriptLibraryMath::NCached;
+	CONDITIONAL_SET_CTXT(LessEqualChecked_FloatFloat);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LessEqualChecked_FloatFloat : Context;
-
-	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsFloatLessThanOrEqual(Ctxt, A, B));
+	return CS_SCRIPT_GET_CHECKED(MathLibrary::IsFloatLessThanOrEqualChecked(Ctxt, A, B), MathLibrary::SafeIsFloatLessThanOrEqual(Ctxt, A, B, LogError));
 }
 
 FString UCsScriptLibrary_Math::GetFloatAsStringWithPrecision(const float& TheFloat, const uint8& Precision)
@@ -141,11 +130,8 @@ FString UCsScriptLibrary_Math::GetFloatAsStringWithPrecision(const float& TheFlo
 
 float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& EasingType, const float& Time, const float& Start, const float& Final, const float& Duration)
 {
-	using namespace NCsScriptLibraryMath::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Ease : Context;
-
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	CONDITIONAL_SET_CTXT(Ease);
+	SET_LOG_WARNING
 
 	CS_IS_ENUM_VALID_RET_VALUE(EMCsEasingType, ECsEasingType, EasingType, 0.0f)
 
@@ -154,11 +140,8 @@ float UCsScriptLibrary_Math::Ease(const FString& Context, const ECsEasingType& E
 
 float UCsScriptLibrary_Math::EasePercent(const FString& Context, const ECsEasingType& EasingType, const float& TimeAsPercent, const float& Start, const float& Final)
 {
-	using namespace NCsScriptLibraryMath::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::EasePercent : Context;
-
-	void(*Log)(const FString&) = &FCsLog::Warning;
+	CONDITIONAL_SET_CTXT(EasePercent);
+	SET_LOG_WARNING
 
 	CS_IS_ENUM_VALID_RET_VALUE(EMCsEasingType, ECsEasingType, EasingType, 0.0f)
 
@@ -358,13 +341,15 @@ FPlane4f UCsScriptLibrary_Math::MakePlane(const FVector3f& Origin, const FVector
 
 bool UCsScriptLibrary_Math::RayPlaneIntersection(const FString& Context, const FCsRay& Ray, const FPlane4f& Plane, float& OutT, FVector3f& OutIntersection)
 {
-	using namespace NCsScriptLibraryMath::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::RayPlaneIntersection : Context;
+	CONDITIONAL_SET_CTXT(RayPlaneIntersection);
 
 	return MathLibrary::SafeRayPlaneIntersection(Context, Ray, Plane, OutT, OutIntersection);
 }
 
 #pragma endregion Intersection
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef SET_LOG_WARNING
+#undef LogError
 #undef MathLibrary

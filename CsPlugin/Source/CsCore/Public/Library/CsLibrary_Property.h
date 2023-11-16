@@ -757,23 +757,23 @@ namespace NCsProperty
 		static FSetProperty* FindSetEnumPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, const FString& EnumCppType, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Find the Set Property (TArray of UStructs) from Struct with name: PropertyName.
+		* Find the Set Property (Value of type: UStruct) from Struct with name: PropertyName.
 		*
 		* @param Context		The calling context.
 		* @param Struct
 		* @param PropertyName
-		* @param Log
+		* @param Log			(optional)
 		* return				Property.
 		*/
 		static FSetProperty* FindSetStructPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**
-		* Find the Set Property (TArray of UStructs) from Struct with name: PropertyName.
+		* Find the Set Property (Value of type: UStruct) from Struct with name: PropertyName.
 		*
 		* @param Context		The calling context.
 		* @param Struct
 		* @param PropertyName
-		* @param Log
+		* @param Log			(optional)
 		* return				Property.
 		*/
 		template<typename StructType>
@@ -795,6 +795,34 @@ namespace NCsProperty
 		}
 
 	#pragma endregion Set
+
+		// Map
+	#pragma region
+	public:
+	
+		/**
+		* Find the Map Property from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		static FMapProperty* FindMapPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		/**
+		* Find the Map Property with Value of type: UStruct from Struct with name: PropertyName.
+		*
+		* @param Context		The calling context.
+		* @param Struct
+		* @param PropertyName
+		* @param Log			(optional)
+		* return				Property.
+		*/
+		static FMapProperty* FindMapPropertyWithStructValueByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Map
 
 		/**
 		*
@@ -886,6 +914,36 @@ namespace NCsProperty
 		struct FGetEndPropertyInfoByPath
 		{
 		public:
+
+			struct FParser
+			{
+			public:
+
+				struct FPropertyInfo
+				{
+					bool bMapOrArray;
+
+					FString KeyOrIndex;
+
+					FName Name;
+
+					FPropertyInfo() :
+						bMapOrArray(false),
+						KeyOrIndex(),
+						Name(NAME_None)
+					{
+					}
+				};
+
+				TArray<FPropertyInfo> Infos;
+
+				FParser() :
+					Infos()
+				{
+				}
+
+				bool Process(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+			};
 
 			struct FResult
 			{

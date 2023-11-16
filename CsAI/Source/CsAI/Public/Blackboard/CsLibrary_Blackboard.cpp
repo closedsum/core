@@ -455,11 +455,34 @@ namespace NCsBlackboard
 		// Int
 	#pragma region
 
+	bool FLibrary::SafeIsKeyType_Int(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!KeyType.Get())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType is NULL."), *Context));
+			return false;
+		}
+
+		if (KeyType != UBlackboardKeyType_Int::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: KeyType NOT of type: Int but of type: %s."), *Context, *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
+
 	bool FLibrary::IsKeyChecked_Int(const FString& Context, const UBlackboardData* Data, const FName& KeyName)
 	{
 		TSubclassOf<UBlackboardKeyType> KeyType = GetKeyTypeChecked(Context, Data, KeyName);
 
 		checkf(KeyType == UBlackboardKeyType_Int::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Int but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType));
+		return true;
+	}
+
+	bool FLibrary::IsKeyChecked_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector)
+	{
+		check(HasKeyChecked(Context, Data, KeySelector));
+		checkf(KeySelector.SelectedKeyType.Get() == UBlackboardKeyType_Int::StaticClass(), TEXT("%s: %s with Key: %s is NOT of type: Int but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType));
 		return true;
 	}
 
@@ -470,6 +493,19 @@ namespace NCsBlackboard
 		if (KeyType != UBlackboardKeyType_Int::StaticClass())
 		{
 			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Int but of type: %s."), *Context, *(Data->GetName()), *(KeyName.ToString()), *KeyTypeToString(KeyType)));
+			return false;
+		}
+		return true;
+	}
+
+	bool FLibrary::SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeHasKey(Context, Data, KeySelector, Log))
+			return false;
+
+		if (KeySelector.SelectedKeyType.Get() != UBlackboardKeyType_Int::StaticClass())
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s with Key: %s is NOT of type: Int but of type: %s."), *Context, *(Data->GetName()), *(KeySelector.SelectedKeyName.ToString()), *KeyTypeToString(KeySelector.SelectedKeyType)));
 			return false;
 		}
 		return true;
@@ -871,6 +907,66 @@ namespace NCsBlackboard
 
 	#pragma endregion Enum
 
+		// Int
+	#pragma region
+	
+	void FLibrary::SetIntChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue)
+	{
+		check(IsKeyChecked_Int(Context, Component, KeyName));
+
+		Component->SetValueAsInt(KeyName, IntValue);
+	}
+	
+	void FLibrary::SetIntChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue)
+	{
+		check(IsKeyChecked_Int(Context, Component, KeySelector));
+
+		Component->SetValueAsInt(KeySelector.SelectedKeyName, IntValue);
+	}
+
+	bool FLibrary::SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Int(Context, Component, KeyName))
+			return false;
+
+		Component->SetValueAsInt(KeyName, IntValue);
+		return true;
+	}
+
+	bool FLibrary::SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Int(Context, Component, KeySelector))
+			return false;
+
+		Component->SetValueAsInt(KeySelector.SelectedKeyName, IntValue);
+		return true;
+	}
+
+	void FLibrary::IncrementIntChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount /*=1*/)
+	{
+		check(IsKeyChecked_Int(Context, Component, KeyName));
+		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Amount, 1)
+
+		int32 Value = Component->GetValueAsInt(KeyName);
+
+		Component->SetValueAsInt(KeyName, Value + Amount);
+	}
+
+	bool FLibrary::SafeIncrementInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount /*=1*/, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		if (!SafeIsKey_Int(Context, Component, KeyName))
+			return false;
+
+		CS_IS_INT_GREATER_THAN_OR_EQUAL(Amount, 1)
+
+		int32 Value = Component->GetValueAsInt(KeyName);
+
+		Component->SetValueAsInt(KeyName, Value + Amount);
+		return true;
+	}
+
+	#pragma endregion Int
+
 		// Float
 	#pragma region
 	
@@ -1045,6 +1141,45 @@ namespace NCsBlackboard
 	}
 
 	#pragma endregion Enum
+
+		// Int
+	#pragma region
+
+	int32 FLibrary::GetIntChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
+	{
+		check(IsKeyChecked_Int(Context, Component, KeyName));
+		return Component->GetValueAsInt(KeyName);
+	}
+
+	int32 FLibrary::GetIntChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+	{
+		check(IsKeyChecked_Int(Context, Component, KeySelector));
+		return Component->GetValueAsInt(KeySelector.SelectedKeyName);
+	}
+
+	int32 FLibrary::GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Int(Context, Component, KeyName, Log))
+			return 0;
+
+		OutSuccess = true;
+		return Component->GetValueAsInt(KeyName);
+	}
+
+	int32 FLibrary::GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+	{
+		OutSuccess = false;
+
+		if (!SafeIsKey_Int(Context, Component, KeySelector, Log))
+			return 0;
+
+		OutSuccess = true;
+		return Component->GetValueAsInt(KeySelector.SelectedKeyName);
+	}
+
+	#pragma endregion Int
 
 		// Float
 	#pragma region

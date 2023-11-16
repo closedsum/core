@@ -29,6 +29,7 @@ module.exports = class NJsCommon
                 NJsCommon.FLibrary.IsFloatChecked       = NJsCommon.FLibrary.FDisableCheck.IsFloatChecked;
                 NJsCommon.FLibrary.IsNumberChecked      = NJsCommon.FLibrary.FDisableCheck.IsNumberChecked;
                 NJsCommon.FLibrary.IsStringChecked      = NJsCommon.FLibrary.FDisableCheck.IsStringChecked;
+                NJsCommon.FLibrary.IsStringChecked2     = NJsCommon.FLibrary.FDisableCheck.IsStringChecked2;
                 NJsCommon.FLibrary.IsStringNotEmptyChecked = NJsCommon.FLibrary.FDisableCheck.IsStringNotEmptyChecked;
             }
 
@@ -46,6 +47,7 @@ module.exports = class NJsCommon
             static /*boolean*/ IsFloatChecked(context /*string*/, a /*number*/) { return true; }
             static /*boolean*/ IsNumberChecked(context /*string*/, a /*number*/) { return true; }
             static /*boolean*/ IsStringChecked(context /*string*/, s /*string*/) { return true; }
+            static /*boolean*/ IsStringChecked2(s /*string*/) { return true; }
             static /*boolean*/ IsStringNotEmptyChecked(context /*string*/, s /*string*/) { return true; }
         }
 
@@ -112,6 +114,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsNullObject(o);
             self.checkf(result, context + ": o: " + o + " is NOT NULL.");
             return result;
@@ -140,6 +143,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsValidObject(o);
             self.checkf(result, context + ": o: " + o + " is NOT a Valid Object.");
             return result;
@@ -169,6 +173,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsFunction(func);
             self.checkf(result, context + ": func: " + func + " is NOT a function.");
             return result;
@@ -199,6 +204,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsGenerator(gen);
             self.checkf(result, context + ": gen: " + gen + " is NOT a function.");
             return result;
@@ -229,6 +235,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsFunction(c);
             self.checkf(result, context + ": class: " + c + " is NOT a class.");
             return true;
@@ -332,6 +339,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsBool(a);
             self.checkf(result, context + ": a: " + a + " is NOT a boolean.");
             return result;
@@ -357,6 +365,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsInt(a);
             self.checkf(result, context + ": a: " + a + " is NOT an integer.");
             return result;
@@ -382,6 +391,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsFloat(a);
             self.checkf(result, context + ": a: " + a + " is NOT a float.");
             return result;
@@ -399,6 +409,7 @@ module.exports = class NJsCommon
         {
             let self = NJsCommon.FLibrary;
 
+            self.IsStringChecked2(context);
             let result = self.IsNumber(a);
             self.checkf(result, context + ": a " + a + " is NOT a Number.");
             return result;
@@ -426,6 +437,22 @@ module.exports = class NJsCommon
 
             let result = typeof s === 'string';
             self.checkf(result, context + ": s: " + s + " is NOT a string.");
+            return result;
+        }
+
+        /**
+        * Get whether or not 's' is a string.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       s 
+        * @returns {boolean}
+        */
+        static /*boolean*/ IsStringChecked2(s)
+        {
+            let self = NJsCommon.FLibrary;
+
+            let result = typeof s === 'string';
+            self.checkf(result, "NJsCommon.FLibrary: s: " + s + " is NOT a string.");
             return result;
         }
 

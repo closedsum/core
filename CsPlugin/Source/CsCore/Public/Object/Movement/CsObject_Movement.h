@@ -19,7 +19,9 @@ class CSCORE_API ICsObject_Movement
 
 public:
 
-	virtual FVector3f Movement_GetCenterOfMassLocation() const = 0;
+	virtual FVector3d Movement_GetCenterOfMassLocation3d() const = 0;
+	virtual FVector3f Movement_GetCenterOfMassLocation3f() const = 0;
 
-	virtual FVector3f Movement_GetBaseOnGroundLocation() const = 0;
+	virtual FVector3d Movement_GetBaseOnGroundLocation3d() const = 0;
+	virtual FVector3f Movement_GetBaseOnGroundLocation3f() const = 0;
 };

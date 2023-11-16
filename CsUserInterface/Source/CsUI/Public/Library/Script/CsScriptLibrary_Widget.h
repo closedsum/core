@@ -205,3 +205,12 @@ public:
 
 #pragma endregion ProgressBar
 };
+
+UCLASS()
+class CSUI_API UCsScriptLibrary_Widget_Animation : public UObject
+{
+	GENERATED_UCLASS_BODY()
+
+	UFUNCTION(BlueprintPure, Category = "CsUI|Library|Widget|Animation", meta = (AutoCreateRefTerm = "Context"))
+	static bool HasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation);
+};

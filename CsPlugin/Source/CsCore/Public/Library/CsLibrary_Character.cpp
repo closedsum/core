@@ -36,13 +36,13 @@ namespace NCsCharacter
 		}
 	}
 
+	#define WorldLibrary NCsWorld::FLibrary
+
 	// Get
 	#pragma region
 
 	ACharacter* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_NAME_NONE_CHECKED(Tag)
@@ -61,7 +61,7 @@ namespace NCsCharacter
 			}
 		}
 	#else
-			ACharacter* Actor = nullptr;
+		ACharacter* Actor = nullptr;
 		
 		for (TActorIterator<ACharacter> Itr(World); Itr; ++Itr)
 		{
@@ -93,8 +93,6 @@ namespace NCsCharacter
 
 	ACharacter* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -148,8 +146,6 @@ namespace NCsCharacter
 
 	void FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
@@ -188,8 +184,6 @@ namespace NCsCharacter
 	
 	ACharacter* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY_CHECKED(Tags, FName)
@@ -237,8 +231,6 @@ namespace NCsCharacter
 
 	bool FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, TArray<ACharacter*>& OutCharacters, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		CS_IS_TARRAY_EMPTY(Tags, FName)
@@ -320,8 +312,6 @@ namespace NCsCharacter
 
 	ACharacter* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -361,8 +351,6 @@ namespace NCsCharacter
 	ACharacter* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
 	{
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 		checkf(!Label.IsEmpty(), TEXT("%s: Label is EMPTY."), *Context);
@@ -390,8 +378,6 @@ namespace NCsCharacter
 	ACharacter* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -433,4 +419,6 @@ namespace NCsCharacter
 	}
 
 	#pragma endregion Get
+
+	#undef WorldLibrary
 }

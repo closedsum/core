@@ -19,11 +19,74 @@ var NJsArray = require('Cs/Library/Library_Array.js');
 var MaterialLibrary  = CsScriptLibrary_Material;
 
 // "typedefs" - functions
-var check             = CommonLibrary.check;
-var IsNotEmptyChecked = ArrayLibrary.IsNotEmptyChecked;
+var check                   = CommonLibrary.check;
+var IsValidObjectChecked    = CommonLibrary.IsValidObjectChecked;
+var IsStringNotEmptyChecked = CommonLibrary.IsStringNotEmptyChecked;
+var IsNotEmptyChecked       = ArrayLibrary.IsNotEmptyChecked;
 
 module.exports = class NJsTypes
 {
+    static FMaterialInterface = class MaterialInterfaceClass
+    {
+        constructor()
+        {
+            /** @type {string} */             this.Path = "";
+            /** @type {MaterialInterface} */  this.Material_Internal = null;
+        }
+
+        /*string*/ GetName() { return " NJsTypes.FMaterialInterface" }
+
+        /**
+        * @returns {MaterialInterface}
+        */
+        /*MaterialInterface*/ Get() { return this.Material_Internal; }
+
+        /**
+        * @param {MaterialInterface} mat 
+        */
+        Set(mat /*MaterialInterface*/) { this.Material_Internal = mat; }
+
+        /**
+        * @param {string}   context
+        * @return {boolean} 
+        */
+        /*boolean*/ IsValidChecked(context /*string*/)
+        {
+            IsStringNotEmptyChecked(context, this.Path);
+            IsValidObjectChecked(context, this.Material_Internal);
+            return true;
+        }
+
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context /*string*/, o /*object*/, memberPath /*string*/)
+        {
+            let result = MaterialLibrary.GetSoftObjectAsStringByPath(context, o, memberPath + ".Material");
+            check(result.OutSuccess);
+            this.Path = result.OutPath;
+            result = MaterialLibrary.GetByPath(context, o, memberPath + ".Material_Internal");
+            IsValidObjectChecked(context, result);
+            this.Material_Internal = result;
+        }
+
+        Load()
+        {
+            let context = this.GetName() + ".Load";
+
+            let result = MaterialLibrary.LoadByStringPath(context, this.Path);
+            IsValidObjectChecked(context, result);
+            this.Material_Internal = result;
+        }
+
+        Unload()
+        {
+            this.Material_Internal = null;
+        }
+    }
+
     static FTArrayMaterialInterface = class TArrayMaterialInterface
     {
         constructor()

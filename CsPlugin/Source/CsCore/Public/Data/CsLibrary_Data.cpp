@@ -9,6 +9,7 @@
 // Library
 #include "Managers/Data/CsLibrary_Manager_Data.h"
 	// Common
+#include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_Valid.h"
 // Interface
 #include "Data/CsScriptData.h"
@@ -111,6 +112,82 @@ namespace NCsData
 
 	#pragma endregion ICsScriptData
 
+	// Implement
+	#pragma region
+
+	#define ObjectLibrary NCsObject::FLibrary
+
+	bool FLibrary::ScriptImplementsChecked(const FString& Context, const UObject* Object)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Object)
+
+		UClass* Class = Object->GetClass();
+
+		checkf(Class, TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName()));
+		checkf(Class->ImplementsInterface(UCsScriptData::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		return true;
+	}
+
+	bool FLibrary::SafeScriptImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(Object)
+
+		UClass* Class = Object->GetClass();
+
+		if (!Class)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName())));
+			return false;
+		}
+
+		const bool Success = Class->ImplementsInterface(UCsScriptData::StaticClass());
+
+		if (!Success)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+		}
+		return Success;
+	}
+
+	bool FLibrary::ImplementsChecked(const FString& Context, const UObject* Object)
+	{
+		CS_IS_PENDING_KILL_CHECKED(Object)
+
+		UClass* Class = Object->GetClass();
+
+		checkf(Class, TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName()));
+		checkf(Class->ImplementsInterface(UCsData::StaticClass()), TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object));
+		return true;
+	}
+
+	bool FLibrary::SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PENDING_KILL(Object)
+
+		UClass* Class = Object->GetClass();
+
+		if (!Class)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get class from Object: %s."), *Context, *(Object->GetName())));
+			return false;
+		}
+
+		const bool Success = Class->ImplementsInterface(UCsData::StaticClass());
+
+		if (!Success)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsData."), *Context, *ObjectLibrary::PrintObjectAndClass(Object)));
+		}
+		return Success;
+	}
+
+	#undef ObjectLibrary
+
+	#pragma endregion Implment
+
+	// Get
+	#pragma region
+
 	#define DataType NCsData::IData
 
 	DataType* FLibrary::GetSafe(const FString& Context, UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -182,4 +259,6 @@ namespace NCsData
 	}
 
 	#undef DataType
+
+	#pragma endregion Get
 }

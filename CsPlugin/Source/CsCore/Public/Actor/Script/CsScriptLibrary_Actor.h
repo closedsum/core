@@ -2,7 +2,6 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
-
 #include "UObject/Object.h"
 // Types
 #include "Types/CsTypes_Movement.h"

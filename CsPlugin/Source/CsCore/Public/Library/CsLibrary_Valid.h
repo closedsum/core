@@ -1008,6 +1008,20 @@ namespace NCsValid
 				}
 				return true;
 			}
+
+			template<typename ValueType>
+			FORCEINLINE static bool ContainsChecked(const FString& Context, const TArray<ValueType>& Array, const FString& ArrayName, const ValueType& Value, const FString& ValueName)
+			{
+				check(EmptyChecked<ValueType>(Context, Array, ArrayName));
+
+				for (const ValueType& A : Array)
+				{
+					if (A == Value)
+						return true;
+				}
+				checkf(0, TEXT("%s: %s does NOT contain %s."), *Context, *ArrayName, *ValueName);
+				return false;
+			}
 		};
 
 		namespace N2D
@@ -2585,6 +2599,27 @@ namespace NCsValid
 	if (!__Object.IsValid(Context, Log)) \
 		return __Value;
 
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID2(__Object) \
+	if (!__Object.IsValid(Ctxt, Log)) \
+		return false;
+// Assume const FString& Ctxt has been defined
+#define CS_IS_VALID_NO_LOG2(__Object) \
+	if (!__Object.IsValid(Ctxt, nullptr)) \
+		return false;
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID_EXIT2(__Object) \
+	if (!__Object.IsValid(Ctxt, Log)) \
+		return;
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID_RET_NULL2(__Object) \
+	if (!__Object.IsValid(Ctxt, Log)) \
+		return nullptr;
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_VALID_RET_VALUE2(__Object, __Value) \
+	if (!__Object.IsValid(Ctxt, Log)) \
+		return __Value;
+
 // Int
 #pragma region
 
@@ -3140,6 +3175,31 @@ namespace NCsValid
 		if (!NCsValid::NPtr::FLibrary::Null(Context, __Ptr, __temp__str__, Log)) { return __Value; } \
 	}
 
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PTR_NULL2(__Ptr) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NPtr::FLibrary::Null(Ctxt, __Ptr, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PTR_NULL_EXIT2(__Ptr) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NPtr::FLibrary::Null(Ctxt, __Ptr, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PTR_NULL_RET_NULL2(__Ptr) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NPtr::FLibrary::Null(Ctxt, __Ptr, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PTR_NULL_RET_VALUE2(__Ptr, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Ptr; \
+		if (!NCsValid::NPtr::FLibrary::Null(Ctxt, __Ptr, __temp__str__, Log)) { return __Value; } \
+	}
+
 #pragma endregion Ptr
 
 // Object
@@ -3169,6 +3229,32 @@ namespace NCsValid
 		static const FString __temp__str__ = #__Object; \
 		if (!NCsValid::NObject::FLibrary::IsPendingKill(Context, __Object, __temp__str__, Log)) { return __Value; } \
 	}
+
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL2(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Ctxt, __Object, __temp__str__, Log)) { return false; } \
+	}
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL_EXIT2(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Ctxt, __Object, __temp__str__, Log)) { return; } \
+	}
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL_RET_NULL2(__Object) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Ctxt, __Object, __temp__str__, Log)) { return nullptr; } \
+	}
+// Assume const FString& Ctxt and void(Log*)(const FString&) have been defined
+#define CS_IS_PENDING_KILL_RET_VALUE2(__Object, __Value) \
+	{ \
+		static const FString __temp__str__ = #__Object; \
+		if (!NCsValid::NObject::FLibrary::IsPendingKill(Ctxt, __Object, __temp__str__, Log)) { return __Value; } \
+	}
+
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
 #define CS_IS_OBJ_CLASS_OF(__Object, __ObjectType, __ClassType) \
 	{ \
@@ -3295,7 +3381,7 @@ namespace NCsValid
 		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
-#define CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(__A) \
+#define CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(__A, __ClassType) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NSoftClassPtr::FLibrary::IsValid<__ClassType>(Context, __A, __temp__str__, Log)) { return nullptr; } \

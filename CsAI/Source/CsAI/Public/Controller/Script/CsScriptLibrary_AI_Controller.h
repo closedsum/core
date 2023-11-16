@@ -446,11 +446,20 @@ public:
 	* Makes AI go toward specified destination
 	* 
 	* @param MoveRequest	details about move
-	* @param OutPath		optional output param, filled in with assigned path
 	* @return				struct holding MoveId and enum code
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Controller", meta = (AutoCreateRefTerm = "Context,MoveRequest"))
 	static FCsPathFollowingRequestResult MoveTo(const FString& Context, AAIController* Controller, const FCsAIMoveRequest& MoveRequest);
+
+	/** 
+	* Makes AI go toward specified destination
+	* 
+	* @param MoveRequest	details about move
+	* @param OutSuccess
+	* @return				struct holding MoveId and enum code
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Controller", meta = (DisplayName = "Move To (Checked)", AutoCreateRefTerm = "Context,MoveRequest"))
+	static FCsPathFollowingRequestResult MoveToChecked(const FString& Context, AAIController* Controller, const FCsAIMoveRequest& MoveRequest, bool& OutSuccess);
 
 	/**
 	* Call Controller->GetDefaultNavigationFilterClass()

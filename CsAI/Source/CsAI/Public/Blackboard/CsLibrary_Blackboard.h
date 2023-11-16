@@ -535,6 +535,15 @@ namespace NCsBlackboard
 		#pragma region
 
 		/**
+		* Safely check whether KeyType is of type Int (int32) or not.
+		*
+		* @param Context	The calling context
+		* @param KeyType
+		* return			Whether KeyType is of type Int (int32) or not.
+		*/
+		static bool SafeIsKeyType_Int(const FString& Context, const TSubclassOf<UBlackboardKeyType>& KeyType, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
 		* Get whether the Data with Key with KeyName is of type Int or not.
 		*
 		* @param Context	The calling context.
@@ -555,6 +564,29 @@ namespace NCsBlackboard
 		FORCEINLINE static bool IsKeyChecked_Int(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName)
 		{
 			return IsKeyChecked_Int(Context, GetDataChecked(Context, Component), KeyName);
+		}
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Int (int32) or not.
+		*
+		* @param Context		The calling context.
+		* @param Data
+		* @param KeySelector
+		* return				Whether the Data has the Key associated with KeySelector is of type Int (int32) or not.
+		*/
+		static bool IsKeyChecked_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector);
+
+		/**
+		* Get whether the Data with Key associated with KeySelector is of type Int (int32) or not.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* return				Whether the Component has the Key associated with KeySelector is of type Int (int32) or not.
+		*/
+		FORCEINLINE static bool IsKeyChecked_Int(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return IsKeyChecked_Int(Context, GetDataChecked(Context, Component), KeySelector);
 		}
 
 		/**
@@ -579,6 +611,30 @@ namespace NCsBlackboard
 		{
 			return SafeIsKey_Int(Context, GetSafeData(Context, Component, Log), KeyName, Log);
 		}
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Int (int32) or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Int (int32) or not.
+		*/
+		static bool SafeIsKey_Int(const FString& Context, const UBlackboardData* Data, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+		/**
+		* Safely get whether the Data with Key associated with KeySelector is of type Int (int32) or not.
+		*
+		* @param Context	The calling context.
+		* @param Data
+		* @param KeySelector
+		* return			Whether the Data has the Key associated with KeySelector is of type Int (int32) or not.
+		*/
+		FORCEINLINE static bool SafeIsKey_Int(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SafeIsKey_Int(Context, GetSafeData(Context, Component, Log), KeySelector, Log);
+		}
+
 
 		#pragma endregion Int
 
@@ -1215,6 +1271,92 @@ namespace NCsBlackboard
 
 	#pragma endregion Enum
 
+		// Int
+	#pragma region
+	public:
+			
+		/**
+		* Set the Component's Blackboard Int (int32) Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma IntValue
+		*/
+		static void SetIntChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue);
+		FORCEINLINE static void SetIntChecked(const FString& Context, UBehaviorTreeComponent* Component, const FName& KeyName, const int32& IntValue)
+		{
+			SetIntChecked(Context, GetComponentChecked(Context, Component), KeyName, IntValue);
+		}
+
+		/**
+		* Set the Component's Blackboard Int (int32) Key value associated with KeySelector.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma IntValue
+		*/
+		static void SetIntChecked(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue);
+		FORCEINLINE static void SetIntChecked(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue)
+		{
+			SetIntChecked(Context, GetComponentChecked(Context, Component), KeySelector, IntValue);
+		}
+
+		/**
+		* Safely set the Component's Blackboard Int (int32) Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma IntValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		FORCEINLINE static bool SetSafeInt(const FString& Context, UBehaviorTreeComponent* Component, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SetSafeInt(Context, GetSafeComponent(Context, Component, Log), KeyName, IntValue, Log);
+		}
+
+		/**
+		* Safely set the Component's Blackboard Int (int32) Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @parma IntValue
+		* @param Log			(optional)
+		* return				Whether the value was set or not.
+		*/
+		static bool SetSafeInt(const FString& Context, UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		FORCEINLINE static bool SetSafeInt(const FString& Context, UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return SetSafeInt(Context, GetSafeComponent(Context, Component, Log), KeySelector, IntValue, Log);
+		}
+
+		/**
+		* Increment the Component's Blackboard Int (int32) Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma Amount
+		*/
+		static void IncrementIntChecked(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount = 1);
+
+		/**
+		* Safely Increment the Component's Blackboard Int (int32) Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* @parma Amount
+		*/
+		static bool SafeIncrementInt(const FString& Context, UBlackboardComponent* Component, const FName& KeyName, const int32& Amount = 1, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+
+	#pragma endregion Enum
+
 		// Float
 	#pragma region
 	public:
@@ -1429,6 +1571,72 @@ namespace NCsBlackboard
 		static uint8 GetSafeEnum(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
 
 	#pragma endregion Enum
+
+		// Int
+	#pragma region
+	public:
+
+		/**
+		* Get the Component's Blackboard Int (int32) Key value associated with KeyName.
+		*
+		* @param Context	The calling context.
+		* @param Component
+		* @param KeyName
+		* return			Int (int32).
+		*/
+		static int32 GetIntChecked(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName);
+		FORCEINLINE static int32 GetIntChecked(const FString& Context, const UBehaviorTreeComponent* Component, const FName& KeyName)
+		{
+			return GetIntChecked(Context, GetComponentChecked(Context, Component), KeyName);
+		}
+
+		/**
+		* Get the Component's Blackboard Int (int32) Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* return				Int (int32).
+		*/
+		static int32 GetIntChecked(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector);
+		FORCEINLINE static int32 GetIntChecked(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector)
+		{
+			return GetIntChecked(Context, GetComponentChecked(Context, Component), KeySelector);
+		}
+
+		/**
+		* Safely get the Component's Blackboard Int (int32) Key value associated with KeyName.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeyName
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Int (int32).
+		*/
+		static int32 GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		FORCEINLINE static int32 GetSafeInt(const FString& Context, const UBehaviorTreeComponent* Component, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return GetSafeInt(Context, GetSafeComponent(Context, Component), KeyName, OutSuccess, Log);
+		}
+
+		/**
+		* Safely get the Component's Blackboard Int (int32) Key value associated with KeySelector.
+		*
+		* @param Context		The calling context.
+		* @param Component
+		* @param KeySelector
+		* @param OutSuccess		(out)
+		* @param Log			(optional)
+		* return				Int (int32).
+		*/
+		static int32 GetSafeInt(const FString& Context, const UBlackboardComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning);
+		FORCEINLINE static int32 GetSafeInt(const FString& Context, const UBehaviorTreeComponent* Component, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) = &NCsAI::FLog::Warning)
+		{
+			return GetSafeInt(Context, GetSafeComponent(Context, Component), KeySelector, OutSuccess, Log);
+		}
+
+	#pragma endregion Int
 
 		// Float
 	#pragma region

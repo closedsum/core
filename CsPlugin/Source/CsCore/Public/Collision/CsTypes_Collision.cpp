@@ -4,6 +4,7 @@
 #include "Collision/CsTypes_Collision.h"
 
 // Library
+#include "Collision/CsLibrary_Collision.h"
 #include "Library/CsLibrary_Valid.h"
 // Components
 #include "Components/StaticMeshComponent.h"
@@ -579,3 +580,23 @@ namespace NCsHitResult
 		return PhysMaterial ? (EPhysicalSurface)PhysMaterial->SurfaceType : EPhysicalSurface::SurfaceType_Default;
 	}
 }
+
+// FCsCollision_CustomProfileName
+#pragma region
+
+#define CollisionProfileLibrary NCsCollision::NProfile::FLibrary
+
+bool FCsCollision_CustomProfileName::IsValidChecked(const FString& Context) const
+{
+	check(CollisionProfileLibrary::IsValidChecked(Context, Name));
+	return true;
+}
+
+bool FCsCollision_CustomProfileName::IsValid(const FString& Context, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	return CollisionProfileLibrary::IsValid(Context, Name, Log);
+}
+
+#undef CollisionProfileLibrary
+
+#pragma endregion FCsCollision_CustomProfileName

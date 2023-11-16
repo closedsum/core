@@ -59,6 +59,9 @@ UCsScriptLibrary_Widget::UCsScriptLibrary_Widget(const FObjectInitializer& Objec
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryWidget::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryWidget::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
 #define LogError &NCsUI::FLog::Error
 #define WidgetLibrary NCsWidget::FLibrary
 
@@ -76,18 +79,14 @@ UUserWidget* UCsScriptLibrary_Widget::Create(const FString& Context, UObject* Ow
 
 UClass* UCsScriptLibrary_Widget::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
+	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
 	return WidgetLibrary::SafeLoad(Ctxt, Path);
 }
 
 UClass* UCsScriptLibrary_Widget::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
 	return WidgetLibrary::SafeLoad(Ctxt, Path);
 }
@@ -99,20 +98,16 @@ UClass* UCsScriptLibrary_Widget::LoadByStringPath(const FString& Context, const 
 
 UUserWidget* UCsScriptLibrary_Widget::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
+	CONDITIONAL_SET_CTXT(GetByPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
-
-	return WidgetLibrary::GetSafe(Context, Object, Path, OutSuccess);
+	return WidgetLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
 }
 
 bool UCsScriptLibrary_Widget::GetSoftClassAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
+	CONDITIONAL_SET_CTXT(GetSoftClassAsStringByPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftClassAsStringByPath : Context;
-
-	return WidgetLibrary::GetSafe(Context, Object, Path, OutPathAsString, OutSuccess);
+	return WidgetLibrary::GetSafe(Ctxt, Object, Path, OutPathAsString, OutSuccess);
 }
 
 #pragma endregion Get
@@ -124,20 +119,16 @@ bool UCsScriptLibrary_Widget::GetSoftClassAsStringByPath(const FString& Context,
 
 bool UCsScriptLibrary_Widget::Render_Opacity_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
+	CONDITIONAL_SET_CTXT(Render_Opacity_Ease);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::Render_Opacity_Ease : Context;
-
-	return WidgetRenderLibrary::Opacity_SafeEase(Context, Widget, Easing, Start, End, Alpha);
+	return WidgetRenderLibrary::Opacity_SafeEase(Ctxt, Widget, Easing, Start, End, Alpha);
 }
 
 bool UCsScriptLibrary_Widget::Render_Scale_Ease(const FString& Context, UUserWidget* Widget, const ECsEasingType& Easing, const float& Start, const float& End, const float& Alpha)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
+	CONDITIONAL_SET_CTXT(Render_Scale_Ease);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::Render_Scale_Ease : Context;
-
-	return WidgetRenderLibrary::Scale_SafeEase(Context, Widget, Easing, Start, End, Alpha);
+	return WidgetRenderLibrary::Scale_SafeEase(Ctxt, Widget, Easing, Start, End, Alpha);
 }
 
 #undef WidgetRenderLibrary
@@ -154,18 +145,14 @@ bool UCsScriptLibrary_Widget::Render_Scale_Ease(const FString& Context, UUserWid
 
 FVector2f UCsScriptLibrary_Widget::GetScreenPositionBySlot(const FString& Context, UWidget* Widget)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetScreenPositionBySlot : Context;
+	CONDITIONAL_SET_CTXT(GetScreenPositionBySlot);
 
 	return WidgetPositionLibrary::GetSafeBySlot2f(Ctxt, Widget);
 }
 
 FVector2f UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(const FString& Context, UWidget* Widget)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAbsoluteScreenPositionByCachedGeometry : Context;
+	CONDITIONAL_SET_CTXT(GetAbsoluteScreenPositionByCachedGeometry);
 
 	return WidgetPositionLibrary::GetSafeAbsoluteByCachedGeometry2f(Ctxt, Widget);
 }
@@ -181,9 +168,7 @@ FVector2f UCsScriptLibrary_Widget::GetAbsoluteScreenPositionByCachedGeometry(con
 
 void UCsScriptLibrary_Widget::GetPixelAndViewportPositionByCachedGeometry(const FString& Context, UWidget* Widget, FVector2f& OutPixelPosition, FVector2f& OutViewportPosition)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetPixelAndViewportPositionByCachedGeometry : Context;
+	CONDITIONAL_SET_CTXT(GetPixelAndViewportPositionByCachedGeometry);
 
 	return WidgetPositionLibrary::GetSafeByCachedGeometry(Ctxt, Widget, OutPixelPosition, OutViewportPosition);
 }
@@ -199,18 +184,14 @@ void UCsScriptLibrary_Widget::GetPixelAndViewportPositionByCachedGeometry(const 
 
 bool UCsScriptLibrary_Widget::GetWorldPositionBySlot(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetWorldPositionBySlot : Context;
+	CONDITIONAL_SET_CTXT(GetWorldPositionBySlot);
 
 	return WidgetPositionLibrary::GetSafeBySlot(Ctxt, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
 }
 
 bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Context, UObject* WorldContextObject, const int32& ControllerId, UWidget* Widget, FVector3f& OutPosition, FVector3f& OutDirection)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetWorldPositionByCachedGeometry : Context;
+	CONDITIONAL_SET_CTXT(GetWorldPositionByCachedGeometry);
 
 	return WidgetPositionLibrary::GetSafeByCachedGeometry(Ctxt, WorldContextObject, ControllerId, Widget, OutPosition, OutDirection);
 }
@@ -228,27 +209,21 @@ bool UCsScriptLibrary_Widget::GetWorldPositionByCachedGeometry(const FString& Co
 
 UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimation(const FString& Context, UUserWidget* Widget, const FName& AnimName)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnimation : Context;
+	CONDITIONAL_SET_CTXT(GetAnimation);
 
 	return WidgetAnimationLibrary::GetSafe(Ctxt, Widget, AnimName);
 }
 
 UWidgetAnimation* UCsScriptLibrary_Widget::GetAnimationChecked(const FString& Context, UUserWidget* Widget, const FName& AnimName, bool& OutSuccess)
 {	
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnimationChecked : Context;
+	CONDITIONAL_SET_CTXT(GetAnimationChecked);
 
 	return CS_SCRIPT_GET_CHECKED(WidgetAnimationLibrary::GetChecked(Ctxt, Widget, AnimName), WidgetAnimationLibrary::GetSafe(Ctxt, Widget, AnimName, LogError));
 }
 
 bool UCsScriptLibrary_Widget::PlayAnimation(const FString& Context, UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::PlayAnimation : Context;
+	CONDITIONAL_SET_CTXT(PlayAnimation);
 
 	return WidgetAnimationLibrary::SafePlay(Ctxt, Widget, Params);
 }
@@ -264,9 +239,7 @@ bool UCsScriptLibrary_Widget::PlayAnimation(const FString& Context, UUserWidget*
 
 UTextBlock* UCsScriptLibrary_Widget::GetTextBlock(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetTextBlock : Context;
+	CONDITIONAL_SET_CTXT(GetTextBlock);
 
 	return WidgetTextBlockLibrary::GetSafe(Ctxt, Widget, PropertyName);
 }
@@ -282,9 +255,7 @@ UTextBlock* UCsScriptLibrary_Widget::GetTextBlock(const FString& Context, UUserW
 
 UButton* UCsScriptLibrary_Widget::GetButton(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetButton : Context;
+	CONDITIONAL_SET_CTXT(GetButton);
 
 	return WidgetButtonLibrary::GetSafe(Ctxt, Widget, PropertyName);
 }
@@ -300,9 +271,7 @@ UButton* UCsScriptLibrary_Widget::GetButton(const FString& Context, UUserWidget*
 
 UImage* UCsScriptLibrary_Widget::GetImage(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetImage : Context;
+	CONDITIONAL_SET_CTXT(GetImage);
 
 	return WidgetImageLibrary::GetSafe(Ctxt, Widget, PropertyName);
 }
@@ -318,9 +287,7 @@ UImage* UCsScriptLibrary_Widget::GetImage(const FString& Context, UUserWidget* W
 
 UProgressBar* UCsScriptLibrary_Widget::GetProgressBar(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetProgressBar : Context;
+	CONDITIONAL_SET_CTXT(GetProgressBar);
 
 	return WidgetProgressBarLibrary::GetSafe(Ctxt, Widget, PropertyName);
 }
@@ -336,9 +303,7 @@ UProgressBar* UCsScriptLibrary_Widget::GetProgressBar(const FString& Context, UU
 
 UBorder* UCsScriptLibrary_Widget::GetBorder(const FString& Context, UUserWidget* Widget, const FName& PropertyName)
 {
-	using namespace NCsScriptLibraryWidget::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetBorder : Context;
+	CONDITIONAL_SET_CTXT(GetBorder);
 
 	return WidgetBorderLibrary::GetSafe(Ctxt, Widget, PropertyName);
 }
@@ -347,5 +312,46 @@ UBorder* UCsScriptLibrary_Widget::GetBorder(const FString& Context, UUserWidget*
 
 #pragma endregion Border
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
 #undef LogError
 #undef WidgetLibrary
+
+// Cached
+#pragma region
+
+namespace NCsScriptLibraryWidgetAnimation
+{
+	namespace NCached
+	{
+		namespace Str
+		{
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Widget_Animation, HasFinished);
+		}
+	}
+}
+
+#pragma endregion Cached
+
+UCsScriptLibrary_Widget_Animation::UCsScriptLibrary_Widget_Animation(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+}
+
+#define USING_NS_CACHED using namespace NCsScriptLibraryWidgetAnimation::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryWidgetAnimation::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define LogError &NCsUI::FLog::Error
+#define WidgetAnimationLibrary NCsWidget::NAnimation::FLibrary
+
+bool UCsScriptLibrary_Widget_Animation::HasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation)
+{
+	CONDITIONAL_SET_CTXT(HasFinished);
+
+	return WidgetAnimationLibrary::SafeHasFinished(Ctxt, Widget, Animation);
+}
+
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef LogError
+#undef WidgetAnimationLibrary

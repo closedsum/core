@@ -585,18 +585,49 @@ namespace NCsProperty
 
 	#pragma endregion Set
 
+		// Map
+	#pragma region
+
+	
+	FMapProperty* FLibrary::FindMapPropertyByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FProperty* Property = FindPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		FMapProperty* Prop = CastField<FMapProperty>(Property);
+
+		if (!Prop)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TMap."), *Context, *(Struct->GetName()), *(PropertyName.ToString())));
+		}
+		return Prop;
+	}
+
+	FMapProperty* FLibrary::FindMapPropertyWithStructValueByName(const FString& Context, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FMapProperty* Property = FindMapPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!Property)
+			return nullptr;
+
+		if (FStructProperty* ValueProperty = CastField<FStructProperty>(Property->ValueProp))
+			return Property;
+
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s.%s is NOT a TMap with Value of type: UStruct but of type: %s."), *Context, *(Struct->GetName()), *(PropertyName.ToString()), *(Property->ValueProp->GetName())));
+		return nullptr;
+	}
+
+	#pragma endregion Map
+
 	#pragma endregion Find
 
 	// Get
 	#pragma region
 
-	#define ResultType NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult
-	bool FLibrary::GetEndPropertyInfoByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, ResultType& OutResult, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	bool FLibrary::FGetEndPropertyInfoByPath::FParser::Process(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-	#undef ResultType
-		CS_IS_PTR_NULL(Struct)
-		CS_IS_STRING_EMPTY(Path)
-
 		TArray<FString> PropertyNames;
 		Path.ParseIntoArray(PropertyNames, TEXT("."), 1);
 
@@ -606,21 +637,143 @@ namespace NCsProperty
 			return false;
 		}
 
-		const int32 Count = PropertyNames.Num();
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FParser::FPropertyInfo InfoType;
+
+		Infos.Reset(2 * PropertyNames.Num());
+
+		for (const FString& PropertyName : PropertyNames)
+		{
+			// TODO: Set
+			
+			// Map or Array
+			//  Value[Key] or Array[Index]
+			if (PropertyName.Contains(TEXT("[")) ||
+				PropertyName.Contains(TEXT("]")))
+			{
+				if (PropertyName.Contains(TEXT("[")) &&
+					PropertyName.EndsWith(TEXT("]")))
+				{
+					// Parse into: {Value, Key]} or {Array, Index]}
+					TArray<FString> Parts;
+					PropertyName.ParseIntoArray(Parts, TEXT("["));
+
+					if (Parts.Num() != 2)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+						return false;
+					}
+
+					// Remove ']' for Key or Index
+					const bool Success = Parts[1].RemoveFromEnd(TEXT("]"));
+
+					if (!Success)
+					{
+						CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+						return false;
+					}
+
+					// TODO: Might need to check if Key is a string
+
+					InfoType& Info   = Infos.AddDefaulted_GetRef();
+					Info.bMapOrArray = true;
+					Info.KeyOrIndex  = Parts[1];
+					Info.Name	     = FName(*(Parts[0]));
+				}
+				else
+				{
+					CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+					return false;
+				}
+			}
+			else
+			{
+				InfoType& Info = Infos.AddDefaulted_GetRef();
+				Info.Name	   = FName(*(PropertyName));
+			}
+		}
+		return true;
+	}
+
+	#define ResultType NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FResult
+	bool FLibrary::GetEndPropertyInfoByPath(const FString& Context, void* StructValue, const UStruct* Struct, const FString& Path, ResultType& OutResult, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+	#undef ResultType
+		CS_IS_PTR_NULL(Struct)
+		CS_IS_STRING_EMPTY(Path)
+
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FParser ParserType;
+
+		ParserType Parser;
+
+		if (!Parser.Process(Context, Path, Log))
+			return false;
+
+		typedef NCsProperty::FLibrary::FGetEndPropertyInfoByPath::FParser::FPropertyInfo InfoType;
+
+		const TArray<InfoType>& Infos = Parser.Infos;
+
+		const int32 Count = Infos.Num();
 		int32 I = 0;
 
 		OutResult.StructValue  = StructValue;
 		OutResult.Struct	   = const_cast<UStruct*>(Struct);
 		OutResult.Property	   = nullptr;
-
+		
 		while (I < Count)
 		{
-			// TODO: Check PropertyName for [] and ""
-			OutResult.PropertyName = FName(*(PropertyNames[I]));
+			const InfoType& Info = Infos[I];
+
+			OutResult.PropertyName = Info.Name;
 
 			if (I < (Count - 1))
 			{
+				// Map or Array
+				if (Info.bMapOrArray)
+				{
+					bool Found = false;
+
+					// Map
+					if (FMapProperty* MapProperty = FindMapPropertyWithStructValueByName(Context, OutResult.Struct, OutResult.PropertyName, nullptr))
+					{
+						void* ValuePtr = MapProperty->ContainerPtrToValuePtr<void>(OutResult.StructValue, 0);
+
+						FScriptMapHelper MapHelper(MapProperty, ValuePtr);
+
+						for (FScriptMapHelper::FIterator MapIt = MapHelper.CreateIterator(); MapIt; ++MapIt)
+						{
+							const uint8* KeyPtr    = MapHelper.GetKeyPtr(*MapIt);
+							FProperty* KeyProperty = MapHelper.KeyProp;
+
+							FString OutValue;
+							KeyProperty->ExportTextItem_Direct(OutValue, KeyPtr, nullptr, nullptr, PPF_None);
+
+							if (Info.KeyOrIndex == OutValue)
+							{
+								// Only support Value of type: UStruct
+								if (FStructProperty* StructProperty = CastField<FStructProperty>(MapHelper.ValueProp))
+								{
+									OutResult.Property	  = StructProperty;
+									OutResult.StructValue = MapHelper.GetValuePtr(*MapIt);
+									OutResult.Struct	  = StructProperty->Struct;
+
+									Found = true;
+									break;
+								}
+
+								CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+								return false;
+							}
+						}
+
+						if (!Found)
+						{
+							CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Path: %s format is incorrect."), *Context, *Path));
+							return false;
+						}
+					}
+				}
 				// Struct
+				else
 				if (FStructProperty* StructProperty = FindStructPropertyByName(Context, OutResult.Struct, OutResult.PropertyName, Log))
 				{
 					OutResult.Property = StructProperty;

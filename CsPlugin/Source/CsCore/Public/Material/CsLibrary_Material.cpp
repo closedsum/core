@@ -91,6 +91,14 @@ namespace NCsMaterial
 		return PropertyLibrary::GetObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
 	}
 
+	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPath, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FSoftObjectPtr SoftObjectPtr = PropertyLibrary::GetSoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutSuccess, Log);
+		OutPath					     = SoftObjectPtr.ToString();
+
+		return OutSuccess;
+	}
+
 	bool FLibrary::GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<TSoftObjectPtr<UMaterialInterface>>& OutArray, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		return PropertyLibrary::GetArraySoftObjectPropertyValueByPath<UMaterialInterface>(Context, Object, Object->GetClass(), Path, OutArray, OutSuccess, Log);

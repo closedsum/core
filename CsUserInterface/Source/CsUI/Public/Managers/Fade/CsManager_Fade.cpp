@@ -202,7 +202,12 @@ void UCsManager_Fade::CleanUp()
 {
 	if (IsValid(FadeWidget))
 	{
-		FadeWidget->MarkAsGarbage();
+		//FadeWidget->MarkAsGarbage();
+
+		FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
+
+		if (FadeWidget->GetParent())
+			FadeWidget->RemoveFromParent();
 		FadeWidget = nullptr;
 	}
 }
@@ -280,7 +285,7 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 	typedef UCsManager_Fade ClassType;
 	#define COROUTINE Fade_Internal
 
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
 
 	#undef COROUTINE
 

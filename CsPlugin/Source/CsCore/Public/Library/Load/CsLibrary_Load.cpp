@@ -1900,7 +1900,45 @@ void UCsLibrary_Load::LoadStruct(void* StructValue, UStruct* const& Struct, cons
 				LoadArrayStructProperty(ArrayProperty, StructValue, LoadFlags, LoadCodes);
 				continue;
 			}
-		}	
+		}
+		// Map
+		if (FMapProperty* MapProperty = CastField<FMapProperty>(*It))
+		{
+			// Struct
+			if (FStructProperty* StructValueProperty = CastField<FStructProperty>(MapProperty->ValueProp))
+			{
+				void* MapPtr = MapProperty->ContainerPtrToValuePtr<void>(StructValue, 0);
+
+				FScriptMapHelper MapHelper(MapProperty, MapPtr);
+
+				for (FScriptMapHelper::FIterator MapIt = MapHelper.CreateIterator(); MapIt; ++MapIt)
+				{
+					void* ValuePtr = MapHelper.GetValuePtr(*MapIt);
+
+					LoadStruct(ValuePtr, StructValueProperty->Struct, LoadFlags, LoadCodes);
+					continue;
+				}
+			}
+		}
+		// Set
+		if (FSetProperty* SetProperty = CastField<FSetProperty>(*It))
+		{
+			// Struct
+			if (FStructProperty* StructElementProperty = CastField<FStructProperty>(SetProperty->ElementProp))
+			{
+				void* SetPtr = SetProperty->ContainerPtrToValuePtr<void>(StructValue, 0);
+
+				FScriptSetHelper SetHelper(SetProperty, SetPtr);
+
+				for (FScriptSetHelper::FIterator SetIt = SetHelper.CreateIterator(); SetIt; ++SetIt)
+				{
+					void* ValuePtr = SetHelper.GetElementPtr(*SetIt);
+
+					LoadStruct(ValuePtr, StructElementProperty->Struct, LoadFlags, LoadCodes);
+					continue;
+				}
+			}
+		}
 	}
 }
 

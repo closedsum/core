@@ -648,3 +648,27 @@ namespace NCsHitResult
 {
 	CSCORE_API EPhysicalSurface GetPhysSurfaceType(const FHitResult& Hit);
 }
+
+// FCsCollision_CustomProfileName
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsCollision_CustomProfileName
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Collision")
+	FName Name;
+
+	FCsCollision_CustomProfileName() :
+		Name(NAME_None)
+	{
+	}
+
+	FORCEINLINE FName* GetPtr() { return &Name; }
+
+	bool IsValidChecked(const FString& Context) const;
+	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const;
+};
+
+#pragma endregion FCsCollision_CustomProfileName

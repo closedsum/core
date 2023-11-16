@@ -8,6 +8,7 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "BehaviorTree/CsLibrary_BehaviorTree.h"
+#include "Library/CsLibrary_Valid.h"
 // Log
 #include "VisualLogger/VisualLogger.h"
 // Behavior Tree
@@ -43,6 +44,10 @@ UCsScriptLibrary_BehaviorTree::UCsScriptLibrary_BehaviorTree(const FObjectInitia
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryBehaviorTree::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBehaviorTree::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
 #define BehaviorTreeLibrary NCsBehaviorTree::FLibrary
 
 // Load
@@ -50,18 +55,14 @@ UCsScriptLibrary_BehaviorTree::UCsScriptLibrary_BehaviorTree(const FObjectInitia
 
 UBehaviorTree* UCsScriptLibrary_BehaviorTree::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
+	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
-
-	return BehaviorTreeLibrary::SafeLoad(Context, Path);
+	return BehaviorTreeLibrary::SafeLoad(Ctxt, Path);
 }
 
 UBehaviorTree* UCsScriptLibrary_BehaviorTree::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
 	return BehaviorTreeLibrary::SafeLoad(Ctxt, Path);
 }
@@ -73,18 +74,14 @@ UBehaviorTree* UCsScriptLibrary_BehaviorTree::LoadByStringPath(const FString& Co
 
 UBehaviorTree* UCsScriptLibrary_BehaviorTree::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
+	CONDITIONAL_SET_CTXT(GetByPath);
 
 	return BehaviorTreeLibrary::GetSafe(Context, Object, Path, OutSuccess);
 }
 
 bool UCsScriptLibrary_BehaviorTree::GetSoftObjectAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPathAsString, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectAsStringByPath : Context;
+	CONDITIONAL_SET_CTXT(GetSoftObjectAsStringByPath);
 
 	return BehaviorTreeLibrary::GetSafe(Context, Object, Path, OutPathAsString, OutSuccess);
 }
@@ -96,46 +93,34 @@ bool UCsScriptLibrary_BehaviorTree::GetSoftObjectAsStringByPath(const FString& C
 
 void UCsScriptLibrary_BehaviorTree::VLog(const FString& Context, UObject* Owner, const FString& Message)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
+	CONDITIONAL_SET_CTXT(VLog);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::VLog : Context;
-
-	if (!Owner)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Owner is NULL."), *Ctxt);
-		return;
-	}
+	CS_IS_PENDING_KILL_EXIT2(Owner)
 	UE_VLOG(Owner, LogBehaviorTree, Log, TEXT("%s"), *Message);
 }
 
 void UCsScriptLibrary_BehaviorTree::VLog_Error(const FString& Context, UObject* Owner, const FString& Message)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
+	CONDITIONAL_SET_CTXT(VLog_Error);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::VLog_Error : Context;
-
-	if (!Owner)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Owner is NULL."), *Ctxt);
-		return;
-	}
+	CS_IS_PENDING_KILL_EXIT2(Owner)
 	UE_VLOG(Owner, LogBehaviorTree, Error, TEXT("%s"), *Message);
 }
 
 void UCsScriptLibrary_BehaviorTree::VLog_Verbose(const FString& Context, UObject* Owner, const FString& Message)
 {
-	using namespace NCsScriptLibraryBehaviorTree::NCached;
+	CONDITIONAL_SET_CTXT(VLog_Verbose);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::VLog_Verbose : Context;
-
-	if (!Owner)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Owner is NULL."), *Ctxt);
-		return;
-	}
+	CS_IS_PENDING_KILL_EXIT2(Owner)
 	UE_VLOG(Owner, LogBehaviorTree, Verbose, TEXT("%s"), *Message);
 }
 
 #pragma endregion Log
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef SET_LOG_WARNING
 #undef BehaviorTreeLibrary

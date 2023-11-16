@@ -192,7 +192,7 @@ void UCsManager_Menu::SetMyRoot(UObject* InRoot)
 void UCsManager_Menu::Update(const float& DeltaSeconds)
 {
 	// Update Time
-	UCsManager_Time* Manager_Time = UCsManager_Time::Get(GetOuter());
+	UCsManager_Time* Manager_Time = UCsManager_Time::Get(MyRoot);
 
 	const FECsUpdateGroup& Group = NCsUpdateGroup::Menu;
 

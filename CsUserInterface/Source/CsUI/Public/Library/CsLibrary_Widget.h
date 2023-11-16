@@ -671,6 +671,13 @@ namespace NCsWidget
 			* @param Params
 			*/
 			static bool SafePlay(UUserWidget* Widget, const FCsUserWidget_Anim_PlayParams& Params);
+
+			static bool SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+			FORCEINLINE static bool SafeHasFinished(const FString& Context, const UUserWidget* Widget, const UWidgetAnimation* Animation, bool& OutSuccess, void(*Log)(const FString&) = &NCsUI::FLog::Warning)
+			{
+				OutSuccess = SafeHasFinished(Context, Widget, Animation, Log);
+				return OutSuccess;
+			}
 		};
 	}
 

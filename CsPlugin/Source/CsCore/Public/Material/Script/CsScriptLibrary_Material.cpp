@@ -24,6 +24,7 @@ namespace NCsScriptLibraryMaterial
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, LoadByStringPaths);
 			// Get
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetByPath);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetSoftObjectAsStringByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetArrayByPath);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsScriptLibrary_Material, GetSoftObjectArrayAsStringByPath);
 			// Set
@@ -43,6 +44,7 @@ UCsScriptLibrary_Material::UCsScriptLibrary_Material(const FObjectInitializer& O
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryMaterial::NCached;
 #define MaterialLibrary NCsMaterial::FLibrary
 
 // Load
@@ -50,16 +52,16 @@ UCsScriptLibrary_Material::UCsScriptLibrary_Material(const FObjectInitializer& O
 
 UMaterialInterface* UCsScriptLibrary_Material::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
 
-	return MaterialLibrary::SafeLoad(Context, Path);
+	return MaterialLibrary::SafeLoad(Ctxt, Path);
 }
 
 UMaterialInterface* UCsScriptLibrary_Material::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
 
@@ -68,7 +70,7 @@ UMaterialInterface* UCsScriptLibrary_Material::LoadByStringPath(const FString& C
 
 bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const TArray<FString>& Paths, TArray<UMaterialInterface*>& OutMaterials)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPaths : Context;
 
@@ -82,29 +84,38 @@ bool UCsScriptLibrary_Material::LoadByStringPaths(const FString& Context, const 
 
 UMaterialInterface* UCsScriptLibrary_Material::GetByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetByPath : Context;
 
-	return MaterialLibrary::GetSafe(Context, Object, Path, OutSuccess);
+	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutSuccess);
+}
+
+bool UCsScriptLibrary_Material::GetSoftObjectAsStringByPath(const FString& Context, UObject* Object, const FString& Path, FString& OutPath, bool& OutSuccess)
+{
+	USING_NS_CACHED
+
+	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectAsStringByPath : Context;
+
+	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutPath, OutSuccess);
 }
 
 bool UCsScriptLibrary_Material::GetArrayByPath(const FString& Context, UObject* Object, const FString& Path, TArray<UMaterialInterface*>& OutArray, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetArrayByPath : Context;
 
-	return MaterialLibrary::GetSafe(Context, Object, Path, OutArray, OutSuccess);
+	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutArray, OutSuccess);
 }
 
 bool UCsScriptLibrary_Material::GetSoftObjectArrayAsStringByPath(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::GetSoftObjectArrayAsStringByPath : Context;
 
-	return MaterialLibrary::GetSafe(Context, Object, Path, OutArray, OutSuccess);
+	return MaterialLibrary::GetSafe(Ctxt, Object, Path, OutArray, OutSuccess);
 }
 
 #pragma endregion Get
@@ -114,34 +125,34 @@ bool UCsScriptLibrary_Material::GetSoftObjectArrayAsStringByPath(const FString& 
 
 bool UCsScriptLibrary_Material::SetAll(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetAll : Context;
 
-	return MaterialLibrary::SetSafe(Context, Component, Material);
+	return MaterialLibrary::SetSafe(Ctxt, Component, Material);
 }
 
 bool UCsScriptLibrary_Material::SetAt(const FString& Context, UPrimitiveComponent* Component, UMaterialInterface* Material, const int32& Index)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetAt : Context;
 
-	return MaterialLibrary::SetSafe(Context, Component, Material, Index);
+	return MaterialLibrary::SetSafe(Ctxt, Component, Material, Index);
 }
 
 bool UCsScriptLibrary_Material::Set(const FString& Context, UPrimitiveComponent* Component, const TArray<UMaterialInterface*>& Materials)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::Set : Context;
 
-	return MaterialLibrary::SetSafe(Context, Component, Materials);
+	return MaterialLibrary::SetSafe(Ctxt, Component, Materials);
 }
 
 bool UCsScriptLibrary_Material::SetFromStruct(const FString& Context, const FCsTArrayMaterialInterface& Materials, UPrimitiveComponent* Component)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromStruct : Context;
 
@@ -150,7 +161,7 @@ bool UCsScriptLibrary_Material::SetFromStruct(const FString& Context, const FCsT
 
 bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* Object, const FName& PropertyName, UPrimitiveComponent* Component)
 {
-	using namespace NCsScriptLibraryMaterial::NCached;
+	USING_NS_CACHED
 
 	const FString& Ctxt = Context.IsEmpty() ? Str::SetFromObject : Context;
 
@@ -200,4 +211,5 @@ bool UCsScriptLibrary_Material::SetFromObject(const FString& Context, UObject* O
 
 #pragma endregion Set
 
+#undef USING_NS_CACHED
 #undef MaterialLibrary

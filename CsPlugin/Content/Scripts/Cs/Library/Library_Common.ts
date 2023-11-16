@@ -243,6 +243,15 @@ declare namespace NJsCommon {
         IsStringChecked(context: string, s: string): boolean;
  
         /**
+        * Get whether or not 's' is a string.
+        *  Assert if NOT. 
+        * 
+        * @param {string}       s 
+        * @returns {boolean}
+        */
+        IsStringChecked2(s: string): boolean;
+
+        /**
         * Get whether or not 's' is NOT empty ('')..
         *  Assert if NOT. 
         * 

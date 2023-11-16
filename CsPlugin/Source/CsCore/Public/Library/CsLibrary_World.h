@@ -12,6 +12,8 @@ namespace NCsWorld
 {
 	class CSCORE_API FLibrary final
 	{
+	// Get
+	#pragma region
 	public:
 
 		/**
@@ -60,6 +62,12 @@ namespace NCsWorld
 		*/
 		static UObject* GetSafeAsObject(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning);
 
+	#pragma endregion Get
+
+	// WorldType
+	#pragma region
+	public:
+
 		static bool IsGameWorld(UWorld* World);
 
 		static bool IsPlayInGame(UWorld* World);
@@ -83,5 +91,15 @@ namespace NCsWorld
 		static bool IsAnyWorldContextEditorOrEditorPreview();
 
 		static bool IsEditorPreviewOrphaned(UObject* WorldContext);
+
+	#pragma endregion WorldType
+
+	// Spawn
+	#pragma region
+	public:
+
+		static AActor* SpawnChecked(const FString& Context, const UObject* WorldContext, UClass* Class);
+
+	#pragma endregion Spawn
 	};
 }

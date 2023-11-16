@@ -19,11 +19,15 @@ class CSCORE_API ICsObject_Orientation
 
 public:
 
-	virtual FRotator3f Orientation_GetRotation() const = 0;
+	virtual FRotator3d Orientation_GetRotation3d() const = 0;
+	virtual FRotator3f Orientation_GetRotation3f() const = 0;
 
-	virtual FVector3f Orientation_GetDirection() const = 0;
+	virtual FVector3d Orientation_GetDirection3d() const = 0;
+	virtual FVector3f Orientation_GetDirection3f() const = 0;
 
-	virtual FVector3f Orientation_GetForward() const = 0;
+	virtual FVector3d Orientation_GetForward3d() const = 0;
+	virtual FVector3f Orientation_GetForward3f() const = 0;
 
-	virtual FVector3f Orientation_GetRight() const = 0;
+	virtual FVector3d Orientation_GetRight3d() const = 0;
+	virtual FVector3f Orientation_GetRight3f() const = 0;
 };

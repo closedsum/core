@@ -60,7 +60,6 @@ public:
 	FORCEINLINE UMaterialInterface* GetChecked(const FString& Context) const
 	{
 		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material is NULL."), *Context);
-
 		checkf(Material_Internal, TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString()));
 
 		return Material_Internal;
@@ -116,17 +115,52 @@ public:
 		return Material_Internal;
 	}
 
-	bool IsValidChecked(const FString& Context) const
+	FORCEINLINE bool IsValidChecked(const FString& Context) const
 	{
 		check(GetChecked(Context));
 		return true;
 	}
 
-	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
+	FORCEINLINE bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (!GetSafe(Context, Log))
 			return false;
 		return true;
+	}
+
+	FORCEINLINE UMaterialInterface* LoadChecked(const FString& Context)
+	{
+		checkf(Material.ToSoftObjectPath().IsValid(), TEXT("%s: Material is NULL."), *Context);
+
+		Material_Internal = Material.LoadSynchronous();
+
+		checkf(Material_Internal, TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString()));
+		return Material_Internal;
+	}
+
+	UMaterialInterface* SafeLoad(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Material.ToSoftObjectPath().IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material is NULL."), *Context));
+			return nullptr;
+		}
+
+		Material_Internal = Material.LoadSynchronous();
+
+		if (!Material_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Material has NOT been loaded from Path @ %s."), *Context, *(Material.ToSoftObjectPath().ToString())));
+		}
+		return Material_Internal;
+	}
+	FORCEINLINE UMaterialInterface* SafeLoad(const FString& Context, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		UMaterialInterface* Result = SafeLoad(Context, Log);
+		OutSuccess				   = Result != nullptr;
+		return Result;
 	}
 };
 

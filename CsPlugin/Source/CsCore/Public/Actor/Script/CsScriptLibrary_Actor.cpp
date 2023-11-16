@@ -9,6 +9,7 @@
 // Library
 #include "Actor/CsLibrary_Actor.h"
 #include "Library/CsLibrary_Math.h"
+#include "Library/CsLibrary_Valid.h"
 
 // Cached
 #pragma region
@@ -58,8 +59,13 @@ namespace NCsScriptLibraryActor
 
 #pragma endregion Cached
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryActor::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryActor::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define SET_LOG_WARNING void(*Log)(const FString&) = &FCsLog::Warning;
 #define LogError &FCsLog::Error
 #define ActorLibrary NCsActor::FLibrary
+#define MathLibrary NCsMath::FLibrary
 
 UCsScriptLibrary_Actor::UCsScriptLibrary_Actor(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -68,15 +74,10 @@ UCsScriptLibrary_Actor::UCsScriptLibrary_Actor(const FObjectInitializer& ObjectI
 
 void UCsScriptLibrary_Actor::SetRootComponent(const FString& Context, AActor* Actor, USceneComponent* Component)
 {
-	using namespace NCsScriptLibraryActor::NCached;
+	CONDITIONAL_SET_CTXT(SetRootComponent);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetRootComponent : Context;
-
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return;
-	}
+	CS_IS_PENDING_KILL_EXIT2(Actor)
 
 	if (!Component)
 	{
@@ -88,15 +89,10 @@ void UCsScriptLibrary_Actor::SetRootComponent(const FString& Context, AActor* Ac
 
 void UCsScriptLibrary_Actor::SetRole(const FString& Context, AActor* Actor, const ENetRole& Role)
 {
-	using namespace NCsScriptLibraryActor::NCached;
+	CONDITIONAL_SET_CTXT(SetRole);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetRole : Context;
-
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return;
-	}
+	CS_IS_PENDING_KILL_EXIT2(Actor)
 	Actor->SetRole(Role);
 }
 
@@ -105,54 +101,42 @@ void UCsScriptLibrary_Actor::SetRole(const FString& Context, AActor* Actor, cons
 
 bool UCsScriptLibrary_Actor::GetAllOfClass(const FString& Context, const UObject* WorldContextObject, TSubclassOf<AActor> ActorClass, TArray<AActor*>& OutActors)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAllOfClass : Context;
+	CONDITIONAL_SET_CTXT(GetAllOfClass);
 
 	return ActorLibrary::GetSafeAllOfClass(Ctxt, WorldContextObject, ActorClass, OutActors);
 }
 
 AActor* UCsScriptLibrary_Actor::GetByTag(const FString& Context, const UObject* WorldContextObject, const FName& Tag)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTag : Context;
+	CONDITIONAL_SET_CTXT(GetByTag);
 
 	return ActorLibrary::GetSafeByTag(Ctxt, WorldContextObject, Tag);
 }
 
 AActor* UCsScriptLibrary_Actor::GetByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByTags : Context;
+	CONDITIONAL_SET_CTXT(GetByTags);
 
 	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags);
 }
 
 bool UCsScriptLibrary_Actor::GetAnyByTags(const FString& Context, const UObject* WorldContextObject, const TArray<FName>& Tags, TArray<AActor*>& OutActors)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetAnyByTags : Context;
+	CONDITIONAL_SET_CTXT(GetAnyByTags);
 
 	return ActorLibrary::GetSafeByTags(Ctxt, WorldContextObject, Tags, OutActors);
 }
 
 AActor* UCsScriptLibrary_Actor::GetByName(const FString& Context, const UObject* WorldContextObject, const FName& Name)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByName : Context;
+	CONDITIONAL_SET_CTXT(GetByName);
 
 	return ActorLibrary::GetSafeByName(Ctxt, WorldContextObject, Name);
 }
 
 AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, const UObject* WorldContextObject, const FString& Label)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetByLabel : Context;
+	CONDITIONAL_SET_CTXT(GetByLabel);
 
 	return ActorLibrary::GetSafeByLabel(Ctxt, WorldContextObject, Label);
 }
@@ -164,27 +148,21 @@ AActor* UCsScriptLibrary_Actor::GetByLabel(const FString& Context, const UObject
 
 bool UCsScriptLibrary_Actor::HasTags(const FString& Context, const AActor* Actor, const TArray<FName>& Tags)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::HasTags : Context;
+	CONDITIONAL_SET_CTXT(HasTags);
 
 	return ActorLibrary::SafeHasTags(Ctxt, Actor, Tags);
 }
 
 bool UCsScriptLibrary_Actor::HasTag(const FString& Context, const AActor* Actor, const FName& Tag)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::HasTag : Context;
+	CONDITIONAL_SET_CTXT(HasTag);
 
 	return ActorLibrary::SafeHasTag(Ctxt, Actor, Tag);
 }
 
 bool UCsScriptLibrary_Actor::HasTagChecked(const FString& Context, const AActor* Actor, const FName& Tag, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::HasTagChecked : Context;
+	CONDITIONAL_SET_CTXT(HasTagChecked);
 
 	OutSuccess = true;
 	return CS_SCRIPT_GET_CHECKED(ActorLibrary::HasTagChecked(Ctxt, Actor, Tag), ActorLibrary::SafeHasTag(Ctxt, Actor, Tag, OutSuccess, LogError));
@@ -197,9 +175,7 @@ bool UCsScriptLibrary_Actor::HasTagChecked(const FString& Context, const AActor*
 
 UActorComponent* UCsScriptLibrary_Actor::GetComponentByTag(const FString& Context, const AActor* Actor, const FName& Tag)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetComponentByTag : Context;
+	CONDITIONAL_SET_CTXT(GetComponentByTag);
 
 	return ActorLibrary::GetSafeComponentByTag(Ctxt, Actor, Tag);
 }
@@ -211,9 +187,7 @@ UActorComponent* UCsScriptLibrary_Actor::GetComponentByTag(const FString& Contex
 
 bool UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Actor, const bool& NewHidden, const bool& ApplyToAttachChildren)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetHiddenInGame : Context;
+	CONDITIONAL_SET_CTXT(SetHiddenInGame);
 
 	return ActorLibrary::SetSafeHiddenInGame(Context, Actor, NewHidden, ApplyToAttachChildren);
 }
@@ -225,31 +199,20 @@ bool UCsScriptLibrary_Actor::SetHiddenInGame(const FString& Context, AActor* Act
 
 FQuat UCsScriptLibrary_Actor::GetQuat(const FString& Context, AActor* Actor)
 {
-	using namespace NCsScriptLibraryActor::NCached;
+	CONDITIONAL_SET_CTXT(GetQuat);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetQuat : Context;
+	CS_IS_PENDING_KILL_RET_VALUE2(Actor, FQuat::Identity)
 
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return FQuat::Identity;
-	}
 	return Actor->GetActorQuat();
 }
 
 bool UCsScriptLibrary_Actor::RotateByPitch(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport /*=ETeleportType::None*/)
 {
-	using namespace NCsScriptLibraryActor::NCached;
+	CONDITIONAL_SET_CTXT(RotateByPitch);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::RotateByPitch : Context;
-
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return false;
-	}
-
-	typedef NCsMath::FLibrary MathLibrary;
+	CS_IS_PENDING_KILL2(Actor)
 
 	FQuat Q = Actor->GetActorQuat();
 
@@ -260,17 +223,10 @@ bool UCsScriptLibrary_Actor::RotateByPitch(const FString& Context, AActor* Actor
 
 bool UCsScriptLibrary_Actor::RotateByYaw(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport /*=ETeleportType::None*/)
 {
-	using namespace NCsScriptLibraryActor::NCached;
+	CONDITIONAL_SET_CTXT(RotateByYaw);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::RotateByYaw : Context;
-
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return false;
-	}
-
-	typedef NCsMath::FLibrary MathLibrary;
+	CS_IS_PENDING_KILL2(Actor)
 
 	FQuat Q = Actor->GetActorQuat();
 
@@ -281,17 +237,10 @@ bool UCsScriptLibrary_Actor::RotateByYaw(const FString& Context, AActor* Actor, 
 
 bool UCsScriptLibrary_Actor::RotateByRoll(const FString& Context, AActor* Actor, const double& Degrees, const ETeleportType& Teleport /*=ETeleportType::None*/)
 {
-	using namespace NCsScriptLibraryActor::NCached;
+	CONDITIONAL_SET_CTXT(RotateByRoll);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::RotateByRoll : Context;
-
-	if (!Actor)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Actor is NULL."), *Ctxt);
-		return false;
-	}
-
-	typedef NCsMath::FLibrary MathLibrary;
+	CS_IS_PENDING_KILL2(Actor)
 
 	FQuat Q = Actor->GetActorQuat();
 
@@ -307,17 +256,15 @@ bool UCsScriptLibrary_Actor::RotateByRoll(const FString& Context, AActor* Actor,
 
 FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, const UObject* WorldContextObject, const FCsMoveByInterp_Params& Params)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::MoveByInterp : Context;
+	CONDITIONAL_SET_CTXT(MoveByInterp);
+	SET_LOG_WARNING
 
 	FCsMoveByInterp_Params* ParamsPtr = const_cast<FCsMoveByInterp_Params*>(&Params);
 
 	ParamsPtr->ConditionalSetSafeMoveObject(Context, WorldContextObject);
 	ParamsPtr->ConditionalSetSafeDestinationObject(Context, WorldContextObject);
 
-	if (!Params.IsValid(Ctxt))
-		return FCsRoutineHandle::Invalid;
+	CS_IS_VALID_RET_VALUE2(Params, FCsRoutineHandle::Invalid)
 
 	// Copy script params to native params.
 	typedef NCsMovement::NTo::NInterp::NParams::FResource ParamsResourceType;
@@ -338,18 +285,14 @@ FCsRoutineHandle UCsScriptLibrary_Actor::MoveByInterp(const FString& Context, co
 
 void UCsScriptLibrary_Actor::SetMaterial(const FString& Context, AActor* Actor, UMaterialInterface* Material, const int32& Index)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetMaterial : Context;
+	CONDITIONAL_SET_CTXT(SetMaterial);
 
 	ActorLibrary::SetSafeMaterial(Ctxt, Actor, Material, Index);
 }
 
 void UCsScriptLibrary_Actor::SetMaterials(const FString& Context, AActor* Actor, const TArray<UMaterialInterface*>& Materials)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SetMaterials : Context;
+	CONDITIONAL_SET_CTXT(SetMaterials);
 
 	ActorLibrary::SetSafeMaterials(Ctxt, Actor, Materials);
 }
@@ -361,18 +304,14 @@ void UCsScriptLibrary_Actor::SetMaterials(const FString& Context, AActor* Actor,
 
 AActor* UCsScriptLibrary_Actor::SpawnBySoftObjectPath(const FString& Context, const UObject* WorldContextObject, const FSoftObjectPath& Path)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnBySoftObjectPath : Context;
+	CONDITIONAL_SET_CTXT(SpawnBySoftObjectPath);
 
 	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
 }
 
 AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, const UObject* WorldContextObject, const FString& Path)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::SpawnByStringPath : Context;
+	CONDITIONAL_SET_CTXT(SpawnByStringPath);
 
 	return ActorLibrary::SafeSpawn(Ctxt, WorldContextObject, Path);
 }
@@ -384,27 +323,21 @@ AActor* UCsScriptLibrary_Actor::SpawnByStringPath(const FString& Context, const 
 
 float UCsScriptLibrary_Actor::GetDistanceSq(const FString& Context, AActor* A, AActor* B)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetDistanceSq : Context;
+	CONDITIONAL_SET_CTXT(GetDistanceSq);
 
 	return ActorLibrary::GetSafeDistanceSq(Ctxt, A, B);
 }
 
 float UCsScriptLibrary_Actor::GetDistanceSq2D(const FString& Context, AActor* A, AActor* B)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetDistanceSq2D : Context;
+	CONDITIONAL_SET_CTXT(GetDistanceSq2D);
 
 	return ActorLibrary::GetSafeDistanceSq2D(Ctxt, A, B);
 }
 
 bool UCsScriptLibrary_Actor::IsDistanceSq2D_LessThanOrEqual(const FString& Context, AActor* A, AActor* B, const float& R)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::IsDistanceSq2D_LessThanOrEqual : Context;
+	CONDITIONAL_SET_CTXT(IsDistanceSq2D_LessThanOrEqual);
 
 	return ActorLibrary::SafeIsDistanceSq2D_LessThanOrEqual(Ctxt, A, B, R);
 }
@@ -416,23 +349,23 @@ bool UCsScriptLibrary_Actor::IsDistanceSq2D_LessThanOrEqual(const FString& Conte
 
 bool UCsScriptLibrary_Actor::GetNormalAtoB(const FString& Context, AActor* A, AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetNormalAtoB : Context;
+	CONDITIONAL_SET_CTXT(GetNormalAtoB);
 
 	return ActorLibrary::GetSafeNormalAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
 }
 
 bool UCsScriptLibrary_Actor::GetNormal2DAtoB(const FString& Context, AActor* A, AActor* B, FVector3f& OutNormal, float& OutDistanceSq, float& OutDistance)
 {
-	using namespace NCsScriptLibraryActor::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetNormal2DAtoB : Context;
+	CONDITIONAL_SET_CTXT(GetNormal2DAtoB);
 
 	return ActorLibrary::GetSafeNormal2DAtoB(Ctxt, A, B, OutNormal, OutDistanceSq, OutDistance);
 }
 
 #pragma endregion Normal
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef SET_LOG_WARNING
 #undef LogError
 #undef ActorLibrary
+#undef MathLibrary

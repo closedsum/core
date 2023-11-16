@@ -7,9 +7,38 @@
 // require('Cs/Material/Types_Material.js');
 
 declare namespace NJsTypes {
+    class FMaterialInterface {
+        Path: string;
+        Material_Internal: MaterialInterface;
+        /**
+        * @returns {string} 
+        */
+        GetName(): string;
+        /**
+        * @returns {MaterialInterface}
+        */
+        Get(): MaterialInterface;
+        /**
+        * @param {MaterialInterface}  mat
+        */
+        Set(mat: MaterialInterface): void;
+        /**
+        * @param {string}   context
+        * @returns {boolean}
+        */
+        IsValidChecked(context: string): boolean;
+        /**
+        * @param {string} context 
+        * @param {object} o 
+        * @param {string} memberPath 
+        */
+        OverrideByUObject(context: string, o: object, memberPath: string): void;
+        Load(): void;
+        Unload(): void;
+    }
     class FTArrayMaterialInterface {
-        Path: string[];
-        Mesh_Internal: MaterialInterface[];
+        Paths: string[];
+        Materials_Internal: MaterialInterface[];
         /**
         * @returns {string} 
         */
@@ -38,4 +67,5 @@ declare namespace NJsTypes {
     }
 }
 
+declare type FMaterialInterface = NJsTypes.FMaterialInterface;
 declare type FTArrayMaterialInterface = NJsTypes.FTArrayMaterialInterface;

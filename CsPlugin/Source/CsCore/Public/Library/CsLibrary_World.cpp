@@ -30,6 +30,9 @@ namespace NCsWorld
 		}
 	}
 
+	// Get
+	#pragma region
+
 	UWorld* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext)
 	{
 		CS_IS_PTR_NULL_CHECKED(WorldContext)
@@ -73,6 +76,11 @@ namespace NCsWorld
 	{
 		return GetSafe(Context, WorldContext, Log);
 	}
+
+	#pragma endregion Get
+
+	// WorldType
+	#pragma region
 
 	bool FLibrary::IsGameWorld(UWorld* World)
 	{
@@ -164,4 +172,21 @@ namespace NCsWorld
 	#endif // #if WITH_EDITOR
 		return false;
 	}
+
+	#pragma endregion WorldType
+
+	// Spawn
+	#pragma region
+
+	AActor* FLibrary::SpawnChecked(const FString& Context, const UObject* WorldContext, UClass* Class)
+	{
+		CS_IS_PTR_NULL_CHECKED(Class)
+
+		AActor* A = GetChecked(Context, WorldContext)->SpawnActor(Class);
+
+		checkf(A, TEXT("%s: Context: Failed to Spawn Actor from Class: %s."), *(Class->GetName()));
+		return A;
+	}
+
+	#pragma endregion Spawn
 }

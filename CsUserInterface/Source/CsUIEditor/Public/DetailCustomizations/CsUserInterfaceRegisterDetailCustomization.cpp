@@ -8,6 +8,10 @@
 #include "PropertyEditorModule.h"
 
 // DetailCustomizations
+	// Asset
+		// UserWidget
+#include "DetailCustomizations/Asset/CsUserWidgetCustomization.h"
+#include "DetailCustomizations/Asset/CsUserWidgetPtrCustomization.h"
 	// EnumStruct
 		// Menu
 #include "DetailCustomizations/EnumStruct/Menu/ECsMenuCustomization.h"
@@ -26,10 +30,17 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 {
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 
+#define CS_TEMP_REGISTER(StructName) PropertyModule.RegisterCustomPropertyTypeLayout(#StructName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##StructName##Customization::MakeInstance)))
+
+	// Asset
+	{
+		// FCsUserWidget
+		CS_TEMP_REGISTER(CsUserWidget);
+		// FCsUserWidgetPtr
+		CS_TEMP_REGISTER(CsUserWidgetPtr);
+	}
 	// EnumStruct
 	{
-#define CS_TEMP_REGISTER(EnumName) PropertyModule.RegisterCustomPropertyTypeLayout(#EnumName, FOnGetPropertyTypeCustomizationInstance::CreateStatic(&(F##EnumName##Customization::MakeInstance)))
-
 		// Menu
 		{
 			// ECsMenu
@@ -57,7 +68,6 @@ void FCsUserInterfaceRegisterDetailCustomization::Register()
 			// ECsUserWidgetPayload
 			CS_TEMP_REGISTER(ECsUserWidgetPayload);
 		}
-
-#undef CS_TEMP_REGISTER
 	}
+#undef CS_TEMP_REGISTER
 }

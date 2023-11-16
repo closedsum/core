@@ -242,7 +242,7 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel()
 	typedef UCsManager_Level ClassType;
 	#define COROUTINE Check_FinishedLoadingPersistentLevel_Internal
 
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
 
 	#undef COROUTINE
 
@@ -270,7 +270,7 @@ void UCsManager_Level::Check_FinishedLoadingPersistentLevel(const FString& MapPa
 	typedef UCsManager_Level ClassType;
 	#define COROUTINE Check_FinishedLoadingPersistentLevel_Internal
 
-	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, this, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
+	Payload->Init<ClassType>(Context, this, &ClassType::COROUTINE, MyRoot, UpdateGroup, Str::COROUTINE, Name::COROUTINE);
 
 	#undef COROUTINE
 

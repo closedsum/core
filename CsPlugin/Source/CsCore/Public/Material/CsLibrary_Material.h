@@ -80,6 +80,8 @@ namespace NCsMaterial
 
 		static UMaterialInterface* GetSafe(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, FString& OutPath, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<TSoftObjectPtr<UMaterialInterface>>& OutArray, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		static bool GetSafe(const FString& Context, UObject* Object, const FString& Path, TArray<FString>& OutArray, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning);

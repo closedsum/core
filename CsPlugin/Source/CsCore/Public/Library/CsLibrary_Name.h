@@ -24,5 +24,7 @@ namespace NCsName
 			}
 			return Str;
 		}
+
+		static bool ContainsChecked(const FString& Context, const TArray<FName>& Names, const FName& Name);
 	};
 }

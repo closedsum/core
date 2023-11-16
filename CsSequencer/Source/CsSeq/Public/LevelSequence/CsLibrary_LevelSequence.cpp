@@ -500,6 +500,158 @@ namespace NCsLevelSequence
 		#pragma endregion Player
 	}
 
+	namespace NPlayer
+	{
+		// Get
+		#pragma region
+
+		#define LevelSequenceLibrary NCsLevelSequence::NActor::FLibrary
+
+		ULevelSequencePlayer* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
+		{
+			ULevelSequencePlayer* Player = LevelSequenceLibrary::GetByTagChecked(Context, WorldContext, Tag)->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL_CHECKED(Player)
+			return Player;
+		}
+
+		ULevelSequencePlayer* FLibrary::GetSafeByTag(const FString& Context, const UObject* WorldContext, const FName& Tag, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			if (ALevelSequenceActor* LSA = LevelSequenceLibrary::GetSafeByTag(Context, WorldContext, Tag, Log))
+			{
+				ULevelSequencePlayer* Player = LSA->GetSequencePlayer();
+
+				CS_IS_PENDING_KILL_RET_NULL(Player)
+				return Player;
+			}
+			return nullptr;
+		}
+
+		ULevelSequencePlayer* FLibrary::GetByTagsChecked(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags)
+		{
+			ULevelSequencePlayer* Player = LevelSequenceLibrary::GetByTagsChecked(Context, WorldContext, Tags)->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL_CHECKED(Player)
+			return Player;
+		}
+
+		ULevelSequencePlayer* FLibrary::GetSafeByTags(const FString& Context, const UObject* WorldContext, const TArray<FName>& Tags, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			if (ALevelSequenceActor* LSA = LevelSequenceLibrary::GetSafeByTags(Context, WorldContext, Tags, Log))
+			{
+				ULevelSequencePlayer* Player = LSA->GetSequencePlayer();
+
+				CS_IS_PENDING_KILL_RET_NULL(Player)
+				return Player;
+			}
+			return nullptr;
+		}
+
+		ULevelSequencePlayer* FLibrary::GetByNameChecked(const FString& Context, const UObject* WorldContext, const FName& Name)
+		{
+			ULevelSequencePlayer* Player = LevelSequenceLibrary::GetByNameChecked(Context, WorldContext, Name)->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL_CHECKED(Player)
+			return Player;
+		}
+
+		ULevelSequencePlayer* FLibrary::GetSafeByName(const FString& Context, const UObject* WorldContext, const FName& Name, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			if (ALevelSequenceActor* LSA = LevelSequenceLibrary::GetSafeByName(Context, WorldContext, Name, Log))
+			{
+				ULevelSequencePlayer* Player = LSA->GetSequencePlayer();
+
+				CS_IS_PENDING_KILL_RET_NULL(Player)
+				return Player;
+			}
+			return nullptr;
+		}
+
+		ULevelSequencePlayer* FLibrary::GetSafeByName(const UObject* WorldContext, const FName& Name)
+		{
+			using namespace NCsLevelSequence::NActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeByName;
+
+			return GetSafeByName(Context, WorldContext, Name, nullptr);
+		}
+
+		ULevelSequencePlayer* FLibrary::GetByLabelChecked(const FString& Context, const UObject* WorldContext, const FString& Label)
+		{
+		#if WITH_EDITOR
+			ULevelSequencePlayer* Player = LevelSequenceLibrary::GetByLabelChecked(Context, WorldContext, Label)->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL_CHECKED(Player)
+			return Player;
+		#else
+			checkf(0, TEXT("%s: GetByLabelChecked is NOT Valid outside of Editor."), *Context);
+			return nullptr;
+		#endif // #if WITH_EDITOR
+		}
+
+		ULevelSequencePlayer* FLibrary::GetSafeByLabel(const FString& Context, const UObject* WorldContext, const FString& Label, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+		#if WITH_EDITOR
+			if (ALevelSequenceActor* LSA = LevelSequenceLibrary::GetSafeByLabel(Context, WorldContext, Label, Log))
+			{
+				ULevelSequencePlayer* Player = LSA->GetSequencePlayer();
+
+				CS_IS_PENDING_KILL_RET_NULL(Player)
+				return Player;
+			}
+			return nullptr;
+	#else
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: GetSafeActorByLabel is NOT Valid outside of Editor."), *Context));
+			return nullptr;
+	#endif // #if !WITH_EDITOR
+		}
+
+		ULevelSequencePlayer* FLibrary::GetSafeByLabel(const UObject* WorldContext, const FString& Label)
+		{
+			using namespace NCsLevelSequence::NActor::NLibrary::NCached;
+
+			const FString& Context = Str::GetSafeByLabel;
+
+			return GetSafeByLabel(Context, WorldContext, Label, nullptr);
+		}
+
+		#undef LevelSequenceLibrary
+
+		#pragma endregion Get
+
+		// Play
+		#pragma region
+
+		void FLibrary::PlayFromStart(const FString& Context, ULevelSequencePlayer* Player)
+		{
+			CS_IS_PENDING_KILL_CHECKED(Player)
+
+			FMovieSceneSequencePlaybackParams Params;
+			Params.Frame = FFrameTime();
+			Params.PositionType = EMovieScenePositionType::Frame;
+			Params.UpdateMethod = EUpdatePositionMethod::Jump;
+
+			Player->SetPlaybackPosition(Params);
+			Player->Play();
+		}
+
+		bool FLibrary::SafePlayFromStart(const FString& Context, ULevelSequencePlayer* Player, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL(Player)
+
+			FMovieSceneSequencePlaybackParams Params;
+			Params.Frame = FFrameTime();
+			Params.PositionType = EMovieScenePositionType::Frame;
+			Params.UpdateMethod = EUpdatePositionMethod::Jump;
+
+			Player->SetPlaybackPosition(Params);
+			Player->Play();
+			return true;
+		}
+
+		#pragma endregion Play
+	}
+
 	namespace NTrack
 	{
 		namespace NCameraCut

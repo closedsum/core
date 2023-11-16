@@ -62,8 +62,22 @@ public:
 	* @param Task
 	* return			AI Controller.
 	*/
-	UFUNCTION(BlueprintPure, Category = "CsAI|Task|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Task", meta = (AutoCreateRefTerm="Context"))
 	static AAIController* GetAIController(const FString& Context, const UAITask* Task);
+
+// MoveTo
+#pragma region
+public:
+
+	/**
+	* NewBTAITask<UAITask_MoveTo>(OwnerController)
+	*
+	* @param Context			The calling context
+	* @param OwnerController
+	* return					Whether NewBTAITask<UAITask_MoveTo>(OwnerController) was successful or not.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Task", meta = (AutoCreateRefTerm="Context"))
+	static UAITask_MoveTo* New_MoveTo(const FString& Context, AAIController* OwnerController);
 
 	/**
 	* Task->ReadyForActivation()
@@ -72,7 +86,7 @@ public:
 	* @param Task
 	* return			Result
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context,OutResult"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Task", meta = (AutoCreateRefTerm="Context,OutResult"))
 	static bool MoveTo_ReadyForActivation(const FString& Context, UAITask_MoveTo* Task, FCsScriptLibrary_AI_Task_MoveTo_ReadyForActivation_Result& OutResult);
 
 	/**
@@ -84,7 +98,7 @@ public:
 	* @param MoveRequest
 	* return			Whether Task->SetUp() was called or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Task|Library", meta = (AutoCreateRefTerm="Context,MoveRequest"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Task", meta = (AutoCreateRefTerm="Context,MoveRequest"))
 	static bool MoveTo_SetUp(const FString& Context, UAITask_MoveTo* Task, AAIController* Controller, const FCsAIMoveRequest& MoveRequest);
 
 	/**
@@ -94,7 +108,7 @@ public:
 	* @param Task
 	* return			Whether Task->ConditionalPerformMove() was called or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Task|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Task", meta = (AutoCreateRefTerm="Context"))
 	static bool MoveTo_ConditionalPerformMove(const FString& Context, UAITask_MoveTo* Task);
 
 	/**
@@ -104,6 +118,8 @@ public:
 	* @param Task
 	* return			Task->WasMoveSuccessful().
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Task|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Task", meta = (AutoCreateRefTerm="Context"))
 	static bool MoveTo_WasMoveSuccessful(const FString& Context, UAITask_MoveTo* Task);
+
+#pragma endregion MoveTo
 };

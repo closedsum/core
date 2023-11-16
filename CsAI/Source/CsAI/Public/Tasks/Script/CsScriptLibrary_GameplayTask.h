@@ -23,7 +23,7 @@ public:
 	* @param Task
 	* return			Whether Task->ReadyForActivation() was called or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Gameplay Task", meta = (AutoCreateRefTerm="Context"))
 	static bool ReadyForActivation(const FString& Context, UGameplayTask* Task);
 
 	/**
@@ -33,7 +33,7 @@ public:
 	* @param Task
 	* return			Whether Task->ExternalCancel() was called or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintCallable, Category = "CsAI|Library|Gameplay Task", meta = (AutoCreateRefTerm="Context"))
 	static bool ExternalCancel(const FString& Context, UGameplayTask* Task);
 
 	/**
@@ -43,7 +43,7 @@ public:
 	* @param Task
 	* return			Whether Task->IsActive() was called or not.
 	*/
-	UFUNCTION(BlueprintPure, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Gameplay Task", meta = (AutoCreateRefTerm="Context"))
 	static bool IsActive(const FString& Context, UGameplayTask* Task);
 
 	/**
@@ -53,7 +53,7 @@ public:
 	* @param Task
 	* return			Whether Task->IsPaused() was called or not.
 	*/
-	UFUNCTION(BlueprintPure, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Gameplay Task", meta = (AutoCreateRefTerm="Context"))
 	static bool IsPaused(const FString& Context, UGameplayTask* Task);
 
 	/**
@@ -63,6 +63,6 @@ public:
 	* @param Task
 	* return			Whether Task->IsFinished() was called or not.
 	*/
-	UFUNCTION(BlueprintPure, Category = "CsAI|Blackboard|Library", meta = (AutoCreateRefTerm="Context"))
+	UFUNCTION(BlueprintPure, Category = "CsAI|Library|Gameplay Task", meta = (AutoCreateRefTerm="Context"))
 	static bool IsFinished(const FString& Context, UGameplayTask* Task);
 };

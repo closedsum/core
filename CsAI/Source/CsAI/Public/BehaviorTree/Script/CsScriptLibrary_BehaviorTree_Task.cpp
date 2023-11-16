@@ -6,11 +6,15 @@
 
 // Types
 #include "Types/CsTypes_Macro.h"
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Behavior Tree
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BTTaskNode.h"
 // AI
 #include "Tasks/AITask_MoveTo.h"
+// Log
+#include "Utility/CsAILog.h"
 
 // Cached
 #pragma region
@@ -35,65 +39,50 @@ UCsScriptLibrary_BehaviorTree_Task::UCsScriptLibrary_BehaviorTree_Task(const FOb
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryBehaviorTreeTask::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryBehaviorTreeTask::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define SET_LOG_WARNING void(*Log)(const FString&) = &NCsAI::FLog::Warning;
+
 UAITask_MoveTo* UCsScriptLibrary_BehaviorTree_Task::New_MoveTo(const FString& Context, UBTNode* Task, UBehaviorTreeComponent* OwnerComp)
 {
-	using namespace NCsScriptLibraryBehaviorTreeTask::NCached;
+	CONDITIONAL_SET_CTXT(New_MoveTo);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::New_MoveTo : Context;
+	CS_IS_PTR_NULL_RET_NULL2(Task)
+	CS_IS_PTR_NULL_RET_NULL2(OwnerComp)
 
-	if (!Task)
+	UAITask_MoveTo* NewTask = Task->NewBTAITask<UAITask_MoveTo>(*OwnerComp);
+
+	if (!NewTask)
 	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return nullptr;
+		UE_LOG(LogCsAI, Warning, TEXT("%s: Failed to create new Task of type: UAITask_MoveTo."), *Ctxt);
 	}
-
-	if (!OwnerComp)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: OwnerComp is NULL."), *Ctxt);
-		return nullptr;
-	}
-	return Task->NewBTAITask<UAITask_MoveTo>(*OwnerComp);
+	return NewTask;
 }
 
 UBehaviorTreeComponent* UCsScriptLibrary_BehaviorTree_Task::GetBTComponentForTask(const FString& Context, UBTNode* Task, UGameplayTask* GameplayTask)
 {
-	using namespace NCsScriptLibraryBehaviorTreeTask::NCached;
+	CONDITIONAL_SET_CTXT(GetBTComponentForTask);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetBTComponentForTask : Context;
-
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return nullptr;
-	}
-
-	if (!GameplayTask)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: GameplayTask is NULL."), *Ctxt);
-		return nullptr;
-	}
-
+	CS_IS_PTR_NULL_RET_NULL2(Task)
+	CS_IS_PTR_NULL_RET_NULL2(GameplayTask)
 	return Task->GetBTComponentForTask(*GameplayTask);
 }
 
 bool UCsScriptLibrary_BehaviorTree_Task::FinishLatentTask(const FString& Context, UBTTaskNode* Task, UBehaviorTreeComponent* OwnerComp, const TEnumAsByte<EBTNodeResult::Type>& TaskResult)
 {
-	using namespace NCsScriptLibraryBehaviorTreeTask::NCached;
+	CONDITIONAL_SET_CTXT(FinishLatentTask);
+	SET_LOG_WARNING
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetBTComponentForTask : Context;
-
-	if (!Task)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: Task is NULL."), *Ctxt);
-		return false;
-	}
-
-	if (!OwnerComp)
-	{
-		UE_LOG(LogCsAI, Warning, TEXT("%s: OwnerComp is NULL."), *Ctxt);
-		return false;
-	}
+	CS_IS_PTR_NULL_RET_NULL2(Task)
+	CS_IS_PTR_NULL_RET_NULL2(OwnerComp)
 
 	Task->FinishLatentTask(*OwnerComp, TaskResult);
 	return true;
 }
+
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef SET_LOG_WARNING

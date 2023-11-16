@@ -283,6 +283,9 @@ public:
 		return true;
 	}
 
+	UClass* LoadChecked(const FString& Context);
+	UClass* SafeLoad(const FString& Context, void(*Log)(const FString&) = &NCsUI::FLog::Warning);
+
 	// Added functions to mimic behavior for containers for interfaces
 
 	void SetObject(UObject* InWidget);

@@ -7,6 +7,8 @@
 // Library
 	// Settings
 #include "Settings/CsLibrary_UserInterfaceSettings.h"
+	// Common
+#include "Library/CsLibrary_Valid.h"
 // UI
 #include "Blueprint/UserWidget.h"
 // Utility
@@ -280,10 +282,58 @@ namespace NCsUserWidgetPooledClass
 // FCsUserWidgetPtr
 #pragma region
 
+UClass* FCsUserWidgetPtr::LoadChecked(const FString& Context)
+{
+	checkf(Widget.ToSoftObjectPath().IsValid(), TEXT("FCsUserWidgetPtr::LoadChecked: Widget's Path: %s is NOT Valid."), *(Widget.ToSoftObjectPath().ToString()));
+
+	Widget_Class = Widget.LoadSynchronous();
+
+	checkf(Widget_Class, TEXT("FCsUserWidgetPtr::LoadChecked: Widget has NOT been loaded from Path @ %s."), *(Widget.ToSoftObjectPath().ToString()));
+
+	Widget_SubclassOf = Widget_Class;
+	UObject* DOb	  = Widget_Class->GetDefaultObject();
+
+	checkf(DOb, TEXT("FCsUserWidgetPtr::LoadChecked: Failed to get DefaultObject from Widget_Class: %s."), *(Widget_Class->GetName()));
+
+	Widget_Internal = CS_CAST_CHECKED(DOb, UObject, UUserWidget);
+	return Widget_Class;
+}
+
+UClass* FCsUserWidgetPtr::SafeLoad(const FString& Context, void(*Log)(const FString&) /*=&NCsUI::FLog::Warning*/)
+{
+	if (!Widget.ToSoftObjectPath().IsValid())
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%: FCsUserWidgetPtr.Widget's Path: %s is NOT Valid."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+		return nullptr;
+	}
+
+	Widget_Class = Widget.LoadSynchronous();
+
+	if (!Widget_Class)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Widget has NOT been loaded from Path @ %s."), *Context, *(Widget.ToSoftObjectPath().ToString())));
+		return nullptr;
+	}
+
+	Widget_SubclassOf = Widget_Class;
+	UObject* DOb	  = Widget_Class->GetDefaultObject();
+
+	if (!DOb)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get DefaultObject from Widget_Class: %s."), *Context, *(Widget_Class->GetName())));
+		return nullptr;
+	}
+
+	Widget_Internal = CS_CAST(DOb, UObject, UUserWidget);
+
+	if (!Widget_Internal)
+		return nullptr;
+	return Widget_Class;
+}
+
 void FCsUserWidgetPtr::SetObject(UObject* InWidget)
 {
 	checkf(InWidget, TEXT("FCsUserWidgetPtr::SetObject: InWidget is NULL."));
-
 	checkf(Cast<UUserWidget>(InWidget), TEXT("FCsUserWidgetPtr::SetObject: InWidget is NOT a UUserWidget."));
 
 	Widget			  = Cast<UUserWidget>(InWidget);

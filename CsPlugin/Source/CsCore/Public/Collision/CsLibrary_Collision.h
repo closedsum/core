@@ -4,6 +4,8 @@
 #pragma once
 // Types
 #include "Engine/EngineTypes.h"
+// Log
+#include "Utility/CsLog.h"
 
 namespace NCsCollision
 {
@@ -33,4 +35,31 @@ namespace NCsCollision
 
 	#pragma endregion HitResult
 	};
+
+	namespace NProfile
+	{
+		struct CSCORE_API FLibrary final
+		{
+		public:
+
+			/**
+			* Check whether Name is the name of a Collision Profile.
+			* 
+			* @param Context	The calling context.
+			* @param Name		Collision Profile name.
+			* return			Whether Name is the name of Collision Profile or not.
+			*/
+			static bool IsValidChecked(const FString& Context, const FName& Name);
+
+			/**
+			* Check whether Name is the name of a Collision Profile.
+			* 
+			* @param Context	The calling context.
+			* @param Name		Collision Profile name.
+			* @param Log		(optional)
+			* return			Whether Name is the name of Collision Profile or not.
+			*/
+			static bool IsValid(const FString& Context, const FName& Name, void(*Log)(const FString&) = &FCsLog::Warning);
+		};
+	}
 }

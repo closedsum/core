@@ -122,6 +122,24 @@ namespace NCsData
 
 	#pragma endregion ICsScriptData
 
+	// Implement
+	#pragma region
+	public:
+
+		static bool ScriptImplementsChecked(const FString& Context, const UObject* Object);
+
+		static bool SafeScriptImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool ImplementsChecked(const FString& Context, const UObject* Object);
+
+		static bool SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Implment
+
+	// Get
+	#pragma region
+	public:
+
 		/**
 		* Get Data with name DataName which implements the interface: DataType (NCsData::IData).
 		* 
@@ -265,6 +283,8 @@ namespace NCsData
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
+
+	#pragma endregion Get
 	};
 #undef DataType
 }

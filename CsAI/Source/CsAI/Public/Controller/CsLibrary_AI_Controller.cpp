@@ -248,7 +248,7 @@ namespace NCsAI
 				// Int
 			#pragma region
 
-			void FLibrary::SetValueChecked(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue)
+			void FLibrary::SetIntChecked(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue)
 			{
 				UBlackboardComponent* Blackboard = ControllerLibrary::GetBlackboardChecked(Context, Controller);
 
@@ -257,7 +257,14 @@ namespace NCsAI
 				Blackboard->SetValueAsInt(KeyName, IntValue);
 			}
 
-			bool FLibrary::SetSafeValue(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			void FLibrary::SetIntChecked(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, const int32& IntValue)
+			{
+				UBlackboardComponent* Blackboard = ControllerLibrary::GetBlackboardChecked(Context, Controller);
+
+				BlackboardLibrary::SetIntChecked(Context, Blackboard, KeySelector, IntValue);
+			}
+
+			bool FLibrary::SetSafeInt(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
 			{
 				if (UBlackboardComponent* Blackboard = ControllerLibrary::GetSafeBlackboard(Context, Controller, Log))
 				{
@@ -266,6 +273,27 @@ namespace NCsAI
 					Blackboard->SetValueAsInt(KeyName, IntValue);
 					return true;
 				}
+				return false;
+			}
+
+			bool FLibrary::SetSafeInt(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, const int32& IntValue, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			{
+				if (UBlackboardComponent* Blackboard = ControllerLibrary::GetSafeBlackboard(Context, Controller, Log))
+					return BlackboardLibrary::SetSafeInt(Context, Blackboard, KeySelector, IntValue, Log);
+				return false;
+			}
+
+			void FLibrary::IncrementIntChecked(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& Amount /*=1*/)
+			{
+				UBlackboardComponent* Blackboard = ControllerLibrary::GetBlackboardChecked(Context, Controller);
+
+				BlackboardLibrary::IncrementIntChecked(Context, Blackboard, KeyName, Amount);
+			}
+
+			bool FLibrary::SafeIncrementInt(const FString& Context, const AAIController* Controller, const FName& KeyName, const int32& Amount /*=1*/, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			{
+				if (UBlackboardComponent* Blackboard = ControllerLibrary::GetSafeBlackboard(Context, Controller, Log))
+					return BlackboardLibrary::SafeIncrementInt(Context, Blackboard, KeyName, Amount, Log);
 				return false;
 			}
 
@@ -538,6 +566,39 @@ namespace NCsAI
 			}
 
 			#pragma endregion Enum
+
+				// Int
+			#pragma region
+
+			int32 FLibrary::GetIntChecked(const FString& Context, const AAIController* Controller, const FName& KeyName)
+			{
+				UBlackboardComponent* Blackboard = ControllerLibrary::GetBlackboardChecked(Context, Controller);
+
+				return BlackboardLibrary::GetIntChecked(Context, Blackboard, KeyName);
+			}
+
+			int32 FLibrary::GetIntChecked(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector)
+			{
+				UBlackboardComponent* Blackboard = ControllerLibrary::GetBlackboardChecked(Context, Controller);
+
+				return BlackboardLibrary::GetIntChecked(Context, Blackboard, KeySelector);
+			}
+
+			int32 FLibrary::GetSafeInt(const FString& Context, const AAIController* Controller, const FName& KeyName, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			{
+				if (UBlackboardComponent* Blackboard = ControllerLibrary::GetSafeBlackboard(Context, Controller, Log))
+					return BlackboardLibrary::GetSafeInt(Context, Blackboard, KeyName, OutSuccess, Log);	
+				return 0;
+			}
+
+			int32 FLibrary::GetSafeInt(const FString& Context, const AAIController* Controller, const FBlackboardKeySelector& KeySelector, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsAI::FLog::Warning*/)
+			{
+				if (UBlackboardComponent* Blackboard = ControllerLibrary::GetSafeBlackboard(Context, Controller, Log))
+					return BlackboardLibrary::GetSafeInt(Context, Blackboard, KeySelector, OutSuccess, Log);
+				return 0;
+			}
+
+			#pragma endregion Int
 
 			#pragma endregion Get
 

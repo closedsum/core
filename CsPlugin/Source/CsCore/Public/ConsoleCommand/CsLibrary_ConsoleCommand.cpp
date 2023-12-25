@@ -5,7 +5,7 @@
 #include "CsCore.h"
 
 // Library
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // Engine

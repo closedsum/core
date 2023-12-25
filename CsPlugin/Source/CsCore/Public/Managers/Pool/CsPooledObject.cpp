@@ -43,7 +43,10 @@ FCsPooledObject::FCsPooledObject() :
 		// ICsOnConstructObject
 	Script_OnConstructObject_Impl(),
 		// ICsPause
-	Script_Pause_Impl()
+	Script_Pause_Impl(),
+		// ICsShutdown
+	Script_Shutdown_Impl(),
+	Script_HasShutdown_Impl()
 {
 }
 
@@ -163,6 +166,7 @@ void FCsPooledObject::Reset()
 	Script_OnConstructObject_Impl.Unbind();
 	Script_Pause_Impl.Unbind();
 	Script_Shutdown_Impl.Unbind();
+	Script_HasShutdown_Impl.Unbind();
 }
 
 #pragma endregion TCsInterfaceObject
@@ -218,6 +222,14 @@ void FCsPooledObject::Shutdown()
 		Script_Shutdown_Impl.Execute(Object);
 	else
 		_Shutdown->Shutdown();
+}
+
+bool FCsPooledObject::HasShutdown()
+{
+	if (bScriptShutdown)
+		return Script_HasShutdown_Impl.Execute(Object);
+	else
+		return _Shutdown->HasShutdown();
 }
 
 #pragma endregion ICsShutdown

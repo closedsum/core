@@ -10,7 +10,7 @@
 	// Common
 #include "Library/Load/CsLibrary_Load.h"
 #include "Object/CsLibrary_Object.h"
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Math.h"
 // Settings

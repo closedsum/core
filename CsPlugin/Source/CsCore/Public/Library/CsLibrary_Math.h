@@ -142,7 +142,11 @@ namespace NCsMath
 	public:
 
 		static float Ease(const ECsEasingType& EasingType, const float& Time, const float& Start, const float& Final, const float& Duration);
-	
+		FORCEINLINE static float Ease(const ECsEasingType& EasingType, const float& Time)
+		{
+			return Ease(EasingType, Time, 0.0f, 1.0f, 1.0f);
+		}
+
 		FORCEINLINE static float Linear(const float& Time, const float& Start, const float& Final, const float& Duration)
 		{
 			return ((Final * Time) / Duration) + Start;

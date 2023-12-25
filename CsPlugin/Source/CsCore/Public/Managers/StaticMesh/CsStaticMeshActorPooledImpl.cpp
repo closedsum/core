@@ -47,6 +47,8 @@ namespace NCsStaticMeshActorPooledImpl
 
 ACsStaticMeshActorPooledImpl::ACsStaticMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// Shutdown
+	bShutdown(false),
 	// PooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
@@ -158,6 +160,8 @@ void ACsStaticMeshActorPooledImpl::Shutdown()
 	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	MIDLibrary::Destroy(MIDs);
+
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

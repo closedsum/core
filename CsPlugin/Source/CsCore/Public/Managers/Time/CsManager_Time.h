@@ -3,13 +3,10 @@
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
 // Types
-#include "Managers/Time/CsTypes_Time.h"
-#include "Managers/Time/CsTypes_Update.h"
 #include "Managers/Time/CsUpdateGroup.h"
+#include "Managers/Time/CsManager_Time_Delegates.h"
 
 #include "CsManager_Time.generated.h"
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsManagerTime_OnUpdate, const FECsUpdateGroup&, Group, const FCsDeltaTime&, DeltaTime);
 
 class ICsGetManagerTime;
 
@@ -111,22 +108,19 @@ public:
 
 	// Pause
 #pragma region
-public:
-
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPause, const FECsUpdateGroup& /*Group*/, bool /*bPaused*/);
-
 private:
 
-	TArray<FOnPause> OnPause_Events;
+#define OnPauseEventType NCsTime::NManager::FOnPause
+#define OnPauseDelegateType OnPauseEventType::FDelegate
+
+	TArray<OnPauseEventType> OnPause_Events;
 
 public:
 
-	FORCEINLINE FOnPause& GetOnPause_Event(const FECsUpdateGroup& Group)
+	FORCEINLINE OnPauseEventType& GetOnPause_Event(const FECsUpdateGroup& Group)
 	{
 		return OnPause_Events[Group.GetValue()];
 	}
-
-#define OnPauseDelegateType FOnPause::FDelegate
 
 	FORCEINLINE FDelegateHandle AddOnPause(const FECsUpdateGroup& Group, OnPauseDelegateType& OnPause)
 	{
@@ -134,6 +128,7 @@ public:
 	}
 
 #undef OnPauseDelegateType
+#undef OnPauseEventType
 
 	FORCEINLINE void RemoveOnPause(const FECsUpdateGroup& Group, const FDelegateHandle& Handle)
 	{
@@ -219,12 +214,19 @@ public:
 		UpdateGroups[Group.GetValue()].RemoveOnUpdate(Handle);
 	}
 
-	UPROPERTY(BlueprintAssignable)
-	FCsManagerTime_OnUpdate OnUpdate_ScriptEvent;
-
 #undef OnUpdateType
 #undef OnUpdateDelegateType
 
+#define OnUpdateEventType NCsTime::NManager::FOnUpdate
+	OnUpdateEventType OnUpdate_Event;
+	FORCEINLINE OnUpdateEventType& GetOnUpdate_Event() { return OnUpdate_Event; }
+#undef OnUpdateEventType
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
+	FCsManagerTime_OnUpdate OnUpdate_ScriptEvent;
+
+	FORCEINLINE FCsManagerTime_OnUpdate& GetOnUpdate_ScriptEvent() { return OnUpdate_ScriptEvent; }
+	
 	FORCEINLINE void SetCustom(const FECsUpdateGroup& Group, const bool& ClearOnUpdate)
 	{
 		UpdateGroups[Group.GetValue()].SetCustom(ClearOnUpdate);
@@ -311,7 +313,18 @@ public:
 	FORCEINLINE void SetScaledDeltaTime(const FECsUpdateGroup& Group, const float& Scale)
 	{
 		UpdateGroups[Group.GetValue()].SetScale(Scale);
+
+		OnSetScaledDeltaTime_Event.Broadcast(Group, Scale);
+		OnSetScaledDeltaTime_ScriptEvent.Broadcast(Group, Scale);
 	}
+
+#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
+	OnSetScaledDeltaTimeEventType OnSetScaledDeltaTime_Event;
+	FORCEINLINE OnSetScaledDeltaTimeEventType& GetOnSetScaledDeltaTime_Event() { return OnSetScaledDeltaTime_Event; }
+#undef OnSetScaledDeltaTimeEventType
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
+	FCsManagerTime_OnSetScaledDeltaTime OnSetScaledDeltaTime_ScriptEvent;
 
 	/**
 	* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
@@ -321,7 +334,18 @@ public:
 	FORCEINLINE void ResetScaledDeltaTime(const FECsUpdateGroup& Group)
 	{
 		UpdateGroups[Group.GetValue()].ResetScale();
+
+		OnResetScaledDeltaTime_Event.Broadcast(Group);
+		OnResetScaledDeltaTime_ScriptEvent.Broadcast(Group);
 	}
+
+#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
+	OnResetScaledDeltaTimeEventType OnResetScaledDeltaTime_Event;
+	FORCEINLINE OnResetScaledDeltaTimeEventType& GetOnResetScaledDeltaTime_Event() { return OnResetScaledDeltaTime_Event; }
+#undef OnResetScaledDeltaTimeEventType
+
+	UPROPERTY(BlueprintAssignable, Category = "CsCore|Mangager|Time")
+	FCsManagerTime_OnResetScaledDeltaTime OnResetScaledDeltaTime_ScriptEvent;
 
 	void SetupInputListener();
 

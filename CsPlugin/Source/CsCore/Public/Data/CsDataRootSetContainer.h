@@ -21,7 +21,7 @@ struct CSCORE_API FCsDataRootSetContainer
 
 public:
 
-	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load", EditAnywhere, meta = (MustImplement = "/Script.CsCore.CsGetDataRootSet"))
+	UPROPERTY(BlueprintReadOnly, Category = "CsCore|Load", EditAnywhere, meta = (MustImplement = "/Script/CsCore.CsGetDataRootSet"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "CsCore|Load")

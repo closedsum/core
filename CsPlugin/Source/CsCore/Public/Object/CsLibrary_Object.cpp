@@ -18,6 +18,8 @@ namespace NCsObject
 			namespace Str
 			{
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsObject::FLibrary, SafeMarkAsGarbage);
+
+				const FString Default__ = TEXT("Default__");
 			}
 		}
 	}
@@ -204,7 +206,7 @@ namespace NCsObject
 
 	bool FLibrary::IsDefaultObject(const UObject* Object)
 	{
-		return Object ? Object->GetName().StartsWith(TEXT("Default__")) : false;
+		return Object ? Object->GetName().StartsWith(NCsObject::NLibrary::NCached::Str::Default__) : false;
 	}
 
 	int32 FLibrary::GetUniqueIDChecked(const FString& Context, const UObject* Object)

@@ -102,6 +102,8 @@ module.exports = class FJsCoroutineSchedule
                 r.SetIndex(index);
             }
         }
+
+        this.QueueEndHandles = [];
     }
 
     // Schedule
@@ -369,7 +371,7 @@ module.exports = class FJsCoroutineSchedule
     // public:
 
 	/**
-	*
+	* End all coroutines.
 	*/
     EndAll()
     {
@@ -412,6 +414,21 @@ module.exports = class FJsCoroutineSchedule
         if (IsValidObject(container))
         {
             let r = container.Get();
+
+            // If the Routine has already Ended, exit
+            if (r.HasEnded() ||
+                r.HasJustEnded())
+            {
+                return false;
+            }
+
+            // If the Routine is currently being Updated, queue the End for either the
+            // beginning of the next Update or the end of the current Update.
+            if (!r.IsUpdateComplete())
+            {
+                this.QueueEndHandles.push(handle);
+                return false;
+            }
 
             r.End(EndReasonType.Manual);
 
@@ -466,6 +483,14 @@ module.exports = class FJsCoroutineSchedule
     */
     Update(deltaTime /*CsDeltaTime*/)
     {
+        // End any pending Handles requested for End from the previous Update
+        for (let handle of this.QueueEndHandles)
+        {
+            this.End(handle);
+        }
+
+        this.QueueEndHandles = [];
+
 	    let current = this.Manager_Routine.GetAllocatedHead();
 	    let next    = current;
 
@@ -501,6 +526,14 @@ module.exports = class FJsCoroutineSchedule
 			    this.Manager_Routine.Deallocate(routineContainer);
 		    }
 	    }
+
+        // End any Handles requested for End on the current Update
+        for (let handle of this.QueueEndHandles)
+        {
+            this.End(handle);
+        }
+
+        this.QueueEndHandles = [];
     }
 
     // #endregion Update

@@ -63,6 +63,60 @@ void FCsPayload_Data::Populate()
 
 #pragma endregion FCsPayload_Data
 
+// FCsPayload_ScriptData
+#pragma region
+
+#if WITH_EDITOR
+
+void FCsPayload_ScriptData::Populate()
+{
+	Paths.Reset();
+
+	if (!Data.IsValid())
+	{
+		//UE_LOG(LogCs, Warning, TEXT("FCsPayload_ScriptData::Populate:"));
+		return;
+	}
+
+	UClass* Class = Data.LoadSynchronous();
+
+	if (!Class)
+	{
+		UE_LOG(LogCs, Warning, TEXT("FCsPayload_ScriptData::Populate:"));
+		return;
+	}
+	
+	UObject* Object = Class->GetDefaultObject();
+
+	Name = Object->GetFName();
+
+	const FString ClassName = Class->GetName();
+
+	if (!Object)
+	{
+		UE_LOG(LogCs, Warning, TEXT("FCsPayload_ScriptData::Populate:"));
+		return;
+	}
+
+	// Add Data Path
+	{
+		/*
+		FSoftObjectPath ObjectPath = Data.ToSoftObjectPath();
+		const FName AssetPathName  = ObjectPath.GetAssetPathName();
+
+		FCsSoftObjectPath& Path = Paths.Map.FindOrAdd(AssetPathName);
+	
+		Path.Path  = ObjectPath;
+		int32 Size = Object->GetResourceSizeBytes(EResourceSizeMode::EstimatedTotal);
+		Path.Size.SetBytes(Size);
+		*/
+	}
+}
+
+#endif // #if WITH_EDITOR
+
+#pragma endregion FCsPayload_ScriptData
+
 // FCsPayload_DataTable
 #pragma region
 
@@ -286,6 +340,16 @@ void FCsPayload::Append(const FCsPayload& Payload)
 			continue;
 
 		DataMap.Add(Name, Data);
+	}
+	// ScriptDatas
+	for (const FCsPayload_ScriptData& Data : Payload.ScriptDatas)
+	{
+		const FName& Name = Data.Name;
+
+		if (ScriptDataMap.Find(Name))
+			continue;
+
+		ScriptDataMap.Add(Name, Data);
 	}
 	// DataTables
 	for (const FCsPayload_DataTable& DataTable : Payload.DataTables)

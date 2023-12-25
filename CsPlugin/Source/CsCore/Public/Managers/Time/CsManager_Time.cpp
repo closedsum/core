@@ -43,7 +43,11 @@ namespace NCsManagerTime
 #pragma endregion Cached
 
 UCsManager_Time::UCsManager_Time(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	// Console Command
+	Manager_ConsoleCommand(nullptr),
+	UpdateGroups(),
+	OnPause_Events()
 {
 }
 

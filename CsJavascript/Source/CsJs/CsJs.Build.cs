@@ -19,6 +19,7 @@ public class CsJs : ModuleRules
                     "AssetRegistry",
                     "DeveloperSettings",
                     "CsCore",
+                    "V8"
                 }
             );
 

@@ -53,7 +53,7 @@ public:
 
 	FORCEINLINE void New()
 	{
-		Id.NewGuid();
+		Id = FGuid::NewGuid();
 	}
 
 	FORCEINLINE void Reset()

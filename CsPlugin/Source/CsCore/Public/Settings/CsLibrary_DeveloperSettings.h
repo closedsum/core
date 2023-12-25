@@ -4,6 +4,7 @@
 #pragma once
 // Types
 #include "Settings/CsTypes_Settings_Enum.h"
+#include "Types/Enum/CsEnumStructLayoutHistory.h"
 
 class UCsDeveloperSettings;
 class UObject;
@@ -23,6 +24,16 @@ namespace NCsCore
 			
 			static UCsDeveloperSettings* Get();
 			
+			static bool TryUpdateDefaultConfigFile();
+
+		// Enum
+		#pragma region
+		public:
+
+			static TMap<FName, FCsEnumStructLayoutHistory>& GetEnumStructlayoutHistoryMap();
+
+		#pragma endregion Enum
+
 		// Data
 		#pragma region
 		public:

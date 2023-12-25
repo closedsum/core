@@ -17,7 +17,7 @@ struct CSCORE_API FCsSettings_Coordinator_GameEvent
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Coordinators|Game Event", meta = (MustImplement = "/Script.CsCore.CsCoordinator_GameEvent"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Coordinators|Game Event")
 	TSoftClassPtr<UCsCoordinator_GameEvent> Class;
 
 	FCsSettings_Coordinator_GameEvent();

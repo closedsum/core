@@ -16,7 +16,7 @@ public:
 	/**
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Load", meta = (AutoCreateRefTerm = "Context,LoadFlags,LoadCodes"))
-	static void LoadObject(const FString& Context, UObject* Object, const int32& LoadFlags, const int32& LoadCodes);
+	static bool LoadObject(const FString& Context, UObject* Object, const int32& LoadFlags, const int32& LoadCodes);
 
 	/**
 	*/

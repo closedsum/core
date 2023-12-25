@@ -17,6 +17,9 @@ struct CSJS_API FCsJavascriptFileObjects
 public:
 
 	UPROPERTY(Transient)
+	int32 Index;
+
+	UPROPERTY(Transient)
 	FGuid Id;
 
 	UPROPERTY(Transient)
@@ -28,22 +31,28 @@ public:
 	UPROPERTY(Transient)
 	TArray<FString> ExposedObjectNames;
 
+	UPROPERTY(Transient)
+	FString Path;
+
 	FCsJavascriptFileObjects() :
+		Index(INDEX_NONE),
 		Id(),
 		Isolate(nullptr),
 		Context(nullptr),
-		ExposedObjectNames()
+		ExposedObjectNames(),
+		Path()
 	{
 	}
 
 	FORCEINLINE bool IsValidChecked(const FString& Ctxt) const
 	{
 		checkf(Isolate, TEXT("%s: Isloate is NULL."), *Ctxt);
-
 		checkf(Context, TEXT("%s: Context is NULL."), *Ctxt);
 		return true;
 	}
 
+	void Init(UObject* Owner);
+	void Deactivate(UObject* Owner);
 	void Shutdown();
 };
 

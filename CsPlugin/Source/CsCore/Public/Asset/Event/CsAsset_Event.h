@@ -41,11 +41,7 @@ namespace NCsAsset
 	}
 }
 
-//FAssetEditorRequestCloseEvent, UObject*, EAssetEditorCloseReason
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCsAssetEditor_OnRequest_Close, UObject*, Asset, const ECsAssetEditorCloseReason&, Reason);
-
-class IAssetEditorInstance;
 
 class CSCORE_API ICsAsset_Event
 {
@@ -55,9 +51,13 @@ public:
 
 public:
 
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnOpenedInEditor, UObject* /*Asset*/, IAssetEditorInstance* /*EditorInstance*/);
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOpenedInEditor, UObject* /*Asset*/);
 
 	virtual FOnOpenedInEditor& GetAsset_OpenedInEditor_Event() = 0;
+
+	DECLARE_MULTICAST_DELEGATE_OneParam(FOnUniqueOpenedInEditor, UObject* /*Asset*/);
+
+	virtual FOnUniqueOpenedInEditor& GetAsset_UniqueOpenedInEditor_Event() = 0;
 
 #define ReasonType NCsAsset::NEditor::NClose::EReason
 	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnRequest_Close, UObject* /*Asset*/, const ReasonType& /*Reason*/);

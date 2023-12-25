@@ -22,7 +22,7 @@
 #include "Coroutine/CsRoutine.h"
 // Data
 #include "Data/CsGetDataRootSet.h"
-#include "Data/CsData.h"
+#include "Data/CsScriptData.h"
 // Managers
 #include "Managers/Load/CsManager_Load.h"
 
@@ -45,10 +45,13 @@ namespace NCsManagerData
 			// Load
 				// Data
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadData);
+				// ScriptData
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadScriptData);
 				// DataTable
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTable);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadDataTableRow);
 				// Payload
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, LoadPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayload);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Data, AsyncLoadPayloadByGroup_Internal);
@@ -76,6 +79,10 @@ UCsManager_Data::UCsManager_Data(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
+
+#define USING_NS_CACHED using namespace NCsManagerData::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerData::NCached; \
+	const FString& Context = Str::##__FunctionName
 
 // Singleton
 #pragma region
@@ -388,9 +395,7 @@ void UCsManager_Data::AddPayload(const FName& PayloadName, const FCsPayload& Pay
 
 void UCsManager_Data::GenerateMaps() 
 {
-	using namespace NCsManagerData::NCached;
-
-	const FString& Context = Str::GenerateMaps;
+	SET_CONTEXT(GenerateMaps);
 
 	// Datas
 	if (UDataTable* Datas = DataRootSet.Get()->GetCsDataRootSet().Datas)
@@ -419,6 +424,34 @@ void UCsManager_Data::GenerateMaps()
 		}
 		NCsDataEntryData::PopulateEnumMapFromSettings(Context, MyRoot);
 	}
+#if !UE_BUILD_SHIPPING
+	// ScriptDatas
+	if (UDataTable* ScriptDatas = DataRootSet.Get()->GetCsDataRootSet().ScriptDatas)
+	{
+		const UScriptStruct* ScriptStruct = ScriptDatas->GetRowStruct();
+
+		checkf(ScriptStruct == FCsDataEntry_ScriptData::StaticStruct(), TEXT("%s: The Row Struct for Data: %s is of incorrect type: %s. It should be FCsDataEntry_ScriptData"), *Context, *(ScriptDatas->GetName()), *(ScriptStruct->GetName()));
+
+		ScriptDataEntryMap.Reset();
+
+		const TMap<FName, uint8*>& RowMap = ScriptDatas->GetRowMap();
+
+		for (const TPair<FName, uint8*>& Pair : RowMap)
+		{
+			const FName& RowName		    = Pair.Key;
+			FCsDataEntry_ScriptData* RowPtr = reinterpret_cast<FCsDataEntry_ScriptData*>(Pair.Value);
+
+			const FSoftObjectPath& Path = RowPtr->Data.ToSoftObjectPath();
+
+			checkf(Path.IsValid(), TEXT("%s: Data at Row: %s for Datas: %s is NOT Valid."), *Context, *(RowName.ToString()), *(ScriptDatas->GetName()));
+
+			RowPtr->BuildFromPaths();
+
+			ScriptDataEntryMap.Add(RowName, RowPtr);
+			ScriptDataEntryByPathMap.Add(Path, RowPtr);
+		}
+	}
+#endif // #if !UE_BUILD_SHIPPING
 	// DataTables
 	if (UDataTable* DataTables = DataRootSet.Get()->GetCsDataRootSet().DataTables)
 	{
@@ -478,11 +511,9 @@ void UCsManager_Data::GenerateMaps()
 
 ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 {
-	using namespace NCsManagerData::NCached;
+	SET_CONTEXT(LoadData);
 
-	const FString& Context = Str::LoadData;
-
-	checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+	CS_IS_NAME_NONE_CHECKED(EntryName)
 
 	if (ICsData* Data = GetData(EntryName))
 		return Data;
@@ -511,11 +542,9 @@ ICsData* UCsManager_Data::LoadData(const FName& EntryName)
 
 ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 {
-	using namespace NCsManagerData::NCached;
+	SET_CONTEXT(LoadData);
 
-	const FString& Context = Str::LoadData;
-
-	checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+	CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
 
 	if (ICsData* Data = GetData(Path))
 		return Data;
@@ -526,7 +555,7 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 
 		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
 
-		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_DataTable::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_Data::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
 
 		UObject* O	  = Entry->GetChecked(Context);
 		ICsData* Data = Entry->GetInterfaceChecked<ICsData>(Context);
@@ -543,6 +572,71 @@ ICsData* UCsManager_Data::LoadData(const FSoftObjectPath& Path)
 }
 
 #pragma endregion Data
+
+	// ScriptData
+#pragma region
+
+UObject* UCsManager_Data::LoadScriptData(const FName& EntryName)
+{
+	SET_CONTEXT(LoadScriptData);
+
+	CS_IS_NAME_NONE_CHECKED(EntryName)
+
+	if (UObject* Data = GetScriptDataObject(EntryName))
+		return Data;
+
+	if (FCsDataEntry_ScriptData** EntryPtr = ScriptDataEntryMap.Find(EntryName))
+	{
+		FCsDataEntry_ScriptData* Entry = *EntryPtr;
+	
+		checkf(Entry->Name == EntryName, TEXT("%s: Mismatch between Entry->Name != EntryName (%s != %s)."), *Context, *(Entry->Name.ToString()), *(EntryName.ToString()));
+
+		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_ScriptData::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+
+		UObject* O = Entry->GetChecked(Context);
+
+		ScriptDataMap_Loaded.FindOrAdd(EntryName) = O;
+		ScriptDataByPathMap_Loaded.FindOrAdd(Entry->Data.ToSoftObjectPath()) = O;
+		ScriptDataObjectMap_Loaded.FindOrAdd(EntryName) = O;
+		ScriptDataObjectByPathMap_Loaded.FindOrAdd(Entry->Data.ToSoftObjectPath()) = O;
+
+		return O;
+	}
+	checkf(0, TEXT("%s: Failed to find Script Data @ Entry: %s."), *Context, *(EntryName.ToString()));
+	return nullptr;
+}
+
+UObject* UCsManager_Data::LoadScriptData(const FSoftObjectPath& Path)
+{
+	SET_CONTEXT(LoadScriptData);
+
+	CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
+
+	if (UObject* Data = GetScriptDataObject(Path))
+		return Data;
+
+	if (FCsDataEntry_ScriptData** EntryPtr = ScriptDataEntryByPathMap.Find(Path))
+	{
+		FCsDataEntry_ScriptData* Entry = *EntryPtr;
+
+		checkf(Entry->Data.ToSoftObjectPath() == Path, TEXT("%s: Mismatch between Entry's Path != Path (%s != %s)."), *Context, *(Entry->Data.ToSoftObjectPath().ToString()), *(Path.ToString()));
+
+		UCsLibrary_Load::LoadStruct(Entry, FCsDataEntry_ScriptData::StaticStruct(), NCsLoadFlags::All, NCsLoadCodes::None);
+
+		UObject* O = Entry->GetChecked(Context);
+
+		ScriptDataMap_Loaded.FindOrAdd(Entry->Name) = O;
+		ScriptDataByPathMap_Loaded.FindOrAdd(Path) = O;
+		ScriptDataObjectMap_Loaded.FindOrAdd(Entry->Name) = O;
+		ScriptDataObjectByPathMap_Loaded.FindOrAdd(Path) = O;
+
+		return O;
+	}
+	checkf(0, TEXT("%s: Failed to find Script Data @ Path: %s."), *Context, *(Path.ToString()));
+	return nullptr;
+}
+
+#pragma endregion ScriptData
 
 	// DataTable
 #pragma region
@@ -654,7 +748,9 @@ uint8* UCsManager_Data::LoadDataTableRow(const FName& EntryName, const FName& Ro
 
 void UCsManager_Data::LoadPayload(const FName& PayloadName)
 {
-	checkf(PayloadName != NAME_None, TEXT("UCsManager_Data::LoadPayload: PayloadName is None."));
+	SET_CONTEXT(LoadPayload);
+
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	// Check if the Payload has already been loaded
 	if (PayloadMap_Loaded.Find(PayloadName))
@@ -678,7 +774,16 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 
 			ICsData* Data = LoadData(EntryName);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			// Load the Script Data
+			const FName& EntryName = Payload_ScriptData.Name;
 
+			UObject* Data = LoadScriptData(EntryName);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -718,7 +823,7 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 				}
 				else
 				{
-					checkf(0, TEXT("UCsManager_Data::LoadPayload: Failed to Row: %s for DataTable with EntryName: %s."), *(RowName.ToString()), *(EntryName.ToString()));
+					checkf(0, TEXT("%s: Failed to Row: %s for DataTable with EntryName: %s."), *Context, *(RowName.ToString()), *(EntryName.ToString()));
 				}
 			}
 		}
@@ -727,15 +832,15 @@ void UCsManager_Data::LoadPayload(const FName& PayloadName)
 	}
 	else
 	{
-		checkf(0, TEXT("UCsManager_Data::LoadPayload: Failed to find Payload: %s."), *(PayloadName.ToString()));
+		checkf(0, TEXT("%s: Failed to find Payload: %s."), *Context, *(PayloadName.ToString()));
 	}
 }
 
-void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate)
-{
-	using namespace NCsManagerData::NCached;
+#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
 
-	const FString& Context = Str::AsyncLoadPayload;
+void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate)
+{
+	SET_CONTEXT(AsyncLoadPayload);
 
 	const FCsSettings_Manager_Data& Settings = FCsSettings_Manager_Data::Get();
 
@@ -779,7 +884,7 @@ void UCsManager_Data::AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPay
 	}
 }
 
-void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
+void UCsManager_Data::SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate, void(*Log)(const FString&) /*= &FCsLog::Warning*/)
 {
 	const int32 Count = Payload_GetSafePathCount(Context, PayloadName, Log);
 
@@ -839,11 +944,9 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayload(const FCsLoadHand
 	OnAsyncLoadPayloadCompleted_Event.Unbind();
 }
 
-void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate)
+void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate)
 {
-	using namespace NCsManagerData::NCached;
-
-	const FString& Context = Str::AsyncLoadPayloadByGroup;
+	SET_CONTEXT(AsyncLoadPayloadByGroup);
 
 	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
@@ -875,9 +978,7 @@ void UCsManager_Data::AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsync
 
 char UCsManager_Data::AsyncLoadPayloadByGroup_Internal(FCsRoutine* R)
 {
-	using namespace NCsManagerData::NCached;
-
-	const FString& Context = Str::AsyncLoadPayloadByGroup_Internal;
+	SET_CONTEXT(AsyncLoadPayloadByGroup_Internal);
 
 	CS_COROUTINE_READ_INT_START
 	CS_COROUTINE_READ_NAME_START
@@ -949,6 +1050,8 @@ void UCsManager_Data::OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsL
 	++AsyncLoadPayloadByGroupInfo.Index;
 }
 
+#undef OnAsyncLoadPayloadCompleteType
+
 #pragma endregion Payload
 
 #pragma endregion Load
@@ -986,6 +1089,15 @@ void UCsManager_Data::Payload_GetPaths(const FName& PayloadName, TArray<FSoftObj
 
 			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			ScriptData_GetPathsChecked(Context, EntryName, OutPaths);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1036,6 +1148,15 @@ void UCsManager_Data::Payload_GetPathsChecked(const FString& Context, const FNam
 
 			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			ScriptData_GetPathsChecked(Context, EntryName, OutPaths);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1086,6 +1207,15 @@ void UCsManager_Data::Payload_GetSafePaths(const FString& Context, const FName& 
 
 			Data_GetPathsChecked(Context, EntryName, OutPaths);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			ScriptData_GetPathsChecked(Context, EntryName, OutPaths);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1142,6 +1272,15 @@ int32 UCsManager_Data::Payload_GetPathCount(const FName& PayloadName) const
 
 			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			Count += ScriptData_GetPathCountChecked(Context, EntryName);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1192,6 +1331,15 @@ int32 UCsManager_Data::Payload_GetPathCountChecked(const FString& Context, const
 
 			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			Count += ScriptData_GetPathCountChecked(Context, EntryName);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1243,6 +1391,15 @@ int32 UCsManager_Data::Payload_GetSafePathCount(const FString& Context, const FN
 
 			Count += Data_GetPathCountChecked(Context, EntryName);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			Count += ScriptData_GetPathCountChecked(Context, EntryName);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1274,7 +1431,7 @@ int32 UCsManager_Data::Payload_GetSafePathCount(const FString& Context, const FN
 
 void UCsManager_Data::Payload_GetPathsByGroupChecked(const FString& Context, const FName& PayloadName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const
 {
-CS_IS_NAME_NONE_CHECKED(PayloadName)
+	CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 	 FCsPayload* const* PayloadPtr = PayloadMap.Find(PayloadName);
 
@@ -1294,6 +1451,15 @@ CS_IS_NAME_NONE_CHECKED(PayloadName)
 
 			Data_GetPathsByGroupChecked(Context, EntryName, Group, Paths);
 		}
+	#if !UE_BUILD_SHIPPING
+		// ScriptDatas
+		for (const FCsPayload_ScriptData& Payload_ScriptData : Payload->ScriptDatas)
+		{
+			const FName& EntryName = Payload_ScriptData.Name;
+
+			ScriptData_GetPathsByGroupChecked(Context, EntryName, Group, Paths);
+		}
+	#endif // #if !UE_BUILD_SHIPPING
 		// DataTables
 		for (const FCsPayload_DataTable& Payload_DataTable : Payload->DataTables)
 		{
@@ -1340,7 +1506,6 @@ CS_IS_NAME_NONE_CHECKED(PayloadName)
 bool UCsManager_Data::SafeAddData_Loaded(const FString& Context, const FName& EntryName, ICsData* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
 	CS_IS_NAME_NONE(EntryName)
-
 	CS_IS_PTR_NULL(Data)
 
 	if (ICsData** DataPtr = DataMap_Loaded.Find(EntryName))
@@ -1371,7 +1536,6 @@ bool UCsManager_Data::SafeAddData_Loaded(const FString& Context, const FName& En
 bool UCsManager_Data::SafeAddDataObject_Loaded(const FString& Context, const FName& EntryName, UObject* Data, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 {
 	CS_IS_NAME_NONE(EntryName)
-
 	CS_IS_PTR_NULL(Data)
 
 	ICsData* InterfaceData = Cast<ICsData>(Data);
@@ -1412,9 +1576,7 @@ void UCsManager_Data::AddDataCompositionObject_Loaded(const FName& DataName, UOb
 	const FString& Context = Str::AddDataCompositionObject_Loaded;
 
 	CS_IS_NAME_NONE_CHECKED(DataName)
-
 	CS_IS_PTR_NULL_CHECKED(Data)
-	
 	CS_IS_NAME_NONE_CHECKED(SliceName)
 
 	FCsMap_ObjectByName& Map = DataCompositionObjectsAdded_Loaded.FindOrAdd(DataName);
@@ -1440,3 +1602,6 @@ bool UCsManager_Data::SafeRemoveDataCompositionObject_Loaded(const FString& Cont
 #pragma endregion Data
 
 #pragma endregion Add
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT

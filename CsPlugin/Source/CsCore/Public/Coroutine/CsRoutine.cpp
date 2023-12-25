@@ -115,6 +115,8 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 {
 	CS_SCOPED_TIMER(RoutineScopedTimerHandle);
 
+	bUpdateComplete = false;
+
 	// Check for Abort Messages
 	const int32 AbortIndex = (int32)MessageType::Abort;
 
@@ -145,6 +147,7 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	if (State == StateType::End &&
 		EndReason == EndReasonType::AbortMessage)
 	{
+		bUpdateComplete = true;
 		return;
 	}
 	// If the Owner of the Coroutine is a UObject, check if that object
@@ -156,6 +159,8 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 		if (!IsValid(O))
 		{
 			End(EndReasonType::OwnerIsInvalid);
+
+			bUpdateComplete = true;
 			return;
 		}
 	}
@@ -169,6 +174,8 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 				OnAbort.Execute(this);
 			}
 			End(EndReasonType::AbortCondition);
+
+			bUpdateComplete = true;
 			return;
 		}
 	}
@@ -177,6 +184,8 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	{
 		if (EndReason == EndReasonType::EEndReason_MAX)
 			End(EndReasonType::EndOfExecution);
+
+		bUpdateComplete = true;
 		return;
 	}
 
@@ -189,7 +198,11 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 	{
 		CS_SCOPED_TIMER(CoroutineScopedTimerHandle);
 
+		bExecuteComplete = false;
+		
 		CoroutineImpl.Execute(this);
+
+		bExecuteComplete = true;
 	}
 	// Check if the Coroutine has ended naturally after
 	// the function has completed execution / reached end of scope.
@@ -201,6 +214,8 @@ void FCsRoutine::Update(const FCsDeltaTime& InDeltaTime)
 			End(EndReasonType::EndOfExecution);
 		}
 	};
+
+	bUpdateComplete = true;
 }
 
 #pragma endregion Update
@@ -219,6 +234,13 @@ void FCsRoutine::End(const EndReasonType& InEndReason)
 	{
 		OnEnd.Execute(this);
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (CS_CVAR_LOG_IS_SHOWING(LogRoutineEnd))
+	{
+		UE_LOG(LogCs, Warning, TEXT("Routine (%s %d): %s: End Reason: %s."), Group.ToChar(), Index, ToChar(), EndReasonMapType::Get().ToChar(EndReason));
+	}
+#endif // #if !UE_BUILD_SHIPPING
 
 	CS_CLEAR_SCOPED_TIMER_HANDLE(RoutineScopedTimerHandle);
 	CS_CLEAR_SCOPED_TIMER_HANDLE(CoroutineScopedTimerHandle);
@@ -257,6 +279,9 @@ void FCsRoutine::Reset()
 
 	Name = nullptr;
 	Name_Internal = NAME_None;
+
+	bUpdateComplete = false;
+	bExecuteComplete = false;
 
 	EndReason = EndReasonType::EEndReason_MAX;
 	OnEnds.Reset(OnEnds.Max());

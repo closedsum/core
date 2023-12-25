@@ -17,6 +17,13 @@ TAutoConsoleVariable<int32> CsCVarLogCoroutineRunning(
 	ECVF_SetByConsole
 );
 
+TAutoConsoleVariable<int32> CsCVarLogRoutineEnd(
+	TEXT("log.routine.end"),
+	0,
+	TEXT("Log Routine End."),
+	ECVF_SetByConsole
+);
+
 // Scoped Timer
 
 TAutoConsoleVariable<int32> CsCVarLogCoroutinesScopedTimer(
@@ -47,6 +54,7 @@ namespace NCsCVarLog
 {
 	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutineTransactions, "Log Coroutine Transactions");
 	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutineRunning, "Log Coroutine Running");
+	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogRoutineEnd, "Log Routine End");
 	// Scoped Timer
 	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogCoroutinesScopedTimer, "Log Coroutines Scoped Timer");
 	CSCORE_API CS_CREATE_ENUM_STRUCT_CUSTOM(LogRoutineScopedTimer, "Log Routine Scoped Timer");
@@ -56,6 +64,7 @@ namespace NCsCVarLog
 	{
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutineTransactions, CsCVarLogCoroutineTransactions);
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutineRunning, CsCVarLogCoroutineRunning);
+		CSCORE_API CS_ADD_TO_CVAR_MAP(LogRoutineEnd, CsCVarLogRoutineEnd);
 		// Scoped Timer
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogCoroutinesScopedTimer, CsCVarLogCoroutinesScopedTimer);
 		CSCORE_API CS_ADD_TO_CVAR_MAP(LogRoutineScopedTimer, CsCVarLogRoutineScopedTimer);

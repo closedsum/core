@@ -17,7 +17,7 @@ struct CSUI_API FCsSettings_Manager_Fade
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Managers|Fade", meta = (MustImplement = "/Script.CsUI.CsManager_Fade"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Managers|Fade")
 	TSoftClassPtr<UCsManager_Fade> Class;
 
 	FCsSettings_Manager_Fade();

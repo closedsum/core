@@ -1416,7 +1416,7 @@ namespace NCsValid
 			}
 
 			template<typename ClassType, typename UInterfaceType>
-			FORCEINLINE static bool ImplementsInterfaceChecked(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName)
+			FORCEINLINE static bool ImplementsInterfaceChecked(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName)
 			{
 				checkf(A, TEXT("%s: %s is NULL."), *Context, *AName);
 
@@ -1428,7 +1428,7 @@ namespace NCsValid
 			}
 
 			template<typename ClassType, typename UInterfaceType>
-			FORCEINLINE static bool ImplementsInterface(const FString& Context, ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
+			FORCEINLINE static bool ImplementsInterface(const FString& Context, const ClassType* A, const FString& AName, const FString& InterfaceName, void(*Log)(const FString&))
 			{
 				if (!A)
 				{
@@ -2496,7 +2496,7 @@ namespace NCsValid
 // WeakObjectPtr
 #define CS_IS_WEAK_OBJ_PTR_NULL_CHECKED(__Ptr, __ObjectType)
 // TSoftObjectPtr
-#define CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(__A)
+#define CS_IS_SOFT_OBJECT_PTR_VALID_CHECKED(__A, __ObjectType)
 	// Assume const FString& Context has been defined
 #define CS_SOFT_OBJECT_PTR_GET_CHECKED(__A, __ObjectType) \
 	[] (const FString& Context, const TSoftObjectPtr<__ObjectType>& __In__##__A) \
@@ -3356,7 +3356,7 @@ namespace NCsValid
 		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return false; } \
 	}
 // Assume const FString& Context and void(Log*)(const FString&) have been defined
-#define CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(__A) \
+#define CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(__A, __ObjectType) \
 	{ \
 		static const FString __temp__str__ = #__A; \
 		if (!NCsValid::NSoftObjectPtr::FLibrary::IsValid<__ObjectType>(Context, __A, __temp__str__, Log)) { return nullptr; } \

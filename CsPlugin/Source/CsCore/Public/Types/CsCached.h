@@ -35,6 +35,11 @@ namespace NCsCached
 		extern CSCORE_API const FString RollEquals;// = TEXT("R=");
 		extern CSCORE_API const FString PitchEquals;// = TEXT("P=");
 		extern CSCORE_API const FString YawEquals;// = TEXT("Y=");
+
+		extern CSCORE_API const FString Default__;// = TEXT("Default__");
+		extern CSCORE_API const FString BP_;// = TEXT("BP_");
+		extern CSCORE_API const FString BP_Data_;// = TEXT("BP_Data_");
+		extern CSCORE_API const FString BP_ScriptData_;// = TEXT("BP_ScriptData_");
 	}
 
 	CSCORE_API FORCEINLINE const TCHAR* ToChar(bool Value)

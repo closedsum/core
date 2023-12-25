@@ -27,6 +27,8 @@ protected:
 
 	virtual void PopulateEnumMapFromSettings();
 
+	virtual void AddPropertyChange();
+
 	virtual void AddEnumToMap(const FString& Name);
 
 	virtual const FString& GetEnumStructName();
@@ -140,10 +142,57 @@ protected:
 		
 		FName Name;
 		NameInternalHandle->GetValue(Name);
+		
+		int32 Index = EnumMap::Get().Num();
 
-		const EnumStruct& Enum = EnumMap::Get().GetSafeEnum(Name);
+		// uint8
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FByteProperty::StaticClass()))
+		{
+			uint8 Value;
+			ValueHandle->GetValue(Value);
+			Index = (int32)Value;
+		}
+		// uint16
+		else
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FUInt16Property::StaticClass()))
+		{
+			uint16 Value;
+			ValueHandle->GetValue(Value);
+			Index = (int32)Value;
+		}
+		// uint32
+		else
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FUInt32Property::StaticClass()))
+		{
+			uint32 Value;
+			ValueHandle->GetValue(Value);
+			Index = (int32)Value;
+		}
+		// int32
+		else
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FIntProperty::StaticClass()))
+		{
+			ValueHandle->GetValue(Index);
+		}
 
-		OutDisplayName = Enum.GetDisplayName();
+		// If Name is Valid, Get DisplayName
+		if (EnumMap::Get().IsValidEnum(Name))
+		{
+			const EnumStruct& Enum = EnumMap::Get().GetEnum(Name);
+			OutDisplayName		   = Enum.GetDisplayName();
+		}
+		// Else, try Value
+		else
+		if (Index < EnumMap::Get().Num())
+		{
+			const EnumStruct& Enum = EnumMap::Get().GetEnumAt(Index);
+			OutDisplayName		   = Enum.GetDisplayName();
+		}
+		// Else, INVALID / NONE
+		else
+		{
+			OutDisplayName = EnumMap::Get().GetNONE().GetDisplayName();
+		}
 	}
 
 	FText GetComboBoxContent() const;

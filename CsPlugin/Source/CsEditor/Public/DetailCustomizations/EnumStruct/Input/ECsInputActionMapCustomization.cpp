@@ -21,57 +21,64 @@ namespace NCsInputActionMapCustomization
 
 #pragma endregion Cached
 
+#define CLASS_TYPE FECsInputActionMapCustomization
 #define EnumMapType EMCsInputActionMap
 #define EnumType FECsInputActionMap
 
-FECsInputActionMapCustomization::FECsInputActionMapCustomization() :
+CLASS_TYPE::CLASS_TYPE() :
 	Super()
 {
 	Init<EnumMapType, EnumType>();
 }
 
-void FECsInputActionMapCustomization::CustomPopulateEnumMap()
+void CLASS_TYPE::CustomPopulateEnumMap()
 {
 	using namespace NCsInputActionMapCustomization::NCached;
 
 	NCsInputActionMap::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
-TSharedRef<IPropertyTypeCustomization> FECsInputActionMapCustomization::MakeInstance()
+void CLASS_TYPE::AddPropertyChange()
 {
-	return MakeShareable(new FECsInputActionMapCustomization);
+	NCsInputActionMap::AddPropertyChange();
 }
 
-void FECsInputActionMapCustomization::AddEnumToMap(const FString& Name)
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
+{
+	return MakeShareable(new CLASS_TYPE);
+}
+
+void CLASS_TYPE::AddEnumToMap(const FString& Name)
 {
 	EnumMapType::Get().CreateSafe(Name, true);
 }
 
-const FString& FECsInputActionMapCustomization::GetEnumStructName()
+const FString& CLASS_TYPE::GetEnumStructName()
 {
 	return EnumMapType::Get().GetEnumName();
 }
 
-const FName& FECsInputActionMapCustomization::GetEnumStructFName()
+const FName& CLASS_TYPE::GetEnumStructFName()
 {
 	return EnumMapType::Get().GetEnumFName();
 }
 
-void FECsInputActionMapCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void CLASS_TYPE::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
 	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
-void FECsInputActionMapCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+void CLASS_TYPE::SetEnumWithDisplayName(const FString& DisplayName)
 {
 	SetEnumWithDisplayName_Internal<EnumMapType, EnumType, int32>(DisplayName);
 }
 
-void FECsInputActionMapCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void CLASS_TYPE::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
 	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
 
+#undef CLASS_TYPE
 #undef EnumMapType
 #undef EnumType
 

@@ -35,6 +35,11 @@ namespace NCsCached
 		CSCORE_API const FString RollEquals = TEXT("R=");
 		CSCORE_API const FString PitchEquals = TEXT("P=");
 		CSCORE_API const FString YawEquals = TEXT("Y=");
+
+		CSCORE_API const FString Default__ = TEXT("Default__");
+		CSCORE_API const FString BP_ = TEXT("BP_");
+		CSCORE_API const FString BP_Data_ = TEXT("BP_Data_");
+		CSCORE_API const FString BP_ScriptData_ = TEXT("BP_ScriptData_");
 	}
 
 	namespace Ref

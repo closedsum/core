@@ -271,6 +271,21 @@ bool FCsCoroutineSchedule::End(const FCsRoutineHandle& Handle)
 	{
 		FCsRoutine* R = Container->Get();
 
+		// If the Routine has already Ended, exit
+		if (R->HasEnded() ||
+			R->HasJustEnded())
+		{
+			return false;
+		}
+
+		// If the Routine is currently being Updated, queue the End for either the
+		// beginning of the next Update or the end of the current Update.
+		if (!R->IsUpdateComplete())
+		{
+			QueueEndHandles.Add(Handle);
+			return false;
+		}
+
 		typedef NCsCoroutine::EEndReason EndReasonType;
 
 		R->End(EndReasonType::Manual);
@@ -305,6 +320,14 @@ bool FCsCoroutineSchedule::HasJustEnded(const FCsRoutineHandle& Handle) const
 
 void FCsCoroutineSchedule::Update(const FCsDeltaTime& DeltaTime)
 {
+	// End any pending Handles requested for End from the previous Update
+	for (const FCsRoutineHandle& Handle : QueueEndHandles)
+	{
+		End(Handle);
+	}
+
+	QueueEndHandles.Reset(QueueEndHandles.Max());
+
 	TCsDoubleLinkedList<RoutineResourceType*>* Current = Manager_Routine.GetAllocatedHead();
 	TCsDoubleLinkedList<RoutineResourceType*>* Next    = Current;
 
@@ -342,6 +365,14 @@ void FCsCoroutineSchedule::Update(const FCsDeltaTime& DeltaTime)
 			Manager_Routine.Deallocate(RoutineContainer);
 		}
 	}
+
+	// End any Handles requested for End on the current Update
+	for (const FCsRoutineHandle& Handle : QueueEndHandles)
+	{
+		End(Handle);
+	}
+
+	QueueEndHandles.Reset(QueueEndHandles.Max());
 }
 
 #pragma endregion Update

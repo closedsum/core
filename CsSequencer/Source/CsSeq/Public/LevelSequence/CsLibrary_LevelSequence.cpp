@@ -441,60 +441,80 @@ namespace NCsLevelSequence
 		// Player
 		#pragma region
 
-		FFrameRate FLibrary::GetFrameRateChecked(const FString& Context, ALevelSequenceActor* Sequence)
+		ULevelSequencePlayer* FLibrary::GetPlayerChecked(const FString& Context, ALevelSequenceActor* Sequence)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Sequence)
 
 			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
 
 			CS_IS_PENDING_KILL_CHECKED(Player)
+			return Player;
+		}
 
-			return Player->GetFrameRate();
+		ULevelSequencePlayer* FLibrary::GetSafePlayer(const FString& Context, ALevelSequenceActor* Sequence, bool& OutSuccess, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			CS_IS_PENDING_KILL_RET_NULL(Sequence)
+
+			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
+
+			CS_IS_PENDING_KILL_RET_NULL(Player)
+			return Player;
+		}
+
+		#define SequencePlayerLibrary NCsLevelSequence::NPlayer::FLibrary
+
+		void FLibrary::PlayFromStartChecked(const FString& Context, ALevelSequenceActor* Sequence)
+		{
+			SequencePlayerLibrary::PlayFromStartChecked(Context, GetPlayerChecked(Context, Sequence));
+		}
+
+		bool FLibrary::SafePlayFromStart(const FString& Context, ALevelSequenceActor* Sequence, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
+		{
+			return SequencePlayerLibrary::SafePlayFromStart(Context, GetSafePlayer(Context, Sequence, Log), Log);
+		}
+
+		#undef SequencePlayerLibrary
+
+		FFrameRate FLibrary::GetFrameRateChecked(const FString& Context, ALevelSequenceActor* Sequence)
+		{
+			return GetPlayerChecked(Context, Sequence)->GetFrameRate();
 		}
 
 		bool FLibrary::GetSafeFrameRate(const FString& Context, ALevelSequenceActor* Sequence, FFrameRate& OutFrameRate, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 		{
-			CS_IS_PENDING_KILL(Sequence)
+			OutFrameRate = FFrameRate();
 
-			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
-
-			CS_IS_PENDING_KILL(Player)
-
-			OutFrameRate = Player->GetFrameRate();
-			return true;
+			if (ULevelSequencePlayer* Player = GetSafePlayer(Context, Sequence, Log))
+			{
+				OutFrameRate = Player->GetFrameRate();
+				return true;
+			}
+			return false;
 		}
 
 		void FLibrary::SetPlaybackPositionFrameZeroChecked(const FString& Context, ALevelSequenceActor* Sequence)
 		{
-			CS_IS_PENDING_KILL_CHECKED(Sequence)
-
-			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
-
-			CS_IS_PENDING_KILL_CHECKED(Player)
-
 			FMovieSceneSequencePlaybackParams Params;
 			Params.Frame = FFrameTime();
 			Params.PositionType = EMovieScenePositionType::Frame;
 			Params.UpdateMethod = EUpdatePositionMethod::Jump;
 
-			Player->SetPlaybackPosition(Params);
+			GetPlayerChecked(Context, Sequence)->SetPlaybackPosition(Params);
 		}
 
 		bool FLibrary::SetSafePlaybackPositionFrameZero(const FString& Context, ALevelSequenceActor* Sequence, void(*Log)(const FString&) /*=&NCsSequencer::FLog::Warning*/)
 		{
-			CS_IS_PENDING_KILL(Sequence)
+			if (ULevelSequencePlayer* Player = GetSafePlayer(Context, Sequence, Log))
+			{
+				FMovieSceneSequencePlaybackParams Params;
+				Params.Frame = FFrameTime();
+				Params.PositionType = EMovieScenePositionType::Frame;
+				Params.UpdateMethod = EUpdatePositionMethod::Jump;
 
-			ULevelSequencePlayer* Player = Sequence->GetSequencePlayer();
-
-			CS_IS_PENDING_KILL(Player)
-
-			FMovieSceneSequencePlaybackParams Params;
-			Params.Frame = FFrameTime();
-			Params.PositionType = EMovieScenePositionType::Frame;
-			Params.UpdateMethod = EUpdatePositionMethod::Jump;
-
-			Player->SetPlaybackPosition(Params);
-			return true;
+				Player->SetPlaybackPosition(Params);
+				return true;
+			}
+			return false;
 		}
 
 		#pragma endregion Player
@@ -622,7 +642,7 @@ namespace NCsLevelSequence
 		// Play
 		#pragma region
 
-		void FLibrary::PlayFromStart(const FString& Context, ULevelSequencePlayer* Player)
+		void FLibrary::PlayFromStartChecked(const FString& Context, ULevelSequencePlayer* Player)
 		{
 			CS_IS_PENDING_KILL_CHECKED(Player)
 

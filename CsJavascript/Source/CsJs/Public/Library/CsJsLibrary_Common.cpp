@@ -8,12 +8,9 @@
 #include "Types/CsTypes_Macro.h"
 // Library
 #include "Library/CsLibrary_Valid.h"
-
-#if WITH_EDITOR
 // Javascript
 #include "JavascriptIsolate.h"
 #include "JavascriptContext.h"
-#endif // #if WITH_EDITOR
 
 namespace NCsJs
 {
@@ -36,8 +33,6 @@ namespace NCsJs
 				}
 			}
 		}
-
-	#if WITH_EDITOR
 
 		void FLibrary::SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor)
 		{
@@ -129,7 +124,5 @@ namespace NCsJs
 				UE_LOG(LogCsJs, Warning, TEXT("NCsJs::NCommon::FLibrary::RunFile: Failed to Run File: %s. Error: %s."), *FileName, *Error);
 			}
 		}
-
-	#endif // #if WITH_EDITOR
 	}
 }

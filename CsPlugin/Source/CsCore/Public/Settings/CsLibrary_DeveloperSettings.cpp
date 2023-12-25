@@ -5,14 +5,56 @@
 #include "Settings/CsLibrary_DeveloperSettings.h"
 #include "CsCore.h"
 
+// Library
+#include "Library/CsLibrary_Valid.h"
 // Settings
 #include "Settings/CsDeveloperSettings.h"
+// Interface
+#include "SourceControl/Tool/CsGetSourceControlTool.h"
+// Engine
+#include "Engine/Engine.h"
 
 namespace NCsCore
 {
 	namespace NSettings
 	{
+		namespace NLibrary
+		{
+			namespace NCached
+			{
+				namespace Str
+				{
+					CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCore::NSettings::FLibrary, TryUpdateDefaultConfigFile);
+				}
+			}
+		}
+
 		UCsDeveloperSettings* FLibrary::Get() { return GetMutableDefault<UCsDeveloperSettings>(); }
+
+		#define USING_NS_CACHED using namespace NCsCore::NSettings::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsCore::NSettings::NLibrary::NCached; \
+			const FString& Context = Str::##__FunctionName
+
+		bool FLibrary::TryUpdateDefaultConfigFile() 
+		{ 
+			SET_CONTEXT(TryUpdateDefaultConfigFile);
+
+			typedef NCsSourceControl::NTool::FImpl SourceControlToolType;
+
+			ICsGetSourceControlTool* GetSourceControlTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetSourceControlTool);
+			SourceControlToolType* SourceControlTool	  = GetSourceControlTool->GetSourceControlTool(); 
+			
+			SourceControlTool->CheckOutFileImpl(Get()->GetDefaultConfigFilename(), false);
+
+			return Get()->TryUpdateDefaultConfigFile();
+		}
+
+		// Enum
+		#pragma region
+		
+		TMap<FName, FCsEnumStructLayoutHistory>& FLibrary::GetEnumStructlayoutHistoryMap() { return Get()->EnumStructlayoutHistoryMap; }
+
+		#pragma endregion Enum
 
 		// Data
 		#pragma region
@@ -73,5 +115,8 @@ namespace NCsCore
 		const FString& FLibrary::GetSettingsEnumPath_VertexAnimNotify()							{ return NCsDeveloperSettings::NCached::Str::VertexAnimNotify; }
 
 		#pragma endregion Anim
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
 	}
 }

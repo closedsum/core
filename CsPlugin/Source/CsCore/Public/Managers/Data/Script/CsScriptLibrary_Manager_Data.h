@@ -46,6 +46,58 @@ public:
 
 #pragma endregion Data
 
+	// ScriptData
+#pragma region
+public:
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param EntryName			Row Name in the master Script Data list.
+	* return					Script Data as UObject.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,EntryName"))
+	static UObject* GetScriptDataObject(const FString& Context, const UObject* WorldContextObject, const FName& EntryName);
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param EntryName			Row Name in the master Script Data list.
+	* @param OutSuccess			(out)
+	* return					Script Data as UObject.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (DisplayName = "Get Script Data as Object (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,EntryName"))
+	static UObject* GetScriptDataObjectChecked(const FString& Context, const UObject* WorldContextObject, const FName& EntryName, bool& OutSuccess);
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Path				Soft path to a Script Data.
+	* return					Script Data as UObject.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
+	static UObject* GetScriptDataObjectByPath(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Path				Soft path to a Script Data.
+	* @param OutSuccess			(out)
+	* return					Script Data as UObject.
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Data", meta = (DisplayName = "Get Script Data Object by Path (Checked)", WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,Path"))
+	static UObject* GetScriptDataObjectByPathChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, bool& OutSuccess);
+
+#pragma endregion ScriptData
+
 	// DataTable
 #pragma region
 public:

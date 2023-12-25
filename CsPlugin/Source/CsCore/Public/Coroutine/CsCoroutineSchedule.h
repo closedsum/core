@@ -163,7 +163,7 @@ public:
 public:
 
 	/**
-	*
+	* End all routines.
 	*/
 	bool End();
 
@@ -172,7 +172,8 @@ public:
 	*
 	* @param Handle		Handle to a routine.
 	* return			Whether the routine has successful ended.
-	*					NOTE: If the routine has already ended, this will return false.
+	*					NOTE: If the routine has already ended or send to queued to end, 
+	*						  this will return false.
 	*/
 	bool End(const FCsRoutineHandle& Handle);
 
@@ -192,6 +193,14 @@ public:
 	* return			Whether the routine has just ended.
 	*/
 	bool HasJustEnded(const FCsRoutineHandle& Handle) const;
+
+private:
+
+	/** Handles to End either beginning of the next Update or the end of the
+		current Update.
+		NOTE: This list is populated when a Routine is currently being Executed and
+			  requested to End. */
+	TArray<FCsRoutineHandle> QueueEndHandles;
 
 #pragma endregion End
 

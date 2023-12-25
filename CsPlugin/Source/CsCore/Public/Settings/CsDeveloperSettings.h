@@ -8,10 +8,12 @@
 #include "Types/Enum/CsUserDefinedEnum.h"
 #include "Settings/CsTypes_Settings.h"
 #include "Settings/CsTypes_Settings_Enum.h"
+#include "Types/Enum/CsEnumStructLayoutHistory.h"
 #include "Data/CsTypes_DataRootSet.h"
 #include "Types/CsTypes_Platform.h"
 // Data
 #include "Managers/Data/CsSettings_Manager_Data.h"
+#include "Data/CsSettings_Data.h"
 // Load
 #include "Managers/Load/CsSettings_Manager_Load.h"
 // Runnable
@@ -83,13 +85,22 @@ public:
 	template<typename EnumType>
 	const FString& GetSettingsEnumPath() const;
 
+	UPROPERTY(config, VisibleAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	TMap<FName, FCsEnumStructLayoutHistory> EnumStructlayoutHistoryMap;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	bool bEnumStructLayoutResolveChanges;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Enum")
+	bool bForceEnumStructLayoutResolveChanges;
+
 #pragma endregion Enum
 
 // Data
 #pragma region
 public:
 
-	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (MustImplement = "/Script.CsCore.CsDataRootSet"))
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (MustImplement = "/Script/CsCore.CsDataRootSet"))
 	TSoftClassPtr<UObject> DataRootSet;
 
 	UObject* LoadDataRootSetChecked(const FString& Context);
@@ -113,6 +124,9 @@ public:
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "Manager Data"))
 	FCsSettings_Manager_Data Manager_Data;
+
+	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data")
+	FCsSettings_Data Data;
 
 	UPROPERTY(config, EditAnywhere, BlueprintReadOnly, Category = "Settings|Data", meta = (DisplayName = "On Editor Startup: Load DataRootSets[Windows]"))
 	bool bOnEditorStartup_LoadDataRootSet;

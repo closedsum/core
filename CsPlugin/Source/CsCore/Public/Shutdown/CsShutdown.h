@@ -21,4 +21,6 @@ class CSCORE_API ICsShutdown
 public:
 
 	virtual void Shutdown() = 0;
+
+	virtual bool HasShutdown() const = 0;
 };

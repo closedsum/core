@@ -46,14 +46,32 @@ namespace NCsBlueprint
 	#pragma region
 	public:
 
+		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static UBlueprintGeneratedClass* GetSafeClass(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
+		static UBlueprintGeneratedClass* GetSafeClass(UObject* Blueprint);
+
+		static UObject* GetSafeClassDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UObject* GetSafeClassDefaultObject(const FString& Context, UObject* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UObject* GetSafeClassDefaultObject(UObject* Blueprint);
+
+		static UObject* GetSafeDefaultObject(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static UObject* GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UObject* GetSafeDefaultObject(const FString& Context, UObject* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static UObject* GetSafeDefaultObject(UObject* Blueprint);
 
 	#pragma endregion Get
 
 	// Is
 	#pragma region
+
+		static bool Is(const UObject* Object);
 
 		static bool SafeIs(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
 

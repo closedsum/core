@@ -36,6 +36,9 @@ UCsScriptLibrary_AnimInstance::UCsScriptLibrary_AnimInstance(const FObjectInitia
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryAnimInstance::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryAnimInstance::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
 #define AnimInstanceLibrary NCsAnimInstance::FLibrary
 
 // Load
@@ -43,31 +46,29 @@ UCsScriptLibrary_AnimInstance::UCsScriptLibrary_AnimInstance(const FObjectInitia
 
 UAnimBlueprint* UCsScriptLibrary_AnimInstance::LoadBySoftObjectPath(const FString& Context, const FSoftObjectPath& Path)
 {
-	using namespace NCsScriptLibraryAnimInstance::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadBySoftObjectPath : Context;
+	CONDITIONAL_SET_CTXT(LoadBySoftObjectPath);
 
 	return AnimInstanceLibrary::SafeLoad(Ctxt, Path);
 }
 
 UAnimBlueprint* UCsScriptLibrary_AnimInstance::LoadByStringPath(const FString& Context, const FString& Path)
 {
-	using namespace NCsScriptLibraryAnimInstance::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadByStringPath : Context;
+	CONDITIONAL_SET_CTXT(LoadByStringPath);
 
 	return AnimInstanceLibrary::SafeLoad(Ctxt, Path);
 }
 
 UAnimBlueprintGeneratedClass* UCsScriptLibrary_AnimInstance::LoadAndGetGeneratedClassByStringPath(const FString& Context, const FString& Path)
 {
-	using namespace NCsScriptLibraryAnimInstance::NCached;
+	CONDITIONAL_SET_CTXT(LoadAndGetGeneratedClassByStringPath);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadAndGetGeneratedClassByStringPath : Context;
-
+#if WITH_EDITOR
 	if (UAnimBlueprint* AnimBlueprint = AnimInstanceLibrary::SafeLoad(Ctxt, Path))
 		return AnimInstanceLibrary::GetSafeClass(Ctxt, AnimBlueprint);
 	return nullptr;
+#else
+	return AnimInstanceLibrary::GetSafeClass(Ctxt, Path);
+#endif // #if WITH_EDITOR
 }
 
 #pragma endregion Load
@@ -77,22 +78,20 @@ UAnimBlueprintGeneratedClass* UCsScriptLibrary_AnimInstance::LoadAndGetGenerated
 
 UAnimBlueprintGeneratedClass* UCsScriptLibrary_AnimInstance::GetGeneratedClass(const FString& Context, UAnimBlueprint* Blueprint)
 {
-	using namespace NCsScriptLibraryAnimInstance::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetGeneratedClass : Context;
+	CONDITIONAL_SET_CTXT(GetGeneratedClass);
 
 	return AnimInstanceLibrary::GetSafeClass(Ctxt, Blueprint);
 }
 
 UAnimBlueprintGeneratedClass* UCsScriptLibrary_AnimInstance::GetClassByPath(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryAnimInstance::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::GetClassByPath : Context;
+	CONDITIONAL_SET_CTXT(GetClassByPath);
 
 	return AnimInstanceLibrary::GetSafeClass(Context, Object, Path, OutSuccess);
 }
 
 #pragma endregion Get
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
 #undef AnimInstanceLibrary

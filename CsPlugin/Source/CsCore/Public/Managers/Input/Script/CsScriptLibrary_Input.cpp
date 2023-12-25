@@ -6,7 +6,7 @@
 
 // Library
 #include "Managers/Input/CsLibrary_Input.h"
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "Library/CsLibrary_Valid.h"
 // Log
 #include "Utility/CsLog.h"

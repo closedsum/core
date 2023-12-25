@@ -1,12 +1,11 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
+#pragma once
 // Types
-#include "Managers/Time/CsTypes_Time.h"
-#include "Managers/Time/CsTypes_Update.h"
+#include "Managers/Time/CsManager_Time_Delegates.h"
 // Log
 #include "Utility/CsLog.h"
-#pragma once
 
 class UObject;
 class UCsManager_Time;
@@ -190,6 +189,8 @@ namespace NCsTime
 
 		#pragma endregion Update
 
+		// Time
+		#pragma region
 		public:
 
 			/**
@@ -266,6 +267,32 @@ namespace NCsTime
 			static void SetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale);
 
 			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Scale
+			*/
+			static void SetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale);
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
+			* @param Scale
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SetSafeScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
 			*
 			*
 			* @param Context		The calling context.
@@ -296,8 +323,43 @@ namespace NCsTime
 			*						or
 			*						A reference to the GameInstance.
 			* @param Group
+			* @param Log			(optional)
+			* return
+			*/
+			static bool SafeResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) = &FCsLog::Warning);
+
+			/**
+			* Resets the Scale (to 1.0f) applied to the delta time for the specified Group.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid)
+			*						or
+			*						A reference to the GameInstance.
+			* @param Group
 			*/
 			static void ResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group);
+
+		#pragma endregion Time
+
+		// Events
+		#pragma region
+		public:
+
+		#define OnUpdateEventType NCsTime::NManager::FOnUpdate
+		#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
+		#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
+
+			static OnUpdateEventType& GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject);
+
+			static OnSetScaledDeltaTimeEventType& GetChecked_OnSetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject);
+
+			static OnResetScaledDeltaTimeEventType& GetChecked_OnResetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject);
+
+		#undef OnUpdateEventType
+		#undef OnSetScaledDeltaTimeEventType
+		#undef OnResetScaledDeltaTimeEventType
+
+		#pragma endregion Events
 		};
 	}
 }

@@ -7,7 +7,7 @@
 // Types
 #include "Types/CsTypes_Macro.h"
 // Library
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "Library/CsLibrary_Valid.h"
 // Managers
 #include "Managers/Input/CsManager_Input.h"
@@ -34,6 +34,9 @@ namespace NCsInput
 			}
 		}
 
+		#define USING_NS_CACHED using namespace NCsInput::NManager::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NLibrary::NCached; \
+			const FString& Context = Str::##__FunctionName
 		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
 
 		// Get
@@ -48,9 +51,7 @@ namespace NCsInput
 
 		UCsManager_Input* FLibrary::GetFirstChecked(UWorld* World)
 		{
-			using namespace NCsInput::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetFirstChecked;
+			SET_CONTEXT(GetFirstChecked);
 
 			return GetFirstChecked(Context, World);
 		}
@@ -64,9 +65,7 @@ namespace NCsInput
 
 		UCsManager_Input* FLibrary::GetFirstChecked(const UObject* WorldContext)
 		{
-			using namespace NCsInput::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetFirstChecked;
+			SET_CONTEXT(GetFirstChecked);
 
 			return GetFirstChecked(Context, WorldContext);
 		}
@@ -89,9 +88,7 @@ namespace NCsInput
 
 		UCsManager_Input* FLibrary::GetSafeFirst(UWorld* World)
 		{
-			using namespace NCsInput::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetFirstChecked;
+			SET_CONTEXT(GetFirstChecked);
 
 			return GetSafeFirst(Context, World, nullptr);
 		}
@@ -114,9 +111,7 @@ namespace NCsInput
 
 		UCsManager_Input* FLibrary::GetSafeFirst(const UObject* WorldContext)
 		{
-			using namespace NCsInput::NManager::NLibrary::NCached;
-
-			const FString& Context = Str::GetFirstChecked;
+			SET_CONTEXT(GetFirstChecked);
 
 			return GetSafeFirst(Context, WorldContext, nullptr);
 		}
@@ -199,18 +194,14 @@ namespace NCsInput
 
 		UCsManager_Input* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
-
-			APlayerController* PC = PlayerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
+			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
 
 			return GetChecked(Context, PC);
 		}
 
 		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
-
-			APlayerController* PC = PlayerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
+			APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log);
 
 			if (!PC)
 				return nullptr;
@@ -220,9 +211,7 @@ namespace NCsInput
 
 		UCsManager_Input* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerLibrary;
-
-			APlayerController* PC = PlayerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, OutSuccess, Log);
+			APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, OutSuccess, Log);
 
 			if (!PC)
 				return nullptr;
@@ -304,6 +293,10 @@ namespace NCsInput
 			return Count > CS_EMPTY;
 		}
 
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef PlayerControllerLibrary
+
 		namespace NInputActionMap
 		{
 			namespace NLibrary
@@ -320,6 +313,11 @@ namespace NCsInput
 				}
 			}
 
+			#define USING_NS_CACHED using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
+			#define SET_CONTEXT(__FunctionName) using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached; \
+				const FString& Context = Str::##__FunctionName
+			#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+
 			// Set
 			#pragma region
 
@@ -328,32 +326,26 @@ namespace NCsInput
 
 			void FLibrary::SetFirstChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
-
-				Manager_Input->SetCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, World)->SetCurrentInputActionMap(Context, Map);
 			}
 
 			void FLibrary::SetFirstChecked(UWorld* World, const FECsInputActionMap& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::SetFirstChecked;
+				SET_CONTEXT(SetFirstChecked);
 
 				SetFirstChecked(Context, World, Map);
 			}
 
 			void FLibrary::SetFirstChecked(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
-
-				Manager_Input->SetCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, WorldContext)->SetCurrentInputActionMap(Context, Map);
 			}	
 
 			bool FLibrary::SetSafeFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, WorldContext, Log))
+				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log))
 				{
 					Manager_Input->SetCurrentInputActionMap(Map);
 					return true;
@@ -363,53 +355,47 @@ namespace NCsInput
 
 			bool FLibrary::SetSafeFirst(const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::SetSafeFirst;
+				SET_CONTEXT(SetSafeFirst);
 
 				return SetSafeFirst(Context, WorldContext, Map, nullptr);
 			}
 
 			void FLibrary::SetFirstChecked(const FString& Context, UWorld* World, const int32& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
-
-				Manager_Input->SetCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, World)->SetCurrentInputActionMap(Context, Map);
 			}
 
 			void FLibrary::SetFirstChecked(UWorld* World, const int32& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::SetFirstChecked;
+				SET_CONTEXT(SetFirstChecked);
 
 				SetFirstChecked(Context, World, Map);
 			}
 
-			void FLibrary::SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+			bool FLibrary::SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				CS_IS_INT_GREATER_THAN_EXIT(Map, 0)
+				CS_IS_INT_GREATER_THAN(Map, 0)
 
-				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, World, Log))
+				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
 				{
 					Manager_Input->SetCurrentInputActionMap(Map);
+					return true;
 				}
+				return false;
 			}
 
 			#pragma endregion First
 
 			void FLibrary::SetChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-				Manager_Input->SetCurrentInputActionMap(Context, Map);
+				GetManagerChecked(Context, PC)->SetCurrentInputActionMap(Context, Map);
 			}
 
 			bool FLibrary::SetSafe(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafe(Context, PC, Log);
+				UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -466,16 +452,12 @@ namespace NCsInput
 
 			void FLibrary::ClearFirstChecked(const FString& Context, UWorld* World, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
-
-				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, World)->ClearCurrentInputActionMap(Context, Map);
 			}
 
 			void FLibrary::ClearFirstChecked(UWorld* World, const FECsInputActionMap& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::ClearFirstChecked;
+				SET_CONTEXT(ClearFirstChecked);
 
 				ClearFirstChecked(Context, World, Map);
 			}
@@ -484,7 +466,7 @@ namespace NCsInput
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(World))
+				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
 				{
 					Manager_Input->ClearCurrentInputActionMap(Map);
 					return true;
@@ -494,25 +476,21 @@ namespace NCsInput
 
 			bool FLibrary::SafeClearFirst(UWorld* World, const FECsInputActionMap& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::SafeClearFirst;
+				SET_CONTEXT(SafeClearFirst);
 
 				return SafeClearFirst(Context, World, Map, nullptr);
 			}
 
 			void FLibrary::ClearFirstChecked(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
-
-				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, WorldContext)->ClearCurrentInputActionMap(Context, Map);
 			}
 			
 			bool FLibrary::SafeClearFirst(const FString& Context, const UObject* WorldContext, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, WorldContext, Log);
+				UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -523,16 +501,12 @@ namespace NCsInput
 
 			void FLibrary::ClearFirstChecked(const FString& Context, UWorld* World, const int32& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
-
-				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, World)->ClearCurrentInputActionMap(Context, Map);
 			}
 
 			void FLibrary::ClearFirstChecked(UWorld* World, const int32& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::ClearFirstChecked;
+				SET_CONTEXT(ClearFirstChecked);
 
 				ClearFirstChecked(Context, World, Map);
 			}
@@ -541,7 +515,7 @@ namespace NCsInput
 			{
 				CS_IS_INT_GREATER_THAN(Map, 0)
 
-				if (UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, World, Log))
+				if (UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, World, Log))
 				{
 					Manager_Input->ClearCurrentInputActionMap(Map);
 					return true;
@@ -551,34 +525,28 @@ namespace NCsInput
 
 			bool FLibrary::SafeClearFirst(UWorld* World, const int32& Map)
 			{
-				using namespace NCsInput::NManager::NInputActionMap::NLibrary::NCached;
-
-				const FString& Context = Str::SafeClearFirst;
+				SET_CONTEXT(SafeClearFirst);
 
 				return SafeClearFirst(Context, World, Map, nullptr);
 			}
 
 			void FLibrary::ClearFirstChecked(const FString& Context, const UObject* WorldContext, const int32& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
-
-				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				GetFirstManagerChecked(Context, WorldContext)->ClearCurrentInputActionMap(Context, Map);
 			}
 
 			#pragma endregion First
 
 			void FLibrary::ClearChecked(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-				Manager_Input->ClearCurrentInputActionMap(Context, Map);
+				GetManagerChecked(Context, PC)->ClearCurrentInputActionMap(Context, Map);
 			}
 
 			bool FLibrary::SafeClear(const FString& Context, APlayerController* PC, const FECsInputActionMap& Map, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
 				CS_IS_ENUM_STRUCT_VALID(EMCsInputActionMap, FECsInputActionMap, Map)
 
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafe(Context, PC, Log);
+				UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -609,9 +577,7 @@ namespace NCsInput
 
 				for (APlayerController* PC : PlayerControllers)
 				{
-					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-					Manager_Input->ClearCurrentInputActionMap(Context, Map);
+					GetManagerChecked(Context, PC)->ClearCurrentInputActionMap(Context, Map);
 				}
 			}
 
@@ -623,9 +589,7 @@ namespace NCsInput
 
 				for (APlayerController* PC : PlayerControllers)
 				{
-					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-					Manager_Input->ClearCurrentInputActionMap(Context, Map);
+					GetManagerChecked(Context, PC)->ClearCurrentInputActionMap(Context, Map);
 				}
 			}
 
@@ -643,21 +607,17 @@ namespace NCsInput
 
 			void FLibrary::ResetFirstChecked(const FString& Context, UWorld* World)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, World);
-
-				Manager_Input->ResetCurrentInputActionMap();
+				GetFirstManagerChecked(Context, World)->ResetCurrentInputActionMap();
 			}
 
 			void FLibrary::ResetFirstChecked(const FString& Context, const UObject* WorldContext)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetFirstChecked(Context, WorldContext);
-
-				Manager_Input->ResetCurrentInputActionMap();
+				GetFirstManagerChecked(Context, WorldContext)->ResetCurrentInputActionMap();
 			}
 
 			bool FLibrary::SafeResetFirst(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafeFirst(Context, WorldContext, Log);
+				UCsManager_Input* Manager_Input = GetSafeFirstManager(Context, WorldContext, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -668,14 +628,12 @@ namespace NCsInput
 
 			void FLibrary::ResetChecked(const FString& Context, APlayerController* PC)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-				Manager_Input->ResetCurrentInputActionMap();
+				GetManagerChecked(Context, PC)->ResetCurrentInputActionMap();
 			}
 
 			bool FLibrary::SafeReset(const FString& Context, APlayerController* PC, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 			{
-				UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafe(Context, PC, Log);
+				UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 				if (!Manager_Input)
 					return false;
@@ -692,9 +650,7 @@ namespace NCsInput
 
 				for (APlayerController* PC : PlayerControllers)
 				{
-					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-					Manager_Input->ResetCurrentInputActionMap();
+					GetManagerChecked(Context, PC)->ResetCurrentInputActionMap();
 				}
 			}
 
@@ -706,9 +662,7 @@ namespace NCsInput
 
 				for (APlayerController* PC : PlayerControllers)
 				{
-					UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetChecked(Context, PC);
-
-					Manager_Input->ResetCurrentInputActionMap();
+					GetManagerChecked(Context, PC)->ResetCurrentInputActionMap();
 				}
 			}
 
@@ -720,7 +674,7 @@ namespace NCsInput
 				{
 					for (APlayerController* PC : PlayerControllers)
 					{
-						UCsManager_Input* Manager_Input = NCsInput::NManager::FLibrary::GetSafe(Context, PC, Log);
+						UCsManager_Input* Manager_Input = GetSafeManager(Context, PC, Log);
 
 						if (!Manager_Input)
 							return false;
@@ -747,9 +701,11 @@ namespace NCsInput
 			}
 
 			#pragma endregion Reset
-		}
 
-		#undef PlayerControllerLibrary
+			#undef USING_NS_CACHED
+			#undef SET_CONTEXT
+			#undef PlayerControllerLibrary
+		}
 
 		namespace NProfile
 		{

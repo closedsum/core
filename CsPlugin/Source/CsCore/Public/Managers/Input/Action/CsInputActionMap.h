@@ -36,8 +36,25 @@ namespace NCsInputActionMap
 	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
 	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
 	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
+	FORCEINLINE void GetNames(FName& OutEnumName, TArray<FName>& OutNames)
+	{
+		OutEnumName = EnumMapType::Get().GetEnumFName();
+
+		OutNames.Reset(FMath::Max(OutNames.Max(), EnumMapType::Get().Num()));
+
+		for (const Type& E : EnumMapType::Get())
+		{
+			OutNames.Add(E.GetFName());
+		}
+	}
+	FORCEINLINE UStruct* GetStruct() { return Type::StaticStruct(); }
+
+	FORCEINLINE bool HasDataTable() { return false; }
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
+	CSCORE_API void ConditionalAddLayout();
+	CSCORE_API void AddPropertyChange();
 }
 
 // FCsInputActionMapRule

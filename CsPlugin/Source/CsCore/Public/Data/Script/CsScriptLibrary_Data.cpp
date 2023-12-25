@@ -31,6 +31,9 @@ UCsScriptLibrary_Data::UCsScriptLibrary_Data(const FObjectInitializer& ObjectIni
 {
 }
 
+#define USING_NS_CACHED using namespace NCsScriptLibraryData::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryData::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
 #define DataLibrary NCsData::FLibrary
 
 // ICsScriptData
@@ -38,13 +41,13 @@ UCsScriptLibrary_Data::UCsScriptLibrary_Data(const FObjectInitializer& ObjectIni
 
 bool UCsScriptLibrary_Data::Script_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess)
 {
-	using namespace NCsScriptLibraryData::NCached;
-
-	const FString& Ctxt = Context.IsEmpty() ? Str::Script_Load : Context;
+	CONDITIONAL_SET_CTXT(Script_Load);
 
 	return DataLibrary::SafeScript_Load(Ctxt, Object, LoadFlags, OutSuccess);
 }
 
 #pragma endregion ICsScriptData
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
 #undef DataLibrary

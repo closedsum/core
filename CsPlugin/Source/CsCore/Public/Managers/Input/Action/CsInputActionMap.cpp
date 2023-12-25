@@ -8,6 +8,7 @@
 	// Settings
 #include "Settings/CsLibrary_DeveloperSettings.h"
 // Utility
+#include "Utility/CsPopulateEnumMapFromSettings.h"
 #include "Utility/CsLog.h"
 
 namespace NCsInputActionMap
@@ -16,6 +17,8 @@ namespace NCsInputActionMap
 	{
 		namespace Str
 		{
+			const FString ConditionalAddLayout = TEXT("NCsInputActionMap::ConditionalAddLayout");
+
 			const FString InputActionMap = TEXT("InputActionMap");
 		}
 	}
@@ -42,4 +45,26 @@ namespace NCsInputActionMap
 
 		EnumSettingsLibrary::Populate(Context, Payload);
 	}
+
+	#define LayoutLibrary NCsEnum::NStruct::NLayout::FLibrary
+
+	void ConditionalAddLayout()
+	{
+		using namespace NCsInputActionMap::NCached;
+
+		const FString& Context = Str::ConditionalAddLayout;
+
+		FName EnumName;
+		TArray<FName> Names;
+		GetNames(EnumName, Names);
+		LayoutLibrary::ConditionalAddLayout(EnumName, Names, nullptr);
+	}
+
+	void AddPropertyChange()
+	{
+		ConditionalAddLayout();
+		LayoutLibrary::AddPropertyChange(EMCsInputActionMap::Get().GetEnumFName(), FECsInputActionMap::StaticStruct());
+	}
+
+	#undef LayoutLibrary
 }

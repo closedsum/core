@@ -15,20 +15,35 @@
 
 namespace NCsBlueprint
 {
+	namespace NLibrary
+	{
+		namespace NCached
+		{
+			namespace Str
+			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsBlueprint::FLibrary, GetSafeClass);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsBlueprint::FLibrary, GetSafeClassDefaultObject);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsBlueprint::FLibrary, GetSafeDefaultObject);
+			}
+		}
+	}
+
+	#define USING_NS_CACHED using namespace NCsBlueprint::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsBlueprint::NLibrary::NCached; \
+		const FString& Context = Str::##__FunctionName
+	#define NO_LOG void(*Log)(const FString&) = nullptr;
+	#define ObjectLibrary NCsObject::FLibrary
+
 	// Load
 	#pragma region
 
 	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
 
 	UBlueprint* FLibrary::SafeLoad(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsObject::FLibrary ObjectLibrary;
-
 		return ObjectLibrary::SafeLoad<UBlueprint>(Context, Path, Log);
 	}
 
@@ -37,20 +52,16 @@ namespace NCsBlueprint
 	// Get
 	#pragma region
 
-	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		CS_IS_PTR_NULL_CHECKED(Blueprint)
+		CS_IS_STRING_EMPTY_RET_NULL(Path)
 
-		TSoftObjectPtr<UBlueprint> Bp(Blueprint);
+		FString ClassPath = Path;
 
-		FString Path = Bp.ToSoftObjectPath().ToString();
+		if (!ClassPath.EndsWith(NCsCached::Str::_C))
+			ClassPath.Append(NCsCached::Str::_C);
 
-		if (!Path.EndsWith(NCsCached::Str::_C))
-			Path.Append(NCsCached::Str::_C);
-
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
+		UObject* O = ObjectLibrary::SafeLoad(Context, ClassPath, Log);
 
 		if (!O)
 			return nullptr;
@@ -59,25 +70,76 @@ namespace NCsBlueprint
 
 		if (!BpGC)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get BlueprintGeneratedClass from Blueprint: %s with Class: %s."), *Context, *(Blueprint->GetName()), *(Blueprint->GetClass()->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get BlueprintGeneratedClass from Path: %s."), *Context, *ClassPath));
+			return nullptr;
 		}
 		return (UBlueprintGeneratedClass*)(O);
 	}
 
-	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	UBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_PTR_NULL_CHECKED(Blueprint)
 
-		TSoftObjectPtr<UBlueprint> Bp(Blueprint);
+		UBlueprintCore* BpC = CS_CAST(Blueprint, UBlueprint, UBlueprintCore);
 
-		FString Path = Bp.ToSoftObjectPath().ToString();
+		if (!BpC)
+			return nullptr;
 
-		if (!Path.EndsWith(NCsCached::Str::_C))
-			Path.Append(NCsCached::Str::_C);
+		UClass* Class = BpC->GeneratedClass.Get();
 
-		typedef NCsObject::FLibrary ObjectLibrary;
+		if (!Class)
+			return nullptr;
+		return CS_CAST(Class, UClass, UBlueprintGeneratedClass);
+	}
 
-		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
+	UBlueprintGeneratedClass* FLibrary::GetSafeClass(UObject* Blueprint)
+	{
+		SET_CONTEXT(GetSafeClass);
+
+		NO_LOG
+		return GetSafeClass(Context, CS_CAST(Blueprint, UObject, UBlueprint), nullptr);
+	}
+
+	UObject* FLibrary::GetSafeClassDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (UBlueprintGeneratedClass* BpGC = GetSafeClass(Context, Blueprint, Log))
+		{
+			UObject* DOb = BpGC->GetDefaultObject();
+
+			if (!DOb)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object from Class: %s."), *Context, *(BpGC->GetName())));
+				return nullptr;
+			}
+			return DOb;
+		}
+		return nullptr;
+	}
+
+	UObject* FLibrary::GetSafeClassDefaultObject(const FString& Context, UObject* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_CHECKED(Blueprint)
+
+		return GetSafeClassDefaultObject(Context, CS_CAST(Blueprint, UObject, UBlueprint), Log);
+	}
+
+	UObject* FLibrary::GetSafeClassDefaultObject(UObject* Blueprint)
+	{
+		SET_CONTEXT(GetSafeClassDefaultObject);
+
+		return GetSafeClassDefaultObject(Context, Blueprint, nullptr);
+	}
+
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_STRING_EMPTY_RET_NULL(Path)
+
+		FString ClassPath = Path;
+
+		if (!ClassPath.EndsWith(NCsCached::Str::_C))
+			ClassPath.Append(NCsCached::Str::_C);
+
+		UObject* O = ObjectLibrary::SafeLoad(Context, ClassPath, Log);
 
 		if (!O)
 			return nullptr;
@@ -91,15 +153,48 @@ namespace NCsBlueprint
 
 		if (!DOb)
 		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object from Blueprint: %s with Class: %s."), *Context, *(Blueprint->GetName()), *(Blueprint->GetClass()->GetName())));
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get Default Object from Blueprint: %s."), *Context, *ClassPath));
+			return nullptr;
 		}
 		return DOb;
+	}
+
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_CHECKED(Blueprint)
+
+		TSoftObjectPtr<UBlueprint> Bp(Blueprint);
+
+		FString Path = Bp.ToSoftObjectPath().ToString();
+
+		if (!Path.EndsWith(NCsCached::Str::_C))
+			Path.Append(NCsCached::Str::_C);
+		return GetSafeDefaultObject(Context, Path, Log);
+	}
+
+	UObject* FLibrary::GetSafeDefaultObject(const FString& Context, UObject* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL_CHECKED(Blueprint)
+
+		return GetSafeDefaultObject(Context, CS_CAST(Blueprint, UObject, UBlueprint), Log);
+	}
+
+	UObject* FLibrary::GetSafeDefaultObject(UObject* Blueprint)
+	{
+		SET_CONTEXT(GetSafeDefaultObject);
+
+		return GetSafeDefaultObject(Context, Blueprint, nullptr);
 	}
 
 	#pragma endregion Get
 
 	// Is
 	#pragma region
+
+	bool FLibrary::Is(const UObject* Object)
+	{
+		return Cast<UBlueprint>(Object) != nullptr;
+	}
 
 	bool FLibrary::SafeIs(const FString& Context, const UObject* Object, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
@@ -128,5 +223,10 @@ namespace NCsBlueprint
 		return true;
 	}
 
-	#pragma endregion
+	#pragma endregion Is
+	
+	#undef USING_NS_CACHED
+	#undef SET_CONTEXT
+	#undef NO_LOG
+	#undef ObjectLibrary
 }

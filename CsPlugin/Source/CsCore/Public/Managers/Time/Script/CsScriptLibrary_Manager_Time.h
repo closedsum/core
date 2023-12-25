@@ -27,7 +27,7 @@ public:
 	* @param Group
 	* return					Whether the pause was successfully executed or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group"))
 	static bool Pause(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
 
 	/**
@@ -38,11 +38,13 @@ public:
 	* @param Group
 	* return					Whether the unpause was successfully executed or not.
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group"))
 	static bool Unpause(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
 
 #pragma endregion Pause
 
+// Time
+#pragma region
 public:
 
 	/**
@@ -53,7 +55,7 @@ public:
 	* @param Group
 	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group"))
 	static FCsTime GetTime(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
 
 	/**
@@ -64,6 +66,31 @@ public:
 	* @param Group
 	* return
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Context,WorldContextObject,Group"))
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group"))
 	static FCsDeltaTime GetTimeSinceStart(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
+
+	/**
+	*
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* @param Scale
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group,Scale"))
+	static bool SetScaledDeltaTime(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group, const float& Scale);
+
+	/**
+	*
+	*
+	* @param Context			The calling context.
+	* @param WorldContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+	* @param Group
+	* return
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CsCore|Library|Manager|Time", meta = (WorldContext = "WorldContextObject", CallableWithoutWorldContext, AutoCreateRefTerm = "Context,Group"))
+	static bool ResetScaledDeltaTime(const FString& Context, const UObject* WorldContextObject, const FECsUpdateGroup& Group);
+
+#pragma endregion Time
 };

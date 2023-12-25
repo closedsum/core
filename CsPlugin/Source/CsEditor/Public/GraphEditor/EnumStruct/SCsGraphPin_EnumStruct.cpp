@@ -30,7 +30,9 @@ void SCsGraphPin_EnumStruct::Construct(const FArguments& InArgs, UEdGraphPin* In
 	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 }
 
-void SCsGraphPin_EnumStruct::CustomPopulateEnumMap(){}
+void SCsGraphPin_EnumStruct::CustomPopulateEnumMap() {}
+
+void SCsGraphPin_EnumStruct::AddPropertyChange() {}
 
 TSharedRef<SWidget>	SCsGraphPin_EnumStruct::GetDefaultValueWidget()
 {

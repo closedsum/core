@@ -28,6 +28,15 @@ struct FCsScript_FileInfo
 	{
 	}
 
+	bool IsValidChecked(const FString& Context) const
+	{
+		if (bEnable)
+		{
+			checkf(!Entry.IsEmpty(), TEXT("%s: Entry is Empty"), *Context);
+		}
+		return true;
+	}
+
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		if (bEnable)
@@ -74,6 +83,15 @@ struct FCsScriptInfo
 		return false;
 	}
 
+	bool IsValidChecked(const FString& Context) const 
+	{
+		for (const FCsScript_FileInfo& FileInfo : FileInfos)
+		{
+			check(FileInfo.IsValidChecked(Context));
+		}
+		return true;
+	}
+
 	bool IsValid(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning) const
 	{
 		for (const FCsScript_FileInfo& FileInfo : FileInfos)
@@ -82,5 +100,10 @@ struct FCsScriptInfo
 				return false;
 		}
 		return true;
+	}
+
+	FORCEINLINE bool HasFileInfo(const int32& Index) const
+	{
+		return FileInfos.Num() > Index && FileInfos[Index].bEnable;
 	}
 };

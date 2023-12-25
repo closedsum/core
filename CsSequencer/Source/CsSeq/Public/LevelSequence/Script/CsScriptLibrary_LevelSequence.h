@@ -76,6 +76,12 @@ public:
 #pragma region
 public:
 
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequenceActor", meta = (AutoCreateRefTerm = "Context"))
+	static bool PlayFromStart(const FString& Context, ALevelSequenceActor* Sequence);
+
+	UFUNCTION(BlueprintCallable, Category = "CsSeq|Library|LevelSequenceActor", meta = (DisplayName = "Play From Start (Checked)", AutoCreateRefTerm = "Context"))
+	static void PlayFromStartChecked(const FString& Context, ALevelSequenceActor* Sequence, bool& OutSuccess);
+
 	/**
 	* Set the current time of the player by evaluating from the current time to frame 0, as if the sequence is playing.
 	* Triggers events that lie within the evaluated range. Does not alter the persistent playback status of the player (IsPlaying).

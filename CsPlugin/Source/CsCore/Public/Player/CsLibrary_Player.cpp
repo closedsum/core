@@ -1,7 +1,7 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "CsCore.h"
 
 // Types
@@ -20,8 +20,6 @@
 #include "GameFramework/Pawn.h"
 // Game
 #include "Engine/GameInstance.h"
-// Camera
-#include "Camera/PlayerCameraManager.h"
 // Engine
 #include "Engine/Engine.h"
 
@@ -39,10 +37,10 @@ namespace NCsPlayer
 		}
 	}
 
+	#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 	ULocalPlayer* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
 	{
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 		UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
 		ULocalPlayer* LocalPlayer   = GameInstance->GetFirstGamePlayer();
 
@@ -53,8 +51,6 @@ namespace NCsPlayer
 
 	ULocalPlayer* FLibrary::GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 		UGameInstance* GameInstance = GameInstanceLibrary::GetSafe(Context, WorldContext, Log);
 
 		if (!GameInstance)
@@ -82,8 +78,6 @@ namespace NCsPlayer
 	{
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_CHECKED(Index, 0)
 
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 		UGameInstance* GameInstance = GameInstanceLibrary::GetChecked(Context, WorldContext);
 		ULocalPlayer* LocalPlayer   = GameInstance->GetLocalPlayerByIndex(Index);
 
@@ -95,8 +89,6 @@ namespace NCsPlayer
 	ULocalPlayer* FLibrary::GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& Index, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
 		CS_IS_INT_GREATER_THAN_OR_EQUAL_RET_NULL(Index, 0)
-
-		typedef NCsGameInstance::FLibrary GameInstanceLibrary;
 
 		UGameInstance* GameInstance = GameInstanceLibrary::GetSafe(Context, WorldContext, Log);
 
@@ -121,6 +113,8 @@ namespace NCsPlayer
 		return GetSafeLocal(Context, WorldContext, Index, nullptr);
 	}
 
+	#undef GameInstanceLibrary
+
 	namespace NController
 	{
 		namespace NLibrary
@@ -138,6 +132,8 @@ namespace NCsPlayer
 				}
 			}
 		}
+
+		#define WorldLibrary NCsWorld::FLibrary
 
 		APlayerController* FLibrary::GetFirstLocal(const FString& Context, UWorld* World)
 		{
@@ -184,8 +180,6 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetFirstLocalChecked(const FString& Context, const UObject* WorldContext)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			return GetFirstLocalChecked(Context, World);
@@ -193,8 +187,6 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetSafeFirstLocal(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) /*=&FCsLog::Warning*/) 
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 			return GetSafeFirstLocal(Context, World, Log);
@@ -239,8 +231,6 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetLocalChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			return GetLocalChecked(Context, World, ControllerId);
@@ -248,8 +238,6 @@ namespace NCsPlayer
 
 		APlayerController* FLibrary::GetSafeLocal(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
@@ -278,8 +266,6 @@ namespace NCsPlayer
 		{
 			OutSuccess = false;
 
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
@@ -305,8 +291,7 @@ namespace NCsPlayer
 			OutSuccess = true;
 			return PC;
 		}
-			
-
+		
 		APlayerController* FLibrary::GetSafeLocal(const UObject* WorldContext, const int32& ControllerId)
 		{
 			using namespace NCsPlayer::NController::NLibrary::NCached;
@@ -387,8 +372,6 @@ namespace NCsPlayer
 
 		void FLibrary::GetAllLocalChecked(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
 
 			GetAllLocalChecked(Context, World, OutControllers);
@@ -396,8 +379,6 @@ namespace NCsPlayer
 
 		bool FLibrary::GetSafeAllLocal(const FString& Context, const UObject* WorldContext, TArray<APlayerController*>& OutControllers, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			if (UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log))
 			{
 				return GetSafeAllLocal(Context, World, OutControllers, Log);
@@ -464,6 +445,8 @@ namespace NCsPlayer
 
 			return PC->PlayerCameraManager;
 		}
+
+		#undef WorldLibrary
 	}
 
 	namespace NState
@@ -476,10 +459,10 @@ namespace NCsPlayer
 			}
 		}
 
+		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+
 		APlayerState* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
 				return PC->PlayerState;
 			return nullptr;
@@ -487,8 +470,6 @@ namespace NCsPlayer
 
 		APlayerState* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, World);
 			APlayerState* PS	  = PC->PlayerState;
 
@@ -503,6 +484,8 @@ namespace NCsPlayer
 				return false;
 			return PlayerState == GetFirstLocal(World);
 		}
+
+		#undef PlayerControllerLibrary
 	}
 	
 	namespace NPawn
@@ -515,10 +498,10 @@ namespace NCsPlayer
 			}
 		}
 
+		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+
 		APawn* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
 				return PC->GetPawn();
 			return nullptr;
@@ -526,8 +509,6 @@ namespace NCsPlayer
 
 		APawn* FLibrary::GetFirstLocalChecked(const FString& Context, UWorld* World)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC = PlayerControllerLibrary::GetFirstLocalChecked(Context, World);
 			APawn* P			  = PC->GetPawn();
 
@@ -551,14 +532,16 @@ namespace NCsPlayer
 				return true;
 			return false;
 		}
+
+		#undef PlayerControllerLibrary
 	}
 
 	namespace NInput
 	{
+		#define PlayerControllerLibrary NCsPlayer::NController::FLibrary
+
 		UPlayerInput* FLibrary::GetFirstLocal(UWorld* World)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
 				return PC->PlayerInput;
 			return nullptr;
@@ -566,8 +549,6 @@ namespace NCsPlayer
 
 		UPlayerInput* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			APlayerController* PC	  = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
 			UPlayerInput* PlayerInput = PC->PlayerInput;
 
@@ -578,8 +559,6 @@ namespace NCsPlayer
 
 		UPlayerInput* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			if (APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log))
 			{
 				UPlayerInput* PlayerInput = PC->PlayerInput;
@@ -593,8 +572,6 @@ namespace NCsPlayer
 
 		bool FLibrary::CanGetSafe(const FString& Context, const UObject* WorldContext, const int32& ControllerId, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
 			if (APlayerController* PC = PlayerControllerLibrary::GetSafeLocal(Context, WorldContext, ControllerId, Log))
 			{
 				UPlayerInput* PlayerInput = PC->PlayerInput;
@@ -605,6 +582,8 @@ namespace NCsPlayer
 			}
 			return false;
 		}
+
+		#undef PlayerControllerLibrary
 	}
 	
 	namespace NHud
@@ -616,56 +595,6 @@ namespace NCsPlayer
 			if (APlayerController* PC = PlayerControllerLibrary::GetFirstLocal(World))
 				return PC->MyHUD;
 			return nullptr;
-		}
-	}
-
-	namespace NCamera
-	{
-		APlayerCameraManager* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
-		{
-			typedef NCsPlayer::NController::FLibrary PlayerControllerLibrary;
-
-			APlayerController* PC = PlayerControllerLibrary::GetLocalChecked(Context, WorldContext, ControllerId);
-
-			checkf(PC->PlayerCameraManager, TEXT("%s: Player Controller: %s has NO Player Camera Manager."), *Context, *(PC->GetName()));
-
-			return PC->PlayerCameraManager;
-		}
-
-		FVector3f FLibrary::GetActorLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
-		{
-			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
-
-			typedef NCsMath::FLibrary MathLibrary;
-
-			return MathLibrary::Convert(Cast<AActor>(PCM)->GetActorLocation());
-		}
-
-		FVector3f FLibrary::GetLocationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId)
-		{
-			typedef NCsMath::FLibrary MathLibrary;
-
-			return MathLibrary::Convert(GetChecked(Context, WorldContext, ControllerId)->GetCameraLocation());
-		}
-
-		void FLibrary::GetLocationAndRotationChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FRotator3f& OutRotation)
-		{
-			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
-
-			typedef NCsMath::FLibrary MathLibrary;
-
-			OutLocation = MathLibrary::Convert(PCM->GetCameraLocation());
-			OutRotation = MathLibrary::Convert(PCM->GetCameraRotation());
-		}
-
-		void FLibrary::GetLocationAndDirectionChecked(const FString& Context, const UObject* WorldContext, const int32& ControllerId, FVector3f& OutLocation, FVector3f& OutDirection)
-		{
-			APlayerCameraManager* PCM = GetChecked(Context, WorldContext, ControllerId);
-
-			typedef NCsMath::FLibrary MathLibrary;
-
-			OutLocation  = MathLibrary::Convert(PCM->GetCameraLocation());
-			OutDirection = MathLibrary::Convert(PCM->GetCameraRotation().Vector());
 		}
 	}
 }

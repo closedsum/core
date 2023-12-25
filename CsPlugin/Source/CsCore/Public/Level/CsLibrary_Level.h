@@ -11,6 +11,7 @@ class ULevel;
 class UWorld;
 class UObject;
 class ALevelScriptActor;
+struct FCsPayload;
 
 namespace NCsLevel
 {
@@ -18,6 +19,8 @@ namespace NCsLevel
 	{
 		struct CSCORE_API FLibrary final
 		{
+		// Get
+		#pragma region
 		public:
 
 			/**
@@ -69,6 +72,8 @@ namespace NCsLevel
 			* return		Level
 			*/
 			static ULevel* GetSafe(const UObject* WorldContext);
+
+		#pragma endregion Get
 
 		// Name
 		#pragma region
@@ -482,6 +487,16 @@ namespace NCsLevel
 			}
 
 		#pragma endregion SetupData
+
+		// ICsGetLevelPayload
+		#pragma region
+		public:
+
+			static void GetPayloadAndLevelNameChecked(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName);
+
+			static bool GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		#pragma endregion ICsGetLevelPayload
 		};
 	}
 }

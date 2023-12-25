@@ -23,7 +23,7 @@ struct CSCORE_API FCsSettings_Manager_Sound_PoolParams
 public:
 
 	/** The class of the pooled Sound. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script.CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
 	TSoftClassPtr<UObject> Class; 
 	/** The maximum size of the pool. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (ClampMin = "4", UIMin = "4"))
@@ -77,7 +77,7 @@ struct CSCORE_API FCsSettings_Manager_Sound
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script.CsCore.CsManager_Sound"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound")
 	TSoftClassPtr<UCsManager_Sound> Class;
 
 	/** Mapping between Update Groups, the "tick" / update group, and Sound types. This
@@ -118,13 +118,13 @@ public:
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsSoundPooled */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script.CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script.CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script.CsCore.CsSoundPooled"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Sound", meta = (MustImplement = "/Script/CsCore.CsSoundPooled"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_Sound_UnitTest() :

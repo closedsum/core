@@ -2,6 +2,8 @@
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
 #pragma once
+// Types
+#include "Managers/Data/CsManager_Data_Delegates.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -10,6 +12,7 @@ class UCsManager_Data;
 class ICsData;
 class UDataTable;
 class UScriptStruct;
+struct FCsPayload;
 
 namespace NCsData
 {
@@ -227,6 +230,77 @@ namespace NCsData
 			static UObject* GetSafeDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		#pragma endregion Data
+
+			// ScriptData
+		#pragma region
+		public:
+
+			/**
+			* Get a Script Data by the Data's Entry Name.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param EntryName		Row Name in the master Script Data list.
+			* return				Script Data as UObject.
+			*/
+			static UObject* GetScriptDataObjectChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName);
+
+			/**
+			* Safely get a Script Data by SoftObjectPath.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param EntryName		Row Name in the master Script Data list.
+			* @param Log			(optional)
+			* return				Script Data as UObject.
+			*/
+			static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UObject* Object = GetSafeScriptDataObject(Context, ContextObject, EntryName, Log);
+				OutSuccess		= Object != nullptr;
+				return Object;
+			}
+
+			/**
+			* Get a Script Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft path to a Script Data.
+			* return
+			*/
+			static UObject* GetScriptDataObjectChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path);
+
+			/**
+			* Get a Script Data by SoftObjectPath.
+			* Check against the current loaded datas.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param Path			Soft path to a Script Data.
+			* @param Log			(optional)
+			* return
+			*/
+			static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+			FORCEINLINE static UObject* GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, bool& OutSuccess, void(*Log)(const FString&) = &FCsLog::Warning)
+			{
+				UObject* Object = GetSafeScriptDataObject(Context, ContextObject, Path, Log);
+				OutSuccess		= Object != nullptr;
+				return Object;
+			}
+
+		#pragma endregion ScriptData
 
 			// DataTabe
 		#pragma region
@@ -452,7 +526,65 @@ namespace NCsData
 
 		#pragma endregion Data
 
+			// Payload
+		#pragma region
+		public:
+
+			/**
+			* 
+			* 
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param PayloadName
+			*/
+			static void AddPayloadChecked(const FString& Context, const UObject* ContextRoot, const FName& PayloadName, const FCsPayload* Payload);
+
+		#pragma endregion Payload
+
 		#pragma endregion Add
+
+		// Load
+		#pragma region
+		
+			// Payload
+		#pragma region
+		public:
+
+		#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+			
+			/**
+			* Asynchronous load a Payload by Payload Name.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param PayloadName	Name of the Payload to async load.
+			* @param Delegate		Delegate called synchronously (on the Game Thread) 
+			*						when the async load completes.
+			*/
+			static void AsyncLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate);
+
+			/**
+			* Asynchronous load a Payload by Payload Name.
+			*
+			* @param Context		The calling context.
+			* @param ContextObject	Object that contains a reference to a World (GetWorld() is Valid).
+			*						or
+			*						A reference to the GameInstance.
+			* @param PayloadName	Name of the Payload to async load.
+			* @param Delegate		Delegate called synchronously (on the Game Thread) 
+			*						when the async load completes.
+			*/
+			static void AsyncAddAndLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const FCsPayload* Payload, OnAsyncLoadPayloadCompleteType Delegate);
+
+		#undef OnAsyncLoadPayloadCompleteType
+
+		#pragma endregion Payload
+			
+		#pragma endregion Load
 		};
 	}
 }

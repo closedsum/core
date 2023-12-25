@@ -6,6 +6,7 @@
 
 // Library
 #include "Library/Load/CsLibrary_Load.h"
+#include "Library/CsLibrary_Valid.h"
 // Log
 #include "Utility/CsLog.h"
 
@@ -25,37 +26,36 @@ UCsScriptLibrary_Load::UCsScriptLibrary_Load(const FObjectInitializer& ObjectIni
 	: Super(ObjectInitializer)
 {
 }
-	
+
+#define USING_NS_CACHED using namespace NCsScriptLibraryLoad::NCached;
+#define CONDITIONAL_SET_CTXT(__FunctionName) using namespace NCsScriptLibraryLoad::NCached; \
+	const FString& Ctxt = Context.IsEmpty() ? Str::##__FunctionName : Context
+#define LogWarning void(*Log)(const FString&) = &FCsLog::Warning
 #define LoadLibrary UCsLibrary_Load
 
-void UCsScriptLibrary_Load::LoadObject(const FString& Context, UObject* Object, const int32& LoadFlags, const int32& LoadCodes)
+bool UCsScriptLibrary_Load::LoadObject(const FString& Context, UObject* Object, const int32& LoadFlags, const int32& LoadCodes)
 {
-	using namespace NCsScriptLibraryLoad::NCached;
+	CONDITIONAL_SET_CTXT(LoadObject);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadObject : Context;
-
-	if (!Object)
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: Object is NULL."), *Ctxt);
-		return;
-	}
+	LogWarning;
+	CS_IS_PTR_NULL2(Object)
 
 	LoadLibrary::LoadStruct(Object, Object->GetClass(), LoadFlags, LoadCodes);
+	return true;
 }
 
 UObject* UCsScriptLibrary_Load::LoadSoftClassPtr(const FString& Context, const TSoftClassPtr<UObject>& SoftClass, const int32& LoadFlags, const int32& LoadCodes)
 {
-	using namespace NCsScriptLibraryLoad::NCached;
+	CONDITIONAL_SET_CTXT(LoadSoftClassPtr);
 
-	const FString& Ctxt = Context.IsEmpty() ? Str::LoadSoftClassPtr : Context;
-
-	if (!SoftClass.ToSoftObjectPath().IsValid())
-	{
-		UE_LOG(LogCs, Warning, TEXT("%s: SoftClass is NOT NULL."), *Ctxt);
-		return nullptr;
-	}
+	LogWarning;
+	// TODO: Add CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL2
+	CS_IS_SOFT_CLASS_PTR_VALID_RET_NULL(SoftClass, UObject)
 
 	return LoadLibrary::LoadSoftClassPtrChecked(Context, SoftClass, LoadFlags, LoadCodes);
 }
 
+#undef USING_NS_CACHED
+#undef CONDITIONAL_SET_CTXT
+#undef LogWarning
 #undef LoadLibrary

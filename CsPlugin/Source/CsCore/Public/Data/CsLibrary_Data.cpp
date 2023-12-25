@@ -16,18 +16,27 @@
 
 namespace NCsData
 {
-	namespace NCached
+	namespace NLibrary
 	{
-		namespace Str
+		namespace NCached
 		{
-			CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
-		}
+			namespace Str
+			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeLoad);
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsData::FLibrary, SafeImplements);
+			}
 
-		namespace Name
-		{
-			const FName Script_Load = FName("Script_Load");
+			namespace Name
+			{
+				const FName Script_Load = FName("Script_Load");
+			}
 		}
 	}
+
+	#define USING_NS_CACHED using namespace NCsData::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsData::NLibrary::NCached; \
+		const FString& Context = Str::##__FunctionName
+	#define DataManagerLibrary NCsData::NManager::FLibrary
 
 	FString FLibrary::PrintObjectAndClass(UObject* Object)
 	{
@@ -73,9 +82,7 @@ namespace NCsData
 
 	DataType* FLibrary::SafeLoad(UObject* Object)
 	{
-		using namespace NCached;
-
-		const FString& Context = Str::SafeLoad;
+		SET_CONTEXT(SafeLoad);
 
 		return SafeLoad(Context, Object, nullptr);
 	}
@@ -88,7 +95,7 @@ namespace NCsData
 	
 	bool FLibrary::SafeScript_Load(const FString& Context, UObject* Object, const int32& LoadFlags, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		using namespace NCsData::NCached;
+		USING_NS_CACHED
 
 		OutSuccess = false;
 
@@ -104,7 +111,14 @@ namespace NCsData
 				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the Function: %s."), *Context, *PrintObjectAndClass(Object), *(Name::Script_Load.ToString())));
 				return false;
 			}
-			return ICsScriptData::Execute_Script_Load(Object, LoadFlags, OutSuccess);
+			
+			const bool Result = ICsScriptData::Execute_Script_Load(Object, LoadFlags, OutSuccess);
+
+			if (!OutSuccess)
+			{
+				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the Function: %s."), *Context, *PrintObjectAndClass(Object), *(Name::Script_Load.ToString())));
+			}
+			return Result;
 		}
 		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: %s does NOT implement the interface: ICsScriptData."), *Context, *PrintObjectAndClass(Object)));
 		return true;
@@ -181,6 +195,13 @@ namespace NCsData
 		return Success;
 	}
 
+	bool FLibrary::SafeImplements(const UObject* Object)
+	{
+		SET_CONTEXT(SafeImplements);
+
+		return SafeImplements(Context, Object, nullptr);
+	}
+
 	#undef ObjectLibrary
 
 	#pragma endregion Implment
@@ -211,20 +232,15 @@ namespace NCsData
 
 	DataType* FLibrary::GetChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
 	{
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		ICsData* UData = DataManagerLibrary::GetDataChecked(Context, WorldContext, DataName);
 		DataType* Data = UData->_getIData();
 
 		checkf(Data, TEXT("%s: Failed to get data of type: DataType (NCsData::IData) from %s."), *Context, *(PrintObjectAndClass(UData)));
-
 		return Data;
 	}
 
 	DataType* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, const FName& DataName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		if (ICsData* UData = DataManagerLibrary::GetSafeData(Context, WorldContext, DataName, Log))
 		{
 			DataType* Data = UData->_getIData();
@@ -260,5 +276,33 @@ namespace NCsData
 
 	#undef DataType
 
+		// Script
+	#pragma region
+
+	UObject* FLibrary::GetScriptChecked(const FString& Context, const UObject* WorldContext, const FName& DataName)
+	{
+		UObject* UData = DataManagerLibrary::GetScriptDataObjectChecked(Context, WorldContext, DataName);
+		
+		check(ScriptImplementsChecked(Context, UData));
+		return UData;
+	}
+
+	UObject* FLibrary::GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		if (UObject* UData = DataManagerLibrary::GetSafeScriptDataObject(Context, WorldContext, DataName, Log))
+		{
+			if (!SafeScriptImplements(Context, UData, Log))
+				return nullptr;
+			return UData;
+		}
+		return nullptr;
+	}
+
+	#pragma endregion Script
+
 	#pragma endregion Get
+
+	#undef USING_NS_CACHED
+	#undef SET_CONTEXT
+	#undef DataManagerLibrary
 }

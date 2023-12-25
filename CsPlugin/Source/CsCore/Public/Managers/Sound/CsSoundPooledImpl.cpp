@@ -59,6 +59,7 @@ namespace NCsSoundPooledImpl
 ACsSoundPooledImpl::ACsSoundPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
 	AudioComponent(nullptr),
+	bShutdown(false),
 	Cache(nullptr),
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
@@ -184,6 +185,7 @@ void ACsSoundPooledImpl::Shutdown()
 		delete Cache;
 		Cache = nullptr;
 	}
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

@@ -66,6 +66,18 @@ public:
 		return !IsValid(Object);
 	}
 
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Object")
+	static bool IsValidObject(UObject* Object)
+	{
+		return IsValid(Object);
+	}
+
+	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Object")
+	static bool IsValid2(UObject* Object)
+	{
+		return IsValid(Object);
+	}
+
 	UFUNCTION(BlueprintPure, Category = "CsCore|Library|Object", meta = (DisplayName = "! NULL (Checked)", CompactNodeTitle = "!NULL", Keywords = "! not null", AutoCreateRefTerm = "Context"))
 	static bool IsValidChecked(const FString& Context, UObject* Object);
 

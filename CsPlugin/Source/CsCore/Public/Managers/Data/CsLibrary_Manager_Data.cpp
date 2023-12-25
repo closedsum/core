@@ -33,6 +33,8 @@ namespace NCsData
 			}
 		}
 
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 		// ContextRoot
 		#pragma region
 
@@ -40,15 +42,11 @@ namespace NCsData
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
@@ -66,7 +64,6 @@ namespace NCsData
 		#pragma endregion ContextRoot
 
 		// Root Set
-		
 		#pragma region
 
 		UObject* FLibrary::GetDataRootSetImplChecked(const FString& Context, const UObject* ContextObject)
@@ -183,6 +180,39 @@ namespace NCsData
 
 		#pragma endregion Data
 
+			// ScriptData
+		#pragma region
+
+		UObject* FLibrary::GetScriptDataObjectChecked(const FString& Context, const UObject* ContextObject, const FName& EntryName)
+		{
+			return GetChecked(Context, ContextObject)->GetScriptDataObjectChecked(Context, EntryName);
+		}
+
+		UObject* FLibrary::GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FName& EntryName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
+			{
+				return Manager_Data->GetSafeScriptDataObject(Context, EntryName, Log);
+			}
+			return nullptr;
+		}
+
+		UObject* FLibrary::GetScriptDataObjectChecked(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path)
+		{
+			return GetChecked(Context, ContextObject)->GetScriptDataObjectChecked(Context, Path);
+		}
+
+		UObject* FLibrary::GetSafeScriptDataObject(const FString& Context, const UObject* ContextObject, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Data* Manager_Data = GetSafe(Context, ContextObject))
+			{
+				return Manager_Data->GetSafeScriptDataObject(Context, Path, Log);
+			}
+			return nullptr;
+		}
+
+		#pragma endregion ScriptData
+
 			// DataTabe
 		#pragma region
 		
@@ -236,14 +266,8 @@ namespace NCsData
 			if (!Manager_Data)
 				return nullptr;
 
-			const FSoftObjectPath& Path = SoftObject.ToSoftObjectPath();
+			CS_IS_SOFT_OBJECT_PTR_VALID_RET_NULL(SoftObject, UDataTable)
 
-			if (!Path.IsValid())
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: SoftObject is NOT Valid."), *Context));
-				return nullptr;
-			}
-		
 			return Manager_Data->GetDataTable(SoftObject);
 		}
 
@@ -328,6 +352,47 @@ namespace NCsData
 
 		#pragma endregion Data
 
+			// Payload
+		#pragma region
+		
+		void FLibrary::AddPayloadChecked(const FString& Context, const UObject* ContextRoot, const FName& PayloadName, const FCsPayload* Payload)
+		{
+			CS_IS_PTR_NULL_CHECKED(Payload)
+
+			GetChecked(Context, ContextRoot)->AddPayload(PayloadName, *Payload);
+		}
+
+		#pragma endregion Payload
+
 		#pragma endregion Add
+
+			// Load
+		#pragma region
+		
+			// Payload
+		#pragma region
+
+		#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+			
+		void FLibrary::AsyncLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate)
+		{
+			GetChecked(Context, ContextObject)->AsyncLoadPayload(PayloadName, Delegate);
+		}
+
+		void FLibrary::AsyncAddAndLoadPayloadChecked(const FString& Context, const UObject* ContextObject, const FName& PayloadName, const FCsPayload* Payload, OnAsyncLoadPayloadCompleteType Delegate)
+		{
+			CS_IS_PTR_NULL_CHECKED(Payload)
+
+			GetChecked(Context, ContextObject)->AddPayload(PayloadName, *Payload);
+			GetChecked(Context, ContextObject)->AsyncLoadPayload(PayloadName, Delegate);
+		}
+
+		#undef OnAsyncLoadPayloadCompleteType
+
+		#pragma endregion Payload
+			
+		#pragma endregion Load
+
+		#undef GameInstanceLibrary
 	}
 }

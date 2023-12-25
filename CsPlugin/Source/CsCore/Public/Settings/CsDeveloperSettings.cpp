@@ -17,6 +17,9 @@
 // Interface
 #include "Data/CsGetDataRootSet.h"
 #include "Data/Tool/CsGetDataEntryTool.h"
+#include "Types/Enum/Tool/CsGetEnumStructTool.h"
+// UI
+//#include "Framework/Application/SlateApplication.h"
 // Editor
 #include "PackageTools.h"
 // Engine
@@ -51,9 +54,14 @@ namespace NCsDeveloperSettings
 
 UCsDeveloperSettings::UCsDeveloperSettings(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// Enum
+	EnumStructlayoutHistoryMap(),
+	bEnumStructLayoutResolveChanges(false),
+	bForceEnumStructLayoutResolveChanges(false),
 	// Data
 	DataRootSet(),
 	Manager_Data(),
+	Data(),
 	bOnEditorStartup_LoadDataRootSet(false),
 	// Script
 	bEnableScriptChecked(false)
@@ -146,6 +154,21 @@ void UCsDeveloperSettings::PopulateAll(const ECsPlatform & Platform)
 				DataEntryTool->Data_PopulateImpl(RowPtr);
 			}
 		}
+		// ScriptDatas
+		if (UDataTable* ScriptDatas = CsDataRootSet.ScriptDatas)
+		{
+			const TMap<FName, uint8*>& RowMap = ScriptDatas->GetRowMap();
+
+			for (const TPair<FName, uint8*>& Pair : RowMap)
+			{
+				const FName& RowName			= Pair.Key;
+				FCsDataEntry_ScriptData* RowPtr = reinterpret_cast<FCsDataEntry_ScriptData*>(Pair.Value);
+
+				RowPtr->Name = RowName;
+
+				DataEntryTool->ScriptData_PopulateImpl(RowPtr);
+			}
+		}
 		// DataTables
 		if (UDataTable* DataTables = CsDataRootSet.DataTables)
 		{
@@ -188,6 +211,25 @@ void UCsDeveloperSettings::PostEditChangeProperty(struct FPropertyChangedEvent& 
 	const FName PropertyName	   = (e.Property != NULL) ? e.Property->GetFName() : NAME_None;
 	const FName MemberPropertyName = (e.MemberProperty != NULL) ? e.MemberProperty->GetFName() : NAME_None;
 
+	// bEnumStructLayoutResolveChanges
+	if (PropertyName == FName("bEnumStructLayoutResolveChanges"))
+	{
+		if (ICsGetEnumStructTool* GetEnumStructTool = Cast<ICsGetEnumStructTool>(GEngine))
+		{
+			GetEnumStructTool->GetEnumStructTool().ResolveLayoutChangesImpl(false);
+		}
+		bEnumStructLayoutResolveChanges = false;
+	}
+	// bForceEnumStructLayoutResolveChanges
+	if (PropertyName == FName("bForceEnumStructLayoutResolveChanges"))
+	{
+		if (ICsGetEnumStructTool* GetEnumStructTool = Cast<ICsGetEnumStructTool>(GEngine))
+		{
+			GetEnumStructTool->GetEnumStructTool().ResolveLayoutChangesImpl(true);
+		}
+		bForceEnumStructLayoutResolveChanges = false;
+	}
+	// bEnableScriptChecked
 	if (PropertyName == FName("bEnableScriptChecked"))
 	{
 		ApplyEnableScriptChecked();
@@ -356,6 +398,23 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 								Datas->MarkPackageDirty();
 								ObjectsToSave.Add(Datas);
 							}
+							// ScriptDatas
+							if (UDataTable* ScriptDatas = CsDataRootSet.ScriptDatas)
+							{
+								const TMap<FName, uint8*>& RowMap = ScriptDatas->GetRowMap();
+
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName			= Pair.Key;
+									FCsDataEntry_ScriptData* RowPtr = reinterpret_cast<FCsDataEntry_ScriptData*>(Pair.Value);
+
+									RowPtr->Name = RowName;
+
+									DataEntryTool->ScriptData_PopulateImpl(RowPtr);
+								}
+								ScriptDatas->MarkPackageDirty();
+								ObjectsToSave.Add(ScriptDatas);
+							}
 							// DataTables
 							if (UDataTable* DataTables = CsDataRootSet.DataTables)
 							{
@@ -431,6 +490,27 @@ void UCsDeveloperSettings::PostEditChangeChainProperty(FPropertyChangedChainEven
 								}
 								Datas->MarkPackageDirty();
 								ObjectsToSave.Add(Datas);
+							}
+							// ScriptDatas
+							if (UDataTable* ScriptDatas = CsDataRootSet.ScriptDatas)
+							{
+								const TMap<FName, uint8*>& RowMap = ScriptDatas->GetRowMap();
+
+								for (const TPair<FName, uint8*>& Pair : RowMap)
+								{
+									const FName& RowName = Pair.Key;
+
+									if (Set.DataRowsToPopulate.Find(RowName))
+									{
+										FCsDataEntry_ScriptData* RowPtr = reinterpret_cast<FCsDataEntry_ScriptData*>(Pair.Value);
+
+										RowPtr->Name = RowName;
+
+										RowPtr->Populate();
+									}
+								}
+								ScriptDatas->MarkPackageDirty();
+								ObjectsToSave.Add(ScriptDatas);
 							}
 							// DataTables
 							if (UDataTable* DataTables = CsDataRootSet.DataTables)

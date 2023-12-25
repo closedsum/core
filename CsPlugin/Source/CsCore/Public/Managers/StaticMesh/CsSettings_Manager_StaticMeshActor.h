@@ -15,7 +15,7 @@ struct CSCORE_API FCsSettings_Manager_StaticMeshActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script.CsCore.CsStaticMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script/CsCore.CsStaticMeshActor"))
 	TSoftClassPtr<UObject> Class;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (ClampMin = "4", UIMin = "4"))
@@ -76,13 +76,13 @@ public:
 	FSoftObjectPath Map;
 
 	/** Native class that implements the interfaces: ICsPooledObject, ICsUpdate, and ICsStaticMeshActor */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script.CsCore.CsStaticMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script/CsCore.CsStaticMeshActor"))
 	TSoftClassPtr<UObject> ClassA;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script.CsCore.CsStaticMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script/CsCore.CsStaticMeshActor"))
 	TSoftClassPtr<UObject> ClassB;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script.CsCore.CsStaticMeshActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Managers|Static Mesh", meta = (MustImplement = "/Script/CsCore.CsStaticMeshActor"))
 	TSoftClassPtr<UObject> ClassC;
 
 	FCsSettings_Manager_StaticMeshActor_UnitTest() :

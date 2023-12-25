@@ -69,6 +69,11 @@ UCsManager_Fade::UCsManager_Fade(const FObjectInitializer& ObjectInitializer)
 {
 }
 
+#define USING_NS_CACHED using namespace NCsManagerFade::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerFade::NCached; \
+	const FString& Context = Str::##__FunctionName
+#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
+
 // Singleton
 #pragma region
 
@@ -226,9 +231,7 @@ void UCsManager_Fade::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Fade::CreateFadeWidget()
 {
-	using namespace NCsManagerFade::NCached;
-
-	const FString& Context = Str::CreateFadeWidget;
+	SET_CONTEXT(CreateFadeWidget);
 
 	if (IsValid(FadeWidget))
 	{
@@ -267,13 +270,10 @@ void UCsManager_Fade::CreateFadeWidget()
 void UCsManager_Fade::Fade(const ParamsType& Params)
 {
 #undef ParamsType
-	using namespace NCsManagerFade::NCached;
-
-	const FString& Context = Str::Fade;
+	SET_CONTEXT(Fade);
 
 	CS_IS_VALID_CHECKED(Params);
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
@@ -318,9 +318,7 @@ void UCsManager_Fade::Fade(const ParamsType& Params)
 
 char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 {
-	using namespace NCsManagerFade::NCached;
-
-	const FString& Context = Str::Fade_Internal;
+	SET_CONTEXT(Fade_Internal);
 
 	CS_COROUTINE_READ_FLAG_START
 	CS_COROUTINE_READ_FLOAT_START
@@ -387,9 +385,7 @@ char UCsManager_Fade::Fade_Internal(FCsRoutine* R)
 void UCsManager_Fade::SafeFade(const ParamsType& Params)
 {
 #undef ParamsType
-	using namespace NCsManagerFade::NCached;
-
-	const FString& Context = Str::SafeFade;
+	SET_CONTEXT(SafeFade);
 
 	void(*Log)(const FString&) = &FCsLog::Warning;
 
@@ -425,9 +421,7 @@ void UCsManager_Fade::SafeFade(const ParamsType& Params)
 
 void UCsManager_Fade::StopFade()
 {
-	using namespace NCsManagerFade::NCached;
-
-	const FString& Context = Str::StopFade;
+	SET_CONTEXT(StopFade);
 
 #if !UE_BUILD_SHIPPING
 	if (CS_CVAR_LOG_IS_SHOWING(LogManagerFade))
@@ -435,8 +429,6 @@ void UCsManager_Fade::StopFade()
 		UE_LOG(LogCsUI, Warning, TEXT("%s: Stopping Fade"), *Context);
 	}
 #endif // #if !UE_BUILD_SHIPPING
-
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 
@@ -448,3 +440,7 @@ void UCsManager_Fade::ClearFade()
 	StopFade();
 	FadeWidget->SetVisibility(ESlateVisibility::Collapsed);
 }
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef CoroutineSchedulerLibrary

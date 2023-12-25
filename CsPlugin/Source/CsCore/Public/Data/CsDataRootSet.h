@@ -51,6 +51,9 @@ public:
 	UDataTable* Datas;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
+	UDataTable* ScriptDatas;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
 	UDataTable* DataTables;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsCore|Data")
@@ -63,6 +66,7 @@ public:
 		ExitMap(),
 		StartupPayload(NAME_None),
 		Datas(nullptr),
+		ScriptDatas(nullptr),
 		DataTables(nullptr),
 		Payloads(nullptr)
 	{
@@ -86,6 +90,7 @@ public:
 	enum class EMember : uint8
 	{
 		Datas,
+		ScriptDatas,
 		DataTables,
 		Payloads
 	};
@@ -101,8 +106,6 @@ public:
 		return GetDataTableSoftObjectChecked(Context, FCsDataRootSet::GetMember(MemberName));
 	}
 
-	UDataTable* GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
-
 	UDataTable* GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
 
 	UDataTable* GetDataTableChecked(const FString& Context, const EMember& MemberType) const;
@@ -112,25 +115,22 @@ public:
 		return GetDataTableChecked(Context, FCsDataRootSet::GetMember(MemberName));
 	}
 
-	template<typename RowStructType>
-	RowStructType* GetSafeDataTableRow(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&)) const
+	UDataTable* GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const;
+
+	UDataTable* GetSafeDataTable(const FString& Context, const EMember& MemberType) const;
+
+	FORCEINLINE UDataTable* GetSafeDataTable(const FString& Context, const FName& MemberName) const
 	{
-		if (UDataTable* DataTable = GetSafeDataTable(Context, WorldContext, MemberType))
-		{
-			if (RowStructType* RowPtr = DataTable->FindRow<RowStructType>(RowName, Context))
-			{
-				return RowPtr;
-			}
-			else
-			{
-	#if !UE_BUILD_SHIPPING
-				if (Log)
-					Log(FString::Printf(TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName())));
-	#endif // #if !UE_BUILD_SHIPPING
-			}
-		}
-		return nullptr;
+		return GetSafeDataTable(Context, FCsDataRootSet::GetMember(MemberName));
 	}
+
+	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const;
+
+	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
 
 	template<typename RowStructType>
 	RowStructType* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const
@@ -143,11 +143,24 @@ public:
 		return RowPtr;
 	}
 
-	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const;
+	uint8* GetSafeDataTableRow(const FString& Context, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning) const;
 
-	uint8* GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
+	uint8* GetSafeDataTableRow(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning) const;
+	
+	template<typename RowStructType>
+	RowStructType* GetSafeDataTableRow(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (uint8* RowPtr = GetSafeDataTableRow(Context, MemberType, RowStructType::StaticStruct(), RowName, Log))
+			return reinterpret_cast<RowStructType*>(RowPtr);
+		return nullptr;
+	}
 
-	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const FName& RowName) const;
 
-	uint8* GetDataTableRowChecked(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName) const;
+	template<typename RowStructType>
+	RowStructType* GetSafeDataTableRow(const FString& Context, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&) = &FCsLog::Warning) const
+	{
+		if (uint8* RowPtr = GetSafeDataTableRow(Context, MemberType, RowStructType::StaticStruct(), RowName, Log))
+			return reinterpret_cast<RowStructType*>(RowPtr);
+		return nullptr;
+	}
 };

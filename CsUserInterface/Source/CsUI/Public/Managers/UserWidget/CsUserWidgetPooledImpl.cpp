@@ -39,6 +39,8 @@ namespace NCsUserWidgetPooledImpl
 
 UCsUserWidgetPooledImpl::UCsUserWidgetPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// Shutdown
+	bShutdown(false),
 	Cache(nullptr),
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
@@ -139,11 +141,12 @@ void UCsUserWidgetPooledImpl::Shutdown()
 		CacheImpl = nullptr;
 	}
 
-	if (UserWidget)
+	if (IsValid(UserWidget))
 	{
 		UserWidget->MarkAsGarbage();
 		UserWidget = nullptr;
 	}
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

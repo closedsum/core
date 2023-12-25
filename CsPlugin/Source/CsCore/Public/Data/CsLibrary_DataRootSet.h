@@ -20,6 +20,16 @@ namespace NCsDataRootSet
 
 		/**
 		* Safely get the UObject implementation of the DataRootSet.
+		*  NOTE: Only use in Editor
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
+		* return				UObject for the DataRootSet
+		*/
+		static UObject* GetSafeImpl(const FString& Context);
+
+		/**
+		* Safely get the UObject implementation of the DataRootSet.
 		*
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
@@ -59,7 +69,7 @@ namespace NCsDataRootSet
 		* 
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
-		* @param Log
+		* @param Log			(optional)
 		* return
 		*/
 		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
@@ -67,6 +77,33 @@ namespace NCsDataRootSet
 		{
 			// Get DataRootSetImpl
 			UObject* DataRootSetImpl = GetSafeImpl(Context, WorldContext);
+
+			if (!DataRootSetImpl)
+				return nullptr;
+
+			// Get DataRootSet for this Module
+			GetDataRootSetType* GetDataRootSet = Cast<GetDataRootSetType>(DataRootSetImpl);
+
+			if (!GetDataRootSet)
+			{
+				Log(FString::Printf(TEXT("%s: DataRootSet: %s with Class: %s does NOT implement interface: GetDataRootSetType."), *Context, *(DataRootSetImpl->GetName()), *(DataRootSetImpl->GetClass()->GetName())));
+				return nullptr;
+			}
+			return &(GetDataRootSet->*GetDataRootSetFn)();
+		}
+
+		/**
+		* 
+		* 
+		* @param Context	The calling context.
+		* @param Log		(optional)
+		* return
+		*/
+		template<typename DataRootSetType, typename GetDataRootSetType, const DataRootSetType& (GetDataRootSetType::* GetDataRootSetFn)() const>
+		static const DataRootSetType* GetSafe(const FString& Context, void(*Log)(const FString&))
+		{
+			// Get DataRootSetImpl
+			UObject* DataRootSetImpl = GetSafeImpl(Context);
 
 			if (!DataRootSetImpl)
 				return nullptr;
@@ -224,6 +261,7 @@ namespace NCsDataRootSet
 		* @param Context		The calling context.
 		* @param WorldContext	Object that has reference to a World (GetWorld() is Valid).
 		* @param Member			The DataTable member.
+		* @param Log			(optional)
 		* return				Pointer to Row Struct of the DataTable.
 		*/
 		template<typename RowStructType>
@@ -231,6 +269,22 @@ namespace NCsDataRootSet
 		{
 			if (const FCsDataRootSet* DataRootSet = GetSafe(Context, WorldContext))
 				return DataRootSet->GetSafeDataTableRow<RowStructType>(Context, WorldContext, Member, RowName, Log);
+			return nullptr;
+		}
+
+		/**
+		*
+		*
+		* @param Context		The calling context.
+		* @param Member			The DataTable member.
+		* @param Log			(optional)
+		* return				Pointer to Row Struct of the DataTable.
+		*/
+		template<typename RowStructType>
+		FORCEINLINE static RowStructType* GetSafeDataTableRow(const FString& Context, const MemberType& Member, const FName& RowName, void(*Log)(const FString&))
+		{
+			if (const FCsDataRootSet* DataRootSet = GetSafe(Context))
+				return DataRootSet->GetSafeDataTableRow<RowStructType>(Context, Member, RowName, Log);
 			return nullptr;
 		}
 

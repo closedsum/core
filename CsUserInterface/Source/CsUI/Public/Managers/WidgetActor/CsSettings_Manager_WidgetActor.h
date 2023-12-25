@@ -16,7 +16,7 @@ struct CSUI_API FCsSettings_Manager_WidgetActor_PoolParams
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings", meta = (MustImplement = "/Script.CsUI.CsWidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings", meta = (MustImplement = "/Script/CsUI.CsWidgetActor"))
 	FECsWidgetActorClass Class; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor|Settings", meta = (ClampMin = "4", UIMin = "4"))

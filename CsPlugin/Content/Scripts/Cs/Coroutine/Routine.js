@@ -78,6 +78,9 @@ module.exports = class FJsRoutine
 
 		/** @type {string} */ this.Name = "";
 
+		/** @type {boolean} */ this.bUpdateComplete = false;
+		/** @type {boolean} */ this.bExecuteComplete = false;
+
 		// End
 		/** @type {NJsCoroutine.EEndReason} */	this.EndReason = EndReasonType.EEndReason_MAX;
 
@@ -194,6 +197,8 @@ module.exports = class FJsRoutine
 	*/
 	Update(deltaTime /*float*/)
 	{
+		this.bUpdateComplete = false;
+
 		// Check for Abort Messages
 		let msgs		  = this.Messages[MessageType.Abort.Value];
 		let msgs_recieved = this.Messages_Recieved[MessageType.Abort.Value];
@@ -223,6 +228,7 @@ module.exports = class FJsRoutine
 		if (this.State.Value === StateType.End.Value &&
 			this.EndReason.Value === EndReasonType.AbortMessage.Value)
 		{
+			this.bUpdateComplete = true;
 			return;
 		}
 		// If the Owner of the Coroutine is a UObject, check if the object
@@ -243,6 +249,8 @@ module.exports = class FJsRoutine
 					this.OnAborts[i](this.self);
 				}
 				this.End(EndReasonType.AbortCondition);
+
+				this.bUpdateComplete = true;
 				return;
 			}
 		}
@@ -251,6 +259,8 @@ module.exports = class FJsRoutine
 		{
 			if (this.EndReason.Value === EndReasonType.EEndReason_MAX.Value)
 				this.End(EndReasonType.EndOfExecution);
+
+			this.bUpdateComplete = true;
 			return;
 		}
 
@@ -395,11 +405,19 @@ module.exports = class FJsRoutine
 		this.ElapsedTime = TimeLibrary.Add_DeltaTime(this.ElapsedTime, deltaTime);
 		
 		if (!move)
+		{
+			this.bUpdateComplete = true;
 			return;
+		}
 		
 		++this.TickCount;
 
-		let result		 = this.CoroutineImpl.next(this.self);
+		this.bExecuteComplete = false;
+
+		let result = this.CoroutineImpl.next(this.self);
+
+		this.bExecuteComplete = true;
+
 		let yieldCommand = result.value;
 		let done		 = result.done;
 		
@@ -610,8 +628,11 @@ module.exports = class FJsRoutine
 				this.End(EndReasonType.EndOfExecution);
 			}
 		}
+		this.bUpdateComplete = true;
 	}
 
+	IsUpdateComplete() { return this.bUpdateComplete; }
+	IsExecuteComplete() { return this.bExecuteComplete; }
 	IsRunning() { return this.State.Value === StateType.Update.Value; }
 
 	/**

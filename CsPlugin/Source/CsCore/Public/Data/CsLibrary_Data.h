@@ -11,11 +11,14 @@
 
 namespace NCsData
 {
-	namespace NCached
+	namespace NLibrary
 	{
-		namespace Str
+		namespace NCached
 		{
-			extern CSCORE_API const FString SafeLoad;
+			namespace Str
+			{
+				extern CSCORE_API const FString SafeLoad;
+			}
 		}
 	}
 
@@ -103,7 +106,7 @@ namespace NCsData
 		template<typename InterfaceType>
 		FORCEINLINE static InterfaceType* SafeLoad(UObject* Object)
 		{
-			using namespace NCached;
+			using namespace NCsData::NLibrary::NCached;
 
 			const FString& Context = Str::SafeLoad;
 
@@ -133,6 +136,8 @@ namespace NCsData
 		static bool ImplementsChecked(const FString& Context, const UObject* Object);
 
 		static bool SafeImplements(const FString& Context, const UObject* Object, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool SafeImplements(const UObject* Object);
 
 	#pragma endregion Implment
 
@@ -283,6 +288,35 @@ namespace NCsData
 
 			return GetInterfaceChecked<InterfaceType>(Context, Data);
 		}
+
+		// Script
+	#pragma region
+	public:
+
+		/**
+		* Get Script Data with name DataName which implements the interface: ICsScriptData.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
+		*						Used to route to Manager_Data.
+		* @param DataName		Name of the Script Data to get. This is the EntryName in Manager_Data.
+		* return				Script Data which implements the interface: ICsScriptData.	
+		*/
+		static UObject* GetScriptChecked(const FString& Context, const UObject* WorldContext, const FName& DataName);
+
+		/**
+		* Safely get Script Data with name DataName which implements the interface: DataType ICsScriptData.
+		*
+		* @param Context		The calling context.
+		* @param WorldContext	Object that has a reference to a UWorld (GetWorld() is Valid).
+		*						Used to route to Manager_Data.
+		* @param DataName		Name of the Script Data to get. This is the EntryName in Manager_Data.
+		* @param Log			(optional)
+		* return				Script Data which implements the interface: ICsScriptData.
+		*/
+		static UObject* GetSafeScript(const FString& Context, const UObject* WorldContext, const FName& DataName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	#pragma endregion Script
 
 	#pragma endregion Get
 	};

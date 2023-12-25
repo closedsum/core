@@ -18,19 +18,29 @@
 
 namespace NCsDataRootSet
 {
+	#define SettingsLibrary NCsCore::NSettings::FLibrary
+	#define WorldLibrary NCsWorld::FLibrary
+	#define DataManagerLibrary NCsData::NManager::FLibrary
+
+	UObject* FLibrary::GetSafeImpl(const FString& Context)
+	{
+	#if WITH_EDITOR
+		return SettingsLibrary::SafeLoadDataRootSet(Context);
+	#else
+		checkf(0, TEXT("%s: This implementation of GetSafeImpl is NOT supported outside of Editor."), *Context);
+		return nullptr;
+	#endif // #if WITH_EDITOR
+	}
+
 	UObject* FLibrary::GetSafeImpl(const FString& Context, const UObject* WorldContext)
 	{
 	#if WITH_EDITOR
 		// Check WorldContext is Valid.
 		if (!WorldContext)
 		{
-			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
-
 			return SettingsLibrary::SafeLoadDataRootSet(Context);
 		}
 		// Check if World from WorldContext is Valid.
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -38,21 +48,15 @@ namespace NCsDataRootSet
 
 		if (WorldLibrary::IsGameWorld(World))
 		{
-			typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 			return DataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
 		}
 		// Check if Editor World
 		else
 		{
-			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
-
 			return SettingsLibrary::SafeLoadDataRootSet(Context);
 		}
 		return nullptr;
 	#else
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetSafeDataRootSetImpl(Context, WorldContext);
 	#endif // #if WITH_EDITOR
 	}
@@ -61,26 +65,17 @@ namespace NCsDataRootSet
 	{
 		CS_IS_PTR_NULL_CHECKED(GameInstance)
 
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetDataRootSetImplChecked(Context, GameInstance);
 	}
 
 	UObject* FLibrary::GetImplChecked(const FString& Context, const UObject* WorldContext)
 	{
 	#if WITH_EDITOR
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		if (WorldLibrary::IsPlayInEditorOrEditorPreview(WorldContext))
 		{
-			typedef NCsCore::NSettings::FLibrary SettingsLibrary;
-
 			return SettingsLibrary::LoadDataRootSetChecked(Context);
 		}
 	#endif // #if WITH_EDITOR
-
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetDataRootSetImplChecked(Context, WorldContext);
 	}
 
@@ -123,8 +118,6 @@ namespace NCsDataRootSet
 			return nullptr;
 		}
 
-		typedef NCsWorld::FLibrary WorldLibrary;
-
 		UWorld* World = WorldLibrary::GetSafe(Context, WorldContext);
 
 		if (!World)
@@ -132,8 +125,6 @@ namespace NCsDataRootSet
 
 		if (WorldLibrary::IsGameWorld(World))
 		{
-			typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 			return DataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
 		}
 		else
@@ -158,30 +149,22 @@ namespace NCsDataRootSet
 		}
 		return nullptr;
 	#else
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetSafeDataTable(Context, WorldContext, DataTableSoftObject);
 #	endif // #if WITH_EDITOR
 	}
 
 	UDataTable* FLibrary::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject)
 	{
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetDataTableChecked(Context, WorldContext, DataTableSoftObject);
 	}
 
 	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const FName& RowName)
 	{
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetDataTableRowChecked(Context, WorldContext, DataTableSoftObject, RowName);
 	}
 
 	uint8* FLibrary::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const TSoftObjectPtr<UDataTable>& DataTableSoftObject, const UScriptStruct* RowStruct, const FName& RowName)
 	{
-		typedef NCsData::NManager::FLibrary DataManagerLibrary;
-
 		return DataManagerLibrary::GetDataTableRowChecked(Context, WorldContext, DataTableSoftObject, RowStruct, RowName);
 	}
 
@@ -223,4 +206,8 @@ namespace NCsDataRootSet
 	}
 
 	#undef MemberType
+
+	#undef SettingsLibrary
+	#undef WorldLibrary
+	#undef DataManagerLibrary
 }

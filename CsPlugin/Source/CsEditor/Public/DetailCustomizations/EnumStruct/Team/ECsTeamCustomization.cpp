@@ -6,35 +6,37 @@
 
 #define LOCTEXT_NAMESPACE "ECsTeamCustomization"
 
+#define CLASS_TYPE FECsTeamCustomization
 #define EnumMapType EMCsTeam
 #define EnumType FECsTeam
 
-FECsTeamCustomization::FECsTeamCustomization() :
+CLASS_TYPE::CLASS_TYPE() :
 	Super()
 {
 	Init<EnumMapType, EnumType>();
 }
 
-TSharedRef<IPropertyTypeCustomization> FECsTeamCustomization::MakeInstance()
+TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
-	return MakeShareable(new FECsTeamCustomization);
+	return MakeShareable(new CLASS_TYPE);
 }
 
-void FECsTeamCustomization::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
+void CLASS_TYPE::SetPropertyHandles(TSharedRef<IPropertyHandle> StructPropertyHandle)
 {
 	SetPropertyHandles_Internal<EnumType>(StructPropertyHandle);
 }
 
-void FECsTeamCustomization::SetEnumWithDisplayName(const FString& DisplayName)
+void CLASS_TYPE::SetEnumWithDisplayName(const FString& DisplayName)
 {
-	SetEnumWithDisplayName_Internal<EnumMapType, EnumType>(DisplayName);
+	SetEnumWithDisplayName_Internal<EnumMapType, EnumType, uint32>(DisplayName);
 }
 
-void FECsTeamCustomization::GetDisplayNamePropertyValue(FString& OutDisplayName) const
+void CLASS_TYPE::GetDisplayNamePropertyValue(FString& OutDisplayName) const
 {
 	GetDisplayNamePropertyValue_Internal<EnumMapType, EnumType>(OutDisplayName);
 }
 
+#undef CLASS_TYPE
 #undef EnumMapType
 #undef EnumType
 

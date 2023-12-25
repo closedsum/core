@@ -42,6 +42,9 @@ namespace NCsTime
 			}
 		}
 
+		#define WorldLibrary NCsWorld::FLibrary
+		#define GameInstanceLibrary NCsGameInstance::FLibrary
+
 		// ContextRoot
 		#pragma region
 
@@ -49,8 +52,6 @@ namespace NCsTime
 
 		UObject* FLibrary::GetContextRootChecked(const FString& Context, const UObject* ContextObject)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
 				const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST_CHECKED(ContextObject, UObject, ICsGetManagerSingleton);
@@ -60,16 +61,11 @@ namespace NCsTime
 
 			if (ContextObject == GEngine)
 				return GEngine;
-
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetAsObjectChecked(Context, ContextObject);
 		}
 
 		UObject* FLibrary::GetSafeContextRoot(const FString& Context, const UObject* ContextObject, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			if (WorldLibrary::IsPlayInEditorOrEditorPreview(ContextObject))
 			{
 				if (const ICsGetManagerSingleton* GetManagerSingleton = CS_CONST_INTERFACE_CAST(ContextObject, UObject, ICsGetManagerSingleton))
@@ -81,9 +77,6 @@ namespace NCsTime
 
 			if (ContextObject == GEngine)
 				return GEngine;
-
-			typedef NCsGameInstance::FLibrary GameInstanceLibrary;
-
 			return GameInstanceLibrary::GetSafeAsObject(Context, ContextObject, Log);
 		}
 
@@ -208,6 +201,9 @@ namespace NCsTime
 
 		#pragma endregion Update
 
+		// Time
+		#pragma region
+
 		void FLibrary::UpdateTimeAndCoroutineScheduler(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& DeltaTime)
 		{
 			UCsManager_Time* Manager_Time = GetChecked(Context, ContextObject);
@@ -259,6 +255,27 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->SetScaledDeltaTime(Group, Scale);
 		}
 
+		void FLibrary::SetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale)
+		{
+			CS_IS_ENUM_STRUCT_VALID_CHECKED(EMCsUpdateGroup, Group)
+			CS_IS_FLOAT_GREATER_THAN_CHECKED(Scale, 0.0f)
+
+			GetChecked(Context, ContextObject)->SetScaledDeltaTime(Group, Scale);
+		}
+
+		bool FLibrary::SetSafeScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, const float& Scale, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
+				CS_IS_FLOAT_GREATER_THAN(Scale, 0.0f)
+
+				Manager_Time->SetScaledDeltaTime(Group, Scale);
+				return true;
+			}
+			return false;
+		}
+
 		const FCsDeltaTime& FLibrary::GetScaledDeltaTimeChecked(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
 			return GetChecked(Context, ContextObject)->GetScaledDeltaTime(Group);
@@ -271,9 +288,54 @@ namespace NCsTime
 			GetChecked(Context, ContextObject)->ResetScaledDeltaTime(Group);
 		}
 
+		bool FLibrary::SafeResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			if (UCsManager_Time* Manager_Time = GetSafe(Context, ContextObject, Log))
+			{
+				CS_IS_ENUM_STRUCT_VALID(EMCsUpdateGroup, FECsUpdateGroup, Group)
+
+				Manager_Time->ResetScaledDeltaTime(Group);
+				return true;
+			}
+			return false;
+		}
+
 		void FLibrary::ResetScaledDeltaTime(const FString& Context, const UObject* ContextObject, const FECsUpdateGroup& Group)
 		{
 			GetChecked(Context, ContextObject)->ResetScaledDeltaTime(Group);
 		}
+
+		#pragma endregion Time
+
+		// Events
+		#pragma region
+
+		#define OnUpdateEventType NCsTime::NManager::FOnUpdate
+		#define OnSetScaledDeltaTimeEventType NCsTime::NManager::FOnSetScaledDeltaTime
+		#define OnResetScaledDeltaTimeEventType NCsTime::NManager::FOnResetScaledDeltaTime
+
+		OnUpdateEventType& FLibrary::GetChecked_OnUpdate_Event(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetOnUpdate_Event();
+		}
+
+		OnSetScaledDeltaTimeEventType& FLibrary::GetChecked_OnSetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetOnSetScaledDeltaTime_Event();
+		}
+
+		OnResetScaledDeltaTimeEventType& FLibrary::GetChecked_OnResetScaledDeltaTime_Event(const FString& Context, const UObject* ContextObject)
+		{
+			return GetChecked(Context, ContextObject)->GetOnResetScaledDeltaTime_Event();
+		}
+
+		#undef OnUpdateEventType
+		#undef OnSetScaledDeltaTimeEventType
+		#undef OnResetScaledDeltaTimeEventType
+
+		#pragma endregion Events
+
+		#undef WorldLibrary
+		#undef GameInstanceLibrary
 	}
 }

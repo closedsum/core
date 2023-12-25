@@ -7,10 +7,31 @@
 #include "CsTypes_Javascript.h"
 #include "EntryPoint/CsTypes_ScriptEntryPointInfo.h"
 #include "Script/CsTypes_ScriptInfo.h"
+// Managers
+#include "Managers/Resource/CsManager_ResourcePointerType_Fixed.h"
 // Log
 #include "Utility/CsLog.h"
 
 #include "CsManager_Javascript.generated.h"
+
+// Structs
+#pragma region
+
+namespace NCsJs
+{
+	namespace NFileObject
+	{
+		struct CSJS_API FResource : public TCsResourceContainer<FCsJavascriptFileObjects>
+		{
+		};
+
+		struct CSJS_API FManager : public NCsResource::NManager::NPointer::TFixed<FCsJavascriptFileObjects, FResource, 0>
+		{
+		};
+	}
+}
+
+#pragma endregion Structs
 
 // Delegates
 #pragma region
@@ -127,6 +148,10 @@ public:
 
 	FORCEINLINE void SetWorldContext(UObject* InWorldContext) { WorldContext = InWorldContext; }
 
+private:
+
+	UGameInstance* GameInstance;
+
 // Entry Point
 #pragma region
 private:
@@ -196,8 +221,7 @@ public:
 	FORCEINLINE const FCsScriptInfo& GetScriptInfo() const { return ScriptInfo; }
 
 	void CreateScriptObjects();
-	void ConditionalCreateScriptObject();
-	void SetupScriptObjects(UGameInstance* GameInstance = nullptr);
+	void SetupScriptObjects(UGameInstance* InGameInstance = nullptr);
 
 private:
 
@@ -244,6 +268,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FCsManagerJavascript_OnPreReloadScript OnPreReloadScript_ScriptEvent;
 
+	void DeactivateScripts();
 	void ShutdownScripts();
 
 	UPROPERTY(BlueprintAssignable)
@@ -296,6 +321,10 @@ public:
 
 	public:
 
+	#define ObjectManagerType NCsJs::NFileObject::FManager
+		ObjectManagerType Manager_Objects;
+	#undef ObjectManagerType
+
 		// <Owner Id, Owner>
 		TMap<int32, UObject*> OwnerByOwnerIdMap;
 		// <Owner Id, Script Index>
@@ -307,6 +336,7 @@ public:
 
 		FEditorScriptImpl() :
 			Outer(nullptr),
+			Manager_Objects(),
 			OwnerByOwnerIdMap(),
 			IndexByOwnerIdMap(),
 			IdByOwnerIdMap(),
@@ -316,6 +346,8 @@ public:
 
 		FORCEINLINE TArray<FCsJavascriptFileObjects>& GetObjects() { return Outer->GetEditorScriptObjects(); }
 
+		void Init();
+
 		void Validate();
 
 		FGuid CreateAndRun(UObject* Owner, const FString& Path);
@@ -323,6 +355,7 @@ public:
 		void Reload(const FGuid& Id, const FString& Path);
 
 		bool Shutdown(UObject* Owner);
+		void Shutdown();
 	};
 
 	FEditorScriptImpl EditorScriptImpl;

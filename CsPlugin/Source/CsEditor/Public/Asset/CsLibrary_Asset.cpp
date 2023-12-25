@@ -248,7 +248,9 @@ namespace NCsAsset
 		IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
 		TArray<FAssetData> AssetDatas;
 
-		AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
+		// TODO: FIX
+		check(0);
+		//AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
 
 		for (FAssetData& Data : AssetDatas)
 		{
@@ -269,7 +271,9 @@ namespace NCsAsset
 			IAssetRegistry& AssetRegistry			  = AssetRegistryModule.Get();
 			TArray<FAssetData> AssetDatas;
 
-			AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(ClassName, AssetDatas);
 
 			UObject* Object = nullptr;
 

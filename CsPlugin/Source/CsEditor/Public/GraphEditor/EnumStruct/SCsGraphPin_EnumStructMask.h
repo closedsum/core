@@ -37,12 +37,13 @@ public:
 
 protected:
 
-	virtual void CustomPopulateEnumMap();
+	
 
 	template<typename EnumMap, typename EnumStruct>
 	void Construct_Internal()
 	{
 		CustomPopulateEnumMap();
+		AddPropertyChange();
 
 		FString CurrentDefaultValue = GraphPinObj->GetDefaultAsString();
 
@@ -57,6 +58,10 @@ protected:
 			}
 		}
 	}
+
+	virtual void CustomPopulateEnumMap();
+
+	virtual void AddPropertyChange();
 
 	/**
 	*	Function to create class specific widget.

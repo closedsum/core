@@ -32,20 +32,24 @@ namespace NCsDataRootSet
 			CS_DEFINE_CACHED_STRING(GetCsDataRootSet, "GetCsDataRootSet()");
 
 			CS_DEFINE_CACHED_STRING(Datas, "Datas");
+			CS_DEFINE_CACHED_STRING(ScriptDatas, "ScriptDatas");
 			CS_DEFINE_CACHED_STRING(DataTables, "DataTables");
 			CS_DEFINE_CACHED_STRING(Payloads, "Payloads");
 		}
 
 		namespace Name
 		{
-			CS_DEFINE_CACHED_NAME(Datas, "Datas");
-			CS_DEFINE_CACHED_NAME(DataTables, "DataTables");
-			CS_DEFINE_CACHED_NAME(Payloads, "Payloads");
+			const FName Datas = FName("Datas");
+			const FName ScriptDatas = FName("ScriptDatas");
+			const FName DataTables = FName("DataTables");
+			const FName Payloads = FName("Payloads");
 		}
 	}
 }
 
 #pragma endregion Cached
+
+#define LoadLibrary UCsLibrary_Load
 
 #define MemberType FCsDataRootSet::EMember
 MemberType FCsDataRootSet::GetMember(const FName& MemberName)
@@ -54,6 +58,8 @@ MemberType FCsDataRootSet::GetMember(const FName& MemberName)
 
 	if (MemberName == Name::Datas)
 		return MemberType::Datas;
+	if (MemberName == Name::ScriptDatas)
+		return MemberType::ScriptDatas;
 	if (MemberName == Name::DataTables)
 		return MemberType::DataTables;
 	if (MemberName == Name::Payloads)
@@ -201,21 +207,6 @@ const TSoftObjectPtr<UDataTable>& FCsDataRootSet::GetDataTableSoftObjectChecked(
 	return DT;
 }
 
-UDataTable* FCsDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
-{
-	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
-		return Member;
-
-	CS_TEMP_GET_SAFE_DATA_TABLE(Datas)
-	CS_TEMP_GET_SAFE_DATA_TABLE(DataTables)
-	CS_TEMP_GET_SAFE_DATA_TABLE(Payloads)
-
-	#undef CS_TEMP_GET_SAFE_DATA_TABLE
-
-	UE_LOG(LogCs, Warning, TEXT("%s: Failed to get DataTable for MemberType."), *Context);
-	return nullptr;
-}
-
 UDataTable* FCsDataRootSet::GetDataTableChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
 {
 	return GetDataTableChecked(Context, MemberType);
@@ -229,6 +220,7 @@ UDataTable* FCsDataRootSet::GetDataTableChecked(const FString& Context, const EM
 		DT = Member;
 
 	CS_TEMP_GET_DATA_TABLE(Datas)
+	CS_TEMP_GET_DATA_TABLE(ScriptDatas)
 	CS_TEMP_GET_DATA_TABLE(DataTables)
 	CS_TEMP_GET_DATA_TABLE(Payloads)
 
@@ -237,6 +229,27 @@ UDataTable* FCsDataRootSet::GetDataTableChecked(const FString& Context, const EM
 	CS_IS_PTR_NULL_CHECKED(DT)
 	return DT;
 } 
+
+UDataTable* FCsDataRootSet::GetSafeDataTable(const FString& Context, const UObject* WorldContext, const EMember& MemberType) const
+{
+	return GetSafeDataTable(Context, MemberType);
+}
+
+UDataTable* FCsDataRootSet::GetSafeDataTable(const FString& Context, const EMember& MemberType) const
+{
+	#define CS_TEMP_GET_SAFE_DATA_TABLE(Member) if (MemberType == EMember::Member) \
+		return Member;
+
+	CS_TEMP_GET_SAFE_DATA_TABLE(Datas)
+	CS_TEMP_GET_SAFE_DATA_TABLE(ScriptDatas)
+	CS_TEMP_GET_SAFE_DATA_TABLE(DataTables)
+	CS_TEMP_GET_SAFE_DATA_TABLE(Payloads)
+
+	#undef CS_TEMP_GET_SAFE_DATA_TABLE
+
+	UE_LOG(LogCs, Warning, TEXT("%s: Failed to get DataTable for MemberType."), *Context);
+	return nullptr;
+}
 
 uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const UObject* WorldContext, const EMember& MemberType, const FName& RowName) const
 {
@@ -253,7 +266,7 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMem
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
 
 #if WITH_EDITOR
-	UCsLibrary_Load::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
+	LoadLibrary::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
 #endif // #if WITH_EDITOR
 
 	const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
@@ -275,7 +288,7 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMem
 	UDataTable* DT = GetDataTableChecked(Context, MemberType);
 
 #if WITH_EDITOR
-	UCsLibrary_Load::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
+	LoadLibrary::LoadDataTableRowChecked(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All);
 #endif // #if WITH_EDITOR
 
 	CS_IS_PTR_NULL_CHECKED(RowStruct)
@@ -295,3 +308,62 @@ uint8* FCsDataRootSet::GetDataTableRowChecked(const FString& Context, const EMem
 	checkf(0, TEXT("Failed to find Row with Name: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DT->GetName()));
 	return nullptr;
 }
+
+uint8* FCsDataRootSet::GetSafeDataTableRow(const FString& Context, const EMember& MemberType, const FName& RowName, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	UDataTable* DT = GetSafeDataTable(Context, MemberType);
+
+	if (!DT)
+		return nullptr;
+
+#if WITH_EDITOR
+	if (!LoadLibrary::SafeLoadDataTableRow(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All, Log))
+		return nullptr;
+#endif // #if WITH_EDITOR
+
+	const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr	  = Pair.Value;
+
+		if (Name == RowName)
+			return RowPtr;
+	}
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("Failed to find Row with Name: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DT->GetName())));
+	return nullptr;
+}
+
+uint8* FCsDataRootSet::GetSafeDataTableRow(const FString& Context, const EMember& MemberType, const UScriptStruct* RowStruct, const FName& RowName, void(*Log)(const FString&) /*=&FCsLog::Warning*/) const
+{
+	UDataTable* DT = GetDataTableChecked(Context, MemberType);
+
+#if WITH_EDITOR
+	if (!LoadLibrary::SafeLoadDataTableRow(Context, DT, RowName, NCsLoadFlags::All, NCsLoadCodes::All, Log))
+		return nullptr;
+#endif // #if WITH_EDITOR
+
+	CS_IS_PTR_NULL_RET_NULL(RowStruct)
+
+	if (DT->GetRowStruct() != RowStruct)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: DataTable: %s RowStruct: %s != %s."), *Context, *(DT->GetName()), *(DT->GetRowStruct()->GetName()), *(RowStruct->GetName())));
+		return nullptr;
+	}
+
+	const TMap<FName, uint8*>& RowMap = DT->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& Name = Pair.Key;
+		uint8* RowPtr = Pair.Value;
+
+		if (Name == RowName)
+			return RowPtr;
+	}
+	CS_CONDITIONAL_LOG(FString::Printf(TEXT("Failed to find Row with Name: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DT->GetName())));
+	return nullptr;
+}
+
+#undef LoadLibrary

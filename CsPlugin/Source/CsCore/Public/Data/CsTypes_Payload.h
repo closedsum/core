@@ -28,7 +28,7 @@ public:
 	FName Name;
 
 	/** Object that implements the interface: ICsData. */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "/Script.CsCore.CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "/Script/CsCore.CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -82,6 +82,78 @@ public:
 };
 
 #pragma endregion FCsPayload_Data
+
+// FCsPayload_ScriptData
+#pragma region
+
+class UObject;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsPayload_ScriptData
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	/** Name of the Data Object. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
+	FName Name;
+
+	/** Object that implements the interface: ICsData. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load", meta = (MustImplement = "/Script/CsCore.CsScriptData"))
+	TSoftClassPtr<UObject> Data;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//ECsLoadFlags_Editor Data_LoadFlags;
+
+	/** All ObjectPaths and Resource Sizes (Memory Size) for Data. */
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "CsCore|Load")
+	FCsTArraySoftObjectPath Paths;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
+
+	FCsPayload_ScriptData() :
+		Name(NAME_None),
+		Data(),
+		Paths()
+	{
+	}
+
+	FORCEINLINE bool IsValid() const
+	{
+		return Data.IsValid();
+	}
+
+	FORCEINLINE bool IsPopulated() const
+	{
+		return IsValid() && Name != NAME_None;
+	}
+
+	void Reset()
+	{
+		Name = NAME_None;
+		Data.Reset();
+		Paths.Reset();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.Reset();
+		}
+	}
+
+#if WITH_EDITOR
+
+	/**
+	* Get all ObjectPaths and Resource Sizes (Memory Size) from Data and 
+	*  store that in Paths.
+	*/
+	void Populate();
+
+#endif // #if WITH_EDITOR
+};
+
+#pragma endregion FCsPayload_ScriptData
 
 // FCsPayload_DataTable
 #pragma region
@@ -192,6 +264,14 @@ public:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
 	TMap<FName, FCsPayload_Data> DataMap;
 
+	/** List of all Payload information related to objects that
+	    implement the interface: ICsScriptData. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (TitleProperty = "Name"))
+	TArray<FCsPayload_ScriptData> ScriptDatas;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
+	TMap<FName, FCsPayload_ScriptData> ScriptDataMap;
+
 	/** List of all Payload information related to DataTables. */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (TitleProperty = "Name"))
 	TArray<FCsPayload_DataTable> DataTables;
@@ -208,6 +288,8 @@ public:
 		bUpdateDataRootSetOnSave(true),
 		Datas(),
 		DataMap(),
+		ScriptDatas(),
+		ScriptDataMap(),
 		DataTables(),
 		DataTableMap(),
 		Paths()
@@ -219,6 +301,8 @@ public:
 		bUpdateDataRootSetOnSave = B.bUpdateDataRootSetOnSave;
 		Datas = B.Datas;
 		DataMap = B.DataMap;
+		ScriptDatas = B.ScriptDatas;
+		ScriptDataMap = B.ScriptDataMap;
 		DataTables = B.DataTables;
 		DataTableMap = B.DataTableMap;
 		Paths = B.Paths;
@@ -239,6 +323,8 @@ public:
 	{
 		Datas.Reset();
 		DataMap.Reset();
+		ScriptDatas.Reset();
+		ScriptDataMap.Reset();
 		DataTables.Reset();
 		DataTableMap.Reset();
 		Paths.Reset();
@@ -258,6 +344,14 @@ public:
 		{
 			if (Data.IsPopulated())
 				DataMap.Add(Data.Name, Data);
+		}
+		// ScriptDatas
+		ScriptDataMap.Reset();
+
+		for (FCsPayload_ScriptData& Data : ScriptDatas)
+		{
+			if (Data.IsPopulated())
+				ScriptDataMap.Add(Data.Name, Data);
 		}
 		// DataTables
 		DataTableMap.Reset();
@@ -281,6 +375,13 @@ public:
 		{
 			Datas.Add(Pair.Value);
 		}
+		// ScriptDatas
+		ScriptDatas.Reset(ScriptDataMap.Num());
+
+		for (TPair<FName, FCsPayload_ScriptData>& Pair : ScriptDataMap)
+		{
+			ScriptDatas.Add(Pair.Value);
+		}
 		// DataTables
 		DataTables.Reset(DataTableMap.Num());
 
@@ -299,6 +400,7 @@ public:
 	{
 		Paths.Reset();
 
+		// Data
 		for (TPair<FName, FCsPayload_Data>& Pair : DataMap)
 		{
 			FCsPayload_Data& Data = Pair.Value;
@@ -307,7 +409,16 @@ public:
 
 			Paths.Append(Data.Paths);
 		}
+		// ScriptData
+		for (TPair<FName, FCsPayload_ScriptData>& Pair : ScriptDataMap)
+		{
+			FCsPayload_ScriptData& Data = Pair.Value;
 
+			Data.Populate();
+
+			Paths.Append(Data.Paths);
+		}
+		// DataTable
 		for (TPair<FName, FCsPayload_DataTable>& Pair : DataTableMap)
 		{
 			FCsPayload_DataTable& DataTable = Pair.Value;

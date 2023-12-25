@@ -20,6 +20,8 @@ protected:
 
 	virtual void CustomPopulateEnumMap() override;
 
+	virtual void AddPropertyChange() override;
+
 	virtual void AddEnumToMap(const FString& Name) override;
 
 	virtual const FString& GetEnumStructName() override;

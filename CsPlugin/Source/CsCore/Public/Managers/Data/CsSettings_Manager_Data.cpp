@@ -13,3 +13,5 @@
 {
 	return GetMutableDefault<UCsDeveloperSettings>()->Manager_Data;
 }
+
+#pragma endregion FCsSettings_Manager_Data

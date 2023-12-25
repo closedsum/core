@@ -11,6 +11,7 @@
 #include "Load/CsStreamableHandle.h"
 #include "Types/CsTypes_Map.h"
 #include "Load/CsObjectPathDependencyGroup.h"
+#include "Managers/Data/CsManager_Data_Delegates.h"
 // Container
 #include "Data/CsDataRootSetContainer.h"
 // Routine
@@ -42,6 +43,16 @@ struct CSCORE_API FCsResource_DataEntry_Data : public TCsResourceContainer<FCsDa
 };
 
 struct CSCORE_API FCsManager_DataEntry_Data : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_Data, FCsResource_DataEntry_Data, 0>
+{
+};
+
+	// FCsDataEntry_ScriptData
+
+struct CSCORE_API FCsResource_DataEntry_ScriptData : public TCsResourceContainer<FCsDataEntry_ScriptData>
+{
+};
+
+struct CSCORE_API FCsManager_DataEntry_ScriptData : public NCsResource::NManager::NValue::TFixed<FCsDataEntry_ScriptData, FCsResource_DataEntry_ScriptData, 0>
 {
 };
 
@@ -174,6 +185,35 @@ protected:
 
 #pragma endregion Data
 
+	// ScriptData
+#pragma region
+protected:
+
+	FCsManager_DataEntry_ScriptData Manager_DataEntry_ScriptData;
+
+	/** <EntryName, Entry> */
+	TMap<FName, FCsDataEntry_ScriptData*> ScriptDataEntryMap;
+	/** <Path, Entry> */
+	TMap<FSoftObjectPath, FCsDataEntry_ScriptData*> ScriptDataEntryByPathMap;
+
+	// Loaded
+
+	/** <EntryName, Entry> */
+	TMap<FName, FCsDataEntry_ScriptData*> ScriptDataEntryMap_Loaded;
+	/** <Path, Entry> */
+	TMap<FSoftObjectPath, FCsDataEntry_ScriptData*> ScriptDataEntryByPathMap_Loaded;
+
+	/** <EntryName, Data> */
+	TMap<FName, UObject*> ScriptDataMap_Loaded;
+	/** <Path, Data> */
+	TMap<FSoftObjectPath, UObject*> ScriptDataByPathMap_Loaded;
+	/** <EntryName, Data> */
+	TMap<FName, UObject*> ScriptDataObjectMap_Loaded;
+	/** <Path, Data> */
+	TMap<FSoftObjectPath, UObject*> ScriptDataObjectByPathMap_Loaded;
+
+#pragma endregion ScriptData
+
 	// DataTable
 #pragma region
 protected:
@@ -293,6 +333,37 @@ public:
 
 #pragma endregion Data
 
+	// ScriptData
+#pragma region
+public:
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return			
+	*/
+	UObject* LoadScriptData(const FName& EntryName);
+
+	UObject* LoadScriptData(const FSoftObjectPath& Path);
+
+	/**
+	*
+	*
+	* @param EntryName
+	* return
+	*/
+	FORCEINLINE bool IsLoadedScriptData(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::IsLoadedScriptData: EntryName is None."));
+
+		if (UObject* Data = GetScriptDataObject(EntryName))
+			return true;
+		return false;
+	}
+
+#pragma endregion ScriptData
+
 	// DataTable
 #pragma region
 public:
@@ -348,6 +419,8 @@ public:
 #pragma region
 public:
 
+#define OnAsyncLoadPayloadCompleteType NCsData::NManager::FOnAsyncLoadPayloadComplete
+
 	/**
 	* Load a Payload by Payload Name.
 	*
@@ -355,18 +428,9 @@ public:
 	*/
 	void LoadPayload(const FName& PayloadName);
 
-	/**
-	* Delegate type for the event when a Payload loaded asynchronously completes.
-	*  This is a synchronous event (fired on the Game Thread).
-	*
-	* @param WasSuccessful
-	* @param PayloadName
-	*/
-	DECLARE_DELEGATE_TwoParams(FOnAsyncLoadPayloadComplete, bool /*WasSuccessful*/, const FName& /*PayloadName*/);
-
 	/** Event when a Payload loaded asynchronously completes.
 		 This is a synchronous event (fired on the Game Thread). */
-	FOnAsyncLoadPayloadComplete OnAsyncLoadPayloadCompleted_Event;
+	OnAsyncLoadPayloadCompleteType OnAsyncLoadPayloadCompleted_Event;
 
 	/**
 	* Asynchronous load a Payload by Payload Name.
@@ -375,9 +439,9 @@ public:
 	* @param Delegate		Delegate called synchronously (on the Game Thread) 
 	*						when the async load completes.
 	*/
-	void AsyncLoadPayload(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
+	void AsyncLoadPayload(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate);
 
-	void SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
+	void SafeAsyncLoadPaylod(const FString& Context, const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate, void(*Log)(const FString&) = &FCsLog::Warning);
 
 private:
 
@@ -412,12 +476,14 @@ private:
 
 	FAsyncLoadPayloadByGroup::FInfo AsyncLoadPayloadByGroupInfo;
 
-	void AsyncLoadPayloadByGroup(const FName& PayloadName, FOnAsyncLoadPayloadComplete Delegate);
+	void AsyncLoadPayloadByGroup(const FName& PayloadName, OnAsyncLoadPayloadCompleteType Delegate);
 	char AsyncLoadPayloadByGroup_Internal(FCsRoutine* R);
 
 	FCsRoutineHandle AsyncLoadPayloadByGroupHandle;
 
 	void OnFinishLoadObjectPaths_AsyncLoadPayloadByGroup(const FCsLoadHandle& Handle, const TArray<TSharedPtr<FStreamableHandle>>& Handles, const TArray<FSoftObjectPath>& LoadedPaths, const TArray<UObject*>& LoadedObjects, const float& LoadTime);
+
+#undef OnAsyncLoadPayloadCompleteType
 
 #pragma endregion Payload
 
@@ -912,6 +978,315 @@ public:
 #pragma endregion SoftObjectPath
 
 #pragma endregion Data
+
+	// ScriptData
+#pragma region
+public:
+
+	/**
+	* Get Script Data by the Data's Entry Name
+	* (Row Name in the master Data list).
+	*
+	* @param EntryName	Row Name in the master Script Data list.
+	* return			Script Data as UObject.
+	*/
+	FORCEINLINE UObject* GetScriptDataObject(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::GetScriptDataObject: EntryName: None is NOT Valid."));
+
+		if (UObject** DataPtr = ScriptDataObjectMap_Loaded.Find(EntryName))
+			return *DataPtr;
+		return nullptr;
+	}
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	* Check against the current loaded datas.
+	*
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Script Data list.
+	* return			Script Data as UObject.
+	*/
+	FORCEINLINE UObject* GetScriptDataObjectChecked(const FString& Context, const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName is None."), *Context);
+
+		if (UObject** DataPtr = ScriptDataObjectMap_Loaded.Find(EntryName))
+			return *DataPtr;
+
+		checkf(0, TEXT("%s: Failed to find Script Data with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return nullptr;
+	}
+
+	/**
+	* Safely get a Script Data by SoftObjectPath.
+	*
+	* @param Context	The calling context.
+	* @param EntryName	Row Name in the master Script Data list.
+	* @param Log		(optional)
+	* return			Script Data as UObject.
+	*/
+	FORCEINLINE UObject* GetSafeScriptDataObject(const FString& Context, const FName& EntryName, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (EntryName == NAME_None)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: EntryName is None."), *Context));
+			return nullptr;
+		}
+
+		if (UObject** DataPtr = ScriptDataObjectMap_Loaded.Find(EntryName))
+			return *DataPtr;
+
+		if (Log)
+			Log(FString::Printf(TEXT("%s: Failed to find Script Data with EntryName: %s."), *Context, *(EntryName.ToString())));
+		return nullptr;
+	}
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	*
+	* @param Path	Soft path to a Script Data.
+	* return		Script Data
+	*/
+	FORCEINLINE UObject* GetScriptDataObject(const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("UCsManager_Data::GetScriptDataObject: Path is NOT Valid."));
+
+		if (UObject** DataPtr = ScriptDataObjectByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+		return nullptr;
+	}
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	* Check against the current loaded datas.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft path to a Script Data.
+	* return
+	*/
+	FORCEINLINE UObject* GetScriptDataObjectChecked(const FString& Context, const FSoftObjectPath& Path)
+	{
+		checkf(Path.IsValid(), TEXT("%s: Path is NOT Valid."), *Context);
+
+		if (UObject** DataPtr = ScriptDataObjectByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+
+		checkf(0, TEXT("%s: Failed to find Script Data at Path: %s."), *Context, *(Path.ToString()));
+		return nullptr;
+	}
+
+	/**
+	* Get a Script Data by SoftObjectPath.
+	* Check against the current loaded datas.
+	*
+	* @param Context	The calling context.
+	* @param Path		Soft path to a Script Data.
+	* @param Log		(optional)
+	* return
+	*/
+	FORCEINLINE UObject* GetSafeScriptDataObject(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Path.IsValid())
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Path is NOT Valid."), *Context));
+			return nullptr;
+		}
+
+		if (UObject** DataPtr = ScriptDataObjectByPathMap_Loaded.Find(Path))
+			return *DataPtr;
+
+		if (Log)
+			Log(FString::Printf(TEXT("%s: Failed to find Script Data at Path: %s."), *Context, *(Path.ToString())));
+		return nullptr;
+	}
+
+	// Entry
+#pragma region
+public:
+
+	/**
+	* Get the Entry for the Script Data associated with EntryName.
+	*
+	* @param EntryName
+	* return			Entry
+	*/
+	FORCEINLINE const FCsDataEntry_ScriptData* ScriptData_GetEntry(const FName& EntryName) const
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::ScriptData_GetEntry: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_ScriptData* const* EntryPtr = ScriptDataEntryMap.Find(EntryName))
+			return *EntryPtr;
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::ScriptData_GetEntry: Failed to find Script Data with EntryName: %s."), *(EntryName.ToString())));
+		return nullptr;
+	}
+
+	/**
+	* Get the Entry for the Script Data associated with EntryName.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* return			Entry
+	*/
+	FORCEINLINE const FCsDataEntry_ScriptData* ScriptData_GetEntryChecked(const FString& Context, const FName& EntryName) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+	#if UE_BUILD_SHIPPING
+		const FCsDataEntry_ScriptData* Entry = ScriptDataEntryMap[EntryName];
+
+		checkf(Entry, TEXT("%s: Failed find Script Data associated with EntryName: %s."), *Context, *(EntryName.ToString()));
+		return Entry;
+	#else
+		return ScriptDataEntryMap[EntryName];
+	#endif // #if UE_BUILD_SHIPPING
+	}
+
+#pragma endregion Entry
+
+	// SoftObjectPath
+#pragma region
+public:
+
+	/**
+	* Get the SoftObjectPath for the Script Data associated with Entry Name.
+	*
+	* @param EntryName
+	* return			SoftObjectPath
+	*/
+	FORCEINLINE FSoftObjectPath ScriptData_GetPath(const FName& EntryName)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::ScriptData_GetPath: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_ScriptData* Entry = ScriptData_GetEntry(EntryName))
+			return Entry->Data.ToSoftObjectPath();
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::ScriptData_GetPath: Failed to find Script Data with EntryName: %s."), *(EntryName.ToString())));
+		return FSoftObjectPath();
+	}
+
+	/**
+	* Get the SoftObjectPath for the Script Data associated with Entry Name.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* return			SoftObjectPath
+	*/
+	FORCEINLINE const FSoftObjectPath& ScriptData_GetPathChecked(const FString& Context, const FName& EntryName) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+	#if UE_BUILD_SHIPPING
+		const FCsDataEntry_ScriptData* Entry = ScriptData_GetEntryChecked(Context, EntryName);
+
+		checkf(Entry->Data.ToSoftObjectPath().IsValid(), TEXT("%s: Entry->Data is NOT Valid"), *Context);
+
+		return Entry->Data.ToSoftObjectPath();
+	#else
+		return ScriptData_GetEntryChecked(Context, EntryName)->Data.ToSoftObjectPath();
+	#endif // UE_BUILD_SHIPPING
+	}
+
+	/**
+	* Get the SoftObjectPaths for Script Data associated with Entry Name.
+	*
+	* @param EntryName
+	* @param OutPaths
+	*/
+	FORCEINLINE void ScriptData_GetPaths(const FName& EntryName, TArray<FSoftObjectPath>& OutPaths)
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::ScriptData_GetPaths: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_ScriptData* Entry = ScriptData_GetEntry(EntryName))
+		{
+			OutPaths.Append(Entry->Paths.Internal);
+		}
+	#if !UE_BUILD_SHIPPING
+		else
+		{
+			CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::ScriptData_GetPaths: Failed to find Script Data with EntryName: %s."), *(EntryName.ToString())));
+		}
+	#endif // #if !UE_BUILD_SHIPPING
+	}
+
+	/**
+	* Get the SoftObjectPaths for Script Data associated with Entry Name.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param OutPaths
+	*/
+	FORCEINLINE void ScriptData_GetPathsChecked(const FString& Context, const FName& EntryName, TArray<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		OutPaths.Append(ScriptData_GetEntryChecked(Context, EntryName)->Paths.Internal);
+	}
+
+	/**
+	* Get the number of SoftObjectPaths for Script Data associated with Entry Name.
+	*
+	* @param EntryName
+	* return			Number of SoftObjectPaths for the Script Data.
+	*					0 for an invalid EntryName.
+	*/
+	FORCEINLINE int32 ScriptData_GetPathCount(const FName& EntryName) const
+	{
+		checkf(EntryName != NAME_None, TEXT("UCsManager_Data::ScriptData_GetPathCount: EntryName: None is NOT Valid."));
+
+		if (const FCsDataEntry_ScriptData* Entry = ScriptData_GetEntry(EntryName))
+			return Entry->Paths.Internal.Num();
+		CS_LOG_WARNING(FString::Printf(TEXT("UCsManager_Data::ScriptData_GetPathCount: Failed to find Script Data with EntryName: %s."), *(EntryName.ToString())));
+		return 0;
+	}
+
+	/**
+	* Get the number of SoftObjectPaths for Data associated with Entry Name.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* return			Number of SoftObjectPaths for the Data.
+	*					0 for an invalid EntryName.
+	*/
+	FORCEINLINE int32 ScriptData_GetPathCountChecked(const FString& Context, const FName& EntryName) const
+	{
+		return ScriptData_GetEntryChecked(Context, EntryName)->Paths.Internal.Num();
+	}
+
+	/**
+	* Get the SoftObjectPaths for Script Data associated with Entry Name and dependency Group.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void ScriptData_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const ECsObjectPathDependencyGroup& Group, TArray<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		OutPaths.Append(ScriptData_GetEntryChecked(Context, EntryName)->PathsByGroup[(uint8)Group].Internal);
+	}
+
+	/**
+	* Get the SoftObjectPaths for Script Data associated with Entry Name and dependency Group.
+	*
+	* @param Context	The calling context.
+	* @param EntryName
+	* @param Group
+	* @param OutPaths
+	*/
+	FORCEINLINE void ScriptData_GetPathsByGroupChecked(const FString& Context, const FName& EntryName, const ECsObjectPathDependencyGroup& Group, TSet<FSoftObjectPath>& OutPaths) const
+	{
+		checkf(EntryName != NAME_None, TEXT("%s: EntryName: None is NOT Valid."), *Context);
+
+		OutPaths.Append(ScriptData_GetEntryChecked(Context, EntryName)->PathsByGroup[(uint8)Group].InternalSet);
+	}
+
+#pragma endregion SoftObjectPath
+
+#pragma endregion ScriptData
 
 	// DataTable
 #pragma region

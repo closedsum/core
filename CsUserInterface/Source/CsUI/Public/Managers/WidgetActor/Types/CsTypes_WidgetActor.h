@@ -153,7 +153,7 @@ struct CSUI_API FCsWidgetActorPtr : public FTableRowBase
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "/Script.CsUI.CsWidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "/Script/CsUI.CsWidgetActor"))
 	TSoftClassPtr<UObject> Widget;
 
 	UPROPERTY()
@@ -239,7 +239,7 @@ struct CSUI_API FCsData_WidgetActorPtr
 public:
 
 	/** Soft Reference to an object that implements the interface: ICsData_WidgetActor. */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "/Script.CsUI.CsData_WidgetActor"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Widget Actor", meta = (MustImplement = "/Script/CsUI.CsData_WidgetActor"))
 	TSoftClassPtr<UObject> Data;
 
 	UPROPERTY(BlueprintReadOnly, Category = "CsUI|Widget Actor")

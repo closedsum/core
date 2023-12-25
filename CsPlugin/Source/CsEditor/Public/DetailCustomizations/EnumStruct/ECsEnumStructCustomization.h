@@ -6,6 +6,7 @@
 #include "Types/Enum/CsUserDefinedEnum.h"
 
 class IDetailGroup;
+class UPackage;
 
 /**
 * Customizes a FECsEnum property to use a dropdown
@@ -26,6 +27,8 @@ protected:
 	virtual void CustomPopulateEnumMap();
 
 	virtual void PopulateEnumMapFromSettings();
+
+	virtual void AddPropertyChange();
 
 	virtual void AddEnumToMap(const FString& Name);
 
@@ -146,9 +149,56 @@ protected:
 		FName Name;
 		NameInternalHandle->GetValue(Name);
 
-		const EnumStruct& Enum = EnumMap::Get().GetSafeEnum(Name);
+		int32 Index = EnumMap::Get().Num();
 
-		OutDisplayName = Enum.GetDisplayName();
+		// uint8
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FByteProperty::StaticClass()))
+		{
+			uint8 Value;
+			ValueHandle->GetValue(Value);
+			Index = (int32)Value;
+		}
+		// uint16
+		else
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FUInt16Property::StaticClass()))
+		{
+			uint16 Value;
+			ValueHandle->GetValue(Value);
+			Index = (int32)Value;
+		}
+		// uint32
+		else
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FUInt32Property::StaticClass()))
+		{
+			uint32 Value;
+			ValueHandle->GetValue(Value);
+			Index = (int32)Value;
+		}
+		// int32
+		else
+		if (ValueHandle->GetPropertyClass()->IsChildOf(FIntProperty::StaticClass()))
+		{
+			ValueHandle->GetValue(Index);
+		}
+
+		// If Name is Valid, Get DisplayName
+		if (EnumMap::Get().IsValidEnum(Name))
+		{
+			const EnumStruct& Enum = EnumMap::Get().GetEnum(Name);
+			OutDisplayName		   = Enum.GetDisplayName();
+		}
+		// Else, try Value
+		else
+		if (Index < EnumMap::Get().Num())
+		{
+			const EnumStruct& Enum = EnumMap::Get().GetEnumAt(Index);
+			OutDisplayName		   = Enum.GetDisplayName();
+		}
+		// Else, INVALID / MAX
+		else
+		{
+			OutDisplayName = EnumMap::Get().GetMAX().GetDisplayName();
+		}
 	}
 
 	FText GetComboBoxContent() const;

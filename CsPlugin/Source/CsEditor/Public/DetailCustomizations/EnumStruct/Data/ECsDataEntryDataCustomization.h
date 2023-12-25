@@ -18,6 +18,8 @@ protected:
 
 	virtual void CustomPopulateEnumMap() override;
 
+	virtual void AddPropertyChange() override;
+
 public:
 
 	static TSharedRef<IPropertyTypeCustomization> MakeInstance();

@@ -45,10 +45,28 @@ namespace NCsDataEntryData
 	FORCEINLINE void CreateCustom(const FString& Name, const FString& DisplayName, const bool& UserDefinedEnum) { EnumMapType::Get().Create(Name, DisplayName, UserDefinedEnum); }
 	FORCEINLINE bool IsValidEnum(const FString& Name) { return EnumMapType::Get().IsValidEnum(Name); }
 	FORCEINLINE bool IsValidEnumByDisplayName(const FString& DisplayName) { return EnumMapType::Get().IsValidEnumByDisplayName(DisplayName); }
+	FORCEINLINE void GetNames(FName& OutEnumName, TArray<FName>& OutNames)
+	{
+		OutEnumName = EnumMapType::Get().GetEnumFName();
+
+		OutNames.Reset(FMath::Max(OutNames.Max(), EnumMapType::Get().Num()));
+
+		for (const Type& E : EnumMapType::Get())
+		{
+			OutNames.Add(E.GetFName());
+		}
+	}
+	FORCEINLINE UStruct* GetStruct() { return Type::StaticStruct(); }
+
+	FORCEINLINE bool HasDataTable() { return true; }
+	CSCORE_API UDataTable* GetDataTable(const FString& Context);
 
 	CSCORE_API void FromDataTable(const FString& Context, UObject* ContextRoot);
 
 	CSCORE_API void PopulateEnumMapFromSettings(const FString& Context, UObject* ContextRoot);
+
+	CSCORE_API void ConditionalAddLayout();
+	CSCORE_API void AddPropertyChange();
 }
 
 #pragma endregion DataEntryData
@@ -58,6 +76,7 @@ namespace NCsDataEntryData
 
 class UObject;
 class UClass;
+class UDataTable;
 
 // NCsLoad::FGetObjectPaths
 CS_FWD_DECLARE_STRUCT_NAMESPACE_1(NCsLoad, FGetObjectPaths)
@@ -78,7 +97,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable)
 	bool bPopulateOnSave;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "/Script.CsCore.CsData"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "/Script/CsCore.CsData"))
 	TSoftClassPtr<UObject> Data;
 
 	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
@@ -173,6 +192,31 @@ public:
 		return Cast<T>(GetChecked(Context));
 	}
 
+	FORCEINLINE UObject* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Data_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Failed to load Data with Entry: %s @ Path: %s."), *Context, *(Name.ToString()), *(Data.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+		return Data_Internal;
+	}
+
+	template<typename T>
+	FORCEINLINE T* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		T* Other = Cast<T>(GetSafe(Context, Log));
+
+		if (!Other)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Failed to cast Object: %s with Class: %s to type: T."), *Context, *(Data_Internal->GetName()), *(Data_Class->GetName())));
+			return nullptr;
+		}
+		return Other;
+	}
+
 	template<typename InterfaceType>
 	FORCEINLINE InterfaceType* GetInterfaceChecked(const FString& Context)
 	{
@@ -206,9 +250,158 @@ public:
 	void Populate(const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup);
 
 #endif // #if WITH_EDITOR
+
+	UClass* SafeLoadSoftClass(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning);
+	UObject* SafeLoadDefaultObject(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning);
+
+	virtual void OnDataTableChanged(const UDataTable* InDataTable, const FName InRowName) override;
 };
 
 #pragma endregion FCsPayload_Data
+
+// FCsDataEntry_ScriptData
+#pragma region
+
+class UObject;
+class UClass;
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsDataEntry_ScriptData : public FTableRowBase
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+
+	UPROPERTY()
+	int32 Index;
+
+	UPROPERTY(BlueprintReadOnly, Category = DataTable)
+	FName Name;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable)
+	bool bPopulateOnSave;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = DataTable, meta = (MustImplement = "/Script/CsCore.CsScriptData"))
+	TSoftClassPtr<UObject> Data;
+
+	//UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	//int32 Data_LoadFlags;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
+	UObject* Data_Internal;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = DataTable)
+	UClass* Data_Class;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = DataTable)
+	FCsTArraySoftObjectPath Paths;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = "CsCore|Load")
+	FCsTArraySoftObjectPath PathsByGroup[(uint8)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX];
+
+	FCsDataEntry_ScriptData() :
+		Index(INDEX_NONE),
+		Name(NAME_None),
+		bPopulateOnSave(false),
+		Data(),
+		Data_Internal(nullptr),
+		Data_Class(nullptr),
+		Paths()
+	{
+	}
+
+	FORCEINLINE FCsDataEntry_ScriptData& operator=(const FCsDataEntry_ScriptData& B)
+	{
+		Name = B.Name;
+		bPopulateOnSave = B.bPopulateOnSave;
+		Data = B.Data;
+		Data_Internal = B.Data_Internal;
+		Data_Class = B.Data_Class;
+		Paths = B.Paths;
+
+		const int32 Count = (int32)ECsObjectPathDependencyGroup::ECsObjectPathDependencyGroup_MAX;
+
+		for (int32 I = 0; I < Count; ++I)
+		{
+			PathsByGroup[I] = B.PathsByGroup[I];
+		}
+		return *this;
+	}
+
+	FORCEINLINE void SetIndex(const int32& InIndex)
+	{
+		Index = InIndex;
+	}
+
+	FORCEINLINE const int32& GetIndex() const
+	{
+		return Index;
+	}
+
+	void Reset()
+	{
+		Data = nullptr;
+		Data_Internal = nullptr;
+		Data_Class = nullptr;
+		ClearPaths();
+	}
+
+	void ClearPaths()
+	{
+		Paths.Reset();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.Reset();
+		}
+	}
+
+	FORCEINLINE UObject* Get() { return Data_Internal; }
+
+	FORCEINLINE UObject* GetChecked(const FString& Context)
+	{
+		checkf(Data_Internal, TEXT("%s: Failed to load Data with Entry: %s @ Path: %s."), *Context, *(Name.ToString()), *(Data.ToSoftObjectPath().ToString()));
+
+		return Data_Internal;
+	}
+
+	FORCEINLINE UObject* GetSafe(const FString& Context, void(*Log)(const FString&) = &FCsLog::Warning)
+	{
+		if (!Data_Internal)
+		{
+			if (Log)
+				Log(FString::Printf(TEXT("%s: Failed to load Data with Entry: %s @ Path: %s."), *Context, *(Name.ToString()), *(Data.ToSoftObjectPath().ToString())));
+			return nullptr;
+		}
+		return Data_Internal;
+	}
+
+	FORCEINLINE UClass* GetClass() { return Data_Class; }
+
+	void BuildFromPaths()
+	{
+		Paths.BuildFromPaths();
+
+		for (FCsTArraySoftObjectPath& Arr : PathsByGroup)
+		{
+			Arr.BuildFromPaths();
+		}
+	}
+
+#if WITH_EDITOR
+
+	/**
+	* Get all ObjectPaths and Resource Sizes (Memory Size) from Data and
+	*  store that in Paths.
+	*/
+	void Populate();
+
+	void Populate(const TSet<FSoftObjectPath>& PathSet, const TArray<TSet<FSoftObjectPath>>& PathSetsByGroup);
+
+#endif // #if WITH_EDITOR
+};
+
+#pragma endregion FCsDataEntry_ScriptData
 
 // FCsDataEntry_DataTable
 #pragma region

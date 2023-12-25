@@ -9,8 +9,15 @@
 #include "Settings/CsLibrary_DeveloperSettings.h"
 	// Common
 #include "Game/CsLibrary_GameInstance.h"
+#include "Library/CsLibrary_Valid.h"
+// Data
+#include "Data/CsGetDataRootSet.h"
 // Engine
 #include "Engine/DataTable.h"
+// Enum
+#include "Types/Enum/Tool/CsGetEnumStructTool.h"
+// Engine
+#include "Engine/Engine.h"
 
 const FName FCsPopulateEnumMapFromSettings::NamePropertyName = FName("Name");
 const FName FCsPopulateEnumMapFromSettings::DisplayNamePropertyName = FName("DisplayName");
@@ -37,6 +44,11 @@ UObject* FCsPopulateEnumMapFromSettings::GetDataRootSetImpl(const FString& Conte
 	return nullptr;
 }
 
+const FCsDataRootSet* FCsPopulateEnumMapFromSettings::GetDataRootSet(const FString& Context, UObject* ContextRoot)
+{
+	return GetDataRootSet<FCsDataRootSet, ICsGetDataRootSet, &ICsGetDataRootSet::GetCsDataRootSet>(Context, ContextRoot);
+}
+
 UDataTable* FCsPopulateEnumMapFromSettings::GetDataTable(const FString& Context, const UObject* ContextRoot, const TSoftObjectPtr<UDataTable>& DT_SoftObject)
 {
 	// Check context to determine how to load the DataTable
@@ -53,6 +65,16 @@ UDataTable* FCsPopulateEnumMapFromSettings::GetDataTable(const FString& Context,
 		return DT_SoftObject.LoadSynchronous();
 	}
 	return nullptr;
+}
+
+UDataTable* FCsPopulateEnumMapFromSettings::GetDataTable(const FString& Context, const FName& DataTableName)
+{
+	const FCsDataRootSet* DataRootSet = GetDataRootSet(Context, nullptr);
+
+	if (!DataRootSet)
+		return nullptr;
+
+	return DataRootSet->GetDataTableChecked(Context, DataTableName);
 }
 
 #define PayloadType FCsPopulateEnumMapFromSettings::FFromDataTable::FPayload
@@ -172,6 +194,77 @@ void FCsPopulateEnumMapFromSettings::FromDataTable_RowAsName(const FString& Cont
 			{
 				Payload.Create(Name, true);
 			}
+		}
+	}
+}
+
+namespace NCsEnum
+{
+	namespace NStruct
+	{
+		namespace NLayout
+		{
+			namespace NLibrary
+			{
+				namespace NCached
+				{
+					namespace Str
+					{
+						CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsEnum::NStruct::NLayout::FLibrary, AddPropertyChange);
+					}
+				}
+			}
+
+			#define USING_NS_CACHED using namespace NCsEnum::NStruct::NLayout::NLibrary::NCached;
+			#define SET_CONTEXT(__FunctionName) using namespace NCsEnum::NStruct::NLayout::NLibrary::NCached; \
+				const FString& Context = Str::##__FunctionName
+
+			void FLibrary::ConditionalAddLayout(const FName& EnumName, const TArray<FName>& Names, UDataTable* DataTable)
+			{
+				typedef NCsCore::NSettings::FLibrary SettingsLibrary;
+
+				TMap<FName, FCsEnumStructLayoutHistory>& EnumStructlayoutHistoryMap = SettingsLibrary::GetEnumStructlayoutHistoryMap();
+
+				if (!EnumStructlayoutHistoryMap.Find(EnumName))
+				{
+					FCsEnumStructLayoutHistory& History = EnumStructlayoutHistoryMap.Add(EnumName);
+
+					int32 Count = 0;
+
+					for (const FName& Name : Names)
+					{
+						FCsEnumStructLayoutHistory_NameAndValue& NameAndValue = History.NameAndValues.AddDefaulted_GetRef();
+						NameAndValue.Name  = Name;
+						NameAndValue.Value = Count;
+
+						++Count;
+					}
+
+					History.DataTable = DataTable;
+
+					SettingsLibrary::TryUpdateDefaultConfigFile();
+				}
+			}
+
+			void FLibrary::AddPropertyChange(const FName& EnumName, UStruct* EnumStruct)
+			{
+				SET_CONTEXT(AddPropertyChange);
+
+				typedef NCsEnum::NStruct::NTool::FImpl EnumStructToolType;
+
+				ICsGetEnumStructTool* GetEnumStructTool = CS_INTERFACE_CAST_CHECKED(GEngine, UEngine, ICsGetEnumStructTool);
+				EnumStructToolType& EnumStructTool		= GetEnumStructTool->GetEnumStructTool();
+
+				EnumStructTool.AddPropertyChange(EnumName, EnumStruct);
+			}
+
+			void FLibrary::CheckChange()
+			{
+				
+			}
+
+			#undef USING_NS_CACHED
+			#undef SET_CONTEXT
 		}
 	}
 }

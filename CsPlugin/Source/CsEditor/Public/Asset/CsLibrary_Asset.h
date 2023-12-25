@@ -87,8 +87,9 @@ namespace NCsAsset
 			IAssetRegistry& AssetRegistry = GetAssetRegistry();
 
 			TArray<FAssetData> OutAssetData;
-
-			AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 			const FString NameLower = Name.ToLower();
 			const int32 AssetCount  = OutAssetData.Num();
@@ -110,7 +111,9 @@ namespace NCsAsset
 
 			TArray<FAssetData> OutAssetDatas;
 
-			AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetDatas);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetDatas);
 
 			const int32 AssetCount   = OutAssetDatas.Num();
 			const int32 KeywordCount = KeywordsOR.Num();
@@ -150,7 +153,9 @@ namespace NCsAsset
 
 			TArray<FAssetData> OutAssetData;
 
-			AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 			const FString NameLower = Name.ToLower();
 			const int32 AssetCount  = OutAssetData.Num();
@@ -179,7 +184,9 @@ namespace NCsAsset
 
 			TArray<FAssetData> OutAssetData;
 
-			AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 			const int32 AssetCount   = OutAssetData.Num();
 			const int32 KeywordCount = KeywordsAND.Num();
@@ -221,7 +228,9 @@ namespace NCsAsset
 
 			TArray<FAssetData> OutAssetData;
 
-			AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 			const FString NameLower = Name.ToLower();
 			const int32 AssetCount  = OutAssetData.Num();
@@ -248,7 +257,9 @@ namespace NCsAsset
 
 			TArray<FAssetData> OutAssetData;
 
-			AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
+			// TODO: FIX
+			check(0);
+			//AssetRegistry.GetAssetsByClass(T::StaticClass()->GetFName(), OutAssetData);
 
 			const FString NameLower = Name.ToString().ToLower();
 			const int32 AssetCount  = OutAssetData.Num();

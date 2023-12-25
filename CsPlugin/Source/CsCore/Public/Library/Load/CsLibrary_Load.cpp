@@ -1977,6 +1977,34 @@ void UCsLibrary_Load::LoadDataTableRowChecked(const FString& Context, UDataTable
 	LoadStruct(RowPtr, Struct, LoadFlags, LoadCodes);
 }
 
+bool UCsLibrary_Load::SafeLoadDataTableRow(const FString& Context, UDataTable* DataTable, const FName& RowName, const int32& LoadFlags, const int32& LoadCodes, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+{
+	CS_IS_PTR_NULL(DataTable)
+	CS_IS_NAME_NONE(RowName)
+
+	const UScriptStruct* ScriptStruct = DataTable->GetRowStruct();
+
+	if (!ScriptStruct)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: No RowStruct for DataTable: %s."), *Context, *(DataTable->GetName())));
+		return false;
+	}
+
+	UScriptStruct* Temp		= const_cast<UScriptStruct*>(ScriptStruct);
+	UStruct* const Struct	= Temp;
+
+	uint8* RowPtr = DataTable->FindRowUnchecked(RowName);
+
+	if (!RowPtr)
+	{
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to find Row: %s from DataTable: %s."), *Context, *(RowName.ToString()), *(DataTable->GetName())));
+		return false;
+	}
+
+	LoadStruct(RowPtr, Struct, LoadFlags, LoadCodes);
+	return true;
+}
+
 UObject* UCsLibrary_Load::LoadSoftClassPtrChecked(const FString& Context, const TSoftClassPtr<UObject>& SoftClass, const int32& LoadFlags, const int32& LoadCodes)
 {
 	checkf(SoftClass.ToSoftObjectPath().IsValid(), TEXT("%: SoftClass is NOT Valid."), *Context);

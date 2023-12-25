@@ -168,6 +168,24 @@ namespace NCsLevelSequence
 		#pragma region
 		public:
 
+			static ULevelSequencePlayer* GetPlayerChecked(const FString& Context, ALevelSequenceActor* Sequence);
+
+			static ULevelSequencePlayer* GetSafePlayer(const FString& Context, ALevelSequenceActor* Sequence, bool& OutSuccess, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+			FORCEINLINE static ULevelSequencePlayer* GetSafePlayer(const FString& Context, ALevelSequenceActor* Sequence, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning)
+			{
+				bool OutSuccess = false;
+				return GetSafePlayer(Context, Sequence, OutSuccess, Log);
+			}
+
+			static void PlayFromStartChecked(const FString& Context, ALevelSequenceActor* Sequence);
+
+			static bool SafePlayFromStart(const FString& Context, ALevelSequenceActor* Sequence, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
+			FORCEINLINE static bool SafePlayFromStart(const FString& Context, ALevelSequenceActor* Sequence, bool& OutSuccess, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning)
+			{
+				OutSuccess = SafePlayFromStart(Context, Sequence, Log);
+				return OutSuccess;
+			}
+
 			/**
 			* Get the Frame Rate for the Player associated with Sequence
 			*  Sequence->GetSequencePlayer()->GetFrameRate().
@@ -355,7 +373,7 @@ namespace NCsLevelSequence
 		#pragma region
 		public:
 
-			static void PlayFromStart(const FString& Context, ULevelSequencePlayer* Player);
+			static void PlayFromStartChecked(const FString& Context, ULevelSequencePlayer* Player);
 
 			static bool SafePlayFromStart(const FString& Context, ULevelSequencePlayer* Player, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning);
 			FORCEINLINE static bool SafePlayFromStart(const FString& Context, ULevelSequencePlayer* Player, bool& OutSuccess, void(*Log)(const FString&) = &NCsSequencer::FLog::Warning)

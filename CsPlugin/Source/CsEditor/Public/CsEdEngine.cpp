@@ -15,9 +15,14 @@
 // Enum
 #include "Types/Enum/CsEnumStructUserDefinedEnumMap.h"
 // Library
+	// Data
+#include "Data/CsLibrary_Data.h"
+	// Common
+#include "Library/Load/CsLibrary_Load.h"
+#include "Library/CsLibrary_Blueprint.h"
 #include "Asset/CsLibrary_Asset.h"
 #include "Library/CsLibrary_String.h"
-#include "Library/Load/CsLibrary_Load.h"
+#include "Library/CsLibrary_Property.h"
 // Managers
 #include "Managers/Time/CsManager_Time.h"
 // Asset Registry
@@ -29,6 +34,8 @@
 // Data
 #include "Data/CsGetDataRootSet.h"
 // Setting
+#include "Settings/Tool/CsSettingsTool.h"
+#include "Settings/CsUserSettings.h"
 #include "Settings/CsDeveloperSettings.h"
 #include "Settings/ProjectPackagingSettings.h"
 #include "Settings/LevelEditorPlaySettings.h"
@@ -36,11 +43,20 @@
 #include "DetailCustomizations/CsRegisterDetailCustomization.h"
 // Level
 #include "Level/CsLevelScriptActor.h"
-
-
-#include "Editor/UnrealEd/Public/Editor.h"
-
+//UI
+#include "Framework/Application/SlateApplication.h"
+// Enum
+#include "Types/Enum/Tool/CsEnumStructLayoutTool.h"
 #include "Engine/UserDefinedEnum.h"
+// Editor
+#include "Editor.h"
+#include "LevelEditor.h"
+#include "PackageTools.h"
+// Module
+#include "Modules/ModuleManager.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+// SourceControl
+#include "SourceControlHelpers.h"
 
 // Cache
 #pragma region
@@ -54,12 +70,18 @@ namespace NCsEdEngine
 			const FString StandaloneFromEditor = TEXT("StandaloneFromEditor");
 			const FString StandaloneMobileFromEditor = TEXT("StandaloneMobileFromEditor");
 
+			// Init
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, PostInit);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, PostInit_Internal);
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnPostInit);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnEndPIE_NextFrame_Internal);
 
 			// GetDataEntryTool
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, DataEntry_DataTable_PopulateImpl);
-
+			// Save
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsEdEngine, OnObjectPreSave);
 			const FString OnObjectPreSave_Update_DataRootSet_Datas = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas");
+			const FString OnObjectPreSave_Update_DataRootSet_ScriptDatas = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_ScriptDatas");
 			const FString OnObjectPreSave_Update_DataRootSet_DataTables = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables");
 			const FString OnObjectPreSave_Update_DataRootSet_Payloads = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payloads");
 			const FString OnObjectPreSave_Update_DataRootSet_Payload = TEXT("UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Payload");
@@ -68,6 +90,10 @@ namespace NCsEdEngine
 		namespace Name
 		{
 			const FName LastExecutedPlayModeType = FName("LastExecutedPlayModeType");
+			const FName Data = FName("Data");
+
+			// Init
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsEdEngine, PostInit_Internal);
 
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_NAME(UCsEdEngine, OnEndPIE_NextFrame_Internal);
 		}
@@ -92,6 +118,10 @@ namespace NCsEdEngine
 
 #pragma endregion Cache
 
+#define USING_NS_CACHED using namespace NCsEdEngine::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsEdEngine::NCached; \
+	const FString& Context = Str::##__FunctionName
+
 // UEngine Interface
 #pragma region
 
@@ -99,28 +129,17 @@ void UCsEdEngine::Init(IEngineLoop* InEngineLoop)
 {
 	Super::Init(InEngineLoop);
 
+	PlayMode = ECsPlayMode::ECsPlayMode_MAX;
 	Standalone.Outer = this;
 
 	FCsRegisterDetailCustomization::Register();
-
-	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
-	FEditorDelegates::EndPIE.AddUObject(this, &UCsEdEngine::OnEndPIE);
-	FEditorDelegates::BeginStandaloneLocalPlay.AddUObject(this, &UCsEdEngine::OnStandaloneLocalPlayEvent);
-	FCoreUObjectDelegates::OnObjectPreSave.AddUObject(this, &UCsEdEngine::OnObjectPreSave);
-	FCoreUObjectDelegates::OnObjectPropertyChanged.AddUObject(this, &UCsEdEngine::OnObjectPropertyChanged);
-
-	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
-
-	// CVars
-	GetMutableDefault<UCsDeveloperSettings>()->ApplyEnableScriptChecked();
 
 	ConstructManagerSingleton();
 
 	UCsManager_Time::Init(this);
 	UCsCoroutineScheduler::Init(this);
 
-	DataEntryTool.Data_PopulateImpl = &UCsEdEngine::DataEntry_Data_PopulateImpl;
-	DataEntryTool.DataTable_PopulateImpl = &UCsEdEngine::DataEntry_DataTable_PopulateImpl;
+	PostInit();
 }
 
 void UCsEdEngine::PreExit()
@@ -142,6 +161,27 @@ void UCsEdEngine::Tick(float DeltaSeconds, bool bIdleMode)
 	const FCsDeltaTime& DeltaTime = UCsManager_Time::Get(this)->GetScaledDeltaTime(Group);
 
 	UCsCoroutineScheduler::Get(this)->Update(Group, DeltaTime);
+
+	// Check Opened Assets
+	{
+		const int32 Count = OpenedAssets.Num();
+
+		// HACK: Capture event for when an Asset Editor is closed for an Asset
+		//		 Event OnAssetEditorRequestClose() from UAssetEditorSubsystem doesn't seem to always be called
+		//		 depending on the Editor.
+		for (int32 I = Count - 1; I >= 0; --I)
+		{
+			UObject* Asset = OpenedAssets[I];
+
+			TArray<IAssetEditorInstance*> Instances = GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->FindEditorsForAsset(Asset);
+
+			if (Instances.Num() == CS_EMPTY)
+			{
+				OnAssetEditorRequestClose(Asset, EAssetEditorCloseReason::CloseAllEditorsForAsset);
+				OpenedAssets.RemoveAt(I, 1, false);
+			}
+		}
+	}
 }
 
 #pragma endregion UEngine Interface
@@ -233,7 +273,101 @@ bool UCsEdEngine::Exec(UWorld* InWorld, const TCHAR* Stream, FOutputDevice& Ar)
 
 #pragma endregion FExec Interface
 
-// PIE
+// Init
+#pragma region
+
+void UCsEdEngine::PostInit()
+{
+	SET_CONTEXT(PostInit);
+
+	typedef NCsCoroutine::NPayload::FImpl PayloadType;
+
+	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::EditorEngine;
+	UCsCoroutineScheduler* Scheduler   = UCsCoroutineScheduler::Get(this);
+	PayloadType* Payload			   = Scheduler->AllocatePayload(UpdateGroup);
+
+	#define COROUTINE PostInit_Internal
+
+	Payload->CoroutineImpl.BindUObject(this, &UCsEdEngine::COROUTINE);
+	Payload->StartTime = UCsManager_Time::Get(this)->GetTime(UpdateGroup);
+	Payload->Owner.SetObject(this);
+	Payload->SetName(Str::COROUTINE);
+	Payload->SetFName(Name::COROUTINE);
+
+	#undef COROUTINE
+
+	Scheduler->Start(Payload);
+}
+
+char UCsEdEngine::PostInit_Internal(FCsRoutine* R)
+{
+	FAssetRegistryModule* AssetRegistry = FModuleManager::GetModulePtr<FAssetRegistryModule>(FName(TEXT("AssetRegistry")));
+
+	CS_COROUTINE_BEGIN(R);
+
+	CS_COROUTINE_WAIT_UNTIL(R, AssetRegistry);
+
+	AssetRegistry->Get().OnFilesLoaded().AddUObject(this, &UCsEdEngine::SetPostInit);
+
+	CS_COROUTINE_WAIT_UNTIL(R, bPostInit);
+
+	AssetRegistry->Get().OnFilesLoaded().RemoveAll(this);
+
+	OnPostInit();
+
+	CS_COROUTINE_END(R);
+}
+
+void UCsEdEngine::OnPostInit()
+{
+	SET_CONTEXT(OnPostInit);
+
+	FEditorDelegates::BeginPIE.AddUObject(this, &UCsEdEngine::OnBeginPIE);
+	FEditorDelegates::EndPIE.AddUObject(this, &UCsEdEngine::OnEndPIE);
+	FEditorDelegates::BeginStandaloneLocalPlay.AddUObject(this, &UCsEdEngine::OnStandaloneLocalPlayEvent);
+	FCoreUObjectDelegates::OnObjectPreSave.AddUObject(this, &UCsEdEngine::OnObjectPreSave);
+	FCoreUObjectDelegates::OnObjectPropertyChanged.AddUObject(this, &UCsEdEngine::OnObjectPropertyChanged);
+
+	OnWorldContextDestroyed().AddUObject(this, &UCsEdEngine::OnWorldContextDestroyed_Internal);
+
+	// CVars
+	GetMutableDefault<UCsDeveloperSettings>()->ApplyEnableScriptChecked();
+
+	DataEntryTool.Data_PopulateImpl = &UCsEdEngine::DataEntry_Data_PopulateImpl;
+	DataEntryTool.ScriptData_PopulateImpl = &UCsEdEngine::DataEntry_ScriptData_PopulateImpl;
+	DataEntryTool.DataTable_PopulateImpl = &UCsEdEngine::DataEntry_DataTable_PopulateImpl;
+
+	SlateApplicationTool.ApplyApplicationScaleImpl = &UCsEdEngine::ApplyApplicationScaleImpl;
+
+	UCsUserSettings* UserSettings = GetMutableDefault<UCsUserSettings>();
+
+	UserSettings->ApplyEditorUI_ApplicationScale();
+
+	AssetTool.GetOpenedAssetsImpl = &UCsEdEngine::GetOpenedAssets_Internal;
+	
+	EnumStructTool.Init(this);
+	EnumStructTool.ResolveLayoutChangesImpl = &UCsEdEngine::EnumStruct_ResolveLayoutChanges_Internal;
+
+	SourceControlTool.CheckOutFileImpl = &USourceControlHelpers::CheckOutFile;
+
+	typedef NCsSettings::FTool SettingsTool;
+
+	SettingsTool::ToggleProjectSettings();
+
+	// ICsAsset_Event
+	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OnAssetOpenedInEditor().AddUObject(this, &UCsEdEngine::OnAssetOpenedInEditor);
+	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->OnAssetEditorRequestClose().AddUObject(this, &UCsEdEngine::OnAssetEditorRequestClose);
+	// ICsLevelEditor_Event
+	FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>("LevelEditor");
+	LevelEditorModule.OnActorSelectionChanged().AddUObject(this, &UCsEdEngine::OnActorSelectionChanged);
+
+	IConsoleVariable* CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("gc.TimeBetweenPurgingPendingKillObjects"));
+	CVar->Set(UserSettings->GCInterval, ECVF_SetByCode);
+}
+
+#pragma endregion Init
+
+// PIE_Event
 #pragma region
 
 void UCsEdEngine::OnBeginPIE(bool IsSimulating)
@@ -241,6 +375,9 @@ void UCsEdEngine::OnBeginPIE(bool IsSimulating)
 	FCsCVarLogMap::Get().ResetDirty();
 	FCsCVarToggleMap::Get().ResetDirty();
 	FCsCVarDrawMap::Get().ResetDirty();
+
+	NCsPIE::FDelegates::OnBegin_Event.Broadcast(IsSimulating);
+	PIE_OnBegin_ScriptEvent.Broadcast(IsSimulating);
 }
 
 void UCsEdEngine::OnEndPIE(bool IsSimulating)
@@ -263,10 +400,19 @@ void UCsEdEngine::OnEndPIE(bool IsSimulating)
 			ModuleSettings->TryUpdateDefaultConfigFile();
 		}
 	}
+	NCsPIE::FDelegates::OnEnd_Event.Broadcast(IsSimulating);
+	PIE_OnEnd_ScriptEvent.Broadcast(IsSimulating);
 	OnEndPIE_ScriptEvent.Broadcast(IsSimulating);
+	NCsPIE::FDelegates::OnEnd_Last_Event.Broadcast(IsSimulating);
+	PIE_OnEnd_Last_ScriptEvent.Broadcast(IsSimulating);
 	OnEndPIE_Last_ScriptEvent.Broadcast(IsSimulating);
 
 	CreatedObjects.DestroyAndRemoveNullPendingKillOrOrphaned();
+
+	UCsUserSettings* UserSettings = GetMutableDefault<UCsUserSettings>();
+
+	if (UserSettings->bForceGCOnEndPIE)
+		ForceGarbageCollection(true);
 
 	OnEndPIE_NextFrame(IsSimulating);
 }
@@ -311,15 +457,21 @@ char UCsEdEngine::OnEndPIE_NextFrame_Internal(FCsRoutine* R)
 
 	OnEndPlayMapPIE(IsSimulating);
 
+	NCsPIE::FDelegates::OnEnd_NextFrame_Event.Broadcast(IsSimulating);
+	PIE_OnEnd_NextFrame_ScriptEvent.Broadcast(IsSimulating);
+
 	CS_COROUTINE_END(R)
 }
 
 void UCsEdEngine::OnEndPlayMapPIE(bool IsSimulating)
 {
 	PlayMode = ECsPlayMode::ECsPlayMode_MAX;
+
+	NCsPIE::FDelegates::OnEndPlayMap_Event.Broadcast(IsSimulating);
+	PIE_OnEndPlayMap_ScriptEvent.Broadcast(IsSimulating);
 }
 
-#pragma endregion PIE
+#pragma endregion PIE_Event
 
 // World
 #pragma region
@@ -341,6 +493,17 @@ void UCsEdEngine::DataEntry_Data_PopulateImpl(FCsDataEntry_Data* Entry)
 
 	ResultType Result;
 	DependencyLibrary::Get(Entry, FCsDataEntry_Data::StaticStruct(), 7, Result);
+
+	Entry->Populate(Result.PathSet, Result.PathSetsByGroup);
+}
+
+void UCsEdEngine::DataEntry_ScriptData_PopulateImpl(FCsDataEntry_ScriptData* Entry)
+{
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
+	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
+
+	ResultType Result;
+	DependencyLibrary::Get(Entry, FCsDataEntry_ScriptData::StaticStruct(), 7, Result);
 
 	Entry->Populate(Result.PathSet, Result.PathSetsByGroup);
 }
@@ -415,6 +578,87 @@ void UCsEdEngine::DataEntry_DataTable_PopulateImpl(UObject* DataTable, const FNa
 
 #pragma endregion GetDataEntryTool
 
+// GetSlateApplicationTool
+#pragma region
+
+void UCsEdEngine::ApplyApplicationScaleImpl(const float& ApplicationScale)
+{
+	FSlateApplication::Get().SetApplicationScale(ApplicationScale);
+}
+
+#pragma endregion GetSlateApplicationTool
+
+// GetAssetTool
+#pragma region
+
+/*static*/ const TArray<UObject*>& UCsEdEngine::GetOpenedAssets_Internal()
+{
+	return Cast<UCsEdEngine>(GEngine)->GetOpenedAssets();
+}
+
+#pragma endregion GetAssetTool
+
+// GetEnumStructTool
+#pragma region
+
+void UCsEdEngine::EnumStruct_ResolveLayoutChanges(bool bForce)
+{
+	TMap<FName, UStruct*> StructMap;
+
+	NCsEnum::NStruct::NLayout::FTool::DetermineChanges(StructMap);
+	NCsEnum::NStruct::NLayout::FTool::ResolveChanges(StructMap, bForce);
+}
+
+/*static*/ void UCsEdEngine::EnumStruct_ResolveLayoutChanges_Internal(bool bForce)
+{
+	Cast<UCsEdEngine>(GEngine)->EnumStruct_ResolveLayoutChanges(bForce);
+}
+
+#pragma endregion GetEnumStructTool
+
+// Asset_Event
+#pragma region
+
+void UCsEdEngine::OnAssetOpenedInEditor(UObject* Asset, IAssetEditorInstance* EditorInstance)
+{
+	Asset_OnOpenedInEditor_Event.Broadcast(Asset);
+
+	bool AddAsset = true;
+
+	for (UObject* O : OpenedAssets)
+	{
+		if (O == Asset)
+			AddAsset = false;
+	}
+
+	if (AddAsset)
+	{
+		Asset_OnUniqueOpenedInEditor_Event.Broadcast(Asset);
+		OpenedAssets.Add(Asset);
+	}
+}
+
+void UCsEdEngine::OnAssetEditorRequestClose(UObject* Asset, EAssetEditorCloseReason Reason)
+{
+	typedef NCsAsset::NEditor::NClose::EReason ReasonType;
+
+	AssetEditor_OnRequest_Close_Event.Broadcast(Asset, (ReasonType)Reason);
+	AssetEditor_OnRequest_Close_ScriptEvent.Broadcast(Asset, (ECsAssetEditorCloseReason)Reason);
+}
+
+#pragma endregion Asset_Event
+
+// LevelEditor_Event
+#pragma region
+
+void UCsEdEngine::OnActorSelectionChanged(const TArray<UObject*>& NewSelection, bool bForceRefresh)
+{
+	OnActorSelectionChanged_Event.Broadcast(NewSelection, bForceRefresh);
+	OnActorSelectionChanged_ScriptEvent.Broadcast(NewSelection, bForceRefresh);
+}
+
+#pragma endregion LevelEditor_Event
+
 // PropertyChange
 #pragma region
 
@@ -485,72 +729,145 @@ void UCsEdEngine::OnObjectPropertyChanged(UObject* Object, FPropertyChangedEvent
 // Save
 #pragma region
 
-void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext Context)
+void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext SaveContext)
 {
+	SET_CONTEXT(OnObjectPreSave);
+
 	if (!Object)
 		return;
+
+	UCsUserSettings* UserSettings = GetMutableDefault<UCsUserSettings>();
 
 	// DataTable
 	if (UDataTable* DataTable = Cast<UDataTable>(Object))
 	{
+		DataTableTool.ProcessChange(DataTable);
+
 		// Settings
 		if (UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>())
 		{
-			TSet<TSoftClassPtr<UObject>> DataRootSets;
-
-			const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
-
-			for (int32 I = 0; I < Count; ++I)
+			// TODO: Save out to .json
+			
+			// DataRootSet
 			{
-				DataRootSets.Add(Settings->DataRootSets[I].DataRootSet);
-			}
+				TSet<TSoftClassPtr<UObject>> DataRootSets;
 
-			for (TSoftClassPtr<UObject> SoftClass : DataRootSets)
-			{
-				UClass* Class					  = SoftClass.LoadSynchronous();
-				UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
-				ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
 
-				// DataRootSet
-				if (GetDataRootSet)
+				for (int32 I = 0; I < Count; ++I)
 				{
-					const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
+					DataRootSets.Add(Settings->DataRootSets[I].DataRootSet);
+				}
 
-					// Datas
-					if (DataTable == DataRootSet.Datas)
+				for (TSoftClassPtr<UObject> SoftClass : DataRootSets)
+				{
+					UClass* Class					  = SoftClass.LoadSynchronous();
+					UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+					ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+
+					// DataRootSet
+					if (GetDataRootSet)
 					{
-						if (FCsDataEntry_Data::StaticStruct() == DataTable->GetRowStruct())
+						const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
+
+						// Check if DataTable is in the list of DataTables
+						if (UserSettings->bOnSave_DataTable_PopulatePaths)
 						{
-							OnObjectPreSave_Update_DataRootSet_Datas(DataTable);
+							TSoftObjectPtr<UDataTable> DataTableSoftObject(DataTable);
+
+							UDataTable* DataTables = DataRootSet.DataTables;
+
+							const TMap<FName, uint8*>& RowMap = DataTables->GetRowMap();
+
+							bool Found = false;
+
+							TArray<UObject*> ObjectsToSave;
+
+							for (const TPair<FName, uint8*>& Pair : RowMap)
+							{
+								const FName& RowName		   = Pair.Key;
+								FCsDataEntry_DataTable* RowPtr = reinterpret_cast<FCsDataEntry_DataTable*>(Pair.Value);
+
+								if (DataTableSoftObject == RowPtr->DataTable)
+								{
+									DataEntryTool.DataTable_PopulateImpl(DataTables, RowName, RowPtr, false);
+									DataTables->MarkPackageDirty();
+									ObjectsToSave.Add(DataTables);
+
+									Found = true;
+									break;
+								}
+							}
+
+							if (Found)
+								UPackageTools::SavePackagesForObjects(ObjectsToSave);
 						}
-						else
+
+						// Datas
+						if (DataTable == DataRootSet.Datas)
 						{
-							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							if (FCsDataEntry_Data::StaticStruct() == DataTable->GetRowStruct())
+							{
+								OnObjectPreSave_Update_DataRootSet_Datas(DataTable);
+							}
+							else
+							{
+								UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_Data."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							}
+						}
+						// ScriptDatas
+						if (DataTable == DataRootSet.ScriptDatas)
+						{
+							if (FCsDataEntry_ScriptData::StaticStruct() == DataTable->GetRowStruct())
+							{
+								OnObjectPreSave_Update_DataRootSet_ScriptDatas(DataTable);
+							}
+							else
+							{
+								UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_ScriptData."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							}
+						}
+						// DataTables
+						if (DataTable == DataRootSet.DataTables)
+						{
+							if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
+							{
+								OnObjectPreSave_Update_DataRootSet_DataTables(DataTable);
+							}
+							else
+							{
+								UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							}
+						}
+						// Payloads
+						if (DataTable == DataRootSet.Payloads)
+						{
+							if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
+							{
+								OnObjectPreSave_Update_DataRootSet_Payloads(DataTable);
+							}
+							else
+							{
+								UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
+							}
 						}
 					}
-					// DataTables
-					if (DataTable == DataRootSet.DataTables)
+				}
+			}
+			// Enum Struct
+			if (UserSettings->bOnSave_DataTable_EnumStructLayoutResolveChanges)
+			{			
+				TSoftObjectPtr<UDataTable> DataTableSoftObject(DataTable);
+
+				TMap<FName, FCsEnumStructLayoutHistory>& EnumStructlayoutHistoryMap = Settings->EnumStructlayoutHistoryMap;
+
+				for (TPair<FName, FCsEnumStructLayoutHistory>& Pair : EnumStructlayoutHistoryMap)
+				{
+					FCsEnumStructLayoutHistory& History = Pair.Value;
+
+					if (History.DataTable == DataTableSoftObject)
 					{
-						if (FCsDataEntry_DataTable::StaticStruct() == DataTable->GetRowStruct())
-						{
-							OnObjectPreSave_Update_DataRootSet_DataTables(DataTable);
-						}
-						else
-						{
-							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s DataTables: %s RowStruct: %s != FCsDataEntry_DataTable."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
-						}
-					}
-					// Payloads
-					if (DataTable == DataRootSet.Payloads)
-					{
-						if (FCsPayload::StaticStruct() == DataTable->GetRowStruct())
-						{
-							OnObjectPreSave_Update_DataRootSet_Payloads(DataTable);
-						}
-						else
-						{
-							UE_LOG(LogCsEditor, Warning, TEXT("UCsEdEngine::OnObjectPreSave: DataRootSet: %s Payloads: %s RowStruct: %s != FCsPayload."), *(O->GetName()), *(DataTable->GetName()), *(DataTable->GetRowStruct()->GetName()));
-						}
+						EnumStructTool.ResolveLayoutChangesImpl(false);
 					}
 				}
 			}
@@ -560,6 +877,178 @@ void UCsEdEngine::OnObjectPreSave(UObject* Object, FObjectPreSaveContext Context
 	if (ACsLevelScriptActor* LevelScriptActor = Cast<ACsLevelScriptActor>(Object))
 	{
 		OnObjectPreSave_Update_DataRootSet_Payload(LevelScriptActor->Payload);
+	}
+
+	// Data
+	if (UserSettings->bOnSave_Data_PopulatePaths)
+	{
+		typedef NCsBlueprint::FLibrary BlueprintLibrary;
+		typedef NCsData::FLibrary DataLibrary;
+
+		if (BlueprintLibrary::Is(Object))
+		{
+			UObject* DefaultObject = nullptr;
+			UObject* BpC		   = BlueprintLibrary::GetSafeClass(Object);
+
+			if (UObject* DOb = BlueprintLibrary::GetSafeDefaultObject(Object))
+			{
+				DefaultObject = DOb;
+			}
+			else
+			if (UObject* CDOb = BlueprintLibrary::GetSafeClassDefaultObject(Object))
+			{
+				DefaultObject = CDOb;
+			}
+		
+			if (DataLibrary::SafeImplements(DefaultObject))
+			{
+				TSoftClassPtr<UObject> ObjectSoftClass(BpC);
+
+				TArray<UObject*> ObjectsToSave;
+
+				UCsDeveloperSettings* Settings = GetMutableDefault<UCsDeveloperSettings>();
+
+				// DataRootSet
+				TSet<TSoftClassPtr<UObject>> DataRootSets;
+
+				const int32 Count = (int32)ECsPlatform::ECsPlatform_MAX;
+
+				for (int32 I = 0; I < Count; ++I)
+				{
+					DataRootSets.Add(Settings->DataRootSets[I].DataRootSet);
+				}
+
+				for (TSoftClassPtr<UObject> SoftClass : DataRootSets)
+				{
+					UClass* Class					  = SoftClass.LoadSynchronous();
+					UObject* O						  = Class ? Class->GetDefaultObject<UObject>() : nullptr;
+					ICsGetDataRootSet* GetDataRootSet = O ? Cast<ICsGetDataRootSet>(O) : nullptr;
+
+					bool Found = false;
+
+					// DataRootSet
+					if (GetDataRootSet)
+					{
+						const FCsDataRootSet& DataRootSet = GetDataRootSet->GetCsDataRootSet();
+
+						// Datas
+						{
+							UDataTable* Datas = DataRootSet.Datas;
+
+							const TMap<FName, uint8*>& RowMap = Datas->GetRowMap();
+
+							for (const TPair<FName, uint8*>& Pair : RowMap)
+							{
+								const FName& RowName	  = Pair.Key;
+								FCsDataEntry_Data* RowPtr = reinterpret_cast<FCsDataEntry_Data*>(Pair.Value);
+
+								if (ObjectSoftClass == RowPtr->Data)
+								{
+									DataEntryTool.Data_PopulateImpl(RowPtr);
+									Datas->MarkPackageDirty();
+									ObjectsToSave.Add(Datas);
+
+									Found = true;
+									break;
+								}
+							}
+
+							if (Found)
+								continue;
+						}
+						// ScriptDatas
+						{
+							UDataTable* ScriptDatas = DataRootSet.ScriptDatas;
+
+							const TMap<FName, uint8*>& RowMap = ScriptDatas->GetRowMap();
+
+							for (const TPair<FName, uint8*>& Pair : RowMap)
+							{
+								const FName& RowName			= Pair.Key;
+								FCsDataEntry_ScriptData* RowPtr = reinterpret_cast<FCsDataEntry_ScriptData*>(Pair.Value);
+
+								if (ObjectSoftClass == RowPtr->Data)
+								{
+									DataEntryTool.ScriptData_PopulateImpl(RowPtr);
+									ScriptDatas->MarkPackageDirty();
+									ObjectsToSave.Add(ScriptDatas);
+
+									Found = true;
+									break;
+								}
+							}
+
+							if (Found)
+								continue;
+						}
+						// DataTables
+						{
+							UDataTable* DataTables = DataRootSet.DataTables;
+
+							const TMap<FName, uint8*>& RowMap = DataTables->GetRowMap();
+
+							for (const TPair<FName, uint8*>& Pair : RowMap)
+							{
+								const FName& RowName		   = Pair.Key;
+								FCsDataEntry_DataTable* RowPtr = reinterpret_cast<FCsDataEntry_DataTable*>(Pair.Value);
+
+								// Search each row for each DataTable if it contains a reference to Data (Object)
+								if (UDataTable* DT = RowPtr->DataTable.LoadSynchronous())
+								{
+									typedef NCsProperty::FLibrary PropertyLibrary;
+
+									const UScriptStruct* RowStruct	   = DT->GetRowStruct();
+									const TMap<FName, uint8*>& _RowMap = DT->GetRowMap();
+
+									for (const TPair<FName, uint8*>& _Pair : _RowMap)
+									{
+										uint8* _RowPtr = _Pair.Value;
+
+										// Look for a Struct with Property Name: Data
+										UStruct* Struct = nullptr;
+										uint8* StructValue = nullptr;;
+
+										if (PropertyLibrary::GetStructPropertyValuePtr(Context, _RowPtr, RowStruct, Name::Data, Struct, StructValue, nullptr))
+										{
+											// Look for a SoftClassPtr with Property Name: Data
+											if (FSoftObjectPtr* SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValuePtr(Context, StructValue, Struct, Name::Data, nullptr))
+											{
+												if (ObjectSoftClass.ToSoftObjectPath() == SoftObjectPtr->ToSoftObjectPath())
+												{
+													DataEntryTool.DataTable_PopulateImpl(DataTables, RowName, RowPtr, false);
+													DataTables->MarkPackageDirty();
+													ObjectsToSave.Add(DataTables);
+
+													Found = true;
+													break;
+												}
+											}
+										}
+										// Look for a SoftClassPtr with Property Name: Data
+										if (FSoftObjectPtr* SoftObjectPtr = PropertyLibrary::GetSoftClassPropertyValuePtr(Context, StructValue, Struct, Name::Data, nullptr))
+										{
+											if (ObjectSoftClass.ToSoftObjectPath() == SoftObjectPtr->ToSoftObjectPath())
+											{
+												DataEntryTool.DataTable_PopulateImpl(DataTables, RowName, RowPtr, false);
+												DataTables->MarkPackageDirty();
+												ObjectsToSave.Add(DataTables);
+
+												Found = true;
+												break;
+											}
+										}
+									}
+								}
+
+								if (Found)
+									break;
+							}
+						}
+					}
+				}
+				UPackageTools::SavePackagesForObjects(ObjectsToSave);
+			}
+		}
 	}
 }
 
@@ -594,9 +1083,6 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable
 
 	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_Datas;
 
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
-
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 
 	for (const TPair<FName, uint8*>& Pair : RowMap)
@@ -620,14 +1106,40 @@ void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_Datas(UDataTable* DataTable
 	}
 }
 
+void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_ScriptDatas(UDataTable* DataTable)
+{
+	using namespace NCsEdEngine::NCached;
+
+	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_ScriptDatas;
+
+	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
+
+	for (const TPair<FName, uint8*>& Pair : RowMap)
+	{
+		const FName& RowName			= Pair.Key;
+		FCsDataEntry_ScriptData* RowPtr = reinterpret_cast<FCsDataEntry_ScriptData*>(Pair.Value);
+
+		RowPtr->Name = RowName;
+
+		if (RowPtr->bPopulateOnSave)
+		{
+			if (CS_CVAR_LOG_IS_SHOWING(LogDataEntryPopulate))
+			{
+				UE_LOG(LogCsEditor, Warning, TEXT("%s: Populating Paths for %s.%s."), *Context, *(DataTable->GetName()), *(RowName.ToString()));
+			}
+
+			DataEntryTool.ScriptData_PopulateImpl(RowPtr);
+
+			RowPtr->bPopulateOnSave = false;
+		}
+	}
+}
+
 void UCsEdEngine::OnObjectPreSave_Update_DataRootSet_DataTables(UDataTable* DataTable)
 {
 	using namespace NCsEdEngine::NCached;
 
 	const FString& Context = Str::OnObjectPreSave_Update_DataRootSet_DataTables;
-
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary DependencyLibrary;
-	typedef NCsAsset::NDependency::NSoftPath::FLibrary::FGet::FResult ResultType;
 
 	const TMap<FName, uint8*>& RowMap = DataTable->GetRowMap();
 	
@@ -985,3 +1497,6 @@ void UCsEdEngine::OnStandaloneLocalPlayEvent(uint32 ProcessID)
 }
 
 #pragma endregion Standalone
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT

@@ -39,6 +39,11 @@ void CLASS_TYPE::CustomPopulateEnumMap()
 	NCsDataEntryData::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
+void CLASS_TYPE::AddPropertyChange()
+{
+	NCsDataEntryData::AddPropertyChange();
+}
+
 TSharedRef<IPropertyTypeCustomization> CLASS_TYPE::MakeInstance()
 {
 	return MakeShareable(new CLASS_TYPE);

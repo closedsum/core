@@ -278,6 +278,14 @@ namespace NCsProperty
 			return FindStructPropertyByName<StructType>(Context, Struct, PropertyName, nullptr);
 		}
 
+		static bool HasStructProperty(const FString& Context, const UStruct* Struct, const UStruct* SearchStruct, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		template<typename StructType>
+		FORCEINLINE static bool HasStructProperty(const FString& Context, const UStruct* Struct, void(*Log)(const FString&) = &FCsLog::Warning)
+		{
+			return HasStructProperty(Context, Struct, StructType::StaticStruct(), Log);
+		}
+
 	#pragma endregion Struct
 
 		// Vector
@@ -1106,6 +1114,10 @@ namespace NCsProperty
 			}
 			return Value;
 		}
+
+		static uint8* GetStructPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) = &FCsLog::Warning);
+
+		static bool GetStructPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, UStruct*& OutStruct, uint8*& OutStructValue, void(*Log)(const FString&) = &FCsLog::Warning);
 
 	#pragma endregion Struct
 

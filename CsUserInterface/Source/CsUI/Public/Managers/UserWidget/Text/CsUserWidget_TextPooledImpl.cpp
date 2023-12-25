@@ -12,7 +12,7 @@
 #include "Managers/UserWidget/CsLibrary_Manager_UserWidget.h"
 #include "Managers/Pool/Payload/CsLibrary_Payload_PooledObject.h"
 	// Common
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "Library/CsLibrary_Widget.h"
 #include "Library/CsLibrary_Viewport.h"
 #include "Library/CsLibrary_Math.h"
@@ -50,6 +50,8 @@ namespace NCsUserWidgetTextPooledImpl
 
 UCsUserWidget_TextPooledImpl::UCsUserWidget_TextPooledImpl(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer),
+	// Shutdown
+	bShutdown(false),
 	Cache(nullptr),
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
@@ -145,6 +147,7 @@ void UCsUserWidget_TextPooledImpl::Shutdown()
 		Cache = nullptr;
 		CacheImpl = nullptr;
 	}
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

@@ -189,3 +189,45 @@ struct CSCORE_API FCsTArraySoftObjectPathByGroup
 };
 
 #pragma endregion FCsTArraySoftObjectPathByGroup
+
+// FCsSoftObjectPathAsString
+#pragma region
+
+USTRUCT(BlueprintType)
+struct CSCORE_API FCsSoftObjectPathAsString
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
+	FString PackageName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
+	FString AssetName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CsCore|Load")
+	FString SubPath;
+
+	FCsSoftObjectPathAsString() :
+		PackageName(),
+		AssetName(),
+		SubPath()
+	{
+	}
+
+	FORCEINLINE bool operator==(const FCsSoftObjectPathAsString& B) const
+	{
+		return PackageName == B.PackageName && AssetName == B.AssetName && SubPath == B.SubPath;
+	}
+
+	FORCEINLINE bool operator!=(const FCsSoftObjectPathAsString& B) const
+	{
+		return !(*this == B);
+	}
+
+	/*FORCEINLINE friend uint32 GetTypeHash(FCsSoftObjectPathAsString const& This)
+	{
+		return GetTypeHash(This.Path);
+	}*/
+};
+
+#pragma endregion FCsSoftObjectPathAsString

@@ -18,10 +18,10 @@
 
 namespace NCsAnimInstance
 {
+	#define ObjectLibrary NCsObject::FLibrary
+
 	// Load
 	#pragma region
-
-	#define ObjectLibrary NCsObject::FLibrary
 
 	UAnimBlueprint* FLibrary::SafeLoad(const FString& Context, const FSoftObjectPath& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
@@ -33,12 +33,34 @@ namespace NCsAnimInstance
 		return ObjectLibrary::SafeLoad<UAnimBlueprint>(Context, Path, Log);
 	}
 
-	#undef ObjectLibrary
-
 	#pragma endregion Load
 
 	// Get
 	#pragma region
+
+	UAnimBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, const FString& Path, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_STRING_EMPTY_RET_NULL(Path)
+
+		FString ClassPath = Path;
+
+		if (!ClassPath.EndsWith(NCsCached::Str::_C))
+			ClassPath.Append(NCsCached::Str::_C);
+
+		UObject* O = ObjectLibrary::SafeLoad(Context, ClassPath, Log);
+
+		if (!O)
+			return nullptr;
+
+		UAnimBlueprintGeneratedClass* ABpGC = Cast<UAnimBlueprintGeneratedClass>(O);
+
+		if (!ABpGC)
+		{
+			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get AnimBlueprintGeneratedClass from Path: %s."), *Context, *ClassPath));
+			return nullptr;
+		}
+		return (UAnimBlueprintGeneratedClass*)(O);
+	}
 
 	UAnimBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UAnimBlueprint* Blueprint, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
 	{
@@ -48,23 +70,7 @@ namespace NCsAnimInstance
 
 		FString Path = ABp.ToSoftObjectPath().ToString();
 
-		if (!Path.EndsWith(NCsCached::Str::_C))
-			Path.Append(NCsCached::Str::_C);
-
-		typedef NCsObject::FLibrary ObjectLibrary;
-
-		UObject* O = ObjectLibrary::SafeLoad(Context, Path, Log);
-
-		if (!O)
-			return nullptr;
-
-		UAnimBlueprintGeneratedClass* ABpGC = Cast<UAnimBlueprintGeneratedClass>(O);
-
-		if (!ABpGC)
-		{
-			CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Failed to get AnimBlueprintGeneratedClass from Blueprint: %s with Class: %s."), *Context, *(Blueprint->GetName()), *(Blueprint->GetClass()->GetName())));
-		}
-		return (UAnimBlueprintGeneratedClass*)(O);
+		return GetSafeClass(Context, Path, Log);
 	}
 
 	UAnimBlueprintGeneratedClass* FLibrary::GetSafeClass(const FString& Context, UObject* Object, const FString& Path, bool& OutSuccess, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
@@ -87,4 +93,6 @@ namespace NCsAnimInstance
 	}
 
 	#pragma endregion Get
+
+	#undef ObjectLibrary
 }

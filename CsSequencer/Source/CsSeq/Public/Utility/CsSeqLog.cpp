@@ -8,4 +8,9 @@ namespace NCsSequencer
 	{
 		UE_LOG(LogCsSeq, Warning, TEXT("%s"), *Str);
 	}
+
+	void FLog::Error(const FString& Str)
+	{
+		UE_LOG(LogCsSeq, Error, TEXT("%s"), *Str);
+	}
 }

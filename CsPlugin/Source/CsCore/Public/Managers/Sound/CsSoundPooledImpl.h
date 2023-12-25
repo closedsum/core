@@ -53,7 +53,7 @@ public:
 	UPROPERTY(Category = Sound, VisibleAnywhere, BlueprintReadOnly, meta = (ExposeFunctionCategories = "Sound,Audio,Audio|Components|Audio"))
 	UAudioComponent* AudioComponent;
 
-	// UObject Interface
+// UObject Interface
 #pragma region
 public:
 
@@ -94,7 +94,17 @@ public:
 
 	void Shutdown();
 
+	FORCEINLINE bool HasShutdown() const { return bShutdown; }
+
 #pragma endregion ICsShutdown
+
+// Shutdown
+#pragma region
+private:
+
+	bool bShutdown;
+
+#pragma endregion Shutdown
 
 protected:
 

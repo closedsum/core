@@ -41,8 +41,11 @@ public class CsEditor : ModuleRules
                     "PropertyEditor",
                     "GraphEditor",
                     "EditorStyle",
+                    "LevelEditor",
                     "NiagaraEditor",
-                    "DeveloperToolSettings"
+                    "DeveloperToolSettings",
+                    "Settings",
+                    "SourceControl"
                 }
             );
         }

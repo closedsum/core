@@ -183,6 +183,34 @@ namespace NCsProperty
 		return Prop;
 	}
 
+	bool FLibrary::HasStructProperty(const FString& Context, const UStruct* Struct, const UStruct* SearchStruct, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		CS_IS_PTR_NULL(Struct)
+		CS_IS_PTR_NULL(SearchStruct)
+
+		for (TFieldIterator<FStructProperty> It(Struct); It; ++It)
+		{
+			FStructProperty* StructProperty = *It;
+
+			if (StructProperty->Struct == SearchStruct)
+				return true;
+			if (HasStructProperty(Context, StructProperty->Struct, SearchStruct, nullptr))
+				return true;
+		}
+
+			// Iterate through Functions
+		for (UFunction* Function : TFieldRange<UFunction>(Struct))
+		{
+			if (Function->GetName().StartsWith(TEXT("ExecuteUbergraph")))
+				continue;
+
+			if (HasStructProperty(Context, Function, SearchStruct, nullptr))
+				return true;
+		}
+		CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: Struct: %s does not contain struct of type: %s."), *(Struct->GetName()), *(SearchStruct->GetName())));
+		return false;
+	}
+
 	#pragma endregion Struct
 
 		// Vector
@@ -912,6 +940,36 @@ namespace NCsProperty
 	}
 
 	#pragma endregion Float
+
+		// Struct
+	#pragma region
+
+	uint8* FLibrary::GetStructPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		FStructProperty* StructProperty = FindStructPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!StructProperty)
+			return nullptr;
+
+		return StructProperty->ContainerPtrToValuePtr<uint8>(StructValue);
+	}
+	
+	bool FLibrary::GetStructPropertyValuePtr(const FString& Context, void* StructValue, const UStruct* Struct, const FName& PropertyName, UStruct*& OutStruct, uint8*& OutStructValue, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+	{
+		OutStruct = nullptr;
+		OutStructValue = nullptr;
+
+		FStructProperty* StructProperty = FindStructPropertyByName(Context, Struct, PropertyName, Log);
+
+		if (!StructProperty)
+			return false;
+
+		OutStruct	   = StructProperty->Struct;
+		OutStructValue = StructProperty->ContainerPtrToValuePtr<uint8>(StructValue);
+		return true;
+	}
+
+	#pragma endregion Struct
 
 		// Vector
 	#pragma region

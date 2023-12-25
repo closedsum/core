@@ -14,6 +14,8 @@ protected:
 
 	virtual void CustomPopulateEnumMap() override;
 
+	virtual void AddPropertyChange() override;
+
 	virtual FString OnGetText() const override;
 
 	virtual void GenerateComboBoxIndexes(TArray< TSharedPtr<int32> >& OutComboBoxIndexes) override;

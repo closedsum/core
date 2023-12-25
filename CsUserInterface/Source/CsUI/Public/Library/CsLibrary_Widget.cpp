@@ -13,7 +13,7 @@
 #include "Library/CsLibrary_Property.h"
 #include "Object/CsLibrary_Object.h"
 #include "Library/CsLibrary_World.h"
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Library/CsLibrary_Math.h"

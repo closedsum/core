@@ -48,6 +48,8 @@ namespace NCsAnimInstance
 	#pragma region
 	public:
 
+		static UAnimBlueprintGeneratedClass* GetSafeClass(const FString& Context, const FString& Path, void(*Log)(const FString&) = &FCsLog::Warning);
+
 		static UAnimBlueprintGeneratedClass* GetSafeClass(const FString& Context, UAnimBlueprint* Blueprint, void(*Log)(const FString&) = &FCsLog::Warning);
 
 		/**

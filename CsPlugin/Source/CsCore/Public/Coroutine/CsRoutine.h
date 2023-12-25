@@ -33,6 +33,7 @@ private:
 	typedef NCsCoroutine::EState StateType;
 	typedef NCsCoroutine::EMessage MessageType;
 	typedef NCsCoroutine::EEndReason EndReasonType;
+	typedef NCsCoroutine::EMEndReason EndReasonMapType;
 	typedef NCsCoroutine::NRegister::EValueType ValueType;
 	typedef NCsCoroutine::NRegister::FMap RegisterMapType;
 
@@ -129,6 +130,8 @@ public:
 
 	FORCEINLINE const FName& GetFName() { return Name_Internal; }
 
+	FORCEINLINE const TCHAR* ToChar() { return *(*GetName()); }
+
 #pragma endregion Name
 
 public:
@@ -142,6 +145,22 @@ public:
 	FORCEINLINE void StartUpdate() { State = StateType::Update; }
 
 	void Update(const FCsDeltaTime& InDeltaTime);
+
+private:
+
+	bool bUpdateComplete;
+
+public:
+
+	FORCEINLINE bool IsUpdateComplete() const { return bUpdateComplete; }
+	
+private:
+
+	bool bExecuteComplete;
+
+public:
+
+	FORCEINLINE bool IsExecuteComplete() const { return bExecuteComplete; }
 
 	FORCEINLINE bool IsRunning() const { return State == StateType::Update; }
 

@@ -22,7 +22,9 @@ namespace NCsObject
 
 		static FString PrintNameAndClass(const UObject* Object);
 
-		FORCEINLINE static bool IsPendingKill(const UObject* Object) { return IsValid(Object); }
+		FORCEINLINE static bool IsValidObject(const UObject* Object) { return IsValid(Object); }
+
+		FORCEINLINE static bool IsPendingKill(const UObject* Object) { return !IsValid(Object); }
 
 	#if WITH_EDITOR
 		static bool IsValidChecked(const FString& Context, const UObject* Object);

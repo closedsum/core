@@ -4,6 +4,7 @@
 #pragma once
 
 class UObject;
+class ACameraActor;
 
 namespace NCsCamera
 {
@@ -13,7 +14,9 @@ namespace NCsCamera
 		{
 			namespace Str
 			{
+				extern CSCORE_API const FString GetLocation;
 				extern CSCORE_API const FString GetLocationChecked;
+				extern CSCORE_API const FString GetRotation;
 				extern CSCORE_API const FString GetRotationChecked;
 				extern CSCORE_API const FString GetDirectionChecked;
 			}
@@ -25,6 +28,25 @@ namespace NCsCamera
 	*/
 	class CSCORE_API FLibrary final
 	{
+
+	// Get
+	#pragma region
+	public:
+
+		/**
+		* Get an Camera with the given Tag (checks ACameraActor->Tags)
+		*  NOTE: Find the FIRST Camera the given Tag.
+		*  NOTE: There should be only ONE Camera with given Tag.
+		* 
+		* @param Context		The calling context.
+		* @param WorldContext	Object that contains a reference to a World (GetWorld() is Valid).
+		* @param Tag
+		* return
+		*/
+		static ACameraActor* GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag);
+
+	#pragma endregion Get
+
 	// Location
 	#pragma region
 	public:

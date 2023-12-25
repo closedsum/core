@@ -67,6 +67,8 @@ namespace NCsFXActorPooledImpl
 
 UCsFXActorPooledImpl::UCsFXActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// Shutdown
+	bShutdown(false),
 	Cache(nullptr),
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
@@ -174,6 +176,7 @@ void UCsFXActorPooledImpl::Shutdown()
 	}
 
 	FX = nullptr;
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

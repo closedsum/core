@@ -8,5 +8,7 @@ namespace NCsSequencer
 	public:
 
 		static void Warning(const FString& Str);
+
+		static void Error(const FString& Str);
 	};
 }

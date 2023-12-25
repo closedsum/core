@@ -75,7 +75,16 @@ public:
 
 	void Shutdown();
 
+	FORCEINLINE bool HasShutdown() const { return bShutdown; }
 #pragma endregion ICsShutdown
+
+// Shutdown
+#pragma region
+private:
+
+	bool bShutdown;
+
+#pragma endregion Shutdown
 
 // PooledObject
 #pragma region

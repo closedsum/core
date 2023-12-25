@@ -32,6 +32,8 @@ void SCsGraphPin_EnumStructMask::Construct(const FArguments& InArgs, UEdGraphPin
 
 void SCsGraphPin_EnumStructMask::CustomPopulateEnumMap(){}
 
+void SCsGraphPin_EnumStructMask::AddPropertyChange() {}
+
 TSharedRef<SWidget>	SCsGraphPin_EnumStructMask::GetDefaultValueWidget()
 {
 	// Get list of enum indexes

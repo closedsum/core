@@ -38,6 +38,11 @@ void CLASS_TYPE::CustomPopulateEnumMap()
 	NCsDataEntryData::PopulateEnumMapFromSettings(Str::CustomPopulateEnumMap, nullptr);
 }
 
+void CLASS_TYPE::AddPropertyChange()
+{
+	NCsDataEntryData::AddPropertyChange();
+}
+
 void CLASS_TYPE::GenerateComboBoxIndexes(TArray<TSharedPtr<int32>>& OutComboBoxIndexes)
 {
 	GenenerateComboBoxIndexes_Internal<EnumMapType>(OutComboBoxIndexes);

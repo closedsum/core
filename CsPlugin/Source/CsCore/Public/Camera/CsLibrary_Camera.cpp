@@ -1,24 +1,28 @@
 // Copyright 2017-2023 Closed Sum Games, LLC. All Rights Reserved.
 // MIT License: https://opensource.org/license/mit/
 // Free for use and distribution: https://github.com/closedsum/core
-#include "Library/CsLibrary_Camera.h"
+#include "Camera/CsLibrary_Camera.h"
 #include "CsCore.h"
 
 // Types
 #include "Types/CsTypes_Math.h"
 // Library
 	// Common
+#include "Library/CsLibrary_World.h"
 #include "Library/CsLibrary_Math.h"
 #include "Library/CsLibrary_Valid.h"
 // Player
 #include "GameFramework/PlayerController.h"
 // Pawn
 #include "GameFramework/Pawn.h"
-// Actor
-#include "GameFramework/Actor.h"
 // Camera
 #include "Camera/CsGetCameraComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/CameraActor.h"
+// Utility
+#include "EngineUtils.h"
+// World
+#include "Engine/World.h"
 
 namespace NCsCamera
 {
@@ -28,21 +32,84 @@ namespace NCsCamera
 		{
 			namespace Str
 			{
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCamera::FLibrary, GetLocation);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCamera::FLibrary, GetLocationChecked);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCamera::FLibrary, GetRotationChecked);
+				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCamera::FLibrary, GetRotation);
 				CSCORE_API CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(NCsCamera::FLibrary, GetDirectionChecked);
 			}
 		}
 	}
+
+	#define USING_NS_CACHED using namespace NCsCamera::NLibrary::NCached;
+	#define SET_CONTEXT(__FunctionName) using namespace NCsCamera::NLibrary::NCached; \
+		const FString& Context = Str::##__FunctionName
+	#define WorldLibrary NCsWorld::FLibrary
+	#define MathLibrary NCsMath::FLibrary
+
+	// Get
+	#pragma region
+
+	ACameraActor* FLibrary::GetByTagChecked(const FString& Context, const UObject* WorldContext, const FName& Tag)
+	{
+		UWorld* World = WorldLibrary::GetChecked(Context, WorldContext);
+
+		CS_IS_NAME_NONE_CHECKED(Tag)
+
+	#if UE_BUILD_SHIPPING
+		for (TActorIterator<ACameraActor> Itr(World); Itr; ++Itr)
+		{
+			ACameraActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->Tags.Contains(Tag))
+			{
+				return A;
+			}
+		}
+	#else
+		ACameraActor* Actor = nullptr;
+		
+		for (TActorIterator<ACameraActor> Itr(World); Itr; ++Itr)
+		{
+			ACameraActor* A = *Itr;
+
+			// Check is Valid and NOT getting destroyed
+			if (!IsValid(A))
+				continue;
+			if (A->Tags.Contains(Tag))
+			{
+				if (!Actor)
+				{
+					Actor = A;
+				}
+				else
+				{
+					checkf(0, TEXT("%s: There are more than one Cameras with the Tag: %s."), *Context, *(Tag.ToString()));
+				}
+			}
+		}
+
+		if (Actor)
+			return Actor;
+	#endif // UE_BUILD_SHIPPING
+
+		checkf(0, TEXT("%s: Failed to find Cameras with Tag: %s."), *Context, *(Tag.ToString()));
+		return nullptr;
+	}
+
+	#pragma endregion Get
 
 	// Location
 	#pragma region
 
 	FVector3f FLibrary::GetLocation(UObject* Object)
 	{
-		checkf(Object, TEXT("NCsCamera::FLibrary::GetLocation: Object is NULL."));
+		SET_CONTEXT(GetLocation);
 
-		typedef NCsMath::FLibrary MathLibrary;
+		CS_IS_PTR_NULL_CHECKED(Object)
 
 		// Try to get camera through the object
 
@@ -81,8 +148,6 @@ namespace NCsCamera
 	{
 		CS_IS_PTR_NULL_CHECKED(Object)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		// Try to get camera through the object
 
 		// ICsGetCameraComponent
@@ -117,9 +182,7 @@ namespace NCsCamera
 
 	FVector3f FLibrary::GetLocationChecked(UObject* Object)
 	{
-		using namespace NCsCamera::NLibrary::NCached;
-
-		const FString& Context = Str::GetLocationChecked;
+		SET_CONTEXT(GetLocationChecked);
 
 		return GetLocationChecked(Context, Object);
 	}
@@ -131,9 +194,9 @@ namespace NCsCamera
 
 	FRotator3f FLibrary::GetRotation(UObject* Object)
 	{
-		checkf(Object, TEXT("NCsCamera::FLibrary::GetRotation: Object is NULL."));
+		SET_CONTEXT(GetRotation);
 
-		typedef NCsMath::FLibrary MathLibrary;
+		CS_IS_PTR_NULL_CHECKED(Object)
 
 		// Try to get camera through the object
 
@@ -171,8 +234,6 @@ namespace NCsCamera
 	{
 		CS_IS_PTR_NULL_CHECKED(Object)
 
-		typedef NCsMath::FLibrary MathLibrary;
-
 		// Try to get camera through the object
 
 		// ICsGetCameraComponent
@@ -207,9 +268,7 @@ namespace NCsCamera
 
 	FRotator3f FLibrary::GetRotationChecked(UObject* Object)
 	{
-		using namespace NCsCamera::NLibrary::NCached;
-
-		const FString& Context = Str::GetRotationChecked;
+		SET_CONTEXT(GetRotationChecked);
 
 		return GetRotationChecked(Context, Object);
 	}
@@ -221,12 +280,15 @@ namespace NCsCamera
 
 	FRotator3f FLibrary::GetRotationChecked(UObject* Object, const int32& Rules)
 	{
-		using namespace NCsCamera::NLibrary::NCached;
-
-		const FString& Context = Str::GetRotationChecked;
+		SET_CONTEXT(GetRotationChecked);
 
 		return GetRotationChecked(Context, Object, Rules);
 	}
 
 	#pragma endregion Rotation
+
+	#undef USING_NS_CACHED
+	#undef SET_CONTEXT
+	#undef WorldLibrary
+	#undef MathLibrary
 }

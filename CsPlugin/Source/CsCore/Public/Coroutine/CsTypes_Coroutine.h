@@ -817,6 +817,10 @@ namespace NCsCoroutine
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR_START int32 __Coroutine__Payload__Vector__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_VECTOR(__Payload, __Value) __Payload->SetValue_Vector(__Coroutine__Payload__Vector__Counter__, __Value); \
 	++__Coroutine__Payload__Vector__Counter__
+// Rotator (FRotator3f)
+#define CS_COROUTINE_PAYLOAD_PASS_ROTATOR_START int32 __Coroutine__Payload__Rotator__Counter__ = 0;
+#define CS_COROUTINE_PAYLOAD_PASS_ROTATOR(__Payload, __Value) __Payload->SetValue_Rotator(__Coroutine__Payload__Rotator__Counter__, __Value); \
+	++__Coroutine__Payload__Rotator__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR_START int32 __Coroutine__Payload__Color__Counter__ = 0;
 #define CS_COROUTINE_PAYLOAD_PASS_COLOR(__Payload, __Value) __Payload->SetValue_Color(__Coroutine__Payload__Color__Counter__, __Value); \
@@ -911,6 +915,16 @@ namespace NCsCoroutine
 	++__Coroutine__Read__Vector__Counter__
 #define CS_COROUTINE_READ_VECTOR_CONST_REF(__R, __VariableName) const FVector3f& __VariableName = __R->GetValue_Vector(__Coroutine__Read__Vector__Counter__); \
 	++__Coroutine__Read__Vector__Counter__
+// Rotator (FRotator3f)
+#define CS_COROUTINE_READ_ROTATOR_START int32 __Coroutine__Read__Rotator__Counter__ = 0;
+#define CS_COROUTINE_READ_ROTATOR(__R, __VariableName) FRotator3f __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+	++__Coroutine__Read__Rotator__Counter__
+#define CS_COROUTINE_READ_ROTATOR_REF(__R, __VariableName) FRotator3f& __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+	++__Coroutine__Read__Rotator__Counter__
+#define CS_COROUTINE_READ_ROTATOR_CONST(__R, __VariableName) const FRotator3f __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+	++__Coroutine__Read__Rotator__Counter__
+#define CS_COROUTINE_READ_ROTATOR_CONST_REF(__R, __VariableName) const FRotator3f& __VariableName = __R->GetValue_Rotator(__Coroutine__Read__Rotator__Counter__); \
+	++__Coroutine__Read__Rotator__Counter__
 // Color (FLinearColor)
 #define CS_COROUTINE_READ_COLOR_START int32 __Coroutine__Read__Color__Counter__ = 0;
 #define CS_COROUTINE_READ_COLOR(__R, __VariableName) FLinearColor __VariableName = __R->GetValue_Color(__Coroutine__Read__Color__Counter__); \

@@ -8,7 +8,7 @@
 #include "Managers/Trace/CsTraceRequest.h"
 // Library
 #include "Game/CsLibrary_GameInstance.h"
-#include "Library/CsLibrary_Player.h"
+#include "Player/CsLibrary_Player.h"
 #include "Library/CsLibrary_Math.h"
 #include "Managers/Trace/CsLibrary_Manager_Trace.h"
 #include "Library/CsLibrary_Valid.h"

@@ -333,6 +333,20 @@ namespace NCsResource
 				}
 
 				/**
+				* Get the container of type: ResourceContainerType holding a
+				* resource of type: ResourceType at the specified Index.
+				*
+				* @param Index
+				* return ResourceContainerType
+				*/
+				FORCEINLINE ResourceContainerType* GetAtChecked(const FString& Context, const int32& Index) const
+				{
+					checkf(Index > INDEX_NONE && Index < PoolSize, TEXT("%s: Index is >= 0 and < PoolSize: %d"), *Context, PoolSize);
+
+					return Pool[Index];
+				}
+
+				/**
 				* Get the resource of type: ResourceType at the specified Index.
 				*
 				* @param Index	Index of the resource to get.
@@ -358,7 +372,6 @@ namespace NCsResource
 
 					for (int32 I = 0; I < Count; ++I)
 					{
-
 						if (Resources[I] == Resource)
 						{
 							return Pool[I];
@@ -447,6 +460,44 @@ namespace NCsResource
 						}
 					}
 					return nullptr;
+				}
+
+				/**
+				*/
+				bool Contains(const ResourceType* Resource) const
+				{
+					checkf(Resource, TEXT("%s::Contains: Resource is NULL."), *Name);
+
+					for (const ResourceType* R : Resources)
+					{
+						if (R == Resource)
+							return true;
+					}
+					return false;
+				}
+
+				FORCEINLINE bool ContainsChecked(const FString& Context, const ResourceType* Resource) const
+				{
+					checkf(Contains(Resource), TEXT("%s: Resource is NOT apart of %s."), *Context, *Name);
+					return true;
+				}
+
+				bool Contains(const ResourceContainerType* ResourceContainer) const
+				{
+					checkf(ResourceContainer, TEXT("%s::Contains: ResourceContainer is NULL."), *Name);
+
+					const int32& Index = ResourceContainer->GetIndex();
+
+					if (Index < 0 || Index >= PoolSize)
+						return false;
+
+					return Pool[Index] == ResourceContainer;
+				}
+
+				FORCEINLINE bool ContainsChecked(const FString& Context, const ResourceContainerType* ResourceContainer) const
+				{
+					checkf(Contains(ResourceContainer), TEXT("%s: ResourceContainer is NOT apart of %s."), *Context, *Name);
+					return true;
 				}
 
 				/**
@@ -633,6 +684,28 @@ namespace NCsResource
 				}
 
 				/**
+				* Allocate a ResourceType and add the corresponding linked list element to the
+				*  end of the list
+				*
+				* return ResourceType	Allocated ResourceType
+				*/
+				FORCEINLINE ResourceType* AllocateResource()
+				{
+					return Allocate()->Get();
+				}
+
+				/**
+				* Allocate a ResourceType and add the corresponding linked list element to the
+				*  end of the list
+				*
+				* return ResourceType	Allocated ResourceType
+				*/
+				FORCEINLINE ResourceType& AllocateResourceRef()
+				{
+					return Allocate()->GetRef();
+				}
+
+				/**
 				* Allocate a ResourceType and add the corresponding linked list element after
 				*  another ResourceContainerType. This is equivalent to inserting a linked list element
 				*  after another element. 
@@ -748,6 +821,16 @@ namespace NCsResource
 					if (AllocatedHead)
 						return AllocateBefore(**AllocatedHead);
 					return Allocate();
+				}
+
+				FORCEINLINE bool IsAllocatedChecked(const FString& Context, const int32& Index) const
+				{
+					return GetAtChecked(Context, Index)->IsAllocated();
+				}
+
+				FORCEINLINE bool IsAllocated(const int32& Index) const
+				{
+					return GetAt(Index)->IsAllocated();
 				}
 
 			#pragma endregion Allocate

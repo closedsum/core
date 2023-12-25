@@ -224,6 +224,9 @@ public:
 		  The object implements a script interface of type: ICsShutdown. */
 	FScript_Shutdown Script_Shutdown_Impl;
 
+	DECLARE_DELEGATE_RetVal_OneParam(bool, FScript_HasShutdown, UObject* /*Object*/);
+
+	FScript_HasShutdown Script_HasShutdown_Impl;
 
 #pragma endregion ICsShutdown
 
@@ -370,6 +373,8 @@ public:
 public:
 
 	void Shutdown();
+
+	bool HasShutdown();
 
 #pragma endregion ICsShutdown
 

@@ -5,9 +5,61 @@
 
 // Library
 #include "Library/CsJsLibrary_Common.h"
+// Settings
+#include "Managers/CsSettings_Manager_Javascript.h"
 
 // FCsJavascriptFileObjects
 #pragma region
+
+#define JavascriptCommonLibrary NCsJs::NCommon::FLibrary
+
+void FCsJavascriptFileObjects::Init(UObject* Owner)
+{
+	JavascriptCommonLibrary::SetupIsolateAndContext(Owner, Isolate, Context, false);
+
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
+	Path = Settings.EmptyPath;
+
+	JavascriptCommonLibrary::RunFile(Context, Path);
+}
+
+void FCsJavascriptFileObjects::Deactivate(UObject* Owner)
+{
+	const bool ContextExists = Context && IsValid(Context);
+	const bool IsolateExists = Isolate && IsValid(Isolate);
+
+	if (ContextExists)
+	{
+		for (const FString& Name : ExposedObjectNames)
+		{
+			JavascriptCommonLibrary::ClearObject(Context, Name);
+		}
+	}
+
+	if (!(ContextExists && IsolateExists))
+	{
+		if (IsolateExists)
+		{
+			Isolate->MarkAsGarbage();
+			Isolate = nullptr;
+		}
+
+		if (ContextExists)
+		{
+			Context->MarkAsGarbage();
+			Context = nullptr;
+		}
+
+		JavascriptCommonLibrary::SetupIsolateAndContext(Owner, Isolate, Context, false);
+	}
+
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
+	Path = Settings.EmptyPath;
+
+	JavascriptCommonLibrary::RunFile(Context, Path);
+}
 
 void FCsJavascriptFileObjects::Shutdown()
 {
@@ -21,17 +73,17 @@ void FCsJavascriptFileObjects::Shutdown()
 	if (Context &&
 	    IsValid(Context))
 	{
-		typedef NCsJs::NCommon::FLibrary JavascriptLibrary;
-
 		for (const FString& Name : ExposedObjectNames)
 		{
-			JavascriptLibrary::ClearObject(Context, Name);
+			JavascriptCommonLibrary::ClearObject(Context, Name);
 		}
 
 		Context->MarkAsGarbage();
 		Context = nullptr;
 	}
-	ExposedObjectNames.Reset();
+	ExposedObjectNames.Reset(ExposedObjectNames.Max());
 }
+
+#undef JavascriptCommonLibrary
 
 #pragma endregion FCsJavascriptFileObjects

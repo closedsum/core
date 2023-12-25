@@ -48,6 +48,7 @@ namespace NCsSkeletalMeshActorImpl
 
 ACsSkeletalMeshActorPooledImpl::ACsSkeletalMeshActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	bShutdown(false),
 	Cache(nullptr),
 	CacheImpl(nullptr),
 	PreserveChangesToDefaultMask(0),
@@ -169,6 +170,8 @@ void ACsSkeletalMeshActorPooledImpl::Shutdown()
 	typedef NCsMaterial::NMID::FLibrary MIDLibrary;
 
 	MIDLibrary::Destroy(MIDs);
+
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

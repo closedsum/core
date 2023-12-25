@@ -38,6 +38,10 @@ void FECsEnumStructCustomization::PopulateEnumMapFromSettings()
 {
 }
 
+void FECsEnumStructCustomization::AddPropertyChange()
+{
+}
+
 void FECsEnumStructCustomization::AddEnumToMap(const FString& Name)
 {
 }
@@ -61,6 +65,8 @@ void FECsEnumStructCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> St
 {
 	SetPropertyHandles(StructPropertyHandle);
 	
+	AddPropertyChange();
+
 	// Alter DisplayNameList for Properties that are visible and should NOT be edited
 	if (bPerformDropDownCheck)
 	{

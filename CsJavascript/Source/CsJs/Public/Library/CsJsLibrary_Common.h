@@ -13,7 +13,6 @@ namespace NCsJs
 		{
 		public:
 
-		#if WITH_EDITOR
 			/**
 			*/
 			static void SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor);
@@ -33,13 +32,6 @@ namespace NCsJs
 			/**
 			*/
 			static void RunFile(UObject*& JavascriptContext, const FString& FileName);
-		#else
-			static void SetupIsolateAndContext(UObject* Owner, UObject*& JavascriptIsolate, UObject*& JavascriptContext, const bool& IsEditor){}
-			static void ExposeObject(UObject*& JavascriptContext, const FString& Name, UObject* Object) {}
-			static void ClearObject(UObject*& JavascriptContext, const FString& Name) {}
-			static void RunFileChecked(const FString& Context, UObject*& JavascriptContext, const FString& FileName) {}
-			static void RunFile(UObject*& JavascriptContext, const FString& FileName) {}
-		#endif // #if WITH_EDITOR
 		};
 	}
 }

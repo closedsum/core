@@ -17,7 +17,7 @@ struct CSUI_API FCsSettings_Manager_Menu
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Managers|Menu", meta = (MustImplement = "/Script.CsUI.CsManager_Menu"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "CsUI|Managers|Menu")
 	TSoftClassPtr<UCsManager_Menu> Class;
 
 	FCsSettings_Manager_Menu();

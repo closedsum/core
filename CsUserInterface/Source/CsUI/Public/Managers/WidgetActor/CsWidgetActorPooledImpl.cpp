@@ -51,6 +51,8 @@ namespace NCsWidgetActorPooledImpl
 
 ACsWidgetActorPooledImpl::ACsWidgetActorPooledImpl(const FObjectInitializer& ObjectInitializer) : 
 	Super(ObjectInitializer),
+	// Shutdown
+	bShutdown(false),
 	// PooledObject
 	Cache(nullptr),
 	CacheImpl(nullptr),
@@ -143,6 +145,7 @@ void ACsWidgetActorPooledImpl::Shutdown()
 		Cache = nullptr;
 		CacheImpl = nullptr;
 	}
+	bShutdown = true;
 }
 
 #pragma endregion ICsShutdown

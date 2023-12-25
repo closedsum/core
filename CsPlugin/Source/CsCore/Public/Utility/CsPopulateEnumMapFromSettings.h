@@ -7,6 +7,7 @@
 
 class UObject;
 class UDataTable;
+struct FCsDataRootSet;
 
 /**
 * Utility class to help populate a EnumStructMap. Called internally by the 
@@ -79,7 +80,10 @@ public:
 		return &DataRootSet;
 	}
 
+	static const FCsDataRootSet* GetDataRootSet(const FString& Context, UObject* ContextRoot);
+
 	static UDataTable* GetDataTable(const FString& Context, const UObject* ContextRoot, const TSoftObjectPtr<UDataTable>& DT_SoftObject);
+	static UDataTable* GetDataTable(const FString& Context, const FName& DataTableName);
 
 	struct FFromDataTable
 	{
@@ -144,3 +148,21 @@ public:
 	static void FromDataTable_RowAsName(const FString& Context, PayloadType Payload);
 #undef PayloadType
 };
+
+namespace NCsEnum
+{
+	namespace NStruct
+	{
+		namespace NLayout
+		{
+			struct CSCORE_API FLibrary final
+			{	
+				static void ConditionalAddLayout(const FName& EnumName, const TArray<FName>& Names, UDataTable* DataTable);
+
+				static void AddPropertyChange(const FName& EnumName, UStruct* EnumStruct);
+
+				static void CheckChange();
+			};
+		}
+	}
+}

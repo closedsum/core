@@ -60,6 +60,7 @@ namespace NCsManagerJavascript
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunEntryPoint);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunEntryPoint_Internal);
 			// Scripts
+			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, CreateScriptObjects);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupScriptObjects_Internal);
 			CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript, SetupAndRunScripts);
@@ -86,6 +87,7 @@ namespace NCsManagerJavascript
 		{
 			namespace Str
 			{
+				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Init);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, CreateAndRun);
 				CS_DEFINE_CACHED_FUNCTION_NAME_AS_STRING(UCsManager_Javascript::FEditorScriptImpl, Reload);
 			}
@@ -117,6 +119,12 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 	EditorScript_OnShutdown_ScriptEvent()
 {
 }
+
+#define USING_NS_CACHED using namespace NCsManagerJavascript::NCached;
+#define SET_CONTEXT(__FunctionName) using namespace NCsManagerJavascript::NCached; \
+	const FString& Context = Str::##__FunctionName
+#define CoroutineSchedulerLibrary NCsCoroutine::NScheduler::FLibrary
+#define JavascriptCommonLibrary NCsJs::NCommon::FLibrary
 
 // Singleton
 #pragma region
@@ -256,9 +264,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 /*static*/ ICsGetManagerJavascript* UCsManager_Javascript::GetSafe_GetManagerJavascript(UObject* Object)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::GetSafe_GetManagerJavascript;
+	SET_CONTEXT(GetSafe_GetManagerJavascript);
 
 	return GetSafe_GetManagerJavascript(Context, Object, nullptr);
 }
@@ -272,9 +278,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetSafe(UObject* Object)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::GetSafe;
+	SET_CONTEXT(GetSafe);
 
 	return GetSafe(Context, Object, nullptr);
 }
@@ -295,9 +299,7 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 /*static*/ UCsManager_Javascript* UCsManager_Javascript::GetFromWorldContextObject(const UObject* WorldContextObject)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::GetFromWorldContextObject;
+	SET_CONTEXT(GetFromWorldContextObject);
 
 	return GetFromWorldContextObject(Context, WorldContextObject, nullptr);
 }
@@ -306,17 +308,19 @@ UCsManager_Javascript::UCsManager_Javascript(const FObjectInitializer& ObjectIni
 
 void UCsManager_Javascript::Initialize()
 {
-/*
+	/*
 	if (Cast<UGameInstance>(MyRoot))
 	{
 	}
-*/
+	*/
 	EditorScriptImpl.Outer = this;
 }
 
 void UCsManager_Javascript::CleanUp()
 {
 	EntryPoint.Shutdown();
+	ShutdownScripts();
+	EditorScriptImpl.Shutdown();
 }
 
 	// Root
@@ -336,24 +340,18 @@ void UCsManager_Javascript::SetMyRoot(UObject* InRoot)
 
 void UCsManager_Javascript::CreateEntryPoint()
 {
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
-
 	// Setup Isolate and Context
 	JavascriptCommonLibrary::SetupIsolateAndContext(this, EntryPoint.Isolate, EntryPoint.Context, false);
 }
 
-void UCsManager_Javascript::SetupEntryPoint(UGameInstance* GameInstance /*=nullptr*/)
+void UCsManager_Javascript::SetupEntryPoint(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	using namespace NCsManagerJavascript::NCached;
+	SET_CONTEXT(SetupEntryPoint);
 
-	const FString& Context = Str::SetupEntryPoint;
+	CS_IS_VALID_CHECKED(EntryPoint);
 
-	check(EntryPoint.IsValidChecked(Context));
-
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 	
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, MyRoot);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
@@ -364,27 +362,19 @@ void UCsManager_Javascript::SetupEntryPoint(UGameInstance* GameInstance /*=nullp
 
 	#undef COROUTINE
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT_START
+	GameInstance = InGameInstance;
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT(Payload, GameInstance);
+	if (!GameInstance)
+		GameInstance = Cast<UGameInstance>(MyRoot);
 
 	bSetupEntryPointComplete = false;
 
-	Scheduler->Start(Payload);
+	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::SetupAndRunEntryPoint_Internal;
-
-	CS_COROUTINE_READ_OBJECT_START
-
-	CS_COROUTINE_READ_OBJECT_AS(R, GameInstance, UGameInstance);
-
-	if (!GameInstance)
-		GameInstance = Cast<UGameInstance>(MyRoot);
+	SET_CONTEXT(SetupEntryPoint_Internal);
 
 	UWorld* World						= GameInstance->GetWorld();
 	AGameStateBase* GameState			= World ? World->GetGameState() : nullptr;
@@ -393,8 +383,6 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 	APawn* PlayerPawn					= PlayerController ? PlayerController->GetPawn() : nullptr;
 
 	CS_COROUTINE_BEGIN(R);
-
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
 	EntryPoint.ExposedObjectNames.Add(TEXT("Root"));
 
@@ -460,16 +448,12 @@ char UCsManager_Javascript::SetupEntryPoint_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-void UCsManager_Javascript::SetupAndRunEntryPoint(UGameInstance* GameInstance /*=nullptr*/)
+void UCsManager_Javascript::SetupAndRunEntryPoint(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	using namespace NCsManagerJavascript::NCached;
+	SET_CONTEXT(SetupAndRunEntryPoint);
 
-	const FString& Context = Str::SetupAndRunEntryPoint;
-
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, MyRoot);	
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
@@ -480,25 +464,19 @@ void UCsManager_Javascript::SetupAndRunEntryPoint(UGameInstance* GameInstance /*
 
 	#undef COROUTINE
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT_START
+	GameInstance = InGameInstance;
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT(Payload, GameInstance);
+	if (!GameInstance)
+		GameInstance = Cast<UGameInstance>(MyRoot);
 
-	Scheduler->Start(Payload);
+	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupAndRunEntryPoint_Internal(FCsRoutine* R)
 {
 	CS_COROUTINE_READ_OBJECT_START
 
-	CS_COROUTINE_READ_OBJECT_AS(R, GameInstance, UGameInstance);
-
-	if (!GameInstance)
-		GameInstance = Cast<UGameInstance>(MyRoot);
-
 	CS_COROUTINE_BEGIN(R);
-
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
 	// Setup Isolate and Context
 	CreateEntryPoint();
@@ -522,8 +500,6 @@ void UCsManager_Javascript::RunEntryPoint()
 
 	checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::RunEntryPoint: FileName is Empty."));
 
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
-
 	JavascriptCommonLibrary::RunFile(EntryPoint.Context, FileName);
 }
 
@@ -539,41 +515,37 @@ void UCsManager_Javascript::ShutdownEntryPoint()
 
 void UCsManager_Javascript::CreateScriptObjects()
 {
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+	SET_CONTEXT(CreateScriptObjects);
 
-	ScriptObjects.Reset(FMath::Max(ScriptObjects.Max(), ScriptInfo.FileInfos.Num()));
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
+	const int32 Count = Settings.PoolSize;
+
+	ScriptObjects.Reset(Count);
 
 	// Setup Isolates and Contexts
 
-	for (FCsScript_FileInfo& FileInfo : ScriptInfo.FileInfos)
+	for (int32 I = 0; I < Count; ++I)
 	{
 		FCsJavascriptFileObjects& ScriptObject = ScriptObjects.AddDefaulted_GetRef();
 
-		JavascriptCommonLibrary::SetupIsolateAndContext(this, ScriptObject.Isolate, ScriptObject.Context, false);
+		ScriptObject.Index = I;
+		ScriptObject.Init(this);
 	}
 }
 
-void UCsManager_Javascript::ConditionalCreateScriptObject()
+void UCsManager_Javascript::SetupScriptObjects(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	if (ScriptObjects.Num() == CS_EMPTY ||
-		ScriptObjects.Num() != ScriptInfo.FileInfos.Num())
-	{
-		CreateScriptObjects();
-	}
-}
+	SET_CONTEXT(SetupScriptObjects);
 
-void UCsManager_Javascript::SetupScriptObjects(UGameInstance* GameInstance /*=nullptr*/)
-{
-	using namespace NCsManagerJavascript::NCached;
+	CS_IS_VALID_CHECKED(ScriptInfo);
 
-	const FString& Context = Str::SetupScriptObjects;
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
 
-	check(EntryPoint.IsValidChecked(Context));
+	checkf(Settings.PoolSize >= ScriptInfo.FileInfos.Num(), TEXT("%s: Pool Size (%d) of Script Objects is not large to support the number of requested files (%d) to run."), *Context, Settings.PoolSize, ScriptInfo.FileInfos.Num());
 
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 	
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, MyRoot);
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
@@ -584,9 +556,7 @@ void UCsManager_Javascript::SetupScriptObjects(UGameInstance* GameInstance /*=nu
 
 	#undef COROUTINE
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT_START
-
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT(Payload, GameInstance);
+	GameInstance = InGameInstance;
 
 	bSetupScriptObjectsComplete = false;
 
@@ -595,13 +565,9 @@ void UCsManager_Javascript::SetupScriptObjects(UGameInstance* GameInstance /*=nu
 
 char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::SetupScriptObjects_Internal;
+	SET_CONTEXT(SetupScriptObjects_Internal);
 
 	CS_COROUTINE_READ_OBJECT_START
-
-	CS_COROUTINE_READ_OBJECT_AS(R, GameInstance, UGameInstance);
 
 	if (!GameInstance)
 		GameInstance = Cast<UGameInstance>(MyRoot);
@@ -611,8 +577,6 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 	APlayerController* PlayerController = World ? GEngine->GetFirstLocalPlayerController(World) : nullptr;
 	APlayerState* PlayerState			= PlayerController ? PlayerController->PlayerState : nullptr;
 	APawn* PlayerPawn					= PlayerController ? PlayerController->GetPawn() : nullptr;
-
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
 	CS_COROUTINE_BEGIN(R);
 
@@ -632,54 +596,57 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 
 		for (int32 I = 0; I < MaxScripts; ++I)
 		{
-			FCsJavascriptFileObjects& ScriptObject = ScriptObjects[I];
+			if (ScriptInfo.HasFileInfo(I))
+			{
+				FCsJavascriptFileObjects& ScriptObject = ScriptObjects[I];
 
-			ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
+				ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
 
-			// Engine
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
-			ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
+				// Engine
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+				ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
 	 
-			// GameInstance
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
-			ScriptObject.ExposedObjectNames.Add(TEXT("GameInstance"));
+				// GameInstance
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
+				ScriptObject.ExposedObjectNames.Add(TEXT("GameInstance"));
 
-			// Manager_Time
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
-			ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
+				// Manager_Time
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+				ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
 
-			// Coordinator_GameEvent
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
-			ScriptObject.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
+				// Coordinator_GameEvent
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
+				ScriptObject.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
 
-			// World
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
-			ScriptObject.ExposedObjectNames.Add(TEXT("World"));
-			ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
+				// World
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
+				ScriptObject.ExposedObjectNames.Add(TEXT("World"));
+				ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
 
-			// Game State
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
-			ScriptObject.ExposedObjectNames.Add(TEXT("GameState"));
+				// Game State
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
+				ScriptObject.ExposedObjectNames.Add(TEXT("GameState"));
 
-			// Manager_Javascript
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
-			ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
+				// Manager_Javascript
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
+				ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 
-			// Player Controller
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
-			ScriptObject.ExposedObjectNames.Add(TEXT("PlayerController"));
+				// Player Controller
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
+				ScriptObject.ExposedObjectNames.Add(TEXT("PlayerController"));
 
-			// Player State
-			JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
-			ScriptObject.ExposedObjectNames.Add(TEXT("PlayerState"));
+				// Player State
+				JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
+				ScriptObject.ExposedObjectNames.Add(TEXT("PlayerState"));
 
-			// Player Pawn
-			//JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerPawn"), PlayerPawn);
-			//ScriptObject.ExposedObjectNames.Add(TEXT("PlayerPawn"));
+				// Player Pawn
+				//JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerPawn"), PlayerPawn);
+				//ScriptObject.ExposedObjectNames.Add(TEXT("PlayerPawn"));
 
-			// Additional Setup
-			if (AdditionalSetupScriptObjects_Impl.IsBound())
-				AdditionalSetupScriptObjects_Impl.Execute(I);
+				// Additional Setup
+				if (AdditionalSetupScriptObjects_Impl.IsBound())
+					AdditionalSetupScriptObjects_Impl.Execute(I);
+			}
 		}
 	}
 
@@ -691,16 +658,12 @@ char UCsManager_Javascript::SetupScriptObjects_Internal(FCsRoutine* R)
 	CS_COROUTINE_END(R);
 }
 
-void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* GameInstance /*=nullptr*/)
+void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* InGameInstance /*=nullptr*/)
 {
-	using namespace NCsManagerJavascript::NCached;
+	SET_CONTEXT(SetupAndRunScripts);
 
-	const FString& Context = Str::SetupAndRunScripts;
-
-	typedef NCsCoroutine::NScheduler::FLibrary CoroutineSchedulerLibrary;
 	typedef NCsCoroutine::NPayload::FImpl PayloadType;
 
-	UCsCoroutineScheduler* Scheduler   = CoroutineSchedulerLibrary::GetChecked(Context, MyRoot);	
 	const FECsUpdateGroup& UpdateGroup = NCsUpdateGroup::GameInstance;
 	PayloadType* Payload			   = CoroutineSchedulerLibrary::AllocatePayloadChecked(Context, MyRoot, UpdateGroup);
 
@@ -711,25 +674,19 @@ void UCsManager_Javascript::SetupAndRunScripts(UGameInstance* GameInstance /*=nu
 
 	#undef COROUTINE
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT_START
+	GameInstance = InGameInstance;
 
-	CS_COROUTINE_PAYLOAD_PASS_OBJECT(Payload, GameInstance);
-
-	Scheduler->Start(Payload);
+	CoroutineSchedulerLibrary::StartChecked(Context, MyRoot, Payload);
 }
 
 char UCsManager_Javascript::SetupAndRunScripts_Internal(FCsRoutine* R)
 {
 	CS_COROUTINE_READ_OBJECT_START
 
-	CS_COROUTINE_READ_OBJECT_AS(R, GameInstance, UGameInstance);
-
 	if (!GameInstance)
 		GameInstance = Cast<UGameInstance>(MyRoot);
 
 	CS_COROUTINE_BEGIN(R);
-
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
 
 	// Setup Isolate and Context
 	CreateScriptObjects();
@@ -749,6 +706,8 @@ char UCsManager_Javascript::SetupAndRunScripts_Internal(FCsRoutine* R)
 
 void UCsManager_Javascript::RunScripts()
 {
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
 	const int32 MaxScripts = ScriptObjects.Num();
 
 	CurrentScriptIndex = 0;
@@ -756,18 +715,18 @@ void UCsManager_Javascript::RunScripts()
 
 	for (int32 I = 0; I < MaxScripts; ++I)
 	{
-		FCsScript_FileInfo& FileInfo		   = ScriptInfo.FileInfos[I];
-		FCsJavascriptFileObjects& ScriptObject = ScriptObjects[I];
-
-		if (FileInfo.bEnable)
+		if (ScriptInfo.HasFileInfo(I))
 		{
+			FCsScript_FileInfo& FileInfo		   = ScriptInfo.FileInfos[I];
+			FCsJavascriptFileObjects& ScriptObject = ScriptObjects[I];
+
 			checkf(ScriptObject.Context, TEXT("UCsManager_Javascript::RunScripts: Context is NULL."));
 
 			const FString& FileName = FileInfo.Entry;
 
 			checkf(!FileName.IsEmpty(), TEXT("UCsManager_Javascript::RunScripts: FileName is Empty."));
 
-			typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+			ScriptObject.Path = FileName;
 
 			JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
 		}
@@ -778,9 +737,7 @@ void UCsManager_Javascript::RunScripts()
 
 void UCsManager_Javascript::ReloadScript(const int32& Index)
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::ReloadScript;
+	SET_CONTEXT(ReloadScript);
 
 	if (Index < 0)
 	{
@@ -805,12 +762,88 @@ void UCsManager_Javascript::ReloadScript(const int32& Index)
 	if (!FileInfo.IsValid(Context))
 		return;
 
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
-
 	FCsJavascriptFileObjects& ScriptObject = ScriptObjects[Index];
-	const FString& FileName				   = FileInfo.Entry;
+
+	ScriptObject.Deactivate(this);
+
+	UWorld* World						= GameInstance->GetWorld();
+	AGameStateBase* GameState			= World ? World->GetGameState() : nullptr;
+	APlayerController* PlayerController = World ? GEngine->GetFirstLocalPlayerController(World) : nullptr;
+	APlayerState* PlayerState			= PlayerController ? PlayerController->PlayerState : nullptr;
+	APawn* PlayerPawn					= PlayerController ? PlayerController->GetPawn() : nullptr;
+
+	ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
+
+	// Engine
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+	ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
+	 
+	// GameInstance
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameInstance"), GameInstance);
+	ScriptObject.ExposedObjectNames.Add(TEXT("GameInstance"));
+
+	// Manager_Time
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GameInstance));
+	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
+
+	// Coordinator_GameEvent
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Coordinator_GameEvent"), UCsCoordinator_GameEvent::Get(GameInstance));
+	ScriptObject.ExposedObjectNames.Add(TEXT("Coordinator_GameEvent"));
+
+	// World
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), World);
+	ScriptObject.ExposedObjectNames.Add(TEXT("World"));
+	ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
+
+	// Game State
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GameState"), GameState);
+	ScriptObject.ExposedObjectNames.Add(TEXT("GameState"));
+
+	// Manager_Javascript
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), this);
+	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
+
+	// Player Controller
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerController"), PlayerController);
+	ScriptObject.ExposedObjectNames.Add(TEXT("PlayerController"));
+
+	// Player State
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerState"), PlayerState);
+	ScriptObject.ExposedObjectNames.Add(TEXT("PlayerState"));
+
+	// Player Pawn
+	//JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("PlayerPawn"), PlayerPawn);
+	//ScriptObject.ExposedObjectNames.Add(TEXT("PlayerPawn"));
+
+	// Additional Setup
+	if (AdditionalSetupScriptObjects_Impl.IsBound())
+		AdditionalSetupScriptObjects_Impl.Execute(Index);
+
+	const FString& FileName	= FileInfo.Entry;
 
 	JavascriptCommonLibrary::RunFile(ScriptObject.Context, FileName);
+}
+
+void UCsManager_Javascript::DeactivateScripts()
+{
+	OnShutdownScripts_Start_ScriptEvent.Broadcast();
+
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
+	const int32 Count = ScriptObjects.Num();
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		if (ScriptInfo.HasFileInfo(I))
+		{
+			FCsJavascriptFileObjects& ScriptObject = ScriptObjects[I];
+			const FCsScript_FileInfo& FileInfo = ScriptInfo.FileInfos[I];
+			const FString& FileName			   = FileInfo.Entry;
+
+			if (ScriptObject.Path != Settings.EmptyPath)
+				ScriptObject.Deactivate(this);
+		}
+	}
 }
 
 void UCsManager_Javascript::ShutdownScripts()
@@ -829,6 +862,34 @@ void UCsManager_Javascript::ShutdownScripts()
 // Editor Scripts
 #pragma region
 
+void UCsManager_Javascript::FEditorScriptImpl::Init()
+{
+	using namespace NCsManagerJavascript::NEditorScriptImpl::NCached;
+
+	const FString& Context = Str::Init;
+
+	const FCsSettings_Manager_Javascript& Settings = FCsSettings_Manager_Javascript::Get();
+
+	CS_IS_VALID_CHECKED(Settings);
+
+	const int32 Count = Settings.PoolSize;
+
+	TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
+
+	Objects.Reset(Count);
+	Manager_Objects.CreatePool(Count);
+
+	for (int32 I = 0; I < Count; ++I)
+	{
+		FCsJavascriptFileObjects& ScriptObject = Objects.AddDefaulted_GetRef();
+
+		ScriptObject.Index = I;
+		ScriptObject.Init(Outer);
+
+		Manager_Objects.Add(&ScriptObject);
+	}
+}
+
 void UCsManager_Javascript::FEditorScriptImpl::Validate()
 {
 	TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
@@ -843,7 +904,7 @@ void UCsManager_Javascript::FEditorScriptImpl::Validate()
 		const int32& Id = Pair.Key;
 		UObject* Owner	= Pair.Value;
 
-		if (!ObjectLibrary::IsPendingKill(Owner))
+		if (!ObjectLibrary::IsValidObject(Owner))
 			IdsToRemove.Add(Id);
 	}
 
@@ -857,26 +918,12 @@ void UCsManager_Javascript::FEditorScriptImpl::Validate()
 		OwnerByOwnerIdMap.Remove(OwnerId_Remove);
 
 		// Remove the Invalid Index from the list
-		const int32& Index_Remove	 = IndexByOwnerIdMap[OwnerId_Remove];
-		const FGuid ScriptId_Remove	 = Objects[Index_Remove].Id;
-		const int32 LastIndex		 = Objects.Num() - 1;
+		const int32& Index_Remove   = IndexByOwnerIdMap[OwnerId_Remove];
+		const FGuid ScriptId_Remove	= Objects[Index_Remove].Id;
 
-		Objects.Swap(Index_Remove, LastIndex);
-		Objects.Last().Shutdown();
-		Objects.RemoveAt(LastIndex);
+		Objects[Index_Remove].Deactivate(Outer);
+		Manager_Objects.DeallocateAt(Objects[Index_Remove].Index);
 
-		// Update the swapped Index
-		if (Index_Remove != LastIndex &&
-			Objects.Num() > CS_EMPTY)
-		{
-			const int32 NewIndex = Index_Remove;
-
-			FCsJavascriptFileObjects& ScriptObject = Objects[NewIndex];
-			const FGuid& ScriptId_Swapped		   = ScriptObject.Id;
-
-			const int32& OwnerId_Swapped	   = OwnerIdByIdMap[ScriptId_Swapped];
-			IndexByOwnerIdMap[OwnerId_Swapped] = NewIndex;
-		}
 		// Remove from remaining lists
 		IndexByOwnerIdMap.Remove(OwnerId_Remove);
 		IdByOwnerIdMap.Remove(OwnerId_Remove);
@@ -899,14 +946,10 @@ FGuid UCsManager_Javascript::FEditorScriptImpl::CreateAndRun(UObject* Owner, con
 
 	Validate();
 
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
-
-	FCsJavascriptFileObjects& ScriptObject = GetObjects().AddDefaulted_GetRef();
+	FCsJavascriptFileObjects& ScriptObject = Manager_Objects.AllocateResourceRef();
 
 	// Setup Isolates and Contexts
 	{
-		JavascriptCommonLibrary::SetupIsolateAndContext(Outer, ScriptObject.Isolate, ScriptObject.Context, false);
-	
 		ScriptObject.Id = FGuid::NewGuid();
 
 		// Update Maps
@@ -968,10 +1011,34 @@ void UCsManager_Javascript::FEditorScriptImpl::Reload(const FGuid& Id, const FSt
 
 	const int32& OwnerId = OwnerIdByIdMap[Id];
 	const int32& Index   = IndexByOwnerIdMap[OwnerId];
+	UObject* Owner		 = OwnerByOwnerIdMap[OwnerId];
 
 	FCsJavascriptFileObjects& ScriptObject = GetObjects()[Index];
 
-	typedef NCsJs::NCommon::FLibrary JavascriptCommonLibrary;
+	ScriptObject.Deactivate(Outer);
+
+	ScriptObject.ExposedObjectNames.Add(TEXT("Root"));
+
+	// Script Outer | Owner
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("ScriptOuter"), Owner);
+	ScriptObject.ExposedObjectNames.Add(TEXT("ScriptOuter"));
+
+	// Engine
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("GEngine"), GEngine);
+	ScriptObject.ExposedObjectNames.Add(TEXT("GEngine"));
+
+	// Manager_Time
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Time"), UCsManager_Time::Get(GEngine));
+	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Time"));
+
+	// World
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("World"), Owner->GetWorld());
+	ScriptObject.ExposedObjectNames.Add(TEXT("World"));
+	ScriptObject.ExposedObjectNames.Add(TEXT("GWorld"));
+
+	// Manager_Javascript
+	JavascriptCommonLibrary::ExposeObject(ScriptObject.Context, TEXT("Manager_Javascript"), Outer);
+	ScriptObject.ExposedObjectNames.Add(TEXT("Manager_Javascript"));
 
 	JavascriptCommonLibrary::RunFile(ScriptObject.Context, Path);
 }
@@ -990,32 +1057,34 @@ bool UCsManager_Javascript::FEditorScriptImpl::Shutdown(UObject* Owner)
 	// Remove the Invalid Index from the list
 	const int32& Index_Remove	 = IndexByOwnerIdMap[OwnerId_Remove];
 	const FGuid ScriptId_Remove	 = Objects[Index_Remove].Id;
-	const int32 LastIndex		 = Objects.Num() - 1;
-
-	Objects.Swap(Index_Remove, LastIndex);
 
 	Outer->EditorScript_OnShutdown_ScriptEvent.Broadcast(ScriptId_Remove);
 
-	Objects.Last().Shutdown();
-	Objects.RemoveAt(LastIndex);
+	Objects[Index_Remove].Deactivate(Outer);
+	Manager_Objects.DeallocateAt(Objects[Index_Remove].Index);
 
-	// Update the swapped Index
-	if (Index_Remove != LastIndex &&
-		Objects.Num() > CS_EMPTY)
-	{
-		const int32 NewIndex = Index_Remove;
-
-		FCsJavascriptFileObjects& ScriptObject = Objects[NewIndex];
-		const FGuid& ScriptId_Swapped		   = ScriptObject.Id;
-
-		const int32& OwnerId_Swapped	   = OwnerIdByIdMap[ScriptId_Swapped];
-		IndexByOwnerIdMap[OwnerId_Swapped] = NewIndex;
-	}
 	// Remove from remaining lists
 	IndexByOwnerIdMap.Remove(OwnerId_Remove);
 	IdByOwnerIdMap.Remove(OwnerId_Remove);
 	OwnerIdByIdMap.Remove(ScriptId_Remove);
 	return true;
+}
+
+void UCsManager_Javascript::FEditorScriptImpl::Shutdown()
+{
+	TArray<FCsJavascriptFileObjects>& Objects = GetObjects();
+
+	for (FCsJavascriptFileObjects& ScriptObject : Objects)
+	{
+		ScriptObject.Shutdown();
+	}
+
+	Manager_Objects.Shutdown();
+	Objects.Reset();
+	OwnerByOwnerIdMap.Reset();
+	IndexByOwnerIdMap.Reset();
+	IdByOwnerIdMap.Reset();
+	OwnerIdByIdMap.Reset();
 }
 
 bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context, UObject* Owner)
@@ -1034,9 +1103,7 @@ bool UCsManager_Javascript::EditorScript_Shutdown_ByOwner(const FString& Context
 
 void UCsManager_Javascript::SetupCallbacks()
 {
-	using namespace NCsManagerJavascript::NCached;
-
-	const FString& Context = Str::SetupCallbacks;
+	SET_CONTEXT(SetupCallbacks);
 
 	CS_IS_PENDING_KILL_CHECKED(WorldContext)
 
@@ -1078,3 +1145,8 @@ void UCsManager_Javascript::OnAnyKey_Pressed(const FKey& Key)
 }
 
 #pragma endregion Events
+
+#undef USING_NS_CACHED
+#undef SET_CONTEXT
+#undef CoroutineSchedulerLibrary
+#undef JavascriptCommonLibrary

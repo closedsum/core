@@ -115,6 +115,32 @@ namespace NCsInput
 		{
 			struct CSCORE_API FLibrary final
 			{
+			public:
+
+			#define InputManagerLibrary NCsInput::NManager::FLibrary
+
+				FORCEINLINE static UCsManager_Input* GetFirstManagerChecked(const FString& Context, const UObject* WorldContext)
+				{
+					return InputManagerLibrary::GetFirstChecked(Context, WorldContext);
+				}
+
+				FORCEINLINE static UCsManager_Input* GetSafeFirstManager(const FString& Context, const UObject* WorldContext, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					return InputManagerLibrary::GetSafeFirst(Context, WorldContext, Log);
+				}
+
+				FORCEINLINE static UCsManager_Input* GetManagerChecked(const FString& Context, APlayerController* PC)
+				{
+					return InputManagerLibrary::GetChecked(Context, PC);
+				}
+
+				FORCEINLINE static UCsManager_Input* GetSafeManager(const FString& Context, APlayerController* PC, void(*Log)(const FString&) = &FCsLog::Warning)
+				{
+					return InputManagerLibrary::GetSafe(Context, PC, Log);
+				}
+
+			#undef InputManagerLibrary
+
 			// Set
 			#pragma region
 
@@ -193,7 +219,7 @@ namespace NCsInput
 				* @param Map		A bit flag. See FECsInputActionMap.
 				* @param Log
 				*/
-				static void SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, void(*Log)(const FString&) = &FCsLog::Warning);
+				static bool SetSafeFirst(const FString& Context, UWorld* World, const int32& Map, void(*Log)(const FString&) = &FCsLog::Warning);
 
 			#pragma endregion First
 

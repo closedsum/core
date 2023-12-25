@@ -11,6 +11,7 @@
 // Level
 #include "Engine/LevelScriptActor.h"
 #include "Level/Data/Setup/CsGetLevelSetupData.h"
+#include "Level/CsGetLevelPayload.h"
 // World
 #include "Engine/World.h"
 
@@ -35,6 +36,14 @@ namespace NCsLevel
 				}
 			}
 		}
+
+		#define USING_NS_CACHED using namespace NCsLevel::NPersistent::NLibrary::NCached;
+		#define SET_CONTEXT(__FunctionName) using namespace NCsLevel::NPersistent::NLibrary::NCached; \
+			const FString& Context = Str::##__FunctionName
+		#define WorldLibrary NCsWorld::FLibrary
+
+		// Get
+		#pragma region
 
 		ULevel* FLibrary::GetChecked(const FString& Context, const UWorld* World)
 		{
@@ -79,33 +88,28 @@ namespace NCsLevel
 
 		ULevel* FLibrary::GetSafe(const UWorld* World)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			SET_CONTEXT(GetSafe);
 
 			return GetSafe(Context, World, nullptr);
 		}
 
 		ULevel* FLibrary::GetSafe(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;
-
 			return GetSafe(Context, World, Log);
 		}
 
 		ULevel* FLibrary::GetSafe(const UObject* WorldContext)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafe;
+			SET_CONTEXT(GetSafe);
 
 			return GetSafe(Context, WorldContext, nullptr);
 		}
+
+		#pragma endregion Get
 
 		// Name
 		#pragma region
@@ -126,11 +130,7 @@ namespace NCsLevel
 
 		FString FLibrary::GetSafeName(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			if (!World)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: World is NULL."), *Context));
-				return FString();
-			}
+			CS_IS_PENDING_KILL_RET_VALUE(World, FString())
 
 			FString Result = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 
@@ -143,30 +143,23 @@ namespace NCsLevel
 
 		FString FLibrary::GetSafeName(const UWorld* World)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeName;
+			SET_CONTEXT(GetSafeName);
 
 			return GetSafeName(Context, World, nullptr);
 		}
 
 		FString FLibrary::GetSafeName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 			
 			if (!World)
 				return FString();
-
 			return GetSafeName(Context, World, Log);
 		}
 
 		FString FLibrary::GetSafeName(const UObject* WorldContext)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeName;
+			SET_CONTEXT(GetSafeName);
 
 			return GetSafeName(Context, WorldContext, nullptr);
 		}
@@ -206,11 +199,7 @@ namespace NCsLevel
 
 		FName FLibrary::GetSafeFName(const FString& Context, const UWorld* World, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			if (!World)
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: World is NULL."), *Context));
-				return NAME_None;
-			}
+			CS_IS_PENDING_KILL_RET_VALUE(World, NAME_None)
 
 			const FString Name = UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 
@@ -224,30 +213,23 @@ namespace NCsLevel
 
 		FName FLibrary::GetSafeFName(const UWorld* World)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeFName;
+			SET_CONTEXT(GetSafeFName);
 
 			return GetSafeFName(Context, World, nullptr);
 		}
 
 		FName FLibrary::GetSafeFName(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return NAME_None;
-
 			return GetSafeFName(World);
 		}
 
 		FName FLibrary::GetSafeFName(const UObject* WorldContext)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeFName;
+			SET_CONTEXT(GetSafeFName);
 
 			return GetSafeFName(Context, WorldContext, nullptr);
 		}
@@ -255,8 +237,7 @@ namespace NCsLevel
 		bool FLibrary::IsNameChecked(const FString& Context, const UWorld* World, const FString& MapPackageName)
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
-
-			checkf(!MapPackageName.IsEmpty(), TEXT("MapPackageName is EMPTY."), *Context);
+			CS_IS_STRING_EMPTY_CHECKED(MapPackageName)
 
 			return MapPackageName == UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 		}
@@ -271,46 +252,33 @@ namespace NCsLevel
 		bool FLibrary::SafeIsName(const FString& Context, const UWorld* World, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
 			CS_IS_PTR_NULL(World)
+			CS_IS_STRING_EMPTY(MapPackageName)
 
-			if (MapPackageName.IsEmpty())
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MapPackageName is EMPTY."), *Context));
-				return false;
-			}
 			return MapPackageName == UWorld::StripPIEPrefixFromPackageName(World->GetOutermost()->GetName(), World->StreamingLevelsPrefix);
 		}
 
 		bool FLibrary::SafeIsName(const UWorld* World, const FString& MapPackageName)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::SafeIsName;
+			SET_CONTEXT(SafeIsName);
 
 			return SafeIsName(Context, World, MapPackageName, nullptr);
 		}
 
 		bool FLibrary::SafeIsName(const FString& Context, const UObject* WorldContext, const FString& MapPackageName, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return false;
 
-			if (MapPackageName.IsEmpty())
-			{
-				CS_CONDITIONAL_LOG(FString::Printf(TEXT("%s: MapPackageName is EMPTY."), *Context));
-				return false;
-			}
+			CS_IS_STRING_EMPTY(MapPackageName)
+
 			return SafeIsName(Context, World, MapPackageName, Log);
 		}
 
 		bool FLibrary::SafeIsName(const UObject* WorldContext, const FString& MapPackageName)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::SafeIsName;
+			SET_CONTEXT(SafeIsName);
 
 			return SafeIsName(Context, WorldContext, MapPackageName, nullptr);
 		}
@@ -324,7 +292,7 @@ namespace NCsLevel
 		{
 			const FString MapPackageName = GetLongPackageNameChecked(Context, WorldContext);
 
-			checkf(Path.IsValid(), TEXT("%s: Path is NOT a valid path."), *Context);
+			CS_IS_SOFT_OBJECT_PATH_VALID_CHECKED(Path)
 
 			const FString URL = Path.GetLongPackageName();
 
@@ -345,12 +313,10 @@ namespace NCsLevel
 		{
 			CS_IS_PTR_NULL_CHECKED(World)
 
-			ULevel* Level = GetChecked(Context, World);
-
+			ULevel* Level						= GetChecked(Context, World);
 			ALevelScriptActor* LevelScriptActor = Level->LevelScriptActor;
 
 			checkf(LevelScriptActor, TEXT("%s: Failed to get LevelScriptActor from Persistent Level: %s."), *Context, *(Level->GetName()));
-
 			return LevelScriptActor;
 		}
 
@@ -377,30 +343,23 @@ namespace NCsLevel
 
 		ALevelScriptActor* FLibrary::GetSafeScriptActor(const UWorld* World)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeScriptActor;
+			SET_CONTEXT(GetSafeScriptActor);
 
 			return GetSafeScriptActor(Context, World, nullptr);
 		}
 
 		ALevelScriptActor* FLibrary::GetSafeScriptActor(const FString& Context, const UObject* WorldContext, void(*Log)(const FString& Context) /*=&FCsLog::Warning*/)
 		{
-			typedef NCsWorld::FLibrary WorldLibrary;
-
 			UWorld* World = WorldLibrary::GetSafe(Context, WorldContext, Log);
 
 			if (!World)
 				return nullptr;
-
 			return GetSafeScriptActor(Context, World, Log);
 		}
 
 		ALevelScriptActor* FLibrary::GetSafeScriptActor(const UObject* WorldContext)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeScriptActor;
+			SET_CONTEXT(GetSafeScriptActor);
 
 			return GetSafeScriptActor(Context, WorldContext, nullptr);
 		}
@@ -437,13 +396,45 @@ namespace NCsLevel
 
 		UObject* FLibrary::GetSafeSetupDataAsObject(const UObject* WorldContext)
 		{
-			using namespace NCsLevel::NPersistent::NLibrary::NCached;
-
-			const FString& Context = Str::GetSafeSetupDataAsObject;
+			SET_CONTEXT(GetSafeSetupDataAsObject);
 
 			return GetSafeSetupDataAsObject(Context, WorldContext, nullptr);
 		}
 
 		#pragma endregion SetupData
+
+		// ICsGetLevelPayload
+		#pragma region
+
+		void FLibrary::GetPayloadAndLevelNameChecked(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName)
+		{
+			OutPayload	  = nullptr;
+			OutLevelName  = NAME_None;
+		}
+
+		bool FLibrary::GetSafePayloadAndLevelName(const FString& Context, const UObject* WorldContext, FCsPayload*& OutPayload, FName& OutLevelName, void(*Log)(const FString&) /*=&FCsLog::Warning*/)
+		{
+			OutPayload	  = nullptr;
+			OutLevelName  = NAME_None;
+
+			ICsGetLevelPayload* GetLevelPayload = GetSafeSetupData<ICsGetLevelPayload>(Context, WorldContext, Log);
+
+			if (!GetLevelPayload)
+				return false;
+
+			const FCsPayload& Payload = GetLevelPayload->GetLevelPayload();
+			OutPayload				  = const_cast<FCsPayload*>(&Payload);
+			OutLevelName			  = GetSafeFName(Context, WorldContext, Log);
+
+			if (OutLevelName == NAME_None)
+				return false;
+			return true;
+		}
+
+		#pragma endregion ICsGetLevelPayload
+
+		#undef USING_NS_CACHED
+		#undef SET_CONTEXT
+		#undef WorldLibrary
 	}
 }

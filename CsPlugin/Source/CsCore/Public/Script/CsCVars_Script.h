@@ -46,7 +46,7 @@ namespace NCsCVarToggle
 		SafeExpr; \
 	}
 #else
-#define CS_SCRIPT_CHECKED(ExprChecked, SafeExpr)
+#define CS_SCRIPT_CHECKED(ExprChecked, SafeExpr) ExprChecked;
 #define CS_SCRIPT_GET_CHECKED(ExprChecked, SafeExpr) ExprChecked
 #define CS_SCRIPT_SET_CHECKED(ExprChecked, SafeExpr) ExprChecked; return true;
 #define CS_SCRIPT_SET_CHECKED_NO_RET(ExprChecked, SafeExpr) ExprChecked;

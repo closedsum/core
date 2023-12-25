@@ -7,6 +7,7 @@
 #include "CsGetDataEntryTool.generated.h"
 
 struct FCsDataEntry_Data;
+struct FCsDataEntry_ScriptData;
 struct FCsDataEntry_DataTable;
 
 namespace NCsData
@@ -20,6 +21,7 @@ namespace NCsData
 			public:
 
 				void(*Data_PopulateImpl)(FCsDataEntry_Data* /*Entry*/);
+				void(*ScriptData_PopulateImpl)(FCsDataEntry_ScriptData* /*Entry*/);
 				void(*DataTable_PopulateImpl)(UObject* /*DataTable*/, const FName& /*RowName*/, FCsDataEntry_DataTable* /*Entry*/, const bool& /*AllRows*/);
 			};
 		}
